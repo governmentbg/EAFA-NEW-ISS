@@ -1,0 +1,366 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "iara": {
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "aot": true,
+            "outputPath": "wwwroot",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.json",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/ngx-monaco-editor/assets/monaco",
+                "output": "/assets/monaco/"
+              }
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": [],
+            "showCircularDependencies": true,
+            "allowedCommonJsDependencies": [
+              "lodash",
+              "@swimlane/dragula",
+              "chart.js",
+              "angular-calendar",
+              "calendar-utils/date-adapters/date-fns",
+              "contra/emitter",
+              "crossvent",
+              "dom-plane",
+              "dom-set",
+              "@mattlewis92/dom-autoscroller",
+              "../Libraries/Angular/quill-image-resize-module-plus-remastered"
+            ]
+          },
+          "configurations": {
+            "admin-staging": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/shared/navigation/tl-navigation.ts",
+                  "with": "src/app/shared/navigation/tl-navigation.administrative.ts"
+                },
+                {
+                  "replace": "src/app/shared/modules/application.modules.ts",
+                  "with": "src/app/shared/modules/administrative-app.modules.ts"
+                },
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "11mb",
+                  "maximumError": "16mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
+            },
+            "public-staging": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/shared/navigation/tl-navigation.ts",
+                  "with": "src/app/shared/navigation/tl-navigation.public.ts"
+                },
+                {
+                  "replace": "src/app/shared/modules/application.modules.ts",
+                  "with": "src/app/shared/modules/public-app.modules.ts"
+                },
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "11mb",
+                  "maximumError": "16mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
+            },
+            "admin-prod": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/shared/navigation/tl-navigation.ts",
+                  "with": "src/app/shared/navigation/tl-navigation.administrative.ts"
+                },
+                {
+                  "replace": "src/app/shared/modules/application.modules.ts",
+                  "with": "src/app/shared/modules/administrative-app.modules.ts"
+                },
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.admin-prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "11mb",
+                  "maximumError": "16mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
+            },
+            "public-prod": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/shared/navigation/tl-navigation.ts",
+                  "with": "src/app/shared/navigation/tl-navigation.public.ts"
+                },
+                {
+                  "replace": "src/app/shared/modules/application.modules.ts",
+                  "with": "src/app/shared/modules/public-app.modules.ts"
+                },
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.public-prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "11mb",
+                  "maximumError": "16mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
+            },
+            "admin-dev": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/shared/navigation/tl-navigation.ts",
+                  "with": "src/app/shared/navigation/tl-navigation.administrative.ts"
+                },
+                {
+                  "replace": "src/app/shared/modules/application.modules.ts",
+                  "with": "src/app/shared/modules/administrative-app.modules.ts"
+                },
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.internal-dev.ts"
+                }
+              ],
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "11mb",
+                  "maximumError": "16mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
+            },
+            "public-dev": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/shared/navigation/tl-navigation.ts",
+                  "with": "src/app/shared/navigation/tl-navigation.public.ts"
+                },
+                {
+                  "replace": "src/app/shared/modules/application.modules.ts",
+                  "with": "src/app/shared/modules/public-app.modules.ts"
+                },
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.public-dev.ts"
+                }
+              ],
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "11mb",
+                  "maximumError": "16mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
+            },
+            "ec": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "sourceMap": true,
+              "extractCss": true
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "iara:build:admin-dev"
+          },
+          "configurations": {
+            "admin-staging": {
+              "browserTarget": "iara:build:admin-staging"
+            },
+            "public-staging": {
+              "browserTarget": "iara:build:public-staging"
+            },
+            "admin-prod": {
+              "browserTarget": "iara:build:admin-prod"
+            },
+            "admin-dev": {
+              "browserTarget": "iara:build:admin-dev"
+            },
+            "public-prod": {
+              "browserTarget": "iara:build:public-prod"
+            },
+            "public-dev": {
+              "browserTarget": "iara:build:public-dev"
+            },
+            "ec": {
+              "browserTarget": "iara:build:ec"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "iara:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/test.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/ngx-monaco-editor/assets/monaco",
+                "output": "/assets/monaco/"
+              }
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "tsconfig.app.json",
+              "tsconfig.spec.json",
+              "e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "e2e/protractor.conf.js",
+            "devServerTarget": "iara:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "iara:serve:admin-dev"
+            }
+          }
+        }
+      },
+      "prefix": "app",
+      "projectType": "application",
+      "root": "",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "sourceRoot": "src"
+    }
+  },
+  "defaultProject": "iara",
+  "cli": {
+    "analytics": false
+  }
+}

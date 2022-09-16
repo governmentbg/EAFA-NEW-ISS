@@ -1,0 +1,102 @@
+﻿<tl-card>
+    <tl-card-title>{{ 'my-profile.basic-information' | tlTranslate }}</tl-card-title>
+    <tl-card-content fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="center center" fxFill [formGroup]="changeUserDataForm">
+        <tl-card fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="1em">
+            <tl-card-content fxFlex="80" fxLayout="column">
+                <tl-checkbox formControlName="checkboxControl"
+                             label="{{ 'my-profile.has-bulgarian-address-registration' | tlTranslate }}">
+                </tl-checkbox>
+
+                <div fxLayout="row" fxLayoutGap="1em">
+                    <tl-input fxFlex="50" formControlName="usernameControl" label="{{ 'my-profile.username' | tlTranslate }}"></tl-input>
+                    <egn-lnc-input fxFlex="50" formControlName="egnControl"></egn-lnc-input>
+                </div>
+
+                <div fxLayout="row" fxLayoutGap="1em">
+                    <tl-input fxFlex="33" formControlName="firstNameControl" label="{{ 'my-profile.first-name' | tlTranslate }}"></tl-input>
+                    <tl-input fxFlex="33" formControlName="middleNameControl" label="{{ 'my-profile.middle-name' | tlTranslate }}"></tl-input>
+                    <tl-input fxFlex="33" formControlName="lastNameControl" label="{{ 'my-profile.last-name' | tlTranslate }}"></tl-input>
+                </div>
+
+                <div fxLayout="row" fxLayoutGap="1em">
+                    <tl-select fxFlex="24"
+                               formControlName="documentTypeControl"
+                               [options]="documentTypes"
+                               label="{{ 'my-profile.document-type' | tlTranslate }}">
+                    </tl-select>
+                    <tl-input fxFlex="24"
+                              formControlName="documentNumControl"
+                              label="{{ 'my-profile.document-number' | tlTranslate }}">
+                    </tl-input>
+                    <tl-date fxFlex="24"
+                             formControlName="documentIssueDateControl"
+                             label="{{ 'my-profile.document-issue-date' | tlTranslate }}">
+                    </tl-date>
+                    <tl-input fxFlex="24"
+                              formControlName="documentIssuerControl"
+                              label="{{ 'my-profile.document-issuer' | tlTranslate }}">
+                    </tl-input>
+                </div>
+
+                <div fxLayout="row" fxLayoutGap="1em">
+                    <tl-autocomplete fxFlex="25"
+                                     formControlName="citizenshipControl"
+                                     [options]="countries"
+                                     label="{{ 'my-profile.citizenship' | tlTranslate }}">
+                    </tl-autocomplete>
+
+                    <tl-select fxFlex="25"
+                               formControlName="genderControl"
+                               label="{{ 'my-profile.gender' | tlTranslate }}"
+                               [options]="genders">
+                    </tl-select>
+
+                    <tl-date fxFlex="25"
+                             formControlName="birthdateControl"
+                             label="{{ 'my-profile.birthdate' | tlTranslate }}">
+                    </tl-date>
+
+                    <tl-input fxFlex="25"
+                              formControlName="phoneControl"
+                              label="{{ 'my-profile.phone' | tlTranslate }}">
+                    </tl-input>
+                </div>
+
+                <!--Постоянен адрес-->
+                <address-registration formControlName="addressesControl"
+                                      addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                                      secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                                      checkboxLabel="{{ 'my-profile.permanent-address-same-as-correspondence' | tlTranslate }}">
+                </address-registration>
+
+            </tl-card-content>
+        </tl-card>
+        <!--Данни за парола-->
+        <tl-card *ngIf="userMustChangePassword" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1em">
+            <tl-card-title>{{ 'change-password.change-password-title' | tlTranslate }}</tl-card-title>
+            <tl-card-content>
+                <tl-input *ngIf="passwordIcon == 'fa-eye'; else textTypePass" type="password" formControlName="passwordControl"
+                          label="{{ 'my-profile.password' | tlTranslate }}">
+                    <tl-icon-button icon="{{passwordIcon}}" iconClass="accent-color" (buttonClicked)="showOrHidePassword('password')"></tl-icon-button>
+                </tl-input>
+                <ng-template #textTypePass>
+                    <tl-input type="text" formControlName="passwordControl"
+                              label="{{ 'my-profile.password' | tlTranslate }}">
+                        <tl-icon-button icon="{{passwordIcon}}" iconClass="accent-color" (buttonClicked)="showOrHidePassword('password')"></tl-icon-button>
+                    </tl-input>
+                </ng-template>
+
+                <tl-input *ngIf="passwordConfirmationIcon == 'fa-eye'; else textTypePassConf" type="password" formControlName="passwordConfirmationControl"
+                          label="{{ 'my-profile.verify-password' | tlTranslate }}">
+                    <tl-icon-button icon="{{passwordConfirmationIcon}}" iconClass="accent-color" (buttonClicked)="showOrHidePassword('passwordConfirmation')"></tl-icon-button>
+                </tl-input>
+                <ng-template #textTypePassConf>
+                    <tl-input type="text" formControlName="passwordConfirmationControl"
+                              label="{{ 'my-profile.verify-password' | tlTranslate }}">
+                        <tl-icon-button icon="{{passwordConfirmationIcon}}" iconClass="accent-color" (buttonClicked)="showOrHidePassword('passwordConfirmation')"></tl-icon-button>
+                    </tl-input>
+                </ng-template>
+            </tl-card-content>
+        </tl-card>
+    </tl-card-content>
+</tl-card>

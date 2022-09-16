@@ -1,0 +1,53 @@
+﻿<tl-card>
+    <tl-card-title fxFlex="row">{{ cardLabel }}</tl-card-title>
+    <tl-card-content>
+        <div fxFlexFill fxLayout="column" fxLayoutGap="1em" [formGroup]="formGroup">
+            <tl-data-table fxFlexFill
+                           [isSoftDeletable]="false"
+                           [showInactiveRecords]="false"
+                           [rows]="employeeInfo"
+                           [showAddButton]="false">
+                <data-column [columnName]="infoTypeColumnLabel"
+                             propertyName="name"
+                             [flexRate]="0.4">
+                </data-column>
+                <data-template-column columnName="{{ 'statistical-forms.men-with-pay' | tlTranslate }}"
+                                      propertyName="menWithPayCount"
+                                      [flexRate]="0.2">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <tl-input [formControl]="formGroup.controls[row.data.code + 'menWithPayControl']">
+                        </tl-input>
+                    </ng-template>
+                </data-template-column>
+                <data-template-column columnName="{{ 'statistical-forms.men-without-pay' | tlTranslate }}"
+                                      propertyName="menWithoutPayCount"
+                                      [flexRate]="0.2">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <tl-input [formControl]="formGroup.controls[row.data.code + 'menWithoutPayControl']">
+                        </tl-input>
+                    </ng-template>
+                </data-template-column>
+                <data-template-column columnName="{{ 'statistical-forms.women-with-pay' | tlTranslate }}"
+                                      propertyName="womenWithPayCount"
+                                      [flexRate]="0.2">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <tl-input [formControl]="formGroup.controls[row.data.code + 'womenWithPayControl']">
+                        </tl-input>
+                    </ng-template>
+                </data-template-column>
+                <data-template-column columnName="{{ 'statistical-forms.women-without-pay' | tlTranslate }}"
+                                      propertyName="womenWithoutPayCount"
+                                      [flexRate]="0.2">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <tl-input [formControl]="formGroup.controls[row.data.code + 'womenWithoutPayControl']">
+                        </tl-input>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+
+            <mat-error *ngIf="formGroup.touched && formGroup.errors?.payCountValidationError === true">
+                {{ 'statistical-forms.pay-count-validation' | tlTranslate }}
+            </mat-error>
+        </div>
+    </tl-card-content>
+</tl-card>

@@ -1,0 +1,36 @@
+﻿<div class="picture-uploader">
+    <div *ngIf="image"
+         class="container"
+         [style.width]="options.size.width"
+         [style.height]="options.size.height">
+        <div class="photo"
+             [style.border-radius]="options.borderRadius"
+             [style.background-image]="image">
+        </div>
+        <label for="{{ inputId }}" *ngIf="!isDisabled">
+            <div class="photo-edit"
+                 [style.background-image]="photo?.file ? addImage : editImage"
+                 [matTooltip]="photo?.file ? options.buttons.add.tooltip : options.buttons.edit.tooltip"
+                 matTooltipShowDelay="400">
+            </div>
+        </label>
+        <div *ngIf="!isDisabled"
+             class="photo-delete"
+             [style.background-image]="deleteImage"
+             [matTooltip]="options.buttons.delete.tooltip"
+             matTooltipShowDelay="400"
+             (click)="onFileRemoved()">
+        </div>
+    </div>
+    <mat-error *ngIf="isTouched && showRequiredError">
+        * {{ options.validations.isRequiredMessage }}
+    </mat-error>
+    <mat-error *ngIf="isTouched && showWrongFormatError">
+        * {{ options.validations.allowedFormatsMessage }}
+    </mat-error>
+    <input id="{{ inputId }}"
+           type="file"
+           [accept]="options.validations.allowedFormats ? options.validations.allowedFormats : 'image/*'"
+           (change)="onFileSelected($event.target.files)"
+           (click)="$event.target.value=null" />
+</div>

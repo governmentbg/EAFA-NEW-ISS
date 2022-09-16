@@ -1,0 +1,67 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <!-- Основни данни -->
+    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <inspection-general-info formControlName="generalInfoControl"
+                                     [institutions]="institutions">
+            </inspection-general-info>
+            <patrol-vehicles-table formControlName="patrolVehiclesControl"
+                                   [isWaterVehicle]="false">
+            </patrol-vehicles-table>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Данни от извършената проверка -->
+    <tl-expansion-panel [formGroup]="form"
+                        title="{{ 'inspections.check-water-object-data' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start center">
+                <tl-input fxFlex="50"
+                          formControlName="nameControl"
+                          label="{{ 'inspections.water-object-name' | tlTranslate }}">
+                </tl-input>
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="typeControl"
+                                 [options]="waterBodyTypes"
+                                 label="{{ 'inspections.water-object-type' | tlTranslate }}">
+                </tl-autocomplete>
+            </div>
+            <inspection-toggle-list formControlName="togglesControl"
+                                    [toggles]="toggles">
+            </inspection-toggle-list>
+            <inspection-map-viewer formControlName="mapControl">
+            </inspection-map-viewer>
+            <water-fishing-gears-table formControlName="fishingGearsControl">
+            </water-fishing-gears-table>
+            <water-vessels-table formControlName="vesselsControl">
+            </water-vessels-table>
+            <water-engines-table formControlName="enginesControl">
+            </water-engines-table>
+            <water-catches-table formControlName="catchesControl"
+                                 [fishes]="fishes">
+            </water-catches-table>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Допълнителна информация -->
+    <inspection-additional-info formControlName="additionalInfoControl">
+    </inspection-additional-info>
+
+    <!-- Файлове -->
+    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+</div>

@@ -1,0 +1,151 @@
+﻿<mat-tab-group mat-align-tabs="start" fxFlexFill (selectedTabChange)="tabChanged($event)">
+    <!-- Общи -->
+    <mat-tab label="{{ 'flux-vms-requests.common' | tlTranslate }}">
+        <div fxLayout="column" fxLayoutGap="1em" fxFlexFill>
+            <!-- Филтри -->
+            <search-panel [translateService]="translate">
+                <div [formGroup]="form" fxLayout="column">
+                    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                        <tl-input fxFlex="33"
+                                  formControlName="webServiceNameControl"
+                                  label="{{ 'flux-vms-requests.filters-web-service-name' | tlTranslate }}"
+                                  tooltipResourceName="flux-vms-requests.filters-web-service-name-helper">
+                        </tl-input>
+
+                        <tl-select fxFlex="33"
+                                   formControlName="domainNameControl"
+                                   [options]="domainNames"
+                                   [isMultiple]="true"
+                                   label="{{ 'flux-vms-requests.filters-domain-name' | tlTranslate }}"
+                                   tooltipResourceName="flux-vms-requests.filters-domain-name-helper">
+                        </tl-select>
+
+                        <tl-select fxFlex="33"
+                                   formControlName="responseStatusControl"
+                                   [options]="responseStatuses"
+                                   [isMultiple]="true"
+                                   label="{{ 'flux-vms-requests.filters-response-status' | tlTranslate }}"
+                                   tooltipResourceName="flux-vms-requests.filters-response-status-helper">
+                        </tl-select>
+                    </div>
+
+                    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                        <tl-input fxFlex="25"
+                                  formControlName="requestUuidControl"
+                                  label="{{ 'flux-vms-requests.filters-request-uuid' | tlTranslate }}"
+                                  tooltipResourceName="flux-fms-requests.filters-request-uuid-helper">
+                        </tl-input>
+
+                        <tl-date-range fxFlex="25"
+                                       formControlName="requestDateTimeControl"
+                                       label="{{ 'flux-vms-requests.filters-request-date-time' | tlTranslate }}"
+                                       tooltipResourceName="flux-vms-requests.filters-request-date-time-helper">
+                        </tl-date-range>
+
+                        <tl-input fxFlex="25"
+                                  formControlName="responseUuidControl"
+                                  label="{{ 'flux-vms-requests.filters-response-uuid' | tlTranslate }}"
+                                  tooltipResourceName="flux-fms-requests.filters-response-uuid-helper">
+                        </tl-input>
+
+                        <tl-date-range fxFlex="25"
+                                       formControlName="responseDateTimeControl"
+                                       label="{{ 'flux-vms-requests.filters-response-date-time' | tlTranslate }}"
+                                       tooltipResourceName="flux-vms-requests.filters-response-date-time-helper">
+                        </tl-date-range>
+                    </div>
+                </div>
+            </search-panel>
+
+            <!-- Таблица -->
+            <mat-card>
+                <tl-data-table [showAddButton]="false"
+                               [showInactiveRecords]="false">
+                    <data-template-column [flexRate]="0.2"
+                                          columnName="{{ 'flux-vms-requests.is-outgoing' | tlTranslate }}"
+                                          propertyName="isOutgoing">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <span *ngIf="row.data.isOutgoing; else notOutgoing">
+                                {{ 'flux-vms-requests.outgoing' | tlTranslate }}
+                            </span>
+
+                            <ng-template #notOutgoing>
+                                <span>{{ 'flux-vms-requests.incoming' | tlTranslate }}</span>
+                            </ng-template>
+                        </ng-template>
+                    </data-template-column>
+
+                    <data-template-column propertyName="webServiceName"
+                                          [flexRate]="0.4"
+                                          columnName="{{ 'application-regix-checks.web-service-name' | tlTranslate }}">
+                        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                            <span class="break-all-words">{{ value }}</span>
+                        </ng-template>
+                    </data-template-column>
+
+                    <data-column propertyName="requestUUID"
+                                 [flexRate]="0.3"
+                                 columnName="{{ 'flux-vms-requests.request-uuid' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column propertyName="requestDateTime"
+                                 [flexRate]="0.2"
+                                 dataType="datetime"
+                                 columnName="{{ 'flux-vms-requests.request-date-time' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column propertyName="responseStatus"
+                                 [flexRate]="0.3"
+                                 columnName="{{ 'flux-vms-requests.response-status' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column propertyName="responseUUID"
+                                 [flexRate]="0.3"
+                                 columnName="{{ 'flux-vms-requests.response-uuid' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column propertyName="responseDateTime"
+                                 [flexRate]="0.2"
+                                 dataType="datetime"
+                                 columnName="{{ 'flux-vms-requests.response-date-time' | tlTranslate }}">
+                    </data-column>
+
+                    <data-template-column [flexRate]="0.2"
+                                          columnName="{{ 'flux-vms-requests.error-description' | tlTranslate }}"
+                                          propertyName="errorDescription">
+                        <ng-template ngx-datatable-cell-template let-value="value">
+                            <div fxLayout="row" fxLayoutAlign="center center">
+                                <tl-popover-button *ngIf="value !== null && value !== undefined && value.length > 0; else noValue"
+                                                   icon="info"
+                                                   iconClass="accent-color">
+                                    <span fxLayout="row" class="scroll">{{ value }}</span>
+                                </tl-popover-button>
+
+                                <ng-template #noValue>
+                                    <tl-icon icon="done_outline"
+                                             iconClass="success-color">
+                                    </tl-icon>
+                                </ng-template>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+
+                    <data-template-column [flexRate]="0.2">
+                        <ng-template ngx-datatable-cell-template let-row="row">
+                            <tl-icon-button icon="visibility"
+                                            (buttonClicked)="openDialog(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'flux-vms-requests.view-request' | tlTranslate }}">
+                            </tl-icon-button>
+                        </ng-template>
+                    </data-template-column>
+                </tl-data-table>
+            </mat-card>
+        </div>
+    </mat-tab>
+
+    <!-- FLAP domain -->
+    <mat-tab label="{{ 'flux-vms-requests.flap-domain' | tlTranslate }}">
+        <flux-flap-requests *ngIf="fluxFlapRequestsLoaded"></flux-flap-requests>
+    </mat-tab>
+</mat-tab-group>

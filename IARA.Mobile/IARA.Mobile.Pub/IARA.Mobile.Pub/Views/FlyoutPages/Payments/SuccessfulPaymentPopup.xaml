@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<popup:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Pub.Views.FlyoutPages.Payments.SuccessfulPaymentPopup"
+        xmlns:popup="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        CloseWhenBackgroundIsClicked="True"
+        BackgroundClicked="PopupPage_BackgroundClicked">
+    <StackLayout VerticalOptions="Center"
+            HorizontalOptions="Center"
+            Padding="0"
+            Margin="0">
+        <Frame WidthRequest="300"
+                HeightRequest="300"
+                HasShadow="False">
+            <StackLayout VerticalOptions="Center">
+                <Label HorizontalTextAlignment="Center"
+                        VerticalTextAlignment="Center"
+                        FontSize="150"
+                        FontFamily="FA"
+                        TextColor="Green"
+                        Text="{Static h:IconFont.CircleCheck}" />
+                <Label Text="{rt:Translate SuccessfulPayment, Group=Common}"
+                        HorizontalTextAlignment="Center"
+                        HorizontalOptions="Center"
+                        VerticalTextAlignment="Center"
+                        VerticalOptions="Center"
+                        LineBreakMode="WordWrap"
+                        FontSize="30" />
+            </StackLayout>
+        </Frame>
+    </StackLayout>
+</popup:PopupPage>

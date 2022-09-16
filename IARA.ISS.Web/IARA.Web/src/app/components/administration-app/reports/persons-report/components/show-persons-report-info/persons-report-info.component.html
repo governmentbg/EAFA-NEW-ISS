@@ -1,0 +1,33 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     [formGroup]="form"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     class="dialog-padding">
+    <!-- Основна информация -->
+    <tl-card tooltipResourceName="persons-report-page.basic-information-helper">
+        <tl-card-title>{{ 'persons-report-page.basic-information' | tlTranslate }}</tl-card-title>
+        <tl-card-content>
+            <regix-data formControlName="regixDataControl"
+                        [isPerson]="true"
+                        [isIdReadOnly]="false"
+                        checkboxLabel="{{ 'persons-report-page.has-bulgarian-address-registration' | tlTranslate }}">
+            </regix-data>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Адрес -->
+    <address-registration formControlName="addressControl"
+                          addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                          secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                          checkboxLabel="{{ 'persons-report-page.permanent-address-same-as-correspondence' | tlTranslate }}">
+    </address-registration>
+
+    <!-- Коментари -->
+    <tl-card tooltipResourceName="persons-report-page.comments-helper">
+        <tl-card-title>{{ 'persons-report-page.comments' | tlTranslate }}</tl-card-title>
+        <tl-card-content>
+            <tl-textarea formControlName="commentsControl"></tl-textarea>
+        </tl-card-content>
+    </tl-card>
+</div>

@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<tl:TLResponsiveTable xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        x:Class="IARA.Mobile.Insp.Controls.InspectorsView"
+        x:DataType="vm:InspectorsViewModel"
+        x:Name="view"
+        Title="{rt:Translate Inspectors, Group=GeneralInfo}"
+        ValidState="{Binding Inspectors}">
+    <tl:TLResponsiveTable.TableColumns>
+        <tl:TLTableColumn Text="{rt:Translate InCharge, Group=GeneralInfo}" Width="100" />
+        <tl:TLTableColumn Text="{rt:Translate HasIdentified, Group=GeneralInfo}" Width="150" />
+        <tl:TLTableColumn Text="{rt:Translate CardNum, Group=GeneralInfo}" Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate FirstName, Group=Common}" Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate MiddleName, Group=Common}" Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate LastName, Group=Common}" Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate Institution, Group=GeneralInfo}" Width="150" />
+        <tl:TLTableColumn Width="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource ReviewDialogToWidth}, ConverterParameter=140, Source={Reference view}}" />
+    </tl:TLResponsiveTable.TableColumns>
+    <tl:TLResponsiveTable.DefaultItemTemplate>
+        <DataTemplate>
+            <tl:TLTableRow x:DataType="m:InspectorModel">
+                <tl:TLTableRow.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding BindingContext.Review, Source={Reference view}}" CommandParameter="{Binding}" />
+                </tl:TLTableRow.GestureRecognizers>
+                <tl:TLCheckView IsChecked="{Binding IsInCharge}" IsEnabled="False" />
+                <tl:TLCheckView IsChecked="{Binding HasIdentified}" IsEnabled="False" />
+                <Label Text="{Binding Dto.CardNum}"
+                        LineBreakMode="WordWrap"
+                        VerticalOptions="Center" />
+                <Label Text="{Binding Dto.FirstName}"
+                        LineBreakMode="WordWrap"
+                        VerticalOptions="Center" />
+                <Label Text="{Binding Dto.MiddleName}"
+                        LineBreakMode="WordWrap"
+                        VerticalOptions="Center" />
+                <Label Text="{Binding Dto.LastName}"
+                        LineBreakMode="WordWrap"
+                        VerticalOptions="Center" />
+                <Label Text="{Binding Institution}"
+                        LineBreakMode="WordWrap"
+                        VerticalOptions="Center" />
+                <StackLayout Orientation="Horizontal" VerticalOptions="Start">
+                    <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Eye}, Size=20, Color=White}"
+                            Padding="10"
+                            Command="{Binding BindingContext.Review, Source={Reference view}}"
+                            CommandParameter="{Binding}" />
+                    <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Pen}, Size=20, Color=White}"
+                            Padding="10"
+                            Command="{Binding BindingContext.Edit, Source={Reference view}}"
+                            CommandParameter="{Binding}"
+                            IsVisible="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}">
+                        <ImageButton.Triggers>
+                            <DataTrigger TargetType="ImageButton"
+                                    Binding="{Binding Validity.IsValid}"
+                                    Value="False">
+                                <Setter Property="BackgroundColor" Value="{StaticResource ErrorColor}" />
+                            </DataTrigger>
+                        </ImageButton.Triggers>
+                    </ImageButton>
+                    <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
+                            Padding="10"
+                            Command="{Binding BindingContext.Remove, Source={Reference view}}"
+                            CommandParameter="{Binding}">
+                        <ImageButton.IsVisible>
+                            <MultiBinding Converter="{StaticResource All}">
+                                <Binding Path="BindingContext.Inspection.ActivityType"
+                                        Converter="{StaticResource IsNotReview}"
+                                        Source="{Reference view}" />
+                                <Binding Path="IsCurrentInspector" Converter="{StaticResource OppositeBool}" />
+                            </MultiBinding>
+                        </ImageButton.IsVisible>
+                    </ImageButton>
+                </StackLayout>
+            </tl:TLTableRow>
+        </DataTemplate>
+    </tl:TLResponsiveTable.DefaultItemTemplate>
+    <tl:TLResponsivleTableChild TableLayout="Table" />
+    <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="900" />
+    <tl:TLResponsiveTable.FooterView>
+        <StackLayout Orientation="Horizontal"
+                Spacing="10"
+                HorizontalOptions="End">
+            <sv:TLMenuButton Command="{Binding RecentInspectorChosen}"
+                    Choices="{Binding RecentInspectors}"
+                    Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.ClockRotateLeft}, Size=25, Color=White}"
+                    Padding="10,0">
+                <sv:TLMenuButton.IsVisible>
+                    <MultiBinding Converter="{StaticResource All}">
+                        <Binding Path="HasRecentInspectors" />
+                        <Binding Path="Inspection.ActivityType" Converter="{StaticResource IsNotReview}" />
+                    </MultiBinding>
+                </sv:TLMenuButton.IsVisible>
+            </sv:TLMenuButton>
+            <Button Text="{rt:Translate AddInspector, Group=GeneralInfo}"
+                    Command="{Binding Add}"
+                    ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
+                    HorizontalOptions="End"
+                    IsVisible="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+        </StackLayout>
+    </tl:TLResponsiveTable.FooterView>
+    <tl:TLResponsiveTable.EmptyView>
+        <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
+    </tl:TLResponsiveTable.EmptyView>
+</tl:TLResponsiveTable>

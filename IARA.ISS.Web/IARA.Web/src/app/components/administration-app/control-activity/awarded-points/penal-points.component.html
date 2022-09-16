@@ -1,0 +1,200 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <!-- Филтри -->
+    <search-panel *ngIf="shipId === null || shipId === undefined" [translateService]="translate">
+        <div [formGroup]="form" fxFlexFill fxLayout="column" fxLayoutGap="1em">
+            <!-- № на наказателно постановление, дата на съставяне, № на заповед, дата на издаване -->
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="decreeNumControl"
+                          label="{{ 'penal-points.filters-decree-num' | tlTranslate }}"
+                          tooltipResourceName="penal-points.filters-decree-num-helper">
+                </tl-input>
+
+                <tl-date-range fxFlex="25"
+                               formControlName="decreeDateRangeControl"
+                               label="{{ 'penal-points.filters-decree-date' | tlTranslate }}"
+                               tooltipResourceName="penal-points.filters-decree-date-helper">
+                </tl-date-range>
+
+                <tl-input fxFlex="25"
+                          formControlName="orderNumControl"
+                          label="{{ 'penal-points.filters-order-num' | tlTranslate }}"
+                          tooltipResourceName="penal-points.filters-order-num-helper">
+                </tl-input>
+
+                <tl-date-range fxFlex="25"
+                               formControlName="orderDateRangeControl"
+                               label="{{ 'penal-points.filters-order-date' | tlTranslate }}"
+                               tooltipResourceName="penal-points.filters-order-date-helper">
+                </tl-date-range>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="pointsOrderTypeControl"
+                                 [options]="orderTypes"
+                                 label="{{ 'penal-points.filters-points-order-type' | tlTranslate }}"
+                                 tooltipResourceName="penal-points.filters-points-order-type-helper">
+                </tl-autocomplete>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="pointsTypeControl"
+                                 [options]="pointsTypes"
+                                 label="{{ 'penal-points.filters-points-type' | tlTranslate }}"
+                                 tooltipResourceName="penal-points.filters-points-type-helper">
+                </tl-autocomplete>
+
+                <tl-input fxFlex="25"
+                          formControlName="permitNumControl"
+                          label="{{ 'penal-points.filters-permit-num' | tlTranslate }}"
+                          tooltipResourceName="penal-points.filters-permit-num-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="permitLicenseNumControl"
+                          label="{{ 'penal-points.filters-permit-license-num' | tlTranslate }}"
+                          tooltipResourceName="penal-points.filters-permit-license-num-helper">
+                </tl-input>
+            </div>
+
+
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="shipNameControl"
+                          label="{{ 'penal-points.filters-ship-name' | tlTranslate }}"
+                          tooltipResourceName="penal-points.filters-ship-name-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="shipCfrControl"
+                          label="{{ 'penal-points.filters-ship-cfr' | tlTranslate }}"
+                          tooltipResourceName="penal-points.filters-ship-cfr-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="shipExternalMarkingControl"
+                          label="{{ 'penal-points.filters-ship-external-marking' | tlTranslate }}"
+                          tooltipResourceName="penal-points.filters-ship-external-marking-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="shipRegistrationCertificateNumControl"
+                          label="{{ 'penal-points.filters-ship-registration-certificate-num' | tlTranslate }}"
+                          tooltipResourceName="penal-points.filters-ship-registration-certificate-num-helper">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="permitOwnerNameControl"
+                          label="{{ 'penal-points.filters-permit-owner-name' | tlTranslate }}"
+                          tooltipResourceName="penal-points.filters-permit-owner-name-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="permitOwnerIdentifierControl"
+                          label="{{ 'penal-points.filters-permit-owner-identifier' | tlTranslate }}"
+                          tooltipResourceName="penal-points.filters-permit-owner-identifier-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="captainNameControl"
+                          label="{{ 'penal-points.filters-captain-name' | tlTranslate }}"
+                          tooltipResourceName="penal-points.filters-captain-name-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="captainIdentifierControl"
+                          label="{{ 'penal-points.filters-captain-identifier' | tlTranslate }}"
+                          tooltipResourceName="penal-points.filters-captain-identifier-helper">
+                </tl-input>
+            </div>
+        </div>
+    </search-panel>
+
+    <!--Таблица-->
+    <mat-card>
+        <tl-data-table [showAddButton]="canAddRecords && (shipId === null || shipId === undefined)"
+                       [showInactiveRecords]="canRestoreRecords && (shipId === null || shipId === undefined)"
+                       (addButtonClicked)="addEditPenalPoints(undefined, false)">
+            <data-column propertyName="penalDecreeNum"
+                         [flexRate]="0.3"
+                         columnName="{{ 'penal-points.table-penal-decree-num' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="decreeNum"
+                         [flexRate]="0.3"
+                         columnName="{{ 'penal-points.table-order-num' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="issueDate"
+                         [flexRate]="0.3"
+                         dataType="date"
+                         columnName="{{ 'penal-points.table-issue-date' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.3"
+                         propertyName="pointsType"
+                         [options]="pointsTypes"
+                         dataType="nomenclature"
+                         columnName="{{ 'penal-points.table-points-type' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="ship"
+                         [flexRate]="0.3"
+                         columnName="{{ 'penal-points.table-ship' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="name"
+                         [flexRate]="0.3"
+                         columnName="{{ 'penal-points.table-name' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.3"
+                         propertyName="isIncreasePoints"
+                         [options]="orderTypes"
+                         dataType="nomenclature"
+                         columnName="{{ 'penal-points.table-order-type' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="pointsAmount"
+                         [flexRate]="0.3"
+                         columnName="{{ 'penal-points.table-points-amount' | tlTranslate }}">
+            </data-column>
+
+            <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                        <tl-icon-button *ngIf="canReadRecords"
+                                        icon="visibility"
+                                        (buttonClicked)="addEditPenalPoints(row.data, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'penal-points.view-penal-points' | tlTranslate }}">
+                        </tl-icon-button>
+
+                        <tl-icon-button *ngIf="row.isActive && canEditRecords && (shipId === null || shipId === undefined)"
+                                        icon="edit"
+                                        (buttonClicked)="addEditPenalPoints(row.data, false)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'penal-points.edit-penal-points' | tlTranslate }}">
+                        </tl-icon-button>
+
+                        <tl-icon-button *ngIf="row.isActive && canDeleteRecords && (shipId === null || shipId === undefined)"
+                                        icon="delete"
+                                        (buttonClicked)="deletePenalPoints(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'penal-points.delete-penal-points' | tlTranslate }}">
+                        </tl-icon-button>
+
+                        <tl-icon-button *ngIf="!row.isActive && canRestoreRecords && (shipId === null || shipId === undefined)"
+                                        icon="restore"
+                                        (buttonClicked)="restorePenalPoints(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'penal-points.restore-penal-points' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </mat-card>
+</div>

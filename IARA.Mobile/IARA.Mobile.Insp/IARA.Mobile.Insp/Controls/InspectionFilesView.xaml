@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sv:SectionView xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:behaviours="clr-namespace:IARA.Mobile.Insp.Behaviors"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:converters="clr-namespace:IARA.Mobile.Insp.Converters"
+        x:Class="IARA.Mobile.Insp.Controls.InspectionFilesView"
+        x:DataType="vm:InspectionFilesViewModel"
+        x:Name="view"
+        Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.File}, Color=White, Size=100}"
+        Text="{rt:Translate Files, Group=GeneralInfo}"
+        IsExpanded="False">
+    <sv:SectionView.Resources>
+        <converters:DivideByConverter x:Key="DivideBy" />
+        <converters:MimeTypeToGlyphConverter x:Key="MimeTypeToGlyph" />
+    </sv:SectionView.Resources>
+    <StackLayout Padding="10">
+        <tl:TLResponsiveTable ValidState="{Binding Files}" IsTitleVisible="False">
+            <tl:TLResponsiveTable.TableColumns>
+                <tl:TLTableColumn Width="100" />
+                <tl:TLTableColumn Text="{rt:Translate FileSize, Group=GeneralInfo}" Width="150" />
+                <tl:TLTableColumn Text="{rt:Translate FileName, Group=GeneralInfo}" Width="*" />
+                <tl:TLTableColumn Text="{rt:Translate Description, Group=GeneralInfo}" Width="*" />
+                <tl:TLTableColumn Text="{rt:Translate FileType, Group=GeneralInfo}" Width="250" />
+                <tl:TLTableColumn Width="40" />
+            </tl:TLResponsiveTable.TableColumns>
+            <tl:TLResponsiveTable.DefaultItemTemplate>
+                <DataTemplate>
+                    <tl:TLTableRow x:DataType="vm:InspectionFileViewModel">
+                        <Label Text="{Binding File.ContentType, Converter={StaticResource MimeTypeToGlyph}}"
+                                FontSize="40"
+                                FontFamily="FA"
+                                VerticalOptions="Center"
+                                Margin="5,0,0,0" />
+                        <Label Text="{Binding File.FileSize, Converter={StaticResource DivideBy}, ConverterParameter=1000}" VerticalOptions="Center" />
+                        <Label Text="{Binding File.FileName}"
+                                LineBreakMode="WordWrap"
+                                VerticalOptions="Center" />
+                        <tl:TLEditor IsTitleVisible="False"
+                                ValidState="{Binding Description}"
+                                IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}">
+                            <tl:TLEditor.Behaviors>
+                                <behaviours:EditorNot2LineBehavior />
+                            </tl:TLEditor.Behaviors>
+                        </tl:TLEditor>
+                        <tl:TLNativePicker IsTitleVisible="False"
+                                Title="{rt:Translate FileType, Group=GeneralInfo}"
+                                ValidState="{Binding FileType}"
+                                ItemsSource="{Binding BindingContext.FileTypes, Source={Reference view}}"
+                                IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                        <StackLayout Orientation="Horizontal" VerticalOptions="Start">
+                            <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Download}, Size=20, Color=White}"
+                                    Padding="10"
+                                    Command="{Binding BindingContext.DownloadFile, Source={Reference view}}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsReview}, Source={Reference view}}" />
+                            <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
+                                    Padding="10"
+                                    Command="{Binding BindingContext.RemoveFile, Source={Reference view}}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                        </StackLayout>
+                    </tl:TLTableRow>
+                </DataTemplate>
+            </tl:TLResponsiveTable.DefaultItemTemplate>
+            <tl:TLResponsiveTable.DefaultSectionItemTemplate>
+                <DataTemplate>
+                    <Frame x:DataType="vm:InspectionFileViewModel"
+                            HasShadow="False"
+                            BorderColor="LightGray"
+                            Padding="10"
+                            CornerRadius="5">
+                        <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,1,*,Auto">
+                            <BoxView Grid.Column="1" Color="{StaticResource GrayColor}" />
+                            <StackLayout Orientation="Horizontal">
+                                <tl:TLRichLabel VerticalOptions="Center">
+                                    <Span Text="{rt:Translate ContentType, Group=GeneralInfo}" FontAttributes="Bold" />
+                                    <Span Text=": " />
+                                </tl:TLRichLabel>
+                                <Label Text="{Binding File.ContentType, Converter={StaticResource MimeTypeToGlyph}}"
+                                        FontSize="40"
+                                        FontFamily="FA"
+                                        VerticalOptions="Center"
+                                        Margin="5,0,0,0" />
+                            </StackLayout>
+                            <StackLayout Grid.Column="2">
+                                <tl:TLRichLabel>
+                                    <Span Text="{rt:Translate FileName, Group=GeneralInfo}" FontAttributes="Bold" />
+                                    <Span Text=": " />
+                                    <Span Text="{Binding File.FileName}" />
+                                </tl:TLRichLabel>
+                                <tl:TLRichLabel>
+                                    <Span Text="{rt:Translate FileSize, Group=GeneralInfo}" FontAttributes="Bold" />
+                                    <Span Text=": " />
+                                    <Span Text="{Binding File.FileSize, Converter={StaticResource DivideBy}, ConverterParameter=1000}" />
+                                </tl:TLRichLabel>
+                            </StackLayout>
+                            <tl:TLEditor Grid.Row="1"
+                                    Grid.ColumnSpan="4"
+                                    Title="{rt:Translate Description, Group=GeneralInfo}"
+                                    ValidState="{Binding Description}"
+                                    IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                            <tl:TLNativePicker Grid.Row="2"
+                                    Grid.ColumnSpan="3"
+                                    Title="{rt:Translate FileType, Group=GeneralInfo}"
+                                    ValidState="{Binding FileType}"
+                                    ItemsSource="{Binding BindingContext.FileTypes, Source={Reference view}}"
+                                    IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                            <StackLayout Grid.Row="2"
+                                    Grid.Column="3"
+                                    Orientation="Horizontal"
+                                    VerticalOptions="End">
+                                <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Download}, Size=20, Color=White}"
+                                        Padding="10"
+                                        Command="{Binding BindingContext.DownloadFile, Source={Reference view}}"
+                                        CommandParameter="{Binding}"
+                                        IsVisible="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsReview}, Source={Reference view}}" />
+                                <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
+                                        Padding="10"
+                                        Command="{Binding BindingContext.RemoveFile, Source={Reference view}}"
+                                        CommandParameter="{Binding}"
+                                        IsVisible="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                            </StackLayout>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </tl:TLResponsiveTable.DefaultSectionItemTemplate>
+            <tl:TLResponsivleTableChild TableLayout="Table" />
+            <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="800" />
+            <tl:TLResponsiveTable.FooterView>
+                <Button Text="{rt:Translate AddFile, Group=GeneralInfo}"
+                        Command="{Binding AddFile}"
+                        ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
+                        HorizontalOptions="End"
+                        IsVisible="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+            </tl:TLResponsiveTable.FooterView>
+            <tl:TLResponsiveTable.EmptyView>
+                <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
+            </tl:TLResponsiveTable.EmptyView>
+        </tl:TLResponsiveTable>
+    </StackLayout>
+</sv:SectionView>

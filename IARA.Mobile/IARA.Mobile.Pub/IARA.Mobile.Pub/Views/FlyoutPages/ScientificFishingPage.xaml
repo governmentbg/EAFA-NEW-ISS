@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:MainPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+             xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+             xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+             xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+             xmlns:sfDtos="clr-namespace:IARA.Mobile.Pub.Application.DTObjects.ScientificFishing.LocalDb;assembly=IARA.Mobile.Pub.Application"
+             xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages"
+             x:Class="IARA.Mobile.Pub.Views.FlyoutPages.ScientificFishingPage"
+             x:DataType="viewModels:ScientificFishingViewModel"
+             x:TypeArguments="viewModels:ScientificFishingViewModel"
+             x:Name="page"
+             PageInfo="{rt:Translate PageInfo, Group=ScientificFishing}"
+             Title="{rt:Translate Title, Group=ScientificFishing}"
+             BackgroundColor="{StaticResource BackgroundColor}">
+    <RefreshView Command="{Binding Refresh}">
+        <CollectionView ItemsSource="{Binding ScientificFishings}"
+                        SelectionMode="None">
+            <CollectionView.Header>
+                <StackLayout Padding="0,5,0,0">
+                    <Label FontSize="24"
+                           Text="{rt:Translate Permits, Group=ScientificFishing}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                    <BoxView HeightRequest="1"
+                             BackgroundColor="LightGray"
+                             Margin="5,0" />
+                </StackLayout>
+            </CollectionView.Header>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <ContentView x:DataType="sfDtos:SFPermitDto">
+                        <Frame Margin="10,5"
+                               Padding="10">
+                            <Grid ColumnDefinitions="*,150"
+                                  RowDefinitions="Auto,Auto,Auto,Auto"
+                                  RowSpacing="5">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding BindingContext.Review, Source={Reference page}}"
+                                                          CommandParameter="{Binding}" />
+                                </Grid.GestureRecognizers>
+                                <Label Text="{Binding RequesterName}"
+                                       LineBreakMode="WordWrap"
+                                       HorizontalOptions="Center"
+                                       FontAttributes="Bold" />
+                                <tl:TLRichLabel Grid.Row="1">
+                                    <Span Text="{rt:Translate Permit, Group=ScientificFishing}" />
+                                    <Span Text=": " />
+                                    <Span Text="{Binding Id}"
+                                          FontAttributes="Bold" />
+                                </tl:TLRichLabel>
+                                <tl:TLRichLabel Grid.Row="2">
+                                    <Span Text="{rt:Translate BeginningDate, Group=ScientificFishing}" />
+                                    <Span Text=": " />
+                                    <Span Text="{Binding ValidFrom, Converter={StaticResource DateToString}}"
+                                          FontAttributes="Bold" />
+                                </tl:TLRichLabel>
+                                <tl:TLRichLabel Grid.Row="3">
+                                    <Span Text="{rt:Translate ScientificOrganization, Group=ScientificFishing}" />
+                                    <Span Text=": " />
+                                    <Span Text="{Binding ScientificOrganizationName}"
+                                          FontAttributes="Bold" />
+                                </tl:TLRichLabel>
+                                <StackLayout Grid.Column="1"
+                                             Grid.RowSpan="4"
+                                             Spacing="1"
+                                             VerticalOptions="Center">
+                                    <sv:TLButton Text="{rt:Translate AddOuting, Group=ScientificFishing}"
+                                                 Command="{Binding BindingContext.AddOuting, Source={Reference page}}"
+                                                 CommandParameter="{Binding}"
+                                                 ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Plus}, Color=White}"
+                                                 CornerRadius="0"
+                                                 FontSize="14"
+                                                 VerticalOptions="Center" />
+                                    <sv:TLButton Command="{Binding BindingContext.Outings, Source={Reference page}}"
+                                                 CommandParameter="{Binding}"
+                                                 Text="{rt:Translate ConductedOutings, Group=ScientificFishing}"
+                                                 ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.ClipboardCheck}, Color=White}"
+                                                 CornerRadius="0"
+                                                 FontSize="14"
+                                                 VerticalOptions="Center" />
+                                </StackLayout>
+                            </Grid>
+                        </Frame>
+                    </ContentView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </RefreshView>
+</sv:MainPage>

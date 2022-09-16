@@ -1,0 +1,82 @@
+﻿<div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+    <tl-data-table #seizedFishTable
+                   fxFlex="100"
+                   [isRemote]="false"
+                   [isSoftDeletable]="true"
+                   [showInactiveRecords]="true"
+                   [inlineEditing]="true"
+                   [showAddButton]="!viewMode"
+                   [rows]="seizedFish"
+                   (recordChanged)="seizedFishRecordChanged($event)">
+        <data-column *ngIf="isAppliance === false"
+                     [flexRate]="0.2"
+                     [formGroup]="seizedFishForm"
+                     propertyName="fishTypeId"
+                     dataType="nomenclature"
+                     [options]="fishTypes"
+                     columnName="{{ 'penal-decrees.edit-sized-fish-type' | tlTranslate }}">
+        </data-column>
+
+        <data-column *ngIf="isAppliance"
+                     [flexRate]="0.2"
+                     [formGroup]="seizedFishForm"
+                     propertyName="applianceId"
+                     dataType="nomenclature"
+                     [options]="appliances"
+                     columnName="{{ 'penal-decrees.edit-confiscated-fish-appliance' | tlTranslate }}">
+        </data-column>
+
+        <data-column *ngIf="!isAppliance"
+                     [flexRate]="0.1"
+                     [formGroup]="seizedFishForm"
+                     propertyName="weight"
+                     columnName="{{ 'penal-decrees.edit-sized-fish-weight' | tlTranslate }}">
+        </data-column>
+
+        <data-column [flexRate]="0.1"
+                     [formGroup]="seizedFishForm"
+                     propertyName="count"
+                     columnName="{{ 'penal-decrees.edit-sized-fish-count' | tlTranslate }}">
+        </data-column>
+
+        <data-column *ngIf="!isAppliance"
+                     [flexRate]="0.2"
+                     [formGroup]="seizedFishForm"
+                     propertyName="turbotSizeGroupId"
+                     dataType="nomenclature"
+                     [options]="turbotSizeGroups"
+                     columnName="{{ 'auan-register.edit-confiscated-fish-turbot-size' | tlTranslate }}">
+        </data-column>
+
+        <data-column [flexRate]="0.2"
+                     [formGroup]="seizedFishForm"
+                     propertyName="confiscationActionId"
+                     dataType="nomenclature"
+                     [options]="confiscatedFishActions"
+                     columnName="{{ 'penal-decrees.edit-sized-fish-action' | tlTranslate }}">
+        </data-column>
+
+        <data-column *ngIf="!isAuan"
+                     [flexRate]="0.2"
+                     [formGroup]="seizedFishForm"
+                     propertyName="territoryUnitId"
+                     dataType="nomenclature"
+                     [options]="territoryUnits"
+                     columnName="{{ 'penal-decrees.edit-sized-fish-storrage-territory-unit' | tlTranslate }}">
+        </data-column>
+
+        <data-column [flexRate]="0.3"
+                     [formGroup]="seizedFishForm"
+                     propertyName="comments"
+                     columnName="{{ 'penal-decrees.edit-sized-fish-comments' | tlTranslate }}">
+        </data-column>
+
+        <data-column-inline *ngIf="!viewMode"
+                            [flexRate]="0.2">
+        </data-column-inline>
+    </tl-data-table>
+
+    <mat-error *ngIf="seizedFishFormTouched && seizedFishForm.errors?.fishCountValidationError === true">
+        {{ 'penal-decrees.fish-count-validation' | tlTranslate }}
+    </mat-error>
+</div>

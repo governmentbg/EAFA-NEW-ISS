@@ -1,0 +1,79 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="form">
+    <div fxLayout="row" fxLayoutGap="1em">
+        <tl-autocomplete fxFlex="50"
+                         formControlName="gearTypeControl"
+                         [options]="fishingGearTypes"
+                         tooltipResourceName="fishing-gears.type-helper"
+                         label="{{ 'fishing-gears.type' | tlTranslate }}">
+        </tl-autocomplete>
+
+        <tl-input fxFlex="25"
+                  formControlName="gearCountControl"
+                  tooltipResourceName="fishing-gears.count-helper"
+                  label="{{ 'fishing-gears.count' | tlTranslate }}">
+        </tl-input>
+
+        <tl-input fxFlex="25"
+                  formControlName="gearEyeSizeControl"
+                  tooltipResourceName="fishing-gears.net-eye-size-helper"
+                  label="{{ 'fishing-gears.net-eye-size' | tlTranslate }}">
+        </tl-input>
+    </div>
+
+    <div fxLayout="row" fxLayoutGap="1em">
+        <tl-input fxFlex="33"
+                  formControlName="gearHookCountControl"
+                  tooltipResourceName="fishing-gears.hooks-count-helper"
+                  label="{{ 'fishing-gears.hooks-count' | tlTranslate }}">
+        </tl-input>
+
+        <tl-input fxFlex="33"
+                  formControlName="gearLengthControl"
+                  tooltipResourceName="fishing-gears.length-helper"
+                  label="{{ 'fishing-gears.length' | tlTranslate }}">
+        </tl-input>
+
+        <tl-input fxFlex="33"
+                  formControlName="gearHeightControl"
+                  tooltipResourceName="fishing-gears.height-helper"
+                  label="{{ 'fishing-gears.height' | tlTranslate }}">
+        </tl-input>
+    </div>
+
+    <tl-data-table #marksTable
+                   fxFlexFill
+                   label="{{ 'fishing-gears.marks-panel' | tlTranslate}}"
+                   [hasError]="marksError"
+                   [isRemote]="false"
+                   [rows]="marks"
+                   [showAddButton]="!isDisabled"
+                   [isSoftDeletable]="false"
+                   [showInactiveRecords]="false">
+        <data-column [flexRate]="1"
+                     propertyName="number"
+                     [formGroup]="marksFormGroup"
+                     columnName="{{ 'fishing-gears.mark-number' | tlTranslate }}">
+        </data-column>
+
+        <data-column [flexRate]="1.5"
+                     propertyName="statusId"
+                     [formGroup]="marksFormGroup"
+                     [options]="fishingGearMarkStatuses"
+                     [displayOptions]="fishingGearMarkStatuses"
+                     [isSortable]="false"
+                     [hasSelectedValueFromDropdownValidator]="true"
+                     dataType="nomenclature"
+                     columnName="{{ 'fishing-gears.mark-status' | tlTranslate }}">
+        </data-column>
+
+        <data-column-inline *ngIf="!isDisabled" [flexRate]="0.5"></data-column-inline>
+    </tl-data-table>
+
+    <div fxLayout="row" fxLayoutGap="1em">
+        <tl-input fxFlexFill
+                  formControlName="descriptionControl"
+                  tooltipResourceName="fishing-gears.description-helper"
+                  label="{{ 'fishing-gears.description' | tlTranslate }}">
+        </tl-input>
+    </div>
+</div>

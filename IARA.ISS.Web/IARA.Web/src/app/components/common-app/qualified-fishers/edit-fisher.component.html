@@ -1,0 +1,221 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="editForm"
+     [notifierGroup]="notifier"
+     validityCheckerGroup
+     class="dialog-padding">
+    <!-- Заявител  -->
+    <tl-expansion-panel *ngIf="modeApplication"
+                        title="{{'qualified-fishers-page.requester' | tlTranslate}}"
+                        tooltipResourceName="qualified-fishers-page.requester-helper"
+                        [validityChecker]="editForm"
+                        [validityCheckerExtraCondition]="editForm.errors?.personIsAlreadyQualifiedFisher !== true">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-data formControlName="submittedByRegixDataControl"
+                        notifier
+                        validityChecker
+                        [isPerson]="true"
+                        [isIdReadOnly]="isEditingSubmittedBy"
+                        [expectedResults]="expectedResults.submittedByRegixData"
+                        [middleNameRequired]="true"
+                        checkboxLabel="{{'qualified-fishers-page.has-bg-address' | tlTranslate}}">
+            </regix-data>
+
+            <mat-error *ngIf="editForm.touched && editForm.errors?.personIsAlreadyQualifiedFisher === true">
+                *{{ 'qualified-fishers-page.person-is-alread-qualified-fisher' | tlTranslate }}
+            </mat-error>
+
+            <address-registration formControlName="submittedByAddressDataControl"
+                                  notifier
+                                  validityChecker
+                                  addressLabel="{{'qualified-fishers-page.permanent-address' | tlTranslate}}"
+                                  secondAddressLabel="{{'qualified-fishers-page.contact-address' | tlTranslate}}"
+                                  [expectedResults]="expectedResults.submittedByAddresses"
+                                  checkboxLabel="{{'qualified-fishers-page.address-match' | tlTranslate}}">
+            </address-registration>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Качестно заявител спрямо титуляр -->
+    <tl-expansion-panel *ngIf="modeApplication && !modeApplicationRegixOnly"
+                        title="{{ 'qualified-fishers-page.requester-role' | tlTranslate }}"
+                        tooltipResourceName="qualified-fishers-page.requester-role-helper"
+                        [validityChecker]="editForm">
+        <applicant-relation-to-recipient formControlName="applicantRelationToRecipientControl"
+                                         validityChecker
+                                         [pageCode]="pageCode">
+        </applicant-relation-to-recipient>
+    </tl-expansion-panel>
+
+    <!-- Титуляр -->
+    <tl-expansion-panel *ngIf="showSubmittedFor || !modeApplication"
+                        title="{{'qualified-fishers-page.personal-data' | tlTranslate}}"
+                        tooltipResourceName="qualified-fishers-page.personal-data-helper"
+                        [validityChecker]="editForm">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-data formControlName="submittedForRegixDataControl"
+                        notifier
+                        validityChecker
+                        [isPerson]="true"
+                        [isIdReadOnly]="isEditing"
+                        [expectedResults]="expectedResults.submittedForRegixData"
+                        [isForeigner]="isThirdCountryFisherman"
+                        [middleNameRequired]="true"
+                        checkboxLabel="{{'qualified-fishers-page.has-bg-address' | tlTranslate}}">
+            </regix-data>
+            <address-registration formControlName="submittedForAddressDataControl"
+                                  notifier
+                                  validityChecker
+                                  addressLabel="{{'qualified-fishers-page.permanent-address' | tlTranslate}}"
+                                  secondAddressLabel="{{'qualified-fishers-page.contact-address' | tlTranslate}}"
+                                  [expectedResults]="expectedResults.submittedForAddresses"
+                                  checkboxLabel="{{'qualified-fishers-page.address-match' | tlTranslate}}">
+            </address-registration>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Обща информация -->
+    <tl-expansion-panel *ngIf="!modeApplicationRegixOnly"
+                        title="{{'qualified-fishers-page.qualification-data' | tlTranslate}}"
+                        tooltipResourceName="qualified-fishers-page.qualification-data-helper"
+                        [validityChecker]="editForm">
+        <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
+            <div *ngIf="!modeApplication" fxLayout="row" fxLayoutGap="1em">
+                <tl-input fxFlex="50"
+                          formControlName="registrationNumberControl"
+                          tooltipResourceName="qualified-fishers-page.registration-number-helper"
+                          label="{{ 'qualified-fishers-page.registration-number' | tlTranslate }}">
+                </tl-input>
+                <tl-date fxFlex="50"
+                         formControlName="registrationDateControl"
+                         tooltipResourceName="qualified-fishers-page.registration-date-helper"
+                         label="{{ 'qualified-fishers-page.registration-date' | tlTranslate }}">
+                </tl-date>
+            </div>
+            <tl-card fxFlex="100"
+                     [tooltipResourceName]="!isWithMaritimeEducation ? 'qualified-fishers-page.exam-information-card-helper' : 'qualified-fishers-page.diploma-information-card-helper'"
+                     [validityChecker]="editForm">
+                <tl-card-title>
+                    <ng-container *ngIf="!isWithMaritimeEducation">{{ 'qualified-fishers-page.exam-information-card' | tlTranslate }}</ng-container>
+                    <ng-container *ngIf="isWithMaritimeEducation === true">{{ 'qualified-fishers-page.diploma-information-card' | tlTranslate }}</ng-container>
+                </tl-card-title>
+                <tl-card-content fxLayout="column" fxLayoutGap="1em" fxFlex="100">
+                    <div *ngIf="!isWithMaritimeEducation" fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                        <tl-autocomplete fxFlex="25"
+                                         formControlName="examTerritoryUnitControl"
+                                         label="{{ 'qualified-fishers-page.exam-territory-unit' | tlTranslate }}"
+                                         tooltipResourceName="qualified-fishers-page.exam-territory-unit-helper"
+                                         [options]="territoryUnits">
+                        </tl-autocomplete>
+                        <ng-container *ngIf="!modeApplication">
+                            <tl-date fxFlex="25"
+                                     formControlName="examDateControl"
+                                     tooltipResourceName="qualified-fishers-page.exam-date-helper"
+                                     label="{{ 'qualified-fishers-page.exam-date' | tlTranslate }}">
+                            </tl-date>
+                            <tl-input fxFlex="30"
+                                      formControlName="protocolNumberControl"
+                                      tooltipResourceName="qualified-fishers-page.protocol-number-helper"
+                                      label="{{ 'qualified-fishers-page.protocol-number' | tlTranslate }}">
+                            </tl-input>
+                            <tl-slide-toggle fxFlex="20"
+                                             formControlName="hasPassedExamControl"
+                                             label="{{ 'qualified-fishers-page.has-passed-exam' | tlTranslate }}"
+                                             tooltipResourceName="qualified-fishers-page.has-passed-exam-helper"
+                                             matTooltip="{{ 'qualified-fishers-page.has-passed-exam' | tlTranslate }}"
+                                             matTooltipShowDelay="500">
+                            </tl-slide-toggle>
+                        </ng-container>
+                    </div>
+
+                    <div *ngIf="isWithMaritimeEducation === true" fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                        <tl-input fxFlex="25"
+                                  formControlName="diplomaNumberControl"
+                                  tooltipResourceName="qualified-fishers-page.diploma-number-helper"
+                                  label="{{ 'qualified-fishers-page.diploma-number' | tlTranslate }}">
+                        </tl-input>
+                        <tl-date fxFlex="25"
+                                 formControlName="diplomaDateControl"
+                                 tooltipResourceName="qualified-fishers-page.diploma-date-helper"
+                                 label="{{ 'qualified-fishers-page.diploma-date' | tlTranslate }}">
+                        </tl-date>
+                        <tl-input fxFlex="50"
+                                  formControlName="diplomaIssuerControl"
+                                  tooltipResourceName="qualified-fishers-page.diploma-issuer-helper"
+                                  label="{{ 'qualified-fishers-page.diploma-issuer' | tlTranslate }}">
+                        </tl-input>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Бележки -->
+    <tl-expansion-panel *ngIf="!modeApplicationRegixOnly"
+                        title="{{ 'qualified-fishers-page.comments-panel' | tlTranslate }}"
+                        tooltipResourceName="qualified-fishers-page.comments-panel-helper"
+                        [validityChecker]="editForm">
+        <tl-textarea fxFlexFill
+                     formControlName="commentsControl"
+                     label="{{ 'qualified-fishers-page.comments' | tlTranslate }}"
+                     tooltipResourceName="qualified-fishers-page.comments-helper">
+        </tl-textarea>
+    </tl-expansion-panel>
+
+    <!-- Информация за плащане -->
+    <tl-expansion-panel *ngIf="modeApplication && !modeApplicationRegixOnly && applicationPaymentInformation !== null && applicationPaymentInformation !== undefined"
+                        title="{{ 'qualified-fishers-page.payment-information-panel' | tlTranslate }}"
+                        tooltipResourceName="qualified-fishers-page.payment-information-panel-helper"
+                        [validityChecker]="editForm">
+        <payment-information [paymentData]="applicationPaymentInformation"></payment-information>
+    </tl-expansion-panel>
+
+    <!-- Информация за начин на връчване -->
+    <tl-expansion-panel *ngIf="modeApplication && !modeApplicationRegixOnly"
+                        title="{{ 'qualified-fishers-page.delivery-data-panel' | tlTranslate }}"
+                        tooltipResourceName="qualified-fishers-page.delivery-data-panel-helper"
+                        fxFlexLayoutGap="1em"
+                        [validityChecker]="editForm"
+                        [validityCheckerExtraCondition]="hasNoEDeliveryRegistrationError !== true">
+        <delivery-data formControlName="deliveryDataControl"
+                       validityChecker
+                       [pageCode]="pageCode">
+        </delivery-data>
+        <mat-error *ngIf="hasNoEDeliveryRegistrationError">
+            {{ 'qualified-fishers-page.has-no-e-delivery-registration-error' | tlTranslate }} *
+        </mat-error>
+    </tl-expansion-panel>
+
+    <!-- Издадени дубликати -->
+    <tl-expansion-panel *ngIf="duplicates && duplicates.length > 0"
+                        title="{{ 'qualified-fishers-page.duplicate-entries' | tlTranslate }}"
+                        tooltipResourceName="qualified-fishers-page.duplicate-entries-helper">
+        <duplicate-entries-table [entries]="duplicates">
+        </duplicate-entries-table>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel *ngIf="!modeApplicationRegixOnly"
+                        title="{{ 'qualified-fishers-page.files' | tlTranslate }}"
+                        tooltipResourceName="qualified-fishers-page.files-helper"
+                        [validityChecker]="editForm">
+        <file-uploader-form-array formControlName="filesControl"
+                                  validityChecker
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)"
+                                  [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                  [refreshFileTypes]="refreshFileTypes">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+
+    <!-- Проверки -->
+    <tl-expansion-panel *ngIf="modeApplicationRegixOnly"
+                        title="{{ 'qualified-fishers-page.regix-checks-results-panel' | tlTranslate }}"
+                        tooltipResourceName="qualified-fishers-page.regix-checks-results-panel-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-checks-results [regixChecksCollection]="regixChecks"></regix-checks-results>
+        </div>
+    </tl-expansion-panel>
+</div>

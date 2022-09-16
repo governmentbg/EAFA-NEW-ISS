@@ -1,0 +1,21 @@
+﻿.input-container {
+    display: flex;
+}
+
+.input-element {
+    border: none;
+    background: none;
+    padding: 0;
+    outline: none;
+    font: inherit;
+    text-align: center;
+}
+
+.input-spacer {
+    opacity: 0;
+    transition: opacity 200ms;
+}
+
+:host.example-floating .input-spacer {
+    opacity: 1;
+}

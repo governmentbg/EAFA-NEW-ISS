@@ -1,0 +1,142 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <search-panel [translateService]="translate">
+        <div [formGroup]="form" fxFlexFill fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-input fxFlex="25"
+                      formControlName="nameControl"
+                      label="{{ 'cross-check.name' | tlTranslate }}"
+                      tooltipResourceName="cross-check.name-helper">
+            </tl-input>
+            <tl-input fxFlex="25"
+                      formControlName="checkedTableControl"
+                      label="{{ 'cross-check.checked-table' | tlTranslate }}"
+                      tooltipResourceName="cross-check.checked-table-helper">
+            </tl-input>
+            <tl-input fxFlex="25"
+                      formControlName="executionDataSourceControl"
+                      label="{{ 'cross-check.execution-data-source' | tlTranslate }}"
+                      tooltipResourceName="cross-check.execution-data-source-helper">
+            </tl-input>
+            <tl-input fxFlex="25"
+                      formControlName="reportGroupNameControl"
+                      label="{{ 'cross-check.group-name' | tlTranslate }}"
+                      tooltipResourceName="cross-check.group-name-helper">
+            </tl-input>
+            <tl-select fxFlex="25"
+                       label="{{ 'cross-check.level' | tlTranslate }}"
+                       formControlName="levelControl"
+                       [options]="levels"
+                       [isMultiple]="true"
+                       tooltipResourceName="cross-check.level-helper">
+            </tl-select>
+            <tl-select fxFlex="25"
+                       label="{{ 'cross-check.has-automatic-execution' | tlTranslate }}"
+                       formControlName="autoExecFrequencyCodesControl"
+                       [options]="autoExecFrequencyCodes"
+                       [isMultiple]="true"
+                       tooltipResourceName="cross-check.has-automatic-execution-helper">
+            </tl-select>
+        </div>
+    </search-panel>
+    <!-- Таблица -->
+    <mat-card>
+        <tl-data-table [showAddButton]="canAddRecords"
+                       [showInactiveRecords]="canRestoreRecords"
+                       (addButtonClicked)="createEditCrossCheck(undefined, false)"
+                       (activeRecordChanged)="createEditCrossCheck($event, !$event.isActive)">
+            <data-column propertyName="code"
+                         [flexRate]="0.2"
+                         columnName="{{ 'cross-check.code' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="name"
+                         [flexRate]="0.4"
+                         columnName="{{ 'cross-check.name' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="groupName"
+                         [flexRate]="0.3"
+                         columnName="{{ 'cross-check.group-name' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="dataSource"
+                         [flexRate]="0.4"
+                         columnName="{{ 'cross-check.execution-data-source' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="dataSourceColumns"
+                         [flexRate]="0.3"
+                         columnName="{{ 'cross-check.execution-data-fields' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="checkSource"
+                         [flexRate]="0.3"
+                         columnName="{{ 'cross-check.data-source-check' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="checkSourceColumns"
+                         [flexRate]="0.3"
+                         columnName="{{ 'cross-check.data-fields-check' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="purpose"
+                         [flexRate]="0.5"
+                         columnName="{{ 'cross-check.purpose' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="checkTableName"
+                         [flexRate]="0.3"
+                         columnName="{{ 'cross-check.checked-table' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="errorLevel"
+                         [flexRate]="0.2"
+                         columnName="{{ 'cross-check.level' | tlTranslate }}">
+            </data-column>
+            <data-template-column propertyName="autoExecFrequency"
+                                  [flexRate]="0.3"
+                                  [isSortable]="false"
+                                  columnName="{{ 'cross-check.has-automatic-execution' | tlTranslate }}">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <ng-container [ngSwitch]="row.data.autoExecFrequency">
+                        <div *ngSwitchCase="execFrequencies.Repeating">
+                            {{ 'cross-check.repeating' | tlTranslate }}
+                        </div>
+                        <div *ngSwitchCase="execFrequencies.Manual">
+                            {{ 'cross-check.manual' | tlTranslate }}
+                        </div>
+                        <div *ngSwitchCase="execFrequencies.Daily">
+                            {{ 'cross-check.daily' | tlTranslate }}
+                        </div>
+                        <div *ngSwitchCase="execFrequencies.Weekly">
+                            {{ 'cross-check.weekly' | tlTranslate }}
+                        </div>
+                        <div *ngSwitchCase="execFrequencies.Monthly">
+                            {{ 'cross-check.monthly' | tlTranslate }}
+                        </div>
+                    </ng-container>
+                </ng-template>
+            </data-template-column>
+            <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row" fxLayoutAlign="end center">
+                        <tl-icon-button *ngIf="row.isActive"
+                                        icon="visibility"
+                                        (buttonClicked)="createEditCrossCheck(row.data, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'cross-check.view-cross-check' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.isActive && canEditRecords"
+                                        icon="edit"
+                                        (buttonClicked)="createEditCrossCheck(row.data, false)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'cross-check.edit-cross-check' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.isActive && canDeleteRecords"
+                                        icon="delete"
+                                        (buttonClicked)="deleteCrossCheck(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'cross-check.delete-cross-check' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="!row.isActive && canRestoreRecords"
+                                        icon="restore"
+                                        (buttonClicked)="restoreCrossCheck(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'cross-check.restore-cross-check' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </mat-card>
+</div>

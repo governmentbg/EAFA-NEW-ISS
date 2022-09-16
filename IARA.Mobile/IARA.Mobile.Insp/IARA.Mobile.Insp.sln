@@ -1,0 +1,187 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IARA.Mobile.Insp.Android", "IARA.Mobile.Insp.Android\IARA.Mobile.Insp.Android.csproj", "{266E8C40-C710-4B4D-802C-956ED79B6D48}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IARA.Mobile.Insp", "IARA.Mobile.Insp\IARA.Mobile.Insp.csproj", "{43680712-91AC-440A-9EA2-00AC4D960B22}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{E199AB6F-5FDB-4785-9740-CAEF3AE27D65}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{ECB880FE-EB06-4072-BE27-95A55B1EADB7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platform", "Platform", "{7A2E2F62-7ACE-4641-9E95-CF11FEE8047F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{5EB0AECA-0EEC-43DB-AECC-129732DA32FE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C1CB0D35-6B9A-490B-965F-DD8652AAFE67}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IARA.Mobile.Insp.Tests", "IARA.Mobile.Insp.Tests\IARA.Mobile.Insp.Tests.csproj", "{08B3129C-FAC7-468E-8E9F-8BD06DD22320}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IARA.Mobile.Application", "..\IARA.Mobile.Common\IARA.Mobile.Application\IARA.Mobile.Application.csproj", "{4EFF268B-81FF-45BF-90C6-AAB9291C7920}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IARA.Mobile.Domain", "..\IARA.Mobile.Common\IARA.Mobile.Domain\IARA.Mobile.Domain.csproj", "{BD0F470C-B0F8-4D62-97C1-68A02959B991}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IARA.Mobile.Infrastructure", "..\IARA.Mobile.Common\IARA.Mobile.Infrastructure\IARA.Mobile.Infrastructure.csproj", "{48C6D553-324D-46F0-A482-5C6663CBECFD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IARA.Mobile.Insp.Application", "IARA.Mobile.Insp.Application\IARA.Mobile.Insp.Application.csproj", "{83E3BC04-1196-4471-990E-B5A74207FAE6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IARA.Mobile.Insp.Domain", "IARA.Mobile.Insp.Domain\IARA.Mobile.Insp.Domain.csproj", "{525DAE60-F1F7-4FEB-92E2-53484BEBD13A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IARA.Mobile.Insp.Infrastructure", "IARA.Mobile.Insp.Infrastructure\IARA.Mobile.Insp.Infrastructure.csproj", "{94A42711-1465-46EE-AE3F-6B6899E6E694}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IARA.Mobile.Shared", "..\IARA.Mobile.Common\IARA.Mobile.Shared\IARA.Mobile.Shared.csproj", "{F8EBBD12-79B2-47BC-9F6A-221FFD43039D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechnoLogica.XamImage", "..\TechnoLogica.XamImage\TechnoLogica.XamImage.csproj", "{E86FD2CF-A0DE-4503-8C23-8FB2EED4029C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		ProdRelease|Any CPU = ProdRelease|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{266E8C40-C710-4B4D-802C-956ED79B6D48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{266E8C40-C710-4B4D-802C-956ED79B6D48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{266E8C40-C710-4B4D-802C-956ED79B6D48}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{266E8C40-C710-4B4D-802C-956ED79B6D48}.ProdRelease|Any CPU.ActiveCfg = ProdRelease|Any CPU
+		{266E8C40-C710-4B4D-802C-956ED79B6D48}.ProdRelease|Any CPU.Build.0 = ProdRelease|Any CPU
+		{266E8C40-C710-4B4D-802C-956ED79B6D48}.ProdRelease|Any CPU.Deploy.0 = ProdRelease|Any CPU
+		{266E8C40-C710-4B4D-802C-956ED79B6D48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{266E8C40-C710-4B4D-802C-956ED79B6D48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{266E8C40-C710-4B4D-802C-956ED79B6D48}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{43680712-91AC-440A-9EA2-00AC4D960B22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43680712-91AC-440A-9EA2-00AC4D960B22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43680712-91AC-440A-9EA2-00AC4D960B22}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{43680712-91AC-440A-9EA2-00AC4D960B22}.ProdRelease|Any CPU.ActiveCfg = ProdRelease|Any CPU
+		{43680712-91AC-440A-9EA2-00AC4D960B22}.ProdRelease|Any CPU.Build.0 = ProdRelease|Any CPU
+		{43680712-91AC-440A-9EA2-00AC4D960B22}.ProdRelease|Any CPU.Deploy.0 = ProdRelease|Any CPU
+		{43680712-91AC-440A-9EA2-00AC4D960B22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43680712-91AC-440A-9EA2-00AC4D960B22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43680712-91AC-440A-9EA2-00AC4D960B22}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{08B3129C-FAC7-468E-8E9F-8BD06DD22320}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08B3129C-FAC7-468E-8E9F-8BD06DD22320}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08B3129C-FAC7-468E-8E9F-8BD06DD22320}.ProdRelease|Any CPU.ActiveCfg = ProdRelease|Any CPU
+		{08B3129C-FAC7-468E-8E9F-8BD06DD22320}.ProdRelease|Any CPU.Build.0 = ProdRelease|Any CPU
+		{08B3129C-FAC7-468E-8E9F-8BD06DD22320}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08B3129C-FAC7-468E-8E9F-8BD06DD22320}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EFF268B-81FF-45BF-90C6-AAB9291C7920}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EFF268B-81FF-45BF-90C6-AAB9291C7920}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EFF268B-81FF-45BF-90C6-AAB9291C7920}.ProdRelease|Any CPU.ActiveCfg = ProdRelease|Any CPU
+		{4EFF268B-81FF-45BF-90C6-AAB9291C7920}.ProdRelease|Any CPU.Build.0 = ProdRelease|Any CPU
+		{4EFF268B-81FF-45BF-90C6-AAB9291C7920}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EFF268B-81FF-45BF-90C6-AAB9291C7920}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD0F470C-B0F8-4D62-97C1-68A02959B991}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD0F470C-B0F8-4D62-97C1-68A02959B991}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD0F470C-B0F8-4D62-97C1-68A02959B991}.ProdRelease|Any CPU.ActiveCfg = ProdRelease|Any CPU
+		{BD0F470C-B0F8-4D62-97C1-68A02959B991}.ProdRelease|Any CPU.Build.0 = ProdRelease|Any CPU
+		{BD0F470C-B0F8-4D62-97C1-68A02959B991}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD0F470C-B0F8-4D62-97C1-68A02959B991}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48C6D553-324D-46F0-A482-5C6663CBECFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48C6D553-324D-46F0-A482-5C6663CBECFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48C6D553-324D-46F0-A482-5C6663CBECFD}.ProdRelease|Any CPU.ActiveCfg = ProdRelease|Any CPU
+		{48C6D553-324D-46F0-A482-5C6663CBECFD}.ProdRelease|Any CPU.Build.0 = ProdRelease|Any CPU
+		{48C6D553-324D-46F0-A482-5C6663CBECFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48C6D553-324D-46F0-A482-5C6663CBECFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83E3BC04-1196-4471-990E-B5A74207FAE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83E3BC04-1196-4471-990E-B5A74207FAE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83E3BC04-1196-4471-990E-B5A74207FAE6}.ProdRelease|Any CPU.ActiveCfg = ProdRelease|Any CPU
+		{83E3BC04-1196-4471-990E-B5A74207FAE6}.ProdRelease|Any CPU.Build.0 = ProdRelease|Any CPU
+		{83E3BC04-1196-4471-990E-B5A74207FAE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83E3BC04-1196-4471-990E-B5A74207FAE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{525DAE60-F1F7-4FEB-92E2-53484BEBD13A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{525DAE60-F1F7-4FEB-92E2-53484BEBD13A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{525DAE60-F1F7-4FEB-92E2-53484BEBD13A}.ProdRelease|Any CPU.ActiveCfg = ProdRelease|Any CPU
+		{525DAE60-F1F7-4FEB-92E2-53484BEBD13A}.ProdRelease|Any CPU.Build.0 = ProdRelease|Any CPU
+		{525DAE60-F1F7-4FEB-92E2-53484BEBD13A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{525DAE60-F1F7-4FEB-92E2-53484BEBD13A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94A42711-1465-46EE-AE3F-6B6899E6E694}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94A42711-1465-46EE-AE3F-6B6899E6E694}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94A42711-1465-46EE-AE3F-6B6899E6E694}.ProdRelease|Any CPU.ActiveCfg = ProdRelease|Any CPU
+		{94A42711-1465-46EE-AE3F-6B6899E6E694}.ProdRelease|Any CPU.Build.0 = ProdRelease|Any CPU
+		{94A42711-1465-46EE-AE3F-6B6899E6E694}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94A42711-1465-46EE-AE3F-6B6899E6E694}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8EBBD12-79B2-47BC-9F6A-221FFD43039D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8EBBD12-79B2-47BC-9F6A-221FFD43039D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8EBBD12-79B2-47BC-9F6A-221FFD43039D}.ProdRelease|Any CPU.ActiveCfg = ProdRelease|Any CPU
+		{F8EBBD12-79B2-47BC-9F6A-221FFD43039D}.ProdRelease|Any CPU.Build.0 = ProdRelease|Any CPU
+		{F8EBBD12-79B2-47BC-9F6A-221FFD43039D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8EBBD12-79B2-47BC-9F6A-221FFD43039D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E86FD2CF-A0DE-4503-8C23-8FB2EED4029C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E86FD2CF-A0DE-4503-8C23-8FB2EED4029C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E86FD2CF-A0DE-4503-8C23-8FB2EED4029C}.ProdRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{E86FD2CF-A0DE-4503-8C23-8FB2EED4029C}.ProdRelease|Any CPU.Build.0 = Release|Any CPU
+		{E86FD2CF-A0DE-4503-8C23-8FB2EED4029C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E86FD2CF-A0DE-4503-8C23-8FB2EED4029C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{266E8C40-C710-4B4D-802C-956ED79B6D48} = {7A2E2F62-7ACE-4641-9E95-CF11FEE8047F}
+		{43680712-91AC-440A-9EA2-00AC4D960B22} = {5EB0AECA-0EEC-43DB-AECC-129732DA32FE}
+		{08B3129C-FAC7-468E-8E9F-8BD06DD22320} = {C1CB0D35-6B9A-490B-965F-DD8652AAFE67}
+		{4EFF268B-81FF-45BF-90C6-AAB9291C7920} = {E199AB6F-5FDB-4785-9740-CAEF3AE27D65}
+		{BD0F470C-B0F8-4D62-97C1-68A02959B991} = {E199AB6F-5FDB-4785-9740-CAEF3AE27D65}
+		{48C6D553-324D-46F0-A482-5C6663CBECFD} = {E199AB6F-5FDB-4785-9740-CAEF3AE27D65}
+		{83E3BC04-1196-4471-990E-B5A74207FAE6} = {ECB880FE-EB06-4072-BE27-95A55B1EADB7}
+		{525DAE60-F1F7-4FEB-92E2-53484BEBD13A} = {ECB880FE-EB06-4072-BE27-95A55B1EADB7}
+		{94A42711-1465-46EE-AE3F-6B6899E6E694} = {ECB880FE-EB06-4072-BE27-95A55B1EADB7}
+		{F8EBBD12-79B2-47BC-9F6A-221FFD43039D} = {E199AB6F-5FDB-4785-9740-CAEF3AE27D65}
+		{E86FD2CF-A0DE-4503-8C23-8FB2EED4029C} = {E199AB6F-5FDB-4785-9740-CAEF3AE27D65}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1A48E0A4-47CC-432A-9EC4-661C0A87AF93}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 12
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://tfstl:8080/tfs/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = IARA.Mobile.Insp.Android\\IARA.Mobile.Insp.Android.csproj
+		SccProjectTopLevelParentUniqueName1 = IARA.Mobile.Insp.sln
+		SccProjectName1 = IARA.Mobile.Insp.Android
+		SccLocalPath1 = IARA.Mobile.Insp.Android
+		SccProjectUniqueName2 = IARA.Mobile.Insp\\IARA.Mobile.Insp.csproj
+		SccProjectTopLevelParentUniqueName2 = IARA.Mobile.Insp.sln
+		SccProjectName2 = IARA.Mobile.Insp
+		SccLocalPath2 = IARA.Mobile.Insp
+		SccProjectUniqueName3 = IARA.Mobile.Insp.Tests\\IARA.Mobile.Insp.Tests.csproj
+		SccProjectTopLevelParentUniqueName3 = IARA.Mobile.Insp.sln
+		SccProjectName3 = IARA.Mobile.Insp.Tests
+		SccLocalPath3 = IARA.Mobile.Insp.Tests
+		SccProjectUniqueName4 = ..\\IARA.Mobile.Common\\IARA.Mobile.Application\\IARA.Mobile.Application.csproj
+		SccProjectTopLevelParentUniqueName4 = IARA.Mobile.Insp.sln
+		SccProjectName4 = ../IARA.Mobile.Common/IARA.Mobile.Application
+		SccLocalPath4 = ..\\IARA.Mobile.Common\\IARA.Mobile.Application
+		SccProjectUniqueName5 = ..\\IARA.Mobile.Common\\IARA.Mobile.Domain\\IARA.Mobile.Domain.csproj
+		SccProjectTopLevelParentUniqueName5 = IARA.Mobile.Insp.sln
+		SccProjectName5 = ../IARA.Mobile.Common/IARA.Mobile.Domain
+		SccLocalPath5 = ..\\IARA.Mobile.Common\\IARA.Mobile.Domain
+		SccProjectUniqueName6 = ..\\IARA.Mobile.Common\\IARA.Mobile.Infrastructure\\IARA.Mobile.Infrastructure.csproj
+		SccProjectTopLevelParentUniqueName6 = IARA.Mobile.Insp.sln
+		SccProjectName6 = ../IARA.Mobile.Common/IARA.Mobile.Infrastructure
+		SccLocalPath6 = ..\\IARA.Mobile.Common\\IARA.Mobile.Infrastructure
+		SccProjectUniqueName7 = IARA.Mobile.Insp.Application\\IARA.Mobile.Insp.Application.csproj
+		SccProjectTopLevelParentUniqueName7 = IARA.Mobile.Insp.sln
+		SccProjectName7 = IARA.Mobile.Insp.Application
+		SccLocalPath7 = IARA.Mobile.Insp.Application
+		SccProjectUniqueName8 = IARA.Mobile.Insp.Domain\\IARA.Mobile.Insp.Domain.csproj
+		SccProjectTopLevelParentUniqueName8 = IARA.Mobile.Insp.sln
+		SccProjectName8 = IARA.Mobile.Insp.Domain
+		SccLocalPath8 = IARA.Mobile.Insp.Domain
+		SccProjectUniqueName9 = IARA.Mobile.Insp.Infrastructure\\IARA.Mobile.Insp.Infrastructure.csproj
+		SccProjectTopLevelParentUniqueName9 = IARA.Mobile.Insp.sln
+		SccProjectName9 = IARA.Mobile.Insp.Infrastructure
+		SccLocalPath9 = IARA.Mobile.Insp.Infrastructure
+		SccProjectUniqueName10 = ..\\IARA.Mobile.Common\\IARA.Mobile.Shared\\IARA.Mobile.Shared.csproj
+		SccProjectTopLevelParentUniqueName10 = IARA.Mobile.Insp.sln
+		SccProjectName10 = ../IARA.Mobile.Common/IARA.Mobile.Shared
+		SccLocalPath10 = ..\\IARA.Mobile.Common\\IARA.Mobile.Shared
+		SccProjectUniqueName11 = ..\\TechnoLogica.XamImage\\TechnoLogica.XamImage.csproj
+		SccProjectTopLevelParentUniqueName11 = IARA.Mobile.Insp.sln
+		SccProjectName11 = ../TechnoLogica.XamImage
+		SccLocalPath11 = ..\\TechnoLogica.XamImage
+	EndGlobalSection
+EndGlobal

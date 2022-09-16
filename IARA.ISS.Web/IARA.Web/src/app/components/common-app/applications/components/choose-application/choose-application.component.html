@@ -1,0 +1,54 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-around stretch"
+     class="dialog-padding">
+    <div fxFlex="100">
+        <tl-input label="{{ 'applications-register.applications-for-choice-keywork-filter' | tlTranslate }}"
+                  [formControl]="applicationsFilterControl"></tl-input>
+    </div>
+    <div fxFlex="100" fxLayoutGap="1em" fxLayout="column">
+        <tl-data-table #table
+                       [showAddButton]="false"
+                       [showInactiveRecords]="false"
+                       [rows]="applications"
+                       [isRemote]="false"
+                       [rowClass]="getRowClass">
+            <data-template-column propertyName="" [flexRate]="0.001" columnName="">
+                <ng-template ngx-datatable-cell-template
+                             let-rowIndex="rowIndex"
+                             let-value="value"
+                             let-row="row">
+                    <label for="ep1{{ rowIndex }}" class="datatable-checkbox">
+                        <input type="checkbox"
+                               id="application-for-register-{{ rowIndex }}"
+                               [checked]="row.data['isChecked']"
+                               (change)="checkedRow(row)" />
+                    </label>
+                </ng-template>
+            </data-template-column>
+            <data-column propertyName="eventisNumber"
+                         [flexRate]="0.3"
+                         columnName="{{ 'applications-register.eventis-num' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="submitDateTime"
+                         [flexRate]="0.3"
+                         dataType="datetime"
+                         columnName="{{ 'applications-register.date-of-application' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="submittedBy"
+                         [flexRate]="0.4"
+                         columnName="{{ 'applications-register.application-submitted-by' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="submittedFor"
+                         [flexRate]="0.4"
+                         columnName="{{ 'applications-register.application-submitted-for' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="type"
+                         [flexRate]="0.6"
+                         columnName="{{ 'applications-register.application-type' | tlTranslate }}">
+            </data-column>
+        </tl-data-table>
+        <mat-error *ngIf="noApplicationChosenValidation">{{ 'applications-register.application-must-be-selected' | tlTranslate }}*</mat-error>
+    </div>
+</div>

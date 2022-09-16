@@ -1,0 +1,143 @@
+﻿<div fxLayout="column" fxLayoutGroup="5px" fxLayoutAlign="start stretch" fxFill>
+    <search-panel [translateService]="translate">
+        <div [formGroup]="vehiclesFormGroup" fxLayout="column" fxLayoutAlign="start start">
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-input fxFlex="33"
+                          formControlName="nameControl"
+                          label="{{ 'patrol-vehicles.name' | tlTranslate }}"
+                          tooltipResourceName="patrol-vehicles.name-helper">
+                </tl-input>
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="institutionIdControl"
+                                 [options]="institutions"
+                                 label="{{ 'patrol-vehicles.institution' | tlTranslate }}"
+                                 tooltipResourceName="patrol-vehicles.institution-helper">
+                </tl-autocomplete>
+                <tl-input fxFlex="33"
+                          formControlName="externalMarkControl"
+                          label="{{ 'patrol-vehicles.external-mark' | tlTranslate }}"
+                          tooltipResourceName="patrol-vehicles.external-mark-helper">
+                </tl-input>
+            </div>
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-input fxFlex="33"
+                          formControlName="cfrControl"
+                          label="{{ 'patrol-vehicles.cfr' | tlTranslate }}"
+                          tooltipResourceName="patrol-vehicles.cfr-helper">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="uviControl"
+                          label="{{ 'patrol-vehicles.uvi' | tlTranslate }}"
+                          tooltipResourceName="patrol-vehicles.uvi-helper">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="ircsCallSignControl"
+                          label="{{ 'patrol-vehicles.ircs-call-sign' | tlTranslate }}"
+                          tooltipResourceName="patrol-vehicles.ircs-call-sign-helper">
+                </tl-input>
+            </div>
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-input fxFlex="25"
+                          formControlName="mmsiControl"
+                          label="{{ 'patrol-vehicles.mmsi' | tlTranslate }}"
+                          tooltipResourceName="patrol-vehicles.mmsi-helper">
+                </tl-input>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="vesselTypeIdControl"
+                                 [options]="vesselTypes"
+                                 label="{{ 'patrol-vehicles.vessel-type' | tlTranslate }}"
+                                 tooltipResourceName="patrol-vehicles.vessel-type-helper">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="patrolVehicleTypeIdControl"
+                                 [options]="patrolVehicleTypes"
+                                 label="{{ 'patrol-vehicles.patrol-vehicle-type' | tlTranslate }}"
+                                 tooltipResourceName="patrol-vehicles.patrol-vehicle-type-helper">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="flagCountryIdControl"
+                                 [options]="flagCountries"
+                                 label="{{ 'patrol-vehicles.flag-country' | tlTranslate }}"
+                                 tooltipResourceName="patrol-vehicles.flag-country-helper">
+                </tl-autocomplete>
+            </div>
+        </div>
+    </search-panel>
+    <tl-card tooltipResourceName="patrol-vehicles.patrol-vehicles-helper">
+        <tl-card-content>
+            <tl-data-table (addButtonClicked)="createEditPatrolVehicle(undefined, false)"
+                           (activeRecordChanged)="createEditPatrolVehicle($event, !$event.isActive)">
+                <data-column propertyName="name"
+                             [flexRate]="0.4"
+                             columnName="{{ 'patrol-vehicles.name' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="institution"
+                             [flexRate]="0.5"
+                             columnName="{{ 'patrol-vehicles.institution' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="externalMark"
+                             [flexRate]="0.3"
+                             columnName="{{ 'patrol-vehicles.external-mark' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="cfr"
+                             [flexRate]="0.3"
+                             columnName="{{ 'patrol-vehicles.cfr' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="uvi"
+                             [flexRate]="0.3"
+                             columnName="{{ 'patrol-vehicles.uvi' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="ircscallSign"
+                             [flexRate]="0.3"
+                             columnName="{{ 'patrol-vehicles.ircs-call-sign' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="mmsi"
+                             [flexRate]="0.3"
+                             columnName="{{ 'patrol-vehicles.mmsi' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="vesselType"
+                             [flexRate]="0.4"
+                             columnName="{{ 'patrol-vehicles.vessel-type' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="patrolVehicleType"
+                             [flexRate]="0.3"
+                             columnName="{{ 'patrol-vehicles.patrol-vehicle-type' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="flagCountry"
+                             [flexRate]="0.3"
+                             columnName="{{ 'patrol-vehicles.flag-country' | tlTranslate }}">
+                </data-column>
+                <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="end center">
+                            <tl-icon-button *ngIf="row.isActive"
+                                            icon="visibility"
+                                            (buttonClicked)="createEditPatrolVehicle(row.data, true)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'patrol-vehicles.view' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.isActive"
+                                            icon="edit"
+                                            (buttonClicked)="createEditPatrolVehicle(row.data, false)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'patrol-vehicles.edit' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.isActive"
+                                            icon="delete"
+                                            (buttonClicked)="deletePatrolVehicle(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'patrol-vehicles.delete' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="!row.isActive"
+                                            icon="restore"
+                                            (buttonClicked)="restorePatrolVehicle(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'patrol-vehicles.restore' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+</div>

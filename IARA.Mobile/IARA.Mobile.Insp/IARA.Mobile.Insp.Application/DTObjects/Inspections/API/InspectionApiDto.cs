@@ -1,0 +1,18 @@
+﻿using System;
+using IARA.Mobile.Insp.Domain.Enums;
+
+namespace IARA.Mobile.Insp.Application.DTObjects.Inspections.API
+{
+    public class InspectionApiDto
+    {
+        public int Id { get; set; }
+        public string ReportNumber { get; set; }
+        public DateTime StartDate { get; set; }
+        public InspectionType InspectionType { get; set; }
+        public InspectionState InspectionState { get; set; }
+        public string Inspectors { get; set; }
+        public string InspectionSubjects { get; set; }
+        public DateTime LastUpdateDate { get; set; }
+        public bool IsActive { get; set; }
+    }
+}

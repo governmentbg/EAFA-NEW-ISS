@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<Grid xmlns="http://xamarin.com/schemas/2014/forms"
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      xmlns:views="clr-namespace:IARA.Mobile.Shared.Views"
+      xmlns:tlConverters="clr-namespace:TechnoLogica.Xamarin.Converters;assembly=TechnoLogica.Xamarin"
+      xmlns:converters="clr-namespace:IARA.Mobile.Shared.Converters"
+      x:DataType="views:SectionView"
+      x:Class="IARA.Mobile.Shared.Views.SectionHeaderView"
+      Padding="0,10"
+      BackgroundColor="{StaticResource Primary}">
+    <Grid.Resources>
+        <tlConverters:IsNotNullConverter x:Key="IsNotNull" />
+        <converters:ImageWidthConverter x:Key="ImageWidth" />
+    </Grid.Resources>
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="{Binding Image, Converter={StaticResource ImageWidth}}" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+    <Image Source="{Binding Image}"
+           Aspect="AspectFit"
+           WidthRequest="25"
+           HeightRequest="25"
+           VerticalOptions="Center"
+           HorizontalOptions="Center"
+           Margin="5,0,0,0"
+           IsVisible="{Binding Image, Converter={StaticResource IsNotNull}}" />
+    <Label Grid.Column="1"
+           Text="{Binding Text}"
+           TextColor="White"
+           FontSize="{Binding FontSize}"
+           LineBreakMode="WordWrap"
+           VerticalOptions="Center" />
+    <Label Grid.Column="2"
+           FontFamily="FA"
+           FontSize="20"
+           TextColor="White"
+           Text="{Binding IsExpanded, Converter={StaticResource AccordionImage}}"
+           VerticalOptions="Center"
+           Margin="0,0,15,0" />
+</Grid>

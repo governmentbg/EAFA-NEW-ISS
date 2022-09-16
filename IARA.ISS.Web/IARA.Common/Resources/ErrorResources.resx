@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="errCrossCheckExecution" xml:space="preserve">
+    <value>Грешка при изпълнение на кръстосана проверка: {0}</value>
+  </data>
+  <data name="failedCrossCheckExecution" xml:space="preserve">
+    <value>Неуспешно изпълнение на кръстосана проверка: {0}</value>
+  </data>
+  <data name="invalidCrossCheckResult" xml:space="preserve">
+    <value>Невалиден резултат от кръстосана проверка</value>
+  </data>
+  <data name="lblValue" xml:space="preserve">
+    <value>стойност:</value>
+  </data>
+  <data name="msgEgnLnchDoesntExist" xml:space="preserve">
+    <value>В системата не съществува потребител с това ЕГН/ЛНЧ</value>
+  </data>
+  <data name="msgEgnLnchExists" xml:space="preserve">
+    <value>Същестува потребител с това ЕГН/ЛНЧ</value>
+  </data>
+  <data name="msgEmailExists" xml:space="preserve">
+    <value>Съществува потребител с този имейл</value>
+  </data>
+  <data name="msgEmptyRegixDataReceived" xml:space="preserve">
+    <value>Полученият отговор от Regix съдържа празен резутат</value>
+  </data>
+  <data name="msgExistingEmail" xml:space="preserve">
+    <value>Същестува потребител с този e-mail адрес</value>
+  </data>
+  <data name="msgFluxFailedReceive" xml:space="preserve">
+    <value>Грешка при изпращане към Flux Central Node</value>
+  </data>
+  <data name="msgInvalidApplicationFileType" xml:space="preserve">
+    <value>Невалиден тип на документ</value>
+  </data>
+  <data name="msgInvalidApplicationID" xml:space="preserve">
+    <value>Несъответстващ pdf документ за даденото заявление</value>
+  </data>
+  <data name="msgInvalidApplicationVersion" xml:space="preserve">
+    <value>Качена невалидна или по-стара версия на файлът!</value>
+  </data>
+  <data name="msgInvalidPDF" xml:space="preserve">
+    <value>Невалиден pdf документ</value>
+  </data>
+  <data name="msgInvalidSubmitter" xml:space="preserve">
+    <value>Невалиден подател на заявлението</value>
+  </data>
+  <data name="msgListMinLength" xml:space="preserve">
+    <value>Минималната дължина на списъка {0} е {1}</value>
+  </data>
+  <data name="msgLocationNotSent" xml:space="preserve">
+    <value>Не е посочена локация</value>
+  </data>
+  <data name="msgMaxLength" xml:space="preserve">
+    <value>Максимална дължина на полето {0} е {1}</value>
+  </data>
+  <data name="msgMissingData" xml:space="preserve">
+    <value>Липсват данни</value>
+  </data>
+  <data name="msgMissingOwners" xml:space="preserve">
+    <value>Несъответстващи собсвеници в регистърът на ИАМА</value>
+  </data>
+  <data name="msgMissingPerson" xml:space="preserve">
+    <value>Несъществува човек с тези данни в регистърът!</value>
+  </data>
+  <data name="msgPatternNotMatching" xml:space="preserve">
+    <value>Полето не отговаря на зададения шаблон</value>
+  </data>
+  <data name="msgPermanentAddressesError" xml:space="preserve">
+    <value>Не попълнен адрес или несъществуващ в Regix регистъра</value>
+  </data>
+  <data name="msgPositiveIntegerValue" xml:space="preserve">
+    <value>Стойността на полето {0} трябва да е положително цяло число</value>
+  </data>
+  <data name="msgPropertiesDiscrepancy" xml:space="preserve">
+    <value>Полета с несъответстващи стойности: {0}</value>
+  </data>
+  <data name="msgRepresentativeMissing" xml:space="preserve">
+    <value>Несъществува представител от тип: родител или настойник с тези данни!</value>
+  </data>
+  <data name="msgRequired" xml:space="preserve">
+    <value>Полето {0} е задължително</value>
+  </data>
+  <data name="msgTelkError" xml:space="preserve">
+    <value>Изтекло или несъществуващо решение на ТЕЛК</value>
+  </data>
+  <data name="msgTelkWarn" xml:space="preserve">
+    <value>Несъответстващи номера на документа за експертно решение</value>
+  </data>
+  <data name="msgUnsignedFile" xml:space="preserve">
+    <value>Неподписан файл!</value>
+  </data>
+  <data name="msgVesselNotFoundInRegister" xml:space="preserve">
+    <value>Не е открит кораб с такива характеристики в регистърът на ИАМА</value>
+  </data>
+  <data name="msgWrongPassword" xml:space="preserve">
+    <value>Грешна парола</value>
+  </data>
+  <data name="passwordChangeErr" xml:space="preserve">
+    <value>Грешка при смяна на парола за token {0}</value>
+  </data>
+</root>

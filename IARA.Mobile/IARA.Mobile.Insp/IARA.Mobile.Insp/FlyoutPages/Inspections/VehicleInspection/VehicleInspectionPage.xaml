@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection"
+        xmlns:lh="clr-namespace:IARA.Mobile.Insp.Helpers"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection.VehicleInspectionPage"
+        x:DataType="local:VehicleInspectionViewModel"
+        x:TypeArguments="local:VehicleInspectionViewModel"
+        x:Name="page"
+        PageInfo="{rt:Translate PageInfo, Group=VehicleInspection}"
+        Title="{rt:Translate Title, Group=VehicleInspection}"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <lc:TLForwardSections ExpandAll="{Binding ExpandAll}">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
+                Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
+            <StackLayout Padding="10">
+                <lc:InspectionGeneralInfoView BindingContext="{Binding InspectionGeneralInfo}" />
+                <lc:TLLocationView Title="{rt:Translate Location, Group=VehicleInspection}"
+                        ValidState="{Binding Location}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLEntry Title="{rt:Translate Address, Group=VehicleInspection}"
+                        ValidState="{Binding Address}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+            </StackLayout>
+        </sv:SectionView>
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.TruckFast}, Color=White, Size=100}"
+                Text="{rt:Translate InspectedVehicleData, Group=VehicleInspection}"
+                IsExpanded="False">
+            <StackLayout Padding="10">
+                <tl:TLFlex GrowUnit="250">
+                    <tl:TLPicker Title="{rt:Translate VehicleType, Group=VehicleInspection}"
+                            ValidState="{Binding VehicleType}"
+                            ItemsSource="{Binding VehicleTypes}"
+                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                    <tl:TLPicker Title="{rt:Translate Country, Group=VehicleInspection}"
+                            ValidState="{Binding Country}"
+                            ItemsSource="{Binding Countries}"
+                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                    <tl:TLEntry Title="{rt:Translate TractorLicensePlateNum, Group=VehicleInspection}"
+                            ValidState="{Binding TractorLicensePlateNum}"
+                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                    <tl:TLEntry Title="{rt:Translate TractorBrand, Group=VehicleInspection}"
+                            ValidState="{Binding TractorBrand}"
+                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                    <tl:TLEntry Title="{rt:Translate TractorModel, Group=VehicleInspection}"
+                            ValidState="{Binding TractorModel}"
+                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                    <tl:TLEntry Title="{rt:Translate TrailerLicensePlateNum, Group=VehicleInspection}"
+                            ValidState="{Binding TrailerLicensePlateNum}"
+                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                </tl:TLFlex>
+                <lc:SubjectView BindingContext="{Binding Owner}"
+                        Title="{rt:Translate Owner, Group=VehicleInspection}" />
+                <lc:PersonView BindingContext="{Binding Driver}"
+                        Title="{rt:Translate Driver, Group=VehicleInspection}" />
+            </StackLayout>
+        </sv:SectionView>
+        <sv:SectionView Image="{lh:Image hook}"
+                Text="{rt:Translate CatchVehicleData, Group=VehicleInspection}"
+                IsExpanded="False">
+            <StackLayout Padding="10">
+                <lc:DeclarationCatchesView BindingContext="{Binding Catches}" />
+                <lc:TLGeneratedToggles ValidState="{Binding InspectedVehicleToggles}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLCheckView Text="{rt:Translate IsSealed, Group=VehicleInspection}"
+                        ValidState="{Binding IsSealed}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLFlex GrowUnit="300"
+                        IsVisible="{Binding IsSealed.Value}">
+                    <tl:TLPicker Title="{rt:Translate InstitutionWhoPutTheSeals, Group=VehicleInspection}"
+                            ValidState="{Binding InstitutionWhoPutTheSeals}"
+                            ItemsSource="{Binding Institutions}"
+                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                    <tl:TLEntry Title="{rt:Translate SealCondition, Group=VehicleInspection}"
+                            ValidState="{Binding SealCondition}"
+                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                </tl:TLFlex>
+                <lc:BuyerView BindingContext="{Binding Buyer}"
+                        Title="{rt:Translate Buyer, Group=VehicleInspection}" />
+                <tl:TLEntry Title="{rt:Translate TransportDestination, Group=VehicleInspection}"
+                        ValidState="{Binding TransportDestination}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+            </StackLayout>
+        </sv:SectionView>
+        <lc:AdditionalInfoView BindingContext="{Binding AdditionalInfo}">
+            <tl:TLEditor Title="{rt:Translate TransporterComment, Group=VehicleInspection}"
+                    ValidState="{Binding TransporterComment}"
+                    IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+        </lc:AdditionalInfoView>
+        <lc:InspectionFilesView BindingContext="{Binding InspectionFiles}" />
+        <lc:SignaturesView BindingContext="{Binding Signatures}" />
+        <lc:SaveButtonsLayout />
+    </lc:TLForwardSections>
+</sv:BasePage>

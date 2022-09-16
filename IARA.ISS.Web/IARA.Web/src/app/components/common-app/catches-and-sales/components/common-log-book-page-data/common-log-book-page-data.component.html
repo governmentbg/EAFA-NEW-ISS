@@ -1,0 +1,108 @@
+﻿<div fxFlexFill fxLayout="column" fxLayoutGap="1em" [formGroup]="form">
+
+    <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+        <tl-checkbox fxFlex="60"
+                     formControlName="isImportNotByShipControl"
+                     label="{{ 'catches-and-sales.common-log-book-page-data-is-import-not-by-ship' | tlTranslate }}"
+                     tooltipResourceName="catches-and-sales.common-log-book-page-data-is-import-not-by-ship-helper"
+                     [readonly]="isReadonly">
+        </tl-checkbox>
+        <tl-input *ngIf="form.controls.isImportNotByShipControl.value === true"
+                  fxFlex="40"
+                  formControlName="placeOfImportControl"
+                  label="{{ 'catches-and-sales.common-log-book-page-data-place-of-import' | tlTranslate }}"
+                  tooltipResourceName="catches-and-sales.common-log-book-page-data-place-of-import-helper"
+                  [readonly]="isReadonly">
+        </tl-input>
+    </div>
+    <ng-container *ngIf="!form.controls.isImportNotByShipControl.value">
+        <div *ngIf="form.controls.originDeclarationNumberControl.value !== null && form.controls.originDeclarationNumberControl.value !== undefined"
+             fxFlex="100"
+             fxLayout="row"
+             fxLayoutAlign="space-between center"
+             fxLayoutGap="1em">
+            <tl-input fxFlex="50"
+                      formControlName="originDeclarationNumberControl"
+                      label="{{ 'catches-and-sales.common-log-book-page-data-origin-declaration-number' | tlTranslate }}"
+                      tooltipResourceName="catches-and-sales.common-log-book-page-data-origin-declaration-number-helper"
+                      [readonly]="isReadonly">
+            </tl-input>
+            <tl-date fxFlex="50"
+                     formControlName="originDeclarationDateControl"
+                     label="{{ 'catches-and-sales.common-log-book-page-data-origin-declaration-date' | tlTranslate }}"
+                     tooltipResourceName="catches-and-sales.common-log-book-page-data-origin-declaration-date-helper"
+                     [readonly]="isReadonly">
+            </tl-date>
+        </div>
+        <div *ngIf="form.controls.transportationDocumentNumberControl.value !== null && form.controls.transportationDocumentNumberControl.value !== undefined"
+             fxFlex="100"
+             fxLayout="row"
+             fxLayoutAlign="space-between center"
+             fxLayoutGap="1em">
+            <tl-input fxFlex="50"
+                      formControlName="transportationDocumentNumberControl"
+                      label="{{ 'catches-and-sales.common-log-book-page-data-transportation-document-number' | tlTranslate }}"
+                      tooltipResourceName="catches-and-sales.common-log-book-page-data-transportation-document-number-helper"
+                      [readonly]="isReadonly">
+            </tl-input>
+            <tl-date fxFlex="50"
+                     formControlName="transportationDocumentDateControl"
+                     label="{{ 'catches-and-sales.common-log-book-page-data-transportation-document-date' | tlTranslate }}"
+                     tooltipResourceName="catches-and-sales.common-log-book-page-data-transportation-document-date-helper"
+                     [readonly]="isReadonly">
+            </tl-date>
+        </div>
+        <div *ngIf="form.controls.admissionDocumentNumberControl.value !== null && form.controls.admissionDocumentNumberControl.value !== undefined"
+             fxFlex="100"
+             fxLayout="row"
+             fxLayoutAlign="space-between center"
+             fxLayoutGap="1em">
+            <tl-input fxFlex="50"
+                      formControlName="admissionDocumentNumberControl"
+                      label="{{ 'catches-and-sales.common-log-book-page-data-admission-document-number' | tlTranslate }}"
+                      tooltipResourceName="catches-and-sales.common-log-book-page-data-admission-document-number-helper"
+                      [readonly]="isReadonly">
+            </tl-input>
+            <tl-date fxFlex="50"
+                     formControlName="admissionDocumentHandoverDateControl"
+                     label="{{ 'catches-and-sales.common-log-book-page-data-admission-document-handover-date' | tlTranslate }}"
+                     tooltipResourceName="catches-and-sales.common-log-book-page-data-admission-document-handover-date-helper"
+                     [readonly]="isReadonly">
+            </tl-date>
+        </div>
+        <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
+            <tl-autocomplete fxFlex="100"
+                             formControlName="shipControl"
+                             label="{{ 'catches-and-sales.common-log-book-page-data-ship' | tlTranslate }}"
+                             tooltipResourceName="catches-and-sales.common-log-book-page-data-ship-helper"
+                             [options]="ships"
+                             [readonly]="isReadonly">
+            </tl-autocomplete>
+        </div>
+        <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-input fxFlex="45"
+                      formControlName="captainNameControl"
+                      label="{{ 'catches-and-sales.common-log-book-page-data-captain-name' | tlTranslate }}"
+                      tooltipResourceName="catches-and-sales.common-log-book-page-data-captain-name-helper"
+                      [readonly]="isReadonly">
+            </tl-input>
+            <tl-input fxFlex="55"
+                      formControlName="unloadingInformationControl"
+                      label="{{ 'catches-and-sales.common-log-book-page-data-unloading-information' | tlTranslate }}"
+                      tooltipResourceName="catches-and-sales.common-log-book-page-data-unloading-information-helper"
+                      [readonly]="isReadonly">
+            </tl-input>
+        </div>
+        <div *ngIf="logBookType === logBookTypesEnum.FirstSale"
+             fxFlex="100"
+             fxLayout="row"
+             fxLayoutAlign="space-between center">
+            <tl-input fxFlex="100"
+                      formControlName="vendorControl"
+                      label="{{ 'catches-and-sales.common-log-book-page-data-vendor-permit-license-holder' | tlTranslate }}"
+                      tooltipResourceName="catches-and-sales.common-log-book-page-data-vendor-permit-license-holder-helper"
+                      [readonly]="isReadonly">
+            </tl-input>
+        </div>
+    </ng-container>
+</div>

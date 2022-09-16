@@ -1,0 +1,180 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="form"
+     [notifierGroup]="notifier"
+     class="dialog-padding">
+    <!-- Заявител -->
+    <tl-card *ngIf="isApplication">
+        <tl-card-title>{{ 'legal-entities-page.application-requester' | tlTranslate }}</tl-card-title>
+        <tl-card-content fxLayout="column" fxLayoutGap="1em">
+            <regix-data formControlName="requesterControl"
+                        notifier
+                        [isPerson]="true"
+                        [isIdReadOnly]="isEditing || isPublicApp"
+                        [expectedResults]="expectedResults.requester"
+                        checkboxLabel="{{ 'legal-entities-page.has-bulgarian-address-registration' | tlTranslate }}">
+            </regix-data>
+
+            <address-registration formControlName="requesterAddressesControl"
+                                  notifier
+                                  addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                                  secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                                  checkboxLabel="{{ 'legal-entities-page.permanent-address-same-as-correspondence' | tlTranslate }}"
+                                  [expectedResults]="expectedResults.requesterAddresses">
+            </address-registration>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Получател -->
+    <tl-card>
+        <tl-card-title>{{ 'legal-entities-page.basic-information-title' | tlTranslate }}</tl-card-title>
+        <tl-card-content fxLayout="column" fxLayoutGap="1em">
+            <regix-data formControlName="legalControl"
+                        notifier
+                        [isPerson]="false"
+                        [showCustodianOfProperty]="false"
+                        [isIdReadOnly]="isEditing"
+                        [expectedResults]="expectedResults.legal"
+                        checkboxLabel="{{ 'ships-register.has-bulgarian-address-registration' | tlTranslate }}">
+            </regix-data>
+
+            <address-registration formControlName="addressesControl"
+                                  notifier
+                                  [addressType]="addressTypesEnum.CORRESPONDENCE"
+                                  [secondAddressType]="addressTypesEnum.COURT_REGISTRATION"
+                                  addressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                                  secondAddressLabel="{{ 'common.court-registration-address' | tlTranslate : 'cap' }}"
+                                  checkboxLabel="{{ 'legal-entities-page.correspondence-address-same-as-court-registration' | tlTranslate }}"
+                                  [expectedResults]="expectedResults.addresses">
+            </address-registration>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Упълномощени лица -->
+    <tl-card tooltipResourceName="legal-entities-page.authorized-persons-helper">
+        <tl-card-title>
+            <span *ngIf="legalName !== null && legalName !== undefined && legalName !== ''; else noLegalName">
+                {{ 'legal-entities-page.authorized-persons-title' | tlTranslate }} {{ 'common.open-quotes' | tlTranslate }}{{ legalName }}{{ 'common.close-quotes' | tlTranslate }}
+            </span>
+            <ng-template #noLegalName>
+                {{ 'legal-entities-page.authorized-persons-title-no-legal-name' | tlTranslate }}
+            </ng-template>
+        </tl-card-title>
+        <tl-card-content>
+            <div fxLayout="column" fxLayoutGap="1em">
+                <tl-data-table fxFlexFill
+                               #authorizedPeopleDataTable
+                               [isRemote]="false"
+                               [isSoftDeletable]="true"
+                               [showInactiveRecords]="!showOnlyRegixData"
+                               [showAddButton]="!viewMode && !isReadonly && !showOnlyRegixData"
+                               [rows]="authorizedPeople"
+                               (addButtonClicked)="addEditAuthorizedPerson()"
+                               (activeRecordChanged)="addEditAuthorizedPerson($event)">
+                    <div *ngIf="isPublicApp && !showOnlyRegixData && isApplication && !viewMode && !isReadonly"
+                         datatable-add-buttons
+                         fxLayout="row"
+                         fxLayoutGap="1em">
+                        <button mat-raised-button
+                                color="primary"
+                                (click)="addCurrentUserAsAuthorizedPerson()">
+                            <tl-icon icon="fa-plus-circle"
+                                     class="warn-color">
+                            </tl-icon>
+                            {{ 'legal-entities-page.add-current-user-as-authorized-person' | tlTranslate }}
+                        </button>
+                    </div>
+
+                    <data-column [flexRate]="0.3"
+                                 columnName="{{ 'legal-entities-page.authorized-person-email' | tlTranslate }}"
+                                 propertyName="email">
+                    </data-column>
+
+                    <data-column [flexRate]="0.4"
+                                 columnName="{{ 'legal-entities-page.authorized-person-full-name' | tlTranslate }}"
+                                 propertyName="fullName">
+                    </data-column>
+
+                    <data-column *ngIf="!showOnlyRegixData"
+                                 [flexRate]="0.5"
+                                 columnName="{{ 'legal-entities-page.authorized-person-roles' | tlTranslate }}"
+                                 propertyName="rolesAll">
+                    </data-column>
+
+                    <data-template-column [flexRate]="0.2" [headerClass]="'justify-center'">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div fxLayout="row" fxLayoutAlign="end center">
+                                <tl-icon *ngIf="row.data.hasRegixDataDiscrepancy"
+                                         icon="ic-exclamation"
+                                         iconClass="error-color"
+                                         [size]="icIconSize">
+                                </tl-icon>
+                                <tl-icon-button icon="visibility"
+                                                (buttonClicked)="addEditAuthorizedPerson(row.data, true)"
+                                                [iconClass]="row.data.hasRegixDataDiscrepancy ? 'error-color' : 'accent-color'"
+                                                tooltipText="{{ 'legal-entities-page.view-authorized-person-tooltip' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="!viewMode && !isReadonly && row.data.isActive"
+                                                icon="edit"
+                                                (buttonClicked)="addEditAuthorizedPerson(row.data, false)"
+                                                [iconClass]="row.data.hasRegixDataDiscrepancy ? 'error-color' : 'accent-color'"
+                                                tooltipText="{{ 'legal-entities-page.edit-authorized-person-tooltip' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="!viewMode && !isReadonly && row.data.isActive && !showOnlyRegixData"
+                                                icon="delete"
+                                                (buttonClicked)="deleteAuthorizedPerson(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'legal-entities-page.delete-authorized-person-tooltip' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="!viewMode && !isReadonly && !row.data.isActive && !showOnlyRegixData"
+                                                icon="restore"
+                                                (buttonClicked)="restoreAuthorizedPerson(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'legal-entities-page.restore-authorized-person-tooltip' | tlTranslate }}">
+                                </tl-icon-button>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+                </tl-data-table>
+
+                <mat-error *ngIf="authorizedPeopleTouched && form.errors?.atLeastOneAuthorizedPersonNeeded === true">
+                    * {{ 'legal-entities-page.at-least-one-authorized-person-needed' | tlTranslate }}
+                </mat-error>
+
+                <mat-error *ngIf="authorizedPeopleTouched && form.errors?.userWithoutPermissions === true">
+                    * {{ 'legal-entities-page.users-with-no-permissions' | tlTranslate }}: {{ noPermissionUsers }}.
+                </mat-error>
+
+                <mat-error *ngIf="showEgnAndEmailDontMatchError">
+                    * {{ 'legal-entities-page.user-already-exists-with-egn' | tlTranslate }} ({{ egnAndEmailDontMatchErrorEgnLnc }})
+                    {{ 'legal-entities-page.or-email-address' | tlTranslate }} ({{ egnAndEmailDontMatchErrorEmail }}).
+                    {{ 'legal-entities-page.has-mismatch-in-egn-email' | tlTranslate }}
+                    {{ 'legal-entities-page.please-check-if-user-data-correct' | tlTranslate }}
+                </mat-error>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Файлове -->
+    <tl-card *ngIf="!showOnlyRegixData">
+        <tl-card-title>{{ 'legal-entities-page.files' | tlTranslate }}</tl-card-title>
+        <tl-card-content fxFlexFill fxLayout="column">
+            <file-uploader-form-array formControlName="filesControl"
+                                      [pageCode]="pageCode"
+                                      [downloadFileMethod]="service.downloadFile.bind(this.service)"
+                                      [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                      [refreshFileTypes]="refreshFileTypes">
+            </file-uploader-form-array>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Проверки -->
+    <tl-card *ngIf="showOnlyRegixData">
+        <tl-card-title>{{ 'legal-entities-page.regix-checks-results' | tlTranslate }}</tl-card-title>
+        <tl-card-content>
+            <regix-checks-results [regixChecksCollection]="regixChecks"></regix-checks-results>
+        </tl-card-content>
+    </tl-card>
+</div>

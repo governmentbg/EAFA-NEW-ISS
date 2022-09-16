@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:dtos="clr-namespace:IARA.Mobile.Application.DTObjects.Profile.API;assembly=IARA.Mobile.Application"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.ProfilePage"
+        xmlns:converters="clr-namespace:IARA.Mobile.Shared.Converters;assembly=IARA.Mobile.Shared"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.ProfilePage.ProfilePage"
+        x:DataType="local:ProfileViewModel"
+        x:TypeArguments="local:ProfileViewModel"
+        x:Name="page"
+        PageInfo="{rt:Translate PageInfo, Group=Profile}"
+        Title="{rt:Translate Title, Group=Profile}">
+    <ContentPage.Resources>
+        <converters:IconProfileStatusConverter x:Key="IconProfileStatus" />
+        <converters:TranslateProfileStatusConverter x:Key="TranslateProfileStatus" />
+        <converters:NotEqualToConverter x:Key="NotEqualTo" />
+    </ContentPage.Resources>
+    <tl:TLScrollView>
+        <StackLayout Padding="10">
+            <sv:ImageUploadView Source="{Binding Photo}" Command="{Binding UploadImage}" />
+            <tl:TLAutoGrid ColMeasuseMethod="Min" OverflowMeasureMethod="Simple">
+                <tl:TLEntry tl:TLAutoGrid.MinWidth="300"
+                        Title="{rt:Translate Email, Group=Profile}"
+                        ValidState="{Binding Username}"
+                        IsEnabled="False" />
+                <tl:TLEntry tl:TLAutoGrid.MinWidth="300"
+                        Title="{rt:Translate EgnLnch, Group=Profile}"
+                        ValidState="{Binding EgnLnc}"
+                        IsEnabled="False" />
+                <tl:TLEntry tl:TLAutoGrid.MinWidth="200"
+                        Title="{rt:Translate FirstName, Group=Profile}"
+                        ValidState="{Binding FirstName}" />
+                <tl:TLEntry tl:TLAutoGrid.MinWidth="200"
+                        Title="{rt:Translate MiddleName, Group=Profile}"
+                        ValidState="{Binding MiddleName}" />
+                <tl:TLEntry tl:TLAutoGrid.MinWidth="200"
+                        Title="{rt:Translate LastName, Group=Profile}"
+                        ValidState="{Binding LastName}" />
+                <tl:TLPicker tl:TLAutoGrid.MinWidth="200"
+                        Title="{rt:Translate DocumentType, Group=Profile}"
+                        ItemsSource="{Binding DocumentTypes}"
+                        Command="{Binding DocumentChanged}"
+                        ValidState="{Binding DocumentType}" />
+                <tl:TLEntry tl:TLAutoGrid.MinWidth="200"
+                        Title="{rt:Translate DocumentNumber, Group=Profile}"
+                        ValidState="{Binding DocumentNumber}"
+                        Command="{Binding DocumentChanged}"
+                        Keyboard="Numeric" />
+                <tl:TLDatePicker tl:TLAutoGrid.MinWidth="150"
+                        Title="{rt:Translate IssuedOn, Group=Profile}"
+                        ValidState="{Binding IssuedOn}" />
+                <tl:TLEntry tl:TLAutoGrid.MinWidth="150"
+                        Title="{rt:Translate IssuedFrom, Group=Profile}"
+                        ValidState="{Binding IssuedFrom}" />
+                <tl:TLPicker tl:TLAutoGrid.MinWidth="150"
+                        Title="{rt:Translate Citizenship, Group=Profile}"
+                        ItemsSource="{Binding Countries}"
+                        ValidState="{Binding Citizenship}" />
+                <tl:TLDatePicker tl:TLAutoGrid.MinWidth="150"
+                        Title="{rt:Translate BirthDate, Group=Profile}"
+                        ValidState="{Binding BirthDate}" />
+                <tl:TLEntry tl:TLAutoGrid.MinWidth="200"
+                        Title="{rt:Translate Telephone, Group=Profile}"
+                        ValidState="{Binding Telephone}"
+                        Keyboard="Telephone" />
+            </tl:TLAutoGrid>
+            <tl:TLRadioButtonListView Spacing="5"
+                    ValidState="{Binding Gender}"
+                    ItemsSource="{Binding Genders}"
+                    Text="{rt:Translate Gender, Group=Profile}" />
+            <tl:TLCheckView Text="{rt:Translate HasBulgarianAddress, Group=Profile}" IsChecked="{Binding HasBulgarianAddressRegistration}" />
+            <sv:TLHeaderLine Text="{rt:Translate PermanentAddress, Group=Profile}" ImageGlyph="{Static h:IconFont.AddressBook}" />
+            <sv:DetailedAddressView BindingContext="{Binding PermanentAddress}" />
+            <tl:TLCheckView Text="{rt:Translate PermanentAddressMatchWithCorrespondence, Group=Profile}" IsChecked="{Binding HasSameAddressAsCorrespondence}" />
+            <StackLayout IsVisible="{Binding HasSameAddressAsCorrespondence, Converter={StaticResource OppositeBool}}">
+                <sv:TLHeaderLine Text="{rt:Translate CorrespondenceAddress, Group=Profile}" ImageGlyph="{Static h:IconFont.AddressBook}" />
+                <sv:DetailedAddressView BindingContext="{Binding CorrespondenceAddress}" />
+            </StackLayout>
+            <!--  Списък с роли  -->
+            <StackLayout IsVisible="{Binding Roles.Count, Converter={StaticResource NotEqualTo}, ConverterParameter=0}">
+                <sv:TLHeaderLine Text="{rt:Translate Roles, Group=Profile}" ImageGlyph="{Static h:IconFont.CircleInfo}" />
+                <StackLayout BindableLayout.ItemsSource="{Binding Roles}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Frame x:DataType="dtos:RoleApiDto"
+                                    Padding="10"
+                                    Margin="5,0"
+                                    CornerRadius="10"
+                                    BorderColor="{OnPlatform UWP=LightGray, Default=Transparent}">
+                                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
+                                    <Label Grid.ColumnSpan="2"
+                                            Text="{Binding Name}"
+                                            FontAttributes="Bold"
+                                            LineBreakMode="WordWrap"
+                                            Margin="0,5" />
+                                    <tl:TLRichLabel Grid.Row="1">
+                                        <Span Text="{rt:Translate From, Group=Common}" />
+                                        <Span Text=": " />
+                                        <sv:DateSpan Date="{Binding AccessValidFrom}" />
+                                    </tl:TLRichLabel>
+                                    <tl:TLRichLabel Grid.Row="1" Grid.Column="1">
+                                        <Span Text="{rt:Translate To, Group=Common}" />
+                                        <Span Text=": " />
+                                        <sv:DateSpan Date="{Binding AccessValidTo}" />
+                                    </tl:TLRichLabel>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
+            </StackLayout>
+            <!--  Списък със свързани юридически лица  -->
+            <StackLayout IsVisible="{Binding Legals.Count, Converter={StaticResource NotEqualTo}, ConverterParameter=0}">
+                <sv:TLHeaderLine Text="{rt:Translate Organizations, Group=Profile}" ImageGlyph="{Static h:IconFont.CircleInfo}" />
+                <StackLayout BindableLayout.ItemsSource="{Binding Legals}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Frame x:DataType="dtos:RegixLegalDataApiDto"
+                                    Padding="10"
+                                    Margin="5,0"
+                                    CornerRadius="10"
+                                    BorderColor="{OnPlatform UWP=LightGray, Default=Transparent}">
+                                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                    <Label Grid.ColumnSpan="2"
+                                            Text="{Binding Name}"
+                                            FontAttributes="Bold"
+                                            LineBreakMode="WordWrap"
+                                            Margin="0,5" />
+                                    <tl:TLRichLabel Grid.Row="1">
+                                        <Span Text="{rt:Translate Role, Group=Profile}" />
+                                        <Span Text=": " />
+                                        <Span Text="{Binding Role}" />
+                                    </tl:TLRichLabel>
+                                    <StackLayout Grid.Row="1"
+                                            Grid.Column="1"
+                                            Orientation="Horizontal"
+                                            Margin="0,0,5,0">
+                                        <Label FontFamily="FA"
+                                                Text="{Binding Status, Converter={StaticResource IconProfileStatus}, Mode=OneWay}"
+                                                VerticalOptions="Center" />
+                                        <Label Text="{Binding Status, Converter={StaticResource TranslateProfileStatus}, Mode=OneWay}" VerticalOptions="Center" />
+                                    </StackLayout>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
+            </StackLayout>
+            <Button Command="{Binding Save}"
+                    Text="{rt:Translate Save, Group=Common}"
+                    Margin="0,5,0,0" />
+        </StackLayout>
+    </tl:TLScrollView>
+</sv:BasePage>

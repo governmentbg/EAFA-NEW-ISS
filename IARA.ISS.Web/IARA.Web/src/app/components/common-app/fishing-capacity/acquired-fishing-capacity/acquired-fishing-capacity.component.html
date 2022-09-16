@@ -1,0 +1,91 @@
+﻿<div [formGroup]="form" fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+    <tl-radio-button-group formControlName="typeControl"
+                           direction="row"
+                           gap="1em"
+                           [options]="types">
+    </tl-radio-button-group>
+
+    <div *ngIf="form.controls.typeControl.value?.value === manners.Ranking; else freeCapLicence"
+         fxLayout="column"
+         fxLayoutGap="1em">
+        <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+            <tl-input fxFlex="25"
+                      formControlName="grossTonnageControl"
+                      tooltipResourceName="fishing-capacity.acquired-gross-tonnage-helper"
+                      label="{{ 'fishing-capacity.acquired-gross-tonnage' | tlTranslate }}">
+            </tl-input>
+            <tl-input fxFlex="25"
+                      formControlName="powerControl"
+                      tooltipResourceName="fishing-capacity.acquired-power-helper"
+                      label="{{ 'fishing-capacity.acquired-power' | tlTranslate }}">
+            </tl-input>
+            <div fxFlex="25"></div>
+            <div fxFlex="25"></div>
+        </div>
+    </div>
+
+    <ng-template #freeCapLicence>
+        <div fxLayout="column">
+            <div *ngFor="let control of certificatesArray.controls; index as i, last as last"
+                 fxLayout="row"
+                 fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="25"
+                                 [formControl]="control"
+                                 [options]="licenses"
+                                 [templateOptions]="true"
+                                 [autoMatchTextToOption]="true"
+                                 [readonly]="control.value && last !== true"
+                                 label="{{ 'fishing-capacity.acquired-licence-num' | tlTranslate }}"
+                                 tooltipResourceName="fishing-capacity.acquired-licence-num-helper">
+                </tl-autocomplete>
+
+                <tl-input fxFlex="20"
+                          [value]="control.value?.grossTonnage?.toFixed(2)"
+                          [readonly]="true"
+                          label="{{ 'fishing-capacity.acquired-licence-tonnage' | tlTranslate }}"
+                          tooltipResourceName="fishing-capacity.acquired-licence-tonnage-helper">
+                </tl-input>
+
+                <tl-input fxFlex="20"
+                          [value]="control.value?.power?.toFixed(2)"
+                          [readonly]="true"
+                          label="{{ 'fishing-capacity.acquired-licence-power' | tlTranslate }}"
+                          tooltipResourceName="fishing-capacity.acquired-licence-power-helper">
+                </tl-input>
+
+                <tl-input fxFlex="20"
+                          value="{{ control.value?.validTo | date: 'dd.MM.yyyy' }}"
+                          [readonly]="true"
+                          label="{{ 'fishing-capacity.acquired-licence-valid-to' | tlTranslate }}"
+                          tooltipResourceName="fishing-capacity.acquired-licence-valid-to-helper">
+                </tl-input>
+
+                <div fxFlex="15"
+                     fxLayout="row"
+                     [fxLayoutAlign]="last === true && !isDisabled ? 'space-between center' : 'start center'">
+                    <tl-icon-button type="MAT_ICON"
+                                    iconClass="accent-color"
+                                    icon="delete"
+                                    matTooltip="{{ 'fishing-capacity.acquired-remove-licence' | tlTranslate }}"
+                                    matTooltipShowDelay="500"
+                                    [matTooltipDisabled]="isDisabled || certificatesArray.length < 2"
+                                    [disabled]="isDisabled || certificatesArray.length < 2"
+                                    (buttonClicked)="removeLicence(i)">
+                    </tl-icon-button>
+
+                    <button *ngIf="last === true && !isDisabled"
+                            mat-raised-button
+                            color="accent"
+                            [disabled]="disableAddLicenceBtn"
+                            (click)="addEmptyLicence()">
+                        {{ 'fishing-capacity.acquired-add-licence' | tlTranslate }}
+                    </button>
+                </div>
+            </div>
+
+            <mat-error *ngIf="certificatesArray.touched && certificatesArray.errors?.licencesCapacityNotEnough === true">
+                * {{ 'fishing-capacity.acquired-licences-capacity-not-enough-error' | tlTranslate }}
+            </mat-error>
+        </div>
+    </ng-template>
+</div>

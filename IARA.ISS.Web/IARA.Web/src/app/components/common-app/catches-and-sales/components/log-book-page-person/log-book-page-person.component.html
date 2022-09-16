@@ -1,0 +1,66 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     validityCheckerGroup
+     [formGroup]="form">
+    <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
+        <tl-radio-button-group fxFlex="100"
+                               formControlName="personTypeControl"
+                               tooltipResourceName="catches-and-sales.log-book-page-person-types-group-helper"
+                               [options]="personTypes"
+                               [readonly]="readonly">
+        </tl-radio-button-group>
+    </div>
+    <div fxFlex="100"
+         fxLayout="column"
+         fxLayoutGap="1em">
+        <ng-container *ngIf="form.controls.personTypeControl.value?.value === logBookPagePersonTypesEnum.Person">
+            <regix-data formControlName="personControl"
+                        validityChecker
+                        [isPerson]="true"
+                        [isIdReadOnly]="isIdReadOnly"
+                        [isForeigner]="isForeigner"
+                        [showOnlyBasicData]="showOnlyBasicData"
+                        [readonly]="readonly"
+                        checkboxLabel="{{ 'catches-and-sales.log-book-page-person-has-bulgarian-address-registration' | tlTranslate }}">
+            </regix-data>
+            <address-registration *ngIf="!showOnlyBasicData"
+                                  formControlName="addressesControl"
+                                  addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                                  secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                                  checkboxLabel="{{ 'application-submitted-for.permanent-address-same-as-correspondence' | tlTranslate }}"
+                                  validityChecker
+                                  [readonly]="readonly">
+            </address-registration>
+        </ng-container>
+        <ng-container *ngIf="form.controls.personTypeControl.value?.value === logBookPagePersonTypesEnum.LegalPerson">
+            <regix-data formControlName="legalControl"
+                        validityChecker
+                        [isPerson]="false"
+                        [showCustodianOfProperty]="false"
+                        [isForeigner]="isForeigner"
+                        [isIdReadOnly]="isIdReadOnly"
+                        [showOnlyBasicData]="showOnlyBasicData"
+                        [readonly]="readonly"
+                        checkboxLabel="{{ 'catches-and-sales.log-book-page-person-has-bulgarian-address-registration' | tlTranslate }}">
+            </regix-data>
+            <address-registration *ngIf="!showOnlyBasicData"
+                                  formControlName="addressesControl"
+                                  addressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                                  secondAddressLabel="{{ 'common.company-headquarters-address' | tlTranslate : 'cap' }}"
+                                  validityChecker
+                                  [readonly]="readonly">
+            </address-registration>
+        </ng-container>
+        <ng-container *ngIf="form.controls.personTypeControl.value?.value === logBookPagePersonTypesEnum.RegisteredBuyer">
+            <tl-autocomplete fxFlex="100"
+                             formControlName="registeredBuyerControl"
+                             label="{{ 'catches-and-sales.log-book-page-person-registered-buyer' | tlTranslate }}"
+                             tooltipResourceName="catches-and-sales.log-book-page-person-registered-buyer-helper"
+                             [options]="registeredBuyers"
+                             [readonly]="readonly">
+            </tl-autocomplete>
+        </ng-container>
+    </div>
+</div>

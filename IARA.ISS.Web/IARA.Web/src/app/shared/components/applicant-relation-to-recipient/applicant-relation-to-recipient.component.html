@@ -1,0 +1,9 @@
+﻿<div [formGroup]="form" fxLayout="column" fxLayoutGap="1em">
+    <tl-radio-button-group formControlName="roleControl"
+                           [options]="submittedByRoles">
+    </tl-radio-button-group>
+
+    <letter-of-attorney *ngIf="hasLetterOfAttorney === true"
+                        formControlName="letterOfAttorneyControl">
+    </letter-of-attorney>
+</div>

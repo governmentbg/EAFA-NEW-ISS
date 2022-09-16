@@ -1,0 +1,57 @@
+﻿<div [formGroup]="form" fxLayout="column" fxLayoutGap="1em" fxFlexFill fxLayoutAlign="space-between stretch">
+
+    <tl-checkbox formControlName="personRegisteredControl"
+                 [label]="label">
+    </tl-checkbox>
+
+    <tl-autocomplete *ngIf="isFromRegister"
+                     formControlName="subjectControl"
+                     [label]="title"
+                     [options]="subjects">
+    </tl-autocomplete>
+
+    <ng-container *ngIf="!isFromRegister">
+        <tl-radio-button-group *ngIf="legalType !== null && legalType !== undefined"
+                               fxFlexFill
+                               formControlName="personTypeControl"
+                               direction="row"
+                               gap="1em"
+                               [options]="personTypes">
+        </tl-radio-button-group>
+
+        <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+            <ng-container *ngIf="form.controls.personTypeControl.value?.value === logBookPagePersonTypesEnum.Person">
+                <regix-data formControlName="personControl"
+                            [isPerson]="true"
+                            [isIdReadOnly]="false"
+                            [isForeigner]="false"
+                            [includeForeigner]="true"
+                            [showOnlyBasicData]="true"
+                            checkboxLabel="{{ 'catches-and-sales.log-book-page-person-has-bulgarian-address-registration' | tlTranslate }}">
+                </regix-data>
+            </ng-container>
+            <ng-container *ngIf="form.controls.personTypeControl.value?.value === logBookPagePersonTypesEnum.LegalPerson">
+                <regix-data formControlName="legalControl"
+                            [isPerson]="false"
+                            [showCustodianOfProperty]="false"
+                            [isForeigner]="true"
+                            [isIdReadOnly]="false"
+                            [showOnlyBasicData]="true"
+                            checkboxLabel="{{ 'catches-and-sales.log-book-page-person-has-bulgarian-address-registration' | tlTranslate }}">
+                </regix-data>
+            </ng-container>
+        </div>
+    </ng-container>
+
+    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+        <tl-input fxFlex="50"
+                  formControlName="addressControl"
+                  label="{{ 'inspections.address' | tlTranslate }}">
+        </tl-input>
+        <tl-autocomplete fxFlex="50"
+                         formControlName="countryControl"
+                         label="{{ 'inspections.country' | tlTranslate }}"
+                         [options]="countries">
+        </tl-autocomplete>
+    </div>
+</div>

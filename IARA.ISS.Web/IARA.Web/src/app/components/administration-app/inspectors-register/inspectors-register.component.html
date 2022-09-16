@@ -1,0 +1,76 @@
+﻿<mat-tab-group id="main-content" mat-align-tabs="start" fxFlexFill (selectedTabChange)="tabChanged($event)">
+    <mat-tab label="{{ 'inspectors-register.user-inspectors' | tlTranslate }}">
+        <div fxLayout="column" fxLayoutGroup="5px" fxLayoutAlign="start stretch" fxFill>
+            <search-panel [translateService]="translate">
+                <div [formGroup]="inspectorsFormGroup" fxLayout="column" fxLayoutAlign="start start">
+                    <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
+                        <tl-input fxFlex="25"
+                                  formControlName="inspectorFirstNameControl"
+                                  label="{{ 'inspectors-register.first-name' | tlTranslate }}"
+                                  tooltipResourceName="inspectors-register.first-name-helper">
+                        </tl-input>
+                        <tl-input fxFlex="25"
+                                  formControlName="inspectorLastNameControl"
+                                  label="{{ 'inspectors-register.last-name' | tlTranslate }}"
+                                  tooltipResourceName="inspectors-register.last-name-helper">
+                        </tl-input>
+                        <tl-autocomplete fxFlex="25"
+                                         formControlName="userIdControl"
+                                         [options]="usernames"
+                                         label="{{ 'inspectors-register.username' | tlTranslate }}"
+                                         tooltipResourceName="inspectors-register.username-helper">
+                        </tl-autocomplete>
+                        <tl-input fxFlex="25"
+                                  formControlName="inspectorCardNumControl"
+                                  label="{{ 'inspectors-register.inspector-card-num' | tlTranslate }}"
+                                  tooltipResourceName="inspectors-register.inspector-card-num-helper">
+                        </tl-input>
+                    </div>
+                </div>
+            </search-panel>
+
+            <tl-card tooltipResourceName="inspectors-register.inspectors-helper">
+                <tl-card-content>
+                    <tl-data-table [showAddButton]="canAddRecords"
+                                   [showInactiveRecords]="canRestoreRecords"
+                                   [isSoftDeletable]="true"
+                                   (addButtonClicked)="onAddRecord()"
+                                   (activeRecordChanged)="onEditRecord($event)"
+                                   (recordChanged)="inspectorRecordChanged($event)">
+                        <data-column [hidden]="true"
+                                     propertyName="id"
+                                     dataType="number">
+                        </data-column>
+                        <data-column propertyName="userId"
+                                     [flexRate]="0.3"
+                                     [formGroup]="addInspectorFormGroup"
+                                     [options]="usernames"
+                                     dataType="nomenclature"
+                                     columnName="{{ 'inspectors-register.username' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="firstName"
+                                     [flexRate]="0.3"
+                                     [formGroup]="addInspectorFormGroup"
+                                     columnName="{{ 'inspectors-register.first-name' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="lastName"
+                                     [flexRate]="0.3"
+                                     [formGroup]="addInspectorFormGroup"
+                                     columnName="{{ 'inspectors-register.last-name' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="inspectorCardNum"
+                                     [flexRate]="0.3"
+                                     [formGroup]="addInspectorFormGroup"
+                                     columnName="{{ 'inspectors-register.inspector-card-num' | tlTranslate }}">
+                        </data-column>
+                        <data-column-inline [flexRate]="0.1" *ngIf="canEditRecords"></data-column-inline>
+                    </tl-data-table>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </mat-tab>
+    <mat-tab label="{{ 'inspectors-register.unregistered-inspectors' | tlTranslate }}">
+        <unregistered-inspectors *ngIf="unregisteredInspectorsLoaded">
+        </unregistered-inspectors>
+    </mat-tab>
+</mat-tab-group>

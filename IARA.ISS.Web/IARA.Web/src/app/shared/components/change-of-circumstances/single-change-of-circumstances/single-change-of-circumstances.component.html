@@ -1,0 +1,50 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="form">
+    <!-- Тип промяна -->
+    <div fxLayout="row" fxLayoutAlign="center center">
+        <tl-autocomplete fxFlex="100"
+                         formControlName="changeTypeControl"
+                         [options]="changeTypes"
+                         label="{{ 'change-of-circumstances.change-type' | tlTranslate }}">
+        </tl-autocomplete>
+    </div>
+
+    <!-- Описание -->
+    <div *ngIf="form.controls.changeTypeControl!.value" fxLayout="row" fxLayoutAlign="center center">
+        <tl-textarea *ngIf="form.controls.changeTypeControl!.value?.dataType === dataTypes.FreeText; else notFreeText"
+                     fxFlex="100"
+                     formControlName="descriptionControl"
+                     label="{{ 'change-of-circumstances.description' | tlTranslate }}">
+        </tl-textarea>
+
+        <ng-template #notFreeText>
+            <tl-input fxFlex="100"
+                      formControlName="descriptionControl"
+                      label="{{ 'change-of-circumstances.description' | tlTranslate }}">
+            </tl-input>
+        </ng-template>
+    </div>
+
+    <!-- Подробности -->
+    <div fxLayout="row" fxLayoutAlign="center center" [ngSwitch]="form.controls.changeTypeControl!.value?.dataType">
+        <regix-data *ngSwitchCase="dataTypes.Person"
+                    fxFlexFill
+                    formControlName="personControl"
+                    [isPerson]="true"
+                    checkboxLabel="{{ 'change-of-circumstances.has-bulgarian-address-registration' | tlTranslate }}">
+        </regix-data>
+
+        <regix-data *ngSwitchCase="dataTypes.Legal"
+                    fxFlexFill
+                    formControlName="legalControl"
+                    [isPerson]="false"
+                    [showCustodianOfProperty]="true"
+                    checkboxLabel="{{ 'change-of-circumstances.has-bulgarian-address-registration' | tlTranslate }}">
+        </regix-data>
+
+        <address-registration *ngSwitchCase="dataTypes.Address"
+                              fxFlexFill
+                              formControlName="addressControl"
+                              addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}">
+        </address-registration>
+    </div>
+</div>

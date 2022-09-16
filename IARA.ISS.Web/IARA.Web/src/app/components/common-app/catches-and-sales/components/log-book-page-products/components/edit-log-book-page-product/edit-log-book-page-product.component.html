@@ -1,0 +1,138 @@
+﻿<div class="dialog-padding" validityCheckerGroup>
+    <tl-card [validityChecker]="form">
+        <tl-card-content fxFlexFill
+                         fxLayout="column"
+                         fxLayoutGap="1em"
+                         fxLayoutAlign="space-between stretch"
+                         [formGroup]="form">
+            <div *ngIf="logBookType !== logBookTypesEnum.Aquaculture; else noCatchLocation"
+                 fxFLex="100"
+                 fxLayout="row"
+                 fxLayoutAlign="space-between center">
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="aquaticOrganismTypeControl"
+                                 label="{{ 'catches-and-sales.page-product-aquatic-organism-type' | tlTranslate }}"
+                                 [options]="aquaticOrganismTypes"
+                                 [readonly]="!isAdd">
+                </tl-autocomplete>
+                <tl-input fxFlex="33"
+                          formControlName="minimumSizeControl"
+                          label="{{ 'catches-and-sales.page-product-min-size' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="catchLocationControl"
+                          label="{{ 'catches-and-sales.page-product-catch-location' | tlTranslate }}"
+                          [readonly]="!isAdd">
+                </tl-input>
+            </div>
+            <ng-template #noCatchLocation>
+                <div fxFLex="100"
+                     fxLayout="row"
+                     fxLayoutAlign="space-between center">
+                    <tl-autocomplete fxFlex="33"
+                                     formControlName="aquaticOrganismTypeControl"
+                                     label="{{ 'catches-and-sales.page-product-aquatic-organism-type' | tlTranslate }}"
+                                     [options]="aquaticOrganismTypes">
+                    </tl-autocomplete>
+                    <tl-input fxFlex="33"
+                              formControlName="averageUnitWeightKgControl"
+                              label="{{ 'catches-and-sales.page-product-average-unit-weight-kg' | tlTranslate }}">
+                    </tl-input>
+                    <tl-autocomplete fxFlex="33"
+                                     formControlName="presentationControl"
+                                     label="{{ 'catches-and-sales.page-product-presentation' | tlTranslate }}"
+                                     [options]="presentations">
+                    </tl-autocomplete>
+                </div>
+            </ng-template>
+            <div *ngIf="logBookType !== logBookTypesEnum.Aquaculture; else noFreshness"
+                 fxFlex="100"
+                 fxLayout="row"
+                 fxLayoutAlign="space-between center"
+                 fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="presentationControl"
+                                 label="{{ 'catches-and-sales.page-product-presentation' | tlTranslate }}"
+                                 [options]="presentations">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="purposeControl"
+                                 label="{{ 'catches-and-sales.page-product-purpose' | tlTranslate }}"
+                                 [options]="purposes">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="freshnessControl"
+                                 label="{{ 'catches-and-sales.page-product-freshness' | tlTranslate }}"
+                                 [options]="freshnessCategories">
+                </tl-autocomplete>
+            </div>
+            <ng-template #noFreshness>
+                <div fxFlex="100"
+                     fxLayout="row"
+                     fxLayoutAlign="space-between center"
+                     fxLayoutGap="1em">
+                    <tl-autocomplete fxFlex="33"
+                                     formControlName="purposeControl"
+                                     label="{{ 'catches-and-sales.page-product-purpose' | tlTranslate }}"
+                                     [options]="purposes">
+                    </tl-autocomplete>
+                    <tl-autocomplete *ngIf="showFishCategoryControl"
+                                     fxFlex="33"
+                                     formControlName="sizeCategoryControl"
+                                     label="{{ 'catches-and-sales.page-product-size-category' | tlTranslate }}"
+                                     [codeInTemplateOptions]="true"
+                                     [templateOptions]="true"
+                                     [options]="sizeCategories">
+                    </tl-autocomplete>
+                    <div *ngIf="!showFishCategoryControl" fxFlex="33"></div>
+                    <div fxFlex="33"></div>
+                </div>
+            </ng-template>
+            <div *ngIf="logBookType !== logBookTypesEnum.Aquaculture"
+                 fxFlex="100"
+                 fxLayout="row"
+                 fxLayoutAlign="space-between center"
+                 fxLayoutGap="1em">
+                <tl-autocomplete *ngIf="showFishCategoryControl"
+                                 fxFlex="33"
+                                 formControlName="sizeCategoryControl"
+                                 label="{{ 'catches-and-sales.page-product-size-category' | tlTranslate }}"
+                                 [codeInTemplateOptions]="true"
+                                 [templateOptions]="true"
+                                 [options]="sizeCategories">
+                </tl-autocomplete>
+                <div *ngIf="!showFishCategoryControl" fxFlex="66"></div>
+            </div>
+            <div *ngIf="showTurbotControls" fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="turbotSizeGroupControl"
+                                 label="{{ 'catches-and-sales.page-product-turbot-size-group' | tlTranslate }}"
+                                 [options]="turbotSizeGroups">
+                </tl-autocomplete>
+                <tl-input fxFlex="33"
+                          formControlName="unitCountControl"
+                          label="{{ 'catches-and-sales.page-product-turbot-count' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="averageUnitWeightKgControl"
+                          label="{{ 'catches-and-sales.page-product-turbot-average-unit-weigth-kg' | tlTranslate }}">
+                </tl-input>
+            </div>
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="33"
+                          formControlName="quantityKgControl"
+                          label="{{ 'catches-and-sales.page-product-quantity-kg' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="unitPriceControl"
+                          label="{{ 'catches-and-sales.page-product-unit-price' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="totalPriceControl"
+                          label="{{ 'catches-and-sales.page-product-total-price' | tlTranslate }}"
+                          [readonly]="true">
+                </tl-input>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

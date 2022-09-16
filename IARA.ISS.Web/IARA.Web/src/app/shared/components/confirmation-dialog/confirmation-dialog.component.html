@@ -1,0 +1,14 @@
+﻿<mat-toolbar color="primary" class="m-0" style="min-height: 1em !important; height: 2em;">
+    <mat-toolbar-row fxFlex fxLayout="row" style="height: 2em !important;" class="flex-basis-Auto" fxLayoutAlign="space-between center">
+        <h1 matDialogTitle>{{ title }}</h1>
+    </mat-toolbar-row>
+</mat-toolbar>
+<div class="dialog-size">
+    <mat-dialog-content class="m-t-8">
+        <span>{{ message }}</span>
+    </mat-dialog-content>
+</div>
+<mat-dialog-actions class="m-0 p-b-0" fxLayout="row" fxLayoutAlign="space-between center">
+    <button mat-raised-button color="primary" (click)="cancel()">{{ cancelBtnLabel }}</button>
+    <button mat-raised-button color="accent" (click)="confirm()">{{ okBtnLabel }}</button>
+</mat-dialog-actions>

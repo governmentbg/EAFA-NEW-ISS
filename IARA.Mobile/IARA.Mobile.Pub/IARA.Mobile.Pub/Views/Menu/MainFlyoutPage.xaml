@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="IARA.Mobile.Pub.Views.Menu.MainFlyoutPage"
+        xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:ffimg="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+        xmlns:menu="clr-namespace:IARA.Mobile.Shared.Menu;assembly=IARA.Mobile.Shared"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:local="clr-namespace:IARA.Mobile.Pub.Views.Menu"
+        x:DataType="local:MainFlyoutPage"
+        Title="If you see this, report it as a bug"
+        BackgroundColor="{StaticResource BackgroundColor}"
+        IconImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Bars}, Color=White}">
+    <Grid RowDefinitions="Auto,1,*,50"
+            Padding="{OnPlatform iOS='0, 20, 0, 0'}"
+            RowSpacing="0">
+        <Grid ColumnDefinitions="Auto,*">
+            <ffimg:CachedImage Source="iara_logo"
+                    DownsampleToViewSize="True"
+                    HeightRequest="65"
+                    Margin="5" />
+            <Label Grid.Column="1"
+                    Text="{rt:Translate Title, Group=Menu}"
+                    FontSize="18"
+                    LineBreakMode="WordWrap"
+                    HorizontalTextAlignment="Center"
+                    Margin="5,0"
+                    VerticalOptions="Center" />
+        </Grid>
+        <BoxView Grid.Row="1"
+                BackgroundColor="LightGray"
+                HeightRequest="1" />
+        <ScrollView Grid.Row="2">
+            <StackLayout Spacing="0">
+                <StackLayout x:Name="NavigationItemsLayout"
+                        Padding="0,5"
+                        Spacing="0">
+                    <menu:NavigationItemView Icon="{Static h:IconFont.House}"
+                            Route="HomePage"
+                            Text="{rt:Translate HomePage, Group=Menu}" />
+                    <menu:NavigationItemView x:Name="fishingTicketPage"
+                            Icon="{Static h:IconFont.Ticket}"
+                            Route="FishingTicketPage"
+                            Text="{rt:Translate FishingTicketTitle, Group=Menu}" />
+                    <menu:NavigationItemView x:Name="catchRecordsPage"
+                            Icon="{Static h:IconFont.Fish}"
+                            Route="CatchRecordsPage"
+                            Text="{rt:Translate CaughtFishesTitle, Group=Menu}" />
+                    <menu:NavigationItemView Icon="{Static h:IconFont.Newspaper}"
+                            Route="NewsPage"
+                            Text="{rt:Translate NewsTitle, Group=Menu}" />
+                    <menu:NavigationItemView x:Name="scientificFishingPage"
+                            Icon="{Static h:IconFont.Fish}"
+                            Route="ScientificFishingPage"
+                            Text="{rt:Translate ScientificFishingPage, Group=Menu}" />
+                    <menu:NavigationItemView x:Name="myTicketsPage"
+                            Icon="{Static h:IconFont.MoneyCheck}"
+                            Route="MyTicketsPage"
+                            Text="{rt:Translate MyTickets, Group=Menu}" />
+                    <menu:NavigationItemView x:Name="reportViolationPage"
+                            Icon="{Static h:IconFont.TriangleExclamation}"
+                            Route="ReportViolationPage"
+                            Text="{rt:Translate ViolationSignal, Group=Menu}" />
+                    <menu:NavigationItemView x:Name="reportsPage"
+                            Icon="{Static h:IconFont.List}"
+                            Route="ReportsPage"
+                            Text="{rt:Translate ReportsTitle, Group=Menu}" />
+                </StackLayout>
+                <BoxView Margin="5,0,5,5"
+                        BackgroundColor="LightGray"
+                        HeightRequest="1"
+                        HorizontalOptions="FillAndExpand" />
+                <menu:NavigationItemView x:Name="languageNavItem"
+                        Icon="{Static h:IconFont.Globe}"
+                        Route="Language"
+                        Text="{rt:Translate Language, Group=Menu}" />
+                <menu:NavigationItemView x:Name="profileNavItem"
+                        Icon="{Static h:IconFont.User}"
+                        Route="ProfilePage"
+                        Text="{rt:Translate ProfilePage, Group=Menu}" />
+                <menu:NavigationItemView x:Name="logoutNavItem"
+                        Icon="{Static h:IconFont.ArrowRightFromBracket}"
+                        Route="Logout"
+                        Text="{rt:Translate Logout, Group=Menu}" />
+            </StackLayout>
+        </ScrollView>
+        <tl:TLRichLabel Grid.Row="3"
+                Margin="20,0"
+                TextColor="{StaticResource Primary}"
+                VerticalOptions="Center">
+            <Span Text="{rt:Translate Version, Group=Menu}" />
+            <Span Text=" " />
+            <Span x:Name="VersionSpan" />
+            <tl:TLRichLabel.GestureRecognizers>
+                <TapGestureRecognizer Tapped="ClickVersionLabel_Clicked" />
+            </tl:TLRichLabel.GestureRecognizers>
+        </tl:TLRichLabel>
+    </Grid>
+</ContentPage>

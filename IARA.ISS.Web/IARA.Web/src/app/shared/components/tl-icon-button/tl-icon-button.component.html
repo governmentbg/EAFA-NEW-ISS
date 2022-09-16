@@ -1,0 +1,17 @@
+﻿<button mat-icon-button (click)="onButtonClicked($event)"
+        [matTooltip]="tooltipText"
+        matTooltipPosition="above"
+        matTooltipHideDelay="250"
+        class="transparent-btn-icon cursor-pointer"
+        (mouseover)="onMouseOver($event)"
+        (mouseout)="onMouseOut($event)"
+        [disabled]="disabled"
+        [ngClass]="{
+            'disabled': disabled
+        }">
+    <tl-icon [type]="type"
+             [icon]="icon"
+             [size]="size"
+             [iconClass]="iconClass"
+             [iconColor]="iconColor"></tl-icon>
+</button>

@@ -1,0 +1,191 @@
+﻿<div fxLayout="column" fxLayoutGap="5px" fxLayoutAlign="start stretch" fxFill>
+    <search-panel class="full-width" [translateService]="translationService">
+        <div [formGroup]="filterFormGroup" fxFlexFill fxLayout="column" fxLayoutGap="1em">
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="25"
+                                 label="{{ 'buyers-and-sales-centers.type' | tlTranslate }}"
+                                 tooltipResourceName="buyers-and-sales-centers.type-helper"
+                                 formControlName="entryTypesControl"
+                                 [options]="entryTypes">
+                </tl-autocomplete>
+
+                <tl-input fxFlex="25"
+                          formControlName="urorrNumberControl"
+                          label="{{ 'buyers-and-sales-centers.urorr-number' | tlTranslate }}"
+                          tooltipResourceName="buyers-and-sales-centers.urorr-number-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="registrationNumberControl"
+                          label="{{ 'buyers-and-sales-centers.registration-number' | tlTranslate }}"
+                          tooltipResourceName="buyers-and-sales-centers.registration-number-helper">
+                </tl-input>
+
+                <tl-autocomplete *ngIf="hasReadAllPermission; else hasOnlyReadPermission"
+                                 fxFlex="25"
+                                 formControlName="territoryUnitControl"
+                                 label="{{ 'buyers-and-sales-centers.territory-unit' | tlTranslate }}"
+                                 tooltipResourceName="buyers-and-sales-centers.territory-unit-helper"
+                                 [options]="territoryUnits">
+                </tl-autocomplete>
+
+                <ng-template #hasOnlyReadPermission>
+                    <div fxFlex="25"></div>
+                </ng-template>
+            </div>
+
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-date-range fxFlex="25"
+                               formControlName="dateRangeControl"
+                               label="{{ 'buyers-and-sales-centers.registration-date' | tlTranslate }} {{ 'buyers-and-sales-centers.in-range' | tlTranslate }}"
+                               tooltipResourceName="buyers-and-sales-centers.registration-date-in-range-helper">
+                </tl-date-range>
+
+                <tl-input fxFlex="25"
+                          formControlName="utilityNameControl"
+                          label="{{ 'buyers-and-sales-centers.utility-name' | tlTranslate }}"
+                          tooltipResourceName="buyers-and-sales-centers.utility-name-helper">
+                </tl-input>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="populatedAreaControl"
+                                 [options]="populatedAreas"
+                                 [templateOptions]="true"
+                                 label="{{ 'buyers-and-sales-centers.premises-populated-area' | tlTranslate }}"
+                                 tooltipResourceName="buyers-and-sales-centers.premises-populated-area-helper">
+                </tl-autocomplete>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="districtControl"
+                                 label="{{ 'buyers-and-sales-centers.premises-district' | tlTranslate }}"
+                                 tooltipResourceName="buyers-and-sales-centers.premises-district-helper"
+                                 [options]="districts">
+                </tl-autocomplete>
+            </div>
+
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="ownerNameControl"
+                          label="{{ 'buyers-and-sales-centers.owner-name' | tlTranslate }}"
+                          tooltipResourceName="buyers-and-sales-centers.owner-name-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="ownerEikControl"
+                          label="{{ 'buyers-and-sales-centers.owner-eik' | tlTranslate }}"
+                          tooltipResourceName="buyers-and-sales-centers.owner-eik-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="organizerNameControl"
+                          label="{{ 'buyers-and-sales-centers.organizer-name' | tlTranslate }}"
+                          tooltipResourceName="buyers-and-sales-centers.organizer-name-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="organizerEgnControl"
+                          label="{{ 'buyers-and-sales-centers.organizer-egn' | tlTranslate }}"
+                          tooltipResourceName="buyers-and-sales-centers.organizer-egn-helper">
+                </tl-input>
+            </div>
+
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-select fxFlex="25"
+                           formControlName="buyerSatusesControl"
+                           [options]="buyerStatuses"
+                           [isMultiple]="true"
+                           tooltipResourceName="buyers-and-sales-centers.buyer-status-filter-helper"
+                           label="{{ 'buyers-and-sales-centers.buyer-status-filter' | tlTranslate }}">
+                </tl-select>
+
+                <tl-input fxFlex="25"
+                          formControlName="logNumberControl"
+                          label="{{ 'buyers-and-sales-centers.log-book-number' | tlTranslate }}"
+                          tooltipResourceName="buyers-and-sales-centers.log-book-number-helper">
+                </tl-input>
+
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+            </div>
+        </div>
+    </search-panel>
+
+    <tl-card tooltipResourceName="buyers-and-sales-centers.register-table-card-helper">
+        <tl-card-content>
+            <tl-data-table fxFlexFill
+                           [showAddButton]="canAddRecords"
+                           [showInactiveRecords]="canRestoreRecords"
+                           (addButtonClicked)="addEntry()"
+                           (activeRecordChanged)="editEntry($event, !$event.isActive && !canEditRecords)">
+                <data-column [flexRate]="0.2"
+                             columnName="{{ 'buyers-and-sales-centers.type' | tlTranslate }}"
+                             propertyName="buyerTypeName">
+                </data-column>
+
+                <data-column [flexRate]="0.5"
+                             columnName="{{ 'buyers-and-sales-centers.submitted-for-name' | tlTranslate }}"
+                             propertyName="submittedForName">
+                </data-column>
+
+                <data-column [flexRate]="0.4"
+                             columnName="{{ 'buyers-and-sales-centers.subject-names' | tlTranslate }}"
+                             propertyName="subjectNames">
+                </data-column>
+
+                <data-column [flexRate]="0.3"
+                             columnName="{{ 'buyers-and-sales-centers.urorr-number' | tlTranslate }}"
+                             propertyName="urorrNumber">
+                </data-column>
+
+                <data-column [flexRate]="0.3"
+                             columnName="{{ 'buyers-and-sales-centers.registration-number' | tlTranslate }}"
+                             propertyName="registrationNumber">
+                </data-column>
+
+                <data-column [flexRate]="0.2"
+                             columnName="{{ 'buyers-and-sales-centers.registration-date' | tlTranslate }}"
+                             propertyName="registrationDate"
+                             dataType="date">
+                </data-column>
+
+                <data-column [flexRate]="0.2"
+                             columnName="{{ 'buyers-and-sales-centers.buyer-status' | tlTranslate }}"
+                             propertyName="buyerStatusName">
+                </data-column>
+
+                <data-template-column [cellClass]="'justify-center min-w-50'" [flexRate]="0.3">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button icon="visibility"
+                                            (buttonClicked)="editEntry(row, true)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'buyers-and-sales-centers.view-buyer-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.data.isActive && canEditRecords"
+                                            icon="edit"
+                                            (buttonClicked)="editEntry(row, false)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'buyers-and-sales-centers.edit-buyer-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.data.isActive && canDeleteRecords"
+                                            icon="delete"
+                                            (buttonClicked)="deleteEntry(row)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'buyers-and-sales-centers.delete-buyer-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="!row.data.isActive && canRestoreRecords"
+                                            icon="restore"
+                                            (buttonClicked)="restoreEntry(row)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'buyers-and-sales-centers.restore-buyer-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+</div>

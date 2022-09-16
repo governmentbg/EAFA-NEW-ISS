@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages"
+        x:Class="IARA.Mobile.Pub.Views.FlyoutPages.LoginPage"
+        x:DataType="viewModels:LoginViewModel"
+        x:TypeArguments="viewModels:LoginViewModel"
+        x:Name="page"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <StackLayout VerticalOptions="Center">
+        <StackLayout HorizontalOptions="Center"
+                VerticalOptions="Center"
+                IsVisible="{Binding NoInternet}">
+            <Label Text="{rt:Translate NoInternetConnection, Group=CommonOffline}" />
+            <Button Text="{rt:Translate TryAgain, Group=CommonOffline}" Command="{Binding Retry}" />
+        </StackLayout>
+        <StackLayout HorizontalOptions="Center"
+                VerticalOptions="Center"
+                IsVisible="{Binding NoServerConnection}">
+            <Label Text="{rt:Translate NoServerConnection, Group=CommonOffline}" />
+            <Button Text="{rt:Translate TryAgain, Group=CommonOffline}" Command="{Binding Retry}" />
+        </StackLayout>
+    </StackLayout>
+</sv:BasePage>

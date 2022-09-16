@@ -1,0 +1,28 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="form">
+    <div fxLayout="row" fxLayoutGap="1em">
+        <tl-input fxFlex="20"
+                  formControlName="auanNumControl"
+                  label="{{ 'penal-decrees.edit-auan-num' | tlTranslate }}">
+        </tl-input>
+
+        <tl-date fxFlex="20"
+                 formControlName="auanDraftDateControl"
+                 [max]="today"
+                 label="{{ 'penal-decrees.edit-auan-draft-date' | tlTranslate }}">
+        </tl-date>
+
+        <tl-input fxFlex="20"
+                  formControlName="auanDrafterControl"
+                  label="{{ 'penal-decrees.edit-auan-drafter' | tlTranslate }}">
+        </tl-input>
+
+        <tl-input fxFlex="40"
+                  formControlName="auanLocationDescriptionControl"
+                  label="{{ 'penal-decrees.edit-auan-location-description' | tlTranslate }}">
+        </tl-input>
+    </div>
+
+    <inspected-entity-basic-info formControlName="auanInspectedEntityControl"
+                                 [viewMode]="true">
+    </inspected-entity-basic-info>
+</div>

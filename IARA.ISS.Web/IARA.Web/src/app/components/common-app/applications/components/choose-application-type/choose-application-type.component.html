@@ -1,0 +1,73 @@
+﻿<tl-card>
+    <tl-card-content fxLayoutGap="1em" fxLayout="column">
+        <tl-data-table #table
+                       [showAddButton]="false"
+                       [showInactiveRecords]="false"
+                       [isRemote]="false"
+                       [rows]="applicationTypes"
+                       [groupRowsByFieldName]="'groupId'"
+                       [rowClass]="getRowClass"
+                       class="custom-row-background">
+            <group-header>
+                <ng-template let-group="group"
+                             let-expanded="expanded"
+                             ngx-datatable-group-header-template>
+                    <div fxLayout="row" class="h-48"
+                         [ngClass]="{
+                                'not-selected': group.value.length === 1 && !group.value[0].IsChecked,
+                                'selected': group.value.length === 1 && group.value[0].IsChecked
+                             }">
+                        <div fxFlex="48px"
+                             fxLayout="column"
+                             fxLayoutAlign="center center"
+                             [class.datatable-icon-right]="!expanded"
+                             [class.datatable-icon-down]="expanded"
+                             class="accent-color"
+                             (click)="toggleExpandGroup(group)"
+                             *ngIf="group.value.length > 1">
+                        </div>
+                        <div *ngIf="group.value.length === 1"
+                             fxFlex="48px"
+                             fxLayoutAlign="center center">
+                            <label for="chk{{ group.value[0].groupId }}" class="datatable-checkbox" fxLayoutAlign="center center">
+                                <input type="checkbox"
+                                       id="chk{{ group.value[0].groupId }}"
+                                       name="{{ group.value[0].groupId }}"
+                                       value="2"
+                                       [checked]="group.value[0].IsChecked"
+                                       (change)="checkedGroup($event, group)" />
+                            </label>
+                        </div>
+                        <div fxFlex fxLayout="column" fxLayoutAlign="center start" *ngIf="group.value.length > 1">
+                            <span>
+                                <b>{{ group.value[0].data.groupName }}</b>
+                            </span>
+                        </div>
+                        <div fxFlex fxLayout="column" fxLayoutAlign="center start" *ngIf="group.value.length === 1">
+                            <span>{{ group.value[0].data.displayName }}</span>
+                        </div>
+                    </div>
+                </ng-template>
+            </group-header>
+            <data-template-column propertyName="" [flexRate]="0.001" columnName="">
+                <ng-template ngx-datatable-cell-template
+                             let-rowIndex="rowIndex"
+                             let-value="value"
+                             let-row="row"
+                             let-group="group">
+                    <label for="ep1{{ rowIndex }}" class="datatable-checkbox">
+                        <input type="checkbox"
+                               id="ep1{{ rowIndex }}"
+                               value="0"
+                               [checked]="row.data['isChecked']"
+                               (change)="checkedRow($event, row)" />
+                    </label>
+                </ng-template>
+            </data-template-column>
+            <data-column propertyName="displayName"
+                         columnName="{{ 'applications-register.application-type-name' | tlTranslate }}">
+            </data-column>
+        </tl-data-table>
+        <mat-error *ngIf="noApplicationTypeChosenValidation">{{ 'applications-register.application-type-must-be-selected' | tlTranslate }}*</mat-error>
+    </tl-card-content>
+</tl-card>

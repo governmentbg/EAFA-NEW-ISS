@@ -1,0 +1,217 @@
+﻿import { HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import { IApplicationRegister } from '../../interfaces/common-app/application-register.interface';
+import { IRecreationalFishingService } from '../../interfaces/common-app/recreational-fishing.interface';
+import { GridRequestModel } from '@app/models/common/grid-request.model';
+import { GridResultModel } from '@app/models/common/grid-result.model';
+import { ApplicationRegisterDTO } from '@app/models/generated/dtos/ApplicationRegisterDTO';
+import { AssignedApplicationInfoDTO } from '@app/models/generated/dtos/AssignedApplicationInfoDTO';
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { RecreationalFishingTicketApplicationDTO } from '@app/models/generated/dtos/RecreationalFishingTicketApplicationDTO';
+import { RecreationalFishingTicketBaseRegixDataDTO } from '@app/models/generated/dtos/RecreationalFishingTicketBaseRegixDataDTO';
+import { RecreationalFishingTicketDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDTO';
+import { RecreationalFishingTicketHolderDTO } from '@app/models/generated/dtos/RecreationalFishingTicketHolderDTO';
+import { RecreationalFishingTicketPriceDTO } from '@app/models/generated/dtos/RecreationalFishingTicketPriceDTO';
+import { RecreationalFishingTicketsDTO } from '@app/models/generated/dtos/RecreationalFishingTicketsDTO';
+import { RecreationalFishingTicketValidationDTO } from '@app/models/generated/dtos/RecreationalFishingTicketValidationDTO';
+import { RecreationalFishingTicketValidationResultDTO } from '@app/models/generated/dtos/RecreationalFishingTicketValidationResultDTO';
+import { RecreationalFishingTicketValidToCalculationParamsDTO } from '@app/models/generated/dtos/RecreationalFishingTicketValidToCalculationParamsDTO';
+import { RegixChecksWrapperDTO } from '@app/models/generated/dtos/RegixChecksWrapperDTO';
+import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
+import { ApplicationsRegisterFilters } from '@app/models/generated/filters/ApplicationsRegisterFilters';
+import { RecreationalFishingTicketApplicationFilters } from '@app/models/generated/filters/RecreationalFishingTicketApplicationFilters';
+import { RequestProperties } from '@app/shared/services/request-properties';
+import { RequestService } from '@app/shared/services/request.service';
+import { RecreationalFishingCommonService } from '../common-app/recreational-fishing-common.service';
+import { ApplicationsRegisterAdministrativeBaseService } from './applications-register-administrative-base.service';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { RecreationalFishingTicketDeclarationParametersDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDeclarationParametersDTO';
+import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
+import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dtos/RecreationalFishingAddTicketsResultDTO';
+import { RecreationalFishingTicketDuplicateDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDuplicateDTO';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class RecreationalFishingAdministrationService extends ApplicationsRegisterAdministrativeBaseService implements IRecreationalFishingService {
+    protected controller: string = 'RecreationalFishingAdministration';
+
+    private commonService: RecreationalFishingCommonService;
+
+    public constructor(requestService: RequestService, commonService: RecreationalFishingCommonService) {
+        super(requestService);
+
+        this.commonService = commonService;
+    }
+
+    public getRegisterByApplicationId(applicationId: number, pageCode?: PageCodeEnum): Observable<unknown> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getApplication(id: number): Observable<IApplicationRegister> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getApplicationDataForRegister(applicationId: number): Observable<IApplicationRegister> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getApplicationHistorySimpleAudit(id: number): Observable<SimpleAuditDTO> {
+        throw new Error('Method not implemented.');
+    }
+
+    public addApplication(application: IApplicationRegister): Observable<number> {
+        throw new Error('Method not implemented.');
+    }
+
+    public editApplication(application: IApplicationRegister, pageCode?: PageCodeEnum, fromSaveAsDraft?: boolean): Observable<number> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getTicket(id: number): Observable<RecreationalFishingTicketDTO> {
+        return this.commonService.getTicket(this.area, this.controller, id);
+    }
+
+    public editTicket(ticket: RecreationalFishingTicketDTO): Observable<void> {
+        return this.commonService.editTicket(this.area, this.controller, ticket);
+    }
+
+    public getRegixData(id: number): Observable<RegixChecksWrapperDTO<RecreationalFishingTicketBaseRegixDataDTO>> {
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.get<RegixChecksWrapperDTO<RecreationalFishingTicketBaseRegixDataDTO>>(this.area, this.controller, 'GetTicketRegixData', {
+            httpParams: params,
+            responseTypeCtr: RegixChecksWrapperDTO
+        }).pipe(map((result: RegixChecksWrapperDTO<RecreationalFishingTicketBaseRegixDataDTO>) => {
+            result.dialogDataModel = new RecreationalFishingTicketBaseRegixDataDTO(result.dialogDataModel);
+            result.regiXDataModel = new RecreationalFishingTicketBaseRegixDataDTO(result.regiXDataModel);
+
+            return result;
+        }));
+    }
+
+    public addTickets(tickets: RecreationalFishingTicketsDTO): Observable<RecreationalFishingAddTicketsResultDTO> {
+        return this.commonService.addTickets(this.area, this.controller, tickets);
+    }
+
+    public addTicketDuplicate(data: RecreationalFishingTicketDuplicateDTO): Observable<number> {
+        return this.commonService.addTicketDuplicate(this.area, this.controller, data);
+    }
+
+    public calculateTicketValidToDate(params: RecreationalFishingTicketValidToCalculationParamsDTO): Observable<Date> {
+        return this.commonService.calculateTicketValidToDate(this.area, this.controller, params);
+    }
+
+    public checkEgnLncPurchaseAbility(data: RecreationalFishingTicketValidationDTO): Observable<RecreationalFishingTicketValidationResultDTO> {
+        return this.requestService.post(this.area, this.controller, 'CheckEgnLncPurchaseAbility', data, {
+            responseTypeCtr: RecreationalFishingTicketValidationResultDTO
+        });
+    }
+
+    public checkTicketNumbersAvailability(numbers: string[]): Observable<boolean[]> {
+        let params: HttpParams = new HttpParams();
+        for (const num of numbers) {
+            params = params.append('ticketNumbers', num);
+        }
+
+        return this.requestService.get(this.area, this.controller, 'CheckTicketNumbersAvailability', {
+            httpParams: params
+        });
+    }
+
+    public getPhoto(fileId: number): Observable<string> {
+        const params = new HttpParams().append('fileId', fileId.toString());
+        return this.requestService.get(this.area, this.controller, 'GetPhoto', {
+            httpParams: params,
+            responseType: 'text',
+            properties: RequestProperties.NO_SPINNER
+        });
+    }
+
+    public getPersonData(egnLnc: EgnLncDTO): Observable<RecreationalFishingTicketHolderDTO | undefined> {
+        const params = new HttpParams()
+            .append('egnLnc', egnLnc.egnLnc!)
+            .append('idType', egnLnc.identifierType!.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetPersonData', {
+            httpParams: params,
+            responseTypeCtr: RecreationalFishingTicketHolderDTO
+        });
+    }
+
+    public getPersonPhoto(egnLnc: EgnLncDTO): Observable<string> {
+        const params = new HttpParams()
+            .append('egnLnc', egnLnc.egnLnc!)
+            .append('idType', egnLnc.identifierType!.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetPersonPhoto', {
+            httpParams: params,
+            responseType: 'text',
+            properties: RequestProperties.NO_SPINNER
+        });
+    }
+
+    public downloadFishingTicket(ticketId: number): Observable<boolean> {
+        const params = new HttpParams().append('ticketId', ticketId.toString());
+        return this.requestService.download(this.area, this.controller, 'DownloadFishingTicket', 'ticket', { httpParams: params });
+    }
+
+    public downloadTicketDeclaration(parameters: RecreationalFishingTicketDeclarationParametersDTO): Observable<boolean> {
+        return this.requestService.downloadPost(this.area, this.controller, 'DownloadTicketDeclaration', 'declaration', parameters);
+    }
+
+    public getTicketPeriods(): Observable<NomenclatureDTO<number>[]> {
+        return this.commonService.getTicketPeriods(this.area, this.controller);
+    }
+
+    public getTicketTypes(): Observable<NomenclatureDTO<number>[]> {
+        return this.commonService.getTicketTypes(this.area, this.controller);
+    }
+
+    public getTicketPrices(): Observable<RecreationalFishingTicketPriceDTO[]> {
+        return this.commonService.getTicketPrices(this.area, this.controller);
+    }
+
+    public getAllFishingAssociations(): Observable<NomenclatureDTO<number>[]> {
+        return this.commonService.getAllFishingAssociations(this.area, this.controller);
+    }
+
+    // applications
+    public getAllTicketApplications(request: GridRequestModel<RecreationalFishingTicketApplicationFilters>): Observable<GridResultModel<RecreationalFishingTicketApplicationDTO>> {
+        return this.requestService.post(this.area, this.controller, 'GetAllTicketApplications', request, {
+            properties: RequestProperties.NO_SPINNER,
+            responseTypeCtr: GridResultModel
+        });
+    }
+
+    public getAllTicketStatuses(): Observable<NomenclatureDTO<number>[]> {
+        return this.requestService.get(this.area, this.controller, 'GetAllTicketStatuses', { responseTypeCtr: NomenclatureDTO });
+    }
+
+    public getAllApplications(request: GridRequestModel<ApplicationsRegisterFilters>): Observable<GridResultModel<ApplicationRegisterDTO>> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getApplicationStatuses(): Observable<NomenclatureDTO<number>[]> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getApplicationTypes(): Observable<NomenclatureDTO<number>[]> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getApplicationSources(): Observable<NomenclatureDTO<number>[]> {
+        throw new Error('Method not implemented.');
+    }
+
+    public assignApplicationViaAccessCode(accessCode: string): Observable<AssignedApplicationInfoDTO> {
+        throw new Error('Method not implemented.');
+    }
+
+    public editApplicationDataAndStartRegixChecks(model: IApplicationRegister): Observable<void> {
+        return this.requestService.put(this.area, this.controller, 'EditTicketRegixData', model);
+    }
+}

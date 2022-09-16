@@ -1,0 +1,43 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <!-- Данни за сдружение -->
+    <tl-card tooltipResourceName="recreational-fishing.association-basic-information-helper">
+        <tl-card-title>{{ 'recreational-fishing.association-basic-information' | tlTranslate }}</tl-card-title>
+        <tl-card-content fxLayout="column">
+            <regix-data formControlName="legalRegixDataControl"
+                        [isPerson]="false"
+                        [isIdReadOnly]="isEditing"
+                        checkboxLabel="{{ 'recreational-fishing.has-bulgarian-address-registration' | tlTranslate }}">
+            </regix-data>
+
+            <div fxLayout="row">
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="territoryUnitControl"
+                                 [options]="territoryUnits"
+                                 tooltipResourceName="recreational-fishing.association-territory-unit-helper"
+                                 label="{{ 'recreational-fishing.association-territory-unit' | tlTranslate }}">
+                </tl-autocomplete>
+            </div>
+
+            <address-registration formControlName="legalAddressesControl"
+                                  addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                                  secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                                  checkboxLabel="{{ 'recreational-fishing.permanent-address-same-as-correspondence' | tlTranslate }}">
+            </address-registration>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Приложени файлове -->
+    <tl-card tooltipResourceName="recreational-fishing.association-files-helper">
+        <tl-card-title>{{ 'recreational-fishing.association-files' | tlTranslate }}</tl-card-title>
+        <tl-card-content>
+            <file-uploader-form-array formControlName="filesControl"
+                                      [pageCode]="pageCode"
+                                      [downloadFileMethod]="service.downloadAssociationFile.bind(this.service)">
+            </file-uploader-form-array>
+        </tl-card-content>
+    </tl-card>
+</div>

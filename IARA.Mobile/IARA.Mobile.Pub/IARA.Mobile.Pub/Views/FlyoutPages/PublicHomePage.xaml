@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tl:TLBasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages"
+        x:Class="IARA.Mobile.Pub.Views.FlyoutPages.PublicHomePage"
+        x:DataType="viewModels:PublicHomeViewModel"
+        x:TypeArguments="viewModels:PublicHomeViewModel"
+        x:Name="page"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <tl:TLScrollView>
+        <Grid>
+            <sv:HomeFrameView>
+                <tl:TLFillLayout MeasureMethod="BasedOnParent">
+                    <StackLayout Spacing="15">
+                        <Image Source="iara_logo" HeightRequest="200" />
+                        <StackLayout Margin="0,0,0,30" Spacing="0">
+                            <Label Text="{rt:Translate TitleIARA, Group=CommonOffline}"
+                                    HorizontalTextAlignment="Center"
+                                    HorizontalOptions="Center"
+                                    LineBreakMode="WordWrap"
+                                    TextColor="{StaticResource Primary}"
+                                    FontSize="24" />
+                        </StackLayout>
+                        <Button ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.RightToBracket}, Color=White}"
+                                Text="{rt:Translate Login, Group=CommonOffline}"
+                                Command="{Binding NavigateToLoginPage}" />
+                        <Button Command="{Binding NavigateToRegisterPage}"
+                                ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.UserPlus}, Color=White}"
+                                Text="{rt:Translate Register, Group=CommonOffline}" />
+                    </StackLayout>
+                </tl:TLFillLayout>
+            </sv:HomeFrameView>
+            <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Globe}, Size=25, Color=White}"
+                    Command="{Binding ChangeLanguage}"
+                    Padding="10"
+                    HorizontalOptions="End"
+                    VerticalOptions="Start">
+                <ImageButton.Margin>
+                    <OnPlatform x:TypeArguments="Thickness">
+                        <On Platform="iOS" Value="10,20" />
+                        <On Platform="Android" Value="10" />
+                    </OnPlatform>
+                </ImageButton.Margin>
+            </ImageButton>
+        </Grid>
+    </tl:TLScrollView>
+</tl:TLBasePage>

@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+        xmlns:converters="clr-namespace:IARA.Mobile.Shared.Converters"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:sc="clr-namespace:IARA.Mobile.Shared.Converters;assembly=IARA.Mobile.Shared"
+        xmlns:bevaiors="clr-namespace:IARA.Mobile.Shared.Behaviors"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:tlBase="clr-namespace:TechnoLogica.Xamarin.Controls.Base;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:local="clr-namespace:IARA.Mobile.Shared.ViewModels"
+        xmlns:dts="clr-namespace:IARA.Mobile.Shared.DataTemplateSelectors"
+        x:Class="IARA.Mobile.Shared.Views.ReportPage"
+        x:DataType="local:ReportViewModel"
+        x:TypeArguments="local:ReportViewModel"
+        x:Name="page"
+        PageInfo="{rt:Translate PageInfo, Group=Report}"
+        Title="{rt:Translate Title, Group=Report}"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <ContentPage.Resources>
+        <sc:NotEqualToConverter x:Key="NotEqualTo" />
+        <converters:LayoutStateNotNoneConverter x:Key="LayoutStateNotNone" />
+        <converters:ValueColorConverter x:Key="ValueColor" />
+        <sc:MultiplyByConverter x:Key="MultiplyBy" />
+    </ContentPage.Resources>
+    <tl:TLScrollView>
+        <StackLayout Padding="10" Spacing="10">
+            <tl:TLAutoGrid DefaultMinWidth="250"
+                    UnfilledColumns="LeaveEmpty"
+                    BindableLayout.ItemsSource="{Binding Parameters}">
+                <BindableLayout.ItemTemplateSelector>
+                    <dts:ReportParameterTemplateSelector />
+                </BindableLayout.ItemTemplateSelector>
+            </tl:TLAutoGrid>
+            <Button Text="{rt:Translate ExecuteReport, Group=Report}"
+                    Command="{Binding ExecuteReport}"
+                    HorizontalOptions="End"
+                    IsVisible="{Binding HasParameters}" />
+            <tl:TLResponsiveTable Title="{rt:Translate ReportResult, Group=Report}"
+                    TotalCount="{Binding TotalRecordsCount}"
+                    IsVisible="{Binding ExecuteState, Converter={StaticResource LayoutStateNotNone}}"
+                    ItemsSource="{Binding ReportResult}">
+                <tl:TLResponsiveTable.Behaviors>
+                    <bevaiors:ReportTableBehavior ColumnNames="{Binding ColumnNames}" />
+                </tl:TLResponsiveTable.Behaviors>
+                <tl:TLResponsivleTableChild TableLayout="Table" />
+                <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="{Binding BindingContext.ColumnNames.Count, Converter={StaticResource MultiplyBy}, ConverterParameter=175, Source={Reference page}}" />
+                <tl:TLResponsiveTable.EmptyView>
+                    <Grid BindingContext="{Binding BindingContext, Source={Reference page}}" xct:StateLayout.CurrentState="{Binding ExecuteState}">
+                        <xct:StateLayout.StateViews>
+                            <xct:StateView StateKey="Loading">
+                                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                        Color="{StaticResource Primary}"
+                                        HeightRequest="150"
+                                        WidthRequest="150"
+                                        HorizontalOptions="Center"
+                                        Margin="10" />
+                            </xct:StateView>
+                            <xct:StateView StateKey="Error">
+                                <Label Text="{rt:Translate ErrorExecute, Group=Report}" LineBreakMode="WordWrap" />
+                            </xct:StateView>
+                            <xct:StateView StateKey="Empty">
+                                <Label Text="{rt:Translate NoInformation, Group=Common}" LineBreakMode="WordWrap" />
+                            </xct:StateView>
+                            <xct:StateView StateKey="Success" />
+                        </xct:StateLayout.StateViews>
+                    </Grid>
+                </tl:TLResponsiveTable.EmptyView>
+            </tl:TLResponsiveTable>
+            <StackLayout IsVisible="{Binding PagesCount, Converter={StaticResource NotEqualTo}, ConverterParameter=0}"
+                    HorizontalOptions="EndAndExpand"
+                    Orientation="Horizontal">
+                <sv:TLButton WidthRequest="34"
+                        Command="{Binding GoToFirstPage}"
+                        ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.BackwardStep}, Size=18, Color=White}" />
+                <sv:TLButton WidthRequest="34"
+                        Command="{Binding GoToPreviousPage}"
+                        ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.ChevronLeft}, Size=18, Color=White}" />
+                <StackLayout Orientation="Horizontal" BindableLayout.ItemsSource="{Binding Pages}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="x:Int32">
+                            <sv:TLButton WidthRequest="50"
+                                    Command="{Binding BindingContext.ReportPageSelected, Source={Reference page}}"
+                                    CommandParameter="{Binding}"
+                                    Text="{Binding}">
+                                <sv:TLButton.BackgroundColor>
+                                    <MultiBinding Converter="{StaticResource ValueColor}">
+                                        <Binding Path="." />
+                                        <Binding Source="{x:Reference page}" Path="BindingContext.CurrentPage" />
+                                    </MultiBinding>
+                                </sv:TLButton.BackgroundColor>
+                            </sv:TLButton>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
+                <sv:TLButton WidthRequest="34"
+                        Command="{Binding GoToNextPage}"
+                        ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.ChevronRight}, Size=18, Color=White}" />
+                <sv:TLButton WidthRequest="34"
+                        Command="{Binding GoToLastPage}"
+                        ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.ForwardStep}, Size=18, Color=White}" />
+            </StackLayout>
+        </StackLayout>
+    </tl:TLScrollView>
+</sv:BasePage>

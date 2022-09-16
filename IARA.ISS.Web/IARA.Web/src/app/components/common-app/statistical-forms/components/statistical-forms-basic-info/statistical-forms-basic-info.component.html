@@ -1,0 +1,35 @@
+﻿<div [formGroup]="form">
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
+        <tl-autocomplete fxFlex="33"
+                         formControlName="processUserControl"
+                         [options]="processUsers"
+                         label="{{ 'statistical-forms.process-user' | tlTranslate }}">
+        </tl-autocomplete>
+        <tl-date-year fxFlex="33"
+                      formControlName="yearControl"
+                      label="{{ 'statistical-forms.year' | tlTranslate }}">
+        </tl-date-year>
+        <tl-date fxFlex="33"
+                 formControlName="submissionDateControl"
+                 label="{{ 'statistical-forms.submission-date' | tlTranslate }}">
+        </tl-date>
+    </div>
+    <tl-card fxFlexFill>
+        <tl-card-title>{{'statistical-forms.submission-user' | tlTranslate}}</tl-card-title>
+        <tl-card-content>
+            <regix-data formControlName="submissionPersonControl"
+                        [isPerson]="true"
+                        [hideDocument]="true">
+            </regix-data>
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="submissionPersonWorkPositionControl"
+                          label="{{ 'statistical-forms.submission-person-work-position' | tlTranslate }}">
+                </tl-input>
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

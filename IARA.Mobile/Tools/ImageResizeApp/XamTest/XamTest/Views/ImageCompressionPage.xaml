@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:model="clr-namespace:XamTest.Models"
+        xmlns:local="clr-namespace:XamTest.ViewModels"
+        xmlns:ffimg="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+        x:Class="XamTest.Views.ImageCompressionPage"
+        Title="{Binding Title}"
+        x:DataType="local:ImageCompressionViewModel">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout>
+                <Button Text="Pick photo" Command="{Binding PickPhotoCommand}" />
+                <Button Text="Capture photo" Command="{Binding CapturePhotoCommand}" />
+                <StackLayout BindableLayout.ItemsSource="{Binding Photos}"
+                        Margin="10"
+                        BackgroundColor="White">
+                    <BindableLayout.EmptyView>
+                        <ContentView>
+                            <Label Text="No photos"
+                                    LineBreakMode="WordWrap"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Center"
+                                    HorizontalTextAlignment="Center" />
+                        </ContentView>
+                    </BindableLayout.EmptyView>
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <ContentView x:DataType="model:ImageItem">
+                                <StackLayout>
+                                    <Label HorizontalTextAlignment="Center">
+                                        <Label.Text>
+                                            <MultiBinding StringFormat="{}{0} - {1},{2}%">
+                                                <Binding Path="FileName" />
+                                                <Binding Path="Size" />
+                                                <Binding Path="CompressionPercentage" />
+                                            </MultiBinding>
+                                        </Label.Text>
+                                    </Label>
+                                    <ffimg:CachedImage HorizontalOptions="FillAndExpand"
+                                            VerticalOptions="FillAndExpand"
+                                            DownsampleToViewSize="True"
+                                            Source="{Binding ImageSource}" />
+                                </StackLayout>
+                            </ContentView>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

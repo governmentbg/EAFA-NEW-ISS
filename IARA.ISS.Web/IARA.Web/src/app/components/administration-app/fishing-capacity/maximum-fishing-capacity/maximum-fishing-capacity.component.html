@@ -1,0 +1,71 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <!-- Филтри -->
+    <search-panel [translateService]="translate">
+        <div [formGroup]="form" fxFlexFill fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-input fxFlex="33"
+                      formControlName="regulationControl"
+                      label="{{ 'maximum-capacity.regulation' | tlTranslate }}">
+            </tl-input>
+            <tl-date fxFlex="33"
+                     formControlName="dateFromControl"
+                     label="{{ 'maximum-capacity.date-from' | tlTranslate }}">
+            </tl-date>
+            <tl-date fxFlex="33"
+                     formControlName="dateToControl"
+                     label="{{ 'maximum-capacity.date-to' | tlTranslate }}">
+            </tl-date>
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <mat-card>
+        <tl-data-table [showAddButton]="canAddRecords"
+                       [showInactiveRecords]="false"
+                       (addButtonClicked)="createEditMaximumCapacity(undefined, false)">
+            <data-column propertyName="date"
+                         [flexRate]="0.3"
+                         dataType="date"
+                         columnName="{{ 'maximum-capacity.date' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="regulation"
+                         [flexRate]="0.5"
+                         columnName="{{ 'maximum-capacity.regulation' | tlTranslate }}">
+            </data-column>
+
+            <data-template-column propertyName="grossTonnage"
+                                  [flexRate]="0.3"
+                                  columnName="{{ 'maximum-capacity.gross-tonnage' | tlTranslate }}">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.data.grossTonnage.toFixed(2) }}
+                </ng-template>
+            </data-template-column>
+
+            <data-template-column propertyName="power"
+                                  [flexRate]="0.3"
+                                  columnName="{{ 'maximum-capacity.power' | tlTranslate }}">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.data.power.toFixed(2) }}
+                </ng-template>
+            </data-template-column>
+
+            <data-template-column [flexRate]="0.5" [cellClass]="'justify-center'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                        <tl-icon-button *ngIf="row.isActive"
+                                        icon="visibility"
+                                        (buttonClicked)="createEditMaximumCapacity(row.data, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'maximum-capacity.view-maximum-capacity' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.isActive && canEditRecords"
+                                        icon="edit"
+                                        (buttonClicked)="createEditMaximumCapacity(row.data, false)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'maximum-capacity.edit-maximum-capacity' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </mat-card>
+</div>

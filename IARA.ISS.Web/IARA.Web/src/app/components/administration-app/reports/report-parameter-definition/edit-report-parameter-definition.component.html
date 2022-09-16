@@ -1,0 +1,59 @@
+﻿<div fxLayout="column" fxFlexFill fxLayoutGap="1em">
+    <tl-card>
+        <tl-card-content [formGroup]="parameterPropertiesGroup" fxLayoutGap="2em">
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                <tl-input fxFlex="33"
+                          label="{{ 'report-parameter-definition.dialog-parameter-name' | tlTranslate }}"
+                          formControlName="nameControl"
+                          tooltipResourceName="report-parameter-definition.dialog-parameter-name-helper">
+                </tl-input>
+                <tl-select fxFlex="33"
+                           [options]="dataTypes"
+                           label="{{ 'report-parameter-definition.dialog-parameter-type' | tlTranslate }}"
+                           formControlName="typeControl"
+                           tooltipResourceName="report-parameter-definition.dialog-parameter-type-helper">
+                </tl-select>
+                <tl-date-range fxFlex="33"
+                               formControlName="dateRangeControl"
+                               label="{{ 'report-parameter-definition.dialog-parameter-date-active-from' | tlTranslate }} {{ 'report-parameter-definition.dialog-parameter-date-active-to' | tlTranslate }}"
+                               tooltipResourceName="report-parameter-definition.dialog-parameter-date-active-helper">
+                </tl-date-range>
+            </div>
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                <tl-input fxFlex="33"
+                          label="{{ 'report-parameter-definition.dialog-parameter-pattern' | tlTranslate }}"
+                          formControlName="patternControl"
+                          tooltipResourceName="report-parameter-definition.dialog-parameter-pattern-helper">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          label="{{ 'report-parameter-definition.dialog-parameter-error-message' | tlTranslate }}"
+                          formControlName="errorMessageControl"
+                          tooltipResourceName="report-parameter-definition.dialog-parameter-error-message-helper">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          label="{{ 'report-parameter-definition.dialog-parameter-code' | tlTranslate }}"
+                          formControlName="codeControl"
+                          tooltipResourceName="report-parameter-definition.dialog-parameter-code-helper">
+                </tl-input>
+            </div>
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                <tl-textarea fxFlex="50"
+                             label="{{ 'report-parameter-definition.dialog-parameter-default-value' | tlTranslate }}"
+                             formControlName="defaultValueControl"
+                             tooltipResourceName="report-parameter-definition.dialog-parameter-default-value-helper">
+                </tl-textarea>
+                <tl-textarea fxFlex="50"
+                             label="{{ 'report-parameter-definition.dialog-parameter-description' | tlTranslate }}"
+                             formControlName="descriptionControl"
+                             tooltipResourceName="report-parameter-definition.dialog-parameter-description-helper">
+                </tl-textarea>
+            </div>
+            <div fxLayout="column" fxLayoutGap="1em">
+                <mat-label>{{ 'report-parameter-definition.dialog-parameter-nomenclature-sql' | tlTranslate }}</mat-label>
+                <report-sql formControlName="nomenclatureSQLControl"
+                            [hasExecuteTable]="false">
+                </report-sql>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

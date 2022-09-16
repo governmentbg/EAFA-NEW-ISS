@@ -1,0 +1,20 @@
+﻿<div fxLayout="row" fxFlexFill fxLayoutGap="1em" [formGroup]="fileUploadForm">
+    <tl-autocomplete fxFlex="40"
+                     label="{{ 'common.choose-file-type' | tlTranslate: 'cap' }}"
+                     formControlName="type"
+                     [options]="fileTypesCollection"
+                     [templateOptions]="true"
+                     [readonly]="isTypeReadonly">
+    </tl-autocomplete>
+    <tl-input fxFlex="20"
+              label="{{ 'common.uploaded-file-comment-label' | tlTranslate: 'cap' }}"
+              formControlName="description">
+    </tl-input>
+    <tl-file-uploader fxFlex="40"
+                      [isFileRequired]="isRequired"
+                      label="{{ 'common.name-of-chosen-file' | tlTranslate: 'cap' }}"
+                      formControlName="file"
+                      [acceptedFormats]="acceptedFormats"
+                      (fileSelected)="onFileSelected($event)">
+    </tl-file-uploader>
+</div>

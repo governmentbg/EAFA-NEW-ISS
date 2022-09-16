@@ -1,0 +1,17 @@
+﻿.wrapper input {
+    text-align: center;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+/*Chrome, Safari, Edge, Opera */
+.wrapper input::-webkit-outer-spin-button,
+.wrapper input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/*Firefox */
+.wrapper input[type=number] {
+    -moz-appearance: textfield;
+}

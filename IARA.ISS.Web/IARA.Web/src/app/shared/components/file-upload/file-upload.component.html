@@ -1,0 +1,51 @@
+<div class="vertical-div full-width">
+    <div class="horizontal-div w-inherit">
+        <mat-form-field class="w-inherit"
+                        matTooltip="{{ fileControl.value }}"
+                        matTooltipPosition="above"
+                        matTooltipShowDelay="800">
+            <input matInput
+                   type="text"
+                   placeholder="{{ label }}"
+                   [formControl]="fileControl"
+                   readonly
+                   [required]="isFileRequired" />
+            <mat-error *ngIf="fileControl.touched && fileControl.errors?.required === true">
+                {{ 'validation.requiredfile' | tlTranslate: 'cap' }}
+            </mat-error>
+
+            <mat-hint *ngIf="!isDisabled && (!file?.file && !file?.id || (file?.id && file?.deleted)); else fileInfoHint">
+                {{ 'common.upload-file-from-button' | tlTranslate: 'cap' }}
+            </mat-hint>
+            <ng-template #fileInfoHint>
+                <mat-hint *ngIf="!isDisabled" class="full-width" fxLayout="row" fxLayoutAlign="space-between center">
+                    <span *ngIf="file?.uploadedOn">
+                        {{ 'common.file-uploaded-on' | tlTranslate: 'cap' }}: {{ file?.uploadedOn | date: 'dd.MM.yyyy HH:mm' }}
+                    </span>
+                    <span *ngIf="file?.size > 0">
+                        {{ file?.size }} {{ 'common.bytes' | tlTranslate }}
+                    </span>
+                </mat-hint>
+            </ng-template>
+        </mat-form-field>
+        <div fxLayoutAlign="center center"
+             [matTooltip]="isDisabled ? disabledBtnTitleText : enabledBtnTitle"
+             matTooltipPosition="above"
+             matTooltipShowDelay="800">
+            <tl-icon-button typeof="MAT_ICON"
+                            iconClass="accent-color"
+                            icon="attach_file"
+                            [disabled]="isDisabled"
+                            (buttonClicked)="onUploadBtnClick()">
+            </tl-icon-button>
+        </div>
+    </div>
+    <div class="vetical-div w-inherit">
+        <input type="file"
+               #fileUpload
+               accept="{{ acceptedFormats }}"
+               class="not-displayed"
+               (change)="onFileSelected($event.target.files)"
+               (click)="$event.target.value=null" />
+    </div>
+</div>

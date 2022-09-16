@@ -1,0 +1,20 @@
+﻿<mat-form-field style="width: 100%">
+    <mat-label>{{ label }}</mat-label>
+    <input matInput *ngIf="readonly" [value]="ngControl.control.value?.displayName" [readonly]="true" />
+    <mat-select matInput *ngIf="!readonly" [formControl]="ngControl.control" [required]="fieldIsRequired" [multiple]="isMultiple">
+        <ng-container *ngFor="let item of _collection">
+            <mat-option *ngIf="hasStringOptions || item.value != undefined"
+                        [value]="item"
+                        matTooltip="{{ item.displayName ? item.displayName : item }}"
+                        matTooltipShowDelay="500"
+                        [disabled]="item.isActive != undefined ? !item.isActive : false">
+                {{ item.displayName ? item.displayName : item }}
+            </mat-option>
+            <mat-option *ngIf="!hasStringOptions && item.value==undefined">&mdash;</mat-option>
+        </ng-container>
+    </mat-select>
+    <tl-help matSuffix [tooltipResource]="tooltipResourceName"></tl-help>
+    <mat-error *ngIf="errors.length > 0">
+        <tl-error [errors]="errors" [useMultipleLines]="multilineError"></tl-error>
+    </mat-error>
+</mat-form-field>

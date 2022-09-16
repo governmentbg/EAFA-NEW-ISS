@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <Configurations>Debug;Release;Test</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="IARA.Infrastructure.csproj.vspscc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="FirebaseAdmin" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.0.0" />
+    <PackageReference Include="TL.EDelivery" Version="22.59.37750" />
+    <PackageReference Include="TL.Email.ExtendedClient" Version="22.159.40819" />
+    <PackageReference Include="TL.EPayPayments" Version="22.173.41146" />
+    <PackageReference Include="TL.Signer" Version="22.76.38469" />
+    <PackageReference Include="TL.SysToSySecCom" Version="22.178.41269" />
+    <PackageReference Include="TL.EGovPayments" Version="22.173.41145" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IARA.Common\IARA.Common.csproj" />
+    <ProjectReference Include="..\IARA.DataAccess\IARA.DataAccess.csproj" />
+    <ProjectReference Include="..\IARA.DomainModels\IARA.DomainModels.csproj" />
+    <ProjectReference Include="..\IARA.EntityModels\IARA.EntityModels.csproj" />
+    <ProjectReference Include="..\IARA.Excel.Tools\IARA.Excel.Tools.csproj" />
+    <ProjectReference Include="..\IARA.FluxModels\IARA.FluxModels.csproj" />
+    <ProjectReference Include="..\IARA.FVMSModels\IARA.FVMSModels.csproj" />
+    <ProjectReference Include="..\IARA.Interfaces\IARA.Interfaces.csproj" />
+    <ProjectReference Include="..\IARA.Notifications\IARA.Notifications.csproj" />
+    <ProjectReference Include="..\IARA.RegixAbstractions\IARA.RegixAbstractions.csproj" />
+    <ProjectReference Include="..\IARA.Security\IARA.Security.csproj" />
+    <ProjectReference Include="..\TL.JasperReports.Integration\TL.JasperReports.Integration.csproj" />
+  </ItemGroup>
+
+</Project>

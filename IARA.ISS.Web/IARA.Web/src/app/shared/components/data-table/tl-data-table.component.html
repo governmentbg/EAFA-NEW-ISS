@@ -1,0 +1,114 @@
+﻿<div fxLayout="column" fxLayoutAlign="space-between stretch" fxLayoutGap="5px">
+    <div class="tl-datatable-header" fxLayout="row" fxLayoutAlign="center center">
+        <div fxFlex="25">
+            <mat-slide-toggle *ngIf="_showInactiveRecords" (change)="onInactiveToggleChanged($event)">{{ _showInactiveRecordsLabel }}</mat-slide-toggle>
+            <label *ngIf="_label && !_showInactiveRecords"
+                   [style.font-size.em]="1.3"
+                   [ngClass]="{ 'error-color': hasError }"
+                   [style.font-weight]="700">
+                {{ _label }}
+            </label>
+        </div>
+        <div fxFlex="75" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">
+            <ng-content select="[datatable-add-buttons]"></ng-content>
+
+            <button *ngIf="_showAddButton"
+                    mat-raised-button color="accent"
+                    (click)="addButtonClick()"
+                    style="margin-left:auto;">
+                <tl-icon [icon]="_addButtonIcon" class="warn-color"></tl-icon>
+                {{ _addButtonLabel }}
+            </button>
+
+            <button *ngIf="hasExcelExport"
+                    mat-raised-button 
+                    color="accent"
+                    (click)="exportExcel()">
+                <tl-icon [icon]="excelIcon" class="warn-color"></tl-icon>
+                <span>{{ excelBtnTextResource | tlTranslate : 'cap' }}</span>
+            </button>
+        </div>
+    </div>
+    <div #gridWrapperDiv>
+        <div *ngIf="_isRemote">
+            <ngx-datatable (activate)="onActiveRecordChanged($event)"
+                           (page)="onSetPage($event)"
+                           (select)="onSelectionChanged($event)"
+                           (sort)="onSortTable($event)"
+                           [columnMode]="_columnMode"
+                           [count]="_totalRecordsCount"
+                           [externalPaging]="_remotePaging"
+                           [externalSorting]="_remoteSorting"
+                           [footerHeight]="_footerHeight"
+                           [headerHeight]="_headerHeight"
+                           [limit]="_recordsPerPage"
+                           [loadingIndicator]="_loading"
+                           [offset]="_pageNumber"
+                           [reorderable]="_reorderable"
+                           [rows]="_tempRows"
+                           [columns]="_columns"
+                           [selectionType]="_selectionType"
+                           [selected]="_selectedRows"
+                           [groupRowBy]="_groupRowsByFieldName"
+                           [groupExpansionDefault]="_groupsExpandedByDefault"
+                           [rowClass]="_rowClass"
+                           rowHeight="auto"
+                           style="width:100%"
+                           class="material">
+                <ngx-datatable-row-detail *ngIf="_hasRowDetail"
+                                          rowHeight="auto"
+                                          [template]="_rowDetail.template">
+                </ngx-datatable-row-detail>
+                <ngx-datatable-group-header *ngIf="_hasGroupHeader"
+                                            [rowHeight]="_groupHeaderRowHeight"
+                                            (toggle)="onGroupHeaderDetailToggle($event)"
+                                            [template]="_groupHeader.template">
+                </ngx-datatable-group-header>
+            </ngx-datatable>
+        </div>
+        <div *ngIf="!_isRemote">
+            <ngx-datatable (activate)="onActiveRecordChanged($event)"
+                           (select)="onSelectionChanged($event)"
+                           [columnMode]="_columnMode"
+                           [footerHeight]="_footerHeight"
+                           [headerHeight]="_headerHeight"
+                           [limit]="_recordsPerPage"
+                           [offset]="_pageNumber"
+                           [reorderable]="_reorderable"
+                           [rows]="_tempRows"
+                           [columns]="_columns"
+                           [selectionType]="_selectionType"
+                           [selected]="_selectedRows"
+                           [groupRowsBy]="_groupRowsByFieldName"
+                           [groupExpansionDefault]="_groupsExpandedByDefault"
+                           [rowClass]="_rowClass"
+                           [scrollbarH]="true"
+                           rowHeight="auto"
+                           style="width:100%"
+                           class="material">
+                <ngx-datatable-row-detail *ngIf="_hasRowDetail"
+                                          rowHeight="auto"
+                                          [template]="_rowDetail.template">
+                </ngx-datatable-row-detail>
+                <ngx-datatable-group-header *ngIf="_hasGroupHeader"
+                                            [rowHeight]="_groupHeaderRowHeight"
+                                            (toggle)="onGroupHeaderDetailToggle($event)"
+                                            [template]="_groupHeader.template">
+                </ngx-datatable-group-header>
+            </ngx-datatable>
+        </div>
+    </div>
+</div>
+
+<ng-container #toggleDetailArrowColumn>
+    <data-template-column [flexRate]="0" [cellClass]="'justify-center'">
+        <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+            <a href="javascript:void(0)"
+               [class.datatable-icon-right]="!expanded"
+               [class.datatable-icon-down]="expanded"
+               title="Expand/Collapse Row"
+               (click)="onToggleExpandRow(row)">
+            </a>
+        </ng-template>
+    </data-template-column>
+</ng-container>

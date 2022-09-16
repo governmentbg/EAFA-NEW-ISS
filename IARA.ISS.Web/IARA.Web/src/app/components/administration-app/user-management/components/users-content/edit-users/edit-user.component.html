@@ -1,0 +1,194 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="editUserForm" fxFlexFill fxLayoutAlign="space-between stretch">
+    <tl-card tooltipResourceName="users-page.basic-information-helper">
+        <tl-card-title>{{ 'users-page.basic-information-title' | tlTranslate }}</tl-card-title>
+        <tl-card-content fxFlexFill fxLayout="column">
+            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100">
+                <tl-input fxFlex="25"
+                          formControlName="firstNameControl"
+                          label="{{ 'users-page.first-name' | tlTranslate }}"
+                          tooltipResourceName="users-page.first-name-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="middleNameControl"
+                          label="{{ 'users-page.middle-name' | tlTranslate }}"
+                          tooltipResourceName="users-page.middle-name-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="lastNameControl"
+                          label="{{ 'users-page.last-name' | tlTranslate }}"
+                          tooltipResourceName="users-page.last-name-helper">
+                </tl-input>
+
+                <egn-lnc-input fxFlex="25"
+                               formControlName="egnControl">
+                </egn-lnc-input>
+            </div>
+            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100">
+                <tl-input fxFlex="25"
+                          formControlName="usernameControl"
+                          label="{{ 'users-page.username' | tlTranslate }}"
+                          tooltipResourceName="users-page.username-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="emailControl"
+                          label="{{ 'users-page.email' | tlTranslate }}"
+                          tooltipResourceName="users-page.email-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="phoneNumberControl"
+                          label="{{ 'users-page.phone-number' | tlTranslate }}"
+                          tooltipResourceName="users-page.phone-number-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="positionControl"
+                          label="{{ 'users-page.position' | tlTranslate }}"
+                          tooltipResourceName="users-page.position-helper">
+                </tl-input>
+            </div>
+            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100">
+                <tl-select fxFlex="33"
+                           label="{{ 'users-page.territorial-unit' | tlTranslate }}"
+                           formControlName="territorialUnitControl"
+                           [options]="territoryUnits"
+                           tooltipResourceName="users-page.territorial-unit-helper">
+                </tl-select>
+
+                <tl-select fxFlex="33"
+                           label="{{ 'users-page.department' | tlTranslate }}"
+                           formControlName="departmentControl"
+                           [options]="departments"
+                           tooltipResourceName="users-page.department-helper">
+                </tl-select>
+
+                <tl-select fxFlex="33"
+                           label="{{ 'users-page.sector' | tlTranslate }}"
+                           formControlName="sectorControl"
+                           [options]="sectors"
+                           tooltipResourceName="users-page.sector-helper">
+                </tl-select>
+            </div>
+            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100">
+                <tl-slide-toggle fxFlex="33"
+                                 label="{{ 'users-page.user-must-change-password' | tlTranslate }}"
+                                 formControlName="userMustChangePasswordControl"
+                                 tooltipResourceName="users-page.user-must-change-password-helper">
+                </tl-slide-toggle>
+
+                <tl-slide-toggle fxFlex="33"
+                                 label="{{ 'users-page.unlock-user' | tlTranslate }}"
+                                 formControlName="isLockedControl"
+                                 tooltipResourceName="users-page.unlock-user-helper">
+                </tl-slide-toggle>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <tl-card tooltipResourceName="users-page.role-helper">
+        <tl-card-title fxFlex="row">{{  'users-page.role' | tlTranslate }} </tl-card-title>
+        <tl-card-content>
+            <tl-data-table #roleDataTable
+                           fxFlexFill
+                           fxLayoutGap="1em"
+                           class="full-width-template"
+                           [isRemote]="false"
+                           [isSoftDeletable]="true"
+                           [showInactiveRecords]="true"
+                           [showAddButton]="!readOnly"
+                           [rows]="userRoles"
+                           (recordChanged)="userRoleChanged($event)">
+                <data-column columnName="{{ 'users-page.role' | tlTranslate }}"
+                             propertyName="id"
+                             [formGroup]="userRoleForm"
+                             [options]="roles"
+                             dataType="nomenclature"
+                             [getControlErrorLabelText]="getDatesOverlappingErrorText.bind(this)">
+                </data-column>
+                <data-column columnName="{{ 'users-page.valid-from' | tlTranslate }}"
+                             propertyName="accessValidFrom"
+                             [formGroup]="userRoleForm"
+                             dataType="date"
+                             [maxValue]="userRoleForm.controls.accessValidToControl.value">
+                </data-column>
+                <data-column columnName="{{ 'users-page.valid-to' | tlTranslate }}"
+                             propertyName="accessValidTo"
+                             [formGroup]="userRoleForm"
+                             dataType="date"
+                             [minValue]="userRoleForm.controls.accessValidFromControl.value">
+                </data-column>
+                <data-column-inline [flexRate]="0.3" *ngIf="!readOnly"></data-column-inline>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+
+    <tl-card *ngIf="!isInternalUser"
+             tooltipResourceName="users-page.related-organizations-helper">
+        <tl-card-title fxFlex="row">{{ 'users-page.related-organizations' | tlTranslate }} </tl-card-title>
+        <tl-card-content>
+            <tl-data-table #legalDataTable fxFlexFill fxLayoutGap="1em" class="full-width-template"
+                           [showAddButton]="!readOnly"
+                           [showInactiveRecords]="canRestoreRecords"
+                           [isRemote]="false"
+                           [isSoftDeletable]="true"
+                           [rows]="userLegals"
+                           (recordChanged)="userLegalsChanged($event)">
+                <data-column columnName="{{ 'users-page.legal-name' | tlTranslate }}"
+                             propertyName="legalId"
+                             [formGroup]="userLegalForm"
+                             [options]="legals"
+                             dataType="nomenclature">
+                </data-column>
+                <data-column columnName="{{ 'users-page.role' | tlTranslate }}"
+                             propertyName="roleId"
+                             [formGroup]="userLegalForm"
+                             [options]="roles"
+                             dataType="nomenclature">
+                </data-column>
+                <data-template-column columnName="{{ 'users-page.status' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div *ngIf="row.data.status !== undefined">
+                            <div *ngIf="row.data.status === legalStatusEnum.Blocked">
+                                <tl-icon icon="highlight_off" iconClass="accent-color"></tl-icon>
+                                {{'users-page.blocked' | tlTranslate }}
+                            </div>
+                            <div *ngIf="row.data.status === legalStatusEnum.Approved">
+                                <tl-icon icon="done_outline" iconClass="accent-color"></tl-icon>
+                                {{'users-page.approved' | tlTranslate }}
+                            </div>
+                            <div *ngIf="row.data.status === legalStatusEnum.Requested">
+                                <tl-icon icon="autorenew" iconClass="accent-color"></tl-icon>
+                                {{'users-page.requested' | tlTranslate }}
+                            </div>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+                <data-template-column *ngIf="!readOnly" [flexRate]="0.4" flexGrow="0.5" columnName="{{'users-page.status-header' | tlTranslate}}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="center" *ngIf="row.data.status === legalStatusEnum.Requested">
+                            <tl-icon-button icon="done_outline" (buttonClicked)="allowLegal(row.data.legalId)" iconClass="accent-color"
+                                            tooltipText="{{ 'users-page.allow-access' | tlTranslate }}"></tl-icon-button>
+                            <tl-icon-button icon="highlight_off" (buttonClicked)="denyLegal(row.data.legalId)" iconClass="accent-color"
+                                            tooltipText="{{ 'users-page.deny-access' | tlTranslate }}"></tl-icon-button>
+                        </div>
+                        <div fxLayout="row" fxLayoutAlign="center" *ngIf="row.data.status !== legalStatusEnum.Requested">
+                            <tl-icon-button *ngIf="row.data.status === legalStatusEnum.Blocked" icon="done_outline" iconClass="accent-color"
+                                            (buttonClicked)="allowLegal(row.data.legalId)" tooltipText="{{ 'users-page.allow-access' | tlTranslate }}"></tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.status === legalStatusEnum.Approved" icon="highlight_off" iconClass="accent-color"
+                                            (buttonClicked)="denyLegal(row.data.legalId)" tooltipText="{{ 'users-page.deny-access' | tlTranslate }}"></tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+                <data-column-inline [flexRate]="0.3" *ngIf="!readOnly"></data-column-inline>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+    <edit-access *ngIf="isInternalUser"
+                 formControlName="mobileDevicesControl"
+                 [userFullName]="userFullName"
+                 [matCardTitleLabel]="mobileDevicesMatCardTitleLabel"
+                 [readOnly]="readOnly"></edit-access>
+</div>

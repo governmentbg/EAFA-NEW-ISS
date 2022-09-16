@@ -1,0 +1,49 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="form"
+     class="dialog-padding">
+    <div fxLayout="row wrap" fxLayoutGap="1em" fxLayoutAlign="start center">
+        <div *ngFor="let dataColumn of dataColumns" fxFlex="48">
+            <ng-container [ngSwitch]="dataColumn.dataType">
+                <div *ngSwitchCase="'date'"
+                     matTooltip="{{ dataColumn.displayName }}"
+                     matTooltipPosition="before"
+                     [matTooltipShowDelay]="500">
+                    <tl-date formControlName="{{ dataColumn.propertyName }}"
+                             label="{{ dataColumn.displayName }}">
+                    </tl-date>
+                </div>
+
+                <div *ngSwitchCase="'boolean'"
+                     matTooltip="{{ dataColumn.displayName }}"
+                     matTooltipPosition="before"
+                     [matTooltipShowDelay]="500">
+                    <tl-checkbox formControlName="{{ dataColumn.propertyName }}"
+                                 label="{{ dataColumn.displayName }}">
+                    </tl-checkbox>
+                </div>
+
+                <div *ngSwitchCase="'nomenclature'"
+                     matTooltip="{{ dataColumn.displayName }}"
+                     matTooltipPosition="before"
+                     [matTooltipShowDelay]="500">
+                    <tl-autocomplete formControlName="{{ dataColumn.propertyName }}"
+                                     [options]="dataColumn.options"
+                                     label="{{ dataColumn.displayName }}">
+                    </tl-autocomplete>
+                </div>
+
+                <div *ngSwitchDefault
+                     matTooltip="{{ dataColumn.displayName }}"
+                     matTooltipPosition="before"
+                     [matTooltipShowDelay]="500">
+                    <tl-input formControlName="{{ dataColumn.propertyName }}"
+                              label="{{ dataColumn.displayName }}">
+                    </tl-input>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>

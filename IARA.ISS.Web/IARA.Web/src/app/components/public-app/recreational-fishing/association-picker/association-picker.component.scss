@@ -1,0 +1,27 @@
+﻿$fontsize: 2em;
+$fontsizesm: 1.3em;
+
+.container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    #choose-association-label {
+        font-size: $fontsize;
+        font-weight: bold;
+    }
+
+    #no-associations-label {
+        font-size: $fontsize;
+        font-weight: bold;
+    }
+
+    .associations-list {
+        button {
+            height: 2.3em;
+            width: 20em;
+            font-size: $fontsizesm;
+        }
+    }
+}

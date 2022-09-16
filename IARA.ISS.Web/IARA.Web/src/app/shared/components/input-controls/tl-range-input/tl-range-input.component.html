@@ -1,0 +1,21 @@
+﻿<mat-form-field [appearance]="appearance" fxFill>
+    <mat-label>{{ label }}</mat-label>
+    <range-input [formControl]="ngControl.control"
+                 [fromLabel]="fromLabel"
+                 [toLabel]="toLabel"
+                 [separator]="separator"
+                 [required]="fieldIsRequired"
+                 [startRequired]="startRequired"
+                 [endRequired]="endRequired"
+                 [min]="min"
+                 [max]="max"
+                 [readonly]="readonly">
+    </range-input>
+    <div matSuffix>
+        <ng-content></ng-content>
+        <tl-help [tooltipResource]="tooltipResourceName"></tl-help>
+    </div>
+    <mat-error *ngIf="errors.length > 0">
+        <tl-error [errors]="errors"></tl-error>
+    </mat-error>
+</mat-form-field>

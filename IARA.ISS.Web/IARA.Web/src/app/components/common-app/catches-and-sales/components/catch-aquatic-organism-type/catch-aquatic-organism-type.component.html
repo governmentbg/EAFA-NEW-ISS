@@ -1,0 +1,149 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     validityCheckerGroup
+     [formGroup]="form">
+    <tl-expansion-panel [title]="expansionPanelTitle.length > 0 ? expansionPanelTitle : defaultExpansionPanelTitle"
+                        tooltipResourceName="catches-and-sales.catch-aquatic-organism-type-panel-title-helper"
+                        [validityChecker]="form">
+        <tl-expansion-panel-description>
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="end start">
+                <tl-icon-button icon="delete"
+                                iconClass="accent-color"
+                                (buttonClicked)="deletePanel()"
+                                [disabled]="isDisabled">
+                </tl-icon-button>
+            </div>
+        </tl-expansion-panel-description>
+        <div fxFlexFill
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlex="100">
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="aquaticOrganismControl"
+                                 label="{{ 'catches-and-sales.ship-page-catch-record-fish' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.ship-page-catch-record-fish-helper"
+                                 [options]="aquaticOrganisms">
+                </tl-autocomplete>
+                <tl-input fxFlex="15"
+                          formControlName="quantityKgControl"
+                          label="{{ 'catches-and-sales.ship-page-catch-record-quantity-kg' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-catch-record-quantity-kg-helper">
+                </tl-input>
+                <tl-select fxFlex="30"
+                           formControlName="catchSizeControl"
+                           [options]="fishSizes"
+                           label="{{ 'catches-and-sales.ship-page-catch-record-catch-size' | tlTranslate }}"
+                           tooltipResourceName="catches-and-sales.ship-page-catch-record-catch-size-helper">
+                </tl-select>
+                <tl-autocomplete fxFlex="30"
+                                 formControlName="catchTypeControl"
+                                 [options]="catchTypes"
+                                 label="{{ 'catches-and-sales.ship-page-catch-record-catch-type' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.ship-page-catch-record-catch-type-helper">
+                </tl-autocomplete>
+            </div>
+            <div *ngIf="showStrugeonControls || showTurbotControls" 
+                 fxFlex="100" 
+                 fxLayout="row" 
+                 fxLayoutAlign="space-between center"
+                 fxLayoutGap="1em">
+                <div *ngIf="showStrugeonControls"
+                     [fxFlex]="showTurbotControls ? 50 : 100" 
+                     fxLayout="row" 
+                     fxLayoutAlign="space-between center"
+                     fxLayoutGap="1em">
+                    <tl-select fxFlex="25"
+                               formControlName="sturgeonGenderControl"
+                               label="{{ 'catches-and-sales.ship-page-catch-record-sturgeon-gender' | tlTranslate }}"
+                               tooltipResourceName="catches-and-sales.ship-page-catch-record-sturgeon-gender-helper"
+                               [options]="sturgeonGenders">
+                    </tl-select>
+                    <tl-input fxFlex="25"
+                              formControlName="sturgeonSizeControl"
+                              label="{{ 'catches-and-sales.ship-page-catch-record-sturgeon-size' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.ship-page-catch-record-sturgeon-size-helper">
+                    </tl-input>
+                    <div *ngIf="!showTurbotControls" fxFlex="50"></div>
+                </div>
+                <div *ngIf="showTurbotControls"
+                     [fxFlex]="showStrugeonControls ? 50 : 100"
+                     fxLayout="row"
+                     fxLayoutAlign="space-between center"
+                     fxLayoutGap="1em">
+                    <tl-autocomplete fxFlex="25"
+                                     formControlName="turbotSizeGroupControl"
+                                     label="{{ 'catches-and-sales.ship-page-catch-record-turbot-size-group' | tlTranslate }}"
+                                     tooltipResourceName="catches-and-sales.ship-page-catch-record-turbot-size-group-helper"
+                                     [options]="turbotSizeGroups">
+                    </tl-autocomplete>
+                    <tl-input fxFlex="15"
+                              formControlName="turbotCountControl"
+                              label="{{ 'catches-and-sales.ship-page-catch-record-turbot-count' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.ship-page-catch-record-turbot-count-helper">
+                    </tl-input>
+                    <div *ngIf="!showStrugeonControls" fxFlex="60"></div>
+                </div>
+            </div>
+            <div fxFLex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <div fxFlex="25" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-autocomplete fxFlex="81"
+                                     formControlName="catchQuadrantControl"
+                                     label="{{ 'catches-and-sales.ship-page-catch-record-quadrant' | tlTranslate }}"
+                                     [readonly]="true"
+                                     [options]="catchQuadrants"
+                                     tooltipResourceName="catches-and-sales.ship-page-catch-record-quadrant-helper">
+                    </tl-autocomplete>
+                    <div fxFlex="19" fxLayoutAlign="start start">
+                        <tl-popover-button *ngIf="!isDisabled"
+                                           iconClass="accent-color"
+                                           icon="fa-map-marker-alt"
+                                           (togglePopover)="onPopoverToggled($event)">
+                            <tl-card *ngIf="isMapPopoverOpened" tooltipResourceName="catches-and-sales.ship-page-catch-record-quadrant-map-popover-helper">
+                                <tl-card-title>
+                                    {{ 'catches-and-sales.ship-page-catch-record-quadrant-map-popover-title' | tlTranslate }}
+                                </tl-card-title>
+                                <tl-card-content fxFlexFill>
+                                    <div fxLayout="column" fxLayoutGap="1em">
+                                        <div class="fixed-map-size">
+                                            <tl-map-viewer [mapOptions]="mapOptions"></tl-map-viewer>
+                                        </div>
+                                        <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
+                                            <button mat-raised-button
+                                                    color="primary"
+                                                    (click)="onMapPopoverCancelBtnClicked()">
+                                                {{ 'catches-and-sales.ship-page-catch-record-quadrant-map-popover-cancel' | tlTranslate }}
+                                            </button>
+                                            <button mat-raised-button
+                                                    color="accent"
+                                                    (click)="onQuadrantChosenBtnClicked()">
+                                                {{ 'catches-and-sales.ship-page-catch-record-quadrant-map-popover-save' | tlTranslate }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </tl-card-content>
+                            </tl-card>
+                        </tl-popover-button>
+                    </div>
+                </div>
+                <tl-input fxFlex="20"
+                          formControlName="catchZoneControl"
+                          label="{{ 'catches-and-sales.ship-page-catch-record-catch-zone' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-catch-record-catch-zone-helper"
+                          [readonly]="true">
+                </tl-input>
+                <tl-input fxFlex="30"
+                          formControlName="thirdCountryCatchZoneControl"
+                          label="{{ 'catches-and-sales.ship-page-catch-record-third-country-catch-zone' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-catch-record-third-country-catch-zone-helper">
+                </tl-input>
+                <tl-checkbox fxFlex="20"
+                             formControlName="isContinentalCatchControl"
+                             label="{{ 'catches-and-sales.ship-page-catch-record-is-continental-catch' | tlTranslate }}"
+                             tooltipResourceName="catches-and-sales.ship-page-catch-record-is-continental-catch-helper">
+                </tl-checkbox>
+            </div>
+        </div>
+    </tl-expansion-panel>
+</div>

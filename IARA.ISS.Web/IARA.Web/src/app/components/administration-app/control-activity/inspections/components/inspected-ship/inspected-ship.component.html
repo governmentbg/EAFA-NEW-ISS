@@ -1,0 +1,63 @@
+﻿<div [formGroup]="form"
+     fxLayout="column"
+     fxLayoutGap="1em"
+     fxLayoutAlign="start stretch">
+    <div fxLayout="column"
+         fxLayoutGap="1em"
+         fxLayoutAlign="start stretch">
+        <tl-checkbox formControlName="shipRegisteredControl"
+                     label="{{ 'inspections.ship-registered' | tlTranslate }}">
+        </tl-checkbox>
+
+        <tl-autocomplete *ngIf="isFromRegister"
+                         formControlName="shipControl"
+                         label="{{ 'inspections.ship' | tlTranslate }}"
+                         [options]="ships">
+        </tl-autocomplete>
+
+        <div fxLayout="row"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start center">
+            <tl-input *ngIf="!isFromRegister"
+                      fxFlex="20"
+                      formControlName="nameControl"
+                      label="{{ 'inspections.ship-name' | tlTranslate }}">
+            </tl-input>
+            <tl-input *ngIf="!isFromRegister"
+                      fxFlex="20"
+                      formControlName="externalMarkControl"
+                      label="{{ 'inspections.external-mark' | tlTranslate }}">
+            </tl-input>
+            <tl-input *ngIf="!isFromRegister"
+                      fxFlex="10"
+                      formControlName="cfrControl"
+                      label="{{ 'inspections.cfr' | tlTranslate }}">
+            </tl-input>
+            <tl-autocomplete [fxFlex]="isFromRegister ? 20 : 10"
+                             formControlName="flagControl"
+                             label="{{ 'inspections.flag' | tlTranslate }}"
+                             [options]="countries">
+            </tl-autocomplete>
+            <tl-input [fxFlex]="isFromRegister ? 20 : 8"
+                      formControlName="uviControl"
+                      label="{{ 'inspections.uvi' | tlTranslate }}">
+            </tl-input>
+            <tl-input [fxFlex]="isFromRegister ? 20 : 8"
+                      formControlName="callsignControl"
+                      label="{{ 'inspections.callsign' | tlTranslate }}">
+            </tl-input>
+            <tl-autocomplete [fxFlex]="isFromRegister ? 20 : 15"
+                             formControlName="shipTypeControl"
+                             label="{{ 'inspections.ship-type' | tlTranslate }}"
+                             [options]="vesselTypes">
+            </tl-autocomplete>
+            <tl-input [fxFlex]="isFromRegister ? 20 : 8"
+                      formControlName="mmsiControl"
+                      label="{{ 'inspections.mmsi' | tlTranslate }}">
+            </tl-input>
+        </div>
+    </div>
+    <inspection-map-viewer *ngIf="hasMap"
+                           formControlName="shipMapControl">
+    </inspection-map-viewer>
+</div>

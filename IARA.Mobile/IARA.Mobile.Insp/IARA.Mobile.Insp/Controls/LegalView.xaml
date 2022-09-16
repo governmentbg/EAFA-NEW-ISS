@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<StackLayout xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        x:Class="IARA.Mobile.Insp.Controls.LegalView"
+        x:DataType="vm:LegalViewModel"
+        x:Name="view">
+    <Label Text="{Binding Title, Source={Reference view}}"
+            FontAttributes="Bold"
+            FontSize="24" />
+    <tl:TLFlex GrowUnit="200">
+        <tl:TLEntry Title="{rt:Translate Name, Group=Common}"
+                ValidState="{Binding Name}">
+            <tl:TLEntry.IsEnabled>
+                <MultiBinding Converter="{StaticResource All}">
+                    <Binding Path="Inspection.ActivityType"
+                            Converter="{StaticResource IsNotReview}" />
+                    <Binding Path="IsEnabled" />
+                </MultiBinding>
+            </tl:TLEntry.IsEnabled>
+        </tl:TLEntry>
+        <tl:TLEntry Title="{rt:Translate EIK, Group=Common}"
+                ValidState="{Binding EIK}">
+            <tl:TLEntry.IsEnabled>
+                <MultiBinding Converter="{StaticResource All}">
+                    <Binding Path="Inspection.ActivityType"
+                            Converter="{StaticResource IsNotReview}" />
+                    <Binding Path="IsEnabled" />
+                </MultiBinding>
+            </tl:TLEntry.IsEnabled>
+        </tl:TLEntry>
+        <tl:TLEntry tl:TLFlex.Grow="2"
+                Title="{rt:Translate Address, Group=Common}"
+                ValidState="{Binding Address}">
+            <tl:TLEntry.IsEnabled>
+                <MultiBinding Converter="{StaticResource All}">
+                    <Binding Path="Inspection.ActivityType"
+                            Converter="{StaticResource IsNotReview}" />
+                    <Binding Path="IsEnabled" />
+                </MultiBinding>
+            </tl:TLEntry.IsEnabled>
+        </tl:TLEntry>
+        <tl:TLPicker Title="{rt:Translate Country, Group=Common}"
+                ValidState="{Binding Nationality}"
+                ItemsSource="{Binding Nationalities}">
+            <tl:TLPicker.IsEnabled>
+                <MultiBinding Converter="{StaticResource All}">
+                    <Binding Path="Inspection.ActivityType"
+                            Converter="{StaticResource IsNotReview}" />
+                    <Binding Path="IsEnabled" />
+                </MultiBinding>
+            </tl:TLPicker.IsEnabled>
+        </tl:TLPicker>
+    </tl:TLFlex>
+</StackLayout>

@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:MainPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+             xmlns:sharedConverters="clr-namespace:IARA.Mobile.Shared.Converters;assembly=IARA.Mobile.Shared"
+             xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+             xmlns:dtos="clr-namespace:IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API;assembly=IARA.Mobile.Pub.Application"
+             xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+             xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages"
+             x:Class="IARA.Mobile.Pub.Views.FlyoutPages.MyTicketsPage"
+             x:DataType="viewModels:MyTicketsViewModel"
+             x:TypeArguments="viewModels:MyTicketsViewModel"
+             xmlns:controls="clr-namespace:IARA.Mobile.Pub.Views.Controls"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             Title="{rt:Translate MyTickets, Group=Common}"
+             PageInfo="{rt:Translate PageInfo, Group=MyTickets}"
+             x:Name="page"
+             BackgroundColor="{StaticResource BackgroundColor}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <sharedConverters:BoolToLayoutStateConverter x:Key="BoolToLayoutState" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid RowDefinitions="Auto,*"
+          RowSpacing="0">
+        <Grid Grid.Row="1"
+              xct:StateLayout.CurrentState="{Binding IsBusy, Converter={StaticResource BoolToLayoutState}}"
+              xct:StateLayout.CurrentCustomStateKey="{Binding SelectedState}">
+            <xct:StateLayout.StateViews>
+                <xct:StateView StateKey="Loading"
+                               VerticalOptions="FillAndExpand"
+                               BackgroundColor="White">
+                    <ActivityIndicator IsRunning="True"
+                                       WidthRequest="100"
+                                       HeightRequest="100"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Center" />
+                </xct:StateView>
+                <!-- Налични билети -->
+                <xct:StateView StateKey="Custom"
+                               CustomStateKey="Tickets">
+                    <tl:TLScrollView>
+                        <StackLayout BindableLayout.ItemsSource="{Binding Tickets}"
+                                     Margin="10"
+                                     BackgroundColor="White">
+                            <BindableLayout.EmptyView>
+                                <ContentView>
+                                    <Label Text="{rt:Translate TicketsEmptyList,
+                                                                Group=MyTickets}"
+                                           LineBreakMode="WordWrap"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center"
+                                           HorizontalTextAlignment="Center" />
+                                </ContentView>
+                            </BindableLayout.EmptyView>
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentView x:DataType="dtos:FishingTicketDto">
+                                        <controls:MyTicketView Model="{Binding BindingContext, Source={x:Reference page}}" />
+                                    </ContentView>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                    </tl:TLScrollView>
+                </xct:StateView>
+                <!-- Изтекли билети -->
+                <xct:StateView StateKey="Custom"
+                               CustomStateKey="ExpiredTickets">
+                    <tl:TLScrollView>
+                        <StackLayout BindableLayout.ItemsSource="{Binding ExpiredTickets}"
+                                     Margin="10"
+                                     BackgroundColor="White">
+                            <BindableLayout.EmptyView>
+                                <ContentView>
+                                    <Label Text="{rt:Translate TicketsExpiredEmptyList,
+                                                                Group=MyTickets}"
+                                           LineBreakMode="WordWrap"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center"
+                                           HorizontalTextAlignment="Center" />
+                                </ContentView>
+                            </BindableLayout.EmptyView>
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentView x:DataType="dtos:FishingTicketDto">
+                                        <controls:MyTicketView Model="{Binding BindingContext, Source={x:Reference page}}" />
+                                    </ContentView>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                    </tl:TLScrollView>
+                </xct:StateView>
+            </xct:StateLayout.StateViews>
+        </Grid>
+        <!-- Хедър -->
+        <Frame Padding="0,10,0,0"
+               Grid.Row="0">
+            <StackLayout Orientation="Horizontal"
+                         RadioButtonGroup.GroupName="TopTabs"
+                         RadioButtonGroup.SelectedValue="{Binding SelectedState}">
+                <RadioButton IsChecked="True"
+                             Value="Tickets"
+                             IsEnabled="{Binding IsBusy, Converter={StaticResource OppositeBool}}"
+                             HorizontalOptions="FillAndExpand"
+                             Content="{rt:Translate Tickets,
+                                               Group=MyTickets}"
+                             ControlTemplate="{StaticResource RadioTabTemplate}" />
+                <RadioButton HorizontalOptions="FillAndExpand"
+                             Value="ExpiredTickets"
+                             IsEnabled="{Binding IsBusy, Converter={StaticResource OppositeBool}}"
+                             Content="{rt:Translate ExpiredTickets,
+                                               Group=MyTickets}"
+                             ControlTemplate="{StaticResource RadioTabTemplate}">
+                    <RadioButton.Behaviors>
+                        <xct:EventToCommandBehavior EventName="CheckedChanged"
+                                                    Command="{Binding StateChanged}" />
+                    </RadioButton.Behaviors>
+                </RadioButton>
+            </StackLayout>
+        </Frame>
+    </Grid>
+</sv:MainPage>

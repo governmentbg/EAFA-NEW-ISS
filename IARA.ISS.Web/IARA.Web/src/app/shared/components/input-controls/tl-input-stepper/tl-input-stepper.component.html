@@ -1,0 +1,13 @@
+﻿<div class="wrapper" fxFlexLayout="row" fxFlexLayoutAlign="space-between center">
+    <tl-icon-button icon="remove"
+                    [disabled]="isDisabled"
+                    (buttonClicked)="minus()"
+                    iconClass="accent-color">
+    </tl-icon-button>
+    <input type="number" [min]="min" [max]="max" [formControl]="control" />
+    <tl-icon-button icon="add"
+                    (buttonClicked)="plus()"
+                    [disabled]="isDisabled"
+                    iconClass="accent-color">
+    </tl-icon-button>
+</div>

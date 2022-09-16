@@ -1,0 +1,150 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <search-panel [translateService]="translate">
+        <div [formGroup]="form" fxLayout="column" fxLayoutAlign="start start">
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-input fxFlex="33"
+                          formControlName="numberControl"
+                          label="{{ 'poundnet-page.number' | tlTranslate }}"
+                          tooltipResourceName="poundnet-page.number-helper">
+                </tl-input>
+
+                <tl-input fxFlex="33"
+                          formControlName="nameControl"
+                          label="{{ 'poundnet-page.name' | tlTranslate }}"
+                          tooltipResourceName="poundnet-page.name-helper">
+                </tl-input>
+
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="municipalityControl"
+                                 [options]="muncipalities"
+                                 label="{{ 'poundnet-page.municipality' | tlTranslate }}"
+                                 tooltipResourceName="poundnet-page.municipality-helper">
+                </tl-autocomplete>
+            </div>
+
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="categoryControl"
+                                 [options]="categoryTypes"
+                                 label="{{ 'poundnet-page.category' | tlTranslate }}"
+                                 tooltipResourceName="poundnet-page.category">
+                </tl-autocomplete>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="seasonalControl"
+                                 [options]="seasonalTypes"
+                                 label="{{ 'poundnet-page.seasonality' | tlTranslate }}"
+                                 tooltipResourceName="poundnet-page.seasonality-helper">
+                </tl-autocomplete>
+
+                <tl-date-range fxFlex="25"
+                               formControlName="dateRangeControl"
+                               label="{{ 'poundnet-page.registration-date' | tlTranslate }} {{ 'poundnet-page.in-range' | tlTranslate }}"
+                               tooltipResourceName="poundnet-page.registration-date-in-range-helper">
+                </tl-date-range>
+                <tl-select fxFlex="25"
+                           formControlName="statusControl"
+                           [options]="statuses"
+                           label="{{ 'poundnet-page.status' | tlTranslate }}"
+                           tooltipResourceName="poundnet-page.status-helper">
+                </tl-select>
+            </div>
+        </div>
+    </search-panel>
+
+    <tl-card tooltipResourceName="poundnet-page.register-table-card-helper">
+        <tl-card-content>
+            <tl-data-table [showAddButton]="canAddRecords"
+                           [showInactiveRecords]="canRestoreRecords"
+                           (addButtonClicked)="createEditPoundnet(undefined, false)">
+                <data-column columnName="{{ 'poundnet-page.name' | tlTranslate }}"
+                             [flexRate]="0.3"
+                             propertyName="name">
+                </data-column>
+
+                <data-column columnName="{{ 'poundnet-page.number' | tlTranslate }}"
+                             [flexRate]="0.2"
+                             propertyName="number">
+                </data-column>
+
+                <data-column columnName="{{ 'poundnet-page.seasonality' | tlTranslate }}"
+                             [flexRate]="0.1"
+                             propertyName="seasonType">
+                </data-column>
+
+                <data-column columnName="{{ 'poundnet-page.category' | tlTranslate }}"
+                             [flexRate]="0.1"
+                             propertyName="categoryType">
+                </data-column>
+
+                <data-column columnName="{{ 'poundnet-page.municipality' | tlTranslate }}"
+                             [flexRate]="0.2"
+                             propertyName="muncipality">
+                </data-column>
+
+                <data-column columnName="{{ 'poundnet-page.registration-date' | tlTranslate }}"
+                             [flexRate]="0.2"
+                             propertyName="registrationDate"
+                             dataType="date">
+                </data-column>
+
+                <data-template-column columnName="{{ 'poundnet-page.status' | tlTranslate }}"
+                                      [flexRate]="0.2"
+                                      propertyName="status">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.3em">
+                            <ng-container [ngSwitch]="row.statusCode">
+                                <tl-icon *ngSwitchCase="poundnetStatusEnum.Active"
+                                         icon="done_outline"
+                                         iconClass="accent-color">
+                                </tl-icon>
+                                <tl-icon *ngSwitchCase="poundnetStatusEnum.InProcess"
+                                         icon="history"
+                                         iconClass="accent-color">
+                                </tl-icon>
+                                <tl-icon *ngSwitchCase="poundnetStatusEnum.Canceled"
+                                         icon="highlight_off"
+                                         iconClass="accent-color">
+                                </tl-icon>
+                                <div> {{ row.data.status }} </div>
+                            </ng-container>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+
+                <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button icon="visibility"
+                                            (buttonClicked)="createEditPoundnet(row.data, true)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'poundnet-page.view-poundnet-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.data.isActive && canEditRecords"
+                                            icon="edit"
+                                            (buttonClicked)="createEditPoundnet(row.data, false)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'poundnet-page.edit-poundnet-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.data.isActive && canDeleteRecords"
+                                            icon="delete"
+                                            (buttonClicked)="deletePoundnet(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'poundnet-page.delete-poundnet-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="!row.data.isActive && canRestoreRecords"
+                                            icon="restore"
+                                            (buttonClicked)="restorePoundnet(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'poundnet-page.restore-poundnet-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+</div>

@@ -1,0 +1,19 @@
+﻿<div fxLayout="column" fxFlexFill fxLayoutGap="1em">
+    <tl-card>
+        <tl-card-content [formGroup]="groupPropertiesGroup">
+            <tl-input label="{{ 'report-view.dialog-group-name' | tlTranslate }}"
+                      formControlName="nameControl"
+                      tooltipResourceName="report-view.dialog-group-name-helper">
+            </tl-input>
+            <tl-select label="{{ 'report-view.dialog-group-type' | tlTranslate }}"
+                       formControlName="groupTypeControl"
+                       [options]="groupTypes"
+                       tooltipResourceName="report-view.dialog-group-type-helper">
+            </tl-select>
+            <tl-textarea label="{{ 'report-view.dialog-group-description' | tlTranslate }}"
+                         formControlName="descriptionControl"
+                         tooltipResourceName="report-view.dialog-group-description-helper">
+            </tl-textarea>
+        </tl-card-content>
+    </tl-card>
+</div>

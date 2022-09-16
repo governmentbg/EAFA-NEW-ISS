@@ -1,0 +1,27 @@
+﻿<div fxLayout="column" [formGroup]="formGroup">
+    <tl-autocomplete [options]="rows"
+                     [focusoutOnSelect]="true"
+                     formControlName="inputControl"
+                     [label]="autocompleteLabel">
+    </tl-autocomplete>
+    <tl-data-table [rows]="selectedRows"
+                   [isRemote]="false"
+                   [isSoftDeletable]="false"
+                   [showAddButton]="false"
+                   [showInactiveRecords]="false">
+        <data-column [flexRate]="1"
+                     propertyName="displayName"
+                     [columnName]="columnName">
+        </data-column>
+        <data-template-column *ngIf="!isDisabled">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                <div fxLayout="row" fxLayoutAlign="end center">
+                    <tl-icon-button icon="delete"
+                                    iconClass="accent-color"
+                                    (buttonClicked)="removeRow(row)">
+                    </tl-icon-button>
+                </div>
+            </ng-template>
+        </data-template-column>
+    </tl-data-table>
+</div>

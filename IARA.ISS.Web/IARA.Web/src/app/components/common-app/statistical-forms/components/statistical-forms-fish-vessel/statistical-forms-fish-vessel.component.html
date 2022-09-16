@@ -1,0 +1,280 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     validityCheckerGroup
+     [formGroup]="form"
+     [notifierGroup]="notifier"
+     class="dialog-padding">
+    <!-- Заявител -->
+    <application-submitted-by *ngIf="isApplication"
+                              formControlName="submittedByControl"
+                              notifier
+                              validityChecker
+                              label="{{ 'statistical-forms.fish-vessel-requester' | tlTranslate }}"
+                              [isIdReadOnly]="isEditing || isPublicApp"
+                              [showOnlyBasicData]="true"
+                              [expectedResults]="expectedResults.submittedBy">
+        <div middle fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+            <tl-input fxFlex="25"
+                      *ngIf="!showOnlyRegiXData"
+                      formControlName="submittedByWorkPositionControl"
+                      label="{{ 'statistical-forms.fish-vessel-requester-position' | tlTranslate }}">
+            </tl-input>
+            <div fxFlex="25"></div>
+            <div fxFlex="25"></div>
+            <div fxFlex="25"></div>
+        </div>
+    </application-submitted-by>
+
+    <!-- Получател -->
+    <application-submitted-for formControlName="submittedForControl"
+                               notifier
+                               validityChecker
+                               relationLabel="{{ 'statistical-forms.fish-vessel-requester-role' | tlTranslate }}"
+                               submittedForLabel="{{ 'statistical-forms.fish-vessel-receiver' | tlTranslate }}"
+                               [pageCode]="pageCode"
+                               [isIdReadOnly]="isEditing"
+                               [showOnlyBasicData]="true"
+                               [showPersonal]="!isApplication"
+                               [submittedByControl]="form.controls.submittedByControl"
+                               [expectedResults]="expectedResults.submittedFor"
+                               [hideRelation]="showOnlyRegiXData || !isApplication">
+    </application-submitted-for>
+
+    <!--Основна информация за кораба-->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'statistical-forms.fish-vessel-basic-information-title' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.fish-vessel-basic-information-title-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column">
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-input *ngIf="isRegisterEntry"
+                          fxFlex="25"
+                          formControlName="formNumControl"
+                          tooltipResourceName="statistical-forms.fish-vessel-form-num-helper"
+                          label="{{ 'statistical-forms.fish-vessel-form-num' | tlTranslate }}">
+                </tl-input>
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="shipNameControl"
+                                 tooltipResourceName="statistical-forms.ship-name-helper"
+                                 [options]="ships"
+                                 [templateOptions]="true"
+                                 label="{{ 'statistical-forms.ship-name' | tlTranslate }}">
+                </tl-autocomplete>
+                <tl-date-year fxFlex="25"
+                              formControlName="yearControl"
+                              tooltipResourceName="statistical-forms.fish-vessel-year-helper"
+                              label="{{ 'statistical-forms.fish-vessel-year' | tlTranslate }}"
+                              [max]="currentDate">
+                </tl-date-year>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!--Данни за кораба-->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData && form.controls.shipNameControl.valid && form.controls.shipNameControl.value"
+                        title="{{ 'statistical-forms.ship-information-title' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.ship-information-title-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column">
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-input fxFlex="50"
+                          formControlName="shipYearsControl"
+                          tooltipResourceName="statistical-forms.ship-years-helper"
+                          label="{{ 'statistical-forms.ship-years' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="50"
+                          formControlName="shipPriceControl"
+                          tooltipResourceName="statistical-forms.ship-price-helper"
+                          label="{{ 'statistical-forms.ship-price' | tlTranslate }}">
+                </tl-input>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-select fxFlex="50"
+                           formControlName="shipLengthControl"
+                           tooltipResourceName="statistical-forms.ship-length-helper"
+                           [options]="shipLengthIntervals"
+                           label="{{ 'statistical-forms.ship-length' | tlTranslate }}">
+                </tl-select>
+                <tl-select fxFlex="50"
+                           formControlName="shipTonnageControl"
+                           tooltipResourceName="statistical-forms.ship-tonnage-helper"
+                           [options]="grossTonnageIntervals"
+                           label="{{ 'statistical-forms.ship-tonnage' | tlTranslate }}">
+                </tl-select>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-slide-toggle fxFlex="20"
+                                 formControlName="hasEngineControl"
+                                 tooltipResourceName="statistical-forms.ship-has-engine-helper"
+                                 label="{{ 'statistical-forms.ship-has-engine' | tlTranslate }}">
+                </tl-slide-toggle>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" *ngIf="hasEngine">
+                <tl-select fxFlex="50"
+                           formControlName="fuelTypeControl"
+                           tooltipResourceName="statistical-forms.ship-fuel-type-helper"
+                           [options]="fuelTypes"
+                           label="{{ 'statistical-forms.ship-fuel-type' | tlTranslate }}">
+                </tl-select>
+                <tl-input fxFlex="50"
+                          formControlName="shipEnginePowerControl"
+                          tooltipResourceName="statistical-forms.ship-engine-power-helper"
+                          label="{{ 'statistical-forms.ship-engine-power' | tlTranslate }}">
+                </tl-input>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!--Дни на море-->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'statistical-forms.sea-days-title' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.sea-days-title-helper"
+                        [validityChecker]="form">
+        <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+            <tl-data-table fxFlexFill
+                           #seaDaysTable
+                           [rows]="seaDays"
+                           [isRemote]="false"
+                           [isSoftDeletable]="true"
+                           [showInactiveRecords]="true"
+                           [showAddButton]="!viewMode && !readOnly">
+                <data-column columnName="{{ 'statistical-forms.fishing-gear' | tlTranslate }}"
+                             propertyName="fishingGearId"
+                             [formGroup]="seaDaysForm"
+                             [options]="fishingGears"
+                             [displayOptions]="allFishingGears"
+                             dataType="nomenclature">
+                </data-column>
+                <data-column columnName="{{ 'statistical-forms.sea-days' | tlTranslate }}"
+                             propertyName="days"
+                             [formGroup]="seaDaysForm">
+                </data-column>
+                <data-column-inline [flexRate]="0.2" *ngIf="!readOnly"></data-column-inline>
+            </tl-data-table>
+        </div>
+    </tl-expansion-panel>
+
+    <!--Дейност-->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'statistical-forms.activity-title' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.activity-title-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-radio-button-group fxFlex="25"
+                                       formControlName="isFishingMainActivityControl"
+                                       [options]="fishingMainActivityOptions"
+                                       direction="row"
+                                       gap="0.5em"
+                                       tooltipResourceName="statistical-forms.fishing-activity-type-helper"
+                                       label="{{ 'statistical-forms.fishing-activity-type' | tlTranslate }}">
+                </tl-radio-button-group>
+
+                <tl-radio-button-group fxFlex="25"
+                                       formControlName="shipHolderPartOfCrewControl"
+                                       [options]="holderPartOfCrewOptions"
+                                       direction="row"
+                                       gap="0.5em"
+                                       tooltipResourceName="statistical-forms.ship-holder-part-of-crew-helper"
+                                       label="{{ 'statistical-forms.ship-holder-part-of-crew' | tlTranslate }}">
+                </tl-radio-button-group>
+            </div>
+
+            <div *ngIf="isShipHolderPartOfCrew" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-input fxFlex="50"
+                          formControlName="shipHolderPositionControl"
+                          tooltipResourceName="statistical-forms.ship-holder-position-helper"
+                          label="{{ 'statistical-forms.ship-holder-position' | tlTranslate }}">
+                </tl-input>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!--Информация за заети лица-->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'statistical-forms.information-employees' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.information-employees-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.get('workHoursArray')!.valid">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <div *ngFor="let control of form.get('employeeInfoArray')!.controls; index as i"
+                 fxLayout="column"
+                 fxLayoutGap="1em">
+                <statistical-forms-employees-info-table [formControl]="control"
+                                                        [cardLabel]="employeeInfoLabels[i]"
+                                                        infoTypeColumnLabel="">
+                </statistical-forms-employees-info-table>
+
+                <mat-error *ngIf="form.get('employeeInfoArray')?.errors?.columnCountNotEqual[i] === true">
+                    {{ 'statistical-forms.fish-vessel-count-error' | tlTranslate }}
+                </mat-error>
+            </div>
+            <div *ngFor="let control of form.get('workHoursArray')!.controls; index as i"
+                 fxLayout="column"
+                 fxLayoutGap="1em">
+                <tl-input fxFlex="100"
+                          [formControl]="control"
+                          label="{{ 'statistical-forms.worked-out-hours' | tlTranslate }}">
+                </tl-input>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!--Финансова информация-->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'statistical-forms.financial-information-title' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.financial-information-title-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.get('financialInfoArray')!.valid && form.get('employeeStatsArray')!.valid">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <div *ngFor="let control of form.get('employeeStatsArray')!.controls; index as i"
+                 fxLayout="column"
+                 fxLayoutGap="1em">
+                <tl-input fxFlex="100"
+                          [formControl]="control"
+                          [label]="employeeStatsLabels[i]"
+                          tooltipResourceName="statistical-forms.vessel-information-employee-stats-helper">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row wrap" fxLayoutGap="1em" fxFlex="100">
+                <div *ngFor="let control of form.get('financialInfoArray')!.controls; index as i" fxFlex="48" class="gap-bottom-1" fxLayout="column" fxLayoutGap="1em">
+                    <item-list [formControl]="control"
+                               [itemsLabel]="financialInfoGroupNames[i]"
+                               [required]="true"
+                               valuesLabel="{{ 'statistical-forms.rework-amount' | tlTranslate }}"
+                               validityChecker>
+                    </item-list>
+
+                    <mat-error *ngIf="form.get('financialInfoArray')?.errors?.costsIsEmpty[i] === true">
+                        * {{ 'statistical-forms.fish-vessel-costs-error' | tlTranslate }}
+                    </mat-error>
+                </div>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData && !isPublicApp"
+                        title="{{ 'statistical-forms.fish-vessel-files' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.fish-vessel-files-helper"
+                        [validityChecker]="form">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)"
+                                  [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                  [refreshFileTypes]="refreshFileTypes">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+
+    <!-- Проверки -->
+    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+                        title="{{ 'statistical-forms.fish-vessel-regix-checks-results' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.fish-vessel-regix-checks-results-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-checks-results [regixChecksCollection]="regixChecks">
+            </regix-checks-results>
+        </div>
+    </tl-expansion-panel>
+</div>

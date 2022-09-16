@@ -1,0 +1,54 @@
+﻿<div fxLayout="column" fxFlexFill fxLayoutGap="1em">
+    <search-panel>
+        <div fxLayout="row" fxLayoutGap="1em" [formGroup]="filtersFormGroup">
+            <tl-date-range fxFlex="25"
+                           formControlName="dateRangeControl"
+                           label="{{ 'report-parameter-definition.filter-date-from' | tlTranslate }} {{ 'report-parameter-definition.filter-date-to' | tlTranslate }}"
+                           tooltipResourceName="report-parameter-definition.filter-date-helper">
+            </tl-date-range>
+        </div>
+    </search-panel>
+    <tl-card tooltipResourceName="report-parameter-definition.parameters-title-helper">
+        <tl-card-title>{{ 'report-definition.parameters-title' | tlTranslate }}</tl-card-title>
+        <tl-card-content>
+            <tl-data-table #parametersTable
+                           [showAddButton]="canAddNParameters"
+                           [showInactiveRecords]="canRestoreNParameters"
+                           (addButtonClicked)="addOrEditNParameter()"
+                           (activeRecordChanged)="addOrEditNParameter($event)">
+                <data-column [flexRate]="0.2" columnName="{{ 'report-parameter-definition.parameters-table-sql-code' | tlTranslate }}" propertyName="code"></data-column>
+                <data-column [flexRate]="0.2" columnName="{{ 'report-parameter-definition.parameters-table-parameter-name' | tlTranslate }}" propertyName="name"></data-column>
+                <data-column [flexRate]="0.2" columnName="{{ 'report-parameter-definition.parameters-table-parameter-description' | tlTranslate }}" propertyName="description"></data-column>
+                <data-column [flexRate]="0.2" columnName="{{ 'report-parameter-definition.parameters-table-parameter-type' | tlTranslate }}" propertyName="dataType"></data-column>
+                <data-column [flexRate]="0.2" columnName="{{ 'report-parameter-definition.parameters-table-parameter-default-value' | tlTranslate }}" propertyName="defaultValue"></data-column>
+                <data-column [flexRate]="0.2" columnName="{{ 'report-parameter-definition.parameters-table-parameter-error-message' | tlTranslate }}" propertyName="errorMessage"></data-column>
+                <data-column [flexRate]="0.2" columnName="{{ 'report-parameter-definition.parameters-table-parameter-pattern' | tlTranslate }}" propertyName="pattern"></data-column>
+                <data-template-column [flexRate]="0.3">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">
+                            <tl-icon-button icon="visibility"
+                                            (buttonClicked)="addOrEditNParameter(row.data, true)"
+                                            iconClass="accent-color">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.isActive && canEditNParameters"
+                                            icon="edit"
+                                            (buttonClicked)="addOrEditNParameter(row.data)"
+                                            iconClass="accent-color">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.isActive && canDeleteNParameters"
+                                            icon="delete"
+                                            (buttonClicked)="deleteNParameter(row.data)"
+                                            iconClass="accent-color">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="!row.data.isActive && canRestoreNParameters"
+                                            icon="restore"
+                                            (buttonClicked)="undoDeletedNParameter(row.data)"
+                                            iconClass="accent-color">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+</div>

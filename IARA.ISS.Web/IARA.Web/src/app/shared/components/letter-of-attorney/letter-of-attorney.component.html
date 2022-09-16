@@ -1,0 +1,18 @@
+﻿<div [formGroup]="form" fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+    <tl-input fxFlex="33"
+              formControlName="letterNumControl"
+              label="{{ 'letter-of-attorney.letter-num' | tlTranslate }}">
+    </tl-input>
+
+    <date-range-indefinite fxFlex="33"
+                           formControlName="letterPeriodControl"
+                           rangeLabel="{{ 'letter-of-attorney.letter-period' | tlTranslate }}"
+                           dateLabel="{{ 'letter-of-attorney.letter-period-start' | tlTranslate }}"
+                           checkboxLabel="{{ 'letter-of-attorney.letter-is-unlimited' | tlTranslate }}">
+    </date-range-indefinite>
+
+    <tl-input fxFlex="33"
+              formControlName="notaryNameControl"
+              label="{{ 'letter-of-attorney.letter-notary' | tlTranslate }}">
+    </tl-input>
+</div>

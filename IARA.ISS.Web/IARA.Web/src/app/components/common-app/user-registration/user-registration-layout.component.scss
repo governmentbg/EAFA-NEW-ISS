@@ -1,0 +1,87 @@
+@import "src/@fuse/scss/fuse";
+
+user-registration-layout {
+
+    .white {
+        background-color: white !important;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+
+        .logo-icon {
+            width: 2.71em !important;
+            margin: 2.29em auto;
+        }
+    }
+
+    .img-cover {
+        object-fit: cover;
+    }
+
+    #register {
+        width: 100%;
+        overflow: hidden;
+
+        #register-form-wrapper {
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            box-shadow: none !important;
+
+            @include mat-elevation(16);
+
+            @include media-breakpoint('sm') {
+                width: 100%;
+                min-width: 100%;
+                max-width: 100% !important;
+            }
+
+            @include media-breakpoint('xs') {
+                width: 100%;
+                min-width: 100%;
+                max-width: 100% !important;
+            }
+
+            @include media-breakpoint('md') {
+                width: 100%;
+                min-width: 100%;
+                max-width: 100% !important;
+            }
+
+            #register-form {
+                padding: 3.43em 3.43em 3.43em 3.43em;
+
+                @include media-breakpoint('xs') {
+                    text-align: center;
+                    padding: 1.71em;
+                }
+
+                form {
+                    width: 100%;
+                    padding-top: 2.29em;
+
+                    mat-form-field {
+                        width: 100%;
+
+                        @include media-breakpoint('xs') {
+                            width: 80%;
+                        }
+                    }
+
+                    mat-checkbox {
+                        margin: 0;
+                    }
+
+                    .terms {
+                        margin: 1.43em 0 2.29em 0;
+
+                        a {
+                            margin-left: 0.29em;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

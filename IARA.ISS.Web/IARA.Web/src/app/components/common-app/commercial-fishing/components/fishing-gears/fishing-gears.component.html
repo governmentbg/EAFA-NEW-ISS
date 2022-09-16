@@ -1,0 +1,71 @@
+﻿<div fxFlexFill fxLayout="column" fxLayoutGap="0.5em">
+    <tl-data-table fxFlexFill
+                   #fishingGearsTable
+                   [rows]="fishingGears"
+                   [isRemote]="false"
+                   [isSoftDeletable]="true"
+                   [showAddButton]="!isReadonly"
+                   [showInactiveRecords]="true"
+                   (addButtonClicked)="addEditFishingGear()"
+                   (activeRecordChanged)="addEditFishingGear($event, !$event.isActive)">
+        <data-column [flexRate]="0.4"
+                     propertyName="type"
+                     columnName="{{ 'fishing-gears.type' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.2"
+                     propertyName="count"
+                     columnName="{{ 'fishing-gears.count' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.4"
+                     propertyName="marksNumbers"
+                     columnName="{{ 'fishing-gears.marks-numbers' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.2"
+                     propertyName="length"
+                     columnName="{{ 'fishing-gears.length' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.2"
+                     propertyName="netEyeSize"
+                     columnName="{{ 'fishing-gears.net-eye-size' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.4"
+                     propertyName="description"
+                     columnName="{{ 'fishing-gears.description' | tlTranslate }}">
+        </data-column>
+        <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                <div fxLayout="row wrap" fxLayoutAlign="end center">
+                    <tl-icon-button *ngIf="row.data.isActive"
+                                    icon="visibility"
+                                    (buttonClicked)="addEditFishingGear(row.data, true)"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'fishing-gears.view-fishing-gear' | tlTranslate }}">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="row.data.isActive && !isReadonly"
+                                    icon="edit"
+                                    (buttonClicked)="addEditFishingGear(row.data)"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'fishing-gears.edit-fishing-gear' | tlTranslate }}">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="row.data.isActive && !isReadonly"
+                                    icon="delete"
+                                    (buttonClicked)="deleteFishingGear(row)"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'fishing-gears.delete-fishing-gear' | tlTranslate }}">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="!row.data.isActive && !isReadonly"
+                                    icon="restore"
+                                    (buttonClicked)="undoDeleteFishingGear(row)"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'fishing-gears.restore-fishing-gear' | tlTranslate }}">
+                    </tl-icon-button>
+                </div>
+            </ng-template>
+        </data-template-column>
+    </tl-data-table>
+    <div fxFlex="100" fxLayout="row">
+        <mat-error *ngIf="hasMoreThanPermittedNumberOfFishingGears">
+            {{ 'fishing-gears.more-than-permitted-number-of-fishing-gears-error' | tlTranslate }} ({{ maxNumberOfFishingGears }})
+        </mat-error>
+    </div>
+</div>

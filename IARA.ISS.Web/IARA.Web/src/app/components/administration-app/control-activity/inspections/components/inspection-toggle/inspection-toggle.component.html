@@ -1,0 +1,23 @@
+﻿<div *ngIf="toggle"
+     [formGroup]="form"
+     fxLayout="column"
+     fxLayoutGap="0.5em"
+     fxLayoutAlign="start stretch">
+    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+        <mat-button-toggle-group formControlName="togglesControl" [name]="toggle.code" [aria-label]="toggle.displayName">
+            <mat-button-toggle *ngFor="let option of fullOptions" [value]="option.value">
+                {{ option.displayName }}
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+        <span>{{ toggle.displayName }}</span>
+    </div>
+
+    <mat-error *ngIf="form.controls.togglesControl.touched === true && form.controls.togglesControl.errors?.required === true">
+        {{ 'validation.required' | tlTranslate }}
+    </mat-error>
+
+    <tl-input *ngIf="toggle.hasAdditionalDescr === true"
+              formControlName="toggleTextControl"
+              [label]="toggle.descriptionLabel">
+    </tl-input>
+</div>

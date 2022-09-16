@@ -1,0 +1,932 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxFlexFill class="dialog-padding container">
+    <div fxLayout="column"
+         fxLayoutGap="1em"
+         fxFlexFill
+         fxLayoutAlign="space-between stretch"
+         validityCheckerGroup
+         [formGroup]="form"
+         [notifierGroup]="notifier">
+        <!-- Заявител -->
+        <application-submitted-by *ngIf="isApplication"
+                                  formControlName="submittedByControl"
+                                  notifier
+                                  validityChecker
+                                  label="{{ 'aquacultures.requester' | tlTranslate }}"
+                                  [isIdReadOnly]="isEditing || isPublicApp"
+                                  [hideDocument]="true"
+                                  [expectedResults]="expectedResults.submittedBy">
+        </application-submitted-by>
+
+        <!-- Получател -->
+        <application-submitted-for *ngIf="isApplication"
+                                   formControlName="submittedForControl"
+                                   notifier
+                                   validityChecker
+                                   relationLabel="{{ 'aquacultures.requester-role' | tlTranslate }}"
+                                   submittedForLabel="{{ 'aquacultures.receiver' | tlTranslate }}"
+                                   [pageCode]="pageCode"
+                                   [hideRelation]="showOnlyRegiXData"
+                                   [isIdReadOnly]="isEditing"
+                                   [hideDocument]="true"
+                                   [showPersonal]="!isApplication"
+                                   [submittedByControl]="form.controls.submittedByControl"
+                                   [expectedResults]="expectedResults.submittedFor">
+        </application-submitted-for>
+
+        <!-- История на прекратяванията -->
+        <tl-expansion-panel *ngIf="cancellationHistory && cancellationHistory.length > 0"
+                            title="{{ 'aquacultures.cancel-status-history' | tlTranslate }}"
+                            tooltipResourceName="aquacultures.cancel-status-history-helper">
+            <tl-data-table fxFlexFill
+                           [rows]="cancellationHistory"
+                           [isRemote]="false"
+                           [isSoftDeletable]="false"
+                           [showInactiveRecords]="false"
+                           [showAddButton]="false"
+                           [recordsPerPage]="2">
+                <row-detail>
+                    <ng-template let-row="row" ngx-datatable-row-detail-template>
+                        <div fxLayout="row" fxLayoutAlign="center center" style="margin-top: 1em;">
+                            <tl-textarea fxFlex="95"
+                                         [value]="row.data.description"
+                                         [readonly]="true"
+                                         label="{{ 'aquacultures.cancel-status-description' | tlTranslate }}">
+                            </tl-textarea>
+                        </div>
+                    </ng-template>
+                </row-detail>
+
+                <data-template-column propertyName="IsCancelled"
+                                      [flexRate]="0.2"
+                                      columnName="{{ 'aquacultures.cancel-status-status' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.3em">
+                            <tl-icon [icon]="row.data.isCancelled ? 'highlight_off' : 'done_outline'"
+                                     iconClass="accent-color">
+                            </tl-icon>
+                            <div>{{ row.data.isCancelled ? ('aquacultures.cancelled-status' | tlTranslate) : ('aquacultures.active-status' | tlTranslate) }}</div>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+
+                <data-column [flexRate]="0.2"
+                             propertyName="dateOfChange"
+                             dataType="date"
+                             columnName="{{ 'aquacultures.cancel-status-date-of-change' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="0.4"
+                             propertyName="cancellationReasonId"
+                             dataType="nomenclature"
+                             [options]="cancellationReasons"
+                             columnName="{{ 'aquacultures.cancel-status-reason' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="0.2"
+                             propertyName="issueOrderNum"
+                             columnName="{{ 'aquacultures.cancel-status-issue-order-num' | tlTranslate }}">
+                </data-column>
+            </tl-data-table>
+        </tl-expansion-panel>
+
+        <!-- Основни данни -->
+        <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                            [validityChecker]="form"
+                            title="{{ 'aquacultures.basic-data' | tlTranslate }}"
+                            tooltipResourceName="aquacultures.basic-data-helper">
+            <div fxLayout="column" fxLayoutGap="1em">
+                <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                    <tl-input fxFlex="50"
+                              formControlName="nameControl"
+                              label="{{ 'aquacultures.name' | tlTranslate }}"
+                              tooltipResourceName="aquacultures.name-helper">
+                    </tl-input>
+
+                    <tl-input *ngIf="isRegisterEntry"
+                              fxFlex="15"
+                              formControlName="regNumControl"
+                              label="{{ 'aquacultures.reg-num' | tlTranslate }}"
+                              tooltipResourceName="aquacultures.reg-num-helper">
+                    </tl-input>
+
+                    <tl-input *ngIf="isRegisterEntry"
+                              fxFlex="15"
+                              formControlName="urorNumControl"
+                              label="{{ 'aquacultures.uror' | tlTranslate }}"
+                              tooltipResourceName="aquacultures.uror-helper">
+                    </tl-input>
+
+                    <tl-select *ngIf="!isApplication"
+                               fxFlex="15"
+                               formControlName="statusControl"
+                               [options]="statuses"
+                               tooltipResourceName="aquacultures.status-helper"
+                               label="{{ 'aquacultures.status' | tlTranslate }}">
+                    </tl-select>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="space-between stretch" fxLayoutGap="1em">
+                    <!-- Местоположение -->
+                    <tl-card fxFlex="50"
+                             tooltipResourceName="aquacultures.location-helper"
+                             [validityChecker]="form">
+                        <tl-card-title>{{ 'aquacultures.aquaculture-location' | tlTranslate }}</tl-card-title>
+                        <tl-card-content fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="1em">
+                            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                                <tl-autocomplete fxFlex="50"
+                                                 formControlName="territoryUnitControl"
+                                                 [options]="territoryUnits"
+                                                 label="{{ 'aquacultures.territory-unit' | tlTranslate }}"
+                                                 tooltipResourceName="aquacultures.territory-unit-helper">
+                                </tl-autocomplete>
+
+                                <tl-autocomplete fxFlex="50"
+                                                 formControlName="waterAreaTypeControl"
+                                                 [options]="waterAreaTypes"
+                                                 label="{{ 'aquacultures.water-area-type' | tlTranslate }}"
+                                                 tooltipResourceName="aquacultures.water-area-type-helper">
+                                </tl-autocomplete>
+                            </div>
+
+                            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                                <tl-autocomplete fxFlex="50"
+                                                 formControlName="populatedAreaControl"
+                                                 [options]="populatedAreas"
+                                                 [templateOptions]="true"
+                                                 label="{{ 'aquacultures.populated-area' | tlTranslate }}"
+                                                 tooltipResourceName="aquacultures.populated-area-helper">
+                                </tl-autocomplete>
+
+                                <tl-input *ngIf="form.controls.populatedAreaControl.value"
+                                          fxFlex="50"
+                                          formControlName="ekatteControl"
+                                          label="{{ 'aquacultures.ekatte' | tlTranslate }}"
+                                          tooltipResourceName="aquacultures.ekatte-helper">
+                                </tl-input>
+
+                                <div *ngIf="!form.controls.populatedAreaControl.value" fxFlex="50"></div>
+                            </div>
+
+                            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                                <tl-textarea fxFlex="100"
+                                             formControlName="locationDescriptionControl"
+                                             label="{{ 'aquacultures.location-description' | tlTranslate }}"
+                                             tooltipResourceName="aquacultures.location-description-helper">
+                                </tl-textarea>
+                            </div>
+                        </tl-card-content>
+                    </tl-card>
+
+                    <!-- GPS координати -->
+                    <tl-card fxFlex="50"
+                             tooltipResourceName="aquacultures.gps-coordinates-helper"
+                             [validityChecker]="form">
+                        <tl-card-title>{{ 'aquacultures.gps-coordinates' | tlTranslate }}</tl-card-title>
+                        <tl-card-content>
+                            <tl-data-table #coordinatesTable
+                                           fxFlex="100"
+                                           [isRemote]="false"
+                                           [isSoftDeletable]="false"
+                                           [showInactiveRecords]="false"
+                                           [showAddButton]="!viewMode && !isReadonly"
+                                           [rows]="aquacultureCoordinates">
+                                <data-column [flexRate]="0.1"
+                                             [isRowNumber]="true"
+                                             [isSortable]="false"
+                                             propertyName="pointNum"
+                                             columnName="{{ 'aquacultures.point' | tlTranslate }}">
+                                </data-column>
+                                <data-column [flexRate]="0.3"
+                                             [formGroup]="coordinatesForm"
+                                             [isSortable]="false"
+                                             propertyName="longitude"
+                                             dataType="coordinates"
+                                             columnName="{{ 'aquacultures.longitude' | tlTranslate }}">
+                                </data-column>
+                                <data-column [flexRate]="0.3"
+                                             [formGroup]="coordinatesForm"
+                                             [isSortable]="false"
+                                             propertyName="latitude"
+                                             dataType="coordinates"
+                                             columnName="{{ 'aquacultures.latitude' | tlTranslate }}">
+                                </data-column>
+                                <data-column-inline *ngIf="!viewMode && !isReadonly"
+                                                    [flexRate]="0.2">
+                                </data-column-inline>
+                            </tl-data-table>
+                        </tl-card-content>
+                    </tl-card>
+                </div>
+            </div>
+        </tl-expansion-panel>
+
+        <!-- Юридическо лице (получател) -->
+        <application-submitted-for *ngIf="!isApplication"
+                                   formControlName="submittedForControl"
+                                   validityChecker
+                                   submittedForLabel="{{ 'aquacultures.receiver-legal' | tlTranslate }}"
+                                   [hideRelation]="true"
+                                   [isIdReadOnly]="isEditing"
+                                   [hideDocument]="true"
+                                   [showPersonal]="!isApplication">
+        </application-submitted-for>
+
+        <!-- Развъждани видове риба и/или други водни организми -->
+        <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                            [validityChecker]="form"
+                            [validityCheckerExtraCondition]="form.errors?.atLeastOneAquaticOrganismNeeded !== true"
+                            tooltipResourceName="aquacultures.aquatic-organisms-helper"
+                            title="{{ 'aquacultures.aquatic-organisms' | tlTranslate }}">
+            <div fxLayout="column" fxLayoutGap="1em">
+                <tl-data-table #aquaticOrganismsTable
+                               fxFlex="100"
+                               [isRemote]="false"
+                               [isSoftDeletable]="false"
+                               [showInactiveRecords]="false"
+                               [showAddButton]="!viewMode && !isReadonly"
+                               [rows]="aquacultureAquaticOrganisms">
+                    <data-column propertyName="aquaticOrganismId"
+                                 [flexRate]="0.9"
+                                 [formGroup]="aquaticOrganismsForm"
+                                 [options]="aquaticOrganisms"
+                                 [displayOptions]="allAquaticOrganisms"
+                                 dataType="nomenclature"
+                                 columnName="{{ 'aquacultures.aquatic-organism-type' | tlTranslate }}">
+                    </data-column>
+                    <data-column-inline *ngIf="!viewMode && !isReadonly"
+                                        [flexRate]="0.1">
+                    </data-column-inline>
+                </tl-data-table>
+
+                <mat-error *ngIf="aquaticOrganismsTouched && form.errors?.atLeastOneAquaticOrganismNeeded === true">
+                    * {{ 'aquacultures.at-least-one-aquatic-organism-neccessary-error' | tlTranslate }}
+                </mat-error>
+            </div>
+        </tl-expansion-panel>
+
+        <!-- Техническо описание -->
+        <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                            [validityChecker]="form"
+                            tooltipResourceName="aquacultures.technical-info-helper"
+                            title="{{ 'aquacultures.technical-info' | tlTranslate }}">
+            <div fxLayout="column" fxLayoutGap="1em">
+                <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                    <tl-autocomplete fxFlex="25"
+                                     formControlName="powerSupplyTypeControl"
+                                     [options]="powerSupplyTypes"
+                                     tooltipResourceName="aquacultures.power-supply-type-helper"
+                                     label="{{ 'aquacultures.power-supply-type' | tlTranslate }}">
+                    </tl-autocomplete>
+                    <tl-input fxFlex="25"
+                              formControlName="powerSupplyNameControl"
+                              tooltipResourceName="aquacultures.power-supply-name-helper"
+                              label="{{ 'aquacultures.power-supply-name' | tlTranslate }}">
+                    </tl-input>
+                    <tl-input fxFlex="25"
+                              formControlName="powerSupplyDebitControl"
+                              tooltipResourceName="aquacultures.power-supply-debit-helper"
+                              label="{{ 'aquacultures.power-supply-debit' | tlTranslate }}">
+                    </tl-input>
+                    <tl-select fxFlex="25"
+                               formControlName="systemControl"
+                               [options]="systemTypes"
+                               tooltipResourceName="aquacultures.system-type-helper"
+                               label="{{ 'aquacultures.system-type' | tlTranslate }}">
+                    </tl-select>
+                </div>
+
+                <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                    <tl-select fxFlex="25"
+                               formControlName="waterSalinityControl"
+                               [options]="waterSalinityTypes"
+                               tooltipResourceName="aquacultures.water-salinity-helper"
+                               label="{{ 'aquacultures.water-salinity' | tlTranslate }}">
+                    </tl-select>
+                    <tl-select fxFlex="25"
+                               formControlName="waterTemperatureControl"
+                               [options]="waterTemperatureTypes"
+                               tooltipResourceName="aquacultures.water-temperature-helper"
+                               label="{{ 'aquacultures.water-temperature' | tlTranslate }}">
+                    </tl-select>
+                    <tl-input fxFlex="25"
+                              formControlName="totalWaterAreaControl"
+                              tooltipResourceName="aquacultures.total-water-area-helper"
+                              label="{{ 'aquacultures.total-water-area' | tlTranslate }}">
+                    </tl-input>
+                    <tl-input fxFlex="25"
+                              formControlName="totalProductionCapacityControl"
+                              tooltipResourceName="aquacultures.total-production-capacity-helper"
+                              label="{{ 'aquacultures.total-production-capacity' | tlTranslate }}">
+                    </tl-input>
+                </div>
+                <div *ngIf="showHatcheryEquipment" fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                    <tl-input fxFlex="25"
+                              formControlName="hatcheryCapacityControl"
+                              tooltipResourceName="aquacultures.hatchery-capacity-helper"
+                              label="{{ 'aquacultures.hatchery-capacity' | tlTranslate }}">
+                    </tl-input>
+                    <div fxFlex="25"></div>
+                    <div fxFlex="25"></div>
+                    <div fxFlex="25"></div>
+                </div>
+            </div>
+        </tl-expansion-panel>
+
+        <!-- Съоръжения -->
+        <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                            [validityChecker]="form"
+                            [validityCheckerExtraCondition]="form.errors?.atLeastOneInstallationNeeded !== true
+                                                            && form.errors?.installationsValidation !== true"
+                            tooltipResourceName="aquacultures.installations-helper"
+                            title="{{ 'aquacultures.installations' | tlTranslate }}">
+            <div fxLayout="column" fxLayoutGap="1em">
+                <tl-data-table fxFlexFill
+                               #installationsTable
+                               [rows]="installations"
+                               [isRemote]="false"
+                               [isSoftDeletable]="true"
+                               [showAddButton]="!viewMode && !isReadonly"
+                               (addButtonClicked)="addEditInstallation(undefined, false)">
+                    <data-column [flexRate]="0.6"
+                                 propertyName="installationTypeName"
+                                 columnName="{{ 'aquacultures.installation-type' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.2"
+                                 propertyName="totalCount"
+                                 columnName="{{ 'aquacultures.installation-total-count' | tlTranslate }}">
+                    </data-column>
+
+                    <data-template-column [flexRate]="0.2"
+                                          propertyName="TotalArea"
+                                          columnName="{{ 'aquacultures.installation-total-area' | tlTranslate }}">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            {{ row.data.totalArea?.toFixed(2) }}
+                        </ng-template>
+                    </data-template-column>
+
+                    <data-template-column [flexRate]="0.2"
+                                          propertyName="totalVolume"
+                                          columnName="{{ 'aquacultures.installation-total-volume' | tlTranslate }}">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            {{ row.data.totalVolume?.toFixed(2) }}
+                        </ng-template>
+                    </data-template-column>
+
+                    <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                <tl-icon *ngIf="installationsTouched && form.touched && row.data.isActive && row.data.hasValidationErrors"
+                                         icon="ic-exclamation"
+                                         iconClass="error-color"
+                                         [size]="icIconSize">
+                                </tl-icon>
+                                <tl-icon-button icon="visibility"
+                                                (buttonClicked)="addEditInstallation(row.data, true)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.view-installation' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                                icon="edit"
+                                                (buttonClicked)="addEditInstallation(row.data, false)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.edit-installation' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                                icon="delete"
+                                                (buttonClicked)="deleteInstallation(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.delete-installation' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="!row.data.isActive && !viewMode && !isReadonly"
+                                                icon="restore"
+                                                (buttonClicked)="undoDeleteInstallation(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.restore-installation' | tlTranslate }}">
+                                </tl-icon-button>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+                </tl-data-table>
+
+                <mat-error *ngIf="installationsTouched && form.errors?.atLeastOneInstallationNeeded === true">
+                    * {{ 'aquacultures.at-least-one-installation-neccessary-error' | tlTranslate }}
+                </mat-error>
+
+                <mat-error *ngIf="installationsTouched && form.touched && form.errors?.installationsValidation === true">
+                    * {{ 'aquacultures.installations-validation-errors' | tlTranslate }}
+                </mat-error>
+
+                <!-- Технологично оборудване в люпилнята -->
+                <tl-card *ngIf="showHatcheryEquipment"
+                         [validityChecker]="form"
+                         tooltipResourceName="aquacultures.hatchery-equipment-helper">
+                    <tl-card-title>{{ 'aquacultures.hatchery-equipment' | tlTranslate }}</tl-card-title>
+                    <tl-card-content>
+                        <tl-data-table #hatcheryEquipmentTable
+                                       fxFlexFill
+                                       [isRemote]="false"
+                                       [isSoftDeletable]="true"
+                                       [showInactiveRecords]="false"
+                                       [showAddButton]="!viewMode && !isReadonly"
+                                       [rows]="hatcheryEquipments">
+                            <data-column propertyName="equipmentTypeId"
+                                         [flexRate]="0.3"
+                                         [formGroup]="hatcheryEquipmentGroup"
+                                         [options]="hatcheryEquipmentTypes"
+                                         dataType="nomenclature"
+                                         columnName="{{ 'aquacultures.hatchery-equipment-type' | tlTranslate }}">
+                            </data-column>
+                            <data-column propertyName="count"
+                                         [flexRate]="0.2"
+                                         [formGroup]="hatcheryEquipmentGroup"
+                                         columnName="{{ 'aquacultures.hatchery-equipment-count' | tlTranslate }}">
+                            </data-column>
+                            <data-column propertyName="volume"
+                                         [flexRate]="0.2"
+                                         [formGroup]="hatcheryEquipmentGroup"
+                                         columnName="{{ 'aquacultures.hatchery-equipment-volume' | tlTranslate }}">
+                            </data-column>
+                            <data-column-inline *ngIf="!viewMode && !isReadonly"
+                                                [flexRate]="0.1">
+                            </data-column-inline>
+                        </tl-data-table>
+                    </tl-card-content>
+                </tl-card>
+            </div>
+        </tl-expansion-panel>
+
+        <!-- Основание за ползване - заявление -->
+        <tl-expansion-panel *ngIf="isApplication 
+                                && ((showOnlyRegiXData 
+                                    && form.controls.usageDocumentControl.value?.isLessorPerson !== null 
+                                    && form.controls.usageDocumentControl.value?.isLessorPerson !== undefined) || !showOnlyRegiXData)"
+                            [validityChecker]="form"
+                            tooltipResourceName="aquacultures.grounds-for-use-helper"
+                            title="{{ 'aquacultures.grounds-for-use' | tlTranslate }}">
+            <usage-document fxFlexFill
+                            formControlName="usageDocumentControl"
+                            notifier
+                            validityChecker
+                            [isIdReadOnly]="isEditing"
+                            [showOnlyRegiXData]="showOnlyRegiXData"
+                            [expectedResults]="expectedResults?.usageDocument">
+            </usage-document>
+        </tl-expansion-panel>
+
+        <!-- Основание за ползване - регистър -->
+        <tl-expansion-panel *ngIf="!isApplication"
+                            [validityChecker]="form"
+                            [validityCheckerExtraCondition]="form.errors?.atLeastOneActiveUsageDocumentNeeded !== true"
+                            tooltipResourceName="aquacultures.grounds-for-use-helper"
+                            title="{{ 'aquacultures.grounds-for-use' | tlTranslate }}">
+            <div fxLayout="column" fxLayoutGap="1em">
+                <tl-data-table fxFlexFill
+                               #usageDocumentsTable
+                               [rows]="usageDocuments"
+                               [isRemote]="false"
+                               [isSoftDeletable]="true"
+                               [showAddButton]="!viewMode && !isReadonly"
+                               (addButtonClicked)="addEditUsageDocument(undefined, false)">
+                    <data-column [flexRate]="0.3"
+                                 propertyName="documentTypeId"
+                                 [options]="usageDocumentTypes"
+                                 dataType="nomenclature"
+                                 columnName="{{ 'aquacultures.usage-document-table-type' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.3"
+                                 propertyName="documentNum"
+                                 columnName="{{ 'aquacultures.usage-document-table-num' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.3"
+                                 propertyName="documentValidFrom"
+                                 dataType="date"
+                                 columnName="{{ 'aquacultures.usage-document-table-valid-from' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.3"
+                                 propertyName="documentValidTo"
+                                 dataType="date"
+                                 columnName="{{ 'aquacultures.usage-document-table-valid-to' | tlTranslate }}">
+                    </data-column>
+
+                    <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                <tl-icon-button *ngIf="row.data.isActive"
+                                                icon="visibility"
+                                                (buttonClicked)="addEditUsageDocument(row.data, true)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.view-usage-document' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                                icon="edit"
+                                                (buttonClicked)="addEditUsageDocument(row.data, false)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.edit-usage-document' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                                icon="delete"
+                                                (buttonClicked)="deleteUsageDocument(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.delete-usage-document' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="!row.data.isActive && !viewMode && !isReadonly"
+                                                icon="restore"
+                                                (buttonClicked)="undoDeleteUsageDocument(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.restore-usage-document' | tlTranslate }}">
+                                </tl-icon-button>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+                </tl-data-table>
+
+                <mat-error *ngIf="usageDocumentsTouched && form.errors?.atLeastOneActiveUsageDocumentNeeded === true">
+                    * {{ 'aquacultures.at-least-one-active-usage-document-neccessary-error' | tlTranslate }}
+                </mat-error>
+            </div>
+        </tl-expansion-panel>
+
+        <!-- Разрешителни -->
+        <tl-expansion-panel *ngIf="!showOnlyRegiXData && isApplication"
+                            [validityChecker]="form"
+                            tooltipResourceName="aquacultures.licences-helper"
+                            title="{{ 'aquacultures.licences' | tlTranslate }}">
+            <div fxLayout="column" fxLayoutGap="1em">
+                <!-- Разрешително по Закона за водите -->
+                <tl-card [validityChecker]="form"
+                         tooltipResourceName="aquacultures.water-law-certificate-helper">
+                    <tl-card-title>{{ 'aquacultures.water-law-certificate' | tlTranslate }}</tl-card-title>
+
+                    <tl-card-content>
+                        <edit-aquaculture-water-law-certificate fxFlexFill
+                                                                formControlName="waterLawCertificateControl"
+                                                                validityChecker
+                                                                [service]="service">
+                        </edit-aquaculture-water-law-certificate>
+                    </tl-card-content>
+                </tl-card>
+
+                <!-- Решение по глава шеста от ЗООС или разрешение по чл. 67, ал. 2 от ЗБР (Разрешително по ОВОС) -->
+                <div fxLayout="column" fxLayoutGap="1em">
+                    <tl-card [validityChecker]="form"
+                             tooltipResourceName="aquacultures.ovos-certificate-helper">
+                        <tl-card-title>{{ 'aquacultures.ovos-certificate' | tlTranslate }}</tl-card-title>
+
+                        <tl-card-content>
+                            <common-document fxFlexFill
+                                             formControlName="ovosCertificateControl"
+                                             validityChecker>
+                            </common-document>
+                        </tl-card-content>
+                    </tl-card>
+                </div>
+
+                <!-- Удостоверение от БАБХ -->
+                <div fxLayout="column" fxLayoutGap="1em">
+                    <tl-checkbox formControlName="hasNoBabhCertificateControl"
+                                 label="{{ 'aquacultures.has-no-babh-certificate' | tlTranslate }}"
+                                 tooltipResourceName="aquacultures.has-no-babh-certificate-helper">
+                    </tl-checkbox>
+
+                    <tl-card *ngIf="form.controls.hasNoBabhCertificateControl.value !== true"
+                             [validityChecker]="form"
+                             tooltipResourceName="aquacultures.babh-certificate-helper">
+                        <tl-card-title>{{ 'aquacultures.babh-certificate' | tlTranslate }}</tl-card-title>
+
+                        <tl-card-content>
+                            <common-document fxFlexFill
+                                             formControlName="babhCertificateControl"
+                                             validityChecker>
+                            </common-document>
+                        </tl-card-content>
+                    </tl-card>
+                </div>
+            </div>
+        </tl-expansion-panel>
+
+        <!-- Разрешителни по закона за водите -->
+        <tl-expansion-panel *ngIf="!isApplication"
+                            [validityChecker]="form"
+                            [validityCheckerExtraCondition]="form.errors?.atLeastOneActiveWaterLawCertificateNeeded !== true"
+                            tooltipResourceName="aquacultures.water-law-certificates-helper"
+                            title="{{ 'aquacultures.water-law-certificates' | tlTranslate }}">
+            <div fxLayout="column" fxLayoutGap="1em">
+                <tl-data-table fxFlexFill
+                               #waterLawCertificatesTable
+                               [rows]="waterLawCertificates"
+                               [isRemote]="false"
+                               [isSoftDeletable]="true"
+                               [showAddButton]="!viewMode && !isReadonly"
+                               (addButtonClicked)="addEditWaterLawCertificate(undefined, false)">
+                    <data-column [flexRate]="0.3"
+                                 propertyName="certificateTypeId"
+                                 [options]="waterLawCertificateTypes"
+                                 dataType="nomenclature"
+                                 columnName="{{ 'aquacultures.water-law-certificate-table-type' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.3"
+                                 propertyName="certificateNum"
+                                 columnName="{{ 'aquacultures.water-law-certificate-table-num' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.3"
+                                 propertyName="certificateIssuer"
+                                 columnName="{{ 'aquacultures.water-law-certificate-table-issuer' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.3"
+                                 propertyName="certificateValidFrom"
+                                 dataType="date"
+                                 columnName="{{ 'aquacultures.water-law-certificate-table-valid-from' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.3"
+                                 propertyName="certificateValidTo"
+                                 dataType="date"
+                                 columnName="{{ 'aquacultures.water-law-certificate-table-valid-to' | tlTranslate }}">
+                    </data-column>
+
+                    <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                <tl-icon-button *ngIf="row.data.isActive"
+                                                icon="visibility"
+                                                (buttonClicked)="addEditWaterLawCertificate(row.data, true)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.view-water-law-certificate' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                                icon="edit"
+                                                (buttonClicked)="addEditWaterLawCertificate(row.data, false)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.edit-water-law-certificate' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                                icon="delete"
+                                                (buttonClicked)="deleteWaterLawCertificate(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.delete-water-law-certificate' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="!row.data.isActive && !viewMode && !isReadonly"
+                                                icon="restore"
+                                                (buttonClicked)="undoDeleteWaterLawCertificate(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.restore-water-law-certificate-document' | tlTranslate }}">
+                                </tl-icon-button>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+                </tl-data-table>
+
+                <mat-error *ngIf="waterLawCertificatesTouched && form.errors?.atLeastOneActiveWaterLawCertificateNeeded === true">
+                    * {{ 'aquacultures.at-least-one-active-water-law-certificate-neccessary-error' | tlTranslate }}
+                </mat-error>
+            </div>
+        </tl-expansion-panel>
+
+        <!-- Разрешителни по ОВОС -->
+        <tl-expansion-panel *ngIf="!isApplication"
+                            [validityChecker]="form"
+                            [validityCheckerExtraCondition]="form.errors?.atLeastOneActiveOvosCertificateNeeded !== true"
+                            tooltipResourceName="aquacultures.ovos-certificates-table-helper"
+                            title="{{ 'aquacultures.ovos-certificates' | tlTranslate }}">
+            <div fxLayout="column" fxLayoutGap="1em">
+                <tl-data-table fxFlexFill
+                               #ovosCertificatesTable
+                               [rows]="ovosCertificates"
+                               [isRemote]="false"
+                               [isSoftDeletable]="true"
+                               [showAddButton]="!viewMode && !isReadonly"
+                               (addButtonClicked)="addEditOvosCertificate(undefined, false)">
+                    <data-column [flexRate]="0.3"
+                                 propertyName="issueDate"
+                                 dataType="date"
+                                 columnName="{{ 'aquacultures.ovos-certificate-table-issue-date' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.3"
+                                 propertyName="num"
+                                 columnName="{{ 'aquacultures.ovos-certificate-table-num' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.3"
+                                 propertyName="issuer"
+                                 columnName="{{ 'aquacultures.ovos-certificate-table-issuer' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.3"
+                                 propertyName="validFrom"
+                                 dataType="date"
+                                 columnName="{{ 'aquacultures.ovos-certificate-table-valid-from' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.3"
+                                 propertyName="validTo"
+                                 dataType="date"
+                                 columnName="{{ 'aquacultures.ovos-certificate-table-valid-to' | tlTranslate }}">
+                    </data-column>
+
+                    <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                <tl-icon-button *ngIf="row.data.isActive"
+                                                icon="visibility"
+                                                (buttonClicked)="addEditOvosCertificate(row.data, true)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.view-ovos-certificate' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                                icon="edit"
+                                                (buttonClicked)="addEditOvosCertificate(row.data, false)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.edit-ovos-certificate' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                                icon="delete"
+                                                (buttonClicked)="deleteOvosCertificate(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.delete-ovos-certificate' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="!row.data.isActive && !viewMode && !isReadonly"
+                                                icon="restore"
+                                                (buttonClicked)="undoDeleteOvosCertificate(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'aquacultures.restore-ovos-certificate-document' | tlTranslate }}">
+                                </tl-icon-button>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+                </tl-data-table>
+
+                <mat-error *ngIf="form.touched && form.errors?.atLeastOneActiveOvosCertificateNeeded === true">
+                    * {{ 'aquacultures.at-least-one-active-ovos-certificate-neccessary-error' | tlTranslate }}
+                </mat-error>
+            </div>
+        </tl-expansion-panel>
+
+        <!-- Удостоверения от БАБХ -->
+        <tl-expansion-panel *ngIf="!isApplication"
+                            [validityChecker]="form"
+                            [validityCheckerExtraCondition]="form.errors?.atLeastOneActiveBabhCertificateNeeded !== true"
+                            tooltipResourceName="aquacultures.babh-certificates-table-helper"
+                            title="{{ 'aquacultures.babh-certificates' | tlTranslate }}">
+            <tl-data-table fxFlexFill
+                           #babhCertificatesTable
+                           [rows]="babhCertificates"
+                           [isRemote]="false"
+                           [isSoftDeletable]="true"
+                           [showAddButton]="!viewMode && !isReadonly"
+                           (addButtonClicked)="addEditBabhCertificate(undefined, false)">
+                <data-column [flexRate]="0.3"
+                             propertyName="issueDate"
+                             dataType="date"
+                             columnName="{{ 'aquacultures.babh-certificate-table-issue-date' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="0.3"
+                             propertyName="num"
+                             columnName="{{ 'aquacultures.babh-certificate-table-num' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="0.3"
+                             propertyName="issuer"
+                             columnName="{{ 'aquacultures.babh-certificate-table-issuer' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="0.3"
+                             propertyName="validFrom"
+                             dataType="date"
+                             columnName="{{ 'aquacultures.babh-certificate-table-valid-from' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="0.3"
+                             propertyName="validTo"
+                             dataType="date"
+                             columnName="{{ 'aquacultures.babh-certificate-table-valid-to' | tlTranslate }}">
+                </data-column>
+
+                <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button *ngIf="row.data.isActive"
+                                            icon="visibility"
+                                            (buttonClicked)="addEditBabhCertificate(row.data, true)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'aquacultures.view-babh-certificate' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                            icon="edit"
+                                            (buttonClicked)="addEditBabhCertificate(row.data, false)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'aquacultures.edit-babh-certificate' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                            icon="delete"
+                                            (buttonClicked)="deleteBabhCertificate(row)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'aquacultures.delete-babh-certificate' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="!row.data.isActive && !viewMode && !isReadonly"
+                                            icon="restore"
+                                            (buttonClicked)="undoDeleteBabhCertificate(row)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'aquacultures.restore-babh-certificate-document' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </tl-expansion-panel>
+
+        <!-- Бележки -->
+        <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                            [validityChecker]="form"
+                            tooltipResourceName="aquacultures.comments-helper"
+                            title="{{ 'aquacultures.comments' | tlTranslate }}">
+            <tl-textarea fxFlexFill
+                         formControlName="commentsControl"
+                         tooltipResourceName="aquacultures.comments-field-helper"
+                         label="{{ 'aquacultures.comments' | tlTranslate }}">
+            </tl-textarea>
+        </tl-expansion-panel>
+
+        <!-- Информация за плащане -->
+        <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData && paymentInformation !== undefined && paymentInformation !== null"
+                            title="{{ 'aquacultures.payment-information' | tlTranslate }}"
+                            tooltipResourceName="aquacultures.payment-information-helper">
+            <payment-information [paymentData]="paymentInformation"></payment-information>
+        </tl-expansion-panel>
+
+        <!-- Информация за начин на връчване -->
+        <tl-expansion-panel *ngIf="hasDelivery && isApplication && !showOnlyRegiXData"
+                            [validityChecker]="form"
+                            [validityCheckerExtraCondition]="hasNoEDeliveryRegistrationError !== true"
+                            tooltipResourceName="aquacultures.delivery-data-helper"
+                            title="{{ 'aquacultures.delivery-data' | tlTranslate }}">
+            <delivery-data formControlName="deliveryDataControl"
+                           [pageCode]="pageCode">
+            </delivery-data>
+            <mat-error *ngIf="hasNoEDeliveryRegistrationError">
+                * {{ 'aquacultures.has-no-e-delivery-registration-error' | tlTranslate }}
+            </mat-error>
+        </tl-expansion-panel>
+
+        <!-- Дневници -->
+        <tl-expansion-panel *ngIf="!isApplication"
+                            tooltipResourceName="aquacultures.log-books-panel-helper"
+                            title="{{ 'aquacultures.log-books-panel' | tlTranslate }}"
+                            [validityChecker]="form">
+            <log-books fxFlexFill
+                       formControlName="logBooksControl"
+                       [isReadonly]="isReadonly || viewMode"
+                       [getLogBookSimpleAuditMethod]="service.getLogBookAudit.bind(service)"
+                       [logBookGroup]="logBookGroup"
+                       [showInactivePagesAndDocuments]="!isPublicApp">
+            </log-books>
+        </tl-expansion-panel>
+
+        <!-- Файлове -->
+        <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                            [validityChecker]="form"
+                            title="{{ 'aquacultures.files' | tlTranslate }}"
+                            tooltipResourceName="aquacultures.files-helper">
+            <file-uploader-form-array formControlName="filesControl"
+                                      validityChecker
+                                      [pageCode]="pageCode"
+                                      [downloadFileMethod]="service.downloadFile.bind(this.service)"
+                                      [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                      [refreshFileTypes]="refreshFileTypes">
+            </file-uploader-form-array>
+        </tl-expansion-panel>
+
+        <!-- Проверки -->
+        <tl-expansion-panel *ngIf="showOnlyRegiXData"
+                            title="{{ 'aquacultures.regix-checks-results' | tlTranslate }}"
+                            tooltipResourceName="aquacultures.regix-checks-results-helper">
+            <div fxLayout="column" fxLayoutGap="1em">
+                <regix-checks-results [regixChecksCollection]="regixChecks"></regix-checks-results>
+            </div>
+        </tl-expansion-panel>
+    </div>
+
+    <div *ngIf="isChangeOfCircumstancesApplication" tlResizable="top" id="change-of-circumstances-panel">
+        <h2><b>{{ 'aquacultures.changes-from-application' | tlTranslate }}</b></h2>
+        <change-of-circumstances [formControl]="changeOfCircumstancesControl"
+                                 [pageCode]="pageCode"
+                                 [disableDelete]="true">
+        </change-of-circumstances>
+    </div>
+
+    <div *ngIf="isDeregistrationApplication" tlResizable="top" id="change-of-circumstances-panel">
+        <h2><b>{{ 'aquacultures.deregistration-application-reason' | tlTranslate }}</b></h2>
+        <tl-textarea [formControl]="deregistrationReasonControl"
+                     tooltipResourceName="aquacultures.deregistration-application-reason-helper"
+                     label="{{ 'aquacultures.deregistration-application-reason' | tlTranslate }}">
+        </tl-textarea>
+    </div>
+</div>

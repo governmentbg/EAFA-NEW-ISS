@@ -1,0 +1,97 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <Configurations>Debug;Release;Test</Configurations>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <EnableDefaultNoneItems>true</EnableDefaultNoneItems>
+    <Nullable>warnings</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RuntimeIdentifiers>win-x64;win10-x64;linux-x64;rhel-x64;</RuntimeIdentifiers>
+    <UserSecretsId>521515f9-90f7-4f83-a448-e30acdca7fc6</UserSecretsId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Content\BoricaDevKey-de.key" />
+    <None Remove="Content\eDelivery-IApoRibarstvoAkvakulturi.pfx" />
+    <None Remove="Content\IARA-Regix-PROD.pfx" />
+    <None Remove="Content\IARASigningCert.pfx" />
+    <None Remove="Content\private.key" />
+    <None Remove="Content\public.pem" />
+    <None Remove="Content\RegixTestCert.pfx" />
+    <None Remove="Content\V5400564-iss.iara.government.bg-D.pub" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.14" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="5.0.10" />
+    <PackageReference Include="TL.Caching" Version="22.180.41350" />
+    <PackageReference Include="TL.RequestRateLimiting" Version="22.63.37930" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IARA.Common\IARA.Common.csproj" />
+    <ProjectReference Include="..\IARA.DI\IARA.DI.csproj" />
+    <ProjectReference Include="..\IARA.DomainModels\IARA.DomainModels.csproj" />
+    <ProjectReference Include="..\IARA.Interfaces\IARA.Interfaces.csproj" />
+    <ProjectReference Include="..\IARA.Notifications\IARA.Notifications.csproj" />
+    <ProjectReference Include="..\IARA.Security\IARA.Security.csproj" />
+    <ProjectReference Include="..\IARA.WebHelpers\IARA.WebHelpers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.Production.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.Staging.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\BoricaDevKey-de.key">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\eDelivery-IApoRibarstvoAkvakulturi.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\IARA-Regix-PROD.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\IARASigningCert.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\private.key">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\public.pem">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\RegixTestCert.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\V5400564-iss.iara.government.bg-D.pub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

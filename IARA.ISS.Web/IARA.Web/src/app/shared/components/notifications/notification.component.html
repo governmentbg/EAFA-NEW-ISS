@@ -1,0 +1,32 @@
+﻿<div *ngIf="notification!=undefined" class="message-wraper">
+    <mat-card fxFill class="message" (click)="markAsRead()">
+        <mat-card-content fxFill fxLayout="row" fxLayoutAlign="start stretch">
+            <div fxFlex fxLayout="column" fxLayoutAlign="space-between stretch">
+                <div fxFlex="30" fxLayout="row" fxLayoutAlign="start center">
+                    <tl-icon fxFlex="nogrow" [icon]="notification.isRead ? 'fa-envelope-open': 'fa-envelope'" size="0.8"></tl-icon>
+                    <span fxFlex fxFlexOffset="5" class="message-title">{{ notification.title }}</span>
+                </div>
+                <div fxFlex="70" fxLayout="row" fxLayoutAlign="center stretch">
+                    <div fxFlex="nogrow" *ngIf="notification.icon!=undefined">
+                        <tl-icon size="2" [icon]="notification.icon"></tl-icon>
+                    </div>
+                    <div fxFlexOffset="5" fxFlex fxLayout="row" fxLayoutAlign="center stretch">
+                        <div fxLayout="column" fxLayoutAlign="space-between stretch" fxLayoutGap="5px">
+                            <div *ngIf="notification.subtitle!=undefined" fxFlex="nogrow" class="message-subtitle">
+                                {{ notification.subtitle }}
+                            </div>
+                            <div fxFlex class="message-text" [ngClass]="notification.isRead ? '' : 'message-unread'">
+                                {{ notification.text }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="notification.url!=undefined" fxFlexOffset="5" fxFlex="nogrow">
+                <a (click)="navigate()" class="message-link">
+                    <tl-icon icon="fa-reply" size="2"></tl-icon>
+                </a>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

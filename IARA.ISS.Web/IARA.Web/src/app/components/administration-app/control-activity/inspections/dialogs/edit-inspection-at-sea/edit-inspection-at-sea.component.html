@@ -1,0 +1,50 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <!-- Основни данни -->
+    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <inspection-general-info formControlName="generalInfoControl"
+                                     [institutions]="institutions">
+            </inspection-general-info>
+            <patrol-vehicles-table formControlName="patrolVehiclesControl"
+                                   [isWaterVehicle]="true">
+            </patrol-vehicles-table>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Данни за риболовния кораб -->
+    <inspected-ship-sections formControlName="shipSectionsControl"
+                             [hasMap]="true"
+                             [toggles]="toggles"
+                             [associations]="associations"
+                             [ships]="ships"
+                             [fishes]="fishes"
+                             [catchTypes]="catchTypes"
+                             [catchZones]="catchZones"
+                             [fishSex]="fishSex"
+                             [countries]="countries"
+                             [ports]="ports"
+                             [vesselTypes]="vesselTypes">
+    </inspected-ship-sections>
+
+    <!-- Допълнителна информация -->
+    <inspection-additional-info formControlName="additionalInfoControl">
+        <tl-textarea formControlName="captainCommentControl"
+                     [minRows]="3"
+                     label="{{ 'inspections.captain-comment' | tlTranslate }}">
+        </tl-textarea>
+    </inspection-additional-info>
+
+    <!-- Файлове -->
+    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+</div>

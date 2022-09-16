@@ -1,0 +1,86 @@
+﻿<div fxLayout="column" fxLayoutGap="1em">
+    <tl-data-table fxFlexFill
+                   [rows]="entries"
+                   [isRemote]="false"
+                   [isSoftDeletable]="true"
+                   [showAddButton]="!isDisabled && !showOnlyRegiXData"
+                   [showInactiveRecords]="!showOnlyRegiXData"
+                   (addButtonClicked)="addEditEntry()"
+                   (activeRecordChanged)="addEditEntry($event)">
+        <data-column [flexRate]="0.4"
+                     propertyName="name"
+                     columnName="{{ 'fishing-capacity.holder-table-name' | tlTranslate }}">
+        </data-column>
+
+        <data-column [flexRate]="0.3"
+                     propertyName="egnEik"
+                     columnName="{{ 'fishing-capacity.holder-table-egn-eik' | tlTranslate }}">
+        </data-column>
+
+        <data-template-column *ngIf="!showOnlyRegiXData"
+                              [flexRate]="0.4"
+                              propertyName="transferredTonnage"
+                              columnName="{{ 'fishing-capacity.holder-table-tonnage' | tlTranslate }}">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.data.transferredTonnage.toFixed(2) }}
+            </ng-template>
+        </data-template-column>
+
+        <data-template-column *ngIf="!showOnlyRegiXData"
+                              [flexRate]="0.4"
+                              propertyName="transferredPower"
+                              columnName="{{ 'fishing-capacity.holder-table-power' | tlTranslate }}">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.data.transferredPower.toFixed(2) }}
+            </ng-template>
+        </data-template-column>
+
+        <data-template-column [flexRate]="0.3">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                <div fxLayout="row wrap" fxLayoutAlign="end center">
+                    <tl-icon *ngIf="row.data.hasRegixDataDiscrepancy"
+                             icon="ic-exclamation"
+                             iconClass="error-color"
+                             [size]="icIconSize">
+                    </tl-icon>
+                    <tl-icon-button *ngIf="row.data.isActive"
+                                    icon="visibility"
+                                    (buttonClicked)="addEditEntry(row.data, true)"
+                                    [iconClass]="row.data.hasRegixDataDiscrepancy ? 'error-color' : 'accent-color'"
+                                    tooltipText="{{ 'fishing-capacity.holder-table-view' | tlTranslate }}">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="row.data.isActive && !isDisabled"
+                                    icon="edit"
+                                    (buttonClicked)="addEditEntry(row.data, false)"
+                                    [iconClass]="row.data.hasRegixDataDiscrepancy ? 'error-color' : 'accent-color'"
+                                    tooltipText="{{ 'fishing-capacity.holder-table-edit' | tlTranslate }}">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="row.data.isActive && !isDisabled && !showOnlyRegiXData"
+                                    icon="delete"
+                                    (buttonClicked)="deleteEntry(row)"
+                                    [iconClass]="row.data.hasRegixDataDiscrepancy ? 'error-color' : 'accent-color'"
+                                    tooltipText="{{ 'fishing-capacity.holder-table-delete' | tlTranslate }}">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="!row.data.isActive && !isDisabled && !showOnlyRegixData"
+                                    icon="restore"
+                                    (buttonClicked)="restoreEntry(row)"
+                                    [iconClass]="row.data.hasRegixDataDiscrepancy ? 'error-color' : 'accent-color'"
+                                    tooltipText="{{ 'fishing-capacity.holder-table-restore' | tlTranslate }}">
+                    </tl-icon-button>
+                </div>
+            </ng-template>
+        </data-template-column>
+    </tl-data-table>
+
+    <mat-error *ngIf="control.touched && control.errors?.noHolders === true">
+        * {{ 'fishing-capacity.holder-table-no-holders-error' | tlTranslate }}
+    </mat-error>
+
+    <mat-error *ngIf="control.touched && control.errors?.tonnageNotIdentical === true">
+        * {{ 'fishing-capacity.holder-table-tonnage-not-identical' | tlTranslate }}: {{ maxGrossTonnage.toFixed(2) }}
+    </mat-error>
+
+    <mat-error *ngIf="control.touched && control.errors?.powerNotIdentical === true">
+        * {{ 'fishing-capacity.holder-table-power-not-identical' | tlTranslate }}: {{ maxPower.toFixed(2) }}
+    </mat-error>
+</div>

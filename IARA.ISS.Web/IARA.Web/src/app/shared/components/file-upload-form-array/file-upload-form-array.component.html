@@ -1,0 +1,67 @@
+﻿<div fxLayout="column">
+    <div *ngIf="!isDisabled && !hideAddButton" fxLayout="row" fxLayoutAlign="end center">
+        <tl-icon-button type="MAT_ICON"
+                        icon="add"
+                        iconClass="accent-color"
+                        (buttonClicked)="addFileUploadControl()">
+        </tl-icon-button>
+    </div>
+    <div fxFlex="100" fxLayout="column">
+        <div *ngFor="let fileUpload of form.controls; let i = index"
+             fxFlex="100"
+             fxLayout="row"
+             fxLayoutGap="0.5em">
+            <file-uploader-form fxFlex="95"
+                                [formControl]="fileUpload"
+                                [fileTypesCollection]="permittedFileTypes"
+                                [isTypeReadonly]="readonlyStatusMap.get(fileUpload)"
+                                (fileSelected)="onFileSelected($event)">
+            </file-uploader-form>
+
+            <div fxFlex="5" fxLayout="row" fxLayoutGap="0.5em" fxLayoutAlign="center center">
+                <!-- Download button -->
+                <tl-icon-button *ngIf="fileUpload?.value?.id; else notDownloadable"
+                                typeof="IC_ICON"
+                                iconClass="accent-color"
+                                icon="ic-download"
+                                size="30"
+                                matTooltip="{{ 'common.download-file' | tlTranslate: 'cap' }}"
+                                matTooltipShowDelay="500"
+                                [disabled]="false"
+                                (buttonClicked)="onDownloadButtonClicked(fileUpload)">
+                </tl-icon-button>
+                <ng-template #notDownloadable>
+                    <tl-icon-button typeof="IC_ICON"
+                                    iconClass="accent-color"
+                                    icon="ic-download-off"
+                                    size="30"
+                                    matTooltip="{{ 'common.cannot-download-file' | tlTranslate: 'cap' }}"
+                                    matTooltipShowDelay="500"
+                                    [disabled]="true">
+                    </tl-icon-button>
+                </ng-template>
+
+                <!-- Delete button -->
+                <tl-icon-button *ngIf="deletableStatusMap.get(fileUpload); else clearOnly"
+                                type="MAT_ICON"
+                                iconClass="accent-color"
+                                icon="delete"
+                                matTooltip="{{ 'common.delete-file-upload-row' | tlTranslate: 'cap' }}"
+                                matTooltipShowDelay="500"
+                                [disabled]="isDisabled"
+                                (buttonClicked)="onClearButtonClicked(fileUpload, i)">
+                </tl-icon-button>
+                <ng-template #clearOnly>
+                    <tl-icon-button type="MAT_ICON"
+                                    iconClass="accent-color"
+                                    icon="clear"
+                                    matTooltip="{{ 'common.clear-file-field' | tlTranslate: 'cap' }}"
+                                    matTooltipShowDelay="500"
+                                    [disabled]="isDisabled"
+                                    (buttonClicked)="onClearButtonClicked(fileUpload, i)">
+                    </tl-icon-button>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,307 @@
+﻿<div [formGroup]="form"
+     [notifierGroup]="notifier"
+     fxLayout="column"
+     fxLayoutGap="1em">
+    <!-- Данни за билета -->
+    <tl-card *ngIf="!dialogData?.showOnlyRegiXData"
+             tooltipResourceName="recreational-fishing.ticket-info-helper">
+        <tl-card-title>{{ 'recreational-fishing.ticket-info' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="1em">
+                <div *ngIf="period" fxFlex="25" fxLayout="column" fxLayout.lt-sm="row" fxLayoutGap="0.4em">
+                    <b>{{ 'recreational-fishing.validity' | tlTranslate }}:</b>
+                    <span>{{ period.displayName }}</span>
+                </div>
+                <div fxFlex="25" fxLayout="column" fxLayout.lt-sm="row" fxLayoutGap="0.4em">
+                    <b>{{ 'recreational-fishing.type' | tlTranslate }}:</b>
+                    <span>{{ type.displayName }}</span>
+                </div>
+                <span fxFlex="25" fxLayout="column" fxLayout.lt-sm="row" fxLayoutGap="0.4em">
+                    <b>{{ 'recreational-fishing.price' | tlTranslate }}:</b>
+                    <span>{{ price === 0 ? ('recreational-fishing.ticket-free' | tlTranslate) : (price | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG') }}</span>
+                </span>
+                <span *ngIf="isRegisterEntry" fxFlex="25" fxLayout="column" fxLayout.lt-sm="row" fxLayoutGap="0.4em">
+                    <b>{{ isPersonal ? ('recreational-fishing.date-of-purchase' | tlTranslate) : ('recreational-fishing.date-of-issue' | tlTranslate) }}:</b>
+                    <span>{{ currentDate | date: 'dd.MM.yyyy HH:mm' }}</span>
+                </span>
+                <span *ngIf="!isRegisterEntry" fxFlex="25"></span>
+            </div>
+
+            <!-- Регистров запис -->
+            <div *ngIf="isRegisterEntry; else isNotRegisterEntry" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          fxFlex.lt-md="50"
+                          fxFlex.lt-sm="100"
+                          formControlName="ticketNumControl"
+                          [readonly]="true"
+                          tooltipResourceName="recreational-fishing.register-ticket-num-helper"
+                          label="{{ 'recreational-fishing.register-ticket-num' | tlTranslate }}">
+                </tl-input>
+                <tl-date fxFlex="25"
+                         fxFlex.lt-md="50"
+                         fxFlex.lt-sm="100"
+                         formControlName="validFromControl"
+                         [min]="validFrom !== undefined && validFrom !== null ? validFrom : currentDate"
+                         tooltipResourceName="recreational-fishing.ticket-valid-from-helper"
+                         label="{{ 'recreational-fishing.ticket-valid-from' | tlTranslate }}">
+                </tl-date>
+                <tl-date fxFlex="25"
+                         fxFlex.lt-md="50"
+                         fxFlex.lt-sm="100"
+                         formControlName="validToControl"
+                         [readonly]="true"
+                         tooltipResourceName="recreational-fishing.register-ticket-valid-to-helper"
+                         label="{{ 'recreational-fishing.register-ticket-valid-to' | tlTranslate }}">
+                </tl-date>
+                <tl-input *ngIf="isDuplicate"
+                          fxFlex="25"
+                          fxFlex.lt-md="50"
+                          fxFlex.lt-sm="100"
+                          formControlName="duplicateOfTicketNumControl"
+                          [readonly]="true"
+                          tooltipResourceName="recreational-fishing.ticket-duplicate-of-num-helper"
+                          label="{{ 'recreational-fishing.ticket-duplicate-of-num' | tlTranslate }}">
+                </tl-input>
+                <div *ngIf="!isDuplicate" fxFlex="25" fxFlex.lt-md="50" fxFlex.lt-sm="100"></div>
+            </div>
+
+            <!-- Нерегистров запис -->
+            <ng-template #isNotRegisterEntry>
+                <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                    <tl-date fxFlex="25"
+                             fxFlex.lt-md="50"
+                             fxFlex.lt-sm="100"
+                             formControlName="validFromControl"
+                             [min]="validFrom !== undefined && validFrom !== null ? validFrom : currentDate"
+                             tooltipResourceName="recreational-fishing.ticket-valid-from-helper"
+                             label="{{ 'recreational-fishing.ticket-valid-from' | tlTranslate }}">
+                    </tl-date>
+                    <div fxFlex="25" fxFlex.lt-md="50" fxFlex.lt-sm="100"></div>
+                    <div fxFlex="25" fxFlex.lt-md="50" fxFlex.lt-sm="100"></div>
+                    <div fxFlex="25" fxFlex.lt-md="50" fxFlex.lt-sm="100"></div>
+                </div>
+            </ng-template>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Лични данни на билетодържателя -->
+    <tl-card tooltipResourceName="recreational-fishing.ticket-holder-data-helper">
+        <tl-card-title>{{ 'recreational-fishing.ticket-holder-data' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content fxLayout="column">
+            <div fxLayout="row" fxLayout.lt-md="column">
+                <regix-data [fxFlex]="dialogData?.showOnlyRegiXData ? 100 : 75"
+                            fxFlex.lt-md="100"
+                            fxFlexOrder="1"
+                            fxFlexOrder.lt-md="2"
+                            formControlName="regixDataControl"
+                            notifier
+                            [isPerson]="true"
+                            [includeForeigner]="true"
+                            [isIdReadOnly]="(type.code !== 'UNDER14' && !isEgnEditable) || isRenewal"
+                            [hideDocument]="type.code === 'UNDER14'"
+                            [allDocumentFieldsRequired]="true"
+                            [dateOfBirthProperties]="dateOfBirthProperties"
+                            [dateOfBirthRequiredForLncAndForId]="dateOfBirthRequiredTicketTypes.includes(type.code!)"
+                            [expectedResults]="regixChecksData?.person"
+                            [showGender]="type.code === 'ELDER'"
+                            [showSearchButton]="(isAssociation || !isPersonal) && !isDialog"
+                            (downloadDataBtnClicked)="downloadPersonalData($event, false)"
+                            (egnLncFocusedOut)="egnLncFocusedOut($event)"
+                            checkboxLabel="{{ 'recreational-fishing.has-bulgarian-address-registration' | tlTranslate }}">
+                </regix-data>
+
+                <tl-picture-uploader *ngIf="!dialogData?.showOnlyRegiXData"
+                                     fxFlex="25"
+                                     fxFlex.lt-md="100"
+                                     fxFlexOrder="2"
+                                     fxFlexOrder.lt-md="1"
+                                     formControlName="photoControl"
+                                     [options]="{ validations: { isRequired: true } }"
+                                     [requestMethod]="personPhotoMethod">
+                </tl-picture-uploader>
+            </div>
+
+            <!-- Адрес на билетодържателя -->
+            <address-registration formControlName="addressControl"
+                                  notifier
+                                  addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                                  secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                                  checkboxLabel="{{ 'recreational-fishing.permanent-address-same-as-correspondence' | tlTranslate }}"
+                                  [expectedResults]="regixChecksData?.personAddressRegistrations">
+            </address-registration>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Лични данни на лице представител -->
+    <tl-card *ngIf="type.code === 'UNDER14'"
+             tooltipResourceName="recreational-fishing.ticket-holder-representative-data-helper">
+        <tl-card-title>{{ 'recreational-fishing.ticket-holder-representative-data' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content fxLayout="column">
+            <regix-data fxFlex="75"
+                        formControlName="representativeRegixDataControl"
+                        notifier
+                        [isPerson]="true"
+                        [includeForeigner]="true"
+                        [isIdReadOnly]="!isEgnEditable || isRenewal"
+                        [allDocumentFieldsRequired]="true"
+                        [expectedResults]="regixChecksData?.representativePerson"
+                        [showSearchButton]="(isAssociation || !isPersonal) && !isDialog"
+                        (downloadDataBtnClicked)="downloadPersonalData($event, true)"
+                        (egnLncFocusedOut)="egnLncFocusedOut($event, true)"
+                        checkboxLabel="{{ 'recreational-fishing.has-bulgarian-address-registration' | tlTranslate }}">
+            </regix-data>
+
+            <!-- Адрес на лицето представител -->
+            <address-registration formControlName="representativeAddressControl"
+                                  notifier
+                                  addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                                  secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                                  checkboxLabel="{{ 'recreational-fishing.permanent-address-same-as-correspondence' | tlTranslate }}"
+                                  [expectedResults]="regixChecksData?.representativePersonAddressRegistrations">
+            </address-registration>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Данни за членска карта на организация -->
+    <tl-card *ngIf="(type.code === 'ASSOCIATION' || type.code === 'BETWEEN14AND18ASSOCIATION' || type.code === 'ELDERASSOCIATION') && !dialogData?.showOnlyRegiXData"
+             tooltipResourceName="recreational-fishing.membership-card-data-helper">
+        <tl-card-title>{{ 'recreational-fishing.membership-card-data' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="row wrap" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          fxFlex.lt-md="100"
+                          formControlName="membershipCardNumberControl"
+                          tooltipResourceName="recreational-fishing.membership-card-number-helper"
+                          label="{{ 'recreational-fishing.membership-card-number' | tlTranslate }}">
+                </tl-input>
+                <tl-date fxFlex="25"
+                         fxFlex.lt-md="100"
+                         formControlName="membershipCardIssueDateControl"
+                         [max]="currentDate"
+                         tooltipResourceName="recreational-fishing.membership-card-issued-on-helper"
+                         label="{{ 'recreational-fishing.membership-card-issued-on' | tlTranslate }}">
+                </tl-date>
+                <tl-autocomplete fxFlex="25"
+                                 fxFlex.lt-md="100"
+                                 formControlName="membershipCardIssuedByControl"
+                                 [options]="fishingAssociations"
+                                 tooltipResourceName="recreational-fishing.membership-card-issued-by-helper"
+                                 label="{{ 'recreational-fishing.membership-card-issued-by' | tlTranslate }}">
+                </tl-autocomplete>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Медицинска експертиза -->
+    <tl-card *ngIf="type.code === 'DISABILITY'"
+             tooltipResourceName="recreational-fishing.medical-expertise-helper">
+        <tl-card-title>{{ 'recreational-fishing.medical-expertise' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="row wrap" fxLayoutGap="1em" fxLayoutAlign="start center">
+                <tl-input fxFlex="25"
+                          fxFlex.lt-md="100"
+                          formControlName="telkNumControl"
+                          tooltipResourceName="recreational-fishing.telk-num-helper"
+                          label="{{ 'recreational-fishing.telk-num' | tlTranslate }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText">
+                </tl-input>
+                <tl-date fxFlex="25"
+                         fxFlex.lt-md="100"
+                         formControlName="telkValidToControl"
+                         tooltipResourceName="recreational-fishing.telk-valid-to-helper"
+                         label="{{ 'recreational-fishing.telk-valid-to' | tlTranslate }}"
+                         [min]="currentDate"
+                         [getControlErrorLabelText]="getControlErrorLabelText">
+                </tl-date>
+                <tl-checkbox fxFlex="25"
+                             fxFlex.lt-md="100"
+                             formControlName="telkIsIndefiniteControl"
+                             tooltipResourceName="recreational-fishing.telk-indefinite-helper"
+                             label="{{ 'recreational-fishing.telk-indefinite' | tlTranslate }}"
+                             [getControlErrorLabelText]="getControlErrorLabelText">
+                </tl-checkbox>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Коментари и бележки -->
+    <tl-card *ngIf="!isPersonal && !dialogData?.showOnlyRegiXData"
+             tooltipResourceName="recreational-fishing.comments-helper">
+        <tl-card-title>{{ 'recreational-fishing.comments' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <tl-textarea formControlName="commentsControl"
+                         tooltipResourceName="recreational-fishing.comments-text-helper"
+                         label="{{ 'recreational-fishing.comments-text' | tlTranslate }}">
+            </tl-textarea>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Издадени дубликати -->
+    <tl-card *ngIf="ticketDuplicates && ticketDuplicates.length > 0"
+             tooltipResourceName="recreational-fishing.ticket-duplicates-helper">
+        <tl-card-title>{{ 'recreational-fishing.ticket-duplicates' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <tl-data-table fxFlexFill
+                           [rows]="ticketDuplicates"
+                           [isRemote]="false"
+                           [showAddButton]="false"
+                           [showInactiveRecords]="false">
+                <data-column [flexRate]="0.3"
+                             propertyName="ticketNum"
+                             columnName="{{ 'recreational-fishing.ticket-duplicate-num' | tlTranslate }}">
+                </data-column>
+                <data-column [flexRate]="0.3"
+                             propertyName="issueDate"
+                             dataType="datetime"
+                             columnName="{{ 'recreational-fishing.ticket-duplicate-issue-date' | tlTranslate }}">
+                </data-column>
+                <data-column [flexRate]="0.3"
+                             propertyName="price"
+                             columnName="{{ 'recreational-fishing.ticket-duplicate-price' | tlTranslate }}">
+                </data-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Приложени документи -->
+    <tl-card *ngIf="showFilesPanel && !dialogData?.showOnlyRegiXData"
+             tooltipResourceName="recreational-fishing.files-helper">
+        <tl-card-title>{{ 'recreational-fishing.files' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <file-uploader-form-array formControlName="filesControl"
+                                      [pageCode]="pageCode"
+                                      [downloadFileMethod]="service.downloadFile.bind(this.service)"
+                                      [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                      [refreshFileTypes]="refreshFileTypes">
+            </file-uploader-form-array>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Проверки -->
+    <tl-expansion-panel *ngIf="dialogData?.showOnlyRegiXData"
+                        title="{{ 'recreational-fishing.regix-checks-results' | tlTranslate }}"
+                        tooltipResourceName="recreational-fishing.regix-checks-results-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-checks-results [regixChecksCollection]="regixChecks"></regix-checks-results>
+        </div>
+    </tl-expansion-panel>
+
+    <tl-checkbox *ngIf="isPersonal && !dialogData?.viewMode"
+                 formControlName="updatePersonalDataControl"
+                 tooltipResourceName="recreational-fishing.update-personal-data-helper"
+                 label="{{ 'recreational-fishing.update-personal-data' | tlTranslate }}">
+    </tl-checkbox>
+
+    <tl-checkbox *ngIf="!dialogData?.showOnlyRegiXData && !dialogData?.viewMode && type.code !== 'UNDER14'"
+                 formControlName="guaranteeTrueDataControl"
+                 label="{{ isPersonal ? ('recreational-fishing.guarantee-true-data' | tlTranslate) : ('recreational-fishing.guarantee-true-data-admin' | tlTranslate) }}">
+    </tl-checkbox>
+</div>

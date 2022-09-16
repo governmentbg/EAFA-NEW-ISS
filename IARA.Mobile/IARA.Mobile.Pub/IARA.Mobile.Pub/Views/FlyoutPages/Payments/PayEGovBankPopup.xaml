@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<popup:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:popup="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Pub.Views.FlyoutPages.Payments.PayEGovBankPopup"
+        xmlns:vm="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        CloseWhenBackgroundIsClicked="True"
+        x:DataType="vm:PayEGovBankViewModel">
+    <StackLayout VerticalOptions="Center"
+            HorizontalOptions="Center"
+            Padding="0"
+            Margin="0">
+        <Frame WidthRequest="300" HasShadow="False">
+            <tl:TLScrollView>
+                <StackLayout>
+                    <Frame CornerRadius="0" BackgroundColor="{StaticResource Primary}">
+                        <Label Text="{rt:Translate PayEGovBankTitle, Group=Payments}"
+                                LineBreakMode="WordWrap"
+                                FontAttributes="Bold"
+                                FontSize="16"
+                                TextColor="White" />
+                    </Frame>
+                    <StackLayout Margin="5"
+                            xct:StateLayout.CurrentState="Custom"
+                            xct:StateLayout.CurrentCustomStateKey="{Binding CurrentState}">
+                        <xct:StateLayout.StateViews>
+                            <xct:StateView StateKey="Custom" CustomStateKey="FirstStep">
+                                <StackLayout VerticalOptions="CenterAndExpand">
+                                    <Label FontSize="16"
+                                            FontAttributes="Bold"
+                                            Text="{rt:Translate ShouldCopyThePaymentCode, Group=Payments}"
+                                            LineBreakMode="WordWrap" />
+                                    <Label Text="{rt:Translate PaymentCode, Group=Payments}" />
+                                    <Entry Text="{Binding Code}" IsReadOnly="True" />
+                                    <sv:TLButton BackgroundColor="{StaticResource Primary}"
+                                            Command="{Binding CopyToClipboard}"
+                                            Padding="10"
+                                            Text="{rt:Translate CopyPaymentCode, Group=Payments}"
+                                            ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Copy}, Color=White, Size=20}" />
+                                </StackLayout>
+                            </xct:StateView>
+                            <xct:StateView StateKey="Custom" CustomStateKey="SecondStep">
+                                <StackLayout VerticalOptions="CenterAndExpand">
+                                    <Label FontSize="16"
+                                            FontAttributes="Bold"
+                                            Text="{rt:Translate OpenPayEgovAndPasteTheCode, Group=Payments}"
+                                            LineBreakMode="WordWrap" />
+                                    <Label FontSize="16"
+                                            FontAttributes="Bold"
+                                            Text="{rt:Translate AfterPayEgovLogin, Group=Payments}"
+                                            LineBreakMode="WordWrap" />
+                                    <tl:TLRichLabel FontSize="14"
+                                            Margin="0,5"
+                                            LineBreakMode="WordWrap">
+                                        <Span Text="{rt:Translate Address, Group=Payments}" />
+                                        <Span Text="{Binding PayEGovUrl}" TextColor="{StaticResource Primary}">
+                                            <Span.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding OpenUrl}" />
+                                            </Span.GestureRecognizers>
+                                        </Span>
+                                    </tl:TLRichLabel>
+                                    <sv:TLButton BackgroundColor="{StaticResource Primary}"
+                                            Command="{Binding OpenUrl}"
+                                            Padding="10"
+                                            Text="{rt:Translate ProceedToPayEgov, Group=Payments}"
+                                            ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.ArrowUpRightFromSquare}, Color=White, Size=20}" />
+
+                                </StackLayout>
+                            </xct:StateView>
+                        </xct:StateLayout.StateViews>
+                    </StackLayout>
+                </StackLayout>
+            </tl:TLScrollView>
+        </Frame>
+    </StackLayout>
+</popup:PopupPage>

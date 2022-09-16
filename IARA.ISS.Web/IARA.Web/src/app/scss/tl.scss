@@ -1,0 +1,524 @@
+﻿// -----------------------------------------------------------------------------------------------------
+// @ colors
+// -----------------------------------------------------------------------------------------------------
+
+@mixin colors-theme($theme) {
+    $accent: map-get($theme, accent);
+    $warn: map-get($theme, warn);
+
+    .accent-color {
+        color: mat-color($accent) !important;
+    }
+
+    .error-color {
+        color: mat-color($warn) !important;
+    }
+
+    .success-color {
+        color: green !important;
+    }
+
+    .warn-orange-color {
+        color: orange !important;
+    }
+
+    .ngx-datatable.material.single-selection .datatable-body-row.active,
+    .ngx-datatable.material.single-selection .datatable-body-row.active .datatable-row-group,
+    .ngx-datatable.material.multi-selection .datatable-body-row.active,
+    .ngx-datatable.material.multi-selection .datatable-body-row.active .datatable-row-group,
+    .ngx-datatable.material.multi-click-selection .datatable-body-row.active,
+    .ngx-datatable.material.multi-click-selection .datatable-body-row.active .datatable-row-group {
+        background-color: mat-color($accent) !important;
+    }
+}
+
+// -----------------------------------------------------------------------------------------------------
+// @ material snackbar
+// -----------------------------------------------------------------------------------------------------
+.snack-bar-error-color {
+    background-color: crimson !important;
+}
+
+.snack-bar-error-button-text {
+    .mat-simple-snackbar-action {
+        color: darkblue;
+    }
+}
+
+.snack-bar-success-color {
+    background-color: green !important;
+}
+
+// -----------------------------------------------------------------------------------------------------
+// @ spinner material dialog
+// -----------------------------------------------------------------------------------------------------
+
+.spinner-panel {
+    mat-dialog-container {
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+}
+
+// -----------------------------------------------------------------------------------------------------
+// @ common styles
+// -----------------------------------------------------------------------------------------------------
+
+.horizontal-div {
+    display: flex;
+    flex-direction: row;
+}
+
+.vertical-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.half-width {
+    width: 50%;
+}
+
+.flex-box {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.space-between {
+    justify-content: space-between;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.transparent-btn-icon {
+    background: none !important;
+    border: none !important;
+}
+
+.flex-end-content {
+    justify-content: flex-end;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-end {
+    justify-content: end !important;
+}
+
+.p-b-0 {
+    padding-bottom: 0px !important;
+}
+
+.text-ellipsis {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.multi-line {
+    display: block;
+    white-space: pre-wrap !important;
+    overflow: unset !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+.break-all-words {
+    word-break: break-all !important;
+}
+
+.scroll {
+    overflow: scroll;
+}
+
+.space-cards {
+    padding: 1em;
+}
+
+.dialog-padding {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.italic-text {
+    font-style: italic;
+}
+
+.bold-text {
+    font-weight: bold;
+}
+
+.gray-accent {
+    background-color: rgba(220, 220, 220, 0.5)
+}
+
+// -----------------------------------------------------------------------------------------------------
+// @ mat-card -> mat-card-header to have no margins (typically has margin: 0 16px)
+// -----------------------------------------------------------------------------------------------------
+.mat-card-header.no-margin div.mat-card-header-text {
+    margin: 0px 0px 0px 0px !important;
+}
+
+// -----------------------------------------------------------------------------------------------------
+// @ mat-form-field
+// -----------------------------------------------------------------------------------------------------
+mat-form-field.p-b-0 .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-infix {
+    padding-bottom: 5px !important;
+    padding-top: 5px !important;
+}
+
+mat-form-field.zero-border .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-infix {
+    border: 0px !important;
+}
+
+mat-form-field.p-b-0 .mat-form-field-subscript-wrapper {
+    margin-top: 0px !important;
+}
+
+.center-elements mat-form-field .mat-form-field-wrapper .mat-form-field-flex {
+    align-items: center !important;
+}
+// -----------------------------------------------------------------------------------------------------
+// Colors for backgrounds
+// -----------------------------------------------------------------------------------------------------
+.white-background {
+    background-color: white;
+}
+
+// -----------------------------------------------------------------------------------------------------
+// @ Cursor helpers
+// -----------------------------------------------------------------------------------------------------
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.cursor-default {
+    cursor: default;
+}
+
+// -----------------------------------------------------------------------------------------------------
+// @ tl-card global styles
+// -----------------------------------------------------------------------------------------------------
+tl-card {
+    display: initial !important;
+}
+
+// -----------------------------------------------------------------------------------------------------
+// @ menu styles
+// -----------------------------------------------------------------------------------------------------
+.nav-link.auto-height {
+    height: auto !important;
+}
+
+.nav-link.min-height {
+    min-height: 3.4em !important;
+}
+
+// -----------------------------------------------------------------------------------------------------
+// @ tl help component styles - need to move tl-help button up, when in the tl-slide-toggle component
+// -----------------------------------------------------------------------------------------------------
+tl-help.bottom-3-btn {
+    tl-popover-button {
+        tl-icon-button {
+            button {
+                bottom: 3px !important;
+            }
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------------------------------
+// Makes mat-error and mat-hint visible in the inline grid
+// -----------------------------------------------------------------------------------------------------
+tl-data-table {
+    mat-form-field {
+        .mat-form-field {
+            &-underline {
+                position: static;
+            }
+
+            &-subscript-wrapper {
+                position: static;
+            }
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------------------------------
+// Makes mat-error and mat-hint italic
+// -----------------------------------------------------------------------------------------------------
+mat-error, mat-hint {
+    font-style: italic;
+}
+
+// -----------------------------------------------------------------------------------------------------
+// NgxDatatable styles
+// -----------------------------------------------------------------------------------------------------
+ngx-datatable {
+    button:disabled.datatable-tree-button {
+        cursor: default;
+
+        i.datatable-icon {
+            &-up:before {
+                content: "";
+            }
+
+            &-down:before {
+                content: "";
+            }
+        }
+    }
+
+    button:enabled.datatable-tree-button {
+        cursor: pointer;
+    }
+
+    button.datatable-tree-button {
+        border: none;
+        background-color: transparent;
+
+        i.datatable-icon {
+            &-up:before {
+                content: "chevron_right";
+            }
+
+            &-down:before {
+                content: "expand_more";
+            }
+        }
+    }
+}
+
+#role-permissions-table {
+    datatable-body-row {
+        datatable-body-cell {
+            // първа колона "Група"
+            &:nth-of-type(1) {
+                .datatable-body-cell-label {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                }
+            }
+
+            &:nth-of-type(2), &:nth-of-type(3), &:nth-of-type(4), &:nth-of-type(5), &:nth-of-type(6) {
+                padding: 0 !important;
+
+                .datatable-body-cell-label {
+                    text-align: center;
+                }
+            }
+            // последна колона "Други"
+            &:nth-of-type(7) {
+                .datatable-body-cell-label {
+                    margin-top: 0.2em;
+                    margin-bottom: 0.2em;
+                }
+            }
+
+            .datatable-body-cell-label {
+                margin-left: 0em !important;
+            }
+        }
+    }
+}
+
+
+.ngx-datatable.material .datatable-body .datatable-group-header {
+    width: 100% !important;
+}
+
+body.theme-iara ngx-datatable.material .datatable-body .datatable-row-wrapper {
+    width: 100% !important;
+}
+
+.ngx-datatable.material .datatable-body {
+    display: unset !important;
+}
+
+.datatable-body-row.row-selected {
+    background-color: #d9d8d9 !important;
+}
+
+// -----------------------------------------------------------------------------------------------------
+// NgxDatatable styles for datatable checkbox
+// -----------------------------------------------------------------------------------------------------
+
+.datatable-checkbox input[type=checkbox] {
+    position: relative !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    outline: none !important;
+}
+
+.ngx-datatable *, .ngx-datatable :after, .ngx-datatable :before {
+    box-sizing: border-box !important;
+}
+
+.datatable-checkbox input[type=checkbox]:checked:before {
+    transform: rotate( -45deg ) !important;
+    height: .5rem !important;
+    border-top-style: none !important;
+    border-right-style: none !important;
+}
+
+.datatable-checkbox input[type=checkbox]:before {
+    transition: all .3s ease-in-out !important;
+    content: "" !important;
+    position: unset !important;
+    left: 0 !important;
+    z-index: 1 !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    border: none !important;
+}
+
+.datatable-checkbox input[type=checkbox]:after {
+    content: "" !important;
+    position: unset !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    background: #fff !important;
+    cursor: pointer !important;
+}
+
+// -----------------------------------------------------------------------------------------------------
+// Material components wrap label text
+// -----------------------------------------------------------------------------------------------------
+.mat-radio-label-content {
+    white-space: normal !important;
+}
+
+.mat-checkbox-label {
+    white-space: normal !important;
+}
+
+// -----------------------------------------------------------------------------------------------------
+// Material components mat tree
+// -----------------------------------------------------------------------------------------------------
+
+#reports-tree mat-tree-node {
+    margin-bottom: 0.2em;
+
+    #reports-tree-text-button .mat-button-wrapper {
+        display: flex;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
+
+        mat-icon {
+            display: flex;
+            align-items: flex-end;
+        }
+    }
+
+    #reports-tree-action-buttons {
+        width: min-content;
+
+        tl-icon-button {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+
+            button {
+                display: flex;
+                align-items: flex-start;
+                width: fit-content;
+            }
+        }
+    }
+}
+
+#nomenclatures-tree mat-tree-node {
+    .mat-button-wrapper {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
+
+        mat-icon {
+            display: flex;
+            align-items: flex-end;
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------------------------------
+// For ngx-datatable selection mode with checkboxes
+// -----------------------------------------------------------------------------------------------------
+
+.selected {
+    background-color: #d9d8d9 !important;
+}
+
+.not-selected {
+    background-color: white !important;
+}
+
+// -----------------------------------------------------------------------------------------------------
+// For QUILL 3rd party component (What you see is what you get editor)
+// -----------------------------------------------------------------------------------------------------
+
+quill-editor.min-h-20 div.ql-container {
+    min-height: 20em !important;
+}
+
+// ----------------------------------------------
+// For tlResizable
+// ----------------------------------------------
+.tl-resizable-common {
+    position: absolute;
+    z-index: 9999;
+}
+
+.tl-resizable-handle-top, .tl-resizable-handle-bottom {
+    @extend .tl-resizable-common;
+    width: 100%;
+    height: 20px;
+    right: 0;
+    left: 0;
+    cursor: row-resize;
+}
+
+.tl-resizable-handle-left, .tl-resizable-handle-right {
+    @extend .tl-resizable-common;
+    height: 100%;
+    width: 20px;
+    top: 0;
+    bottom: 0;
+    cursor: col-resize;
+}
+
+// ----------------------------------------------
+// For egn-lnc-input
+// ----------------------------------------------
+egn-lnc-input {
+    tl-icon-button {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+
+        button.mat-icon-button {
+            width: fit-content;
+        }
+    }
+}

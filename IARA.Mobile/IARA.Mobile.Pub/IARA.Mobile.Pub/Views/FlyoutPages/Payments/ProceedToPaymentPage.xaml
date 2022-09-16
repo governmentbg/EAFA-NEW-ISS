@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Pub.Views.FlyoutPages.Payments.ProceedToPaymentPage"
+        xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments"
+        x:DataType="viewModels:ProceedToPaymentViewModel"
+        x:TypeArguments="viewModels:ProceedToPaymentViewModel"
+        PageInfo="{rt:Translate PageInfo, Group=Payments}"
+        Title="{rt:Translate Payment, Group=Payments}"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <tl:TLScrollView>
+        <StackLayout>
+            <StackLayout Margin="10"
+                    WidthRequest="400"
+                    HorizontalOptions="Center"
+                    BindableLayout.ItemsSource="{Binding Orders}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BorderColor="#dbd9d9"
+                                CornerRadius="5"
+                                Padding="10"
+                                Margin="5,3">
+                            <Grid ColumnDefinitions="50,*,75" x:DataType="viewModels:ItemViewModel">
+                                <Label FontFamily="FA"
+                                        FontSize="40"
+                                        Text="{Static h:IconFont.Ticket}"
+                                        TextColor="{StaticResource Primary}"
+                                        HorizontalTextAlignment="Center"
+                                        VerticalTextAlignment="Center"
+                                        WidthRequest="30" />
+                                <Grid Grid.Column="1"
+                                        VerticalOptions="Center"
+                                        RowDefinitions="Auto,Auto">
+                                    <Label Grid.Row="0"
+                                            FontSize="12"
+                                            Text="{Binding Name}"
+                                            LineBreakMode="WordWrap"
+                                            HorizontalOptions="Start"
+                                            FontAttributes="Bold" />
+                                    <Label Grid.Row="1"
+                                            FontSize="12"
+                                            Text="{Binding Description}"
+                                            LineBreakMode="WordWrap"
+                                            HorizontalOptions="Start" />
+                                </Grid>
+                                <Label Grid.Column="2"
+                                        WidthRequest="70"
+                                        FontSize="14"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="EndAndExpand"
+                                        HorizontalTextAlignment="End">
+                                    <Label.Text>
+                                        <MultiBinding StringFormat="{}{0:F2} {1}">
+                                            <Binding Path="Price" />
+                                            <rt:Translate Resource="Leva" Group="Payments" />
+                                        </MultiBinding>
+                                    </Label.Text>
+                                </Label>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </StackLayout>
+            <Grid Margin="10"
+                    WidthRequest="400"
+                    HorizontalOptions="Center"
+                    RowDefinitions="Auto,Auto">
+                <Label HorizontalTextAlignment="End">
+                    <Label.Text>
+                        <MultiBinding StringFormat="{}{0}: {1:F2} {2}">
+                            <rt:Translate Resource="Total" Group="Payments" />
+                            <Binding Path="TotalPrice" />
+                            <rt:Translate Resource="Leva" Group="Payments" />
+                        </MultiBinding>
+                    </Label.Text>
+                </Label>
+                <Button Grid.Row="1"
+                        Command="{Binding Checkout}"
+                        Text="{rt:Translate Checkout, Group=Payments}" />
+            </Grid>
+        </StackLayout>
+    </tl:TLScrollView>
+</sv:BasePage>
+

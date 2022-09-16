@@ -1,0 +1,127 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <search-panel [translateService]="translate">
+        <div [formGroup]="form">
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
+                <tl-input fxFlex="25"
+                          formControlName="checkCodeControl"
+                          label="{{ 'cross-check-results.check-code' | tlTranslate }}"
+                          tooltipResourceName="cross-check-results.check-code-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="checkNameControl"
+                          label="{{ 'cross-check-results.check-name' | tlTranslate }}"
+                          tooltipResourceName="cross-check-results.check-name-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="checkTableNameControl"
+                          label="{{ 'cross-check-results.check-table-name' | tlTranslate }}"
+                          tooltipResourceName="cross-check-results.check-table-name-helper">
+                </tl-input>
+                <tl-date-range fxFlex="25"
+                               formControlName="validityControl"
+                               label="{{ 'cross-check-results.valid' | tlTranslate }}"
+                               tooltipResourceName="cross-check-results.valid-helper">
+                </tl-date-range>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
+                <tl-select fxFlex="25"
+                           label="{{ 'cross-check-results.resolution' | tlTranslate }}"
+                           formControlName="resolutionControl"
+                           [options]="resolutions"
+                           [isMultiple]="true"
+                           tooltipResourceName="cross-check-results.resolution-helper">
+                </tl-select>
+                <tl-autocomplete fxFlex="25"
+                                 label="{{ 'cross-check-results.assigned-user' | tlTranslate }}"
+                                 formControlName="assignedUserControl"
+                                 [options]="assignedUsers"
+                                 tooltipResourceName="cross-check-results.assigned-user-helper">
+                </tl-autocomplete>
+                <tl-input fxFlex="25"
+                          formControlName="tableIdControl"
+                          label="{{ 'cross-check-results.check-table-id' | tlTranslate }}"
+                          tooltipResourceName="cross-check-results.check-table-id-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="errorDescriptionControl"
+                          label="{{ 'cross-check-results.check-error-description' | tlTranslate }}"
+                          tooltipResourceName="cross-check-results.check-error-description-helper">
+                </tl-input>
+            </div>
+        </div>
+    </search-panel>
+    <!-- Таблица -->
+    <mat-card>
+        <tl-data-table [showAddButton]="false"
+                       [showInactiveRecords]="canRestoreRecords">
+            <data-column propertyName="checkCode"
+                         [flexRate]="0.1"
+                         columnName="{{ 'cross-check-results.check-code' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="checkName"
+                         [flexRate]="0.4"
+                         columnName="{{ 'cross-check-results.check-name' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="pageCode"
+                         [flexRate]="0.4"
+                         columnName="{{ 'cross-check-results.check-table-name' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="tableId"
+                         [flexRate]="0.2"
+                         columnName="{{ 'cross-check-results.check-table-id' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="errorDescription"
+                         [flexRate]="0.4"
+                         columnName="{{ 'cross-check-results.check-error-description' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="validFrom"
+                         [flexRate]="0.2"
+                         dataType="date"
+                         columnName="{{ 'cross-check-results.valid-from' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="validTo"
+                         [flexRate]="0.2"
+                         dataType="date"
+                         columnName="{{ 'cross-check-results.valid-to' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="assignedUser"
+                         [flexRate]="0.3"
+                         columnName="{{ 'cross-check-results.assigned-user' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="resolution"
+                         [flexRate]="0.2"
+                         columnName="{{ 'cross-check-results.resolution' | tlTranslate }}">
+            </data-column>
+            <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row" fxLayoutAlign="end center">
+                        <tl-icon-button *ngIf="row.data.isActive && canAssignRecords"
+                                        icon="person"
+                                        (buttonClicked)="assignCrossCheckResult(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'cross-check-results.assigned-user-cross-check-result' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && canResolveRecords"
+                                        icon="edit"
+                                        (buttonClicked)="editCrossCheckResolution(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'cross-check-results.edit-cross-check-resolution' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && canDeleteRecords"
+                                        icon="delete"
+                                        (buttonClicked)="deleteCrossCheckResult(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'cross-check-results.delete-cross-check-result' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="!row.data.isActive && canRestoreRecords"
+                                        icon="restore"
+                                        (buttonClicked)="restoreCrossCheckResult(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'cross-check-results.restore-cross-check-result' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </mat-card>
+</div>

@@ -1,0 +1,24 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="form" validityCheckerGroup [notifierGroup]="notifierGroup">
+    <single-address-registration formControlName="firstAddressControl"
+                                 notifier
+                                 validityChecker
+                                 [addressType]="addressType"
+                                 [label]="addressLabel"
+                                 [expectedResults]="expectedAddressResult"
+                                 [readonly]="readonly">
+    </single-address-registration>
+    <tl-checkbox *ngIf="checkboxLabel !== undefined && checkboxLabel !== null"
+                 formControlName="checkboxControl"
+                 [label]="checkboxLabel"
+                 [readonly]="readonly">
+    </tl-checkbox>
+    <single-address-registration *ngIf="form.controls['checkboxControl']?.value === false"
+                                 formControlName="secondAddressControl"
+                                 notifier
+                                 validityChecker
+                                 [addressType]="secondAddressType"
+                                 [label]="secondAddressLabel"
+                                 [expectedResults]="expectedSecondAddressResult"
+                                 [readonly]="readonly">
+    </single-address-registration>
+</div>

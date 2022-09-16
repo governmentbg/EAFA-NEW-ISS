@@ -1,0 +1,97 @@
+<user-registration-layout fxFlexFill>
+    <div fxFlexFill fxLayoutGap="1em" fxLayout="column">
+        <h1>{{ 'user-registration.profile-registration-title' | tlTranslate }}</h1>
+        <form name="registerForm" [formGroup]="registerForm" novalidate fxLayout="column">
+            <mat-accordion class="example-headers-align" multi>
+                <tl-expansion-panel title="{{ 'user-registration.personal-data' |tlTranslate }}">
+                    <div fxLayout="row"
+                         fxLayoutGap="1em grid"
+                         gdAreas="firstNameArea middleNameArea lastNameArea"
+                         gdRows="auto"
+                         gdColumns="33% 33% 33%"
+                         gdAreas.lt-md="firstNameArea | middleNameArea | lastNameArea"
+                         gdRows.lt-md="auto auto auto"
+                         gdColumns.lt-md="100%">
+                        <tl-input gdArea="firstNameArea"
+                                  appearance="outline"
+                                  formControlName="firstName"
+                                  label="{{ 'user-registration.first-name' | tlTranslate }}"></tl-input>
+                        <tl-input gdArea="middleNameArea"
+                                  appearance="outline"
+                                  formControlName="middleName"
+                                  label="{{ 'user-registration.middle-name' | tlTranslate }}"></tl-input>
+                        <tl-input gdArea="lastNameArea"
+                                  appearance="outline"
+                                  formControlName="lastName"
+                                  label="{{ 'user-registration.last-name' | tlTranslate }}"></tl-input>
+                    </div>
+                    <div fxLayout="row"
+                         fxLayoutGap="1em grid"
+                         gdAreas="egnArea emailArea"
+                         gdRows="auto"
+                         gdColumns="33% 33%"
+                         gdAreas.lt-md="egnArea | emailArea"
+                         gdRows.lt-md="auto auto"
+                         gdColumns.lt-md="100%">
+                        <egn-lnc-input gdArea="egnArea"
+                                       [readonly]="isEgnLnchReadonly"
+                                       formControlName="egnControl"
+                                       appearance="outline"
+                                       [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"></egn-lnc-input>
+                        <tl-input gdArea="emailArea"
+                                  appearance="outline"
+                                  formControlName="email"
+                                  label="{{ 'user-registration.email' | tlTranslate }}"
+                                  [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"></tl-input>
+                    </div>
+                </tl-expansion-panel>
+                <tl-expansion-panel title="{{ 'user-registration.login-with-email-and-password-title' | tlTranslate }}">
+                    <div fxLayout="row"
+                         fxLayoutGap="1em grid"
+                         gdAreas="passwordArea passwordConfirmArea"
+                         gdRows="auto"
+                         gdColumns="33% 33%"
+                         gdAreas.lt-md="passwordArea | passwordConfirmArea"
+                         gdRows.lt-md="auto auto"
+                         gdColumns.lt-md="100%"
+                         style="margin-bottom: 1em;padding-bottom:20px">
+                        <tl-input gdArea="passwordArea"
+                                  appearance="outline"
+                                  type="password"
+                                  [multilineError]="useMultilineErrors"
+                                  formControlName="password"
+                                  label="{{ 'user-registration.password' | tlTranslate }}"
+                                  [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"></tl-input>
+                        <tl-input gdArea="passwordConfirmArea"
+                                  appearance="outline"
+                                  type="password"
+                                  formControlName="passwordConfirmation"
+                                  label="{{ 'user-registration.password-confirmation' | tlTranslate }}"
+                                  [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"></tl-input>
+                    </div>
+                </tl-expansion-panel>
+            </mat-accordion>
+            <div class="terms" fxLayout="row" fxLayoutAlign="center top">
+                <tl-checkbox formControlName="termsAndConditionsCheckbox">
+                    <span class="multi-line">
+                        {{ 'user-registration.familiar-with-and-accept' | tlTranslate }}<a target="_blank" [routerLink]="termsAndConditionsPageUrl" style="padding-top: 2px;">{{ 'user-registration.terms-and-conditions' | tlTranslate }}</a>
+                    </span>
+                </tl-checkbox>
+            </div>
+            <div fxLayout="row" fxFlex="100" fxLayoutAlign="center center">
+                <button fxFlex="35" fxHide fxShow.gt-xs class="multi-line" mat-raised-button color="accent" (click)="registrationButtonClicked()">
+                    {{ 'user-registration.create-account' | tlTranslate }}
+                </button>
+                <button fxFlex="100" fxShow fxHide.gt-xs class="multi-line" mat-raised-button color="accent" (click)="registrationButtonClicked()">
+                    {{ 'user-registration.create-account' | tlTranslate }}
+                </button>
+            </div>
+        </form>
+        <div class="register" fxLayout="row" fxLayoutAlign="center center">
+            <span class="text">
+                {{ 'user-registration.already-have-profile' | tlTranslate }} <a class="link" routerLink="">{{ 'user-registration.login-from-here' | tlTranslate }}</a>
+            </span>
+        </div>
+    </div>
+
+</user-registration-layout>

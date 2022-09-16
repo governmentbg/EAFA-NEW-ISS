@@ -1,0 +1,59 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <div fxLayout="row" fxLayoutGap="1em">
+        <tl-input fxFlex="33"
+                  formControlName="nameControl"
+                  label="{{ 'permissions-register.edit-name' | tlTranslate }}"
+                  tooltipResourceName="permissions-register.edit-name-helper">
+        </tl-input>
+
+        <tl-autocomplete fxFlex="33"
+                         formControlName="typeControl"
+                         [options]="types"
+                         label="{{ 'permissions-register.edit-type' | tlTranslate }}"
+                         tooltipResourceName="permissions-register.edit-type-helper">
+        </tl-autocomplete>
+
+        <tl-autocomplete fxFlex="33"
+                         formControlName="groupControl"
+                         [options]="groups"
+                         label="{{ 'permissions-register.edit-group' | tlTranslate }}"
+                         tooltipResourceName="permissions-register.edit-group-helper">
+        </tl-autocomplete>
+    </div>
+
+    <div fxLayout="row">
+        <tl-textarea fxFlexFill
+                     formControlName="descriptionControl"
+                     label="{{ 'permissions-register.edit-description' | tlTranslate }}"
+                     tooltipResourceName="permissions-register.edit-description-helper">
+        </tl-textarea>
+    </div>
+
+    <tl-expansion-panel title="{{ 'permissions-register.edit-roles' | tlTranslate }}"
+                        tooltipResourceName="permissions-register.edit-roles-helper">
+        <tl-data-table [isRemote]="false"
+                       [rows]="tableRoles"
+                       [isSoftDeletable]="false"
+                       [showAddButton]="!readOnly"
+                       [showInactiveRecords]="false"
+                       [disableDblClickEdit]="true">
+            <data-column propertyName="roleId"
+                         [flexRate]="9"
+                         [formGroup]="rolesForm"
+                         [options]="roles"
+                         [displayOptions]="allRoles"
+                         dataType="nomenclature"
+                         columnName="{{ 'permissions-register.edit-role' | tlTranslate }}">
+            </data-column>
+
+            <data-column-inline *ngIf="!readOnly"
+                                [flexRate]="1"
+                                [hideEditBtn]="true">
+            </data-column-inline>
+        </tl-data-table>
+    </tl-expansion-panel>
+</div>

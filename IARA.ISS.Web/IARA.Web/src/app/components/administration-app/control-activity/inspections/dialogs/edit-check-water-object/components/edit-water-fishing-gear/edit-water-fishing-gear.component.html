@@ -1,0 +1,23 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <div fxLayout="column"
+         fxLayoutGap="1em"
+         fxLayoutAlign="start stretch">
+        <tl-expansion-panel title="{{ 'inspections.fishing-gear' | tlTranslate }}">
+            <edit-fishing-gear formControlName="fishingGearControl">
+            </edit-fishing-gear>
+        </tl-expansion-panel>
+        <tl-checkbox formControlName="takenControl"
+                     label="{{ 'inspections.water-inspection-taken' | tlTranslate }}">
+        </tl-checkbox>
+        <tl-checkbox formControlName="storedControl"
+                     label="{{ 'inspections.water-inspection-stored' | tlTranslate }}">
+        </tl-checkbox>
+        <tl-input formControlName="storageControl"
+                  label="{{ 'inspections.fishing-gear-storage-location' | tlTranslate }}">
+        </tl-input>
+    </div>
+</div>

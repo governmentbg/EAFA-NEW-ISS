@@ -1,0 +1,68 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+        <tl-checkbox formControlName="patrolVehicleRegisteredControl"
+                     label="{{ 'inspections.patrol-vehicle-registered' | tlTranslate }}">
+        </tl-checkbox>
+
+        <tl-autocomplete *ngIf="isFromRegister"
+                         formControlName="patrolVehicleControl"
+                         label="{{ 'inspections.patrol-vehicle' | tlTranslate }}"
+                         [options]="patrolVehicles">
+        </tl-autocomplete>
+
+        <div *ngIf="!isFromRegister"
+             fxLayout="row"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start center">
+            <tl-input fxFlex="50"
+                      formControlName="nameControl"
+                      label="{{ 'inspections.vehicle-name' | tlTranslate }}">
+            </tl-input>
+            <tl-input fxFlex="50"
+                      formControlName="cfrControl"
+                      label="{{ 'inspections.cfr' | tlTranslate }}">
+            </tl-input>
+        </div>
+
+        <div *ngIf="isWaterVehicle"
+             fxLayout="row"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start center">
+            <tl-input fxFlex="50"
+                      formControlName="externalMarkControl"
+                      label="{{ 'inspections.external-mark' | tlTranslate }}">
+            </tl-input>
+            <tl-input fxFlex="50"
+                      formControlName="callsignControl"
+                      label="{{ 'inspections.callsign' | tlTranslate }}">
+            </tl-input>
+        </div>
+
+        <div fxLayout="row"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start center">
+            <tl-autocomplete fxFlex="50"
+                             formControlName="countryControl"
+                             label="{{ 'inspections.country' | tlTranslate }}"
+                             [options]="countries">
+            </tl-autocomplete>
+            <tl-autocomplete fxFlex="50"
+                             formControlName="institutionControl"
+                             label="{{ 'inspections.institution' | tlTranslate }}"
+                             [options]="institutions">
+            </tl-autocomplete>
+        </div>
+
+        <tl-autocomplete formControlName="patrolVehicleTypeControl"
+                         label="{{ 'inspections.patrol-vehicle-type' | tlTranslate }}"
+                         [options]="patrolVehicleTypes">
+        </tl-autocomplete>
+
+        <inspection-map-viewer formControlName="mapViewerControl">
+        </inspection-map-viewer>
+    </div>
+</div>

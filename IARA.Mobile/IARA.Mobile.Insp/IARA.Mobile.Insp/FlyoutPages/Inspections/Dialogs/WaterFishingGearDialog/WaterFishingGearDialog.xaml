@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<tl:TLBaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialog"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialog.WaterFishingGearDialog"
+        x:Name="dialog"
+        x:DataType="local:WaterFishingGearDialogViewModel"
+        x:TypeArguments="local:WaterFishingGearDialogViewModel, m:WaterFishingGearModel"
+        Title="{rt:Translate DialogTitle, Group=WaterFishingGear}"
+        BackgroundColor="White"
+        IconColor="White"
+        TitleBackgroundColor="{StaticResource Primary}"
+        TitleColor="White">
+    <tl:TLScrollView>
+        <StackLayout Padding="10">
+            <tl:TLFlex GrowUnit="125">
+                <tl:TLPicker Title="{rt:Translate Type, Group=WaterFishingGear}"
+                        tl:TLFlex.Grow="2"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        ItemsSource="{Binding FishingGearTypes}"
+                        ValidState="{Binding FishingGearType}" />
+                <tl:TLEntry Title="{rt:Translate Count, Group=WaterFishingGear}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        Keyboard="Numeric"
+                        ValidState="{Binding Count}" />
+                <tl:TLEntry Title="{rt:Translate NetEyeSize, Group=WaterFishingGear}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        Keyboard="Numeric"
+                        ValidState="{Binding NetEyeSize}" />
+                <tl:TLEntry Title="{rt:Translate HookCount, Group=WaterFishingGear}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        Keyboard="Numeric"
+                        ValidState="{Binding HookCount}" />
+                <tl:TLEntry Title="{rt:Translate Length, Group=WaterFishingGear}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        Keyboard="Numeric"
+                        ValidState="{Binding Length}" />
+                <tl:TLEntry Title="{rt:Translate Height, Group=WaterFishingGear}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        Keyboard="Numeric"
+                        ValidState="{Binding Height}" />
+            </tl:TLFlex>
+            <tl:TLCheckView Text="{rt:Translate Taken, Group=WaterFishingGear}"
+                    IsChecked="{Binding IsTaken}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+            <tl:TLCheckView Text="{rt:Translate Stored, Group=WaterFishingGear}"
+                    IsChecked="{Binding IsStored}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+            <tl:TLEntry Title="{rt:Translate Location, Group=WaterFishingGear}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    ValidState="{Binding Location}" />
+            <tl:TLTable Title="{rt:Translate Marks, Group=WaterFishingGear}"
+                    ValidState="{Binding Marks}">
+                <tl:TLTable.TableColumns>
+                    <tl:TLTableColumn Width="*"
+                            Text="{rt:Translate Number, Group=WaterFishingGear}" />
+                    <tl:TLTableColumn Width="*"
+                            Text="{rt:Translate Status, Group=WaterFishingGear}" />
+                    <tl:TLTableColumn Width="{Binding BindingContext.DialogType, Converter={StaticResource ReviewToWidth}, ConverterParameter=40, Source={Reference dialog}}" />
+                </tl:TLTable.TableColumns>
+                <DataTemplate>
+                    <tl:TLTableRow x:DataType="local:MarkViewModel">
+                        <tl:TLEntry IsEnabled="{Binding BindingContext.DialogType, Converter={StaticResource IsNotReview}, Source={Reference dialog}}"
+                                IsTitleVisible="False"
+                                ValidState="{Binding Number}" />
+                        <tl:TLNativePicker IsEnabled="{Binding BindingContext.DialogType, Converter={StaticResource IsNotReview}, Source={Reference dialog}}"
+                                IsTitleVisible="False"
+                                ItemsSource="{Binding BindingContext.MarkStatuses, Source={Reference dialog}}"
+                                ValidState="{Binding Status}" />
+                        <ImageButton Padding="10"
+                                Command="{Binding BindingContext.RemoveMark, Source={Reference dialog}}"
+                                CommandParameter="{Binding}"
+                                IsEnabled="{Binding BindingContext.DialogType, Converter={StaticResource IsNotReview}, Source={Reference dialog}}"
+                                Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}" />
+                    </tl:TLTableRow>
+                </DataTemplate>
+                <tl:TLTable.FooterView>
+                    <Button Command="{Binding AddMark}"
+                            HorizontalOptions="End"
+                            ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
+                            IsVisible="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                            Text="{rt:Translate AddMark, Group=WaterFishingGear}" />
+                </tl:TLTable.FooterView>
+                <tl:TLTable.EmptyView>
+                    <Label Margin="20,10"
+                            Text="{rt:Translate NoInformation, Group=Common}" />
+                </tl:TLTable.EmptyView>
+            </tl:TLTable>
+            <tl:TLEditor Title="{rt:Translate Description, Group=WaterFishingGear}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    ValidState="{Binding Description}" />
+            <Button Command="{Binding Save}"
+                    IsVisible="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    Text="{rt:Translate Save, Group=Common}" />
+        </StackLayout>
+    </tl:TLScrollView>
+</tl:TLBaseDialog>

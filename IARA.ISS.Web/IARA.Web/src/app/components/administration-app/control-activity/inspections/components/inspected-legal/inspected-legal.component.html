@@ -1,0 +1,34 @@
+<tl-card>
+    <tl-card-title>{{ title }}</tl-card-title>
+    <tl-card-content>
+        <div [formGroup]="form"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill
+             fxLayoutAlign="space-between stretch">
+
+            <regix-data formControlName="legalControl"
+                        [isPerson]="false"
+                        [showCustodianOfProperty]="false"
+                        [isForeigner]="true"
+                        [isIdReadOnly]="false"
+                        [showOnlyBasicData]="true"
+                        checkboxLabel="{{ 'catches-and-sales.log-book-page-person-has-bulgarian-address-registration' | tlTranslate }}">
+            </regix-data>
+
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start center">
+                <tl-input fxFlex="50"
+                          formControlName="addressControl"
+                          label="{{ 'inspections.address' | tlTranslate }}">
+                </tl-input>
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="countryControl"
+                                 label="{{ 'inspections.country' | tlTranslate }}"
+                                 [options]="countries">
+                </tl-autocomplete>
+            </div>
+        </div>
+    </tl-card-content>
+</tl-card>

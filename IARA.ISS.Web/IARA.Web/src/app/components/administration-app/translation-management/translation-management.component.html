@@ -1,0 +1,105 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <!-- Филтри -->
+    <search-panel [translateService]="translate">
+        <div [formGroup]="form" fxFlexFill fxLayout="column" fxLayoutAlign="start start">
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center" fxFlexFill>
+                <tl-input fxFlex="33"
+                          formControlName="codeControl"
+                          label="{{ 'translation-management.code' | tlTranslate }}"
+                          tooltipResourceName="translation-management.code-helper">
+                </tl-input>
+
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="groupControl"
+                                 [options]="groups"
+                                 label="{{ 'translation-management.group' | tlTranslate }}"
+                                 tooltipResourceName="translation-management.group-helper">
+                </tl-autocomplete>
+
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="translationTypeControl"
+                                 [options]="translationTypes"
+                                 label="{{ 'translation-management.translation-type' | tlTranslate }}"
+                                 tooltipResourceName="translation-management.translation-type-helper">
+                </tl-autocomplete>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center" fxFlexFill>
+                <tl-input fxFlex="33"
+                          formControlName="translationValueBGControl"
+                          label="{{ 'translation-management.translation-value-bg' | tlTranslate }}"
+                          tooltipResourceName="translation-management.translation-value-bg-helper">
+                </tl-input>
+
+                <tl-input fxFlex="33"
+                          formControlName="translationValueENControl"
+                          label="{{ 'translation-management.translation-value-en' | tlTranslate }}"
+                          tooltipResourceName="translation-management.translation-value-en-helper">
+                </tl-input>
+
+                <div fxFlex="33"></div>
+            </div>
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <mat-card>
+        <tl-data-table [showInactiveRecords]="false"
+                       [showAddButton]="false">
+            <div *ngIf="resourceType === resourceTypes.Help" datatable-add-buttons>
+                <button mat-raised-button
+                        color="accent"
+                        (click)="toggleEditMode()">
+                    <tl-icon icon="fa-edit"
+                             class="warn-color">
+                    </tl-icon>
+                    {{ editModeLabel }}
+                </button>
+            </div>
+
+            <data-column columnName="{{ 'translation-management.code' | tlTranslate }}"
+                         [flexRate]="0.2"
+                         propertyName="code">
+            </data-column>
+
+            <data-column columnName="{{ 'translation-management.group' | tlTranslate }}"
+                         [flexRate]="0.2"
+                         propertyName="groupCode">
+            </data-column>
+
+            <data-column columnName="{{ 'translation-management.translation-type' | tlTranslate }}"
+                         [flexRate]="0.2"
+                         propertyName="groupType">
+            </data-column>
+
+            <data-column columnName="{{ 'translation-management.value-bg' | tlTranslate }}"
+                         [flexRate]="0.2"
+                         propertyName="valueBg">
+            </data-column>
+
+            <data-column columnName="{{ 'translation-management.value-en' | tlTranslate }}"
+                         [flexRate]="0.2"
+                         propertyName="valueEn">
+            </data-column>
+
+            <data-template-column [flexRate]="0.25">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                        <tl-icon-button icon="visibility"
+                                        iconClass="accent-color"
+                                        (buttonClicked)="addEditTranslation(row.data, true)"
+                                        tooltipText="{{ 'translation-management.view-translation-tooltip' | tlTranslate }}">
+                        </tl-icon-button>
+
+                        <tl-icon-button *ngIf="row.isActive && canEditRecords"
+                                        icon="edit"
+                                        iconClass="accent-color"
+                                        (buttonClicked)="addEditTranslation(row.data, false)"
+                                        tooltipText="{{ 'translation-management.edit-translation-tooltip' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </mat-card>
+</div>

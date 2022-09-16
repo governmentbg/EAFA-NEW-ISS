@@ -1,0 +1,18 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxFlexFill [formGroup]="form" class="dialog-padding">
+    <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+        <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+            <tl-autocomplete fxFlex="50" formControlName="typeControl" [options]="fishes"
+                label="{{ 'inspections.water-catch-type' | tlTranslate }}">
+            </tl-autocomplete>
+            <tl-input fxFlex="50" formControlName="quantityControl" type="number"
+                label="{{ 'inspections.water-catch-quantity' | tlTranslate }}">
+            </tl-input>
+        </div>
+        <tl-checkbox formControlName="takenControl" label="{{ 'inspections.water-inspection-taken' | tlTranslate }}">
+        </tl-checkbox>
+        <tl-radio-button-group formControlName="storedControl" direction="row" gap="1em" [options]="storedTypes">
+        </tl-radio-button-group>
+        <tl-input formControlName="storageControl" label="{{ 'inspections.storage-location' | tlTranslate }}">
+        </tl-input>
+    </div>
+</div>

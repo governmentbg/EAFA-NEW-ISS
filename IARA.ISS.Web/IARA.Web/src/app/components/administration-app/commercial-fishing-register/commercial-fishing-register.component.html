@@ -1,0 +1,360 @@
+﻿<div fxLayout="column" fxLayoutGap="5px" fxLayoutAlign="start stretch" fxFill>
+    <search-panel *ngIf="shipId === null || shipId === undefined" [translateService]="translationService">
+        <div [formGroup]="formGroup" fxFlexFill fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start start">
+            <div fxLayout="row" fxFlexFill fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-select *ngIf="canReadPermitRecords"
+                           fxFlex="25"
+                           formControlName="permitTypeControl"
+                           label="{{ 'commercial-fishing.permit-type' | tlTranslate }}"
+                           tooltipResourceName="commercial-fishing.permit-type-helper"
+                           [options]="permitTypes">
+                </tl-select>
+                <tl-select *ngIf="canReadPermitLicenseRecords"
+                           fxFlex="25"
+                           formControlName="permitLicenseTypeControl"
+                           label="{{ 'commercial-fishing.permit-license-type' | tlTranslate }}"
+                           tooltipResourceName="commercial-fishing.permit-license-type-helper"
+                           [options]="permitLicenseTypes">
+                </tl-select>
+                <tl-input fxFlex="25"
+                          formControlName="numberControl"
+                          label="{{ 'commercial-fishing.number' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.number-helper">
+                </tl-input>
+                <tl-date-range fxFlex="25"
+                               formControlName="issuedDateRangeControl"
+                               label="{{ 'commercial-fishing.issued-date-range' | tlTranslate }}"
+                               tooltipResourceName="commercial-fishing.issued-date-range-helper">
+                </tl-date-range>
+                <div *ngIf="!canReadPermitLicenseRecords" fxFlex="25"></div>
+                <div *ngIf="!canReadPermitRecords" fxFlex="25"></div>
+            </div>
+            <div fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="25"
+                          formControlName="shipNameControl"
+                          label="{{ 'commercial-fishing.ship-name' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.ship-name-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="shipCfrControl"
+                          label="{{ 'commercial-fishing.ship-cfr' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.ship-cfr-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="shipExternalMarkingControl"
+                          label="{{ 'commercial-fishing.ship-external-marking' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.ship-external-marking-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="shipRegistrationCertificateNumberControl"
+                          label="{{ 'commercial-fishing.ship-registration-certificate-number' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.ship-registration-certificate-number-helper">
+                </tl-input>
+            </div>
+            <div fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="25"
+                          formControlName="poundNetNameControl"
+                          label="{{ 'commercial-fishing.pound-net-name' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.pound-net-name-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="poundNetNumberControl"
+                          label="{{ 'commercial-fishing.pound-net-number' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.pound-net-number-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="submittedForNameControl"
+                          label="{{ 'commercial-fishing.submitted-for-names' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.submitted-for-names-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="submittedForIdentifierControl"
+                          label="{{ 'commercial-fishing.submitted-for-identifier' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.submitted-for-identifier-helper">
+                </tl-input>
+            </div>
+            <div fxLayout="row" fxFlexFill fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-select fxFlex="25"
+                           formControlName="permitIsSuspendedControl"
+                           [options]="permitIsSuspendedOptions"
+                           label="{{ 'commercial-fishing.is-permit-suspended' | tlTranslate }}"
+                           tooltipResourceName="commercial-fishing.is-permit-suspended-helper">
+                </tl-select>
+                <tl-select fxFlex="25"
+                           formControlName="permitIsExpiredControl"
+                           [options]="permitIsExpiredOptions"
+                           label="{{ 'commercial-fishing.is-permit-expired' | tlTranslate }}"
+                           tooltipResourceName="commercial-fishing.is-permit-expired-helper">
+                </tl-select>
+                <tl-autocomplete *ngIf="hasPermitsReadAllPermission; else hasOnlyPermitReadPermission"
+                                 fxFlex="25"
+                                 formControlName="permitTerritoryUnitControl"
+                                 label="{{ 'commercial-fishing.permit-territory-unit' | tlTranslate }}"
+                                 tooltipResourceName="commercial-fishing.permit-territory-unit-helper"
+                                 [options]="territoryUnits">
+                </tl-autocomplete>
+                <div fxFlex="25"></div>
+                <ng-template #hasOnlyPermitReadPermission>
+                    <div fxFlex="25"></div>
+                </ng-template>
+            </div>
+            <div fxLayout="row" fxFlexFill fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-select fxFlex="25"
+                           formControlName="permitLicenseIsSuspendedControl"
+                           [options]="permitLicenseIsSuspendedOptions"
+                           label="{{ 'commercial-fishing.is-permit-license-suspended' | tlTranslate }}"
+                           tooltipResourceName="commercial-fishing.is-permit-license-suspended-helper">
+                </tl-select>
+                <tl-select fxFlex="25"
+                           formControlName="permitLicenseIsExpiredControl"
+                           [options]="permitLicenseIsExpiredOptions"
+                           label="{{ 'commercial-fishing.is-permit-license-expired' | tlTranslate }}"
+                           tooltipResourceName="commercial-fishing.is-permit-license-expired-helper">
+                </tl-select>
+                <tl-autocomplete *ngIf="hasPermitLicenseReadAllPermission; else hasOnlyPermitLicenseReadPermission"
+                                 fxFlex="25"
+                                 formControlName="permitLicenseTerritoryUnitControl"
+                                 label="{{ 'commercial-fishing.permit-license-territory-unit' | tlTranslate }}"
+                                 tooltipResourceName="commercial-fishing.permit-license-territory-unit-helper"
+                                 [options]="territoryUnits">
+                </tl-autocomplete>
+                <div fxFlex="25"></div>
+                <ng-template #hasOnlyPermitLicenseReadPermission>
+                    <div fxFlex="25"></div>
+                </ng-template>
+            </div>
+            <div fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="fishingGearTypeControl"
+                                 label="{{ 'commercial-fishing.fishing-gear-type' | tlTranslate }}"
+                                 tooltipResourceName="commercial-fishing.fishing-gear-type-helper"
+                                 [options]="fishingGearTypes">
+                </tl-autocomplete>
+                <tl-input fxFlex="25"
+                          formControlName="fishingGearMarkNumberControl"
+                          label="{{ 'commercial-fishing.fishing-gear-mark-number' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.fishing-gear-mark-number-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="fishingGearPingerNumberControl"
+                          label="{{ 'commercial-fishing.fishing-gear-pinger-number' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.fishing-gear-pinger-number-helper">
+                </tl-input>
+                <div fxFlex="25"></div>
+            </div>
+            <div fxFlexFill fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="logBookNumberControl"
+                          label="{{ 'commercial-fishing.log-book-number' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.log-book-number-helper">
+                </tl-input>
+                <div fxFlex="75"></div>
+            </div>
+        </div>
+    </search-panel>
+
+    <tl-card tooltipResourceName="commercial-fishing.register-table-card-helper">
+        <tl-card-content>
+            <tl-data-table [showAddButton]="(canAddPermitRecords || canAddPermitLicenseRecords) && (shipId === null || shipId === undefined)"
+                           [showInactiveRecords]="canRestorePermitRecords && (shipId === null || shipId === undefined)"
+                           (addButtonClicked)="createRegister()">
+                <row-detail *ngIf="canReadPermitLicenseRecords">
+                    <ng-template let-row="row" ngx-datatable-row-detail-template>
+                        <tl-card>
+                            <tl-card-title>{{ 'commercial-fishing.permit-licenses-list-card-title' | tlTranslate }}</tl-card-title>
+                            <tl-card-content>
+                                <tl-data-table [isRemote]="false"
+                                               [isSoftDeletable]="true"
+                                               [showInactiveRecords]="canRestorePermitLicenseRecords && (shipId === null || shipId === undefined)"
+                                               [showAddButton]="false"
+                                               [rows]="row.data.licenses">
+                                    <row-detail>
+                                        <ng-template let-row="row" ngx-datatable-row-detail-template>
+                                            <tl-card>
+                                                <tl-card-title>{{ 'commercial-fishing.permit-license-log-books-list-card-title' | tlTranslate }}</tl-card-title>
+                                                <tl-card-content>
+                                                    <tl-data-table [isRemote]="false"
+                                                                   [isSoftDeletable]="true"
+                                                                   [showInactiveRecords]="shipId === null || shipId === undefined"
+                                                                   [showAddButton]="false"
+                                                                   [rows]="row.data.logbooks">
+                                                        <data-column propertyName="number"
+                                                                     [flexRate]="0.3"
+                                                                     columnName="{{ 'commercial-fishing.log-book-number' | tlTranslate }}">
+                                                        </data-column>
+                                                        <data-column [flexRate]="0.2"
+                                                                     propertyName="logBookTypeName"
+                                                                     columnName="{{ 'commercial-fishing.log-book-type' | tlTranslate }}">
+                                                        </data-column>
+                                                        <data-column propertyName="issueDate"
+                                                                     [flexRate]="0.2"
+                                                                     dataType="date"
+                                                                     columnName="{{ 'commercial-fishing.log-book-issue-date' | tlTranslate }}">
+                                                        </data-column>
+                                                        <data-column propertyName="finishDate"
+                                                                     [flexRate]="0.2"
+                                                                     dataType="date"
+                                                                     columnName="{{ 'commercial-fishing.log-book-finish-date' | tlTranslate }}">
+                                                        </data-column>
+                                                        <data-column propertyName="statusName"
+                                                                     [flexRate]="0.3"
+                                                                     columnName="{{ 'commercial-fishing.log-book-status' | tlTranslate }}">
+                                                        </data-column>
+                                                        <data-column propertyName="startPageNumber"
+                                                                     [flexRate]="0.3"
+                                                                     columnName="{{ 'commercial-fishing.log-book-start-page-number' | tlTranslate }}">
+                                                        </data-column>
+                                                        <data-column propertyName="endPageNumber"
+                                                                     [flexRate]="0.3"
+                                                                     columnName="{{ 'commercial-fishing.log-book-end-page-number' | tlTranslate }}">
+                                                        </data-column>
+                                                    </tl-data-table>
+                                                </tl-card-content>
+                                            </tl-card>
+                                        </ng-template>
+                                    </row-detail>
+                                    <data-column propertyName="registrationNumber"
+                                                 [flexRate]="0.4"
+                                                 columnName="{{ 'commercial-fishing.license-number' | tlTranslate }}">
+                                    </data-column>
+                                    <data-column propertyName="submittedForName"
+                                                 [flexRate]="0.4"
+                                                 columnName="{{ 'commercial-fishing.license-submitted-for-names' | tlTranslate }}">
+                                    </data-column>
+                                    <data-column propertyName="qualifiedFisherName"
+                                                 [flexRate]="0.3"
+                                                 columnName="{{ 'commercial-fishing.license-qualified-fisher-names' | tlTranslate }}">
+                                    </data-column>
+                                    <data-column propertyName="issueDate"
+                                                 [flexRate]="0.3"
+                                                 dataType="date"
+                                                 columnName="{{ 'commercial-fishing.license-issue-date' | tlTranslate }}">
+                                    </data-column>
+                                    <data-column propertyName="typeName"
+                                                 [flexRate]="0.3"
+                                                 columnName="{{ 'commercial-fishing.license-type-name' | tlTranslate }}">
+                                    </data-column>
+                                    <data-column propertyName="territoryUnitName"
+                                                 [flexRate]="0.3"
+                                                 columnName="{{ 'commercial-fishing.permit-license-territory-unit' | tlTranslate }}">
+                                    </data-column>
+                                    <data-column propertyName="suspensionsInformation"
+                                                 [flexRate]="0.4"
+                                                 columnName="{{ 'commercial-fishing.license-suspensions-information' | tlTranslate }}">
+                                    </data-column>
+                                    <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                                <tl-icon-button *ngIf="row.data.isActive && (shipId === null || shipId === undefined)"
+                                                                icon="ic-fluent-document-briefcase-24-regular"
+                                                                iconClass="accent-color"
+                                                                [size]="icIconSize"
+                                                                tooltipText="{{ 'commercial-fishing.permit-license-delivery-data' | tlTranslate }}"
+                                                                (buttonClicked)="openDeliveryDialog(row.data)"></tl-icon-button>
+                                                <tl-icon-button *ngIf="canReadPermitLicenseRecords || hasPermitLicenseReadAllPermission"
+                                                                icon="visibility"
+                                                                (buttonClicked)="editRegister(row.data, true)"
+                                                                iconClass="accent-color"
+                                                                tooltipText="{{ 'commercial-fishing.view-permit-license' | tlTranslate }}">
+                                                </tl-icon-button>
+                                                <tl-icon-button *ngIf="row.data.isActive && canEditPermitLicenseRecords && (shipId === null || shipId === undefined)"
+                                                                icon="edit"
+                                                                (buttonClicked)="editRegister(row.data)"
+                                                                iconClass="accent-color"
+                                                                tooltipText="{{ 'commercial-fishing.edit-permit-license' | tlTranslate }}">
+                                                </tl-icon-button>
+                                                <tl-icon-button *ngIf="row.data.isActive && canDeletePermitLicenseRecords && (shipId === null || shipId === undefined)"
+                                                                icon="delete"
+                                                                (buttonClicked)="deleteRegister(row.data)"
+                                                                iconClass="accent-color"
+                                                                tooltipText="{{ 'commercial-fishing.delete-permit-license' | tlTranslate }}">
+                                                </tl-icon-button>
+                                                <tl-icon-button *ngIf="!row.data.isActive && canRestorePermitLicenseRecords && (shipId === null || shipId === undefined)"
+                                                                icon="restore"
+                                                                (buttonClicked)="restoreRegister(row.data)"
+                                                                iconClass="accent-color"
+                                                                tooltipText="{{ 'commercial-fishing.restore-permit-license' | tlTranslate }}">
+                                                </tl-icon-button>
+                                            </div>
+                                        </ng-template>
+                                    </data-template-column>
+                                </tl-data-table>
+                            </tl-card-content>
+                        </tl-card>
+                    </ng-template>
+                </row-detail>
+                <data-column propertyName="registrationNumber"
+                             [flexRate]="0.4"
+                             columnName="{{ 'commercial-fishing.permit-number' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="submittedForName"
+                             [flexRate]="0.3"
+                             columnName="{{ 'commercial-fishing.permit-submitted-for-names' | tlTranslate }}">
+                </data-column>
+                <data-column *ngIf="shipId === null || shipId === undefined"
+                             propertyName="shipName"
+                             [flexRate]="0.3"
+                             columnName="{{ 'commercial-fishing.permit-ship-name' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="qualifiedFisherName"
+                             [flexRate]="0.3"
+                             columnName="{{ 'commercial-fishing.permit-qualified-fisher-names' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="issueDate"
+                             [flexRate]="0.3"
+                             dataType="date"
+                             columnName="{{ 'commercial-fishing.permit-issue-date' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="typeName"
+                             [flexRate]="0.3"
+                             columnName="{{ 'commercial-fishing.permit-type-name' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="territoryUnitName"
+                             [flexRate]="0.3"
+                             columnName="{{ 'commercial-fishing.permit-territory-unit' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="suspensionsInformation"
+                             [flexRate]="0.4"
+                             columnName="{{ 'commercial-fishing.permit-suspensions-information' | tlTranslate }}">
+                </data-column>
+                <data-template-column [flexRate]="0.5" [cellClass]="'justify-center'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button *ngIf="row.data.isActive && (shipId === null || shipId === undefined)"
+                                            icon="ic-fluent-document-briefcase-24-regular"
+                                            iconClass="accent-color"
+                                            [size]="icIconSize"
+                                            tooltipText="{{ 'commercial-fishing.delivery-data' | tlTranslate }}"
+                                            (buttonClicked)="openDeliveryDialog(row.data)">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="canReadPermitRecords || hasPermitsReadAllPermission"
+                                            icon="visibility"
+                                            (buttonClicked)="editRegister(row.data, true)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'commercial-fishing.view-permit' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.isActive && canEditPermitRecords && (shipId === null || shipId === undefined)"
+                                            icon="edit"
+                                            (buttonClicked)="editRegister(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'commercial-fishing.edit-permit' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.isActive && canDeletePermitRecords && (shipId === null || shipId === undefined)"
+                                            icon="delete"
+                                            (buttonClicked)="deleteRegister(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'commercial-fishing.delete-permit' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="!row.data.isActive && canRestorePermitRecords && (shipId === null || shipId === undefined)"
+                                            icon="restore"
+                                            (buttonClicked)="restoreRegister(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'commercial-fishing.restore-permit' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+</div>

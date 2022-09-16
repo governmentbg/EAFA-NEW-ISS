@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:converters="clr-namespace:IARA.Mobile.Insp.Converters"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater.BoatOnOpenWaterPage"
+        x:DataType="local:BoatOnOpenWaterViewModel"
+        x:TypeArguments="local:BoatOnOpenWaterViewModel"
+        x:Name="page"
+        PageInfo="{rt:Translate PageInfo, Group=BoatOnOpenWater}"
+        Title="{rt:Translate Title, Group=BoatOnOpenWater}"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <ContentPage.Resources>
+        <converters:HasDescriptionConverter x:Key="HasDescription" />
+        <converters:HasFishingConverter x:Key="HasFishing" />
+    </ContentPage.Resources>
+    <lc:TLForwardSections ExpandAll="{Binding ExpandAll}">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}" Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
+            <StackLayout Padding="10">
+                <lc:InspectionGeneralInfoView BindingContext="{Binding InspectionGeneralInfo}" />
+                <lc:PatrolVehiclesView BindingContext="{Binding PatrolVehicles}" />
+                <tl:TLCheckListView Text="{rt:Translate MonitoringTools, Group=BoatOnOpenWater}"
+                        ItemsSource="{Binding OnBoardObservationTools}"
+                        ValidState="{Binding OnBoardObservationTool}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLEntry tl:TLFlex.Grow="2"
+                        Title="{rt:Translate Other, Group=BoatOnOpenWater}"
+                        ValidState="{Binding OtherOnBoardObservationTool}"
+                        IsVisible="{Binding OnBoardObservationTool.Value.Items, Converter={StaticResource HasDescription}}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+            </StackLayout>
+        </sv:SectionView>
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Ship}, Color=White, Size=100}"
+                Text="{rt:Translate ShipData, Group=BoatOnOpenWater}"
+                IsExpanded="False">
+            <StackLayout Padding="10">
+                <lc:InspectedShipDataView ShipInRegisterLabel="{rt:Translate InspectedShipInRegister, Group=BoatOnOpenWater}" BindingContext="{Binding ObservedVessel}" />
+                <tl:TLFlex GrowUnit="200">
+                    <tl:TLEntry Title="{rt:Translate Course, Group=BoatOnOpenWater}"
+                            ValidState="{Binding Course}"
+                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                    <tl:TLEntry Title="{rt:Translate Speed, Group=BoatOnOpenWater}"
+                            ValidState="{Binding Speed}"
+                            Keyboard="Numeric"
+                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                </tl:TLFlex>
+                <tl:TLCheckListView Text="{rt:Translate MonitoringSystem, Group=BoatOnOpenWater}"
+                        ItemsSource="{Binding CenterObservationTools}"
+                        ValidState="{Binding CenterObservationTool}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLEntry Title="{rt:Translate OtherData, Group=BoatOnOpenWater}"
+                        ValidState="{Binding OtherCenterObservationTool}"
+                        IsVisible="{Binding CenterObservationTool.Value.Items, Converter={StaticResource HasDescription}}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLCheckView Text="{rt:Translate HasShipContact, Group=BoatOnOpenWater}"
+                        ValidState="{Binding HasShipContact}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLCheckView Text="{rt:Translate HasShipCommunication, Group=BoatOnOpenWater}"
+                        ValidState="{Binding HasShipCommunication}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLCheckListView Text="{rt:Translate ObservedVesselActivities, Group=BoatOnOpenWater}"
+                        ItemsSource="{Binding ObservedVesselActivities}"
+                        ValidState="{Binding ObservedVesselActivity}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLEntry Title="{rt:Translate OtherType, Group=BoatOnOpenWater}"
+                        ValidState="{Binding OtherObservedVesselActivity}"
+                        IsVisible="{Binding ObservedVesselActivity.Value.Items, Converter={StaticResource HasDescription}}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLCheckListView Text="{rt:Translate Fishing, Group=BoatOnOpenWater}"
+                        ItemsSource="{Binding FishingObservedVesselActivities}"
+                        ValidState="{Binding FishingObservedVesselActivity}"
+                        IsVisible="{Binding ObservedVesselActivity.Value.Items, Converter={StaticResource HasFishing}}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLEntry Title="{rt:Translate OtherFishingObservedVesselActivity, Group=BoatOnOpenWater}"
+                        ValidState="{Binding OtherFishingObservedVesselActivity}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}">
+                    <tl:TLEntry.IsVisible>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="FishingObservedVesselActivity.Value.Items" Converter="{StaticResource HasDescription}" />
+                            <Binding Path="ObservedVesselActivity.Value.Items" Converter="{StaticResource HasFishing}" />
+                        </MultiBinding>
+                    </tl:TLEntry.IsVisible>
+                </tl:TLEntry>
+            </StackLayout>
+        </sv:SectionView>
+        <lc:AdditionalInfoView BindingContext="{Binding AdditionalInfo}">
+            <tl:TLEditor Title="{rt:Translate ShipCommunicationDescription, Group=BoatOnOpenWater}"
+                    ValidState="{Binding ShipCommunicationDescription}"
+                    IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+        </lc:AdditionalInfoView>
+        <lc:InspectionFilesView BindingContext="{Binding InspectionFiles}" />
+        <lc:SignaturesView BindingContext="{Binding Signatures}" />
+        <lc:SaveButtonsLayout />
+    </lc:TLForwardSections>
+</sv:BasePage>

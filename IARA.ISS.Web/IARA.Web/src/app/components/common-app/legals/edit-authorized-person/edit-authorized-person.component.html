@@ -1,0 +1,53 @@
+﻿<div [formGroup]="form"
+     fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     class="dialog-padding">
+    <regix-data formControlName="personControl"
+                [isPerson]="true"
+                [isIdReadOnly]="isEditing"
+                [hideDocument]="true"
+                [isEmailRequired]="true"
+                [expectedResults]="expectedResults.person">
+    </regix-data>
+
+    <tl-card *ngIf="!showOnlyRegixData">
+        <tl-card-title fxFlex="row">{{ 'legal-entities-page.roles-title' | tlTranslate }}</tl-card-title>
+        <tl-card-content fxLayout="column" fxLayoutGap="1em">
+            <tl-data-table #roleDataTable
+                           fxFlexFill
+                           [isRemote]="false"
+                           [showInactiveRecords]="false"
+                           [showAddButton]="!readOnly"
+                           [rows]="personRoles">
+                <data-column columnName="{{ 'legal-entities-page.role' | tlTranslate }}"
+                             propertyName="id"
+                             [formGroup]="rolesForm"
+                             [options]="roles"
+                             [displayOptions]="allRoles"
+                             [getControlErrorLabelText]="getDatesOverlappingErrorText.bind(this)"
+                             dataType="nomenclature">
+                </data-column>
+                <data-column columnName="{{ 'legal-entities-page.valid-from' | tlTranslate }}"
+                             propertyName="accessValidFrom"
+                             [formGroup]="rolesForm"
+                             [minValue]="currentDate"
+                             [maxValue]="rolesForm.controls.accessValidToControl.value"
+                             dataType="date">
+                </data-column>
+                <data-column columnName="{{ 'legal-entities-page.valid-to' | tlTranslate }}"
+                             propertyName="accessValidTo"
+                             [formGroup]="rolesForm"
+                             [minValue]="rolesForm.controls.accessValidFromControl.value ? rolesForm.controls.accessValidFromControl.value : currentDate"
+                             dataType="date">
+                </data-column>
+                <data-column-inline *ngIf="!readOnly" [flexRate]="0.3"></data-column-inline>
+            </tl-data-table>
+
+            <mat-error *ngIf="rolesTouched && form.errors?.atLeastOneRoleNeeded === true">
+                * {{ 'legal-entities-page.at-least-one-role-needed' | tlTranslate }}
+            </mat-error>
+        </tl-card-content>
+    </tl-card>
+</div>

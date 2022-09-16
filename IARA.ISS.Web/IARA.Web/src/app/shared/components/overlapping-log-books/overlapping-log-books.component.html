@@ -1,0 +1,76 @@
+﻿<div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+    <div fxLayout="row" fxFlex="100">
+        <h3 fxFlexOffset="1em" class="error-color bold-text">
+            {{ 'overlapping-log-books.there-are-overlapping-logb-books-main-message' | tlTranslate }}
+        </h3>
+    </div>
+    <div *ngFor="let rangeLogBook of rangeLogBooks">
+        <tl-card>
+            <tl-card-title>
+                <span *ngIf="rangeLogBook.logBookNumber !== null && rangeLogBook.logBookNumber !== undefined && rangeLogBook.logBookNumber.length > 0; else noLogBookNum">
+                    {{ 'overlapping-log-books.overlapping-log-books-for-page-rage' | tlTranslate }}: {{ rangeLogBook.startPage }} - {{ rangeLogBook.endPage }} ({{ 'overlapping-log-books.number' | tlTranslate }}: {{ rangeLogBook.logBookNumber }})
+                </span>
+                <ng-template #noLogBookNum>
+                    <span>
+                        {{ 'overlapping-log-books.overlapping-log-books-for-page-rage' | tlTranslate }}: {{ rangeLogBook.startPage }} - {{ rangeLogBook.endPage }}
+                    </span>
+                </ng-template>
+            </tl-card-title>
+            <tl-card-content>
+                <tl-data-table fxFlexFill
+                               #logBooksTable
+                               [rows]="rangeLogBook.overlappingLogBooks"
+                               [isRemote]="false"
+                               [isSoftDeletable]="false"
+                               [showAddButton]="false"
+                               [showInactiveRecords]="false">
+                    <data-column [flexRate]="0.2"
+                                 propertyName="number"
+                                 columnName="{{ 'overlapping-log-books.log-book-number' | tlTranslate }}">
+                    </data-column>
+                    <data-column [flexRate]="0.1"
+                                 propertyName="issueDate"
+                                 dataType="date"
+                                 columnName="{{ 'overlapping-log-books.log-book-issue-date' | tlTranslate }}">
+                    </data-column>
+                    <data-column [flexRate]="0.1"
+                                 propertyName="finishDate"
+                                 dataType="date"
+                                 columnName="{{ 'overlapping-log-books.log-book-finish-date' | tlTranslate }}">
+                    </data-column>
+                    <data-column [flexRate]="0.2"
+                                 propertyName="statusId"
+                                 dataType="nomenclature"
+                                 [options]="logBookStatuses"
+                                 columnName="{{ 'overlapping-log-books.log-book-status' | tlTranslate }}">
+                    </data-column>
+                    <data-column *ngIf="logBookGroup !== logBookGroupsEnum.Ship"
+                                 [flexRate]="0.2"
+                                 propertyName="startPage"
+                                 columnName="{{ 'overlapping-log-books.log-book-start-page-number' | tlTranslate }}">
+                    </data-column>
+                    <data-column *ngIf="logBookGroup !== logBookGroupsEnum.Ship"
+                                 [flexRate]="0.2"
+                                 propertyName="endPage"
+                                 columnName="{{ 'overlapping-log-books.log-book-end-page-number' | tlTranslate }}">
+                    </data-column>
+                    <data-column *ngIf="logBookGroup === logBookGroupsEnum.Ship"
+                                 [flexRate]="0.2"
+                                 propertyName="logBookPermitLicenseStartPage"
+                                 columnName="{{ 'overlapping-log-books.log-book-permit-license-start-page-number' | tlTranslate }}">
+                    </data-column>
+                    <data-column *ngIf="logBookGroup === logBookGroupsEnum.Ship"
+                                 [flexRate]="0.2"
+                                 propertyName="logBookPermitLicenseEndPage"
+                                 columnName="{{ 'overlapping-log-books.log-book-permit-license-end-page-number' | tlTranslate }}">
+                    </data-column>
+                    <data-column *ngIf="logBookGroup === logBookGroupsEnum.Ship"
+                                 [flexRate]="0.2"
+                                 propertyName="logBookPermitLicenseNumber"
+                                 columnName="{{ 'overlapping-log-books.log-book-permit-license-number' | tlTranslate }}">
+                    </data-column>
+                </tl-data-table>
+            </tl-card-content>
+        </tl-card>
+    </div>
+</div>

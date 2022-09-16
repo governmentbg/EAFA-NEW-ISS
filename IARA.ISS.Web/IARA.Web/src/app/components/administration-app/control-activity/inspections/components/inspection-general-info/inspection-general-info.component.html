@@ -1,0 +1,31 @@
+﻿<div [formGroup]="form"
+     fxLayout="column"
+     fxLayoutGap="1em"
+     fxLayoutAlign="start stretch">
+    <div fxLayout="row"
+         fxLayoutGap="1em"
+         fxLayoutAlign="start center">
+        <tl-input fxFlex="25"
+                  formControlName="reportNumberControl"
+                  label="{{ 'inspections.report-number' | tlTranslate }}">
+        </tl-input>
+        <tl-date-time fxFlex="25"
+                      [disabled]="isDisabled"
+                      formControlName="inspectionStartDateControl"
+                      label="{{ 'inspections.inspection-start-date' | tlTranslate }}">
+        </tl-date-time>
+        <tl-date-time fxFlex="25"
+                      [disabled]="isDisabled"
+                      formControlName="inspectionEndDateControl"
+                      label="{{ 'inspections.inspection-end-date' | tlTranslate }}">
+        </tl-date-time>
+        <tl-checkbox fxFlex="25"
+                     formControlName="emergencySignalControl"
+                     label="{{ 'inspections.is-emergency' | tlTranslate }}">
+        </tl-checkbox>
+    </div>
+
+    <inspectors-table formControlName="inspectorsControl"
+                      [institutions]="institutions">
+    </inspectors-table>
+</div>

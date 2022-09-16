@@ -1,0 +1,35 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="form"
+     class="dialog-padding">
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+        <tl-select fxFlex="50"
+                   formControlName="reasonControl"
+                   tooltipResourceName="cancellation-dialog.reason-helper"
+                   label="{{ 'cancellation-dialog.reason' | tlTranslate }}"
+                   [options]="reasons">
+        </tl-select>
+        <tl-input *ngIf="showIssueOrderNum"
+                  fxFlex="25"
+                  formControlName="issueOrderNumControl"
+                  tooltipResourceName="cancellation-dialog.issue-order-num-helper"
+                  label="{{ 'cancellation-dialog.issue-order-num' | tlTranslate }}">
+        </tl-input>
+        <tl-date fxFlex="25"
+                 formControlName="dateControl"
+                 tooltipResourceName="cancellation-dialog.date-helper"
+                 label="{{ 'cancellation-dialog.date' | tlTranslate }}">
+        </tl-date>
+        <div *ngIf="!showIssueOrderNum" fxFlex="25"></div>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="center center">
+        <tl-textarea fxFlexFill
+                     formControlName="descriptionControl"
+                     tooltipResourceName="cancellation-diaog.description-helper"
+                     label="{{ 'cancellation-dialog.description' | tlTranslate }}">
+        </tl-textarea>
+    </div>
+</div>

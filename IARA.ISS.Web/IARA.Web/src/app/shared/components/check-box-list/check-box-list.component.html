@@ -1,0 +1,13 @@
+﻿<tl-card>
+    <tl-card-title>{{ label }}</tl-card-title>
+    <tl-card-content>
+        <div [fxLayout]="contentLayout"
+             fxLayoutGap="0.5em"
+             fxLayoutAlign="start stretch">
+            <tl-checkbox *ngFor="let check of checks; index as i"
+                         [label]="check.displayName"
+                         [formControl]="form.controls[i.toString()]">
+            </tl-checkbox>
+        </div>
+    </tl-card-content>
+</tl-card>

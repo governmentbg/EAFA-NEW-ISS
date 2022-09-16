@@ -1,0 +1,26 @@
+﻿<mat-form-field style="width: 100%" [appearance]="appearance">
+    <mat-label>{{label}}</mat-label>
+    <textarea *ngIf="ngControl?.control !== null && ngControl?.control !== undefined; else areaWithoutFormControl"
+              matInput
+              [cdkTextareaAutosize]="true"
+              [cdkAutosizeMinRows]="minRows"
+              [cdkAutosizeMaxRows]="maxRows"
+              [formControl]="ngControl.control"
+              [required]="fieldIsRequired"
+              [readonly]="readonly">
+    </textarea>
+    <ng-template #areaWithoutFormControl>
+        <textarea matInput
+                  [value]="value"
+                  [cdkTextareaAutosize]="true"
+                  [cdkAutosizeMinRows]="minRows"
+                  [cdkAutosizeMaxRows]="maxRows"
+                  [required]="fieldIsRequired"
+                  [readonly]="readonly">
+        </textarea>
+    </ng-template>
+    <tl-help matSuffix [tooltipResource]="tooltipResourceName"></tl-help>
+    <mat-error *ngIf="errors.length > 0">
+        <tl-error [errors]="errors" [useMultipleLines]="multilineError"></tl-error>
+    </mat-error>
+</mat-form-field>

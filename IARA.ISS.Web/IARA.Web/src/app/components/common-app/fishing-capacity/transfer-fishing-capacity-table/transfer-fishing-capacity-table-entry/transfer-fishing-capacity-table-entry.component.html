@@ -1,0 +1,56 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="form"
+     class="dialog-padding">
+    <div *ngIf="!showOnlyRegiXData" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+        <tl-input fxFlex="25"
+                  formControlName="tonnageControl"
+                  tooltipResourceName="fishing-capacity.holder-transferred-tonnage-helper"
+                  label="{{ 'fishing-capacity.holder-transferred-tonnage' | tlTranslate }}">
+        </tl-input>
+        <tl-input fxFlex="25"
+                  formControlName="powerControl"
+                  tooltipResourceName="fishing-capacity.holder-transferred-power-helper"
+                  label="{{ 'fishing-capacity.holder-transferred-power' | tlTranslate }}">
+        </tl-input>
+    </div>
+
+    <tl-radio-button-group *ngIf="!showOnlyRegiXData"
+                           formControlName="typeControl"
+                           direction="row"
+                           gap="1em"
+                           [options]="types">
+    </tl-radio-button-group>
+
+    <div *ngIf="form.controls.typeControl!.value?.value === 'Person'; else holderLegal">
+        <regix-data formControlName="regixDataControl"
+                    [isPerson]="true"
+                    [isIdReadOnly]="isEgnLncReadOnly"
+                    [hideDocument]="true"
+                    [expectedResults]="expectedResults?.person"
+                    checkboxLabel="{{ 'fishing-capacity.has-bulgarian-address-registration' | tlTranslate }}">
+        </regix-data>
+        <address-registration formControlName="addressControl"
+                              addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                              secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                              checkboxLabel="{{ 'fishing-capacity.permanent-address-same-as-correspondence' | tlTranslate }}"
+                              [expectedResults]="expectedResults?.addresses">
+        </address-registration>
+    </div>
+
+    <ng-template #holderLegal>
+        <regix-data formControlName="regixDataControl"
+                    [isPerson]="false"
+                    [isIdReadOnly]="isEgnLncReadOnly"
+                    [expectedResults]="expectedResults?.legal"
+                    checkboxLabel="{{ 'fishing-capacity.has-bulgarian-address-registration' | tlTranslate }}">
+        </regix-data>
+        <address-registration formControlName="addressControl"
+                              addressLabel="{{ 'common.company-headquarters-address' | tlTranslate : 'cap' }}"
+                              [addressType]="companyHeadquartersType"
+                              [expectedResults]="expectedResults?.addresses">
+        </address-registration>
+    </ng-template>
+</div>

@@ -1,0 +1,21 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="form"
+     class="dialog-padding">
+    <div fxLayout="row">
+        <tl-date fxFlex="50"
+                 formControlName="annulmentDateControl"
+                 tooltipResourceName="recreational-fishing.association-annulment-date-helper"
+                 label="{{ 'recreational-fishing.association-annulment-date' | tlTranslate }}">
+        </tl-date>
+    </div>
+    <div fxLayout="row">
+        <tl-textarea fxFlexFill
+                     formControlName="annulmentReasonControl"
+                     tooltipResourceName="recreational-fishing.association-annulment-reason-helper"
+                     label="{{ 'recreational-fishing.association-annulment-reason' | tlTranslate }}">
+        </tl-textarea>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+<div class="page-layout blank p-24" fusePerfectScrollbar>
+
+    <h2>HELLO</h2>
+
+    <div style="width: 60%">
+        <form [formGroup]="testFormGroup" class="full-width">
+            <!--<file-uploader formControlName="test"
+                           [translationLoader]="translationLoader"
+                           [spinnerService]="spinnerService"
+                           (uploadComplete)="onFileUploadComplete($event)"
+                           [numberOfFilesAllowed]="1"></file-uploader>-->
+        </form>
+    </div>
+
+    <br /><br /><br />
+
+    <button (click)="openDialog()">Open Dialog</button>
+    <h2>Dialog Response:</h2>
+    <p *ngIf="dialogResponseStr">{{dialogResponseStr}}</p>
+</div>

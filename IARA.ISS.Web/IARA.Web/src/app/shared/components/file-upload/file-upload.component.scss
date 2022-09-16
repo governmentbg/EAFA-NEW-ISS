@@ -1,0 +1,53 @@
+ul,
+li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#file-label {
+    display: inline-flex;
+    vertical-align: middle;
+    font-size: 12px;
+    line-height: 18px;
+}
+
+#file-label mat-icon {
+    font-size: 18px;
+    text-align: center;
+}
+
+#file-label a {
+    cursor: pointer;
+}
+
+.not-displayed {
+    display: none !important;
+}
+
+.w-inherit {
+    width: inherit;
+}
+
+.transparent-btn-icon {
+    background: none !important;
+    border: none !important;
+}
+
+.c-pointer {
+    cursor: pointer;
+}
+
+.horizontal-div {
+    display: flex;
+    flex-direction: row;
+}
+
+.vertical-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.full-width {
+    width: 100% !important;
+}

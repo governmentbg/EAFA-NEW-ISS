@@ -1,0 +1,687 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     class="dialog-padding container"
+     validityCheckerGroup
+     [formGroup]="editForm"
+     [notifierGroup]="notifier">
+
+    <!-- История на прекратяванията -->
+    <tl-expansion-panel *ngIf="cancellationHistory && cancellationHistory.length > 0"
+                        title="{{ 'buyers-and-sales-centers.cancel-status-history' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.cancel-status-history-helper">
+        <tl-data-table fxFlexFill
+                       [rows]="cancellationHistory"
+                       [isRemote]="false"
+                       [isSoftDeletable]="false"
+                       [showInactiveRecords]="false"
+                       [showAddButton]="false"
+                       [recordsPerPage]="2">
+            <row-detail>
+                <ng-template let-row="row" ngx-datatable-row-detail-template>
+                    <div fxLayout="row" fxLayoutAlign="center center" style="margin-top: 1em;">
+                        <tl-textarea fxFlex="95"
+                                     [value]="row.data.description"
+                                     [readonly]="true"
+                                     label="{{ 'buyers-and-sales-centers.cancel-status-description' | tlTranslate }}">
+                        </tl-textarea>
+                    </div>
+                </ng-template>
+            </row-detail>
+
+            <data-template-column propertyName="IsCancelled"
+                                  [flexRate]="0.2"
+                                  columnName="{{ 'buyers-and-sales-centers.cancel-status-status' | tlTranslate }}">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.3em">
+                        <tl-icon [icon]="row.data.isCancelled ? 'highlight_off' : 'done_outline'"
+                                 iconClass="accent-color">
+                        </tl-icon>
+                        <div>{{ row.data.isCancelled ? ('buyers-and-sales-centers.cancelled-status' | tlTranslate) : ('buyers-and-sales-centers.active-status' | tlTranslate) }}</div>
+                    </div>
+                </ng-template>
+            </data-template-column>
+
+            <data-column [flexRate]="0.2"
+                         propertyName="dateOfChange"
+                         dataType="date"
+                         columnName="{{ 'buyers-and-sales-centers.cancel-status-date-of-change' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.4"
+                         propertyName="cancellationReasonId"
+                         dataType="nomenclature"
+                         [options]="cancellationReasons"
+                         columnName="{{ 'buyers-and-sales-centers.cancel-status-reason' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.2"
+                         propertyName="issueOrderNum"
+                         columnName="{{ 'buyers-and-sales-centers.cancel-status-issue-order-num' | tlTranslate }}">
+            </data-column>
+        </tl-data-table>
+    </tl-expansion-panel>
+
+    <!-- Заявител -->
+    <application-submitted-by *ngIf="isApplication"
+                              formControlName="submittedByControl"
+                              notifier
+                              validityChecker
+                              label="{{ 'buyers-and-sales-centers.submitted-by-panel' | tlTranslate }}"
+                              [isIdReadOnly]="isEditingSubmittedBy || isPublicApp"
+                              [isForeigner]="false"
+                              [expectedResults]="expectedResults.submittedBy"
+                              [hideDocument]="true">
+    </application-submitted-by>
+
+    <!-- Обща информация за регистров запис -->
+    <tl-expansion-panel *ngIf="!isApplication"
+                        [validityChecker]="editForm"
+                        title="{{ 'buyers-and-sales-centers.registration-information' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.registration-information-helper">
+        <div fxLayout="column" fxFlexFill fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="33"
+                          formControlName="urorrNumberControl"
+                          tooltipResourceName="buyers-and-sales-centers.urorr-number-helper"
+                          label="{{ 'buyers-and-sales-centers.urorr-number' | tlTranslate }}"
+                          [readonly]="true">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="registrationNumberControl"
+                          tooltipResourceName="buyers-and-sales-centers.registration-number-helper"
+                          label="{{ 'buyers-and-sales-centers.registration-number' | tlTranslate }}"
+                          [readonly]="true">
+                </tl-input>
+                <tl-date fxFlex="33"
+                         formControlName="registrationDateControl"
+                         [max]="today"
+                         tooltipResourceName="buyers-and-sales-centers.registration-date-helper"
+                         label="{{ 'buyers-and-sales-centers.registration-date' | tlTranslate }}">
+                </tl-date>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="territoryUnitControl"
+                                 label="{{ 'buyers-and-sales-centers.territory-unit' | tlTranslate }}"
+                                 tooltipResourceName="buyers-and-sales-centers.territory-unit-helper"
+                                 [options]="territoryUnits">
+                </tl-autocomplete>
+                <tl-select fxFlex="33"
+                           formControlName="buyerStatusControl"
+                           label="{{ 'buyers-and-sales-centers.buyer-status' | tlTranslate }}"
+                           tooltipResourceName="buyers-and-sales-centers.buyer-status-helper"
+                           [options]="buyerStatuses">
+                </tl-select>
+                <div fxFlex="33"></div>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Получател -->
+    <application-submitted-for formControlName="submittedForControl"
+                               validityChecker
+                               notifier
+                               relationLabel="{{ 'buyers-and-sales-centers.submitted-by-role-panel' | tlTranslate }}"
+                               submittedForLabel="{{ 'buyers-and-sales-centers.submitted-for-panel' | tlTranslate }}"
+                               [pageCode]="pageCode"
+                               [hideRelation]="showOnlyRegiXData || !isApplication"
+                               [isIdReadOnly]="isEditing"
+                               [isForeigner]="false"
+                               [showPersonal]="!isApplication"
+                               [submittedByControl]="editForm.controls.submittedByControl"
+                               [expectedResults]="expectedResults.submittedFor"
+                               [hideDocument]="true">
+    </application-submitted-for>
+
+    <!-- Магазин при купувач и Помещение при ЦПП-->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'buyers-and-sales-centers.buyer-basic-information-panel' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.buyer-basic-information-panel-helper"
+                        [validityChecker]="editForm"
+                        [validityCheckerExtraCondition]="(isFirstSaleBuyer
+                                                          || editForm.errors?.noPremiseUsageDocuments !== true)
+                                                         && editForm.controls.hasPremiseOrVehicleGroup.errors?.atLeastOneRegistration !== true">
+        <div fxFlex="100" fxLayout="column" fxLayoutGap="1em">
+            <div fxFlex="100" fxLayout="column" fxLayoutGap="1em" formGroupName="hasPremiseOrVehicleGroup">
+                <tl-checkbox *ngIf="isFirstSaleCenter"
+                             fxFlex="100"
+                             formControlName="hasUtilityControl"
+                             label="{{ 'buyers-and-sales-centers.center-has-premise-checkbox' | tlTranslate }}"
+                             tooltipResourceName="buyers-and-sales-centers.center-has-premise-checkbox-helper">
+                </tl-checkbox>
+                <tl-checkbox *ngIf="isFirstSaleBuyer"
+                             fxFlex="100"
+                             formControlName="hasUtilityControl"
+                             label="{{ 'buyers-and-sales-centers.buyer-has-utility-checkbox' | tlTranslate }}"
+                             tooltipResourceName="buyers-and-sales-centers.buyer-has-utility-checkbox-helper">
+                </tl-checkbox>
+                <tl-checkbox fxFlex="100"
+                             formControlName="hasVehicleControl"
+                             label="{{ 'buyers-and-sales-centers.buyer-has-vehicle-checkbox' | tlTranslate }}"
+                             tooltipResourceName="buyers-and-sales-centers.buyer-has-utility-checkbox-helper">
+                </tl-checkbox>
+                <mat-error *ngIf="editForm.touched && editForm.controls.hasPremiseOrVehicleGroup.errors?.atLeastOneRegistration">
+                    * {{ 'buyers-and-sales-centers.choose-at-least-one-registration' | tlTranslate }}
+                </mat-error>
+            </div>
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="annualTurnoverControl"
+                          label="{{ 'buyers-and-sales-centers.annual-turnover' | tlTranslate }}"
+                          tooltipResourceName="buyers-and-sales-centers.annual-turnover-helper">
+                </tl-input>
+            </div>
+            <!-- Основни данни за магазин/помещение, ако има такова -->
+            <tl-card *ngIf="editForm.get('hasPremiseOrVehicleGroup.hasUtilityControl')?.value"
+                     tooltipResourceName="buyers-and-sales-centers.shop-panel-helper"
+                     [validityChecker]="editForm"
+                     [validityCheckerExtraCondition]="isFirstSaleBuyer || editForm.errors?.noPremiseUsageDocuments !== true">
+                <tl-card-title *ngIf="isFirstSaleCenter">
+                    {{ 'buyers-and-sales-centers.premise-panel' | tlTranslate }}
+                </tl-card-title>
+                <tl-card-title *ngIf="isFirstSaleBuyer">
+                    {{ 'buyers-and-sales-centers.shop-information-panel' | tlTranslate }}
+                </tl-card-title>
+                <tl-card-content fxFlexFill>
+                    <div *ngIf="isFirstSaleCenter"
+                         fxFlex="100"
+                         fxLayout="column"
+                         fxLayoutGap="1em">
+                        <div *ngIf="!showOnlyRegiXData" fxFlex="100" fxLayout="row">
+                            <tl-input fxFlex="50"
+                                      formControlName="premiseNameControl"
+                                      tooltipResourceName="buyers-and-sales-centers.sale-center-name-helper"
+                                      label="{{ 'buyers-and-sales-centers.sale-center-name' | tlTranslate }}">
+                            </tl-input>
+                        </div>
+                        <div *ngIf="!showOnlyRegiXData" fxFlex="100" fxLayout="row">
+                            <single-address-registration fxFlexFill
+                                                         formControlName="premiseAddressControl"
+                                                         validityChecker
+                                                         label="{{ 'buyers-and-sales-centers.premise-address' | tlTranslate }}">
+                            </single-address-registration>
+                        </div>
+                        <div *ngIf="isApplication; else premiseUsageDocumentsTemplate" fxFlex="100" fxLayout="column">
+                            <usage-document fxFlexFill
+                                            formControlName="premiseUsageDocumentControl"
+                                            validityChecker
+                                            title="{{ 'buyers-and-sales-centers.premise-usage-document-card' | tlTranslate }}"
+                                            tooltipResourceName="buyers-and-sales-centers.premise-usage-document-card-helper"
+                                            [isIdReadOnly]="isEditing"
+                                            [showOnlyRegiXData]="showOnlyRegiXData"
+                                            [expectedResults]="expectedResults?.premiseUsageDocument">
+                            </usage-document>
+                        </div>
+                        <ng-template #premiseUsageDocumentsTemplate>
+                            <tl-card tooltipResourceName="premise-usage-document-cards-helper"
+                                     [validityChecker]="editForm"
+                                     [validityCheckerExtraCondition]="editForm.errors?.noPremiseUsageDocuments !== true">
+                                <tl-card-title>{{ 'buyers-and-sales-centers.premise-usage-document-cards' | tlTranslate }}</tl-card-title>
+                                <tl-card-content fxFlexFill>
+                                    <div fxLayout="column" fxLayoutGap="1em">
+                                        <tl-data-table fxFlexFill
+                                                       #premiseUsageDocumentsTable
+                                                       [rows]="premiseUsageDocuments"
+                                                       [isRemote]="false"
+                                                       [isSoftDeletable]="true"
+                                                       [showAddButton]="!viewMode && !isReadonly"
+                                                       (addButtonClicked)="addEditPremiseUsageDocument(undefined, false)">
+                                            <data-column [flexRate]="0.3"
+                                                         propertyName="documentTypeId"
+                                                         [options]="usageDocumentTypes"
+                                                         dataType="nomenclature"
+                                                         columnName="{{ 'buyers-and-sales-centers.usage-document-table-type' | tlTranslate }}">
+                                            </data-column>
+                                            <data-column [flexRate]="0.3"
+                                                         propertyName="documentNum"
+                                                         columnName="{{ 'buyers-and-sales-centers.usage-document-table-num' | tlTranslate }}">
+                                            </data-column>
+                                            <data-column [flexRate]="0.3"
+                                                         propertyName="documentValidFrom"
+                                                         dataType="date"
+                                                         columnName="{{ 'buyers-and-sales-centers.usage-document-table-valid-from' | tlTranslate }}">
+                                            </data-column>
+                                            <data-column [flexRate]="0.3"
+                                                         propertyName="documentValidTo"
+                                                         dataType="date"
+                                                         columnName="{{ 'buyers-and-sales-centers.usage-document-table-valid-to' | tlTranslate }}">
+                                            </data-column>
+                                            <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                                        <tl-icon-button icon="visibility"
+                                                                        (buttonClicked)="addEditPremiseUsageDocument(row.data, true)"
+                                                                        iconClass="accent-color"
+                                                                        tooltipText="{{ 'buyers-and-sales-centers.view-usage-document' | tlTranslate }}">
+                                                        </tl-icon-button>
+                                                        <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                                                        icon="edit"
+                                                                        (buttonClicked)="addEditPremiseUsageDocument(row.data, false)"
+                                                                        iconClass="accent-color"
+                                                                        tooltipText="{{ 'buyers-and-sales-centers.edit-usage-document' | tlTranslate }}">
+                                                        </tl-icon-button>
+                                                        <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                                                        icon="delete"
+                                                                        (buttonClicked)="deletePremiseUsageDocument(row)"
+                                                                        iconClass="accent-color"
+                                                                        tooltipText="{{ 'buyers-and-sales-centers.delete-usage-document' | tlTranslate }}">
+                                                        </tl-icon-button>
+                                                        <tl-icon-button *ngIf="!row.data.isActive && !viewMode && !isReadonly"
+                                                                        icon="restore"
+                                                                        (buttonClicked)="undoDeletePremiseUsageDocument(row)"
+                                                                        iconClass="accent-color"
+                                                                        tooltipText="{{ 'buyers-and-sales-centers.restore-usage-document' | tlTranslate }}">
+                                                        </tl-icon-button>
+                                                    </div>
+                                                </ng-template>
+                                            </data-template-column>
+                                        </tl-data-table>
+
+                                        <mat-error *ngIf="premiseUsageDocumentsTouched && editForm.errors?.noPremiseUsageDocuments === true">
+                                            * {{ 'buyers-and-sales-centers.at-least-one-active-premise-usage-document-neccessary-error' | tlTranslate }}
+                                        </mat-error>
+                                    </div>
+                                </tl-card-content>
+                            </tl-card>
+                        </ng-template>
+                    </div>
+                    <div *ngIf="isFirstSaleBuyer"
+                         fxFlex="100"
+                         fxLayout="column"
+                         fxLayoutGap="1em">
+                        <div fxFlex="100" fxLayout="row">
+                            <tl-input fxFlex="50"
+                                      formControlName="premiseNameControl"
+                                      tooltipResourceName="buyers-and-sales-centers.shop-name-helper"
+                                      label="{{ 'buyers-and-sales-centers.shop-name' | tlTranslate }}">
+                            </tl-input>
+                        </div>
+                        <div fxFlex="100" fxLayout="row" fxLayoutGap="1em">
+                            <single-address-registration fxFlexFill
+                                                         formControlName="premiseAddressControl"
+                                                         validityChecker
+                                                         label="{{ 'buyers-and-sales-centers.shop-address' | tlTranslate }}">
+                            </single-address-registration>
+                        </div>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+
+            <!-- Основни данни за превозно средство, ако има такова -->
+            <tl-card *ngIf="editForm.get('hasPremiseOrVehicleGroup.hasVehicleControl')?.value"
+                     tooltipResourceName="buyers-and-sales-centers.vehicle-panel-helper"
+                     [validityChecker]="editForm">
+                <tl-card-title>{{ 'buyers-and-sales-centers.vehicle-information-panel' | tlTranslate }}</tl-card-title>
+                <tl-card-content fxFlexFill>
+                    <div fxFlex="100" fxLayout="row" fxLayoutGap="1em">
+                        <tl-input fxFlex="50"
+                                  formControlName="vehicleNumberControl"
+                                  tooltipResourceName="buyers-and-sales-centers.vehicle-number-helper"
+                                  label="{{ 'buyers-and-sales-centers.vehicle-number' | tlTranslate }}">
+                        </tl-input>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Документ за ползване на помещение при ЦПП в RegiX режим -->
+    <usage-document *ngIf="showOnlyRegiXData && isFirstSaleCenter"
+                    fxFlexFill
+                    formControlName="premiseUsageDocumentControl"
+                    notifier
+                    validityChecker
+                    title="{{ 'buyers-and-sales-centers.premise-usage-document-card' | tlTranslate }}"
+                    tooltipResourceName="buyers-and-sales-centers.premise-usage-document-card-helper"
+                    [isIdReadOnly]="isEditing"
+                    [showOnlyRegiXData]="showOnlyRegiXData"
+                    [expectedResults]="expectedResults?.premiseUsageDocument">
+    </usage-document>
+
+    <!-- Организатор при ЦПП -->
+    <tl-expansion-panel *ngIf="isFirstSaleCenter"
+                        title="{{ 'buyers-and-sales-centers.organizer-panel' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.organizer-panel-helper"
+                        [validityChecker]="editForm">
+        <div fxFlex="100" fxLayout="column" fxLayoutGap="1em">
+            <div *ngIf="!showOnlyRegiXData" fxFlex="100" fxLayout="row">
+                <tl-checkbox fxFlex="100"
+                             formControlName="organizerSameAsSubmittedByControl"
+                             label="{{ 'buyers-and-sales-centers.organizer-same-as-submitted-by' | tlTranslate }}"
+                             tooltipResourceName="buyers-and-sales-centers.organizer-same-as-submitted-by-helper">
+                </tl-checkbox>
+            </div>
+            <div fxFlex="100" fxLayout="row">
+                <regix-data fxFlex="100"
+                            formControlName="organizerControl"
+                            validityChecker
+                            [isPerson]="true"
+                            [showCustodianOfProperty]="false"
+                            [isIdReadOnly]="isEditing"
+                            [expectedResults]="expectedResults.organizer"
+                            [hideDocument]="true"
+                            checkboxLabel="{{ 'buyers-and-sales-centers.has-bulgarian-address-registration' | tlTranslate }}">
+                </regix-data>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Агент при купувач -->
+    <tl-expansion-panel *ngIf="isFirstSaleBuyer"
+                        title="{{ 'buyers-and-sales-centers.agent-panel' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.agent-panel-helper"
+                        [validityChecker]="editForm">
+        <div fxFlex="100" fxLayout="column" fxLayoutGap="1em">
+            <div *ngIf="!showOnlyRegiXData" fxFlex="100" fxLayout="row">
+                <tl-radio-button-group fxFlex="100"
+                                       tooltipResourceName="buyers-and-sales-centers.agent-same-as-helper"
+                                       formControlName="agentSameAsControl"
+                                       [options]="agentSameAsOptions">
+                </tl-radio-button-group>
+            </div>
+            <div fxFlex="100" fxLayout="row">
+                <regix-data fxFlex="100"
+                            formControlName="agentControl"
+                            validityChecker
+                            [isPerson]="true"
+                            [showCustodianOfProperty]="false"
+                            [isIdReadOnly]="isEditing"
+                            [disableOnlyBasicData]="isAgentSameAsSubmittedForCustodian"
+                            [hideDocument]="true"
+                            checkboxLabel="{{ 'buyers-and-sales-centers.has-bulgarian-address-registration' | tlTranslate }}">
+                </regix-data>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Удостоверения от БАБХ в регистровия запис -->
+    <tl-expansion-panel *ngIf="!isApplication && (editForm.get('hasPremiseOrVehicleGroup.hasUtilityControl')?.value
+                                                  || editForm.get('hasPremiseOrVehicleGroup.hasVehicleControl')?.value)"
+                        title="{{ 'buyers-and-sales-centers.licenses-panel' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.licenses-panel-helper"
+                        [validityChecker]="editForm"
+                        [validityCheckerExtraCondition]="editForm.errors?.noPremiseBabhLicenses !== true && editForm.errors?.noVehicleBabhLicenses !== true">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <!-- Удостоверения от БАБХ за храните, ако има магазин/помещение -->
+            <tl-card *ngIf="editForm.get('hasPremiseOrVehicleGroup.hasUtilityControl').value"
+                     tooltipResourceName="buyers-and-sales-centers.babh-licenses-title-helper"
+                     [validityChecker]="editForm"
+                     [validityCheckerExtraCondition]="editForm.errors?.noPremiseBabhLicenses !== true">
+                <tl-card-title>{{ 'buyers-and-sales-centers.babh-licenses-title' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+                        <tl-data-table fxFlexFill
+                                       #babhLicensesTable
+                                       [rows]="babhLicenses"
+                                       [isRemote]="false"
+                                       [isSoftDeletable]="true"
+                                       [showAddButton]="!viewMode && !isReadonly"
+                                       (addButtonClicked)="addEditBabhLicense(undefined, false)">
+                            <data-column [flexRate]="0.3"
+                                         propertyName="issueDate"
+                                         dataType="date"
+                                         columnName="{{ 'buyers-and-sales-centers.babh-license-table-issue-date' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.3"
+                                         propertyName="num"
+                                         columnName="{{ 'buyers-and-sales-centers.babh-license-table-num' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.3"
+                                         propertyName="issuer"
+                                         columnName="{{ 'buyers-and-sales-centers.babh-license-table-issuer' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.3"
+                                         propertyName="validFrom"
+                                         dataType="date"
+                                         columnName="{{ 'buyers-and-sales-centers.babh-license-table-valid-from' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.3"
+                                         propertyName="validTo"
+                                         dataType="date"
+                                         columnName="{{ 'buyers-and-sales-centers.babh-license-table-valid-to' | tlTranslate }}">
+                            </data-column>
+                            <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                        <tl-icon-button icon="visibility"
+                                                        (buttonClicked)="addEditBabhLicense(row.data, true)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'buyers-and-sales-centers.view-babh-license' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                                        icon="edit"
+                                                        (buttonClicked)="addEditBabhLicense(row.data, false)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'buyers-and-sales-centers.edit-babh-license' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                                        icon="delete"
+                                                        (buttonClicked)="deleteBabhLicense(row)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'buyers-and-sales-centers.delete-babh-license' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="!row.data.isActive && !viewMode && !isReadonly"
+                                                        icon="restore"
+                                                        (buttonClicked)="undoDeleteBabhLicense(row)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'buyers-and-sales-centers.restore-babh-license' | tlTranslate }}">
+                                        </tl-icon-button>
+                                    </div>
+                                </ng-template>
+                            </data-template-column>
+                        </tl-data-table>
+                        <mat-error *ngIf="babhLicensesTouched && editForm.errors?.noPremiseBabhLicenses">
+                            * {{ 'buyers-and-sales-centers.no-premise-babh-license-error' | tlTranslate }}
+                        </mat-error>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+            <!-- Удостоверения от БАБХ за превозното средство, ако има такова -->
+            <tl-card *ngIf="editForm.get('hasPremiseOrVehicleGroup.hasVehicleControl')?.value"
+                     tooltipResourceName="buyers-and-sales-centers.veterinary-vehicle-license-title-helper"
+                     [validityChecker]="editForm"
+                     [validityCheckerExtraCondition]="editForm.errors?.noVehicleBabhLicenses !== true">
+                <tl-card-title>{{ 'buyers-and-sales-centers.veterinary-vehicle-license-title' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+                        <tl-data-table fxFlexFill
+                                       #veterinaryVehicleLicensesTable
+                                       [rows]="veterinaryVehicleLicenses"
+                                       [isRemote]="false"
+                                       [isSoftDeletable]="true"
+                                       [showAddButton]="!viewMode && !isReadonly"
+                                       (addButtonClicked)="addEditVeterinaryVehicleLicense(undefined, false)">
+                            <data-column [flexRate]="0.3"
+                                         propertyName="issueDate"
+                                         dataType="date"
+                                         columnName="{{ 'buyers-and-sales-centers.veterinary-vehicle-license-table-issue-date' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.3"
+                                         propertyName="num"
+                                         columnName="{{ 'buyers-and-sales-centers.veterinary-vehicle-license-table-num' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.3"
+                                         propertyName="issuer"
+                                         columnName="{{ 'buyers-and-sales-centers.veterinary-vehicle-license-table-issuer' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.3"
+                                         propertyName="validFrom"
+                                         dataType="date"
+                                         columnName="{{ 'buyers-and-sales-centers.veterinary-vehicle-license-table-valid-from' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.3"
+                                         propertyName="validTo"
+                                         dataType="date"
+                                         columnName="{{ 'buyers-and-sales-centers.veterinary-vehicle-license-table-valid-to' | tlTranslate }}">
+                            </data-column>
+                            <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                        <tl-icon-button icon="visibility"
+                                                        (buttonClicked)="addEditVeterinaryVehicleLicense(row.data, true)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'buyers-and-sales-centers.view-veterinary-vehicle-license' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                                        icon="edit"
+                                                        (buttonClicked)="addEditVeterinaryVehicleLicense(row.data, false)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'buyers-and-sales-centers.edit-veterinary-vehicle-license' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="row.data.isActive && !viewMode && !isReadonly"
+                                                        icon="delete"
+                                                        (buttonClicked)="deleteVeterinaryVehicleLicense(row)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'buyers-and-sales-centers.delete-veterinary-vehicle-license' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="!row.data.isActive && !viewMode && !isReadonly"
+                                                        icon="restore"
+                                                        (buttonClicked)="undoDeleteVeterinaryVehicleLicense(row)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'buyers-and-sales-centers.restore-veterinary-vehicle-license' | tlTranslate }}">
+                                        </tl-icon-button>
+                                    </div>
+                                </ng-template>
+                            </data-template-column>
+                        </tl-data-table>
+                        <mat-error *ngIf="veterinaryVehicleLicensesTouched && editForm.errors?.noVehicleBabhLicenses">
+                            * {{ 'buyers-and-sales-centers.no-vehicle-babh-license-error' | tlTranslate }}
+                        </mat-error>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- БАБХ удостоверения в заявление -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData
+                               && isApplication
+                               && (editForm.get('hasPremiseOrVehicleGroup.hasUtilityControl')?.value
+                                   || editForm.get('hasPremiseOrVehicleGroup.hasVehicleControl')?.value)"
+                        title="{{ 'buyers-and-sales-centers.licenses-panel' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.licenses-panel-helper"
+                        [validityChecker]="editForm">
+        <div fxFlex="100" fxLayout="column" fxLayoutGap="1em">
+            <!-- Удостоверение по закона за храните, ако има магазин/помещение -->
+            <tl-card *ngIf="editForm.get('hasPremiseOrVehicleGroup.hasUtilityControl').value"
+                     tooltipResourceName="buyers-and-sales-centers.registration-under-food-law-license-helper"
+                     [validityChecker]="editForm">
+                <tl-card-title>{{ 'buyers-and-sales-centers.registration-under-food-law-license' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <div fxFlex="100" fxLayout="column">
+                        <common-document fxFlexFill
+                                         formControlName="babhLawLicenseControl"
+                                         validityChecker>
+                        </common-document>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+            <!-- Удостоверение за превозното средство, ако има такова -->
+            <tl-card *ngIf="editForm.get('hasPremiseOrVehicleGroup.hasVehicleControl')?.value"
+                     tooltipResourceName="buyers-and-sales-centers.vehicle-registration-under-veterinary-medical-activity-law-license-helper"
+                     [validityChecker]="editForm">
+                <tl-card-title>
+                    {{ 'buyers-and-sales-centers.vehicle-registration-under-veterinary-medical-activity-law-license' | tlTranslate }}
+                </tl-card-title>
+                <tl-card-content>
+                    <div fxFlex="100" fxLayout="column">
+                        <common-document fxFlexFill
+                                         formControlName="veteniraryVehicleRegLicenseControl"
+                                         validityChecker>
+                        </common-document>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Дневници при регистров запис -->
+    <tl-expansion-panel *ngIf="!isApplication"
+                        title="{{ 'buyers-and-sales-centers.log-books-panel' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.log-helper"
+                        [validityChecker]="editForm">
+        <log-books fxFlex="100"
+                   formControlName="logBooksControl"
+                   validityChecker
+                   [isReadonly]="isReadonly || viewMode"
+                   [getLogBookSimpleAuditMethod]="service.getLogBookAudit.bind(service)"
+                   [logBookGroup]="logBookGroup"
+                   [showInactivePagesAndDocuments]="!isPublicApp">
+        </log-books>
+    </tl-expansion-panel>
+
+    <!-- Информация за плащане в заявлението -->
+    <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData && applicationPaymentInformation !== null && applicationPaymentInformation !== undefined"
+                        title="{{ 'buyers-and-sales-centers.payment-information-panel' | tlTranslate }}"
+                        [validityChecker]="editForm">
+        <payment-information fxFlex="100" [paymentData]="applicationPaymentInformation"></payment-information>
+    </tl-expansion-panel>
+
+    <!-- Информация за начин на връчване в заявлението -->
+    <tl-expansion-panel *ngIf="hasDelivery && isApplication && !showOnlyRegiXData"
+                        title="{{ 'buyers-and-sales-centers.delivery-data-panel' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.delivery-data-panel-helper"
+                        fxFlexLayoutGap="1em"
+                        [validityChecker]="editForm"
+                        [validityCheckerExtraCondition]="hasNoEDeliveryRegistrationError !== true">
+        <delivery-data fxFlex="100"
+                       formControlName="deliveryDataControl"
+                       validityChecker
+                       [pageCode]="pageCode">
+        </delivery-data>
+        <mat-error *ngIf="hasNoEDeliveryRegistrationError">
+            * {{ 'buyers-and-sales-centers.has-no-e-delivery-registration-error' | tlTranslate }}
+        </mat-error>
+    </tl-expansion-panel>
+
+    <!-- Издадени дубликати -->
+    <tl-expansion-panel *ngIf="duplicates && duplicates.length > 0"
+                        title="{{ 'buyers-and-sales-centers.duplicate-entries' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.duplicate-entries-helper">
+        <duplicate-entries-table [entries]="duplicates">
+        </duplicate-entries-table>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel title="{{ 'buyers-and-sales-centers.files' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.files-helper"
+                        *ngIf="!showOnlyRegiXData"
+                        [validityChecker]="editForm">
+        <file-uploader-form-array formControlName="filesControl"
+                                  validityChecker
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)"
+                                  [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                  [refreshFileTypes]="refreshFileTypes">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+
+    <!-- Проверки в RegiX режим -->
+    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+                        title="{{ 'buyers-and-sales-centers.regix-checks-results-panel' | tlTranslate }}"
+                        [validityChecker]="editForm">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-checks-results [regixChecksCollection]="regixChecks">
+            </regix-checks-results>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Панел с промени при заявление за промяна в обстоятелствата -->
+    <div *ngIf="isChangeOfCircumstancesApplication" tlResizable="top" id="change-of-circumstances-panel">
+        <h2><b>{{ 'buyers-and-sales-centers.changes-from-application' | tlTranslate }}</b></h2>
+        <change-of-circumstances [formControl]="changeOfCircumstancesControl"
+                                 [pageCode]="pageCode"
+                                 [disableDelete]="true">
+        </change-of-circumstances>
+    </div>
+
+    <div *ngIf="isDeregistrationApplication" tlResizable="top" id="change-of-circumstances-panel">
+        <h2><b>{{ 'buyers-and-sales-centers.termination-application-reason' | tlTranslate }}</b></h2>
+        <tl-textarea [formControl]="deregistrationReasonControl"
+                     tooltipResourceName="buyers-and-sales-centers.termination-application-reason-helper"
+                     label="{{ 'buyers-and-sales-centers.termination-application-reason' | tlTranslate }}">
+        </tl-textarea>
+    </div>
+</div>

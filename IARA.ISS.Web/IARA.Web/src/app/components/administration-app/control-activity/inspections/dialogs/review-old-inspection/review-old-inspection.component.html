@@ -1,0 +1,135 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <!-- Основни данни -->
+    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}">
+        <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+            <tl-input formControlName="numControl"
+                      label="{{ 'inspections.kp-num' | tlTranslate }}">
+            </tl-input>
+            <tl-date formControlName="dateControl"
+                     label="{{ 'inspections.date' | tlTranslate }}">
+            </tl-date>
+            <tl-input formControlName="locationControl"
+                      label="{{ 'inspections.location' | tlTranslate }}">
+            </tl-input>
+            <tl-input formControlName="inspectorControl"
+                      label="{{ 'inspections.inspector' | tlTranslate }}">
+            </tl-input>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Свидетели -->
+    <tl-expansion-panel title="{{ 'inspections.witnesses' | tlTranslate }}">
+        <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+            <tl-input formControlName="witness1Control"
+                      label="{{ 'inspections.witness-1' | tlTranslate }}">
+            </tl-input>
+            <tl-input formControlName="witness2Control"
+                      label="{{ 'inspections.witness-2' | tlTranslate }}">
+            </tl-input>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Информация на инспекцията -->
+    <tl-expansion-panel title="{{ 'inspections.inspection-info' | tlTranslate }}">
+        <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+            <tl-input formControlName="objectControl"
+                      label="{{ 'inspections.object' | tlTranslate }}">
+            </tl-input>
+            <tl-input formControlName="inspectedPersonControl"
+                      label="{{ 'inspections.inspected-person' | tlTranslate }}">
+            </tl-input>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Иззет улов -->
+    <tl-expansion-panel title="{{ 'inspections.catch-seized' | tlTranslate }}">
+        <tl-data-table fxFlexFill
+                       [rows]="catches"
+                       [isRemote]="false"
+                       [isSoftDeletable]="false"
+                       [showInactiveRecords]="false"
+                       [showAddButton]="false">
+            <data-column [flexRate]="0.4"
+                         propertyName="fishName"
+                         columnName="{{ 'inspections.fish-type' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.3"
+                         propertyName="catchQuantity"
+                         columnName="{{ 'inspections.quantity' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.3"
+                         propertyName="isDestroyed"
+                         dataType="boolean"
+                         columnName="{{ 'inspections.destroyed' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.4"
+                         propertyName="isDonated"
+                         dataType="boolean"
+                         columnName="{{ 'inspections.donated' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.4"
+                         propertyName="isStored"
+                         dataType="boolean"
+                         columnName="{{ 'inspections.stored' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.4"
+                         propertyName="isTaken"
+                         dataType="boolean"
+                         columnName="{{ 'inspections.taken' | tlTranslate }}">
+            </data-column>
+        </tl-data-table>
+    </tl-expansion-panel>
+
+    <!-- Уреди -->
+    <tl-expansion-panel title="{{ 'inspections.fishing-gears' | tlTranslate }}">
+        <tl-data-table fxFlexFill
+                       [rows]="fishingGears"
+                       [isRemote]="false"
+                       [isSoftDeletable]="false"
+                       [showInactiveRecords]="false"
+                       [showAddButton]="false">
+            <data-column [flexRate]="0.4"
+                         propertyName="fishingGearName"
+                         columnName="{{ 'inspections.fishing-gear-type' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.3"
+                         propertyName="gearCount"
+                         columnName="{{ 'inspections.count' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.3"
+                         propertyName="length"
+                         columnName="{{ 'inspections.length' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.4"
+                         propertyName="description"
+                         columnName="{{ 'inspections.fishing-gear-cp-description' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.4"
+                         propertyName="isStored"
+                         dataType="boolean"
+                         columnName="{{ 'inspections.stored' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.4"
+                         propertyName="isTaken"
+                         dataType="boolean"
+                         columnName="{{ 'inspections.taken' | tlTranslate }}">
+            </data-column>
+        </tl-data-table>
+    </tl-expansion-panel>
+
+    <!-- Допълнителна информация -->
+    <tl-expansion-panel title="{{ 'inspections.additional-info' | tlTranslate }}">
+        <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+            <tl-input formControlName="inspectorCommentControl"
+                      label="{{ 'inspections.cp-inspector-comment' | tlTranslate }}">
+            </tl-input>
+            <tl-input formControlName="actionsTakenControl"
+                      label="{{ 'inspections.cp-actions-taken' | tlTranslate }}">
+            </tl-input>
+        </div>
+    </tl-expansion-panel>
+</div>

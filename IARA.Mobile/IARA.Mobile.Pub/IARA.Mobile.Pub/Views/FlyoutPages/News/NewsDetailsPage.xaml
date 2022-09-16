@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages.News"
+             xmlns:c="clr-namespace:IARA.Mobile.Pub.Views.Controls"
+             xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+             x:Class="IARA.Mobile.Pub.Views.FlyoutPages.News.NewsDetailsPage"
+             xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+             x:DataType="vm:NewsDetailsViewModel"
+             x:TypeArguments="vm:NewsDetailsViewModel"
+             Title="{rt:Translate News, Group=Common}"
+             BackgroundColor="{StaticResource BackgroundColor}">
+    <c:NewsDetailsLayout WidthRequest="650">
+        <WebView x:Name="webView"
+                 VerticalOptions="FillAndExpand"
+                 HorizontalOptions="FillAndExpand"
+                 Grid.Row="3"
+                 Margin="5,0" />
+    </c:NewsDetailsLayout>
+</sv:BasePage>

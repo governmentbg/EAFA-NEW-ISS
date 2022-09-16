@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "IARA.ResourcesParser": {
+      "commandName": "Project",
+      "authenticationMode": "None"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <Configurations>Debug;Release;Test</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Version Condition=" '$(Major)$(Minor)$(Patch)' == '' ">1.0.0.0</Version>
+    <Version Condition=" '$(Major)$(Minor)$(Patch)' != '' ">$(Major).$(Minor).$(Patch).0</Version>
+    <Authors>Ivelin Ivanov</Authors>
+    <Company>TechnoLogica</Company>
+    <Description>IARA Identity Profile</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.10" />
+    <PackageReference Include="TechnoLogica.Authentication.Common" Version="1.0.39" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\IARA.ISS.Web-DEV\IARA.Common\IARA.Common.csproj" />
+    <ProjectReference Include="..\..\IARA.ISS.Web-DEV\IARA.Logging.Abstractions\IARA.Logging.Abstractions.csproj" />
+    <ProjectReference Include="..\..\IARA.ISS.Web-DEV\IARA.Logging\IARA.Logging.csproj" />
+    <ProjectReference Include="..\..\IARA.ISS.Web-DEV\IARA.Security\IARA.Security.csproj" />
+  </ItemGroup>
+
+</Project>

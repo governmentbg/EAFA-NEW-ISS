@@ -1,0 +1,37 @@
+﻿<div fxFlexFill>
+    <tl-card fxFlexFill *ngIf="news !== null && news !== undefined">
+        <tl-card-title>{{ news.title }}</tl-card-title>
+        <tl-card-content fxLayout="column" fxLayoutGap="2em">
+            <div fxLayout="row">
+                <div *ngIf="news.image !== null && news.image !== undefined; else noMainImage">
+                    <img [src]="news.image"/>
+                </div>
+                <ng-template #noMainImage>
+                    <tl-icon icon="ic-newspaper-variant-multiple-outline"
+                             class="default-image-color"
+                             size="200">
+                    </tl-icon>
+                </ng-template>
+            </div>
+            <div fxLayout="row"
+                 class="full-width"
+                 fxLayoutAlign="space-between end">
+                <span>{{ news.publishStart | date: 'dd MMMM yyyy'}}</span>
+            </div>
+            <div class="break-all-words"
+                 [innerHTML]="news.content">
+            </div>
+            <div fxLayout="row" fxLayoutGap="1em">
+                <div>
+
+                </div>
+                <div *ngFor="let file of news.files">
+                    <a [matTooltip]="file.description"
+                       (click)="fileNameClicked(file.id, file.name)">
+                        {{ file.name }}
+                    </a>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

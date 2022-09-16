@@ -1,0 +1,32 @@
+﻿<div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+    <div *ngFor="let catchControl of formArray.controls; let i = index" fxFlex="100" fxLayout="column">
+        <catch-aquatic-organism-type fxLayout="column"
+                                     validityChecker
+                                     [formControl]="catchControl"
+                                     [service]="service"
+                                     [aquaticOrganisms]="aquaticOrganisms"
+                                     [sturgeonGenders]="sturgeonGenders"
+                                     [turbotSizeGroups]="turbotSizeGroups"
+                                     [catchQuadrants]="catchQuadrants"
+                                     [fishSizes]="fishSizes"
+                                     [catchTypes]="catchTypes"
+                                     (deletePanelBtnClicked)="deleteCatchAquaticOrganismTypeControl(catchControl, i)">
+        </catch-aquatic-organism-type>
+    </div>
+    <div *ngIf="formArray.controls === null || formArray.controls === undefined || formArray.controls.length === 0"
+         fxFlex="100" 
+         fxLayout="column">
+        <span fxFlex="100" class="italic-text">
+            {{ 'catches-and-sales.ship-page-catch-record-no-catch' | tlTranslate }}
+        </span>
+    </div>
+    <div fxFlex="100" fxLayout="row" fxLayoutAlign="end center">
+        <button mat-raised-button
+                color="accent"
+                (click)="addCatchAquaticOrganismTypeControl()"
+                [disabled]="isDisabled">
+            <tl-icon icon="fa-plus-circle"></tl-icon>
+            {{ 'catches-and-sales.ship-page-catch-record-add-catch' | tlTranslate }}
+        </button>
+    </div>
+</div>

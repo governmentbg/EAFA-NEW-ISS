@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sv:SectionView xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:lh="clr-namespace:IARA.Mobile.Insp.Helpers"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        x:Class="IARA.Mobile.Insp.Controls.ShipFishingGearsView"
+        x:DataType="vm:ShipFishingGearsViewModel"
+        x:Name="view"
+        Image="{lh:Image hook}"
+        IsExpanded="False">
+    <sv:SectionView.InnerContent>
+        <StackLayout Padding="10">
+            <lc:FishingGearsView IsTitleVisible="False" BindingContext="{Binding FishingGears}" />
+            <tl:TLEditor Title="{rt:Translate ObservationsOrViolations, Group=GeneralInfo}"
+                    ValidState="{Binding ObservationsOrViolations}"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+        </StackLayout>
+    </sv:SectionView.InnerContent>
+</sv:SectionView>

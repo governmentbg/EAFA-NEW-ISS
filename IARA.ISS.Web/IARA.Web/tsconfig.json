@@ -1,0 +1,54 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "declaration": false,
+    "downlevelIteration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "allowSyntheticDefaultImports": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "lib": [
+      "ES2017",
+      "DOM"
+    ],
+    "module": "ES2020",
+    "moduleResolution": "Node",
+    "newLine": "lf",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "outDir": "./wwwroot/out-tsc",
+    "paths": {
+      "@app/*": [
+        "src/app/*"
+      ],
+      "@env/*": [
+        "src/environments/*"
+      ],
+      "@fuse/*": [
+        "src/@fuse/*"
+      ],
+      "@/*": [
+        "src/*"
+      ],
+      "quill-image-resize-module-plus-remastered/*": [
+        "Libraries/Angular/quill-image-resize-module-plus-remastered/*"
+      ]
+    },
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES2015",
+    "typeRoots": [
+      "node_modules/@types"
+    ]
+  },
+  "exclude": [ "node_modules", ".vscode", "@fuse" ]
+}

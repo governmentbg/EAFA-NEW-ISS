@@ -1,0 +1,137 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <!-- Филтри -->
+    <search-panel [translateService]="translate">
+        <div [formGroup]="form" fxFlexFill fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-input fxFlex="25"
+                      formControlName="codeControl"
+                      label="{{ 'roles-register.code' | tlTranslate }}"
+                      tooltipResourceName="roles-register.code-helper">
+            </tl-input>
+
+            <tl-input fxFlex="25"
+                      formControlName="nameControl"
+                      label="{{ 'roles-register.name' | tlTranslate }}"
+                      tooltipResourceName="roles-register.name-helper">
+            </tl-input>
+
+            <tl-autocomplete fxFlex="25"
+                             formControlName="permissionControl"
+                             [options]="permissions"
+                             label="{{ 'roles-register.permission' | tlTranslate }}"
+                             tooltipResourceName="roles-register.permission-helper">
+            </tl-autocomplete>
+
+            <tl-date-range fxFlex="25"
+                           formControlName="validityDateRangeControl"
+                           label="{{ 'roles-register.date-of-validity' | tlTranslate }}"
+                           tooltipResourceName="roles-register.date-of-validity-helper">
+            </tl-date-range>
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <mat-card>
+        <tl-data-table [showAddButton]="canAddRecords"
+                       [showInactiveRecords]="canRestoreRecords"
+                       (addButtonClicked)="createEditRole(undefined, false)">
+            <data-column propertyName="code"
+                         [flexRate]="0.3"
+                         columnName="{{ 'roles-register.code' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="name"
+                         [flexRate]="0.4"
+                         columnName="{{ 'roles-register.name' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="description"
+                         [flexRate]="0.6"
+                         columnName="{{ 'roles-register.description' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="validFrom"
+                         dataType="date"
+                         [flexRate]="0.3"
+                         columnName="{{ 'roles-register.valid-from' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="validTo"
+                         dataType="date"
+                         [flexRate]="0.3"
+                         columnName="{{ 'roles-register.valid-to' | tlTranslate }}">
+            </data-column>
+
+            <data-template-column [flexRate]="0.5"
+                                  propertyName="HasInternalAccess"
+                                  columnName="{{ 'roles-register.users-type' | tlTranslate }}">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div *ngIf="!row.data.hasInternalAccess && row.data.hasPublicAccess">
+                        <tl-icon icon="fa-address-book-regular"
+                                 iconClass="accent-color">
+                        </tl-icon>
+                        {{ 'roles-register.user-public-access' | tlTranslate }}
+                    </div>
+
+                    <div *ngIf="row.data.hasInternalAccess && !row.data.hasPublicAccess">
+                        <tl-icon icon="fa-address-book"
+                                 iconClass="accent-color">
+                        </tl-icon>
+                        {{ 'roles-register.user-internal-access' | tlTranslate }}
+                    </div>
+
+                    <div *ngIf="row.data.hasInternalAccess && row.data.hasPublicAccess">
+                        <tl-icon icon="fa-check-double"
+                                 iconClass="accent-color">
+                        </tl-icon>
+                        {{ 'roles-register.user-internal-public-access' | tlTranslate }}
+                    </div>
+
+                    <div *ngIf="!row.data.hasInternalAccess && !row.data.hasPublicAccess">
+                        <tl-icon icon="fa-ban"
+                                 iconClass="accent-color">
+                        </tl-icon>
+                        {{ 'roles-register.user-no-internal-public-access' | tlTranslate }}
+                    </div>
+                </ng-template>
+            </data-template-column>
+
+            <data-column propertyName="usersCount"
+                         [flexRate]="0.3"
+                         columnName="{{ 'roles-register.users-count' | tlTranslate }}">
+            </data-column>
+
+            <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                        <tl-icon-button icon="visibility"
+                                        (buttonClicked)="createEditRole(row.data, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'roles-register.view-role' | tlTranslate }}">
+                        </tl-icon-button>
+
+                        <tl-icon-button *ngIf="row.isActive && canEditRecords"
+                                        icon="edit"
+                                        (buttonClicked)="createEditRole(row.data, false)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'roles-register.edit-role' | tlTranslate }}">
+                        </tl-icon-button>
+
+                        <tl-icon-button *ngIf="row.isActive && canDeleteRecords"
+                                        icon="delete"
+                                        (buttonClicked)="deleteRole(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'roles-register.delete-role' | tlTranslate }}">
+                        </tl-icon-button>
+
+                        <tl-icon-button *ngIf="!row.isActive && canRestoreRecords"
+                                        icon="restore"
+                                        (buttonClicked)="restoreRole(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'roles-register.restore-role' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </mat-card>
+</div>

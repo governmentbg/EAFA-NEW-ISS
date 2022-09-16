@@ -1,0 +1,192 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <!-- Филтри -->
+    <search-panel [translateService]="translate">
+        <!-- Административни филтри -->
+        <div *ngIf="!isPublicApp" [formGroup]="form">
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
+                <tl-input fxFlex="25"
+                          formControlName="registryNumberControl"
+                          label="{{ 'statistical-forms.registry-number' | tlTranslate }}"
+                          tooltipResourceName="statistical-forms.registry-number-helper">
+                </tl-input>
+                <tl-autocomplete fxFlex="25"
+                                 label="{{ 'statistical-forms.process-user' | tlTranslate }}"
+                                 formControlName="processUserControl"
+                                 [options]="processUsers"
+                                 tooltipResourceName="statistical-forms.process-user-helper">
+                </tl-autocomplete>
+                <tl-select fxFlex="25"
+                           label="{{ 'statistical-forms.form-type' | tlTranslate }}"
+                           formControlName="formTypesControl"
+                           [options]="formTypes"
+                           [isMultiple]="true"
+                           tooltipResourceName="statistical-forms.form-type-helper">
+                </tl-select>
+                <tl-date-range fxFlex="25"
+                               formControlName="submissionDateControl"
+                               label="{{ 'statistical-forms.valid' | tlTranslate }}"
+                               tooltipResourceName="statistical-forms.valid-helper">
+                </tl-date-range>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
+                <tl-autocomplete fxFlex="25"
+                                 label="{{ 'statistical-forms.submission-user' | tlTranslate }}"
+                                 formControlName="submissionUserControl"
+                                 [options]="submissionUsers"
+                                 tooltipResourceName="statistical-forms.submission-user-helper">
+                </tl-autocomplete>
+
+                <tl-input fxFlex="25"
+                          label="{{ 'statistical-forms.form-object' | tlTranslate }}"
+                          formControlName="formObjectControl"
+                          tooltipResourceName="statistical-forms.form-object-helper">
+                </tl-input>
+
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+            </div>
+        </div>
+
+        <!-- Публични филтри -->
+        <div *ngIf="isPublicApp" [formGroup]="form">
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
+                <tl-input fxFlex="25"
+                          formControlName="registryNumberControl"
+                          label="{{ 'statistical-forms.registry-number' | tlTranslate }}"
+                          tooltipResourceName="statistical-forms.registry-number-helper">
+                </tl-input>
+                <tl-select fxFlex="25"
+                           label="{{ 'statistical-forms.form-type' | tlTranslate }}"
+                           formControlName="formTypesControl"
+                           [options]="formTypes"
+                           [isMultiple]="true"
+                           tooltipResourceName="statistical-forms.form-type-helper">
+                </tl-select>
+                <tl-date-range fxFlex="25"
+                               formControlName="submissionDateControl"
+                               label="{{ 'statistical-forms.valid' | tlTranslate }}"
+                               tooltipResourceName="statistical-forms.valid-helper">
+                </tl-date-range>
+                <div fxFlex="25"></div>
+            </div>
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <mat-card>
+        <tl-data-table [showAddButton]="!isPublicApp"
+                       [showInactiveRecords]="!isPublicApp && (canRestoreAquaFarmRecords || canRestoreReworkRecords || canRestoreFishVesselRecords)"
+                       (addButtonClicked)="addEditForm(undefined, undefined, false)">
+            <data-column propertyName="registryNumber"
+                         [flexRate]="0.15"
+                         columnName="{{ 'statistical-forms.registry-number' | tlTranslate }}">
+            </data-column>
+            <data-column *ngIf="!isPublicApp"
+                         propertyName="processUser"
+                         [flexRate]="0.2"
+                         columnName="{{ 'statistical-forms.process-user' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="year"
+                         [flexRate]="0.1"
+                         columnName="{{ 'statistical-forms.year' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="submissionDate"
+                         [flexRate]="0.15"
+                         dataType="date"
+                         columnName="{{ 'statistical-forms.submission-date' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="formObject"
+                         [flexRate]="0.4"
+                         columnName="{{ 'statistical-forms.form-object' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="formTypeName"
+                         [flexRate]="0.2"
+                         columnName="{{ 'statistical-forms.form-type' | tlTranslate }}">
+            </data-column>
+            <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <!--Аквакултурни стопанства-->
+                    <div *ngIf="row.data.formType === statisticalFormTypesEnum.AquaFarm" fxLayout="row" fxLayoutAlign="end center">
+                        <tl-icon-button icon="visibility"
+                                        (buttonClicked)="addEditForm(row.data, row.data.formType, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'statistical-forms.view-statistical-form' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && canEditAquaFarmRecords && !isPublicApp"
+                                        icon="edit"
+                                        (buttonClicked)="addEditForm(row.data, row.data.formType, false)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'statistical-forms.edit-statistical-form' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && canDeleteAquaFarmRecords && !isPublicApp"
+                                        icon="delete"
+                                        (buttonClicked)="deleteStatisticalForm(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'statistical-forms.delete-statistical-form' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="!row.data.isActive && canRestoreAquaFarmRecords && !isPublicApp"
+                                        icon="restore"
+                                        (buttonClicked)="restoreStatisticalForm(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'statistical-forms.restore-statistical-form' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+
+                    <!--Преработка-->
+                    <div *ngIf="row.data.formType === statisticalFormTypesEnum.Rework" fxLayout="row" fxLayoutAlign="end center">
+                        <tl-icon-button icon="visibility"
+                                        (buttonClicked)="addEditForm(row.data, row.data.formType, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'statistical-forms.view-statistical-form' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && canEditReworkRecords && !isPublicApp"
+                                        icon="edit"
+                                        (buttonClicked)="addEditForm(row.data, row.data.formType, false)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'statistical-forms.edit-statistical-form' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && canDeleteReworkRecords && !isPublicApp"
+                                        icon="delete"
+                                        (buttonClicked)="deleteStatisticalForm(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'statistical-forms.delete-statistical-form' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="!row.data.isActive && canRestoreReworkRecords && !isPublicApp"
+                                        icon="restore"
+                                        (buttonClicked)="restoreStatisticalForm(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'statistical-forms.restore-statistical-form' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+
+                    <!--Риболовни кораби-->
+                    <div *ngIf="row.data.formType === statisticalFormTypesEnum.FishVessel" fxLayout="row" fxLayoutAlign="end center">
+                        <tl-icon-button icon="visibility"
+                                        (buttonClicked)="addEditForm(row.data, row.data.formType, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'statistical-forms.view-statistical-form' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && canEditFishVesselRecords && !isPublicApp"
+                                        icon="edit"
+                                        (buttonClicked)="addEditForm(row.data, row.data.formType, false)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'statistical-forms.edit-statistical-form' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && canDeleteFishVesselRecords && !isPublicApp"
+                                        icon="delete"
+                                        (buttonClicked)="deleteStatisticalForm(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'statistical-forms.delete-statistical-form' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="!row.data.isActive && canRestoreFishVesselRecords && !isPublicApp"
+                                        icon="restore"
+                                        (buttonClicked)="restoreStatisticalForm(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'statistical-forms.restore-statistical-form' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </mat-card>
+</div>

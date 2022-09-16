@@ -1,0 +1,172 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <!-- Филтри -->
+    <search-panel [translateService]="translate">
+        <div [formGroup]="form" fxFlexFill fxLayout="column" fxLayoutGap="1em">
+            <!-- № на АУАН, съставител, териториално звено, дата на съставяне -->
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="auanNumControl"
+                          label="{{ 'auan-register.filters-auan-num' | tlTranslate }}"
+                          tooltipResourceName="auan-register.filters-auan-num-helper">
+                </tl-input>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="drafterControl"
+                                 [options]="drafters"
+                                 [hasSelectedValueFromDropdownValidator]="false"
+                                 label="{{ 'auan-register.filters-drafter' | tlTranslate }}"
+                                 tooltipResourceName="auan-register.filters-drafter-helper">
+                </tl-autocomplete>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="territoryUnitControl"
+                                 [options]="territoryUnits"
+                                 label="{{ 'auan-register.filters-territory-unit' | tlTranslate }}"
+                                 tooltipResourceName="auan-register.filters-territory-unit-helper">
+                </tl-autocomplete>
+
+                <tl-date-range fxFlex="25"
+                               formControlName="draftDateRangeControl"
+                               label="{{ 'auan-register.filters-draft-date' | tlTranslate }}"
+                               tooltipResourceName="auan-register.filters-draft-date-helper">
+                </tl-date-range>
+            </div>
+
+            <!-- Конфискувани риба, уред и приспособление, връчени/невръчени АУАН -->
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="inspEntityFirstNameControl"
+                          label="{{ 'auan-register.filters-insp-entity-first-name' | tlTranslate }}"
+                          tooltipResourceName="auan-register.filters-insp-entity-first-name-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="inspEntityMiddleNameControl"
+                          label="{{ 'auan-register.filters-insp-entity-middle-name' | tlTranslate }}"
+                          tooltipResourceName="auan-register.filters-insp-entity-middle-name-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="inspEntityLastNameControl"
+                          label="{{ 'auan-register.filters-insp-entity-last-name' | tlTranslate }}"
+                          tooltipResourceName="auan-register.filters-insp-entity-last-name-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="identifierControl"
+                          label="{{ 'auan-register.filters-identifier' | tlTranslate }}"
+                          tooltipResourceName="auan-register.filters-identifier-helper">
+                </tl-input>
+            </div>
+
+            <!-- Имена и ЕГН/ЛНЧ/ЕИК на нарушител -->
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="fishControl"
+                                 [options]="fishes"
+                                 label="{{ 'auan-register.filters-fish' | tlTranslate }}"
+                                 tooltipResourceName="auan-register.filters-fish-helper">
+                </tl-autocomplete>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="fishingGearControl"
+                                 [options]="fishingGears"
+                                 label="{{ 'auan-register.filters-fishing-gear' | tlTranslate }}"
+                                 tooltipResourceName="auan-register.filters-fishing-gear-helper">
+                </tl-autocomplete>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="applianceControl"
+                                 [options]="appliances"
+                                 label="{{ 'auan-register.filters-appliance' | tlTranslate }}"
+                                 tooltipResourceName="auan-register.filters-appliance-helper">
+                </tl-autocomplete>
+
+                <tl-select fxFlex="25"
+                           formControlName="isDeliveredControl"
+                           [options]="deliveries"
+                           label="{{ 'penal-decrees.filters-is-delivered' | tlTranslate }}"
+                           tooltipResourceName="penal-decrees.filters-is-delivered-helper">
+                </tl-select>
+            </div>
+
+            <!-- Тип на инспекция и проверка, описание на проверяван обект -->
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="inspectionTypeControl"
+                                 [options]="inspectionTypes"
+                                 label="{{ 'auan-register.filters-inspection-type' | tlTranslate }}"
+                                 tooltipResourceName="auan-register.filters-inspection-type-helper">
+                </tl-autocomplete>
+
+                <tl-input fxFlex="50"
+                          formControlName="locationDescriptionControl"
+                          label="{{ 'auan-register.filters-location-description' | tlTranslate }}"
+                          tooltipResourceName="auan-register.filters-location-description-helper">
+                </tl-input>
+            </div>
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <mat-card>
+        <tl-data-table [showAddButton]="canAddRecords"
+                       [showInactiveRecords]="canRestoreRecords"
+                       (addButtonClicked)="addEditAuan(undefined, false)"
+                       (activeRecordChanged)="addEditAuan($event, !$event.isActive || !canEditRecords)">
+            <data-column propertyName="auanNum"
+                         [flexRate]="0.3"
+                         columnName="{{ 'auan-register.table-auan-num' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="drafter"
+                         [flexRate]="0.3"
+                         columnName="{{ 'auan-register.table-drafter' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="draftDate"
+                         [flexRate]="0.3"
+                         dataType="date"
+                         columnName="{{ 'auan-register.table-draft-date' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="inspectedEntity"
+                         [flexRate]="0.3"
+                         columnName="{{ 'auan-register.table-inspected-entity' | tlTranslate }}">
+            </data-column>
+
+            <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                        <tl-icon-button icon="visibility"
+                                        (buttonClicked)="addEditAuan(row.data, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'auan-register.view-auan' | tlTranslate }}">
+                        </tl-icon-button>
+
+                        <tl-icon-button *ngIf="row.isActive && canEditRecords"
+                                        icon="edit"
+                                        (buttonClicked)="addEditAuan(row.data, false)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'auan-register.edit-auan' | tlTranslate }}">
+                        </tl-icon-button>
+
+                        <tl-icon-button *ngIf="row.isActive && canDeleteRecords"
+                                        icon="delete"
+                                        (buttonClicked)="deleteAuan(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'auan-register.delete-auan' | tlTranslate }}">
+                        </tl-icon-button>
+
+                        <tl-icon-button *ngIf="!row.isActive && canRestoreRecords"
+                                        icon="restore"
+                                        (buttonClicked)="restoreAuan(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'auan-register.restore-auan' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </mat-card>
+</div>

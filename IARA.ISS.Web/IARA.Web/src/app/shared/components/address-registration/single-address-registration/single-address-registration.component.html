@@ -1,0 +1,111 @@
+﻿<div [formGroup]="form" validityCheckerGroup>
+    <tl-card [validityChecker]="form">
+        <tl-card-title>{{ label }}</tl-card-title>
+        <tl-card-content fxLayoutGap="0.5em" fxLayout="column">
+            <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+                <tl-autocomplete fxFlex="16"
+                                 fxFlex.md="49"
+                                 fxFlex.lt-md="100"
+                                 formControlName="countryControl"
+                                 [options]="countries"
+                                 label="{{ 'common.country' | tlTranslate : 'cap' }}"
+                                 [getControlErrorLabelText]="getControlErrorLabelText"
+                                 [readonly]="readonly">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="16"
+                                 fxFlex.md="49"
+                                 fxFlex.lt-md="100"
+                                 formControlName="districtControl"
+                                 [options]="districts"
+                                 label="{{ 'common.district' | tlTranslate : 'cap' }}"
+                                 [getControlErrorLabelText]="getControlErrorLabelText"
+                                 [readonly]="readonly">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="16"
+                                 fxFlex.md="49"
+                                 fxFlex.lt-md="100"
+                                 formControlName="municipalityControl"
+                                 [options]="municipalities"
+                                 label="{{ 'common.municipality' | tlTranslate : 'cap' }}"
+                                 [getControlErrorLabelText]="getControlErrorLabelText"
+                                 [readonly]="readonly">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="16"
+                                 fxFlex.md="49"
+                                 fxFlex.lt-md="100"
+                                 formControlName="populatedAreaControl"
+                                 [options]="populatedAreas"
+                                 label="{{ 'common.populated-area' | tlTranslate : 'cap' }}"
+                                 [getControlErrorLabelText]="getControlErrorLabelText"
+                                 [readonly]="readonly">
+                </tl-autocomplete>
+                <tl-input fxFlex="16"
+                          fxFlex.md="49"
+                          fxFlex.lt-md="100"
+                          formControlName="regionControl"
+                          label="{{ 'common.region' | tlTranslate : 'cap' }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText"
+                          [readonly]="readonly">
+                </tl-input>
+                <tl-input fxFlex="16"
+                          fxFlex.md="49"
+                          fxFlex.lt-md="100"
+                          formControlName="postalCodeControl"
+                          label="{{ 'common.postal-code' | tlTranslate : 'cap' }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText"
+                          [readonly]="readonly">
+                </tl-input>
+            </div>
+            <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="40"
+                          fxFlex.md="79"
+                          fxFlex.lt-md="100"
+                          formControlName="streetControl"
+                          label="{{ 'common.street' | tlTranslate : 'cap' }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText"
+                          [readonly]="readonly">
+                </tl-input>
+                <tl-input fxFlex="8"
+                          fxFlex.md="19"
+                          fxFlex.lt-md="100"
+                          formControlName="streetNumControl"
+                          label="{{ 'common.street-num-symbol' | tlTranslate : 'cap' }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText"
+                          [readonly]="readonly">
+                </tl-input>
+                <tl-input fxFlex="12"
+                          fxFlex.md="24"
+                          fxFlex.lt-md="100"
+                          formControlName="blockNumControl"
+                          label="{{ 'common.block' | tlTranslate : 'cap' }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText"
+                          [readonly]="readonly">
+                </tl-input>
+                <tl-input fxFlex="12"
+                          fxFlex.md="24"
+                          fxFlex.lt-md="100"
+                          formControlName="entranceNumControl"
+                          label="{{ 'common.entrance' | tlTranslate : 'cap' }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText"
+                          [readonly]="readonly">
+                </tl-input>
+                <tl-input fxFlex="12"
+                          fxFlex.md="24"
+                          fxFlex.lt-md="100"
+                          formControlName="floorNumControl"
+                          label="{{ 'common.floor' | tlTranslate : 'cap' }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText"
+                          [readonly]="readonly">
+                </tl-input>
+                <tl-input fxFlex="12"
+                          fxFlex.md="24"
+                          fxFlex.lt-md="100"
+                          formControlName="apartmentNumControl"
+                          label="{{ 'common.apartment' | tlTranslate : 'cap' }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText"
+                          [readonly]="readonly">
+                </tl-input>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

@@ -1,0 +1,10 @@
+﻿<tl-popover-button *ngIf="alwaysShow || text !== ''"
+                   iconType="FA_ICON"
+                   iconClass="accent-color"
+                   icon="fa-question"
+                   iconSize="0.7"
+                   [overrideOpen]="alwaysShow"
+                   (togglePopover)="onTogglePopover()"
+                   style="vertical-align:text-bottom">
+    <pre style="font-family: inherit !important; max-width: 500px !important;">{{ text }}</pre>
+</tl-popover-button>

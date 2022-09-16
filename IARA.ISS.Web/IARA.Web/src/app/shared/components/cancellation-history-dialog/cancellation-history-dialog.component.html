@@ -1,0 +1,94 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="form"
+     class="dialog-padding">
+    <div fxLayout="row" fxLayoutalign="space-between center" fxLayoutGap="1em">
+        <tl-select fxFlex="50"
+                   formControlName="reasonControl"
+                   tooltipResourceName="cancellation-history-dialog.cancel-reason-helper"
+                   label="{{ 'cancellation-history-dialog.cancel-reason' | tlTranslate }}"
+                   [options]="reasons">
+        </tl-select>
+
+        <tl-input *ngIf="showIssueOrderNum"
+                  fxFlex="25"
+                  formControlName="issueOrderNumControl"
+                  tooltipResourceName="cancellation-history-dialog.cancel-issue-order-num-helper"
+                  label="{{ 'cancellation-history-dialog.cancel-issue-order-num' | tlTranslate }}">
+        </tl-input>
+
+        <tl-date fxFlex="25"
+                 formControlName="dateControl"
+                 tooltipResourceName="cancellation-history-dialog.cancel-date-helper"
+                 label="{{ 'cancellation-history-dialog.cancel-date' | tlTranslate }}">
+        </tl-date>
+
+        <div *ngIf="!showIssueOrderNum" fxFlex="25"></div>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="center center">
+        <tl-textarea fxFlexFill
+                     formControlName="descriptionControl"
+                     tooltipResourceName="cancellation-history-dialog.cancel-description-helper"
+                     label="{{ 'cancellation-history-dialog.cancel-description' | tlTranslate }}">
+        </tl-textarea>
+    </div>
+
+    <tl-card tooltipResourceName="cancellation-history-dialog.cancel-status-history-helper">
+        <tl-card-title>{{ 'cancellation-history-dialog.cancel-status-history' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <tl-data-table fxFlexFill
+                           [rows]="statuses"
+                           [isRemote]="false"
+                           [isSoftDeletable]="false"
+                           [showInactiveRecords]="false"
+                           [showAddButton]="false">
+                <row-detail>
+                    <ng-template let-row="row" ngx-datatable-row-detail-template>
+                        <div fxLayout="row" fxLayoutAlign="center center" style="margin-top: 1em;">
+                            <tl-textarea fxFlex="95"
+                                         [value]="row.data.description"
+                                         [readonly]="true"
+                                         label="{{ 'cancellation-history-dialog.cancel-status-description' | tlTranslate }}">
+                            </tl-textarea>
+                        </div>
+                    </ng-template>
+                </row-detail>
+
+                <data-template-column propertyName="IsCancelled"
+                                      [flexRate]="0.2"
+                                      columnName="{{ 'cancellation-history-dialog.cancel-status-status' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.3em">
+                            <tl-icon [icon]="row.data.isCancelled ? 'highlight_off' : 'done_outline'"
+                                     iconClass="accent-color">
+                            </tl-icon>
+                            <div>{{ row.data.isCancelled ? ('cancellation-history-dialog.cancelled' | tlTranslate) : ('cancellation-history-dialog.active' | tlTranslate) }}</div>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+
+                <data-column [flexRate]="0.2"
+                             propertyName="dateOfChange"
+                             dataType="date"
+                             columnName="{{ 'cancellation-history-dialog.cancel-status-date-of-change' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="0.4"
+                             propertyName="cancellationReasonId"
+                             dataType="nomenclature"
+                             [options]="allReasons"
+                             columnName="{{ 'cancellation-history-dialog.cancel-status-reason' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="0.2"
+                             propertyName="issueOrderNum"
+                             columnName="{{ 'cancellation-history-dialog.cancel-status-issue-order-num' | tlTranslate }}">
+                </data-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+</div>

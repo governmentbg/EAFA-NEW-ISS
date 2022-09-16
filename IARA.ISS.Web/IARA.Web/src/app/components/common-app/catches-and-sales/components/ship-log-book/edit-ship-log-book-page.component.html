@@ -1,0 +1,393 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     validityCheckerGroup
+     [formGroup]="form">
+    <!-- Основна информация -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.ship-page-basic-information-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.ship-page-basic-information-panel-helper"
+                        [validityChecker]="form">
+        <div fxFlexFill fxLayout="column">
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input [fxFlex]="isEditing ? '25' : '33'"
+                          formControlName="pageNumberControl"
+                          label="{{ 'catches-and-sales.ship-page-page-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-page-number-helper"
+                          [readonly]="true">
+                </tl-input>
+                <tl-date [fxFlex]="isEditing ? '25' : '33'"
+                         formControlName="fillDateControl"
+                         label="{{ 'catches-and-sales.ship-page-fill-date' | tlTranslate }}"
+                         tooltipResourceName="catches-and-sales.ship-page-fill-date-helper"
+                         [max]="today">
+                </tl-date>
+                <!--<tl-date-time [fxFlex]="isEditing ? '25' : '33'"
+                              formControlName="iaraAcceptanceDateTimeControl"
+                              label="{{ 'catches-and-sales.ship-page-iara-acceptance-date-time' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.ship-page-iara-acceptance-date-time-helper"
+                              [min]="form.controls.fillDateControl?.value"
+                              [disabled]="viewMode">
+                </tl-date-time>-->
+                <tl-input *ngIf="isEditing"
+                          fxFlex="25"
+                          formControlName="statusControl"
+                          label="{{ 'catches-and-sales.ship-page-status' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-status-helper"
+                          [readonly]="true">
+                </tl-input>
+                <tl-input [fxFlex]="isEditing ? '25' : '33'"
+                          formControlName="shipControl"
+                          label="{{ 'catches-and-sales.ship-page-ship' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-ship-helper"
+                          [readonly]="true">
+                </tl-input>
+            </div>
+            <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="permitLicenseControl"
+                          label="{{ 'catches-and-sales.ship-page-permit-license' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-permit-license-helper"
+                          [readonly]="true">
+                </tl-input>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="fishingGearRegisterControl"
+                                 label="{{ 'catches-and-sales.ship-page-fishing-gear' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.ship-page-fishing-gear-helper"
+                                 [templateOptions]="true"
+                                 [options]="fishingGearsRegister">
+                </tl-autocomplete>
+                <tl-input fxFlex="25"
+                          formControlName="fishingGearCountControl"
+                          label="{{ 'catches-and-sales.ship-page-fishing-gear-count' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-fishing-gear-count-helper">
+                </tl-input>
+                <tl-input *ngIf="showHooksCountField"
+                          fxFlex="25"
+                          formControlName="fishingGearHookCountControl"
+                          label="{{ 'catches-and-sales.ship-page-fishing-gear-hook-count' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-fishing-gear-hook-count-helper">
+                </tl-input>
+                <div *ngIf="!showHooksCountField" fxFlex="25"></div>
+            </div>
+            <div *ngIf="showPartnerShipField" fxLayout="row" fxFlex="100">
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="partnerShipControl"
+                                 label="{{ 'catches-and-sales.ship-page-partner-ship' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.ship-page-partner-ship-helper"
+                                 [options]="ships">
+                </tl-autocomplete>
+            </div>
+        </div>
+    </tl-expansion-panel>
+    <!-- Риболовен излет -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.ship-page-fish-trip-information-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.ship-page-fish-trip-information-panel-helper"
+                        [validityChecker]="form">
+        <div fxFlexFill fxLayout="column">
+            <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1.2em">
+                <tl-date-time fxFlex="25"
+                              formControlName="fishTripStartDateTimeControl"
+                              tooltipResourceName="catches-and-sales.ship-page-fish-trip-start-date-time-helper"
+                              label="{{ 'catches-and-sales.ship-page-fish-trip-start-date-time' | tlTranslate }} ({{ 'common.date-time-control-format-hint' | tlTranslate }})"
+                              [max]="form.controls.fishTripEndDateTimeControl?.value"
+                              [disabled]="viewMode"
+                              [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                </tl-date-time>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="departurePortControl"
+                                 tooltipResourceName="catches-and-sales.ship-page-departure-port-helper"
+                                 label="{{ 'catches-and-sales.ship-page-departure-port' | tlTranslate }}"
+                                 [options]="ports">
+                </tl-autocomplete>
+                <tl-date-time fxFlex="25"
+                              formControlName="fishTripEndDateTimeControl"
+                              tooltipResourceName="catches-and-sales.ship-page-fish-trip-end-date-time-helper"
+                              label="{{ 'catches-and-sales.ship-page-fish-trip-end-date-time' | tlTranslate }} ({{ 'common.date-time-control-format-hint' | tlTranslate }})"
+                              [min]="form.controls.fishTripStartDateTimeControl?.value"
+                              [disabled]="viewMode"
+                              [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                </tl-date-time>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="arrivalPortControl"
+                                 tooltipResourceName="catches-and-sales.ship-page-arrival-port-helper"
+                                 label="{{ 'catches-and-sales.ship-page-arrival-port' | tlTranslate }}"
+                                 [options]="ports">
+                </tl-autocomplete>
+            </div>
+            <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="daysAtSeaCountControl"
+                          tooltipResourceName="catches-and-sales.ship-page-days-at-sea-helper"
+                          label="{{ 'catches-and-sales.ship-page-days-at-sea' | tlTranslate }}"
+                          [readonly]="true">
+                </tl-input>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="unloadPortControl"
+                                 label="{{ 'catches-and-sales.ship-page-origin-declaration-unloading-port' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.ship-page-origin-declaration-unloading-port-helper"
+                                 [options]="ports">
+                </tl-autocomplete>
+                <tl-date-time fxFlex="25"
+                              formControlName="unloadDateTimeControl"
+                              label="{{ 'catches-and-sales.ship-page-origin-declaration-unload-data-time' | tlTranslate }} ({{ 'common.date-time-control-format-hint' | tlTranslate }})"
+                              tooltipResourceName="catches-and-sales.ship-page-origin-declaration-unload-data-time-helper"
+                              [disabled]="viewMode"
+                              [min]="form.controls.fishTripEndDateTimeControl?.value"
+                              [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                </tl-date-time>
+                <tl-checkbox fxFlex="25"
+                             formControlName="allCatchIsTransboardedControl"
+                             tooltipResourceName="catches-and-sales.ship-page-all-catch-is-transboarded-helper"
+                             label="{{ 'catches-and-sales.ship-page-all-catch-is-transboarded' | tlTranslate }}">
+                </tl-checkbox>
+            </div>
+        </div>
+    </tl-expansion-panel>
+    <!-- Улов и информация за разтоварване -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.ship-page-catch-records-and-unloading-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.ship-page-catch-records-and-unloading-panel-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.hasInvalidCatchRecordDates !== true 
+                                                      && form.errors?.invalidOriginDeclarationCatchRecords !== true
+                                                      && form.errors?.quantityDifferences">
+        <div fxFlex="column" fxLayoutGap="1em" fxFlexFill>
+            <!-- Улов -->
+            <tl-card tooltipResourceName="catches-and-sales.ship-page-catch-records-panel-helper"
+                     validityChecker>
+                <tl-card-title>{{ 'catches-and-sales.ship-page-catch-records-panel' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <tl-data-table fxFlexFill
+                                   #catchRecordsTable
+                                   [rows]="catchRecords"
+                                   [isRemote]="false"
+                                   [isSoftDeletable]="true"
+                                   [showAddButton]="!viewMode"
+                                   [showInactiveRecords]="!viewMode"
+                                   (addButtonClicked)="addEditCatchRecord()"
+                                   (activeRecordChanged)="addEditCatchRecord($event, !$event.isActive || viewMode)">
+                        <row-detail>
+                            <ng-template let-row="row" ngx-datatable-row-detail-template>
+                                <tl-card>
+                                    <tl-card-title>{{ 'catches-and-sales.ship-page-catch-records-fishes-card-title' | tlTranslate }}</tl-card-title>
+                                    <tl-card-content>
+                                        <tl-data-table [isRemote]="false"
+                                                       [isSoftDeletable]="false"
+                                                       [showInactiveRecords]="false"
+                                                       [showAddButton]="false"
+                                                       [rows]="row.data.catchRecordFishes">
+                                            <data-column propertyName="catchZone"
+                                                         [flexRate]="0.2"
+                                                         columnName="{{ 'catches-and-sales.ship-page-catch-record-catch-zone' | tlTranslate }}">
+                                            </data-column>
+                                            <data-column propertyName="catchQuadrant"
+                                                         [flexRate]="0.2"
+                                                         columnName="{{ 'catches-and-sales.ship-page-catch-record-quadrant' | tlTranslate }}">
+                                            </data-column>
+                                            <data-column propertyName="fishName"
+                                                         [flexRate]="0.4"
+                                                         columnName="{{ 'catches-and-sales.ship-page-catch-record-fish' | tlTranslate }}">
+                                            </data-column>
+                                            <data-column propertyName="quantityKg"
+                                                         [flexRate]="0.2"
+                                                         columnName="{{ 'catches-and-sales.ship-page-catch-record-quantity-kg' | tlTranslate }}">
+                                            </data-column>
+                                            <data-column propertyName="isDetainedOnBoard"
+                                                         [flexRate]="0.2"
+                                                         dataType="boolean"
+                                                         columnName="{{ 'catches-and-sales.ship-page-catch-record-is-detained-on-board' | tlTranslate }}">
+                                            </data-column>
+                                        </tl-data-table>
+                                    </tl-card-content>
+                                </tl-card>
+                            </ng-template>
+                        </row-detail>
+
+                        <data-column [flexRate]="0.1"
+                                     propertyName="catchOperationsCount"
+                                     columnName="{{ 'catches-and-sales.ship-page-catch-operations-count' | tlTranslate }}">
+                        </data-column>
+                        <data-column [flexRate]="0.1"
+                                     propertyName="depth"
+                                     columnName="{{ 'catches-and-sales.ship-page-catch-fishing-gear-depth' | tlTranslate }}">
+                        </data-column>
+                        <data-column [flexRate]="0.3"
+                                     propertyName="gearEntryTime"
+                                     dataType="datetime"
+                                     columnName="{{ 'catches-and-sales.ship-page-gear-entry-time' | tlTranslate }}">
+                        </data-column>
+                        <data-column [flexRate]="0.3"
+                                     propertyName="gearExitTime"
+                                     dataType="datetime"
+                                     columnName="{{ 'catches-and-sales.ship-page-gear-exit-time' | tlTranslate }}">
+                        </data-column>
+                        <data-column [flexRate]="0.3"
+                                     propertyName="totalTime"
+                                     columnName="{{ 'catches-and-sales.ship-page-total-time' | tlTranslate }}">
+                        </data-column>
+                        <data-column [flexRate]="0.4"
+                                     propertyName="catchRecordFishesSummary"
+                                     columnName="{{ 'catches-and-sales.ship-page-catch-summary' | tlTranslate }}"></data-column>
+                        <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+                            <ng-template let-row="row" ngx-datatable-cell-template>
+                                <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                    <tl-icon-button *ngIf="row.data.isActive"
+                                                    icon="visibility"
+                                                    (buttonClicked)="addEditCatchRecord(row.data, true)"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'catches-and-sales.view-ship-page-catch-record' | tlTranslate }}">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                                    icon="edit"
+                                                    (buttonClicked)="addEditCatchRecord(row.data, false)"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'catches-and-sales.edit-ship-page-catch-record' | tlTranslate }}">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                                    icon="delete"
+                                                    (buttonClicked)="deleteCatchRecord(row)"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'catches-and-sales.delete-ship-page-catch-record' | tlTranslate }}">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="!row.data.isActive && !viewMode"
+                                                    icon="restore"
+                                                    (buttonClicked)="undoDeleteCatchRecord(row)"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'catches-and-sales.restore-ship-page-catch-record' | tlTranslate }}">
+                                    </tl-icon-button>
+                                </div>
+                            </ng-template>
+                        </data-template-column>
+                    </tl-data-table>
+                </tl-card-content>
+            </tl-card>
+            <!-- Декларация за произход -->
+            <tl-card tooltipResourceName="catches-and-sales.ship-page-declaration-of-origin-panel-helper"
+                     validityChecker
+                     [validityCheckerExtraCondition]="form.errors?.hasInvalidCatchRecordDates !== true 
+                                                      && form.errors?.invalidOriginDeclarationCatchRecords !== true
+                                                      && form.errors?.quantityDifferences">
+                <tl-card-title>{{ 'catches-and-sales.ship-page-declaration-of-origin-panel' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+                        <tl-data-table fxFlexFill
+                                       #declarationOfOriginCatchRecordsTable
+                                       [rows]="declarationOfOriginCatchRecords"
+                                       [isRemote]="false"
+                                       [isSoftDeletable]="true"
+                                       [showInactiveRecords]="false"
+                                       [showAddButton]="!viewMode"
+                                       addButtonLabel="{{ 'catches-and-sales.ship-page-declaration-of-origin-generate-catch-data' | tlTranslate }}"
+                                       (addButtonClicked)="generateOriginDeclarationFromCatchRecordFishes()"
+                                       (activeRecordChanged)="editDeclarationOfOriginCatchRecord($event, !$event.isActive || viewMode)">
+                            <div *ngIf="!viewMode" datatable-add-buttons fxLayout="row" fxLayoutGap="1em">
+                                <button mat-raised-button
+                                        color="primary"
+                                        (click)="addCatchFromPreviousTrip()">
+                                    <tl-icon icon="fa-plus-circle"></tl-icon>
+                                    {{ 'catches-and-sales.ship-page-declaration-of-origin-catch-record-add-from-external-catch' | tlTranslate }}
+                                </button>
+                            </div>
+                            <data-column propertyName="catchZone"
+                                         columnName="{{ 'catches-and-sales.ship-page-declaration-of-origin-catch-record-catch-zone' | tlTranslate }}"
+                                         [flexRate]="0.2">
+                            </data-column>
+                            <data-column propertyName="catchQuadrantId"
+                                         dataType="nomenclature"
+                                         columnName="{{ 'catches-and-sales.ship-page-declaration-of-origin-catch-record-quadrant' | tlTranslate }}"
+                                         [flexRate]="0.2"
+                                         [options]="catchZones">
+                            </data-column>
+                            <data-column propertyName="fishId"
+                                         dataType="nomenclature"
+                                         columnName="{{ 'catches-and-sales.ship-page-origin-declaration-aquatic-organism-type' | tlTranslate }}"
+                                         [flexRate]="0.4"
+                                         [options]="aquaticOrganisms">
+                            </data-column>
+                            <data-column propertyName="quantityKg"
+                                         [flexRate]="0.2"
+                                         columnName="{{ 'catches-and-sales.ship-page-origin-declaration-quantity-kg' | tlTranslate }}">
+                            </data-column>
+                            <data-column propertyName="catchFishStateId"
+                                         dataType="nomenclature"
+                                         columnName="{{ 'catches-and-sales.ship-page-origin-declaration-catch-state' | tlTranslate }}"
+                                         [flexRate]="0.4"
+                                         [options]="catchStates">
+                            </data-column>
+                            <data-column propertyName="catchFishPresentationId"
+                                         dataType="nomenclature"
+                                         columnName="{{ 'catches-and-sales.ship-page-origin-declaration-catch-presentation' | tlTranslate }}"
+                                         [flexRate]="0.4"
+                                         [options]="catchPresentations">
+                            </data-column>
+                            <data-template-column [flexRate]="0.35" [cellClass]="'justify-center'">
+                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                        <tl-icon *ngIf="!row.data.isValid"
+                                                 icon="ic-exclamation"
+                                                 iconClass="error-color"
+                                                 [size]="icIconSize"
+                                                 tooltipText="{{ 'catches-and-sales.ship-page-invalid-declaration-of-origin-catch-record' | tlTranslate }}">
+                                        </tl-icon>
+                                        <tl-icon-button icon="visibility"
+                                                        (buttonClicked)="editDeclarationOfOriginCatchRecord(row.data, true)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'catches-and-sales.ship-page-view-declaration-of-origin-catch-record' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                                        icon="edit"
+                                                        (buttonClicked)="editDeclarationOfOriginCatchRecord(row.data, false)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'catches-and-sales.ship-page-edit-declaration-of-origin-catch-record' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                                        icon="ic-copy"
+                                                        (buttonClicked)="copyDeclarationOfOriginCatchRecord(row.data)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'catches-and-sales.ship-page-copy-declaration-of-origin-catch-record' | tlTranslate }}"
+                                                        [size]="icIconSize">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                                        icon="remove"
+                                                        (buttonClicked)="removeOriginDeclarationFish(row.data)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'catches-and-sales.remove-ship-page-remove-origin-declaration-catch-record' | tlTranslate }}">
+                                        </tl-icon-button>
+                                    </div>
+                                </ng-template>
+                            </data-template-column>
+                        </tl-data-table>
+                        <mat-error *ngIf="form.touched && form.errors?.hasInvalidCatchRecordDates">
+                            * {{ 'catches-and-sales.ship-page-invalid-declaration-of-origin-catch-records-dates' | tlTranslate }}
+                        </mat-error>
+                        <mat-error *ngIf="form.errors?.invalidOriginDeclarationCatchRecords">
+                            * {{ 'catches-and-sales.ship-page-invalid-declaration-of-origin-catch-records' | tlTranslate }}
+                        </mat-error>
+                        <mat-error class="warn-orange-color" *ngIf="form.errors?.quantityDifferences">
+                            <div fxLayout="row" fxFlexFill *ngFor="let fishQuantity of form.errors?.quantityDifferences | keyvalue">
+                                <span fxLayot="row" fxFlex="100">
+                                    * {{ 'catches-and-sales.ship-page-catch-quantity-for' | tlTranslate }} {{ fishQuantity.key | nomenclatureDisplay: aquaticOrganisms }} {{ 'catches-and-sales.ship-page-differs-by' | tlTranslate }} {{ fishQuantity.value | number: '1.2-2' }}%
+                                </span>
+                            </div>
+                            <div fxLayout="row" fxFlexFill>
+                                <mat-hint fxLayout="row" fxFlex="100">
+                                    ({{ 'catches-and-sales.ship-page-quantities-can-have-max-10-percent-difference' | tlTranslate }}%)
+                                </mat-hint>
+                            </div>
+                        </mat-error>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </tl-expansion-panel>
+    <!-- Файлове -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.ship-page-files-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.ship-page-files-panel-helper"
+                        [validityChecker]="form">
+        <file-uploader-form-array formControlName="filesControl"
+                                  validityChecker
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(service)">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+</div>

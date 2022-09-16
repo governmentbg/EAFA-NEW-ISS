@@ -1,0 +1,30 @@
+﻿<div [formGroup]="formGroup" fxLayout="column" fxLayoutGap="1em" fxFlexFill>
+    <div fxLayout="row" fxFlex="100">
+        <tl-autocomplete fxFlex="70"
+                         formControlName="shipControl"
+                         label="{{ 'choose-permit-to-copy-from.ship' | tlTranslate }}"
+                         [options]="ships">
+        </tl-autocomplete>
+    </div>
+    <div fxLayout="row" fxFlex="100" fxLayoutAlign="start start">
+        <tl-autocomplete *ngIf="!isPublicApp"
+                         fxFlex="70"
+                         formControlName="permitControl"
+                         label="{{ 'choose-permit-to-copy-from.permit' | tlTranslate }}"
+                         [options]="permits"
+                         [readonly]="noShipSelected">
+        </tl-autocomplete>
+        <tl-popover-button *ngIf="noShipSelected"
+                           iconType="MAT_ICON"
+                           iconClass="accent-color"
+                           icon="info"
+                           style="vertical-align:text-bottom">
+            <pre style="font-family: inherit !important; max-width: 500px !important;">{{ 'choose-permit-to-copy-from.permit-is-readonly-info' | tlTranslate }}</pre>
+        </tl-popover-button>
+        <tl-input *ngIf="isPublicApp"
+                  fxFlex="50"
+                  formControlName="permitRegistrationNumberControl"
+                  label="{{ 'choose-permit-to-copy-from.permit-registration-number' | tlTranslate }}">
+        </tl-input>
+    </div>
+</div>

@@ -1,0 +1,78 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxFlexFill [formGroup]="editVehicleForm" class="dialog-padding">
+    <tl-card tooltipResourceName="patrol-vehicles.patrol-vehicle-basic-info-helper">
+        <tl-card-title>{{ 'patrol-vehicles.edit-patrol-vehicle-card-title' | tlTranslate }}</tl-card-title>
+        
+        <tl-card-content fxFlexFill fxLayout="column">
+            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100">
+                <tl-input fxFlex="33"
+                          formControlName="nameControl"
+                          label="{{ 'patrol-vehicles.name' | tlTranslate }}"
+                          tooltipResourceName="patrol-vehicles.name-helper">
+                </tl-input>
+
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="institutionIdControl"
+                                 [options]="institutions"
+                                 label="{{ 'patrol-vehicles.institution' | tlTranslate }}"
+                                 tooltipResourceName="patrol-vehicles.institution-helper">
+                </tl-autocomplete>
+
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="patrolVehicleTypeIdControl"
+                                 [options]="patrolVehicleTypes"
+                                 label="{{ 'patrol-vehicles.patrol-vehicle-type' | tlTranslate }}"
+                                 tooltipResourceName="patrol-vehicles.patrol-vehicle-type-helper">
+                </tl-autocomplete>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100">
+                <tl-input fxFlex="33"
+                          formControlName="externalMarkControl"
+                          label="{{ 'patrol-vehicles.external-mark' | tlTranslate }}"
+                          tooltipResourceName="patrol-vehicles.external-mark-helper">
+                </tl-input>
+
+                <tl-input fxFlex="33"
+                          formControlName="cfrControl"
+                          [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"
+                          label="{{ 'patrol-vehicles.cfr' | tlTranslate }}"
+                          tooltipResourceName="patrol-vehicles.cfr-helper">
+                </tl-input>
+
+                <tl-input fxFlex="33"
+                          formControlName="uviControl"
+                          label="{{ 'patrol-vehicles.uvi' | tlTranslate }}"
+                          tooltipResourceName="patrol-vehicles.uvi-helper">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100">
+                <tl-input fxFlex="25"
+                          formControlName="ircsCallSignControl"
+                          label="{{ 'patrol-vehicles.ircs-call-sign' | tlTranslate }}"
+                          tooltipResourceName="patrol-vehicles.ircs-call-sign-helper">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="mmsiControl"
+                          label="{{ 'patrol-vehicles.mmsi' | tlTranslate }}"
+                          tooltipResourceName="patrol-vehicles.mmsi-helper">
+                </tl-input>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="vesselTypeIdControl"
+                                 [options]="vesselTypes"
+                                 label="{{ 'patrol-vehicles.vessel-type' | tlTranslate }}"
+                                 tooltipResourceName="patrol-vehicles.vessel-type-helper">
+                </tl-autocomplete>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="flagCountryIdControl"
+                                 [options]="flagCountries"
+                                 label="{{ 'patrol-vehicles.flag-country' | tlTranslate }}"
+                                 tooltipResourceName="patrol-vehicles.flag-country-helper">
+                </tl-autocomplete>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

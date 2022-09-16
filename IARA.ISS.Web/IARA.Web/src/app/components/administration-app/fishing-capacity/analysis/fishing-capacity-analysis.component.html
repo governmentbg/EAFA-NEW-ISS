@@ -1,0 +1,92 @@
+﻿<tl-card fxFlexFill [formGroup]="form">
+    <tl-card-content fxLayout="column" fxLayoutGap="1em">
+        <div fxLayout="row" fxLayoutAlign="start center">
+            <tl-date fxFlex="15"
+                     formControlName="dateControl"
+                     [max]="today"
+                     label="{{ 'fishing-capacity.analysis-date' | tlTranslate }}"
+                     tooltipResourceName="fishing-capacity.analysis-date-helper">
+            </tl-date>
+        </div>
+
+        <div *ngIf="dataLoaded">
+            <div *ngIf="noMaximumCapacityError === true; else noError">
+                <h2>{{ 'fishing-capacity.analysis-no-maximum-capacity-for-date' | tlTranslate }}</h2>
+            </div>
+
+            <ng-template #noError>
+                <!-- Пределен риболовен капацитет -->
+                <tl-card tooltipResourceName="fishing-capacity.analysis-maximum-capacity-helper">
+                    <tl-card-title>{{ 'fishing-capacity.analysis-maximum-capacity' | tlTranslate }}</tl-card-title>
+
+                    <tl-card-content fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                        <tl-input fxFlex="15"
+                                  formControlName="maximumCapacityTonnageControl"
+                                  label="{{ 'fishing-capacity.analysis-maximum-capacity-tonnage' | tlTranslate }}"
+                                  tooltipResourceName="fishing-capacity.analysis-maximum-capacity-tonnage-helper">
+                        </tl-input>
+                        <tl-input fxFlex="15"
+                                  formControlName="maximumCapacityPowerControl"
+                                  label="{{ 'fishing-capacity.analysis-maximum-capacity-power' | tlTranslate }}"
+                                  tooltipResourceName="fishing-capacity.analysis-maximum-capacity-power-helper">
+                        </tl-input>
+                    </tl-card-content>
+                </tl-card>
+
+                <!-- Общ неизползван капацитет -->
+                <tl-card tooltipResourceName="fishing-capacity.analysis-total-unused-capacity-helper">
+                    <tl-card-title>{{ 'fishing-capacity.analysis-total-unused-capacity' | tlTranslate }}</tl-card-title>
+
+                    <tl-card-content fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                        <tl-input fxFlex="15"
+                                  formControlName="totalUnusedCapacityTonnageControl"
+                                  label="{{ 'fishing-capacity.analysis-total-unused-capacity-tonnage' | tlTranslate }}"
+                                  tooltipResourceName="fishing-capacity.analysis-total-unused-capacity-tonnage-helper">
+                        </tl-input>
+                        <tl-input fxFlex="15"
+                                  formControlName="totalUnusedCapacityPowerControl"
+                                  label="{{ 'fishing-capacity.analysis-total-unused-capacity-power' | tlTranslate }}"
+                                  tooltipResourceName="fishing-capacity.analysis-total-unused-capacity-power-helper">
+                        </tl-input>
+                    </tl-card-content>
+                </tl-card>
+
+                <!-- Общ капацитет от активни удостоверения -->
+                <tl-card tooltipResourceName="fishing-capacity.analysis-active-certificates-capacity-helper">
+                    <tl-card-title>{{ 'fishing-capacity.analysis-active-certificates-capacity' | tlTranslate }}</tl-card-title>
+
+                    <tl-card-content fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                        <tl-input fxFlex="15"
+                                  formControlName="activeCertificatesCapacityTonnageControl"
+                                  label="{{ 'fishing-capacity.analysis-active-certificates-capacity-tonnage' | tlTranslate }}"
+                                  tooltipResourceName="fishing-capacity.analysis-active-certificates-capacity-tonnage-helper">
+                        </tl-input>
+                        <tl-input fxFlex="15"
+                                  formControlName="activeCertificatesCapacityPowerControl"
+                                  label="{{ 'fishing-capacity.analysis-active-certificates-capacity-power' | tlTranslate }}"
+                                  tooltipResourceName="fishing-capacity.analysis-active-certificates-capacity-power-helper">
+                        </tl-input>
+                    </tl-card-content>
+                </tl-card>
+
+                <!-- Общ капацитет, разпределен по риболовни кораби -->
+                <tl-card tooltipResourceName="fishing-capacity.analysis-active-ship-capacity-helper">
+                    <tl-card-title>{{ 'fishing-capacity.analysis-active-ship-capacity' | tlTranslate }}</tl-card-title>
+
+                    <tl-card-content fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                        <tl-input fxFlex="15"
+                                  formControlName="activeShipCapacityTonnageControl"
+                                  label="{{ 'fishing-capacity.analysis-active-ship-capacity-tonnage' | tlTranslate }}"
+                                  tooltipResourceName="fishing-capacity.analysis-active-ship-capacity-tonnage-helper">
+                        </tl-input>
+                        <tl-input fxFlex="15"
+                                  formControlName="activeShipCapacityPowerControl"
+                                  label="{{ 'fishing-capacity.analysis-active-ship-capacity-power' | tlTranslate }}"
+                                  tooltipResourceName="fishing-capacity.analysis-active-ship-capacity-power-helper">
+                        </tl-input>
+                    </tl-card-content>
+                </tl-card>
+            </ng-template>
+        </div>
+    </tl-card-content>
+</tl-card>

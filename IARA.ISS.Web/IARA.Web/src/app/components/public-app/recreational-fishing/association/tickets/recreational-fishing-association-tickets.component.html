@@ -1,0 +1,11 @@
+﻿<association-picker *ngIf="showAssociationPicker"
+                    fxFlexFill
+                    (associationChosen)="associationChosen($event)">
+</association-picker>
+
+<recreational-fishing-tickets-content *ngIf="!showAssociationPicker"
+                                      fxFlexFill
+                                      [isAssociation]="true"
+                                      [service]="service"
+                                      [isPublicApp]="true">
+</recreational-fishing-tickets-content>

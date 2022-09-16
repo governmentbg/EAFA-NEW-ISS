@@ -1,0 +1,19 @@
+﻿<div [formGroup]="form"
+     [attr.aria-labelledby]="formField?.getLabelId()"
+     fxLayout="row"
+     fxLayoutAlign="start center"
+     fxLayoutGap="0.2em"
+     fxFill
+     class="wrapper">
+    <input #startValue
+           formControlName="startValueControl"
+           type="number"
+           [placeholder]="shouldLabelFloat ? fromLabel : ''"
+           [readonly]="readonly" />
+    <span>{{ separator }}</span>
+    <input #endValue
+           formControlName="endValueControl"
+           type="number"
+           [placeholder]="shouldLabelFloat ? toLabel : ''"
+           [readonly]="readonly" />
+</div>

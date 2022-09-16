@@ -1,0 +1,129 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     validityCheckerGroup
+     [formGroup]="form">
+    <tl-card tooltipResourceName="first-sale-basic-information-panel-helper" [validityChecker]="form">
+        <tl-card-content fxFlexFill fxLayout="column" fxLayoutGap="1em">
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input [fxFlex]="isAdd ? 33 : 25"
+                          formControlName="logBookNumberControl"
+                          label="{{ 'catches-and-sales.firt-sale-page-log-book-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.firt-sale-page-log-book-number-helper"
+                          [readonly]="true">
+                </tl-input>
+                <tl-input [fxFlex]="isAdd ? 33 : 25"
+                          formControlName="pageNumberControl"
+                          label="{{ 'catches-and-sales.firt-sale-page-page-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.firt-sale-page-page-number-helper"
+                          [readonly]="!isAdd">
+                </tl-input>
+                <tl-date [fxFlex]="isAdd ? 33 : 25"
+                         formControlName="saleDateControl"
+                         label="{{ 'catches-and-sales.first-sale-sale-date' | tlTranslate }}"
+                         tooltipResourceName="catches-and-sales.first-sale-sale-date-helper"
+                         [max]="currentDate">
+                </tl-date>
+                <tl-input *ngIf="!isAdd"
+                          fxFlex="25"
+                          formControlName="statusControl"
+                          label="{{ 'catches-and-sales.first-sale-page-status' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.first-sale-page-status-helper"
+                          [readonly]="true">
+                </tl-input>
+            </div>
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="33"
+                          formControlName="saleContractNumberControl"
+                          label="{{ 'catches-and-sales.first-sale-sale-contract-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.first-sale-sale-contract-number-helper">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="saleLocationControl"
+                          label="{{ 'catches-and-sales.first-sale-sale-location' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.first-sale-sale-location-helper">
+                </tl-input>
+                <tl-date fxFlex="33"
+                         formControlName="saleContractDateControl"
+                         label="{{ 'catches-and-sales.first-sale-sale-contract-date' | tlTranslate }}"
+                         tooltipResourceName="catches-and-sales.first-sale-sale-contract-date-helper"
+                         [max]="currentDate">
+                </tl-date>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Основна информация и Данни за продавач -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.first-sale-basic-information-and-vendor-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.first-sale-basic-information-and-vendor-panel-helper"
+                        [validityChecker]="form">
+        <div fxFlex="100" fxLayout="row">
+            <common-log-book-page-data fxFlexFill
+                                       formControlName="commonLogBookPageDataControl"
+                                       validityChecker
+                                       [logBookType]="logBookType"
+                                       [isReadonly]="true">
+            </common-log-book-page-data>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Данни за купувач -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.fisrt-sale-buyer-information-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.fisrt-sale-buyer-information-panel-helper"
+                        [validityChecker]="form">
+        <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
+            <tl-autocomplete fxFlex="100"
+                             formControlName="buyerControl"
+                             label="{{ 'catches-and-sales.first-sale-buyer' | tlTranslate }}"
+                             tooltipResourceName="catches-and-sales.first-sale-buyer-helper"
+                             [options]="registeredBuyers"
+                             [readonly]="true">
+            </tl-autocomplete>
+        </div>
+    </tl-expansion-panel>
+
+    <!--Данни за продукти от риболов, обект на първа продажба -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.first-sale-products-information-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.first-sale-products-information-panel-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="noAvailableProducts !== true">
+        <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+            <div fxFlex="100" fxLayout="row">
+                <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+                    <log-book-page-products fxFlexFill
+                                            formControlName="productsControl"
+                                            validityChecker
+                                            [isReadonly]="viewMode"
+                                            [service]="service"
+                                            [logBookType]="logBookType"
+                                            [showAddButton]="false"
+                                            [originProducts]="originPossibleProducts">
+                    </log-book-page-products>
+                    <mat-error *ngIf="noAvailableProducts">
+                        * {{ 'catches-and-sales.first-sale-products-no-available-products-in-origin-document-error' | tlTranslate }}
+                    </mat-error>
+                </div>
+            </div>
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="end center">
+                <tl-input fxFlex="30"
+                          formControlName="productsTotalValueControl"
+                          label="{{ 'catches-and-sales.first-sale-products-total-value' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.first-sale-products-total-value-helper"
+                          [readonly]="true">
+                </tl-input>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.first-sale-files-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.first-sale-files-panel-helper"
+                        [validityChecker]="form">
+        <file-uploader-form-array formControlName="filesControl"
+                                  validityChecker
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(service)">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+</div>

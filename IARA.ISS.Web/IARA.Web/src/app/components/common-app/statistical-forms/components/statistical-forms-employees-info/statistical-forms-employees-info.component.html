@@ -1,0 +1,18 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="form">
+    <statistical-forms-employees-info-table formControlName="workDaysControl"
+                                            cardLabel="{{ 'statistical-forms.work-day-duration' | tlTranslate }}"
+                                            infoTypeColumnLabel="{{ 'statistical-forms.duration' | tlTranslate }}">
+    </statistical-forms-employees-info-table>
+    <statistical-forms-employees-info-table formControlName="ageControl"
+                                            cardLabel="{{ 'statistical-forms.employees-age' | tlTranslate }}"
+                                            infoTypeColumnLabel="{{ 'statistical-forms.age' | tlTranslate }}">
+    </statistical-forms-employees-info-table>
+    <statistical-forms-employees-info-table formControlName="educationControl"
+                                            cardLabel="{{ 'statistical-forms.employees-education' | tlTranslate }}"
+                                            infoTypeColumnLabel="{{ 'statistical-forms.education' | tlTranslate }}">
+    </statistical-forms-employees-info-table>
+    <statistical-forms-employees-info-table formControlName="nationalityControl"
+                                            cardLabel="{{ 'statistical-forms.employees-nationality' | tlTranslate }}"
+                                            infoTypeColumnLabel="{{ 'statistical-forms.nationality' | tlTranslate }}">
+    </statistical-forms-employees-info-table>
+</div>

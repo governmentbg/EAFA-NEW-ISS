@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:lh="clr-namespace:IARA.Mobile.Insp.Helpers"
+        xmlns:nom="clr-namespace:IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;assembly=IARA.Mobile.Insp.Application"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection.FishingGearInspectionPage"
+        x:DataType="local:FishingGearInspectionViewModel"
+        x:TypeArguments="local:FishingGearInspectionViewModel"
+        x:Name="page"
+        PageInfo="{rt:Translate PageInfo, Group=FishingGearInspection}"
+        Title="{rt:Translate Title, Group=FishingGearInspection}"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <lc:TLForwardSections ExpandAll="{Binding ExpandAll}">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
+                Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
+            <StackLayout Padding="10">
+                <lc:InspectionGeneralInfoView BindingContext="{Binding InspectionGeneralInfo}" />
+            </StackLayout>
+        </sv:SectionView>
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Ship}, Color=White, Size=100}"
+                Text="{rt:Translate ShipPoundNetData, Group=FishingGearInspection}"
+                IsExpanded="False">
+            <StackLayout Padding="10">
+                <tl:TLRadioButtonListView IsLabelVisible="False"
+                        Command="{Binding FishingGearTypeSwitched}"
+                        ItemsSource="{Binding FishingGearTypes}"
+                        SelectedItem="{Binding FishingGearType}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <StackLayout IsVisible="{Binding BindingContext.FishingGearType.Code, Converter={StaticResource Equal}, ConverterParameter={Static local:FishingGearInspectionViewModel.FishingShip}, Source={Reference page}}">
+                    <lc:InspectedShipDataView ShipInRegisterLabel="{rt:Translate ShipInRegister, Group=FishingGearInspection}"
+                            BindingContext="{Binding ShipData}" />
+                    <lc:InspectionHarbourView BindingContext="{Binding LastHarbour}"
+                            InRegisterLabel="{rt:Translate LastPortInRegister, Group=FishingGearInspection}" />
+                </StackLayout>
+                <StackLayout IsVisible="{Binding FishingGearType.Code, Converter={StaticResource Equal}, ConverterParameter={Static local:FishingGearInspectionViewModel.FishingPoundNet}}">
+                    <lc:CustomInfinitePicker Title="{rt:Translate PoundNet, Group=FishingGearInspection}"
+                            ValidState="{Binding PoundNet}"
+                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                </StackLayout>
+                <tl:TLNativePicker Title="{rt:Translate CheckReason, Group=FishingGearInspection}"
+                        ValidState="{Binding CheckReason}"
+                        ItemsSource="{Binding CheckReasons}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLNativePicker Title="{rt:Translate RecheckReason, Group=FishingGearInspection}"
+                        ValidState="{Binding RecheckReason}"
+                        ItemsSource="{Binding RecheckReasons}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLEntry Title="{rt:Translate OtherRecheckReason, Group=FishingGearInspection}"
+                        ValidState="{Binding OtherRecheckReason}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}"
+                        IsVisible="{Binding RecheckReason.Value.Code, Converter={StaticResource Equal}, ConverterParameter=Other, FallbackValue=False}" />
+            </StackLayout>
+        </sv:SectionView>
+        <sv:SectionView Image="{lh:Image hook}"
+                Text="{rt:Translate FishingGearData, Group=FishingGearInspection}"
+                IsExpanded="False">
+            <StackLayout Padding="10">
+                <lc:CustomInfinitePicker Title="{rt:Translate Permit, Group=FishingGearInspection}"
+                        ValidState="{Binding Permit}"
+                        Command="{Binding PermitChosen}"
+                        DisplayValue="DisplayValue"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}">
+                    <DataTemplate>
+                        <Grid x:DataType="nom:PermitNomenclatureDto"
+                                RowDefinitions="Auto,Auto,1"
+                                RowSpacing="0">
+                            <tl:TLRichLabel Margin="5,5,5,0">
+                                <Span Text="{Binding Name}" />
+                                <Span Text=" (" />
+                                <Span Text="{Binding Code}" />
+                                <Span Text=")" />
+                            </tl:TLRichLabel>
+                            <StackLayout Grid.Row="1"
+                                    Orientation="Horizontal"
+                                    Margin="5,0,5,10">
+                                <tl:TLRichLabel>
+                                    <Span Text="{rt:Translate From, Group=Common}" />
+                                    <Span Text=": " />
+                                    <sv:DateSpan Date="{Binding From}" />
+                                </tl:TLRichLabel>
+                                <tl:TLRichLabel>
+                                    <Span Text="{rt:Translate To, Group=Common}" />
+                                    <Span Text=": " />
+                                    <sv:DateSpan Date="{Binding To}" />
+                                </tl:TLRichLabel>
+                            </StackLayout>
+                            <BoxView Grid.Row="2"
+                                    Margin="5,0"
+                                    Color="LightGray" />
+                        </Grid>
+                    </DataTemplate>
+                </lc:CustomInfinitePicker>
+                <lc:FishingGearsView BindingContext="{Binding FishingGears}" />
+                <lc:TLGeneratedToggles ValidState="{Binding Toggles}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+            </StackLayout>
+        </sv:SectionView>
+        <lc:AdditionalInfoView BindingContext="{Binding AdditionalInfo}" />
+        <lc:InspectionFilesView BindingContext="{Binding InspectionFiles}" />
+        <lc:SignaturesView BindingContext="{Binding Signatures}" />
+        <lc:SaveButtonsLayout />
+    </lc:TLForwardSections>
+</sv:BasePage>

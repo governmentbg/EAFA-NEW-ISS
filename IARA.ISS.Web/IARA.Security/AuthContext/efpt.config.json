@@ -1,0 +1,98 @@
+﻿{
+   "CodeGenerationMode": 0,
+   "ContextClassName": "AuthDbContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": "",
+   "OutputContextPath": "Models\/..\/AuthContext",
+   "OutputPath": "Models\/EntityModels",
+   "ProjectRootNamespace": "IARA.Security",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 1,
+   "Tables": [
+      {
+         "Name": "Legals.Legals",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.Persons",
+         "ObjectType": 0
+      },
+      {
+         "Name": "SysLog.AuditLog",
+         "ObjectType": 0
+      },
+      {
+         "Name": "SysLog.ErrorLog",
+         "ObjectType": 0
+      },
+      {
+         "Name": "SysLog.NAuditLogActionTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "SysLog.NAuditLogTables",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Admin.NNotificationTemplates",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.NPermissionGroups",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.NPermissions",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.NPermissionTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.RolePermissions",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.Roles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.UserInfos",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.UserLegals",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.UserRoles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.Users",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": "IARA_ISS",
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoConstructor": false,
+   "UseNoDefaultConstructor": true,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSpatial": false
+}

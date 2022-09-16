@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sv:SectionView xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Insp.Controls.AdditionalInfoView"
+        x:DataType="vm:AdditionalInfoViewModel"
+        x:Name="view"
+        Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Question}, Color=White, Size=100}"
+        Text="{rt:Translate AdditionalInfo, Group=GeneralInfo}"
+        IsExpanded="False">
+    <sv:SectionView.InnerContent>
+        <StackLayout Padding="10">
+            <tl:TLEditor Title="{rt:Translate ObservationsOrViolations, Group=GeneralInfo}"
+                    ValidState="{Binding ObservationsOrViolations}"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+            <StackLayout x:Name="moreStack"
+                    BindingContext="{Binding Inspection}"
+                    IsVisible="{Binding AdditionalFields.Count, Converter={StaticResource NotEqual}, ConverterParameter=0, Source={Reference view}}" />
+            <tl:TLEditor Title="{rt:Translate InspectorComment, Group=GeneralInfo}"
+                    ValidState="{Binding InspectorComment}"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+            <tl:TLEditor Title="{rt:Translate ActionsTaken, Group=GeneralInfo}"
+                    ValidState="{Binding ActionsTaken}"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+            <tl:TLCheckView Text="{rt:Translate AdministrativeViolation, Group=GeneralInfo}"
+                    ValidState="{Binding AdministrativeViolation}"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+        </StackLayout>
+    </sv:SectionView.InnerContent>
+</sv:SectionView>

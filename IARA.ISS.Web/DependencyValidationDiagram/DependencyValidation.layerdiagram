@@ -1,0 +1,235 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<layerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="eec44804-fedf-4ad3-98c3-91c5e338b8d9" xmlns="http://schemas.microsoft.com/VisualStudio/TeamArchitect/LayerDesigner">
+  <layers>
+    <layer Id="3102c00d-dc64-4cb6-b1ea-f53140e323fc" name="IARA.Web">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="dd5ede85-0a8b-4ccb-b4aa-5e178535c4bd" direction="Forward">
+          <layerMoniker Id="c940d3e1-266d-4261-bbcf-7a9396f70bff" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="cda906ed-ec80-4f8c-a411-3ec65057757b" direction="Forward">
+          <layerMoniker Id="ba56e7bc-f39f-4802-99f2-a2037647200d" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="586f2007-e73c-4a73-a162-1c07c2b72da1" direction="Forward">
+          <layerMoniker Id="95dbeee6-73a9-4ca3-bf4d-6cfd6c9dc2c8" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="6bd4c9eb-1622-472f-aa84-77a560b1fb69" direction="Forward">
+          <layerMoniker Id="98d55e31-a12d-4939-a88f-70f4672bbd7e" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="f880e0fc-8d6b-497f-9d65-5d87e53b7b34" direction="Forward">
+          <layerMoniker Id="8cf2fbfd-7119-47b7-b00b-77fe1cd44e9c" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <references>
+        <reference Id="8c83dad8-cafe-4a95-aa40-7572ef005601" name="IARA.Web">
+          <ArtifactNode Label="IARA.Web" Category="CodeSchema_Project" Id="(Assembly=../IARA.Web/IARA.Web.csproj)">
+            <Category Ref="File" />
+          </ArtifactNode>
+          <ExpandedNode Id="(Assembly=IARA.Web)" Label="IARA.Web.dll" Category="CodeSchema_Assembly">
+            <Category Ref="FileSystem.Category.FileOfType.dll" />
+            <LinkCategory Ref="Produces" />
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+    <layer Id="efc0b945-08e8-41de-825e-0205d042c03e" name="IARA.Infrastructure">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="55116d68-3314-4f4f-99d6-79b197664581" direction="Forward">
+          <layerMoniker Id="ba56e7bc-f39f-4802-99f2-a2037647200d" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="c2783469-d2e9-448f-a22d-e2d1a359ae02" direction="Forward">
+          <layerMoniker Id="c940d3e1-266d-4261-bbcf-7a9396f70bff" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="69ef754c-1211-468b-99a1-4b9b8dcd6322" direction="Forward">
+          <layerMoniker Id="cba35dc1-bd36-48cf-ae31-b196a8e4b75f" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="0f6efecb-3b80-407e-b03b-9a7318d73cc0" direction="Forward">
+          <layerMoniker Id="4c5a50d1-9249-447b-800f-062a5db279d9" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="f854c39c-faf9-4d75-bb69-d0f09aff102f" direction="Forward">
+          <layerMoniker Id="98d55e31-a12d-4939-a88f-70f4672bbd7e" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="a603271e-c6f7-4dbe-9e24-e9297951769d" direction="Forward">
+          <layerMoniker Id="9e647049-804e-484d-845d-c012ed7e68ba" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <references>
+        <reference Id="474b4a16-8e6b-4649-a565-9e6e87d5ba42" name="IARA.Infrastructure">
+          <ArtifactNode Label="IARA.Infrastructure" Category="CodeSchema_Project" Id="(Assembly=../IARA.Infrastructure/IARA.Infrastructure.csproj)">
+            <Category Ref="File" />
+          </ArtifactNode>
+          <ExpandedNode Id="(Assembly=IARA.Infrastructure)" Label="IARA.Infrastructure.dll" Category="CodeSchema_Assembly">
+            <Category Ref="FileSystem.Category.FileOfType.dll" />
+            <LinkCategory Ref="Produces" />
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+    <layer Id="ba56e7bc-f39f-4802-99f2-a2037647200d" name="IARA.Interfaces">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="2456c21f-9830-45b0-9afc-aab934915fef" direction="Forward">
+          <layerMoniker Id="c940d3e1-266d-4261-bbcf-7a9396f70bff" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="ca7fa9f9-ca77-489b-ab6c-8530118a4a3f" direction="Forward">
+          <layerMoniker Id="98d55e31-a12d-4939-a88f-70f4672bbd7e" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <references>
+        <reference Id="c35e4b6d-2390-4a47-966d-836ff52281be" name="IARA.Interfaces">
+          <ArtifactNode Label="IARA.Interfaces" Category="CodeSchema_Project" Id="(Assembly=../IARA.Interfaces/IARA.Interfaces.csproj)">
+            <Category Ref="File" />
+          </ArtifactNode>
+          <ExpandedNode Id="(Assembly=IARA.Interfaces)" Label="IARA.Interfaces.dll" Category="CodeSchema_Assembly">
+            <Category Ref="FileSystem.Category.FileOfType.dll" />
+            <LinkCategory Ref="Produces" />
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+    <layer Id="cba35dc1-bd36-48cf-ae31-b196a8e4b75f" name="IARA.EntityModels">
+      <references>
+        <reference Id="c2693699-c8d9-4041-95fc-4a0a1d6d6302" name="IARA.EntityModels">
+          <ArtifactNode Label="IARA.EntityModels" Category="CodeSchema_Project" Id="(Assembly=../IARA.EntityModels/IARA.EntityModels.csproj)">
+            <Category Ref="File" />
+          </ArtifactNode>
+          <ExpandedNode Id="(Assembly=IARA.EntityModels)" Label="IARA.EntityModels.dll" Category="CodeSchema_Assembly">
+            <Category Ref="FileSystem.Category.FileOfType.dll" />
+            <LinkCategory Ref="Produces" />
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+    <layer Id="c940d3e1-266d-4261-bbcf-7a9396f70bff" name="IARA.DomainModels">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="0c596cf1-16c0-4dbe-86f1-f81ecf01c996" direction="Forward">
+          <layerMoniker Id="98d55e31-a12d-4939-a88f-70f4672bbd7e" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <references>
+        <reference Id="5046c23c-2ecd-44f2-9cce-af5de6d0a848" name="IARA.DomainModels">
+          <ArtifactNode Label="IARA.DomainModels" Category="CodeSchema_Project" Id="(Assembly=../IARA.DTModels/IARA.DomainModels.csproj)">
+            <Category Ref="File" />
+          </ArtifactNode>
+          <ExpandedNode Id="(Assembly=IARA.DomainModels)" Label="IARA.DomainModels.dll" Category="CodeSchema_Assembly">
+            <Category Ref="FileSystem.Category.FileOfType.dll" />
+            <LinkCategory Ref="Produces" />
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+    <layer Id="8cf2fbfd-7119-47b7-b00b-77fe1cd44e9c" name="IARA.DI">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="09bf1170-3210-4cbb-b935-31edc11d25f5" direction="Forward">
+          <layerMoniker Id="efc0b945-08e8-41de-825e-0205d042c03e" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="1b638218-8b45-4f3a-9e77-5ed911e85d17" direction="Forward">
+          <layerMoniker Id="4c5a50d1-9249-447b-800f-062a5db279d9" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="e5f1a987-ea3d-42a2-b5ba-26751d24d9dd" direction="Forward">
+          <layerMoniker Id="ba56e7bc-f39f-4802-99f2-a2037647200d" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="d9bbb4e2-9a1a-4188-95e3-ac0f901ede25" direction="Forward">
+          <layerMoniker Id="98d55e31-a12d-4939-a88f-70f4672bbd7e" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="bf2195de-1286-4bbb-8d87-5f449ef00fbe" direction="Forward">
+          <layerMoniker Id="95dbeee6-73a9-4ca3-bf4d-6cfd6c9dc2c8" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <references>
+        <reference Id="41e3e97f-5ebc-43e2-9e8c-4c12f3678a92" name="IARA.DI">
+          <ArtifactNode Label="IARA.DI" Category="CodeSchema_Project" Id="(Assembly=../IARA.DI/IARA.DI.csproj)">
+            <Category Ref="File" />
+          </ArtifactNode>
+          <ExpandedNode Id="(Assembly=IARA.DI)" Label="IARA.DI.dll" Category="CodeSchema_Assembly">
+            <Category Ref="FileSystem.Category.FileOfType.dll" />
+            <LinkCategory Ref="Produces" />
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+    <layer Id="4c5a50d1-9249-447b-800f-062a5db279d9" name="IARA.DataAccess">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="b01da331-9a93-431a-b952-60ca7b8700f8" direction="Forward">
+          <layerMoniker Id="cba35dc1-bd36-48cf-ae31-b196a8e4b75f" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="39388ca2-af3c-4e16-acf9-47d3f3a78dcb" direction="Forward">
+          <layerMoniker Id="98d55e31-a12d-4939-a88f-70f4672bbd7e" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <references>
+        <reference Id="c97d895e-b8a9-4ba9-931e-a49740e92d80" name="IARA.DataAccess">
+          <ArtifactNode Label="IARA.DataAccess" Category="CodeSchema_Project" Id="(Assembly=../IARA.DataAccess/IARA.DataAccess.csproj)">
+            <Category Ref="File" />
+          </ArtifactNode>
+          <ExpandedNode Id="(Assembly=IARA.DataAccess)" Label="IARA.DataAccess.dll" Category="CodeSchema_Assembly">
+            <Category Ref="FileSystem.Category.FileOfType.dll" />
+            <LinkCategory Ref="Produces" />
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+    <layer Id="98d55e31-a12d-4939-a88f-70f4672bbd7e" name="IARA.Common">
+      <references>
+        <reference Id="d79054a4-a16d-47fa-b531-0bfd661e5e91" name="IARA.Common">
+          <ArtifactNode Label="IARA.Common" Category="CodeSchema_Project" Id="(Assembly=../IARA.Common/IARA.Common.csproj)">
+            <Category Ref="File" />
+          </ArtifactNode>
+          <ExpandedNode Id="(Assembly=IARA.Common)" Label="IARA.Common.dll" Category="CodeSchema_Assembly">
+            <Category Ref="FileSystem.Category.FileOfType.dll" />
+            <LinkCategory Ref="Produces" />
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+    <layer Id="95dbeee6-73a9-4ca3-bf4d-6cfd6c9dc2c8" name="IARA.WebHelpers">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="472a35ff-d617-4436-b986-113285be7fca" direction="Forward">
+          <layerMoniker Id="98d55e31-a12d-4939-a88f-70f4672bbd7e" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="4ed32511-09fc-47cb-941f-6f361567889a" direction="Forward">
+          <layerMoniker Id="ba56e7bc-f39f-4802-99f2-a2037647200d" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="9a2fe3f8-6df0-41ae-8a5e-569fa5fd3277" direction="Forward">
+          <layerMoniker Id="9e647049-804e-484d-845d-c012ed7e68ba" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <references>
+        <reference Id="19f98a16-e85c-4a5b-9aec-3ffc08fd66ed" name="IARA.WebHelpers">
+          <ArtifactNode Label="IARA.WebHelpers" Category="CodeSchema_Project" Id="(Assembly=../IARA.WebHelpers/IARA.WebHelpers.csproj)">
+            <Category Ref="File" />
+          </ArtifactNode>
+          <ExpandedNode Id="(Assembly=IARA.WebHelpers)" Label="IARA.WebHelpers.dll" Category="CodeSchema_Assembly">
+            <Category Ref="FileSystem.Category.FileOfType.dll" />
+            <LinkCategory Ref="Produces" />
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+    <layer Id="9e647049-804e-484d-845d-c012ed7e68ba" name="IARA.Security">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="9901b38f-9e4d-466b-bcb2-b7761a42f11b" direction="Forward">
+          <layerMoniker Id="98d55e31-a12d-4939-a88f-70f4672bbd7e" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <references>
+        <reference Id="3a826fe2-546b-40a7-935e-a2f9d570b653" name="IARA.Security">
+          <ArtifactNode Label="IARA.Security" Category="CodeSchema_Project" Id="(Assembly=../../IARA.IdentityServer/IARA.Security/IARA.Security.csproj)">
+            <Category Ref="File" />
+          </ArtifactNode>
+          <ExpandedNode Id="(Assembly=IARA.Security)" Label="IARA.Security.dll" Category="CodeSchema_Assembly">
+            <LinkCategory Ref="Produces" />
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+  </layers>
+</layerModel>

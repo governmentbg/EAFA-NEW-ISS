@@ -1,0 +1,105 @@
+UserName: SYSTEM
+Message: Executed endpoint '/notifications'
+ExceptionSource: 
+StackTrace: 
+LogDate: Client: 
+UserName: SYSTEM
+Message: Executing endpoint '/notifications/negotiate'
+ExceptionSource: 
+StackTrace: 
+LogDate: Client: 
+UserName: SYSTEM
+Message: Executing endpoint 'IARA.Web.Controllers.Public.UserController.GetUserAuthInfo (IARA.WebAPI)'
+ExceptionSource: 
+StackTrace: 
+LogDate: Client: 
+UserName: SYSTEM
+Message: Executed endpoint '/notifications/negotiate'
+ExceptionSource: 
+StackTrace: 
+LogDate: Client: 
+UserName: SYSTEM
+Message: Executing endpoint '/notifications'
+ExceptionSource: 
+StackTrace: 
+LogDate: Client: 
+UserName: SYSTEM
+Message: ---BEGIN MESSAGE---
+No connection could be made because the target machine actively refused it.
+---END MESSAGE---
+---BEGIN MESSAGE---
+Exception while connecting
+---END MESSAGE---
+---BEGIN MESSAGE---
+An exception has been raised that is likely due to a transient failure.
+---END MESSAGE---
+
+ExceptionSource: /
+StackTrace: ---BEGIN STACKTRACE---
+   at Npgsql.NpgsqlConnector.Connect(NpgsqlTimeout timeout)
+---END STACKTRACE---
+---BEGIN STACKTRACE---
+   at Npgsql.NpgsqlConnector.Connect(NpgsqlTimeout timeout)
+   at Npgsql.NpgsqlConnector.RawOpen(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.ConnectorPool.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.ConnectorPool.<>c__DisplayClass38_0.<<Rent>g__RentAsync|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Npgsql.NpgsqlConnection.<>c__DisplayClass41_0.<<Open>g__OpenAsync|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Npgsql.NpgsqlConnection.Open()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternal(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.Enumerator.InitializeReader(DbContext _, Boolean result)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+---END STACKTRACE---
+---BEGIN STACKTRACE---
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.Enumerator.MoveNext()
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at IARA.Infrastructure.Services.PermissionsService.GetPermissionNamesByIds(List`1 permissionIds) in C:\Repos\IARA_TFS\03-Development\Codebase\IARA.ISS.Web-DEV\IARA.Infrastructure\Services\Permissions\PermissionsService.cs:line 32
+   at IARA.WebHelpers.Abstract.BaseController.FillCurrentUser() in C:\Repos\IARA_TFS\03-Development\Codebase\IARA.ISS.Web-DEV\IARA.WebHelpers\Abstract\BaseController.cs:line 168
+   at IARA.WebHelpers.Abstract.BaseController.OnActionExecuting(ActionExecutingContext context) in C:\Repos\IARA_TFS\03-Development\Codebase\IARA.ISS.Web-DEV\IARA.WebHelpers\Abstract\BaseController.cs:line 75
+   at Microsoft.AspNetCore.Mvc.Filters.ControllerActionFilter.ExecuteActionFilter(ActionExecutingContext context, ActionExecutionDelegate next, IActionFilter actionFilter)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextExceptionFilterAsync>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+---END STACKTRACE---
+
+LogDate: Client: 
+UserName: SYSTEM
+Message: Executed endpoint 'IARA.Web.Controllers.Public.UserController.GetUserAuthInfo (IARA.WebAPI)'
+ExceptionSource: 
+StackTrace: 
+LogDate: Client: 
+UserName: SYSTEM
+Message: Failed to invoke hub method 'GetUserNotifications'.
+ExceptionSource: /
+StackTrace:    at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.Enumerator.MoveNext()
+   at System.Linq.Enumerable.Single[TSource](IEnumerable`1 source)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.Execute[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.Count[TSource](IQueryable`1 source)
+   at IARA.Infrastructure.Services.Common.WebNotificationsService.GetUserNotifications(Int32 userId, Int32 page, Int32 pageSize) in C:\Repos\IARA_TFS\03-Development\Codebase\IARA.ISS.Web-DEV\IARA.Infrastructure\Services\Common\WebNotificationsService.cs:line 63
+   at IARA.WebAPI.Hubs.NotificationsHub.GetUserNotifications(BaseGridRequestModel request) in C:\Repos\IARA_TFS\03-Development\Codebase\IARA.ISS.Web-DEV\IARA.API\Hubs\Notifications\NotificationsHub.cs:line 86
+   at lambda_method19(Closure , Object , Object[] )
+   at Microsoft.AspNetCore.SignalR.Internal.DefaultHubDispatcher`1.ExecuteMethod(ObjectMethodExecutor methodExecutor, Hub hub, Object[] arguments)
+   at Microsoft.AspNetCore.SignalR.Internal.DefaultHubDispatcher`1.<>c__DisplayClass16_0.<<Invoke>g__ExecuteInvocation|0>d.MoveNext()
+LogDate: Client: 
+UserName: SYSTEM
+Message: Failed to invoke hub method 'GetUserNotifications'.
+ExceptionSource: /
+StackTrace:    at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.Enumerator.MoveNext()
+   at System.Linq.Enumerable.Single[TSource](IEnumerable`1 source)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.Execute[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.Count[TSource](IQueryable`1 source)
+   at IARA.Infrastructure.Services.Common.WebNotificationsService.GetUserNotifications(Int32 userId, Int32 page, Int32 pageSize) in C:\Repos\IARA_TFS\03-Development\Codebase\IARA.ISS.Web-DEV\IARA.Infrastructure\Services\Common\WebNotificationsService.cs:line 63
+   at IARA.WebAPI.Hubs.NotificationsHub.GetUserNotifications(BaseGridRequestModel request) in C:\Repos\IARA_TFS\03-Development\Codebase\IARA.ISS.Web-DEV\IARA.API\Hubs\Notifications\NotificationsHub.cs:line 86
+   at lambda_method19(Closure , Object , Object[] )
+   at Microsoft.AspNetCore.SignalR.Internal.DefaultHubDispatcher`1.ExecuteMethod(ObjectMethodExecutor methodExecutor, Hub hub, Object[] arguments)
+   at Microsoft.AspNetCore.SignalR.Internal.DefaultHubDispatcher`1.<>c__DisplayClass16_0.<<Invoke>g__ExecuteInvocation|0>d.MoveNext()
+LogDate: Client: 

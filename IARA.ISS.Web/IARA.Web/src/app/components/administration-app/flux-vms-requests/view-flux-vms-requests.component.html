@@ -1,0 +1,97 @@
+﻿<div [formGroup]="form" fxLayout="column" fxLayoutGap="1em" class="dialog-padding">
+    <tl-card tooltipResourceName="flux-vms-request.basic-info-helper">
+        <tl-card-title>{{ 'flux-vms-requests.basic-info' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <div fxFlex="50" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-input fxFlex="50"
+                              formControlName="domainNameControl"
+                              label="{{ 'flux-vms-requests.domain-name' | tlTranslate }}"
+                              tooltipResourceName="flux-vms-requests.domain-name-helper">
+                    </tl-input>
+
+                    <tl-input fxFlex="50"
+                              formControlName="webServiceNameControl"
+                              label="{{ 'flux-vms-requests.web-service-name' | tlTranslate }}"
+                              tooltipResourceName="flux-vms-requests.web-service-name-helper">
+                    </tl-input>
+                </div>
+
+                <tl-checkbox fxFlex="50"
+                             formControlName="isOutgoingControl"
+                             label="{{ 'flux-vms-requests.is-outgoing' | tlTranslate }}"
+                             tooltipResourceName="flux-vms-requests.is-outgoing-helper">
+                </tl-checkbox>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="50"
+                          formControlName="requestUUIDControl"
+                          label="{{ 'flux-vms-requests.request-uuid' | tlTranslate }}"
+                          tooltipResourceName="flux-vms-requests.request-uuid-helper">
+                </tl-input>
+
+                <tl-date fxFlex="50"
+                         formControlName="requestDateTimeControl"
+                         label="{{ 'flux-vms-requests.request-date-time' | tlTranslate }}"
+                         tooltipResourceName="flux-vms-requests.request-date-time-helper">
+                </tl-date>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="50"
+                          formControlName="responseUUIDControl"
+                          label="{{ 'flux-vms-requests.response-uuid' | tlTranslate }}"
+                          tooltipResourceName="flux-vms-requests.response-uuid-helper">
+                </tl-input>
+
+                <tl-date fxFlex="50"
+                         formControlName="responseDateTimeControl"
+                         label="{{ 'flux-vms-requests.response-date-time' | tlTranslate }}"
+                         tooltipResourceName="flux-vms-requests.response-date-time-helper">
+                </tl-date>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="50"
+                          formControlName="responseStatusControl"
+                          label="{{ 'flux-vms-requests.response-status' | tlTranslate }}"
+                          tooltipResourceName="flux-vms-requests.response-status-helper">
+                </tl-input>
+
+                <div fxFlex="50"></div>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-textarea fxFlex="100"
+                             formControlName="errorDescriptionControl"
+                             label="{{ 'flux-vms-requests.error-description' | tlTranslate }}"
+                             tooltipResourceName="flux-vms-requests.error-description-helper">
+                </tl-textarea>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="1em">
+        <tl-card fxFlex="50" tooltipResourceName="flux-vms-requests.request-content-helper">
+            <tl-card-title>{{ 'flux-vms-requests.request-content' | tlTranslate }}</tl-card-title>
+
+            <tl-card-content>
+                <ngx-json-viewer [json]="requestContent"
+                                 [expanded]="false">
+                </ngx-json-viewer>
+            </tl-card-content>
+        </tl-card>
+
+        <tl-card fxFlex="50" tooltipResourceName="flux-vms-requests.response-content-helper">
+            <tl-card-title>{{ 'flux-vms-requests.response-content' | tlTranslate }}</tl-card-title>
+
+            <tl-card-content>
+                <ngx-json-viewer [json]="responseContent"
+                                 [expanded]="false">
+                </ngx-json-viewer>
+            </tl-card-content>
+        </tl-card>
+    </div>
+</div>

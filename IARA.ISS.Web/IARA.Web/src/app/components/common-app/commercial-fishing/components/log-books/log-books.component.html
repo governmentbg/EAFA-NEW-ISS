@@ -1,0 +1,115 @@
+﻿<div fxLayout="column" fxFlexFill fxLayoutGap="1em">
+    <tl-data-table fxFlexFill
+                   #logBooksTable
+                   [rows]="logBooks"
+                   [isRemote]="false"
+                   [isSoftDeletable]="true"
+                   [showAddButton]="!isReadonly"
+                   [showInactiveRecords]="showInactivePagesAndDocuments"
+                   (addButtonClicked)="addEditLogBook()"
+                   (activeRecordChanged)="addEditLogBook($event)">
+        <data-column [flexRate]="0.3"
+                     propertyName="logbookNumber"
+                     columnName="{{ 'catches-and-sales.log-book-number' | tlTranslate }}">
+        </data-column>
+        <data-column *ngIf="logBookGroup !== logBookGroupsEnum.Aquaculture"
+                     [flexRate]="0.2"
+                     propertyName="logBookTypeId"
+                     columnName="{{ 'catches-and-sales.log-book-type' | tlTranslate }}"
+                     dataType="nomenclature"
+                     [options]="logBookTypes">
+        </data-column>
+        <data-column [flexRate]="0.2"
+                     propertyName="issueDate"
+                     dataType="date"
+                     columnName="{{ 'catches-and-sales.log-book-issue-date' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.2"
+                     propertyName="finishDate"
+                     dataType="date"
+                     columnName="{{ 'catches-and-sales.log-book-finish-date' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.2"
+                     propertyName="statusId"
+                     dataType="nomenclature"
+                     [options]="logBookStatuses"
+                     columnName="{{ 'catches-and-sales.log-book-status' | tlTranslate }}">
+        </data-column>
+        <data-template-column [flexRate]="0.2"
+                              columnName="{{ 'catches-and-sales.log-book-from-old-permit' | tlTranslate }}">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                <div *ngIf="row.data.isForRenewal && (row.data.statusId === null || row.data.statusId === undefined)" fxLayout="row" fxFlex="100">
+                    {{ 'catches-and-sales.log-book-from-old-permit-license-waits-employee-action' | tlTranslate }}
+                </div>
+            </ng-template>
+        </data-template-column>
+        <data-column *ngIf="logBookGroup !== logBookGroupsEnum.Ship"
+                     [flexRate]="0.2"
+                     propertyName="startPageNumber"
+                     columnName="{{ 'catches-and-sales.log-book-start-page-number' | tlTranslate }}">
+        </data-column>
+        <data-column *ngIf="logBookGroup !== logBookGroupsEnum.Ship"
+                     [flexRate]="0.2"
+                     propertyName="endPageNumber"
+                     columnName="{{ 'catches-and-sales.log-book-end-page-number' | tlTranslate }}">
+        </data-column>
+        <data-column *ngIf="logBookGroup === logBookGroupsEnum.Ship"
+                     [flexRate]="0.2"
+                     propertyName="permitLicenseStartPageNumber"
+                     columnName="{{ 'catches-and-sales.log-book-permit-license-start-page-number' | tlTranslate }}">
+        </data-column>
+        <data-column *ngIf="logBookGroup === logBookGroupsEnum.Ship"
+                     [flexRate]="0.2"
+                     propertyName="permitLicenseEndPageNumber"
+                     columnName="{{ 'catches-and-sales.log-book-permit-license-end-page-number' | tlTranslate }}">
+        </data-column>
+        <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                <div fxLayout="row wrap" fxLayoutAlign="end center">
+                    <tl-icon *ngIf="row.data.hasError"
+                             icon="ic-exclamation"
+                             iconClass="error-color"
+                             [size]="icIconSize"
+                             tooltipText="{{ 'catches-and-sales.log-book-has-invalid-page-range' | tlTranslate }}">
+                    </tl-icon>
+                    <tl-icon-button *ngIf="row.data.isActive"
+                                    icon="visibility"
+                                    (buttonClicked)="addEditLogBook(row.data, true)"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="row.data.isActive && !isReadonly"
+                                    icon="edit"
+                                    (buttonClicked)="addEditLogBook(row.data)"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'catches-and-sales.edit-log-book' | tlTranslate }}">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="((!row.data.shipPagesAndDeclarations || row.data.shipPagesAndDeclarations.length === 0) && (!row.data.transportationPagesAndDeclarations || row.data.transportationPagesAndDeclarations.length === 0) && (!row.data.admissionPagesAndDeclarations || row.data.admissionPagesAndDeclarations.length === 0) && (!row.data.firstSalePages || row.data.firstSalePages.length > 0) && (!row.data.aquaculturePages || row.data.aquaculturePages.length > 0))
+                                            && !row.data.isForRenewal
+                                            && row.data.isActive
+                                            && !isReadonly"
+                                    icon="delete"
+                                    (buttonClicked)="deleteLogBook(row)"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'catches-and-sales.delete-log-book' | tlTranslate }}">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="row.data.isForRenewal && row.data.isActive && !isReadonly"
+                                    icon="remove"
+                                    (buttonClicked)="removeLogBook(row)"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'catches-and-sales.remove-log-book' | tlTranslate }}">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="!row.data.isActive && !isReadonly"
+                                    icon="restore"
+                                    (buttonClicked)="undoDeleteLogBook(row)"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'catches-and-sales.restore-log-book' | tlTranslate }}">
+                    </tl-icon-button>
+                </div>
+            </ng-template>
+        </data-template-column>
+    </tl-data-table>
+    <mat-error *ngIf="isTouched && hasNotTouchedRenewals">
+        {{ 'catches-and-sales.log-books-for-renewal-need-attention' | tlTranslate }}*
+    </mat-error>
+</div>

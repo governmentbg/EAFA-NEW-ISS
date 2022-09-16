@@ -1,0 +1,23 @@
+﻿<tl-popover-button iconClass="secondary-color" icon="info" (togglePopover)="onTogglePopover($event)">
+    <mat-card>
+        <mat-card-title>
+            {{ 'common.audit' | tlTranslate:'cap' }}
+        </mat-card-title>
+        <mat-card-content fxLayout="column" fxLayoutAlign="space-around center">
+            <div fxLayout="column" fxLayoutAlign="space-around center" [formGroup]="auditFormGroup">
+                <tl-input formControlName="createdByControl" label="Създаден от" readonly="true"></tl-input>
+                <tl-input formControlName="createdOnControl" label="Създаден на" readonly="true"></tl-input>
+                <tl-input formControlName="updatedByControl" label="Обновен от" readonly="true"></tl-input>
+                <tl-input formControlName="updatedOnControl" label="Обновен на" readonly="true"></tl-input>
+            </div>
+            <button (click)="emitDetailedAudit()"
+                    mat-raised-button color="accent" class="h-fit-content">
+                <tl-icon icon="fa-filter"
+                         type="FA_ICON"
+                         iconClass="secondary-color">
+                </tl-icon>
+                {{ 'common.detailed-audit' | tlTranslate:'cap' }}
+            </button>
+        </mat-card-content>
+    </mat-card>
+</tl-popover-button>

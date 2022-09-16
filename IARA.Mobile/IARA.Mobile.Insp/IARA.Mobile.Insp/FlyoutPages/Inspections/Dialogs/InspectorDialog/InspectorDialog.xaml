@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tl:TLBaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.InspectorDialog"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        xmlns:nom="clr-namespace:IARA.Mobile.Application.DTObjects.Nomenclatures;assembly=IARA.Mobile.Application"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.InspectorDialog.InspectorDialog"
+        x:Name="dialog"
+        x:DataType="local:InspectorDialogViewModel"
+        x:TypeArguments="local:InspectorDialogViewModel, m:InspectorModel"
+        Title="{rt:Translate InspectorDialogTitle, Group=GeneralInfo}"
+        BackgroundColor="White"
+        IconColor="White"
+        TitleBackgroundColor="{StaticResource Primary}"
+        TitleColor="White">
+    <tl:TLScrollView>
+        <StackLayout Padding="10">
+            <lc:CustomCheckBoxWithPicker Title="{rt:Translate InspectorInRegister, Group=GeneralInfo}"
+                    CheckValidState="{Binding IsRegistered}"
+                    Command="{Binding InspectorChosen}"
+                    DisplayValue="DisplayValue"
+                    IsVisible="{Binding IsRegistered.Value}"
+                    ValidState="{Binding Inspector}">
+                <DataTemplate>
+                    <Grid x:DataType="nom:SelectNomenclatureDto"
+                            RowDefinitions="Auto,Auto,1"
+                            RowSpacing="0">
+                        <Label Margin="5,5,5,0" Text="{Binding Name}" />
+                        <Label Grid.Row="1"
+                                Margin="5,0,5,10"
+                                Text="{Binding Code}" />
+                        <BoxView Grid.Row="2"
+                                Margin="5,0"
+                                Color="LightGray" />
+                    </Grid>
+                </DataTemplate>
+                <lc:CustomCheckBoxWithPicker.IsEnabled>
+                    <MultiBinding Converter="{StaticResource All}">
+                        <Binding Converter="{StaticResource IsNotReview}" Path="DialogType" />
+                        <Binding Converter="{StaticResource OppositeBool}" Path="IsCurrentUser" />
+                    </MultiBinding>
+                </lc:CustomCheckBoxWithPicker.IsEnabled>
+            </lc:CustomCheckBoxWithPicker>
+            <tl:TLCheckView IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    IsVisible="{Binding IsRegistered.Value, Converter={StaticResource OppositeBool}}"
+                    Text="{rt:Translate InspectorInRegister, Group=GeneralInfo}"
+                    ValidState="{Binding IsRegistered}" />
+            <tl:TLFlex GrowUnit="200" IsVisible="{Binding IsRegistered.Value, Converter={StaticResource OppositeBool}}">
+                <tl:TLEntry Title="{rt:Translate FirstName, Group=Common}"
+                        ValidState="{Binding FirstName}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLEntry Title="{rt:Translate MiddleName, Group=Common}"
+                        ValidState="{Binding MiddleName}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLEntry Title="{rt:Translate LastName, Group=Common}"
+                        ValidState="{Binding LastName}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLEntry Title="{rt:Translate CardNum, Group=GeneralInfo}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        ValidState="{Binding CardNum}" />
+            </tl:TLFlex>
+            <tl:TLFlex GrowUnit="200">
+                <tl:TLPicker Title="{rt:Translate Country, Group=Common}"
+                        ItemsSource="{Binding Nationalities}"
+                        ValidState="{Binding Nationality}">
+                    <tl:TLPicker.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Converter="{StaticResource IsNotReview}" Path="DialogType" />
+                            <Binding Converter="{StaticResource OppositeBool}" Path="IsRegistered.Value" />
+                        </MultiBinding>
+                    </tl:TLPicker.IsEnabled>
+                </tl:TLPicker>
+                <tl:TLPicker Title="{rt:Translate Institution, Group=GeneralInfo}"
+                        DialogDisplayValue="Name"
+                        DisplayValue="Code"
+                        ItemsSource="{Binding Institutions}"
+                        ValidState="{Binding Institution}">
+                    <tl:TLPicker.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Converter="{StaticResource IsNotReview}" Path="DialogType" />
+                            <Binding Converter="{StaticResource OppositeBool}" Path="IsRegistered.Value" />
+                        </MultiBinding>
+                    </tl:TLPicker.IsEnabled>
+                </tl:TLPicker>
+            </tl:TLFlex>
+            <tl:TLCheckView IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    IsVisible="{Binding IsRegistered.Value}"
+                    Text="{rt:Translate InspectorInCharge, Group=GeneralInfo}"
+                    ValidState="{Binding IsInCharge}" />
+            <tl:TLCheckView IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    Text="{rt:Translate InspectorHasIdentified, Group=GeneralInfo}"
+                    ValidState="{Binding HasIdentified}" />
+            <Button Command="{Binding Save}"
+                    IsVisible="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    Text="{rt:Translate Save, Group=Common}" />
+        </StackLayout>
+    </tl:TLScrollView>
+</tl:TLBaseDialog>

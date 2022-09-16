@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sv:SectionView xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Insp.Controls.SignaturesView"
+        x:DataType="vm:SignaturesViewModel"
+        Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Pen}, Color=White, Size=100}"
+        Text="{rt:Translate Signatures, Group=GeneralInfo}"
+        IsExpanded="False">
+    <sv:SectionView.IsVisible>
+        <MultiBinding Converter="{StaticResource All}">
+            <Binding Path="Inspection.ActivityType" Converter="{StaticResource IsReview}" />
+            <Binding Path="HasSignature" />
+        </MultiBinding>
+    </sv:SectionView.IsVisible>
+    <sv:SectionView.InnerContent>
+        <StackLayout Padding="10">
+            <tl:TLFlex GrowUnit="400">
+                <lc:SignatureView CaptionText="{rt:Translate InspectorSignature, Group=GeneralInfo}"
+                        Model="{Binding Inspector}"
+                        IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+                <lc:SignatureView CaptionText="{rt:Translate InspectedPersonSignature, Group=GeneralInfo}"
+                        Model="{Binding InspectedPerson}"
+                        IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
+                        IsVisible="{Binding HasInspectedPerson}" />
+            </tl:TLFlex>
+        </StackLayout>
+    </sv:SectionView.InnerContent>
+</sv:SectionView>

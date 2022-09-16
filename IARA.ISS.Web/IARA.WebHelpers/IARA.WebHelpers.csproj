@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <Configurations>Debug;Release;Test</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="5.0.0" PrivateAssets="all" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.16.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="TL.SysToSySecCom" Version="22.178.41269" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IARA.Common\IARA.Common.csproj" />
+    <ProjectReference Include="..\IARA.Interfaces\IARA.Interfaces.csproj" />
+    <ProjectReference Include="..\IARA.Security\IARA.Security.csproj" />
+  </ItemGroup>
+
+</Project>

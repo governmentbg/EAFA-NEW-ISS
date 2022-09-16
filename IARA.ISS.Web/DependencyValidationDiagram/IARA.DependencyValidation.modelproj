@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{603797ba-6138-426c-8b30-c4577996e3c1}</ProjectGuid>
+    <ArchitectureToolsVersion>2.0.0.0</ArchitectureToolsVersion>
+    <Name>IARA.DependencyValidation</Name>
+    <RootNamespace>DependencyValidationDiagram</RootNamespace>
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Validate Include="DependencyValidation.layerdiagram">
+      <SubType>Content</SubType>
+    </Validate>
+    <Validate Include="DependencyValidation.layerdiagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>DependencyValidation.layerdiagram</DependentUpon>
+    </Validate>
+    <Validate Include="DependencyValidation.layerdiagram.suppressions">
+      <SubType>Content</SubType>
+      <DependentUpon>DependencyValidation.layerdiagram</DependentUpon>
+    </Validate>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\IARA.IdentityServer\IARA.Security\IARA.Security.csproj">
+      <Name>IARA.Security</Name>
+      <Project>{d16bb380-64cf-421c-8249-02afe76401b9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\IARA.Common\IARA.Common.csproj">
+      <Name>IARA.Common</Name>
+      <Project>{72549385-330f-41f9-afbf-a7e35da6ea20}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\IARA.DataAccess\IARA.DataAccess.csproj">
+      <Name>IARA.DataAccess</Name>
+      <Project>{0087a4d4-cec4-4e06-91c4-f15b604a1157}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\IARA.DI\IARA.DI.csproj">
+      <Name>IARA.DI</Name>
+      <Project>{c8d4487c-1de3-4a87-b6f7-746e66ed0247}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\IARA.DTModels\IARA.DomainModels.csproj">
+      <Name>IARA.DomainModels</Name>
+      <Project>{fb50eef7-907d-4a1d-b11a-78e9fb89110f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\IARA.EntityModels\IARA.EntityModels.csproj">
+      <Name>IARA.EntityModels</Name>
+      <Project>{6bceb4ce-1110-42d2-8eb3-9c6f1e0aec94}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\IARA.Infrastructure\IARA.Infrastructure.csproj">
+      <Name>IARA.Infrastructure</Name>
+      <Project>{2d151861-0d78-44bb-8404-27f9a50e7150}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\IARA.Interfaces\IARA.Interfaces.csproj">
+      <Name>IARA.Interfaces</Name>
+      <Project>{e99de208-cfe0-4cc5-acba-87033e03ad09}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\IARA.WebHelpers\IARA.WebHelpers.csproj">
+      <Name>IARA.WebHelpers</Name>
+      <Project>{56dc5199-796e-4d0c-a3b5-b942d635a6c6}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\IARA.Web\IARA.Web.csproj">
+      <Name>IARA.Web</Name>
+      <Project>{63c1396e-c007-4062-acbc-84e02535a220}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VSToolsPath)\ArchitectureTools\Microsoft.VisualStudio.TeamArchitect.ModelingProject.targets" Condition="'$(VSToolsPath)' != ''" />
+</Project>

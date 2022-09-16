@@ -1,0 +1,10 @@
+﻿<div [formGroup]="form"
+     fxLayout="column"
+     fxLayoutGap="0.5em"
+     fxLayoutAlign="start stretch">
+    <inspection-toggle *ngFor="let toggle of toggles; index as i"
+                       [options]="toggle.checkType === inspectionCheckTypesEnum.BOOL ? boolOptions : tripleOptions"
+                       [toggle]="toggle"
+                       [formControl]="form.controls[i.toString()]">
+    </inspection-toggle>
+</div>

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views"
+        xmlns:viewModels="clr-namespace:IARA.Mobile.Shared.ViewModels"
+        x:Class="IARA.Mobile.Shared.Views.SystemInformationPage"
+        x:DataType="viewModels:SystemInformationViewModel"
+        x:TypeArguments="viewModels:SystemInformationViewModel"
+        BackgroundColor="White"
+        Title="Системна информация"
+        x:Name="page">
+    <tl:TLScrollView>
+        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="StartAndExpand">
+            <StackLayout BindableLayout.ItemsSource="{Binding SystemParamters}"
+                    HorizontalOptions="CenterAndExpand"
+                    VerticalOptions="StartAndExpand"
+                    Margin="10"
+                    BackgroundColor="White">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Label x:DataType="x:String"
+                                Text="{Binding}"
+                                LineBreakMode="WordWrap" />
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </StackLayout>
+            <Button Text="Изпрати към сървър"
+                    Command="{Binding SendData}"
+                    Margin="{OnIdiom Phone=10,
+                                     Tablet='100,0'}" />
+        </StackLayout>
+    </tl:TLScrollView>
+</sv:BasePage>

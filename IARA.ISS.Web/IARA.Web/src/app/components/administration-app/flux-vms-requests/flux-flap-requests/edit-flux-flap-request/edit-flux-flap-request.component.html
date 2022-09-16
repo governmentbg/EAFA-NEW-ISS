@@ -1,0 +1,331 @@
+﻿<div [formGroup]="form" fxLayout="column" fxLayoutGap="1em" class="dialog-padding">
+    <!-- Basic request data -->
+    <tl-card tooltipResourceName="flux-vms-requests.flap-basic-data-helper">
+        <tl-card-title>{{ 'flux-vms-requests.flap-basic-data' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="column" fxLayoutGap="1em">
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-autocomplete [fxFlex]="editing ? 25 : 33"
+                                     formControlName="agreementTypeControl"
+                                     [options]="agreementTypes"
+                                     label="{{ 'flux-vms-requests.flap-agreement-type' | tlTranslate }}"
+                                     tooltipResourceName="flux-vms-requests.flap-agreement-type-helper">
+                    </tl-autocomplete>
+
+                    <tl-autocomplete [fxFlex]="editing ? 25 : 33"
+                                     formControlName="coastalPartyControl"
+                                     [options]="coastalParties"
+                                     label="{{ 'flux-vms-requests.flap-coastal-party' | tlTranslate }}"
+                                     tooltipResourceName="flux-vms-requests.flap-coastal-party-helper">
+                    </tl-autocomplete>
+
+                    <tl-autocomplete [fxFlex]="editing ? 25 : 33"
+                                     formControlName="requestPurposeControl"
+                                     [options]="requestPurposes"
+                                     label="{{ 'flux-vms-requests.flap-request-purpose' | tlTranslate }}"
+                                     tooltipResourceName="flux-vms-requests.flap-request-purpose-helper">
+                    </tl-autocomplete>
+
+                    <tl-checkbox *ngIf="editing"
+                                 fxFlex="25"
+                                 formControlName="isOutgoingControl"
+                                 label="{{ 'flux-vms-requests.flap-is-outgoing' | tlTranslate }}"
+                                 tooltipResourceName="flux-vms-requests.flap-is-outgoing-helper">
+                    </tl-checkbox>
+                </div>
+
+                <div fxLayout="row">
+                    <tl-textarea fxFlex="100"
+                                 formControlName="requestPurposeTextControl"
+                                 label="{{ 'flux-vms-requests.flap-request-purpose-text' | tlTranslate }}">
+                    </tl-textarea>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Ship data -->
+    <tl-card tooltipResourceName="flux-vms-requests.flap-ship-data-helper">
+        <tl-card-title>{{ 'flux-vms-requests.flap-ship-data' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="1em">
+                <tl-autocomplete *ngIf="isOutgoing; else notOutgoing"
+                                 formControlName="shipControl"
+                                 [options]="ships"
+                                 label="{{ 'flux-vms-requests.flap-ship' | tlTranslate }}"
+                                 tooltipResourceName="flux-vms-requests.flap-ship-helper">
+                </tl-autocomplete>
+
+                <ng-template #notOutgoing>
+                    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                        <tl-input fxFlex="33"
+                                  formControlName="shipIdentifierTypeControl"
+                                  tooltipResourceName="flux-vms-requests.flap-ship-identifier-type-helper"
+                                  label="{{ 'flux-vms-requests.flap-ship-identifier-type' | tlTranslate }}">
+                        </tl-input>
+
+                        <tl-input fxFlex="33"
+                                  formControlName="shipIdentifierControl"
+                                  tooltipResourceName="flux-vms-requests.flap-ship-identifier-helper"
+                                  label="{{ 'flux-vms-requests.flap-ship-identifier' | tlTranslate }}">
+                        </tl-input>
+
+                        <tl-input fxFlex="33"
+                                  formControlName="shipNameControl"
+                                  tooltipResourceName="flux-vms-requests.flap-ship-name-helper"
+                                  label="{{ 'flux-vms-requests.flap-ship-name' | tlTranslate }}">
+                        </tl-input>
+                    </div>
+                </ng-template>
+
+                <tl-checkbox formControlName="isFirstApplicationControl"
+                             label="{{ 'flux-vms-requests.flap-is-first-application' | tlTranslate }}"
+                             tooltipResourceName="flap-vms-requests.flap-is-first-application-helper">
+                </tl-checkbox>
+
+                <!-- Seamen data -->
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-input fxFlex="25"
+                              formControlName="localSeamenCountControl"
+                              label="{{ 'flux-vms-requests.flap-local-seamen' | tlTranslate }}"
+                              tooltipResourceName="flux-vms-requests.flap-local-seamen-helper">
+                    </tl-input>
+
+                    <tl-input fxFlex="25"
+                              formControlName="acpSeamenCountControl"
+                              label="{{ 'flux-vms-requests.flap-acp-seamen' | tlTranslate }}"
+                              tooltipResourceName="flux-vms-requests.flap-acp-seamen-helper">
+                    </tl-input>
+
+                    <div fxFlex="25"></div>
+                    <div fxFlex="25"></div>
+                </div>
+
+                <!-- Joined ships -->
+                <tl-card *ngIf="isOutgoing || incomingJoinedShips.length !== 0"
+                         tooltipResourceName="flux-vms-requests.flap-joined-ships-helper">
+                    <tl-card-title>{{ 'flux-vms-requests.flap-joined-ships' | tlTranslate }}</tl-card-title>
+
+                    <tl-card-content>
+                        <div *ngIf="isOutgoing; else notOutgoing" fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="1em">
+                            <tl-autocomplete *ngIf="!viewMode"
+                                             fxFlex="100"
+                                             [formControl]="joinedShipControl"
+                                             [options]="ships"
+                                             [templateOptions]="true"
+                                             [focusoutOnSelect]="true"
+                                             label="{{ 'flux-vms-requests.flap-joined-ship' | tlTranslate }}"
+                                             tooltipResourceName="flux-vms-requests.flap-joined-ship-helper">
+                            </tl-autocomplete>
+
+                            <tl-data-table [rows]="joinedShips"
+                                           [isRemote]="false"
+                                           [isSoftDeletable]="false"
+                                           [showAddButton]="false"
+                                           [showInactiveRecords]="false">
+                                <data-column [flexRate]="0.9"
+                                             propertyName="displayName"
+                                             columnName="{{ 'flux-vms-requests.flap-joined-ship-column-name' | tlTranslate }}">
+                                </data-column>
+
+                                <data-template-column [flexRate]="0.1">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                            <tl-icon-button *ngIf="!viewMode"
+                                                            icon="delete"
+                                                            iconClass="accent-color"
+                                                            tooltipText="{{ 'flux-vms-requests.flap-delete-joined-ship' | tlTranslate }}"
+                                                            (buttonClicked)="deleteJoinedShip(row)">
+                                            </tl-icon-button>
+                                        </div>
+                                    </ng-template>
+                                </data-template-column>
+                            </tl-data-table>
+                        </div>
+
+                        <ng-template #notOutgoing>
+                            <div fxLayout="column" fxLayoutGap="1em">
+                                <div *ngFor="let joinedShip of incomingJoinedShips" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                                    <tl-input fxFlex="33"
+                                              [readonly]="true"
+                                              [value]="joinedShip.shipIdentifierType"
+                                              tooltipResourceName="flux-vms-requests.flap-incoming-joined-ship-identifier-type-helper"
+                                              label="{{ 'flux-vms-requests.flap-incoming-joined-ship-identifier-type' | tlTranslate }}">
+                                    </tl-input>
+
+                                    <tl-input fxFlex="33"
+                                              [readonly]="true"
+                                              [value]="joinedShip.shipIdentifier"
+                                              tooltipResourceName="flux-vms-requests.flap-incoming-joined-ship-identifier-helper"
+                                              label="{{ 'flux-vms-requests.flap-incoming-joined-ship-identifier' | tlTranslate }}">
+                                    </tl-input>
+
+                                    <tl-input fxFlex="33"
+                                              [readonly]="true"
+                                              [value]="joinedShip.shipName"
+                                              tooltipResourceName="flux-vms-requests.flap-incoming-joined-ship-name-helper"
+                                              label="{{ 'flux-vms-requests.flap-incoming-joined-ship-name' | tlTranslate }}">
+                                    </tl-input>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </tl-card-content>
+                </tl-card>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Request data -->
+    <tl-card tooltipResourceName="flux-vms-requests.flap-request-data-helper">
+        <tl-card-title>{{ 'flux-vms-requests.flap-request-data' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="column" fxLayoutGap="1em">
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-date-range fxFlex="33"
+                                   formControlName="authorizationDateControl"
+                                   label="{{ 'flux-vms-requests.flap-authorization-date' | tlTranslate }}"
+                                   tooltipResourceName="flux-vms-requests.flap-authorization-date-helper">
+                    </tl-date-range>
+
+                    <tl-autocomplete fxFlex="33"
+                                     formControlName="fishingCategoryControl"
+                                     [options]="fishingCategories"
+                                     label="{{ 'flux-vms-requests.flap-fishing-category' | tlTranslate }}"
+                                     tooltipResourceName="flux-vms-requests.flap-fishing-category-helper">
+                    </tl-autocomplete>
+
+                    <div fxFlex="33"></div>
+                </div>
+
+                <div fxLayout="row">
+                    <tl-textarea fxFlex="100"
+                                 formControlName="fishingMethodControl"
+                                 label="{{ 'flux-vms-requests.flap-fishing-method' | tlTranslate }}"
+                                 tooltipResourceName="flux-vms-requests.flap-fishing-method-helper">
+                    </tl-textarea>
+                </div>
+
+                <div fxLayout="row">
+                    <tl-textarea fxFlex="100"
+                                 formControlName="fishingAreaControl"
+                                 label="{{ 'flux-vms-requests.flap-fishing-area' | tlTranslate }}"
+                                 tooltipResourceName="flux-vms-requests.flap-fishing-area-helper">
+                    </tl-textarea>
+                </div>
+
+                <!-- Authorized gear -->
+                <tl-card tooltipResourceName="flux-vms-requests.flap-authorized-gear-helper">
+                    <tl-card-title>{{ 'flux-vms-requests.flap-authorized-gear' | tlTranslate }}</tl-card-title>
+
+                    <tl-card-content>
+                        <div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="1em">
+                            <tl-autocomplete *ngIf="!viewMode"
+                                             fxFlex="100"
+                                             [formControl]="authorizedGearControl"
+                                             [options]="gears"
+                                             [templateOptions]="true"
+                                             [focusoutOnSelect]="true"
+                                             label="{{ 'flux-vms-requests.flap-authorized-gear-field' | tlTranslate }}"
+                                             tooltipResourceName="flux-vms-requests.flap-authorized-gear-field-helper">
+                            </tl-autocomplete>
+
+                            <tl-data-table [rows]="authorizedGears"
+                                           [isRemote]="false"
+                                           [isSoftDeletable]="false"
+                                           [showAddButton]="false"
+                                           [showInactiveRecords]="false">
+                                <data-column [flexRate]="0.9"
+                                             propertyName="displayName"
+                                             columnName="{{ 'flux-vms-requests.flap-authorized-gear-column-name' | tlTranslate }}">
+                                </data-column>
+
+                                <data-template-column [flexRate]="0.1">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                            <tl-icon-button *ngIf="!viewMode"
+                                                            icon="delete"
+                                                            iconClass="accent-color"
+                                                            tooltipText="{{ 'flux-vms-requests.flap-delete-authorized-gear' | tlTranslate }}"
+                                                            (buttonClicked)="deleteAuthorizedGear(row)">
+                                            </tl-icon-button>
+                                        </div>
+                                    </ng-template>
+                                </data-template-column>
+                            </tl-data-table>
+
+                            <mat-error *ngIf="authorizedGearsTouched && form.errors?.atLeastOneAuthorizedGearNeeded === true">
+                                * {{ 'flux-vms-requests.flap-at-least-one-authorized-gear-needed-error' | tlTranslate }}
+                            </mat-error>
+                        </div>
+                    </tl-card-content>
+                </tl-card>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Targeted quotas -->
+    <tl-card tooltipResourceName="flux-vms-requests.targeted-quotas-helper">
+        <tl-card-title>{{ 'flux-vms-requests.targeted-quotas' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="column" fxLayoutGap="1em">
+                <tl-data-table #targetedQuotasTable
+                               [isRemote]="false"
+                               [rows]="targetedQuotas"
+                               [isSoftDeletable]="false"
+                               [showAddButton]="!viewMode"
+                               [showInactiveRecords]="false"
+                               [disableDblClickEdit]="true">
+                    <data-column propertyName="flapQuotaTypeCode"
+                                 [flexRate]="0.4"
+                                 [formGroup]="targetedQuotasGroup"
+                                 [options]="quotaTypes"
+                                 dataType="nomenclature"
+                                 columnName="{{ 'flux-vms-requests.targeted-quotas-type' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column propertyName="speciesCode"
+                                 [flexRate]="0.4"
+                                 [formGroup]="targetedQuotasGroup"
+                                 [options]="species"
+                                 dataType="nomenclature"
+                                 columnName="{{ 'flux-vms-requests.targeted-quotas-species' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column propertyName="tonnage"
+                                 [flexRate]="0.2"
+                                 [formGroup]="targetedQuotasGroup"
+                                 columnName="{{ 'flux-vms-requests.targeted-quotas-tonnage' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column-inline *ngIf="!viewMode"
+                                        [flexRate]="0.1"
+                                        [hideEditBtn]="true">
+                    </data-column-inline>
+                </tl-data-table>
+
+                <mat-error *ngIf="targetedQuotaTouched && form.errors?.atLeastOneTargetedQuotaNeeded === true">
+                    * {{ 'flux-vms-requests.flap-at-least-one-targeted-quota-needed-error' | tlTranslate }}
+                </mat-error>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Remarks -->
+    <tl-card tooltipResourceName="flux-vms-requests.remarks-panel-helper">
+        <tl-card-title>{{ 'flux-vms-requests.remarks-panel' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="row">
+                <tl-textarea fxFlex="100"
+                             formControlName="remarksControl"
+                             label="{{ 'flux-vms-requests.remarks' | tlTranslate }}"
+                             tooltipResourceName="flux-vms-requests.remarks-helper">
+                </tl-textarea>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

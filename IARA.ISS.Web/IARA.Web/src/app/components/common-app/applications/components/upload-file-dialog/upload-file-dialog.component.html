@@ -1,0 +1,9 @@
+﻿<tl-card>
+    <tl-card-content>
+        <file-uploader-form-array [formControl]="fileControl"
+                                  [pageCode]="pageCode"
+                                  [hideAddButton]="true"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)">
+        </file-uploader-form-array>
+    </tl-card-content>
+</tl-card>

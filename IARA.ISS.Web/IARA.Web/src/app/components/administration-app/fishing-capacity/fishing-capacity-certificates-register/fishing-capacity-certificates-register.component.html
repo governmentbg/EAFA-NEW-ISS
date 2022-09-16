@@ -1,0 +1,450 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <!-- Филтри -->
+    <search-panel [translateService]="translate">
+        <div [formGroup]="form" fxFlexFill fxLayout="column" fxLayoutGap="1em">
+            <!-- Номер на удостоверение, име на титуляр, ЕГН/ЕИК на титуляр, период на валидност -->
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="certificateNumControl"
+                          tooltipResourceName="fishing-capacity.filters-certificate-number-helper"
+                          label="{{ 'fishing-capacity.filters-certificate-number' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="holderNameControl"
+                          tooltipResourceName="fishing-capacity.filters-holder-names-helper"
+                          label="{{ 'fishing-capacity.filters-holder-names' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="holderEgnEikControl"
+                          tooltipResourceName="fishing-capacity.filters-holder-egn-eik-helper"
+                          label="{{ 'fishing-capacity.filters-holder-egn-eik' | tlTranslate }}">
+                </tl-input>
+                <tl-date-range fxFlex="25"
+                               formControlName="validityDateRangeControl"
+                               tooltipResourceName="fishing-capacity.filters-validity-helper"
+                               label="{{ 'fishing-capacity.filters-validity' | tlTranslate }}">
+                </tl-date-range>
+            </div>
+
+            <!-- Диапазон на бруто тонаж, диапазон на мощност, активни -->
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-range-input fxFlex="25"
+                                formControlName="tonnageControl"
+                                tooltipResourceName="fishing-capacity.filters-gross-tonnage-helper"
+                                label="{{ 'fishing-capacity.filters-gross-tonnage' | tlTranslate }}">
+                </tl-range-input>
+                <tl-range-input fxFlex="25"
+                                formControlName="powerControl"
+                                tooltipResourceName="fishing-capacity.filters-power-helper"
+                                label="{{ 'fishing-capacity.filters-power' | tlTranslate }}">
+                </tl-range-input>
+                <tl-select fxFlex="25"
+                           formControlName="isCertificateActiveControl"
+                           [options]="isCertificateActiveOptions"
+                           tooltipResourceName="fishing-capacity.filters-is-active-helper"
+                           label="{{ 'fishing-capacity.filters-is-active' | tlTranslate }}">
+                </tl-select>
+                <div fxFlex="25"></div>
+            </div>
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <mat-card>
+        <tl-data-table [showAddButton]="false"
+                       [showInactiveRecords]="canRestoreRecords"
+                       [hasExcelExport]="true">
+            <row-detail>
+                <ng-template let-row="row" ngx-datatable-row-detail-template>
+                    <div fxLayout="column" fxLayoutGap="0.5em">
+                        <!-- Издадено вследствие на -->
+                        <tl-card tooltipResourceName="fishing-capacity.table-detail-issued-from-application-helper">
+                            <tl-card-title>{{ 'fishing-capacity.table-detail-issue-from-application' | tlTranslate }}</tl-card-title>
+
+                            <tl-card-content fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                                <!-- Дата на промяна -->
+                                <tl-input fxFlex="10"
+                                          [value]="row.data.history.createdFromApplication.applicationDate | date: 'dd.MM.yyyy'"
+                                          [readonly]="true"
+                                          label="{{ 'fishing-capacity.table-detail-issue-from-application-date' | tlTranslate }}"
+                                          tooltipResourceName="fishing-capacity.table-detial-issue-from-application-date-helper">
+                                </tl-input>
+
+                                <!-- Заявление -->
+                                <tl-input fxFlex="47"
+                                          [value]="row.data.history.createdFromApplication.reason"
+                                          [readonly]="true"
+                                          label="{{ 'fishing-capacity.table-detail-issue-from-application-name' | tlTranslate }}"
+                                          tooltipResourceName="fishing-capacity.table-detail-issue-from-application-name-helper">
+                                </tl-input>
+
+                                <!-- Кораб -->
+                                <tl-input *ngIf="row.data.history.createdFromApplication.shipId !== undefined && row.data.history.createdFromApplication.shipId !== null"
+                                          fxFlex="37"
+                                          [value]="row.data.history.createdFromApplication.shipName"
+                                          [readonly]="true"
+                                          label="{{ 'fishing-capacity.table-detail-issue-from-application-ship' | tlTranslate }}"
+                                          tooltipResourceName="fishing-capacity.table-detail-issue-from-application-ship-helper">
+                                </tl-input>
+
+                                <!-- УСК -->
+                                <tl-input *ngIf="row.data.history.createdFromApplication.transferredCapacityCertificate"
+                                          fxFlex="37"
+                                          [value]="row.data.history.createdFromApplication.transferredCapacityCertificate"
+                                          [readonly]="true"
+                                          label="{{ 'fishing-capacity.table-detail-issue-from-application-transferred-from-certificate' | tlTranslate }}"
+                                          tooltipResourceName="fishing-capacity.table-detail-issue-from-application-transferred-from-certificate-helper">
+                                </tl-input>
+
+                                <tl-input *ngIf="row.data.history.createdFromApplication.duplicateCapacityCertificate"
+                                          fxFlex="37"
+                                          [value]="row.data.history.createdFromApplication.duplicateCapacityCertificate"
+                                          [readonly]="true"
+                                          label="{{ 'fishing-capacity.table-detail-issue-from-application-duplicate-of-certificate' | tlTranslate }}"
+                                          tooltipResourceName="fishing-capacity.table-detail-issue-from-application-duplicate-of-certificate-helper">
+                                </tl-input>
+
+                                <!-- Преглед на заявлението -->
+                                <div fxFlex="5" fxLayout="row" fxLayoutAlign="center center">
+                                    <tl-icon-button *ngIf="
+                                                    (canViewShipApplications
+                                                        && (row.data.history.createdFromApplication.pageCode === pageCodes.RegVessel
+                                                            || row.data.history.createdFromApplication.pageCode === pageCodes.DeregShip))
+                                                 || (canViewCapacityApplications
+                                                        && (row.data.history.createdFromApplication.pageCode === pageCodes.IncreaseFishCap
+                                                            || row.data.history.createdFromApplication.pageCode === pageCodes.ReduceFishCap
+                                                            || row.data.history.createdFromApplication.pageCode === pageCodes.TransferFishCap
+                                                            || row.data.history.createdFromApplication.pageCode === pageCodes.CapacityCertDup))"
+                                                    icon="visibility"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'fishing-capacity.table-detail-issue-from-application-view-application' | tlTranslate }}"
+                                                    (buttonClicked)="viewCreatedFromApplication(row.data.history.createdFromApplication)">
+                                    </tl-icon-button>
+
+                                    <tl-icon-button *ngIf="row.data.history.createdFromApplication.pageCode === pageCodes.CapacityCertDup"
+                                                    icon="fa-external-link-alt"
+                                                    class="external-link-to-certificate-button"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'fishing-capacity.table-detail-issue-from-navigate-to-duplicate-from' | tlTranslate }}"
+                                                    (buttonClicked)="navigateToCertificate(row.data.history.createdFromApplication)">
+                                    </tl-icon-button>
+                                </div>
+                            </tl-card-content>
+                        </tl-card>
+
+                        <!-- Използвано при регистриране на кораб, увеличаване на капацитет или за прехвърляне -->
+                        <tl-card *ngIf="row.data.history.usedInApplication !== undefined && row.data.history.usedInApplication !== null"
+                                 tooltipResourceName="fishing-capacity.table-detail-used-in-application-helper">
+                            <tl-card-title>{{ 'fishing-capacity.table-detail-used-in-application' | tlTranslate }}</tl-card-title>
+
+                            <tl-card-content fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                                <!-- Дата на промяна -->
+                                <tl-input fxFlex="10"
+                                          [value]="row.data.history.usedInApplication.applicationDate | date: 'dd.MM.yyyy'"
+                                          [readonly]="true"
+                                          label="{{ 'fishing-capacity.table-detail-used-in-application-date' | tlTranslate }}"
+                                          tooltipResourceName="fishing-capacity.table-detial-used-in-application-date-helper">
+                                </tl-input>
+
+                                <!-- Заявление -->
+                                <tl-input fxFlex="47"
+                                          [value]="row.data.history.usedInApplication.reason"
+                                          [readonly]="true"
+                                          label="{{ 'fishing-capacity.table-detail-used-in-application-name' | tlTranslate }}"
+                                          tooltipResourceName="fishing-capacity.table-detail-used-in-application-name-helper">
+                                </tl-input>
+
+                                <!-- Кораб -->
+                                <tl-input *ngIf="row.data.history.usedInApplication.shipId !== undefined && row.data.history.usedInApplication.shipId !== null"
+                                          fxFlex="37"
+                                          [value]="row.data.history.usedInApplication.shipName"
+                                          [readonly]="true"
+                                          label="{{ 'fishing-capacity.table-detail-used-in-application-ship' | tlTranslate }}"
+                                          tooltipResourceName="fishing-capacity.table-detail-used-in-application-ship-helper">
+                                </tl-input>
+
+                                <!-- УСК -->
+                                <tl-input *ngIf="row.data.history.usedInApplication.transferredCapacityCertificate"
+                                          fxFlex="37"
+                                          [value]="row.data.history.usedInApplication.transferredCapacityCertificate"
+                                          [readonly]="true"
+                                          label="{{ 'fishing-capacity.table-detail-used-in-application-transferred-from-certificate' | tlTranslate }}"
+                                          tooltipResourceName="fishing-capacity.table-detail-used-in-application-transferred-from-certificate-helper">
+                                </tl-input>
+
+                                <tl-input *ngIf="row.data.history.usedInApplication.duplicateCapacityCertificate"
+                                          fxFlex="37"
+                                          [value]="row.data.history.usedInApplication.duplicateCapacityCertificate"
+                                          [readonly]="true"
+                                          label="{{ 'fishing-capacity.table-detail-used-in-application-duplicate-certificate' | tlTranslate }}"
+                                          tooltipResourceName="fishing-capacity.table-detail-used-in-application-duplicate-certificate-helper">
+                                </tl-input>
+
+                                <!-- Преглед на заявлението -->
+                                <div fxFlex="5" fxLayout="row" fxLayoutAlign="center center">
+                                    <tl-icon-button *ngIf="
+                                                    (canViewShipApplications
+                                                        && (row.data.history.usedInApplication.pageCode === pageCodes.RegVessel
+                                                            || row.data.history.usedInApplication.pageCode === pageCodes.DeregShip))
+                                                 || (canViewCapacityApplications
+                                                        && (row.data.history.usedInApplication.pageCode === pageCodes.IncreaseFishCap
+                                                            || row.data.history.usedInApplication.pageCode === pageCodes.ReduceFishCap
+                                                            || row.data.history.usedInApplication.pageCode === pageCodes.TransferFishCap
+                                                            || row.data.history.usedInApplication.pageCode === pageCodes.CapacityCertDup))"
+                                                    icon="visibility"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'fishing-capacity.table-detail-used-in-application-view-application' | tlTranslate }}"
+                                                    (buttonClicked)="viewCreatedFromApplication(row.data.history.usedInApplication)">
+                                    </tl-icon-button>
+
+                                    <tl-icon-button *ngIf="row.data.history.usedInApplication.pageCode === pageCodes.CapacityCertDup"
+                                                    icon="fa-external-link-alt"
+                                                    class="external-link-to-certificate-button"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'fishing-capacity.table-detail-used-in-navigate-to-duplicate-to' | tlTranslate }}"
+                                                    (buttonClicked)="navigateToCertificate(row.data.history.usedInApplication)">
+                                    </tl-icon-button>
+                                </div>
+                            </tl-card-content>
+                        </tl-card>
+
+                        <!-- Прехвърлено в -->
+                        <tl-card *ngIf="row.data.history.transferredTo && row.data.history.transferredTo.length > 0"
+                                 tooltipResourceName="fishing-capacity.table-detail-transferred-to-helper">
+                            <tl-card-title>{{ 'fishing-capacity.table-detail-transferred-to' | tlTranslate }}</tl-card-title>
+
+                            <tl-card-content>
+                                <tl-data-table fxFlexFill
+                                               [isRemote]="false"
+                                               [showAddButton]="false"
+                                               [showInactiveRecords]="false"
+                                               [rows]="row.data.history.transferredTo">
+                                    <data-column propertyName="certificateNum"
+                                                 [flexRate]="0.2"
+                                                 columnName="{{ 'fishing-capacity.table-detail-transferred-to-certificate-num' | tlTranslate }}">
+                                    </data-column>
+
+                                    <data-column propertyName="holder"
+                                                 [flexRate]="0.3"
+                                                 columnName="{{ 'fishing-capacity.table-detail-transferred-to-holder' | tlTranslate }}">
+                                    </data-column>
+
+                                    <data-template-column propertyName="Tonnage"
+                                                          [flexRate]="0.2"
+                                                          columnName="{{ 'fishing-capacity.table-detail-transferred-to-tonnage' | tlTranslate }}">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            <span>{{ row.data.tonnage.toFixed(2) }}</span>
+                                        </ng-template>
+                                    </data-template-column>
+
+                                    <data-template-column propertyName="Power"
+                                                          [flexRate]="0.2"
+                                                          columnName="{{ 'fishing-capacity.table-detail-transferred-to-power' | tlTranslate }}">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            <span>{{ row.data.power.toFixed(2) }}</span>
+                                        </ng-template>
+                                    </data-template-column>
+
+                                    <data-column propertyName="validFrom"
+                                                 [flexRate]="0.2"
+                                                 dataType="date"
+                                                 columnName="{{ 'fishing-capacity.table-detail-transferred-to-valid-from' | tlTranslate }}">
+                                    </data-column>
+
+                                    <data-template-column propertyName="ValidTo"
+                                                          [flexRate]="0.2"
+                                                          columnName="{{ 'fishing-capacity.table-detail-transferred-to-valid-to' | tlTranslate }}">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.3em">
+                                                <span>{{ row.data.validTo | date: 'dd.MM.yyyy' }}</span>
+                                                <tl-icon *ngIf="row.data.invalid" icon="highlight_off" iconClass="error-color"></tl-icon>
+                                                <tl-icon *ngIf="!row.data.invalid" icon="done_outline" iconClass="accent-color"></tl-icon>
+                                            </div>
+                                        </ng-template>
+                                    </data-template-column>
+
+                                    <data-template-column [flexRate]="0.2">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                                <tl-icon-button icon="visibility"
+                                                                iconClass="accent-color"
+                                                                tooltipText="{{ 'fishing-capacity.table-detail-transferred-to-view-certificate' | tlTranslate }}"
+                                                                (buttonClicked)="editCertificate(row.data, true)">
+                                                </tl-icon-button>
+
+                                                <tl-icon-button icon="fa-external-link-alt"
+                                                                class="external-link-to-certificate-button"
+                                                                iconClass="accent-color"
+                                                                tooltipText="{{ 'fishing-capacity.table-detail-transferred-to-navigate-to' | tlTranslate }}"
+                                                                (buttonClicked)="navigateToCertificate(row.data)">
+                                                </tl-icon-button>
+                                            </div>
+                                        </ng-template>
+                                    </data-template-column>
+                                </tl-data-table>
+                            </tl-card-content>
+                        </tl-card>
+
+                        <!-- Прехвърлено в -->
+                        <tl-card *ngIf="row.data.history.remainderTransferredTo && row.data.history.remainderTransferredTo.length > 0"
+                                 tooltipResourceName="fishing-capacity.table-detail-remainder-transferred-to-helper">
+                            <tl-card-title>{{ 'fishing-capacity.table-detail-remainder-transferred-to' | tlTranslate }}</tl-card-title>
+
+                            <tl-card-content>
+                                <tl-data-table fxFlexFill
+                                               [isRemote]="false"
+                                               [showAddButton]="false"
+                                               [showInactiveRecords]="false"
+                                               [rows]="row.data.history.remainderTransferredTo">
+                                    <data-column propertyName="certificateNum"
+                                                 [flexRate]="0.2"
+                                                 columnName="{{ 'fishing-capacity.table-detail-remainder-transferred-to-certificate-num' | tlTranslate }}">
+                                    </data-column>
+
+                                    <data-column propertyName="holder"
+                                                 [flexRate]="0.3"
+                                                 columnName="{{ 'fishing-capacity.table-detail-remainder-transferred-to-holder' | tlTranslate }}">
+                                    </data-column>
+
+                                    <data-template-column propertyName="Tonnage"
+                                                          [flexRate]="0.2"
+                                                          columnName="{{ 'fishing-capacity.table-detail-remainder-transferred-to-tonnage' | tlTranslate }}">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            <span>{{ row.data.tonnage.toFixed(2) }}</span>
+                                        </ng-template>
+                                    </data-template-column>
+
+                                    <data-template-column propertyName="Power"
+                                                          [flexRate]="0.2"
+                                                          columnName="{{ 'fishing-capacity.table-detail-remainder-transferred-to-power' | tlTranslate }}">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            <span>{{ row.data.power.toFixed(2) }}</span>
+                                        </ng-template>
+                                    </data-template-column>
+
+                                    <data-column propertyName="validFrom"
+                                                 [flexRate]="0.2"
+                                                 dataType="date"
+                                                 columnName="{{ 'fishing-capacity.table-detail-remainder-transferred-to-valid-from' | tlTranslate }}">
+                                    </data-column>
+
+                                    <data-template-column propertyName="ValidTo"
+                                                          [flexRate]="0.2"
+                                                          columnName="{{ 'fishing-capacity.table-detail-remainder-transferred-to-valid-to' | tlTranslate }}">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.3em">
+                                                <span>{{ row.data.validTo | date: 'dd.MM.yyyy' }}</span>
+                                                <tl-icon *ngIf="row.data.invalid" icon="highlight_off" iconClass="error-color"></tl-icon>
+                                                <tl-icon *ngIf="!row.data.invalid" icon="done_outline" iconClass="accent-color"></tl-icon>
+                                            </div>
+                                        </ng-template>
+                                    </data-template-column>
+
+                                    <data-template-column [flexRate]="0.2">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                                <tl-icon-button icon="visibility"
+                                                                iconClass="accent-color"
+                                                                tooltipText="{{ 'fishing-capacity.table-detail-remainder-transferred-to-view-certificate' | tlTranslate }}"
+                                                                (buttonClicked)="editCertificate(row.data, true)">
+                                                </tl-icon-button>
+
+                                                <tl-icon-button icon="fa-external-link-alt"
+                                                                class="external-link-to-certificate-button"
+                                                                iconClass="accent-color"
+                                                                tooltipText="{{ 'fishing-capacity.table-detail-remainder-transferred-to-navigate-to' | tlTranslate }}"
+                                                                (buttonClicked)="navigateToCertificate(row.data)">
+                                                </tl-icon-button>
+                                            </div>
+                                        </ng-template>
+                                    </data-template-column>
+                                </tl-data-table>
+                            </tl-card-content>
+                        </tl-card>
+                    </div>
+                </ng-template>
+            </row-detail>
+
+            <data-column propertyName="certificateNum"
+                         [flexRate]="0.3"
+                         columnName="{{ 'fishing-capacity.table-certificate-number' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="certificateValidFrom"
+                         [flexRate]="0.3"
+                         dataType="date"
+                         columnName="{{ 'fishing-capacity.table-certificate-date-from' | tlTranslate }}">
+            </data-column>
+
+            <data-template-column propertyName="CertificateValidTo"
+                                  [flexRate]="0.3"
+                                  columnName="{{ 'fishing-capacity.table-certificate-date-to' | tlTranslate }}">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.3em">
+                        <span>{{ row.data.certificateValidTo | date: 'dd.MM.yyyy' }}</span>
+                        <tl-icon *ngIf="row.data.invalid" icon="highlight_off" iconClass="error-color"></tl-icon>
+                        <tl-icon *ngIf="!row.data.invalid" icon="done_outline" iconClass="accent-color"></tl-icon>
+                    </div>
+                </ng-template>
+            </data-template-column>
+
+            <data-column propertyName="holderNames"
+                         [flexRate]="0.5"
+                         columnName="{{ 'fishing-capacity.table-holder-names' | tlTranslate }}">
+            </data-column>
+
+            <data-template-column propertyName="grossTonnage"
+                                  [flexRate]="0.25"
+                                  columnName="{{ 'fishing-capacity.table-tonnage' | tlTranslate }}">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.data.grossTonnage.toFixed(2) }}
+                </ng-template>
+            </data-template-column>
+
+            <data-template-column propertyName="power"
+                                  [flexRate]="0.25"
+                                  columnName="{{ 'fishing-capacity.table-power' | tlTranslate }}">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.data.power.toFixed(2) }}
+                </ng-template>
+            </data-template-column>
+
+            <data-template-column [flexRate]="0.5" [cellClass]="'justify-center'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                        <tl-icon-button *ngIf="row.data.deliveryId !== null && row.data.deliveryId !== undefined"
+                                        icon="ic-fluent-document-briefcase-24-regular"
+                                        iconClass="accent-color"
+                                        [size]="icIconSize"
+                                        tooltipText="{{ 'fishing-capacity.capacity-certificate-delivery-data' | tlTranslate }}"
+                                        (buttonClicked)="openDeliveryDialog(row.data)">
+                        </tl-icon-button>
+                        <tl-icon-button icon="visibility"
+                                        (buttonClicked)="editCertificate(row.data, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'fishing-capacity.view-capacity-certificate' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && canEditRecords"
+                                        icon="edit"
+                                        (buttonClicked)="editCertificate(row.data, false)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'fishing-capacity.edit-capacity-certificate' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.isActive && canDeleteRecords"
+                                        icon="delete"
+                                        (buttonClicked)="deleteCertificate(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'fishing-capacity.delete-capacity-certificate' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="!row.isActive && canRestoreRecords"
+                                        icon="restore"
+                                        (buttonClicked)="undoDeleteCertificate(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'fishing-capacity.restore-capacity-certificate' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </mat-card>
+</div>

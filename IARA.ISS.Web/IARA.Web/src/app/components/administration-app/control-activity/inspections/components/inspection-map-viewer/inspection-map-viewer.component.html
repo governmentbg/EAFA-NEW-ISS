@@ -1,0 +1,25 @@
+﻿<tl-card>
+    <tl-card-title>{{ 'inspections.location' | tlTranslate }}</tl-card-title>
+    <tl-card-content>
+        <div [formGroup]="form"
+             fxLayout="column"
+             fxLayoutAlign="start stretch">
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start center">
+                <tl-coordinates fxFlex="50"
+                                formControlName="latitudeControl"
+                                label="{{ 'inspections.latitude' | tlTranslate }}">
+                </tl-coordinates>
+                <tl-coordinates fxFlex="50"
+                                formControlName="longitudeControl"
+                                label="{{ 'inspections.longitude' | tlTranslate }}">
+                </tl-coordinates>
+            </div>
+
+            <div style="height:300px; max-height:400px">
+                <tl-map-viewer [mapOptions]="mapOptions"></tl-map-viewer>
+            </div>
+        </div>
+    </tl-card-content>
+</tl-card>

@@ -1,0 +1,25 @@
+// Import Fuse core library
+@import "@fuse/scss/core";
+
+// Import app.theme.scss
+@import "app/app.theme";
+
+@import '~quill/dist/quill.core.css';
+@import '~quill/dist/quill.bubble.css';
+@import '~quill/dist/quill.snow.css';
+
+.nav-link-link {
+    background-color: white !important;
+    color: black !important;
+    text-decoration: underline !important;
+}
+
+.nav-collapse {
+    text-decoration: none !important;
+}
+
+.menu-panel {
+    max-width: 500px !important;
+    min-width: 200px !important;
+    min-height: 200px;
+}

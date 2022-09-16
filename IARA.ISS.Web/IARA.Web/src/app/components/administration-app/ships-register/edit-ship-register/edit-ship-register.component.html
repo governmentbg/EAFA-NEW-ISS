@@ -1,0 +1,441 @@
+﻿<mat-sidenav-container [autosize]="true" fxFlexFill>
+    <mat-sidenav-content>
+        <mat-tab-group id="main-content"
+                       mat-align-tabs="start"
+                       fxFlexFill
+                       (selectedIndexChange)="onTabChange($event)">
+            <!-- Данни за кораба -->
+            <mat-tab label="{{ 'ships-register.ship-data' | tlTranslate }}"
+                     [disabled]="disableTabs">
+                <edit-ship fxFlexFill
+                           [formControl]="shipControl"
+                           [service]="service"
+                           [isReadonly]="true"
+                           [viewMode]="viewMode"
+                           [isThirdPartyShip]="isThirdPartyShip"
+                           [disableFieldsByEventType]="disableFieldsByEventType"
+                           (shipRegisterLoaded)="onShipDataLoaded($event)">
+                </edit-ship>
+            </mat-tab>
+
+            <!-- Уреди -->
+            <mat-tab label="{{ 'ships-register.fishing-gear' | tlTranslate }}"
+                     [disabled]="disableTabs">
+                <tl-card>
+                    <tl-card-content>
+                        <fishing-gears [formControl]="fishingGearsControl"
+                                       [isReadonly]="true"
+                                       [service]="commercialFishingService">
+                        </fishing-gears>
+                    </tl-card-content>
+                </tl-card>
+            </mat-tab>
+
+            <!-- УСР/РСР -->
+            <mat-tab label="{{ 'ships-register.usr-rsr' | tlTranslate }}"
+                     [disabled]="disableTabs">
+                <commercial-fishing-register fxFlexFill
+                                             [reloadData]="reloadUsrRsrData"
+                                             [shipId]="shipId">
+                </commercial-fishing-register>
+            </mat-tab>
+
+            <!-- Декларации -->
+            <mat-tab label="{{ 'ships-register.declarations' | tlTranslate }}"
+                     [disabled]="disableTabs">
+                <tl-card>
+                    <tl-card-content>
+                        <tl-data-table #logbookPagesTable
+                                       fxFlexFill
+                                       [showAddButton]="false"
+                                       [showInactiveRecords]="false"
+                                       [recordsPerPage]="13">
+                            <data-column [flexRate]="0.2"
+                                         propertyName="logBookNum"
+                                         columnName="{{ 'ships-register.ship-declarations-log-book-num' | tlTranslate }}">
+                            </data-column>
+
+                            <data-column [flexRate]="0.15"
+                                         propertyName="pageNum"
+                                         columnName="{{ 'ships-register.ship-declarations-log-book-page-num' | tlTranslate }}">
+                            </data-column>
+
+                            <data-column [flexRate]="0.2"
+                                         propertyName="fishingGear"
+                                         columnName="{{ 'ships-register.ship-declarations-gear-type' | tlTranslate }}">
+                            </data-column>
+                            
+                            <data-column [flexRate]="0.15"
+                                         propertyName="outingStartDate"
+                                         dataType="date"
+                                         columnName="{{ 'ships-register.ship-declarations-outing-start-date' | tlTranslate }}">
+                            </data-column>
+
+                            <data-column [flexRate]="0.2"
+                                         propertyName="portOfUnloading"
+                                         columnName="{{ 'ships-register.ship-declarations-port-of-unloading' | tlTranslate }}">
+                            </data-column>
+
+                            <data-template-column *ngIf="hasCatchesAndSalesReadPermission" [flexRate]="0.1" [cellClass]="'justify-center'">
+                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                        <tl-icon-button icon="visibility"
+                                                        (buttonClicked)="viewShipLogBookPage(row.data)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'ships-register.ship-declarations-view-declaration' | tlTranslate }}">
+                                        </tl-icon-button>
+                                    </div>
+                                </ng-template>
+                            </data-template-column>
+                        </tl-data-table>
+                    </tl-card-content>
+                </tl-card>
+            </mat-tab>
+
+            <!-- Квоти -->
+            <mat-tab label="{{ 'ships-register.ship-quotas' | tlTranslate }}"
+                     [disabled]="disableTabs">
+                <tl-card>
+                    <tl-card-title>{{ 'ships-register.ship-quota-view' | tlTranslate }}</tl-card-title>
+
+                    <tl-card-content fxLayout="column" fxLayoutGap="1em">
+                        <div fxLayout="row" fxLayoutAlign="start center">
+                            <tl-autocomplete fxFlex="25"
+                                             [formControl]="shipQuotaControl"
+                                             [options]="shipQuotasNomenclature"
+                                             tooltipResourceName="ships-register.ship-quota-helper"
+                                             label="{{ 'ships-register.ship-quota' | tlTranslate }}">
+                            </tl-autocomplete>
+                        </div>
+
+                        <!-- Основни данни за квота -->
+                        <tl-card *ngIf="shipQuotaControl.value !== undefined && shipQuotaControl.value !== null"
+                                 tooltipResourceName="ships-register.ship-quota-view-basic-helper">
+                            <tl-card-title>{{ 'ships-register.ship-quota-view-basic' | tlTranslate }}</tl-card-title>
+
+                            <tl-card-content [formGroup]="shipQuotaForm">
+                                <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                                    <tl-input fxFlex="33"
+                                              formControlName="quotaKgControl"
+                                              tooltipResourceName="ships-register.ship-quota-kg-helper"
+                                              label="{{ 'ships-register.ship-quota-kg' | tlTranslate }}">
+                                    </tl-input>
+
+                                    <tl-input fxFlex="33"
+                                              formControlName="totalCatchControl"
+                                              tooltipResourceName="ships-register.ship-quota-total-catch-helper"
+                                              label="{{ 'ships-register.ship-quota-total-catch' | tlTranslate }}">
+                                    </tl-input>
+
+                                    <tl-input fxFlex="33"
+                                              formControlName="leftoverQuotaKgControl"
+                                              tooltipResourceName="ships-register.ship-quota-leftover-helper"
+                                              label="{{ 'ships-register.ship-quota-leftover' | tlTranslate }}">
+                                    </tl-input>
+                                </div>
+                            </tl-card-content>
+                        </tl-card>
+
+                        <!-- История на промените -->
+                        <tl-card *ngIf="shipQuotaControl.value !== undefined && shipQuotaControl.value !== null"
+                                 tooltipResourceName="ships-register.ship-quota-view-history-helper">
+                            <tl-card-title>{{ 'ships-register.ship-quota-view-history' | tlTranslate }}</tl-card-title>
+
+                            <tl-card-content>
+                                <tl-data-table fxFlexFill
+                                               [rows]="shipQuotaHistory"
+                                               [isRemote]="false"
+                                               [isSoftDeletable]="true"
+                                               [showAddButton]="false"
+                                               [showInactiveRecords]="false">
+                                    <data-column [flexRate]="0.2"
+                                                 propertyName="dateOfChange"
+                                                 dataType="date"
+                                                 columnName="{{ 'ships-register.ship-quota-history-date' | tlTranslate }}">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.2"
+                                                 propertyName="shipQuotaSize"
+                                                 columnName="{{ 'ships-register.ship-quota-history-size' | tlTranslate }}">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.2"
+                                                 propertyName="shipQuotaIncrement"
+                                                 columnName="{{ 'ships-register.ship-quota-history-increment' | tlTranslate }}">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.4"
+                                                 propertyName="incrementReason"
+                                                 columnName="{{ 'ships-register.ship-quota-increment-reason' | tlTranslate }}">
+                                    </data-column>
+                                </tl-data-table>
+                            </tl-card-content>
+                        </tl-card>
+
+                        <!-- История на улова -->
+                        <tl-card *ngIf="shipQuotaControl.value !== undefined && shipQuotaControl.value !== null"
+                                 tooltipResourceName="ships-register.ship-quota-view-catch-history-helper">
+                            <tl-card-title>{{ 'ships-register.ship-quota-view-catch-history' | tlTranslate }}</tl-card-title>
+
+                            <tl-card-content>
+                                <tl-data-table fxFlexFill
+                                               [rows]="shipQuotaCatchHistory"
+                                               [isRemote]="false"
+                                               [isSoftDeletable]="true"
+                                               [showAddButton]="false"
+                                               [showInactiveRecords]="false">
+                                    <data-column [flexRate]="0.2"
+                                                 propertyName="dateOfCatch"
+                                                 dataType="date"
+                                                 columnName="{{ 'ships-register.ship-quota-catch-history-date' | tlTranslate }}">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.2"
+                                                 propertyName="quantityKg"
+                                                 columnName="{{ 'ships-register.ship-quota-catch-history-quantity' | tlTranslate }}">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.2"
+                                                 propertyName="placeOfCatch"
+                                                 columnName="{{ 'ships-register.ship-quota-catch-history-place' | tlTranslate }}">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.3"
+                                                 propertyName="logbookPage"
+                                                 columnName="{{ 'ships-register.ship-quota-catch-history-logbook-page' | tlTranslate }}">
+                                    </data-column>
+                                </tl-data-table>
+                            </tl-card-content>
+                        </tl-card>
+                    </tl-card-content>
+                </tl-card>
+            </mat-tab>
+
+            <!-- Проверки -->
+            <mat-tab label="{{ 'ships-register.inspections' | tlTranslate }}"
+                     [disabled]="disableTabs">
+                <inspections-register fxFlexFill
+                                      [reloadData]="reloadInspectionsData"
+                                      [shipId]="shipId">
+                </inspections-register>
+            </mat-tab>
+
+            <!-- Присъдени точки -->
+            <mat-tab label="{{ 'ships-register.given-points' | tlTranslate }}"
+                     [disabled]="disableTabs">
+                <penal-points fxFlexFill
+                              [reloadData]="reloadGivenPointsData"
+                              [shipId]="shipId">
+                </penal-points>
+            </mat-tab>
+        </mat-tab-group>
+
+        <div *ngIf="isChangeOfCircumstancesApplication" tlResizable="top" id="change-of-circumstances-panel">
+            <h2><b>{{ 'ships-register.changes-from-application' | tlTranslate }}</b></h2>
+            <change-of-circumstances [formControl]="changeOfCircumstancesControl"
+                                     [pageCode]="pageCode"
+                                     [disableDelete]="true">
+            </change-of-circumstances>
+        </div>
+
+        <div *ngIf="isDeregistrationApplication" tlResizable="top" id="change-of-circumstances-panel">
+            <h2><b>{{ 'ships-register.deregistration-application-reason' | tlTranslate }}</b></h2>
+            <tl-textarea [formControl]="deregistrationReasonControl"
+                         tooltipResourceName="ships-register.deregistration-application-reason-helper"
+                         label="{{ 'ships-register.deregistration-application-reason' | tlTranslate }}">
+            </tl-textarea>
+        </div>
+
+        <div *ngIf="isIncreaseCapacityApplication" tlResizable="top" id="change-of-circumstances-panel">
+            <h2><b>{{ 'ships-register.increase-capacity-application-parameters' | tlTranslate }}</b></h2>
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start start" fxFill>
+                <tl-input fxFlex="25"
+                          [formControl]="capacityChangeTonnageControl"
+                          tooltipResourceName="ships-register.increase-capacity-application-tonnage-helper"
+                          label="{{ 'ships-register.increase-capacity-application-tonnage' | tlTranslate }}">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          [formControl]="capacityChangePowerControl"
+                          tooltipResourceName="ships-register.increase-capacity-application-power-helper"
+                          label="{{ 'ships-register.increase-capacity-application-power' | tlTranslate }}">
+                </tl-input>
+
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+            </div>
+        </div>
+
+        <div *ngIf="isReduceCapacityApplication" tlResizable="top" id="change-of-circumstances-panel">
+            <h2><b>{{ 'ships-register.reduce-capacity-application-parameters' | tlTranslate }}</b></h2>
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start start" fxFill>
+                <tl-input fxFlex="25"
+                          [formControl]="capacityChangeTonnageControl"
+                          tooltipResourceName="ships-register.reduce-capacity-application-tonnage-helper"
+                          label="{{ 'ships-register.reduce-capacity-application-tonnage' | tlTranslate }}">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          [formControl]="capacityChangePowerControl"
+                          tooltipResourceName="ships-register.reduce-capacity-application-power-helper"
+                          label="{{ 'ships-register.reduce-capacity-application-power' | tlTranslate }}">
+                </tl-input>
+
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+            </div>
+        </div>
+    </mat-sidenav-content>
+
+    <mat-sidenav mode="side"
+                 position="end"
+                 [opened]="true"
+                 [ngClass]="{ 'expanded-events-panel' : isEventsPanelExpanded,
+                              'collapsed-events-panel' : !isEventsPanelExpanded }"
+                 [style.top.px]="eventsPanelTop">
+        <tl-icon-button [icon]="isEventsPanelExpanded ? 'arrow_forward_ios' : 'arrow_back_ios'"
+                        (buttonClicked)="toggleEventsPanel()"
+                        iconClass="primary-color"
+                        tooltipText="{{ (isEventsPanelExpanded ? 'ships-register.collapse-events-panel' : 'ships-register.expand-events-panel') | tlTranslate }}">
+        </tl-icon-button>
+
+        <div *ngIf="isEventsPanelExpanded" fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="1em">
+            <div *ngIf="!viewMode" fxLayout="column" fxLayoutAlign="start end" class="event-save-btn-container">
+                <tl-autocomplete fxFlexFill
+                                 [formControl]="eventTypeControl"
+                                 [groupedOptions]="eventTypes"
+                                 [showHint]="selectedEventHistoryNo !== allEvents.length"
+                                 [getControlErrorLabelText]="getEventTypeErrorText.bind(this)"
+                                 tooltipResourceName="ships-register.add-event-helper"
+                                 hint="{{ 'ships-register.selected-event-history-cannot-edit' | tlTranslate }}"
+                                 label="{{ 'ships-register.add-event' | tlTranslate }}">
+                </tl-autocomplete>
+
+                <div *ngIf="isChangeOfCircumstancesApplication || isDeregistrationApplication || isIncreaseCapacityApplication || isReduceCapacityApplication; else notChangeApplication"
+                     fxLayout="column"
+                     fxLayoutAlign="start end"
+                     fxLayoutGap="0.5em"
+                     fxFill>
+                    <button mat-raised-button
+                            color="accent"
+                            (click)="saveEvent(false)">
+                        {{ 'ships-register.do-application-change' | tlTranslate }}
+                    </button>
+
+                    <mat-divider fxFill></mat-divider>
+
+                    <div fxLayout="row" fxLayoutAlign="space-between center" fxFill>
+                        <button mat-raised-button
+                                color="primary"
+                                (click)="cancelChangesApplication()">
+                            {{ 'ships-register.cancel-changes-application' | tlTranslate }}
+                        </button>
+
+                        <div matTooltip="{{ 'ships-register.complete-changes-application-btn-disabled-tooltip' | tlTranslate }}"
+                             [matTooltipDisabled]="!disableCompleteApplicationButton"
+                             [matTooltipShowDelay]="500">
+                            <button mat-raised-button
+                                    color="accent"
+                                    [disabled]="disableCompleteApplicationButton"
+                                    (click)="completeChangesApplication()">
+                                {{ 'ships-register.complete-changes-application' | tlTranslate }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <ng-template #notChangeApplication>
+                    <button mat-raised-button
+                            color="accent"
+                            (click)="saveEvent(true)">
+                        {{ 'ships-register.save-event' | tlTranslate }}
+                    </button>
+                </ng-template>
+            </div>
+
+            <div fxLayout="column" fxLayoutAlign="start stretch">
+                <tl-slide-toggle class="show-edits-toggle"
+                                 [formControl]="showEditsControl"
+                                 label="{{ 'ships-register.show-edit-events' | tlTranslate }}">
+                </tl-slide-toggle>
+
+                <tl-data-table fxFlexFill
+                               [rows]="events"
+                               [isRemote]="false"
+                               [showInactiveRecords]="false"
+                               [showAddButton]="false"
+                               (activeRecordChanged)="viewHistoryShip($event)">
+                    <data-template-column [flexRate]="0.02"
+                                          propertyName="No"
+                                          columnName="{{ 'ships-register.events-panel-no' | tlTranslate }}">
+                        <ng-template ngx-datatable-cell-template
+                                     let-row="row">
+                            <span [ngClass]="{ 'event-cell-temporary': row.data.isTemporary }"
+                                  [matTooltipDisabled]="!row.data.isTemporary"
+                                  matTooltip="{{ 'ships-register.event-temporary' | tlTranslate }}">
+                                {{ row.data.no }}
+                            </span>
+                        </ng-template>
+                    </data-template-column>
+
+                    <data-template-column [flexRate]="0.125"
+                                          propertyName="Type"
+                                          columnName="{{ 'ships-register.events-panel-event' | tlTranslate }}">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <span [ngClass]="{ 'event-cell-temporary': row.data.isTemporary }"
+                                  [matTooltipDisabled]="!row.data.isTemporary"
+                                  matTooltip="{{ 'ships-register.event-temporary' | tlTranslate }}">
+                                {{ row.data.type }}
+                            </span>
+                        </ng-template>
+                    </data-template-column>
+
+                    <data-template-column [flexRate]="0.2"
+                                          propertyName="Date"
+                                          columnName="{{ 'ships-register.events-panel-date' | tlTranslate }}">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <span [ngClass]="{ 'event-cell-temporary': row.data.isTemporary }"
+                                  [matTooltipDisabled]="!row.data.isTemporary"
+                                  matTooltip="{{ 'ships-register.event-temporary' | tlTranslate }}">
+                                {{ row.data.date | date: 'dd.MM.yyyy' }}
+                            </span>
+                        </ng-template>
+                    </data-template-column>
+
+                    <data-template-column [flexRate]="0.1"
+                                          propertyName="UsrRsr"
+                                          columnName="{{ 'ships-register.events-panel-usr-rsr' | tlTranslate }}">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div fxLayout="row"
+                                 fxLayoutAlign="center center"
+                                 [matTooltipDisabled]="!row.data.isTemporary"
+                                 matTooltip="{{ 'ships-register.event-temporary' | tlTranslate }}">
+                                <tl-icon *ngIf="row.data.usrRsr"
+                                         icon="check_circle_outline"
+                                         [iconClass]="row.data.isTemporary ? 'error-color' : 'accent-color'">
+                                </tl-icon>
+                                <tl-icon *ngIf="!row.data.usrRsr"
+                                         icon="close"
+                                         [iconClass]="'error-color'">
+                                </tl-icon>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+
+                    <data-template-column [flexRate]="0.1">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div fxLayout="row" fxLayoutAlign="end center">
+                                <tl-icon-button icon="visibility"
+                                                [iconClass]="row.data.isTemporary ? 'error-color' : 'accent-color'"
+                                                (buttonClicked)="viewHistoryShip(row.data)"
+                                                [disabled]="row.data.no === selectedEventHistoryNo"
+                                                tooltipText="{{ 'ships-register.events-panel-view-ship' | tlTranslate }}">
+                                </tl-icon-button>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+                </tl-data-table>
+            </div>
+        </div>
+    </mat-sidenav>
+</mat-sidenav-container>

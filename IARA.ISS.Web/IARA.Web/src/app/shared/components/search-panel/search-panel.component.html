@@ -1,0 +1,77 @@
+﻿<mat-accordion fxLayout="column" fxLayoutAlign="space-evenly stretch" style="padding:1em">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header collapsedHeight="auto" style="height:3.5em;">
+            <mat-panel-title fxFlex="40" fxLayout="row">
+                <mat-form-field fxFill
+                                appearance="standard"
+                                (click)="clickedFormField($event)"
+                                (keydown.Space)="clickedFormField($event)"
+                                (keydown.Enter)="searchClicked($event)">
+                    <mat-icon matPrefix>search</mat-icon>
+                    <input matInput
+                           [formControl]="searchTextControl"
+                           placeholder="{{ 'common.key-word-search' | tlTranslate: 'cap' }}">
+                    <mat-hint *ngIf="searchTextControl?.value?.length > 0">{{ 'common.key-word-search' | translate }}</mat-hint>
+                </mat-form-field>
+            </mat-panel-title>
+            <mat-panel-description fxFlex="60" fxLayout="row" fxLayoutAlign="space-between center">
+                <mat-chip-list fxFlex="60" aria-label="Fish selection" style="height: 50px; overflow-y: auto; overflow-x: hidden;">
+                    <mat-chip color="primary"
+                              selected
+                              *ngFor="let filter of appliedFilters"
+                              class="max-w-15"
+                              matTooltip="{{ filter.displayValue }}"
+                              matTooltipPosition="above"
+                              matTooltipShowDelay="750">
+                        <span class="text-ellipsis  max-w-10">
+                            {{ filter.displayValue }}
+                        </span>
+                        <mat-icon (click)="matChipFilterElementClearClicked($event, filter)">clear</mat-icon>
+                    </mat-chip>
+                </mat-chip-list>
+                <div fxFlex="40" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="10px">
+                    <div matTooltip="{{ 'common.clear' | tlTranslate: 'cap' }}"
+                         matTooltipPosition="above"
+                         matTooltipHideDelay="700">
+                        <button mat-raised-button
+                                color="accent"
+                                class="h-fit-content"
+                                (click)="clearAllFiltersClicked($event)"
+                                [disabled]="noAdvancedSearchFiltersEnterted && searchTextControl?.value?.length === 0">
+                            <ic-icon icon="filter-remove" size="20" color="white"></ic-icon>
+                            {{ 'common.clear' | tlTranslate: 'cap' }}
+                        </button>
+                    </div>
+                    <div matTooltip="{{ 'common.refresh-data' | tlTranslate: 'cap' }}"
+                         matTooltipPosition="above"
+                         matTooltipHideDelay="700">
+                        <button mat-raised-button
+                                color="accent"
+                                class="h-fit-content"
+                                (click)="refreshClicked($event)">
+                            <fa-icon [icon]="faRedo" class="m-r-5"></fa-icon>
+                            {{ 'common.refresh' | tlTranslate: 'cap' }}
+                        </button>
+                    </div>
+                    <div matTooltip="{{ 'common.enter-filter-to-search' | tlTranslate: 'cap' }}"
+                         matTooltipPosition="above"
+                         matTooltipHideDelay="300">
+                        <button mat-raised-button
+                                color="accent"
+                                [disabled]="!searchTextControl?.touched && !_advancedSearchFormGroup?.touched"
+                                class="h-fit-content"
+                                (click)="searchClicked($event)">
+                            <fa-icon [icon]="faFilter" class="m-r-5"></fa-icon>
+                            {{ 'common.search' | tlTranslate: 'cap' }}
+                        </button>
+                    </div>
+                </div>
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-card>
+            <mat-card-content>
+                <ng-content></ng-content>
+            </mat-card-content>
+        </mat-card>
+    </mat-expansion-panel>
+</mat-accordion>

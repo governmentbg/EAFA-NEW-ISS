@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <Configurations>Debug;Release;Test</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IARA.DomainModels\IARA.DomainModels.csproj" />
+    <ProjectReference Include="..\IARA.Excel.Tools\IARA.Excel.Tools.csproj" />
+    <ProjectReference Include="..\IARA.FluxModels\IARA.FluxModels.csproj" />
+    <ProjectReference Include="..\IARA.FVMSModels\IARA.FVMSModels.csproj" />
+  </ItemGroup>
+
+</Project>

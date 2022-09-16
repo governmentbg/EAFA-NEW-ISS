@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<tl:TLBaseDialog x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.EngineDialog.EngineDialog"
+        xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.EngineDialog"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        x:Name="dialog"
+        Title="{rt:Translate DialogTitle, Group=Engine}"
+        x:DataType="local:EngineDialogViewModel"
+        x:TypeArguments="local:EngineDialogViewModel, m:EngineModel"
+        BackgroundColor="White"
+        IconColor="White"
+        TitleBackgroundColor="{StaticResource Primary}"
+        TitleColor="White">
+    <tl:TLScrollView>
+        <StackLayout Padding="10">
+            <tl:TLFlex GrowUnit="200">
+                <tl:TLEntry Title="{rt:Translate Model, Group=Engine}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        ValidState="{Binding Model}" />
+                <tl:TLEntry Title="{rt:Translate Power, Group=Engine}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        Keyboard="Numeric"
+                        ValidState="{Binding Power}" />
+                <tl:TLEntry Title="{rt:Translate Type, Group=Engine}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        ValidState="{Binding Type}" />
+                <tl:TLEntry Title="{rt:Translate TotalCount, Group=Engine}"
+                        Keyboard="Numeric"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        ValidState="{Binding TotalCount}" />
+            </tl:TLFlex>
+            <tl:TLEntry Title="{rt:Translate EngineDescription, Group=Engine}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    ValidState="{Binding EngineDescription}" />
+            <tl:TLCheckView Text="{rt:Translate Taken, Group=Engine}"
+                    IsChecked="{Binding IsTaken}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+            <tl:TLCheckView Text="{rt:Translate Stored, Group=Engine}"
+                    IsChecked="{Binding IsStored}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+            <tl:TLEntry Title="{rt:Translate Location, Group=Engine}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    ValidState="{Binding Location}" />
+            <Button Command="{Binding Save}"
+                    IsVisible="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    Text="{rt:Translate Save, Group=Common}" />
+        </StackLayout>
+    </tl:TLScrollView>
+</tl:TLBaseDialog>

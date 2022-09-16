@@ -1,0 +1,32 @@
+﻿<mat-vertical-stepper #stepper linear (selectionChange)="onStepChange($event)" color="accent">
+    <mat-step [stepControl]="ticketNumControl" [editable]="true">
+        <ng-template matStepLabel>
+            <span [ngClass]="{ 'error-color': ticketNumControl.touched && ticketNumControl.invalid }">
+                {{ 'recreational-fishing.issue-duplicate-new-ticket-num-title' | tlTranslate }}
+            </span>
+        </ng-template>
+
+        <div fxLayout="row" fxFlex="100" fxLayoutAlign="start center">
+            <tl-input fxFlex="50"
+                      [formControl]="ticketNumControl"
+                      [getControlErrorLabelText]="getControlErrorLabelTextForTicketNumber.bind(this)"
+                      tooltipResourceName="recreational-fishing.issue-duplicate-new-ticket-num-helper"
+                      label="{{ 'recreational-fishing.issue-duplicate-new-ticket-num' | tlTranslate }}">
+            </tl-input>
+        </div>
+    </mat-step>
+
+    <mat-step [stepControl]="paymentDataControl">
+        <ng-template matStepLabel>
+            <span [ngClass]="{ 'error-color': paymentDataControl.touched && paymentDataControl.invalid }">
+                {{ 'recreational-fishing.issue-duplicate-payment-data-title' | tlTranslate }}
+            </span>
+        </ng-template>
+
+        <payment-data [formControl]="paymentDataControl"
+                      [defaultDate]="currentDate"
+                      [paymentDateMax]="currentDate"
+                      [paymentSummary]="paymentSummary">
+        </payment-data>
+    </mat-step>
+</mat-vertical-stepper>

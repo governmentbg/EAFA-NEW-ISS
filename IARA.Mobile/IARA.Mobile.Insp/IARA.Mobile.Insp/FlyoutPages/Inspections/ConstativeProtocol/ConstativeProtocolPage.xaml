@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.ConstativeProtocol"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:lh="clr-namespace:IARA.Mobile.Insp.Helpers"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.ConstativeProtocol.ConstativeProtocolPage"
+        x:DataType="local:ConstativeProtocolViewModel"
+        x:TypeArguments="local:ConstativeProtocolViewModel"
+        x:Name="page"
+        PageInfo="{rt:Translate PageInfo, Group=ConstativeProtocol}"
+        Title="{rt:Translate Title, Group=ConstativeProtocol}"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <ScrollView>
+        <StackLayout>
+            <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
+                    Text="{rt:Translate GeneralInfo, Group=ConstativeProtocol}"
+                    IsExpanded="True">
+                <StackLayout Padding="10">
+                    <tl:TLEntry Title="{rt:Translate ReportNum, Group=ConstativeProtocol}"
+                            Text="{Binding Edit.ReportNum}"
+                            IsEnabled="False" />
+                    <tl:TLDatePicker Title="{rt:Translate InspectionDate, Group=ConstativeProtocol}"
+                            Date="{Binding Edit.StartDate}"
+                            IsEnabled="False" />
+                    <tl:TLEditor Title="{rt:Translate Location, Group=ConstativeProtocol}"
+                            Text="{Binding Edit.Location}"
+                            IsEnabled="False" />
+                    <tl:TLEditor Title="{rt:Translate InspectorName, Group=ConstativeProtocol}"
+                            Text="{Binding Edit.InspectorName}"
+                            IsEnabled="False" />
+                </StackLayout>
+            </sv:SectionView>
+            <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.User}, Color=White, Size=100}"
+                    Text="{rt:Translate Witnesses, Group=ConstativeProtocol}"
+                    IsExpanded="True">
+                <StackLayout Padding="10">
+                    <tl:TLEditor Title="{rt:Translate Witness1Name, Group=ConstativeProtocol}"
+                            Text="{Binding Edit.Witness1Name}"
+                            IsEnabled="False" />
+                    <tl:TLEditor Title="{rt:Translate Witness2Name, Group=ConstativeProtocol}"
+                            Text="{Binding Edit.Witness2Name}"
+                            IsEnabled="False" />
+                </StackLayout>
+            </sv:SectionView>
+            <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Check}, Color=White, Size=100}"
+                    Text="{rt:Translate Inspected, Group=ConstativeProtocol}"
+                    IsExpanded="True">
+                <StackLayout Padding="10">
+                    <tl:TLEditor Title="{rt:Translate InspectedObjectName, Group=ConstativeProtocol}"
+                            Text="{Binding Edit.InspectedObjectName}"
+                            IsEnabled="False" />
+                    <tl:TLEditor Title="{rt:Translate InspectedPersonName, Group=ConstativeProtocol}"
+                            Text="{Binding Edit.InspectedPersonName}"
+                            IsEnabled="False" />
+                </StackLayout>
+            </sv:SectionView>
+            <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Fish}, Color=White, Size=100}"
+                    Text="{rt:Translate Catches, Group=ConstativeProtocol}"
+                    IsExpanded="True">
+                <StackLayout Padding="10">
+                    <tl:TLResponsiveTable IsTitleVisible="False">
+                        <tl:TLResponsiveTable.TableColumns>
+                            <tl:TLTableColumn Text="{rt:Translate FishType, Group=ConstativeProtocol}" Width="*" />
+                            <tl:TLTableColumn Text="{rt:Translate CatchQuantity, Group=ConstativeProtocol}" Width="*" />
+                            <tl:TLTableColumn Text="{rt:Translate IsDestroyed, Group=ConstativeProtocol}" Width="120" />
+                            <tl:TLTableColumn Text="{rt:Translate IsDonated, Group=ConstativeProtocol}" Width="120" />
+                            <tl:TLTableColumn Text="{rt:Translate IsStored, Group=ConstativeProtocol}" Width="120" />
+                            <tl:TLTableColumn Text="{rt:Translate IsReturned, Group=ConstativeProtocol}" Width="120" />
+                        </tl:TLResponsiveTable.TableColumns>
+                        <tl:TLResponsiveTable.DefaultItemTemplate>
+                            <DataTemplate>
+                                <tl:TLTableRow x:DataType="m:CPCatchModel">
+                                    <Label Text="{Binding Fish.DisplayValue}"
+                                            LineBreakMode="WordWrap"
+                                            VerticalOptions="Center" />
+                                    <Label Text="{Binding Dto.CatchQuantity}"
+                                            LineBreakMode="WordWrap"
+                                            VerticalOptions="Center" />
+                                    <tl:TLCheckView IsChecked="{Binding Dto.IsDestroyed}" />
+                                    <tl:TLCheckView IsChecked="{Binding Dto.IsDonated}" />
+                                    <tl:TLCheckView IsChecked="{Binding Dto.IsStored}" />
+                                    <tl:TLCheckView IsChecked="{Binding Dto.IsTaken, Converter={StaticResource OppositeBool}}" />
+                                </tl:TLTableRow>
+                            </DataTemplate>
+                        </tl:TLResponsiveTable.DefaultItemTemplate>
+                        <tl:TLResponsivleTableChild TableLayout="Table" />
+                        <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="800" />
+                        <tl:TLResponsiveTable.EmptyView>
+                            <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
+                        </tl:TLResponsiveTable.EmptyView>
+                    </tl:TLResponsiveTable>
+                </StackLayout>
+            </sv:SectionView>
+            <sv:SectionView Image="{lh:Image hook}"
+                    Text="{rt:Translate FishingGears, Group=ConstativeProtocol}"
+                    IsExpanded="True">
+                <StackLayout Padding="10">
+                    <tl:TLResponsiveTable IsTitleVisible="False">
+                        <tl:TLResponsiveTable.TableColumns>
+                            <tl:TLTableColumn Text="{rt:Translate FishingGearType, Group=ConstativeProtocol}" Width="*" />
+                            <tl:TLTableColumn Text="{rt:Translate GearCount, Group=ConstativeProtocol}" Width="*" />
+                            <tl:TLTableColumn Text="{rt:Translate GearLength, Group=ConstativeProtocol}" Width="*" />
+                            <tl:TLTableColumn Text="{rt:Translate Devices, Group=ConstativeProtocol}" Width="*" />
+                            <tl:TLTableColumn Text="{rt:Translate IsStored, Group=ConstativeProtocol}" Width="120" />
+                            <tl:TLTableColumn Text="{rt:Translate IsReturned, Group=ConstativeProtocol}" Width="120" />
+                        </tl:TLResponsiveTable.TableColumns>
+                        <tl:TLResponsiveTable.DefaultItemTemplate>
+                            <DataTemplate>
+                                <tl:TLTableRow x:DataType="m:CPFishingGearModel">
+                                    <Label Text="{Binding FishingGear.DisplayValue}"
+                                            LineBreakMode="WordWrap"
+                                            VerticalOptions="Center" />
+                                    <Label Text="{Binding Dto.GearCount}"
+                                            LineBreakMode="WordWrap"
+                                            VerticalOptions="Center" />
+                                    <Label Text="{Binding Dto.Length}"
+                                            LineBreakMode="WordWrap"
+                                            VerticalOptions="Center" />
+                                    <Label Text="{Binding Dto.Description}"
+                                            LineBreakMode="WordWrap"
+                                            VerticalOptions="Center" />
+                                    <tl:TLCheckView IsChecked="{Binding Dto.IsStored}" />
+                                    <tl:TLCheckView IsChecked="{Binding Dto.IsTaken, Converter={StaticResource OppositeBool}}" />
+                                </tl:TLTableRow>
+                            </DataTemplate>
+                        </tl:TLResponsiveTable.DefaultItemTemplate>
+                        <tl:TLResponsivleTableChild TableLayout="Table" />
+                        <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="800" />
+                        <tl:TLResponsiveTable.EmptyView>
+                            <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
+                        </tl:TLResponsiveTable.EmptyView>
+                    </tl:TLResponsiveTable>
+                </StackLayout>
+            </sv:SectionView>
+            <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Question}, Color=White, Size=100}"
+                    Text="{rt:Translate AdditionalInfo, Group=ConstativeProtocol}"
+                    IsExpanded="True">
+                <StackLayout Padding="10">
+                    <tl:TLEditor Title="{rt:Translate InspectorComment, Group=ConstativeProtocol}"
+                            Text="{Binding Edit.InspectorComment}"
+                            IsEnabled="False" />
+                    <tl:TLEditor Title="{rt:Translate ActionsTaken, Group=ConstativeProtocol}"
+                            Text="{Binding Edit.ActionsTaken}"
+                            IsEnabled="False" />
+                </StackLayout>
+            </sv:SectionView>
+        </StackLayout>
+    </ScrollView>
+</sv:BasePage>

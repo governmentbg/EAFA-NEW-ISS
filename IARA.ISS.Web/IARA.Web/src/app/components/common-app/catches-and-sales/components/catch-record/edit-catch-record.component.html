@@ -1,0 +1,58 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     validityCheckerGroup
+     [formGroup]="form">
+    <tl-expansion-panel title="{{ 'catches-and-sales.ship-page-catch-record-basic-information-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.ship-page-catch-record-basic-information-panel-helper"
+                        [validityChecker]="form">
+        <div fxFlexFill fxLayout="column">
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-date-time fxFlex="20"
+                              formControlName="gearEntryDateTimeControl"
+                              label="{{ 'catches-and-sales.ship-page-gear-entry-time' | tlTranslate }} ({{ 'common.date-time-control-format-hint' | tlTranslate }})"
+                              tooltipResourceName="catches-and-sales.ship-page-gear-entry-time-helper"
+                              [max]="form.controls.gearExitDateTimeControl?.value"
+                              [disabled]="viewMode"
+                              [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                </tl-date-time>
+                <tl-date-time fxFlex="20"
+                              formControlName="gearExitDateTimeControl"
+                              label="{{ 'catches-and-sales.ship-page-gear-exit-time' | tlTranslate }} ({{ 'common.date-time-control-format-hint' | tlTranslate }})"
+                              tooltipResourceName="catches-and-sales.ship-page-gear-exit-time-helper"
+                              [min]="form.controls.gearEntryDateTimeControl?.value"
+                              [disabled]="viewMode"
+                              [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                </tl-date-time>
+                <tl-input fxFlex="20"
+                          formControlName="totalTimeControl"
+                          label="{{ 'catches-and-sales.ship-page-total-time' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-total-time-helper"
+                          [readonly]="true">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="catchOperationsCountControl"
+                          label="{{ 'catches-and-sales.ship-page-catch-operations-count' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-catch-operations-count-helper">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="depthControl"
+                          label="{{ 'catches-and-sales.ship-page-catch-fishing-gear-depth' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-catch-fishing-gear-depth-helper">
+                </tl-input>
+            </div>
+        </div>
+    </tl-expansion-panel>
+    <tl-expansion-panel title="{{ 'catches-and-sales.ship-page-catch-aquatic-organisms-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.ship-page-catch-aquatic-organisms-panel-helper"
+                        [validityChecker]="form">
+        <div fxFlexFill fxFlex="column">
+            <catch-aquatic-organism-types-array formControlName="aquaticOrganismTypesControl"
+                                                validityChecker
+                                                [service]="service"
+                                                [waterType]="waterType">
+            </catch-aquatic-organism-types-array>
+        </div>
+    </tl-expansion-panel>
+</div>

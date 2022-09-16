@@ -1,0 +1,64 @@
+﻿<div [formGroup]="form" validityCheckerGroup [notifierGroup]="notifierGroup" fxLayout="column" fxLayoutGap="1em">
+    <tl-expansion-panel *ngIf="!hideRelation"
+                        [validityChecker]="form"
+                        [title]="relationLabel"
+                        validityCheckerGroup>
+        <applicant-relation-to-recipient formControlName="relationControl"
+                                         validityChecker
+                                         [pageCode]="pageCode">
+        </applicant-relation-to-recipient>
+    </tl-expansion-panel>
+
+    <ng-content select="[middle]"></ng-content>
+
+    <tl-expansion-panel *ngIf="role !== undefined && role !== null && (role !== roles.Personal || showPersonal)"
+                        [validityChecker]="form"
+                        [title]="submittedForLabel"
+                        validityCheckerGroup>
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-data *ngIf="role === roles.PersonalRepresentative || (showPersonal && role === roles.Personal)"
+                        formControlName="personControl"
+                        notifier
+                        validityChecker
+                        [isPerson]="true"
+                        [isIdReadOnly]="isIdReadOnly"
+                        [isForeigner]="isForeigner"
+                        [hideDocument]="hideDocument"
+                        [showOnlyBasicData]="showOnlyBasicData"
+                        [expectedResults]="expectedResults?.person"
+                        checkboxLabel="{{ 'application-submitted-for.has-bulgarian-address-registration' | tlTranslate }}">
+            </regix-data>
+
+            <regix-data *ngIf="role === roles.LegalOwner || role === roles.LegalRepresentative"
+                        formControlName="legalControl"
+                        notifier
+                        validityChecker
+                        [isPerson]="false"
+                        [showCustodianOfProperty]="showCustodianOfProperty"
+                        [custodianOfPropertyValue]="custodianOfProperty"
+                        [isForeigner]="isForeigner"
+                        [isIdReadOnly]="isIdReadOnly"
+                        [showOnlyBasicData]="showOnlyBasicData"
+                        [expectedResults]="expectedResults?.legal"
+                        checkboxLabel="{{ 'application-submitted-for.has-bulgarian-address-registration' | tlTranslate }}">
+            </regix-data>
+
+            <address-registration *ngIf="!showOnlyBasicData && (role === roles.PersonalRepresentative || (showPersonal && role === roles.Personal))"
+                                  formControlName="personAddressesControl"
+                                  notifier
+                                  validityChecker
+                                  addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                                  secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                                  checkboxLabel="{{ 'application-submitted-for.permanent-address-same-as-correspondence' | tlTranslate }}"
+                                  [expectedResults]="expectedResults?.addresses">
+            </address-registration>
+            <address-registration *ngIf="!showOnlyBasicData && (role === roles.LegalOwner || role === roles.LegalRepresentative)"
+                                  formControlName="legalAddressesControl"
+                                  notifier
+                                  validityChecker
+                                  addressLabel="{{ 'common.company-headquarters-address' | tlTranslate : 'cap' }}"
+                                  [expectedResults]="expectedResults?.addresses">
+            </address-registration>
+        </div>
+    </tl-expansion-panel>
+</div>

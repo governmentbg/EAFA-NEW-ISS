@@ -1,0 +1,86 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <!-- Филтри -->
+    <search-panel [translateService]="translateService">
+        <div [formGroup]="formGroup" fxFlexFill fxLayout="column" fxLayoutAlign="start start">
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-input fxFlex="25"
+                          formControlName="nameControl"
+                          label="{{ 'permissions-register.permission-name' | tlTranslate }}"
+                          tooltipResourceName="permissions-register.permission-name-helper">
+                </tl-input>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="groupControl"
+                                 [options]="groups"
+                                 label="{{ 'permissions-register.permission-group' | tlTranslate }}"
+                                 tooltipResourceName="permissions-register.permission-group-helper">
+                </tl-autocomplete>
+
+                <tl-select fxFlex="25"
+                           formControlName="typeControl"
+                           label="{{ 'permissions-register.permission-type' | tlTranslate }}"
+                           [options]="types"
+                           [isMultiple]="true"
+                           tooltipResourceName="permissions-register.permission-type-helper">
+                </tl-select>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="roleControl"
+                                 [options]="roles"
+                                 label="{{ 'permissions-register.role' | tlTranslate }}"
+                                 tooltipResourceName="permissions-register.role-helper">
+                </tl-autocomplete>
+            </div>
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <mat-card>
+        <tl-data-table [showAddButton]="false"
+                       [showInactiveRecords]="false">
+            <data-column propertyName="name"
+                         [flexRate]="0.6"
+                         columnName="{{ 'permissions-register.name' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="description"
+                         [flexRate]="0.9"
+                         columnName="{{ 'permissions-register.description' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="group"
+                         [flexRate]="0.6"
+                         columnName="{{ 'permissions-register.group' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="type"
+                         [flexRate]="0.4"
+                         columnName="{{ 'permissions-register.type' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="rolesCount"
+                         [flexRate]="0.3"
+                         columnName="{{ 'permissions-register.count' | tlTranslate }}">
+            </data-column>
+
+            <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                        <tl-icon-button icon="visibility"
+                                        (buttonClicked)="editPermission(row.data, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'permissions-register.view-permission' | tlTranslate }}">
+                        </tl-icon-button>
+
+                        <tl-icon-button *ngIf="canEditRecords"
+                                        icon="edit"
+                                        (buttonClicked)="editPermission(row.data, false)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'permissions-register.edit-permission' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </mat-card>
+</div>

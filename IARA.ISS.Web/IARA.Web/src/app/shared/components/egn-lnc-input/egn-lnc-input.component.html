@@ -1,0 +1,30 @@
+﻿<div [formGroup]="form" fxLayout="row" fxLayoutAlign="space-between center">
+    <tl-input [fxFlex]="showSearchButton && !isDisabled ? 90 : 100"
+              formControlName="valueControl"
+              [label]="label"
+              [readonly]="readonly"
+              [multilineError]="multilineError"
+              [appearance]="appearance"
+              [getControlErrorLabelText]="getControlErrorLabelText"
+              (focusout)="onFocusOut()">
+        <mat-button-toggle-group *ngIf="!isForeigner && !includeForeigner" formControlName="valueTypeControl" [id]="toggleButtonId">
+            <mat-button-toggle value="egn">{{ 'regix-data.egn' | tlTranslate }}</mat-button-toggle>
+            <mat-button-toggle value="lnc">{{ 'regix-data.lnc' | tlTranslate }}</mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <tl-select *ngIf="!isForeigner && includeForeigner"
+                   formControlName="valueTypeControl"
+                   [id]="selectButtonId"
+                   [options]="valueTypes">
+        </tl-select>
+    </tl-input>
+
+    <tl-icon-button *ngIf="showSearchButton && !isDisabled"
+                    fxFlex="10"
+                    class="search-button"
+                    icon="fa-search-icon"
+                    (buttonClicked)="searchBtnClicked()"
+                    iconClass="accent-color"
+                    tooltipText="{{ 'regix-data.search' | tlTranslate }}">
+    </tl-icon-button>
+</div>

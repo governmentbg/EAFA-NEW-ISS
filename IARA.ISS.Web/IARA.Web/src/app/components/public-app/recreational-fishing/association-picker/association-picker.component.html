@@ -1,0 +1,23 @@
+﻿<div fxLayout="column"
+     fxLayoutAlign="space-around center"
+     fxLayoutGap="1em"
+     class="container">
+    <label *ngIf="associations.length !== 0"
+           id="choose-association-label">
+        {{ 'recreational-fishing.choose-association' | tlTranslate }}
+    </label>
+
+    <div *ngFor="let association of associations"
+         class="associations-list">
+        <button mat-raised-button
+                color="accent"
+                (click)="chooseAssociation(association)">
+            {{ association.displayName }}
+        </button>
+    </div>
+
+    <label *ngIf="associations.length === 0"
+           id="no-associations-label">
+        {{ 'recreational-fishing.no-associations-with-permission' | tlTranslate }}
+    </label>
+</div>

@@ -1,0 +1,40 @@
+﻿<tl-card fxFlexFill>
+    <tl-card-content fxFlex="100" fxLayoutGap="1em"> 
+        <div fxLayout="column" fxFlex="155px">
+            <div *ngIf="news.mainImage !== null && news.mainImage !== undefined; else noMainImage">
+                <img [src]="news.mainImage" class="image-size" />
+            </div>
+            <ng-template #noMainImage>
+                <tl-icon icon="ic-newspaper-variant-multiple-outline" 
+                         class="default-image-color" 
+                         size="150">
+                </tl-icon>
+            </ng-template>
+        </div>
+        <div fxLayout="column"
+             fxFlex="100"
+             fxLayoutGap="1em"
+             fxLayoutAlign="space-between start">
+            <div fxLayout="column"
+                 class="full-width"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start start">
+                <div class="break-all-words">
+                    {{ news.title }}
+                </div>
+                <div class="break-all-words">
+                    {{ news.summary }}
+                    <span *ngIf="news.summary?.length >= 200">...</span>
+                </div>
+            </div>
+            <div fxLayout="row"
+                 class="full-width"
+                 fxLayoutAlign="space-between end">
+                <span>{{ news.createdOn | date: 'dd MMMM yyyy'}}</span>
+                <div>
+                    <a (click)="detailedNewsClicked()">{{ 'news.read-more' | tlTranslate }}</a>
+                </div>
+            </div>
+        </div>
+    </tl-card-content>
+</tl-card>

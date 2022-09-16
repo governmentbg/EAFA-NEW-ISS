@@ -1,0 +1,227 @@
+﻿<div #container fxFlexFill fxLayoutGap="1em" class="space-cards" [formGroup]="formGroup">
+    <div fxLayout="column" fxFlex="20">
+        <!-- Таблици -->
+        <tl-card fxFlexFill>
+            <tl-card-title>{{ 'report-definition.tables-title' | tlTranslate }}</tl-card-title>
+            <tl-card-content>
+                <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="tree">
+                    <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
+                        {{node.displayName}}
+                    </mat-tree-node>
+                    <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+                        <div class="mat-tree-node">
+                            <button mat-icon-button matTreeNodeToggle
+                                    [attr.aria-label]="'Toggle ' + node.displayName">
+                                <mat-icon class="mat-icon-rtl-mirror">
+                                    {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                                </mat-icon>
+                            </button>
+                            {{node.displayName}}
+                        </div>
+                        <div [class.tree-invisible]="!treeControl.isExpanded(node)"
+                             role="group">
+                            <ng-container matTreeNodeOutlet></ng-container>
+                        </div>
+                    </mat-nested-tree-node>
+                </mat-tree>
+            </tl-card-content>
+        </tl-card>
+    </div>
+
+    <div fxLayout="column" fxFlex="80" fxLayoutGap="1em">
+
+        <!-- Обща информация за справка -->
+        <tl-expansion-panel title="{{ 'report-definition.general-information-title' | tlTranslate }}"
+                            tooltipResourceName="report-definition.general-information-title-helper">
+            <tl-card fxLayout="row" formGroupName="generalInformationGroup">
+                <tl-card-content fxLayoutGap="1em">
+                    <div fxLayout="column" fxLayoutGap="2em">
+                        <div fxLayout="row" fxLayoutGap="2em" fxFlex>
+                            <tl-input label="{{ 'report-definition.general-information-report-title' | tlTranslate }}"
+                                      formControlName="titleControl"
+                                      fxFlex="75"
+                                      tooltipResourceName="report-definition.general-information-report-title-helper">
+                            </tl-input>
+                            <div class="container" fxLayout="row" fxFlex="24">
+                                <div class="input-group-addon" fxFlex="20" fxLayoutAlign="start center">
+                                    <i [ngClass]="iconNameControl.value">{{ iconNameControl.value }} </i>
+                                </div>
+                                <mat-form-field fxFlex="80">
+                                    <mat-label>{{ 'report-definition.report-icon' | tlTranslate }}</mat-label>
+                                    <input matInput
+                                           type="text"
+                                           formControlName="iconNameControl"
+                                           [iconPicker]="iconNameControl.value"
+                                           [ipIconPack]="['mat']"
+                                           [ipPosition]="'bottom'"
+                                           [ipWidth]="'250px'"
+                                           [ipIconSize]="'20px'"
+                                           [ipIconVerticalPadding]="'6px'"
+                                           [ipIconHorizontalPadding]="'10px'"
+                                           [ipKeepSearchFilter]="false"
+                                           ipFallbackIcon="description"
+                                           ipPlaceHolder="{{ 'report-definition.report-icon-search' | tlTranslate }}"
+                                           (iconPickerSelect)="onIconPickerSelect($event)"
+                                           value="{{ iconNameControl.value }}" />
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div fxLayout="row" fxLayoutGap="1em" fxFlex>
+                            <tl-input label="{{ 'report-definition.general-information-report-code' | tlTranslate }}"
+                                      formControlName="codeControl"
+                                      fxFlex="75"
+                                      tooltipResourceName="report-definition.general-information-report-code-helper">
+                            </tl-input>
+                            <tl-select label="{{ 'report-definition.report-type' | tlTranslate }}"
+                                       formControlName="reportTypeControl"
+                                       [options]="reportTypes"
+                                       fxFlex="25"
+                                       tooltipResourceName="report-definition.report-type-helper">
+                            </tl-select>
+                        </div>
+                        <tl-textarea label="{{ 'report-definition.general-information-report-description' | tlTranslate }}"
+                                     formControlName="descriptionControl"
+                                     tooltipResourceName="report-definition.general-information-report-description-helper">
+                        </tl-textarea>
+
+                        <div fxLayout="row" fxLayoutGap="1em" fxFlex>
+
+                            <tl-input label="{{ 'report-definition.last-run-user' | tlTranslate }}"
+                                      formControlName="lastRunUserControl"
+                                      fxFlex="33"
+                                      tooltipResourceName="report-definition.last-run-user-helper">
+                            </tl-input>
+                            <tl-date-time label="{{ 'report-definition.last-run-date-time' | tlTranslate }}"
+                                          formControlName="lastRunDateTimeControl"
+                                          fxFlex="33"
+                                          tooltipResourceName="report-definition.last-run-date-time-helper">
+                            </tl-date-time>
+                            <tl-input label="{{ 'report-definition.last-run-duration-sec' | tlTranslate }}"
+                                      formControlName="lastRunDurationSecControl"
+                                      fxFlex="33"
+                                      tooltipResourceName="report-definition.last-run-duration-sec-helper">
+                            </tl-input>
+                        </div>
+                        <div fxLayout="row" fxLayoutGap="1em" fxFlex>
+                            <tl-autocomplete label="{{ 'report-definition.report-group' | tlTranslate }}"
+                                             formControlName="reportGroupControl"
+                                             [options]="reportGroups"
+                                             fxFlex="50"
+                                             tooltipResourceName="report-definition.report-group-helper">
+                            </tl-autocomplete>
+                        </div>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+        </tl-expansion-panel>
+
+        <!-- Управление на достъп -->
+        <tl-expansion-panel title=" {{ 'report-definition.general-information-report-permission-title' | tlTranslate }}"
+                            tooltipResourceName="report-definition.general-information-report-permission-title-helper">
+            <tl-card fxLayout="row" formGroupName="accessManagementGroup">
+                <tl-card-content fxLayout="column" fxFlex="100">
+                    <div fxLayout="row" fxFlex="100" fxLayoutGap="1em">
+                        <simple-select-table formControlName="selectedUsersControl"
+                                             [allRows]="users"
+                                             autocompleteLabel="{{ 'report-definition.access-management-add-user' | tlTranslate }}"
+                                             columnName="{{ 'report-definition.access-management-selected-users' | tlTranslate }}"
+                                             fxFlex="50">
+                        </simple-select-table>
+                        <simple-select-table formControlName="selectedRolesControl"
+                                             [allRows]="roles"
+                                             autocompleteLabel="{{ 'report-definition.access-management-add-role' | tlTranslate }}"
+                                             columnName="{{ 'report-definition.access-management-selected-roles' | tlTranslate }}"
+                                             fxFlex="50">
+                        </simple-select-table>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+        </tl-expansion-panel>
+
+        <!-- Дефиниция -->
+        <tl-expansion-panel title=" {{ 'report-definition.definition-title' | tlTranslate }}"
+                            tooltipResourceName="report-definition.definition-title-helper">
+            <tl-card fxLayout="row">
+                <tl-card-content fxLayout="column" fxFlex="100">
+                    <report-sql formControlName="queryControl"
+                                [reportInfo]="reportInfo"
+                                [hasExecuteTable]="true">
+                    </report-sql>
+                    <mat-error *ngIf="formGroup.controls.queryControl.errors?.invalidSqlQuery">
+                        * {{ 'report-view.invalid-sql' | tlTranslate }}
+                    </mat-error>
+                </tl-card-content>
+            </tl-card>
+        </tl-expansion-panel>
+
+        <!-- Параметри -->
+        <tl-expansion-panel title=" {{ 'report-definition.parameters-title' | tlTranslate }}"
+                            tooltipResourceName="report-definition.parameters-title-helper">
+            <tl-card fxLayout="row">
+                <tl-card-content>
+                    <tl-data-table #parametersTable
+                                   [showAddButton]="!viewMode"
+                                   (addButtonClicked)="addOrEditParameter()"
+                                   (activeRecordChanged)="addOrEditParameter($event)"
+                                   [rows]="report.parameters"
+                                   [isRemote]="false"
+                                   [isSoftDeletable]="true">
+                        <data-column [flexRate]="0.3" columnName="{{ 'report-definition.parameters-table-parameter-name' | tlTranslate }}" propertyName="parameterName"></data-column>
+                        <data-column [flexRate]="0.3" columnName="{{ 'report-definition.parameters-table-parameter-code' | tlTranslate }}" propertyName="code"></data-column>
+                        <data-column [flexRate]="0.2" columnName="{{ 'report-definition.parameters-table-parameter-default-value' | tlTranslate }}" propertyName="defaultValue"></data-column>
+                        <data-column [flexRate]="0.2" columnName="{{ 'report-definition.parameters-table-parameter-pattern' | tlTranslate }}" propertyName="pattern"></data-column>
+                        <data-column [flexRate]="0.2" columnName="{{ 'report-definition.parameters-table-parameter-error-message' | tlTranslate }}" propertyName="errorMessage"></data-column>
+                        <data-column [flexRate]="0.2" columnName="{{ 'report-definition.parameters-table-parameter-order-number' | tlTranslate }}" propertyName="orderNumber"></data-column>
+                        <data-column [flexRate]="0.2" columnName="{{ 'report-definition.parameters-table-parameter-is-required' | tlTranslate }}" propertyName="isMandatory"></data-column>
+                        <data-template-column [flexRate]="0.3">
+                            <ng-template let-row="row" ngx-datatable-cell-template>
+                                <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">
+                                    <tl-icon-button icon="visibility"
+                                                    (buttonClicked)="addOrEditParameter(row.data, true)"
+                                                    iconClass="accent-color">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                                    icon="edit" (buttonClicked)="addOrEditParameter(row.data)"
+                                                    iconClass="accent-color">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                                    icon="delete"
+                                                    (buttonClicked)="deleteParameter(row)"
+                                                    iconClass="accent-color">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="!row.data.isActive && !viewMode"
+                                                    icon="restore"
+                                                    (buttonClicked)="undoDeletedParameter(row)"
+                                                    iconClass="accent-color">
+                                    </tl-icon-button>
+                                </div>
+                            </ng-template>
+                        </data-template-column>
+                    </tl-data-table>
+                </tl-card-content>
+            </tl-card>
+        </tl-expansion-panel>
+    </div>
+
+    <div class="hover style-menu"
+         fxLayout="row"
+         fxLayoutAlign="end center">
+        <div fxLayoutGap="2em">
+            <tl-audit [auditInfo]="auditInfo"
+                      (openAudit)="auditBtnClicked()"
+                      (openDetailedAudit)="detailedAuditClicked()">
+            </tl-audit>
+            <button (click)="cancelBtnClicked()"
+                    mat-raised-button
+                    color="secondary">
+                {{ 'report-definition.general-information-report-cancel-button' | tlTranslate }}
+            </button>
+            <button *ngIf="!viewMode"
+                    (click)="saveBtnClicked()"
+                    mat-raised-button
+                    color="accent">
+                {{ 'report-definition.general-information-report-save-button' | tlTranslate }}
+            </button>
+        </div>
+    </div>
+</div>

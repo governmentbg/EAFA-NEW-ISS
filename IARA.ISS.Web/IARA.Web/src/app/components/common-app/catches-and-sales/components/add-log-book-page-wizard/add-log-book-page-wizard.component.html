@@ -1,0 +1,141 @@
+﻿<mat-vertical-stepper linear #stepper (selectionChange)="selectedStepChanged($event)" color="accent">
+    <mat-step [stepControl]="preliminaryDataFormGroup" [editable]="true">
+        <div [formGroup]="preliminaryDataFormGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span [ngClass]="{ 'error-color': preliminaryDataFormGroup.touched && preliminaryDataFormGroup.invalid }">
+                    {{ 'catches-and-sales.add-log-book-page-wizard-fill-preliminary-data' | tlTranslate }}
+                </span>
+            </ng-template>
+            <div fxLayout="row">
+                <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+                    <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                        <tl-input fxFlex="50"
+                                  formControlName="pageNumberControl"
+                                  label="{{ 'catches-and-sales.add-log-book-page-wizard-page-number-to-add' | tlTranslate }}"
+                                  tooltipResourceName="catches-and-sales.add-log-book-page-wizard-page-number-to-add-helper"
+                                  [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                        </tl-input>
+                    </div>
+                    <ng-container *ngIf="logBookType === logBookTypesEnum.Transportation">
+                        <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                            <tl-checkbox fxFlex="60"
+                                         formControlName="isImportNotByShipControl"
+                                         label="{{ 'catches-and-sales.transportation-page-is-import-not-by-ship' | tlTranslate }}"
+                                         tooltipResourceName="catches-and-sales.transportation-page-is-import-not-by-ship-helper">
+                            </tl-checkbox>
+                            <tl-input *ngIf="preliminaryDataFormGroup.controls.isImportNotByShipControl.value === true"
+                                      fxFlex="40"
+                                      formControlName="placeOfImportControl"
+                                      label="{{ 'catches-and-sales.transportation-page-place-of-import' | tlTranslate }}"
+                                      tooltipResourceName="catches-and-sales.transportation-page-place-of-import-helper">
+                            </tl-input>
+                        </div>
+                        <div *ngIf="preliminaryDataFormGroup.controls.isImportNotByShipControl.value !== true"
+                             fxFlexFill
+                             fxLayout="column"
+                             fxLayoutGap="1em">
+                            <div fxFlex="100" fxLayout="row">
+                                <tl-input fxFlex="70"
+                                          formControlName="originDeclarationNumberControl"
+                                          label="{{ 'catches-and-sales.add-log-book-page-wizard-origin-declaration-number' | tlTranslate }}"
+                                          tooltipResourceName="catches-and-sales.add-log-book-page-wizard-origin-declaration-number-helper">
+                                </tl-input>
+                            </div>
+                            <mat-error *ngIf="preliminaryDataFormGroup.errors?.invalidOriginDeclaratioNumber">
+                                {{ 'catches-and-sales.add-log-book-page-wizard-origin-declaration-does-not-exist-error' | tlTranslate }} *
+                            </mat-error>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="logBookType === logBookTypesEnum.Admission || logBookType === logBookTypesEnum.FirstSale">
+                        <div fxFlex="100"
+                             fxLayout="row"
+                             fxLayoutAlign="space-between center"
+                             fxLayoutGap="1em">
+                            <tl-autocomplete fxFlex="100"
+                                             formControlName="documentTypeControl"
+                                             label="{{ 'catches-and-sales.add-log-book-page-wizard-document-type' | tlTranslate }}"
+                                             tooltipResourceName="catches-and-sales.add-log-book-page-wizard-document-type-helper"
+                                             [options]="documentTypes">
+                            </tl-autocomplete>
+                        </div>
+                        <div fxFlexFill fxLayout="column">
+                            <div *ngIf="originDeclarationTypeSelected === true" fxLayout="column" fxLayoutGap="1em">
+                                <div fxFlex="100" fxLayout="row">
+                                    <tl-input fxFlex="70"
+                                              formControlName="originDeclarationNumberControl"
+                                              label="{{ 'catches-and-sales.add-log-book-page-wizard-origin-declaration-number' | tlTranslate }}"
+                                              tooltipResourceName="catches-and-sales.add-log-book-page-wizard-origin-declaration-number-helper">
+                                    </tl-input>
+                                </div>
+                                <mat-error *ngIf="preliminaryDataFormGroup.errors?.invalidOriginDeclaratioNumber">
+                                    {{ 'catches-and-sales.add-log-book-page-wizard-origin-declaration-does-not-exist-error' | tlTranslate }} *
+                                </mat-error>
+                            </div>
+
+                            <div *ngIf="transportationDocumentTypeSelected === true" fxLayout="column" fxLayoutGap="1em">
+                                <div fxFlex="100" fxLayout="row">
+                                    <tl-input fxFlex="70"
+                                              formControlName="transportationDocumentNumberControl"
+                                              label="{{ 'catches-and-sales.add-log-book-page-wizard-transportation-document-number' | tlTranslate }}"
+                                              tooltipResourceName="catches-and-sales.add-log-book-page-wizard-transportation-document-number-helper">
+                                    </tl-input>
+                                </div>
+                                <mat-error *ngIf="preliminaryDataFormGroup.errors?.invalidTransportationDocNumber">
+                                    {{ 'catches-and-sales.add-log-book-page-wizard-transportation-doc-does-not-exist-error' | tlTranslate }} *
+                                </mat-error>
+                            </div>
+
+                            <div *ngIf="admissionDocumentTypeSelected === true" fxLayout="column" fxLayoutGap="1em">
+                                <div fxFlex="100" fxLayout="row">
+                                    <tl-input fxFlex="70"
+                                              formControlName="admissionDocumentNumberControl"
+                                              label="{{ 'catches-and-sales.add-log-book-page-wizard-admission-document-number' | tlTranslate }}">
+                                    </tl-input>
+                                </div>
+                                <mat-error *ngIf="preliminaryDataFormGroup.errors?.invalidAdmissionDocNumber">
+                                    {{ 'catches-and-sales.add-log-book-page-wizard-admission-doc-does-not-exist-error' | tlTranslate }} *
+                                </mat-error>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+            <div fxLayout="row">
+                <button mat-raised-button matStepperNext color="accent">
+                    {{ 'catches-and-sales.add-log-book-page-wizard-confirm-preliminary-data' | tlTranslate }}
+                </button>
+            </div>
+        </div>
+    </mat-step>
+    <mat-step [stepControl]="confirmationDataFormGroup" [editable]="false">
+        <div [formGroup]="confirmationDataFormGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span [ngClass]="{ 'error-color': confirmationDataFormGroup.touched && confirmationDataFormGroup.invalid }">
+                    {{ 'catches-and-sales.add-log-book-page-wizard-confirm-additional-data' | tlTranslate }}
+                </span>
+            </ng-template>
+            <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="100"
+                                 formControlName="possibleLogBooksForPageControl"
+                                 label="{{ 'catches-and-sales.add-log-book-page-wizard-chosen-log-book-for-page' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.add-log-book-page-wizard-chosen-log-book-for-page-helper"
+                                 [options]="possibleLogBooksForPage"
+                                 [templateOptions]="true">
+                </tl-autocomplete>
+            </div>
+            <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center">
+                <common-log-book-page-data fxFlexFill
+                                           formControlName="commonLogBookPageDataControl"
+                                           [logBookType]="selectedDocumentType"
+                                           [isReadonly]="true">
+                </common-log-book-page-data>
+            </div>
+        </div>
+    </mat-step>
+</mat-vertical-stepper>

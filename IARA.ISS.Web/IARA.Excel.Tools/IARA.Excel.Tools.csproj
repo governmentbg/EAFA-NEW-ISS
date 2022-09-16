@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Packaging" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IARA.DomainModels\IARA.DomainModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Infragistics.Web.Documents.Core">
+      <HintPath>..\ExternalLibraries\Infragistics.Web.Documents.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics.Web.Documents.Excel">
+      <HintPath>..\ExternalLibraries\Infragistics.Web.Documents.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics.Web.Documents.IO">
+      <HintPath>..\ExternalLibraries\Infragistics.Web.Documents.IO.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

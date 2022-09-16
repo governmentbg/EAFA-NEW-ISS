@@ -1,0 +1,59 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="form">
+    <div fxLayout="row" fxLayoutGap="1em">
+        <tl-input fxFlex="25"
+                  formControlName="vesselNameControl"
+                  tooltipResourceName="vessel.name-helper"
+                  label="{{ 'vessel.name' | tlTranslate }}">
+        </tl-input>
+
+        <tl-input fxFlex="25"
+                  formControlName="vesselExtMarkControl"
+                  tooltipResourceName="vessel.ext-mark-helper"
+                  label="{{ 'vessel.ext-mark' | tlTranslate }}">
+        </tl-input>
+
+        <tl-autocomplete fxFlex="25"
+                         formControlName="vesselFlagControl"
+                         [options]="countries"
+                         [hasSelectedValueFromDropdownValidator]="false"
+                         [autoMatchTextToOption]="true"
+                         tooltipResourceName="vessel.flag-helper"
+                         label="{{ 'vessel.flag' | tlTranslate }}">
+        </tl-autocomplete>
+
+        <tl-input fxFlex="25"
+                  formControlName="vesselCfrControl"
+                  tooltipResourceName="vessel.cfr-helper"
+                  label="{{ 'vessel.cfr' | tlTranslate }}">
+        </tl-input>
+    </div>
+
+    <div fxLayout="row" fxLayoutGap="1em">
+        <tl-input fxFlex="25"
+                  formControlName="vesselImoControl"
+                  tooltipResourceName="vessel.imo-helper"
+                  label="{{ 'vessel.imo' | tlTranslate }}">
+        </tl-input>
+
+        <tl-input fxFlex="25"
+                  formControlName="vesselCallsignControl"
+                  tooltipResourceName="vessel.callsign-helper"
+                  label="{{ 'vessel.callsign' | tlTranslate }}">
+        </tl-input>
+
+        <tl-autocomplete fxFlex="25"
+                         formControlName="vesselTypeControl"
+                         [options]="shipTypes"
+                         [hasSelectedValueFromDropdownValidator]="false"
+                         [autoMatchTextToOption]="true"
+                         tooltipResourceName="vessel.type-helper"
+                         label="{{ 'vessel.type' | tlTranslate }}">
+        </tl-autocomplete>
+
+        <tl-input fxFlex="25"
+                  formControlName="vesselMmsiControl"
+                  tooltipResourceName="vessel.mmsi-helper"
+                  label="{{ 'vessel.mmsi' | tlTranslate }}">
+        </tl-input>
+    </div>
+</div>

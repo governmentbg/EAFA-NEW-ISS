@@ -1,0 +1,27 @@
+﻿<mat-card [fxFlex]="cardFlex" fxFlexFill>
+    <mat-card-title-group *ngIf="hasTitleContent || hasHelpResource || (avatar !== null && avatar !== undefined)"
+                          fxLayout="row"
+                          [fxLayoutAlign]="avatar ? 'space-between center' : 'start center'">
+        <div [fxFlex]="avatar ? 80 : 100" fxLayout="column" fxLayoutAlign="start stretch">
+            <mat-card-title *ngIf="hasTitleContent || hasHelpResource"
+                            [style.font-size.em]="titleSize"
+                            [ngClass]="{ 'error-color': hasError }"
+                            fxLayout="row"
+                            fxLayoutAlign="start center">
+                <ng-content select="tl-card-title"></ng-content>
+                <tl-help class="helper" [tooltipResource]="_tooltipResourceName"></tl-help>
+            </mat-card-title>
+            <mat-card-subtitle>
+                <ng-content select="tl-card-subtitle"></ng-content>
+            </mat-card-subtitle>
+        </div>
+        <div *ngIf="avatar !== null && avatar !== undefined" fxFlex="20" fxLayout="column">
+            <tl-picture-uploader [formControl]="pictureUploaderControl"
+                                 [options]="{ size: { width: avatarSize.width, height: avatarSize.height } }">
+            </tl-picture-uploader>
+        </div>
+    </mat-card-title-group>
+    <mat-card-content [fxLayout]="contentLayout" [fxLayoutGap]="contentLayoutGapPx" [fxLayoutAlign]="contentLayoutAlign">
+        <ng-content select="tl-card-content"></ng-content>
+    </mat-card-content>
+</mat-card>

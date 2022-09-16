@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<tl:TLResponsiveTable xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        xmlns:lh="clr-namespace:IARA.Mobile.Insp.Helpers"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Insp.Controls.LogBooksView"
+        x:DataType="vm:LogBooksViewModel"
+        x:Name="view"
+        Title="{rt:Translate LogBookTitle, Group=ShipChecks}"
+        ValidState="{Binding LogBooks}">
+    <tl:TLResponsiveTable.TableColumns>
+        <tl:TLTableColumn Text="{rt:Translate Number, Group=ShipChecks}" Width="150" />
+        <tl:TLTableColumn Text="{rt:Translate From, Group=ShipChecks}" Width="150" />
+        <tl:TLTableColumn Text="{rt:Translate StartPage, Group=ShipChecks}" Width="150" />
+        <tl:TLTableColumn Text="{rt:Translate EndPage, Group=ShipChecks}" Width="150" />
+        <tl:TLTableColumn Text="{rt:Translate Page, Group=ShipChecks}" Width="150" />
+        <tl:TLTableColumn Text="{rt:Translate Inspected, Group=ShipChecks}" Width="350" />
+        <tl:TLTableColumn Text="{rt:Translate Description, Group=ShipChecks}" Width="*" />
+        <tl:TLTableColumn Width="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource ReviewToWidth}, ConverterParameter=40, Source={Reference view}}" />
+    </tl:TLResponsiveTable.TableColumns>
+    <tl:TLResponsiveTable.DefaultItemTemplate>
+        <DataTemplate>
+            <tl:TLTableRow x:DataType="m:LogBookModel">
+                <ContentView VerticalOptions="Center">
+                    <ContentView.Triggers>
+                        <DataTrigger TargetType="ContentView"
+                                Binding="{Binding AddedByInspector}"
+                                Value="True">
+                            <Setter Property="Content">
+                                <tl:TLEntry IsTitleVisible="False"
+                                        ValidState="{Binding Number}"
+                                        IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger TargetType="ContentView"
+                                Binding="{Binding AddedByInspector}"
+                                Value="False">
+                            <Setter Property="Content">
+                                <Label Text="{Binding Dto.Number}"
+                                        LineBreakMode="WordWrap"
+                                        VerticalOptions="Center" />
+                            </Setter>
+                        </DataTrigger>
+                    </ContentView.Triggers>
+                </ContentView>
+                <Label Text="{Binding Dto.From, Converter={StaticResource DateToString}}"
+                        LineBreakMode="WordWrap"
+                        VerticalOptions="Center" />
+                <Label Text="{Binding Dto.StartPage}"
+                        LineBreakMode="WordWrap"
+                        VerticalOptions="Center" />
+                <Label Text="{Binding Dto.EndPage}"
+                        LineBreakMode="WordWrap"
+                        VerticalOptions="Center" />
+                <ContentView VerticalOptions="Center">
+                    <ContentView.Triggers>
+                        <DataTrigger TargetType="ContentView"
+                                Binding="{Binding AddedByInspector}"
+                                Value="True">
+                            <Setter Property="Content">
+                                <tl:TLEntry IsTitleVisible="False"
+                                        ValidState="{Binding PageText}"
+                                        IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger TargetType="ContentView"
+                                Binding="{Binding AddedByInspector}"
+                                Value="False">
+                            <Setter Property="Content">
+                                <tl:TLPicker IsTitleVisible="False"
+                                        ValidState="{Binding PageSelect}"
+                                        ItemsSource="{Binding Pages}"
+                                        AllowEmptyDialog="True"
+                                        DisplayValue="PageNum"
+                                        DialogAddButtonText="{rt:Translate Add, Group=Common}"
+                                        DialogAddCommand="{Binding AddPage}"
+                                        IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                            </Setter>
+                        </DataTrigger>
+                    </ContentView.Triggers>
+                </ContentView>
+                <ContentView VerticalOptions="Center">
+                    <ContentView.Triggers>
+                        <DataTrigger TargetType="ContentView"
+                                Binding="{Binding AddedByInspector}"
+                                Value="True">
+                            <Setter Property="Content">
+                                <StackLayout Orientation="Horizontal">
+                                    <Label FontSize="24"
+                                            FontFamily="FA"
+                                            Text="{Static h:IconFont.Xmark}"
+                                            TextColor="Red" />
+                                    <Label LineBreakMode="WordWrap" Text="{rt:Translate Unregistered, Group=ShipChecks}" />
+                                </StackLayout>
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger TargetType="ContentView"
+                                Binding="{Binding AddedByInspector}"
+                                Value="False">
+                            <Setter Property="Content">
+                                <tl:TLMultiToggleView Buttons="{Static lh:InspectionTogglesHelper.CoincidesMultiToggles}"
+                                        ValidState="{Binding Corresponds}"
+                                        IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                            </Setter>
+                        </DataTrigger>
+                    </ContentView.Triggers>
+                </ContentView>
+                <tl:TLEntry IsTitleVisible="False"
+                        ValidState="{Binding Description}"
+                        IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
+                        Padding="10"
+                        Command="{Binding BindingContext.Remove, Source={Reference view}}"
+                        CommandParameter="{Binding}"
+                        VerticalOptions="Center">
+                    <ImageButton.IsVisible>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="BindingContext.Inspection.ActivityType"
+                                    Converter="{StaticResource IsNotReview}"
+                                    Source="{Reference view}" />
+                            <Binding Path="AddedByInspector" />
+                        </MultiBinding>
+                    </ImageButton.IsVisible>
+                </ImageButton>
+            </tl:TLTableRow>
+        </DataTemplate>
+    </tl:TLResponsiveTable.DefaultItemTemplate>
+    <tl:TLResponsiveTable.DefaultSectionItemTemplate>
+        <DataTemplate>
+            <Frame x:DataType="m:LogBookModel"
+                    HasShadow="False"
+                    BorderColor="LightGray"
+                    Padding="10"
+                    CornerRadius="5">
+                <Frame.Triggers>
+                    <DataTrigger TargetType="Frame"
+                            Binding="{Binding AddedByInspector}"
+                            Value="True">
+                        <Setter Property="Content">
+                            <tl:TLFlex GrowUnit="300" MeasureColumnsHeightEqually="True">
+                                <tl:TLEntry Title="{rt:Translate Number, Group=ShipChecks}"
+                                        ValidState="{Binding Number}"
+                                        IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                                <tl:TLEntry Title="{rt:Translate Page, Group=ShipChecks}"
+                                        ValidState="{Binding PageText}"
+                                        IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                                <tl:TLEntry Title="{rt:Translate Description, Group=ShipChecks}"
+                                        ValidState="{Binding Description}"
+                                        IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                                <StackLayout Orientation="Horizontal" VerticalOptions="End">
+                                    <StackLayout Orientation="Horizontal"
+                                            HorizontalOptions="FillAndExpand"
+                                            VerticalOptions="Center">
+                                        <Label FontSize="24"
+                                                FontFamily="FA"
+                                                Text="{Static h:IconFont.Xmark}"
+                                                TextColor="Red" />
+                                        <Label LineBreakMode="WordWrap" Text="{rt:Translate Unregistered, Group=ShipChecks}" />
+                                    </StackLayout>
+                                    <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
+                                            Padding="10"
+                                            Command="{Binding BindingContext.Remove, Source={Reference view}}"
+                                            CommandParameter="{Binding}"
+                                            HorizontalOptions="End"
+                                            IsVisible="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                                </StackLayout>
+                            </tl:TLFlex>
+                        </Setter>
+                    </DataTrigger>
+                    <DataTrigger TargetType="Frame"
+                            Binding="{Binding AddedByInspector}"
+                            Value="False">
+                        <Setter Property="Content">
+                            <StackLayout>
+                                <tl:TLAutoGrid ColMeasuseMethod="Min"
+                                        DefaultMinWidth="450"
+                                        OverflowMeasureMethod="Simple">
+                                    <tl:TLRichLabel LineBreakMode="WordWrap" VerticalOptions="Center">
+                                        <Span Text="{rt:Translate Number, Group=ShipChecks}" />
+                                        <Span Text=": " />
+                                        <Span Text="{Binding Dto.Number}" />
+                                    </tl:TLRichLabel>
+                                    <tl:TLRichLabel LineBreakMode="WordWrap" VerticalOptions="Center">
+                                        <Span Text="{rt:Translate From, Group=ShipChecks}" />
+                                        <Span Text=": " />
+                                        <Span Text="{Binding Dto.From, Converter={StaticResource DateToString}}" />
+                                    </tl:TLRichLabel>
+                                    <tl:TLRichLabel LineBreakMode="WordWrap" VerticalOptions="Center">
+                                        <Span Text="{rt:Translate StartPage, Group=ShipChecks}" />
+                                        <Span Text=": " />
+                                        <Span Text="{Binding Dto.StartPage}" />
+                                    </tl:TLRichLabel>
+                                    <tl:TLRichLabel LineBreakMode="WordWrap" VerticalOptions="Center">
+                                        <Span Text="{rt:Translate EndPage, Group=ShipChecks}" />
+                                        <Span Text=": " />
+                                        <Span Text="{Binding Dto.EndPage}" />
+                                    </tl:TLRichLabel>
+                                    <tl:TLMultiToggleView tl:TLAutoGrid.MinWidth="900"
+                                            Text="{rt:Translate Inspected, Group=ShipChecks}"
+                                            Buttons="{Static lh:InspectionTogglesHelper.CoincidesMultiToggles}"
+                                            ValidState="{Binding Corresponds}"
+                                            IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                                </tl:TLAutoGrid>
+                                <tl:TLFlex GrowUnit="500">
+                                    <tl:TLPicker Title="{rt:Translate Page, Group=ShipChecks}"
+                                            ValidState="{Binding PageSelect}"
+                                            ItemsSource="{Binding Pages}"
+                                            AllowEmptyDialog="True"
+                                            DisplayValue="PageNum"
+                                            DialogAddButtonText="{rt:Translate Add, Group=Common}"
+                                            DialogAddCommand="{Binding AddPage}"
+                                            IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                                    <tl:TLEntry Title="{rt:Translate Description, Group=ShipChecks}"
+                                            ValidState="{Binding Description}"
+                                            IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                                </tl:TLFlex>
+                            </StackLayout>
+                        </Setter>
+                    </DataTrigger>
+                </Frame.Triggers>
+            </Frame>
+        </DataTemplate>
+    </tl:TLResponsiveTable.DefaultSectionItemTemplate>
+    <tl:TLResponsivleTableChild TableLayout="Table" />
+    <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="1500" />
+    <tl:TLResponsiveTable.FooterView>
+        <Button Text="{rt:Translate AddLogBook, Group=ShipChecks}"
+                Command="{Binding Add}"
+                ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
+                HorizontalOptions="End"
+                IsVisible="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+    </tl:TLResponsiveTable.FooterView>
+    <tl:TLResponsiveTable.EmptyView>
+        <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
+    </tl:TLResponsiveTable.EmptyView>
+</tl:TLResponsiveTable>

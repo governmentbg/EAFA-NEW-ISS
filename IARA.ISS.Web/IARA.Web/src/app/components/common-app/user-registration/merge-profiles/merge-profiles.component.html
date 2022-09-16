@@ -1,0 +1,96 @@
+﻿<user-registration-layout fxFlexFill>
+    <header>
+        <h1>{{ 'merge-profiles.title' | tlTranslate }}</h1>
+        <p class="tagline">{{ 'merge-profiles.subtitle' | tlTranslate }}</p>
+    </header>
+    <div fxLayout="column" fxLayoutGap="1em">
+        <form [formGroup]="mergeProfilesForm" novalidate fxLayout="column">
+            <mat-accordion class="example-headers-align" multi fxLayput="row">
+                <tl-expansion-panel title="{{ 'merge-profiles.confirm-email-and-password' | tlTranslate }}">
+                    <div fxLayout="row"
+                         fxLayoutGap="1em grid"
+                         gdAreas="emailArea passwordArea"
+                         gdRows="auto"
+                         gdColumns="33% 33%"
+                         gdAreas.lt-md="emailArea | passwordArea"
+                         gdRows.lt-md="auto auto"
+                         gdColumns.lt-md="100%"
+                         style="margin-bottom: 1em">
+                        <tl-input gdArea="emailArea"
+                                  appearance="outline"
+                                  formControlName="email"
+                                  label="{{ 'merge-profiles.email' | tlTranslate }}"></tl-input>
+                        <tl-input gdArea="passwordArea"
+                                  appearance="outline"
+                                  type="password"
+                                  formControlName="password"
+                                  label="{{ 'merge-profiles.password' | tlTranslate }}"></tl-input>
+                    </div>
+                    <mat-error *ngIf="enteredIncorrectLoginData">
+                        {{ 'merge-profiles.wrong-login-confirmation-data-entered' | tlTranslate }}
+                    </mat-error>
+                </tl-expansion-panel>
+                <tl-expansion-panel title="{{ 'merge-profiles.personal-data' |tlTranslate }}">
+                    <div fxLayout="row"
+                         fxLayoutGap="1em grid"
+                         gdAreas="firstNameArea middleNameArea lastNameArea"
+                         gdRows="auto"
+                         gdColumns="33% 33% 33%"
+                         gdAreas.lt-md="firstNameArea | middleNameArea | lastNameArea"
+                         gdRows.lt-md="auto auto auto"
+                         gdColumns.lt-md="100%">
+                        <tl-input gdArea="firstNameArea"
+                                  appearance="outline"
+                                  formControlName="firstName"
+                                  label="{{ 'merge-profiles.first-name' | tlTranslate }}"></tl-input>
+                        <tl-input gdArea="middleNameArea"
+                                  appearance="outline"
+                                  formControlName="middleName"
+                                  label="{{ 'merge-profiles.second-name' | tlTranslate }}"></tl-input>
+                        <tl-input gdArea="lastNameArea"
+                                  appearance="outline"
+                                  formControlName="lastName"
+                                  label="{{ 'merge-profiles.last-name' | tlTranslate }}"></tl-input>
+                    </div>
+                    <div fxLayout="row"
+                         fxLayoutGap="1em grid"
+                         gdAreas="egnArea"
+                         gdRows="auto"
+                         gdColumns="33%"
+                         gdAreas.lt-md="egnArea"
+                         gdRows.lt-md="auto"
+                         gdColumns.lt-md="100%">
+                        <egn-lnc-input gdArea="egnArea"
+                                       [readonly]="true"
+                                       formControlName="egn"></egn-lnc-input>
+
+                    </div>
+                </tl-expansion-panel>
+            </mat-accordion>
+        </form>
+        <div fxLayout="row"
+             fxFlex="100"
+             fxLayoutAlign="space-between center"
+             fxHide fxShow.gt-md>
+            <button fxFlex="35" class="multi-line" mat-raised-button color="warn" (click)="deactivateOldAccount()">
+                {{ 'merge-profiles.deactivate-old-account' | tlTranslate }}
+            </button>
+            <button fxFlex="20" class="multi-line" mat-raised-button color="accent" (click)="confirmAccountAndLogin()">
+                {{ 'merge-profiles.confirm-and-login' | tlTranslate }}
+            </button>
+        </div>
+        <div fxLayout="column"
+             fxFlex="100"
+             fxLayoutAlign="center center"
+             fxLayoutGap="1em"
+             fxShow fxHide.gt-md>
+            <button fxFlex="90" class="multi-line" mat-raised-button color="warn" (click)="deactivateOldAccount()">
+                {{ 'merge-profiles.deactivate-old-account' | tlTranslate }}
+            </button>
+            <button fxFlex="90" class="multi-line" mat-raised-button color="accent" (click)="confirmAccountAndLogin()">
+                {{ 'merge-profiles.confirm-and-login' | tlTranslate }}
+            </button>
+        </div>
+    </div>
+
+</user-registration-layout>

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TL.RegiXClient.Extended" Version="22.92.39073" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IARA.RegixAbstractions\IARA.RegixAbstractions.csproj" />
+    <ProjectReference Include="..\IARA.RegixIntegration\IARA.RegixIntegration.csproj" />
+  </ItemGroup>
+
+</Project>

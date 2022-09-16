@@ -1,0 +1,1951 @@
+﻿{
+   "CodeGenerationMode": 0,
+   "ContextClassName": "IARAContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": "",
+   "OutputContextPath": null,
+   "OutputPath": "Entities",
+   "ProjectRootNamespace": "IARA.EntityModels",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 2,
+   "Tables": [
+      {
+         "Name": "iss.Files",
+         "ObjectType": 0
+      },
+      {
+         "Name": "iss.CancellationDetails",
+         "ObjectType": 0
+      },
+      {
+         "Name": "iss.FLUXFVMSRequests",
+         "ObjectType": 0
+      },
+      {
+         "Name": "iss.NCancellationReasons",
+         "ObjectType": 0
+      },
+      {
+         "Name": "iss.NFileTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "iss.NRequiredFileTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "iss.NUsageDocumentTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "iss.UsageDocuments",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.PermitRegisterFishes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.PermitRegisterFishingGears",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.PermitSuspensionChangeHistory",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.FishingGearMarks",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.FishingGearPingers",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.FishingGearRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.HolderGroundsForUse",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.MapWaterTypePermitTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.NCommercialFishingPermitLicenseTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.NCommercialFishingPermitTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.NFishingGearMarkStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.NFishingGearPingerStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.NHolderGroundsForUseTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.NSuspensionReasons",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.NSuspensionTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.NWaterTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.PermitLicenseRegisterFishes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.PermitLicenseRegisterFishingGears",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.PermitLicensesRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.PermitLicensesRegisterFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.PermitLicenseSuspensionChangeHistory",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.PermitRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RStRib.PermitRegisterFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.PersonAddresses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.PersonDocuments",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.PersonEmailAddresses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.PersonFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.PersonPhoneNumbers",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.Persons",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.PhoneNumbers",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.Addresses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.EmailAddresses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.LegalEmailAddresses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.LegalFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.LegalPhoneNumbers",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.Legals",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.LegalsAddresses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.NAddressTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.NDocumentTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Legals.NGenders",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RDal.PoundNetCoordinates",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RDal.PoundNetRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RDal.NPoundNetCategoryType",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RDal.NPoundNetSeasonType",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RDal.NPoundNetStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Rep.ReportGroups",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Rep.NReportParameters",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Rep.ReportParameters",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Rep.ReportRolePermissions",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Rep.Reports",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Rep.ReportUserPermissions",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCap.AcquiredCapacityCertificates",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCap.AcquiredCapacityRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCap.CapacityCertificatesRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCap.CapacityChangeHistory",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCap.CapacityChangeHistoryCertificates",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCap.CountryCapacityRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCap.ShipCapacityRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.AdmissionLogBookPageFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.AdmissionLogBookPages",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.AquacultureLogBookPageFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.AquacultureLogBookPages",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.CatchRecordFishes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.CatchRecords",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.FirstSaleLogBookPageFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.FirstSaleLogBookPages",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.FVMSFishingActivityReportLogBookPage",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.FVMSFishingActivityReports",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.LogBookPageProducts",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.LogBookPermitLicenses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.LogBooks",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.NCatchFishUnloadTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.NCatchTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.NCatchZones",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.NFishFreshness",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.NFishPresentations",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.NFishSalePurpose",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.NFishSizeCategories",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.NFishSizes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.NLogBookStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.NLogBookTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.NTurbotSizeGroups",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.OriginDeclarationFishes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.OriginDeclarations",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.ShipLogBookPageFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.ShipLogBookPages",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.TransportationLogBookPageFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CatchSales.TransportationLogBookPages",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.ApplicationChangeHistory",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.ApplicationChangeHistoryFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.ApplicationChangeOfCircumstances",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.ApplicationDelivery",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.ApplicationFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.ApplicationPayments",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.ApplicationPaymentTariffs",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.ApplicationRegiXCache",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.ApplicationRegiXChecks",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.Applications",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.DuplicatesRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.DuplicatesRegisterFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.LetterOfAttorney",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.MapApplicationTypeDeliveryTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.MapApplicationTypeSubmittedByRoles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.MapTariffFishes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.MapTariffFishingGears",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.NApplicationStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.NApplicationStatusHierarchy",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.NApplicationStatusHierarchyTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.NApplicationTypeGroups",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.NApplicationTypeHierTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.NApplicationTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.NApplicationTypeTariff",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.NChangeOfCircumstancesTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.NDeliveryTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.NPaymentStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.NPaymentTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.NSubmittedByRoles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Appl.NTariff",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureBabhCertificates",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureFacilityCoordinates",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureFacilityFishes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureFacilityInstallations",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureFacilityRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureFacilityRegisterFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureFacilityStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureHatcheryEquipment",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureInstallationBasins",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureInstallationCollectors",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureInstallationNetCages",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureInstallationRafts",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureInstallationRecirculatorySystems",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureOvosCertificates",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureUsageDocuments",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.AquacultureWaterLawCertificates",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.InstallationAquariums",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.InstallationBasins",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.InstallationDams",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.NAquacultureInstallationTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.NAquaculturePowerSupplyTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.NAquacultureStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.NAquacultureWaterAreaTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.NHatcheryEquipmentTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.NInstallationBasinMaterialTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.NInstallationBasinPurposeTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.NInstallationCollectorTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.NInstallationNetCageTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RAquaSt.NWaterLawCertificateTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RNauR.ScientificPermitRegisterFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RNauR.NPermitReasons",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RNauR.NPermitStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RNauR.ScientificPermitOutingCatches",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RNauR.ScientificPermitOutings",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RNauR.ScientificPermitOwners",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RNauR.ScientificPermitReasons",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RNauR.ScientificPermitRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.AquacultureFormFullSystemInstallations",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.AquacultureFormNonFullSystemInstallations",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.AquacutlureFormBroodstocks",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.AquacutlureFormGivenMedicines",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.AquacutlureForms",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.AquacutlureFormStockingMaterials",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.EmployeeStatCounts",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.EmployeeStatNumericValues",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.FishVesselsForms",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.MapStatFormTypesEmployeeStatTypeGroups",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.MapStatFormTypesNumericStatTypeGroups",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.NEmployeeStatTypeGroups",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.NEmployeeStatTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.NGrossTonageStatIntervals",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.NNumericStatTypeGroups",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.NNumericStatTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.NReworkProductTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.NStatisticalFormTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.NVesselLengthStatIntervals",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.ReworkForms",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.ReworkProducts",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.ReworkRawMaterials",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.StatisticalFormsRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.StatisticalFormsRegisterFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInfStat.VesselDaysAtSea",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.AquacultureInspections",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.AUANConfiscatedFish",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.AUANConfiscatedFishingGear",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.AUANRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.AUANRegisterFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.AUANViolatedRegulations",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.AUANWitnesses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.ConstativeProtocolInspections",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.FirstSaleInspections",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.FishermanInspections",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.FishingGearChecks",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspDelivery",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectedFishingGears",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectedPersons",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectionCatchMeasures",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectionChecks",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectionEngines",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectionInspectors",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectionLastPortVisits",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectionLogBookPages",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectionObservationTexts",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectionObservationTools",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectionPatrolVehicles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectionPermitLicenses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectionRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectionRegisterFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectionVesselActivities",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.InspectionVessels",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.Inspectors",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NAUANStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NCatchInspectionTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NConfiscatedAppliances",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NConfiscationActions",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NConfiscationInstitutions",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NCourts",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NFishingGearCheckReasons",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NFishingGearRecheckReasons",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NInspDeliveryConfirmationTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NInspDeliveryTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NInspectedPersonTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NInspectionCheckTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NInspectionObservationTextCategories",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NInspectionStates",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NInspectionTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NInstitutions",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NObservationTools",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NPatrolVehicleTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NPenalAuthorityTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NPenalDecreeSanctionTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NPenalDecreeStatusTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NPenalDecreeTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NPenalPointStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NTransportVehicleTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NVesselActivities",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.NWaterBodyTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.ObservationAtSea",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.PenalDecreeFishCompensations",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.PenalDecreePaymentSchedule",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.PenalDecreeSanctions",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.PenalDecreeSeizedFishingGear",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.PenalDecreesRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.PenalDecreesRegisterFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.PenalDecreeStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.PenalPointComplaintStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.PenalPointsRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.ShipInspections",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.TransportVehicleInspections",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.UnregisteredPersons",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.UnregisteredVessels",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RInsp.WaterObjectChecks",
+         "ObjectType": 0
+      },
+      {
+         "Name": "SysLog.AuditLog",
+         "ObjectType": 0
+      },
+      {
+         "Name": "SysLog.ErrorLog",
+         "ObjectType": 0
+      },
+      {
+         "Name": "SysLog.NAuditLogActionTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "SysLog.NAuditLogTables",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCPP.BuyerLicenseFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCPP.BuyerLicenses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCPP.BuyerPremiseUsageDocuments",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCPP.BuyerRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCPP.BuyerRegisterFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCPP.BuyerRegisterStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCPP.NBuyerLicenseTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCPP.NBuyerStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RCPP.NBuyerTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RQuo.CatchQuotaFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RQuo.CatchQuotas",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RQuo.CatchQuotas_Hist",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RQuo.CatchQuotaUnloadPorts",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RQuo.ShipCatchQuotas",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RQuo.ShipCatchQuotas_Hist",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Checks.CrossCheckResults",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Checks.CrossChecks",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Checks.NCheckResolutions",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RPravRib.FishermenRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RPravRib.FishermenRegisterFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "LRib.FishingAssociationFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "LRib.FishingAssociationMembers",
+         "ObjectType": 0
+      },
+      {
+         "Name": "LRib.FishingAssociations",
+         "ObjectType": 0
+      },
+      {
+         "Name": "LRib.FishingCatchRecordFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "LRib.FishingCatchRecordFishes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "LRib.FishingCatchRecords",
+         "ObjectType": 0
+      },
+      {
+         "Name": "LRib.FishingTicketFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "LRib.FishingTickets",
+         "ObjectType": 0
+      },
+      {
+         "Name": "LRib.NTicketPeriods",
+         "ObjectType": 0
+      },
+      {
+         "Name": "LRib.NTicketStatuses",
+         "ObjectType": 0
+      },
+      {
+         "Name": "LRib.NTicketTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NCountries",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NDepartments",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NDistricts",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NFishes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NFishFamilies",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NFishGroups",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NFishingGears",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NFishingGearTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NFishSex",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NFuelTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NMunicipalities",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NNomenclatureGroups",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NNomenclatureTables",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NPopulatedAreas",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NPortGroups",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NPorts",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NSectors",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NTerritoryUnits",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Noms.NViolationSignalTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RShips.NEventTypeGroups",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RShips.NEventTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RShips.NFleetTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RShips.NHullMaterials",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RShips.NPublicAidTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RShips.NSailAreas",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RShips.NSegments",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RShips.NShipAssociations",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RShips.NVesselTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RShips.ShipOwners",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RShips.ShipRegister",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RShips.ShipRegisterFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "News.News",
+         "ObjectType": 0
+      },
+      {
+         "Name": "News.NewsDistricts",
+         "ObjectType": 0
+      },
+      {
+         "Name": "News.NewsDistrictUserSubscriptions",
+         "ObjectType": 0
+      },
+      {
+         "Name": "News.NewsFiles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Admin.NMobileVersions",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Admin.NNotificationTemplates",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Admin.NotificationsLog",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Admin.NPageCodes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Admin.NSystemParameters",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Admin.NTranslationGroups",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Admin.NTranslationResources",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Admin.WorkerQueues",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.NPermissionGroups",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.NPermissions",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.NPermissionTypes",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.RolePermissions",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.Roles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.UserInfos",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.UserLegals",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.UserMobileDevices",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.UserRoles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "UsrMgmt.Users",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Fishery",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Reason_Discard",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Vessel_Role",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FLUX_FA_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Gear_Recovery",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_BFT_Size_Category",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_BR_EU",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Characteristic",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Gear_Role",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_Fishing_Trip_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Catch_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Gear_Characteristic",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_BR_Def",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Gear_Problem",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Device_Gear_Attachment",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FARM",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FLUX_Location_Char",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_GFCM_GSA",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_Fish_Packaging",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Query_Parameter",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FLUX_FA_FMC",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_UN_Data_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_Effort_Zone",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Reason_Arrival",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_NEAFC_Stock",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_Vessel_Storage_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FLUX_FA_Report_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Trip_Id_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Query_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Reason_Departure",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_Management_Area",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Reason_Entry",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FA_Bait_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_Target_Species_Group",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FA.MDR_FLAP_Id_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Sales.MDR_FLUX_Sales_Query_Param_Role",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Sales.MDR_Sales_BR",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Sales.MDR_Vehicle_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Sales.MDR_Product_Destination",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Sales.MDR_Sales_BR_Def",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Sales.MDR_FLUX_Sales_Query_Param",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Sales.MDR_FLUX_Vehicle_Id_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Sales.MDR_FLUX_Sales_Party_Id_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Sales.MDR_Fish_Size_Category",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Sales.MDR_FLUX_Sales_Party_Role",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Sales.MDR_FLUX_Sales_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Sales.MDR_Country_Currency",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_FLUX_Vessel_Equip_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_FLUX_Vessel_Hist_Char",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_FLUX_Vessel_Report_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_FLUX_Vessel_Dim_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_Vessel_Port",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_Propeller_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_Vessel_Export_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_Vessel_Event",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_FLUX_Vessel_Admin_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_Vessel_BR_Def",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_Vessel_BR",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_FLUX_Vessel_Constr_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_Vessel_Hull_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_Navig_Equip_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_Vessel_Photo_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_Comm_Equip_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_FLUX_Vessel_Regstr_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_Vessel_Segment",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_FLUX_Vessel_Gear_Role",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_Storage_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_Deck_Machinery_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_FLUX_Vessel_Tech_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_FLUX_Vessel_Engine_Role",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_FLUX_Vessel_Query_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_Vessel_Public_Aid_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_FLUX_Vessel_Query_Param",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_FishFinder_Equip_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_VMS_Satellite_Oper",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel.MDR_Vessel_Category",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_ACDR.MDR_Quota_Object",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_ACDR.MDR_CR_Sov_Waters",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_ACDR.MDR_CR_Unit",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_ACDR.MDR_CR_Land_Indicator",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_ACDR.MDR_ACDR_Catch_Status",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_ACDR.MDR_Quota_Location",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_ACDR.MDR_CR_Fishing_Category",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_ACDR.MDR_CR_Report_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel_Position.MDR_FLUX_Vessel_Position_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel_Position.MDR_VMS_BR_Param",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel_Position.MDR_VMS_BR",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_Vessel_Position.MDR_VMS_BR_Def",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_FLUX_GP_Message_Id",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_Weight_Measure_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_Fish_Freshness",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_Location",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_Gear_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_Gender",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_FLUX_GP_Party",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_FAO_species",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_Territory",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_FLUX_Location_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_Member_State",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_Fish_Size_Class",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_FLUX_GP_Response",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_FLUX_Process_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_Fish_Preservation",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_FLUX_GP_Val_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_FAO_Fishing_Area",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_FLUX_Telecom_Use",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_RFMOs",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_Vessel_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_FLUX_GP_Val_Level",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_Vessel_Activity",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_Boolean_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_Fish_Presentation",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_FLUX_Vessel_Id_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_Conversion_Factor",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_Stat_Rect",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_FLUX_Unit",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_FLUX_Contact_Role",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_General.MDR_FLUX_GP_Purpose",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FLAP.MDR_Chartering_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FLAP.MDR_FLAP_Flag_State",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FLAP.MDR_FLAP_Characteristic",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FLAP.MDR_FLAP_Quota_type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FLAP.MDR_FLAP_Doc_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FLAP.MDR_Agreement_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FLAP.MDR_FLAP_WF_Steps",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FLAP.MDR_FLAP_Request_Purpose",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FLAP.MDR_FLAP_Coastal_Party",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FLAP.MDR_Vessel_Crew_Type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_FLAP.MDR_FAR_Fish_Category",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_MDM.MDR_MDM_BR",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_MDM.MDR_MDM_BR_Def",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_MDM.MDR_FLUX_MDR_Query_type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "FLUX_MDM.MDR_Data_Type",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": "IARA-Dev-Migration",
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoConstructor": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSpatial": true
+}

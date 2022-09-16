@@ -1,0 +1,265 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:local="clr-namespace:IARA.Mobile.Shared.Converters;assembly=IARA.Mobile.Shared"
+        x:Class="IARA.Mobile.Pub.Views.Controls.PersonView"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.Controls.PersonView"
+        x:DataType="viewModels:PersonViewModel"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        x:Name="page">
+    <ContentView.Resources>
+        <local:AnyTrueMultiConverter x:Key="AnyTrueConverter" />
+        <xct:VariableMultiValueConverter ConditionType="All" x:Key="AllTrueConverter" />
+    </ContentView.Resources>
+    <ContentView.Content>
+        <StackLayout Margin="10">
+            <sv:TLHeaderLine Text="{rt:Translate PersonalData, Group=TicketPerson}" ImageGlyph="{Static h:IconFont.CircleInfo}" />
+            <tl:TLFlex>
+                <tl:TLEntry tl:TLFlex.Grow="4"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        Title="{rt:Translate Name, Group=TicketPerson}"
+                        ValidState="{Binding FirstName}" />
+                <tl:TLEntry tl:TLFlex.Grow="4"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        Title="{rt:Translate MiddleName, Group=TicketPerson}"
+                        ValidState="{Binding MiddleName}" />
+                <tl:TLEntry tl:TLFlex.Grow="4"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        Title="{rt:Translate LastName, Group=TicketPerson}"
+                        ValidState="{Binding LastName}" />
+                <sv:TLEntryWithType tl:TLFlex.Grow="6"
+                        ValidState="{Binding EgnLnc}"
+                        Keyboard="Numeric">
+                    <sv:TLEntryWithType.IsEnabled>
+                        <MultiBinding Converter="{StaticResource AllTrueConverter}">
+                            <Binding Source="{x:Reference page}" Path="IsEditEnabled" />
+                            <Binding Path="IsUnder14.Value" />
+                        </MultiBinding>
+                    </sv:TLEntryWithType.IsEnabled>
+                </sv:TLEntryWithType>
+                <tl:TLDatePicker tl:TLFlex.Grow="3"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        Title="{rt:Translate DateOfBirth, Group=TicketPerson}"
+                        ValidState="{Binding DateOfBirth}"
+                        MaximumDate="{Binding Today}"
+                        WidthRequest="165">
+                    <tl:TLDatePicker.IsVisible>
+                        <MultiBinding Converter="{StaticResource AnyTrueConverter}">
+                            <Binding Path="DateOfBirthRequired" />
+                            <Binding Path="IsBulgarianCitizen" Converter="{StaticResource OppositeBool}" />
+                        </MultiBinding>
+                    </tl:TLDatePicker.IsVisible>
+                </tl:TLDatePicker>
+            </tl:TLFlex>
+            <tl:TLRadioButtonListView Spacing="5"
+                    IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                    ValidState="{Binding Gender}"
+                    ItemsSource="{Binding Genders}"
+                    DisplayValue="DisplayName"
+                    Text="{rt:Translate Gender, Group=TicketPerson}"
+                    IsVisible="{Binding GenderRequired}" />
+            <tl:TLFlex IsVisible="{Binding IsBulgarianCitizen, Converter={StaticResource OppositeBool}}">
+                <tl:TLPicker tl:TLFlex.Grow="3"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        ItemsSource="{Binding Foreigner.DocumentTypes}"
+                        ValidState="{Binding Foreigner.DocumentType}"
+                        Title="{rt:Translate DocumentType, Group=TicketPerson}" />
+                <tl:TLEntry tl:TLFlex.Grow="3"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        ValidState="{Binding Foreigner.Idcard}"
+                        Keyboard="Numeric"
+                        Title="{rt:Translate DocumentNumber, Group=TicketPerson}" />
+                <tl:TLPicker tl:TLFlex.Grow="3"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        ItemsSource="{Binding Countries}"
+                        ValidState="{Binding Foreigner.Citizenship}"
+                        Title="{rt:Translate Citizenship, Group=TicketPerson}" />
+            </tl:TLFlex>
+            <tl:TLFlex IsVisible="{Binding IsBulgarianCitizen}">
+                <tl:TLEntry tl:TLFlex.Grow="3"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        ValidState="{Binding BulgarianCitizen.Idcard}"
+                        Keyboard="Numeric"
+                        Title="{rt:Translate CardId, Group=TicketPerson}"
+                        IsVisible="{Binding IsUnder14.Value, Converter={StaticResource OppositeBool}}" />
+                <tl:TLDatePicker ValidState="{Binding BulgarianCitizen.IdcardDate}"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        MaximumDate="{Binding Today}"
+                        tl:TLFlex.Grow="3"
+                        Title="{rt:Translate CardIdIssuedOn, Group=TicketPerson}"
+                        IsVisible="{Binding IsUnder14.Value, Converter={StaticResource OppositeBool}}" />
+                <tl:TLEntry ValidState="{Binding BulgarianCitizen.IdcardPublisher}"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        tl:TLFlex.Grow="3"
+                        Title="{rt:Translate CardIdIssuedBy, Group=TicketPerson}"
+                        IsVisible="{Binding IsUnder14.Value, Converter={StaticResource OppositeBool}}" />
+            </tl:TLFlex>
+            <sv:TLHeaderLine Text="{rt:Translate PermanentAddress, Group=TicketPerson}" ImageGlyph="{Static h:IconFont.AddressBook}" />
+            <tl:TLCheckView Text="{rt:Translate HasBulgarianAddress, Group=TicketPerson}"
+                    IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                    Command="{Binding HasBulgarianAddressChangedCommand}"
+                    IsChecked="{Binding HasBulgarianAddressRegistration}" />
+            <tl:TLFlex>
+                <tl:TLPicker tl:TLFlex.Grow="3"
+                        ItemsSource="{Binding Countries}"
+                        ValidState="{Binding PermanentAddress.Country}"
+                        Title="{rt:Translate Country, Group=TicketPerson}">
+                    <tl:TLPicker.IsEnabled>
+                        <MultiBinding Converter="{StaticResource AllTrueConverter}">
+                            <Binding Source="{x:Reference page}" Path="IsEditEnabled" />
+                            <Binding Path="HasBulgarianAddressRegistration" Converter="{StaticResource OppositeBool}" />
+                        </MultiBinding>
+                    </tl:TLPicker.IsEnabled>
+                </tl:TLPicker>
+                <tl:TLPicker tl:TLFlex.Grow="3"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        ItemsSource="{Binding Districts}"
+                        ValidState="{Binding PermanentAddress.District}"
+                        Command="{Binding PermanentAddress.OnDistrictChangedCommand}"
+                        IsVisible="{Binding HasBulgarianAddressRegistration}"
+                        Title="{rt:Translate District, Group=TicketPerson}" />
+                <tl:TLPicker tl:TLFlex.Grow="3"
+                        ItemsSource="{Binding PermanentAddress.Municipalities}"
+                        ValidState="{Binding PermanentAddress.Municipality}"
+                        Command="{Binding PermanentAddress.OnMunicipalityChangedCommand}"
+                        IsVisible="{Binding HasBulgarianAddressRegistration}"
+                        Title="{rt:Translate Municipality, Group=TicketPerson}">
+                    <tl:TLPicker.IsEnabled>
+                        <MultiBinding Converter="{StaticResource AllTrueConverter}">
+                            <Binding Source="{x:Reference page}" Path="IsEditEnabled" />
+                            <Binding Path="PermanentAddress.IsDistrictSelected" />
+                        </MultiBinding>
+                    </tl:TLPicker.IsEnabled>
+                </tl:TLPicker>
+                <tl:TLPicker tl:TLFlex.Grow="3"
+                        ItemsSource="{Binding PermanentAddress.PopulatedAreas}"
+                        ValidState="{Binding PermanentAddress.PopulatedArea}"
+                        IsVisible="{Binding HasBulgarianAddressRegistration}"
+                        Title="{rt:Translate PopulatedArea, Group=TicketPerson}">
+                    <tl:TLPicker.IsEnabled>
+                        <MultiBinding Converter="{StaticResource AllTrueConverter}">
+                            <Binding Source="{x:Reference page}" Path="IsEditEnabled" />
+                            <Binding Path="PermanentAddress.IsMunicipalitySelected" />
+                        </MultiBinding>
+                    </tl:TLPicker.IsEnabled>
+                </tl:TLPicker>
+                <tl:TLEntry tl:TLFlex.Grow="3"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        Title="{rt:Translate Region, Group=TicketPerson}"
+                        ValidState="{Binding PermanentAddress.Region}" />
+                <tl:TLEntry tl:TLFlex.Grow="3"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        Title="{rt:Translate ZipCode, Group=TicketPerson}"
+                        ValidState="{Binding PermanentAddress.ZipCode}"
+                        Keyboard="Numeric" />
+                <tl:TLEntry tl:TLFlex.Grow="6"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        Title="{rt:Translate Street, Group=TicketPerson}"
+                        ValidState="{Binding PermanentAddress.Street}" />
+                <tl:TLEntry tl:TLFlex.Grow="2"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        Title="{rt:Translate Number, Group=TicketPerson}"
+                        ValidState="{Binding PermanentAddress.Number}"
+                        Keyboard="Numeric" />
+                <tl:TLEntry tl:TLFlex.Grow="2"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        Title="{rt:Translate Block, Group=TicketPerson}"
+                        ValidState="{Binding PermanentAddress.Block}" />
+                <tl:TLEntry tl:TLFlex.Grow="2"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        Title="{rt:Translate Entrance, Group=TicketPerson}"
+                        ValidState="{Binding PermanentAddress.Entrance}" />
+                <tl:TLEntry tl:TLFlex.Grow="2"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        Title="{rt:Translate Floor, Group=TicketPerson}"
+                        ValidState="{Binding PermanentAddress.Floor}"
+                        Keyboard="Numeric" />
+                <tl:TLEntry tl:TLFlex.Grow="2"
+                        IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                        Title="{rt:Translate Apartment, Group=TicketPerson}"
+                        ValidState="{Binding PermanentAddress.Apartment}" />
+            </tl:TLFlex>
+            <tl:TLCheckView IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                    Text="{rt:Translate PermanentAddressMatchWithCorrespondence, Group=TicketPerson}"
+                    IsChecked="{Binding PermanentAddressMatchWithCorrespondence}" />
+            <StackLayout IsVisible="{Binding PermanentAddressMatchWithCorrespondence, Converter={StaticResource OppositeBool}}">
+                <sv:TLHeaderLine Text="{rt:Translate CorrespondenceAddress, Group=TicketPerson}" ImageGlyph="{Static h:IconFont.AddressBook}" />
+                <tl:TLFlex>
+                    <tl:TLPicker tl:TLFlex.Grow="3"
+                            IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                            ItemsSource="{Binding Countries}"
+                            ValidState="{Binding CorrespondenceAddress.Country}"
+                            Title="{rt:Translate Country, Group=TicketPerson}" />
+                    <tl:TLPicker tl:TLFlex.Grow="3"
+                            IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                            ItemsSource="{Binding Districts}"
+                            ValidState="{Binding CorrespondenceAddress.District}"
+                            Command="{Binding CorrespondenceAddress.OnDistrictChangedCommand}"
+                            Title="{rt:Translate District, Group=TicketPerson}" />
+                    <tl:TLPicker tl:TLFlex.Grow="3"
+                            ItemsSource="{Binding CorrespondenceAddress.Municipalities}"
+                            ValidState="{Binding CorrespondenceAddress.Municipality}"
+                            Command="{Binding CorrespondenceAddress.OnMunicipalityChangedCommand}"
+                            Title="{rt:Translate Municipality, Group=TicketPerson}">
+                        <tl:TLPicker.IsEnabled>
+                            <MultiBinding Converter="{StaticResource AllTrueConverter}">
+                                <Binding Source="{x:Reference page}" Path="IsEditEnabled" />
+                                <Binding Path="CorrespondenceAddress.IsDistrictSelected" />
+                            </MultiBinding>
+                        </tl:TLPicker.IsEnabled>
+                    </tl:TLPicker>
+                    <tl:TLPicker tl:TLFlex.Grow="3"
+                            ItemsSource="{Binding CorrespondenceAddress.PopulatedAreas}"
+                            ValidState="{Binding CorrespondenceAddress.PopulatedArea}"
+                            Title="{rt:Translate PopulatedArea, Group=TicketPerson}">
+                        <tl:TLPicker.IsEnabled>
+                            <MultiBinding Converter="{StaticResource AllTrueConverter}">
+                                <Binding Source="{x:Reference page}" Path="IsEditEnabled" />
+                                <Binding Path="CorrespondenceAddress.IsMunicipalitySelected" />
+                            </MultiBinding>
+                        </tl:TLPicker.IsEnabled>
+                    </tl:TLPicker>
+                    <tl:TLEntry tl:TLFlex.Grow="3"
+                            IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                            Title="{rt:Translate Region, Group=TicketPerson}"
+                            ValidState="{Binding CorrespondenceAddress.Region}" />
+                    <tl:TLEntry tl:TLFlex.Grow="3"
+                            IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                            Title="{rt:Translate ZipCode, Group=TicketPerson}"
+                            ValidState="{Binding CorrespondenceAddress.ZipCode}"
+                            Keyboard="Numeric" />
+                    <tl:TLEntry tl:TLFlex.Grow="6"
+                            IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                            Title="{rt:Translate Street, Group=TicketPerson}"
+                            ValidState="{Binding CorrespondenceAddress.Street}" />
+                    <tl:TLEntry tl:TLFlex.Grow="2"
+                            IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                            Title="{rt:Translate Number, Group=TicketPerson}"
+                            ValidState="{Binding CorrespondenceAddress.Number}"
+                            Keyboard="Numeric" />
+                    <tl:TLEntry tl:TLFlex.Grow="2"
+                            IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                            Title="{rt:Translate Block, Group=TicketPerson}"
+                            ValidState="{Binding CorrespondenceAddress.Block}" />
+                    <tl:TLEntry tl:TLFlex.Grow="2"
+                            IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                            Title="{rt:Translate Entrance, Group=TicketPerson}"
+                            ValidState="{Binding CorrespondenceAddress.Entrance}" />
+                    <tl:TLEntry tl:TLFlex.Grow="2"
+                            IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                            Title="{rt:Translate Floor, Group=TicketPerson}"
+                            ValidState="{Binding CorrespondenceAddress.Floor}"
+                            Keyboard="Numeric" />
+                    <tl:TLEntry tl:TLFlex.Grow="2"
+                            IsEnabled="{Binding Source={x:Reference page}, Path=IsEditEnabled}"
+                            Title="{rt:Translate Apartment, Group=TicketPerson}"
+                            ValidState="{Binding CorrespondenceAddress.Apartment}" />
+                </tl:TLFlex>
+            </StackLayout>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

@@ -1,0 +1,236 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <!-- Филтри -->
+    <search-panel [translateService]="translate">
+        <div [formGroup]="form" fxFlexFill fxLayout="column" fxLayoutAlign="start start">
+            <!-- Системен номер, номер по УРОР, име, дата на регистрация -->
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em" fxFlexFill>
+                <tl-input fxFlex="25"
+                          formControlName="regNumControl"
+                          tooltipResourceName="aquacultures.filters-reg-num-helper"
+                          label="{{ 'aquacultures.filters-reg-num' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="urorControl"
+                          tooltipResourceName="aquacultures.filters-registration-number-helper"
+                          label="{{ 'aquacultures.filters-registration-number' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="nameControl"
+                          tooltipResourceName="aquacultures.filters-name-helper"
+                          label="{{ 'aquacultures.filters-name' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="eikControl"
+                          tooltipResourceName="aquacultures.filters-eik-helper"
+                          label="{{ 'aquacultures.filters-eik' | tlTranslate }}">
+                </tl-input>
+            </div>
+
+            <!-- Вид воден обект, местоположение, дата на регистрация, статус -->
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em" fxFlexFill>
+                <tl-select fxFlex="25"
+                           formControlName="waterAreaTypeControl"
+                           [options]="waterAreaTypes"
+                           [isMultiple]="true"
+                           tooltipResourceName="aquacultures.filters-water-area-type-helper"
+                           label="{{ 'aquacultures.filters-water-area-type' | tlTranslate }}">
+                </tl-select>
+
+                <tl-input fxFlex="25"
+                          formControlName="locationControl"
+                          tooltipResourceName="aquacultures.filters-location-helper"
+                          label="{{ 'aquacultures.filters-location' | tlTranslate }}">
+                </tl-input>
+
+                <tl-date-range fxFlex="25"
+                               formControlName="registrationDateControl"
+                               tooltipResourceName="aquacultures.filters-registration-date-helper"
+                               label="{{ 'aquacultures.filters-registration-date' | tlTranslate }}">
+                </tl-date-range>
+
+                <tl-select fxFlex="25"
+                           formControlName="statusControl"
+                           [options]="statuses"
+                           [isMultiple]="true"
+                           tooltipResourceName="aquacultures.filters-status-helper"
+                           label="{{ 'aquacultures.filters-status' | tlTranslate }}">
+                </tl-select>
+            </div>
+
+            <!-- Соленост на водата, температура на водата, система, вид воден организъм -->
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em" fxFlexFill>
+                <tl-select fxFlex="25"
+                           formControlName="waterSalinityTypeControl"
+                           [options]="waterSalinityTypes"
+                           [isMultiple]="true"
+                           tooltipResourceName="aquacultures.filters-water-salinity-type-helper"
+                           label="{{ 'aquacultures.filters-water-salinity-type' | tlTranslate }}">
+                </tl-select>
+                <tl-select fxFlex="25"
+                           formControlName="waterTemperatureTypeControl"
+                           [options]="waterTemperatureTypes"
+                           [isMultiple]="true"
+                           tooltipResourceName="aquacultures.filters-water-temperature-type-helper"
+                           label="{{ 'aquacultures.filters-water-temperature-type' | tlTranslate }}">
+                </tl-select>
+                <tl-select fxFlex="25"
+                           formControlName="systemTypeControl"
+                           [options]="systemTypes"
+                           [isMultiple]="true"
+                           tooltipResourceName="aquacultures.filters-system-helper"
+                           label="{{ 'aquacultures.filters-system' | tlTranslate }}">
+                </tl-select>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="aquaticOrganismControl"
+                                 [options]="aquaticOrganisms"
+                                 tooltipResourceName="aquacultures.filters-aquatic-organism-helper"
+                                 label="{{ 'aquacultures.filters-aquatic-organism' | tlTranslate }}">
+                </tl-autocomplete>
+            </div>
+
+            <!-- Вид захранващ източник, вид съоръжение, обща водна площ, общ производствен капацитет -->
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em" fxFlexFill>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="powerSupplyTypeControl"
+                                 [options]="powerSupplyTypes"
+                                 tooltipResourceName="aquacultures.filters-power-supply-type-helper"
+                                 label="{{ 'aquacultures.filters-power-supply-type' | tlTranslate }}">
+                </tl-autocomplete>
+                <tl-select fxFlex="25"
+                           formControlName="installationTypeControl"
+                           [options]="installationTypes"
+                           [isMultiple]="true"
+                           tooltipResourceName="aquacultures.filters-installation-type-helper"
+                           label="{{ 'aquacultures.filters-installation-type' | tlTranslate }}">
+                </tl-select>
+                <tl-range-input fxFlex="25"
+                                formControlName="totalWaterAreaControl"
+                                tooltipResourceName="aquacultures.filters-total-water-area-helper"
+                                label="{{ 'aquacultures.filters-total-water-area' | tlTranslate }}">
+                </tl-range-input>
+                <tl-range-input fxFlex="25"
+                                formControlName="totalProductionCapacityControl"
+                                tooltipResourceName="aquacultures.filters-total-production-capacity-helper"
+                                label="{{ 'aquacultures.filters-total-production-capacity' | tlTranslate }}">
+                </tl-range-input>
+            </div>
+
+            <!-- Териториално звено, населено място -->
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em" fxFlexFill>
+                <tl-autocomplete *ngIf="hasReadAllPermission; else hasOnlyReadPermission"
+                                 fxFlex="25"
+                                 formControlName="territoryUnitControl"
+                                 [options]="territoryUnits"
+                                 tooltipResourceName="aquacultures.filters-territory-unit-helper"
+                                 label="{{ 'aquacultures.filters-territory-unit' | tlTranslate }}">
+                </tl-autocomplete>
+                <ng-template #hasOnlyReadPermission>
+                    <div fxFlex="25"></div>
+                </ng-template>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="populatedAreaControl"
+                                 [options]="populatedAreas"
+                                 [templateOptions]="true"
+                                 tooltipResourceName="aquacultures.filters-populated-area-helper"
+                                 label="{{ 'aquacultures.filters-populated-area' | tlTranslate }}">
+                </tl-autocomplete>
+
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+            </div>
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <mat-card>
+        <tl-data-table [showAddButton]="true"
+                       [showInactiveRecords]="canRestoreRecords"
+                       [hasExcelExport]="true"
+                       (addButtonClicked)="addEditAquaculture(undefined, false)">
+            <data-column propertyName="regNum"
+                         [flexRate]="0.20"
+                         columnName="{{ 'aquacultures.reg-num-table' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="urorNum"
+                         [flexRate]="0.25"
+                         columnName="{{ 'aquacultures.urorr-number' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="registrationDate"
+                         [flexRate]="0.25"
+                         dataType="date"
+                         columnName="{{ 'aquacultures.registration-date' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="name"
+                         [flexRate]="0.4"
+                         columnName="{{ 'aquacultures.aquaculture-name' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="owner"
+                         [flexRate]="0.4"
+                         columnName="{{ 'aquacultures.aquaculture-owner' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="territoryUnit"
+                         [flexRate]="0.3"
+                         columnName="{{ 'aquacultures.territory-unit-table' | tlTranslate }}">
+            </data-column>
+
+            <data-template-column propertyName="StatusName"
+                                  [flexRate]="0.2"
+                                  columnName="{{ 'aquacultures.aquaculture-status' | tlTranslate }}">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.3em">
+                        <div>{{ row.data.statusName }}</div>
+
+                        <div [ngSwitch]="row.data.status">
+                            <tl-icon *ngSwitchCase="aquacultureStatus.Requested" icon="autorenew" iconClass="accent-color"></tl-icon>
+                            <tl-icon *ngSwitchCase="aquacultureStatus.Approved" icon="done_outline" iconClass="accent-color"></tl-icon>
+                            <tl-icon *ngSwitchCase="aquacultureStatus.Canceled" icon="highlight_off" iconClass="error-color"></tl-icon>
+                        </div>
+                    </div>
+                </ng-template>
+            </data-template-column>
+
+            <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                        <tl-icon-button *ngIf="row.data.deliveryId !== null && row.data.deliveryId !== undefined"
+                                        icon="ic-fluent-document-briefcase-24-regular"
+                                        iconClass="accent-color"
+                                        [size]="icIconSize"
+                                        tooltipText="{{ 'aquacultures.delivery-data' | tlTranslate }}"
+                                        (buttonClicked)="openDeliveryDialog(row.data)">
+                        </tl-icon-button>
+                        <tl-icon-button icon="visibility"
+                                        (buttonClicked)="addEditAquaculture(row.data, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'aquacultures.view-aquaculture' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && canEditRecords"
+                                        icon="edit"
+                                        (buttonClicked)="addEditAquaculture(row.data, false)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'aquacultures.edit-aquaculture' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.isActive && canDeleteRecords"
+                                        icon="delete"
+                                        (buttonClicked)="deleteAquaculture(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'aquacultures.delete-aquaculture' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="!row.isActive && canRestoreRecords"
+                                        icon="restore"
+                                        (buttonClicked)="undoDeleteAquaculture(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'aquacultures.restore-aquaculture' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </mat-card>
+</div>

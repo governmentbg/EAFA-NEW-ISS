@@ -1,0 +1,82 @@
+﻿<div fxFlex="100" fxLayout="column">
+    <div fxLayout="column" fxLayoutGroup="5px" fxLayoutAlign="start stretch" fxFill>
+        <search-panel [translateService]="translate">
+            <div [formGroup]="unregInspectorsFormGroup" fxLayout="column" fxLayoutAlign="start start">
+                <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
+                    <tl-input fxFlex="25"
+                              formControlName="unregPersonNameControl"
+                              label="{{ 'inspectors-register.first-name' | tlTranslate }}"
+                              tooltipResourceName="inspectors-register.unregistered-first-name-helper">
+                    </tl-input>
+                    <tl-input fxFlex="25"
+                              formControlName="egnLncControl"
+                              label="{{ 'inspectors-register.egn-lnc' | tlTranslate }}"
+                              tooltipResourceName="inspectors-register.unregistered-egn-lnc-helper">
+                    </tl-input>
+                    <tl-autocomplete fxFlex="25"
+                                     formControlName="institutionIdControl"
+                                     [options]="institutions"
+                                     label="{{ 'inspectors-register.institution' | tlTranslate }}"
+                                     tooltipResourceName="inspectors-register.unregistered-institution-helper">
+                    </tl-autocomplete>
+                    <tl-input fxFlex="25"
+                              formControlName="inspectorCardNumControl"
+                              label="{{ 'inspectors-register.inspector-card-num' | tlTranslate }}"
+                              tooltipResourceName="inspectors-register.unregistered-inspector-card-num-helper">
+                    </tl-input>
+                </div>
+            </div>
+        </search-panel>
+
+        <tl-card tooltipResourceName="inspectors-register.unregstered-inspectors-helper">
+            <tl-card-content>
+                <tl-data-table [isRemote]="true"
+                               [showAddButton]="canAddRecords"
+                               [showInactiveRecords]="canRestoreRecords"
+                               [isSoftDeletable]="true"
+                               (recordChanged)="inspectorRecordChanged($event)">
+                    <data-column propertyName="egnLnc"
+                                 [flexRate]="0.2"
+                                 [formGroup]="addInspectorFormGroup"
+                                 columnName="{{ 'inspectors-register.egn-lnc' | tlTranslate }}">
+                    </data-column>
+                    <data-column propertyName="identifierType"
+                                 [flexRate]="0.2"
+                                 [formGroup]="addInspectorFormGroup"
+                                 [options]="identifierTypes"
+                                 dataType="nomenclature"
+                                 columnName="{{ 'inspectors-register.identifier-type' | tlTranslate }}">
+                    </data-column>
+                    <data-column propertyName="firstName"
+                                 [flexRate]="0.3"
+                                 [formGroup]="addInspectorFormGroup"
+                                 columnName="{{ 'inspectors-register.first-name' | tlTranslate }}">
+                    </data-column>
+                    <data-column propertyName="lastName"
+                                 [flexRate]="0.3"
+                                 [formGroup]="addInspectorFormGroup"
+                                 columnName="{{ 'inspectors-register.last-name' | tlTranslate }}">
+                    </data-column>
+                    <data-column propertyName="inspectorCardNum"
+                                 [flexRate]="0.3"
+                                 [formGroup]="addInspectorFormGroup"
+                                 columnName="{{ 'inspectors-register.inspector-card-num' | tlTranslate }}">
+                    </data-column>
+                    <data-column propertyName="institutionId"
+                                 [flexRate]="0.6"
+                                 [formGroup]="addInspectorFormGroup"
+                                 [options]="institutions"
+                                 dataType="nomenclature"
+                                 columnName="{{ 'inspectors-register.institution' | tlTranslate }}">
+                    </data-column>
+                    <data-column propertyName="comments"
+                                 [flexRate]="0.3"
+                                 [formGroup]="addInspectorFormGroup"
+                                 columnName="{{ 'inspectors-register.comments' | tlTranslate }}">
+                    </data-column>
+                    <data-column-inline [flexRate]="0.15" *ngIf="canEditRecords"></data-column-inline>
+                </tl-data-table>
+            </tl-card-content>
+        </tl-card>
+    </div>
+</div>

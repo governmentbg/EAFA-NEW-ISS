@@ -1,0 +1,71 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="form"
+     [notifierGroup]="notifier"
+     class="dialog-padding">
+    <tl-card *ngIf="!showOnlyRegiXData"
+             tooltipResourceName="scientific-fishing.holder-basic-information-helper">
+        <tl-card-title>{{ 'scientific-fishing.holder-basic-information' | tlTranslate }}</tl-card-title>
+        <tl-card-content>
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between start">
+                <div fxFlex="75">
+                    <div fxLayout="row" fxLayoutGap="1em">
+                        <tl-input *ngIf="model.permitNumber !== undefined && model.permitNumber !== null"
+                                  fxFlex="50"
+                                  formControlName="permitNumberControl"
+                                  tooltipResourceName="scientific-fishing.permit-number-helper"
+                                  label="{{ 'scientific-fishing.permit-number' | tlTranslate }}">
+                        </tl-input>
+                        <tl-date fxFlex="50"
+                                 formControlName="permitCreatedDateControl"
+                                 tooltipResourceName="scientific-fishing.creation-date-helper"
+                                 label="{{ 'scientific-fishing.creation-date' | tlTranslate }}">
+                        </tl-date>
+                        <div *ngIf="model.permitNumber === undefined || model.permitNumber === null" fxFlex="50"></div>
+                    </div>
+                    <div fxLayout="row">
+                        <tl-input fxFlex="100"
+                                  formControlName="organizationPositionControl"
+                                  tooltipResourceName="scientific-fishing.scientific-organization-position-helper"
+                                  label="{{ 'scientific-fishing.scientific-organization-position' | tlTranslate }}">
+                        </tl-input>
+                    </div>
+                </div>
+                <div fxFlex="25">
+                    <tl-picture-uploader formControlName="photoControl"
+                                         [requestMethod]="photoRequestMethod"
+                                         [options]="{ validations: { isRequired: true } }">
+                    </tl-picture-uploader>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <tl-card tooltipResourceName="scientific-fishing.holder-data-helper">
+        <tl-card-title>{{ 'scientific-fishing.holder-data' | tlTranslate }}</tl-card-title>
+        <tl-card-content>
+            <regix-data formControlName="regixDataControl"
+                        notifier
+                        [isPerson]="true"
+                        [isIdReadOnly]="isEditing"
+                        [expectedResults]="expectedResultPerson"
+                        checkboxLabel="{{ 'scientific-fishing.has-bulgarian-address-registration' | tlTranslate }}">
+            </regix-data>
+        </tl-card-content>
+    </tl-card>
+
+    <tl-checkbox formControlName="noAddressProvidedControl"
+                 label="{{ 'scientific-fishing.holder-no-address-provided' | tlTranslate }}"
+                 tooltipResourceName="scientific-fishing.holder-no-address-provided-helper">
+    </tl-checkbox>
+
+    <single-address-registration *ngIf="showAddress"
+                                 formControlName="addressControl"
+                                 notifier
+                                 [addressType]="addressTypes.CONTACT"
+                                 label="{{ 'common.contact-address' | tlTranslate : 'cap' }}"
+                                 [expectedResults]="expectedResultAddress">
+    </single-address-registration>
+</div>
