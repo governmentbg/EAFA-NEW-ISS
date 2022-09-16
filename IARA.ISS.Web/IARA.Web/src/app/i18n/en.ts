@@ -1891,12 +1891,11 @@
 
         'ship-declarations-log-book-num': 'Log book',
         'ship-declarations-log-book-page-num': 'Page',
-        'ship-declarations-date': 'Date',
         'ship-declarations-gear-type': 'Fishing gear',
-        'ship-declarations-fish-type': 'Aquatic organism',
-        'ship-declarations-quantity-kg': 'Quantity (kg)',
+        'ship-declarations-outing-start-date': 'Date of outing',
+        'ship-declarations-port-of-unloading': 'Port of unloading',
         'ship-declarations-view-declaration': 'View declaration',
-        'ship-declarations-view-declaration-dialog-title': 'View origin declaration',
+        'ship-declarations-view-declaration-dialog-title': 'View logbook page',
 
         'add-event': 'Add event',
         'show-only-events': 'Show edit events',

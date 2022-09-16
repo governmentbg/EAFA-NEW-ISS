@@ -35,9 +35,9 @@ import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 import { ShipRegisterYearlyQuotaDTO } from '@app/models/generated/dtos/ShipRegisterYearlyQuotaDTO';
 import { ShipRegisterIncreaseCapacityDTO } from '@app/models/generated/dtos/ShipRegisterIncreaseCapacityDTO';
 import { ShipRegisterReduceCapacityDTO } from '@app/models/generated/dtos/ShipRegisterReduceCapacityDTO';
-import { ShipRegisterOriginDeclarationFishDTO } from '@app/models/generated/dtos/ShipRegisterOriginDeclarationFishDTO';
-import { ShipRegisterOriginDeclarationsFilters } from '../../models/generated/filters/ShipRegisterOriginDeclarationsFilters';
 import { ExcelExporterRequestModel } from '@app/shared/components/data-table/models/excel-exporter-request-model.model';
+import { ShipRegisterLogBookPagesFilters } from '@app/models/generated/filters/ShipRegisterLogBookPagesFilters';
+import { ShipRegisterLogBookPageDTO } from '@app/models/generated/dtos/ShipRegisterLogBookPageDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -224,10 +224,10 @@ export class ShipsRegisterAdministrationService extends ApplicationsRegisterAdmi
         });
     }
 
-    public getOriginDeclarationFishSimpleAudit(id: number): Observable<SimpleAuditDTO> {
+    public getShipLogBookPageSimpleAudit(id: number): Observable<SimpleAuditDTO> {
         const params = new HttpParams().append('id', id.toString());
 
-        return this.requestService.get(this.area, this.controller, 'GetOriginDeclarationFishSimpleAudit', {
+        return this.requestService.get(this.area, this.controller, 'GetShipLogBookPageSimpleAudit', {
             httpParams: params,
             responseTypeCtr: SimpleAuditDTO
         });
@@ -260,8 +260,8 @@ export class ShipsRegisterAdministrationService extends ApplicationsRegisterAdmi
         });
     }
 
-    public getShipOriginDeclarations(request: GridRequestModel<ShipRegisterOriginDeclarationsFilters>): Observable<GridResultModel<ShipRegisterOriginDeclarationFishDTO>> {
-        return this.requestService.post(this.area, this.controller, 'GetShipOriginDeclarations', request, {
+    public getShipLogBookPages(request: GridRequestModel<ShipRegisterLogBookPagesFilters>): Observable<GridResultModel<ShipRegisterLogBookPageDTO>> {
+        return this.requestService.post(this.area, this.controller, 'GetShipLogBookPages', request, {
             properties: RequestProperties.NO_SPINNER,
             responseTypeCtr: GridResultModel
         });

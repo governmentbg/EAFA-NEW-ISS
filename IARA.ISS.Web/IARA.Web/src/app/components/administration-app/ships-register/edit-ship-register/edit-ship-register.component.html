@@ -45,7 +45,7 @@
                      [disabled]="disableTabs">
                 <tl-card>
                     <tl-card-content>
-                        <tl-data-table #declarationsTable
+                        <tl-data-table #logbookPagesTable
                                        fxFlexFill
                                        [showAddButton]="false"
                                        [showInactiveRecords]="false"
@@ -55,37 +55,32 @@
                                          columnName="{{ 'ships-register.ship-declarations-log-book-num' | tlTranslate }}">
                             </data-column>
 
-                            <data-column [flexRate]="0.2"
-                                         propertyName="logBookPageNum"
+                            <data-column [flexRate]="0.15"
+                                         propertyName="pageNum"
                                          columnName="{{ 'ships-register.ship-declarations-log-book-page-num' | tlTranslate }}">
                             </data-column>
 
-                            <data-column [flexRate]="0.15"
-                                         propertyName="date"
-                                         dataType="date"
-                                         columnName="{{ 'ships-register.ship-declarations-date' | tlTranslate }}">
-                            </data-column>
-
                             <data-column [flexRate]="0.2"
-                                         propertyName="fishingGearTypeName"
+                                         propertyName="fishingGear"
                                          columnName="{{ 'ships-register.ship-declarations-gear-type' | tlTranslate }}">
                             </data-column>
-
-                            <data-column [flexRate]="0.2"
-                                         propertyName="fishName"
-                                         columnName="{{ 'ships-register.ship-declarations-fish-type' | tlTranslate }}">
+                            
+                            <data-column [flexRate]="0.15"
+                                         propertyName="outingStartDate"
+                                         dataType="date"
+                                         columnName="{{ 'ships-register.ship-declarations-outing-start-date' | tlTranslate }}">
                             </data-column>
 
-                            <data-column [flexRate]="0.15"
-                                         propertyName="quantityKg"
-                                         columnName="{{ 'ships-register.ship-declarations-quantity-kg' | tlTranslate }}">
+                            <data-column [flexRate]="0.2"
+                                         propertyName="portOfUnloading"
+                                         columnName="{{ 'ships-register.ship-declarations-port-of-unloading' | tlTranslate }}">
                             </data-column>
 
                             <data-template-column *ngIf="hasCatchesAndSalesReadPermission" [flexRate]="0.1" [cellClass]="'justify-center'">
                                 <ng-template let-row="row" ngx-datatable-cell-template>
                                     <div fxLayout="row wrap" fxLayoutAlign="end center">
                                         <tl-icon-button icon="visibility"
-                                                        (buttonClicked)="viewShipDeclaration(row.data)"
+                                                        (buttonClicked)="viewShipLogBookPage(row.data)"
                                                         iconClass="accent-color"
                                                         tooltipText="{{ 'ships-register.ship-declarations-view-declaration' | tlTranslate }}">
                                         </tl-icon-button>

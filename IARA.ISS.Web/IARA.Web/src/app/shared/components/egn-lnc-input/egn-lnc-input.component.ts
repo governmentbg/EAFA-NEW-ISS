@@ -62,10 +62,10 @@ export class EgnLncInputComponent extends CustomFormControl<EgnLncDTO> implement
     private translate: FuseTranslationLoaderService;
 
     private get egnValidators(): ValidatorFn[] {
-        return [TLValidators.expectedValueMatch(this.expectedValue), Validators.required, Validators.maxLength(10), TLValidators.egn];
+        return [TLValidators.expectedValueMatch(this.expectedValue), Validators.required, TLValidators.exactLength(10), TLValidators.egn];
     }
     private get lncValidators(): ValidatorFn[] {
-        return [TLValidators.expectedValueMatch(this.expectedValue), Validators.required, Validators.maxLength(10), TLValidators.pnf];
+        return [TLValidators.expectedValueMatch(this.expectedValue), Validators.required, TLValidators.exactLength(10), TLValidators.pnf];
     }
     private get forIdValidators(): ValidatorFn[] {
         return [TLValidators.expectedValueMatch(this.expectedValue), Validators.required, Validators.maxLength(15)];

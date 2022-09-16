@@ -34,19 +34,19 @@ import { ReduceFishingCapacityDataDTO } from '@app/models/generated/dtos/ReduceF
 import { ShipRegisterIncreaseCapacityDTO } from '@app/models/generated/dtos/ShipRegisterIncreaseCapacityDTO';
 import { ShipRegisterReduceCapacityDTO } from '@app/models/generated/dtos/ShipRegisterReduceCapacityDTO';
 import { RequestProperties } from '@app/shared/services/request-properties';
-import { ShipRegisterOriginDeclarationFishDTO } from '@app/models/generated/dtos/ShipRegisterOriginDeclarationFishDTO';
 import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
 import { DataTableManager } from '@app/shared/utils/data-table.manager';
-import { ShipRegisterOriginDeclarationsFilters } from '@app/models/generated/filters/ShipRegisterOriginDeclarationsFilters';
 import { FilterEventArgs } from '@app/shared/components/data-table/models/filter-event-args.model';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
-import { EditOriginDeclarationComponent } from '@app/components/common-app/catches-and-sales/components/edit-origin-declaration/edit-origin-declaration.component';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
-import { OriginDeclarationDialogParamsModel } from '@app/components/common-app/catches-and-sales/models/origin-declaration-dialog-params.model';
 import { ICatchesAndSalesService } from '@app/interfaces/common-app/catches-and-sales.interface';
 import { CatchesAndSalesAdministrationService } from '@app/services/administration-app/catches-and-sales-administration.service';
 import { PermissionsService } from '@app/shared/services/permissions.service';
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
+import { ShipRegisterLogBookPageDTO } from '@app/models/generated/dtos/ShipRegisterLogBookPageDTO';
+import { ShipRegisterLogBookPagesFilters } from '@app/models/generated/filters/ShipRegisterLogBookPagesFilters';
+import { EditShipLogBookPageComponent } from '@app/components/common-app/catches-and-sales/components/ship-log-book/edit-ship-log-book-page.component';
+import { EditShipLogBookPageDialogParams } from '@app/components/common-app/catches-and-sales/components/ship-log-book/models/edit-ship-log-book-page-dialog-params.model';
 
 const SHIP_DATA_TAB_INDEX: number = 0;
 const FISHING_GEARS_TAB_INDEX: number = 1;
@@ -118,11 +118,11 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
     private mainContentElement: HTMLElement | undefined;
     private changeOfContentsPanel: HTMLElement | undefined;
 
-    @ViewChild('declarationsTable')
-    private declarationsTable!: TLDataTableComponent;
+    @ViewChild('logbookPagesTable')
+    private logbookPagesTable!: TLDataTableComponent;
 
-    private declarationsGrid!: DataTableManager<ShipRegisterOriginDeclarationFishDTO, ShipRegisterOriginDeclarationsFilters>;
-    private originDeclarationEditDialog: TLMatDialog<EditOriginDeclarationComponent>;
+    private logbookPagesGrid!: DataTableManager<ShipRegisterLogBookPageDTO, ShipRegisterLogBookPagesFilters>;
+    private logbookPageEditDialog: TLMatDialog<EditShipLogBookPageComponent>;
     private initialDeclarationsLoaded: boolean = false;
 
     private translate: FuseTranslationLoaderService;
@@ -147,7 +147,7 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
         router: Router,
         confirmDialog: TLConfirmDialog,
         snackbar: MatSnackBar,
-        originDeclarationEditDialog: TLMatDialog<EditOriginDeclarationComponent>,
+        logbookPageEditDialog: TLMatDialog<EditShipLogBookPageComponent>,
         catchesAndSalesService: CatchesAndSalesAdministrationService,
         permissions: PermissionsService,
         messageService: MessageService
@@ -161,7 +161,7 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
         this.router = router;
         this.confirmDialog = confirmDialog;
         this.snackbar = snackbar;
-        this.originDeclarationEditDialog = originDeclarationEditDialog;
+        this.logbookPageEditDialog = logbookPageEditDialog;
         this.catchesAndSalesService = catchesAndSalesService;
 
         this.hasCatchesAndSalesReadPermission = permissions.hasAny(PermissionsEnum.FishLogBookPageReadAll, PermissionsEnum.FishLogBookPageRead);
@@ -290,11 +290,11 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
             this.changeOfContentsPanel = this.getChangeOfCircumstancesPanel();
         }
 
-        this.declarationsGrid = new DataTableManager<ShipRegisterOriginDeclarationFishDTO, ShipRegisterOriginDeclarationsFilters>({
-            tlDataTable: this.declarationsTable,
+        this.logbookPagesGrid = new DataTableManager<ShipRegisterLogBookPageDTO, ShipRegisterLogBookPagesFilters>({
+            tlDataTable: this.logbookPagesTable,
             searchPanel: undefined,
-            requestServiceMethod: this.service.getShipOriginDeclarations.bind(this.service),
-            filtersMapper: this.mapOriginDeclarationsFilters.bind(this)
+            requestServiceMethod: this.service.getShipLogBookPages.bind(this.service),
+            filtersMapper: this.mapLogBookPagesFilters.bind(this)
         });
 
         this.shipControl.valueChanges.subscribe({
@@ -601,11 +601,11 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
         }
         else if (index === DECLARATIONS_TAB_INDEX) {
             if (this.initialDeclarationsLoaded === false) {
-                this.declarationsGrid.advancedFilters = new ShipRegisterOriginDeclarationsFilters({
+                this.logbookPagesGrid.advancedFilters = new ShipRegisterLogBookPagesFilters({
                     shipUID: this.model.shipUID
                 });
 
-                this.declarationsGrid.refreshData();
+                this.logbookPagesGrid.refreshData();
                 this.initialDeclarationsLoaded = true;
             }
         }
@@ -636,30 +636,30 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
         }
     }
 
-    public viewShipDeclaration(declaration: ShipRegisterOriginDeclarationFishDTO): void {
-        this.originDeclarationEditDialog.openWithTwoButtons({
+    public viewShipLogBookPage(page: ShipRegisterLogBookPageDTO): void {
+        this.logbookPageEditDialog.openWithTwoButtons({
             title: this.translate.getValue('ships-register.ship-declarations-view-declaration-dialog-title'),
-            TCtor: EditOriginDeclarationComponent,
+            TCtor: EditShipLogBookPageComponent,
             translteService: this.translate,
             headerCancelButton: {
-                cancelBtnClicked: this.closeViewShipDeclarationDialog.bind(this)
+                cancelBtnClicked: this.closeViewShipLogBookPageDialog.bind(this)
             },
             headerAuditButton: {
-                id: declaration.id!,
-                tableName: 'OriginDeclarationFish',
-                getAuditRecordData: this.service.getOriginDeclarationFishSimpleAudit.bind(this.service)
+                id: page.id!,
+                tableName: 'ShipLogBookPages',
+                getAuditRecordData: this.service.getShipLogBookPageSimpleAudit.bind(this.service)
             },
-            componentData: new OriginDeclarationDialogParamsModel({
-                model: declaration,
+            componentData: new EditShipLogBookPageDialogParams({
+                id: page.id,
                 service: this.catchesAndSalesService,
                 viewMode: true
             }),
             viewMode: true,
             disableDialogClose: false
-        }, '1000px').subscribe();
+        }, '1450px').subscribe();
     }
 
-    private closeViewShipDeclarationDialog(closeFn: HeaderCloseFunction): void {
+    private closeViewShipLogBookPageDialog(closeFn: HeaderCloseFunction): void {
         closeFn();
     }
 
@@ -934,8 +934,8 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
         );
     }
 
-    private mapOriginDeclarationsFilters(filters: FilterEventArgs): ShipRegisterOriginDeclarationsFilters {
-        const result = new ShipRegisterOriginDeclarationsFilters({
+    private mapLogBookPagesFilters(filters: FilterEventArgs): ShipRegisterLogBookPagesFilters {
+        const result = new ShipRegisterLogBookPagesFilters({
             freeTextSearch: undefined,
             showInactiveRecords: false,
             shipUID: this.model.shipUID

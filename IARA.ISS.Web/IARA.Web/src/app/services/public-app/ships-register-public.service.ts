@@ -85,7 +85,7 @@ export class ShipsRegisterPublicService extends ApplicationsRegisterPublicBaseSe
         throw new Error('This method should not be called from the public app.');
     }
 
-    public getOriginDeclarationFishSimpleAudit(id: number): Observable<SimpleAuditDTO> {
+    public getShipLogBookPageSimpleAudit(id: number): Observable<SimpleAuditDTO> {
         throw new Error('This method should not be called from the public app.');
     }
 

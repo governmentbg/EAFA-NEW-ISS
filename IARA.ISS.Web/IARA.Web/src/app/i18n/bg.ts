@@ -1934,12 +1934,11 @@
 
         'ship-declarations-log-book-num': 'Дневник',
         'ship-declarations-log-book-page-num': 'Страница',
-        'ship-declarations-date': 'Дата',
-        'ship-declarations-gear-type': 'Уред',
-        'ship-declarations-fish-type': 'Воден организъм',
-        'ship-declarations-quantity-kg': 'Количество (kg)',
+        'ship-declarations-gear-type': 'Риболовен уред',
+        'ship-declarations-outing-start-date': 'Начална дата на излет',
+        'ship-declarations-port-of-unloading': 'Пристанище на разтоварване',
         'ship-declarations-view-declaration': 'Преглед на декларация',
-        'ship-declarations-view-declaration-dialog-title': 'Преглед на декларация за произход',
+        'ship-declarations-view-declaration-dialog-title': 'Преглед на страница от риболовен дневник',
 
         'add-event': 'Добави събитие',
         'show-edit-events': 'Покажи и редакции',

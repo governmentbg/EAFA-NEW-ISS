@@ -300,7 +300,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
 
             this.dateOfBirthProperties.validators = [Validators.required, this.isPersonBetween14And18Validator()];
         }
-        else if (type === TicketTypeEnum.ELDER) {
+        else if (type === TicketTypeEnum.ELDER || type === TicketTypeEnum.ELDERASSOCIATION) {
             const max: Date = new Date();
             max.setFullYear(max.getFullYear() - 60);
             max.setDate(max.getDate() + 1);
@@ -905,7 +905,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
     }
 
     private getFishingAssociations(): Observable<void> {
-        const assocTypes: TicketTypeEnum[] = [TicketTypeEnum.ASSOCIATION, TicketTypeEnum.BETWEEN14AND18ASSOCIATION, TicketTypeEnum.ELDER];
+        const assocTypes: TicketTypeEnum[] = [TicketTypeEnum.ASSOCIATION, TicketTypeEnum.BETWEEN14AND18ASSOCIATION, TicketTypeEnum.ELDERASSOCIATION];
 
         if (assocTypes.includes(TicketTypeEnum[this.type.code as keyof typeof TicketTypeEnum])) {
             return NomenclatureStore.instance.getNomenclature(

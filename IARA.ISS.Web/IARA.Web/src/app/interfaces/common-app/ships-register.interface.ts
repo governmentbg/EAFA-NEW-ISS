@@ -23,7 +23,7 @@ export interface IShipsRegisterService extends IApplicationsActionsService, IBas
     downloadShipRegisterExcel(request: ExcelExporterRequestModel<ShipsRegisterFilters>): Observable<boolean>;
 
     getShipOwnerAudit(id: number): Observable<SimpleAuditDTO>;
-    getOriginDeclarationFishSimpleAudit(id: number): Observable<SimpleAuditDTO>;
+    getShipLogBookPageSimpleAudit(id: number): Observable<SimpleAuditDTO>;
 
     getEventTypes(): Observable<NomenclatureDTO<number>[]>;
     getFleetTypes(): Observable<FleetTypeNomenclatureDTO[]>;
