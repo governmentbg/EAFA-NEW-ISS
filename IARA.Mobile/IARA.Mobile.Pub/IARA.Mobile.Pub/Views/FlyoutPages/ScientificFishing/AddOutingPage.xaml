@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+             xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+             xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+             xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+             xmlns:dtos="clr-namespace:IARA.Mobile.Pub.Application.DTObjects.ScientificFishing.LocalDb;assembly=IARA.Mobile.Pub.Application"
+             xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages.ScientificFishing"
+             x:DataType="viewModels:AddOutingViewModel"
+             x:TypeArguments="viewModels:AddOutingViewModel"
+             x:Class="IARA.Mobile.Pub.Views.FlyoutPages.ScientificFishing.AddOutingPage"
+             x:Name="page"
+             PageInfo="{rt:Translate PageInfo, Group=AddOuting}"
+             Title="{rt:Translate Title, Group=AddOuting}"
+             BackgroundColor="{StaticResource BackgroundColor}">
+    <tl:TLFillLayout>
+        <tl:TLScrollView>
+            <StackLayout>
+                <tl:TLFlex GrowUnit="200"
+                           Margin="5">
+                    <tl:TLDatePicker Title="{rt:Translate DateOfCatch, Group=AddOuting}"
+                                     ValidState="{Binding DateOfOuting}"
+                                     IsEnabled="{Binding CanEdit}" />
+                    <tl:TLEntry Title="{rt:Translate PlaceOfCatch, Group=AddOuting}"
+                                ValidState="{Binding WaterArea}"
+                                IsEnabled="{Binding CanEdit}" />
+                </tl:TLFlex>
+                <Grid ColumnDefinitions="45,*,Auto"
+                      RowDefinitions="Auto,1"
+                      Margin="10,10,10,0">
+                    <Label FontFamily="FA"
+                           FontSize="24"
+                           Margin="5,0,0,0"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                           TextColor="{StaticResource Primary}"
+                           Text="{Static h:IconFont.Fish}" />
+                    <tl:TLRichLabel Grid.Column="1"
+                                    LineBreakMode="WordWrap"
+                                    FontSize="18"
+                                    VerticalOptions="Center">
+                        <Span Text="{rt:Translate Catch, Group=AddOuting}" />
+                        <Span Text=" (" />
+                        <Span Text="{Binding Catches.Count}" />
+                        <Span Text=")" />
+                    </tl:TLRichLabel>
+                    <ImageButton Grid.Column="2"
+                                 Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Plus}, Color=White, Size=22}"
+                                 BackgroundColor="{StaticResource Primary}"
+                                 Padding="10"
+                                 Command="{Binding AddCatch}"
+                                 IsVisible="{Binding CanEdit}" />
+                    <BoxView Grid.Row="1"
+                             Grid.ColumnSpan="3"
+                             BackgroundColor="#3c424d" />
+                </Grid>
+                <StackLayout BindableLayout.ItemsSource="{Binding Catches}"
+                             Margin="5">
+                    <BindableLayout.EmptyView>
+                        <Label Text="{rt:Translate NoCatch, Group=AddOuting}"
+                               TextColor="{StaticResource ErrorColor}"
+                               IsVisible="{Binding Validation.WasForced}" />
+                    </BindableLayout.EmptyView>
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Frame x:DataType="dtos:SFCatchDto"
+                                   Padding="10">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding BindingContext.EditCatch, Source={Reference page}}"
+                                                          CommandParameter="{Binding}" />
+                                </Frame.GestureRecognizers>
+                                <StackLayout>
+                                    <Grid ColumnSpacing="20"
+                                          ColumnDefinitions="*,40"
+                                          RowDefinitions="Auto,Auto">
+                                        <tl:TLRichLabel LineBreakMode="WordWrap">
+                                            <Span Text="{rt:Translate FishType, Group=AddOuting}" />
+                                            <Span Text=": " />
+                                            <Span Text="{Binding FishType.DisplayName}"
+                                                  FontAttributes="Bold" />
+                                        </tl:TLRichLabel>
+                                        <tl:TLRichLabel Grid.Row="1">
+                                            <Span Text="{rt:Translate TotalCaught, Group=AddOuting}" />
+                                            <Span Text=": " />
+                                            <Span Text="{Binding TotalCatch}"
+                                                  FontAttributes="Bold" />
+                                            <Span Text=" ("  />
+                                            <Span Text="{rt:Translate TotalKept, Group=AddOuting}"  />
+                                            <Span Text=" " />
+                                            <Span Text="{Binding TotalKeptCount}"
+                                                  FontAttributes="Bold" />
+                                            <Span Text=")"  />
+                                        </tl:TLRichLabel>
+                                        <ImageButton Grid.RowSpan="2"
+                                                     Grid.Column="1"
+                                                     Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Color=White, Size=22}"
+                                                     BackgroundColor="{StaticResource Primary}"
+                                                     Padding="10"
+                                                     Command="{Binding BindingContext.RemoveCatch, Source={Reference page}}"
+                                                     CommandParameter="{Binding}"
+                                                     IsVisible="{Binding BindingContext.CanEdit, Source={Reference page}}"
+                                                     VerticalOptions="Center" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="*,1,*"
+                                          RowDefinitions="1,Auto,1,Auto,Auto,Auto,Auto">
+                                        <Label Grid.Row="1"
+                                               Text="{rt:Translate Range, Group=AddOuting}" />
+                                        <Label Grid.Row="1"
+                                               Grid.Column="2"
+                                               Text="{rt:Translate Number, Group=AddOuting}" />
+                                        <Label Grid.Row="3"
+                                               Text="{rt:Translate Under100, Group=AddOuting}" />
+                                        <Label Grid.Row="3"
+                                               Grid.Column="2"
+                                               Text="{Binding CatchUnder100}" />
+                                        <Label Grid.Row="4"
+                                               Text="{rt:Translate From100To500, Group=AddOuting}" />
+                                        <Label Grid.Row="4"
+                                               Grid.Column="2"
+                                               Text="{Binding Catch100To500}" />
+                                        <Label Grid.Row="5"
+                                               Text="{rt:Translate From500To1000, Group=AddOuting}" />
+                                        <Label Grid.Row="5"
+                                               Grid.Column="2"
+                                               Text="{Binding Catch500To1000}" />
+                                        <Label Grid.Row="6"
+                                               Text="{rt:Translate Above1000, Group=AddOuting}" />
+                                        <Label Grid.Row="6"
+                                               Grid.Column="2"
+                                               Text="{Binding CatchOver1000}" />
+                                        <BoxView Grid.RowSpan="7"
+                                                 Grid.Column="1"
+                                                 Color="LightGray" />
+                                        <BoxView Grid.Row="2"
+                                                 Grid.ColumnSpan="3"
+                                                 Color="LightGray" />
+                                        <BoxView Grid.ColumnSpan="3"
+                                                 Color="LightGray" />
+                                    </Grid>
+                                </StackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
+                <Button Text="{rt:Translate Save, Group=Common}"
+                        Command="{Binding Add}"
+                        Margin="10,5"
+                        IsVisible="{Binding CanEdit}" />
+            </StackLayout>
+        </tl:TLScrollView>
+    </tl:TLFillLayout>
+</sv:BasePage>

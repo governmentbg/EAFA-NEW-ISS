@@ -1,0 +1,39 @@
+﻿<div fxFlexFill fxLayout="column" fxLayoutGap="1em" class="dialog-padding" [formGroup]="form">
+    <tl-card>
+        <tl-card-content>
+            <div fxLayout="column" fxLayoutGap="1em">
+                <div fxLayout="row" fxFlex="100" fxLayoutAlign="start center">
+                    <tl-radio-button-group fxFlex="100"
+                                           formControlName="suspensionTypeControl"
+                                           [options]="suspensionTypes"
+                                           label="{{ 'commercial-fishing.suspension-type' | tlTranslate }}">
+                    </tl-radio-button-group>
+                </div>
+                <div fxLayout="column" fxFlex="100" fxLayoutGap="1em">
+                    <div fxLayout="row" fxFlex="100" fxLayoutGap="1em">
+                        <tl-autocomplete fxFlex="50"
+                                         formControlName="suspensionReasonControl"
+                                         [options]="reasons"
+                                         label="{{ 'commercial-fishing.suspension-reason' | tlTranslate }}">
+                        </tl-autocomplete>
+                        <tl-date-range *ngIf="showRangeControl"
+                                       fxFlex="50"
+                                       formControlName="suspensionDateRangeControl"
+                                       label="{{ 'commercial-fishing.suspension-valid-from-to' | tlTranslate }}">
+                        </tl-date-range>
+                    </div>
+                    <div fxLayout="row" fxFlex="100" fxLayoutGap="1em">
+                        <tl-input fxFlex="50"
+                                  formControlName="orderNumberControl"
+                                  label="{{ 'commercial-fishing.suspension-order-number' | tlTranslate }}">
+                        </tl-input>
+                        <tl-date fxFlex="50"
+                                 formControlName="enactmentDateControl"
+                                 label="{{ 'commercial-fishing.suspension-enactment-date' | tlTranslate }}">
+                        </tl-date>
+                    </div>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

@@ -1,0 +1,57 @@
+﻿<button mat-button
+        [matMenuTriggerFor]="ticketsMenu"
+        fxLayout="column"
+        fxLayoutAlign="center center"
+        fxFlexFill>
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+        <tl-icon icon="fa-ticket-alt"
+                 size="2"
+                 matBadge="!"
+                 matBadgeSize="small"
+                 matBadgeColor="warn"
+                 [matBadgeHidden]="!showWarningBadge">
+        </tl-icon>
+
+        <span fxHide
+              fxShow.gt-sm
+              class="mr-12">
+            {{ 'recreational-fishing.my-tickets' | tlTranslate }}
+        </span>
+
+        <tl-icon icon="keyboard_arrow_down"
+                 fxHide.xs>
+        </tl-icon>
+    </div>
+</button>
+
+<mat-menu #ticketsMenu="matMenu" [overlapTrigger]="false">
+    <div fxLayout="column" fxLayoutGap="0.5em" class="menu-container">
+        <div fxLayout="column" 
+             fxLayoutAlign="space-between stretch" 
+             fxLayoutGap="0.5em">
+            <div *ngFor="let ticket of tickets; trackBy: trackTicket" (click)="$event.stopPropagation()">
+                <recreational-fishing-ticket-card [ticket]="ticket"></recreational-fishing-ticket-card>
+            </div>
+
+            <div *ngIf="tickets.length === 0" class="no-tickets-label">
+                {{ 'recreational-fishing.no-active-tickets' | tlTranslate }}
+            </div>
+        </div>
+
+        <div fxLayout="column" fxLayoutAlign="end stretch" fxLayoutGap="0.2em" class="buttons">
+            <button *ngIf="canBuyTickets"
+                    mat-raised-button
+                    color="accent"
+                    (click)="buyTicket()">
+                {{ 'recreational-fishing.buy-ticket' | tlTranslate }}
+            </button>
+
+            <button *ngIf="tickets.length !== 0"
+                    mat-raised-button
+                    color="primary"
+                    (click)="showAllTickets()">
+                {{ 'recreational-fishing.show-all-my-tickets' | tlTranslate }}
+            </button>
+        </div>
+    </div>
+</mat-menu>

@@ -1,0 +1,18 @@
+﻿<div fxLayout="column" fxFlexFill fxLayoutGap="1em">
+    <div fxLayout="row">
+        <mat-toolbar color="accent">
+            <div fxLayout="row" fxLayoutAlign="start center">
+                {{ 'navigation.online-payment-page' | tlTranslate }}
+            </div>
+        </mat-toolbar>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center start" fxFlex class="margin-right">
+        <tl-egovpayment-btn #btn 
+                            [btnText]="buttonText" 
+                            [autoSubmit]="true" 
+                            [isDisabled]="false" 
+                            [paymentForm]="paymentFormData" 
+                            [fireFormFill]="true">
+        </tl-egovpayment-btn>
+    </div>
+</div>

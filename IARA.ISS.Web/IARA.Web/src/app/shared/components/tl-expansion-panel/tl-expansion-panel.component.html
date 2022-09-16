@@ -1,0 +1,29 @@
+﻿<mat-expansion-panel class="tl-custom-expansion-panel"
+                     [disabled]="disabled"
+                     [expanded]="expanded"
+                     [hideToggle]="hideToggle"
+                     [togglePosition]="togglePosition"
+                     (afterCollapse)="onCollapse()"
+                     (afterExpand)="onExpand()"
+                     (closed)="closed.emit()"
+                     (destroyed)="destroyed.emit()"
+                     (opened)="opened.emit()">
+    <mat-expansion-panel-header [collapsedHeight]="collapsedHeaderHeight"
+                                [expandedHeight]="expandedHeaderHeight">
+        <mat-panel-title [ngClass]="{ 'error-color': hasError }" fxLayoutAlign="start center">
+            <span [style.font-size]="fontSizeEm + 'em'">
+                {{ title }}
+            </span>
+            <tl-help class="helper" [tooltipResource]="tooltipResourceName"></tl-help>
+        </mat-panel-title>
+        <mat-panel-description fxLayoutAlign="space-between center">
+            <span fxFlex="90">
+                {{ description }}
+            </span>
+            <div fxLayout="row" fxFlex="10" fxLayoutAlign="end center">
+                <ng-content select="tl-expansion-panel-description"></ng-content>
+            </div>
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+    <ng-content></ng-content>
+</mat-expansion-panel>

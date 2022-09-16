@@ -1,0 +1,272 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     validityCheckerGroup
+     [formGroup]="form"
+     [notifierGroup]="notifier"
+     class="dialog-padding">
+    <!-- Заявител -->
+    <application-submitted-by *ngIf="isApplication"
+                              formControlName="submittedByControl"
+                              notifier
+                              validityChecker
+                              label="{{ 'duplicates.requester' | tlTranslate }}"
+                              [isIdReadOnly]="isEditing || isPublicApp"
+                              [expectedResults]="expectedResults.submittedBy">
+    </application-submitted-by>
+
+    <!-- Получател -->
+    <application-submitted-for formControlName="submittedForControl"
+                               notifier
+                               validityChecker
+                               relationLabel="{{ 'duplicates.requester-role' | tlTranslate }}"
+                               submittedForLabel="{{ 'duplicates.receiver' | tlTranslate }}"
+                               [pageCode]="pageCode"
+                               [hideRelation]="showOnlyRegiXData || !isApplication"
+                               [isIdReadOnly]="isEditing"
+                               [showPersonal]="!isApplication"
+                               [submittedByControl]="form.controls.submittedByControl"
+                               [expectedResults]="expectedResults.submittedFor">
+    </application-submitted-for>
+
+    <!-- Информация за купувач -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData && buyerPageCodes.includes(pageCode)"
+                        title="{{ 'duplicates.buyer-information' | tlTranslate }}"
+                        tooltipResourceName="duplicates.buyer-information-tooltip"
+                        [validityChecker]="form"
+                        fxLayout="column"
+                        fxLayoutGap="1em">
+        <div *ngIf="isPublicApp" fxLayout="column" fxLayoutAlign="start start">
+            <div fxLayout="row" fxLayoutAlign="start center">
+                <tl-input fxFlex="33"
+                          formControlName="buyerUrorrControl"
+                          label="{{ 'duplicates.buyer-urorr' | tlTranslate }}"
+                          tooltipResourceName="duplicates.buyer-urorr-tooltip">
+                </tl-input>
+            </div>
+
+            <mat-error *ngIf="buyerDoesNotExistError">
+                * {{ 'duplicates.buyer-does-not-exist-error' | tlTranslate }}
+            </mat-error>
+        </div>
+
+        <div *ngIf="!isPublicApp" fxLayout="row" fxLayoutAlign="start center">
+            <tl-autocomplete fxFlex="50"
+                             formControlName="buyerControl"
+                             [options]="buyers"
+                             [templateOptions]="true"
+                             label="{{ 'duplicates.buyer' | tlTranslate }}"
+                             tooltipResourceName="duplicates.buyer-tooltip">
+            </tl-autocomplete>
+        </div>
+
+        <div fxLayout="row" fxLayoutAlign="start center">
+            <tl-textarea fxFlexFill
+                         formControlName="reasonControl"
+                         label="{{ 'duplicates.buyer-reason' | tlTranslate }}"
+                         tooltipResourceName="duplicates.buyer-reason-tooltip">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Информация за център за първа продажба -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData && firstSalePageCodes.includes(pageCode)"
+                        title="{{ 'duplicates.first-sale-information' | tlTranslate }}"
+                        tooltipResourceName="duplicates.first-sale-information-tooltip"
+                        [validityChecker]="form"
+                        fxLayout="column"
+                        fxLayoutGap="1em">
+        <div *ngIf="isPublicApp" fxLayout="column" fxLayoutAlign="start start">
+            <div fxLayout="row" fxLayoutAlign="start center">
+                <tl-input fxFlex="33"
+                          formControlName="buyerUrorrControl"
+                          label="{{ 'duplicates.first-sale-urorr' | tlTranslate }}"
+                          tooltipResourceName="duplicates.first-sale-urorr-tooltip">
+                </tl-input>
+            </div>
+
+            <mat-error *ngIf="buyerDoesNotExistError">
+                * {{ 'duplicates.first-sale-does-not-exist-error' | tlTranslate }}
+            </mat-error>
+        </div>
+
+        <div *ngIf="!isPublicApp" fxLayout="row" fxLayoutAlign="start center">
+            <tl-autocomplete fxFlex="50"
+                             formControlName="buyerControl"
+                             [options]="buyers"
+                             [templateOptions]="true"
+                             label="{{ 'duplicates.first-sale' | tlTranslate }}"
+                             tooltipResourceName="duplicates.first-sale-tooltip">
+            </tl-autocomplete>
+        </div>
+
+        <div fxLayout="row" fxLayoutAlign="start center">
+            <tl-textarea fxFlexFill
+                         formControlName="reasonControl"
+                         label="{{ 'duplicates.first-sale-reason' | tlTranslate }}"
+                         tooltipResourceName="duplicates.first-sale-reason-tooltip">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Информация за разрешително за стопански риболов -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData && permitPageCodes.includes(pageCode)"
+                        title="{{ 'duplicates.permit-information' | tlTranslate }}"
+                        tooltipResourceName="duplicates.permit-information-tooltip"
+                        [validityChecker]="form"
+                        fxLayout="column"
+                        fxLayoutGap="1em">
+        <div *ngIf="isPublicApp" fxLayout="column" fxLayoutAlign="start start">
+            <tl-input fxFlex="33"
+                      formControlName="permitRegNumControl"
+                      label="{{ 'duplicates.permit-reg-num' | tlTranslate }}"
+                      tooltipResourceName="duplicates.permit-regi-num-tooltip">
+            </tl-input>
+
+            <mat-error *ngIf="permitDoesNotExistError">
+                * {{ 'duplicates.permit-does-not-exist-error' | tlTranslate }}
+            </mat-error>
+        </div>
+
+        <div *ngIf="!isPublicApp" fxLayout="row" fxLayoutAlign="start center">
+            <tl-autocomplete fxFlex="50"
+                             formControlName="permitControl"
+                             [options]="permits"
+                             [templateOptions]="true"
+                             label="{{ 'duplicates.permit' | tlTranslate }}"
+                             tooltipResourceName="duplicates.permit-tooltip">
+            </tl-autocomplete>
+        </div>
+
+        <div fxLayout="row" fxLayoutAlign="start center">
+            <tl-textarea fxFlexFill
+                         formControlName="reasonControl"
+                         label="{{ 'duplicates.permit-reason' | tlTranslate }}"
+                         tooltipResourceName="duplicates.permit-reason-tooltip">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Информация за удостоверение за стопански риболов -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData && permitLicencePageCodes.includes(pageCode)"
+                        title="{{ 'duplicates.permit-licence-information' | tlTranslate }}"
+                        tooltipResourceName="duplicates.permit-licence-information-tooltip"
+                        [validityChecker]="form"
+                        fxLayout="column"
+                        fxLayoutGap="1em">
+        <div *ngIf="isPublicApp" fxLayout="column" fxLayoutAlign="start start">
+            <tl-input fxFlex="33"
+                      formControlName="permitLicenceRegNumControl"
+                      label="{{ 'duplicates.permit-licence-reg-num' | tlTranslate }}"
+                      tooltipResourceName="duplicates.permit-licence-reg-num-tooltip">
+            </tl-input>
+
+            <mat-error *ngIf="permitLicenceDoesNotExistError">
+                * {{ 'duplicates.permit-licence-does-not-exist-error' | tlTranslate }}
+            </mat-error>
+        </div>
+
+        <div *ngIf="!isPublicApp" fxLayout="row" fxLayoutAlign="start center">
+            <tl-autocomplete fxFlex="50"
+                             formControlName="permitLicenceControl"
+                             [options]="permitLicences"
+                             [templateOptions]="true"
+                             label="{{ 'duplicates.permit-licence' | tlTranslate }}"
+                             tooltipResourceName="duplicates.permit-licence-tooltip">
+            </tl-autocomplete>
+        </div>
+
+        <div fxLayout="row" fxLayoutAlign="start center">
+            <tl-textarea fxFlexFill
+                         formControlName="reasonControl"
+                         label="{{ 'duplicates.permit-licence-reason' | tlTranslate }}"
+                         tooltipResourceName="duplicates.permit-licence-reason-tooltip">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Информация за правоспособен рибар -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData && fisherPageCodes.includes(pageCode)"
+                        title="{{ 'duplicates.fisher-information' | tlTranslate }}"
+                        tooltipResourceName="duplicates.fisher-information-tooltip"
+                        [validityChecker]="form"
+                        fxLayout="column"
+                        fxLayoutGap="1em">
+        <div *ngIf="isPublicApp" fxLayout="column" fxLayoutAlign="start start">
+            <regix-data formControlName="fisherControl"
+                        [isPerson]="true"
+                        [isIdReadOnly]="false"
+                        [isForeigner]="false"
+                        [includeForeigner]="true"
+                        [showOnlyBasicData]="true">
+            </regix-data>
+
+            <mat-error *ngIf="fisherDoesNotExistError">
+                * {{ 'duplicates.fisher-does-not-exist-error' | tlTranslate }}
+            </mat-error>
+        </div>
+
+        <div *ngIf="!isPublicApp" fxLayout="row" fxLayoutAlign="start center">
+            <tl-autocomplete fxFlex="50"
+                             formControlName="fisherRegisterControl"
+                             [options]="fishers"
+                             [templateOptions]="true"
+                             label="{{ 'duplicates.fisher' | tlTranslate }}"
+                             tooltipResourceName="duplicates.fisher-tooltip">
+            </tl-autocomplete>
+        </div>
+
+        <div fxLayout="row" fxLayoutAlign="start center">
+            <tl-textarea fxFlexFill
+                         formControlName="reasonControl"
+                         label="{{ 'duplicates.fisher-reason' | tlTranslate }}"
+                         tooltipResourceName="duplicates.fisher-reason-tooltip">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Информация за плащане -->
+    <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData && paymentInformation !== undefined && paymentInformation !== null"
+                        title="{{ 'duplicates.payment-information' | tlTranslate }}"
+                        tooltipResourceName="duplicates.payment-information-helper">
+        <payment-information [paymentData]="paymentInformation"></payment-information>
+    </tl-expansion-panel>
+
+    <!-- Информация за начин на връчване -->
+    <tl-expansion-panel *ngIf="hasDelivery && isApplication && !showOnlyRegiXData"
+                        title="{{ 'duplicates.delivery-data' | tlTranslate }}"
+                        tooltipResourceName="duplicates.delivery-data-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="hasNoEDeliveryRegistrationError !== true">
+        <delivery-data formControlName="deliveryDataControl"
+                       [pageCode]="pageCode">
+        </delivery-data>
+
+        <mat-error *ngIf="hasNoEDeliveryRegistrationError">
+            * {{ 'duplicates.has-no-e-delivery-registration-error' | tlTranslate }}
+        </mat-error>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'duplicates.files' | tlTranslate }}"
+                        tooltipResourceName="duplicates.files-helper"
+                        [validityChecker]="form">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(service)"
+                                  [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                  [refreshFileTypes]="refreshFileTypes">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+
+    <!-- Проверки -->
+    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+                        title="{{ 'duplicates.regix-checks-results' | tlTranslate }}"
+                        tooltipResourceName="duplicates.regix-checks-results-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-checks-results [regixChecksCollection]="regixChecks"></regix-checks-results>
+        </div>
+    </tl-expansion-panel>
+</div>

@@ -1,0 +1,31 @@
+﻿<div id="mail-confirm" fxLayout="column">
+    <div id="mail-confirm-form-wrapper" fxLayout="column" fxLayoutAlign="center center">
+        <div id="mail-confirm-form" [@animate]="{value:'*',params:{duration:'300ms',y:'100px'}}">
+            <div class="logo">
+                <tl-icon type="IC_ICONS" size="80" iconClass="s-96" icon="ic-email-check" iconColor="green"></tl-icon>
+            </div>
+            <div class="title">{{ 'successful-registration.confirm-your-email' | tlTranslate }}</div>
+            <div class="subtitle">
+                <p>
+                    {{ 'successful-registration.an-email-will-be-send-to' | tlTranslate }} <b>{{ userEmail }}</b>.
+                </p>
+                <p>
+                    {{ 'successful-registration.check-your-email-to-confirm' | tlTranslate }}
+                </p>
+            </div>
+            <div fxLayout="column" fxFlexFill fxLayoutGap="1em">
+                <div class="message">
+                    <a class="link" [routerLink]="homeUrl">{{ 'successful-registration.go-back-to-login-page' | tlTranslate }}</a>
+                </div>
+                <mat-divider></mat-divider>
+                <small>
+                    {{ 'successful-registration.have-not-received-an-email' | tlTranslate }}
+                    <a class="link" (click)="resendConfirmationEmail()">
+                        {{ 'successful-registration.here' | tlTranslate }}
+                    </a>
+                    {{ 'successful-registration.for-resend-email' | tlTranslate }}
+                </small>
+            </div>
+        </div>
+    </div>
+</div>

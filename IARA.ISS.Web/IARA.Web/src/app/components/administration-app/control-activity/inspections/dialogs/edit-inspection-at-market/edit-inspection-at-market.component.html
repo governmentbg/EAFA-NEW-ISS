@@ -1,0 +1,96 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <!-- Основни данни -->
+    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <inspection-general-info formControlName="generalInfoControl"
+                                     [institutions]="institutions">
+            </inspection-general-info>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Данни за инспекция на пазар / помещение -->
+    <tl-expansion-panel [formGroup]="form"
+                        title="{{ 'inspections.market-data' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start center">
+                <tl-input fxFlex="50"
+                          formControlName="marketNameControl"
+                          label="{{ 'inspections.market-name' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="50"
+                          formControlName="addressControl"
+                          label="{{ 'inspections.address' | tlTranslate }}">
+                </tl-input>
+            </div>
+            <inspected-buyer formControlName="buyerControl"
+                             title="{{ 'inspections.owner' | tlTranslate }}"
+                             label="{{ 'inspections.owner-is-registered-buyer' | tlTranslate }}"
+                             [countries]="countries"
+                             [buyers]="buyers"
+                             (buyerSelected)="onBuyerSelected($event)">
+            </inspected-buyer>
+            <inspected-person formControlName="representativeControl"
+                              [countries]="countries"
+                              [personType]="inspectedPersonTypeEnum.ReprsPers"
+                              title="{{ 'inspections.representative' | tlTranslate }}">
+            </inspected-person>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Данни за инспектираните продукти от риболов -->
+    <tl-expansion-panel [formGroup]="form"
+                        title="{{ 'inspections.market-catch' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <market-catches-table formControlName="catchesControl"
+                                  [fishes]="fishes"
+                                  [types]="catchTypes"
+                                  [catchZones]="catchZones"
+                                  [presentations]="presentations">
+            </market-catches-table>
+            <inspection-toggle-list formControlName="catchTogglesControl"
+                                    [toggles]="catchToggles">
+            </inspection-toggle-list>
+            <tl-checkbox formControlName="hasImporterControl"
+                         label="{{ 'inspections.has-importer' | tlTranslate }}">
+            </tl-checkbox>
+            <inspected-legal *ngIf="hasImporter"
+                             formControlName="importerControl"
+                             [countries]="countries"
+                             [legalType]="inspectedPersonTypeEnum.Importer"
+                             title="{{ 'inspections.importer' | tlTranslate }}">
+            </inspected-legal>
+            <tl-textarea formControlName="catchViolationControl"
+                         [minRows]="3"
+                         label="{{ 'inspections.violation' | tlTranslate }}">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Допълнителна информация -->
+    <inspection-additional-info formControlName="additionalInfoControl">
+        <tl-textarea formControlName="representativeCommentControl"
+                     [minRows]="3"
+                     label="{{ 'inspections.representative-comment' | tlTranslate }}">
+        </tl-textarea>
+    </inspection-additional-info>
+
+    <!-- Файлове -->
+    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+</div>

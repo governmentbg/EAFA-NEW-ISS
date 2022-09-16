@@ -1,0 +1,106 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <search-panel [translateService]="translate">
+        <div [formGroup]="form" fxLayout="column" fxLayoutAlign="start start">
+            <!-- Код на заявление, номер от евентис, дата на подаване -->
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center" fxFill>
+                <tl-input fxFlex="33"
+                          formControlName="accessCodeControl"
+                          label="{{ 'applications-register.application-access-code' | tlTranslate }}"
+                          tooltipResourceName="applications-register.application-access-code-helper">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="eventisNumControl"
+                          label="{{ 'applications-register.eventis-num' | tlTranslate }}"
+                          tooltipResourceName="applications-register.eventis-num-helper">
+                </tl-input>
+                <tl-date-range fxFlex="33"
+                               formControlName="applicationDateRangeControl"
+                               label="{{ 'applications-register.date-of-application' | tlTranslate }}"
+                               tooltipResourceName="applications-register.date-of-application-helper">
+                </tl-date-range>
+            </div>
+
+            <!-- Услуга, статус, тип -->
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center" fxFill>
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="applicationTypeControl"
+                                 [options]="types"
+                                 label="{{ 'applications-register.application-type' | tlTranslate }}"
+                                 tooltipResourceName="applications-register.application-type-helper">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="applicationStatusControl"
+                                 [options]="statuses"
+                                 label="{{ 'applications-register.application-status' | tlTranslate }}"
+                                 tooltipResourceName="applications-register.application-status-helper">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="applicationSourceControl"
+                                 [options]="sources"
+                                 label="{{ 'applications-register.application-source' | tlTranslate }}"
+                                 tooltipResourceName="applications-register.application-source-helper">
+                </tl-autocomplete>
+            </div>
+
+            <!-- Получател на заявлението, ЕГН/ЕИК на получател -->
+            <div *ngIf="pageType === 'FileInPage'; else isConcreteRegister"
+                 fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="space-between center"
+                 fxFill>
+                <tl-input fxFlex="25"
+                          formControlName="submittedForControl"
+                          label="{{ 'applications-register.application-submitted-for' | tlTranslate }}"
+                          tooltipResourceName="applications-register.application-submitted-for-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="submittedForEgnLncControl"
+                          label="{{ 'applications-register.application-submitted-for-egn-lnc' | tlTranslate }}"
+                          tooltipResourceName="applications-register.application-submitted-for-egn-lnc-helper">
+                </tl-input>
+                <tl-select fxFlex="25"
+                           formControlName="showOnlyAssignedControl"
+                           [options]="showOnlyAssignedOptions"
+                           label="{{ 'applications-register.assigned-applications' | tlTranslate }}"
+                           tooltipResourceName="applications-register.assigned-applications-helper">
+                </tl-select>
+                <tl-input fxFlex="25"
+                          formControlName="assignedToControl"
+                          label="{{ 'applications-register.application-assigned-user' | tlTranslate }}"
+                          tooltipResourceName="applications-register.application-assigned-user-helper">
+                </tl-input>
+            </div>
+
+            <ng-template #isConcreteRegister>
+                <div *ngIf="pageType !== 'PublicPage'" fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center" fxFill>
+                    <tl-input fxFlex="33"
+                              formControlName="submittedForControl"
+                              label="{{ 'applications-register.application-submitted-for' | tlTranslate }}"
+                              tooltipResourceName="applications-register.application-submitted-for-helper">
+                    </tl-input>
+                    <tl-input fxFlex="33"
+                              formControlName="submittedForEgnLncControl"
+                              label="{{ 'applications-register.application-submitted-for-egn-lnc' | tlTranslate }}"
+                              tooltipResourceName="applications-register.application-submitted-for-egn-lnc-helper">
+                    </tl-input>
+                    <div fxFlex="33"><!-- Подравняване --></div>
+                </div>
+            </ng-template>
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <tl-card tooltipResourceName="applications-register.applications-table-card-helper">
+        <tl-card-content>
+            <applications-table [pageType]="pageType"
+                                [processingPermissions]="applicationProcessingHasPermissions"
+                                [service]="service"
+                                [applicationsRegisterData]="applicationsRegisterData"
+                                [applicationsService]="applicationsService"
+                                (onDeleted)="deleteApplication($event)"
+                                (onRestored)="restoreApplication($event)"
+                                (onAddedOrEditted)="addedOrEdittedApplication($event)">
+            </applications-table>
+        </tl-card-content>
+    </tl-card>
+</div>

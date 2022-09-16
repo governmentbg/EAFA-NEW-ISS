@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:MainPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+             xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+             xmlns:ffimg="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+             xmlns:dtos="clr-namespace:IARA.Mobile.Pub.Application.DTObjects.FishingTickets.LocalDb;assembly=IARA.Mobile.Pub.Application"
+             xmlns:vm="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket;assembly=IARA.Mobile.Pub"
+             xmlns:converters="clr-namespace:IARA.Mobile.Pub.Converters"
+             xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages"
+             x:Class="IARA.Mobile.Pub.Views.FlyoutPages.FishingTicketPage"
+             x:DataType="viewModels:FishingTicketViewModel"
+             x:TypeArguments="viewModels:FishingTicketViewModel"
+             x:Name="page"
+             PageInfo="{rt:Translate FishingTicketPageInfo, Group=FishingTicket}"
+             Title="{rt:Translate Title, Group=FishingTicket}"
+             BackgroundColor="{StaticResource BackgroundColor}">
+    <ContentPage.Resources>
+        <converters:TicketTypeToIconConverter x:Key="TicketTypeToIcon" />
+        <converters:TicketPeriodToIconConverter x:Key="TicketPeriodToIcon" />
+    </ContentPage.Resources>
+    <Grid>
+        <ffimg:CachedImage Aspect="AspectFill"
+                           Source="home_background" />
+        <tl:TLScrollView>
+            <Grid VerticalOptions="Center"
+                  HorizontalOptions="Center"
+                  xct:StateLayout.CurrentState="Custom"
+                  xct:StateLayout.CurrentCustomStateKey="{Binding CurrentState}">
+                <xct:StateLayout.StateViews>
+                    <xct:StateView StateKey="Custom"
+                                   CustomStateKey="{x:Static viewModels:FishingTicketViewModel.TicketTypeState}">
+                        <StackLayout BindableLayout.ItemsSource="{Binding TicketTypes}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentView x:DataType="dtos:TicketTypeDto">
+                                        <Frame xct:TouchEffect.NativeAnimation="True"
+                                               xct:TouchEffect.Command="{Binding BindingContext.GoToSecondStateCommand, Source={Reference page}}"
+                                               xct:TouchEffect.CommandParameter="{Binding}"
+                                               Padding="0"
+                                               IsClippedToBounds="True"
+                                               CornerRadius="50"
+                                               WidthRequest="500"
+                                               Margin="10,5"
+                                               HasShadow="False"
+                                               HeightRequest="100"
+                                               BackgroundColor="Transparent">
+                                            <Grid ColumnSpacing="0"
+                                                  ColumnDefinitions="100,*">
+                                                <Frame Grid.Column="1"
+                                                       IsClippedToBounds="True"
+                                                       BackgroundColor="{StaticResource Primary}"
+                                                       HasShadow="False"
+                                                       Margin="-100,0,0,0"
+                                                       Padding="0"
+                                                       CornerRadius="50">
+                                                    <Label Text="{Binding Name}"
+                                                           LineBreakMode="WordWrap"
+                                                           TextColor="White"
+                                                           VerticalOptions="Center"
+                                                           Margin="110,0,25,0" />
+                                                </Frame>
+                                                <Frame CornerRadius="50"
+                                                       IsClippedToBounds="True"
+                                                       HasShadow="False"
+                                                       Padding="0"
+                                                       BackgroundColor="{StaticResource PrimaryLight}">
+                                                    <Image Source="{Binding Converter={StaticResource TicketTypeToIcon}}"
+                                                           Aspect="AspectFit"
+                                                           HeightRequest="45"
+                                                           WidthRequest="45"
+                                                           VerticalOptions="Center"
+                                                           HorizontalOptions="Center" />
+                                                </Frame>
+                                            </Grid>
+                                        </Frame>
+                                    </ContentView>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                    </xct:StateView>
+                    <xct:StateView StateKey="Custom"
+                                   CustomStateKey="{Binding Source={x:Static viewModels:FishingTicketViewModel.TicketPriceState}}">
+                        <StackLayout BindableLayout.ItemsSource="{Binding TicketTariffsByType}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentView x:DataType="vm:TicketTariffViewModel">
+                                        <Frame xct:TouchEffect.NativeAnimation="True"
+                                               xct:TouchEffect.Command="{Binding BindingContext.GoToTicketPageCommand, Source={Reference page}}"
+                                               xct:TouchEffect.CommandParameter="{Binding}"
+                                               Padding="0"
+                                               CornerRadius="50"
+                                               Margin="10,5"
+                                               HasShadow="False"
+                                               IsClippedToBounds="True"
+                                               HeightRequest="100"
+                                               BackgroundColor="Transparent">
+                                            <Grid ColumnSpacing="0"
+                                                  ColumnDefinitions="100,*">
+                                                <Frame Grid.Column="1"
+                                                       IsClippedToBounds="True"
+                                                       BackgroundColor="{StaticResource Primary}"
+                                                       HasShadow="False"
+                                                       Margin="-100,0,0,0"
+                                                       WidthRequest="500"
+                                                       Padding="0"
+                                                       CornerRadius="50">
+                                                    <Label LineBreakMode="WordWrap"
+                                                           TextColor="White"
+                                                           VerticalOptions="Center"
+                                                           Margin="110,0,25,0">
+                                                        <Label.Text>
+                                                            <MultiBinding StringFormat="{}{0} - {1:F2} {2}">
+                                                                <Binding Path="PeriodName" />
+                                                                <Binding Path="Price" />
+                                                                <Binding Source="{x:Static viewModels:FishingTicketViewModel.Currency}" />
+                                                            </MultiBinding>
+                                                        </Label.Text>
+                                                    </Label>
+                                                </Frame>
+                                                <Frame CornerRadius="50"
+                                                       IsClippedToBounds="True"
+                                                       HasShadow="False"
+                                                       Padding="0"
+                                                       BackgroundColor="{StaticResource PrimaryLight}">
+                                                    <Image Source="{Binding PeriodCode, Converter={StaticResource TicketPeriodToIcon}}"
+                                                           Aspect="AspectFit"
+                                                           HeightRequest="45"
+                                                           WidthRequest="45"
+                                                           VerticalOptions="Center"
+                                                           HorizontalOptions="Center" />
+                                                </Frame>
+                                            </Grid>
+                                        </Frame>
+                                    </ContentView>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                    </xct:StateView>
+                </xct:StateLayout.StateViews>
+            </Grid>
+        </tl:TLScrollView>
+    </Grid>
+</sv:MainPage>

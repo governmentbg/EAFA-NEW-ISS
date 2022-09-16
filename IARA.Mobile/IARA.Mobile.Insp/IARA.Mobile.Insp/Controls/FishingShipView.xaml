@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sv:SectionView x:Class="IARA.Mobile.Insp.Controls.FishingShipView"
+        xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        x:Name="view"
+        x:DataType="vm:FishingShipViewModel"
+        Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Ship}, Color=White, Size=100}"
+        IsExpanded="False">
+    <sv:SectionView.InnerContent>
+        <StackLayout Padding="10">
+            <lc:InspectedShipDataView BindingContext="{Binding ShipData}"
+                    ShipInRegisterLabel="{Binding ShipInRegisterLabel, Source={Reference view}}" />
+            <BoxView HeightRequest="1"
+                    Color="{StaticResource GrayColor}" />
+            <lc:InspectedPersonView Title="{rt:Translate ShipOwner, Group=FishingShip}"
+                    BindingContext="{Binding ShipOwner}"
+                    InRegisterText="{rt:Translate ShipOwnerInRegister, Group=FishingShip}" />
+            <BoxView HeightRequest="1"
+                    Color="{StaticResource GrayColor}" />
+            <lc:InspectedPersonView Title="{rt:Translate ShipUser, Group=FishingShip}"
+                    BindingContext="{Binding ShipUser}"
+                    InRegisterText="{rt:Translate ShipUserInRegister, Group=FishingShip}" />
+            <BoxView HeightRequest="1"
+                    Color="{StaticResource GrayColor}" />
+            <lc:InspectedPersonView Title="{rt:Translate ShipRepresentative, Group=FishingShip}"
+                    BindingContext="{Binding ShipRepresentative}"
+                    InRegisterText="{rt:Translate ShipRepresentativeInRegister, Group=FishingShip}" />
+            <BoxView HeightRequest="1"
+                    Color="{StaticResource GrayColor}" />
+            <lc:InspectedPersonView Title="{rt:Translate ShipCaptain, Group=FishingShip}"
+                    BindingContext="{Binding ShipCaptain}"
+                    InRegisterText="{rt:Translate ShipCaptainInRegister, Group=FishingShip}" />
+            <BoxView HeightRequest="1"
+                    Color="{StaticResource GrayColor}" />
+            <lc:InspectionHarbourView BindingContext="{Binding LastHarbour}"
+                    InRegisterLabel="{rt:Translate LastPortInRegister, Group=FishingShip}"
+                    IsVisible="{Binding BindingContext.HasLastPort, Source={Reference view}}" />
+            <lc:TLGeneratedToggles IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
+                    IsVisible="{Binding Toggles.Value.Count, Converter={StaticResource NotEqual}, ConverterParameter=0}"
+                    ValidState="{Binding Toggles}" />
+            <tl:TLEditor Title="{rt:Translate ObservationsOrViolations, Group=GeneralInfo}"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
+                    ValidState="{Binding ObservationsOrViolations}" />
+        </StackLayout>
+    </sv:SectionView.InnerContent>
+</sv:SectionView>

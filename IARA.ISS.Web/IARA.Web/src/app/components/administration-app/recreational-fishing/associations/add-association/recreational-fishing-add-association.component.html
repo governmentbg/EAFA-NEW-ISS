@@ -1,0 +1,43 @@
+﻿<tl-card tooltipResourceName="recreational-fishing.legal-entities-for-association-helper">
+    <tl-card-title>{{ 'recreational-fishing.legal-entities-for-association' | tlTranslate }}</tl-card-title>
+
+    <tl-card-content>
+        <tl-input label="{{ 'recreational-fishing.legals-keyword-search' | tlTranslate }}"
+                  tooltipResourceName="recreational-fishing.legals-keyword-search-helper"
+                  [formControl]="filterControl">
+        </tl-input>
+
+        <tl-slide-toggle [formControl]="showNoPermissionsControl"
+                         tooltipResourceName="recreational-fishing.show-legals-without-permissions-helper"
+                         label="{{ 'recreational-fishing.show-legals-without-permissions' | tlTranslate }}">
+        </tl-slide-toggle>
+
+        <tl-data-table [showAddButton]="false"
+                       [showInactiveRecords]="false"
+                       [isRemote]="false"
+                       [rows]="associations"
+                       [rowClass]="getRowClass">
+            <data-template-column [flexRate]="0.001">
+                <ng-template ngx-datatable-cell-template
+                             let-row="row">
+                    <label for="legal-for-association-{{ row.data.eik }}">
+                        <input type="checkbox"
+                               id="legal-for-association-{{ row.data.eik }}"
+                               [checked]="row.data['isChecked']"
+                               (change)="checkRow(row.data)" />
+                    </label>
+                </ng-template>
+            </data-template-column>
+
+            <data-column propertyName="eik"
+                         [flexRate]="0.3"
+                         columnName="{{ 'recreational-fishing.legal-eik' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="name"
+                         [flexRate]="0.7"
+                         columnName="{{ 'recreational-fishing.legal-name' | tlTranslate }}">
+            </data-column>
+        </tl-data-table>
+    </tl-card-content>
+</tl-card>

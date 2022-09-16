@@ -1,0 +1,21 @@
+﻿<h2 *ngIf="dialogData">Hi {{dialogData.name}}</h2>
+
+<form [formGroup]="dialogForm"
+      id="dialogForm"
+      (ngSubmit)="submitDialogForm()">
+    <mat-form-field color="accent">
+        <mat-label>Favourite Food</mat-label>
+        <input matInput
+               placeholder="Favourite Food"
+               type="text"
+               formControlName="faveFood">
+    </mat-form-field>
+</form>
+
+<div>
+    <button (click)="cancelDialogForm()">Cancel</button>
+    <button type="submit"
+            form="dialogForm">
+        Save
+    </button>
+</div>

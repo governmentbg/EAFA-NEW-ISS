@@ -1,0 +1,47 @@
+<ng-container *ngIf="!item?.hidden">
+
+    <!-- item.url -->
+    <div class="nav-link auto-height min-height" [ngClass]="item?.classes" *ngIf="item?.url && !item?.externalUrl && !item?.function"
+         [routerLink]="[item?.url]" [routerLinkActive]="['active', 'accent']"
+         [routerLinkActiveOptions]="{exact: item?.exactMatch || false}"
+         [target]="item?.openInNewTab ? '_blank' : '_self'">
+        <ng-container *ngTemplateOutlet="itemContent"></ng-container>
+    </div>
+
+    <!-- item.externalUrl -->
+    <div class="nav-link auto-height min-height" [ngClass]="item?.classes" *ngIf="item?.url && item?.externalUrl && !item?.function"
+         [href]="item?.url" [target]="item?.openInNewTab ? '_blank' : '_self'">
+        <ng-container *ngTemplateOutlet="itemContent"></ng-container>
+    </div>
+
+    <!-- item.function -->
+    <span class="nav-link auto-height min-height" [ngClass]="item?.classes" *ngIf="!item?.url && item?.function"
+          (click)="item?.function()">
+        <ng-container *ngTemplateOutlet="itemContent"></ng-container>
+    </span>
+
+    <!-- item.url && item.function -->
+    <div class="nav-link auto-height min-height" [ngClass]="item?.classes" *ngIf="item?.url && !item?.externalUrl && item?.function"
+         (click)="item?.function()"
+         [routerLink]="[item?.url]" [routerLinkActive]="['active', 'accent']"
+         [routerLinkActiveOptions]="{exact: item?.exactMatch || false}"
+         [target]="item?.openInNewTab ? '_blank' : '_self'">
+        <ng-container *ngTemplateOutlet="itemContent"></ng-container>
+    </div>
+
+    <!-- item.externalUrl && item.function -->
+    <div class="nav-link auto-height min-height" [ngClass]="item?.classes" *ngIf="item?.url && item?.externalUrl && item?.function"
+         (click)="item?.function()" [routerLinkActive]="['active', 'accent']"
+         [href]="item?.url" [target]="item?.openInNewTab ? '_blank' : '_self'">
+        <ng-container *ngTemplateOutlet="itemContent"></ng-container>
+    </div>
+
+    <ng-template #itemContent>
+        <tl-icon *ngIf="item?.icon" [icon]="item.icon" [size]="item.iconType === 'IC_ICON' ? 23 : 1.33" style="padding-right:5px"></tl-icon>
+        <span class="nav-link-title">{{ item?.translate | translate }}</span>
+        <span class="nav-link-badge" *ngIf="item?.badge"
+              [ngStyle]="{'background-color': item?.badge?.bg,'color': item?.badge?.fg}">
+            {{ item?.badge?.translate | translate }}
+        </span>
+    </ng-template>
+</ng-container>

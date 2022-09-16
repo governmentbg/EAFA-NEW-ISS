@@ -1,0 +1,86 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <Configurations>Debug;Release;Test</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RuntimeIdentifiers>win-x64;win10-x64;linux-x64;rhel-x64;</RuntimeIdentifiers>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <AssemblyName>IARA.IdentityServer</AssemblyName>
+    <UserSecretsId>de71408f-ca04-4340-bd52-1ca2092b00d9</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Content\bgEgovEAuthenticatorSigning.cer" />
+    <None Remove="Content\IARAEAuthEncrypt.pfx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\WindowsDebug-Profile.pubxml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog" Version="2.10.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+    <PackageReference Include="TechnoLogica.Authentication.EAuth" Version="1.1.28" />
+    <PackageReference Include="TechnoLogica.Authentication.EAuthV2" Version="2.0.29" />
+    <PackageReference Include="TechnoLogica.Authentication.Mock" Version="1.0.19" />
+    <PackageReference Include="TechnoLogica.IdentityServer" Version="1.0.73" />
+    <PackageReference Include="TechnoLogica.IdentityServer.PostgreSQLOperationalStore" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="..\DependencyValidationDiagram\DependencyValidation.layerdiagram" Link="DependencyValidation.layerdiagram">
+      <Visible>False</Visible>
+    </AdditionalFiles>
+    <AdditionalFiles Include="..\..\IARA.ISS.Web\DependencyValidationDiagram\DependencyValidation.layerdiagram" Link="DependencyValidation.layerdiagram">
+      <Visible>False</Visible>
+    </AdditionalFiles>
+    <None Include="..\..\IARA.ISS.Web\DependencyValidationDiagram\DependencyValidation.layerdiagram.layout" Link="DependencyValidation.layerdiagram.layout" />
+    <None Include="..\..\IARA.ISS.Web\DependencyValidationDiagram\DependencyValidation.layerdiagram.suppressions" Link="DependencyValidation.layerdiagram.suppressions" />
+    <None Include="..\DependencyValidationDiagram\DependencyValidation.layerdiagram.layout" Link="DependencyValidation.layerdiagram.layout" />
+    <None Include="..\DependencyValidationDiagram\DependencyValidation.layerdiagram.suppressions" Link="DependencyValidation.layerdiagram.suppressions" />
+    <AdditionalFiles Include="..\IARA.IdentityValidationDiagram\DependencyValidation1.layerdiagram" Link="DependencyValidation1.layerdiagram">
+      <Visible>False</Visible>
+    </AdditionalFiles>
+    <Content Include="Content\bgEgovEAuthenticatorSigning.cer">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\IARAEAuthEncrypt.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="..\IARA.IdentityValidationDiagram\DependencyValidation1.layerdiagram.layout" Link="DependencyValidation1.layerdiagram.layout" />
+    <None Include="..\IARA.IdentityValidationDiagram\DependencyValidation1.layerdiagram.suppressions" Link="DependencyValidation1.layerdiagram.suppressions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IARA.IdentityProfile\IARA.IdentityProfile.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Views\_Header.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\css\Header.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\iara.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\logoRight.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

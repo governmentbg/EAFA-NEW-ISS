@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<StackLayout xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        x:Class="IARA.Mobile.Insp.Controls.InspectionGeneralInfoView"
+        x:DataType="vm:InspectionGeneralInfoViewModel"
+        x:Name="view">
+    <tl:TLFlex GrowUnit="200">
+        <tl:TLEntry Title="{rt:Translate DocumentNumber, Group=GeneralInfo}"
+                ValidState="{Binding ReportNr}"
+                IsEnabled="False" />
+        <tl:TLFlex tl:TLFlex.Grow="2" GrowUnit="200">
+            <tl:TLDateTimePicker Title="{rt:Translate InspectionStart, Group=GeneralInfo}"
+                    ValidState="{Binding StartDate}"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+            <tl:TLDateTimePicker Title="{rt:Translate InspectionEnd, Group=GeneralInfo}"
+                    ValidState="{Binding EndDate}"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+        </tl:TLFlex>
+    </tl:TLFlex>
+    <tl:TLCheckView Text="{rt:Translate Signal112, Group=GeneralInfo}"
+            ValidState="{Binding ByEmergencySignal}"
+            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+    <lc:InspectorsView BindingContext="{Binding Inspectors}" />
+</StackLayout>

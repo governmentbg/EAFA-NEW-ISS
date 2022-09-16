@@ -1,0 +1,12 @@
+﻿using IARA.Mobile.Pub.Application.DTObjects.News;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace IARA.Mobile.Pub.Application.Interfaces.Transactions
+{
+    public interface INewsTransaction
+    {
+        Task<List<NewsDto>> GetPagedNews(NewsFiltersDto filters, int pageSize, int pageNumber);
+        Task<NewsDetailsDto> GetNewsDetail(int newsId);
+    }
+}

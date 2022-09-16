@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sv:SectionView xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Insp.Controls.ShipCatchesView"
+        x:DataType="vm:ShipCatchesViewModel"
+        x:Name="view"
+        Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Fish}, Color=White, Size=100}"
+        IsExpanded="False">
+    <sv:SectionView.InnerContent>
+        <StackLayout Padding="10">
+            <lc:CatchInspectionsView IsTitleVisible="False" BindingContext="{Binding Catches}" />
+            <lc:TLGeneratedToggles ValidState="{Binding Toggles}"
+                    IsVisible="{Binding Toggles.Value.Count, Converter={StaticResource NotEqual}, ConverterParameter=0}"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+            <tl:TLEditor Title="{rt:Translate ObservationsOrViolations, Group=GeneralInfo}"
+                    ValidState="{Binding ObservationsOrViolations}"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+        </StackLayout>
+    </sv:SectionView.InnerContent>
+</sv:SectionView>

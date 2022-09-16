@@ -1,0 +1,317 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     validityCheckerGroup
+     [formGroup]="form"
+     class="dialog-padding">
+
+    <!-- Основни данни -->
+    <tl-expansion-panel title="{{ 'penal-points.edit-points-basic-data' | tlTranslate }}"
+                        tooltipResourceName="penal-points.edit-points-basic-data-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="25"
+                          formControlName="reportNumControl"
+                          label="{{ 'penal-points.edit-report-num' | tlTranslate }}"
+                          tooltipResourceName="penal-points.edit-report-num-helper">
+                </tl-input>
+
+                <tl-date fxFlex="25"
+                         formControlName="dateControl"
+                         label="{{ 'penal-points.edit-effective-date' | tlTranslate }}"
+                         tooltipResourceName="penal-points.edit-effective-date-helper">
+                </tl-date>
+
+                <tl-input fxFlex="25"
+                          formControlName="issuerControl"
+                          label="{{ 'penal-points.edit-issuer' | tlTranslate }}"
+                          tooltipResourceName="penal-points.edit-issuer-helper">
+                </tl-input>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="territoryUnitControl"
+                                 [options]="territoryUnits"
+                                 label="{{ 'penal-points.edit-territory-unit' | tlTranslate }}"
+                                 tooltipResourceName="penal-points.edit-territory-unit-helper">
+                </tl-autocomplete>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Информация за НП и АУАН -->
+    <tl-expansion-panel title="{{ 'penal-points.edit-points-decree-auan-data' | tlTranslate }}"
+                        tooltipResourceName="penal-points.edit-points-decree-auan-data-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="20"
+                          formControlName="auanNumControl"
+                          label="{{ 'penal-points.edit-auan-num' | tlTranslate }}"
+                          tooltipResourceName="penal-points.edit-auan-num-helper">
+                </tl-input>
+
+                <tl-date fxFlex="20"
+                         formControlName="auanDateControl"
+                         label="{{ 'penal-points.edit-auan-date' | tlTranslate }}"
+                         tooltipResourceName="penal-points.edit-auan-date-helper">
+                </tl-date>
+
+                <tl-input fxFlex="20"
+                          formControlName="decreeNumControl"
+                          label="{{ 'penal-points.edit-decree-num' | tlTranslate }}"
+                          tooltipResourceName="penal-points.edit-decree-num-helper">
+                </tl-input>
+
+                <tl-date fxFlex="20"
+                         formControlName="decreeIssueDateControl"
+                         label="{{ 'penal-points.edit-decree-issue-date' | tlTranslate }}"
+                         tooltipResourceName="penal-points.edit-decree-issue-date-helper">
+                </tl-date>
+
+                <tl-date fxFlex="20"
+                         formControlName="decreeEffectiveDateControl"
+                         label="{{ 'penal-points.edit-decree-effective-date' | tlTranslate }}"
+                         tooltipResourceName="penal-points.edit-decree-effective-date-helper">
+                </tl-date>
+            </div>
+
+            <inspected-entity-basic-info formControlName="auanInspectedEntityControl"
+                                         [viewMode]="true">
+            </inspected-entity-basic-info>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Риболовен кораб -->
+    <tl-expansion-panel [title]="shipDataTitle"
+                        [validityChecker]="form"
+                        tooltipResourceName="penal-points.edit-ship-data-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="shipControl"
+                                 [options]="ships"
+                                 [templateOptions]="true"
+                                 label="{{ 'penal-points.edit-ship' | tlTranslate }}"
+                                 tooltipResourceName="penal-points.edit-ship-helper">
+                </tl-autocomplete>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                <tl-autocomplete *ngIf="type === pointsTypes.PermitOwner"
+                                 fxFlex="75"
+                                 formControlName="permitControl"
+                                 [options]="permits"
+                                 [templateOptions]="true"
+                                 [readonly]="noShipSelected"
+                                 label="{{ 'penal-points.edit-permit' | tlTranslate }}"
+                                 tooltipResourceName="penal-points.edit-permit-helper">
+                </tl-autocomplete>
+
+                <tl-autocomplete *ngIf="type === pointsTypes.QualifiedFisher"
+                                 fxFlex="75"
+                                 formControlName="permitLicenseControl"
+                                 [options]="permitLicenses"
+                                 [templateOptions]="true"
+                                 [readonly]="noShipSelected"
+                                 label="{{ 'penal-points.edit-permit-license' | tlTranslate }}"
+                                 tooltipResourceName="penal-points.edit-permit-license-helper">
+                </tl-autocomplete>
+            </div>
+
+            <tl-slide-toggle formControlName="isPermitOwnerControl"
+                             label="{{ 'penal-points.edit-is-permit-owner' | tlTranslate }}">
+            </tl-slide-toggle>
+
+            <div *ngIf="form.controls.isPermitOwnerControl.value === false">
+                <tl-card tooltipResourceName="penal-points.edit-owner-person-helper">
+                    <tl-card-title>{{ 'penal-points.edit-owner-person' | tlTranslate }}</tl-card-title>
+                    <tl-card-content>
+                        <regix-data formControlName="personControl"
+                                    [isPerson]="true"
+                                    [hideDocument]="true"
+                                    [isIdReadOnly]="viewMode"
+                                    checkboxLabel="{{ 'penal-points.has-bulgarian-address-registration' | tlTranslate }}">
+                        </regix-data>
+                    </tl-card-content>
+                </tl-card>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-select fxFlex="50"
+                           formControlName="orderTypeControl"
+                           [options]="orderTypes"
+                           label="{{ 'penal-points.edit-order-type' | tlTranslate }}"
+                           tooltipResourceName="penal-points.edit-order-type-helper">
+                </tl-select>
+
+                <tl-input fxFlex="50"
+                          formControlName="pointsAmountControl"
+                          label="{{ 'penal-points.edit-order-points' | tlTranslate }}"
+                          tooltipResourceName="penal-points.edit-order-points-helper">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-date fxFlex="33"
+                         formControlName="issueDateControl"
+                         label="{{ 'penal-points.edit-order-issue-date' | tlTranslate }}"
+                         tooltipResourceName="penal-points.edit-order-issue-date-helper">
+                </tl-date>
+
+                <tl-date fxFlex="33"
+                         formControlName="effectiveDateControl"
+                         label="{{ 'penal-points.edit-order-effective-date' | tlTranslate }}"
+                         tooltipResourceName="penal-points.edit-order-effective-date-helper">
+                </tl-date>
+
+                <tl-date fxFlex="33"
+                         formControlName="deliveryDateControl"
+                         label="{{ 'penal-points.edit-order-delivery-date' | tlTranslate }}"
+                         tooltipResourceName="penal-points.edit-order-delivery-date-helper">
+                </tl-date>
+            </div>
+
+            <div fxLayout="column" fxLayoutGap="1em" *ngIf="form.controls.isPermitOwnerControl.value === true">
+
+                <!-- Заповед -->
+                <tl-card tooltipResourceName="penal-points.edit-penal-points-orders-helper">
+                    <tl-card-title>{{ 'penal-points.edit-penal-points-orders' | tlTranslate }}</tl-card-title>
+                    <tl-card-content>
+                        <tl-data-table #pointsOrdersTable
+                                       fxFlex="100"
+                                       [rows]="pointsOrders"
+                                       [isRemote]="false"
+                                       [showInactiveRecords]="false"
+                                       [showAddButton]="false">
+                            <data-column [flexRate]="0.3"
+                                         propertyName="decreeNum"
+                                         columnName="{{ 'penal-points.edit-order-num' | tlTranslate }}">
+                            </data-column>
+
+                            <data-column [flexRate]="0.3"
+                                         propertyName="isIncreasePoints"
+                                         [options]="orderTypes"
+                                         dataType="nomenclature"
+                                         columnName="{{ 'penal-points.edit-order-type' | tlTranslate }}">
+                            </data-column>
+
+                            <data-column [flexRate]="0.3"
+                                         propertyName="issueDate"
+                                         dataType="date"
+                                         columnName="{{ 'penal-points.edit-order-issue-date' | tlTranslate }}">
+                            </data-column>
+
+                            <data-column [flexRate]="0.3"
+                                         propertyName="effectiveDate"
+                                         dataType="date"
+                                         columnName="{{ 'penal-points.edit-order-effective-date' | tlTranslate }}">
+                            </data-column>
+
+                            <data-column [flexRate]="0.3"
+                                         propertyName="deliveryDate"
+                                         dataType="date"
+                                         columnName="{{ 'penal-points.edit-order-delivery-date' | tlTranslate }}">
+                            </data-column>
+
+                            <data-column [flexRate]="0.3"
+                                         propertyName="pointsAmount"
+                                         columnName="{{ 'penal-points.edit-order-points' | tlTranslate }}">
+                            </data-column>
+                        </tl-data-table>
+                    </tl-card-content>
+                </tl-card>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="end center" *ngIf="form.controls.isPermitOwnerControl.value === true">
+                <tl-input fxFlex="25"
+                          formControlName="pointsTotalCountControl"
+                          label="{{ 'penal-points.edit-points-total-count' | tlTranslate }}"
+                          tooltipResourceName="penal-points.edit-points-total-count-helper">
+                </tl-input>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Обжалване -->
+    <tl-expansion-panel *ngIf="!isAdding"
+                        title="{{ 'penal-points.edit-penal-points-complaint' | tlTranslate }}"
+                        [validityChecker]="form"
+                        tooltipResourceName="penal-points.penal-points-complaint-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <tl-data-table #complaintStatusesTable
+                           fxFlex="100"
+                           [rows]="complaintStatuses"
+                           [isRemote]="false"
+                           [isSoftDeletable]="true"
+                           [showAddButton]="!viewMode"
+                           (addButtonClicked)="addEditComplaint(undefined, false)">
+                <data-column columnName="{{ 'penal-points.edit-complaint-date' | tlTranslate }}"
+                             [flexRate]="0.2"
+                             propertyName="dateOfChange"
+                             dataType="date">
+                </data-column>
+
+                <data-column [flexRate]="0.3"
+                             propertyName="statusName"
+                             columnName="{{ 'penal-points.edit-complaint-status-name' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="0.3"
+                             propertyName="details"
+                             columnName="{{ 'penal-points.edit-complaint-details' | tlTranslate }}">
+                </data-column>
+
+                <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button icon="visibility"
+                                            (buttonClicked)="addEditComplaint(row.data, true)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'penal-points.view-complaint-status' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                            icon="edit"
+                                            (buttonClicked)="addEditComplaint(row.data, false)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'penal-points.edit-complaint-status' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                            icon="delete"
+                                            (buttonClicked)="deleteComplaint(row)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'penal-points.delete-complaint-status' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="!row.data.isActive && !viewMode"
+                                            icon="restore"
+                                            (buttonClicked)="undoDeleteComplaint(row)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'penal-points.restore-complaint-status' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Бележки -->
+    <tl-expansion-panel title="{{ 'penal-points.edit-penal-points-comments' | tlTranslate }}"
+                        tooltipResourceName="penal-points.edit-penal-points-comments-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <tl-textarea formControlName="commentsControl"
+                         label="{{ 'penal-points.edit-comments' | tlTranslate }}"
+                         tooltipResourceName="penal-points.edit-comments-helper">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <!--<tl-expansion-panel title="{{ 'penal-points.edit-points-files' | tlTranslate }}">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)">
+        </file-uploader-form-array>
+    </tl-expansion-panel>-->
+</div>

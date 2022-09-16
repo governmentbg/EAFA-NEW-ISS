@@ -1,0 +1,11 @@
+{
+  "ConnectionStrings": {
+    "Source": "Server=172.31.12.160;Port=3306;Database=prod_iara;Uid=iaradb;Pwd=HanAsparuhh11;",
+    "Destination": "Host=172.31.12.168;Port=5432;Database=iss;Username=iss;Password=iss;SslMode=Prefer;Trust Server Certificate=true;Include Error Detail=true;"
+  },
+  "ThreadCount": 5,
+  "TimeToNextThread": 30,
+  "ChunkSize": 100,
+  "StartId": 0,
+  "EndId": null
+}

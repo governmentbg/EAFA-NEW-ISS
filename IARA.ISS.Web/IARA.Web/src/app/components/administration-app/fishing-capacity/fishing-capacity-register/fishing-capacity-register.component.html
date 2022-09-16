@@ -1,0 +1,123 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <!-- Филтри -->
+    <search-panel [translateService]="translate">
+        <div [formGroup]="form" fxFlexFill fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-input fxFlex="25"
+                      formControlName="shipCfrControl"
+                      label="{{ 'fishing-capacity.register-filters-ship-cfr' | tlTranslate }}">
+            </tl-input>
+            <tl-input fxFlex="25"
+                      formControlName="shipNameControl"
+                      label="{{ 'fishing-capacity.register-filters-ship-name' | tlTranslate }}">
+            </tl-input>
+            <tl-range-input fxFlex="25"
+                            formControlName="tonnageControl"
+                            label="{{ 'fishing-capacity.register-filters-net-tonnage' | tlTranslate }}">
+            </tl-range-input>
+            <tl-range-input fxFlex="25"
+                            formControlName="powerControl"
+                            label="{{ 'fishing-capacity.register-filters-power' | tlTranslate }}">
+            </tl-range-input>
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <mat-card>
+        <tl-data-table [showAddButton]="false"
+                       [showInactiveRecords]="false">
+            <row-detail>
+                <ng-template let-row="row" ngx-datatable-row-detail-template>
+                    <div class="inner-table-margin">
+                        <tl-data-table fxFlexFill
+                                       [isRemote]="false"
+                                       [showAddButton]="false"
+                                       [showInactiveRecords]="false"
+                                       [rows]="row.history">
+                            <data-template-column propertyName="GrossTonnage"
+                                                  [flexRate]="0.3"
+                                                  columnName="{{ 'fishing-capacity.register-history-gross-tonnage' | tlTranslate }}">
+                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                    <div fxLayout="row" fxLayoutAlign="start center">
+                                        <span>{{ row.data.grossTonnage.toFixed(2) }}</span>
+                                        <span *ngIf="row.data.grossTonnageChange > 0" class="change-padding accent-color">(+{{ row.data.grossTonnageChange.toFixed(2) }})</span>
+                                        <span *ngIf="row.data.grossTonnageChange < 0" class="change-padding error-color">({{ row.data.grossTonnageChange.toFixed(2) }})</span>
+                                    </div>
+                                </ng-template>
+                            </data-template-column>
+
+                            <data-template-column propertyName="Power"
+                                                  [flexRate]="0.3"
+                                                  columnName="{{ 'fishing-capacity.register-history-power' | tlTranslate }}">
+                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                    <div fxLayout="row" fxLayoutAlign="start center">
+                                        <span>{{ row.data.power.toFixed(2) }}</span>
+                                        <span *ngIf="row.data.powerChange > 0" class="change-padding accent-color">(+{{ row.data.powerChange.toFixed(2) }})</span>
+                                        <span *ngIf="row.data.powerChange < 0" class="change-padding error-color">({{ row.data.powerChange.toFixed(2) }})</span>
+                                    </div>
+                                </ng-template>
+                            </data-template-column>
+
+                            <data-column propertyName="dateFrom"
+                                         [flexRate]="0.3"
+                                         dataType="date"
+                                         columnName="{{ 'fishing-capacity.register-history-capacity-date-from' | tlTranslate }}">
+                            </data-column>
+                            <data-column propertyName="dateTo"
+                                         [flexRate]="0.3"
+                                         dataType="date"
+                                         columnName="{{ 'fishing-capacity.register-history-capacity-date-to' | tlTranslate }}">
+                            </data-column>
+                            <data-column propertyName="reason"
+                                         [flexRate]="0.3"
+                                         columnName="{{ 'fishing-capacity.register-history-change-reason' | tlTranslate }}">
+                            </data-column>
+
+                            <data-template-column [flexRate]="0.2">
+                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                    <div *ngIf="(row.data.pageCode === pageCodes.RegVessel || row.data.pageCode === pageCodes.DeregShip && canViewShipApplications)
+                                            || (row.data.pageCode === pageCodes.IncreaseFishCap || row.data.pageCode === pageCodes.ReduceFishCap && canViewCapacityApplications)"
+                                         fxLayout="row wrap"
+                                         fxLayoutAlign="end center">
+                                        <tl-icon-button icon="visibility"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'fishing-capacity.view-history-application' | tlTranslate }}"
+                                                        (buttonClicked)="openHistoryApplication(row.data)">
+                                        </tl-icon-button>
+                                    </div>
+                                </ng-template>
+                            </data-template-column>
+                        </tl-data-table>
+                    </div>
+                </ng-template>
+            </row-detail>
+
+            <data-column propertyName="shipCfr"
+                         [flexRate]="0.3"
+                         columnName="{{ 'fishing-capacity.register-ship-cfr' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="shipName"
+                         [flexRate]="0.3"
+                         columnName="{{ 'fishing-capacity.register-ship-name' | tlTranslate }}">
+            </data-column>
+            <data-template-column propertyName="grossTonnage"
+                                  [flexRate]="0.3"
+                                  columnName="{{ 'fishing-capacity.register-gross-tonnage' | tlTranslate }}">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.data.grossTonnage.toFixed(2) }}
+                </ng-template>
+            </data-template-column>
+            <data-template-column propertyName="power"
+                                  [flexRate]="0.3"
+                                  columnName="{{ 'fishing-capacity.register-power' | tlTranslate }}">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.data.power.toFixed(2) }}
+                </ng-template>
+            </data-template-column>
+            <data-column propertyName="dateOfChange"
+                         [flexRate]="0.3"
+                         dataType="date"
+                         columnName="{{ 'fishing-capacity.register-capacity-date-of-change' | tlTranslate }}">
+            </data-column>
+        </tl-data-table>
+    </mat-card>
+</div>

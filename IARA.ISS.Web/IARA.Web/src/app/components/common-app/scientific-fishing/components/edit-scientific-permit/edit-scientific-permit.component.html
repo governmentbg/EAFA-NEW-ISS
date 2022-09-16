@@ -1,0 +1,510 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     validityCheckerGroup
+     [formGroup]="form"
+     [notifierGroup]="notifier"
+     class="dialog-padding">
+    <!-- Заявител на разрешителното -->
+    <tl-expansion-panel *ngIf="isApplication"
+                        [validityChecker]="form"
+                        title="{{ 'scientific-fishing.permit-requester' | tlTranslate }}"
+                        tooltipResourceName="scientific-fishing.permit-requester-helper">
+        <regix-data formControlName="requesterRegixDataControl"
+                    notifier
+                    validityChecker
+                    [isPerson]="true"
+                    [isIdReadOnly]="isEditing || isPublicApp"
+                    [hideDocument]="true"
+                    [expectedResults]="expectedResults.requester">
+        </regix-data>
+    </tl-expansion-panel>
+
+    <!-- Пълномощно -->
+    <tl-expansion-panel *ngIf="isApplication && !showOnlyRegiXData"
+                        [validityChecker]="form"
+                        title="{{ 'scientific-fishing.permit-requester-role' | tlTranslate }}"
+                        tooltipResourceName="scientific-fishing.permit-requester-role-helper">
+        <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+            <tl-input fxFlex="40"
+                      formControlName="requesterOrganizationPositionControl"
+                      tooltipResourceName="scientific-fishing.permit-requester-organization-position-helper"
+                      label="{{ 'scientific-fishing.permit-requester-organization-position' | tlTranslate }}">
+            </tl-input>
+            <tl-checkbox fxFlex="60"
+                         formControlName="requesterHasLetterOfAttorneyControl"
+                         tooltipResourceName="scientific-fishing.permit-requester-letter-of-attorney-helper"
+                         label="{{ 'scientific-fishing.permit-requester-letter-of-attorney' | tlTranslate }}">
+            </tl-checkbox>
+        </div>
+        <letter-of-attorney *ngIf="form.controls.requesterHasLetterOfAttorneyControl.value === true"
+                            formControlName="letterOfAttorneyControl">
+        </letter-of-attorney>
+    </tl-expansion-panel>
+
+    <!-- Получател на разрешителното -->
+    <tl-expansion-panel *ngIf="isApplication"
+                        title="{{ 'scientific-fishing.permit-receiver' | tlTranslate }}"
+                        tooltipResourceName="scientific-fishing.permit-receiver-helper"
+                        [validityChecker]="form">
+        <regix-data formControlName="receiverRegixDataControl"
+                    notifier
+                    validityChecker
+                    [isPerson]="false"
+                    [showCustodianOfProperty]="false"
+                    [isIdReadOnly]="isEditing"
+                    [expectedResults]="expectedResults.receiver"
+                    checkboxLabel="{{ 'scientific-fishing.has-bulgarian-address-registration' | tlTranslate }}">
+        </regix-data>
+    </tl-expansion-panel>
+
+    <!-- Номер/дата на заявление, период на валидност, основания -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'scientific-fishing.basic-information' | tlTranslate }}"
+                        tooltipResourceName="scientific-fishing.basic-information-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.controls?.permitReasonsGroup?.errors?.atLeastOne !== true
+                                                      && form.controls?.permitLegalReasonsGroup?.errors?.atLeastOne !== true">
+        <div fxLayout="row" fxLayoutGap="1em">
+            <tl-input *ngIf="!isApplication"
+                      fxFlex="25"
+                      formControlName="requestNumberControl"
+                      tooltipResourceName="scientific-fishing.request-number-helper"
+                      label="{{ 'scientific-fishing.request-number' | tlTranslate }}">
+            </tl-input>
+            <tl-date fxFlex="25"
+                     formControlName="requestDateControl"
+                     tooltipResourceName="scientific-fishing.request-date-helper"
+                     [max]="currentDate"
+                     label="{{ 'scientific-fishing.request-date' | tlTranslate }}">
+            </tl-date>
+            <tl-date-range fxFlex="25"
+                           formControlName="validityDateRangeControl"
+                           tooltipResourceName="scientific-fishing.period-validity-helper"
+                           label="{{ 'scientific-fishing.period-validity' | tlTranslate }}">
+            </tl-date-range>
+            <tl-select *ngIf="!isApplication"
+                       fxFlex="25"
+                       formControlName="statusControl"
+                       [options]="statuses"
+                       tooltipResourceName="scientific-fishing.status-helper"
+                       label="{{ 'scientific-fishing.status' | tlTranslate }}">
+            </tl-select>
+            <div *ngIf="isApplication" fxFlex="25"></div>
+            <div *ngIf="isApplication" fxFlex="25"></div>
+        </div>
+
+        <div fxLayout="column" fxLayoutGap="1em">
+            <tl-card tooltipResourceName="scientific-fishing.permit-reason-helper"
+                     [validityChecker]="form"
+                     [validityCheckerExtraCondition]="form.controls?.permitReasonsGroup?.errors?.atLeastOne !== true">
+                <tl-card-title>{{ 'scientific-fishing.permit-reason' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <div fxLayout="column" fxLayoutGap="1em">
+                        <div *ngIf="form.controls.permitReasonsGroup"
+                             [formGroup]="form.controls.permitReasonsGroup">
+                            <div *ngFor="let reason of permitReasons">
+                                <tl-checkbox [formControlName]="reason.value"
+                                             label="{{ reason.displayName }}">
+                                </tl-checkbox>
+                            </div>
+                        </div>
+
+                        <mat-error *ngIf="form.controls?.permitReasonsGroup?.touched && form.controls?.permitReasonsGroup?.errors?.atLeastOne">
+                            * {{ 'scientific-fishing.must-have-one-permit-reason-error-msg' | tlTranslate }}
+                        </mat-error>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+
+            <tl-card *ngIf="!isApplication"
+                     tooltipResourceName="scientific-fishing.permit-legal-reason-helper"
+                     [validityChecker]="form"
+                     [validityCheckerExtraCondition]="form.controls?.permitLegalReasonsGroup?.errors?.atLeastOne !== true">
+                <tl-card-title>{{ 'scientific-fishing.permit-legal-reason' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <div fxLayout="column" fxLayoutGap="1em">
+                        <div *ngIf="form.controls.permitLegalReasonsGroup"
+                             [formGroup]="form.controls.permitLegalReasonsGroup">
+                            <div *ngFor="let reason of permitLegalReasons">
+                                <tl-checkbox [formControlName]="reason.value"
+                                             label="{{ reason.displayName }}">
+                                </tl-checkbox>
+                            </div>
+                        </div>
+
+                        <mat-error *ngIf="form.controls?.permitLegalReasonsGroup?.touched && form.controls?.permitLegalReasonsGroup?.errors?.atLeastOne">
+                            * {{ 'scientific-fishing.must-have-one-permit-legal-reason-error-msg' | tlTranslate }}
+                        </mat-error>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Получател на разрешителното -->
+    <tl-expansion-panel *ngIf="!isApplication"
+                        title="{{ 'scientific-fishing.permit-receiver-legal' | tlTranslate }}"
+                        tooltipResourceName="scientific-fishing.permit-receiver-legal-helper"
+                        [validityChecker]="form">
+        <regix-data formControlName="receiverRegixDataControl"
+                    validityChecker
+                    [isPerson]="false"
+                    [showCustodianOfProperty]="false"
+                    [isIdReadOnly]="isEditing"
+                    checkboxLabel="{{ 'scientific-fishing.has-bulgarian-address-registration' | tlTranslate }}">
+        </regix-data>
+    </tl-expansion-panel>
+
+    <!-- Таблица с титуляри -->
+    <tl-expansion-panel title="{{ 'scientific-fishing.permit-owner' | tlTranslate }}"
+                        tooltipResourceName="scientific-fishing.permit-owner-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.noHolders !== true && form.errors?.ownersValidation !== true">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <tl-data-table fxFlexFill
+                           #holdersTable
+                           [rows]="permitHolders"
+                           [isRemote]="false"
+                           [isSoftDeletable]="true"
+                           [showAddButton]="!readOnly && !showOnlyRegiXData"
+                           [showInactiveRecords]="!showOnlyRegiXData"
+                           (addButtonClicked)="addEditPermitHolder(undefined, false)">
+                <data-column *ngIf="!showOnlyRegiXData && !isApplication"
+                             propertyName="permitNumber"
+                             columnName="{{ 'scientific-fishing.permit-number' | tlTranslate }}">
+                </data-column>
+
+                <data-column propertyName="name"
+                             columnName="{{ 'scientific-fishing.holder' | tlTranslate }}">
+                </data-column>
+
+                <data-column propertyName="egn"
+                             columnName="{{ 'scientific-fishing.egn' | tlTranslate }}">
+                </data-column>
+
+                <data-column *ngIf="!showOnlyRegiXData"
+                             propertyName="scientificPosition"
+                             columnName="{{ 'scientific-fishing.position' | tlTranslate }}">
+                </data-column>
+
+                <data-template-column [flexRate]="0.6" [cellClass]="'justify-center'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="end center">
+                            <tl-icon *ngIf="row.data.hasRegixDataDiscrepancy || (holdersTouched && row.data.hasValidationErrors)"
+                                     icon="ic-exclamation"
+                                     iconClass="error-color"
+                                     [size]="icIconSize">
+                            </tl-icon>
+                            <tl-icon-button icon="visibility"
+                                            (buttonClicked)="addEditPermitHolder(row.data, true)"
+                                            [iconClass]="row.data.hasRegixDataDiscrepancy ? 'error-color' : 'accent-color'"
+                                            tooltipText="{{ 'scientific-fishing.view-holder' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.isActive && !readOnly"
+                                            icon="edit"
+                                            (buttonClicked)="addEditPermitHolder(row.data, false)"
+                                            [iconClass]="row.data.hasRegixDataDiscrepancy ? 'error-color' : 'accent-color'"
+                                            tooltipText="{{ 'scientific-fishing.edit-holder' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.isActive && !readOnly && !showOnlyRegiXData"
+                                            icon="delete"
+                                            (buttonClicked)="deletePermitHolder(row)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'scientific-fishing.delete-holder' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="!row.data.isActive && !readOnly && !showOnlyRegiXData"
+                                            icon="restore"
+                                            (buttonClicked)="undoDeletePermitHolder(row)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'scientific-fishing.restore-holder' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+
+            <mat-error *ngIf="holdersTouched && form.errors?.noHolders === true; else holdersValidationErrors">
+                * {{ 'scientific-fishing.must-have-at-least-one-holder-err-msg' | tlTranslate }}
+            </mat-error>
+
+            <ng-template #holdersValidationErrors>
+                <mat-error *ngIf="holdersTouched && form.errors?.holdersValidation === true">
+                    * {{ 'scientific-fishing.holders-validation-errors' | tlTranslate }}
+                </mat-error>
+            </ng-template>
+        </div>
+    </tl-expansion-panel>
+
+    <!--Данни за изследването-->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'scientific-fishing.research-information' | tlTranslate }}"
+                        tooltipResourceName="scientific-fishing.research-information-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row">
+                <tl-date-range fxFlex="25"
+                               formControlName="researchPeriodControl"
+                               tooltipResourceName="scientific-fishing.research-period-helper"
+                               label="{{ 'scientific-fishing.research-period' | tlTranslate }}">
+                </tl-date-range>
+            </div>
+            <tl-textarea fxFlexFill
+                         formControlName="researchWaterAreasControl"
+                         tooltipResourceName="scientific-fishing.water-areas-helper"
+                         label="{{ 'scientific-fishing.water-areas' | tlTranslate }}">
+            </tl-textarea>
+            <tl-textarea fxFlexFill
+                         formControlName="researchGoalsControl"
+                         tooltipResourceName="scientific-fishing.research-goals-helper"
+                         label="{{ 'scientific-fishing.research-goals' | tlTranslate }}">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Вид водни организми -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'scientific-fishing.fish-types-allowed-for-catch' | tlTranslate }}"
+                        tooltipResourceName="scientific-fishing.fish-types-allowed-for-catch-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <tl-textarea fxFlexFill
+                         formControlName="fishTypesControl"
+                         tooltipResourceName="scientific-fishing.types-helper"
+                         label="{{ 'scientific-fishing.types' | tlTranslate }}">
+            </tl-textarea>
+            <tl-textarea fxFlexFill
+                         formControlName="fishTypesApp4ZBRDescControl"
+                         tooltipResourceName="scientific-fishing.types-app-4-zbr-helper"
+                         label="{{ 'scientific-fishing.types-app-4-zbr' | tlTranslate }}">
+            </tl-textarea>
+            <tl-textarea fxFlexFill
+                         formControlName="fishTypesCrayFishControl"
+                         tooltipResourceName="scientific-fishing.crayfish-types-helper"
+                         label="{{ 'scientific-fishing.crayfish-types' | tlTranslate }}">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Уреди -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'scientific-fishing.gears' | tlTranslate }}"
+                        tooltipResourceName="scientific-fishing.gears-helper"
+                        [validityChecker]="form">
+        <tl-textarea fxFlexFill
+                     formControlName="fishingGearControl"
+                     tooltipResourceName="scientific-fishing.gears-field-helper"
+                     label="{{ 'scientific-fishing.gears' | tlTranslate }}">
+        </tl-textarea>
+    </tl-expansion-panel>
+
+    <!-- Кораб -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'scientific-fishing.ship' | tlTranslate }}"
+                        tooltipResourceName="scientific-fishing.ship-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+            <div fxLayout="row" fxLayoutAlign="start center">
+                <tl-checkbox fxFlex="50"
+                             formControlName="shipIsNotRegisteredControl"
+                             tooltipResourceName="scientific-fishing.ship-does-not-exist-in-register-helper"
+                             label="{{ 'scientific-fishing.ship-does-not-exist-in-register' | tlTranslate }}">
+                </tl-checkbox>
+            </div>
+
+            <div *ngIf="form?.controls.shipIsNotRegisteredControl.value === false"
+                 fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start center">
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="existingShipNameControl"
+                                 [options]="ships"
+                                 tooltipResourceName="scientific-fishing.ships-in-register-helper"
+                                 label="{{ 'scientific-fishing.ships-in-register' | tlTranslate }}">
+                </tl-autocomplete>
+            </div>
+
+            <div *ngIf="form.controls.shipIsNotRegisteredControl.value === true"
+                 fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start center">
+                <tl-input fxFlex="25"
+                          formControlName="shipNameControl"
+                          tooltipResourceName="scientific-fishing.ship-name-helper"
+                          label="{{ 'scientific-fishing.ship-name' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="shipExternalMarkingControl"
+                          tooltipResourceName="scientific-fishing.ship-external-mark-helper"
+                          label="{{ 'scientific-fishing.ship-external-mark' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="50"
+                          formControlName="shipCaptainNameControl"
+                          tooltipResourceName="scientific-fishing.ship-captain-name-helper"
+                          label="{{ 'scientific-fishing.ship-captain-name' | tlTranslate }}">
+                </tl-input>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Таблица с излети -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData && isApplication === false && permitId !== undefined && permitOutings.length > 0"
+                        title="{{ 'scientific-fishing.carried-out-outings-and-results-from-research' | tlTranslate }}"
+                        tooltipResourceName="scientific-fishing.carried-out-outings-and-results-from-research-helper"
+                        [validityChecker]="form">
+        <tl-data-table fxFlexFill
+                       [rows]="permitOutings"
+                       [isRemote]="false"
+                       [isSoftDeletable]="true"
+                       [showAddButton]="!readOnly && permitStatus === permitStatuses.Approved"
+                       (addButtonClicked)="addEditPermitOuting(undefined, false)">
+            <row-detail>
+                <ng-template let-row="row" ngx-datatable-row-detail-template>
+                    <div class="pl-35px">
+                        <tl-data-table [isRemote]="false"
+                                       [isSoftDeletable]="true"
+                                       [showInactiveRecords]="false"
+                                       [showAddButton]="false"
+                                       [rows]="row.data.catches">
+                            <data-column propertyName="fishTypeId"
+                                         [options]="fishes"
+                                         dataType="nomenclature"
+                                         columnName="{{ 'scientific-fishing.caught-fish-type-aquatic-organism' | tlTranslate }}">
+                            </data-column>
+                            <data-column propertyName="catchUnder100"
+                                         columnName="{{ 'scientific-fishing.count-under-100g' | tlTranslate }}">
+                            </data-column>
+                            <data-column propertyName="catch100To500"
+                                         columnName="{{ 'scientific-fishing.count-100-to-500g' | tlTranslate }}">
+                            </data-column>
+                            <data-column propertyName="catch500To1000"
+                                         columnName="{{ 'scientific-fishing.count-500-to-1000g' | tlTranslate }}">
+                            </data-column>
+                            <data-column propertyName="catchOver1000"
+                                         columnName="{{ 'scientific-fishing.count-above-1000g' | tlTranslate }}">
+                            </data-column>
+                            <data-column propertyName="totalCatch"
+                                         columnName="{{ 'scientific-fishing.total-caught-fish' | tlTranslate }}">
+                            </data-column>
+                            <data-column propertyName="totalKeptCount"
+                                         columnName="{{ 'scientific-fishing.total-kept-fish' | tlTranslate }}">
+                            </data-column>
+                        </tl-data-table>
+                    </div>
+                </ng-template>
+            </row-detail>
+
+            <data-column propertyName="dateOfOuting"
+                         dataType="date"
+                         columnName="{{ 'scientific-fishing.date-of-outing' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="waterArea"
+                         columnName="{{ 'scientific-fishing.outing-water-area' | tlTranslate }}">
+            </data-column>
+
+            <data-template-column [flexRate]="0.5" [cellClass]="'justify-center'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row" fxLayoutAlign="end center">
+                        <tl-icon-button icon="visibility"
+                                        (buttonClicked)="addEditPermitOuting(row.data.id, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'scientific-fishing.view-outing' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && !readOnly"
+                                        icon="edit"
+                                        (buttonClicked)="addEditPermitOuting(row.data.id, false)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'scientific-fishing.edit-outing' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && !readOnly"
+                                        icon="delete"
+                                        (buttonClicked)="deletePermitOuting(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'scientific-fishing.delete-outing' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="!row.data.isActive && !readOnly"
+                                        icon="restore"
+                                        (buttonClicked)="undoDeletePermitOuting(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'scientific-fishing.restore-outing' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </tl-expansion-panel>
+
+    <!-- Съгласуване -->
+    <tl-expansion-panel *ngIf="isApplication === false && permitId !== undefined && !showOnlyRegiXData"
+                        title="{{ 'scientific-fishing.coordination' | tlTranslate }}"
+                        tooltipResourceName="scientific-fishing.coordination-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column">
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-input fxFlex="33"
+                          formControlName="coordinationCommitteeControl"
+                          tooltipResourceName="scientific-fishing.coordination-committee-helper"
+                          label="{{ 'scientific-fishing.coordination-committee' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="coordinationLetterNoControl"
+                          tooltipResourceName="scientific-fishing.coordination-letter-no-helper"
+                          label="{{ 'scientific-fishing.coordination-letter-no' | tlTranslate }}">
+                </tl-input>
+                <tl-date fxFlex="33"
+                         formControlName="coordinationDateControl"
+                         [max]="currentDate"
+                         [getControlErrorLabelText]="getCoordinationDateErrorText.bind(this)"
+                         tooltipResourceName="scientific-fishing.coordination-date-helper"
+                         label="{{ 'scientific-fishing.coordination-date' | tlTranslate }}">
+                </tl-date>
+            </div>
+
+            <div fxLayout="row">
+                <tl-textarea fxFlex="100"
+                             formControlName="coordinationCommentsControl"
+                             tooltipResourceName="scientific-fishing.coordination-comments-helper"
+                             label="{{ 'scientific-fishing.coordination-comments' | tlTranslate }}">
+                </tl-textarea>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Информация за начин на връчване -->
+    <tl-expansion-panel *ngIf="hasDelivery && isApplication && !showOnlyRegiXData"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="hasNoEDeliveryRegistrationError !== true"
+                        tooltipResourceName="scientific-fishing.delivery-data-helper"
+                        title="{{ 'scientific-fishing.delivery-data' | tlTranslate }}">
+        <delivery-data formControlName="deliveryDataControl"
+                       [pageCode]="pageCode">
+        </delivery-data>
+        <mat-error *ngIf="hasNoEDeliveryRegistrationError">
+            * {{ 'scientific-fishing.has-no-e-delivery-registration-error' | tlTranslate }}
+        </mat-error>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'scientific-fishing.files' | tlTranslate }}"
+                        tooltipResourceName="scientific-fishing.files-helper"
+                        [validityChecker]="form">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)"
+                                  [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                  [refreshFileTypes]="refreshFileTypes">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+
+    <!-- Резултати от проверки от RegiX -->
+    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+                        title="{{ 'scientific-fishing.regix-checks-results' | tlTranslate }}"
+                        tooltipResourceName="scientific-fishing.regix-checks-results-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-checks-results [regixChecksCollection]="regixChecks"></regix-checks-results>
+        </div>
+    </tl-expansion-panel>
+</div>

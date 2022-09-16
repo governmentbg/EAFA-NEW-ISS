@@ -1,0 +1,163 @@
+﻿<div *ngIf="initialLoadComplete" fxFlexFill>
+    <recreational-fishing-tickets-content *ngIf="showBuyTicketScreen; else allTicketsScreen"
+                                          fxFlexFill
+                                          [isPersonal]="true"
+                                          [service]="service"
+                                          [isPublicApp]="true">
+    </recreational-fishing-tickets-content>
+
+    <ng-template #allTicketsScreen>
+        <div *ngIf="allTickets?.length !== 0; else noTickets" fxFlexFill>
+            <div fxLayout="row" fxLayoutAlign="space-between center" class="buttons full-width">
+                <tl-slide-toggle [formControl]="showExpiredControl"
+                                 label="{{ 'recreational-fishing.show-expired-tickets' | tlTranslate }}">
+                </tl-slide-toggle>
+
+                <button mat-raised-button color="accent" (click)="navigateToBuyTicketPage()">
+                    {{ 'recreational-fishing.buy-new-ticket' | tlTranslate }}
+                </button>
+            </div>
+
+            <div *ngIf="tickets?.length === 0" class="no-tickets-label" fxFlexFill fxLayoutAlign="center center">
+                <span *ngIf="showExpiredControl.value === false; else showingExpired">
+                    {{ 'recreational-fishing.my-tickets-no-active-tickets' | tlTranslate }}
+                </span>
+                <ng-template #showingExpired>
+                    <span>
+                        {{ 'recreational-fishing.my-tickets-no-inactive-tickets' | tlTranslate }}
+                    </span>
+                </ng-template>
+            </div>
+
+            <div fxLayout="column" fxLayoutAlign="start stretch">
+                <div *ngFor="let ticket of tickets" class="card">
+                    <mat-progress-bar mode="determinate"
+                                      value="{{ ticket.percentOfPeriodCompleted }}"
+                                      [color]="ticket.isExpiringSoon ? 'warn' : 'accent'">
+                    </mat-progress-bar>
+
+                    <tl-card>
+                        <tl-card-title>
+                            <tl-icon icon="fa-ticket-alt" size="1" iconClass="accent-color"></tl-icon>
+                            {{ ticket.type }}
+                        </tl-card-title>
+
+                        <tl-card-subtitle>{{ ticket.period }}</tl-card-subtitle>
+
+                        <tl-card-content>
+                            <div fxLayout="row" fxLayoutAlign="space-between start">
+                                <div fxFlex="90" fxLayout="column" fxLayoutAlign="start stretch">
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                                        <mat-form-field appearance="legacy" fxFlex="23" class="full-width">
+                                            <mat-label>{{ 'recreational-fishing.ticket-card-ticket-num' | tlTranslate }}</mat-label>
+                                            <input matInput readonly value="{{ ticket.ticketNum }}" />
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="legacy" fxFlex="23" class="full-width">
+                                            <mat-label>{{ 'recreational-fishing.ticket-card-holder' | tlTranslate }}</mat-label>
+                                            <input matInput readonly value="{{ ticket.person }}" />
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="legacy" fxFlex="23" class="full-width">
+                                            <mat-label>{{ 'recreational-fishing.ticket-card-valid-from' | tlTranslate }}</mat-label>
+                                            <input matInput readonly value="{{ ticket.validFrom | date: 'dd.MM.yyyy HH:mm' }}" />
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="legacy" fxFlex="23" class="full-width">
+                                            <mat-label>{{ 'recreational-fishing.ticket-card-valid-to' | tlTranslate }}</mat-label>
+                                            <input matInput readonly value="{{ ticket.validTo | date: 'dd.MM.yyyy HH:mm' }}" />
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                                        <mat-form-field appearance="legacy" fxFlex="23" class="full-width">
+                                            <mat-label>{{ 'recreational-fishing.ticket-card-price' | tlTranslate }}</mat-label>
+                                            <input matInput readonly value="{{ ticket.price | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}" />
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="legacy" fxFlex="23" class="full-width">
+                                            <mat-label>{{ 'recreational-fishing.ticket-card-status' | tlTranslate }}</mat-label>
+                                            <input matInput readonly value="{{ ticket.status }}" />
+                                        </mat-form-field>
+
+                                        <div fxFlex="23"></div>
+                                        <div fxFlex="23"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Buttons -->
+                                <div fxFlex="10" fxLayout="row wrap" fxLayoutAlign="end center">
+                                    <tl-icon-button *ngIf="ticket.applicationStatus === applicationStatuses.FILL_BY_APPL"
+                                                    icon="edit"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'recreational-fishing.edit-ticket' | tlTranslate }}"
+                                                    (buttonClicked)="editTicket(ticket, false)">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="ticket.applicationStatus === applicationStatuses.CONFIRMED_ISSUED_TICKET && ticket.isExpired"
+                                                    icon="fa-ticket-alt"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'recreational-fishing.renew-ticket' | tlTranslate }}"
+                                                    (buttonClicked)="renewTicket(ticket)">
+                                    </tl-icon-button>
+                                    <tl-icon-button icon="fa-download"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'recreational-fishing.download-ticket' | tlTranslate }}"
+                                                    (buttonClicked)="downloadTicket(ticket)">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="ticket.applicationStatus === applicationStatuses.WAIT_PMT_FROM_USR"
+                                                    icon="ic-fluent-person-money-24-filled"
+                                                    iconClass="accent-color"
+                                                    [size]="icIconSize"
+                                                    tooltipText="{{ 'recreational-fishing.pay-ticket' | tlTranslate }}"
+                                                    (buttonClicked)="pay(ticket)">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="ticket.applicationStatus === applicationStatuses.WAIT_PMT_FROM_USR"
+                                                    icon="ic-fluent-person-prohibited-28-filled"
+                                                    iconClass="accent-color"
+                                                    [size]="icIconSize"
+                                                    tooltipText="{{ 'recreational-fishing.refuse-pay-ticket' | tlTranslate }}"
+                                                    (buttonClicked)="refusePayment(ticket)">
+                                    </tl-icon-button>
+                                    <tl-icon-button icon="visibility"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'recreational-fishing.view-ticket' | tlTranslate }}"
+                                                    (buttonClicked)="editTicket(ticket, true)">
+                                    </tl-icon-button>
+                                </div>
+                            </div>
+                        </tl-card-content>
+                    </tl-card>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="end center">
+                    <mat-paginator *ngIf="tickets.length !== 0"
+                                   #ticketsPaginator
+                                   class="tickets-paginator"
+                                   (page)="switchPage($event)"
+                                   [disabled]="false"
+                                   [length]="ticketsLength"
+                                   [pageSize]="defaultPageSize"
+                                   [pageSizeOptions]="pageSizeOptions">
+                    </mat-paginator>
+                </div>
+            </div>
+        </div>
+
+        <ng-template #noTickets>
+            <div fxLayout="column" fxLayoutAlign="center center" fxFlexFill>
+                <tl-icon icon="fa-ticket-alt"
+                         size="4"
+                         iconClass="accent-color">
+                </tl-icon>
+
+                <span class="buy-ticket-label">{{ 'recreational-fishing.my-tickets-no-active-tickets' | tlTranslate }}</span>
+
+                <button mat-raised-button
+                        color="accent"
+                        (click)="navigateToBuyTicketPage()">
+                    {{ 'recreational-fishing.buy-new-ticket' | tlTranslate }}
+                </button>
+            </div>
+        </ng-template>
+    </ng-template>
+</div>

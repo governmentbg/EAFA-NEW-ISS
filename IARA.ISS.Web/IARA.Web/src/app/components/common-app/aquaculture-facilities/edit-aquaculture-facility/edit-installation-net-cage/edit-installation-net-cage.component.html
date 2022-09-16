@@ -1,0 +1,65 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxflexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="form"
+     class="dialog-padding">
+    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+        <tl-select fxFlex="40"
+                   formControlName="typeControl"
+                   [options]="netCageTypes"
+                   label="{{ 'aquacultures.edit-net-cage-type' | tlTranslate }}">
+        </tl-select>
+        <tl-select fxFlex="40"
+                   formControlName="shapeControl"
+                   [options]="netCageShapes"
+                   label="{{ 'aquacultures.edit-net-cage-shape' | tlTranslate }}">
+        </tl-select>
+        <tl-input fxFlex="20"
+                  formControlName="countControl"
+                  label="{{ 'aquacultures.edit-net-cage-count' | tlTranslate }}">
+        </tl-input>
+    </div>
+
+    <div *ngIf="form.controls.shapeControl.value?.value === shapes.Rectangular" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+        <tl-input fxFlex="18"
+                  formControlName="lengthControl"
+                  label="{{ 'aquacultures.edit-net-cage-length' | tlTranslate }}">
+        </tl-input>
+        <tl-input fxFlex="18"
+                  formControlName="widthControl"
+                  label="{{ 'aquacultures.edit-net-cage-width' | tlTranslate }}">
+        </tl-input>
+        <tl-input fxFlex="18"
+                  formControlName="heightControl"
+                  label="{{ 'aquacultures.edit-net-cage-height' | tlTranslate }}">
+        </tl-input>
+        <tl-input fxFlex="18"
+                  [formControl]="areaControl"
+                  label="{{ 'aquacultures.edit-net-cage-area' | tlTranslate }}">
+        </tl-input>
+        <tl-input fxFlex="18"
+                  [formControl]="volumeControl"
+                  label="{{ 'aquacultures.edit-net-cage-volume' | tlTranslate }}">
+        </tl-input>
+    </div>
+
+    <div *ngIf="form.controls.shapeControl.value?.value === shapes.Circular" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+        <tl-input fxFlex="25"
+                  formControlName="radiusControl"
+                  label="{{ 'aquacultures.edit-net-cage-radius' | tlTranslate }}">
+        </tl-input>
+        <tl-input fxFlex="25"
+                  formControlName="heightControl"
+                  label="{{ 'aquacultures.edit-net-cage-height' | tlTranslate }}">
+        </tl-input>
+        <tl-input fxFlex="25"
+                  [formControl]="areaControl"
+                  label="{{ 'aquacultures.edit-net-cage-area' | tlTranslate }}">
+        </tl-input>
+        <tl-input fxFlex="25"
+                  [formControl]="volumeControl"
+                  label="{{ 'aquacultures.edit-net-cage-volume' | tlTranslate }}">
+        </tl-input>
+    </div>
+</div>

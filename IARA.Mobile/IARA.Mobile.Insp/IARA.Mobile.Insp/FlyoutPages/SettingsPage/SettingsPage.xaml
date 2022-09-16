@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:b="clr-namespace:TechnoLogica.Xamarin.Behaviors;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:lh="clr-namespace:IARA.Mobile.Insp.Helpers"
+        xmlns:converters="clr-namespace:IARA.Mobile.Insp.Converters"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.SettingsPage"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.SettingsPage.SettingsPage"
+        x:DataType="local:SettingsViewModel"
+        x:TypeArguments="local:SettingsViewModel"
+        x:Name="page"
+        PageInfo="{rt:Translate PageInfo, Group=Settings}"
+        Title="{rt:Translate Title, Group=Settings}"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <ContentPage.Resources>
+        <converters:AddValueConverter x:Key="Add" />
+    </ContentPage.Resources>
+    <StackLayout Spacing="10">
+        <tl:TLFlex GrowUnit="400">
+            <StackLayout Padding="5">
+                <StackLayout HorizontalOptions="Start" VerticalOptions="Start">
+                    <Label Text="{rt:Translate ChangeFontSize, Group=Settings}" Margin="10,0,0,0" />
+                    <StackLayout Orientation="Horizontal"
+                            Spacing="10"
+                            VerticalOptions="EndAndExpand">
+                        <Stepper Increment="2"
+                                Minimum="16"
+                                Maximum="24"
+                                Value="{Binding FontSize}">
+                            <Stepper.Behaviors>
+                                <b:EventToCommandBehavior EventName="ValueChanged" Command="{Binding FontSizeChanged}" />
+                            </Stepper.Behaviors>
+                        </Stepper>
+                        <Label Text="{Binding FontSize}"
+                                VerticalOptions="Center"
+                                FontSize="24" />
+                    </StackLayout>
+                </StackLayout>
+            </StackLayout>
+            <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
+                    Text="{rt:Translate ExampleText, Group=Settings}"
+                    FontSize="{Binding FontSize, Converter={StaticResource Add}, ConverterParameter=2}">
+                <StackLayout Padding="10" Spacing="10">
+                    <Label FontSize="{Binding FontSize}" Text="{rt:Translate ExampleText, Group=Settings}" />
+                    <tl:TLDatePicker TitleFontSize="{Binding FontSize}"
+                            FontSize="{Binding FontSize}"
+                            Title="{rt:Translate ExampleText, Group=Settings}"
+                            Date="{Binding Now}" />
+                    <tl:TLMultiToggleView FontSize="{Binding FontSize}"
+                            ClearButtonSize="{Binding FontSize}"
+                            Buttons="{Static lh:InspectionTogglesHelper.YesNoMultiToggles}"
+                            Text="{rt:Translate ExampleText, Group=Settings}" />
+                    <tl:TLCheckView FontSize="{Binding FontSize}" Text="{rt:Translate ExampleText, Group=Settings}" />
+                    <tl:TLTable FooterFontSize="{Binding FontSize}"
+                            TitleFontSize="{Binding FontSize, Converter={StaticResource Add}, ConverterParameter=6}"
+                            Title="{rt:Translate ExampleText, Group=Settings}"
+                            TotalLabel="{rt:Translate ExampleText, Group=Settings}">
+                        <tl:TLTable.TableColumns>
+                            <tl:TLTableColumn FontSize="{Binding BindingContext.FontSize, Source={Reference page}}"
+                                    Text="{rt:Translate ExampleText, Group=Settings}"
+                                    Width="*" />
+                        </tl:TLTable.TableColumns>
+                        <tl:TLTable.EmptyView>
+                            <Label FontSize="{Binding FontSize}"
+                                    Text="{rt:Translate ExampleText, Group=Settings}"
+                                    Margin="20,10" />
+                        </tl:TLTable.EmptyView>
+                        <tl:TLTable.FooterView>
+                            <Button FontSize="{Binding FontSize}"
+                                    Text="{rt:Translate ExampleText, Group=Settings}"
+                                    ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
+                                    HorizontalOptions="End" />
+                        </tl:TLTable.FooterView>
+                    </tl:TLTable>
+                </StackLayout>
+            </sv:SectionView>
+        </tl:TLFlex>
+        <StackLayout Padding="5">
+            <tl:TLCheckView Text="{rt:Translate HasFleetFilter, Group=Settings}"
+                    IsChecked="{Binding HasFleetFilter}"
+                    Command="{Binding FleetFilterChanged}" />
+            <tl:TLMultiPicker Title="{rt:Translate Fleets, Group=Settings}"
+                    ItemsSource="{Binding Fleets}"
+                    SelectedItems="{Binding SelectedFleets}"
+                    Command="{Binding FleetFilterChanged}"
+                    IsVisible="{Binding HasFleetFilter}" />
+        </StackLayout>
+    </StackLayout>
+</sv:BasePage>

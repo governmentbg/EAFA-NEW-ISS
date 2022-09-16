@@ -1,0 +1,56 @@
+﻿@import "src/@fuse/scss/fuse";
+
+successful-registration, successful-password-change, successful-email-confirmation {
+
+    #mail-confirm {
+        width: 100%;
+        background: white no-repeat;
+        background-size: cover;
+
+        #mail-confirm-form-wrapper {
+            flex: 1 0 auto;
+            padding: 2.29em;
+
+            @include media-breakpoint('xs') {
+                padding: 1.14em;
+            }
+
+            #mail-confirm-form {
+                max-width: 34.29em;
+                padding: 3.43em;
+                text-align: center;
+                @include mat-elevation(16);
+
+                @include media-breakpoint('xs') {
+                    padding: 1.71em;
+                    width: 100%;
+                }
+
+                .logo {
+                    margin: 0 auto 32px auto;
+                }
+
+                .title {
+                    font-size: 1.43em;
+                    margin-top: 1.14em;
+                }
+
+                .subtitle {
+                    margin: 1.14em auto;
+                    max-width: 21.43em;
+                    font-size: 1.07em;
+                }
+
+                .message {
+                    font-weight: 600;
+                    text-align: center;
+                    margin-top: 2.86em;
+                }
+            }
+        }
+    }
+
+    a.link {
+        cursor: pointer !important;
+    }
+}

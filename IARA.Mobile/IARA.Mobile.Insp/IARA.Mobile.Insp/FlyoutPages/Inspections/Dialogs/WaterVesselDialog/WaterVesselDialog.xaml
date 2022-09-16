@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<tl:TLBaseDialog x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterVesselDialog.WaterVesselDialog"
+        xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterVesselDialog"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        x:Name="dialog"
+        Title="{rt:Translate DialogTitle, Group=WaterVessel}"
+        x:DataType="local:WaterVesselDialogViewModel"
+        x:TypeArguments="local:WaterVesselDialogViewModel, m:WaterVesselModel"
+        BackgroundColor="White"
+        IconColor="White"
+        TitleBackgroundColor="{StaticResource Primary}"
+        TitleColor="White">
+    <tl:TLScrollView>
+        <StackLayout Padding="10">
+            <tl:TLFlex GrowUnit="200">
+                <tl:TLPicker Title="{rt:Translate Type, Group=WaterVessel}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        ItemsSource="{Binding VesselTypes}"
+                        ValidState="{Binding Type}" />
+                <tl:TLEntry Title="{rt:Translate Number, Group=WaterVessel}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        ValidState="{Binding Number}" />
+                <tl:TLEntry Title="{rt:Translate Color, Group=WaterVessel}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        ValidState="{Binding Color}" />
+                <tl:TLEntry Title="{rt:Translate Length, Group=WaterVessel}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        Keyboard="Numeric"
+                        ValidState="{Binding Length}" />
+                <tl:TLEntry Title="{rt:Translate Width, Group=WaterVessel}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        Keyboard="Numeric"
+                        ValidState="{Binding Width}" />
+                <tl:TLEntry Title="{rt:Translate TotalCount, Group=WaterVessel}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        Keyboard="Numeric"
+                        ValidState="{Binding TotalCount}" />
+            </tl:TLFlex>
+            <tl:TLCheckView Text="{rt:Translate Taken, Group=WaterVessel}"
+                    IsChecked="{Binding IsTaken}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+            <tl:TLCheckView Text="{rt:Translate Stored, Group=WaterVessel}"
+                    IsChecked="{Binding IsStored}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+            <tl:TLEntry Title="{rt:Translate Location, Group=WaterVessel}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    ValidState="{Binding Location}" />
+            <Button Command="{Binding Save}"
+                    IsVisible="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    Text="{rt:Translate Save, Group=Common}" />
+        </StackLayout>
+    </tl:TLScrollView>
+</tl:TLBaseDialog>

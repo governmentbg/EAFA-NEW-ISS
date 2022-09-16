@@ -1,0 +1,74 @@
+﻿<tl-card>
+    <tl-card-title>{{ 'inspections.log-books' | tlTranslate }}</tl-card-title>
+    <tl-card-content>
+        <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+            <tl-data-table fxFlexFill
+                           [rows]="logBooks"
+                           [isRemote]="false"
+                           [isSoftDeletable]="false"
+                           [showInactiveRecords]="false"
+                           [showAddButton]="!isDisabled"
+                           (addButtonClicked)="onAddRecord()"
+                           (activeRecordChanged)="onEditRecord($event)"
+                           (recordChanged)="logBookRecordChanged($event)">
+                <data-column [flexRate]="0.1"
+                             propertyName="number"
+                             [formGroup]="logBooksFormGroup"
+                             columnName="{{ 'inspections.log-book-number' | tlTranslate }}">
+                </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="from"
+                             dataType="date"
+                             [formGroup]="logBooksFormGroup"
+                             columnName="{{ 'inspections.log-book-valid-from' | tlTranslate }}">
+                </data-column>
+                <data-template-column [flexRate]="0.15" columnName="{{ 'inspections.log-book-page-range' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div *ngIf="row.data.startPage !== null && row.data.startPage !== undefined">
+                            <span>{{ row.data.startPage }}</span>
+                            <span> - </span>
+                            <span>{{ row.data.endPage }}</span>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+                <data-template-column [flexRate]="0.1" columnName="{{ 'inspections.log-book-page' | tlTranslate }}">
+                    <ng-template [formGroup]="logBooksFormGroup" let-row="row" ngx-datatable-cell-template>
+                        <tl-autocomplete *ngIf="row.editMode === true"
+                                         formControlName="pageControl"
+                                         [options]="row.data.pages"
+                                         [hasSelectedValueFromDropdownValidator]="false">
+                        </tl-autocomplete>
+                        <span *ngIf="row.editMode === false">
+                            {{ row.data.pageNum }}
+                        </span>
+                    </ng-template>
+                </data-template-column>
+                <data-column [flexRate]="0.2"
+                             propertyName="description"
+                             [formGroup]="logBooksFormGroup"
+                             columnName="{{ 'inspections.permit-description' | tlTranslate }}">
+                </data-column>
+                <data-template-column [flexRate]="0.4" columnName="{{ 'inspections.permit-license-check' | tlTranslate }}">
+                    <ng-template [formGroup]="logBooksFormGroup" let-row="row" ngx-datatable-cell-template>
+                        <inspection-toggle *ngIf="row.editMode === true && row.data.isRegistered === true"
+                                           formControlName="optionsControl"
+                                           [options]="options"
+                                           [toggle]="fakeToggle">
+                        </inspection-toggle>
+                        <span *ngIf="row.editMode === false && row.data.isRegistered === true">
+                            {{ findOption(row.data.checkDTO) }}
+                        </span>
+                        <span *ngIf="row.data.isRegistered === null || row.data.isRegistered === undefined || row.data.isRegistered === false">
+                            {{ 'inspections.toggle-unregistered' | tlTranslate }}
+                        </span>
+                    </ng-template>
+                </data-template-column>
+                <data-column-inline [flexRate]="0.07" [hideDeleteBtn]="true" *ngIf="!isDisabled"></data-column-inline>
+            </tl-data-table>
+
+            <mat-error *ngIf="control.errors?.logBooksMustBeChecked === true">
+                * {{ 'inspections.log-book-must-be-checked' | tlTranslate }}
+            </mat-error>
+        </div>
+    </tl-card-content>
+</tl-card>

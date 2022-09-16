@@ -1,0 +1,104 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <!-- Основни данни -->
+    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <inspection-general-info formControlName="generalInfoControl"
+                                     [institutions]="institutions">
+            </inspection-general-info>
+            <patrol-vehicles-table formControlName="patrolVehiclesControl"
+                                   [isWaterVehicle]="true">
+            </patrol-vehicles-table>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Данни за трансбордиращия кораб -->
+    <inspected-ship-sections formControlName="sendingShipControl"
+                             [hasMap]="true"
+                             [toggles]="toggles"
+                             [associations]="associations"
+                             [ships]="ships"
+                             [fishes]="fishes"
+                             [catchTypes]="catchTypes"
+                             [catchZones]="catchZones"
+                             [fishSex]="fishSex"
+                             [countries]="countries"
+                             [ports]="ports"
+                             [vesselTypes]="vesselTypes"
+                             [hasPort]="false"
+                             [hasFishingGears]="false"
+                             [shipObservationCategory]="inspectionObservationCategoryEnum.InspectedShipData"
+                             [checksObservationCategory]="inspectionObservationCategoryEnum.InspectedShipCheck"
+                             [catchObservationCategory]="inspectionObservationCategoryEnum.InspectedShipCatch"
+                             shipLabel="{{ 'inspections.sending-ship-data' | tlTranslate }}"
+                             checksLabel="{{ 'inspections.sending-ship-inspection' | tlTranslate }}"
+                             catchLabel="{{ 'inspections.sending-ship-catch' | tlTranslate }}">
+    </inspected-ship-sections>
+
+    <!-- Данни за приемащия кораб -->
+    <inspected-ship-sections formControlName="receivingShipControl"
+                             [hasMap]="true"
+                             [toggles]="toggles"
+                             [associations]="associations"
+                             [ships]="ships"
+                             [fishes]="fishes"
+                             [catchTypes]="catchTypes"
+                             [catchZones]="catchZones"
+                             [fishSex]="fishSex"
+                             [countries]="countries"
+                             [ports]="ports"
+                             [vesselTypes]="vesselTypes"
+                             [hasPort]="false"
+                             [hasFishingGears]="false"
+                             [shipObservationCategory]="inspectionObservationCategoryEnum.AcceptingShipData"
+                             [checksObservationCategory]="inspectionObservationCategoryEnum.AcceptingShipCheck"
+                             [catchObservationCategory]="inspectionObservationCategoryEnum.AcceptingShipCatch"
+                             shipLabel="{{ 'inspections.receiving-ship-data' | tlTranslate }}"
+                             checksLabel="{{ 'inspections.receiving-ship-inspection' | tlTranslate }}"
+                             catchLabel="{{ 'inspections.receiving-ship-catch' | tlTranslate }}">
+    </inspected-ship-sections>
+
+    <!-- Трансбордиран улов -->
+    <tl-expansion-panel title="{{ 'inspections.transshipment-catches' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <inspected-catches-table formControlName="transshipmentCatchesControl"
+                                     [ships]="ships"
+                                     [fishes]="fishes"
+                                     [types]="catchTypes"
+                                     [catchZones]="catchZones"
+                                     [fishSex]="fishSex">
+            </inspected-catches-table>
+            <tl-textarea formControlName="transshipmentCatchViolationControl"
+                         [minRows]="3"
+                         label="{{ 'inspections.violation' | tlTranslate }}">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Допълнителна информация -->
+    <inspection-additional-info formControlName="additionalInfoControl">
+        <tl-textarea formControlName="sendingShipcaptainCommentControl"
+                     [minRows]="3"
+                     label="{{ 'inspections.sending-ship-captain-comment' | tlTranslate }}">
+        </tl-textarea>
+        <tl-textarea formControlName="receivingShipcaptainCommentControl"
+                     [minRows]="3"
+                     label="{{ 'inspections.receiving-ship-captain-comment' | tlTranslate }}">
+        </tl-textarea>
+    </inspection-additional-info>
+
+    <!-- Файлове -->
+    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+</div>

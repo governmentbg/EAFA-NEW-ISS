@@ -1,0 +1,51 @@
+﻿<tl-card>
+    <tl-card-title>{{ 'auan-register.edit-auan-inspected-person' | tlTranslate }}</tl-card-title>
+    <tl-card-content>
+        <div *ngIf="inspectedEntity !== undefined && inspectedEntity !== null" [formGroup]="form">
+            <!-- Физическо лице -->
+            <div *ngIf="inspectedEntity.isPerson === true">
+                <regix-data formControlName="personControl"
+                            [isPerson]="true"
+                            [hideDocument]="false"
+                            [isIdReadOnly]="viewMode"
+                            checkboxLabel="{{ 'auan-register.has-bulgarian-address-registration' | tlTranslate }}">
+                </regix-data>
+
+                <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                    <tl-input fxFlex="25"
+                              formControlName="personWorkPlaceControl"
+                              label="{{ 'auan-register.edit-inspected-entity-work-place' | tlTranslate }}">
+                    </tl-input>
+
+                    <tl-input fxFlex="25"
+                              formControlName="personWorkPositionControl"
+                              label="{{ 'auan-register.edit-inspected-entity-work-position' | tlTranslate }}">
+                    </tl-input>
+
+                    <div fxFlex="50"></div>
+                </div>
+
+                <address-registration formControlName="personAddressesControl"
+                                      addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                                      secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                                      checkboxLabel="{{ 'auan-register.permanent-address-same-as-correspondence' | tlTranslate }}">
+                </address-registration>
+            </div>
+
+            <!-- Юридическо лице -->
+            <div *ngIf="inspectedEntity.isPerson === false">
+                <regix-data formControlName="legalControl"
+                            [isPerson]="false"
+                            [showCustodianOfProperty]="false"
+                            [isIdReadOnly]="viewMode"
+                            checkboxLabel="{{ 'auan-regster.has-bulgarian-address-registration' | tlTranslate }}">
+                </regix-data>
+
+                <address-registration formControlName="legalAddressesControl"
+                                      addressLabel="{{ 'common.company-headquarters-address' | tlTranslate : 'cap' }}"
+                                      [addressType]="companyHeadquartersType">
+                </address-registration>
+            </div>
+        </div>
+    </tl-card-content>
+</tl-card>

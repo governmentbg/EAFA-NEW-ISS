@@ -1,0 +1,8 @@
+﻿<div [formGroup]="form"
+     class="dialog-padding">
+    <tl-autocomplete label="{{ 'cross-check-results.user' | tlTranslate }}"
+                     formControlName="assignedUserControl"
+                     [options]="assignedUserIds"
+                     tooltipResourceName="cross-check-results.user-helper">
+    </tl-autocomplete>
+</div>

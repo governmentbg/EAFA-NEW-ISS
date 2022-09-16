@@ -1,0 +1,159 @@
+﻿<div fxFlexFill
+     fxLayout="column"
+     fxLayoutGap="1em"
+     [formGroup]="form">
+    <tl-expansion-panel title="{{ 'fishing-gears.basic-information-panel' | tlTranslate }}">
+        <div fxFlexFill
+             fxLayout="column"
+             fxLayoutGap="1em">
+            <div fxFlex="100"
+                 fxLayout="row">
+                <tl-autocomplete fxFlex="100"
+                                 formControlName="typeControl"
+                                 label="{{ 'fishing-gears.type' | tlTranslate }}"
+                                 [options]="fishingGearTypes">
+                </tl-autocomplete>
+            </div>
+            <div fxFlex="100"
+                 fxLayout="row"
+                 fxLayoutAlign="space-between center">
+                <tl-input *ngIf="form.controls.typeControl.value !== null && form.controls.typeControl.value !== undefined
+                                && form.controls.typeControl.value.code !== undefined && form.controls.typeControl.value.code !== null
+                                && form.controls.typeControl.value.code !== fishingGearTypesEnum[fishingGearTypesEnum.DLN]"
+                          fxLayout="column"
+                          fxFlex="19"
+                          formControlName="countControl"
+                          label="{{ 'fishing-gears.count' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxLayout="column"
+                          fxFlex="19"
+                          formControlName="netEyeSizeControl"
+                          label="{{ 'fishing-gears.net-eye-size' | tlTranslate }}"></tl-input>
+                <div *ngIf="form.controls.typeControl.value !== null && form.controls.typeControl.value !== undefined
+                            && form.controls.typeControl.value.code !== undefined && form.controls.typeControl.value.code !== null
+                            && form.controls.typeControl.value.code !== fishingGearTypesEnum[fishingGearTypesEnum.DLN]"
+                     fxLayout="row"
+                     fxFlex="60"
+                     fxLayoutAlign="space-between center">
+                    <tl-input fxFlex="24"
+                              formControlName="hooksContControl"
+                              label="{{ 'fishing-gears.hooks-count' | tlTranslate }}"></tl-input>
+                    <tl-input fxFlex="24"
+                              formControlName="lengthControl"
+                              label="{{ 'fishing-gears.length' | tlTranslate }}"></tl-input>
+                    <tl-input fxFlex="24"
+                              formControlName="heightControl"
+                              label="{{ 'fishing-gears.height' | tlTranslate }}"></tl-input>
+                    <tl-input fxFlex="24"
+                              formControlName="cordThicknessControl"
+                              label="{{ 'fishing-gears.cord-thickness' | tlTranslate }}"></tl-input>
+                </div>
+                <div *ngIf="form.controls.typeControl.value !== null && form.controls.typeControl.value !== undefined
+                            && form.controls.typeControl.value.code !== undefined && form.controls.typeControl.value.code !== null
+                            && form.controls.typeControl.value.code === fishingGearTypesEnum[fishingGearTypesEnum.DLN]"
+                     fxLayout="row"
+                     fxFlex="79"
+                     fxLayoutAlign="space-between center">
+                    <tl-input fxFlex="32"
+                              formControlName="towelLengthControl"
+                              label="{{ 'fishing-gears.towel-length' | tlTranslate }}"></tl-input>
+                    <tl-input fxFlex="32"
+                              formControlName="houseLengthControl"
+                              label="{{ 'fishing-gears.house-length' | tlTranslate }}"></tl-input>
+                    <tl-input fxFlex="32"
+                              formControlName="houseWidthControl"
+                              label="{{ 'fishing-gears.house-width' | tlTranslate }}"></tl-input>
+                </div>
+            </div>
+            <div fxFlex="100"
+                 fxLayout="row"
+                 fxLayoutAlign="space-between center">
+                <tl-textarea fxFlex="100"
+                             formControlName="descriptionControl"
+                             label="{{ 'fishing-gears.description' | tlTranslate }}"></tl-textarea>
+            </div>
+        </div>
+    </tl-expansion-panel>
+    <tl-expansion-panel title="{{ 'fishing-gears.marks-panel' | tlTranslate }}">
+        <div fxFlexFill
+             fxLayout="column"
+             fxLayoutGap="1em">
+            <tl-data-table #marksTable
+                           fxFlexFill
+                           fxLayoutGap="1em"
+                           class="full-width-template"
+                           [showAddButton]="!isDisabled"
+                           [showInactiveRecords]="!isInspected"
+                           [isRemote]="false"
+                           [isSoftDeletable]="true"
+                           [rows]="model.marks"
+                           (activeRecordChanged)="onEditMark($event)"
+                           (recordChanged)="onEditedMark()">
+                <data-column columnName="{{ 'fishing-gears.mark-number' | tlTranslate }}"
+                             propertyName="number"
+                             [formGroup]="marksForm"
+                             dataType="string">
+                </data-column>
+                <data-column columnName="{{ 'fishing-gears.mark-status' | tlTranslate }}"
+                             propertyName="statusId"
+                             [formGroup]="marksForm"
+                             [options]="markStatuses"
+                             dataType="nomenclature">
+                </data-column>
+                <data-column-inline [flexRate]="0.3"
+                                    *ngIf="!isDisabled"></data-column-inline>
+            </tl-data-table>
+        </div>
+    </tl-expansion-panel>
+    <tl-expansion-panel title="{{ 'fishing-gears.pingers-panel' | tlTranslate }}">
+        <div fxFlexFill
+             fxLayout="column"
+             fxLayoutGap="1em">
+            <div fxFlex="100"
+                 fxLayout="row">
+                <tl-checkbox formControlName="hasPingersControl"
+                             label="{{ 'fishing-gears.has-pingers' | tlTranslate }}"></tl-checkbox>
+            </div>
+            <div *ngIf="showPingersTable === true"
+                 fxFlexFill
+                 fxLayout="column"
+                 fxLayoutGap="1em">
+                <tl-data-table #pingersTable
+                               fxFlexFill
+                               fxLayoutGap="1em"
+                               class="full-width-template"
+                               [showAddButton]="!isDisabled"
+                               [showInactiveRecords]="!isInspected"
+                               [isRemote]="false"
+                               [isSoftDeletable]="true"
+                               [disableDblClickEdit]="true"
+                               [rows]="model.pingers"
+                               (recordChanged)="onEditedPinger()">
+                    <data-column columnName="{{ 'fishing-gears.pinger-number' | tlTranslate }}"
+                                 propertyName="number"
+                                 [formGroup]="pingersForm"
+                                 dataType="string">
+                    </data-column>
+                    <data-column columnName="{{ 'fishing-gears.pinger-status' | tlTranslate }}"
+                                 propertyName="statusId"
+                                 [formGroup]="pingersForm"
+                                 [options]="pingerStatuses"
+                                 dataType="nomenclature">
+                    </data-column>
+                    <data-column columnName="{{ 'fishing-gears.pinger-model' | tlTranslate }}"
+                                 propertyName="model"
+                                 [formGroup]="pingersForm"
+                                 dataType="string">
+                    </data-column>
+                    <data-column columnName="{{ 'fishing-gears.pinger-brand' | tlTranslate }}"
+                                 propertyName="brand"
+                                 [formGroup]="pingersForm"
+                                 dataType="string">
+                    </data-column>
+                    <data-column-inline [flexRate]="0.5"
+                                        *ngIf="!isDisabled"></data-column-inline>
+                </tl-data-table>
+            </div>
+        </div>
+    </tl-expansion-panel>
+</div>

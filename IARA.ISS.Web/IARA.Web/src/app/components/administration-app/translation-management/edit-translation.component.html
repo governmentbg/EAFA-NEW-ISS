@@ -1,0 +1,28 @@
+﻿<div [formGroup]="form"
+     fxLayout="column"
+     fxLayoutGap="1em"
+     class="dialog-padding">
+    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+        <tl-input fxFlex="50"
+                  formControlName="groupCodeControl"
+                  label="{{ 'translation-management.group' | tlTranslate }}">
+        </tl-input>
+
+        <tl-input fxFlex="50"
+                  formControlName="resourceCodeControl"
+                  label="{{ 'translation-management.code' | tlTranslate }}">
+        </tl-input>
+    </div>
+
+    <div fxLayout="column" fxLayoutGap="1em">
+        <tl-input fxFlex="100"
+                  formControlName="valueBgControl"
+                  label="{{ 'translation-management.value-bg' | tlTranslate }}">
+        </tl-input>
+
+        <tl-input fxFlex="100"
+                  formControlName="valueEnControl"
+                  label="{{ 'translation-management.value-en' | tlTranslate }}">
+        </tl-input>
+    </div>
+</div>

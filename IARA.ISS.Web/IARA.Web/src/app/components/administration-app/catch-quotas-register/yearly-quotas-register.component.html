@@ -1,0 +1,122 @@
+﻿<div fxLayout="column" fxLayoutGap="5px" fxLayoutAlign="start stretch" fxFill>
+    <search-panel class="full-width" [translateService]="translationService">
+        <div [formGroup]="filterFormGroup" fxFlexFill fxLayout="column" fxLayoutAlign="start start">
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between start">
+                <tl-date-year fxFlex="50"
+                              formControlName="yearFilterControl"
+                              label="{{ 'catch-quotas.year' | tlTranslate }}"
+                              tooltipResourceName="catch-quotas.year-helper">
+                </tl-date-year>
+                <tl-autocomplete fxFlex="50"
+                                 label="{{ 'catch-quotas.fishes' | tlTranslate }}"
+                                 formControlName="fishesFilterControl"
+                                 [options]="fishes"
+                                 tooltipResourceName="catch-quotas.fishes-helper">
+                </tl-autocomplete>
+            </div>
+        </div>
+    </search-panel>
+
+    <mat-card>
+        <tl-data-table [showAddButton]="canAddRecords"
+                       [showInactiveRecords]="canRestoreRecords"
+                       [hasExcelExport]="true"
+                       (addButtonClicked)="addEditEntry()"
+                       class="full-width full-width-template"
+                       style="margin-top: 10px;">
+            <row-detail>
+                <ng-template let-row="row" ngx-datatable-row-detail-template>
+                    <tl-card>
+                        <tl-card-title>{{ 'catch-quotas.yearly-quotas-list-card-title' | tlTranslate }}</tl-card-title>
+                        <tl-card-content>
+                            <tl-data-table [isRemote]="false"
+                                           [isSoftDeletable]="false"
+                                           [showInactiveRecords]="false"
+                                           [showAddButton]="false"
+                                           [rows]="row.changeHistoryRecords">
+                                <data-column [flexRate]="0.2"
+                                             propertyName="timestamp"
+                                             columnName="{{ 'catch-quotas.change-date' | tlTranslate }}"
+                                             dataType="date">
+                                </data-column>
+                                <data-column [flexRate]="0.2"
+                                             propertyName="addRemoveQuota"
+                                             columnName="{{ 'catch-quotas.added-removed-quota' | tlTranslate }}">
+                                </data-column>
+                                <data-column [flexRate]="0.2"
+                                             propertyName="newQuotaValueKg"
+                                             columnName="{{ 'catch-quotas.quota-size' | tlTranslate }}">
+                                </data-column>
+                                <data-column [flexRate]="0.4"
+                                             propertyName="basis"
+                                             columnName="{{ 'catch-quotas.basis' | tlTranslate }}">
+                                </data-column>
+                            </tl-data-table>
+                        </tl-card-content>
+                    </tl-card>
+                </ng-template>
+            </row-detail>
+
+            <data-column [flexRate]="0.4"
+                         columnName="{{ 'catch-quotas.fishes' | tlTranslate }}"
+                         propertyName="fish">
+            </data-column>
+            <data-column [flexRate]="0.3"
+                         columnName="{{ 'catch-quotas.year' | tlTranslate }}"
+                         propertyName="year">
+            </data-column>
+            <data-column [flexRate]="0.3"
+                         columnName="{{ 'catch-quotas.quota-size' | tlTranslate }}"
+                         propertyName="quotaValueKg">
+            </data-column>
+            <data-column [flexRate]="0.3"
+                         columnName="{{ 'catch-quotas.quota-unloaded-quantity' | tlTranslate }}"
+                         propertyName="unloadedQuantity">
+            </data-column>
+            <data-column [flexRate]="0.3"
+                         columnName="{{ 'catch-quotas.quota-confiscated-quantity' | tlTranslate }}"
+                         propertyName="confiscatedQuantity">
+            </data-column>
+            <data-column [flexRate]="0.3"
+                         columnName="{{ 'catch-quotas.quota-leftover' | tlTranslate }}"
+                         propertyName="leftover">
+            </data-column>
+
+            <data-template-column [cellClass]="'justify-center min-w-50'" [flexRate]="0.3">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row" fxLayoutAlign="end center">
+                        <tl-icon-button icon="visibility"
+                                        (buttonClicked)="addEditEntry(row, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'catch-quotas.view-entry-tooltip' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.isActive && canEditRecords"
+                                        icon="edit"
+                                        (buttonClicked)="addEditEntry(row, !canEditRecords)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'catch-quotas.edit-entry-tooltip' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.isActive && canDeleteRecords"
+                                        icon="delete"
+                                        (buttonClicked)="deleteEntry(row)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'catch-quotas.delete-entry-tooltip' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="!row.isActive && canRestoreRecords"
+                                        icon="restore"
+                                        (buttonClicked)="restoreEntry(row)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'catch-quotas.restore-entry-tooltip' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.isActive"
+                                        icon="fa-external-link-alt"
+                                        (buttonClicked)="transferQuota(row)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'catch-quotas.transfer-quota-tooltip' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </mat-card>
+</div>

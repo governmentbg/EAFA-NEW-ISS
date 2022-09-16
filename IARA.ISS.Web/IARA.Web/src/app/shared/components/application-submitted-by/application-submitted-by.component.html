@@ -1,0 +1,29 @@
+﻿<div [formGroup]="form" validityCheckerGroup [notifierGroup]="notifierGroup">
+	<tl-expansion-panel [title]="label" [validityChecker]="form">
+		<div fxLayout="column" fxLayoutGap="1em" validityCheckerGroup>
+			<regix-data formControlName="personControl"
+						notifier
+						validityChecker
+						[isPerson]="true"
+						[isIdReadOnly]="isIdReadOnly"
+						[isForeigner]="isForeigner"
+						[hideDocument]="hideDocument"
+						[showOnlyBasicData]="showOnlyBasicData"
+						[expectedResults]="expectedResults?.person"
+						checkboxLabel="{{ 'application-submitted-by.has-bulgarian-address-registration' | tlTranslate }}">
+			</regix-data>
+
+			<ng-content select="[middle]"></ng-content>
+
+			<address-registration *ngIf="!showOnlyBasicData"
+								  formControlName="addressesControl"
+								  notifier
+								  validityChecker
+								  addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+								  secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+								  checkboxLabel="{{ 'application-submitted-by.permanent-address-same-as-correspondence' | tlTranslate }}"
+								  [expectedResults]="expectedResults?.addresses">
+			</address-registration>
+		</div>
+	</tl-expansion-panel>
+</div>

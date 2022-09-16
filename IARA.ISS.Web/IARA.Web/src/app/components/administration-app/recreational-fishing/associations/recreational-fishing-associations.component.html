@@ -1,0 +1,110 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <!-- Панел за търсене -->
+    <search-panel [translateService]="translate">
+        <div [formGroup]="form" fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="nameControl"
+                          tooltipResourceName="recreational-fishing.association-name-helper"
+                          label="{{ 'recreational-fishing.association-name' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="eikControl"
+                          tooltipResourceName="recreational-fishing.association-eik-helper"
+                          label="{{ 'recreational-fishing.association-eik' | tlTranslate }}">
+                </tl-input>
+                <tl-select fxFlex="25"
+                           formControlName="statusesControl"
+                           tooltipResourceName="recreational-fishing.association-status-helper"
+                           label="{{ 'recreational-fishing.association-status' | tlTranslate }}"
+                           [options]="associationStatuses"
+                           [isMultiple]="true">
+                </tl-select>
+                <tl-autocomplete *ngIf="hasReadAllPermission; else hasOnlyReadPermission"
+                                 fxFlex="25"
+                                 formControlName="territoryUnitControl"
+                                 [options]="territoryUnits"
+                                 tooltipResourceName="recreational-fishing.association-territory-unit-helper"
+                                 label="{{ 'recreational-fishing.association-territory-unit' | tlTranslate }}">
+                </tl-autocomplete>
+                <ng-template #hasOnlyReadPermission>
+                    <div fxFlex="25"></div>
+                </ng-template>
+            </div>
+
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <mat-card>
+        <tl-data-table [showAddButton]="canAddRecords"
+                       [showInactiveRecords]="canRestoreRecords"
+                       (addButtonClicked)="addAssociation()">
+            <data-column propertyName="name"
+                         [flexRate]="0.5"
+                         columnName="{{ 'recreational-fishing.association-name' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="territoryUnit"
+                         [flexRate]="0.5"
+                         columnName="{{ 'recreational-fishing.association-territory-unit' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="eik"
+                         [flexRate]="0.3"
+                         columnName="{{ 'recreational-fishing.association-eik' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="phone"
+                         [flexRate]="0.3"
+                         columnName="{{ 'recreational-fishing.association-phone' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="membersCount"
+                         [flexRate]="0.3"
+                         columnName="{{ 'recreational-fishing.association-members-count' | tlTranslate }}">
+            </data-column>
+
+            <data-template-column propertyName="isCanceled"
+                                  [flexRate]="0.2"
+                                  [cellClass]="'justify-center'"
+                                  columnName="{{ 'recreational-fishing.association-status' | tlTranslate }}">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row" fxLayoutGap="0.5em">
+                        <tl-icon [icon]="row.isCanceled ? 'highlight_off' : 'done_outline'" iconClass="accent-color"></tl-icon>
+                        <div>{{ row.isCanceled ? ('recreational-fishing.association-canceled' | tlTranslate) : ('recreational-fishing.association-active' | tlTranslate) }}</div>
+                    </div>
+                </ng-template>
+            </data-template-column>
+
+            <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                        <tl-icon-button *ngIf="row.isActive"
+                                        icon="visibility"
+                                        (buttonClicked)="editAssociation(row.data, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'recreational-fishing.view-association' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.isActive && canEditRecords"
+                                        icon="edit"
+                                        (buttonClicked)="editAssociation(row.data, false)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'recreational-fishing.edit-association' | tlTranslate }}">
+                        </tl-icon-button>
+                        <ng-template [ngxPermissionsOnly]="['AssociationsDeleteRecords']">
+                            <tl-icon-button *ngIf="row.isActive"
+                                            icon="delete"
+                                            (buttonClicked)="deleteAssociation(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'recreational-fishing.delete-association' | tlTranslate }}">
+                            </tl-icon-button>
+                        </ng-template>
+                        <tl-icon-button *ngIf="!row.isActive && canRestoreRecords"
+                                        icon="restore"
+                                        (buttonClicked)="restoreAssociation(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'recreational-fishing.restore-association' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </mat-card>
+</div>

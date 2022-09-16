@@ -1,0 +1,6 @@
+{
+  "apiBasePath": "/api",
+  "servicesBaseUrl": "",
+  "identityServerBaseUrl": "",
+  "environmentType": ""
+}

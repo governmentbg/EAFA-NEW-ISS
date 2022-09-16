@@ -1,0 +1,10 @@
+﻿[*.cs]
+
+# RCS1090: Add call to 'ConfigureAwait' (or vice versa).
+dotnet_diagnostic.RCS1090.severity = none
+
+# IDE0002: Simplify Member Access
+dotnet_diagnostic.IDE0002.severity = none
+
+# IDE0058: Expression value is never used
+dotnet_diagnostic.IDE0058.severity = none

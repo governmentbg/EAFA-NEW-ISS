@@ -1,0 +1,257 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <!-- Filters -->
+    <search-panel [translateService]="translate">
+        <div [formGroup]="form" fxFlexFill fxLayout="column" fxLayoutAlign="start start">
+            <!-- CFR, име, външна маркиворка, флот -->
+            <div fxLayout="row" fxFlexFill fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="cfrControl"
+                          tooltipResourceName="ships-register.filters-cfr-helper"
+                          label="{{ 'ships-register.filters-cfr' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="nameControl"
+                          tooltipResourceName="ships-register.filters-ship-name-helper"
+                          label="{{ 'ships-register.filters-ship-name' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="externalMarkControl"
+                          tooltipResourceName="ships-register.filters-external-marking-helper"
+                          label="{{ 'ships-register.filters-external-marking' | tlTranslate }}">
+                </tl-input>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="fleetControl"
+                                 [options]="fleetTypes"
+                                 tooltipResourceName="ships-register.filters-fleet-helper"
+                                 label="{{ 'ships-register.filters-fleet' | tlTranslate }}">
+                </tl-autocomplete>
+            </div>
+
+            <!-- Вид, код на публична помощ, позивна, VMS -->
+            <div fxLayout="row" fxFlexFill fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="vesselTypeControl"
+                                 [options]="vesselTypes"
+                                 tooltipResourceName="ships-register.filters-vessel-type-helper"
+                                 label="{{ 'ships-register.filters-vessel-type' | tlTranslate }}">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="publicAidTypeControl"
+                                 [options]="publicAidTypes"
+                                 tooltipResourceName="ships-register.filters-public-aid-type-helper"
+                                 label="{{ 'ships-register.filters-public-aid-type' | tlTranslate }}">
+                </tl-autocomplete>
+                <tl-input fxFlex="25"
+                          formControlName="ircsCallSignControl"
+                          tooltipResourceName="ships-register.filters-icrs-call-sign-helper"
+                          label="{{ 'ships-register.filters-ircs-call-sign' | tlTranslate }}">
+                </tl-input>
+                <tl-select fxFlex="25"
+                           formControlName="hasVMSControl"
+                           [options]="hasVMSOptions"
+                           tooltipResourceName="ships-register.filters-has-vms-helper"
+                           label="{{ 'ships-register.filters-has-vms' | tlTranslate }}">
+                </tl-select>
+            </div>
+
+            <!-- Собственик, собственик егн/лнч, разр. за стопански риболов, кораб от трета страна -->
+            <div fxLayout="row" fxFlexFill fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="shipOwnerControl"
+                          tooltipResourceName="ships-register.filters-ship-owner-helper"
+                          label="{{ 'ships-register.filters-ship-owner' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="shipOwnerEgnLncControl"
+                          tooltipResourceName="ships-register.filters-ship-owner-egn-eik-helper"
+                          label="{{ 'ships-register.filters-ship-owner-egn-eik' | tlTranslate }}">
+                </tl-input>
+                <tl-select fxFlex="25"
+                           formControlName="hasCommercialFishingLicenceControl"
+                           [options]="hasCommercialFishingLicenceOptions"
+                           tooltipResourceName="ships-register.filters-has-commercial-fishing-licence-helper"
+                           label="{{ 'ships-register.filters-commercial-fishing-licence' | tlTranslate }}">
+                </tl-select>
+                <tl-select fxFlex="25"
+                           formControlName="isThirdPartyShipControl"
+                           [options]="isThirdPartyShipOptions"
+                           tooltipResourceName="ships-register.filters-third-party-ship-helper"
+                           label="{{ 'ships-register.filters-third-party-ship' | tlTranslate }}">
+                </tl-select>
+            </div>
+
+            <!-- Обща дължина, бруто тонаж, нето тонаж, мощност на главния двигател -->
+            <div fxLayout="row" fxFlexFill fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-range-input fxFlex="25"
+                                formControlName="totalLengthControl"
+                                tooltipResourceName="ships-register.filters-total-length-helper"
+                                label="{{ 'ships-register.filters-total-length' | tlTranslate }}">
+                </tl-range-input>
+                <tl-range-input fxFlex="25"
+                                formControlName="grossTonnageControl"
+                                tooltipResourceName="ships-register.filters-gross-tonnage-helper"
+                                label="{{ 'ships-register.filters-gross-tonnage' | tlTranslate }}">
+                </tl-range-input>
+                <tl-range-input fxFlex="25"
+                                formControlName="netTonnageControl"
+                                tooltipResourceName="ships-register.filters-net-tonnage-helper"
+                                label="{{ 'ships-register.filters-net-tonnage' | tlTranslate }}">
+                </tl-range-input>
+                <tl-range-input fxFlex="25"
+                                formControlName="mainEnginePowerControl"
+                                tooltipResourceName="ships-register.filters-main-engine-power-helper"
+                                label="{{ 'ships-register.filters-main-engine-power' | tlTranslate }}">
+                </tl-range-input>
+            </div>
+
+            <!-- Основен риболовен уред, допълнителен риболовен уред -->
+            <div fxLayout="row" fxFlexFill fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="mainFishingGearControl"
+                                 [options]="fishingGear"
+                                 tooltipResourceName="ships-register.filters-main-fishing-gear-helper"
+                                 label="{{ 'ships-register.filters-main-fishing-gear' | tlTranslate }}">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="additionalFishingGearControl"
+                                 [options]="fishingGear"
+                                 tooltipResourceName="ships-register.filters-additional-fishing-gear-helper"
+                                 label="{{ 'ships-register.filters-additional-fishing-gear' | tlTranslate }}">
+                </tl-autocomplete>
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+            </div>
+
+            <!-- Вид събитие, дата на събитие, причина за отписване -->
+            <div fxLayout="row" fxFlexFill fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="eventTypeControl"
+                                 [options]="eventTypes"
+                                 tooltipResourceName="ships-register.filters-last-event-type-helper"
+                                 label="{{ 'ships-register.filters-last-event-type' | tlTranslate }}">
+                </tl-autocomplete>
+                <tl-date-range fxFlex="25"
+                               formControlName="eventDateControl"
+                               tooltipResourceName="ships-register.filters-last-event-date-helper"
+                               label="{{ 'ships-register.filters-last-event-date' | tlTranslate }}">
+                </tl-date-range>
+                <tl-select fxFlex="25"
+                           formControlName="isCancelledControl"
+                           [options]="isCancelledOptions"
+                           tooltipResourceName="ships-register.filters-cancelled-helper"
+                           label="{{ 'ships-register.filters-cancelled' | tlTranslate }}">
+                </tl-select>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="cancellationReasonControl"
+                                 [options]="deletionReasons"
+                                 tooltipResourceName="ships-register.filters-cancellation-reason-helper"
+                                 label="{{ 'ships-register.filters-cancellation-reason' | tlTranslate }}">
+                </tl-autocomplete>
+            </div>
+
+            <!-- Одобрен за улов на квотирана риба, удостворение по закона за храните, сдружение -->
+            <div fxLayout="row" fxFlexFill fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="allowedForQuotaFishControl"
+                                 [options]="quotaFishes"
+                                 tooltipResourceName="ships-register.filters-allowed-quota-fish-helper"
+                                 label="{{ 'ships-register.filters-allowed-quota-fish' | tlTranslate }}">
+                </tl-autocomplete>
+                <tl-date-range fxFlex="25"
+                               formControlName="foodLawLicenceDateControl"
+                               tooltipResourceName="ships-register.filters-has-food-law-licence-helper"
+                               label="{{ 'ships-register.filters-has-food-law-licence' | tlTranslate }}">
+                </tl-date-range>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="shipAssociationControl"
+                                 [options]="shipAssociations"
+                                 tooltipResourceName="ships-register.filters-is-in-ship-association-helper"
+                                 label="{{ 'ships-register.filters-is-in-ship-association' | tlTranslate }}">
+                </tl-autocomplete>
+                <div fxFlex="25"></div>
+            </div>
+        </div>
+    </search-panel>
+
+    <!-- Table -->
+    <tl-card>
+        <tl-card-content>
+            <tl-data-table [showAddButton]="canAddRecords"
+                           [showInactiveRecords]="false"
+                           [hasExcelExport]="true"
+                           (addButtonClicked)="openChooseApplicationForRegisterDialog()">
+                <div *ngIf="canAddThirdPartyShipRecords" datatable-add-buttons fxLayout="row" fxLayoutGap="1em">
+                    <button mat-raised-button
+                            color="primary"
+                            (click)="addThirdPartyShip()">
+                        <tl-icon icon="fa-plus-circle"
+                                 class="warn-color">
+                        </tl-icon>
+                        {{ 'ships-register.add-third-party-ship' | tlTranslate }}
+                    </button>
+                </div>
+
+                <data-column propertyName="cfr"
+                             [flexRate]="0.3"
+                             columnName="{{ 'ships-register.cfr' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="name"
+                             [flexRate]="0.3"
+                             columnName="{{ 'ships-register.ship-name' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="externalMark"
+                             [flexRate]="0.3"
+                             columnName="{{ 'ships-register.external-marking' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="owners"
+                             [flexRate]="0.3"
+                             [isSortable]="false"
+                             columnName="{{ 'ships-register.ship-owner' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="lastChangeDate"
+                             [flexRate]="0.4"
+                             dataType="date"
+                             columnName="{{ 'ships-register.last-change-date' | tlTranslate }}">
+                </data-column>
+                <data-template-column propertyName="LastChangeStatus"
+                                      [flexRate]="0.4"
+                                      columnName="{{ 'ships-register.last-change-status' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.3em">
+                            <tl-icon *ngIf="row.data.eventType === eventTypesEnum.RET || row.data.eventType === eventTypesEnum.DES || row.data.eventType === eventTypesEnum.EXP; else inFleet"
+                                     icon="highlight_off"
+                                     iconClass="error-color">
+                            </tl-icon>
+
+                            <ng-template #inFleet>
+                                <tl-icon icon="done_outline"
+                                         iconClass="accent-color">
+                                </tl-icon>
+                            </ng-template>
+
+                            <div>{{ row.data.lastChangeStatus }}</div>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+
+                <data-template-column [flexRate]="0.5" [cellClass]="'justify-center'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button icon="visibility"
+                                            (buttonClicked)="editShip(row.data, true)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'ships-register.view-ship' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="canEditRecords"
+                                            icon="edit"
+                                            (buttonClicked)="editShip(row.data, false)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'ships-register.edit-ship' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+</div>

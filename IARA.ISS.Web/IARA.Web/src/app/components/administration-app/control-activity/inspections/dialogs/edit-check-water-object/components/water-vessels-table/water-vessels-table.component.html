@@ -1,0 +1,50 @@
+﻿<tl-card>
+    <tl-card-title>{{ 'inspections.check-water-object-vessels' | tlTranslate }}</tl-card-title>
+    <tl-card-content>
+        <tl-data-table fxFlexFill
+                       [rows]="vessels"
+                       [isRemote]="false"
+                       [isSoftDeletable]="false"
+                       [showInactiveRecords]="false"
+                       [showAddButton]="!isDisabled"
+                       (addButtonClicked)="addEditEntry()"
+                       (activeRecordChanged)="addEditEntry($event)">
+            <data-column [flexRate]="0.4"
+                         propertyName="number"
+                         columnName="{{ 'inspections.water-vessel-number' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.3"
+                         propertyName="color"
+                         columnName="{{ 'inspections.water-vessel-color' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.3"
+                         propertyName="totalCount"
+                         columnName="{{ 'inspections.water-vessel-total-count' | tlTranslate }}">
+            </data-column>
+
+            <data-template-column [flexRate]="0.5">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                        <tl-icon-button icon="visibility"
+                                        (buttonClicked)="addEditEntry(row.data, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'inspections.patrol-vehicle-table-view' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="!isDisabled"
+                                        icon="edit"
+                                        (buttonClicked)="addEditEntry(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'inspections.patrol-vehicle-table-edit' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="!isDisabled"
+                                        icon="delete"
+                                        (buttonClicked)="deleteEntry(row)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'inspections.patrol-vehicle-table-delete' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </tl-card-content>
+</tl-card>

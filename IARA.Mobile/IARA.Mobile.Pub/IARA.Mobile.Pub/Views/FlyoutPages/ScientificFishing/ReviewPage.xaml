@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:converters="clr-namespace:IARA.Mobile.Shared.Converters;assembly=IARA.Mobile.Shared"
+        xmlns:dtos="clr-namespace:IARA.Mobile.Pub.Application.DTObjects.ScientificFishing.LocalDb;assembly=IARA.Mobile.Pub.Application"
+        xmlns:models="clr-namespace:IARA.Mobile.Pub.ViewModels.Models"
+        xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages.ScientificFishing"
+        x:DataType="viewModels:ReviewViewModel"
+        x:TypeArguments="viewModels:ReviewViewModel"
+        x:Class="IARA.Mobile.Pub.Views.FlyoutPages.ScientificFishing.ReviewPage"
+        x:Name="page"
+        PageInfo="{rt:Translate PageInfo, Group=ScientificFishingReview}"
+        Title="{rt:Translate Title, Group=ScientificFishingReview}"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <ContentPage.Resources>
+        <converters:StringNotEmptyConverter x:Key="StringNotEmpty" />
+    </ContentPage.Resources>
+    <tl:TLScrollView>
+        <StackLayout>
+            <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Size=100, Color=White}" Text="{rt:Translate GeneralInfo, Group=ScientificFishingReview}">
+                <StackLayout Margin="5">
+                    <tl:TLWrapLayout Stretch="True">
+                        <tl:TLEntry WidthRequest="150"
+                                Title="{rt:Translate RequestNumber, Group=ScientificFishingReview}"
+                                Text="{Binding Edit.Id}"
+                                Keyboard="Numeric"
+                                HorizontalOptions="FillAndExpand"
+                                IsEnabled="False" />
+                        <tl:TLDatePicker WidthRequest="150"
+                                Title="{rt:Translate RequestDate, Group=ScientificFishingReview}"
+                                Date="{Binding Edit.RequestDate}"
+                                HorizontalOptions="FillAndExpand"
+                                IsEnabled="False" />
+                    </tl:TLWrapLayout>
+                    <tl:TLRangeDatePicker Title="{rt:Translate RequestValidPeriod, Group=ScientificFishingReview}"
+                            StartDate="{Binding Edit.ValidFrom}"
+                            EndDate="{Binding Edit.ValidTo}"
+                            HorizontalOptions="FillAndExpand"
+                            IsEnabled="False" />
+                    <Label Text="{rt:Translate Reason, Group=ScientificFishingReview}" Margin="5,0" />
+                    <StackLayout BindableLayout.ItemsSource="{Binding PermitReasons}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <tl:TLCheckView x:DataType="models:CheckNomenclatureModel"
+                                        Text="{Binding DisplayName}"
+                                        IsChecked="{Binding IsChecked}"
+                                        IsEnabled="False" />
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                    <tl:TLSwitchView IsToggled="{Binding Edit.IsAllowedDuringMatingSeason}"
+                            Text="{rt:Translate PermitForFishingDuringReproductivePeroid, Group=ScientificFishingReview}"
+                            IsEnabled="False" />
+                </StackLayout>
+            </sv:SectionView>
+            <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.User}, Size=100, Color=White}" Text="{rt:Translate PermitRequester, Group=ScientificFishingReview}">
+                <StackLayout Margin="5">
+                    <tl:TLWrapLayout Stretch="True">
+                        <tl:TLEntry WidthRequest="150"
+                                Text="{Binding Edit.RequesterFirstName}"
+                                Title="{rt:Translate Name, Group=Common}"
+                                IsEnabled="False" />
+                        <tl:TLEntry WidthRequest="150"
+                                Text="{Binding Edit.RequesterMiddleName}"
+                                Title="{rt:Translate MiddleName, Group=Common}"
+                                IsEnabled="False" />
+                        <tl:TLEntry WidthRequest="150"
+                                Text="{Binding Edit.RequesterLastName}"
+                                Title="{rt:Translate LastName, Group=Common}"
+                                IsEnabled="False" />
+                        <tl:TLEntry WidthRequest="150"
+                                Text="{Binding Edit.RequesterEgn}"
+                                Title="{rt:Translate EGN, Group=Common}"
+                                IsEnabled="False" />
+                    </tl:TLWrapLayout>
+                    <tl:TLWrapLayout Stretch="True">
+                        <tl:TLEntry WidthRequest="300"
+                                Text="{Binding Edit.RequesterScientificOrganizationName}"
+                                Title="{rt:Translate ScienceOrganization, Group=ScientificFishingReview}"
+                                IsEnabled="False" />
+                        <tl:TLEntry WidthRequest="300"
+                                Text="{Binding Edit.RequesterPosition}"
+                                Title="{rt:Translate ScienceOrganizationPosition, Group=ScientificFishingReview}"
+                                IsEnabled="False" />
+                    </tl:TLWrapLayout>
+                </StackLayout>
+            </sv:SectionView>
+            <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Users}, Size=100, Color=White}" Text="{rt:Translate PermitHolder, Group=ScientificFishingReview}">
+                <StackLayout Margin="5" BindableLayout.ItemsSource="{Binding Edit.Holders}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Frame x:DataType="dtos:SFHolderDto" Padding="5">
+                                <StackLayout>
+                                    <Label Text="{Binding Name}" FontAttributes="Bold" />
+                                    <tl:TLRichLabel>
+                                        <Span Text="{rt:Translate Permit, Group=ScientificFishingReview}" />
+                                        <Span Text=": " />
+                                        <Span Text="{Binding Id}" FontAttributes="Bold" />
+                                    </tl:TLRichLabel>
+                                    <tl:TLRichLabel>
+                                        <Span Text="{rt:Translate Position, Group=ScientificFishingReview}" />
+                                        <Span Text=": " />
+                                        <Span Text="{Binding ScientificPosition}" FontAttributes="Bold" />
+                                    </tl:TLRichLabel>
+                                </StackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
+            </sv:SectionView>
+            <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.UserGear}, Size=100, Color=White}" Text="{rt:Translate ResearchData, Group=ScientificFishingReview}">
+                <StackLayout Margin="5">
+                    <tl:TLRangeDatePicker Title="{rt:Translate ResearchPeriod, Group=ScientificFishingReview}"
+                            StartDate="{Binding Edit.ResearchPeriodFrom}"
+                            EndDate="{Binding Edit.ResearchPeriodTo}"
+                            IsEnabled="False" />
+                    <tl:TLEntry Title="{rt:Translate WaterArea, Group=ScientificFishingReview}"
+                            Text="{Binding Edit.ResearchWaterArea}"
+                            IsEnabled="False" />
+                    <tl:TLEditor Title="{rt:Translate ResearchGoals, Group=ScientificFishingReview}"
+                            Text="{Binding Edit.ResearchGoalsDescription}"
+                            IsEnabled="False" />
+                </StackLayout>
+            </sv:SectionView>
+            <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Fish}, Size=100, Color=White}" Text="{rt:Translate TypeAquaticOrganismsEligibleForCatch, Group=ScientificFishingReview}">
+                <StackLayout Margin="5">
+                    <tl:TLEditor Title="{rt:Translate Types, Group=ScientificFishingReview}"
+                            Text="{Binding Edit.FishTypesDescription}"
+                            IsEnabled="False" />
+                    <tl:TLEditor Title="{rt:Translate TypesApp4ZBR, Group=ScientificFishingReview}"
+                            Text="{Binding Edit.FishTypesApp4ZBRDesc}"
+                            IsEnabled="False" />
+                    <tl:TLEditor Title="{rt:Translate TypesCrayFish, Group=ScientificFishingReview}"
+                            Text="{Binding Edit.FishTypesCrayFish}"
+                            IsEnabled="False" />
+                </StackLayout>
+            </sv:SectionView>
+            <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Gear}, Size=100, Color=White}" Text="{rt:Translate Gear, Group=ScientificFishingReview}">
+                <StackLayout Margin="5">
+                    <tl:TLEditor Title="{rt:Translate Gear, Group=ScientificFishingReview}"
+                            Text="{Binding Edit.FishingGearDescription}"
+                            IsEnabled="False" />
+                </StackLayout>
+            </sv:SectionView>
+            <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Ship}, Size=100, Color=White}" Text="{rt:Translate Ship, Group=ScientificFishingReview}">
+                <StackLayout Margin="5">
+                    <tl:TLSwitchView IsToggled="{Binding Edit.IsAllowedDuringMatingSeason}"
+                            Text="{rt:Translate ShipInRegister, Group=ScientificFishingReview}"
+                            IsEnabled="False" />
+                    <tl:TLEntry Title="{rt:Translate ShipName, Group=ScientificFishingReview}"
+                            Text="{Binding Edit.ShipName}"
+                            IsEnabled="False" />
+                    <tl:TLEntry Title="{rt:Translate ExternalMarking, Group=ScientificFishingReview}"
+                            Text="{Binding Edit.ShipExternalMark}"
+                            IsEnabled="False" />
+                    <tl:TLEntry Title="{rt:Translate CaptainName, Group=ScientificFishingReview}"
+                            Text="{Binding Edit.ShipCaptainName}"
+                            IsEnabled="False" />
+                </StackLayout>
+            </sv:SectionView>
+            <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.UserTie}, Size=100, Color=White}" Text="{rt:Translate Coordination, Group=ScientificFishingReview}">
+                <StackLayout Margin="5">
+                    <tl:TLEntry Title="{rt:Translate CoordinationComittee, Group=ScientificFishingReview}"
+                            Text="{Binding Edit.CoordinationCommittee}"
+                            IsEnabled="False" />
+                    <tl:TLEntry Title="{rt:Translate CoordinationLetterNumber, Group=ScientificFishingReview}"
+                            Text="{Binding Edit.CoordinationLetterNo}"
+                            IsEnabled="False" />
+                    <tl:TLEntry Title="{rt:Translate CoordinationDate, Group=ScientificFishingReview}"
+                            Text="{Binding Edit.CoordinationDate}"
+                            IsEnabled="False" />
+                </StackLayout>
+            </sv:SectionView>
+        </StackLayout>
+    </tl:TLScrollView>
+</sv:BasePage>

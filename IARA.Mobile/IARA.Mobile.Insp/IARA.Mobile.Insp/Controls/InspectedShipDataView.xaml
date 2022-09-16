@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<StackLayout xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:nom="clr-namespace:IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;assembly=IARA.Mobile.Insp.Application"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        x:Class="IARA.Mobile.Insp.Controls.InspectedShipDataView"
+        x:DataType="vm:InspectedShipDataViewModel"
+        x:Name="view">
+    <lc:CustomCheckBoxWithPicker Title="{Binding ShipInRegisterLabel, Source={Reference view}}"
+            ValidState="{Binding Ship}"
+            CheckValidState="{Binding ShipInRegister}"
+            Command="{Binding ShipSelected}"
+            CheckCommand="{Binding InRegisterChecked}"
+            DisplayValue="ShipDisplayValue"
+            IsVisible="{Binding ShipInRegister.Value}"
+            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}">
+        <DataTemplate>
+            <Grid x:DataType="nom:ShipSelectNomenclatureDto"
+                    RowDefinitions="Auto,Auto,1"
+                    RowSpacing="0">
+                <tl:TLRichLabel Margin="5,5,5,0">
+                    <Span Text="{rt:Translate Name, Group=Common}" />
+                    <Span Text=": " />
+                    <Span Text="{Binding Name}" />
+                    <Span Text="; " />
+                    <Span Text="{rt:Translate CFR, Group=InspectedShipData}" />
+                    <Span Text=": " />
+                    <Span Text="{Binding Code}" />
+                </tl:TLRichLabel>
+                <StackLayout Grid.Row="1"
+                        Orientation="Horizontal"
+                        Margin="5,0,5,10">
+                    <tl:TLRichLabel TextColor="#4B4B4B"
+                            IsVisible="{Binding AssociationName, Converter={StaticResource IsNotNull}}">
+                        <Span Text="(" />
+                        <Span Text="{Binding AssociationName}" />
+                        <Span Text=")" />
+                    </tl:TLRichLabel>
+                    <tl:TLRichLabel>
+                        <Span Text="{rt:Translate ExternalMarkings, Group=InspectedShipData}" />
+                        <Span Text=": " />
+                        <Span Text="{Binding ExtMarkings}" />
+                    </tl:TLRichLabel>
+                </StackLayout>
+                <BoxView Grid.Row="2"
+                        Margin="5,0"
+                        Color="LightGray" />
+            </Grid>
+        </DataTemplate>
+    </lc:CustomCheckBoxWithPicker>
+    <tl:TLCheckView ValidState="{Binding ShipInRegister}"
+            Text="{Binding ShipInRegisterLabel, Source={Reference view}}"
+            Command="{Binding InRegisterChecked}"
+            IsVisible="{Binding ShipInRegister.Value, Converter={StaticResource OppositeBool}}"
+            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+    <tl:TLFlex GrowUnit="100">
+        <tl:TLEntry tl:TLFlex.Grow="2"
+                Title="{rt:Translate Name, Group=Common}"
+                ValidState="{Binding Name}"
+                IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
+                IsVisible="{Binding ShipInRegister.Value, Converter={StaticResource OppositeBool}}" />
+        <tl:TLEntry tl:TLFlex.Grow="2"
+                Title="{rt:Translate ExternalMarkings, Group=InspectedShipData}"
+                ValidState="{Binding ExternalMarkings}"
+                IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
+                IsVisible="{Binding ShipInRegister.Value, Converter={StaticResource OppositeBool}}" />
+        <tl:TLEntry Title="{rt:Translate CFR, Group=InspectedShipData}"
+                ValidState="{Binding CFR}"
+                IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
+                IsVisible="{Binding ShipInRegister.Value, Converter={StaticResource OppositeBool}}" />
+        <tl:TLPicker tl:TLFlex.Grow="2"
+                Title="{rt:Translate Flag, Group=InspectedShipData}"
+                ValidState="{Binding Flag}"
+                ItemsSource="{Binding Flags}">
+            <tl:TLPicker.IsEnabled>
+                <MultiBinding Converter="{StaticResource All}">
+                    <Binding Path="Inspection.ActivityType"
+                            Converter="{StaticResource IsNotReview}" />
+                    <Binding Path="ShipInRegister.Value"
+                            Converter="{StaticResource OppositeBool}" />
+                </MultiBinding>
+            </tl:TLPicker.IsEnabled>
+        </tl:TLPicker>
+        <tl:TLEntry Title="{rt:Translate UVI, Group=InspectedShipData}"
+                ValidState="{Binding UVI}">
+            <tl:TLEntry.IsEnabled>
+                <MultiBinding Converter="{StaticResource All}">
+                    <Binding Path="Inspection.ActivityType"
+                            Converter="{StaticResource IsNotReview}" />
+                    <Binding Path="ShipInRegister.Value"
+                            Converter="{StaticResource OppositeBool}" />
+                </MultiBinding>
+            </tl:TLEntry.IsEnabled>
+        </tl:TLEntry>
+        <tl:TLEntry Title="{rt:Translate CallSign, Group=InspectedShipData}"
+                ValidState="{Binding CallSign}">
+            <tl:TLEntry.IsEnabled>
+                <MultiBinding Converter="{StaticResource All}">
+                    <Binding Path="Inspection.ActivityType"
+                            Converter="{StaticResource IsNotReview}" />
+                    <Binding Path="ShipInRegister.Value"
+                            Converter="{StaticResource OppositeBool}" />
+                </MultiBinding>
+            </tl:TLEntry.IsEnabled>
+        </tl:TLEntry>
+        <tl:TLPicker tl:TLFlex.Grow="2"
+                Title="{rt:Translate ShipType, Group=InspectedShipData}"
+                ValidState="{Binding ShipType}"
+                ItemsSource="{Binding ShipTypes}"
+                DisplayValue="DisplayValue">
+            <tl:TLPicker.IsEnabled>
+                <MultiBinding Converter="{StaticResource All}">
+                    <Binding Path="Inspection.ActivityType"
+                            Converter="{StaticResource IsNotReview}" />
+                    <Binding Path="ShipInRegister.Value"
+                            Converter="{StaticResource OppositeBool}" />
+                </MultiBinding>
+            </tl:TLPicker.IsEnabled>
+        </tl:TLPicker>
+        <tl:TLEntry Title="{rt:Translate MMSI, Group=InspectedShipData}"
+                ValidState="{Binding MMSI}">
+            <tl:TLEntry.IsEnabled>
+                <MultiBinding Converter="{StaticResource All}">
+                    <Binding Path="Inspection.ActivityType"
+                            Converter="{StaticResource IsNotReview}" />
+                    <Binding Path="ShipInRegister.Value"
+                            Converter="{StaticResource OppositeBool}" />
+                </MultiBinding>
+            </tl:TLEntry.IsEnabled>
+        </tl:TLEntry>
+    </tl:TLFlex>
+    <lc:ExtendedLocationView Title="{rt:Translate GPSCoordinates, Group=InspectedShipData}"
+            BindingContext="{Binding Location}"
+            IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}"
+            IsVisible="{Binding BindingContext.CanPickLocation, Source={Reference view}}" />
+</StackLayout>

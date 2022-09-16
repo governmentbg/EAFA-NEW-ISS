@@ -1,0 +1,58 @@
+﻿using System;
+using System.Xml.Serialization;
+
+namespace IARA.Flux.Models
+{
+    [Serializable]
+    [XmlType(Namespace = "urn:un:unece:uncefact:codelist:standard:UNECE:CommunicationMeansTypeCode:D18B")]
+    public enum CommunicationMeansTypeCodeContentType
+    {
+        AA,
+        AB,
+        AC,
+        AD,
+        AE,
+        AF,
+        AG,
+        AH,
+        AI,
+        AJ,
+        AK,
+        AL,
+        AM,
+        AN,
+        AO,
+        AP,
+        AQ,
+        AR,
+        AS,
+        AT,
+        AU,
+        AV,
+        AW,
+        CA,
+        EI,
+        EM,
+        EX,
+        FT,
+        FX,
+        GM,
+        IE,
+        IM,
+        MA,
+        PB,
+        PS,
+        SW,
+        TE,
+        TG,
+        TL,
+        TM,
+        TT,
+        TX,
+        XF,
+        XG,
+        XH,
+        XI,
+        XJ
+    }
+}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6211" systemVersion="14A298i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="225">
+  <dependencies>
+    <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6204"/>
+  </dependencies>
+  <scenes>
+    <scene sceneID="224">
+      <objects>
+        <viewController id="225" sceneMemberID="viewController">
+          <layoutGuides>
+            <viewControllerLayoutGuide type="top" id="222"/>
+            <viewControllerLayoutGuide type="bottom" id="223"/>
+          </layoutGuides>
+          <view key="view" contentMode="scaleToFill" id="226">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <color key="backgroundColor" colorSpace="calibratedRGB" red="1" green="1" blue="1" alpha="1"/>
+            <subviews>
+              <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" id="229" translatesAutoresizingMaskIntoConstraints="NO" image="splash_screen_iara.png" tag="0.0" preservesSuperviewLayoutMargins="YES" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                <preferredSymbolConfiguration key="preferredSymbolConfiguration" weight="ultraLight"/>
+              </imageView>
+            </subviews>
+            <constraints>
+              <constraint id="345" firstItem="229" firstAttribute="bottom" secondItem="223" secondAttribute="top"/>
+              <constraint id="346" firstItem="222" firstAttribute="bottom" secondItem="229" secondAttribute="top" constant="20"/>
+              <constraint id="347" firstItem="229" firstAttribute="trailing" secondItem="226" secondAttribute="trailingMargin" constant="16"/>
+              <constraint id="348" firstAttribute="leadingMargin" secondItem="229" secondAttribute="leading" constant="16"/>
+            </constraints>
+          </view>
+        </viewController>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="227" userLabel="First Responder" sceneMemberID="firstResponder"/>
+      </objects>
+      <point key="canvasLocation" x="-181" y="-383"/>
+    </scene>
+  </scenes>
+  <resources>
+    <image name="iara_logo.png" width="2416" height="567"/>
+  </resources>
+</document>

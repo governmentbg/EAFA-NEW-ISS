@@ -1,0 +1,118 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     validityCheckerGroup
+     [formGroup]="form"
+     class="dialog-padding">
+    <!-- Обща информация -->
+    <tl-expansion-panel title="{{ 'cross-check.basic-information' | tlTranslate }}"
+                        tooltipResourceName="cross-check.basic-information-helper"
+                        [validityChecker]="form">
+        <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-input fxFlex="51"
+                      formControlName="nameControl"
+                      tooltipResourceName="cross-check.name-helper"
+                      label="{{ 'cross-check.name' | tlTranslate }}">
+            </tl-input>
+            <tl-input fxFlex="24.25"
+                      formControlName="codeControl"
+                      tooltipResourceName="cross-check.code-helper"
+                      label="{{ 'cross-check.code' | tlTranslate }}">
+            </tl-input>
+            <tl-select fxFlex="24.25"
+                       tooltipResourceName="cross-check.level-helper"
+                       label="{{ 'cross-check.level' | tlTranslate }}"
+                       formControlName="levelControl"
+                       [options]="levels">
+            </tl-select>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-autocomplete fxFlex="50"
+                             tooltipResourceName="cross-check.group-name-helper"
+                             label="{{ 'cross-check.group-name' | tlTranslate }}"
+                             formControlName="reportGroupControl"
+                             [options]="groupsNames"
+                             [hasSelectedValueFromDropdownValidator]="false">
+            </tl-autocomplete>
+            <tl-select fxFlex="50"
+                       tooltipResourceName="cross-check.has-automatic-execution-helper"
+                       label="{{ 'cross-check.has-automatic-execution' | tlTranslate }}"
+                       formControlName="hasAutomaticExecutionControl"
+                       [options]="autoExecFrequencyCodes">
+            </tl-select>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-input fxFlex="50"
+                      formControlName="executionDataSourceControl"
+                      tooltipResourceName="cross-check.execution-data-source-helper"
+                      label="{{ 'cross-check.execution-data-source' | tlTranslate }}">
+            </tl-input>
+            <tl-input fxFlex="50"
+                      formControlName="executionDataFieldsControl"
+                      tooltipResourceName="cross-check.execution-data-fields-helper"
+                      label="{{ 'cross-check.execution-data-fields' | tlTranslate }}">
+            </tl-input>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-input fxFlex="50"
+                      formControlName="dataSourceCheckControl"
+                      tooltipResourceName="cross-check.data-source-check-helper"
+                      label="{{ 'cross-check.data-source-check' | tlTranslate }}">
+            </tl-input>
+            <tl-input fxFlex="50"
+                      formControlName="dataFieldsCheckControl"
+                      tooltipResourceName="cross-check.data-fields-check-helper"
+                      label="{{ 'cross-check.data-fields-check' | tlTranslate }}">
+            </tl-input>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-input fxFlex="50"
+                      formControlName="checkTableNameControl"
+                      tooltipResourceName="cross-check.check-table-name-helper"
+                      label="{{ 'cross-check.check-table-name' | tlTranslate }}">
+            </tl-input>
+        </div>
+        <div fxLayout="row">
+            <tl-textarea fxFlexFill
+                         formControlName="purposeControl"
+                         tooltipResourceName="cross-check.purpose-helper"
+                         label="{{ 'cross-check.purpose' | tlTranslate }}">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Управление на достъп -->
+    <tl-expansion-panel title="{{ 'cross-check.general-information-report-permission-title' | tlTranslate }}"
+                        tooltipResourceName="cross-check.general-information-report-permission-title-helper"
+                        [validityChecker]="form">
+        <tl-card>
+            <tl-card-content>
+                <div fxLayout="row" fxFlex="100" fxLayoutGap="1em">
+                    <simple-select-table formControlName="usersControl"
+                                         [allRows]="users"
+                                         autocompleteLabel="{{ 'cross-check.access-management-add-user' | tlTranslate }}"
+                                         columnName="{{ 'cross-check.access-management-selected-users' | tlTranslate }}"
+                                         fxFlex="50">
+                    </simple-select-table>
+                    <simple-select-table formControlName="rolesControl"
+                                         [allRows]="roles"
+                                         autocompleteLabel="{{ 'cross-check.access-management-add-role' | tlTranslate }}"
+                                         columnName="{{ 'cross-check.access-management-selected-roles' | tlTranslate }}"
+                                         fxFlex="50">
+                    </simple-select-table>
+                </div>
+            </tl-card-content>
+        </tl-card>
+    </tl-expansion-panel>
+    <!-- Дефиниция -->
+    <tl-expansion-panel title=" {{ 'report-definition.definition-title' | tlTranslate }}"
+                        tooltipResourceName="report-definition.definition-title-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.get('queryControl')!.valid">
+        <mat-error *ngIf="form.controls.queryControl.touched && hasError">
+            * {{ 'validation.required' | tlTranslate }}
+        </mat-error>
+        <report-sql [hasExecuteTable]="true"
+                    formControlName="queryControl"></report-sql>
+    </tl-expansion-panel>
+</div>

@@ -1,0 +1,41 @@
+# Exclude entity models from adding in TFS
+\IARA.EntityModels\Entities\*.cs
+#!IARA.EntityModels\Entities\Administrative\*.cs
+#!IARA.EntityModels\Entities\Application\*.cs
+#!IARA.EntityModels\Entities\Common\*.cs
+#!IARA.EntityModels\Entities\FluxVessel\*.cs
+#!IARA.EntityModels\Entities\HobbyFishing\*.cs
+#!IARA.EntityModels\Entities\Legals\*.cs
+#!IARA.EntityModels\Entities\Nomenclatures\*.cs
+#!IARA.EntityModels\Entities\Poundnets\*.cs
+#!IARA.EntityModels\Entities\QualifiedFishers\*.cs
+#!IARA.EntityModels\Entities\Rcpp\*.cs
+#!IARA.EntityModels\Entities\ScientificFishing\*.cs
+#!IARA.EntityModels\Entities\SystemLogging\*.cs
+#!IARA.EntityModels\Entities\UserManagement\*.cs
+
+
+#Exclude extended entity models from adding in TFS
+\IARA.EntityModels\ExtendedEntities\*.cs
+#!IARA.EntityModels\ExtendedEntities\Administrative\*.cs
+#!IARA.EntityModels\ExtendedEntities\Application\*.cs
+#!IARA.EntityModels\ExtendedEntities\Common\*.cs
+#!IARA.EntityModels\ExtendedEntities\FluxVessel\*.cs
+#!IARA.EntityModels\ExtendedEntities\HobbyFishing\*.cs
+#!IARA.EntityModels\ExtendedEntities\Legals\*.cs
+#!IARA.EntityModels\ExtendedEntities\Nomenclatures\*.cs
+#!IARA.EntityModels\ExtendedEntities\Poundnets\*.cs
+#!IARA.EntityModels\ExtendedEntities\QualifiedFishers\*.cs
+#!IARA.EntityModels\ExtendedEntities\Rcpp\*.cs
+#!IARA.EntityModels\ExtendedEntities\ScientificFishing\*.cs
+#!IARA.EntityModels\ExtendedEntities\SystemLogging\*.cs
+#!IARA.EntityModels\ExtendedEntities\UserManagement\*.cs
+
+#Exclude all node_modules folders
+node_modules
+
+#Exclude all wwwroot folders
+wwwroot
+
+#Exlude all out folders
+out-tst

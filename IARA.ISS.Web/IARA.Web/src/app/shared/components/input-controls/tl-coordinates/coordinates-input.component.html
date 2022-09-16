@@ -1,0 +1,34 @@
+﻿<div role="group" [formGroup]="parts" [attr.aria-labelledby]="_formField?.getLabelId()" class="input-container">
+    <input formControlName="degreesControl"
+           class="input-element"
+           size="2"
+           minlength="1"
+           maxlength="2"
+           aria-label="Degrees"
+           (input)="_handleInput(parts.controls.degreesControl, minutesInput)"
+           (keypress)="onIntegerKeyPress($event)"
+           #degrees>
+    <span>&deg;</span>
+    <input formControlName="minutesControl"
+           class="input-element"
+           size="2"
+           minlength="2"
+           maxlength="2"
+           aria-label="Minutes"
+           (input)="_handleInput(parts.controls.minutesControl, secondsInput)"
+           (keyup.backspace)="autoFocusPrev(parts.controls.minutesControl, degreesInput)"
+           (keypress)="onIntegerKeyPress($event)"
+           #minutes>
+    <span>'</span>
+    <input formControlName="secondsControl"
+           size="6"
+           minlength="1"
+           maxlength="6"
+           class="input-element"
+           aria-label="Seconds"
+           (input)="_handleInput(parts.controls.secondsControl)"
+           (keyup.backspace)="autoFocusPrev(parts.controls.secondsControl, minutesInput)"
+           (keypress)="onFloatKeyPress($event)"
+           #seconds>
+    <span>"</span>
+</div>

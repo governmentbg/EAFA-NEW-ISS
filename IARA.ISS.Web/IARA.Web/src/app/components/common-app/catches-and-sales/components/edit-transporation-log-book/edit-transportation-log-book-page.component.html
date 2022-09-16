@@ -1,0 +1,109 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     validityCheckerGroup
+     [formGroup]="form">
+    <tl-card tooltipResourceName="transportation-page-basic-information-panel-helper" [validityChecker]="form">
+        <tl-card-content fxFlexFill fxLayout="column" fxLayoutGap="1em">
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="33"
+                          formControlName="pageNumberControl"
+                          label="{{ 'catches-and-sales.transportation-page-page-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.transportation-page-page-number-helper"
+                          [readonly]="true">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="vehicleIdentificationControl"
+                          label="{{ 'catches-and-sales.transportation-page-vehicle-identification' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.transportation-page-vehicle-identification-helper">
+                </tl-input>
+                <tl-input *ngIf="!isAdd"
+                          fxFlex="33"
+                          formControlName="statusControl"
+                          label="{{ 'catches-and-sales.transportation-page-status' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.transportation-page-status-helper"
+                          [readonly]="true">
+                </tl-input>
+                <div *ngIf="isAdd" fxFlex="33"></div>
+            </div>
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="33"
+                          formControlName="loadingLocationControl"
+                          label="{{ 'catches-and-sales.transportation-page-loading-location' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.transportation-page-loading-location-helper">
+                </tl-input>
+                <tl-date fxFlex="33"
+                         formControlName="loadingDateControl"
+                         [max]="currentDate"
+                         label="{{ 'catches-and-sales.transportation-page-loading-date' | tlTranslate }}"
+                         tooltipResourceName="catches-and-sales.transportation-page-loading-date-helper">
+                </tl-date>
+                <tl-input fxFlex="33"
+                          formControlName="deliveryLocationControl"
+                          label="{{ 'catches-and-sales.transportation-page-delivery-location' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.transportation-page-delivery-location-helper">
+                </tl-input>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Основна информация -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.transportation-page-basic-information-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.transportation-page-basic-information-panel-helper"
+                        [validityChecker]="form">
+        <div fxFlexFill fxLayout="row" fxLayoutGap="1em">
+            <common-log-book-page-data fxFlexFill
+                                       formControlName="commonLogBookPageDataControl"
+                                       validityChecker
+                                       [logBookType]="logBookType"
+                                       [isReadonly]="true">
+            </common-log-book-page-data>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Получател -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.transportation-page-receiver-person-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.transportation-page-receiver-person-panel-helper"
+                        [validityChecker]="form">
+        <log-book-page-person fxFlexFill
+                              formControlName="receiverPersonControl"
+                              validityChecker
+                              [isIdReadOnly]="!isAdd"
+                              [service]="service"
+                              [readonly]="true">
+        </log-book-page-person>
+    </tl-expansion-panel>
+
+    <!-- Данни за продукти от риболов, обект на превоз -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.transportation-page-products-information-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.transportation-page-products-information-panel-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="noAvailableProducts !== true">
+        <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+            <log-book-page-products fxFlexFill
+                                    formControlName="productsControl"
+                                    validityChecker
+                                    [isReadonly]="viewMode"
+                                    [service]="service"
+                                    [logBookType]="logBookType"
+                                    [showAddButton]="canAddProducts"
+                                    [originProducts]="originPossibleProducts">
+            </log-book-page-products>
+            <mat-error *ngIf="noAvailableProducts">
+                * {{ 'catches-and-sales.transportation-page-products-no-available-products-in-origin-document-error' | tlTranslate }}
+            </mat-error>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.transportation-page-files-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.transportation-page-files-panel-helper"
+                        [validityChecker]="form">
+        <file-uploader-form-array formControlName="filesControl"
+                                  validityChecker
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(service)">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+</div>

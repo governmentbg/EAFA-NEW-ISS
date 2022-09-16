@@ -1,0 +1,20 @@
+﻿<tl-icon-button [mdePopoverTriggerFor]="appPopover"
+                [icon]="icon"
+                [size]="iconSize"
+                [iconClass]="iconClass"
+                [tooltipText]="tooltipText"
+                [type]="iconType"
+                (buttonClicked)="onButtonClicked()"
+                (document:click)="closePopover(true)"
+                (click)="$event.stopPropagation()">
+</tl-icon-button>
+<mde-popover #appPopover="mdePopover"
+             mdePopoverTriggerOn="none"
+             [mdePopoverCloseOnClick]="false"
+             [mdePopoverOverlapTrigger]="false">
+    <mat-card (click)="closePopover(false); $event.stopPropagation()">
+        <mat-card-content>
+            <ng-content></ng-content>
+        </mat-card-content>
+    </mat-card>
+</mde-popover>

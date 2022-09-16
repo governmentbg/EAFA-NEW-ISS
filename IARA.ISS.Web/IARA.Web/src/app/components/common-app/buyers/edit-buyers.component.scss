@@ -1,0 +1,18 @@
+﻿.container {
+    position: sticky;
+}
+
+#change-of-circumstances-panel {
+    background-color: #ffffff;
+    height: 250px;
+    width: 100%;
+    position: sticky;
+    bottom: 0;
+    transform: translateY(24px);
+    z-index: 9999;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 1em;
+    overflow-y: auto;
+    box-shadow: 0px -15px 10px 0px rgba(0, 0, 0, 0.35);
+}

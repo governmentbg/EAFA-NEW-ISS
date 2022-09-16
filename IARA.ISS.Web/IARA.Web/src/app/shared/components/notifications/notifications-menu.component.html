@@ -1,0 +1,23 @@
+﻿<div fxLayout="row" fxLayoutAlign="center center" fxFill>
+    <button mat-button [matMenuTriggerFor]="menu">
+        <tl-icon [size]="3"
+                 icon="notifications"
+                 matBadgeColor="warn"
+                 [matBadgeHidden]="totalUnread==0"
+                 [matBadge]="totalUnread"
+                 matBadgePosition="below after"></tl-icon>
+    </button>
+
+    <mat-menu #menu="matMenu" [overlapTrigger]="false" xPosition="before" [class]="'menu-panel'" style="max-width:500px!important">
+        <ng-template matMenuContent style="max-width:500px!important">
+            <span mat-menu-item *ngIf="totalRecordsCount==0">Няма нотификации</span>
+            <cdk-virtual-scroll-viewport *ngIf="totalRecordsCount>0"
+                                         itemSize="50"
+                                         minBufferPx="200"
+                                         maxBufferPx="400"
+                                         style="height: 200px; width: 400px;">
+                <notification *cdkVirtualFor="let notification of dataSource" [notification]="notification" [notificationsHub]="notificationsHub"></notification>
+            </cdk-virtual-scroll-viewport>
+        </ng-template>
+    </mat-menu>
+</div>

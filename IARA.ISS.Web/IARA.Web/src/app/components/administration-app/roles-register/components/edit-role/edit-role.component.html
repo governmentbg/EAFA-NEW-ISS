@@ -1,0 +1,179 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <!-- Основна информация -->
+    <tl-expansion-panel title="{{ 'roles-register.basic-information' | tlTranslate }}"
+                        tooltipResourceName="roles-register.basic-information-helper">
+        <div fxLayout="row" fxLayoutGap="1em">
+            <tl-input fxFlex="33"
+                      formControlName="codeControl"
+                      label="{{ 'roles-register.edit-code' | tlTranslate }}"
+                      tooltipResourceName="roles-register.edit-code-helper">
+            </tl-input>
+
+            <tl-input fxFlex="33"
+                      formControlName="nameControl"
+                      label="{{ 'roles-register.edit-name' | tlTranslate }}"
+                      tooltipResourceName="roles-register.edit-name-helper">
+            </tl-input>
+
+            <tl-date-range fxFlex="33"
+                           formControlName="validityDateRangeControl"
+                           label="{{ 'roles-register.edit-date-of-validity' | tlTranslate }}"
+                           tooltipResourceName="roles-register.edit-date-of-validity-helper">
+            </tl-date-range>
+        </div>
+
+        <div fxLayout="row">
+            <tl-textarea fxFill
+                         formControlName="descriptionControl"
+                         label="{{ 'roles-register.edit-description' | tlTranslate }}"
+                         tooltipResourceName="roles-register.edit-description-helper">
+            </tl-textarea>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="1em">
+            <tl-checkbox fxFlex="33"
+                         formControlName="hasInternalAccessControl"
+                         label="{{ 'roles-register.role-internal-access' | tlTranslate }}"
+                         tooltipResourceName="roles-register.role-internal-access-helper">
+            </tl-checkbox>
+
+            <tl-checkbox fxFlex="33"
+                         formControlName="hasPublicAccessControl"
+                         label="{{ 'roles-register.role-public-access' | tlTranslate }}"
+                         tooltipResourceName="roles-register.role-public-access-helper">
+            </tl-checkbox>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Права -->
+    <tl-expansion-panel title="{{ 'roles-register.permissions' | tlTranslate }}" fxLayout="column" fxLayoutGap="1em">
+        <div fxLayout="row">
+            <tl-input fxFlex="33"
+                      [formControl]="permissionFilterControl"
+                      label="{{ 'roles-register.search-permission' | tlTranslate }}"
+                      tooltipResourceName="roles-register.search-permission-helper">
+            </tl-input>
+        </div>
+
+        <div *ngIf="form.controls.permissionsGroup" [formGroup]="form.controls.permissionsGroup">
+            <ngx-datatable id="role-permissions-table"
+                           class="material"
+                           [columnMode]="'flex'"
+                           [headerHeight]="50"
+                           [footerHeight]="0"
+                           rowHeight="auto"
+                           [treeFromRelation]="'ParentGroup'"
+                           [treeToRelation]="'Name'"
+                           [rows]="permissionGroups"
+                           (treeAction)="onTreeAction($event)">
+                <ngx-datatable-column name="{{ 'roles-register.permission-group' | tlTranslate }}" [flexGrow]="0.4" [isTreeColumn]="true">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span>{{ row.name }}</span>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="{{ 'roles-register.permission-read-all' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'justify-center'" [sortable]="false">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <tl-checkbox *ngIf="row.readAllPermission"
+                                     [formControl]="form.controls.permissionsGroup.controls[row.readAllPermission.displayName]">
+                        </tl-checkbox>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="{{ 'roles-register.permission-read' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'justify-center'" [sortable]="false">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <tl-checkbox *ngIf="row.readPermission"
+                                     [formControl]="form.controls.permissionsGroup.controls[row.readPermission.displayName]">
+                        </tl-checkbox>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="{{ 'roles-register.permission-add' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'justify-center'" [sortable]="false">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <tl-checkbox *ngIf="row.addPermission"
+                                     [formControl]="form.controls.permissionsGroup.controls[row.addPermission.displayName]">
+                        </tl-checkbox>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="{{ 'roles-register.permission-edit' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'justify-center'" [sortable]="false">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <tl-checkbox *ngIf="row.editPermission"
+                                     [formControl]="form.controls.permissionsGroup.controls[row.editPermission.displayName]">
+                        </tl-checkbox>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="{{ 'roles-register.permission-delete' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'justify-center'" [sortable]="false">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <tl-checkbox *ngIf="row.deletePermission"
+                                     [formControl]="form.controls.permissionsGroup.controls[row.deletePermission.displayName]">
+                        </tl-checkbox>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="{{ 'roles-register.permission-restore' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'justify-center'" [sortable]="false">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <tl-checkbox *ngIf="row.restorePermission"
+                                     [formControl]="form.controls.permissionsGroup.controls[row.restorePermission.displayName]">
+                        </tl-checkbox>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="{{ 'roles-register.permission-other' | tlTranslate }}" [flexGrow]="0.4" [sortable]="false">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div *ngFor="let otherPerm of row.otherPermissions" fxLayout="column" fxLayoutAlign="center start">
+                            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                                <tl-checkbox [formControl]="form.controls.permissionsGroup.controls[otherPerm.displayName]"></tl-checkbox>
+                                <span>{{ otherPerm.description }}</span>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngx-datatable-column>
+            </ngx-datatable>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Потребители -->
+    <tl-expansion-panel title="{{ 'roles-register.users' | tlTranslate }}"
+                        tooltipResourceName="roles-register.users-helper">
+        <tl-data-table #usersTable
+                       [isRemote]="false"
+                       [rows]="tableUsers"
+                       [isSoftDeletable]="true"
+                       [showAddButton]="!readOnly">
+            <data-column propertyName="userId"
+                         [flexRate]="4"
+                         [formGroup]="usersForm"
+                         [options]="users"
+                         dataType="nomenclature"
+                         [getControlErrorLabelText]="getDatesOverlappingErrorText.bind(this)"
+                         columnName="{{ 'roles-register.user' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="accessValidFrom"
+                         [flexRate]="3"
+                         [formGroup]="usersForm"
+                         dataType="date"
+                         [maxValue]="usersForm.controls.accessValidToControl.value"
+                         columnName="{{ 'roles-register.access-valid-from' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="accessValidTo"
+                         [flexRate]="3"
+                         [formGroup]="usersForm"
+                         dataType="date"
+                         [minValue]="usersForm.controls.accessValidFromControl.value"
+                         columnName="{{ 'roles-register.access-valid-to' | tlTranslate }}">
+            </data-column>
+
+            <data-column-inline *ngIf="!readOnly"
+                                [flexRate]="1">
+            </data-column-inline>
+        </tl-data-table>
+    </tl-expansion-panel>
+</div>

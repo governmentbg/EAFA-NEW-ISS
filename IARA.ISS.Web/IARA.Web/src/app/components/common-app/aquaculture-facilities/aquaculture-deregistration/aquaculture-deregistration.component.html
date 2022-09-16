@@ -1,0 +1,105 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     validityCheckerGroup
+     [formGroup]="form"
+     [notifierGroup]="notifier"
+     class="dialog-padding">
+    <!-- Заявител -->
+    <application-submitted-by formControlName="submittedByControl"
+                              notifier
+                              validityChecker
+                              label="{{ 'aquacultures.dereg-requester' | tlTranslate }}"
+                              [isIdReadOnly]="isEditing || isPublicApp"
+                              [hideDocument]="true"
+                              [expectedResults]="expectedResults.submittedBy">
+    </application-submitted-by>
+
+    <!-- Получател -->
+    <application-submitted-for formControlName="submittedForControl"
+                               notifier
+                               validityChecker
+                               relationLabel="{{ 'aquacultures.dereg-requester-role' | tlTranslate }}"
+                               submittedForLabel="{{ 'aquacultures.dereg-receiver' | tlTranslate }}"
+                               [pageCode]="pageCode"
+                               [hideRelation]="showOnlyRegiXData"
+                               [isIdReadOnly]="isEditing"
+                               [submittedByControl]="form.controls.submittedByControl"
+                               [expectedResults]="expectedResults.submittedFor">
+    </application-submitted-for>
+
+    <!-- Данни за заявената услуга -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'aquacultures.dereg-application-data' | tlTranslate }}"
+                        tooltipResourceName="aquacultures.dereg-application-data-helper"
+                        [validityChecker]="form">
+        <!-- Данни за аквакултурното стопанство -->
+        <tl-card tooltipResourceName="aquacultures.dereg-aquaculture-helper"
+                 [validityChecker]="form">
+            <tl-card-title>{{ 'aquacultures.dereg-aquaculture' | tlTranslate }}</tl-card-title>
+            <tl-card-content fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="1em">
+                <div fxLayout="row">
+                    <tl-autocomplete fxFlex="50"
+                                     formControlName="aquacultureControl"
+                                     [options]="aquacultures"
+                                     [templateOptions]="true"
+                                     label="{{ 'aquacultures.dereg-aquaculture-from-register' | tlTranslate }}"
+                                     tooltipResourceName="aquacultures.dereg-aquaculture-from-register-helper">
+                    </tl-autocomplete>
+                </div>
+
+                <div fxLayout="row">
+                    <tl-textarea fxFlex="100"
+                                 formControlName="reasonControl"
+                                 label="{{ 'aquacultures.dereg-reason-description' | tlTranslate }}"
+                                 tooltipResourceName="aquacultures.dereg-reason-description-helper">
+                    </tl-textarea>
+                </div>
+            </tl-card-content>
+        </tl-card>
+    </tl-expansion-panel>
+
+    <!-- Информация за плащане -->
+    <tl-expansion-panel *ngIf="isPaid && !showOnlyRegiXData && paymentInformation !== undefined && paymentInformation !== null"
+                        title="{{ 'aquacultures.dereg-payment-information' | tlTranslate }}"
+                        tooltipResourceName="aquacultures.dereg-payment-information-helper">
+        <payment-information [paymentData]="paymentInformation"></payment-information>
+    </tl-expansion-panel>
+
+    <!-- Информация за начин на връчване -->
+    <tl-expansion-panel *ngIf="hasDelivery && !showOnlyRegiXData"
+                        title="{{ 'aquacultures.dereg-delivery-data' | tlTranslate }}"
+                        tooltipResourceName="aquacultures.dereg-delivery-data-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="hasNoEDeliveryRegistrationError !== true">
+        <delivery-data formControlName="deliveryDataControl"
+                       [pageCode]="pageCode">
+        </delivery-data>
+        <mat-error *ngIf="hasNoEDeliveryRegistrationError">
+            * {{ 'aquacultures.dereg-has-no-e-delivery-registration-error' | tlTranslate }}
+        </mat-error>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'aquacultures.dereg-files' | tlTranslate }}"
+                        tooltipResourceName="aquacultures.dereg-files-helper"
+                        [validityChecker]="form">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)"
+                                  [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                  [refreshFileTypes]="refreshFileTypes">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+
+    <!-- Проверки -->
+    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+                        title="{{ 'aquacultures.dereg-regix-checks-results' | tlTranslate }}"
+                        tooltipResourceName="aquacultures.dereg-regix-checks-results-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-checks-results [regixChecksCollection]="regixChecks"></regix-checks-results>
+        </div>
+    </tl-expansion-panel>
+</div>

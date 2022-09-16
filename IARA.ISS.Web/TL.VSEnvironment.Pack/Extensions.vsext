@@ -1,0 +1,42 @@
+{
+  "description": "TechnoLogica Visual Studio 2019 Development Environment Extensions Pack",
+  "version": "1.0.0.0",
+  "extensions": [
+    {
+      "vsixId": "f4c4712c-ceae-4803-8e52-0e2049d5de9f",
+      "name": "EF Core Power Tools"
+    },
+    {
+      "vsixId": "VS2017.8015c581-31ee-4b02-802a-37dc73a3c7df",
+      "name": "Move Type To File - 2017/19"
+    },
+    {
+      "vsixId": "16a2b8be-df6a-49b4-87c3-d5aeb9478822",
+      "name": "Format All Files"
+    },
+    {
+      "vsixId": "2f4fac85-be4e-4d7a-8c74-93cc4389b427",
+      "name": "Format document on Save"
+    },
+    {
+      "vsixId": "Npgsql.VSIX.07074491-d0c6-4138-9d44-ea3f8920e84b",
+      "name": "Npgsql PostgreSQL Integration"
+    },
+    {
+      "vsixId": "4c82e17d-927e-42d2-8460-b473ac7df316",
+      "name": "CodeMaid"
+    },
+    {
+      "vsixId": "45b6b392-ce2f-409c-a39f-bbf90b34349e",
+      "name": "Typewriter"
+    },
+    {
+      "vsixId": "8682fae0-2ce9-49ea-93b5-edc92c118e2a",
+      "name": "HTML Tools 2019"
+    },
+    {
+      "vsixId": "593771d0-13b5-4de6-a192-165dd6f16144",
+      "name": "Angular Html TS Switcher"
+    }
+  ]
+}

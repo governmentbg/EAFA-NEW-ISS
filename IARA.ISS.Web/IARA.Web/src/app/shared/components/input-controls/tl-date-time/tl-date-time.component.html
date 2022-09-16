@@ -1,0 +1,44 @@
+﻿<mat-form-field style="width: 100%;">
+    <input matInput
+           [ngxMatDatetimePicker]="picker"
+           placeholder="{{ label }}"
+           [formControl]="ngControl.control"
+           [min]="min"
+           [max]="max"
+           [disabled]="disabled"
+           [required]="fieldIsRequired"
+           [readonly]="readonly">
+    <button *ngIf="!disabled && !readonly"
+            mat-icon-button
+            matSuffix
+            class="transparent-btn-icon cursor-pointer"
+            (click)="picker.open(); $event.stopPropagation();"
+            fxLayoutAlign="center center">
+        <mat-icon>today</mat-icon>
+    </button>
+    <tl-help matSuffix [tooltipResource]="tooltipResourceName"></tl-help>
+    <ngx-mat-datetime-picker #picker
+                             [disabled]="disabled || readonly"
+                             [showSpinners]="showSpinners"
+                             [showSeconds]="showSeconds"
+                             [disableMinute]="disableMinute"
+                             [defaultTime]="defaultTime"
+                             [stepHour]="stepHour"
+                             [stepMinute]="stepMinute"
+                             [stepSecond]="stepSecond"
+                             [color]="color"
+                             [enableMeridian]="enableMeridian"
+                             [hideTime]="hideTime">
+    </ngx-mat-datetime-picker>
+
+    <!-- Errors -->
+    <mat-error *ngIf="errors.length > 0">
+        <tl-error [errors]="errors" [useMultipleLines]="multilineError"></tl-error>
+    </mat-error>
+    
+  <!-- Hint -->
+    <mat-hint *ngIf="showHint">
+        {{ hint }}
+    </mat-hint>
+
+</mat-form-field>

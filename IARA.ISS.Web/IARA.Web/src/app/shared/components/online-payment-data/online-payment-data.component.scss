@@ -1,0 +1,27 @@
+﻿.hidden-button {
+    display: none !important;
+}
+
+.shown-button {
+    display: unset !important;
+}
+
+.logo-2em {
+    width: 2em;
+}
+
+.logo-3em {
+    width: 3em;
+}
+
+tl-egovpayment-btn, tl-epayment-btn {
+    button {
+        background-color: #0078c2 !important;
+        color: white !important;
+    }
+}
+
+#egov-bank-payment-btn {
+    background-color: #0078c2 !important;
+    color: white !important;
+}

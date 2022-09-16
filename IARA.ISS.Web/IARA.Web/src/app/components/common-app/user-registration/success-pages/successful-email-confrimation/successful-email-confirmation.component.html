@@ -1,0 +1,54 @@
+﻿<div *ngIf="isAccountActivationSuccessful !== undefined" id="mail-confirm" fxLayout="column">
+    <div id="mail-confirm-form-wrapper" fxLayout="column" fxLayoutAlign="center center">
+        <div id="mail-confirm-form"
+             fxLayout="column"
+             fxLayoutAlign="center center"
+             [@animate]="{value:'*',params:{duration:'300ms',y:'100px'}}">
+            <ng-container *ngIf="isAccountActivationSuccessful === true; else accountActivationFailed">
+                <div class="logo">
+                    <tl-icon type="IC_ICONS" size="80" iconClass="s-96" icon="done_outline" iconColor="green"></tl-icon>
+                </div>
+                <div class="title">{{ 'successful-email-confirmation.successful-email-confirmation-small-title' | tlTranslate }}</div>
+                <div class="subtitle">
+                    <span>{{ 'successful-email-confirmation.you-will-be-navigated-to-login' | tlTranslate }}</span>
+                </div>
+                <div fxLayout="column" fxLayoutGap="1em">
+                    <div fxLayout="row" fxFlex="100" fxLayoutAlign="center center">
+                        <mat-spinner color="accent" diameter="30"></mat-spinner>
+                    </div>
+                    <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
+                        <div fxLayout="row" fxLayoutAlign="center center" fxFlex="100">
+                            <button fxFlex="100"
+                                    mat-raised-button
+                                    color="accent"
+                                    class="multi-line"
+                                    (click)="redirectToLogin()">
+                                {{ 'successful-email-confirmation.redirect-to-login' | tlTranslate }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-template #accountActivationFailed>
+                <div class="logo">
+                    <tl-icon type="IC_ICONS" size="80" icon="highlight_off" iconClass="s-96 error-color"></tl-icon>
+                </div>
+                <div fxLayout="column" fxLayoutGap="1em">
+                    <div class="title">{{ 'successful-email-confirmation.failed-email-confirmation-small-title' | tlTranslate }}</div>
+                    <div class="subtitle">
+                        <span>{{ 'successful-email-confirmation.you-can-ask-for-new-activation-token' | tlTranslate }}</span>
+                    </div>
+                    <div fxLayout="row" fxLayoutAlign="center center" fxFlex="100">
+                        <button fxFlex="100"
+                                mat-raised-button
+                                color="accent"
+                                class="multi-line"
+                                (click)="resendConfirmationEmail()">
+                            {{ 'successful-email-confirmation.resend-confirmation-email' | tlTranslate }}
+                        </button>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="form">
+    <div fxLayout="row">
+        <delivery-data formControlName="basicDeliveryDataControl"
+                       [pageCode]="pageCode">
+        </delivery-data>
+    </div>
+
+    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+        <tl-date fxFlex="50"
+                 formControlName="deliveryDateControl"
+                 label="{{ 'register-delivery.delivery-date' | tlTranslate }}"
+                 tooltipResourceName="register-delivery.delivery-date-helper"
+                 [max]="currentDate">
+        </tl-date>
+
+        <tl-date fxFlex="50"
+                 formControlName="sentDateControl"
+                 label="{{ 'register-delivery.sent-date' | tlTranslate }}"
+                 tooltipResourceName="register-delivery.sent-date-helper"
+                 [max]="currentDate">
+        </tl-date>
+    </div>
+
+    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+        <tl-input fxFlex="50"
+                  formControlName="referenceNumberControl"
+                  label="{{ 'register-delivery.reference-number' | tlTranslate }}"
+                  tooltipResourceName="register-delivery.reference-number-helper">
+        </tl-input>
+
+        <div fxFlex="50"></div>
+    </div>
+</div>

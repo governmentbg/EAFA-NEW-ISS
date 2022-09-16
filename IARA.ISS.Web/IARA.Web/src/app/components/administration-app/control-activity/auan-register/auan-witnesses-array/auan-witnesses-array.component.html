@@ -1,0 +1,17 @@
+﻿<div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+    <div *ngFor="let witnessControl of form.controls; let i = index" fxFlex="100" fxLayout="column" fxLayoutGap="1em">
+        <auan-witness fxLayout="column"
+                      [formControl]="witnessControl"
+                      [orderNum]="i"
+                      (deletePanelBtnClicked)="deleteWitnessControl(witnessControl, i)">
+        </auan-witness>
+        <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">
+            <button *ngIf="!viewMode"
+                    mat-raised-button
+                    color="accent"
+                    (click)="addWitnessControl()">
+                {{ 'auan-register.edit-auan-add-witness' | tlTranslate }}
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,72 @@
+﻿<tl-data-table fxFlexFill
+               [rows]="catches"
+               [isRemote]="false"
+               [isSoftDeletable]="false"
+               [showInactiveRecords]="false"
+               [showAddButton]="!isDisabled"
+               (addButtonClicked)="addEditEntry()"
+               (activeRecordChanged)="addEditEntry($event)">
+    <data-column [flexRate]="0.2"
+                 propertyName="fishTypeId"
+                 [options]="fishes"
+                 dataType="nomenclature"
+                 columnName="{{ 'inspections.market-catch-fish' | tlTranslate }}">
+    </data-column>
+    <data-column *ngIf="hasCatchType"
+                 [flexRate]="0.2"
+                 propertyName="catchTypeId"
+                 [options]="types"
+                 dataType="nomenclature"
+                 columnName="{{ 'inspections.market-catch-type' | tlTranslate }}">
+    </data-column>
+    <data-column [flexRate]="0.1"
+                 propertyName="catchCount"
+                 columnName="{{ 'inspections.market-catch-count' | tlTranslate }}">
+    </data-column>
+    <data-column [flexRate]="0.1"
+                 propertyName="catchQuantity"
+                 columnName="{{ 'inspections.market-catch-quantity' | tlTranslate }}">
+    </data-column>
+    <data-column [flexRate]="0.1"
+                 propertyName="unloadedQuantity"
+                 columnName="{{ 'inspections.market-catch-unloaded-quantity' | tlTranslate }}">
+    </data-column>
+    <data-column [flexRate]="0.1"
+                 propertyName="presentationId"
+                 [options]="presentations"
+                 dataType="nomenclature"
+                 columnName="{{ 'inspections.market-catch-presentation' | tlTranslate }}">
+    </data-column>
+    <data-column [flexRate]="0.1"
+                 propertyName="catchZoneId"
+                 [options]="catchZones"
+                 dataType="nomenclature"
+                 columnName="{{ 'inspections.market-catch-zone' | tlTranslate }}">
+    </data-column>
+
+    <data-template-column [flexRate]="0.2">
+        <ng-template let-row="row"
+                     ngx-datatable-cell-template>
+            <div fxLayout="row wrap"
+                 fxLayoutAlign="end center">
+                <tl-icon-button icon="visibility"
+                                (buttonClicked)="addEditEntry(row.data, true)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'inspections.inspector-table-view' | tlTranslate }}">
+                </tl-icon-button>
+                <tl-icon-button *ngIf="!isDisabled"
+                                icon="edit"
+                                (buttonClicked)="addEditEntry(row.data)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'inspections.inspector-table-edit' | tlTranslate }}">
+                </tl-icon-button>
+                <tl-icon-button *ngIf="!isDisabled && !row.data.isCurrentUser"
+                                icon="delete"
+                                (buttonClicked)="deleteEntry(row)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'inspections.inspector-table-delete' | tlTranslate }}">
+                </tl-icon-button>
+            </div>
+        </ng-template>
+    </data-template-column>
+</tl-data-table>

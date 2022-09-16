@@ -1,0 +1,76 @@
+﻿namespace IARA.FluxModels
+{
+    public static class ListIDTypes
+    {
+        public const string BOOLEAN_TYPE = nameof(BOOLEAN_TYPE);
+        public const string COMM_EQUIP_TYPE = nameof(COMM_EQUIP_TYPE);
+        public const string DECK_MACHINERY_TYPE = nameof(DECK_MACHINERY_TYPE);
+        public const string FISHFINDER_EQUIP_TYPE = nameof(FISHFINDER_EQUIP_TYPE);
+        public const string FLUX_CONTACT_ROLE = nameof(FLUX_CONTACT_ROLE);
+        public const string FLUX_GP_MSG_ID = nameof(FLUX_GP_MSG_ID);
+        public const string FLUX_GP_PARTY = nameof(FLUX_GP_PARTY);
+        public const string FLUX_GP_PURPOSE = nameof(FLUX_GP_PURPOSE);
+        public const string FLUX_GP_RESPONSE = nameof(FLUX_GP_RESPONSE);
+        public const string FLUX_GP_VALIDATION_LEVEL = nameof(FLUX_GP_VALIDATION_LEVEL);
+        public const string FLUX_GP_VALIDATION_TYPE = nameof(FLUX_GP_VALIDATION_TYPE);
+        public const string FLUX_TELECOM_USE = nameof(FLUX_TELECOM_USE);
+        public const string FLUX_UNIT = nameof(FLUX_UNIT);
+        public const string FLUX_VESSEL_ADMIN_TYPE = nameof(FLUX_VESSEL_ADMIN_TYPE);
+        public const string FLUX_VESSEL_CONSTR_TYPE = nameof(FLUX_VESSEL_CONSTR_TYPE);
+        public const string FLUX_VESSEL_DIM_TYPE = nameof(FLUX_VESSEL_DIM_TYPE);
+        public const string FLUX_VESSEL_ENGINE_ROLE = nameof(FLUX_VESSEL_ENGINE_ROLE);
+        public const string FLUX_VESSEL_EQUIP_TYPE = nameof(FLUX_VESSEL_EQUIP_TYPE);
+        public const string FLUX_VESSEL_GEAR_ROLE = nameof(FLUX_VESSEL_GEAR_ROLE);
+        public const string FLUX_VESSEL_HIST_CHAR = nameof(FLUX_VESSEL_HIST_CHAR);
+        public const string FLUX_VESSEL_ID_TYPE = nameof(FLUX_VESSEL_ID_TYPE);
+        public const string FLUX_VESSEL_QUERY_PARAM = nameof(FLUX_VESSEL_QUERY_PARAM);
+        public const string FLUX_VESSEL_QUERY_TYPE = nameof(FLUX_VESSEL_QUERY_TYPE);
+        public const string FLUX_VESSEL_REGSTR_TYPE = nameof(FLUX_VESSEL_REGSTR_TYPE);
+        public const string FLUX_VESSEL_REPORT_TYPE = nameof(FLUX_VESSEL_REPORT_TYPE);
+        public const string FLUX_VESSEL_TECH_TYPE = nameof(FLUX_VESSEL_TECH_TYPE);
+        public const string GEAR_TYPE = nameof(GEAR_TYPE);
+        public const string MEMBER_STATE = nameof(MEMBER_STATE);
+        public const string NAVIG_EQUIP_TYPE = nameof(NAVIG_EQUIP_TYPE);
+        public const string PROPELLER_TYPE = nameof(PROPELLER_TYPE);
+        public const string RFMO = nameof(RFMO);
+        public const string URI = nameof(URI);
+        public const string STORAGE_TYPE = nameof(STORAGE_TYPE);
+        public const string TERRITORY = nameof(TERRITORY);
+        public const string VESSEL_BR_DEF = nameof(VESSEL_BR_DEF);
+        public const string VESSEL_BR_LIMIT = nameof(VESSEL_BR_LIMIT);
+        public const string VESSEL_BR_PARAMETER = nameof(VESSEL_BR_PARAMETER);
+        public const string VESSEL_CATEGORY = nameof(VESSEL_CATEGORY);
+        public const string VESSEL_EVENT = nameof(VESSEL_EVENT);
+        public const string VESSEL_EXPORT_TYPE = nameof(VESSEL_EXPORT_TYPE);
+        public const string VESSEL_HULL_TYPE = nameof(VESSEL_HULL_TYPE);
+        public const string VESSEL_PHOTO_TYPE = nameof(VESSEL_PHOTO_TYPE);
+        public const string VESSEL_PORT = nameof(VESSEL_PORT);
+        public const string VESSEL_PUBLIC_AID_TYPE = nameof(VESSEL_PUBLIC_AID_TYPE);
+        public const string VESSEL_SEGMENT = nameof(VESSEL_SEGMENT);
+        public const string VESSEL_TYPE = nameof(VESSEL_TYPE);
+        public const string VMS_SATELLITE_OPERATOR = nameof(VMS_SATELLITE_OPERATOR);
+        public const string FLUX_SALES_TYPE = nameof(FLUX_SALES_TYPE);
+        public const string TERRITORY_CURR = nameof(TERRITORY_CURR);
+        public const string EU_SALES_ID = nameof(EU_SALES_ID);
+        public const string FLUX_SALES_PARTY_ROLE = nameof(FLUX_SALES_PARTY_ROLE);
+        public const string FLUX_LOCATION_TYPE = nameof(FLUX_LOCATION_TYPE);
+        public const string LOCATION = nameof(LOCATION);
+        public const string EU_TRIP_ID = nameof(EU_TRIP_ID);
+        public const string FAO_SPECIES = nameof(FAO_SPECIES);
+        public const string FAO_AREA = nameof(FAO_AREA);
+        public const string PROD_USAGE = nameof(PROD_USAGE);
+        public const string FISH_FRESHNESS = nameof(FISH_FRESHNESS);
+        public const string FISH_PRESENTATION = nameof(FISH_PRESENTATION);
+        public const string FISH_SIZE_CATEGORY = nameof(FISH_SIZE_CATEGORY);
+        public const string FISH_SIZE_CLASS = nameof(FISH_SIZE_CLASS);
+        public const string FLUX_VEHICLE_ID_TYPE = nameof(FLUX_VEHICLE_ID_TYPE);
+        public const string VEHICLE_TYPE = nameof(VEHICLE_TYPE);
+        public const string FLUX_FA_TYPE = nameof(FLUX_FA_TYPE);
+        public const string AGREEMENT_TYPE = nameof(AGREEMENT_TYPE);
+        public const string FLAP_COASTAL_PARTY = nameof(FLAP_COASTAL_PARTY);
+        public const string FLAP_REQUEST_PURPOSE = nameof(FLAP_REQUEST_PURPOSE);
+        public const string FAR_FISH_CATEGORY = nameof(FAR_FISH_CATEGORY);
+        public const string VESSEL_CREW_TYPE = nameof(VESSEL_CREW_TYPE);
+        public const string FLAP_QUOTA_TYPE = nameof(FLAP_QUOTA_TYPE);
+    }
+}

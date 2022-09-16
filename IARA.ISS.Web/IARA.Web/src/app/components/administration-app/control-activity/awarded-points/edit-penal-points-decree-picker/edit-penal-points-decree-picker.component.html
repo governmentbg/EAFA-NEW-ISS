@@ -1,0 +1,18 @@
+﻿<div fxFlexFill
+     fxLayout="row"
+     fxLayoutAlign="center center"
+     class="dialog-padding">
+
+    <div fxLayout="column" fxLayoutGap="1em" fxFlex="90">
+        <tl-radio-button-group [formControl]="typeControl"
+                               [options]="types">
+        </tl-radio-button-group>
+
+        <tl-autocomplete [formControl]="penalDecreeControl"
+                         [options]="penalDecrees"
+                         [autoMatchTextToOption]="true"
+                         label="{{ 'penal-points.picker-decree-num' | tlTranslate }}"
+                         tooltipResourceName="penal-points.picker-decree-num-date-helper">
+        </tl-autocomplete>
+    </div>
+</div>

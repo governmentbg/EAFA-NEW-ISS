@@ -1,0 +1,31 @@
+﻿<tl-data-table fxFlexFill
+               #regixChecksTable
+               [rows]="regixChecksCollection"
+               [isRemote]="false"
+               [isSoftDeletable]="false"
+               [showAddButton]="false"
+               [showInactiveRecords]="false">
+    <data-column propertyName="webServiceName"
+                 columnName="{{ 'regix-check.web-service-name' | tlTranslate }}"
+                 [flexRate]="0.5"></data-column>
+    <data-column propertyName="requestDateTime"
+                 columnName="{{ 'regix-check.request-date-time' | tlTranslate }}"
+                 dataType="datetime"
+                 [flexRate]="0.3"></data-column>
+    <data-column propertyName="responseStatus"
+                 columnName="{{ 'regix-check.response-status' | tlTranslate }}"
+                 [flexRate]="0.2"></data-column>
+    <data-column propertyName="responseDateTime"
+                 columnName="{{ 'regix-check.response-date-time' | tlTranslate }}"
+                 dataType="datetime"
+                 [flexRate]="0.3"></data-column>
+    <data-column propertyName="errorLevel"
+                 columnName="{{ 'regix-check.error-level' | tlTranslate }}"
+                 [flexRate]="0.2"></data-column>
+    <data-column propertyName="errorDescription"
+                 columnName="{{ 'regix-check.error-description' | tlTranslate }}"
+                 [flexRate]="0.5"></data-column>
+    <data-column propertyName="attempts"
+                 columnName="{{ 'regix-check.attempts' | tlTranslate }}"
+                 [flexRate]="0.2"></data-column>
+</tl-data-table>

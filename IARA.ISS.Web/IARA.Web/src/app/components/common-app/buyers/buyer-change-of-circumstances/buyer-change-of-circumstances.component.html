@@ -1,0 +1,113 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     validityCheckerGroup
+     [formGroup]="form"
+     [notifierGroup]="notifier"
+     class="dialog-padding">
+    <!-- Заявител -->
+    <application-submitted-by formControlName="submittedByControl"
+                              notifier
+                              validityChecker
+                              label="{{ 'buyers-and-sales-centers.coc-requester' | tlTranslate }}"
+                              [isIdReadOnly]="isEditing || isPublicApp"
+                              [hideDocument]="true"
+                              [expectedResults]="expectedResults.submittedBy">
+    </application-submitted-by>
+
+    <!-- Получател -->
+    <application-submitted-for formControlName="submittedForControl"
+                               notifier
+                               validityChecker
+                               relationLabel="{{ 'buyers-and-sales-centers.coc-requester-role' | tlTranslate }}"
+                               submittedForLabel="{{ 'buyers-and-sales-centers.coc-receiver' | tlTranslate }}"
+                               [pageCode]="pageCode"
+                               [hideRelation]="showOnlyRegiXData"
+                               [isIdReadOnly]="isEditing"
+                               [submittedByControl]="form.controls.submittedByControl"
+                               [expectedResults]="expectedResults.submittedFor">
+    </application-submitted-for>
+
+    <!-- Купувач/ЦПП -->
+    <tl-expansion-panel [title]="cocBuyerFscPanelTitle"
+                        tooltipResourceName="buyers-and-sales-centers.coc-buyer-fsc-panel-helper"
+                        [validityChecker]="form">
+        <ng-container *ngIf="isPublicApp; else administrationAppBuyer">
+            <tl-input fxFlex="40"
+                      formControlName="buyerUrorrNumberControl"
+                      tooltipResourceName="buyers-and-sales-centers.coc-buyer-fsc-urorr-number-helper"
+                      label="{{ 'buyers-and-sales-centers.coc-buyer-fsc-urorr-number' | tlTranslate }}">
+            </tl-input>
+
+            <mat-error *ngIf="buyerDoesNotExistError">
+                {{ 'buyer-and-sales-centers.coc-buyer-does-not-exist' | tlTranslate }}
+            </mat-error>
+        </ng-container>
+
+        <ng-template #administrationAppBuyer>
+            <tl-autocomplete fxFlex="50"
+                             formControlName="buyerControl"
+                             [options]="buyers"
+                             [templateOptions]="true"
+                             tooltipResourceName="buyers-and-sales-centers.coc-buyer-fsc-helper"
+                             label="{{ 'buyers-and-sales-centers.coc-buyer-fsc' | tlTranslate }}">
+            </tl-autocomplete>
+        </ng-template>
+    </tl-expansion-panel>
+
+    <!-- Промени -->
+    <tl-expansion-panel title="{{ 'buyers-and-sales-centers.coc-changes-panel' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.coc-changes-panel-helper"
+                        [validityChecker]="form">
+        <change-of-circumstances formControlName="changesControl"
+                                 [pageCode]="pageCode"
+                                 [disableDelete]="showOnlyRegiXData"
+                                 [showOnlyRegiXData]="showOnlyRegiXData">
+        </change-of-circumstances>
+    </tl-expansion-panel>
+
+    <!-- Информация за плащане -->
+    <tl-expansion-panel *ngIf="isPaid && !showOnlyRegiXData && paymentInformation !== undefined && paymentInformation !== null"
+                        title="{{ 'buyers-and-sales-centers.coc-payment-information-panel' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.coc-payment-information-panel-helper">
+        <payment-information [paymentData]="paymentInformation"></payment-information>
+    </tl-expansion-panel>
+
+    <!-- Информация за начин на връчване -->
+    <tl-expansion-panel *ngIf="hasDelivery && !showOnlyRegiXData"
+                        title="{{ 'buyers-and-sales-centers.coc-delivery-data-panel' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.coc-delivery-data-panel-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="hasNoEDeliveryRegistrationError !== true">
+        <delivery-data formControlName="deliveryDataControl"
+                       [pageCode]="pageCode">
+        </delivery-data>
+
+        <mat-error *ngIf="hasNoEDeliveryRegistrationError">
+            * {{ 'buyers-and-sales-centers.coc-has-no-e-delivery-registration-error' | tlTranslate }}
+        </mat-error>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'buyers-and-sales-centers.coc-files-panel' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.coc-files-panel-helper"
+                        [validityChecker]="form">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)"
+                                  [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                  [refreshFileTypes]="refreshFileTypes">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+
+    <!-- Проверки -->
+    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+                        title="{{ 'buyers-and-sales-centers.coc-regix-checks-results-panel' | tlTranslate }}"
+                        tooltipResourceName="buyers-and-sales-centers.coc-regix-checks-results-panel-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-checks-results [regixChecksCollection]="regixChecks"></regix-checks-results>
+        </div>
+    </tl-expansion-panel>
+</div>

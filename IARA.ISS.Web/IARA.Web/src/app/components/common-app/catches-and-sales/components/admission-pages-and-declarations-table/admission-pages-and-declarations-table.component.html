@@ -1,0 +1,83 @@
+﻿<tl-data-table [isRemote]="isRemote"
+               [isSoftDeletable]="isSoftDeletable"
+               [showInactiveRecords]="showInactiveRecords"
+               [showAddButton]="showAddButton"
+               (activeRecordChanged)="editAdmissionLogBookPage($event, !$event.isActive 
+                                                                         || $event.status === logBookPageStatusesEnum.Canceled
+                                                                         || $event.isLogBookFinished
+                                                                         || !canEditAdmissionLogBookRecords)"
+               [rows]="rows">
+    <data-template-column [flexRate]="0.2"
+                          [cellClass]="'justify-center'"
+                          columnName="{{ 'catches-and-sales.admission-page' | tlTranslate }}">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <span>{{ row.data.pageNumber }}</span>
+        </ng-template>
+    </data-template-column>
+
+    <data-template-column propertyName="StatusName"
+                          [flexRate]="0.2"
+                          [cellClass]="'justify-center'"
+                          columnName="{{ 'catches-and-sales.admission-page-status' | tlTranslate }}">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.5em">
+                <span>{{ row.data.statusName }}</span>
+                <tl-icon *ngIf="row.data.status === logBookPageStatusesEnum.Canceled && row.data.cancellationReason && row.data.cancellationReason.length !== 0"
+                         icon="ic-fluent-warning-24-filled"
+                         iconClass="warn-orange-color"
+                         [matTooltip]="row.data.cancellationReason"
+                         matTooltipPosition="above"
+                         matTooltipShowDelay="250"
+                         [size]="icIconSize">
+                </tl-icon>
+            </div>
+        </ng-template>
+    </data-template-column>
+
+    <data-column propertyName="handoverDate"
+                 [flexRate]="0.2"
+                 dataType="date"
+                 columnName="{{ 'catches-and-sales.admission-handover-date' | tlTranslate }}">
+    </data-column>
+
+    <data-column propertyName="storageLocation"
+                 [flexRate]="0.4"
+                 columnName="{{ 'catches-and-sales.admission-storage-location' | tlTranslate }}">
+    </data-column>
+
+    <data-column propertyName="productsInformation"
+                 [flexRate]="0.4"
+                 columnName="{{ 'catches-and-sales.admission-products-information' | tlTranslate }}">
+    </data-column>
+
+    <data-template-column *ngIf="showActionButtons" [flexRate]="0.2" [cellClass]="'justify-center'">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                <tl-icon-button *ngIf="!row.data.isLogBookFinished 
+                                       && canCancelAdmissionLogBookRecords 
+                                       && row.data.status !== logBookPageStatusesEnum.Canceled
+                                       && !row.data.consistsOriginProducts"
+                                icon="ic-cancel"
+                                [size]="icIconSize"
+                                (buttonClicked)="onAnnulAdmissionLogBookPageBtnClicked(row.data)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'catches-and-sales.anull-admission-log-book-page' | tlTranslate }}">
+                </tl-icon-button>
+
+                <tl-icon-button *ngIf="row.data.status !== logBookPageStatusesEnum.Missing"
+                                icon="visibility"
+                                (buttonClicked)="editAdmissionLogBookPage(row.data, true)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'catches-and-sales.view-admission-log-book-page' | tlTranslate }}">
+                </tl-icon-button>
+
+                <tl-icon-button *ngIf="!row.data.isLogBookFinished && canEditAdmissionLogBookRecords && row.data.status !== logBookPageStatusesEnum.Canceled"
+                                icon="edit"
+                                (buttonClicked)="editAdmissionLogBookPage(row.data, false)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'catches-and-sales.edit-admission-log-book-page' | tlTranslate }}">
+                </tl-icon-button>
+            </div>
+        </ng-template>
+    </data-template-column>
+</tl-data-table>

@@ -1,0 +1,58 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using IARA.Common.Resources;
+using IARA.DomainModels.DTOModels.Application;
+using IARA.DomainModels.DTOModels.Files;
+
+namespace IARA.DomainModels.DTOModels.StatisticalForms.Reworks
+{
+    public class StatisticalFormReworkApplicationEditDTO
+    {
+        public int? Id { get; set; }
+
+        [Required(ErrorMessageResourceName = "msgRequired", ErrorMessageResourceType = typeof(ErrorResources))]
+        public int? ApplicationId { get; set; }
+
+        public bool IsOnlineApplication { get; set; }
+
+        [Required(ErrorMessageResourceName = "msgRequired", ErrorMessageResourceType = typeof(ErrorResources))]
+        public ApplicationSubmittedByDTO SubmittedBy { get; set; }
+
+        [StringLength(200, ErrorMessageResourceName = "msgMaxLength", ErrorMessageResourceType = typeof(ErrorResources))]
+        public string SubmittedByWorkPosition { get; set; }
+
+        [Required(ErrorMessageResourceName = "msgRequired", ErrorMessageResourceType = typeof(ErrorResources))]
+        public ApplicationSubmittedForDTO SubmittedFor { get; set; }
+
+        [Required(ErrorMessageResourceName = "msgRequired", ErrorMessageResourceType = typeof(ErrorResources))]
+        public int? Year { get; set; }
+
+        public string VetRegistrationNum { get; set; }
+
+        public string LicenceNum { get; set; }
+
+        public DateTime? LicenceDate { get; set; }
+
+        [Required(ErrorMessageResourceName = "msgRequired", ErrorMessageResourceType = typeof(ErrorResources))]
+        public decimal? TotalRawMaterialTons { get; set; }
+
+        [Required(ErrorMessageResourceName = "msgRequired", ErrorMessageResourceType = typeof(ErrorResources))]
+        public decimal? TotalReworkedProductTons { get; set; }
+
+        [Required(ErrorMessageResourceName = "msgRequired", ErrorMessageResourceType = typeof(ErrorResources))]
+        public decimal? TotalYearTurnover { get; set; }
+
+        [Required(ErrorMessageResourceName = "msgRequired", ErrorMessageResourceType = typeof(ErrorResources))]
+        public List<StatisticalFormReworkRawMaterialDTO> RawMaterial { get; set; }
+
+        [Required(ErrorMessageResourceName = "msgRequired", ErrorMessageResourceType = typeof(ErrorResources))]
+        public List<StatisticalFormReworkProductDTO> Products { get; set; }
+
+        public List<StatisticalFormEmployeeInfoGroupDTO> EmployeeInfoGroups { get; set; }
+
+        public List<StatisticalFormNumStatGroupDTO> NumStatGroups { get; set; }
+
+        public List<FileInfoDTO> Files { get; set; }
+    }
+}

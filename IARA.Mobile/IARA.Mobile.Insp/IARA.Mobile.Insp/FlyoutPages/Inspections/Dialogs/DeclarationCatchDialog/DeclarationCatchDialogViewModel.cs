@@ -1,0 +1,322 @@
+﻿using IARA.Mobile.Application.Attributes;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
+using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Insp.Application.DTObjects.Inspections;
+using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
+using IARA.Mobile.Insp.Application.Interfaces.Transactions;
+using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Controls.ViewModels;
+using IARA.Mobile.Insp.Domain.Enums;
+using IARA.Mobile.Insp.Helpers;
+using IARA.Mobile.Insp.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using TechnoLogica.Xamarin.Commands;
+using TechnoLogica.Xamarin.Helpers;
+using TechnoLogica.Xamarin.ResourceTranslator;
+using TechnoLogica.Xamarin.ViewModels.Base;
+using TechnoLogica.Xamarin.ViewModels.Interfaces;
+using TechnoLogica.Xamarin.ViewModels.Models;
+using Xamarin.Forms;
+
+namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialog
+{
+    public class DeclarationCatchDialogViewModel : TLBaseDialogViewModel<DeclarationCatchModel>
+    {
+        private List<SelectNomenclatureDto> _fishTypes;
+        private List<SelectNomenclatureDto> _catchTypes;
+        private List<SelectNomenclatureDto> _presentations;
+        private List<CatchZoneNomenclatureDto> _catchZones;
+        private List<SelectNomenclatureDto> _declarationTypes;
+        private List<DeclarationLogBookPageDto> _logBookPages;
+        private bool _isDeclarationRegistered;
+        private bool _onlyUnregisteredDeclaration;
+
+        public DeclarationCatchDialogViewModel()
+        {
+            Save = CommandBuilder.CreateFrom(OnSave);
+            DeclarationSelected = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnDeclarationSelected);
+        }
+
+        public DeclarationCatchModel Edit { get; set; }
+        public int? ShipUid { get; set; }
+        public bool HasCatchType { get; set; }
+
+        public DeclarationCatchesViewModel Catches { get; set; }
+        public InspectionPageViewModel Inspection { get; set; }
+        public ViewActivityType DialogType { get; set; }
+
+        public InspectedShipDataViewModel InspectedShip { get; set; }
+
+        [Required]
+        public ValidStateSelect<SelectNomenclatureDto> FishType { get; set; }
+
+        [Required]
+        public ValidStateSelect<SelectNomenclatureDto> CatchType { get; set; }
+
+        [Required]
+        [TLRange(1, 10000, true)]
+        public ValidState CatchQuantity { get; set; }
+
+        [Required]
+        [TLRange(1, 10000, true)]
+        public ValidState UnloadedQuantity { get; set; }
+
+        [Required]
+        public ValidStateSelect<SelectNomenclatureDto> Presentation { get; set; }
+
+        [Required]
+        public ValidStateSelect<CatchZoneNomenclatureDto> CatchZone { get; set; }
+
+        public ValidStateSelect<SelectNomenclatureDto> DeclarationType { get; set; }
+
+        public ValidStateSelect<DeclarationLogBookPageDto> LogBookPage { get; set; }
+
+        public ValidState LogBookPageNum { get; set; }
+
+        public ValidStateDate LogBookPageDate { get; set; }
+
+        public bool IsDeclarationRegistered
+        {
+            get => _isDeclarationRegistered;
+            set => SetProperty(ref _isDeclarationRegistered, value);
+        }
+        public bool OnlyUnregisteredDeclaration
+        {
+            get => _onlyUnregisteredDeclaration;
+            set => SetProperty(ref _onlyUnregisteredDeclaration, value);
+        }
+
+        public List<SelectNomenclatureDto> FishTypes
+        {
+            get => _fishTypes;
+            set => SetProperty(ref _fishTypes, value);
+        }
+        public List<SelectNomenclatureDto> CatchTypes
+        {
+            get => _catchTypes;
+            set => SetProperty(ref _catchTypes, value);
+        }
+        public List<SelectNomenclatureDto> Presentations
+        {
+            get => _presentations;
+            set => SetProperty(ref _presentations, value);
+        }
+        public List<CatchZoneNomenclatureDto> CatchZones
+        {
+            get => _catchZones;
+            set => SetProperty(ref _catchZones, value);
+        }
+        public List<SelectNomenclatureDto> DeclarationTypes
+        {
+            get => _declarationTypes;
+            set => SetProperty(ref _declarationTypes, value);
+        }
+        public List<DeclarationLogBookPageDto> LogBookPages
+        {
+            get => _logBookPages;
+            set => SetProperty(ref _logBookPages, value);
+        }
+
+        public ICommand Save { get; }
+        public ICommand DeclarationSelected { get; }
+
+        public void OnInit()
+        {
+            InspectedShip = new InspectedShipDataViewModel(Inspection, false)
+            {
+                ShipSelected = CommandBuilder.CreateFrom<ShipSelectNomenclatureDto>(OnShipSelected)
+            };
+
+            this.AddValidation(others: new IValidatableViewModel[]
+            {
+                InspectedShip,
+            });
+
+            if (!HasCatchType)
+            {
+                CatchType.HasAsterisk = false;
+                CatchType.Validations.Clear();
+            }
+        }
+
+        public override async Task Initialize(object sender)
+        {
+            INomenclatureTransaction nomTransaction = DependencyService.Resolve<INomenclatureTransaction>();
+
+            List<CatchZoneNomenclatureDto> catchZones = nomTransaction.GetCatchZones();
+
+            FishTypes = nomTransaction.GetFishes();
+            CatchTypes = nomTransaction.GetCatchInspectionTypes();
+            Presentations = nomTransaction.GetFishPresentations();
+            CatchZones = catchZones;
+
+            InspectedShip.Init(nomTransaction.GetCountries(), nomTransaction.GetVesselTypes(), catchZones);
+
+            Array logBooksTypes = Enum.GetValues(typeof(DeclarationLogBookType));
+
+            List<SelectNomenclatureDto> declarationTypes = new List<SelectNomenclatureDto>(logBooksTypes.Length);
+
+            for (int i = 0; i < logBooksTypes.Length; i++)
+            {
+                string logBookType = logBooksTypes.GetValue(i).ToString();
+
+                declarationTypes.Add(new SelectNomenclatureDto
+                {
+                    Id = i + 1,
+                    Code = logBookType,
+                    Name = TranslateExtension.Translator[nameof(GroupResourceEnum.DeclarationCatch) + "/" + logBookType]
+                });
+            }
+
+            DeclarationTypes = declarationTypes;
+
+            if (Edit != null)
+            {
+                CatchQuantity.AssignFrom(Edit.Dto.CatchQuantity);
+                CatchType.AssignFrom(Edit.Dto.CatchTypeId, CatchTypes);
+                CatchZone.AssignFrom(Edit.Dto.CatchZoneId, CatchZones);
+                FishType.AssignFrom(Edit.Dto.FishTypeId, FishTypes);
+                Presentation.AssignFrom(Edit.Dto.PresentationId, Presentations);
+                UnloadedQuantity.AssignFrom(Edit.Dto.UnloadedQuantity);
+
+                if (Edit.Dto.OriginShip != null)
+                {
+                    InspectedShip.OnEdit(Edit.Dto.OriginShip);
+
+                    if (Edit.Dto.OriginShip.IsRegistered == true
+                        && Edit.Dto.OriginShip.ShipId != null)
+                    {
+                        ShipSelectNomenclatureDto ship = nomTransaction.GetShipNomenclature(Edit.Dto.OriginShip.ShipId.Value);
+
+                        if (ship != null)
+                        {
+                            OnShipSelected(ship);
+
+                            DeclarationType.AssignFrom(Edit.Dto.LogBookType?.ToString(), DeclarationTypes);
+
+                            await OnDeclarationSelected(DeclarationType.Value);
+
+                            LogBookPageNum.AssignFrom(Edit.Dto.UnregisteredPageNum);
+                            LogBookPageDate.AssignFrom(Edit.Dto.UnregisteredPageDate ?? DateTime.Now);
+
+                            if (LogBookPages != null && Edit.Dto.LogBookPageId != null)
+                            {
+                                LogBookPage.Value = LogBookPages.Find(f => f.Id == Edit.Dto.LogBookPageId.Value);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        DeclarationType.AssignFrom(Edit.Dto.LogBookType?.ToString(), DeclarationTypes);
+                        LogBookPageNum.AssignFrom(Edit.Dto.UnregisteredPageNum);
+                        LogBookPageDate.AssignFrom(Edit.Dto.UnregisteredPageDate ?? DateTime.Now);
+                    }
+                }
+
+                if (DialogType == ViewActivityType.Edit)
+                {
+                    Validation.Force();
+                }
+            }
+            else
+            {
+                Presentation.Value = Presentations.Find(f => f.Code == "WHL");
+            }
+        }
+
+        private void OnShipSelected(ShipSelectNomenclatureDto ship)
+        {
+            INomenclatureTransaction nomTransaction = DependencyService.Resolve<INomenclatureTransaction>();
+
+            ShipDto chosenShip = nomTransaction.GetShip(ship.Id);
+
+            if (chosenShip == null)
+            {
+                return;
+            }
+
+            ShipUid = ship.Uid;
+
+            InspectedShip.InspectedShip = chosenShip;
+
+            InspectedShip.CallSign.AssignFrom(chosenShip.CallSign);
+            InspectedShip.MMSI.AssignFrom(chosenShip.MMSI);
+            InspectedShip.CFR.AssignFrom(chosenShip.CFR);
+            InspectedShip.ExternalMarkings.AssignFrom(chosenShip.ExtMarkings);
+            InspectedShip.Name.AssignFrom(chosenShip.Name);
+            InspectedShip.UVI.AssignFrom(chosenShip.UVI);
+            InspectedShip.Flag.AssignFrom(chosenShip.FlagId, InspectedShip.Flags);
+            InspectedShip.ShipType.AssignFrom(chosenShip.ShipTypeId, InspectedShip.ShipTypes);
+
+            DeclarationType.Value = null;
+            LogBookPage.Value = null;
+            LogBookPageNum.Value = null;
+            LogBookPageDate.Value = DateTime.Now;
+        }
+
+        private async Task OnDeclarationSelected(SelectNomenclatureDto declarationType)
+        {
+            DeclarationLogBookType type = ParseHelper.ParseEnum<DeclarationLogBookType>(declarationType.Code).Value;
+
+            switch (type)
+            {
+                case DeclarationLogBookType.FirstSaleLogBook:
+                case DeclarationLogBookType.TransportationLogBook:
+                case DeclarationLogBookType.AdmissionLogBook:
+                case DeclarationLogBookType.ShipLogBook:
+                {
+                    if (!ShipUid.HasValue)
+                    {
+                        break;
+                    }
+
+                    IInspectionsTransaction inspTransaction = DependencyService.Resolve<IInspectionsTransaction>();
+
+                    LogBookPages = await inspTransaction.GetDeclarationLogBookPages(type, ShipUid.Value)
+                        ?? new List<DeclarationLogBookPageDto>();
+
+                    OnlyUnregisteredDeclaration = false;
+                    IsDeclarationRegistered = LogBookPages.Count > 0;
+                    break;
+                }
+                case DeclarationLogBookType.Invoice:
+                case DeclarationLogBookType.NNN:
+                {
+                    OnlyUnregisteredDeclaration = true;
+                    IsDeclarationRegistered = false;
+                    break;
+                }
+            }
+        }
+
+        private Task OnSave()
+        {
+            return HideDialog(new DeclarationCatchModel
+            {
+                Type = FishType.Value?.DisplayValue,
+                CatchType = CatchType.Value?.DisplayValue,
+                CatchZone = CatchZone.Value?.Name,
+                Presentation = Presentation.Value?.Name,
+                Dto = new InspectedDeclarationCatchDto
+                {
+                    Id = Edit?.Dto.Id,
+                    CatchQuantity = ParseHelper.ParseDecimal(CatchQuantity.Value),
+                    CatchTypeId = CatchType.Value,
+                    CatchZoneId = CatchZone.Value,
+                    FishTypeId = FishType.Value,
+                    PresentationId = Presentation.Value,
+                    UnloadedQuantity = ParseHelper.ParseDecimal(UnloadedQuantity.Value),
+                    OriginShip = InspectedShip,
+                    LogBookType = ParseHelper.ParseEnum<DeclarationLogBookType>(DeclarationType.Value?.Code),
+                    LogBookPageId = LogBookPage.Value?.Id,
+                    UnregisteredPageNum = LogBookPageNum.Value,
+                    UnregisteredPageDate = LogBookPageDate.Value,
+                }
+            });
+        }
+    }
+}

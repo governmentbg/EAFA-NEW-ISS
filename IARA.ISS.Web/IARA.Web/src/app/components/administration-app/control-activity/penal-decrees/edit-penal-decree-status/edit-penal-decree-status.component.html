@@ -1,0 +1,246 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="form"
+     class="dialog-padding">
+    <!-- Вид статус -->
+    <div fxLayout="row" fxLayoutGap="1em">
+        <tl-select fxFlex="50"
+                   formControlName="statusTypeControl"
+                   [options]="statusTypes"
+                   label="{{ 'penal-decrees.edit-status-type' | tlTranslate }}"
+                   tooltipResourceName="penal-decrees.edit-status-type-helper">
+        </tl-select>
+    </div>
+
+    <!--Детайли-->
+    <div [ngSwitch]="type">
+        <!-- Обжалвано пред първа инстанция -->
+        <div *ngSwitchCase="types.FirstInstAppealed"
+             [formGroup]="form.controls.appealGroup"
+             fxLayout="row"
+             fxLayoutGap="1em">
+            <tl-autocomplete fxFlex="50"
+                             [options]="courts"
+                             formControlName="courtControl"
+                             label="{{ 'penal-decrees.edit-court' | tlTranslate }}"
+                             tooltipResourceName="penal-decrees.edit-court-helper">
+            </tl-autocomplete>
+
+            <tl-date fxFlex="33"
+                     formControlName="appealDateControl"
+                     [max]="today"
+                     label="{{ 'penal-decrees.edit-appeal-date' | tlTranslate }}"
+                     tooltipResourceName="penal-decrees.edit-appeal-date-helper">
+            </tl-date>
+
+            <tl-input fxFlex="33"
+                      formControlName="caseNumControl"
+                      label="{{ 'penal-decrees.edit-case-num' | tlTranslate }}"
+                      tooltipResourceName="penal-decrees.edit-case-num-helper">
+            </tl-input>
+        </div>
+
+        <!-- Обжалвано пред втора инстанция -->
+        <div *ngSwitchCase="types.SecondInstAppealed"
+             [formGroup]="form.controls.appealGroup"
+             fxLayout="row"
+             fxLayoutGap="1em">
+            <tl-autocomplete fxFlex="50"
+                             [options]="courts"
+                             formControlName="courtControl"
+                             label="{{ 'penal-decrees.edit-court' | tlTranslate }}"
+                             tooltipResourceName="penal-decrees.edit-court-helper">
+            </tl-autocomplete>
+
+            <tl-date fxFlex="33"
+                     formControlName="appealDateControl"
+                     [max]="today"
+                     label="{{ 'penal-decrees.edit-appeal-date' | tlTranslate }}"
+                     tooltipResourceName="penal-decrees.edit-appeal-date-helper">
+            </tl-date>
+
+            <tl-input fxFlex="33"
+                      formControlName="caseNumControl"
+                      label="{{ 'penal-decrees.edit-case-num' | tlTranslate }}"
+                      tooltipResourceName="penal-decrees.edit-case-num-helper">
+            </tl-input>
+        </div>
+
+        <!-- Постановено решение на първа инстанция -->
+        <div *ngSwitchCase="types.FirstInstDecision"
+             [formGroup]="form.controls.firstDecisionGroup"
+             fxLayout="row"
+             fxLayoutGap="1em">
+            <tl-autocomplete fxFlex="50"
+                             [options]="courts"
+                             formControlName="courtControl"
+                             label="{{ 'penal-decrees.edit-court' | tlTranslate }}"
+                             tooltipResourceName="penal-decrees.edit-court-helper">
+            </tl-autocomplete>
+
+            <tl-date fxFlex="33"
+                     formControlName="complaintDueDateControl"
+                     [max]="today"
+                     label="{{ 'penal-decrees.edit-complaint-due-date' | tlTranslate }}"
+                     tooltipResourceName="penal-decrees.edit-complaint-due-date-helper">
+            </tl-date>
+
+            <tl-input fxFlex="33"
+                      formControlName="remunerationAmountControl"
+                      label="{{ 'penal-decrees.edit-remuneration-amount' | tlTranslate }}"
+                      tooltipResourceName="penal-decrees.edit-remuneration-amount-helper">
+            </tl-input>
+        </div>
+
+        <!-- Постановено решение на втора инстанция -->
+        <div *ngSwitchCase="types.SecondInstDecision"
+             [formGroup]="form.controls.secondDecisionGroup"
+             fxLayout="row"
+             fxLayoutGap="1em">
+            <tl-autocomplete fxFlex="50"
+                             [options]="courts"
+                             formControlName="courtControl"
+                             label="{{ 'penal-decrees.edit-court' | tlTranslate }}"
+                             tooltipResourceName="penal-decrees.edit-court-helper">
+            </tl-autocomplete>
+
+            <tl-input fxFlex="50"
+                      formControlName="remunerationAmountControl"
+                      label="{{ 'penal-decrees.edit-remuneration-amount' | tlTranslate }}"
+                      tooltipResourceName="penal-decrees.edit-remuneration-amount-helper">
+            </tl-input>
+        </div>
+
+        <!-- Влязло в сила -->
+        <div *ngSwitchCase="types.Valid"
+             [formGroup]="form.controls.intoForceGroup">
+            <tl-date fxFlex="25"
+                     formControlName="enactmentDateControl"
+                     [max]="today"
+                     label="{{ 'penal-decrees.edit-enactment-date-valid' | tlTranslate }}"
+                     tooltipResourceName="penal-decrees.edit-enactment-date-valid-helper">
+            </tl-date>
+        </div>
+
+        <!-- Частично изменено -->
+        <div *ngSwitchCase="types.PartiallyChanged"
+             [formGroup]="form.controls.partiallyChangedGroup">
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-date fxFlex="50"
+                         formControlName="enactmentDateControl"
+                         [max]="today"
+                         label="{{ 'penal-decrees.edit-enactment-date-changed' | tlTranslate }}"
+                         tooltipResourceName="penal-decrees.edit-enactment-date-changed-helper">
+                </tl-date>
+
+                <tl-autocomplete fxFlex="50"
+                                 [options]="courts"
+                                 formControlName="courtControl"
+                                 label="{{ 'penal-decrees.edit-court' | tlTranslate }}"
+                                 tooltipResourceName="penal-decrees.edit-court-helper">
+                </tl-autocomplete>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-textarea fxFlex="100"
+                             formControlName="amendmentsControl"
+                             label="{{ 'penal-decrees.edit-amendments' | tlTranslate }}"
+                             tooltipResourceName="penal-decrees.edit-amendments-helper">
+                </tl-textarea>
+            </div>
+        </div>
+
+        <!-- Изцяло отменено -->
+        <div *ngSwitchCase="types.Withdrawn"
+             [formGroup]="form.controls.withdrawnGroup"
+             fxLayout="row"
+             fxLayoutGap="1em">
+            <tl-autocomplete fxFlex="50"
+                             [options]="authorityTypes"
+                             formControlName="penalAuthorityTypeControl"
+                             label="{{ 'penal-decrees.edit-penal-authority-type' | tlTranslate }}"
+                             tooltipResourceName="penal-decrees.edit-penal-authority-type-helper">
+            </tl-autocomplete>
+
+            <tl-date fxFlex="50"
+                     formControlName="enactmentDateControl"
+                     [max]="today"
+                     label="{{ 'penal-decrees.edit-enactment-date-withdrawn' | tlTranslate }}"
+                     tooltipResourceName="penal-decrees.edit-enactment-date-withdrawn-helper">
+            </tl-date>
+        </div>
+
+        <!-- Предадено за принудително събиране -->
+        <div *ngSwitchCase="types.Compulsory"
+             [formGroup]="form.controls.compulsoryGroup"
+             fxLayout="row"
+             fxLayoutGap="1em">
+            <tl-autocomplete fxFlex="50"
+                             [options]="confiscationInstitutions"
+                             formControlName="confiscationInstitutionControl"
+                             label="{{ 'penal-decrees.edit-confiscation-institution' | tlTranslate }}"
+                             tooltipResourceName="penal-decrees.edit-confiscation-institution-helper">
+            </tl-autocomplete>
+
+            <tl-date fxFlex="50"
+                     formControlName="enactmentDateControl"
+                     [max]="today"
+                     label="{{ 'penal-decrees.edit-enactment-date-compulsory' | tlTranslate }}"
+                     tooltipResourceName="penal-decrees.edit-enactment-date-compulsory-helper">
+            </tl-date>
+        </div>
+
+        <!-- Изплатено частично -->
+        <div *ngSwitchCase="types.PartiallyPaid"
+             [formGroup]="form.controls.partiallyPaidGroup">
+            <tl-input fxFlex="25"
+                      formControlName="paidAmountControl"
+                      label="{{ 'penal-decrees.edit-paid-amount' | tlTranslate }}"
+                      tooltipResourceName="penal-decrees.edit-paid-amount-helper">
+            </tl-input>
+        </div>
+
+        <!-- Разсрочено -->
+        <div *ngSwitchCase="types.Rescheduled">
+            <div fxLayout="column" fxLayoutGap="1em">
+                <tl-card tooltipResourceName="penal-decrees.edit-decree-payment-schedule-helper">
+                    <tl-card-title>{{ 'penal-decrees.edit-decree-payment-schedule' | tlTranslate }}</tl-card-title>
+                    <tl-card-content>
+                            <tl-data-table #paymentScheduleTable
+                                           fxFlex="100"
+                                           [isRemote]="false"
+                                           [isSoftDeletable]="true"
+                                           [showInactiveRecords]="true"
+                                           [showAddButton]="!viewMode"
+                                           [rows]="payments">
+                                <data-column columnName="{{ 'penal-decrees.edit-payment-schedule-date' | tlTranslate }}"
+                                             [flexRate]="0.2"
+                                             [formGroup]="paymentScheduleForm"
+                                             propertyName="date"
+                                             dataType="date">
+                                </data-column>
+
+                                <data-column [flexRate]="0.3"
+                                             propertyName="owedAmount"
+                                             [formGroup]="paymentScheduleForm"
+                                             columnName="{{ 'penal-decrees.edit-payment-schedule-owed-amount' | tlTranslate }}">
+                                </data-column>
+
+                                <data-column [flexRate]="0.3"
+                                             propertyName="paidAmount"
+                                             [formGroup]="paymentScheduleForm"
+                                             columnName="{{ 'penal-decrees.edit-payment-schedule-paid-amount' | tlTranslate }}">
+                                </data-column>
+
+                                <data-column-inline *ngIf="!viewMode"
+                                                    [flexRate]="0.1">
+                                </data-column-inline>
+                            </tl-data-table>
+                    </tl-card-content>
+                </tl-card>
+            </div>
+        </div>
+    </div>
+</div>

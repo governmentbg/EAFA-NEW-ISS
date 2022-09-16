@@ -1,0 +1,247 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     [formGroup]="form"
+     validityCheckerGroup
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     class="dialog-padding">
+    <tl-card tooltipResourceName="poundnet-page.basic-information-title-helper" [validityChecker]="form">
+        <tl-card-title>{{ 'poundnet-page.basic-information-title' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content fxFlexFill fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="33"
+                          formControlName="numberControl"
+                          label="{{ 'poundnet-page.number' | tlTranslate }}"
+                          tooltipResourceName="poundnet-page.number-helper">
+                </tl-input>
+
+                <tl-input fxFlex="33"
+                          formControlName="nameControl"
+                          label="{{ 'poundnet-page.name' | tlTranslate }}"
+                          tooltipResourceName="poundnet-page.name-helper">
+                </tl-input>
+
+                <tl-select fxFlex="33"
+                           formControlName="statusControl"
+                           [options]="statuses"
+                           label="{{ 'poundnet-page.status' | tlTranslate }}"
+                           tooltipResourceName="poundnet-page.status-helper">
+                </tl-select>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-date fxFlex="33"
+                         formControlName="dateControl"
+                         label="{{ 'poundnet-page.registration-date' | tlTranslate }}"
+                         tooltipResourceName="poundnet-page.registration-date-helper">
+                </tl-date>
+
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="seasonalControl"
+                                 [options]="seasonalTypes"
+                                 label="{{ 'poundnet-page.seasonality' | tlTranslate }}"
+                                 tooltipResourceName="poundnet-page.seasonality-helper">
+                </tl-autocomplete>
+
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="categoryControl"
+                                 [options]="categoryTypes"
+                                 label="{{ 'poundnet-page.category' | tlTranslate }}"
+                                 tooltipResourceName="poundnet-page.category-helper">
+                </tl-autocomplete>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="33"
+                          formControlName="permitLicensePriceControl"
+                          label="{{ 'poundnet-page.permit-license-price' | tlTranslate }}"
+                          tooltipResourceName="poundnet-page.permit-license-price-helper">
+                </tl-input>
+                <div fxFlex="99"></div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <tl-card tooltipResourceName="poundnet-page.order-to-determine-poundnet-action-helper" [validityChecker]="form">
+        <tl-card-title>{{ 'poundnet-page.order-to-determine-poundnet-action' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="50"
+                          formControlName="orderNumberControl"
+                          label="{{ 'poundnet-page.number' | tlTranslate }}"
+                          tooltipResourceName="poundnet-page.number-helper">
+                </tl-input>
+
+                <tl-date fxFlex="50"
+                         formControlName="orderDateControl"
+                         label="{{ 'poundnet-page.order-date' | tlTranslate }}"
+                         tooltipResourceName="poundnet-page.order-date-helper">
+                </tl-date>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-textarea fxFlex="50"
+                             formControlName="commentsControl"
+                             label="{{ 'poundnet-page.comments-territorial-unit' | tlTranslate }}"
+                             tooltipResourceName="poundnet-page.comments-territorial-unit-helper"
+                             minRows="5"
+                             maxRows="5">
+                </tl-textarea>
+
+                <tl-textarea fxFlex="50"
+                             formControlName="areaDescriptionControl"
+                             label="{{ 'poundnet-page.area-description' | tlTranslate }}"
+                             tooltipResourceName="poundnet-page.area-description-helper"
+                             minRows="5"
+                             maxRows="5">
+                </tl-textarea>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <tl-card tooltipResourceName="poundnet-page.technical-characteristics-helper" [validityChecker]="form">
+        <tl-card-title>{{ 'poundnet-page.technical-characteristics' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+            <tl-range-input fxFlex="20"
+                            formControlName="placeDepthControl"
+                            label="{{ 'poundnet-page.depth-of-the-place' | tlTranslate }}"
+                            tooltipResourceName="poundnet-page.depth-of-the-place-helper">
+            </tl-range-input>
+
+            <tl-input fxFlex="20"
+                      formControlName="towelLengthControl"
+                      label="{{ 'poundnet-page.towel-length' | tlTranslate }}"
+                      tooltipResourceName="poundnet-page.towel-length-helper">
+            </tl-input>
+
+            <tl-input fxFlex="20"
+                      formControlName="houseWidthControl"
+                      label="{{ 'poundnet-page.house-width' | tlTranslate }}"
+                      tooltipResourceName="poundnet-page.house-width-helper">
+            </tl-input>
+
+            <tl-input fxFlex="20"
+                      formControlName="houseLengthControl"
+                      label="{{ 'poundnet-page.house-length' | tlTranslate }}"
+                      tooltipResourceName="poundnet-page.house-length-helper">
+            </tl-input>
+
+            <tl-input fxFlex="20"
+                      formControlName="bagSizeControl"
+                      label="{{ 'poundnet-page.bag-eye-size' | tlTranslate }}"
+                      tooltipResourceName="poundnet-page.bag-eye-size-helper">
+            </tl-input>
+        </tl-card-content>
+    </tl-card>
+
+    <tl-card tooltipResourceName="poundnet-page.address-info-title-helper" [validityChecker]="form">
+        <tl-card-title>{{ 'poundnet-page.address-info-title' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="districtControl"
+                                 [options]="districts"
+                                 label="{{ 'poundnet-page.district' | tlTranslate }}"
+                                 tooltipResourceName="poundnet-page.district-helper">
+                </tl-autocomplete>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="muncipalityControl"
+                                 [options]="muncipalities"
+                                 label="{{ 'poundnet-page.municipality' | tlTranslate }}"
+                                 tooltipResourceName="poundnet-page.municipality-helper">
+                </tl-autocomplete>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="populatedAreaControl"
+                                 [options]="populatedAreas"
+                                 [templateOptions]="true"
+                                 label="{{ 'poundnet-page.populated-place' | tlTranslate }}"
+                                 tooltipResourceName="poundnet-page.populated-place-helper">
+                </tl-autocomplete>
+
+                <tl-input fxFlex="25"
+                          formControlName="regionControl"
+                          label="{{ 'poundnet-page.region' | tlTranslate }}"
+                          tooltipResourceName="poundnet-page.region-helper">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row">
+                <tl-textarea fxFlexFill
+                             formControlName="placeDescriptionControl"
+                             label="{{ 'poundnet-page.address-location-description' | tlTranslate }}"
+                             tooltipResourceName="poundnet-page.address-location-description-helper"
+                             minRows="2"
+                             maxRows="5">
+                </tl-textarea>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <tl-card tooltipResourceName="poundnet-page.coordinates-helper"
+             [validityChecker]="form"
+             [validityCheckerExtraCondition]="form.errors?.atLeastOneCoordinateNeeded !== true && form.errors?.atLeastOneConnectionPoint !== true">
+        <tl-card-title>{{ 'poundnet-page.coordinates' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content fxFlexFill>
+            <div fxLayout="row" fxLayoutAlign="space-between start center" fxLayoutGap="1em">
+                <div fxLayout="column" fxLayoutGap="1em" fxFlex="50">
+                    <tl-data-table fxFlex="100"
+                                   [isRemote]="false"
+                                   [isSoftDeletable]="false"
+                                   [showInactiveRecords]="false"
+                                   [showAddButton]="!viewMode"
+                                   [rows]="poundnetCoordinates"
+                                   (recordChanged)="coordinatesRecordChanged($event)">
+                        <data-column columnName="{{ 'poundnet-page.point' | tlTranslate:'cap' }}"
+                                     [isRowNumber]="true"
+                                     [flexRate]="0.1"
+                                     [isSortable]="false">
+                        </data-column>
+
+                        <data-column columnName="{{ 'poundnet-page.longitude' | tlTranslate:'cap' }}"
+                                     [formGroup]="coordinatesForm"
+                                     [flexRate]="0.2"
+                                     [isSortable]="false"
+                                     propertyName="longitude"
+                                     dataType="coordinates">
+                        </data-column>
+
+                        <data-column columnName="{{ 'poundnet-page.latitude' | tlTranslate:'cap' }}"
+                                     [formGroup]="coordinatesForm"
+                                     [flexRate]="0.2"
+                                     [isSortable]="false"
+                                     propertyName="latitude"
+                                     dataType="coordinates">
+                        </data-column>
+
+                        <data-column columnName="{{ 'poundnet-page.connection-point' | tlTranslate:'cap' }}"
+                                     [formGroup]="coordinatesForm"
+                                     [flexRate]="0.1"
+                                     [isSortable]="false"
+                                     propertyName="isConnectPoint"
+                                     dataType="boolean">
+                        </data-column>
+
+                        <data-column-inline *ngIf="!viewMode" [flexRate]="0.1"> </data-column-inline>
+                    </tl-data-table>
+                    <mat-error *ngIf="gpsCoordinatesTouched && form.errors?.atLeastOneCoordinateNeeded === true">
+                        * {{ 'poundnet-page.at-least-one-coordinate-needed' | tlTranslate }}
+                    </mat-error>
+                    <mat-error *ngIf="gpsCoordinatesTouched && form.errors?.atLeastOneConnectionPoint === true">
+                        * {{ 'poundnet-page.at-least-one-connection-point' | tlTranslate }}
+                    </mat-error>
+                </div>
+
+                <div fxFlex="50" style="height:400px;max-height:600px">
+                    <tl-map-viewer [mapOptions]="mapOptions"></tl-map-viewer>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

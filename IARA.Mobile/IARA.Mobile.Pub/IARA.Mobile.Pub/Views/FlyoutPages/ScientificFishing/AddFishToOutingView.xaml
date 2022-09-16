@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<tl:TLBaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+                 xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+                 xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages.ScientificFishing"
+                 xmlns:dto="clr-namespace:IARA.Mobile.Pub.Application.DTObjects.ScientificFishing.LocalDb;assembly=IARA.Mobile.Pub.Application"
+                 x:DataType="viewModels:AddFishToOutingViewModel"
+                 x:Class="IARA.Mobile.Pub.Views.FlyoutPages.ScientificFishing.AddFishToOutingView"
+                 x:TypeArguments="viewModels:AddFishToOutingViewModel, dto:SFCatchDto"
+                 BackgroundColor="{StaticResource BackgroundColor}"
+                 TitleBackgroundColor="{StaticResource Primary}"
+                 IconColor="White"
+                 TitleColor="White">
+    <tl:TLScrollView>
+        <StackLayout>
+            <tl:TLPicker Title="{rt:Translate FishType, Group=AddFishToOuting}"
+                         ItemsSource="{Binding FishTypes}"
+                         ValidState="{Binding FishType}"
+                         Margin="5" />
+            <tl:TLFlex GrowUnit="100"
+                       Margin="5">
+                <tl:TLEntry tl:TLFlex.Grow="2"
+                            Title="{rt:Translate Under100, Group=AddFishToOuting}"
+                            ValidState="{Binding CatchUnder100}"
+                            Command="{Binding CatchChanged}"
+                            Keyboard="Numeric" />
+                <tl:TLEntry tl:TLFlex.Grow="3"
+                            Title="{rt:Translate From100To500, Group=AddFishToOuting}"
+                            ValidState="{Binding Catch100To500}"
+                            Command="{Binding CatchChanged}"
+                            Keyboard="Numeric" />
+                <tl:TLEntry tl:TLFlex.Grow="3"
+                            Title="{rt:Translate From500To1000, Group=AddFishToOuting}"
+                            ValidState="{Binding Catch500To1000}"
+                            Command="{Binding CatchChanged}"
+                            Keyboard="Numeric" />
+                <tl:TLEntry tl:TLFlex.Grow="2"
+                            Title="{rt:Translate Above1000, Group=AddFishToOuting}"
+                            ValidState="{Binding CatchOver1000}"
+                            Command="{Binding CatchChanged}"
+                            Keyboard="Numeric" />
+                <tl:TLEntry tl:TLFlex.Grow="2"
+                            Title="{rt:Translate TotalCaught, Group=AddFishToOuting}"
+                            ValidState="{Binding TotalCatch}"
+                            IsEnabled="False" />
+                <tl:TLEntry tl:TLFlex.Grow="2"
+                            Title="{rt:Translate TotalKept, Group=AddFishToOuting}"
+                            ValidState="{Binding TotalKeptCount}"
+                            Keyboard="Numeric" />
+            </tl:TLFlex>
+            <Button Command="{Binding Save}"
+                    Text="{rt:Translate Save, Group=Common}"
+                    Margin="5" />
+        </StackLayout>
+    </tl:TLScrollView>
+</tl:TLBaseDialog>

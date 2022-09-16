@@ -1,0 +1,115 @@
+﻿<div fxLayout="column" fxLayoutGap="5px" fxLayoutAlign="start stretch" fxFill>
+    <search-panel class="full-width" [translateService]="translationService">
+        <div [formGroup]="filterFormGroup" fxFlexFill fxLayout="column" fxLayoutAlign="start start">
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between start">
+                <tl-input fxFlex="33"
+                          formControlName="nameControl"
+                          label="{{ 'qualified-fishers-page.name' | tlTranslate }}"
+                          tooltipResourceName="qualified-fishers-page.name-helper">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="egnControl"
+                          label="{{ 'qualified-fishers-page.egn' | tlTranslate }}"
+                          tooltipResourceName="qualified-fishers-page.egn-helper">
+                </tl-input>
+                <tl-date-range fxFlex="33"
+                               formControlName="dateRangeControl"
+                               label="{{ 'qualified-fishers-page.registration-date' | tlTranslate }} {{ 'qualified-fishers-page.in-range' | tlTranslate }}"
+                               tooltipResourceName="qualified-fishers-page.registration-date-in-range-helper">
+                </tl-date-range>
+            </div>
+
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="start center">
+                <tl-input fxFlex="33"
+                          formControlName="registrationNumControl"
+                          label="{{ 'qualified-fishers-page.registration-number' | tlTranslate }}"
+                          tooltipResourceName="qualified-fishers-page.registration-number">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="diplomaNumberControl"
+                          label="{{ 'qualified-fishers-page.diploma-number' | tlTranslate }}"
+                          tooltipResourceName="qualified-fishers-page.diploma-number">
+                </tl-input>
+            </div>
+
+        </div>
+    </search-panel>
+
+    <tl-card tooltipResourceName="qualified-fishers-page.register-table-card-helper">
+        <tl-card-content>
+            <tl-data-table fxFlexFill
+                           [showAddButton]="canAddRecords"
+                           [showInactiveRecords]="canRestoreRecords"
+                           (addButtonClicked)="addEntry()">
+                <div *ngIf="canAddDiplomaFishermanRecords" datatable-add-buttons fxLayout="row" fxLayoutGap="1em">
+                    <button mat-raised-button
+                            color="primary"
+                            (click)="addThirdCountryDiplomaFishermanEntry()">
+                        <tl-icon icon="fa-plus-circle"></tl-icon>
+                        {{ 'qualified-fishers-page.add-diploma-third-country-fisherman-register-entry' | tlTranslate }}
+                    </button>
+                    <button mat-raised-button
+                            color="accent"
+                            (click)="addDiplomaFishermanEntry()">
+                        <tl-icon icon="fa-plus-circle"></tl-icon>
+                        {{ 'qualified-fishers-page.add-diploma-fisherman-register-entry' | tlTranslate }}
+                    </button>
+                </div>
+
+                <data-column columnName="{{ 'qualified-fishers-page.registration-number' | tlTranslate }}"
+                             propertyName="registrationNum">
+                </data-column>
+                <data-column columnName="{{ 'qualified-fishers-page.registration-date' | tlTranslate }}"
+                             propertyName="registrationDate"
+                             dataType="date">
+                </data-column>
+                <data-column columnName="{{ 'qualified-fishers-page.name' | tlTranslate }}"
+                             propertyName="name">
+                </data-column>
+                <data-column columnName="{{ 'qualified-fishers-page.diploma' | tlTranslate }} / {{'qualified-fishers-page.certificate' | tlTranslate}}"
+                             propertyName="diplomaOrExamLabel">
+                </data-column>
+                <data-column columnName="{{ 'qualified-fishers-page.number' | tlTranslate }}"
+                             propertyName="diplomaOrExamNumber">
+                </data-column>
+
+                <data-template-column [cellClass]="'justify-center min-w-50'" [flexRate]="1">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="end center">
+                            <tl-icon-button *ngIf="row.data.isActive"
+                                            icon="ic-fluent-document-briefcase-24-regular"
+                                            iconClass="accent-color"
+                                            [size]="icIconSize"
+                                            tooltipText="{{ 'qualified-fishers-page.delivery-data' | tlTranslate }}"
+                                            (buttonClicked)="openDeliveryDialog(row.data)">
+                            </tl-icon-button>
+                            <tl-icon-button icon="visibility"
+                                            (buttonClicked)="editEntry(row, true)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'qualified-fishers-page.view-fisher-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.isActive && canEditRecords"
+                                            icon="edit"
+                                            (buttonClicked)="editEntry(row, false)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'qualified-fishers-page.edit-fisher-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.isActive && canDeleteRecords"
+                                            icon="delete"
+                                            (buttonClicked)="deleteFisher(row)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'qualified-fishers-page.delete-fisher-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="!row.isActive && canRestoreRecords"
+                                            icon="restore"
+                                            (buttonClicked)="restoreFisher(row)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'qualified-fishers-page.restore-fisher-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+</div>

@@ -1,0 +1,20 @@
+﻿<tl-expansion-panel [formGroup]="form" title="{{ 'inspections.additional-info' | tlTranslate }}">
+    <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+        <tl-textarea formControlName="violationControl"
+                     [minRows]="3"
+                     label="{{ 'inspections.violation' | tlTranslate }}">
+        </tl-textarea>
+        <ng-content></ng-content>
+        <tl-textarea formControlName="inspectorCommentControl"
+                     [minRows]="3"
+                     label="{{ 'inspections.inspector-comment' | tlTranslate }}">
+        </tl-textarea>
+        <tl-textarea formControlName="actionsTakenControl"
+                     [minRows]="3"
+                     label="{{ 'inspections.actions-taken' | tlTranslate }}">
+        </tl-textarea>
+        <tl-checkbox formControlName="administrativeViolationControl"
+                     label="{{ 'inspections.administrative-violation' | tlTranslate }}">
+        </tl-checkbox>
+    </div>
+</tl-expansion-panel>

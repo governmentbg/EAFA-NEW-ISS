@@ -1,0 +1,55 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     [formGroup]="form"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     class="dialog-padding">
+    <!-- Основна информация -->
+    <tl-card tooltipResourceName="legal-entities-report-page.basic-information-helper">
+        <tl-card-title>{{ 'legal-entities-report-page.basic-information' | tlTranslate }}</tl-card-title>
+        <tl-card-content>
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-input fxFlex="50"
+                          formControlName="eikControl"
+                          label="{{ 'legal-entities-report-page.eik' | tlTranslate }}"
+                          tooltipResourceName="legal-entities-report-page.eik-helper">
+                </tl-input>
+                <tl-input fxFlex="50"
+                          formControlName="nameControl"
+                          label="{{ 'legal-entities-report-page.legal-name' | tlTranslate }}"
+                          tooltipResourceName="legal-entities-report-page.legal-name-helper">
+                </tl-input>
+            </div>
+
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-input fxFlex="33"
+                          formControlName="phoneControl"
+                          label="{{ 'legal-entities-report-page.phone' | tlTranslate }}"
+                          tooltipResourceName="legal-entities-report-page.phone-helper">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="emailControl"
+                          label="{{ 'legal-entities-report-page.email' | tlTranslate }}"
+                          tooltipResourceName="legal-entities-report-page.email-helper">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="postalCodeControl"
+                          label="{{ 'legal-entities-report-page.postal-code' | tlTranslate }}"
+                          tooltipResourceName="legal-entities-report-page.postal-code-helper">
+                </tl-input>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Адрес за кореспонденция -->
+    <single-address-registration formControlName="correspondenceAddressControl"
+                                 [addressType]="addressTypes.CORRESPONDENCE"
+                                 label="{{ 'legal-entities-report-page.correspondence-address' | tlTranslate }}">
+    </single-address-registration>
+
+    <!-- Адрес по съдебна регистрация -->
+    <single-address-registration formControlName="courtRegistrationAddressControl"
+                                 [addressType]="addressTypes.COURT_REGISTRATION"
+                                 label="{{ 'legal-entities-report-page.court-registration-address' | tlTranslate }}">
+    </single-address-registration>
+</div>

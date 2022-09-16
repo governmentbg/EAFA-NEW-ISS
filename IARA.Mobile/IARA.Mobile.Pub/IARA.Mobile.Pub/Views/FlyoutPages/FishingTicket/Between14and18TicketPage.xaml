@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:controls="clr-namespace:IARA.Mobile.Pub.Views.Controls"
+        xmlns:under14Control="clr-namespace:IARA.Mobile.Pub.Views.FlyoutPages.FishingTicket"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Pub.Views.FlyoutPages.FishingTicket.Between14and18TicketPage"
+        x:DataType="viewModels:Between14and18TicketViewModel"
+        x:Name="page"
+        x:TypeArguments="viewModels:Between14and18TicketViewModel"
+        PageInfo="{rt:Translate Between14and18TicketPageInfo, Group=FishingTicket}"
+        Title="{Binding Title}"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <ContentPage.Resources>
+        <xct:IntToBoolConverter x:Key="IntToBool" />
+    </ContentPage.Resources>
+    <tl:TLScrollView>
+        <StackLayout>
+            <tl:TLRichLabel Margin="0,5,0,0"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    IsVisible="{Binding IsActive}">
+                <Span Text="{rt:Translate TicketNumber, Group=FishingTicket}" />
+                <Span Text=": " />
+                <Span Text="{Binding TicketNum}" />
+            </tl:TLRichLabel>
+            <sv:TLButton Command="{Binding DownloadTicket}"
+                    Text="{rt:Translate DownloadAsPdf, Group=FishingTicket}"
+                    Margin="5"
+                    WidthRequest="250"
+                    IsVisible="{Binding IsActive}"
+                    HorizontalOptions="CenterAndExpand"
+                    ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.FilePdf}, Color=White}" />
+            <Label FontSize="20"
+                    HorizontalTextAlignment="Center"
+                    Text="{Binding TicketMetadata.Name}"
+                    Margin="10"
+                    LineBreakMode="WordWrap" />
+            <Frame BackgroundColor="{StaticResource GrayColor}"
+                    Padding="5"
+                    IsVisible="{Binding TicketMetadata.BadgeText, Converter={StaticResource IsNotNull}}"
+                    HorizontalOptions="Center">
+                <Label TextColor="Black"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding TicketMetadata.BadgeText}"
+                        LineBreakMode="WordWrap"
+                        FontSize="18" />
+            </Frame>
+            <Label Text="{rt:Translate Photo, Group=TicketPerson}"
+                    HorizontalOptions="Center"
+                    FontSize="18" />
+            <sv:ImageUploadView Source="{Binding Photo}"
+                    IsEnabled="{Binding IsEditEnabled}"
+                    Size="150"
+                    WidthRequest="150"
+                    HeightRequest="150"
+                    Command="{Binding UploadPhotoCommand}" />
+            <tl:TLWrapLayout Stretch="True" Margin="10">
+                <tl:TLDatePicker Date="{Binding TicketValidFrom}"
+                        IsEnabled="{Binding IsEditEnabled}"
+                        MinimumDate="{Binding Today}"
+                        WidthRequest="150"
+                        Command="{Binding ValidFromChanged}"
+                        Title="{rt:Translate TicketValidFrom, Group=TicketPerson}" />
+                <tl:TLEntry Text="{Binding TicketValidTo}"
+                        IsVisible="{Binding TicketValidTo, Converter={StaticResource IsNotNull}}"
+                        IsEnabled="False"
+                        WidthRequest="150"
+                        Title="{rt:Translate TicketValidTo, Group=TicketPerson}" />
+            </tl:TLWrapLayout>
+            <controls:PersonView IsEditEnabled="{Binding BindingContext.IsEditEnabled, Source={Reference page}}" BindingContext="{Binding Person, Mode=TwoWay}" />
+            <sv:TLGrid ItemsSource="{Binding ChildrenTickets}">
+                <sv:TLGrid.ItemTemplate>
+                    <DataTemplate>
+                        <under14Control:Under14SubTicketView Command="{Binding BindingContext.RemoveUnder14TicketCommand, Source={Reference page}}" />
+                    </DataTemplate>
+                </sv:TLGrid.ItemTemplate>
+            </sv:TLGrid>
+            <StackLayout IsVisible="{Binding IsEditEnabled}">
+                <sv:TLButton Command="{Binding AddUnder14TicketCommand}"
+                        IsVisible="{Binding AllowAdditionalUnder14Tickets}"
+                        Text="{rt:Translate AddUnder14Ticket, Group=FishingTicket}"
+                        Margin="5,10"
+                        ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Ticket}, Color=White}" />
+                <tl:TLCheckView Margin="10,5"
+                        ValidState="{Binding AcceptAgreement}"
+                        Text="{rt:Translate TicketAgreement, Group=TicketPerson}" />
+                <tl:TLCheckView Margin="10,5"
+                        ValidState="{Binding UpdateProfileData}"
+                        Text="{rt:Translate UpdateProfileData, Group=FishingTicket}" />
+                <Label Text="{rt:Translate InvalidFishingTicketData, Group=FishingTicket}"
+                        IsVisible="{Binding HasInvalidData}"
+                        Margin="20,5"
+                        HorizontalTextAlignment="Start"
+                        HorizontalOptions="Start"
+                        TextColor="Red"
+                        LineBreakMode="WordWrap" />
+                <sv:TLButton Command="{Binding OnSaveCommand}"
+                        Text="{Binding OnSaveButtonLabel}"
+                        Margin="5,10"
+                        ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.FloppyDisk}, Color=White}" />
+            </StackLayout>
+        </StackLayout>
+    </tl:TLScrollView>
+</sv:BasePage>

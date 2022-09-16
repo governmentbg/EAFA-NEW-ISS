@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:MainPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:lc="clr-namespace:IARA.Mobile.Pub.Views.Controls"
+             xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+             xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+             xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+             xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages"
+             x:Class="IARA.Mobile.Pub.Views.FlyoutPages.ReportViolationPage"
+             x:DataType="viewModels:ReportViolationViewModel"
+             x:TypeArguments="viewModels:ReportViolationViewModel"
+             PageInfo="{rt:Translate PageInfo, Group=ReportViolation}"
+             Title="{rt:Translate Title, Group=ReportViolation}"
+             BackgroundColor="{StaticResource BackgroundColor}">
+    <lc:TabletFrameView>
+        <tl:TLScrollView>
+            <StackLayout Padding="10">
+                <tl:TLFlex GrowUnit="300">
+                    <tl:TLNativePicker Title="{rt:Translate SignalTypes,
+                                                 Group=ReportViolation}"
+                                       ItemsSource="{Binding SignalTypes}"
+                                       ValidState="{Binding SignalType}"
+                                       DisplayValue="DisplayName" />
+                    <tl:TLEditor Title="{rt:Translate Phone,
+                                                 Group=ReportViolation}"
+                                 ValidState="{Binding Phone}"
+                                 Keyboard="Telephone" />
+                    <tl:TLDateTimePicker Title="{rt:Translate Date, Group=ReportViolation}"
+                                         ValidState="{Binding Date}" />
+                    <tl:TLEditor Title="{rt:Translate Description, Group=ReportViolation}"
+                                 ValidState="{Binding Description}" />
+                    <lc:TLMapLocationPicker Title="{rt:Translate Location, Group=ReportViolation}"
+                                            Location="{Binding Location}" />
+                </tl:TLFlex>
+                <Button Text="{rt:Translate Send, Group=ReportViolation}"
+                        Command="{Binding Send}" />
+            </StackLayout>
+        </tl:TLScrollView>
+    </lc:TabletFrameView>
+</sv:MainPage>

@@ -1,0 +1,11 @@
+﻿<div fxLayout="row" fxLayoutAlign="start stretch">
+    <ul fxFlex="90" style="padding-top: 0px;
+        padding-bottom: 0px;
+        margin-top: 0px;
+        margin-bottom: 0px;">
+        <li *ngFor="let message of model.messages">{{message}}</li>
+    </ul>
+    <div fxFlex="10" (click)="closeSnackbar()" fxLayout="row" fxLayoutAlign="end center" style="cursor:pointer">
+        <mat-icon>clear</mat-icon>
+    </div>
+</div>

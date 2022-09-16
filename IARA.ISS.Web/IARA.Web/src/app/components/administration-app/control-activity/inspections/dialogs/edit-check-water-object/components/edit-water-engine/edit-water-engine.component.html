@@ -1,0 +1,29 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxFlexFill [formGroup]="form" class="dialog-padding">
+    <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+        <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+            <tl-input fxFlex="33" formControlName="modelControl"
+                label="{{ 'inspections.water-engine-model' | tlTranslate }}">
+            </tl-input>
+            <tl-input fxFlex="33" formControlName="powerControl" type="number"
+                label="{{ 'inspections.water-engine-power' | tlTranslate }}">
+            </tl-input>
+            <tl-input fxFlex="33" formControlName="typeControl"
+                label="{{ 'inspections.water-engine-type' | tlTranslate }}">
+            </tl-input>
+        </div>
+        <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+            <tl-input fxFlex="32" formControlName="totalCountControl" type="number"
+                label="{{ 'inspections.water-engine-total-count' | tlTranslate }}">
+            </tl-input>
+            <tl-input fxFlex="66" formControlName="colorControl"
+                label="{{ 'inspections.water-engine-color' | tlTranslate }}">
+            </tl-input>
+        </div>
+        <tl-checkbox formControlName="takenControl" label="{{ 'inspections.water-inspection-taken' | tlTranslate }}">
+        </tl-checkbox>
+        <tl-checkbox formControlName="storedControl" label="{{ 'inspections.water-inspection-stored' | tlTranslate }}">
+        </tl-checkbox>
+        <tl-input formControlName="storageControl" label="{{ 'inspections.storage-location' | tlTranslate }}">
+        </tl-input>
+    </div>
+</div>

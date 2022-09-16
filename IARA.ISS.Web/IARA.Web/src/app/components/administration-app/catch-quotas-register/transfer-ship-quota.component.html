@@ -1,0 +1,48 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="form"
+     class="dialog-padding">
+
+    <tl-card fxFlexFill>
+        <tl-card-title>{{'catch-quotas.quota-data' | tlTranslate}}</tl-card-title>
+        <tl-card-content>
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="60"
+                                 formControlName="fromShipsControl"
+                                 [options]="shipQuotas"
+                                 [autoMatchTextToOption]="true"
+                                 tooltipResourceName="catch-quotas.from-ship-helper"
+                                 label="{{ 'catch-quotas.from-ship' | tlTranslate }}">
+                </tl-autocomplete>
+                <tl-input fxFlex="40"
+                          formControlName="leftoverQuotaSizeControl"
+                          tooltipResourceName="catch-quotas.remaining-quota-helper"
+                          label="{{ 'catch-quotas.remaining-quota' | tlTranslate }}">
+                </tl-input>
+            </div>
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="60"
+                                 formControlName="toShipsControl"
+                                 [options]="shipQuotas"
+                                 [autoMatchTextToOption]="true"
+                                 tooltipResourceName="catch-quotas.to-ship-helper"
+                                 label="{{ 'catch-quotas.to-ship' | tlTranslate }}">
+                </tl-autocomplete>
+                <tl-input fxFlex="40"
+                          formControlName="quotaSizeControl"
+                          tooltipResourceName="catch-quotas.transfer-size-helper"
+                          label="{{ 'catch-quotas.transfer-size' | tlTranslate }}">
+                </tl-input>
+            </div>
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-textarea fxFlexFill
+                             formControlName="quotaChangeBasisControl"
+                             tooltipResourceName="catch-quotas.basis-helper"
+                             label="{{ 'catch-quotas.basis' | tlTranslate }}">
+                </tl-textarea>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

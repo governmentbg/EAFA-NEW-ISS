@@ -1,0 +1,81 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="form"
+     class="dialog-padding">
+    <div *ngIf="!showOnlyRegiXData" fxLayout="row" fxLayoutAlign="space-between center">
+        <div fxFlex="80" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+            <tl-input fxFlex="25"
+                      formControlName="ownedShareControl"
+                      tooltipResourceName="ships-register.owner-owned-share-of-vessel-helper"
+                      label="{{ 'ships-register.owner-owned-share-of-vessel' | tlTranslate }}">
+            </tl-input>
+            <tl-slide-toggle fxFlex="25"
+                             formControlName="isHolderControl"
+                             tooltipResourceName="ships-register.owner-is-holder-helper"
+                             label="{{ 'ships-register.owner-is-holder' | tlTranslate }}">
+            </tl-slide-toggle>
+        </div>
+
+        <div *ngIf="isApplication && !readOnly" fxFlex="20" fxLayout="row" fxLayoutAlign="end center">
+            <button mat-raised-button
+                    color="accent"
+                    (click)="getOwnerFromSubmittedFor()">
+                {{ 'ships-register.owner-from-submitted-for' | tlTranslate }}
+            </button>
+        </div>
+    </div>
+
+    <mat-radio-group *ngIf="!showOnlyRegiXData"
+                     fxLayout="row"
+                     fxLayoutGap="1em"
+                     [value]="ownerType"
+                     [disabled]="readOnly"
+                     (change)="onPersonLegalChange($event)">
+        <mat-radio-button value="Person">{{ 'ships-register.owner-person' | tlTranslate }}</mat-radio-button>
+        <mat-radio-button value="Legal">{{ 'ships-register.owner-legal' | tlTranslate }}</mat-radio-button>
+    </mat-radio-group>
+
+    <div *ngIf="ownerType === 'Person'">
+        <regix-data *ngIf="!isThirdPartyShip"
+                    formControlName="personControl"
+                    [isPerson]="true"
+                    [isIdReadOnly]="isEditing"
+                    [hideDocument]="true"
+                    [expectedResults]="expectedResults.regixPersonData"
+                    checkboxLabel="{{ 'ships-register.has-bulgarian-address-registration' | tlTranslate }}">
+        </regix-data>
+
+        <regix-data *ngIf="isThirdPartyShip"
+                    formControlName="personControl"
+                    [isPerson]="true"
+                    [isForeigner]="true"
+                    [hideDocument]="true">
+        </regix-data>
+    </div>
+
+    <regix-data *ngIf="ownerType === 'Legal'"
+                formControlName="legalControl"
+                [isPerson]="false"
+                [showCustodianOfProperty]="false"
+                [isIdReadOnly]="isEditing"
+                [expectedResults]="expectedResults.regixLegalData"
+                checkboxLabel="{{ 'ships-regster.has-bulgarian-address-registration' | tlTranslate }}">
+    </regix-data>
+
+    <address-registration *ngIf="ownerType === 'Person'"
+                          formControlName="personAddressesControl"
+                          addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                          secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                          checkboxLabel="{{ 'ships-register.permanent-address-same-as-correspondence' | tlTranslate }}"
+                          [expectedResults]="expectedResults.addressRegistrations">
+    </address-registration>
+
+    <address-registration *ngIf="ownerType === 'Legal'"
+                          formControlName="legalAddressesControl"
+                          addressLabel="{{ 'common.company-headquarters-address' | tlTranslate : 'cap' }}"
+                          [addressType]="companyHeadquartersType"
+                          [expectedResults]="expectedResults.addressRegistrations">
+    </address-registration>
+</div>

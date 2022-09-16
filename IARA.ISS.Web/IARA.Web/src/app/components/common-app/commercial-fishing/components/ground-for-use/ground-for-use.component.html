@@ -1,0 +1,20 @@
+﻿<div fxLayout="row"
+     fxFlex="100"
+     fxLayoutGap="1em"
+     [formGroup]="groundForUseForm">
+    <tl-autocomplete fxFlex="33"
+                     formControlName="groundForUseTypeControl"
+                     label="{{ 'ground-for-use.type' | tlTranslate }}"
+                     [options]="groundForUseTypes">
+    </tl-autocomplete>
+    <tl-input fxFlex="20"
+              formControlName="groundForUseNumberControl"
+              label="{{ 'ground-for-use.number' | tlTranslate }}">
+    </tl-input>
+    <date-range-indefinite fxFlex="50"
+                           formControlName="groundForUseValidityRangeControl"
+                           rangeLabel="{{ 'ground-for-use.validity-range' | tlTranslate }}"
+                           dateLabel="{{ 'ground-for-use.valid-from' | tlTranslate }}"
+                           checkboxLabel="{{ 'ground-for-use.is-unlimited' | tlTranslate }}">
+    </date-range-indefinite>
+</div>

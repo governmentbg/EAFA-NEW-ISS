@@ -1,0 +1,71 @@
+﻿import { Observable } from "rxjs";
+import { PageCodeEnum } from "@app/enums/page-code.enum";
+
+import { GridRequestModel } from "@app/models/common/grid-request.model";
+import { GridResultModel } from "@app/models/common/grid-result.model";
+import { CommercialFishingEditDTO } from "@app/models/generated/dtos/CommercialFishingEditDTO";
+import { CommercialFishingPermitRegisterDTO } from "@app/models/generated/dtos/CommercialFishingPermitRegisterDTO";
+import { CommercialFishingRegisterFilters } from "@app/models/generated/filters/CommercialFishingRegisterFilters";
+import { IApplicationsActionsService } from "./application-actions.interface";
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
+import { CommercialFishingApplicationEditDTO } from '@app/models/generated/dtos/CommercialFishingApplicationEditDTO';
+import { SuspensionTypeNomenclatureDTO } from '@app/models/generated/dtos/SuspensionTypeNomenclatureDTO';
+import { SuspensionReasonNomenclatureDTO } from '@app/models/generated/dtos/SuspensionReasonNomenclatureDTO';
+import { PermitNomenclatureDTO } from '@app/models/generated/dtos/PermitNomenclatureDTO';
+import { PermitLicenseForRenewalDTO } from '@app/models/generated/dtos/PermitLicenseForRenewalDTO';
+import { PoundNetNomenclatureDTO } from '@app/models/generated/dtos/PoundNetNomenclatureDTO';
+import { QualifiedFisherNomenclatureDTO } from '@app/models/generated/dtos/QualifiedFisherNomenclatureDTO';
+import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
+import { PermitLicenseTariffCalculationParameters } from '@app/components/common-app/commercial-fishing/models/permit-license-tariff-calculation-parameters.model';
+import { RangeOverlappingLogBooksDTO } from '@app/models/generated/dtos/RangeOverlappingLogBooksDTO';
+import { OverlappingLogBooksParameters } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-parameters.model';
+
+export interface ICommercialFishingService extends IApplicationsActionsService {
+    getAllPermits(request: GridRequestModel<CommercialFishingRegisterFilters>): Observable<GridResultModel<CommercialFishingPermitRegisterDTO>>;
+
+    getRecord(id: number, pageCode: PageCodeEnum): Observable<CommercialFishingEditDTO>;
+    getOverlappedLogBooks(parameters: OverlappingLogBooksParameters[]): Observable<RangeOverlappingLogBooksDTO[]>;
+
+    addPermit(permit: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<number>;
+    addAndDownloadRegister(model: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<boolean>;
+
+    editPermit(permit: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<void>;
+    editAndDownloadRegister(model: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<boolean>;
+
+    downloadRegister(id: number, pageCode: PageCodeEnum): Observable<boolean>;
+    downloadFile(fileId: number, fileName: string): Observable<boolean>;
+
+    deletePermit(id: number, pageCode: PageCodeEnum): Observable<void>;
+    undoDeletePermit(id: number, pageCode: PageCodeEnum): Observable<void>;
+
+    getPermitLicensesForRenewal(permitId: number | undefined, permitNumber: string | undefined, pageCode: PageCodeEnum): Observable<PermitLicenseForRenewalDTO[]>;
+    getPermitLicenseData(permitLicenseId: number): Observable<CommercialFishingApplicationEditDTO>;
+    getPermitLicenseApplicationDataFromPermitId(permitId: number, applicationId: number): Observable<CommercialFishingApplicationEditDTO>;
+    getPermitLicenseApplicationDataFromPermitNumber(permitNumber: string, applicationId: number): Observable<CommercialFishingApplicationEditDTO>;
+
+    addPermitApplicationAndStartPermitLicenseApplication(permit: CommercialFishingApplicationEditDTO): Observable<CommercialFishingApplicationEditDTO>;
+
+    getCommercialFishingPermitTypes(): Observable<NomenclatureDTO<number>[]>;
+    getCommercialFishingPermitLicenseTypes(): Observable<NomenclatureDTO<number>[]>;
+    getQualifiedFishers(): Observable<QualifiedFisherNomenclatureDTO[]>;
+    getWaterTypes(): Observable<NomenclatureDTO<number>[]>;
+    getFishingGearMarkStatuses(): Observable<NomenclatureDTO<number>[]>;
+    getFishingGearPingerStatuses(): Observable<NomenclatureDTO<number>[]>;
+    getHolderGroundForUseTypes(): Observable<NomenclatureDTO<number>[]>;
+    getPoundNets(): Observable<PoundNetNomenclatureDTO[]>;
+    getPorts(): Observable<NomenclatureDTO<number>[]>;
+    getSuspensionTypes(): Observable<SuspensionTypeNomenclatureDTO[]>;
+    getSuspensionReasons(): Observable<SuspensionReasonNomenclatureDTO[]>;
+    getPermitNomenclatures(shipId: number, onlyPoundNet: boolean): Observable<PermitNomenclatureDTO[]>;
+    calculatePermitLicenseAppliedTariffs(tariffCalculationParameters: PermitLicenseTariffCalculationParameters): Observable<PaymentTariffDTO[]>;
+
+    getSimpleAudit(id: number): Observable<SimpleAuditDTO>;
+    getPermitLicenseSimpleAudit(id: number): Observable<SimpleAuditDTO>;
+    getPermitSuspensionAudit(id: number): Observable<SimpleAuditDTO>;
+    getPermitLicenseSuspensionAudit(id: number): Observable<SimpleAuditDTO>;
+    getFishingGearAudit(id: number): Observable<SimpleAuditDTO>;
+    getLogBookAudit(id: number): Observable<SimpleAuditDTO>;
+
+    downloadPermitFluxXml(permit: CommercialFishingEditDTO): Observable<boolean>;
+}

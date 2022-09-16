@@ -1,0 +1,309 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <!-- Филтри -->
+    <search-panel [translateService]="translationService">
+        <div [formGroup]="formGroup" fxFlexFill fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start start">
+            <!-- Номер на стр. от хартиен дневник, тип дневник, номер на дневник, статус на дневник -->
+            <div fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="25"
+                          formControlName="pageNumberControl"
+                          label="{{ 'catches-and-sales.log-book-page-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.log-book-page-number-helper">
+                </tl-input>
+                <tl-select fxFlex="25"
+                           formControlName="logBookTypeControl"
+                           label="{{ 'catches-and-sales.log-book-type' | tlTranslate }}"
+                           tooltipResourceName="catches-and-sales.log-book-type.helper"
+                           [options]="logBookTypes">
+                </tl-select>
+                <tl-input fxFlex="25"
+                          formControlName="logBookNumberControl"
+                          label="{{ 'catches-and-sales.log-book-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.log-book-number-helper">
+                </tl-input>
+                <tl-select fxFlex="25"
+                           formControlName="logBookStatusesControl"
+                           label="{{ 'catches-and-sales.log-book-status-filter' | tlTranslate }}"
+                           tooltipResourceName="catches-and-sales.log-book-status-filter-helper"
+                           [options]="logBookStatuses"
+                           [isMultiple]="true">
+                </tl-select>
+            </div>
+            <!-- Същестуваща страница от онлайн дневник, Диапазон от валидност на дневник, номер на документ (за ПП, приемане, превоз),  кораб -->
+            <div fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="25"
+                          formControlName="onlinePageNumberControl"
+                          label="{{ 'catches-and-sales.log-book-online-page-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.log-book-online-page-number-helper">
+                </tl-input>
+                <tl-date-range fxFlex="25"
+                               formControlName="logBookValidityRangeControl"
+                               label="{{ 'catches-and-sales.log-book-validity-range' | tlTranslate }}"
+                               tooltipResourceName="catches-and-sales.log-book-validity-range-helper">
+                </tl-date-range>
+                <tl-input fxFlex="25"
+                          formControlName="documentNumberControl"
+                          label="{{ 'catches-and-sales.document-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.document-number-helper">
+                </tl-input>
+                <tl-autocomplete *ngIf="canReadShipLogBookRecords && !isPublicApp; else noShipFilter"
+                                 fxFlex="25"
+                                 formControlName="shipControl"
+                                 label="{{ 'catches-and-sales.ship' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.ship-helper"
+                                 [autoMatchTextToOption]="true"
+                                 [options]="ships">
+                </tl-autocomplete>
+               <ng-template #noShipFilter>
+                   <div fxFlex="25"></div>
+               </ng-template>
+            </div>
+            <!-- Аквакултурно стопанство, регистриран купувач, ЕГН/ЕИК на нерегистриран купувач -->
+            <div *ngIf="!isPublicApp" fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-autocomplete *ngIf="canReadFirstSaleLogBookRecords || canReadAdmissionLogBookRecords || canReadTransportationLogBookRecords"
+                                 fxFlex="25"
+                                 formControlName="registeredBuyerControl"
+                                 label="{{ 'catches-and-sales.registered-buyer' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.registered-buyer-helper"
+                                 [autoMatchTextToOption]="true"
+                                 [options]="registeredBuyers">
+                </tl-autocomplete>
+                <tl-input fxFlex="25"
+                          formControlName="ownerEgnEikControl"
+                          label="{{ 'catches-and-sales.owner-egn-eik' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.owner-egn-eik-helper">
+                </tl-input>
+                <tl-autocomplete *ngIf="canReadAquacultureLogBookRecords"
+                                 fxFlex="50"
+                                 formControlName="aquacultureFacilityControl"
+                                 label="{{ 'catches-and-sales.aquaculture-facility' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.aquaculture-facility-helper"
+                                 [autoMatchTextToOption]="true"
+                                 [options]="aquacultureFacilities"
+                                 [templateOptions]="true">
+                </tl-autocomplete>
+            </div>
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <tl-card tooltipResourceName="catches-and-sales.register-table-card-title-helper">
+        <tl-card-content>
+            <tl-data-table #mainTable
+                           [showAddButton]="false"
+                           [showInactiveRecords]="false"
+                           [recordsPerPage]="10"
+                           (activeRecordChanged)="viewLogBook($event)">
+                <row-detail>
+                    <ng-template let-row="row" ngx-datatable-row-detail-template>
+                        <tl-card>
+                            <tl-card-title>
+                                <ng-container [ngSwitch]="row.data.typeCode">
+                                    <span *ngSwitchCase="logBookTypesEnum.Ship">{{ 'catches-and-sales.ship-log-book-pages-card' | tlTranslate }}</span>
+                                    <span *ngSwitchCase="logBookTypesEnum.Admission">{{ 'catches-and-sales.admission-log-book-pages-card' | tlTranslate }}</span>
+                                    <span *ngSwitchCase="logBookTypesEnum.Transportation">{{ 'catches-and-sales.transportaion-log-book-pages-card' | tlTranslate }}</span>
+                                    <span *ngSwitchCase="logBookTypesEnum.FirstSale">{{ 'catches-and-sales.first-sale-log-book-pages-card' | tlTranslate }}</span>
+                                    <span *ngSwitchCase="logBookTypesEnum.Aquaculture">{{ 'catches-and-sales.aquaculture-log-book-pages-card' | tlTranslate }}</span>
+                                </ng-container>
+                            </tl-card-title>
+
+                            <tl-card-content>
+                                <!-- Страници от Корабни риболовни дневници -->
+                                <ship-pages-and-declarations-table *ngIf="row.data.typeCode === logBookTypesEnum.Ship"
+                                                                   [rows]="row.data.shipPages"
+                                                                   [showActionButtons]="true"
+                                                                   [showInactiveRecords]="!isPublicApp"
+                                                                   [pagesPermissions]="pagesPermissions"
+                                                                   [showDocumentActionButtons]="!isPublicApp"
+                                                                   (onActiveRecordChanged)="editShipLogBookPage($event.shipPage, $event.viewMode)"
+                                                                   (onEditAdmissionLogBookPage)="editAdmissionLogBookPage($event, false)"
+                                                                   (onViewAdmissionLogBookPage)="editAdmissionLogBookPage($event, true)"
+                                                                   (onEditTransportationLogBookPage)="editTransportationLogBookPage($event, false)"
+                                                                   (onViewTransportationLogBookPage)="editTransportationLogBookPage($event, true)"
+                                                                   (onEditFirstSaleLogBookPage)="editFirstSaleLogBookPage($event, false)"
+                                                                   (onViewFirstSaleLogBookPage)="editFirstSaleLogBookPage($event, true)"
+                                                                   (onAnnulShipLogBookPage)="onAnnulShipLogBookPageBtnClicked($event)"
+                                                                   (onEditShipLogBookPage)="editShipLogBookPage($event, false)"
+                                                                   (onViewShipLogBookPage)="editShipLogBookPage($event, true)"
+                                                                   (onAddAdmissionDeclaration)="onAddAdmissionDeclarationBtnClicked($event)"
+                                                                   (onAddTransportationDocument)="onAddTransportationDocumentBtnClicked($event)"
+                                                                   (onAddFirstSaleDocument)="onAddFirstSaleDocumentBtnClicked($event)">
+                                </ship-pages-and-declarations-table>
+
+                                <!-- Страници от Дневници за приемане -->
+                                <admission-pages-and-declarations-table *ngIf="row.data.typeCode === logBookTypesEnum.Admission"
+                                                                        [rows]="row.data.admissionPages"
+                                                                        [showActionButtons]="true"
+                                                                        [showInactiveRecords]="!isPublicApp"
+                                                                        [canCancelAdmissionLogBookRecords]="canCancelAdmissionLogBookRecords"
+                                                                        [canEditAdmissionLogBookRecords]="canEditAdmissionLogBookRecords"
+                                                                        (onActiveRecordChanged)="editAdmissionLogBookPage($event.page, $event.viewMode)"
+                                                                        (onEditAdmissionLogBookPage)="editAdmissionLogBookPage($event, false)"
+                                                                        (onViewAdmissionLogBookPage)="editAdmissionLogBookPage($event, true)"
+                                                                        (onAnnulAdmissionLogBookPage)="onAnnulAdmissionLogBookPageBtnClicked($event)">
+                                </admission-pages-and-declarations-table>
+
+                                <!-- Страници от Дневници за превоз -->
+                                <transportation-pages-and-declarations-table *ngIf="row.data.typeCode === logBookTypesEnum.Transportation"
+                                                                             [rows]="row.data.transportationPages"
+                                                                             [showActionButtons]="true"
+                                                                             [showInactiveRecords]="!isPublicApp"
+                                                                             [canCancelTransportationLogBookRecords]="canCancelTransportationLogBookRecords"
+                                                                             [canEditTransportationLogBookRecords]="canEditTransportationLogBookRecords"
+                                                                             (onActiveRecordChanged)="editTransportationLogBookPage($event.page, $event.viewMode)"
+                                                                             (onEditTransportationLogBookPage)="editTransportationLogBookPage($event, false)"
+                                                                             (onViewTransportationLogBookPage)="editTransportationLogBookPage($event, true)"
+                                                                             (onAnnulTransportationLogBookPage)="onAnnulTransportationLogBookPageBtnClicked($event)">
+                                </transportation-pages-and-declarations-table>
+
+                                <!-- Страници от Дневници за първа продажба -->
+                                <first-sale-pages-table *ngIf="row.data.typeCode === logBookTypesEnum.FirstSale"
+                                                        [rows]="row.data.firstSalePages"
+                                                        [showActionButtons]="true"
+                                                        [showInactiveRecords]="!isPublicApp"
+                                                        [canCancelFirstSaleLogBookRecords]="canCancelFirstSaleLogBookRecords"
+                                                        [canEditFirstSaleLogBookRecords]="canEditFirstSaleLogBookRecords"
+                                                        (onActiveRecordChanged)="editFirstSaleLogBookPage($event.page, $event.viewMode)"
+                                                        (onEditFirstSaleLogBookPage)="editFirstSaleLogBookPage($event, false)"
+                                                        (onViewFirstSaleLogBookPage)="editFirstSaleLogBookPage($event, true)"
+                                                        (onAnnulFirstSaleLogBookPage)="onAnnulFirstSaleLogBookPageBtnClicked($event)">
+                                </first-sale-pages-table>
+
+                                <!-- Страници от Дневници за аквакултурно стопанство -->
+                                <aquaculture-pages-table *ngIf="row.data.typeCode === logBookTypesEnum.Aquaculture"
+                                                         [rows]="row.data.aquaculturePages"
+                                                         [showActionButtons]="true"
+                                                         [showInactiveRecords]="!isPublicApp"
+                                                         [canCancelAquacultureLogBookRecords]="canCancelAquacultureLogBookRecords"
+                                                         [canEditAquacultureLogBookRecords]="canEditAquacultureLogBookRecords"
+                                                         (onActiveRecordChanged)="editAquacultureLogBookPage($event.page, $event.viewMode)"
+                                                         (onEditAquacultureLogBookPage)="editAquacultureLogBookPage($event, false)"
+                                                         (onViewAquacultureLogBookPage)="editAquacultureLogBookPage($event, true)"
+                                                         (onAnnulAquacultureLogBookPage)="onAnnulAquacultureLogBookPageBtnClicked($event)">
+                                </aquaculture-pages-table>
+                            </tl-card-content>
+                        </tl-card>
+                    </ng-template>
+                </row-detail>
+
+                <!-- Основни колони за всички дневници -->
+                <data-template-column [flexRate]="0.5"
+                                      [cellClass]="'justify-center'"
+                                      [isSortable]="false"
+                                      columnName="{{ 'catches-and-sales.document-type' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span>{{ row.data.type }} - {{ row.data.number }}</span>
+                    </ng-template>
+                </data-template-column>
+
+                <data-column propertyName="name"
+                             [flexRate]="0.5"
+                             [isSortable]="false"
+                             columnName="{{ 'catches-and-sales.name' | tlTranslate }}">
+                </data-column>
+
+                <data-column propertyName="issueDate"
+                             [flexRate]="0.3"
+                             [isSortable]="false"
+                             dataType="date"
+                             columnName="{{ 'catches-and-sales.issue-date' | tlTranslate }}">
+                </data-column>
+
+                <data-column propertyName="finishDate"
+                             [flexRate]="0.3"
+                             [isSortable]="false"
+                             dataType="date"
+                             columnName="{{ 'catches-and-sales.fishing-date' | tlTranslate }}">
+                </data-column>
+
+                <data-column propertyName="statusName"
+                             [flexRate]="0.3"
+                             [isSortable]="false"
+                             columnName="{{ 'catches-and-sales.log-book-status' | tlTranslate }}">
+                </data-column>
+
+                <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'" [isSortable]="false">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Ship && canReadShipLogBookRecords"
+                                            icon="visibility"
+                                            (buttonClicked)="viewLogBook(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.FirstSale && canReadFirstSaleLogBookRecords"
+                                            icon="visibility"
+                                            (buttonClicked)="viewLogBook(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Admission &&  canReadAdmissionLogBookRecords"
+                                            icon="visibility"
+                                            (buttonClicked)="viewLogBook(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Transportation && canReadTransportationLogBookRecords"
+                                            icon="visibility"
+                                            (buttonClicked)="viewLogBook(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Aquaculture && canReadAquacultureLogBookRecords"
+                                            icon="visibility"
+                                            (buttonClicked)="viewLogBook(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <ng-container *ngIf="!row.data.isLogBookFinished && !row.data.isOnline">
+                                <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Ship && canAddShipLogBookRecords"
+                                                icon="fa-plus-circle"
+                                                (buttonClicked)="addLogBookPage(row.data)"
+                                                iconClass="accent-color"
+                                                size="1.5"
+                                                tooltipText="{{ 'catches-and-sales.add-log-book-page' | tlTranslate }}">
+                                </tl-icon-button>
+
+                                <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.FirstSale && canAddFirstSaleLogBookRecords"
+                                                icon="fa-plus-circle"
+                                                (buttonClicked)="addLogBookPage(row.data)"
+                                                iconClass="accent-color"
+                                                size="1.5"
+                                                tooltipText="{{ 'catches-and-sales.add-log-book-page' | tlTranslate }}">
+                                </tl-icon-button>
+
+                                <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Admission && canAddAdmissionLogBookRecords"
+                                                icon="fa-plus-circle"
+                                                (buttonClicked)="addLogBookPage(row.data)"
+                                                iconClass="accent-color"
+                                                size="1.5"
+                                                tooltipText="{{ 'catches-and-sales.add-log-book-page' | tlTranslate }}">
+                                </tl-icon-button>
+
+                                <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Transportation && canAddTransportationLogBookRecords"
+                                                icon="fa-plus-circle"
+                                                (buttonClicked)="addLogBookPage(row.data)"
+                                                iconClass="accent-color"
+                                                size="1.5"
+                                                tooltipText="{{ 'catches-and-sales.add-log-book-page' | tlTranslate }}">
+                                </tl-icon-button>
+
+                                <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Aquaculture && canAddAquacultureLogBookRecords"
+                                                icon="fa-plus-circle"
+                                                (buttonClicked)="addLogBookPage(row.data)"
+                                                iconClass="accent-color"
+                                                size="1.5"
+                                                tooltipText="{{ 'catches-and-sales.add-log-book-page' | tlTranslate }}">
+                                </tl-icon-button>
+                            </ng-container>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+</div>

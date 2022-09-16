@@ -1,0 +1,28 @@
+<div fxLayout="column" fxFlexFill>
+    <mat-toolbar class="white">
+        <div class="logo">
+            <img class="logo-icon" src="assets/images/logos/iara.svg">
+        </div>
+        <h1 class="multi-line">
+            {{ 'common.iara-full-name' | tlTranslate: 'cap' }}
+        </h1>
+    </mat-toolbar>
+    <mat-toolbar class="accent" fxLayoutGap="1em">
+        <h1>{{ 'common.iss-full-name' | tlTranslate: 'cap' }}</h1>
+    </mat-toolbar>
+    <div id="register" fxFlex="100" fxLayout="row" fxLayoutAlign="start">
+        <div id="register-form-wrapper"
+             fusePerfectScrollbar
+             [@animate]="{value:'*',params:{delay:'300ms',x:'100%'}}"
+             fxFlex="60">
+            <div id="register-form">
+                <ng-content></ng-content>
+            </div>
+        </div>
+        <div id="register-intro" fxFlex="40" fxHide fxShow.gt-md fxLayoutAlign="center center">
+            <div [@animate]="{value:'*',params:{delay:'50ms',y:'25px'}}" fxFlexFill>
+                <img src="assets/images/fredrik-ohlander-CbeApl8sxxw-unsplash.jpg" fxFlexFill class="img-cover">
+            </div>
+        </div>
+    </div>
+</div>

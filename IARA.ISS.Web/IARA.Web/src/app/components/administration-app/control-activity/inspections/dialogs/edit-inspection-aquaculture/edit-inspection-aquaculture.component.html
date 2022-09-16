@@ -1,0 +1,86 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <!-- Основни данни -->
+    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <inspection-general-info formControlName="generalInfoControl"
+                                     [institutions]="institutions">
+            </inspection-general-info>
+            <patrol-vehicles-table formControlName="patrolVehiclesControl"
+                                   [isWaterVehicle]="false">
+            </patrol-vehicles-table>
+            <inspection-map-viewer formControlName="mapControl">
+            </inspection-map-viewer>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Данни за юридическо лице, регистрирано по чл. 25 от ЗРА, за отглеждане на риба и други организми -->
+    <tl-expansion-panel [formGroup]="form"
+                        title="{{ 'inspections.aquaculture-data' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <tl-autocomplete formControlName="aquacultureControl"
+                             [options]="aquacultures"
+                             label="{{ 'inspections.aquaculture' | tlTranslate }}">
+            </tl-autocomplete>
+            <inspected-legal formControlName="ownerControl"
+                             [countries]="countries"
+                             [legalType]="inspectedPersonTypeEnum.OwnerLegal"
+                             title="{{ 'inspections.legal-entity' | tlTranslate }}">
+            </inspected-legal>
+            <inspected-person formControlName="representerControl"
+                              [countries]="countries"
+                              [personType]="inspectedPersonTypeEnum.ReprsPers"
+                              title="{{ 'inspections.representer' | tlTranslate }}">
+            </inspected-person>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Данни за инспекцията -->
+    <tl-expansion-panel [formGroup]="form"
+                        title="{{ 'inspections.aquaculture-catch' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <inspected-catches-table formControlName="catchesControl"
+                                     [ships]="ships"
+                                     [fishes]="fishes"
+                                     [types]="catchTypes"
+                                     [catchZones]="catchZones"
+                                     [fishSex]="fishSex"
+                                     [hasUnloadedQuantity]="false"
+                                     [hasAllowedDeviation]="false"
+                                     [hasSex]="true"
+                                     [hasCatchZone]="false">
+            </inspected-catches-table>
+            <inspection-toggle-list formControlName="catchTogglesControl"
+                                    [toggles]="catchToggles">
+            </inspection-toggle-list>
+            <tl-input formControlName="otherFishingGearControl"
+                      label="{{ 'inspections.other-fishing-gear' | tlTranslate }}">
+            </tl-input>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Допълнителна информация -->
+    <inspection-additional-info formControlName="additionalInfoControl">
+        <tl-textarea formControlName="representativeControl"
+                     [minRows]="3"
+                     label="{{ 'inspections.representer-comment' | tlTranslate }}">
+        </tl-textarea>
+    </inspection-additional-info>
+
+    <!-- Файлове -->
+    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+</div>

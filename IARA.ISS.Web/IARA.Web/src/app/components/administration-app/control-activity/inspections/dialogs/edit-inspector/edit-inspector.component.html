@@ -1,0 +1,68 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+        <tl-checkbox formControlName="inspectorRegisteredControl"
+                     label="{{ 'inspections.inspector-registered' | tlTranslate }}">
+        </tl-checkbox>
+
+        <tl-autocomplete *ngIf="isFromRegister"
+                         formControlName="inspectorControl"
+                         label="{{ 'inspections.inspector' | tlTranslate }}"
+                         [options]="inspectors">
+        </tl-autocomplete>
+
+        <div *ngIf="!isFromRegister" fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start center">
+                <tl-input fxFlex="50"
+                          formControlName="firstNameControl"
+                          label="{{ 'inspections.first-name' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="50"
+                          formControlName="middleNameControl"
+                          label="{{ 'inspections.middle-name' | tlTranslate }}">
+                </tl-input>
+            </div>
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start center">
+                <tl-input fxFlex="50"
+                          formControlName="lastNameControl"
+                          label="{{ 'inspections.last-name' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="50"
+                          formControlName="cardNumControl"
+                          label="{{ 'inspections.card-num' | tlTranslate }}">
+                </tl-input>
+            </div>
+        </div>
+
+        <div fxLayout="row"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start center">
+            <tl-autocomplete fxFlex="50"
+                             formControlName="countryControl"
+                             label="{{ 'inspections.country' | tlTranslate }}"
+                             [options]="countries">
+            </tl-autocomplete>
+            <tl-autocomplete fxFlex="50"
+                             formControlName="institutionControl"
+                             label="{{ 'inspections.institution' | tlTranslate }}"
+                             [options]="institutions">
+            </tl-autocomplete>
+        </div>
+
+        <tl-checkbox *ngIf="isFromRegister"
+                     formControlName="headOfInspectionControl"
+                     label="{{ 'inspections.head-of-inspection' | tlTranslate }}">
+        </tl-checkbox>
+
+        <tl-checkbox formControlName="inspectorIdentifiedControl"
+                     label="{{ 'inspections.inspector-identified' | tlTranslate }}">
+        </tl-checkbox>
+    </div>
+</div>

@@ -1,0 +1,242 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="form" validityCheckerGroup>
+    <div *ngIf="isPerson === true; else isNotPerson" fxLayoutGap="0.5em" fxLayout="column">
+        <div *ngIf="checkboxLabel !== null && checkboxLabel !== undefined && !showOnlyBasicData">
+            <tl-checkbox formControlName="checkboxControl"
+                         [label]="checkboxLabel"
+                         [readonly]="readonly">
+            </tl-checkbox>
+        </div>
+
+        <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+            <egn-lnc-input fxFlex="24"
+                           fxFlex.md="49"
+                           fxFlex.lt-md="100"
+                           formControlName="idNumberControl"
+                           [readonly]="isIdReadOnly || readonly"
+                           [isForeigner]="isForeigner"
+                           [includeForeigner]="includeForeigner"
+                           [expectedResult]="expectedRegixResults?.egnLnc?.egnLnc"
+                           [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"
+                           [showSearchButton]="showSearchButton"
+                           [emitEgnPnfErrors]="true"
+                           (searchButtonClicked)="downloadBtnClicked($event)"
+                           (focusout)="egnLncFocusOut()">
+            </egn-lnc-input>
+            <tl-input fxFlex="24"
+                      fxFlex.md="49"
+                      fxFlex.lt-md="100"
+                      formControlName="firstNameControl"
+                      label="{{ 'regix-data.first-name' | tlTranslate }}"
+                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [readonly]="readonly">
+            </tl-input>
+            <tl-input fxFlex="24"
+                      fxFlex.md="49"
+                      fxFlex.lt-md="100"
+                      formControlName="middleNameControl"
+                      label="{{ 'regix-data.middle-name' | tlTranslate }}"
+                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [readonly]="readonly">
+            </tl-input>
+            <tl-input fxFlex="24"
+                      fxFlex.md="49"
+                      fxFlex.lt-md="100"
+                      formControlName="lastNameControl"
+                      label="{{ 'regix-data.last-name' | tlTranslate }}"
+                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [readonly]="readonly">
+            </tl-input>
+        </div>
+
+        <div *ngIf="!hideDocument && !showOnlyBasicData" fxLayout="row wrap" fxLayoutAlign="space-between center">
+            <tl-select fxFlex="24"
+                       fxFlex.md="49"
+                       fxFlex.lt-md="100"
+                       formControlName="documentTypeControl"
+                       [options]="documentTypes"
+                       label="{{ 'regix-data.document-type' | tlTranslate }}"
+                       [getControlErrorLabelText]="getControlErrorLabelText"
+                       [readonly]="readonly">
+            </tl-select>
+            <tl-input fxFlex="24"
+                      fxFlex.md="49"
+                      fxFlex.lt-md="100"
+                      formControlName="documentNumControl"
+                      label="{{ 'regix-data.document-number' | tlTranslate }}"
+                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [readonly]="readonly">
+            </tl-input>
+            <tl-date fxFlex="24"
+                     fxFlex.md="49"
+                     fxFlex.lt-md="100"
+                     formControlName="documentIssueDateControl"
+                     label="{{ 'regix-data.document-issue-date' | tlTranslate }}"
+                     [max]="today"
+                     [getControlErrorLabelText]="getControlErrorLabelText"
+                     [readonly]="readonly">
+            </tl-date>
+            <tl-input fxFlex="24"
+                      fxFlex.md="49"
+                      fxFlex.lt-md="100"
+                      formControlName="documentIssuerControl"
+                      label="{{ 'regix-data.document-issuer' | tlTranslate }}"
+                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [readonly]="readonly">
+            </tl-input>
+        </div>
+
+        <div *ngIf="!showOnlyBasicData" fxLayout="row wrap" fxLayoutAlign="space-between center">
+            <tl-select *ngIf="showGender"
+                       fxFlex="24"
+                       fxFlex.md="49"
+                       fxFlex.lt-md="100"
+                       formControlName="genderControl"
+                       label="{{ 'regix-data.gender' | tlTranslate }}"
+                       [options]="genders"
+                       [readonly]="readonly">
+            </tl-select>
+            <tl-autocomplete fxFlex="24"
+                             fxFlex.md="49"
+                             fxFlex.lt-md="100"
+                             formControlName="citizenshipControl"
+                             [options]="countries"
+                             label="{{ 'regix-data.citizenship' | tlTranslate }}"
+                             [getControlErrorLabelText]="getControlErrorLabelText"
+                             [readonly]="readonly">
+            </tl-autocomplete>
+            <tl-date fxFlex="24"
+                     fxFlex.md="49"
+                     fxFlex.lt-md="100"
+                     formControlName="birthDateControl"
+                     [min]="dateOfBirthProps.min"
+                     [max]="dateOfBirthProps.max !== undefined && dateOfBirthProps.max !== null ? dateOfBirthProps.max : today"
+                     label="{{ 'regix-data.date-of-birth' | tlTranslate }}"
+                     [getControlErrorLabelText]="getControlErrorLabelTextDateOfBirth.bind(this)"
+                     [readonly]="readonly">
+            </tl-date>
+            <tl-input fxFlex="24"
+                      fxFlex.md="49"
+                      fxFlex.lt-md="100"
+                      formControlName="phoneControl"
+                      label="{{ 'regix-data.phone' | tlTranslate }}"
+                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [readonly]="readonly">
+            </tl-input>
+            <tl-input fxFlex="24"
+                      fxFlex.md="49"
+                      fxFlex.lt-md="100"
+                      formControlName="emailControl"
+                      label="{{ 'regix-data.email' | tlTranslate }}"
+                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [readonly]="readonly">
+            </tl-input>
+        </div>
+    </div>
+
+    <ng-template #isNotPerson>
+        <div *ngIf="!showOnlyBasicData" fxLayout="row wrap" fxLayoutAlign="space-between center">
+            <tl-input fxFlex="24"
+                      fxFlex.md="49"
+                      fxFlex.lt-md="100"
+                      formControlName="idNumberControl"
+                      [readonly]="isIdReadOnly || readonly"
+                      label="{{ 'regix-data.eik' | tlTranslate }}"
+                      [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+            </tl-input>
+            <tl-input fxFlex="24"
+                      fxFlex.md="49"
+                      fxFlex.lt-md="100"
+                      formControlName="companyNameControl"
+                      label="{{ 'regix-data.company-name' | tlTranslate }}"
+                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [readonly]="readonly">
+            </tl-input>
+            <tl-input fxFlex="24"
+                      fxFlex.md="49"
+                      fxFlex.lt-md="100"
+                      formControlName="phoneControl"
+                      label="{{ 'regix-data.phone' | tlTranslate }}"
+                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [readonly]="readonly">
+            </tl-input>
+            <tl-input fxFlex="24"
+                      fxFlex.md="49"
+                      fxFlex.lt-md="100"
+                      formControlName="emailControl"
+                      label="{{ 'regix-data.email' | tlTranslate }}"
+                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [readonly]="readonly">
+            </tl-input>
+        </div>
+        <div *ngIf="showOnlyBasicData" fxLayout="row wrap" fxLayoutAlign="space-between center">
+            <tl-input fxFlex="24"
+                      fxFlex.md="49"
+                      fxFlex.lt-md="100"
+                      formControlName="idNumberControl"
+                      [readonly]="isIdReadOnly || readonly"
+                      label="{{ 'regix-data.eik' | tlTranslate }}"
+                      [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+            </tl-input>
+            <tl-input fxFlex="24"
+                      fxFlex.md="49"
+                      fxFlex.lt-md="100"
+                      formControlName="companyNameControl"
+                      label="{{ 'regix-data.company-name' | tlTranslate }}"
+                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [readonly]="readonly">
+            </tl-input>
+            <div fxFlex="48" fxFlex.md="98" fxFlex.lt-md="100">
+            </div>
+        </div>
+
+        <div *ngIf="showCustodianOfProperty && !showOnlyBasicData" [validityChecker]="form">
+            <tl-checkbox formControlName="custodianCheckboxControl"
+                         label="{{ 'regix-data.custodian-checkbox' | tlTranslate }}"
+                         [readonly]="readonly">
+            </tl-checkbox>
+
+            <tl-card>
+                <tl-card-title>{{ 'regix-data.custodian-of-property' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+                        <egn-lnc-input fxFlex="24"
+                                       fxFlex.md="49"
+                                       fxFlex.lt-md="100"
+                                       formControlName="custodianEgnControl"
+                                       [readonly]="isIdReadOnly || readonly"
+                                       [isForeigner]="isForeigner"
+                                       [includeForeigner]="includeForeigner"
+                                       [emitEgnPnfErrors]="true"
+                                       [expectedResult]="expectedRegixResults?.custodianOfProperty?.egnLnc?.egnLnc"
+                                       [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                        </egn-lnc-input>
+                        <tl-input fxFlex="24"
+                                  fxFlex.md="49"
+                                  fxFlex.lt-md="100"
+                                  formControlName="custodianFirstNameControl"
+                                  label="{{ 'regix-data.custodian-first-name' | tlTranslate }}"
+                                  [getControlErrorLabelText]="getControlErrorLabelText"
+                                  [readonly]="readonly">
+                        </tl-input>
+                        <tl-input fxFlex="24"
+                                  fxFlex.md="49"
+                                  fxFlex.lt-md="100"
+                                  formControlName="custodianMiddleNameControl"
+                                  label="{{ 'regix-data.custodian-middle-name' | tlTranslate }}"
+                                  [getControlErrorLabelText]="getControlErrorLabelText"
+                                  [readonly]="readonly">
+                        </tl-input>
+                        <tl-input fxFlex="24"
+                                  fxFlex.md="49"
+                                  fxFlex.lt-md="100"
+                                  formControlName="custodianLastNameControl"
+                                  label="{{ 'regix-data.custodian-last-name' | tlTranslate }}"
+                                  [getControlErrorLabelText]="getControlErrorLabelText"
+                                  [readonly]="readonly">
+                        </tl-input>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </ng-template>
+</div>

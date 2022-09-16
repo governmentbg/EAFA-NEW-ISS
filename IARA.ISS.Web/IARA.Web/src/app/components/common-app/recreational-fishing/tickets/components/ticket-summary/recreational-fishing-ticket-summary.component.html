@@ -1,0 +1,81 @@
+﻿<div *ngIf="ticket" class="ticket-summary-size">
+    <tl-card [avatar]="ticket.personPhoto">
+        <tl-card-title *ngIf="type !== null && type !== undefined">
+            {{ type.displayName }}
+        </tl-card-title>
+        <tl-card-subtitle *ngIf="period !== null && period !== undefined">
+            {{ type.code === 'UNDER14' ? ( 'recreational-fishing.until-person-is-14' | tlTranslate : 'cap') : period.displayName }}
+        </tl-card-subtitle>
+
+        <tl-card-content fxLayout="column" fxLayoutAlign="space-between stretch" fxLayoutGap="0.4em">
+            <div fxLayout="row" fxLayoutGap="0.4em">
+                <b>{{ 'recreational-fishing.summary-receiver' | tlTranslate }}:</b>
+                <span>{{ ticket.person.firstName }} {{ ticket.person.middleName }} {{ ticket.person.lastName }}</span>
+            </div>
+            <div fxLayout="row" fxLayoutGap="0.4em">
+                <b *ngIf="ticket.person.egnLnc.identifierType === identifierTypes.EGN">{{ 'recreational-fishing.summary-receiver-egn' | tlTranslate }}:</b>
+                <b *ngIf="ticket.person.egnLnc.identifierType === identifierTypes.LNC">{{ 'recreational-fishing.summary-receiver-lnc' | tlTranslate }}:</b>
+                <b *ngIf="ticket.person.egnLnc.identifierType === identifierTypes.FORID">{{ 'recreational-fishing.summary-receiver-for-id' | tlTranslate }}:</b>
+                <span>{{ ticket.person.egnLnc.egnLnc }}</span>
+            </div>
+            <div fxLayout="row" fxLayoutGap="0.4em">
+                <b>{{ 'recreational-fishing.summary-valid-from' | tlTranslate }}:</b>
+                <span>{{ ticket.validFrom | date: 'dd.MM.yyyy HH:mm' }}</span>
+            </div>
+            <div *ngIf="validTo" fxLayout="row" fxLayoutGap="0.4em">
+                <b>{{ 'recreational-fishing.summary-valid-to' | tlTranslate }}:</b>
+                <span>{{ validTo | date: 'dd.MM.yyyy HH:mm' }}</span>
+            </div>
+            <div fxLayout="row" fxLayoutGap="0.4em">
+                <b>{{ 'recreational-fishing.summary-price' | tlTranslate }}:</b>
+                <span *ngIf="ticket.price === 0; else ticketNotFree">
+                    {{ 'recreational-fishing.summary-free' | tlTranslate }}
+                </span>
+                <ng-template #ticketNotFree>
+                    <span>
+                        {{ ticket.price | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}
+                    </span>
+                </ng-template>
+            </div>
+
+            <div *ngIf="expectDeclaration" fxLayout="row" fxLayoutGap="0.5em" fxLayoutAlign="space-between end">
+                <div fxLayout="column" fxLayoutGap="0.5em" fxLayoutAlign="space-between stretch">
+                    <div fxLayout="row" fxLayoutGap="0.5em" fxLayoutAlign="space-between end">
+                        <div fxLayout="column" fxLayoutAlign="space-between stretch" fxLayoutGap="0.5em">
+                            <button mat-raised-button
+                                    color="accent"
+                                    (click)="printApplication()">
+                                {{ 'recreational-fishing.association-ticket-print-application' | tlTranslate }}
+                            </button>
+
+                            <input hidden type="file" #uploader (change)="onFileUploaded($event.target.files)" />
+                            <button mat-raised-button
+                                    color="accent"
+                                    [disabled]="disable"
+                                    (click)="uploader.click()">
+                                {{ 'recreational-fishing.association-ticket-upload-application' | tlTranslate }}
+                            </button>
+                        </div>
+
+                        <tl-icon *ngIf="ticket.declarationFile === null || ticket.declarationFile === undefined"
+                                 icon="fa-times"
+                                 size="2"
+                                 iconClass="error-color"
+                                 matTooltip="{{ 'recreational-fishing.ticket-declaration-not-uploaded' | tlTranslate }}"
+                                 [matTooltipShowDelay]="300">
+                        </tl-icon>
+                        <tl-icon *ngIf="ticket.declarationFile !== null && ticket.declarationFile !== undefined"
+                                 icon="fa-check"
+                                 size="2"
+                                 iconClass="success-color">
+                        </tl-icon>
+                    </div>
+
+                    <mat-error *ngIf="hasError">
+                        * {{ 'recreational-fishing.association-ticket-no-uploaded-application-error' | tlTranslate }}
+                    </mat-error>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

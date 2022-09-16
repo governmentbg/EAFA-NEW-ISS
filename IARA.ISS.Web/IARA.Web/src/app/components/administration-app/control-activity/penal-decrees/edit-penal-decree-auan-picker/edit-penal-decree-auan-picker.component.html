@@ -1,0 +1,17 @@
+﻿<div fxFlexFill
+     fxLayout="row"
+     fxLayoutAlign="center center"
+     class="dialog-padding">
+
+    <div fxLayout="column" fxLayoutGap="1em" fxFlex="90">
+        <tl-radio-button-group [formControl]="typeControl"
+                               [options]="types">
+        </tl-radio-button-group>
+
+        <tl-autocomplete [formControl]="auanControl"
+                         [options]="auans"
+                         label="{{ 'penal-decrees.picker-auan-num' | tlTranslate }}"
+                         tooltipResourceName="penal-decrees.picker-auan-num-helper">
+        </tl-autocomplete>
+    </div>
+</div>

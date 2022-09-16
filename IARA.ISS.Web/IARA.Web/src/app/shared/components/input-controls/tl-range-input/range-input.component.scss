@@ -1,0 +1,31 @@
+﻿.wrapper {
+    input {
+        border: none;
+        background: none;
+        padding: 0;
+        outline: none;
+        font: inherit;
+        //text-align: center;
+    }
+
+    span {
+        opacity: 0;
+        transition: opacity 200ms;
+    }
+}
+
+:host.floating span {
+    opacity: 1;
+}
+
+/*Chrome, Safari, Edge, Opera */
+.wrapper input::-webkit-outer-spin-button,
+.wrapper input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/*Firefox */
+.wrapper input[type=number] {
+    -moz-appearance: textfield;
+}

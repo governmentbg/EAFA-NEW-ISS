@@ -1,0 +1,68 @@
+﻿<mat-vertical-stepper linear #stepper (selectionChange)="selectedStepChanged($event)" color="accent">
+    <mat-step *ngIf="componentMode === 'AddAndFileIn'" [stepControl]="createApplicationFormGroup" [editable]="true">
+        <div [formGroup]="createApplicationFormGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span [ngClass]="{ 'error-color': createApplicationFormGroup.touched && createApplicationFormGroup.invalid }">
+                    {{ 'applications-register.choose-application-type' | tlTranslate }}
+                </span>
+            </ng-template>
+            <div fxLayout="row">
+                <tl-autocomplete fxFlex="100"
+                                 label="{{ 'applications-register.service-type' | tlTranslate }}"
+                                 formControlName="applicationType"
+                                 [groupedOptions]="groupedApplicationTypes">
+                </tl-autocomplete>
+            </div>
+            <div fxLayout="row">
+                <button mat-raised-button matStepperNext color="accent">{{ 'applications-register.generate-access-code' | tlTranslate }}</button>
+            </div>
+        </div>
+    </mat-step>
+    <mat-step [stepControl]="accessCodeFormGroup" [editable]="true">
+        <div [formGroup]="accessCodeFormGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span [ngClass]="{ 'error-color': accessCodeFormGroup.touched && accessCodeFormGroup.invalid }">
+                    {{ 'applications-register.get-application-access-code' | tlTranslate }}
+                </span>
+            </ng-template>
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-input fxFlex="30"
+                          label="{{ 'applications-register.access-code' | tlTranslate }}"
+                          formControlName="accessCode"
+                          [readonly]="true"></tl-input>
+            </div>
+            <div fxLayout="row">
+                <button mat-raised-button
+                        color="accent"
+                        matStepperNext
+                        [cdkCopyToClipboard]="copyAccessCodeToClipboard()"
+                        matTooltip="{{ 'applications-register.copy-access-code-tooltip' | tlTranslate }}"
+                        (cdkCopyToClipboardCopied)="accessCodeCopied($event)">
+                    <tl-icon type="IC_ICON" icon="ic-copy" size="1.33em"></tl-icon>
+                    {{ 'applications-register.copy-for-pasting-in-eventis' | tlTranslate }}
+                </button>
+            </div>
+        </div>
+    </mat-step>
+    <mat-step [stepControl]="eventisDataFormGroup" [editable]="true">
+        <div [formGroup]="eventisDataFormGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span [ngClass]="{ 'error-color': eventisDataFormGroup.touched && eventisDataFormGroup.invalid }">
+                    {{ 'applications-register.enter-eventis-number' | tlTranslate }}
+                </span>
+            </ng-template>
+            <div fxLayout="row">
+                <tl-input fxFlex="50" formControlName="eventisNumber" label="{{ 'applications-register.eventis-num' | tlTranslate }}"></tl-input>
+            </div>
+        </div>
+    </mat-step>
+</mat-vertical-stepper>

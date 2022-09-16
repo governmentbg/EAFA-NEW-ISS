@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IARA.Common\IARA.Common.csproj" />
+    <ProjectReference Include="..\IARA.DataAccess\IARA.DataAccess.csproj" />
+    <ProjectReference Include="..\IARA.DomainModels\IARA.DomainModels.csproj" />
+    <ProjectReference Include="..\IARA.EntityModels\IARA.EntityModels.csproj" />
+    <ProjectReference Include="..\IARA.Interfaces\IARA.Interfaces.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TL.RegiXClient.Extended" Version="22.92.39073" />
+  </ItemGroup>
+
+</Project>

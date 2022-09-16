@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+             xmlns:ffimg="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+             x:Class="IARA.Mobile.Pub.Views.FlyoutPages.Payments.ChoosePaymentTypePage"
+             xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments"
+             xmlns:dtos="clr-namespace:IARA.Mobile.Application.DTObjects.Nomenclatures;assembly=IARA.Mobile.Application"
+             x:DataType="viewModels:ChoosePaymentTypeViewModel"
+             x:TypeArguments="viewModels:ChoosePaymentTypeViewModel"
+             PageInfo="{rt:Translate PaymentTypePageInfo, Group=Payments}"
+             Title="{rt:Translate PaymentTypeTitle, Group=Payments}"
+             x:Name="page"
+             BackgroundColor="{StaticResource BackgroundColor}">
+    <tl:TLScrollView>
+        <StackLayout Margin="10"
+                     WidthRequest="400"
+                     HorizontalOptions="Center"
+                     BindableLayout.ItemsSource="{Binding PaymentTypes}">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+                    <Frame x:DataType="dtos:NomenclatureDto"
+                           xct:TouchEffect.NativeAnimation="True"
+                           BorderColor="#dbd9d9"
+                           CornerRadius="5"
+                           Padding="10"
+                           Margin="5,3">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding BindingContext.PaymentTypeTapped, Source={Reference page}}"
+                                                  CommandParameter="{Binding Code}" />
+                        </Frame.GestureRecognizers>
+                        <Grid ColumnDefinitions="70,*">
+                            <ffimg:CachedImage Source="{Binding Code}"
+                                               WidthRequest="40"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center" />
+                            <Label Grid.Column="1"
+                                   FontSize="14"
+                                   Text="{Binding DisplayName}"
+                                   LineBreakMode="WordWrap"
+                                   HorizontalOptions="Start"
+                                   FontAttributes="Bold" />
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </StackLayout>
+    </tl:TLScrollView>
+</sv:BasePage>

@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tl:TLBasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages"
+        x:Class="IARA.Mobile.Pub.Views.FlyoutPages.EAuthUserUpdatePage"
+        x:DataType="viewModels:EAuthUserUpdateViewModel"
+        x:TypeArguments="viewModels:EAuthUserUpdateViewModel"
+        BackgroundColor="{StaticResource BackgroundColor}"
+        x:Name="page">
+    <tl:TLScrollView>
+        <sv:HomeFrameView>
+            <Grid>
+                <StackLayout VerticalOptions="Center">
+                    <Image Source="iara_logo" HeightRequest="200" />
+                    <StackLayout Margin="0,0,0,20" Spacing="0">
+                        <Label Text="{rt:Translate TitleIARA, Group=CommonOffline}"
+                                LineBreakMode="WordWrap"
+                                HorizontalOptions="Center"
+                                HorizontalTextAlignment="Center"
+                                FontSize="24" />
+                        <Label Margin="0,10,0,0"
+                                Text="{rt:Translate CompleteEAuthRegistration, Group=Register}"
+                                LineBreakMode="WordWrap"
+                                HorizontalOptions="Center"
+                                HorizontalTextAlignment="Center"
+                                FontSize="14" />
+                    </StackLayout>
+                    <tl:TLFlex>
+                        <tl:TLEntry tl:TLFlex.Grow="4"
+                                Title="{rt:Translate FirstName, Group=Register}"
+                                ValidState="{Binding FirstName}" />
+                        <tl:TLEntry tl:TLFlex.Grow="4"
+                                Title="{rt:Translate MiddleName, Group=Register}"
+                                ValidState="{Binding MiddleName}" />
+                        <tl:TLEntry tl:TLFlex.Grow="4"
+                                Title="{rt:Translate LastName, Group=Register}"
+                                ValidState="{Binding LastName}" />
+                        <sv:TLEntryWithType tl:TLFlex.Grow="4"
+                                IsEnabled="False"
+                                EGNLabel="{rt:Translate EGN, Group=Common}"
+                                LNCHLabel="{rt:Translate LNCH, Group=Common}"
+                                ValidState="{Binding EgnLnc}"
+                                Keyboard="Numeric" />
+                        <tl:TLEntry tl:TLFlex.Grow="4"
+                                Title="{rt:Translate Email, Group=Register}"
+                                ValidState="{Binding Email}"
+                                Keyboard="Email" />
+                    </tl:TLFlex>
+                    <sv:TLHeaderLine Text="{rt:Translate PasswordLogin, Group=Register}"
+                            ImageGlyph="{Static h:IconFont.UserSecret}"
+                            Margin="0,10" />
+                    <tl:TLFlex>
+                        <tl:TLEntry tl:TLFlex.Grow="4"
+                                Title="{rt:Translate Password, Group=Register}"
+                                IsPassword="True"
+                                ValidState="{Binding Password}" />
+                        <tl:TLEntry tl:TLFlex.Grow="4"
+                                Title="{rt:Translate RepeatPassword, Group=Register}"
+                                IsPassword="True"
+                                ValidState="{Binding RepeatPassword}" />
+                    </tl:TLFlex>
+                    <StackLayout BindableLayout.ItemsSource="{Binding CustomValidationErrors}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Label x:DataType="x:String"
+                                        LineBreakMode="WordWrap"
+                                        Text="{Binding}"
+                                        FontSize="14"
+                                        TextColor="{StaticResource ErrorColor}" />
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                    <tl:TLCheckView Text="{rt:Translate TermsAndConditions, Group=Register}" ValidState="{Binding TermsAndConditions}" />
+                    <Button CornerRadius="3"
+                            Margin="20,10"
+                            Text="{rt:Translate Save, Group=Common}"
+                            Command="{Binding UpdateEAuthUser}" />
+                </StackLayout>
+                <Label FontFamily="FA"
+                        Text="{Static h:IconFont.ArrowLeft}"
+                        VerticalOptions="Start"
+                        HorizontalOptions="Start"
+                        FontSize="30">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToHomePage}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </Grid>
+        </sv:HomeFrameView>
+    </tl:TLScrollView>
+</tl:TLBasePage>

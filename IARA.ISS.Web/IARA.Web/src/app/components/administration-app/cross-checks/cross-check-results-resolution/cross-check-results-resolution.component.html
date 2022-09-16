@@ -1,0 +1,24 @@
+﻿<div [formGroup]="form"
+     class="dialog-padding">
+    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+        <tl-select fxFlex="50"
+                   label="{{ 'cross-check-results.resolution' | tlTranslate }}"
+                   formControlName="resolutionControl"
+                   [options]="resolutions"
+                   tooltipResourceName="cross-check-results.resolution-helper">
+        </tl-select>
+        <tl-date fxFlex="50"
+                 formControlName="resolutionDateControl"
+                 [max]="today"
+                 label="{{ 'cross-check-results.resolution-date' | tlTranslate }}"
+                 tooltipResourceName="cross-check-results.resolution-date-helper">
+        </tl-date>
+    </div>
+    <div fxLayout="row">
+        <tl-textarea fxFlexFill
+                     formControlName="resolutionDetailsControl"
+                     label="{{ 'cross-check-results.resolution-details' | tlTranslate }}"
+                     tooltipResourceName="cross-check-results.resolution-details-helper">
+        </tl-textarea>
+    </div>
+</div>

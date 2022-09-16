@@ -1,0 +1,317 @@
+﻿<tl-data-table [rows]="rows"
+               [isRemote]="isRemote"
+               [isSoftDeletable]="isSoftDeletable"
+               [showInactiveRecords]="showInactiveRecords"
+               [showAddButton]="showAddButton"
+               (activeRecordChanged)="activeRecordChangedEvent($event, !$event.isActive 
+                                                                        || $event.status === logBookPageStatusesEnum.Canceled
+                                                                        || $event.isLogBookFinished
+                                                                        || !_pagesPermissions.canEditShipLogBookRecords)">
+    <row-detail>
+        <ng-template let-row="row" ngx-datatable-row-detail-template>
+            <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+                <tl-card *ngIf="row.data.admissionDeclarations !== null && row.data.admissionDeclarations !== undefined && row.data.admissionDeclarations.length > 0">
+                    <tl-card-title>{{ 'catches-and-sales.admission-declarations-card' | tlTranslate }}</tl-card-title>
+                    <tl-card-content fxFlexFill fxLayout="column" fxLayoutGap="1em">
+                        <div *ngFor="let admissionDeclaration of row.data.admissionDeclarations"
+                             fxFlex="100"
+                             fxLayout="row"
+                             fxLayoutAlign="space-between center">
+                            <tl-input fxFlex="8"
+                                      [readonly]="true"
+                                      [value]="admissionDeclaration.pageNumber"
+                                      label="{{ 'catches-and-sales.admission-number' | tlTranslate }}">
+                            </tl-input>
+
+                            <tl-input fxFlex="25"
+                                      [readonly]="true"
+                                      [value]="admissionDeclaration.acceptedPersonNames"
+                                      label="{{ 'catches-and-sales.admission-accepted-person-names' | tlTranslate }}">
+                            </tl-input>
+
+                            <tl-input fxFlex="10"
+                                      [readonly]="true"
+                                      [value]="admissionDeclaration.handoverDate | date: 'dd.MM.yyyy'"
+                                      label="{{ 'catches-and-sales.admission-handover-date' | tlTranslate }}">
+                            </tl-input>
+
+                            <tl-input fxFlex="14"
+                                      [readonly]="true"
+                                      [value]="admissionDeclaration.storageLocation"
+                                      label="{{ 'catches-and-sales.admission-storage-location' | tlTranslate }}">
+                            </tl-input>
+
+                            <tl-input [fxFlex]="admissionDeclaration.status === logBookPageStatusesEnum.Canceled ? 39 : 34"
+                                      [readonly]="true"
+                                      [value]="admissionDeclaration.productsInformation"
+                                      label="{{ 'catches-and-sales.admission-products-information' | tlTranslate }}">
+                            </tl-input>
+
+                            <div *ngIf="showDocumentActionButtons && admissionDeclaration.status !== logBookPageStatusesEnum.Canceled"
+                                 fxFlex="5"
+                                 fxLayout="row">
+                                <tl-icon-button icon="visibility"
+                                                (buttonClicked)="editAdmissionLogBookPage(admissionDeclaration, true)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'catches-and-sales.view-admission-log-book-page' | tlTranslate }}">
+                                </tl-icon-button>
+
+                                <tl-icon-button *ngIf="!row.data.isLogBookFinished && _pagesPermissions.canEditAdmissionLogBookRecords"
+                                                icon="edit"
+                                                (buttonClicked)="editAdmissionLogBookPage(admissionDeclaration, false)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'catches-and-sales.edit-admission-log-book-page' | tlTranslate }}">
+                                </tl-icon-button>
+                            </div>
+                        </div>
+                    </tl-card-content>
+                </tl-card>
+
+                <tl-card *ngIf="row.data.transportationDocuments !== null && row.data.transportationDocuments !== undefined && row.data.transportationDocuments.length > 0">
+                    <tl-card-title>{{ 'catches-and-sales.transportation-documents-card' | tlTranslate }}</tl-card-title>
+                    <tl-card-content fxFlexFill>
+                        <div *ngFor="let transportationDocument of row.data.transportationDocuments"
+                             fxFlexFill
+                             fxLayout="row"
+                             fxLayoutAlign="space-between center">
+                            <tl-input fxFlex="8"
+                                      [readonly]="true"
+                                      [value]="transportationDocument.pageNumber"
+                                      label="{{ 'catches-and-sales.transportation-number' | tlTranslate }}">
+                            </tl-input>
+
+                            <tl-input fxFlex="15"
+                                      [readonly]="true"
+                                      [value]="transportationDocument.recieverName"
+                                      label="{{ 'catches-and-sales.transportation-reciever-name' | tlTranslate }}">
+                            </tl-input>
+
+                            <tl-input fxFlex="9"
+                                      [readonly]="true"
+                                      [value]="transportationDocument.vehicleNumber"
+                                      label="{{ 'catches-and-sales.transportation-vehicle-number' | tlTranslate }}">
+                            </tl-input>
+
+                            <tl-input fxFlex="10"
+                                      [readonly]="true"
+                                      [value]="transportationDocument.loadingDate | date: 'dd.MM.yyyy'"
+                                      label="{{ 'catches-and-sales.transportation-loading-date' | tlTranslate }}">
+                            </tl-input>
+
+                            <tl-input fxFlex="14"
+                                      [readonly]="true"
+                                      [value]="transportationDocument.deliveryLocation"
+                                      label="{{ 'catches-and-sales.transportation-delivery-location' | tlTranslate }}">
+                            </tl-input>
+
+                            <tl-input [fxFlex]="transportationDocument.status === logBookPageStatusesEnum.Canceled ? 39 : 34"
+                                      [readonly]="true"
+                                      [value]="transportationDocument.productsInformation"
+                                      label="{{ 'catches-and-sales.transportation-products-information' | tlTranslate }}">
+                            </tl-input>
+
+                            <div *ngIf="showDocumentActionButtons && transportationDocument.status !== logBookPageStatusesEnum.Canceled"
+                                 fxFlex="5"
+                                 fxLayout="row">
+                                <tl-icon-button icon="visibility"
+                                                (buttonClicked)="editTransportationLogBookPage(transportationDocument, true)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'catches-and-sales.view-transportation-log-book-page' | tlTranslate }}">
+                                </tl-icon-button>
+
+                                <tl-icon-button *ngIf="!row.data.isLogBookFinished && _pagesPermissions.canEditTransportationLogBookRecords"
+                                                icon="edit"
+                                                (buttonClicked)="editTransportationLogBookPage(transportationDocument, false)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'catches-and-sales.edit-transportation-log-book-page' | tlTranslate }}">
+                                </tl-icon-button>
+                            </div>
+                        </div>
+                    </tl-card-content>
+                </tl-card>
+
+                <tl-card *ngIf="row.data.firstSaleDocuments !== null && row.data.firstSaleDocuments !== undefined && row.data.firstSaleDocuments.length > 0">
+                    <tl-card-title>{{ 'catches-and-sales.first-sale-documents-card' | tlTranslate }}</tl-card-title>
+                    <tl-card-content fxFlexFill>
+                        <div fxFlexFill
+                             fxLayout="row"
+                             fxLayoutAlign="space-between center"
+                             *ngFor="let firstSaleDocument of row.data.firstSaleDocuments">
+                            <tl-input fxFlex="8"
+                                      [readonly]="true"
+                                      [value]="firstSaleDocument.pageNumber"
+                                      label="{{ 'catches-and-sales.first-sale-number' | tlTranslate }}">
+                            </tl-input>
+
+                            <tl-input fxFlex="25"
+                                      [readonly]="true"
+                                      [value]="firstSaleDocument.buyerNames"
+                                      label="{{ 'catches-and-sales.first-sale-buyer-names' | tlTranslate }}">
+                            </tl-input>
+
+                            <tl-input fxFlex="10"
+                                      [readonly]="true"
+                                      [value]="firstSaleDocument.saleDate | date: 'dd.MM.yyyy'"
+                                      label="{{ 'catches-and-sales.first-sale-sale-date' | tlTranslate }}">
+                            </tl-input>
+
+                            <tl-input fxFlex="14"
+                                      [readonly]="true"
+                                      [value]="firstSaleDocument.saleLocation"
+                                      label="{{ 'catches-and-sales.first-sale-sale-location' | tlTranslate }}">
+                            </tl-input>
+
+                            <tl-input [fxFlex]="firstSaleDocument.status === logBookPageStatusesEnum.Canceled ? 39 : 34"
+                                      [readonly]="true"
+                                      [value]="firstSaleDocument.productsInformation"
+                                      label="{{ 'catches-and-sales.first-sale-products-information' | tlTranslate }}">
+                            </tl-input>
+
+                            <div *ngIf="showDocumentActionButtons && firstSaleDocument.status !== logBookPageStatusesEnum.Canceled"
+                                 fxFlex="5"
+                                 fxLayout="row"
+                                 fxLayoutAlign="end center">
+                                <tl-icon-button icon="visibility"
+                                                (buttonClicked)="editFirstSaleLogBookPage(firstSaleDocument, true)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'catches-and-sales.view-first-sale-log-book-page' | tlTranslate }}">
+                                </tl-icon-button>
+
+                                <tl-icon-button *ngIf="!row.data.isLogBookFinished && _pagesPermissions.canEditFirstSaleLogBookRecords"
+                                                icon="edit"
+                                                (buttonClicked)="editFirstSaleLogBookPage(firstSaleDocument, false)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'catches-and-sales.edit-first-sale-log-book-page' | tlTranslate }}">
+                                </tl-icon-button>
+                            </div>
+                        </div>
+                    </tl-card-content>
+                </tl-card>
+
+                <div fxFlexFill *ngIf="(!row.data.firstSaleDocuments || row.data.firstSaleDocuments.length === 0)
+                                        && (!row.data.transportationDocuments || row.data.transportationDocuments.length === 0)
+                                        && (!row.data.admissionDeclarations || row.data.admissionDeclarations.length === 0)">
+                    <div fxFlex="100" fxLayout="row">
+                        <h2>
+                            {{ 'catches-and-sales.no-documents-or-declarations-attached-to-ship-page' | tlTranslate }}
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </row-detail>
+
+    <data-template-column [flexRate]="0.2"
+                          [cellClass]="'justify-center'"
+                          columnName="{{ 'catches-and-sales.ship-page' | tlTranslate }}">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <span>{{ row.data.pageNumber }}</span>
+        </ng-template>
+    </data-template-column>
+
+    <data-template-column propertyName="StatusName"
+                          [flexRate]="0.2"
+                          [cellClass]="'justify-center'"
+                          columnName="{{ 'catches-and-sales.ship-status' | tlTranslate }}">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.5em">
+                <span>{{ row.data.statusName }}</span>
+                <tl-icon *ngIf="row.data.status === logBookPageStatusesEnum.Canceled
+                                && row.data.cancellationReason
+                                && row.data.cancellationReason.length !== 0"
+                         icon="ic-fluent-warning-24-filled"
+                         iconClass="warn-orange-color"
+                         [matTooltip]="row.data.cancellationReason"
+                         matTooltipPosition="above"
+                         matTooltipShowDelay="250"
+                         [size]="icIconSize">
+                </tl-icon>
+            </div>
+        </ng-template>
+    </data-template-column>
+
+    <data-column propertyName="fishingGear"
+                 [flexRate]="0.3"
+                 columnName="{{ 'catches-and-sales.ship-fishing-gear' | tlTranslate }}">
+    </data-column>
+
+    <data-column propertyName="outingStartDate"
+                 [flexRate]="0.2"
+                 dataType="date"
+                 columnName="{{ 'catches-and-sales.ship-outing-start-date' | tlTranslate }}">
+    </data-column>
+
+    <data-column propertyName="PortOfUnloading"
+                 [flexRate]="0.3"
+                 columnName="{{ 'catches-and-sales.ship-port-of-unloading' | tlTranslate }}">
+    </data-column>
+
+    <data-column propertyName="unloadingInformation"
+                 [flexRate]="0.4"
+                 columnName="{{ 'catches-and-sales.ship-unloading-information' | tlTranslate }}">
+    </data-column>
+
+    <data-template-column *ngIf="showActionButtons" [flexRate]="0.3" [cellClass]="'justify-center'">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                <tl-icon-button *ngIf="!row.data.isLogBookFinished
+                                       && _pagesPermissions.canCancelShipLogBookRecords
+                                       && row.data.status !== logBookPageStatusesEnum.Canceled
+                                       && row.data.transportationDocuments?.length === 0
+                                       && row.data.firstSaleDocuments?.length === 0
+                                       && row.data.admissionDeclarations?.length === 0"
+                                icon="ic-cancel"
+                                [size]="icIconSize"
+                                (buttonClicked)="onAnnulShipLogBookPageBtnClicked(row.data)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'catches-and-sales.anull-ship-log-book-page' | tlTranslate }}">
+                </tl-icon-button>
+
+                <button *ngIf="!row.data.isLogBookFinished
+                               && row.data.status !== logBookPageStatusesEnum.Canceled
+                               && row.data.status !== logBookPageStatusesEnum.Missing
+                               && row.data.hasOriginDeclaration
+                               && showDocumentActionButtons"
+                        mat-icon-button
+                        color="accent"
+                        [matMenuTriggerFor]="menu"
+                        matTooltip="{{ 'catches-and-sales.document-attachment' | tlTranslate }}">
+                    <tl-icon icon="fa-plus-circle" size="1.5" iconColor="accent"></tl-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item
+                            *ngIf="_pagesPermissions.canAddAdmissionLogBookRecords"
+                            (click)="onAddAdmissionDeclarationBtnClicked(row.data)">
+                        <span>{{ 'catches-and-sales.admission-declaration' | tlTranslate }}</span>
+                    </button>
+                    <button mat-menu-item
+                            *ngIf="_pagesPermissions.canAddTransportationLogBookRecords"
+                            (click)="onAddTransportationDocumentBtnClicked(row.data)">
+                        <span>{{ 'catches-and-sales.transportaion-document' | tlTranslate }}</span>
+                    </button>
+                    <button mat-menu-item
+                            *ngIf="_pagesPermissions.canAddFirstSaleLogBookRecords"
+                            (click)="onAddFirstSaleDocumentBtnClicked(row.data)">
+                        <span>{{ 'catches-and-sales.first-sale-document' | tlTranslate }}</span>
+                    </button>
+                </mat-menu>
+
+                <tl-icon-button *ngIf="row.data.status !== logBookPageStatusesEnum.Missing"
+                                icon="visibility"
+                                (buttonClicked)="editShipLogBookPage(row.data, true)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'catches-and-sales.view-ship-log-book-page' | tlTranslate }}">
+                </tl-icon-button>
+
+                <tl-icon-button *ngIf="!row.data.isLogBookFinished
+                                       && _pagesPermissions.canEditShipLogBookRecords
+                                       && row.data.status !== logBookPageStatusesEnum.Canceled"
+                                icon="edit"
+                                (buttonClicked)="editShipLogBookPage(row.data, false)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'catches-and-sales.edit-ship-log-book-page' | tlTranslate }}">
+                </tl-icon-button>
+            </div>
+        </ng-template>
+    </data-template-column>
+</tl-data-table>

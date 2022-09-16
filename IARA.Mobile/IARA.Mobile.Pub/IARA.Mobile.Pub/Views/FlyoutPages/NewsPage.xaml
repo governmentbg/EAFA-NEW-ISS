@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:MainPage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:c="clr-namespace:IARA.Mobile.Pub.Views.Controls"
+        xmlns:converters="clr-namespace:IARA.Mobile.Pub.Converters"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages"
+        xmlns:dtos="clr-namespace:IARA.Mobile.Pub.Application.DTObjects.News;assembly=IARA.Mobile.Pub.Application"
+        x:Class="IARA.Mobile.Pub.Views.FlyoutPages.NewsPage"
+        x:DataType="viewModels:NewsViewModel"
+        x:TypeArguments="viewModels:NewsViewModel"
+        x:Name="page"
+        PageInfo="{rt:Translate PageInfo, Group=News}"
+        Title="{rt:Translate Title, Group=News}"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <ContentPage.Resources>
+        <converters:NewsImageSourceConverter x:Key="NewsImageSource" />
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <c:NewsLayout>
+            <CollectionView VerticalScrollBarVisibility="Never"
+                    HeightRequest="10000"
+                    HorizontalOptions="Center"
+                    WidthRequest="650"
+                    SelectionMode="None"
+                    ItemsSource="{Binding News}"
+                    RemainingItemsThreshold="4"
+                    RemainingItemsThresholdReachedCommand="{Binding LoadHistory}">
+                <CollectionView.Header>
+                    <sv:SectionView Margin="0"
+                            Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Filter}, Color=White, Size=100}"
+                            Text="{rt:Translate NewsFilter, Group=News}"
+                            IsExpanded="False">
+                        <StackLayout Padding="10">
+                            <tl:TLFlex GrowUnit="200">
+                                <tl:TLFlex tl:TLFlex.Grow="2" GrowUnit="200">
+                                    <tl:TLEntry Title="{rt:Translate FreeTextSearch, Group=News}" Text="{Binding FreeTextSearch}" />
+                                    <tl:TLMultiPicker Margin="0"
+                                            Title="{rt:Translate Districts, Group=News}"
+                                            ValidState="{Binding SelectedDistricts}"
+                                            ItemsSource="{Binding NewsDistricts}"
+                                            DuplicateExclusion="Key" />
+                                </tl:TLFlex>
+                                <tl:TLFlex tl:TLFlex.Grow="2" GrowUnit="200">
+                                    <tl:TLDatePicker Title="{rt:Translate DateFrom, Group=News}" ValidState="{Binding DateFrom}" />
+                                    <tl:TLDatePicker Title="{rt:Translate DateTo, Group=News}" ValidState="{Binding DateTo}" />
+                                </tl:TLFlex>
+                            </tl:TLFlex>
+                            <Button Command="{Binding FilterChanged}" Text="{rt:Translate Search, Group=News}" />
+                        </StackLayout>
+                    </sv:SectionView>
+                </CollectionView.Header>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <ContentView x:DataType="dtos:NewsDto">
+                            <ContentView.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Path=BindingContext.NewsTapped, Source={Reference page}}" CommandParameter="{Binding}" />
+                            </ContentView.GestureRecognizers>
+                            <Frame Margin="5" Padding="10">
+                                <Grid RowDefinitions="Auto,Auto,Auto">
+                                    <Label Margin="5,5,0,0"
+                                            Text="{Binding Title}"
+                                            LineBreakMode="WordWrap"
+                                            FontAttributes="Bold"
+                                            FontSize="14" />
+                                    <StackLayout Grid.Row="1"
+                                            Orientation="Horizontal"
+                                            VerticalOptions="Center">
+                                        <Label FontFamily="FA"
+                                                FontSize="10"
+                                                Margin="5,0,0,0"
+                                                VerticalOptions="Center"
+                                                HorizontalOptions="Start"
+                                                TextColor="Gray"
+                                                Text="{Static h:IconFont.Clock}" />
+                                        <Label Grid.Column="1"
+                                                Text="{Binding PublishStart, StringFormat='{0:yyyy-MM-dd HH\\:mm}'}"
+                                                FontSize="10"
+                                                LineBreakMode="WordWrap"
+                                                HorizontalOptions="Start"
+                                                VerticalOptions="Center"
+                                                VerticalTextAlignment="Center"
+                                                HorizontalTextAlignment="Start" />
+                                    </StackLayout>
+                                    <StackLayout Grid.Row="2">
+                                        <Frame Padding="0"
+                                                HasShadow="False"
+                                                BackgroundColor="#e0e0e0">
+                                            <Image HorizontalOptions="Center" VerticalOptions="Start">
+                                                <Image.Source>
+                                                    <MultiBinding Converter="{StaticResource NewsImageSource}">
+                                                        <Binding Path="HasImage" />
+                                                        <Binding Path="Id" />
+                                                        <Binding Path="BindingContext.ImageUrl" Source="{Reference page}" />
+                                                    </MultiBinding>
+                                                </Image.Source>
+                                            </Image>
+                                        </Frame>
+                                        <Label Margin="5,0"
+                                                Text="{Binding Summary}"
+                                                LineBreakMode="WordWrap"
+                                                VerticalTextAlignment="Start"
+                                                HorizontalTextAlignment="Start"
+                                                FontSize="12" />
+                                    </StackLayout>
+                                </Grid>
+                            </Frame>
+                        </ContentView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.Footer>
+                    <ActivityIndicator IsVisible="{Binding LoadingHistory}"
+                            IsRunning="True"
+                            Color="{StaticResource Primary}"
+                            HeightRequest="150"
+                            WidthRequest="150" />
+                </CollectionView.Footer>
+            </CollectionView>
+        </c:NewsLayout>
+    </ContentPage.Content>
+</sv:MainPage>

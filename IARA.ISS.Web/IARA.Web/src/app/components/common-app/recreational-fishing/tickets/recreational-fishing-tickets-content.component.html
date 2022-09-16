@@ -1,0 +1,264 @@
+﻿<mat-vertical-stepper #stepper matVerticalStepperScroller [linear]="true" (selectionChange)="onStepChange($event)" (animationDone)="onStepAnimationDone()">
+    <!-- Условия и цена -->
+    <mat-step [editable]="true">
+        <ng-template matStepLabel>
+            {{ 'recreational-fishing.wizard-title-ticket-type' | tlTranslate }}
+            {{ ticketTypeComment !== null ? ' – ' + ticketTypeComment : '' }}
+        </ng-template>
+
+        <form [formGroup]="ticketTypeGroup">
+            <div *ngFor="let type of ticketTypes">
+                <div fxLayout="column">
+                    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                        <tl-checkbox [formControlName]="type.code"
+                                     label="{{ type.displayName }}">
+                        </tl-checkbox>
+                        <tl-input-stepper [style.visibility]="type.code === 'UNDER14' && ticketTypeGroup.controls[type.code].value === true && maxUnder14Tickets !== 0 ? 'visible' : 'hidden'"
+                                          [formControl]="under14CountControl"
+                                          [initial]="maxUnder14Tickets > 0 ? 1 : 0"
+                                          [min]="maxUnder14Tickets > 0 ? 1 : 0"
+                                          [max]="maxUnder14Tickets">
+                        </tl-input-stepper>
+                    </div>
+
+                    <mat-hint *ngIf="type.code === 'UNDER14' && maxUnder14Tickets === 0 && isPublicApp && !isAssociation" class="text-indent-2">
+                        {{ 'recreational-fishing.no-more-under14-tickets-error-msg' | tlTranslate }}
+                    </mat-hint>
+                </div>
+            </div>
+        </form>
+    </mat-step>
+
+    <!-- Валидност на билета -->
+    <mat-step *ngIf="showValidityStep">
+        <ng-template matStepLabel>
+            <span [ngClass]="{ 'error-color': ticketPeriodGroup.touched && ticketPeriodGroup.invalid }">
+                {{ 'recreational-fishing.wizard-title-ticket-validity' | tlTranslate }}
+                {{ validityPeriodComment !== null ? ' – ' + validityPeriodComment : '' }}
+            </span>
+        </ng-template>
+
+        <form [formGroup]="ticketPeriodGroup">
+            <mat-radio-group fxLayout="column" fxLayoutGap="1em" formControlName="ticketPeriodControl">
+                <mat-radio-button *ngFor="let period of visibleTicketPeriods" [value]="period">
+                    {{ period.displayName }}
+                </mat-radio-button>
+            </mat-radio-group>
+        </form>
+    </mat-step>
+
+    <!-- Номер на билет -->
+    <mat-step *ngIf="(!isPublicApp || isAssociation)
+              && (ticketTypeGroup.valid || ticketTypeGroup.disabled)
+              && (ticketPeriodGroup.valid || ticketPeriodGroup.disabled || !showValidityStep)">
+        <ng-template matStepLabel>
+            <span [ngClass]="{ 'error-color': ticketNumsArray.touched && ticketNumsArray.invalid }">
+                {{ 'recreational-fishing.wizard-title-ticket-num' | tlTranslate }}
+                {{ ticketNumsComment !== null ? ' – ' + ticketNumsComment : '' }}
+            </span>
+        </ng-template>
+
+        <div fxLayout="column">
+            <div [formArray]="ticketNumsArray">
+                <div *ngFor="let ticketNumControl of ticketNumsArray.controls; index as i"
+                     fxLayout="row"
+                     fxLayoutAlign="start center">
+                    <tl-input fxFlex="30"
+                              [formControl]="ticketNumControl"
+                              [label]="ticketNumsLabels[i]"
+                              [getControlErrorLabelText]="getControlErrorLabelTextForTicketNumber.bind(this)"
+                              [tooltipResourceName]="isAssociation ? 'recreational-fishing.issue-ticket-num-not-association-helper' : 'recreational-fishing.issue-ticket-num-helper'">
+                    </tl-input>
+                </div>
+            </div>
+
+            <mat-error *ngIf="ticketNumsArray.touched && ticketNumsArray.errors?.ticketNumDuplicates === true" class="mat-error-transform">
+                * {{ 'recreational-fishing.ticket-numbers-duplicates' | tlTranslate }}
+            </mat-error>
+
+            <div fxLayout="row">
+                <button fxFlex="none"
+                        mat-raised-button
+                        color="accent"
+                        [disabled]="(ticketNumsArray.invalid && !ticketNumsApproved) || ticketsSaved"
+                        (click)="checkTicketNumbers()">
+                    {{ 'recreational-fishing.ticket-numbers-go-forward' | tlTranslate }}
+                </button>
+            </div>
+        </div>
+    </mat-step>
+
+    <!-- Данни на билетодържателя -->
+    <div *ngIf="(ticketPeriodGroup.valid || ticketPeriodGroup.disabled || !showValidityStep)
+         && (((ticketNumsArray.valid || ticketNumsArray.disabled) && ticketNumsApproved) || (isPublicApp && !isAssociation))"
+         [formGroup]="ticketsGroup">
+        <ng-container formArrayName="ticketsArray">
+            <div *ngFor="let ticketControl of ticketsArray.controls; index as i">
+                <mat-step [editable]="true">
+                    <ng-template matStepLabel>
+                        <span [ngClass]="{ 'error-color': ticketControl.touched && ticketControl.invalid }">
+                            {{ ticketsTypes[i].displayName }}
+                        </span>
+                    </ng-template>
+
+                    <recreational-fishing-ticket [formControl]="ticketControl"
+                                                 [service]="service"
+                                                 [type]="ticketsTypes[i]"
+                                                 [period]="ticketsPeriods[i]"
+                                                 [price]="tickets[i].price"
+                                                 [isEgnEditable]="!isPersonal"
+                                                 [isPersonal]="isPersonal"
+                                                 [isAssociation]="isAssociation"
+                                                 (egnLncCheck)="checkEgnLncPurchaseAbility($event, i)"
+                                                 (updatePersonalData)="updatePersonalData($event)">
+                    </recreational-fishing-ticket>
+                </mat-step>
+            </div>
+        </ng-container>
+
+        <ng-container formArrayName="childTicketsArray">
+            <div *ngFor="let ticketControl of childTicketsArray.controls; index as i">
+                <mat-step [editable]="true">
+                    <ng-template matStepLabel>
+                        <span [ngClass]="{ 'error-color': ticketControl.touched && ticketControl.invalid }">
+                            {{ childTicketsTypes[i].displayName + (childTickets.length > 1 ? ' #' + (i + 1) : '') }}
+                        </span>
+                    </ng-template>
+
+                    <recreational-fishing-ticket [formControl]="ticketControl"
+                                                 [service]="service"
+                                                 [type]="childTicketsTypes[i]"
+                                                 [period]="childTicketsPeriods[i]"
+                                                 [price]="childTickets[i].price"
+                                                 [isEgnEditable]="!isPersonal"
+                                                 [isPersonal]="isPersonal"
+                                                 [isAssociation]="isAssociation"
+                                                 (egnLncCheck)="checkEgnLncPurchaseAbility($event, i, true)"
+                                                 (egnLncCheckRepresentative)="checkEgnLncPurchaseAbility($event, i, true, true)">
+                    </recreational-fishing-ticket>
+                </mat-step>
+            </div>
+        </ng-container>
+    </div>
+
+    <!-- Преглед и потвърждение -->
+    <mat-step *ngIf="(ticketPeriodGroup.valid || ticketPeriodGroup.disabled || !showValidityStep)
+              && (tickets.length !== 0 || childTickets.length !== 0)
+              && (((ticketNumsArray.valid || ticketNumsArray.disabled) && ticketNumsApproved) || (isPublicApp && !isAssociation))"
+              #viewAndConfirmStep>
+        <ng-template matStepLabel>
+            {{ 'recreational-fishing.view-and-confirm' | tlTranslate }}
+        </ng-template>
+
+        <div fxLayout="column" fxLayoutGap="1em">
+            <div *ngIf="stepper.selected === viewAndConfirmStep" fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <recreational-fishing-ticket-summary *ngFor="let ticket of tickets; index as i"
+                                                     [service]="service"
+                                                     [type]="ticketsTypes[i]"
+                                                     [period]="ticketsPeriods[i]"
+                                                     [ticket]="ticket"
+                                                     [expectDeclaration]="isAssociation || !isPublicApp"
+                                                     [showValidation]="showDeclarationFileValidation"
+                                                     [isAssociation]="isAssociation"
+                                                     [disable]="ticketsSaved">
+                </recreational-fishing-ticket-summary>
+
+                <recreational-fishing-ticket-summary *ngFor="let ticket of childTickets; index as i"
+                                                     [service]="service"
+                                                     [type]="childTicketsTypes[i]"
+                                                     [period]="childTicketsPeriods[i]"
+                                                     [ticket]="ticket"
+                                                     [expectDeclaration]="false"
+                                                     [isAssociation]="isAssociation"
+                                                     [disable]="ticketsSaved">
+                </recreational-fishing-ticket-summary>
+            </div>
+
+            <div *ngIf="tickets.length + childTickets.length > 1 && totalPrice > 0">
+                <b>{{ 'recreational-fishing.total-sum-price' | tlTranslate }}</b>: {{ totalPrice | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}
+            </div>
+
+            <div *ngIf="totalPrice > 0" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <button mat-raised-button
+                        color="accent"
+                        (click)="save(false)"
+                        [disabled]="disableSaveBtnComment !== null || ticketsSaved || !valid"
+                        [matTooltip]="disableSaveBtnComment"
+                        [matTooltipDisabled]="disableSaveBtnComment === null">
+                    {{ 'recreational-fishing.approve-and-go-to-payment' | tlTranslate }}
+                </button>
+            </div>
+
+            <div *ngIf="totalPrice <= 0" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <button mat-raised-button
+                        color="accent"
+                        (click)="save(true)"
+                        [disabled]="disableSaveBtnComment !== null || ticketsSaved || !valid"
+                        [matTooltip]="disableSaveBtnComment"
+                        [matTooltipDisabled]="disableSaveBtnComment === null">
+                    {{ 'recreational-fishing.approve-and-finish-purchase-and-print' | tlTranslate }}
+                </button>
+
+                <button mat-raised-button
+                        color="accent"
+                        (click)="save(false)"
+                        [disabled]="disableSaveBtnComment !== null || ticketsSaved || !valid"
+                        [matTooltip]="disableSaveBtnComment"
+                        [matTooltipDisabled]="disableSaveBtnComment === null">
+                    {{ 'recreational-fishing.approve-and-finish-purchase' | tlTranslate }}
+                </button>
+
+                <button *ngIf="!isPublicApp"
+                        mat-raised-button
+                        color="accent"
+                        (click)="reset()"
+                        [disabled]="!ticketsSaved || !valid">
+                    {{ 'recreational-fishing.issue-other-ticket' | tlTranslate }}
+                </button>
+            </div>
+
+            <span class="italic-text">* {{ 'recreational-fishing.view-and-confirm-declaration-info' | tlTranslate }}</span>
+        </div>
+    </mat-step>
+
+    <!-- Плащане -->
+    <mat-step *ngIf="showPaymentStep">
+        <ng-template matStepLabel>{{ 'recreational-fishing.payment' | tlTranslate  }}</ng-template>
+
+        <div *ngIf="isPublicApp && !isAssociation; else notPublicAppOrAssociation">
+            <online-payment-data *ngIf="paidTicketApplicationId !== undefined && paidTicketApplicationId !== null"
+                                 [applicationId]="paidTicketApplicationId">
+            </online-payment-data>
+        </div>
+
+        <ng-template #notPublicAppOrAssociation>
+            <payment-data [formControl]="paymentDataControl"
+                          [paymentDateMax]="currentDate"
+                          [defaultDate]="currentDate">
+            </payment-data>
+
+            <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">
+                <button mat-raised-button
+                        color="accent"
+                        (click)="reset()"
+                        [disabled]="!ticketsPayed">
+                    {{ 'recreational-fishing.issue-other-ticket' | tlTranslate }}
+                </button>
+
+                <button mat-raised-button
+                        color="accent"
+                        (click)="payAndPrint()"
+                        [disabled]="ticketsPayed">
+                    {{ 'recreational-fishing.finish-payment-and-print' | tlTranslate }}
+                </button>
+
+                <button mat-raised-button
+                        color="accent"
+                        (click)="pay()"
+                        [disabled]="ticketsPayed">
+                    {{ 'recreational-fishing.finish-payment' | tlTranslate }}
+                </button>
+            </div>
+        </ng-template>
+    </mat-step>
+</mat-vertical-stepper>

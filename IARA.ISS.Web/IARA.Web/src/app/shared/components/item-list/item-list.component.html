@@ -1,0 +1,25 @@
+﻿<div validityCheckerGroup>
+    <tl-card [formGroup]="form" [validityChecker]="form">
+        <tl-card-content>
+            <div fxLayout="column">
+                <div fxLayoutAlign="space-between center" fxFlexFill fxLayout="row">
+                    <div fxFlex="70">
+                        <h2><b>{{ itemsLabel }}</b></h2>
+                    </div>
+                    <div fxFlex="30">
+                        <h2><b>{{ valuesLabel }}</b></h2>
+                    </div>
+                </div>
+                <div fxLayout="column" *ngFor="let item of formItems" fxLayoutGap="0.5em">
+                    <div fxLayoutAlign="space-between center" fxLayout="row" class="small">
+                        <div fxFlex="70" class="overflow">{{ item.name }}</div>
+                        <tl-input fxFlex="30"
+                                  [formControlName]="item.code + 'Control'">
+                        </tl-input>
+                    </div>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>
+

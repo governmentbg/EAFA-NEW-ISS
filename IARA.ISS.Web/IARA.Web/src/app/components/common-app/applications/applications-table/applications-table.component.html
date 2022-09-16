@@ -1,0 +1,784 @@
+﻿<tl-data-table [showAddButton]="showAddButton"
+               [showInactiveRecords]="showInactiveRecords"
+               (addButtonClicked)="createOrAssignApplication()"
+               [recordsPerPage]="recordsPerPage">
+    <row-detail *ngIf="pageType !== 'DashboardPage'">
+        <ng-template let-row="row" ngx-datatable-row-detail-template>
+            <tl-data-table [isRemote]="false"
+                           [isSoftDeletable]="false"
+                           [showInactiveRecords]="false"
+                           [showAddButton]="false"
+                           [rows]="row.changeHistoryRecords"
+                           [recordsPerPage]="10">
+                <data-column propertyName="statusName"
+                             [flexRate]="0.5"
+                             columnName="{{ 'applications-register.application-status' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="statusReason"
+                             [flexRate]="0.3"
+                             columnName="{{ 'applications-register.application-status-reason' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="modifiedDate"
+                             [flexRate]="0.2"
+                             dataType="datetime"
+                             columnName="{{ 'applications-register.application-modified-date' | tlTranslate }}">
+                </data-column>
+                <data-column *ngIf="pageType !== 'PublicPage'"
+                             propertyName="modifiedByUserName"
+                             [flexRate]="0.2"
+                             columnName="{{ 'applications-register.application-modified-by-user-name' | tlTranslate }}">
+                </data-column>
+                <data-column *ngIf="row.data.changeHistoryRecords !== null
+                                    && row.data.changeHistoryRecords !== undefined
+                                    && row.data.changeHistoryRecords[0]?.paymentStatusCode !== 'NotNeeded'"
+                             propertyName="paymentStatus"
+                             [flexRate]="0.2"
+                             columnName="{{ 'applications-register.application-payment-status' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="assingedUserName"
+                             [flexRate]="0.2"
+                             columnName="{{ 'applications-register.application-assigned-user' | tlTranslate }}">
+                </data-column>
+                <data-column *ngIf="pageType !== 'PublicPage'"
+                             propertyName="territoryUnitName"
+                             [flexRate]="0.2"
+                             columnName="{{ 'applications-register.application-territory-unit-name' | tlTranslate }}">
+                </data-column>
+                <data-template-column [flexRate]="0.2">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="end center">
+                            <tl-icon-button *ngIf="row.data.hasApplicationDraftContent === true"
+                                            icon="visibility"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'applications-register.view-application-history-draft-content' | tlTranslate }}"
+                                            (buttonClicked)="openApplicationHistoryDraftInViewMode(row.data)">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </ng-template>
+    </row-detail>
+    <data-column propertyName="eventisNum"
+                 [flexRate]="0.3"
+                 columnName="{{ 'applications-register.eventis-num' | tlTranslate }}">
+    </data-column>
+    <data-column *ngIf="pageType === 'FileInPage'"
+                 propertyName="accessCode"
+                 [flexRate]="0.3"
+                 columnName="{{ 'applications-register.application-access-code' | tlTranslate }}"></data-column>
+    <data-column propertyName="submitDateTime"
+                 [flexRate]="0.4"
+                 dataType="datetime"
+                 columnName="{{ 'applications-register.date-of-application' | tlTranslate }}">
+    </data-column>
+    <data-column propertyName="submittedFor"
+                 [flexRate]="0.3"
+                 columnName="{{ 'applications-register.application-submitted-for' | tlTranslate }}">
+    </data-column>
+    <data-column propertyName="type"
+                 [flexRate]="0.6"
+                 columnName="{{ 'applications-register.application-type' | tlTranslate }}">
+    </data-column>
+    <data-column propertyName="sourceName"
+                 [flexRate]="0.3"
+                 columnName="{{ 'applications-register.application-source' | tlTranslate }}">
+    </data-column>
+    <data-template-column propertyName="statusName"
+                          [flexRate]="0.7"
+                          columnName="{{ 'applications-register.application-status' | tlTranslate }}">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <div fxLayout="column" fxLayoutAlign="start start">
+                    <ng-container [ngSwitch]="row.statusCode">
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.INITIAL"
+                                 icon="ic-fluent-document-28-regular"
+                                 iconClass="accent-color"
+                                 [size]="icIconSize">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.ENTERED_ASSIGNED_APPL"
+                                 icon="ic-fluent-doc-arrow-right-24-regular"
+                                 iconClass="accent-color"
+                                 [size]="icIconSize">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.UPLOADED_SIGNED"
+                                 icon="ic-fluent-signed-16-regular"
+                                 iconClass="accent-color"
+                                 [size]="icIconSize">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.FILL_BY_APPL"
+                                 icon="edit"
+                                 iconClass="accent-color">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.APPL_FOR_SIGN"
+                                 icon="ic-fluent-arrow-download-16-filled"
+                                 iconClass="accent-color"
+                                 [size]="icIconSize">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.WAIT_ENTRY"
+                                 icon="ic-fluent-doc-question-mark-24-regular"
+                                 iconClass="accent-color"
+                                 [size]="icIconSize">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.FILL_BY_EMP"
+                                 icon="edit"
+                                 iconClass="accent-color">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.EXT_CHK_STARTED"
+                                 icon="ic-fluent-doc-sync-24-regular"
+                                 iconClass="accent-color"
+                                 [size]="icIconSize">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.INSP_CORR_FROM_EMP"
+                                 icon="ic-fluent-doc-question-mark-24-regular"
+                                 iconClass="accent-color"
+                                 [size]="icIconSize">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.CORR_BY_USR_NEEDED"
+                                 icon="ic-fluent-doc-person-20-regular"
+                                 iconClass="accent-color"
+                                 [size]="icIconSize">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.WAIT_PAYMENT_DATA"
+                                 icon="ic-fluent-person-money-24-filled"
+                                 iconClass="accent-color"
+                                 [size]="icIconSize">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.WAIT_PMT_FROM_USR"
+                                 icon="ic-fluent-person-money-24-filled"
+                                 iconClass="accent-color"
+                                 [size]="icIconSize">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.PAYMENT_PROCESSING"
+                                 icon="ic-building-retail-money-20-regular"
+                                 iconClass="accent-color"
+                                 [size]="icIconSize">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.WAIT_REG_CHKS_ISS_GROUNDS"
+                                 icon="ic-fluent-doc-question-mark-24-regular"
+                                 iconClass="accent-color"
+                                 [size]="icIconSize">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.CAN_FILL_ADM_ACT"
+                                 icon="ic-fluent-document-edit-16-regular"
+                                 iconClass="accent-color"
+                                 [size]="icIconSize">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.ADM_ACT_COMPLETION"
+                                 icon="ic-fluent-document-edit-16-regular"
+                                 iconClass="accent-color"
+                                 [size]="icIconSize">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="applicationStatusEnum.CANCELED_APPL"
+                                 icon="ic-fluent-doc-prohibited-24-regular"
+                                 iconClass="accent-color"
+                                 [size]="icIconSize">
+                        </tl-icon>
+                    </ng-container>
+                </div>
+                <div fxLayout="column" fxLayoutAlign="start center">
+                    <span>{{ row.statusName }}</span>
+                </div>
+                <div fxLayout="column" fxLayoutAlign="start center">
+                    <tl-icon *ngIf="row.statusReason?.length > 0"
+                             icon="ic-fluent-warning-24-filled"
+                             iconClass="warn-orange-color"
+                             [matTooltip]="row.statusReason"
+                             matTooltipPosition="above"
+                             matTooltipShowDelay="250"
+                             [size]="icIconSize">
+                    </tl-icon>
+                </div>
+            </div>
+        </ng-template>
+    </data-template-column>
+    <data-column *ngIf="pageType !== 'PublicPage'"
+                 propertyName="assignedUser"
+                 [flexRate]="0.3"
+                 columnName="{{ 'applications-register.application-assigned-user' | tlTranslate }}">
+    </data-column>
+
+    <data-template-column [flexRate]="0.6">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div fxLayout="row" fxLayoutAlign="end center">
+                <div *ngIf="pageType !== 'DashboardPage' && row.data.isActive">
+                    <ng-container *ngTemplateOutlet="applicationActions; context: { value: { row: row.data } }"></ng-container>
+                </div>
+                <tl-icon-button *ngIf="pageType !== 'DashboardPage'
+                                       && (row.data.sourceCode === applicationSourceTypeEnum.Online
+                                           || row.data.statusCode !== applicationStatusEnum.ADM_ACT_COMPLETION)"
+                                icon="visibility"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'applications-register.view-application' | tlTranslate }}"
+                                (buttonClicked)="openApplicationInViewMode(row.data)"></tl-icon-button>
+                <tl-icon-button *ngIf="row.data.isActive && processingPermissions.get(row.data.pageCode)?.canDeleteRecords"
+                                icon="delete"
+                                (buttonClicked)="deleteApplication(row.data)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'applications-register.delete-application' | tlTranslate }}">
+                </tl-icon-button>
+                <tl-icon-button *ngIf="!row.data.isActive && processingPermissions.get(row.data.pageCode)?.canRestoreRecords"
+                                icon="restore"
+                                (buttonClicked)="restoreApplication(row.data)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'applications-register.restore-application' | tlTranslate }}">
+                </tl-icon-button>
+                <tl-icon-button *ngIf="pageType === 'DashboardPage'"
+                                icon="search"
+                                (buttonClicked)="showApplication(row.data)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'applications-register.show-application' | tlTranslate }}">
+                </tl-icon-button>
+            </div>
+        </ng-template>
+    </data-template-column>
+</tl-data-table>
+
+<ng-template #applicationActions let-value="value">
+    <ng-container *ngIf="value.row.sourceCode === applicationSourceTypeEnum.Online">
+        <ng-container [ngSwitch]="value.row.statusCode">
+            <ng-container *ngSwitchCase="applicationStatusEnum.INITIAL">
+                <ng-container *ngIf="pageType === 'FileInPage'">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'PublicPage'">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canEditRecords"
+                                    icon="edit"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'applications-register.application-fill-by-applicant' | tlTranslate }}"
+                                    (buttonClicked)="editActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.FILL_BY_APPL">
+                <ng-container *ngIf="pageType === 'FileInPage' && value.row.assignedUser == undefined">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'PublicPage'">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canEditRecords"
+                                    icon="edit"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'applications-register.application-fill-by-applicant' | tlTranslate }}"
+                                    (buttonClicked)="editActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'ApplicationPage' && value.row.assignedUser != undefined">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.APPL_FOR_SIGN">
+                <ng-container *ngIf="pageType === 'FileInPage' && value.row.assignedUser == undefined">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'PublicPage'">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canUploadOnlineApplications"
+                                    icon="ic-fluent-arrow-upload-16-filled"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.upload-singed-application' | tlTranslate }}"
+                                    (buttonClicked)="uploadSignedApplicationActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canDownloadOnlineApplications"
+                                    icon="ic-fluent-arrow-download-16-filled"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.download-generated-application' | tlTranslate }}"
+                                    (buttonClicked)="downloadGeneratedApplicationActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canEditRecords"
+                                    icon="ic-fluent-edit-arrow-back-16-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.go-back-to-fill-application-by-applicant'  | tlTranslate }}"
+                                    (buttonClicked)="goBackToFillApplicationByApplicantActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'ApplicationPage' && value.row.assignedUser != undefined">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.UPLOADED_SIGNED">
+                <ng-container *ngIf="pageType === 'FileInPage' && value.row.assignedUser == undefined">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canInspectAndCorrectRecords"
+                                    icon="ic-fluent-doc-sync-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.manual-start-regix-checks' | tlTranslate }}"
+                                    (buttonClicked)="manualRegixChecksStartActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'ApplicationPage' && value.row.assignedUser != undefined">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canInspectAndCorrectRecords"
+                                    icon="ic-fluent-doc-sync-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.manual-start-regix-checks' | tlTranslate }}"
+                                    (buttonClicked)="manualRegixChecksStartActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.EXT_CHK_STARTED">
+                <ng-container *ngIf="pageType === 'FileInPage' && value.row.assignedUser == undefined">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'PublicPage'">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'ApplicationPage' && value.row.assignedUser != undefined">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.INSP_CORR_FROM_EMP">
+                <ng-container *ngIf="pageType === 'FileInPage' && value.row.assignedUser == undefined">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canInspectAndCorrectRecords"
+                                    icon="ic-fluent-doc-question-mark-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.view-and-edit-application' | tlTranslate }}"
+                                    (buttonClicked)="editActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'PublicPage'">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'ApplicationPage' && value.row.assignedUser != undefined">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canInspectAndCorrectRecords"
+                                    icon="ic-fluent-doc-question-mark-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.view-and-edit-application' | tlTranslate }}"
+                                    (buttonClicked)="editActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.CORR_BY_USR_NEEDED">
+                <ng-container *ngIf="pageType === 'FileInPage' && value.row.assignedUser == undefined">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'PublicPage'">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canEditRecords"
+                                    icon="edit"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'applications-register.application-fill-by-applicant' | tlTranslate }}"
+                                    (buttonClicked)="editActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'ApplicationPage' && value.row.assignedUser != undefined">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.WAIT_ENTRY">
+                <ng-container *ngIf="pageType === 'FileInPage'">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canEnterEventisNumber"
+                                    icon="ic-fluent-doc-arrow-right-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.entering-eventis-number' | tlTranslate }}"
+                                    (buttonClicked)="enterEventisNumberActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'PublicPage'">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.WAIT_PMT_FROM_USR">
+                <ng-container *ngIf="pageType === 'ApplicationPage'">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'PublicPage'">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canProcessPaymentData"
+                                    icon="ic-fluent-person-money-24-filled"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.enter-online-payment-data' | tlTranslate }}"
+                                    (buttonClicked)="enterOnlinePaymentDataActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.PAYMENT_PROCESSING">
+                <ng-container *ngIf="pageType === 'ApplicationPage'">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'PublicPage'">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.PAYMENT_ANNUL">
+                <ng-container *ngIf="pageType === 'ApplicationPage'">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'PublicPage'">
+                    <!--<tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canProcessPaymentData"
+                                    icon="???"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'applications-register.renew-payment' | tlTranslate }}"
+                                    (buttonClicked)="renewPaymentActionClicked(value.row)">
+                    </tl-icon-button>-->
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.WAIT_REG_CHKS_ISS_GROUNDS">
+                <ng-container *ngIf="pageType === 'ApplicationPage'">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canConfirmDataRegularity"
+                                    icon="ic-fluent-doc-question-mark-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.check-for-data-regularity' | tlTranslate }}"
+                                    (buttonClicked)="checkDataRegularityActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+                <ng-container *ngIf="pageType === 'PublicPage'">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.CAN_FILL_ADM_ACT">
+                <ng-container *ngIf="pageType === 'ApplicationPage'">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canAddAdministrativeActRecords"
+                                    icon="ic-fluent-document-edit-16-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.filling-administrative-act' | tlTranslate }}"
+                                    (buttonClicked)="createRegisterActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.ADM_ACT_COMPLETION">
+                <ng-container *ngIf="pageType === 'PublicPage'">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canViewAdministrativeActRecords"
+                                    icon="assignment"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'applications-register.view-administrative-act' | tlTranslate }}"
+                                    (buttonClicked)="viewRegisterActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+        </ng-container>
+    </ng-container>
+    <ng-container *ngIf="value.row.sourceCode === applicationSourceTypeEnum.OnPaper">
+        <ng-container [ngSwitch]="value.row.statusCode">
+            <ng-container *ngSwitchCase="applicationStatusEnum.INITIAL">
+                <ng-container *ngIf="pageType === 'FileInPage'">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canEnterEventisNumber"
+                                    icon="ic-fluent-doc-arrow-right-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.entering-eventis-number' | tlTranslate }}"
+                                    (buttonClicked)="enterEventisNumberActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.FILL_BY_EMP">
+                <ng-container *ngIf="pageType === 'ApplicationPage'">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canEditRecords"
+                                    icon="edit"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'applications-register.application-fill-by-employee' | tlTranslate }}"
+                                    (buttonClicked)="editActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.EXT_CHK_STARTED">
+                <ng-container *ngIf="pageType === 'ApplicationPage'">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.INSP_CORR_FROM_EMP">
+                <ng-container *ngIf="pageType === 'ApplicationPage'">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canInspectAndCorrectRecords"
+                                    icon="ic-fluent-doc-question-mark-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.view-and-edit-application' | tlTranslate }}"
+                                    (buttonClicked)="editActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.CORR_BY_USR_NEEDED">
+                <ng-container *ngIf="pageType === 'ApplicationPage'">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canEditRecords"
+                                    icon="edit"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'applications-register.view-and-edit-application' | tlTranslate }}"
+                                    (buttonClicked)="editActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.WAIT_PAYMENT_DATA">
+                <ng-container *ngIf="pageType === 'ApplicationPage'">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canProcessPaymentData"
+                                    icon="ic-fluent-person-money-24-filled"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.enter-payment-data' | tlTranslate }}"
+                                    (buttonClicked)="enterPaymentDataActionClicked(value.row)">
+                    </tl-icon-button>
+                    <!--<tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canProcessPaymentData"
+                                    icon="ic-fluent-person-prohibited-28-filled"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.payment-refusal' | tlTranslate }}"
+                                    (buttonClicked)="paymentRefusalActionClicked(value.row)">
+                    </tl-icon-button>-->
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.WAIT_REG_CHKS_ISS_GROUNDS">
+                <ng-container *ngIf="pageType === 'ApplicationPage'">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canConfirmDataRegularity"
+                                    icon="ic-fluent-doc-question-mark-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.check-for-data-regularity' | tlTranslate }}"
+                                    (buttonClicked)="checkDataRegularityActionClicked(value.row)">
+                    </tl-icon-button>
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
+                                    icon="ic-fluent-doc-prohibited-24-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                                    (buttonClicked)="cancellationActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.CAN_FILL_ADM_ACT">
+                <ng-container *ngIf="pageType === 'ApplicationPage'">
+                    <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canAddAdministrativeActRecords"
+                                    icon="ic-fluent-document-edit-16-regular"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.filling-administrative-act' | tlTranslate }}"
+                                    (buttonClicked)="createRegisterActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="applicationStatusEnum.ADM_ACT_COMPLETION">
+                <ng-container *ngIf="pageType === 'PublicPage'">
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canViewAdministrativeActRecords"
+                                    icon="visibility"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'applications-register.view-administrative-act' | tlTranslate }}"
+                                    (buttonClicked)="viewRegisterActionClicked(value.row)">
+                    </tl-icon-button>
+                </ng-container>
+            </ng-container>
+        </ng-container>
+    </ng-container>
+</ng-template>

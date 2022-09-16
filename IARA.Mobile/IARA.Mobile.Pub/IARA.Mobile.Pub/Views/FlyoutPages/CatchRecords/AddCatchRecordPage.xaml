@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+             xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+             xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+             xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+             xmlns:c="clr-namespace:IARA.Mobile.Pub.Views.Controls"
+             xmlns:m="clr-namespace:IARA.Mobile.Pub.ViewModels.Models"
+             xmlns:dts="clr-namespace:IARA.Mobile.Pub.DataTemplateSelectors"
+             xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages.CatchRecords"
+             xmlns:cViewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.Controls"
+             xmlns:ticketDtos="clr-namespace:IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API;assembly=IARA.Mobile.Pub.Application"
+             x:Class="IARA.Mobile.Pub.Views.FlyoutPages.CatchRecords.AddCatchRecordPage"
+             x:DataType="viewModels:AddCatchRecordViewModel"
+             x:TypeArguments="viewModels:AddCatchRecordViewModel"
+             x:Name="page"
+             PageInfo="{rt:Translate PageInfo, Group=AddCatchRecord}"
+             Title="{rt:Translate Title, Group=AddCatchRecord}"
+             BackgroundColor="{StaticResource BackgroundColor}">
+    <tl:TLScrollView>
+        <StackLayout Padding="10">
+            <tl:TLFlex GrowUnit="250">
+                <tl:TLEntry Title="{rt:Translate WaterArea, Group=AddCatchRecord}"
+                            ValidState="{Binding WaterArea}"
+                            IsEnabled="{Binding CanEdit}" />
+                <tl:TLDateTimePicker Title="{rt:Translate Date, Group=Common}"
+                                     ValidState="{Binding CatchDate}"
+                                     IsEnabled="{Binding CanEdit}" />
+                <c:TLMapLocationPicker tl:TLFlex.Grow="2"
+                                       Title="{rt:Translate Location, Group=AddCatchRecord}"
+                                       Location="{Binding Location}"
+                                       IsEnabled="{Binding CanEdit}" />
+            </tl:TLFlex>
+            <tl:TLPicker Title="{rt:Translate Ticket, Group=AddCatchRecord}"
+                         ItemsSource="{Binding UserTickets}"
+                         ValidState="{Binding Ticket}"
+                         Command="{Binding TicketSelected}"
+                         DisplayValue="TypeName"
+                         IsEnabled="{Binding IsAdd}">
+                <DataTemplate>
+                    <StackLayout x:DataType="ticketDtos:UserTicketShortDto"
+                                 Padding="5">
+                        <Label FontAttributes="Bold"
+                               FontSize="14"
+                               LineBreakMode="WordWrap"
+                               Text="{Binding TypeName}" />
+                        <Label Text="{Binding PersonFullName}" />
+                        <tl:TLRichLabel FontSize="12">
+                            <Span Text="{rt:Translate TicketValidFrom, Group=Common}" />
+                            <Span Text=" " />
+                            <Span FontAttributes="Bold"
+                                  Text="{Binding ValidFrom, Converter={StaticResource DateTimeToString}}" />
+                        </tl:TLRichLabel>
+                        <tl:TLRichLabel FontSize="12">
+                            <Span Text="{rt:Translate TicketValidTo, Group=Common}" />
+                            <Span Text=" " />
+                            <Span FontAttributes="Bold"
+                                  Text="{Binding ValidTo, Converter={StaticResource DateTimeToString}}" />
+                        </tl:TLRichLabel>
+                        <BoxView HeightRequest="1"
+                                 Color="LightGray" />
+                    </StackLayout>
+                </DataTemplate>
+            </tl:TLPicker>
+            <Frame BindingContext="{Binding Ticket.Value}"
+                   IsVisible="{Binding BindingContext.TicketChosen, Source={Reference page}}"
+                   Padding="5">
+                <StackLayout x:DataType="ticketDtos:UserTicketShortDto">
+                    <Label FontAttributes="Bold"
+                           FontSize="14"
+                           LineBreakMode="WordWrap"
+                           Text="{Binding TypeName}" />
+                    <Label Text="{Binding PersonFullName}" />
+                    <tl:TLRichLabel FontSize="12">
+                        <Span Text="{rt:Translate TicketValidFrom, Group=Common}" />
+                        <Span Text=" " />
+                        <Span FontAttributes="Bold"
+                              Text="{Binding ValidFrom, Converter={StaticResource DateTimeToString}}" />
+                    </tl:TLRichLabel>
+                    <tl:TLRichLabel FontSize="12">
+                        <Span Text="{rt:Translate TicketValidTo, Group=Common}" />
+                        <Span Text=" " />
+                        <Span FontAttributes="Bold"
+                              Text="{Binding ValidTo, Converter={StaticResource DateTimeToString}}" />
+                    </tl:TLRichLabel>
+                </StackLayout>
+            </Frame>
+            <tl:TLEditor Title="{rt:Translate Description, Group=AddCatchRecord}"
+                         ValidState="{Binding Description}"
+                         IsEnabled="{Binding CanEdit}" />
+            <Grid ColumnDefinitions="45,*,Auto"
+                  RowDefinitions="Auto,1"
+                  Margin="0,10,0,0">
+                <Label FontFamily="FA"
+                       FontSize="24"
+                       Margin="5,0,0,0"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Center"
+                       TextColor="{StaticResource Primary}"
+                       Text="{Static h:IconFont.Fish}" />
+                <tl:TLRichLabel Grid.Column="1"
+                                LineBreakMode="WordWrap"
+                                FontSize="18"
+                                VerticalOptions="Center">
+                    <Span Text="{rt:Translate Catches, Group=AddCatchRecord}" />
+                    <Span Text=" (" />
+                    <Span Text="{Binding Catches.Count}" />
+                    <Span Text=")" />
+                </tl:TLRichLabel>
+                <ImageButton Grid.Column="2"
+                             Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Plus}, Color=White, Size=22}"
+                             BackgroundColor="{StaticResource Primary}"
+                             Padding="10"
+                             Command="{Binding AddCatch}"
+                             IsVisible="{Binding CanEdit}" />
+                <BoxView Grid.Row="1"
+                         Grid.ColumnSpan="3"
+                         BackgroundColor="#3c424d" />
+            </Grid>
+            <StackLayout BindableLayout.ItemsSource="{Binding Catches}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Frame x:DataType="cViewModels:CFCatchViewModel"
+                               Padding="10">
+                            <StackLayout>
+                                <tl:TLPicker Title="{rt:Translate FishType, Group=AddCatchRecord}"
+                                             DisplayValue="DisplayName"
+                                             ItemsSource="{Binding FishTypes}"
+                                             ValidState="{Binding FishType}"
+                                             IsEnabled="{Binding BindingContext.CanEdit, Source={Reference page}}" />
+                                <Grid ColumnDefinitions="*,*,Auto">
+                                    <tl:TLEntry Title="{rt:Translate Count, Group=AddCatchRecord}"
+                                                ValidState="{Binding Count}"
+                                                Keyboard="Numeric"
+                                                IsEnabled="{Binding BindingContext.CanEdit, Source={Reference page}}" />
+                                    <tl:TLEntry Grid.Column="1"
+                                                Title="{rt:Translate Quantity, Group=AddCatchRecord}"
+                                                ValidState="{Binding Quantity}"
+                                                Keyboard="Numeric"
+                                                IsEnabled="{Binding BindingContext.CanEdit, Source={Reference page}}" />
+                                    <ImageButton Grid.Column="2"
+                                                 Command="{Binding BindingContext.RemoveCatch, Source={Reference page}}"
+                                                 CommandParameter="{Binding}"
+                                                 Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Color=White, Size=20}"
+                                                 Padding="10"
+                                                 VerticalOptions="End"
+                                                 IsVisible="{Binding BindingContext.CanEdit, Source={Reference page}}" />
+                                </Grid>
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </StackLayout>
+            <Grid ColumnDefinitions="45,*,Auto"
+                  RowDefinitions="Auto,1"
+                  Margin="0,10,0,0">
+                <Label FontFamily="FA"
+                       FontSize="24"
+                       Margin="5,0,0,0"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Center"
+                       TextColor="{StaticResource Primary}"
+                       Text="{Static h:IconFont.Fish}" />
+                <tl:TLRichLabel Grid.Column="1"
+                                LineBreakMode="WordWrap"
+                                FontSize="18"
+                                VerticalOptions="Center">
+                    <Span Text="{rt:Translate Pictures, Group=AddCatchRecord}" />
+                    <Span Text=" (" />
+                    <Span Text="{Binding Pictures.Count}" />
+                    <Span Text=")" />
+                </tl:TLRichLabel>
+                <sv:TLMenuButton Grid.Column="2"
+                                 Choices="{Binding AddPictureChoices}"
+                                 Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Plus}, Color=White, Size=22}"
+                                 BackgroundColor="{StaticResource Primary}"
+                                 Padding="10"
+                                 Command="{Binding AddPicture}"
+                                 IsVisible="{Binding CanEdit}" />
+                <BoxView Grid.Row="1"
+                         Grid.ColumnSpan="3"
+                         BackgroundColor="#3c424d" />
+            </Grid>
+            <FlexLayout Wrap="Wrap"
+                        BindableLayout.ItemsSource="{Binding Pictures}">
+                <BindableLayout.EmptyView>
+                    <Label Text="{rt:Translate NoPictures, Group=AddCatchRecord}" />
+                </BindableLayout.EmptyView>
+                <BindableLayout.ItemTemplateSelector>
+                    <dts:CatchImageTemplateSelector />
+                </BindableLayout.ItemTemplateSelector>
+            </FlexLayout>
+            <Button Text="{rt:Translate Save, Group=Common}"
+                    Command="{Binding Save}"
+                    IsVisible="{Binding CanEdit}" />
+        </StackLayout>
+    </tl:TLScrollView>
+</sv:BasePage>

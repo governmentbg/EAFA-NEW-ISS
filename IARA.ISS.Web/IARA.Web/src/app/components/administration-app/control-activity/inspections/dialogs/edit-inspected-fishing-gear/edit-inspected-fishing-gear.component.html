@@ -1,0 +1,31 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <div fxLayout="column"
+         fxLayoutGap="1em"
+         fxLayoutAlign="start stretch">
+        <tl-expansion-panel *ngIf="isRegistered"
+                            title="{{ 'inspections.fishing-gear' | tlTranslate }}">
+            <edit-fishing-gear formControlName="permittedGearControl">
+            </edit-fishing-gear>
+        </tl-expansion-panel>
+        <inspection-toggle *ngIf="isRegistered"
+                           formControlName="optionsControl"
+                           [options]="options"
+                           [toggle]="toggle">
+        </inspection-toggle>
+        <inspection-toggle *ngIf="hasAttachedAppliances"
+                           formControlName="appliancesOptionsControl"
+                           [options]="options"
+                           [toggle]="appliancesToggle">
+        </inspection-toggle>
+        <tl-expansion-panel *ngIf="canEditInspectedGear"
+                            title="{{ 'inspections.inspected-fishing-gear' | tlTranslate }}">
+            <edit-fishing-gear formControlName="inspectedGearControl"
+                               [isInspected]="true">
+            </edit-fishing-gear>
+        </tl-expansion-panel>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+﻿<div *ngIf="tariff !== null && tariff !== undefined"
+     fxFlex="100"
+     fxLayout="row"
+     fxLayoutGap="2em"
+     fxLayoutAlign="start center">
+    <div [fxFlex]="nameFlex" fxLayoutAlign="start center">
+        <div fxFlex="auto">
+            <span class="multi-line">{{ tariff.tariffName }}</span>
+        </div>
+        <div *ngIf="hasDescription || hasBasedOnPlea" fxFlex="initial">
+            <tl-popover-button iconType="FA_ICON"
+                               iconClass="accent-color"
+                               icon="fa-question"
+                               iconSize="0.7"
+                               [overrideOpen]="false"
+                               style="vertical-align:text-bottom">
+                <div fxFlexFill fxLayout="column" fxLayoutGap="0.5em">
+                    <div *ngIf="hasDescription" fxLayout="row" fxFlex="100">
+                        <pre style="font-family: inherit !important; max-width: 500px !important;">{{ tariff.tariffDescription }}</pre>
+                    </div>
+                    <div fxFlex="100">
+                        <mat-divider></mat-divider>
+                    </div>
+                    <div *ngIf="hasBasedOnPlea" fxLayout="row" fxFlex="100">
+                        <pre style="font-family: inherit !important; max-width: 500px !important;"><span>{{ 'payment-tariff.based-on-plea-label' | tlTranslate }}:</span> {{ tariff.tariffBasedOnPlea }}</pre>
+                    </div>
+                </div>
+            </tl-popover-button>
+        </div>
+    </div>
+    <div [fxFlex]="quantityFlex" fxLayoutAlign="center center">
+        <span>x {{ tariff.quantity | number : '1.0-2' }}</span>
+    </div>
+    <div [fxFlex]="unitPriceFlex" fxLayoutAlign="center center">
+        <span>{{ tariff.unitPrice | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}</span>
+    </div>
+    <div [fxFlex]="priceFlex" fxLayoutAlign="end center">
+        <span>{{ tariff.price | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}</span>
+    </div>
+</div>

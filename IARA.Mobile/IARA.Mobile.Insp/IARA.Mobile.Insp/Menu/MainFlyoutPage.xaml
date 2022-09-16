@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="IARA.Mobile.Insp.Menu.MainFlyoutPage"
+        xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:ffimg="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:menu="clr-namespace:IARA.Mobile.Shared.Menu;assembly=IARA.Mobile.Shared"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:lh="clr-namespace:IARA.Mobile.Insp.Helpers"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        Title=" "
+        BackgroundColor="{AppThemeBinding Dark={StaticResource BackgroundColorDark}, Light={StaticResource BackgroundColor}}"
+        IconImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Bars}, Color=White}">
+    <Grid Padding="{OnPlatform iOS='0, 20, 0, 0'}"
+            RowDefinitions="Auto,1,*,50"
+            RowSpacing="0">
+        <Grid ColumnDefinitions="Auto,*">
+            <ffimg:CachedImage Margin="5"
+                    HeightRequest="65"
+                    Source="{lh:Image iara_logo}" />
+            <Label Grid.Column="1"
+                    FontSize="18"
+                    HorizontalTextAlignment="Center"
+                    LineBreakMode="WordWrap"
+                    Text="{rt:Translate Title, Group=Menu}"
+                    VerticalOptions="Center" />
+        </Grid>
+        <BoxView Grid.Row="1"
+                HeightRequest="1"
+                Color="LightGray" />
+        <StackLayout Grid.Row="2"
+                Margin="0,5"
+                Spacing="0"
+                VerticalOptions="FillAndExpand">
+            <StackLayout.Resources>
+                <Style TargetType="menu:NavigationItemView">
+                    <Setter Property="Padding" Value="15,20" />
+                </Style>
+            </StackLayout.Resources>
+            <menu:NavigationItemView x:Name="inspections"
+                    Icon="{Static h:IconFont.Fish}"
+                    Route="InspectionsPage"
+                    Text="{rt:Translate Inspections, Group=Menu}" />
+            <menu:NavigationItemView x:Name="addInspections"
+                    Icon="{Static h:IconFont.CirclePlus}"
+                    Route="AddInspections"
+                    Text="{rt:Translate AddInspections, Group=Menu}" />
+            <menu:NavigationItemView x:Name="reports"
+                    Icon="{Static h:IconFont.List}"
+                    Route="Reports"
+                    Text="{rt:Translate Reports, Group=Menu}" />
+            <BoxView Margin="5,0,5,5"
+                    HeightRequest="1"
+                    Color="LightGray" />
+            <menu:NavigationItemView x:Name="profileNavItem"
+                    Icon="{Static h:IconFont.User}"
+                    Route="ProfilePage"
+                    Text="{rt:Translate Profile, Group=Menu}" />
+            <menu:NavigationItemView x:Name="settings"
+                    Icon="{Static h:IconFont.Gear}"
+                    Route="SettingsPage"
+                    Text="{rt:Translate Settings, Group=Menu}" />
+            <menu:NavigationItemView x:Name="logoutNavItem"
+                    Icon="{Static h:IconFont.RightFromBracket}"
+                    Route="Logout"
+                    Text="{rt:Translate Logout, Group=Menu}" />
+        </StackLayout>
+        <tl:TLRichLabel Grid.Row="3"
+                Margin="20,0,0,0"
+                FontSize="18"
+                TextColor="{StaticResource Primary}"
+                VerticalOptions="Center">
+            <Span Text="{rt:Translate Version, Group=Menu}" />
+            <Span Text=" " />
+            <Span x:Name="VersionSpan" />
+            <tl:TLRichLabel.GestureRecognizers>
+                <TapGestureRecognizer Tapped="ClickVersionLabel_Clicked" />
+            </tl:TLRichLabel.GestureRecognizers>
+        </tl:TLRichLabel>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,97 @@
+﻿<div validityCheckerGroup [formGroup]="form">
+    <tl-card tooltipResourceName="origin-declaration-basic-information-panel-helper" [validityChecker]="form">
+        <tl-card-content fxLayout="column"
+                         fxLayoutGap="1em"
+                         fxFlexFill
+                         fxLayoutAlign="space-between stretch">
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
+                <tl-autocomplete fxFlex="32"
+                                 formControlName="aquaticOrganismTypeControl"
+                                 label="{{ 'catches-and-sales.ship-page-origin-declaration-aquatic-organism-type' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.ship-page-origin-declaration-aquatic-organism-type-helper"
+                                 [options]="aquaticOrganismTypes"
+                                 [readonly]="true">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="32"
+                                 formControlName="catchStateControl"
+                                 label="{{ 'catches-and-sales.ship-page-origin-declaration-catch-state' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.ship-page-origin-declaration-catch-state-helper"
+                                 [options]="catchStates">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="32"
+                                 formControlName="catchPresentationControl"
+                                 label="{{ 'catches-and-sales.ship-page-origin-declaration-catch-presentation' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.ship-page-origin-declaration-catch-presentation-helper"
+                                 [options]="catchPresentations">
+                </tl-autocomplete>
+            </div>
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
+                <tl-checkbox fxFlex="32"
+                             formControlName="isProcessedOnBoardControl"
+                             label="{{ 'catches-and-sales.ship-page-origin-declaration-is-processed-on-board' | tlTranslate }}"
+                             tooltipResourceName="catches-and-sales.ship-page-origin-declaration-is-processed-on-board-helper">
+                </tl-checkbox>
+                <tl-input fxFlex="32"
+                          formControlName="quantityKgControl"
+                          label="{{ 'catches-and-sales.ship-page-origin-declaration-quantity-kg' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-origin-declaration-quantity-kg-helper">
+                </tl-input>
+                <tl-input fxFlex="32"
+                          formControlName="unloadedProcessedQuantityKgControl"
+                          label="{{ 'catches-and-sales.ship-page-origin-declaration-unloaded-processed-quantity-kg' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-origin-declaration-unloaded-processed-quantity-kg-helper">
+                </tl-input>
+            </div>
+            <div fxFlex="100" fxLayout="column" fxLayoutGap="1em">
+                <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
+                    <tl-checkbox fxFlex="100"
+                                 formControlName="isTransboardedControl"
+                                 label="{{ 'catches-and-sales.ship-page-origin-declaration-is-fish-transboarded' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.ship-page-origin-declaration-is-fish-transboarded-helper">
+                    </tl-checkbox>
+                </div>
+                <div *ngIf="form.controls.isTransboardedControl.value"
+                     fxFlex="100"
+                     fxLayout="column"
+                     fxLayoutGap="1em">
+                    <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
+                        <tl-date-time fxFlex="32"
+                                      formControlName="transboardDateTimeControl"
+                                      label="{{ 'catches-and-sales.ship-page-origin-declaration-transboard-data-time' | tlTranslate }}  ({{ 'common.date-time-control-format-hint' | tlTranslate }})"
+                                      tooltipResourceName="catches-and-sales.ship-page-origin-declaration-transboard-data-time-helper"
+                                      [disabled]="viewMode"
+                                      [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                        </tl-date-time>
+                        <tl-autocomplete fxFlex="32"
+                                         formControlName="transboardTargetPortControl"
+                                         label="{{ 'catches-and-sales.ship-page-origin-declaration-transborad-target-port' | tlTranslate }}"
+                                         tooltipResourceName="catches-and-sales.ship-page-origin-declaration-transborad-target-port-helper"
+                                         [options]="ports">
+                        </tl-autocomplete>
+                        <div fxFlex="32"></div>
+                        <!--<tl-input fxFlex="32"
+                                  formControlName="transbordNationalityControl"
+                                  label="{{ 'catches-and-sales.ship-page-origin-declaration-transboard-nationality' | tlTranslate }}"
+                                  tooltipResourceName="catches-and-sales.ship-page-origin-declaration-transboard-nationality-helper">
+                        </tl-input>-->
+                    </div>
+                    <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
+                        <tl-autocomplete fxFlex="100"
+                                         formControlName="transboardingShipControl"
+                                         label="{{ 'catches-and-sales.ship-page-origin-declaration-transboarding-ship' | tlTranslate }}"
+                                         tooltipResourceName="catches-and-sales.ship-page-origin-declaration-transboarding-ship-helper"
+                                         [options]="ships">
+                        </tl-autocomplete>
+                    </div>
+                </div>
+                <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
+                    <tl-textarea fxFlex="100"
+                                 formControlName="commentsControl"
+                                 label="{{ 'catches-and-sales.ship-page-origin-declaration-comments' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.ship-page-origin-declaration-comments-helper">
+                    </tl-textarea>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

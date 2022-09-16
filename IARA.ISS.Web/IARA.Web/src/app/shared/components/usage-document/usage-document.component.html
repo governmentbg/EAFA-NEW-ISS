@@ -1,0 +1,115 @@
+﻿<div [formGroup]="form"
+	 fxLayout="column"
+	 fxLayoutGap="1em"
+	 [ngClass]="{ 'dialog-padding': isDialog }"
+	 [notifierGroup]="notifierGroup"
+	 validityCheckerGroup>
+	<!-- Документ -->
+	<tl-card *ngIf="!showOnlyRegiXData" [validityChecker]="form" tooltipResourceName="{{ tooltipResourceName }}">
+		<tl-card-title>{{ title }}</tl-card-title>
+
+		<tl-card-content fxLayout="column" fxLayoutGap="1em">
+			<div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+				<tl-select fxFlex="25"
+						   formControlName="typeControl"
+						   [options]="documentTypes"
+						   label="{{ 'usage-document.document-type' | tlTranslate }}">
+				</tl-select>
+
+				<tl-input fxFlex="25"
+						  formControlName="numControl"
+						  label="{{ 'usage-document.document-num' | tlTranslate }}">
+				</tl-input>
+
+				<date-range-indefinite fxFlex="50"
+									   formControlName="validityControl"
+									   rangeLabel="{{ 'usage-document.document-validity' | tlTranslate }}"
+									   dateLabel="{{ 'usage-document.document-validity-start' | tlTranslate }}"
+									   checkboxLabel="{{ 'usage-document.document-indefinite' | tlTranslate }}">
+				</date-range-indefinite>
+			</div>
+
+			<tl-textarea fxFlexFill
+						 formControlName="commentsControl"
+						 label="{{ 'usage-document.comments' | tlTranslate }}">
+			</tl-textarea>
+		</tl-card-content>
+	</tl-card>
+
+	<!-- Договор за концесия -->
+	<tl-card *ngIf="type === usageDocumentTypes.Concession" [validityChecker]="form">
+		<tl-card-title>{{ 'usage-document.concessioner' | tlTranslate }}</tl-card-title>
+
+		<tl-card-content fxLayout="column" fxLayoutGap="1em" validityCheckerGroup>
+			<regix-data formControlName="concessionerControl"
+						notifier
+						validityChecker
+						[isPerson]="false"
+						[isIdReadOnly]="isIdReadOnly"
+						[expectedResults]="expectedResults?.lessorLegal"
+						checkboxLabel="{{ 'usage-document.has-bulgarian-address-registration' | tlTranslate }}">
+			</regix-data>
+
+			<address-registration formControlName="concessionerAddressesControl"
+								  notifier
+								  validityChecker
+								  addressLabel="{{ 'common.company-headquarters-address' | tlTranslate : 'cap' }}"
+								  [addressType]="companyHeadquartersType"
+								  [expectedResults]="expectedResults?.lessorAddresses">
+			</address-registration>
+		</tl-card-content>
+	</tl-card>
+
+	<!-- Договор за наем -->
+	<tl-card *ngIf="type === usageDocumentTypes.Lease" [validityChecker]="form">
+		<tl-card-title>{{ 'usage-document.lessor' | tlTranslate }}</tl-card-title>
+
+		<tl-card-content fxLayout="column" fxLayoutGap="1em" validityCheckerGroup>
+			<tl-radio-button-group formControlName="isLessorPersonControl"
+								   direction="row"
+								   gap="1em"
+								   [options]="documentLessorTypes">
+			</tl-radio-button-group>
+
+			<regix-data *ngIf="form.controls.isLessorPersonControl.value?.value === 'Person'"
+						formControlName="personControl"
+						notifier
+						validityChecker
+						[isPerson]="true"
+						[isIdReadOnly]="isIdReadOnly"
+						[hideDocument]="true"
+						[expectedResults]="expectedResults?.lessorPerson"
+						checkboxLabel="{{ 'usage-document.has-bulgarian-address-registration' | tlTranslate }}">
+			</regix-data>
+
+			<regix-data *ngIf="form.controls.isLessorPersonControl.value?.value === 'Legal'"
+						formControlName="legalControl"
+						notifier
+						validityChecker
+						[isPerson]="false"
+						[isIdReadOnly]="isIdReadOnly"
+						[expectedResults]="expectedResults?.lessorLegal"
+						checkboxLabel="{{ 'usage-document.has-bulgarian-address-registration' | tlTranslate }}">
+			</regix-data>
+
+			<address-registration *ngIf="form.controls.isLessorPersonControl.value?.value === 'Person'"
+								  formControlName="personAddressesControl"
+								  notifier
+								  validityChecker
+								  addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+								  secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+								  checkboxLabel="{{ 'usage-document.permanent-address-same-as-correspondence' | tlTranslate }}"
+								  [expectedResults]="expectedResults?.lessorAddresses">
+			</address-registration>
+
+			<address-registration *ngIf="form.controls.isLessorPersonControl.value?.value === 'Legal'"
+								  formControlName="legalAddressesControl"
+								  notifier
+								  validityChecker
+								  addressLabel="{{ 'common.company-headquarters-address' | tlTranslate : 'cap' }}"
+								  [addressType]="companyHeadquartersType"
+								  [expectedResults]="expectedResults?.lessorAddresses">
+			</address-registration>
+		</tl-card-content>
+	</tl-card>
+</div>

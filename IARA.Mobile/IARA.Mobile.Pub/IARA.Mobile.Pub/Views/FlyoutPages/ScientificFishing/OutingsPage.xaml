@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:dtos="clr-namespace:IARA.Mobile.Pub.Application.DTObjects.ScientificFishing.LocalDb;assembly=IARA.Mobile.Pub.Application"
+        xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages.ScientificFishing"
+        x:DataType="viewModels:OutingsViewModel"
+        x:TypeArguments="viewModels:OutingsViewModel"
+        x:Class="IARA.Mobile.Pub.Views.FlyoutPages.ScientificFishing.OutingsPage"
+        x:Name="page"
+        PageInfo="{rt:Translate PageInfo, Group=Outings}"
+        Title="{rt:Translate Title, Group=Outings}"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <CollectionView ItemsSource="{Binding Outings}">
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <ContentView>
+                    <Frame x:DataType="dtos:SFOutingDto"
+                            Margin="5"
+                            Padding="10">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding BindingContext.Review, Source={Reference page}}" CommandParameter="{Binding}" />
+                        </Frame.GestureRecognizers>
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                            <tl:TLRichLabel>
+                                <Span Text="{rt:Translate DateOfOuting, Group=Outings}" />
+                                <Span Text=": " />
+                                <Span Text="{Binding DateOfOuting, Converter={StaticResource DateToString}}" FontAttributes="Bold" />
+                            </tl:TLRichLabel>
+                            <tl:TLRichLabel Grid.Row="1">
+                                <Span Text="{rt:Translate WaterArea, Group=Outings}" />
+                                <Span Text=": " />
+                                <Span Text="{Binding WaterArea}" FontAttributes="Bold" />
+                            </tl:TLRichLabel>
+                            <StackLayout Grid.RowSpan="2"
+                                    Grid.Column="1"
+                                    Orientation="Horizontal"
+                                    VerticalOptions="Center"
+                                    IsVisible="{Binding BindingContext.IsActive, Source={Reference page}}">
+                                <ImageButton Command="{Binding BindingContext.Edit, Source={Reference page}}"
+                                        CommandParameter="{Binding}"
+                                        Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.PenToSquare}, Size=20}"
+                                        Padding="10"
+                                        IsVisible="{Binding BindingContext.IsActive, Source={Reference page}}" />
+                                <ImageButton Command="{Binding BindingContext.Delete, Source={Reference page}}"
+                                        CommandParameter="{Binding}"
+                                        Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20}"
+                                        Padding="10"
+                                        BackgroundColor="{StaticResource ErrorColor}"
+                                        IsVisible="{Binding BindingContext.IsActive, Source={Reference page}}" />
+                            </StackLayout>
+                        </Grid>
+                    </Frame>
+                </ContentView>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+</sv:BasePage>

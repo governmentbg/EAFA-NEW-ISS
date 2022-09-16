@@ -1,0 +1,20 @@
+﻿<div class="card-height" fxLayout="row">
+    <tl-card fxFlexFill>
+        <tl-card-content fxFlexFill>
+            <div fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                <tl-icon icon="{{ data.icon }}"
+                         iconClass="accent-color"
+                         size="3">
+                </tl-icon>
+                <div fxLayoutAlign="start center" fxFlex="75">
+                    <div [style.font-size.em]="titleSize" class="overflow">
+                        {{ data.name }}
+                    </div>
+                </div>
+                <div [style.font-size.em]="3">
+                    {{ data.count }}
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

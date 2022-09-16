@@ -1,0 +1,368 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     validityCheckerGroup
+     [formGroup]="form"
+     class="dialog-padding">
+    <!-- Основни данни -->
+    <tl-expansion-panel title="{{ 'auan-register.edit-auan-basic-data' | tlTranslate }}"
+                        tooltipResourceName="auan-register.edit-auan-basic-data-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="20"
+                          formControlName="reportNumControl"
+                          label="{{ 'auan-register.edit-report-num' | tlTranslate }}"
+                          tooltipResourceName="auan-register.edit-report-num-helper">
+                </tl-input>
+
+                <tl-input fxFlex="20"
+                          formControlName="auanNumControl"
+                          label="{{ 'auan-register.edit-auan-num' | tlTranslate }}"
+                          tooltipResourceName="auan-register.edit-auan-num-helper">
+                </tl-input>
+
+                <tl-date fxFlex="20"
+                         formControlName="draftDateControl"
+                         [max]="today"
+                         label="{{ 'auan-register.edit-draft-date' | tlTranslate }}"
+                         tooltipResourceName="auan-register.edit-draft-date-helper">
+                </tl-date>
+
+                <tl-input fxFlex="40"
+                          formControlName="locationDescriptionControl"
+                          label="{{ 'auan-register.edit-location-description' | tlTranslate }}"
+                          tooltipResourceName="auan-register.edit-locaton-description-helper">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="20"
+                          formControlName="drafterControl"
+                          label="{{ 'auan-register.edit-drafter' | tlTranslate }}"
+                          tooltipResourceName="auan-register.edit-drafter-helper">
+                </tl-input>
+
+                <tl-autocomplete fxFlex="20"
+                                 formControlName="territoryUnitControl"
+                                 [options]="territoryUnits"
+                                 label="{{ 'auan-register.edit-territory-unit' | tlTranslate }}"
+                                 tooltipResourceName="auan-register.edit-territory-unit-helper">
+                </tl-autocomplete>
+
+                <tl-autocomplete fxFlex="20"
+                                 formControlName="statusControl"
+                                 [options]="statuses"
+                                 label="{{ 'auan-register.edit-status' | tlTranslate }}"
+                                 tooltipResourceName="auan-register.edit-status-helper">
+                </tl-autocomplete>
+
+                <tl-autocomplete fxFlex="40"
+                                 formControlName="inspectionTypeControl"
+                                 [options]="inspectionTypes"
+                                 label="{{ 'auan-register.edit-inspection-type' | tlTranslate }}"
+                                 tooltipResourceName="auan-register.edit-inspection-type-helper">
+                </tl-autocomplete>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Свидетели -->
+    <tl-expansion-panel title="{{ 'auan-register.edit-auan-witnesses' | tlTranslate }}"
+                        tooltipResourceName="auan-register.edit-auan-witnesses-helper"
+                        [validityChecker]="form">
+        <auan-witnesses-array formControlName="witnessesControl"
+                              [viewMode]="viewMode">
+        </auan-witnesses-array>
+    </tl-expansion-panel>
+
+    <!-- Проверявано лице -->
+    <tl-expansion-panel title="{{ 'auan-register.edit-auan-inspected-person' | tlTranslate }}"
+                        tooltipResourceName="auan-register.edit-auan-inspected-person-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <div *ngIf="isAdding" fxLayout="row" fxLayoutAlign="start center">
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="inspectedEntityControl"
+                                 [options]="inspectedEntities"
+                                 label="{{ 'auan-register.edit-inspected-entity-select' | tlTranslate }}"
+                                 tooltipResourceName="auan-register.edit-inspected-entity-select-helper">
+                </tl-autocomplete>
+            </div>
+
+            <div *ngIf="inspectedEntity !== undefined && inspectedEntity !== null">
+                <!-- Физическо лице -->
+                <div *ngIf="inspectedEntity.isPerson === true">
+                    <regix-data formControlName="personControl"
+                                [isPerson]="true"
+                                [hideDocument]="true"
+                                [isIdReadOnly]="viewMode"
+                                checkboxLabel="{{ 'auan-register.has-bulgarian-address-registration' | tlTranslate }}">
+                    </regix-data>
+
+                    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                        <tl-input fxFlex="25"
+                                  formControlName="personWorkPlaceControl"
+                                  label="{{ 'auan-register.edit-inspected-entity-work-place' | tlTranslate }}"
+                                  tooltipResourceName="auan-register.edit-inspected-entity-work-place-helper">
+                        </tl-input>
+
+                        <tl-input fxFlex="25"
+                                  formControlName="personWorkPositionControl"
+                                  label="{{ 'auan-register.edit-inspected-entity-work-position' | tlTranslate }}"
+                                  tooltipResourceName="auan-register.edit-inspected-entity-work-position-helper">
+                        </tl-input>
+
+                        <div fxFlex="25"></div>
+                        <div fxFlex="25"></div>
+                    </div>
+
+                    <address-registration formControlName="personAddressesControl"
+                                          addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                                          secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                                          checkboxLabel="{{ 'auan-register.permanent-address-same-as-correspondence' | tlTranslate }}">
+                    </address-registration>
+                </div>
+
+                <!-- Юридическо лице -->
+                <div *ngIf="inspectedEntity.isPerson === false">
+                    <regix-data formControlName="legalControl"
+                                [isPerson]="false"
+                                [showCustodianOfProperty]="false"
+                                [isIdReadOnly]="viewMode"
+                                checkboxLabel="{{ 'auan-regster.has-bulgarian-address-registration' | tlTranslate }}">
+                    </regix-data>
+
+                    <address-registration formControlName="legalAddressesControl"
+                                          addressLabel="{{ 'common.company-headquarters-address' | tlTranslate : 'cap' }}"
+                                          [addressType]="companyHeadquartersType">
+                    </address-registration>
+                </div>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Бележки -->
+    <tl-expansion-panel title="{{ 'auan-register.edit-auan-comments' | tlTranslate }}"
+                        [validityChecker]="form"
+                        tooltipResourceName="auan-register.edit-auan-comments-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <tl-textarea formControlName="constatationCommentsControl"
+                         label="{{ 'auan-register.edit-constatation-comments' | tlTranslate }}"
+                         tooltipResourceName="auan-register.edit-constatation-comments-helper">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Нарушени разпоредби -->
+    <tl-expansion-panel title="{{ 'auan-register.edit-auan-violated-regulations' | tlTranslate }}"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.atLeastOneViolatedRegulationNeeded !== true"
+                        tooltipResourceName="auan-register.edit-auan-constatations-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <auan-violated-regulations formControlName="violatedRegulationsControl"
+                                       [viewMode]="viewMode">
+            </auan-violated-regulations>
+
+            <mat-error *ngIf="violatedRegulationsTouched && form.errors?.atLeastOneViolatedRegulationNeeded === true">
+                * {{ 'auan-register.edit-auan-at-least-one-violated-regulation-needed' | tlTranslate }}
+            </mat-error>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Конфискуване на риба / морски организми -->
+    <tl-expansion-panel title="{{ 'auan-register.edit-auan-confiscated-fishes' | tlTranslate }}"
+                        [validityChecker]="form"
+                        tooltipResourceName="auan-register.edit-auan-confiscated-fishes-helper">
+        <decree-sized-fish formControlName="confiscatedFishControl"
+                           [viewMode]="viewMode"
+                           [isAuan]="true">
+        </decree-sized-fish>
+    </tl-expansion-panel>
+
+    <!-- Конфискуване на риболовни уреди -->
+    <tl-expansion-panel title="{{ 'auan-register.edit-auan-confiscated-fishing-gear' | tlTranslate }}"
+                        [validityChecker]="form"
+                        tooltipResourceName="auan-register.edit-auan-confiscated-fishing-gear-helper">
+        <decree-sized-fishing-gear formControlName="confiscatedFishingGearControl"
+                                   [viewMode]="viewMode"
+                                   [isAuan]="true">
+        </decree-sized-fishing-gear>
+    </tl-expansion-panel>
+
+    <!-- Конфискувани приспособления -->
+    <tl-expansion-panel title="{{ 'auan-register.edit-auan-confiscated-appliances' | tlTranslate }}"
+                        [validityChecker]="form"
+                        tooltipResourceName="auan-register.edit-auan-confiscated-appliances-helper">
+        <decree-sized-fish formControlName="confiscatedApplianceControl"
+                           [viewMode]="viewMode"
+                           [isAppliance]="true">
+        </decree-sized-fish>
+    </tl-expansion-panel>
+
+    <!-- Обяснения от посочения нарушител -->
+    <tl-expansion-panel title="{{ 'auan-register.edit-offender-comments' | tlTranslate }}"
+                        [validityChecker]="form"
+                        tooltipResourceName="auan-register.edit-auan-comments-offender-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <tl-textarea formControlName="offenderCommentsControl"
+                         label="{{ 'auan-register.edit-offender-comments' | tlTranslate }}"
+                         tooltipResourceName="auan-register.edit-offender-comments-helper">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Начин на връчване -->
+    <tl-expansion-panel title="{{ 'auan-register.edit-auan-delivery' | tlTranslate }}"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.hasNoEDeliveryRegistrationError !== true"
+                        tooltipResourceName="auan-register.edit-auan-delivery-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="column" fxLayoutGap="1em">
+                <tl-radio-button-group fxFlex="100"
+                                       formControlName="deliveryTypeControl"
+                                       [options]="deliveryTypes">
+                </tl-radio-button-group>
+
+                <tl-checkbox fxFlex="100"
+                             formControlName="isEDeliveryRequestedControl"
+                             label="{{ 'auan-register.edit-auan-e-delivery-requested' | tlTranslate }}"
+                             tooltipResourceName="auan-register.edit-auan-e-delivery-requested-helper">
+                </tl-checkbox>
+
+                <mat-error *ngIf="hasNoEDeliveryRegistrationError">
+                    * {{ 'auan-register.has-no-e-delivery-registration-error' | tlTranslate }}
+                </mat-error>
+            </div>
+
+            <div [ngSwitch]="deliveryType">
+                <div *ngSwitchCase="deliveryTypesEnum.Personal" fxLayout="row">
+                    <tl-date fxFlex="25"
+                             formControlName="deliveryDateControl"
+                             [max]="today"
+                             label="{{ 'auan-register.edit-auan-delivery-date' | tlTranslate }}"
+                             tooltipResourceName="auan-register.edit-auan-delivery-date-helper">
+                    </tl-date>
+                </div>
+
+                <div *ngSwitchCase="deliveryTypesEnum.Office" fxLayout="row">
+                    <tl-autocomplete fxFlex="25"
+                                     formControlName="deliveryTerritoryUnitControl"
+                                     [options]="territoryUnits"
+                                     label="{{ 'auan-register.edit-auan-territory-unit' | tlTranslate }}"
+                                     tooltipResourceName="auan-register.edit-auan-territory-unit-helper">
+                    </tl-autocomplete>
+                </div>
+
+                <div *ngSwitchCase="deliveryTypesEnum.ByMail" fxLayout="column">
+                    <div fxLayout="row" fxLayoutGap="1em">
+                        <tl-date fxFlex="25"
+                                 formControlName="sentDateControl"
+                                 [max]="today"
+                                 label="{{ 'auan-register.edit-auan-sent-date' | tlTranslate }}"
+                                 tooltipResourceName="auan-register.edit-edit-auan-sent-date-helper">
+                        </tl-date>
+                    </div>
+                    <single-address-registration formControlName="deliveryAddressControl"
+                                                 [addressType]="correspondenceAddressType"
+                                                 label="{{ 'auan-register.edit-auan-delivery-address' | tlTranslate : 'cap' }}">
+                    </single-address-registration>
+                </div>
+
+                <div *ngSwitchCase="deliveryTypesEnum.StateService" fxLayout="row" fxLayoutGap="1em">
+                    <tl-input fxFlex="25"
+                              formControlName="stateServiceControl"
+                              label="{{ 'auan-register.edit-auan-state-service' | tlTranslate }}"
+                              tooltipResourceName="auan-register.edit-auan-state-service-helper">
+                    </tl-input>
+
+                    <tl-input fxFlex="25"
+                              formControlName="referenceNumControl"
+                              label="{{ 'auan-register.edit-auan-reference-num' | tlTranslate }}"
+                              tooltipResourceName="auan-register.edit-auan-reference-num-helper">
+                    </tl-input>
+                </div>
+
+                <div *ngSwitchCase="deliveryTypesEnum.Refusal" fxLayout="column" fxLayoutGap="1em">
+                    <div fxLayout="row">
+                        <tl-date fxFlex="25"
+                                 formControlName="refusalDateControl"
+                                 [max]="today"
+                                 label="{{ 'auan-register.edit-auan-refusal-date' | tlTranslate }}"
+                                 tooltipResourceName="auan-register.edit-auan-refusal-date-helper">
+                        </tl-date>
+                    </div>
+
+                    <auan-witnesses-array formControlName="refusalWitnessesControl"
+                                          [viewMode]="viewMode">
+                    </auan-witnesses-array>
+                </div>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Възражение и прекратяване -->
+    <tl-expansion-panel *ngIf="deliveryType === deliveryTypesEnum.Personal"
+                        [validityChecker]="form"
+                        title="{{ 'auan-register.edit-auan-objection-and-termination' | tlTranslate }}"
+                        tooltipResourceName="auan-register.edit-auan-objection-and-termination-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <tl-slide-toggle formControlName="hasObjectionControl"
+                             label="{{ 'auan-register.edit-auan-has-objection' | tlTranslate }}">
+            </tl-slide-toggle>
+
+            <div *ngIf="form.controls.hasObjectionControl.value === true" fxLayout="column" fxLayoutGap="1em">
+                <div fxLayout="row">
+                    <tl-date fxFlex="25"
+                             formControlName="objectionDateControl"
+                             [max]="today"
+                             label="{{ 'auan-register.edit-auan-objection-date' | tlTranslate }}"
+                             tooltipResourceName="auan-register.edit-auan-objection-date-helper">
+                    </tl-date>
+                </div>
+
+                <tl-radio-button-group formControlName="objectionResolutionTypeControl"
+                                       [options]="objectionResolutionTypes">
+                </tl-radio-button-group>
+
+                <div *ngIf="form.controls.objectionResolutionTypeControl.value"
+                     fxLayout="row"
+                     fxLayoutGap="1em"
+                     fxLayoutAlign="start center">
+                    <tl-date fxFlex="25"
+                             formControlName="objectionResolutionDateControl"
+                             [max]="today"
+                             label="{{ 'auan-register.edit-auan-objection-resolution-date' | tlTranslate }}"
+                             tooltipResourceName="auan-register.edit-auan-objection-resolution-date-helper">
+                    </tl-date>
+
+                    <tl-input fxFlex="25"
+                              formControlName="objectionResolutionNumControl"
+                              label="{{ 'auan-register.edit-auan-objection-resolution-num' | tlTranslate }}"
+                              tooltipResourceName="auan-register.edit-auan-objection-resolution-num-helper">
+                    </tl-input>
+                </div>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Свързани НП, споразумения и предупреждения -->
+    <tl-expansion-panel *ngIf="!isAdding"
+                        [validityChecker]="form"
+                        title="{{ 'auan-register.edit-auan-penal-decrees' | tlTranslate }}"
+                        tooltipResourceName="auan-register.edit-auan-penal-decrees-helper">
+        <penal-decrees fxFlex="100"
+                       [auanId]="auanId">
+        </penal-decrees>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel title="{{ 'auan-register.edit-auan-files' | tlTranslate }}"
+                        tooltipResourceName="auan-register.edit-auan-files-helper"
+                        [validityChecker]="form">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+</div>

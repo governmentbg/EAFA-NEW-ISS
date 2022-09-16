@@ -1,0 +1,28 @@
+﻿<div [formGroup]="form"
+     fxLayout="row"
+     fxLayoutGap="1em"
+     fxLayoutAlign="space-between center"
+     [ngClass]="{ 'dialog-padding': isDialog }">
+    <tl-select fxFlex="20"
+               formControlName="waterLawCertificateTypeControl"
+               [options]="waterLawCertificateTypes"
+               label="{{ 'aquacultures.water-law-certificate-type' | tlTranslate }}">
+    </tl-select>
+
+    <tl-input fxFlex="20"
+              formControlName="waterLawCertificateNumControl"
+              label="{{ 'aquacultures.water-law-certificate-num' | tlTranslate }}">
+    </tl-input>
+
+    <tl-input fxFlex="20"
+              formControlName="waterLawCertificateIssuerControl"
+              label="{{ 'aquacultures.water-law-certificate-issuer' | tlTranslate }}">
+    </tl-input>
+
+    <date-range-indefinite fxFlex="40"
+                           formControlName="waterLawCertificateValidityControl"
+                           rangeLabel="{{ 'aquacultures.water-law-certificate-validity' | tlTranslate }}"
+                           dateLabel="{{ 'aquacultures.water-law-certificate-validity-start' | tlTranslate }}"
+                           checkboxLabel="{{ 'aquacultures.water-law-certificate-indefinite' | tlTranslate }}">
+    </date-range-indefinite>
+</div>

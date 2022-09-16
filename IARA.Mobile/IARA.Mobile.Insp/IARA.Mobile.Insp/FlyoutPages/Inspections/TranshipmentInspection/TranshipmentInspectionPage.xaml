@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+             xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+             xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+             xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+             xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection"
+             xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+             x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection.TranshipmentInspectionPage"
+             x:DataType="local:TranshipmentInspectionViewModel"
+             x:TypeArguments="local:TranshipmentInspectionViewModel"
+             x:Name="page"
+             PageInfo="{rt:Translate PageInfo, Group=TranshipmentInspection}"
+             Title="{rt:Translate Title, Group=TranshipmentInspection}"
+             BackgroundColor="{StaticResource BackgroundColor}">
+    <lc:TLForwardSections ExpandAll="{Binding ExpandAll}">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
+                        Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
+            <StackLayout Padding="10">
+                <lc:InspectionGeneralInfoView BindingContext="{Binding InspectionGeneralInfo}" />
+                <lc:PatrolVehiclesView BindingContext="{Binding PatrolVehicles}" />
+            </StackLayout>
+        </sv:SectionView>
+        <lc:FishingShipView Text="{rt:Translate TranshipmentShipData, Group=TranshipmentInspection}"
+                            ShipInRegisterLabel="{rt:Translate TranshipmentShipNotInRegister, Group=TranshipmentInspection}"
+                            BindingContext="{Binding InspectedShip}" />
+        <lc:ShipChecksView Text="{rt:Translate InspectedShipChecksData, Group=TranshipmentInspection}"
+                           BindingContext="{Binding InspectedShipChecks}" />
+        <lc:ShipCatchesView Text="{rt:Translate InspectedShipCatchesData, Group=TranshipmentInspection}"
+                            BindingContext="{Binding InspectedShipCatches}" />
+        <lc:FishingShipView Text="{rt:Translate AcceptingShipData, Group=TranshipmentInspection}"
+                            ShipInRegisterLabel="{rt:Translate AcceptingShipNotInRegister, Group=TranshipmentInspection}"
+                            BindingContext="{Binding AcceptingShip}" />
+        <lc:ShipChecksView Text="{rt:Translate AcceptingShipChecksData, Group=TranshipmentInspection}"
+                           BindingContext="{Binding AcceptingShipChecks}" />
+        <lc:ShipCatchesView Text="{rt:Translate AcceptingShipCatchesData, Group=TranshipmentInspection}"
+                            BindingContext="{Binding AcceptingShipCatches}" />
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Fish}, Color=White, Size=100}"
+                        Text="{rt:Translate CatchTranshippedInspection, Group=TranshipmentInspection}"
+                        IsExpanded="False">
+            <StackLayout Padding="10">
+                <lc:CatchInspectionsView IsTitleVisible="False"
+                                         BindingContext="{Binding TranshippedCatches}" />
+                <tl:TLEditor Title="{rt:Translate ObservationsOrViolations, Group=GeneralInfo}"
+                             ValidState="{Binding TranshippedCatchObservation}"
+                             IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+            </StackLayout>
+        </sv:SectionView>
+        <lc:AdditionalInfoView BindingContext="{Binding AdditionalInfo}">
+            <tl:TLEditor Title="{rt:Translate InspectedShipCaptainComment, Group=TranshipmentInspection}"
+                         ValidState="{Binding InspectedShipCaptainComment}"
+                         IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+            <tl:TLEditor Title="{rt:Translate AcceptingShipCaptainComment, Group=TranshipmentInspection}"
+                         ValidState="{Binding AcceptingShipCaptainComment}"
+                         IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+        </lc:AdditionalInfoView>
+        <lc:InspectionFilesView BindingContext="{Binding InspectionFiles}" />
+        <lc:SignaturesView BindingContext="{Binding Signatures}" />
+        <lc:SaveButtonsLayout />
+    </lc:TLForwardSections>
+</sv:BasePage>

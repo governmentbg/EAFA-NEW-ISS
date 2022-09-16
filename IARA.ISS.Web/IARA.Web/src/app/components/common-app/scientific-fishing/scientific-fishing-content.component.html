@@ -1,0 +1,228 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <search-panel [translateService]="translationService">
+        <div [formGroup]="formGroup" fxFlexFill fxLayout="column" fxLayoutAlign="start start">
+            <!-- Номер на заявление/разрешително. Дата на създаване/влизане в сила -->
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-input fxFlex="25"
+                          formControlName="requestNumberControl"
+                          tooltipResourceName="scientific-fishing.request-number-helper"
+                          label="{{ 'scientific-fishing.request-number' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="permitNumberControl"
+                          tooltipResourceName="scientific-fishing.permit-number-helper"
+                          label="{{ 'scientific-fishing.permit-number' | tlTranslate }}">
+                </tl-input>
+                <tl-date-range fxFlex="25"
+                               formControlName="creationDateRangeControl"
+                               tooltipResourceName="scientific-fishing.creation-date-helper"
+                               label="{{ 'scientific-fishing.creation-date' | tlTranslate }}">
+                </tl-date-range>
+                <tl-date-range fxFlex="25"
+                               formControlName="validityDateRangeControl"
+                               tooltipResourceName="scientific-fishing.start-date-of-validity-helper"
+                               label="{{ 'scientific-fishing.date-of-validity' | tlTranslate }}">
+                </tl-date-range>
+            </div>
+
+            <ng-container *ngIf="!isPublicApp">
+                <!-- Основания. Риболов през размножителен период -->
+                <div fxLayout="row" fxLayoutGap="1em" fxFlexFill fxLayoutAlign="start center">
+                    <tl-select fxFlex="50"
+                               formControlName="permitReasonsControl"
+                               tooltipResourceName="scientific-fishing.permit-reasons-helper"
+                               label="{{ 'scientific-fishing.permit-reasons' | tlTranslate }}"
+                               [options]="permitReasons"
+                               [isMultiple]="true">
+                    </tl-select>
+
+                    <tl-select fxFlex="50"
+                               formControlName="permitLegalReasonsControl"
+                               tooltipResourceName="scientific-fishing.permit-legal-reasons-helper"
+                               label="{{ 'scientific-fishing.permit-legal-reasons' | tlTranslate }}"
+                               [options]="permitLegalReasons"
+                               [isMultiple]="true">
+                    </tl-select>
+                </div>
+
+                <!-- Заявител/титуляр на разрешителното -->
+                <div fxLayout="row" fxLayoutGap="1em" fxFlexFill fxLayoutAlign="space-center center">
+                    <tl-input fxFlex="33"
+                              formControlName="permitRequesterControl"
+                              tooltipResourceName="scientific-fishing.permit-requester-helper"
+                              label="{{ 'scientific-fishing.permit-requester' | tlTranslate }}">
+                    </tl-input>
+                    <tl-input fxFlex="33"
+                              formControlName="permitOwnerNameControl"
+                              tooltipResourceName="scientific-fishing.permit-owner-helper"
+                              label="{{ 'scientific-fishing.permit-owner' | tlTranslate }}">
+                    </tl-input>
+                    <tl-input fxFlex="33"
+                              formControlName="permitOwnerEgnControl"
+                              tooltipResourceName="scientific-fishing.permit-owner-egn-helper"
+                              label="{{ 'scientific-fishing.permit-owner-egn' | tlTranslate }}">
+                    </tl-input>
+                </div>
+
+                <!-- Научна организация. Воден обект. Семейство водни организми. Вид воден организъм -->
+                <div fxLayout="row" fxLayoutGap="1em" fxFlexFill fxLayoutAlign="space-center center">
+                    <tl-input fxFlex="33"
+                              formControlName="scientificOrganizationControl"
+                              tooltipResourceName="scientific-fishing.scientific-organization-helper"
+                              label="{{ 'scientific-fishing.scientific-organization' | tlTranslate }}">
+                    </tl-input>
+                    <tl-input fxFlex="33"
+                              formControlName="researchWaterAreaControl"
+                              tooltipResourceName="scientific-fishing.water-area-helper"
+                              label="{{ 'scientific-fishing.water-area' | tlTranslate }}">
+                    </tl-input>
+                    <tl-input fxFlex="33"
+                              formControlName="aquaticOrganismTypeControl"
+                              tooltipResourceName="scientific-fishing.aquatic-organism-type-helper"
+                              label="{{ 'scientific-fishing.aquatic-organism-type' | tlTranslate }}">
+                    </tl-input>
+                </div>
+
+                <!-- Тип уред. Покажи изтекли -->
+                <div fxLayout="row" fxLayoutGap="1em" fxFlexFill fxLayoutAlign="space-center center">
+                    <tl-input fxFlex="33"
+                              formControlName="gearTypeControl"
+                              tooltipResourceName="scientific-fishing.gear-type-helper"
+                              label="{{ 'scientific-fishing.gear-type' | tlTranslate }}">
+                    </tl-input>
+
+                    <tl-select fxFlex="33"
+                               formControlName="permitStatusesControl"
+                               tooltipResourceName="scientific-fishing.permit-status-helper"
+                               label="{{ 'scientific-fishing.permit-status' | tlTranslate }}"
+                               [options]="permitStatuses"
+                               [isMultiple]="true">
+                    </tl-select>
+
+                    <div fxFlex="33"></div>
+                </div>
+            </ng-container>
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <mat-card>
+        <tl-data-table [showAddButton]="canAddRecords && !isPublicApp"
+                       [showInactiveRecords]="canRestoreRecords && !isPublicApp"
+                       (addButtonClicked)="createEditPermit()">
+            <row-detail>
+                <ng-template let-row="row" ngx-datatable-row-detail-template>
+                    <div class="pl-35px">
+                        <tl-data-table [isRemote]="false"
+                                       [isSoftDeletable]="true"
+                                       [showInactiveRecords]="false"
+                                       [showAddButton]="false"
+                                       [rows]="row.holders">
+                            <data-column propertyName="permitNumber"
+                                         [flexRate]="0.3"
+                                         columnName="{{ 'scientific-fishing.permit-number' | tlTranslate }}">
+                            </data-column>
+                            <data-column propertyName="name"
+                                         [flexRate]="0.5"
+                                         columnName="{{ 'scientific-fishing.holder' | tlTranslate }}">
+                            </data-column>
+                            <data-column propertyName="scientificPosition"
+                                         [flexRate]="0.7"
+                                         columnName="{{ 'scientific-fishing.position' | tlTranslate }}">
+                            </data-column>
+                        </tl-data-table>
+                    </div>
+                </ng-template>
+            </row-detail>
+
+            <data-column propertyName="requestNumber"
+                         [flexRate]="0.3"
+                         columnName="{{ 'scientific-fishing.request-number' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="requesterName"
+                         [flexRate]="0.5"
+                         columnName="{{ 'scientific-fishing.requester' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="scientificOrganizationName"
+                         [flexRate]="0.5"
+                         columnName="{{ 'scientific-fishing.scientific-organization' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="permitReasons"
+                         [flexRate]="1"
+                         [isSortable]="false"
+                         columnName="{{ 'scientific-fishing.permit-reason' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="validTo"
+                         [flexRate]="0.4"
+                         dataType="date"
+                         columnName="{{ 'scientific-fishing.end-date-of-validity' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="outingsCount"
+                         [flexRate]="0.3"
+                         columnName="{{ 'scientific-fishing.permit-outings-count' | tlTranslate }}">
+            </data-column>
+            <data-template-column [flexRate]="0.4"
+                                  columnName="{{ 'scientific-fishing.permit-status' | tlTranslate }}"
+                                  propertyName="permitStatusName">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.4em">
+                        <div [ngSwitch]="row.data.permitStatus">
+                            <tl-icon *ngSwitchCase="permitStatus.Requested" icon="autorenew" iconClass="accent-color"></tl-icon>
+                            <tl-icon *ngSwitchCase="permitStatus.Approved" icon="done_outline" iconClass="accent-color"></tl-icon>
+                            <tl-icon *ngSwitchCase="permitStatus.Canceled" icon="highlight_off" iconClass="accent-color"></tl-icon>
+                            <tl-icon *ngSwitchCase="permitStatus.Expired" icon="fa-hourglass-end" iconClass="accent-color"></tl-icon>
+                        </div>
+                        <div>
+                            {{ row.data.permitStatusName }}
+                        </div>
+                    </div>
+                </ng-template>
+            </data-template-column>
+
+            <data-template-column [flexRate]="0.6" [cellClass]="'justify-center'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                        <tl-icon-button *ngIf="row.data.permitStatus === permitStatus.Approved
+                                               && !isPublicApp
+                                               && (row.data.deliveryId !== null && row.data.deliveryId !== undefined)"
+                                        icon="ic-fluent-document-briefcase-24-regular"
+                                        iconClass="accent-color"
+                                        [size]="icIconSize"
+                                        tooltipText="{{ 'scientific-fishing.delivery-data' | tlTranslate }}"
+                                        (buttonClicked)="openDeliveryDialog(row.data)">
+                        </tl-icon-button>
+                        <tl-icon-button icon="visibility"
+                                        (buttonClicked)="createEditPermit(row.data, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'scientific-fishing.view-permit' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && canEditRecords && !isPublicApp"
+                                        icon="edit"
+                                        (buttonClicked)="createEditPermit(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'scientific-fishing.edit-permit' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && row.permitStatus === permitStatus.Approved && canAddOutings"
+                                        icon="directions_boat"
+                                        (buttonClicked)="addOuting(row.data.id)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'scientific-fishing.add-outing' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && canDeleteRecords && !isPublicApp"
+                                        icon="delete"
+                                        (buttonClicked)="deletePermit(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'scientific-fishing.delete-permit' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="!row.data.isActive && canRestoreRecords && !isPublicApp"
+                                        icon="restore"
+                                        (buttonClicked)="restorePermit(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'scientific-fishing.restore-permit' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </mat-card>
+</div>

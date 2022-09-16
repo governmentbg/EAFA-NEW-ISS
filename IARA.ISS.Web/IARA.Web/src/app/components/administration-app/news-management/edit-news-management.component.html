@@ -1,0 +1,99 @@
+﻿<div [formGroup]="form"
+     fxLayout="column"
+     fxLayoutAlign="start stretch"
+     fxLayoutGap="1em"
+     fxFill
+     class="dialog-padding">
+    <!-- Basic info -->
+    <tl-card tooltipResourceName="news-management.dialog-general-information-helper">
+        <tl-card-title>{{ 'news-management.dialog-general-information' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="1em">
+                <tl-picture-uploader formControlName="mainImageControl"
+                                     [requestMethod]="photoRequestMethod"
+                                     [options]="{ borderRadius: '0%', defaultPictureUrl: defaultImageUrl }">
+                </tl-picture-uploader>
+
+                <div fxFlex fxLayout="column" fxLayoutGap="1em">
+                    <tl-input label="{{ 'news-management.dialog-title' | tlTranslate }}"
+                              formControlName="titleControl"
+                              tooltipResourceName="news-management.dialog-title-helper">
+                    </tl-input>
+
+                    <tl-textarea label="{{ 'news-management.dialog-summary' | tlTranslate }}"
+                                 formControlName="summaryControl"
+                                 tooltipResourceName="news-management.dialog-summary-helper">
+                    </tl-textarea>
+
+                    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="none center">
+                        <tl-date fxFlex="25"
+                                 formControlName="dateFromControl"
+                                 [max]="form.controls.dateToControl.value"
+                                 label="{{ 'news-management.dialog-date-from' | tlTranslate }}"
+                                 tooltipResourceName="news-management.dialog-date-from-helper">
+                        </tl-date>
+
+                        <tl-date fxFlex="25"
+                                 formControlName="dateToControl"
+                                 [min]="form.controls.dateFromControl.value"
+                                 label="{{ 'news-management.dialog-date-to' | tlTranslate }}"
+                                 tooltipResourceName="news-management.dialog-date-to-helper">
+                        </tl-date>
+                    </div>
+
+                    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                        <tl-checkbox label="{{ 'news-management.dialog-publish-with-no-district' | tlTranslate }}"
+                                     formControlName="hasNoDistrictControl"
+                                     tooltipResourceName="news-management.dialog-publish-with-no-district-helper">
+                        </tl-checkbox>
+
+                        <tl-select fxFlex="70"
+                                   label="{{ 'news-management.dialog-districts' | tlTranslate }}"
+                                   formControlName="districtsControl"
+                                   [options]="districts"
+                                   [isMultiple]="true"
+                                   tooltipResourceName="news-management.dialog-districts-helper">
+                        </tl-select>
+                    </div>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Content -->
+    <tl-card tooltipResourceName="news-management.dialog-content-helper">
+        <tl-card-title fxLayout="row"
+                       [ngClass]="{ 'error-color': isContentRequired && form.controls.contentControl.invalid && form.controls.contentControl.touched }">
+            {{ 'news-management.dialog-content' | tlTranslate }}&nbsp;<span *ngIf="isContentRequired">*</span>
+        </tl-card-title>
+
+        <tl-card-content>
+            <quill-editor #editor
+                          class="min-h-20"
+                          formControlName="contentControl"
+                          [modules]="quillModules"
+                          (onContentChanged)="contentChanged($event)"
+                          format="html">
+            </quill-editor>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- WYSIWYG preview -->
+    <tl-card tooltipResourceName="news-management.dialog-news-preview-helper">
+        <tl-card-title>{{ 'news-management.dialog-news-preview' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div [innerHTML]="form.controls.contentControl.value"></div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Files -->
+    <tl-expansion-panel title="{{ 'news-management.dialog-files' | tlTranslate }}"
+                        tooltipResourceName="news-management.dialog-files-helper">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(service)">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+</div>

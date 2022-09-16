@@ -1,0 +1,107 @@
+﻿<div [formGroup]="form" fxLayout="column" fxLayoutGap="1em" class="dialog-padding">
+    <tl-card tooltipResourceName="application-regix-checks.basic-data-helper">
+        <tl-card-title>{{ 'application-regix-checks.basic-data' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="20"
+                          formControlName="applicationIdControl"
+                          label="{{ 'application-regix-checks.application-id' | tlTranslate }}"
+                          tooltipResourceName="application-regix-checks.application-id-helper">
+                </tl-input>
+
+                <tl-input fxFlex="80"
+                          formControlName="applicationTypeControl"
+                          label="{{ 'application-regix-checks.application-type' | tlTranslate }}"
+                          tooltipResourceName="application-regix-checks.application-type-helper">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="50"
+                          formControlName="webServiceNameControl"
+                          label="{{ 'application-regix-checks.web-service-name' | tlTranslate }}"
+                          tooltipResourceName="application-regix-checks.web-service-name-helper">
+                </tl-input>
+
+                <tl-input fxFlex="50"
+                          formControlName="remoteAddressControl"
+                          label="{{ 'application-regix-checks.remote-address' | tlTranslate }}"
+                          tooltipResourceName="application-regix-checks.remote-address-helper">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-date fxFlex="20"
+                         formControlName="requestDateTimeControl"
+                         label="{{ 'application-regix-checks.request-date-time' | tlTranslate }}"
+                         tooltipResourceName="application-regix-checks.request-date-time-helper">
+                </tl-date>
+
+                <tl-date fxFlex="20"
+                         formControlName="responseDateTimeControl"
+                         label="{{ 'application-regix-checks.response-date-time' | tlTranslate }}"
+                         tooltipResourceName="application-regix-checks.response-date-time-helper">
+                </tl-date>
+
+                <tl-input fxFlex="20"
+                          formControlName="responseStatusControl"
+                          label="{{ 'application-regix-checks.response-status' | tlTranslate }}"
+                          tooltipResourceName="application-regix-checks.response-status-helper">
+                </tl-input>
+
+                <tl-input fxFlex="20"
+                          formControlName="errorLevelControl"
+                          label="{{ 'application-regix-checks.error-level' | tlTranslate }}"
+                          tooltipResourceName="application-regix-checks.error-level-helper">
+                </tl-input>
+
+                <tl-input fxFlex="20"
+                          formControlName="attemptsControl"
+                          label="{{ 'application-regix-checks.attempts' | tlTranslate }}"
+                          tooltipResourceName="application-regix-checks.attempts-helper">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-textarea fxFlex="100"
+                             formControlName="errorDescriptionControl"
+                             label="{{ 'application-regix-checks.error-description' | tlTranslate }}"
+                             tooltipResourceName="application-regix-checks.error-description-helper">
+                </tl-textarea>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <tl-card tooltipResourceName="application-regix-checks.request-content-helper">
+        <tl-card-title>{{ 'application-regix-checks.request-content' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <ngx-json-viewer [json]="requestContent"
+                             [expanded]="false">
+            </ngx-json-viewer>
+        </tl-card-content>
+    </tl-card>
+
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="1em">
+        <tl-card fxFlex="50" tooltipResourceName="application-regix-checks.expected-response-content-helper">
+            <tl-card-title>{{ 'application-regix-checks.expected-response-content' | tlTranslate }}</tl-card-title>
+
+            <tl-card-content>
+                <ngx-json-viewer [json]="expectedResponseContent"
+                                 [expanded]="false">
+                </ngx-json-viewer>
+            </tl-card-content>
+        </tl-card>
+
+        <tl-card fxFlex="50" tooltipResourceName="application-regix-checks.response-content-helper">
+            <tl-card-title>{{ 'application-regix-checks.response-content' | tlTranslate }}</tl-card-title>
+
+            <tl-card-content>
+                <ngx-json-viewer [json]="responseContent"
+                                 [expanded]="false">
+                </ngx-json-viewer>
+            </tl-card-content>
+        </tl-card>
+    </div>
+</div>

@@ -1,0 +1,45 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="form"
+     class="dialog-padding">
+    <tl-expansion-panel title="{{'catch-quotas.quota-data' | tlTranslate}}"
+                        tooltipResourceName="catch-quotas.quota-data-helper">
+        <div fxLayout="row" fxLayoutGap="1em">
+            <tl-autocomplete fxFlex="60"
+                             formControlName="oldQuotaControl"
+                             [options]="quotas"
+                             [autoMatchTextToOption]="true"
+                             tooltipResourceName="catch-quotas.old-quota-helper"
+                             label="{{ 'catch-quotas.old-quota' | tlTranslate }}">
+            </tl-autocomplete>
+            <tl-input fxFlex="40"
+                      formControlName="leftoverQuotaSizeControl"
+                      tooltipResourceName="catch-quotas.remaining-quota-helper"
+                      label="{{ 'catch-quotas.remaining-quota' | tlTranslate }}">
+            </tl-input>
+        </div>
+        <div fxLayout="row" fxLayoutGap="1em">
+            <tl-autocomplete fxFlex="60"
+                             formControlName="currentQuotaControl"
+                             [options]="quotas"
+                             [autoMatchTextToOption]="true"
+                             tooltipResourceName="catch-quotas.current-quota-helper"
+                             label="{{ 'catch-quotas.current-quota' | tlTranslate }}">
+            </tl-autocomplete>
+            <tl-input fxFlex="40"
+                      formControlName="transferQuotaSizeControl"
+                      tooltipResourceName="catch-quotas.transfer-size-helper"
+                      label="{{ 'catch-quotas.transfer-size' | tlTranslate }}">
+            </tl-input>
+        </div>
+        <div fxLayout="row" fxLayoutGap="1em">
+            <tl-textarea fxFlexFill
+                         formControlName="transferBasisControl"
+                         tooltipResourceName="catch-quotas.basis-helper"
+                         label="{{ 'catch-quotas.basis' | tlTranslate }}">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+</div>

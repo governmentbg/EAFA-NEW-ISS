@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tl:TLBaseDialog x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.PatrolVehicleDialog.PatrolVehicleDialog"
+        xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.PatrolVehicleDialog"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        xmlns:nom="clr-namespace:IARA.Mobile.Application.DTObjects.Nomenclatures;assembly=IARA.Mobile.Application"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        x:Name="dialog"
+        Title="{rt:Translate PatrolVehicleDialogTitle, Group=PatrolVehicle}"
+        x:DataType="local:PatrolVehicleDialogViewModel"
+        x:TypeArguments="local:PatrolVehicleDialogViewModel, m:PatrolVehicleModel"
+        BackgroundColor="White"
+        IconColor="White"
+        TitleBackgroundColor="{StaticResource Primary}"
+        TitleColor="White">
+    <tl:TLScrollView>
+        <StackLayout Padding="10">
+            <lc:CustomCheckBoxWithPicker Title="{rt:Translate PatrolVehicleInRegister, Group=PatrolVehicle}"
+                    CheckValidState="{Binding IsRegistered}"
+                    Command="{Binding PatrolVehicleChosen}"
+                    DisplayValue="DisplayValue"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    IsVisible="{Binding IsRegistered.Value}"
+                    ValidState="{Binding PatrolVehicle}">
+                <DataTemplate>
+                    <Grid x:DataType="nom:SelectNomenclatureDto"
+                            RowDefinitions="Auto,Auto,1"
+                            RowSpacing="0">
+                        <Label Margin="5,5,5,0"
+                                Text="{Binding Name}" />
+                        <Label Grid.Row="1"
+                                Margin="5,0,5,10"
+                                Text="{Binding Code}" />
+                        <BoxView Grid.Row="2"
+                                Margin="5,0"
+                                Color="LightGray" />
+                    </Grid>
+                </DataTemplate>
+            </lc:CustomCheckBoxWithPicker>
+            <tl:TLCheckView IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    IsVisible="{Binding IsRegistered.Value, Converter={StaticResource OppositeBool}}"
+                    Text="{rt:Translate PatrolVehicleInRegister, Group=PatrolVehicle}"
+                    ValidState="{Binding IsRegistered}" />
+            <tl:TLFlex GrowUnit="200"
+                    IsVisible="{Binding IsRegistered.Value, Converter={StaticResource OppositeBool}}">
+                <tl:TLEntry Title="{rt:Translate Name, Group=Common}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        ValidState="{Binding Name}" />
+                <tl:TLEntry Title="{rt:Translate RegistrationNumber, Group=PatrolVehicle}"
+                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                        ValidState="{Binding RegistrationNumber}"
+                        IsVisible="{Binding IsWaterVehicle, Converter={StaticResource OppositeBool}}" />
+                <tl:TLEntry Title="{rt:Translate ExternalMarkings, Group=PatrolVehicle}"
+                        ValidState="{Binding ExternalMarkings}"
+                        IsVisible="{Binding IsWaterVehicle}" />
+            </tl:TLFlex>
+            <tl:TLFlex GrowUnit="200">
+                <tl:TLEntry Title="{rt:Translate CallSign, Group=PatrolVehicle}"
+                        ValidState="{Binding CallSign}"
+                        IsVisible="{Binding IsWaterVehicle}">
+                    <tl:TLEntry.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Converter="{StaticResource IsNotReview}"
+                                    Path="DialogType" />
+                            <Binding Converter="{StaticResource OppositeBool}"
+                                    Path="IsRegistered.Value" />
+                        </MultiBinding>
+                    </tl:TLEntry.IsEnabled>
+                </tl:TLEntry>
+                <tl:TLPicker Title="{rt:Translate Country, Group=Common}"
+                        ItemsSource="{Binding Flags}"
+                        ValidState="{Binding Flag}">
+                    <tl:TLPicker.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Converter="{StaticResource IsNotReview}"
+                                    Path="DialogType" />
+                            <Binding Converter="{StaticResource OppositeBool}"
+                                    Path="IsRegistered.Value" />
+                        </MultiBinding>
+                    </tl:TLPicker.IsEnabled>
+                </tl:TLPicker>
+                <tl:TLPicker Title="{rt:Translate Institution, Group=GeneralInfo}"
+                        DialogDisplayValue="Name"
+                        DisplayValue="Code"
+                        ItemsSource="{Binding Institutions}"
+                        ValidState="{Binding Institution}">
+                    <tl:TLPicker.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Converter="{StaticResource IsNotReview}"
+                                    Path="DialogType" />
+                            <Binding Converter="{StaticResource OppositeBool}"
+                                    Path="IsRegistered.Value" />
+                        </MultiBinding>
+                    </tl:TLPicker.IsEnabled>
+                </tl:TLPicker>
+                <tl:TLPicker Title="{rt:Translate PatrolVehicleType, Group=PatrolVehicle}"
+                        ItemsSource="{Binding PatrolVehicleTypes}"
+                        ValidState="{Binding PatrolVehicleType}">
+                    <tl:TLPicker.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Converter="{StaticResource IsNotReview}"
+                                    Path="DialogType" />
+                            <Binding Converter="{StaticResource OppositeBool}"
+                                    Path="IsRegistered.Value" />
+                        </MultiBinding>
+                    </tl:TLPicker.IsEnabled>
+                </tl:TLPicker>
+            </tl:TLFlex>
+            <lc:TLLocationView Title="{rt:Translate GPSCoordinates, Group=PatrolVehicle}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    ValidState="{Binding Location}" />
+            <Button Command="{Binding Save}"
+                    IsVisible="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    Text="{rt:Translate Save, Group=Common}" />
+        </StackLayout>
+    </tl:TLScrollView>
+</tl:TLBaseDialog>

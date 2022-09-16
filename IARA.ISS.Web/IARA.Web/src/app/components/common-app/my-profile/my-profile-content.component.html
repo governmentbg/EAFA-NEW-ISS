@@ -1,0 +1,202 @@
+﻿<div fxLayout="column" fxLayoutAlign="space-between stretch" fxFill fxLayoutGap="1em" [formGroup]="userForm">
+    <!-- Лични данни -->
+    <tl-card tooltipResourceName="my-profile.basic-information-helper">
+        <tl-card-title>{{ 'my-profile.basic-information' | tlTranslate }}</tl-card-title>
+        <tl-card-content fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start start" fxFill>
+            <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="1em">
+                <div fxFlex="80" fxLayout="column">
+                    <tl-checkbox formControlName="checkboxControl"
+                                 label="{{ 'my-profile.has-bulgarian-address-registration' | tlTranslate }}"
+                                 tooltipResourceName="my-profile.has-bulgarian-address-registration-helper">
+                    </tl-checkbox>
+
+                    <div fxLayout="row" fxLayoutGap="1em">
+                        <tl-input fxFlex="50"
+                                  formControlName="usernameControl"
+                                  label="{{ 'my-profile.username' | tlTranslate }}"
+                                  tooltipResourceName="my-profile.username-helper">
+                        </tl-input>
+                        <tl-input fxFlex="50"
+                                  formControlName="egnControl"
+                                  label="{{ 'my-profile.egn' | tlTranslate }}"
+                                  tooltipResourceName="my-profile.egn-helper">
+                        </tl-input>
+                    </div>
+
+                    <div fxLayout="row" fxLayoutGap="1em">
+                        <tl-input fxFlex="33"
+                                  formControlName="firstNameControl"
+                                  label="{{ 'my-profile.first-name' | tlTranslate }}"
+                                  tooltipResourceName="my-profile.first-name-helper">
+                        </tl-input>
+                        <tl-input fxFlex="33"
+                                  formControlName="middleNameControl"
+                                  label="{{ 'my-profile.middle-name' | tlTranslate }}"
+                                  tooltipResourceName="my-profile.middle-name-helper">
+                        </tl-input>
+                        <tl-input fxFlex="33"
+                                  formControlName="lastNameControl"
+                                  label="{{ 'my-profile.last-name' | tlTranslate }}"
+                                  tooltipResourceName="my-profile.last-name-helper">
+                        </tl-input>
+                    </div>
+
+                    <div fxLayout="row" fxLayoutGap="1em">
+                        <tl-select fxFlex="24"
+                                   formControlName="documentTypeControl"
+                                   [options]="documentTypes"
+                                   label="{{ 'my-profile.document-type' | tlTranslate }}"
+                                   tooltipResourceName="my-profile.document-type-helper">
+                        </tl-select>
+                        <tl-input fxFlex="24"
+                                  formControlName="documentNumControl"
+                                  label="{{ 'my-profile.document-number' | tlTranslate }}"
+                                  tooltipResourceName="my-profile.document-number-helper">
+                        </tl-input>
+                        <tl-date fxFlex="24"
+                                 formControlName="documentIssueDateControl"
+                                 label="{{ 'my-profile.document-issue-date' | tlTranslate }}"
+                                 tooltipResourceName="my-profile.document-issue-date-helper">
+                        </tl-date>
+                        <tl-input fxFlex="24"
+                                  formControlName="documentIssuerControl"
+                                  label="{{ 'my-profile.document-issuer' | tlTranslate }}"
+                                  tooltipResourceName="my-profile.document-issuer-helper">
+                        </tl-input>
+                    </div>
+
+                    <div fxLayout="row" fxLayoutGap="1em">
+                        <tl-autocomplete fxFlex="25"
+                                         formControlName="citizenshipControl"
+                                         [options]="countries"
+                                         label="{{ 'my-profile.citizenship' | tlTranslate }}"
+                                         tooltipResourceName="my-profile.citizenship-helper">
+                        </tl-autocomplete>
+
+                        <tl-select fxFlex="25"
+                                   formControlName="genderControl"
+                                   label="{{ 'my-profile.gender' | tlTranslate }}"
+                                   [options]="genders"
+                                   tooltipResourceName="my-profile.gender-helper">
+                        </tl-select>
+
+                        <tl-date fxFlex="25"
+                                 formControlName="birthdateControl"
+                                 label="{{ 'my-profile.birthdate' | tlTranslate }}"
+                                 tooltipResourceName="my-profile.birthdate-helper">
+                        </tl-date>
+
+                        <tl-input fxFlex="25"
+                                  formControlName="phoneControl"
+                                  label="{{ 'my-profile.phone' | tlTranslate }}"
+                                  tooltipResourceName="my-profile.phone-helper">
+                        </tl-input>
+                    </div>
+
+                    <!--Постоянен адрес-->
+                    <address-registration formControlName="addressesControl"
+                                          addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                                          secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                                          checkboxLabel="{{ 'my-profile.permanent-address-same-as-correspondence' | tlTranslate }}">
+                    </address-registration>
+
+                </div>
+
+                <div fxFlex="20">
+                    <tl-picture-uploader formControlName="photoControl"
+                                         [requestMethod]="photoRequestMethod">
+                    </tl-picture-uploader>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+    <tl-card tooltipResourceName="my-profile.news-notifications-helper">
+        <!--Нотификации за новини-->
+        <tl-card-title>{{ 'my-profile.news-notifications' | tlTranslate }}</tl-card-title>
+        <tl-card-content fxLayoutGap="0.5em" fxLayout="column">
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-slide-toggle fxFlex="70"
+                                 label="{{ 'my-profile.want-news-notifications' | tlTranslate }}"
+                                 formControlName="notificationNewsControl"
+                                 tooltipResourceName="my-profile.want-news-notifications-helper">
+                </tl-slide-toggle>
+            </div>
+            <div *ngIf="showAllDistricts" fxLayout="row" fxLayoutGap="1em">
+                <tl-slide-toggle fxFlex="70"
+                                 label="{{ 'my-profile.all-districts' | tlTranslate }}"
+                                 formControlName="hasNoDistrictControl"
+                                 tooltipResourceName="my-profile.all-districts-helper">
+                </tl-slide-toggle>
+            </div>
+            <div *ngIf="showDistricts" fxLayout="row" fxLayoutGap="1em">
+                <tl-select fxFlex="20"
+                           label="{{ 'my-profile.districts' | tlTranslate }}"
+                           formControlName="districtsControl"
+                           [options]="districts"
+                           [isMultiple]="true"
+                           tooltipResourceName="my-profile.districts-helper">
+                </tl-select>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <div fxLayout="row" fxLayoutGap="1em" class="m-l">
+        <button mat-raised-button class="mat-accent" (click)="updateProfileData()">{{ 'my-profile.save' | tlTranslate }}</button>
+        <button mat-raised-button class="mat-accent" (click)="changePassword()">{{ 'my-profile.change-password' | tlTranslate }}</button>
+    </div>
+
+    <!-- Роли -->
+    <tl-card tooltipResourceName="my-profile.roles-helper">
+        <tl-card-title fxFlex="row">{{  'my-profile.roles' | tlTranslate }} </tl-card-title>
+        <tl-card-content>
+            <tl-data-table #roleDataTable fxFlexFill fxLayoutGap="1em" class="full-width-template"
+                           [isRemote]="false"
+                           [isSoftDeletable]="false"
+                           [showInactiveRecords]="false"
+                           [showAddButton]="false"
+                           [rows]="roles">
+                <data-column columnName="{{ 'my-profile.role' | tlTranslate }}"
+                             propertyName="name">
+                </data-column>
+                <data-column columnName="{{ 'my-profile.valid-from' | tlTranslate }}"
+                             propertyName="accessValidFrom"
+                             dataType="date">
+                </data-column>
+                <data-column columnName="{{ 'my-profile.valid-to' | tlTranslate }}"
+                             propertyName="accessValidTo"
+                             dataType="date">
+                </data-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Свързани организации -->
+    <tl-card tooltipResourceName="my-profile.related-organizations-helper">
+        <tl-card-title fxFlex="row">{{ 'my-profile.related-organizations' | tlTranslate }} </tl-card-title>
+        <tl-card-content>
+            <tl-data-table #legalDataTable fxFlexFill fxLayoutGap="1em" class="full-width-template"
+                           [showAddButton]="false"
+                           [isRemote]="false"
+                           [isSoftDeletable]="false"
+                           [showInactiveRecords]="false"
+                           [rows]="legals">
+                <data-column columnName="{{ 'my-profile.legal-name' | tlTranslate }}"
+                             propertyName="name">
+                </data-column>
+                <data-column columnName="{{ 'my-profile.role' | tlTranslate }}"
+                             propertyName="role">
+                </data-column>
+                <data-template-column columnName="{{ 'my-profile.status' | tlTranslate }}" propertyName="StatusName">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div *ngIf="row != undefined">
+                            <tl-icon *ngIf="row.data.status == legalStatusEnum.Blocked" icon="highlight_off" iconClass="accent-color"></tl-icon>
+                            <tl-icon *ngIf="row.data.status == legalStatusEnum.Approved" icon="done_outline" iconClass="accent-color"></tl-icon>
+                            <tl-icon *ngIf="row.data.status == legalStatusEnum.Requested" icon="autorenew" iconClass="accent-color"></tl-icon>
+                            {{ row.data.statusName }}
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+</div>

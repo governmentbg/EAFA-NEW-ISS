@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard.InWaterOnBoardInspectionPage"
+        x:DataType="local:InWaterOnBoardInspectionViewModel"
+        x:TypeArguments="local:InWaterOnBoardInspectionViewModel"
+        x:Name="page"
+        PageInfo="{rt:Translate PageInfo, Group=InWaterOnBoardInspection}"
+        Title="{rt:Translate Title, Group=InWaterOnBoardInspection}"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <lc:TLForwardSections ExpandAll="{Binding ExpandAll}">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
+                Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
+            <StackLayout Padding="10">
+                <lc:InspectionGeneralInfoView BindingContext="{Binding InspectionGeneralInfo}" />
+                <lc:PatrolVehiclesView BindingContext="{Binding PatrolVehicles}" />
+            </StackLayout>
+        </sv:SectionView>
+        <lc:FishingShipView Text="{rt:Translate ShipData, Group=InWaterOnBoardInspection}"
+                ShipInRegisterLabel="{rt:Translate InspectedShipInRegister, Group=InWaterOnBoardInspection}"
+                BindingContext="{Binding InspectedShip}" />
+        <lc:ShipChecksView Text="{rt:Translate ShipChecksData, Group=InWaterOnBoardInspection}"
+                BindingContext="{Binding ShipChecks}" />
+        <lc:ShipCatchesView Text="{rt:Translate ShipCatchesData, Group=InWaterOnBoardInspection}"
+                BindingContext="{Binding ShipCatches}" />
+        <lc:ShipFishingGearsView Text="{rt:Translate ShipFishingGearsData, Group=InWaterOnBoardInspection}"
+                BindingContext="{Binding ShipFishingGears}" />
+        <lc:AdditionalInfoView BindingContext="{Binding AdditionalInfo}">
+            <tl:TLEditor Title="{rt:Translate CaptainComment, Group=InWaterOnBoardInspection}"
+                    ValidState="{Binding CaptainComment}"
+                    IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+        </lc:AdditionalInfoView>
+        <lc:InspectionFilesView BindingContext="{Binding InspectionFiles}" />
+        <lc:SignaturesView BindingContext="{Binding Signatures}" />
+        <lc:SaveButtonsLayout />
+    </lc:TLForwardSections>
+</sv:BasePage>

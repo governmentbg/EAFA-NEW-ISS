@@ -1,0 +1,116 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <!-- Основни данни -->
+    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <inspection-general-info formControlName="generalInfoControl"
+                                     [institutions]="institutions">
+            </inspection-general-info>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Данни за Кораб / Далян -->
+    <tl-expansion-panel [formGroup]="form"
+                        title="{{ 'inspections.fishing-gear-inspection-data' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <tl-radio-button-group fxFlexFill
+                                   formControlName="inspectedTypeControl"
+                                   direction="row"
+                                   gap="1em"
+                                   [options]="inspectedTypes">
+            </tl-radio-button-group>
+
+            <div *ngIf="isShip"
+                 fxLayout="column"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start stretch">
+                <inspected-ship formControlName="shipControl"
+                                [ships]="ships"
+                                [hasMap]="false"
+                                [ships]="ships"
+                                [vesselTypes]="vesselTypes"
+                                [countries]="countries">
+                </inspected-ship>
+                <inspected-ship-subject formControlName="shipOwnerControl"
+                                        [subjects]="owners"
+                                        [countries]="countries"
+                                        [personType]="inspectedPersonTypeEnum.OwnerPers"
+                                        [legalType]="inspectedPersonTypeEnum.OwnerLegal"
+                                        label="{{ 'inspections.ship-owner-registered' | tlTranslate }}"
+                                        title="{{ 'inspections.ship-owner' | tlTranslate }}">
+                </inspected-ship-subject>
+                <inspected-port formControlName="portControl"
+                                [ports]="ports"
+                                [countries]="countries">
+                </inspected-port>
+            </div>
+
+            <div *ngIf="!isShip"
+                 fxLayout="column"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start stretch">
+                <tl-autocomplete formControlName="dalyanControl"
+                                 [options]="dalyans"
+                                 label="{{ 'inspections.dalyan' | tlTranslate }}">
+                </tl-autocomplete>
+            </div>
+
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start center">
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="markReasonControl"
+                                 [options]="markReasons"
+                                 label="{{ 'inspections.mark-reason' | tlTranslate }}">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="remarkReasonControl"
+                                 [options]="remarkReasons"
+                                 label="{{ 'inspections.remark-reason' | tlTranslate }}">
+                </tl-autocomplete>
+            </div>
+            <tl-input *ngIf="otherRemarkReasonSelected"
+                      formControlName="otherRemarkReasonControl"
+                      label="{{ 'inspections.other-remark-reason' | tlTranslate }}">
+            </tl-input>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Данни от извършената проверка -->
+    <tl-expansion-panel [formGroup]="form"
+                        title="{{ 'inspections.inspected-fishing-gears' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <tl-autocomplete formControlName="permitControl"
+                             [options]="permits"
+                             label="{{ 'inspections.permit' | tlTranslate }}">
+            </tl-autocomplete>
+            <inspected-fishing-gears-table formControlName="fishingGearsControl"
+                                           [permitIds]="selectedPermitIds">
+            </inspected-fishing-gears-table>
+            <inspection-toggle-list formControlName="togglesControl"
+                                    [toggles]="toggles">
+            </inspection-toggle-list>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Допълнителна информация -->
+    <inspection-additional-info formControlName="additionalInfoControl">
+    </inspection-additional-info>
+
+    <!-- Файлове -->
+    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+</div>

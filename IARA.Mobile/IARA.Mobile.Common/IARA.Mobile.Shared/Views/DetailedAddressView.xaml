@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<tl:TLAutoGrid xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:viewModels="clr-namespace:IARA.Mobile.Shared.ViewModels"
+        x:Class="IARA.Mobile.Shared.Views.DetailedAddressView"
+        x:DataType="viewModels:DetailedAddressViewModel"
+        ColMeasuseMethod="Max"
+        OverflowMeasureMethod="Simple">
+    <tl:TLPicker tl:TLAutoGrid.MinWidth="150"
+            Title="{rt:Translate Country, Group=Profile}"
+            ItemsSource="{Binding Countries}"
+            ValidState="{Binding Country}"
+            Command="{Binding CountryChosen}" />
+    <tl:TLPicker tl:TLAutoGrid.MinWidth="150"
+            Title="{rt:Translate District, Group=Profile}"
+            ItemsSource="{Binding Districts}"
+            ValidState="{Binding District}"
+            Command="{Binding DistrictChosen}"
+            IsEnabled="{Binding IsBulgariaSelected}" />
+    <tl:TLPicker tl:TLAutoGrid.MinWidth="150"
+            Title="{rt:Translate Municipality, Group=Profile}"
+            ItemsSource="{Binding Municipalities}"
+            ValidState="{Binding Municipality}"
+            Command="{Binding MunicipalityChosen}"
+            IsEnabled="{Binding DistrictSelected}" />
+    <tl:TLPicker tl:TLAutoGrid.MinWidth="150"
+            Title="{rt:Translate PopulatedArea, Group=Profile}"
+            ItemsSource="{Binding PopulatedAreas}"
+            ValidState="{Binding PopulatedArea}"
+            IsEnabled="{Binding MunicipalitySelected}" />
+    <tl:TLEntry tl:TLAutoGrid.MinWidth="150"
+            Title="{rt:Translate Region, Group=Profile}"
+            ValidState="{Binding Region}" />
+    <tl:TLEntry tl:TLAutoGrid.MinWidth="150"
+            Title="{rt:Translate ZipCode, Group=Profile}"
+            ValidState="{Binding ZipCode}"
+            Keyboard="Numeric" />
+    <tl:TLEntry tl:TLAutoGrid.MinWidth="400"
+            Title="{rt:Translate Street, Group=Profile}"
+            ValidState="{Binding Street}" />
+    <tl:TLEntry tl:TLAutoGrid.MinWidth="50"
+            Title="{rt:Translate Number, Group=Profile}"
+            ValidState="{Binding Number}"
+            Keyboard="Numeric" />
+    <tl:TLEntry tl:TLAutoGrid.MinWidth="50"
+            Title="{rt:Translate Block, Group=Profile}"
+            ValidState="{Binding Block}" />
+    <tl:TLEntry tl:TLAutoGrid.MinWidth="50"
+            Title="{rt:Translate Entrance, Group=Profile}"
+            ValidState="{Binding Entrance}" />
+    <tl:TLEntry tl:TLAutoGrid.MinWidth="100"
+            Title="{rt:Translate Floor, Group=Profile}"
+            ValidState="{Binding Floor}"
+            Keyboard="Numeric" />
+    <tl:TLEntry tl:TLAutoGrid.MinWidth="150"
+            Title="{rt:Translate Apartment, Group=Profile}"
+            ValidState="{Binding Apartment}" />
+</tl:TLAutoGrid>

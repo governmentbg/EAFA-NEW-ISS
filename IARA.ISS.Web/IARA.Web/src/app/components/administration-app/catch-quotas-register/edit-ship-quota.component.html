@@ -1,0 +1,46 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="editForm"
+     class="dialog-padding">
+    <!-- Обща информация -->
+    <tl-expansion-panel title="{{'catch-quotas.quota-data' | tlTranslate}}"
+                        tooltipResourceName="catch-quotas.quota-data-helper">
+        <div fxLayout="row" fxLayoutGap="1em">
+            <tl-autocomplete fxFlex="70"
+                             formControlName="shipsControl"
+                             [options]="ships"
+                             [templateOptions]="true"
+                             [autoMatchTextToOption]="true"
+                             tooltipResourceName="catch-quotas.ship-helper"
+                             label="{{ 'catch-quotas.ship' | tlTranslate }}">
+            </tl-autocomplete>
+        </div>
+        <div fxLayout="row" fxLayoutGap="1em">
+            <tl-autocomplete fxFlex="50"
+                             formControlName="fishQuotasControl"
+                             [options]="fishQuotas"
+                             [autoMatchTextToOption]="true"
+                             tooltipResourceName="catch-quotas.fishes-helper"
+                             label="{{ 'catch-quotas.fishes' | tlTranslate }}">
+            </tl-autocomplete>
+            <tl-input fxFlex="50"
+                      formControlName="quotaSizeControl"
+                      tooltipResourceName="catch-quotas.quota-size-helper"
+                      label="{{ 'catch-quotas.quota-size' | tlTranslate }}">
+            </tl-input>
+        </div>
+        <div fxLayout="row" fxLayoutGap="1em">
+            <tl-textarea *ngIf="isEditing"
+                         fxFlexFill
+                         formControlName="quotaChangeBasisControl"
+                         tooltipResourceName="catch-quotas.basis-helper"
+                         label="{{ 'catch-quotas.basis' | tlTranslate }}">
+            </tl-textarea>
+        </div>
+        <mat-error *ngIf="shipQuotaAlreadyExistsErrors">
+            * {{ 'catch-quotas.ship-quota-already-exists-error' | tlTranslate }}
+        </mat-error>
+    </tl-expansion-panel>
+</div>

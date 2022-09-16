@@ -1,0 +1,62 @@
+﻿<tl-expansion-panel [formGroup]="form"
+                    [title]="shipLabel">
+    <div fxLayout="column"
+         fxLayoutGap="1em"
+         fxLayoutAlign="start stretch">
+        <inspected-ship [hasMap]="hasMap"
+                        [ships]="ships"
+                        [countries]="countries"
+                        [vesselTypes]="vesselTypes"
+                        formControlName="shipControl"
+                        (shipSelected)="onShipSelected($event)">
+        </inspected-ship>
+        <inspected-ship-subject formControlName="shipOwnerControl"
+                                [subjects]="owners"
+                                [countries]="countries"
+                                [personType]="inspectedPersonTypeEnum.OwnerPers"
+                                [legalType]="inspectedPersonTypeEnum.OwnerLegal"
+                                label="{{ 'inspections.ship-owner-registered' | tlTranslate }}"
+                                title="{{ 'inspections.ship-owner' | tlTranslate }}">
+        </inspected-ship-subject>
+        <inspected-ship-subject formControlName="shipUserControl"
+                                [subjects]="users"
+                                [countries]="countries"
+                                [personType]="inspectedPersonTypeEnum.LicUsrPers"
+                                [legalType]="inspectedPersonTypeEnum.LicUsrLgl"
+                                label="{{ 'inspections.ship-user-registered' | tlTranslate }}"
+                                title="{{ 'inspections.ship-user' | tlTranslate }}">
+        </inspected-ship-subject>
+        <inspected-ship-subject formControlName="shipRepresentativeControl"
+                                [subjects]="representatives"
+                                [countries]="countries"
+                                [personType]="inspectedPersonTypeEnum.ReprsPers"
+                                label="{{ 'inspections.ship-representative-registered' | tlTranslate }}"
+                                title="{{ 'inspections.ship-representative' | tlTranslate }}">
+        </inspected-ship-subject>
+        <inspected-ship-subject formControlName="shipCaptainControl"
+                                [subjects]="captains"
+                                [countries]="countries"
+                                [personType]="inspectedPersonTypeEnum.CaptFshmn"
+                                label="{{ 'inspections.ship-captain-registered' | tlTranslate }}"
+                                title="{{ 'inspections.ship-captain' | tlTranslate }}">
+        </inspected-ship-subject>
+        <inspection-toggle-list formControlName="togglesControl"
+                                [toggles]="toggles">
+        </inspection-toggle-list>
+
+        <tl-card *ngIf="hasPort">
+            <tl-card-title>{{ 'inspections.last-port-visited' | tlTranslate }}</tl-card-title>
+            <tl-card-content>
+                <inspected-port formControlName="portControl"
+                                [ports]="ports"
+                                [countries]="countries">
+                </inspected-port>
+            </tl-card-content>
+        </tl-card>
+
+        <tl-textarea formControlName="observationControl"
+                     [minRows]="3"
+                     label="{{ 'inspections.violation' | tlTranslate }}">
+        </tl-textarea>
+    </div>
+</tl-expansion-panel>

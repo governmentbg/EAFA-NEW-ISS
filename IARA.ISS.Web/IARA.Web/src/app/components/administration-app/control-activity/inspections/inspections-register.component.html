@@ -1,0 +1,235 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxLayoutAlign="start stretch"
+     fxFill>
+    <!-- Филтри -->
+    <search-panel *ngIf="shipId === null || shipId === undefined"
+                  [translateService]="translate">
+        <div [formGroup]="form"
+             fxFlexFill
+             fxLayout="column"
+             fxLayoutGap="1em">
+            <!-- Териториално звено, инспектор -->
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxFlexFill
+                 fxLayoutAlign="space-between center">
+                <tl-autocomplete fxFlex="40"
+                                 formControlName="territoryNodeControl"
+                                 [options]="territoryNodes"
+                                 tooltipResourceName="inspections.territory-helper"
+                                 label="{{ 'inspections.territory' | tlTranslate }}">
+                </tl-autocomplete>
+
+                <tl-input fxFlex="30"
+                          formControlName="inspectorNameControl"
+                          tooltipResourceName="inspections.inspector-helper"
+                          label="{{ 'inspections.inspector' | tlTranslate }}">
+                </tl-input>
+
+                <div fxFlex="30"></div>
+            </div>
+
+            <!-- Тип на инспекция, номер на доклад, период на инспекция -->
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxFlexFill
+                 fxLayoutAlign="space-between center">
+                <tl-autocomplete fxFlex="40"
+                                 formControlName="inspectionTypeControl"
+                                 [options]="inspectionTypes"
+                                 tooltipResourceName="inspections.type-helper"
+                                 label="{{ 'inspections.type' | tlTranslate }}">
+                </tl-autocomplete>
+
+                <tl-input fxFlex="30"
+                          formControlName="reportNumberControl"
+                          tooltipResourceName="inspections.report-number-helper"
+                          label="{{ 'inspections.report-number' | tlTranslate }}">
+                </tl-input>
+
+                <tl-date-range fxFlex="30"
+                               formControlName="dateRangeControl"
+                               label="{{ 'inspections.report-creation-date' | tlTranslate }}">
+                </tl-date-range>
+            </div>
+
+            <!-- Юридическо лице -->
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxFlexFill
+                 fxLayoutAlign="space-between center">
+                <tl-slide-toggle fxFlex="70"
+                                 formControlName="isLegalControl"
+                                 label="{{ 'inspections.is-legal' | tlTranslate }}">
+                </tl-slide-toggle>
+            </div>
+
+            <!-- Име на юридическо лице, ЕИК, управител -->
+            <div *ngIf="form.controls.isLegalControl.value === true; else isPerson"
+                 fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxFlexFill
+                 fxLayoutAlign="space-between center">
+                <tl-input fxFlex="40"
+                          formControlName="legalNameControl"
+                          tooltipResourceName="inspections.legal-name-helper"
+                          label="{{ 'inspections.legal-name' | tlTranslate }}">
+                </tl-input>
+
+                <tl-input fxFlex="30"
+                          formControlName="eikControl"
+                          tooltipResourceName="inspections.eik-helper"
+                          label="{{ 'inspections.eik' | tlTranslate }}">
+                </tl-input>
+
+                <tl-input fxFlex="30"
+                          formControlName="legalOwnerControl"
+                          tooltipResourceName="inspections.legal-owner-helper"
+                          label="{{ 'inspections.legal-owner' | tlTranslate }}">
+                </tl-input>
+            </div>
+
+            <!-- Име на физическо лице, ЕГН -->
+            <ng-template #isPerson>
+                <div fxLayout="row"
+                     fxLayoutGap="1em"
+                     fxFlexFill
+                     fxLayoutAlign="space-between center">
+                    <tl-input fxFlex="40"
+                              formControlName="personNameControl"
+                              tooltipResourceName="inspections.person-name-helper"
+                              label="{{ 'inspections.person-name' | tlTranslate }}">
+                    </tl-input>
+
+                    <tl-input fxFlex="30"
+                              formControlName="egnControl"
+                              tooltipResourceName="inspections.egn-helper"
+                              label="{{ 'inspections.egn' | tlTranslate }}">
+                    </tl-input>
+
+                    <div fxFlex="30"></div>
+                </div>
+            </ng-template>
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <tl-card>
+        <tl-card-content>
+            <tl-data-table fxFlexFill
+                           [showAddButton]="canAddRecords && (shipId === null || shipId === undefined)"
+                           [showInactiveRecords]="canRestoreRecords && (shipId === null || shipId === undefined)"
+                           (addButtonClicked)="addEditEntry(undefined, false)">
+                <row-detail>
+                    <ng-template let-row="row"
+                                 ngx-datatable-row-detail-template>
+                        <tl-card>
+                            <tl-card-title>{{ 'inspections.auan-list-title' | tlTranslate }}</tl-card-title>
+                            <tl-card-content>
+                                <tl-data-table [isRemote]="false"
+                                               [isSoftDeletable]="false"
+                                               [showInactiveRecords]="false"
+                                               [showAddButton]="false"
+                                               [rows]="row.auaNs">
+                                    <data-column propertyName="auanNum"
+                                                 [flexRate]="0.3"
+                                                 columnName="{{ 'auan-register.table-auan-num' | tlTranslate }}">
+                                    </data-column>
+
+                                    <data-column propertyName="drafter"
+                                                 [flexRate]="0.3"
+                                                 columnName="{{ 'auan-register.table-drafter' | tlTranslate }}">
+                                    </data-column>
+
+                                    <data-column propertyName="draftDate"
+                                                 [flexRate]="0.3"
+                                                 dataType="date"
+                                                 columnName="{{ 'auan-register.table-draft-date' | tlTranslate }}">
+                                    </data-column>
+
+                                    <data-column propertyName="inspectedEntity"
+                                                 [flexRate]="0.3"
+                                                 columnName="{{ 'auan-register.table-inspected-entity' | tlTranslate }}">
+                                    </data-column>
+                                </tl-data-table>
+                            </tl-card-content>
+                        </tl-card>
+                    </ng-template>
+                </row-detail>
+
+                <data-column [flexRate]="0.75"
+                             propertyName="reportNumber"
+                             columnName="{{ 'inspections.report-number' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="1"
+                             propertyName="inspectors"
+                             [isSortable]="false"
+                             columnName="{{ 'inspections.inspectors' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="1.5"
+                             propertyName="inspectionTypeName"
+                             columnName="{{ 'inspections.type' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="0.5"
+                             propertyName="startDate"
+                             dataType="date"
+                             columnName="{{ 'inspections.date' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="0.5"
+                             propertyName="inspectionStateName"
+                             columnName="{{ 'inspections.state' | tlTranslate }}">
+                </data-column>
+
+                <data-template-column [flexRate]="0.75"
+                                      [cellClass]="'justify-center min-w-50'">
+                    <ng-template let-row="row"
+                                 ngx-datatable-cell-template>
+                        <div fxLayout="row"
+                             fxLayoutAlign="end center">
+                            <tl-icon-button *ngIf="canReadRecords"
+                                            icon="visibility"
+                                            (buttonClicked)="addEditEntry(row.data, true)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'inspections.view-inspection-dialog-title' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.data.isActive && row.data.inspectionState === inspectionStatesEnum.Draft && canEditRecords && (shipId === null || shipId === undefined)"
+                                            icon="edit"
+                                            (buttonClicked)="addEditEntry(row.data, false)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'inspections.edit-inspection-dialog-title' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.data.isActive && row.data.inspectionState === inspectionStatesEnum.Submitted && canEditRecords"
+                                            icon="ic-fluent-arrow-upload-16-filled"
+                                            [size]="icIconSize"
+                                            (buttonClicked)="signEntry(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'inspections.sign-inspection' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.data.isActive && canDeleteRecords && (shipId === null || shipId === undefined)"
+                                            icon="delete"
+                                            (buttonClicked)="deleteEntry(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'inspections.delete' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="!row.data.isActive && canRestoreRecords && (shipId === null || shipId === undefined)"
+                                            icon="restore"
+                                            (buttonClicked)="restoreEntry(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'inspections.undo-delete' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+</div>

@@ -1,0 +1,44 @@
+﻿<tl-data-table fxFlexFill
+               [rows]="entries"
+               [isRemote]="false"
+               [isSoftDeletable]="false"
+               [showAddButton]="false"
+               [showInactiveRecords]="false">
+    <data-column [flexRate]="0.3"
+                 propertyName="date"
+                 dataType="date"
+                 columnName="{{ 'duplicates.table-entry-date' | tlTranslate }}">
+    </data-column>
+
+    <data-column [flexRate]="0.5"
+                 propertyName="submittedBy"
+                 columnName="{{ 'duplicates.table-entry-submitted-by' | tlTranslate }}">
+    </data-column>
+
+    <data-template-column [flexRate]="0.2"
+                          propertyName="price"
+                          columnName="{{ 'duplicates.table-entry-price' | tlTranslate }}">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <span>{{ row.data.price | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}</span>
+        </ng-template>
+    </data-template-column>
+
+    <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                <tl-icon-button *ngIf="row.data.deliveryId !== undefined && row.data.deliveryId !== null"
+                                icon="ic-fluent-document-briefcase-24-regular"
+                                iconClass="accent-color"
+                                [size]="icIconSize"
+                                tooltipText="{{ 'duplicates.table-entry-delivery-data' | tlTranslate }}"
+                                (buttonClicked)="openDeliveryDialog(row.data)">
+                </tl-icon-button>
+                <tl-icon-button icon="visibility"
+                                (buttonClicked)="viewDuplicateApplication(row.data)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'duplicates.table-entry-view-application' | tlTranslate }}">
+                </tl-icon-button>
+            </div>
+        </ng-template>
+    </data-template-column>
+</tl-data-table>

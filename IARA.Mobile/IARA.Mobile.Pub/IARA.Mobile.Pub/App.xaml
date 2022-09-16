@@ -1,0 +1,249 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application x:Class="IARA.Mobile.Pub.App"
+        xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:commonConverters="clr-namespace:IARA.Mobile.Shared.Converters;assembly=IARA.Mobile.Shared"
+        xmlns:tlConverters="clr-namespace:TechnoLogica.Xamarin.Converters;assembly=TechnoLogica.Xamarin">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!--  CONVERTERS  -->
+            <tlConverters:IsNotNullConverter x:Key="IsNotNull" />
+            <tlConverters:DateTimeToStringConverter x:Key="DateTimeToString" />
+            <tlConverters:DateToStringConverter x:Key="DateToString" />
+            <tlConverters:OppositeBoolConverter x:Key="OppositeBool" />
+            <commonConverters:AccordionImageConverter x:Key="AccordionImage" />
+            <!--  END CONVERTERS  -->
+            <!--  COLORS  -->
+            <Color x:Key="Primary">#0078c2</Color>
+            <Color x:Key="PrimaryLight">#59a7f5</Color>
+            <Color x:Key="PrimaryDark">#004d91</Color>
+            <Color x:Key="Secondary">#6f7aba</Color>
+            <Color x:Key="SecondaryLight">#a0a9ed</Color>
+            <Color x:Key="SecondaryDark">#404e8a</Color>
+            <Color x:Key="BackgroundColor">#F5F5F6</Color>
+            <Color x:Key="BackgroundColorDark">#191919</Color>
+            <Color x:Key="GrayColor">#e2e2e2</Color>
+            <Color x:Key="ErrorColor">#ff5252</Color>
+            <Color x:Key="DisabledColor">#e1e1e2</Color>
+            <SolidColorBrush x:Key="PrimaryBrush"
+                    Color="{StaticResource Primary}" />
+            <!--  END COLORS  -->
+            <!--  GLOBAL STYLES  -->
+            <Style TargetType="Frame">
+                <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="BackgroundColor" Value="White" />
+            </Style>
+            <Style TargetType="Label">
+                <Setter Property="LineBreakMode" Value="NoWrap" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="FontSize" Value="16" />
+            </Style>
+            <Style TargetType="Entry">
+                <Setter Property="TextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="FontSize" Value="16" />
+            </Style>
+            <Style TargetType="Editor">
+                <Setter Property="AutoSize" Value="TextChanges" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="FontSize" Value="16" />
+            </Style>
+            <Style TargetType="RadioButton">
+                <Setter Property="TextColor" Value="Black" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="BackgroundColor" Value="Transparent" />
+            </Style>
+            <Style TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="CornerRadius" Value="3" />
+                <Setter Property="FontSize" Value="16" />
+            </Style>
+            <Style TargetType="ImageButton">
+                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="Padding" Value="5" />
+                <Setter Property="CornerRadius" Value="3" />
+            </Style>
+            <Style x:Name="tlResponsiveTable"
+                    TargetType="tl:TLResponsiveTable">
+                <Setter Property="TitleFontSize" Value="22" />
+                <Setter Property="BorderColor" Value="{StaticResource GrayColor}" />
+            </Style>
+            <Style TargetType="sv:TLHeaderLine">
+                <Setter Property="ImageColor" Value="{StaticResource Primary}" />
+                <Setter Property="Margin" Value="0,10" />
+            </Style>
+            <Style TargetType="sv:TLButton">
+                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="CornerRadius" Value="3" />
+                <Setter Property="FontSize" Value="16" />
+            </Style>
+            <Style TargetType="tl:TLRichLabel">
+                <Setter Property="LineBreakMode" Value="WordWrap" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="FontSize" Value="16" />
+            </Style>
+            <Style TargetType="tl:TLEntry">
+                <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
+                <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
+                <Setter Property="BorderColor" Value="Gray" />
+                <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+            </Style>
+            <Style TargetType="tl:TLEditor">
+                <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
+                <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
+                <Setter Property="BorderColor" Value="Gray" />
+                <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+            </Style>
+            <Style TargetType="tl:TLPicker"
+                    x:Name="PickerStyle">
+                <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
+                <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
+                <Setter Property="BorderColor" Value="Gray" />
+                <Setter Property="IconColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="DialogBackgroundColor" Value="{StaticResource BackgroundColor}" />
+                <Setter Property="DialogCancelButtonColor" Value="SlateGray" />
+                <Setter Property="DialogSeparatorColor" Value="LightGray" />
+            </Style>
+            <Style x:Name="tlNativePicker"
+                    TargetType="tl:TLNativePicker">
+                <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
+                <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
+                <Setter Property="BorderColor" Value="Gray" />
+                <Setter Property="IconColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+            </Style>
+            <Style TargetType="tl:TLDatePicker">
+                <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
+                <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
+                <Setter Property="BorderColor" Value="Gray" />
+                <Setter Property="IconColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="DateToStringConverter" Value="{StaticResource DateToString}" />
+                <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+            </Style>
+            <Style TargetType="tl:TLTimePicker">
+                <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
+                <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
+                <Setter Property="BorderColor" Value="Gray" />
+                <Setter Property="IconColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+            </Style>
+            <Style TargetType="tl:TLDateTimePicker"
+                    x:Name="DateTimePickerStyle">
+                <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
+                <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
+                <Setter Property="BorderColor" Value="Gray" />
+                <Setter Property="IconColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="DateTimeToStringConverter" Value="{StaticResource DateTimeToString}" />
+                <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="DialogBackgroundColor" Value="White" />
+                <Setter Property="DialogCancelButtonColor" Value="{StaticResource ErrorColor}" />
+                <Setter Property="DialogCancelButtonTextColor" Value="White" />
+                <Setter Property="DialogItemTextColor" Value="Black" />
+                <Setter Property="DialogLabelColor" Value="Gray" />
+                <Setter Property="DialogIconColor" Value="White" />
+                <Setter Property="DialogOkayButtonColor" Value="{StaticResource Primary}" />
+                <Setter Property="DialogOkayButtonTextColor" Value="White" />
+                <Setter Property="DialogSelectedColor" Value="{StaticResource Primary}" />
+                <Setter Property="DialogSeparatorColor" Value="LightGray" />
+                <Setter Property="DialogTitleBackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="DialogTitleColor" Value="White" />
+                <Setter Property="DialogTitle" Value="Date and time" />
+                <Setter Property="DialogCancelText" Value="Cancel" />
+                <Setter Property="DialogOkayText" Value="Select" />
+                <Setter Property="DialogYearText" Value="Year" />
+                <Setter Property="DialogMonthText" Value="Month" />
+                <Setter Property="DialogDayText" Value="Day" />
+                <Setter Property="DialogHoursText" Value="Hours" />
+                <Setter Property="DialogMinutesText" Value="Minutes" />
+            </Style>
+            <Style TargetType="tl:TLRangeDatePicker">
+                <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
+                <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
+                <Setter Property="BorderColor" Value="Gray" />
+                <Setter Property="IconColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="DateToStringConverter" Value="{StaticResource DateTimeToString}" />
+                <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+            </Style>
+            <Style TargetType="tl:TLCheckView">
+                <Setter Property="TextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="Color" Value="{StaticResource Primary}" />
+                <Setter Property="DisabledColor" Value="Gray" />
+            </Style>
+            <Style TargetType="tl:TLSwitchView">
+                <Setter Property="TextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="OnColor" Value="{StaticResource PrimaryLight}" />
+                <Setter Property="ThumbColor" Value="{StaticResource Primary}" />
+                <Setter Property="DisabledOnColor" Value="LightGray" />
+                <Setter Property="DisabledThumbColor" Value="Gray" />
+            </Style>
+            <Style TargetType="tl:TLMultiPicker"
+                    x:FieldModifier="public"
+                    x:Name="MultiPickerStyle">
+                <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
+                <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
+                <Setter Property="BorderColor" Value="Gray" />
+                <Setter Property="IconColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="ChipColor" Value="{StaticResource Primary}" />
+                <Setter Property="ChipTextColor" Value="White" />
+                <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+                <Setter Property="DialogBackgroundColor" Value="{StaticResource BackgroundColor}" />
+                <Setter Property="DialogCancelButtonColor" Value="SlateGray" />
+            </Style>
+            <Style TargetType="sv:TLEntryWithType"
+                    x:Name="EntryForEgnLnch">
+                <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
+                <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
+                <Setter Property="BorderColor" Value="Gray" />
+                <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+            </Style>
+            <Style x:Name="tlMenuTextButton"
+                    TargetType="sv:TLMenuTextButton">
+                <Setter Property="HeightRequest" Value="40" />
+                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="CornerRadius" Value="3" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="Padding" Value="10,0" />
+            </Style>
+            <!--  END GLOBAL STYLES  -->
+            <!--  GLOBAL STYLES WITH KEYS OR CLASS  -->
+            <Style TargetType="View"
+                    Class="Center"
+                    x:Key="Center">
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+            <Style TargetType="Label"
+                    Class="BaseIcon"
+                    BasedOn="{StaticResource Center}">
+                <Setter Property="FontFamily" Value="FA" />
+            </Style>
+            <ControlTemplate x:Key="RadioTabTemplate">
+                <Grid RowDefinitions="Auto,5">
+                    <Label Text="{TemplateBinding Content}"
+                            FontSize="14"
+                            HorizontalOptions="Center" />
+                    <BoxView Grid.Row="1">
+                        <BoxView.Triggers>
+                            <DataTrigger TargetType="BoxView"
+                                    Binding="{Binding IsChecked, Source={RelativeSource AncestorType={x:Type RadioButton}}}"
+                                    Value="True">
+                                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="BoxView"
+                                    Binding="{Binding IsChecked, Source={RelativeSource AncestorType={x:Type RadioButton}}}"
+                                    Value="False">
+                                <Setter Property="BackgroundColor" Value="Transparent" />
+                            </DataTrigger>
+                        </BoxView.Triggers>
+                    </BoxView>
+                </Grid>
+            </ControlTemplate>
+            <!--  END GLOBAL STYLES WITH KEYS OR CLASS  -->
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

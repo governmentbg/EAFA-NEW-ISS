@@ -1,0 +1,148 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     validityCheckerGroup
+     [formGroup]="form"
+     [notifierGroup]="notifier"
+     class="dialog-padding">
+    <!-- Заявител -->
+    <application-submitted-by formControlName="submittedByControl"
+                              notifier
+                              validityChecker
+                              label="{{ 'ships-register.dereg-requester' | tlTranslate }}"
+                              [isIdReadOnly]="isEditing || isPublicApp"
+                              [expectedResults]="expectedResults.submittedBy">
+    </application-submitted-by>
+
+    <!-- Получател -->
+    <application-submitted-for formControlName="submittedForControl"
+                               notifier
+                               validityChecker
+                               relationLabel="{{ 'ships-register.dereg-requester-role' | tlTranslate }}"
+                               submittedForLabel="{{ 'ships-register.dereg-receiver' | tlTranslate }}"
+                               [pageCode]="pageCode"
+                               [hideRelation]="showOnlyRegiXData"
+                               [isIdReadOnly]="isEditing"
+                               [showCustodianOfProperty]="false"
+                               [submittedByControl]="form.controls.submittedByControl"
+                               [expectedResults]="expectedResults.submittedFor">
+    </application-submitted-for>
+
+    <!-- Данни за заявената услуга -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData || (showOnlyRegiXData && hasFishingCapacity && form.controls.actionsControl.value?.holders && form.controls.actionsControl.value.holders.length > 0)"
+                        title="{{ 'ships-register.dereg-application-data' | tlTranslate }}"
+                        tooltipResourceName="ships-register.dereg-application-data-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="space-between stretch">
+            <!-- Данни за риболовния кораб -->
+            <tl-card *ngIf="!showOnlyRegiXData"
+                     tooltipResourceName="ships-register.dereg-ship-helper"
+                     [validityChecker]="form">
+                <tl-card-title>{{ 'ships-register.dereg-ship' | tlTranslate }}</tl-card-title>
+                <tl-card-content fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="1em">
+                    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                        <tl-autocomplete fxFlex="50"
+                                         formControlName="shipControl"
+                                         [options]="ships"
+                                         tooltipResourceName="ships-register.dereg-ship-from-register-helper"
+                                         label="{{ 'ships-register.dereg-ship-from-register' | tlTranslate }}">
+                        </tl-autocomplete>
+
+                        <tl-input *ngIf="form.controls.shipControl.value && (form.controls.shipControl.valid || viewMode || isReadonly)"
+                                  fxFlex="25"
+                                  [readonly]="true"
+                                  [value]="form.controls.shipControl.value.grossTonnage?.toFixed(2)"
+                                  tooltipResourceName="ships-register.dereg-ship-gross-tonnage-helper"
+                                  label="{{ 'ships-register.dereg-ship-gross-tonnage' | tlTranslate }}">
+                        </tl-input>
+
+                        <tl-input *ngIf="form.controls.shipControl.value && (form.controls.shipControl.valid || viewMode || isReadonly)"
+                                  fxFlex="25"
+                                  [readonly]="true"
+                                  [value]="form.controls.shipControl.value.mainEnginePower?.toFixed(2)"
+                                  tooltipResourceName="ships-register.dereg-ship-main-engine-power-helper"
+                                  label="{{ 'ships-register.dereg-ship-main-engine-power' | tlTranslate }}">
+                        </tl-input>
+
+                        <div fxFlex="25" *ngIf="!form.controls.shipControl.value || !form.controls.shipControl.valid && !viewMode && !isReadonly"></div>
+                        <div fxFlex="25" *ngIf="!form.controls.shipControl.value || !form.controls.shipControl.valid && !viewMode && !isReadonly"></div>
+                    </div>
+
+                    <div fxLayout="row">
+                        <tl-textarea fxFlex="100"
+                                     formControlName="reasonControl"
+                                     tooltipResourceName="ships-register.dereg-reason-description-helper"
+                                     label="{{ 'ships-register.dereg-reason-description' | tlTranslate }}">
+                        </tl-textarea>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+
+            <!-- Необходими действия относно остатъка на риболовния капацитет -->
+            <tl-card *ngIf="hasFishingCapacity && (!showOnlyRegiXData || (showOnlyRegiXData && form.controls.actionsControl.value?.holders && form.controls.actionsControl.value.holders.length > 0))"
+                     tooltipResourceName="ships-register.dereg-required-actions-helper"
+                     [validityChecker]="form">
+                <tl-card-title>{{ 'ships-register.dereg-required-actions' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <fishing-capacity-freed-actions formControlName="actionsControl"
+                                                    [showOnlyRegiXData]="showOnlyRegiXData"
+                                                    [isDraft]="isDraft"
+                                                    [isEditing]="isEditing"
+                                                    [service]="service"
+                                                    [maxTonnage]="maxTonnage"
+                                                    [maxPower]="maxPower"
+                                                    [newCertificateData]="newCertificateData"
+                                                    [expectedResults]="expectedResults?.freedCapacityAction">
+                    </fishing-capacity-freed-actions>
+                </tl-card-content>
+            </tl-card>
+
+            <!-- Информация за начин на връчване -->
+            <tl-card *ngIf="hasDelivery && !showOnlyRegiXData && hasFishingCapacity"
+                     tooltipResourceName="ships-register.dereg-delivery-data-helper"
+                     [validityChecker]="form"
+                     [validityCheckerExtraCondition]="hasNoEDeliveryRegistrationError !== true">
+                <tl-card-title>{{ 'ships-register.dereg-delivery-data' | tlTranslate }}</tl-card-title>
+
+                <tl-card-content>
+                    <delivery-data formControlName="deliveryDataControl"
+                                   [pageCode]="pageCode">
+                    </delivery-data>
+                    <mat-error *ngIf="hasNoEDeliveryRegistrationError">
+                        * {{ 'ships-register.dereg-has-no-e-delivery-registration-error' | tlTranslate }}
+                    </mat-error>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Информация за плащане -->
+    <tl-expansion-panel *ngIf="isPaid && !showOnlyRegiXData && paymentInformation !== undefined && paymentInformation !== null"
+                        title="{{ 'ships-register.dereg-payment-information' | tlTranslate }}"
+                        tooltipResourceName="ships-register.dereg-payment-information-helper">
+        <payment-information [paymentData]="paymentInformation"></payment-information>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'ships-register.dereg-files' | tlTranslate }}"
+                        tooltipResourceName="ships-register.dereg-files-helper"
+                        [validityChecker]="form">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)"
+                                  [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                  [refreshFileTypes]="refreshFileTypes">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+
+    <!-- Проверки -->
+    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+                        title="{{ 'ships-register.dereg-regix-checks-results' | tlTranslate }}"
+                        tooltipResourceName="ships-register.dereg-regix-checks-results-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-checks-results [regixChecksCollection]="regixChecks"></regix-checks-results>
+        </div>
+    </tl-expansion-panel>
+</div>

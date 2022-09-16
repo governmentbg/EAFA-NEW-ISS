@@ -1,0 +1,68 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="editOutingForm"
+     class="dialog-padding">
+    <div fxLayout="row" fxLayoutGap="1em">
+        <tl-date fxFlex="25"
+                 formControlName="dateOfOutingControl"
+                 [max]="currentDate"
+                 tooltipResourceName="scientific-fishing.date-of-outing-helper"
+                 label="{{ 'scientific-fishing.date-of-outing' | tlTranslate }}">
+        </tl-date>
+        <tl-input fxFlex="75"
+                  formControlName="waterAreaControl"
+                  tooltipResourceName="scientific-fishing.outing-water-area-helper"
+                  label="{{ 'scientific-fishing.outing-water-area' | tlTranslate }}">
+        </tl-input>
+    </div>
+    <div fxLayout="column" fxLayoutGap="1em">
+        <tl-data-table [isRemote]="false"
+                       [rows]="outingCatches"
+                       [isSoftDeletable]="true"
+                       [showInactiveRecords]="canRestoreRecords"
+                       [showAddButton]="!readOnly">
+            <data-column propertyName="fishTypeId"
+                         [formGroup]="outingCatchForm"
+                         [options]="fishTypes"
+                         [displayOptions]="allFishTypes"
+                         dataType="nomenclature"
+                         columnName="{{ 'scientific-fishing.caught-fish-type-aquatic-organism' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="catchUnder100"
+                         [formGroup]="outingCatchForm"
+                         columnName="{{ 'scientific-fishing.count-under-100g' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="catch100To500"
+                         [formGroup]="outingCatchForm"
+                         columnName="{{ 'scientific-fishing.count-100-to-500g' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="catch500To1000"
+                         [formGroup]="outingCatchForm"
+                         columnName="{{ 'scientific-fishing.count-500-to-1000g' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="catchOver1000"
+                         [formGroup]="outingCatchForm"
+                         columnName="{{ 'scientific-fishing.count-above-1000g' | tlTranslate }}">
+
+            </data-column>
+            <data-column propertyName="totalCatch"
+                         [formGroup]="outingCatchForm"
+                         dataType="calculated"
+                         [calculatedValue]="calculateTotal"
+                         [calculatedColumnControlNames]="totalCatchCalculateControls"
+                         columnName="{{ 'scientific-fishing.total-caught-fish' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="totalKeptCount"
+                         [formGroup]="outingCatchForm"
+                         [getControlErrorLabelText]="getTotalCountErrorText.bind(this)"
+                         columnName="{{ 'scientific-fishing.total-kept-fish' | tlTranslate }}">
+            </data-column>
+            <data-column-inline *ngIf="!readOnly"></data-column-inline>
+        </tl-data-table>
+
+        <mat-error *ngIf="showNoCatchesError">
+            * {{ 'scientific-fishing.must-have-at-least-one-catch-err-msg' | tlTranslate }}
+        </mat-error>
+    </div>
+</div>

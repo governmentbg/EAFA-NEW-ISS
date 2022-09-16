@@ -1,0 +1,124 @@
+﻿<div fxFlex="100" fxLayout="column">
+    <div *ngIf="hasAnyApplicationsReadPermission || hasApplicationsProcessingPermission">
+        <tl-expansion-panel title="{{ 'dashboard.applications-table-label' | tlTranslate }}"
+                            tooltipResourceName="dashboard.applications-table-label-helper">
+            <search-panel [translateService]="translate">
+                <div [formGroup]="form" fxLayout="column" fxLayoutAlign="start start">
+                    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center" fxFill>
+                        <tl-input fxFlex="33"
+                                  formControlName="eventisNumControl"
+                                  label="{{ 'applications-register.eventis-num' | tlTranslate }}"
+                                  tooltipResourceName="applications-register.eventis-num-helper">
+                        </tl-input>
+                        <tl-date-range fxFlex="33"
+                                       formControlName="applicationDateControl"
+                                       label="{{ 'applications-register.date-of-application' | tlTranslate }}"
+                                       tooltipResourceName="applications-register.date-of-application-helper">
+                        </tl-date-range>
+                        <tl-autocomplete fxFlex="33"
+                                         formControlName="applicationTypeControl"
+                                         [options]="types"
+                                         label="{{ 'applications-register.application-type' | tlTranslate }}"
+                                         tooltipResourceName="applications-register.application-type-helper">
+                        </tl-autocomplete>
+                    </div>
+
+                    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center" fxFill>
+                        <tl-autocomplete fxFlex="33"
+                                         formControlName="applicationStatusControl"
+                                         [options]="statuses"
+                                         label="{{ 'applications-register.application-status' | tlTranslate }}"
+                                         tooltipResourceName="applications-register.application-status-helper">
+                        </tl-autocomplete>
+                        <tl-autocomplete fxFlex="33"
+                                         formControlName="applicationSourceControl"
+                                         [options]="sources"
+                                         label="{{ 'applications-register.application-source' | tlTranslate }}"
+                                         tooltipResourceName="applications-register.application-source-helper">
+                        </tl-autocomplete>
+                        <tl-input fxFlex="33"
+                                  formControlName="submittedForControl"
+                                  label="{{ 'applications-register.application-submitted-for' | tlTranslate }}"
+                                  tooltipResourceName="applications-register.application-submitted-for-helper">
+                        </tl-input>
+                    </div>
+
+                    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center" fxFill>
+                        <tl-input fxFlex="33"
+                                  formControlName="submittedForEgnLncControl"
+                                  label="{{ 'applications-register.application-submitted-for-egn-lnc' | tlTranslate }}"
+                                  tooltipResourceName="applications-register.application-submitted-for-egn-lnc-helper">
+                        </tl-input>
+                        <tl-select fxFlex="33"
+                                   formControlName="showOnlyAssignedControl"
+                                   [options]="showOnlyAssignedOptions"
+                                   label="{{ 'applications-register.assigned-applications' | tlTranslate }}"
+                                   tooltipResourceName="applications-register.assigned-applications-helper">
+                        </tl-select>
+                        <tl-input fxFlex="33"
+                                  formControlName="assignedToControl"
+                                  label="{{ 'applications-register.application-assigned-user' | tlTranslate }}"
+                                  tooltipResourceName="applications-register.application-assigned-user-helper">
+                        </tl-input>
+                    </div>
+                </div>
+            </search-panel>
+            <applications-table [pageType]="pageType"
+                                [processingPermissions]="applicationProcessingHasPermissions"
+                                [recordsPerPage]="5">
+            </applications-table>
+
+
+
+            <apx-chart *ngIf="applicationChartOptions !== undefined"
+                       [series]="applicationChartOptions.series"
+                       [chart]="applicationChartOptions.chart"
+                       [dataLabels]="applicationChartOptions.dataLabels"
+                       [plotOptions]="applicationChartOptions.plotOptions"
+                       [responsive]="applicationChartOptions.responsive"
+                       [xaxis]="applicationChartOptions.xaxis"
+                       [legend]="applicationChartOptions.legend"
+                       [fill]="applicationChartOptions.fill">
+            </apx-chart>
+        </tl-expansion-panel>
+
+        <tl-expansion-panel title="{{ 'dashboard.reference-label' | tlTranslate }}"
+                            tooltipResourceName="dashboard.reference-label-helper">
+            <div class="cards" fxLayout="row wrap" fxLayoutGap="1em" fxLayoutAlign="start center">
+                <dashboard-card [data]="type" fxFlex="24" fxFlex.lg="32" fxFlex.lt-lg="46" fxFlex.lt-md="100" *ngFor="let type of typesCountReports">
+                </dashboard-card>
+            </div>
+        </tl-expansion-panel>
+    </div>
+
+    <div *ngIf="hasTicketsReadPermission">
+        <tl-expansion-panel title="{{ 'dashboard.tickets-table-label' | tlTranslate }}"
+                            tooltipResourceName="dashboard.tickets-table-label-helper">
+            <recreational-fishing-applications-content [isDashboardMode]="true"
+                                                       [getAllServiceMethod]="service.getAllTicketApplications.bind(service)"
+                                                       [recordsPerPage]="5"
+                                                       [service]="recreationalFishingService">
+            </recreational-fishing-applications-content>
+
+            <apx-chart *ngIf="ticketChartOptions !== undefined"
+                       [series]="ticketChartOptions.series"
+                       [chart]="ticketChartOptions.chart"
+                       [dataLabels]="ticketChartOptions.dataLabels"
+                       [plotOptions]="ticketChartOptions.plotOptions"
+                       [responsive]="ticketChartOptions.responsive"
+                       [xaxis]="ticketChartOptions.xaxis"
+                       [legend]="ticketChartOptions.legend"
+                       [fill]="ticketChartOptions.fill">
+            </apx-chart>
+        </tl-expansion-panel>
+
+        <tl-expansion-panel title="{{ 'dashboard.ticket-reference-label' | tlTranslate }}"
+                            tooltipResourceName="dashboard.ticket-reference-label-helper">
+            <div class="cards" fxLayout="row wrap" fxLayoutGap="1em" fxLayoutAlign="start center">
+                <dashboard-card [data]="type" fxFlex="24" fxFlex.lg="32" fxFlex.lt-lg="46" fxFlex.lt-md="100" *ngFor="let type of ticketTypesCountReports">
+                </dashboard-card>
+            </div>
+        </tl-expansion-panel>
+    </div>
+</div>
+

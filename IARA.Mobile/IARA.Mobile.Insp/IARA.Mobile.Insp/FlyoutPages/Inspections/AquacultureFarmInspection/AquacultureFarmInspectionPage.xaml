@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection.AquacultureFarmInspectionPage"
+        x:DataType="local:AquacultureFarmInspectionViewModel"
+        x:TypeArguments="local:AquacultureFarmInspectionViewModel"
+        x:Name="page"
+        PageInfo="{rt:Translate PageInfo, Group=AquacultureFarmInspection}"
+        Title="{rt:Translate Title, Group=AquacultureFarmInspection}"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <lc:TLForwardSections ExpandAll="{Binding ExpandAll}">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
+                Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
+            <StackLayout Padding="10">
+                <lc:InspectionGeneralInfoView BindingContext="{Binding InspectionGeneralInfo}" />
+                <lc:PatrolVehiclesView BindingContext="{Binding PatrolVehicles}" />
+                <lc:TLLocationView Title="{rt:Translate Location, Group=AquacultureFarmInspection}"
+                        ValidState="{Binding Location}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+            </StackLayout>
+        </sv:SectionView>
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Table}, Color=White, Size=100}"
+                Text="{rt:Translate LegalEntityInfo, Group=AquacultureFarmInspection}"
+                IsExpanded="False">
+            <StackLayout Padding="10">
+                <lc:CustomInfinitePicker Title="{rt:Translate Aquaculture, Group=AquacultureFarmInspection}"
+                        ValidState="{Binding Aquaculture}"
+                        DisplayValue="DisplayValue"
+                        Command="{Binding AquacultureChosen}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <lc:LegalView BindingContext="{Binding LegalEntity}"
+                        Title="{rt:Translate LegalEntity, Group=AquacultureFarmInspection}" />
+                <lc:PersonView BindingContext="{Binding Representative}"
+                        Title="{rt:Translate Representative, Group=AquacultureFarmInspection}" />
+            </StackLayout>
+        </sv:SectionView>
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Fish}, Color=White, Size=100}"
+                Text="{rt:Translate InspectedData, Group=AquacultureFarmInspection}"
+                IsExpanded="False">
+            <StackLayout Padding="10">
+                <lc:CatchInspectionsView BindingContext="{Binding Catches}" />
+                <lc:TLGeneratedToggles ValidState="{Binding InspectionToggles}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLEditor Title="{rt:Translate OtherFishingGear, Group=AquacultureFarmInspection}"
+                        ValidState="{Binding OtherFishingGear}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+            </StackLayout>
+        </sv:SectionView>
+        <lc:AdditionalInfoView BindingContext="{Binding AdditionalInfo}">
+            <tl:TLEditor Title="{rt:Translate RepresentativeComment, Group=AquacultureFarmInspection}"
+                    ValidState="{Binding RepresentativeComment}"
+                    IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+        </lc:AdditionalInfoView>
+        <lc:InspectionFilesView BindingContext="{Binding InspectionFiles}" />
+        <lc:SignaturesView BindingContext="{Binding Signatures}" />
+        <lc:SaveButtonsLayout />
+    </lc:TLForwardSections>
+</sv:BasePage>

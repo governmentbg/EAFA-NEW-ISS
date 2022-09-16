@@ -1,0 +1,28 @@
+﻿<div [formGroup]="form"
+     fxLayout="row"
+     fxLayoutGap="1em"
+     fxLayoutAlign="space-between center"
+     [ngClass]="{ 'dialog-padding': isDialog }">
+    <tl-date fxFlex="20"
+             formControlName="issueDateControl"
+             [max]="today"
+             label="{{ 'common-document.document-issue-date' | tlTranslate }}">
+    </tl-date>
+
+    <tl-input fxFlex="20"
+              formControlName="numControl"
+              label="{{ 'common-document.document-num' | tlTranslate }}">
+    </tl-input>
+
+    <tl-input fxFlex="20"
+              formControlName="issuerControl"
+              label="{{ 'common-document.document-issuer' | tlTranslate }}">
+    </tl-input>
+
+    <date-range-indefinite fxFlex="40"
+                           formControlName="validityControl"
+                           rangeLabel="{{ 'common-document.document-validity' | tlTranslate }}"
+                           dateLabel="{{ 'common-document.document-validity-start' | tlTranslate }}"
+                           checkboxLabel="{{ 'common-document.document-indefinite' | tlTranslate }}">
+    </date-range-indefinite>
+</div>

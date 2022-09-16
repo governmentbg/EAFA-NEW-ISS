@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater.InspectionWaterPage"
+        x:DataType="local:InspectionWaterViewModel"
+        x:TypeArguments="local:InspectionWaterViewModel"
+        x:Name="page"
+        PageInfo="{rt:Translate PageInfo, Group=InspectionWater}"
+        Title="{rt:Translate Title, Group=InspectionWater}"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <lc:TLForwardSections ExpandAll="{Binding ExpandAll}">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
+                Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
+            <StackLayout Padding="10">
+                <lc:InspectionGeneralInfoView BindingContext="{Binding InspectionGeneralInfo}" />
+                <lc:PatrolVehiclesView BindingContext="{Binding PatrolVehicles}" />
+            </StackLayout>
+        </sv:SectionView>
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Book}, Color=White, Size=100}"
+                Text="{rt:Translate InspectionData, Group=InspectionWater}"
+                IsExpanded="False">
+            <StackLayout Padding="10">
+                <tl:TLFlex GrowUnit="300">
+                    <tl:TLEntry Title="{rt:Translate ObjectName, Group=InspectionWater}"
+                            ValidState="{Binding ObjectName}"
+                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                    <tl:TLNativePicker Title="{rt:Translate WaterType, Group=InspectionWater}"
+                            ValidState="{Binding WaterType}"
+                            ItemsSource="{Binding WaterTypes}"
+                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                </tl:TLFlex>
+                <lc:TLGeneratedToggles IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}"
+                        IsVisible="{Binding Toggles.Value.Count, Converter={StaticResource NotEqual}, ConverterParameter=0}"
+                        ValidState="{Binding Toggles}" />
+                <lc:TLLocationView Title="{rt:Translate GPSCoordinates, Group=InspectionWater}"
+                        ValidState="{Binding Location}" />
+                <lc:WaterFishingGearsView BindingContext="{Binding FishingGears}" />
+                <lc:WaterVesselsView BindingContext="{Binding Vessels}" />
+                <lc:EnginesView BindingContext="{Binding Engines}" />
+                <lc:WaterCatchesView BindingContext="{Binding Catches}" />
+            </StackLayout>
+        </sv:SectionView>
+        <lc:AdditionalInfoView BindingContext="{Binding AdditionalInfo}" />
+        <lc:InspectionFilesView BindingContext="{Binding InspectionFiles}" />
+        <lc:SignaturesView BindingContext="{Binding Signatures}" />
+        <lc:SaveButtonsLayout />
+    </lc:TLForwardSections>
+</sv:BasePage>

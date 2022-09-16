@@ -1,0 +1,34 @@
+﻿<div fxLayout="column" fxLayoutGap="1em">
+    <tl-card fxLayout="row" [formGroup]="formGroup">
+        <tl-card-content fxLayoutGap="1em">
+            <div fxLayout="column" fxFlexFill>
+                <ngx-monaco-editor [options]="options"
+                                   [model]="model"
+                                   formControlName="editorControl">
+                </ngx-monaco-editor>
+                <mat-error *ngIf="formGroup.controls.editorControl.errors?.invalidSqlQuery">
+                    * {{ 'report-view.invalid-sql' | tlTranslate }}
+                </mat-error>
+            </div>
+        </tl-card-content>
+    </tl-card>
+    <div *ngIf="hasExecuteTable">
+        <button (click)="executeResultClicked()"
+                mat-raised-button
+                color="accent">
+            {{ 'report-view.report-run-button' | tlTranslate }}
+        </button>
+        <div *ngIf="isExecuteResultClicked">
+            <tl-data-table [showAddButton]="false"
+                           [showInactiveRecords]="false"
+                           [rows]="executeResults"
+                           [isRemote]="false">
+                <ng-container *ngFor="let reportColumn of reportDisplayColumns">
+                    <data-column columnName="{{ reportColumn.propertyDisplayName }}"
+                                 propertyName="{{ reportColumn.propertyName }}">
+                    </data-column>
+                </ng-container>
+            </tl-data-table>
+        </div>
+    </div>
+</div>

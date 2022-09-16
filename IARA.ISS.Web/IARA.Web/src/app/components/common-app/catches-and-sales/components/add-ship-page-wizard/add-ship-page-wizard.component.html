@@ -1,0 +1,55 @@
+﻿<mat-vertical-stepper linear (selectionChange)="stepSelected($event)" color="accent">
+    <mat-step [stepControl]="pageNumberControl" [editable]="true">
+        <ng-template matStepLabel>
+            <span [ngClass]="{ 'error-color': pageNumberControl.touched && pageNumberControl.invalid }">
+                {{ 'catches-and-sales.add-ship-page-wizard-page-number-title' | tlTranslate }}
+            </span>
+        </ng-template>
+
+        <div fxLayout="row" fxFlex="100" fxLayoutAlign="start center">
+            <tl-input fxFlex="40"
+                      [formControl]="pageNumberControl"
+                      label="{{ 'catches-and-sales.add-ship-page-wizard-page-number' | tlTranslate }}"
+                      tooltipResourceName="catches-and-sales.add-ship-page-wizard-page-number-helper">
+            </tl-input>
+        </div>
+
+        <div fxLayout="row">
+            <button mat-raised-button matStepperNext color="accent">
+                {{ 'catches-and-sales.add-ship-page-wizard-confirm-page-number' | tlTranslate }}
+            </button>
+        </div>
+    </mat-step>
+
+    <mat-step [stepControl]="dataFormGroup" [editable]="false">
+        <div [formGroup]="dataFormGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span [ngClass]="{ 'error-color': dataFormGroup.touched && dataFormGroup.invalid }">
+                    {{ 'catches-and-sales.add-ship-page-wizard-log-book-data' | tlTranslate }}
+                </span>
+            </ng-template>
+
+            <div fxLayout="row" fxFlex="100" fxLayoutAlign="start center">
+                <tl-input fxFlex="100"
+                          formControlName="shipControl"
+                          label="{{ 'catches-and-sales.add-ship-page-wizard-ship-name' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.add-ship-page-wizard-ship-name-helper"
+                          [readonly]="true">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row" fxFlex="100" fxLayoutAlign="start center">
+                <tl-autocomplete fxFlex="100"
+                                 formControlName="permitLicenceControl"
+                                 label="{{ 'catches-and-sales.add-ship-page-wizard-permit-licence' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.add-ship-page-wizard-permit-licence-helper"
+                                 [options]="permitLicenses"
+                                 [templateOptions]="true">
+                </tl-autocomplete>
+            </div>
+        </div>
+    </mat-step>
+</mat-vertical-stepper>

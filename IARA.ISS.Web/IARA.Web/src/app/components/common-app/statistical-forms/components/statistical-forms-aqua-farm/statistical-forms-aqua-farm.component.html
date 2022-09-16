@@ -1,0 +1,583 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     validityCheckerGroup
+     [formGroup]="form"
+     [notifierGroup]="notifier"
+     class="dialog-padding">
+    <!-- Заявител -->
+    <application-submitted-by *ngIf="isApplication"
+                              formControlName="submittedByControl"
+                              notifier
+                              validityChecker
+                              label="{{ 'statistical-forms.aqua-farm-requester' | tlTranslate }}"
+                              [isIdReadOnly]="isEditing || isPublicApp"
+                              [showOnlyBasicData]="true"
+                              [expectedResults]="expectedResults.submittedBy">
+        <div middle fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center" *ngIf="!showOnlyRegiXData">
+            <tl-input fxFlex="25"
+                      formControlName="submittedByWorkPositionControl"
+                      label="{{ 'statistical-forms.aqua-farm-requester-position' | tlTranslate }}">
+            </tl-input>
+            <div fxFlex="25"></div>
+            <div fxFlex="25"></div>
+            <div fxFlex="25"></div>
+        </div>
+    </application-submitted-by>
+
+    <!-- Получател -->
+    <application-submitted-for formControlName="submittedForControl"
+                               notifier
+                               validityChecker
+                               relationLabel="{{ 'statistical-forms.aqua-farm-requester-role' | tlTranslate }}"
+                               submittedForLabel="{{ 'statistical-forms.aqua-farm-receiver' | tlTranslate }}"
+                               [pageCode]="pageCode"
+                               [isIdReadOnly]="isEditing"
+                               [showOnlyBasicData]="true"
+                               [showPersonal]="!isApplication"
+                               [submittedByControl]="form.controls.submittedByControl"
+                               [expectedResults]="expectedResults.submittedFor"
+                               [disabledLegal]="true"
+                               [hideRelation]="showOnlyRegiXData || !isApplication">
+        <!-- Основна информация -->
+        <tl-expansion-panel *ngIf="!showOnlyRegiXData && showBasicInfo" middle
+                            title=" {{ 'statistical-forms.aqua-farm-basic-information-title' | tlTranslate }}"
+                            tooltipResourceName="statistical-forms.aqua-farm-basic-information-title-helper"
+                            [validityChecker]="form">
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input *ngIf="isRegisterEntry"
+                          fxFlex="25"
+                          formControlName="formNumControl"
+                          tooltipResourceName="statistical-forms.aqua-farm-form-num-helper"
+                          label="{{ 'statistical-forms.aqua-farm-form-num' | tlTranslate }}">
+                </tl-input>
+                <tl-autocomplete fxFlex="75"
+                                 label="{{ 'statistical-forms.aqua-farm-aquaculture-facilities' | tlTranslate }}"
+                                 formControlName="aquacultureFacilityControl"
+                                 tooltipResourceName="statistical-forms.aqua-farm-aquaculture-facilities-helper"
+                                 [options]="aquacultures"
+                                 [filterFn]="aquaculturesFilterFn.bind(this)">
+                </tl-autocomplete>
+                <div *ngIf="!isRegisterEntry" fxFlex="25"></div>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-date-year fxFlex="25"
+                              formControlName="yearControl"
+                              tooltipResourceName="statistical-forms.aqua-farm-year-helper"
+                              [max]="today"
+                              label="{{ 'statistical-forms.aqua-farm-year' | tlTranslate }}">
+                </tl-date-year>
+            </div>
+        </tl-expansion-panel>
+    </application-submitted-for>
+
+    <!-- Произведени количества риба и други водни организми -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'statistical-forms.aqua-farm-produced-fish-organism-title' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.aqua-farm-produced-fish-organism-title-helper"
+                        [validityChecker]="form">
+        <tl-data-table fxFlexFill
+                       #producedFishOrganismTable
+                       [rows]="producedFishOrganisms"
+                       [isRemote]="false"
+                       [isSoftDeletable]="true"
+                       [showInactiveRecords]="false"
+                       [showAddButton]="!viewMode && !isReadonly">
+            <data-column [flexRate]="0.1"
+                         propertyName="installationTypeId"
+                         [formGroup]="producedFishOrganismGroup"
+                         [options]="installationTypes"
+                         [displayOptions]="allInstallationTypes"
+                         dataType="nomenclature"
+                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-installation-type' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.1"
+                         propertyName="fishTypeId"
+                         [formGroup]="producedFishOrganismGroup"
+                         [options]="fishTypes"
+                         [displayOptions]="allFishTypes"
+                         dataType="nomenclature"
+                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-fish-type' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="fishLarvaeCount"
+                         [formGroup]="producedFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-fish-larvae-count' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="oneStripBreedingMaterialCount"
+                         [formGroup]="producedFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-one-strip-breeding-material-count' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="oneStripBreedingMaterialWeight"
+                         [formGroup]="producedFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-one-strip-breeding-material-weight' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="oneYearBreedingMaterialCount"
+                         [formGroup]="producedFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-one-year-breeding-material-count' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="oneYearBreedingMaterialWeight"
+                         [formGroup]="producedFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-one-year-breeding-material-weight' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="forConsumption"
+                         [formGroup]="producedFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-for-consumption' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="caviarForConsumption"
+                         [formGroup]="producedFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-caviar-for-consumption' | tlTranslate }}">
+            </data-column>
+            <data-column-inline [flexRate]="0.1" *ngIf="!isReadonly"></data-column-inline>
+        </tl-data-table>
+    </tl-expansion-panel>
+
+    <!-- Продадени количества риба и други водни организми -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'statistical-forms.aqua-farm-sold-fish-organism-title' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.aqua-farm-sold-fish-organism-title-helper"
+                        [validityChecker]="form">
+        <tl-data-table fxFlexFill
+                       #soldFishOrganismTable
+                       [rows]="soldFishOrganisms"
+                       [isRemote]="false"
+                       [isSoftDeletable]="true"
+                       [showInactiveRecords]="false"
+                       [showAddButton]="!viewMode && !isReadonly">
+            <data-column [flexRate]="0.1"
+                         propertyName="installationTypeId"
+                         [formGroup]="soldFishOrganismGroup"
+                         [options]="installationTypes"
+                         [displayOptions]="allInstallationTypes"
+                         dataType="nomenclature"
+                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-installation-type' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.1"
+                         propertyName="fishTypeId"
+                         [formGroup]="soldFishOrganismGroup"
+                         [options]="fishTypes"
+                         [displayOptions]="allFishTypes"
+                         dataType="nomenclature"
+                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-fish-type' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="fishLarvaeCount"
+                         [formGroup]="soldFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-fish-larvae-count' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="oneStripBreedingMaterialCount"
+                         [formGroup]="soldFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-one-strip-breeding-material-count' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="oneStripBreedingMaterialWeight"
+                         [formGroup]="soldFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-one-strip-breeding-material-weight' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="oneYearBreedingMaterialCount"
+                         [formGroup]="soldFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-one-year-breeding-material-count' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="oneYearBreedingMaterialWeight"
+                         [formGroup]="soldFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-one-year-breeding-material-weight' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="forConsumption"
+                         [formGroup]="soldFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-for-consumption' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="caviarForConsumption"
+                         [formGroup]="soldFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-caviar-for-consumption' | tlTranslate }}">
+            </data-column>
+            <data-column-inline [flexRate]="0.1" *ngIf="!isReadonly"></data-column-inline>
+        </tl-data-table>
+    </tl-expansion-panel>
+
+    <!-- Нереализирани количества и незавършено производство на риба и други водни организми -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-title' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.aqua-farm-unrealized-fish-organism-title-helper"
+                        [validityChecker]="form">
+        <tl-data-table fxFlexFill
+                       #unrealizedFishOrganismTable
+                       [rows]="unrealizedFishOrganisms"
+                       [isRemote]="false"
+                       [isSoftDeletable]="true"
+                       [showInactiveRecords]="false"
+                       [showAddButton]="!viewMode && !isReadonly">
+            <data-column [flexRate]="0.1"
+                         propertyName="installationTypeId"
+                         [formGroup]="unrealizedFishOrganismGroup"
+                         [options]="installationTypes"
+                         [displayOptions]="allInstallationTypes"
+                         dataType="nomenclature"
+                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-installation-type' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.1"
+                         propertyName="fishTypeId"
+                         [formGroup]="unrealizedFishOrganismGroup"
+                         [options]="fishTypes"
+                         [displayOptions]="allFishTypes"
+                         dataType="nomenclature"
+                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-fish-type' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="oneStripBreedingMaterialCount"
+                         [formGroup]="unrealizedFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-one-strip-breeding-material-count' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="oneStripBreedingMaterialWeight"
+                         [formGroup]="unrealizedFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-one-strip-breeding-material-weight' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="oneYearBreedingMaterialCount"
+                         [formGroup]="unrealizedFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-one-year-breeding-material-count' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="oneYearBreedingMaterialWeight"
+                         [formGroup]="unrealizedFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-one-year-breeding-material-weight' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="forConsumption"
+                         [formGroup]="unrealizedFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-for-consumption' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="caviarForConsumption"
+                         [formGroup]="unrealizedFishOrganismGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-caviar-for-consumption' | tlTranslate }}">
+            </data-column>
+            <data-column-inline [flexRate]="0.1" *ngIf="!isReadonly"></data-column-inline>
+        </tl-data-table>
+    </tl-expansion-panel>
+
+    <!-- Маточно стадо /разплодници/ -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'statistical-forms.aqua-farm-broodstock-title' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.aqua-farm-broodstock-title-helper"
+                        [validityChecker]="form">
+        <tl-data-table fxFlexFill
+                       #broodstockTable
+                       [rows]="broodstocks"
+                       [isRemote]="false"
+                       [isSoftDeletable]="true"
+                       [showInactiveRecords]="false"
+                       [showAddButton]="!viewMode && !isReadonly">
+            <data-column [flexRate]="0.1"
+                         propertyName="installationTypeId"
+                         [formGroup]="broodstockGroup"
+                         [options]="installationTypes"
+                         [displayOptions]="allInstallationTypes"
+                         dataType="nomenclature"
+                         columnName="{{ 'statistical-forms.aqua-farm-broodstock-installation-type' | tlTranslate }}">
+            </data-column>
+            <data-column [flexRate]="0.1"
+                         propertyName="fishTypeId"
+                         [formGroup]="broodstockGroup"
+                         [options]="fishTypes"
+                         [displayOptions]="allFishTypes"
+                         dataType="nomenclature"
+                         columnName="{{ 'statistical-forms.aqua-farm-broodstock-fish-type' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="femaleCount"
+                         [formGroup]="broodstockGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-broodstock-female-count' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="femaleWeight"
+                         [formGroup]="broodstockGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-broodstock-female-weight' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="femaleAge"
+                         [formGroup]="broodstockGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-broodstock-female-age' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="maleCount"
+                         [formGroup]="broodstockGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-broodstock-male-count' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="maleWeight"
+                         [formGroup]="broodstockGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-broodstock-male-weight' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.1"
+                         propertyName="maleAge"
+                         [formGroup]="broodstockGroup"
+                         columnName="{{ 'statistical-forms.aqua-farm-broodstock-male-age' | tlTranslate }}">
+            </data-column>
+
+            <data-column-inline [flexRate]="0.1" *ngIf="!isReadonly"></data-column-inline>
+        </tl-data-table>
+    </tl-expansion-panel>
+
+    <!-- Смъртност -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title=" {{ 'statistical-forms.aqua-farm-death-title' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.aqua-farm-death-title-helper"
+                        [validityChecker]="form">
+        <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-input fxFlex="33"
+                      formControlName="breedingMaterialDeathRateControl"
+                      tooltipResourceName="statistical-forms.aqua-farm-breeding-material-death-rate-helper"
+                      label="{{ 'statistical-forms.aqua-farm-breeding-material-death-rate' | tlTranslate }}">
+            </tl-input>
+            <tl-input fxFlex="33"
+                      formControlName="consumationFishDeathRateControl"
+                      tooltipResourceName="statistical-forms.aqua-farm-consumation-fish-death-rate-helper"
+                      label="{{ 'statistical-forms.aqua-farm-consumation-fish-death-rate' | tlTranslate }}">
+            </tl-input>
+            <tl-input fxFlex="33"
+                      formControlName="broodstockDeathRateControl"
+                      tooltipResourceName="statistical-forms.aqua-farm-broodstock-death-rate-helper"
+                      label="{{ 'statistical-forms.aqua-farm-broodstock-death-rate' | tlTranslate }}">
+            </tl-input>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Приложени ветеринаромедицински препарати или лечение -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'statistical-forms.aqua-farm-medicine-title' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.aqua-farm-medicine-title-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-data-table fxFlexFill
+                               #medicineTable
+                               [rows]="medicines"
+                               [isRemote]="false"
+                               [isSoftDeletable]="true"
+                               [showInactiveRecords]="false"
+                               [showAddButton]="!viewMode && !isReadonly">
+                    <data-column [flexRate]="0.5"
+                                 propertyName="medicineType"
+                                 [formGroup]="medicineGroup"
+                                 columnName="{{ 'statistical-forms.aqua-farm-medicine-type' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.4"
+                                 propertyName="grams"
+                                 [formGroup]="medicineGroup"
+                                 columnName="{{ 'statistical-forms.aqua-farm-grams' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column-inline *ngIf="!viewMode && !isReadonly"
+                                        [flexRate]="0.1">
+                    </data-column-inline>
+                </tl-data-table>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-textarea fxFlex="100"
+                             formControlName="medicineCommentsControl"
+                             tooltipResourceName="statistical-forms.aqua-farm-medicine-comments-helper"
+                             label="{{ 'statistical-forms.aqua-farm-medicine-comments' | tlTranslate }}">
+                </tl-textarea>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Вид на стопанството и използвани съоръжения -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'statistical-forms.aqua-farm-installation-title' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.aqua-farm-installation-title-helper"
+                        [validityChecker]="form">
+        <tl-data-table *ngIf="isSystemFull"
+                       fxFlexFill
+                       #systemFullTable
+                       [isRemote]="false"
+                       [isSoftDeletable]="true"
+                       [showInactiveRecords]="false"
+                       [rows]="installationsSystemFull"
+                       [showAddButton]="!viewMode && !isReadonly">
+            <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-full-installation' | tlTranslate }}"
+                         propertyName="installationTypeId"
+                         [formGroup]="installationSystemFullGroup"
+                         [flexRate]="0.5"
+                         [options]="installationTypes"
+                         [displayOptions]="allInstallationTypes"
+                         dataType="nomenclature">
+            </data-column>
+            <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-full-installation-used' | tlTranslate }}"
+                         propertyName="isInstallationUsed"
+                         [formGroup]="installationSystemFullGroup"
+                         [flexRate]="0.5"
+                         dataType="boolean">
+            </data-column>
+            <data-column-inline [flexRate]="0.1" *ngIf="!viewMode && !isReadonly"></data-column-inline>
+        </tl-data-table>
+
+        <tl-data-table *ngIf="!isSystemFull"
+                       fxFlexFill
+                       #systemNotFullTable
+                       [isRemote]="false"
+                       [isSoftDeletable]="true"
+                       [showInactiveRecords]="false"
+                       [rows]="installationsSystemNotFull"
+                       [showAddButton]="!viewMode && !isReadonly">
+            <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-not-full-installation' | tlTranslate }}"
+                         propertyName="installationTypeId"
+                         [formGroup]="installationSystemNotFullGroup"
+                         [flexRate]="0.3"
+                         [options]="installationTypes"
+                         [displayOptions]="allInstallationTypes"
+                         dataType="nomenclature">
+            </data-column>
+            <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-not-full-installation-used-breeding-material' | tlTranslate }}"
+                         propertyName="isInstallationUsedBreedingMaterial"
+                         [formGroup]="installationSystemNotFullGroup"
+                         [flexRate]="0.3"
+                         dataType="boolean">
+            </data-column>
+            <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-not-full-installation-used-consumation-fish' | tlTranslate }}"
+                         propertyName="isInstallationUsedConsumationFish"
+                         [formGroup]="installationSystemNotFullGroup"
+                         [flexRate]="0.3"
+                         dataType="boolean">
+            </data-column>
+            <data-column-inline [flexRate]="0.1" *ngIf="!viewMode && !isReadonly"></data-column-inline>
+        </tl-data-table>
+    </tl-expansion-panel>
+
+    <!--Информация за заети лица-->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'statistical-forms.aqua-farm-information-employees' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.aqua-farm-information-employees-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.get('employeeStatsArray')!.valid">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <div *ngFor="let control of form.get('employeeInfoArray')!.controls; index as i"
+                 fxLayout="column"
+                 fxLayoutGap="1em">
+                <statistical-forms-employees-info-table [formControl]="control"
+                                                        [cardLabel]="employeeInfoLabels[i]"
+                                                        infoTypeColumnLabel="">
+                </statistical-forms-employees-info-table>
+
+                <mat-error *ngIf="form.get('employeeInfoArray')?.errors?.columnCountNotEqual[i] === true">
+                    * {{ 'statistical-forms.aqua-farm-count-error' | tlTranslate }}
+                </mat-error>
+            </div>
+        </div>
+
+        <div *ngFor="let control of form.get('employeeStatsArray')!.controls; index as i"
+             fxLayout="column"
+             fxLayoutGap="1em">
+            <div fxLayout="row">
+                <tl-input fxFlex="100"
+                          [formControl]="control"
+                          [label]="employeeStatsLabels[i]"
+                          tooltipResourceName="statistical-forms.aqua-farm-information-employee-stats-helper">
+                </tl-input>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!--Финансова информация-->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'statistical-forms.aqua-farm-financial-information-title' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.aqua-farm-financial-information-title-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.get('financialInfoArray')!.valid">
+        <div fxLayout="row wrap" fxLayoutGap="1em" fxFlex="100">
+            <div *ngFor="let control of form.get('financialInfoArray')!.controls; index as i" fxFlex="48" class="gap-bottom-1" fxLayout="column" fxLayoutGap="1em">
+                <item-list [formControl]="control"
+                           [itemsLabel]="financialInfoGroupNames[i]"
+                           [required]="true"
+                           validityChecker
+                           valuesLabel="{{ 'statistical-forms.rework-amount' | tlTranslate }}">
+                </item-list>
+
+                <mat-error *ngIf="form.get('financialInfoArray')?.errors?.costsIsEmpty[i] === true">
+                    * {{ 'statistical-forms.aqua-farm-costs-error' | tlTranslate }}
+                </mat-error>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Друго -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'statistical-forms.aqua-farm-other-title' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.aqua-farm-other-title-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.get('rawMaterialControl')!.valid">
+        <div fxLayout="row wrap" fxLayoutGap="1em">
+            <div fxFlex="50" class="gap-bottom-1">
+                <item-list itemsLabel="{{ 'statistical-forms.aqua-farm-raw-material' | tlTranslate }}"
+                           valuesLabel="{{ 'statistical-forms.aqua-farm-weight' | tlTranslate }}"
+                           formControlName="rawMaterialControl"
+                           validityChecker
+                           [required]="true">
+                </item-list>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData && !isPublicApp"
+                        title="{{ 'statistical-forms.aqua-farm-files' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.aqua-farm-files-helper"
+                        [validityChecker]="form">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(service)"
+                                  [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                  [refreshFileTypes]="refreshFileTypes">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+
+    <!-- Проверки -->
+    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+                        title="{{ 'statistical-forms.fish-vessel-regix-checks-results' | tlTranslate }}"
+                        tooltipResourceName="statistical-forms.fish-vessel-regix-checks-results-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-checks-results [regixChecksCollection]="regixChecks">
+            </regix-checks-results>
+        </div>
+    </tl-expansion-panel>
+</div>

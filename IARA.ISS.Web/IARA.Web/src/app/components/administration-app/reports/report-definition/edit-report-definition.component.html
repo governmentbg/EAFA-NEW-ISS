@@ -1,0 +1,48 @@
+﻿<div fxLayout="column" fxFlexFill fxLayoutGap="1em">
+    <tl-card>
+        <tl-card-content [formGroup]="parameterPropertiesGroup" fxLayoutGap="2em">
+            <div fxLayout="row" fxLayoutGap="1em" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-autocomplete fxFlex="50"
+                                 label="{{ 'report-definition.dialog-parameter-nparameter' | tlTranslate }}"
+                                 formControlName="parameterNameControl"
+                                 [options]="availableParameters"
+                                 tooltipResourceName="report-definition.dialog-parameter-nparameter-helper">
+                </tl-autocomplete>
+                <tl-input fxFlex="50"
+                          label="{{ 'report-definition.dialog-parameter-code' | tlTranslate }}"
+                          formControlName="codeControl"
+                          tooltipResourceName="report-definition.dialog-parameter-code-helper">
+                </tl-input>
+            </div>
+            <div fxLayout="row" fxLayoutGap="1em" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-input fxFlex="50"
+                          label="{{ 'report-definition.dialog-parameter-default-value' | tlTranslate }}"
+                          formControlName="defaultValueControl"
+                          tooltipResourceName="report-definition.dialog-parameter-default-value-helper">
+                </tl-input>
+                <tl-input fxFlex="30"
+                          label="{{ 'report-definition.dialog-parameter-order-number' | tlTranslate }}"
+                          formControlName="orderNumberControl"
+                          tooltipResourceName="report-definition.dialog-parameter-order-number-helper">
+                </tl-input>
+                <tl-slide-toggle fxFlex="18"
+                                 label="{{ 'report-definition.dialog-parameter-is-required' | tlTranslate }}"
+                                 formControlName="isMandatoryControl"
+                                 tooltipResourceName="report-definition.dialog-parameter-is-required-helper">
+                </tl-slide-toggle>
+            </div>
+            <div fxLayout="row" fxLayoutGap="1em" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-input fxFlex="50"
+                          label="{{ 'report-definition.dialog-parameter-pattern' | tlTranslate }}"
+                          formControlName="patternControl"
+                          tooltipResourceName="report-definition.dialog-parameter-pattern-helper">
+                </tl-input>
+                <tl-input fxFlex="50"
+                          label="{{ 'report-definition.dialog-parameter-error-message' | tlTranslate }}"
+                          formControlName="errorMessageControl"
+                          tooltipResourceName="report-definition.dialog-parameter-error-message-helper">
+                </tl-input>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

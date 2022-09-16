@@ -1,0 +1,70 @@
+﻿.picture-uploader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    input {
+        display: none;
+    }
+
+    mat-error {
+        text-align: center;
+    }
+
+    .container {
+        margin: 0 auto;
+        position: relative;
+
+        &:hover {
+            .photo {
+                opacity: 0.3;
+                transition: .2s ease;
+            }
+
+            .photo-edit, .photo-delete {
+                opacity: 0.8;
+                transition: .2s ease;
+            }
+        }
+
+        .photo {
+            background-color: lightgray;
+            width: inherit;
+            height: inherit;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            opacity: 1;
+            transition: .2s ease;
+
+            &-edit, &-delete {
+                position: absolute;
+                width: 20%;
+                height: 20%;
+                background-position: center center;
+                background-repeat: no-repeat;
+                background-size: cover;
+                opacity: 0;
+                transition: .2s ease;
+
+                &:hover {
+                    background-color: gray;
+                    border-radius: 50%;
+                }
+            }
+
+            &-edit {
+                top: 50%;
+                left: 35%;
+                transform: translate(-50%, -50%);
+            }
+
+            &-delete {
+                top: 50%;
+                left: 65%;
+                transform: translate(-50%, -50%);
+            }
+        }
+    }
+}

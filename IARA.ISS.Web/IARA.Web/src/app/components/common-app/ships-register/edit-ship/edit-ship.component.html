@@ -1,0 +1,942 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     validityCheckerGroup
+     [formGroup]="form"
+     [notifierGroup]="notifier"
+     class="dialog-padding">
+    <!-- Заявител -->
+    <application-submitted-by *ngIf="isApplication"
+                              formControlName="submittedByControl"
+                              notifier
+                              validityChecker
+                              label="{{ 'ships-register.requester' | tlTranslate }}"
+                              [isIdReadOnly]="isEditing || isPublicApp"
+                              [expectedResults]="expectedResults.submittedBy">
+    </application-submitted-by>
+
+    <!-- Получател -->
+    <application-submitted-for *ngIf="isApplication"
+                               formControlName="submittedForControl"
+                               notifier
+                               validityChecker
+                               relationLabel="{{ 'ships-register.requester-role' | tlTranslate }}"
+                               submittedForLabel="{{ 'ships-register.receiver' | tlTranslate }}"
+                               [pageCode]="pageCode"
+                               [hideRelation]="showOnlyRegiXData"
+                               [isIdReadOnly]="isEditing"
+                               [showCustodianOfProperty]="false"
+                               [submittedByControl]="form.controls.submittedByControl"
+                               [expectedResults]="expectedResults.submittedFor">
+    </application-submitted-for>
+
+    <!-- Основна информация -->
+    <tl-expansion-panel title="{{ 'ships-register.basic-information' | tlTranslate }}"
+                        tooltipResourceName="ships-register.basic-information-helper"
+                        [validityChecker]="form">
+        <div *ngIf="!showOnlyRegiXData; else showOnlyRegixBasicData" fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-input fxFlex="20"
+                          formControlName="cfrControl"
+                          tooltipResourceName="ships-register.iama-number-cfr-helper"
+                          label="{{ isRegisterEntry || isAddingRegisterEntry ? ('ships-register.cfr' | tlTranslate) : ('ships-register.iama-number' | tlTranslate) }}"
+                          (focusout)="onCfrFocusout()"
+                          [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="shipNameControl"
+                          tooltipResourceName="ships-register.name-helper"
+                          label="{{ 'ships-register.name' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="externalMarkControl"
+                          tooltipResourceName="ships-register.external-mark-helper"
+                          label="{{ 'ships-register.external-mark' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="regNumberControl"
+                          tooltipResourceName="ships-register.registration-number-helper"
+                          label="{{ 'ships-register.registration-number' | tlTranslate }}">
+                </tl-input>
+                <tl-date fxFlex="20"
+                         formControlName="regDateControl"
+                         tooltipResourceName="ships-register.registration-date-helper"
+                         [max]="today"
+                         label="{{ 'ships-register.registration-date' | tlTranslate }}">
+                </tl-date>
+            </div>
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-input fxFlex="20"
+                          formControlName="ircsCallSignControl"
+                          tooltipResourceName="ships-register.ircs-call-sign-helper"
+                          label="{{ 'ships-register.ircs-call-sign' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="mmsiControl"
+                          tooltipResourceName="ships-register.mmsi-helper"
+                          label="{{ 'ships-register.mmsi' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="uviControl"
+                          tooltipResourceName="ships-register.uvi-helper"
+                          label="{{ 'ships-register.uvi' | tlTranslate }}">
+                </tl-input>
+                <tl-autocomplete fxFlex="20"
+                                 formControlName="fleetTypeControl"
+                                 tooltipResourceName="ships-register.fleet-helper"
+                                 label="{{ 'ships-register.fleet' | tlTranslate }}"
+                                 [options]="fleets">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="20"
+                                 formControlName="vesselTypeControl"
+                                 tooltipResourceName="ships-register.vessel-type-per-mssk-helper"
+                                 label="{{ 'ships-register.vessel-type-per-mssk' | tlTranslate }}"
+                                 [options]="vesselTypes">
+                </tl-autocomplete>
+            </div>
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-around center">
+                <tl-autocomplete fxFlex="20"
+                                 formControlName="flagControl"
+                                 tooltipResourceName="ships-register.flag-helper"
+                                 label="{{ 'ships-register.flag' | tlTranslate }}"
+                                 [options]="countries">
+                </tl-autocomplete>
+                <tl-checkbox fxFlex="20"
+                             formControlName="aisControl"
+                             tooltipResourceName="ships-register.ais-helper"
+                             label="{{ 'ships-register.ais' | tlTranslate }}">
+                </tl-checkbox>
+                <tl-checkbox fxFlex="20"
+                             formControlName="ersControl"
+                             tooltipResourceName="ships-register.ers-helper"
+                             label="{{ 'ships-register.ers' | tlTranslate }}">
+                </tl-checkbox>
+                <tl-checkbox fxFlex="20"
+                             formControlName="vmsControl"
+                             tooltipResourceName="ships-register.vms-helper"
+                             label="{{ 'ships-register.vms-monitoring-system' | tlTranslate }}">
+                </tl-checkbox>
+                <tl-checkbox *ngIf="(!isApplication && !isDialog) || isThirdPartyShip"
+                             fxFlex="20"
+                             formControlName="forbiddenForRSRControl"
+                             tooltipResourceName="ships-register.forbidden-for-rsr-helper"
+                             label="{{ 'ships-register.forbidden-for-rsr' | tlTranslate }}">
+                </tl-checkbox>
+                <div *ngIf="(isApplication || isDialog) && !isThirdPartyShip" fxFlex="20"></div>
+            </div>
+
+            <!-- Забрана за РСР -->
+            <div *ngIf="form.controls.forbiddenForRSRControl?.value === true" fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                <tl-date fxFlex="25"
+                         formControlName="forbiddenStartDateControl"
+                         tooltipResourceName="ships-register.forbidden-start-date-helper"
+                         label="{{ 'ships-register.forbidden-start-date' | tlTranslate }}"
+                         [max]="form.controls.forbiddenEndDateControl?.value">
+                </tl-date>
+                <tl-date fxFlex="25"
+                         formControlName="forbiddenEndDateControl"
+                         tooltipResourceName="ships-register.forbidden-end-date-helper"
+                         label="{{ 'ships-register.forbidden-end-date' | tlTranslate }}"
+                         [min]="form.controls.forbiddenStartDateControl?.value">
+                </tl-date>
+                <tl-input fxFlex="50"
+                          formControlName="forbiddenReasonControl"
+                          tooltipResourceName="ships-register.forbidden-reason-helper"
+                          label="{{ 'ships-register.forbidden-reason' | tlTranslate }}">
+                </tl-input>
+            </div>
+
+            <!-- Унищожаване -->
+            <div *ngIf="disableFieldsByEventType === eventTypes.DES || form.controls.destructionTypeControl?.value"
+                 fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start center">
+                <tl-select fxFlex="20"
+                           formControlName="destructionTypeControl"
+                           tooltipResourceName="ships-register.destruction-reason-helper"
+                           label="{{ 'ships-register.destruction-reason' | tlTranslate }}"
+                           [options]="destroyReasons">
+                </tl-select>
+            </div>
+
+            <!-- Отписване -->
+            <div *ngIf="disableFieldsByEventType === eventTypes.RET
+                 || form.controls.cancellationReasonControl?.value
+                 || form.controls.cancellationOrderNumControl?.value
+                 || form.controls.cancellationOrderDateControl?.value"
+                 fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start center">
+                <tl-select fxFlex="30"
+                           formControlName="cancellationReasonControl"
+                           tooltipResourceName="ships-register.cancellation-reason-helper"
+                           label="{{ 'ships-register.cancellation-reason' | tlTranslate }}"
+                           [options]="cancellationReasons">
+                </tl-select>
+                <tl-input fxFlex="20"
+                          formControlName="cancellationOrderNumControl"
+                          tooltipResourceName="ships-register.cancellation-order-num-helper"
+                          label="{{ 'ships-register.cancellation-order-num' | tlTranslate }}">
+                </tl-input>
+                <tl-date fxFlex="20"
+                         formControlName="cancellationOrderDateControl"
+                         [max]="today"
+                         tooltipResourceName="ships-register.cancellation-order-date-helper"
+                         label="{{ 'ships-register.cancellation-order-date' | tlTranslate }}">
+                </tl-date>
+            </div>
+        </div>
+
+        <!-- Само основни данни от RegiX -->
+        <ng-template #showOnlyRegixBasicData>
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-input fxFlex="20"
+                          formControlName="cfrControl"
+                          tooltipResourceName="ships-register.iama-number-cfr-helper"
+                          label="{{ addingRegisterEntry ? ('ships-register.cfr' | tlTranslate) : ('ships-register.iama-number' | tlTranslate) }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="shipNameControl"
+                          tooltipResourceName="ships-register.name-helper"
+                          label="{{ 'ships-register.name' | tlTranslate }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText">
+                </tl-input>
+                <tl-autocomplete fxFlex="20"
+                                 formControlName="vesselTypeControl"
+                                 tooltipResourceName="ships-register.vessel-type-per-mssk-helper"
+                                 label="{{ 'ships-register.vessel-type-per-mssk' | tlTranslate }}"
+                                 [options]="vesselTypes"
+                                 [getControlErrorLabelText]="getControlErrorLabelText">
+                </tl-autocomplete>
+            </div>
+        </ng-template>
+    </tl-expansion-panel>
+
+    <!-- Собственици -->
+    <tl-expansion-panel title="{{ 'ships-register.owners' | tlTranslate }}"
+                        tooltipResourceName="ships-register.owners-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.ownersValidation !== true
+                                                        && form.errors?.noOwners !== true
+                                                        && form.errors?.onlyOneOwnerTitular !== true
+                                                        && form.errors?.ownersOwnedShareNot100 !== true">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <tl-data-table fxFlexFill
+                           #ownersTable
+                           [rows]="shipOwners"
+                           [isRemote]="false"
+                           [isSoftDeletable]="true"
+                           [showAddButton]="(!isReadonly || allowOwnersEdit) && !showOnlyRegiXData"
+                           [showInactiveRecords]="canRestoreRecords && !showOnlyRegiXData"
+                           (addButtonClicked)="addEditShipOwner()"
+                           (activeRecordChanged)="addEditShipOwner($event)">
+                <data-column [flexRate]="0.4"
+                             propertyName="names"
+                             columnName="{{ 'ships-register.owner-names' | tlTranslate }}">
+                </data-column>
+                <data-column [flexRate]="0.3"
+                             propertyName="egnLncEik"
+                             columnName="{{ 'ships-register.owner-egn-lnc-eik' | tlTranslate }}">
+                </data-column>
+
+                <data-template-column *ngIf="!showOnlyRegiXData"
+                                      [flexRate]="0.2"
+                                      propertyName="OwnedShare"
+                                      columnName="{{ 'ships-register.owner-owned-share' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row.data.ownedShare !== undefined && row.data.ownedShare !== null">
+                            {{ row.data.ownedShare }}%
+                        </span>
+                    </ng-template>
+                </data-template-column>
+
+                <data-column *ngIf="!showOnlyRegiXData"
+                             [flexRate]="0.2"
+                             propertyName="isShipHolder"
+                             dataType="boolean"
+                             columnName="{{ 'ships-register.owner-holder' | tlTranslate }}">
+                </data-column>
+
+                <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon *ngIf="row.data.hasRegixDataDiscrepancy || (ownersTouched && row.data.hasValidationErrors)"
+                                     icon="ic-exclamation"
+                                     iconClass="error-color"
+                                     [size]="icIconSize">
+                            </tl-icon>
+                            <tl-icon-button *ngIf="row.data.isActive"
+                                            icon="visibility"
+                                            (buttonClicked)="addEditShipOwner(row.data, true)"
+                                            [iconClass]="row.data.hasRegixDataDiscrepancy ? 'error-color' : 'accent-color'"
+                                            tooltipText="{{ 'ships-register.view-owner' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.isActive && (!isReadonly || allowOwnersEdit)"
+                                            icon="edit"
+                                            (buttonClicked)="addEditShipOwner(row.data)"
+                                            [iconClass]="row.data.hasRegixDataDiscrepancy ? 'error-color' : 'accent-color'"
+                                            tooltipText="{{ 'ships-register.edit-owner' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.isActive && canDeleteRecords && (!isReadonly || allowOwnersEdit) && !showOnlyRegiXData"
+                                            icon="delete"
+                                            (buttonClicked)="deleteShipOwner(row)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'ships-register.delete-owner' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="!row.data.isActive && canRestoreRecords && (!isReadonly || allowOwnersEdit) && !showOnlyRegiXData"
+                                            icon="restore"
+                                            (buttonClicked)="undoDeleteShipOwner(row)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'ships-register.restore-owner' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+
+            <mat-error *ngIf="ownersTouched && form.errors?.ownersValidation === true; else noOwnersValidationErrors">
+                * {{ 'ships-register.owners-validation-errors' | tlTranslate }}
+            </mat-error>
+
+            <ng-template #noOwnersValidationErrors>
+                <mat-error *ngIf="ownersTouched && form.errors?.noOwners === true; else atLeastOneOwner">
+                    * {{ 'ships-register.must-have-at-least-one-owner-err-msg' | tlTranslate }}
+                </mat-error>
+
+                <ng-template #atLeastOneOwner>
+                    <mat-error *ngIf="ownersTouched && form.errors?.onlyOneOwnerTitular === true">
+                        * {{ 'ships-register.must-have-at-least-one-titular-owner-err-msg' | tlTranslate }}
+                    </mat-error>
+
+                    <mat-error *ngIf="ownersTouched && form.errors?.ownersOwnedShareNot100 === true">
+                        * {{ 'ships-register.must-have-owned-share-100-err-msg' | tlTranslate }}
+                    </mat-error>
+                </ng-template>
+            </ng-template>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Ползватели -->
+    <tl-expansion-panel *ngIf="!isApplication && !isDialog"
+                        title="{{ 'ships-register.ship-users' | tlTranslate }}"
+                        tooltipResourceName="ships-register.ship-users-helper"
+                        [validityChecker]="form">
+        <tl-data-table fxFlexFill
+                       [rows]="shipUsers"
+                       [isRemote]="false"
+                       [isSoftDeletable]="true"
+                       [showAddButton]="false"
+                       [showInactiveRecords]="false">
+            <data-column [flexRate]="0.5"
+                         propertyName="name"
+                         columnName="{{ 'ships-register.ship-user-names' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.2"
+                         propertyName="egnLncEik"
+                         columnName="{{ 'ships-register.ship-user-egn-lnc-eik' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.3"
+                         propertyName="permitLicenceType"
+                         columnName="{{ 'ships-register.ship-user-licence-type' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.2"
+                         propertyName="groundsForUse"
+                         columnName="{{ 'ships-register.ship-user-grounds-for-use' | tlTranslate }}">
+            </data-column>
+        </tl-data-table>
+    </tl-expansion-panel>
+
+    <!-- Свидетелство за регистрация -->
+    <tl-expansion-panel title="{{ 'ships-register.registration-data' | tlTranslate }}"
+                        tooltipResourceName="ships-register.registration-data-helper"
+                        [validityChecker]="form">
+        <div *ngIf="!showOnlyRegiXData; else showOnlyRegixRegistrationData" fxLayout="column" fxLayoutGap="1em">
+            <tl-card tooltipResourceName="ships-register.registration-certificate-helper"
+                     [validityChecker]="form">
+                <tl-card-title>{{ 'ships-register.registration-certificate' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                        <tl-input fxFlex="15"
+                                  formControlName="regLicenceNumControl"
+                                  tooltipResourceName="ships-register.registration-licence-number-helper"
+                                  label="{{ 'ships-register.registration-licence-number' | tlTranslate }}">
+                        </tl-input>
+                        <tl-date fxFlex="15"
+                                 formControlName="regLicenceDateControl"
+                                 tooltipResourceName="ships-register.registration-licence-date-helper"
+                                 [max]="today"
+                                 label="{{ 'ships-register.registration-licence-date' | tlTranslate }}">
+                        </tl-date>
+                        <tl-input fxFlex="15"
+                                  formControlName="regLicencePublisherControl"
+                                  tooltipResourceName="ships-register.registration-licence-publisher-helper"
+                                  label="{{ 'ships-register.registration-licence-publisher' | tlTranslate }}">
+                        </tl-input>
+                        <tl-input fxFlex="15"
+                                  formControlName="regLicencePublishVolumeControl"
+                                  tooltipResourceName="ships-register.registration-licence-publish-volume-helper"
+                                  label="{{ 'ships-register.registration-licence-publish-volume' | tlTranslate }}">
+                        </tl-input>
+                        <tl-input fxFlex="15"
+                                  formControlName="regLicencePublishPageControl"
+                                  tooltipResourceName="ships-register.registration-licence-publish-page-helper"
+                                  label="{{ 'ships-register.registration-licence-publish-page' | tlTranslate }}">
+                        </tl-input>
+                        <tl-input fxFlex="15"
+                                  formControlName="regLicencePublishNumControl"
+                                  tooltipResourceName="ships-register.registration-licence-publish-number-helper"
+                                  label="{{ 'ships-register.registration-licence-publish-number' | tlTranslate }}">
+                        </tl-input>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-date fxFlex="33"
+                         formControlName="exploitationStartDateControl"
+                         tooltipResourceName="ships-register.exploitation-start-date-helper"
+                         [max]="today"
+                         label="{{ 'ships-register.exploitation-start-date' | tlTranslate }}">
+                </tl-date>
+                <tl-date-year fxFlex="33"
+                              formControlName="buildYearControl"
+                              tooltipResourceName="ships-register.build-year-helper"
+                              [max]="today"
+                              label="{{ 'ships-register.build-year' | tlTranslate }}">
+                </tl-date-year>
+                <tl-input fxFlex="33"
+                          formControlName="buildPlaceControl"
+                          tooltipResourceName="ships-register.build-place-helper"
+                          label="{{ 'ships-register.build-place' | tlTranslate }}">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-input fxFlex="33"
+                          formControlName="adminDecisionNumControl"
+                          tooltipResourceName="ships-register.admin-decision-num-helper"
+                          label="{{ 'ships-register.admin-decision-num' | tlTranslate }}">
+                </tl-input>
+                <tl-date fxFlex="33"
+                         formControlName="adminDecisionDateControl"
+                         tooltipResourceName="ships-register.admin-decision-date-helper"
+                         [max]="today"
+                         label="{{ 'ships-register.admin-decision-date' | tlTranslate }}">
+                </tl-date>
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="publicAidCodeControl"
+                                 tooltipResourceName="ships-register.public-aid-code-helper"
+                                 label="{{ 'ships-register.public-aid-code' | tlTranslate }}"
+                                 [options]="publicAidTypes">
+                </tl-autocomplete>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="portControl"
+                                 tooltipResourceName="ships-register.port-helper"
+                                 label="{{ 'ships-register.port' | tlTranslate }}"
+                                 [options]="ports">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="stayPortControl"
+                                 tooltipResourceName="ships-register.stay-port-helper"
+                                 label="{{ 'ships-register.stay-port' | tlTranslate }}"
+                                 [options]="ports">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="sailAreaControl"
+                                 tooltipResourceName="ships-register.sail-area-helper"
+                                 label="{{ 'ships-register.sail-area' | tlTranslate }}"
+                                 [hasSelectedValueFromDropdownValidator]="false"
+                                 [options]="sailAreas">
+                </tl-autocomplete>
+            </div>
+        </div>
+
+        <!-- Само данни за регистрация от RegiX -->
+        <ng-template #showOnlyRegixRegistrationData>
+            <tl-card tooltipResourceName="ships-register.registration-certificate-helper"
+                     [validityChecker]="form">
+                <tl-card-title>{{ 'ships-register.registration-certificate' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <div fxLayout="row" fxLayoutGap="1em">
+                        <tl-input fxFlex="16"
+                                  formControlName="regLicenceNumControl"
+                                  tooltipResourceName="ships-register.registration-licence-number-helper"
+                                  label="{{ 'ships-register.registration-licence-number' | tlTranslate }}"
+                                  [getControlErrorLabelText]="getControlErrorLabelText">
+                        </tl-input>
+                        <tl-input fxFlex="16"
+                                  formControlName="regLicencePublishVolumeControl"
+                                  tooltipResourceName="ships-register.registration-licence-publish-volume-helper"
+                                  label="{{ 'ships-register.registration-licence-publish-volume' | tlTranslate }}"
+                                  [getControlErrorLabelText]="getControlErrorLabelText">
+                        </tl-input>
+                        <tl-input fxFlex="16"
+                                  formControlName="regLicencePublishPageControl"
+                                  tooltipResourceName="ships-register.registration-licence-publish-page-helper"
+                                  label="{{ 'ships-register.registration-licence-publish-page' | tlTranslate }}"
+                                  [getControlErrorLabelText]="getControlErrorLabelText">
+                        </tl-input>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+        </ng-template>
+    </tl-expansion-panel>
+
+    <!-- Използване на удостоверение за свободен риболовен капацитет -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData && !isApplication && !isDialog"
+                        title="{{ 'ships-register.certificate-for-use-of-free-fishing-capacity' | tlTranslate }}"
+                        tooltipResourceName="certificate-for-use-of-free-fishing-capacity-helper"
+                        [validityChecker]="form">
+        <tl-data-table fxFlexFill
+                       [rows]="usedCapacityCertificates"
+                       [isRemote]="false"
+                       [isSoftDeletable]="true"
+                       [showAddButton]="false"
+                       [showInactiveRecords]="false">
+            <data-column [flexRate]="0.2"
+                         propertyName="date"
+                         dataType="date"
+                         columnName="{{ 'ships-register.ship-used-cap-certificate-date' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.3"
+                         propertyName="num"
+                         columnName="{{ 'ships-register.ship-used-cap-certificate-num' | tlTranslate }}">
+            </data-column>
+
+            <data-template-column [flexRate]="0.2"
+                                  propertyName="EnginePower"
+                                  columnName="{{ 'ships-register.ship-used-cap-certificate-power' | tlTranslate }}">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.data.enginePower.toFixed(2) }}
+                </ng-template>
+            </data-template-column>
+
+            <data-template-column [flexRate]="0.2"
+                                  propertyName="GrossTonnage"
+                                  columnName="{{ 'ships-register.ship-used-cap-certificate-tonnage' | tlTranslate }}">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.data.grossTonnage.toFixed(2) }}
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+    </tl-expansion-panel>
+
+    <!-- Технически параметри -->
+    <tl-expansion-panel title="{{ 'ships-register.technical-parameters' | tlTranslate }}"
+                        tooltipResourceName="ships-register.technical-parameters-helper"
+                        [validityChecker]="form">
+        <div *ngIf="!showOnlyRegiXData; else showOnlyRegixTechnicalParameters" fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-input fxFlex="20"
+                          formControlName="totalLengthControl"
+                          tooltipResourceName="ships-register.total-length-loa-helper"
+                          label="{{ 'ships-register.total-length-loa' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="totalWidthControl"
+                          tooltipResourceName="ships-register.total-width-helper"
+                          label="{{ 'ships-register.total-width' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="grossTonnageControl"
+                          tooltipResourceName="ships-register.gross-tonnage-helper"
+                          label="{{ 'ships-register.gross-tonnage' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="netTonnageControl"
+                          tooltipResourceName="ships-register.net-tonnage-helper"
+                          label="{{ 'ships-register.net-tonnage' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="otherTonnageControl"
+                          tooltipResourceName="ships-register.other-tonnage-helper"
+                          label="{{ 'ships-register.other-tonnage' | tlTranslate }}">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-input fxFlex="20"
+                          formControlName="boardHeightControl"
+                          tooltipResourceName="ships-register.board-height-helper"
+                          label="{{ 'ships-register.board-height' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="draughtControl"
+                          tooltipResourceName="ships-register.ship-draught-helper"
+                          label="{{ 'ships-register.ship-draught' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="lengthBetweenPerpendicularsControl"
+                          tooltipResourceName="ships-register.length-between-perpendiculars-helper"
+                          label="{{ 'ships-register.length-between-perpendiculars' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="mainEnginePowerControl"
+                          tooltipResourceName="ships-register.main-engine-power-helper"
+                          label="{{ 'ships-register.main-engine-power' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="auxiliaryEnginePowerControl"
+                          tooltipResourceName="ships-register.auxiliary-engine-power-helper"
+                          label="{{ 'ships-register.auxiliary-engine-power' | tlTranslate }}">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-input fxFlex="20"
+                          formControlName="mainEngineNumControl"
+                          tooltipResourceName="ships-register.main-engine-num-helper"
+                          label="{{ 'ships-register.main-engine-num' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="mainEngineModelControl"
+                          tooltipResourceName="ships-register.main-engine-model-helper"
+                          label="{{ 'ships-register.main-engine-model' | tlTranslate }}">
+                </tl-input>
+                <tl-autocomplete fxFlex="20"
+                                 formControlName="mainFishingGearControl"
+                                 tooltipResourceName="ships-register.main-fishing-gear-helper"
+                                 label="{{ 'ships-register.main-fishing-gear' | tlTranslate }}"
+                                 [options]="fishingGears">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="20"
+                                 formControlName="additionalFishingGearControl"
+                                 tooltipResourceName="ships-register.additional-fishing-gear-helper"
+                                 label="{{ 'ships-register.additional-fishing-gear' | tlTranslate }}"
+                                 [options]="fishingGears">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="20"
+                                 formControlName="hullMaterialControl"
+                                 tooltipResourceName="ships-register.hull-material-helper"
+                                 label="{{ 'ships-register.hull-material' | tlTranslate }}"
+                                 [options]="hullMaterials">
+                </tl-autocomplete>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="20"
+                                 formControlName="fuelTypeControl"
+                                 tooltipResourceName="ships-register.fuel-type-helper"
+                                 label="{{ 'ships-register.fuel-type' | tlTranslate }}"
+                                 [options]="fuelTypes">
+                </tl-autocomplete>
+                <tl-input fxFlex="20"
+                          formControlName="totalPassengerCapacityControl"
+                          tooltipResourceName="ships-register.total-passenger-capacity-helper"
+                          label="{{ 'ships-register.total-passenger-capacity' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="20"
+                          formControlName="crewCountControl"
+                          tooltipResourceName="ships-register.crew-count-helper"
+                          label="{{ 'ships-register.crew-count' | tlTranslate }}">
+                </tl-input>
+                <tl-autocomplete fxFlex="20"
+                                 formControlName="fleetSegmentControl"
+                                 tooltipResourceName="ships-register.fleet-segment-helper"
+                                 label="{{ 'ships-register.fleet-segment' | tlTranslate }}"
+                                 [options]="fleetSegments">
+                </tl-autocomplete>
+                <div fxFlex="20"></div>
+            </div>
+        </div>
+
+        <!-- Само технически данни от RegiX -->
+        <ng-template #showOnlyRegixTechnicalParameters>
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="totalLengthControl"
+                          tooltipResourceName="ships-register.total-length-loa-helper"
+                          label="{{ 'ships-register.total-length-loa' | tlTranslate }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="totalWidthControl"
+                          tooltipResourceName="ships-register.total-width-helper"
+                          label="{{ 'ships-register.total-width' | tlTranslate }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="grossTonnageControl"
+                          tooltipResourceName="ships-register.gross-tonnage-helper"
+                          label="{{ 'ships-register.gross-tonnage' | tlTranslate }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="netTonnageControl"
+                          tooltipResourceName="ships-register.net-tonnage-helper"
+                          label="{{ 'ships-register.net-tonnage' | tlTranslate }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="boardHeightControl"
+                          tooltipResourceName="ships-register.board-height-helper"
+                          label="{{ 'ships-register.board-height' | tlTranslate }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="draughtControl"
+                          tooltipResourceName="ships-register.ship-draught-helper"
+                          label="{{ 'ships-register.ship-draught' | tlTranslate }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="lengthBetweenPerpendicularsControl"
+                          tooltipResourceName="ships-register.length-between-perpendiculars-helper"
+                          label="{{ 'ships-register.length-between-perpendiculars' | tlTranslate }}"
+                          [getControlErrorLabelText]="getControlErrorLabelText">
+                </tl-input>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="fuelTypeControl"
+                                 tooltipResourceName="ships-register.fuel-type-helper"
+                                 label="{{ 'ships-register.fuel-type' | tlTranslate }}"
+                                 [options]="fuelTypes">
+                </tl-autocomplete>
+            </div>
+        </ng-template>
+    </tl-expansion-panel>
+
+    <!-- Други данни -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData || (showOnlyRegiXData && form.controls.actionsControl.value?.holders && form.controls.actionsControl.value.holders.length > 0)"
+                        title="{{ 'ships-register.other-data' | tlTranslate }}"
+                        tooltipResourceName="ships-register.other-data-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <!-- Контролен талон -->
+            <tl-card *ngIf="hasControlCard && !showOnlyRegiXData"
+                     tooltipResourceName="ships-register.control-card-helper"
+                     [validityChecker]="form">
+                <tl-card-title>{{ 'ships-register.control-card' | tlTranslate }}</tl-card-title>
+                <tl-card-content fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                    <tl-input fxFlex="25"
+                              formControlName="controlCardNumControl"
+                              tooltipResourceName="ships-register.control-card-num-helper"
+                              label="{{ 'ships-register.control-card-num' | tlTranslate }}">
+                    </tl-input>
+                    <tl-date fxFlex="25"
+                             formControlName="controlCardDateControl"
+                             tooltipResourceName="ships-register.control-card-date-helper"
+                             [max]="today"
+                             label="{{ 'ships-register.control-card-date' | tlTranslate }}">
+                    </tl-date>
+                    <div fxFlex="25"></div>
+                    <div fxFlex="25"></div>
+                </tl-card-content>
+            </tl-card>
+
+            <!-- Свидетелство за годност -->
+            <tl-card *ngIf="hasFitnessCertificate && !showOnlyRegiXData"
+                     tooltipResourceName="ships-register.control-card-validity-certificate-helper"
+                     [validityChecker]="form">
+                <tl-card-title>{{ 'ships-register.control-card-validity-certificate' | tlTranslate }}</tl-card-title>
+                <tl-card-content fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                    <tl-input fxFlex="25"
+                              formControlName="controlCardValidityCertificateNumControl"
+                              tooltipResourceName="ships-register.control-card-validity-certificate-number-helper"
+                              label="{{ 'ships-register.control-card-validity-certificate-number' | tlTranslate }}">
+                    </tl-input>
+                    <tl-date fxFlex="25"
+                             formControlName="controlCardValidityCertificateDateControl"
+                             tooltipResourceName="ships-register.control-card-validity-certificate-date-helper"
+                             [max]="today"
+                             label="{{ 'ships-register.control-card-validity-certificate-date' | tlTranslate }}">
+                    </tl-date>
+                    <tl-date fxFlex="25"
+                             formControlName="controlCardDateOfLastAttestationControl"
+                             tooltipResourceName="ships-register.control-card-date-of-last-attestation-helper"
+                             [max]="today"
+                             label="{{ 'ships-register.control-card-date-of-last-attestation' | tlTranslate }}">
+                    </tl-date>
+                    <div fxFlex="25"></div>
+                </tl-card-content>
+            </tl-card>
+
+            <!-- Внос -->
+            <tl-card *ngIf="(isApplication || hasImportCountry || isThirdPartyShip) && !showOnlyRegiXData"
+                     tooltipResourceName="ships-register.import-helper"
+                     [validityChecker]="form">
+                <tl-card-title>{{ 'ships-register.import' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <div fxLayout="row" fxLayoutGap="1em">
+                        <tl-autocomplete fxFlex="50"
+                                         formControlName="importCountryControl"
+                                         tooltipResourceName="ships-register.import-country-helper"
+                                         label="{{ 'ships-register.import-country' | tlTranslate }}"
+                                         [options]="countries">
+                        </tl-autocomplete>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+
+            <!-- Износ -->
+            <tl-card *ngIf="!isApplication && isRegisterEntry"
+                     tooltipResourceName="ships-register.export-helper"
+                     [validityChecker]="form">
+                <tl-card-title>{{ 'ships-register.export' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <div fxLayout="row" fxLayoutGap="1em">
+                        <tl-autocomplete fxFlex="50"
+                                         formControlName="exportCountryControl"
+                                         tooltipResourceName="ships-register.export-country-helper"
+                                         label="{{ 'ships-register.export-country' | tlTranslate }}"
+                                         [options]="countries">
+                        </tl-autocomplete>
+
+                        <tl-autocomplete fxFlex="50"
+                                         formControlName="exportTypeControl"
+                                         tooltipResourceName="ships-register.export-type-helper"
+                                         label="{{ 'ships-register.export-type' | tlTranslate }}"
+                                         [options]="exportTypes">
+                        </tl-autocomplete>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+
+            <!-- Удостоверение по закона за храните -->
+            <tl-card *ngIf="!showOnlyRegiXData"
+                     tooltipResourceName="ships-register.food-law-licence-certificate-helper"
+                     [validityChecker]="form">
+                <tl-card-title>{{ 'ships-register.food-law-licence-certificate' | tlTranslate }}</tl-card-title>
+                <tl-card-content fxLayout="row" fxLayoutGap="1em">
+                    <tl-input fxFlex="25"
+                              formControlName="foodLawLicenceNumControl"
+                              tooltipResourceName="ships-register.food-law-licence-num-helper"
+                              label="{{ 'ships-register.food-law-licence-num' | tlTranslate }}">
+                    </tl-input>
+
+                    <tl-date fxFlex="25"
+                             formControlName="foodLawLicenceDateControl"
+                             tooltipResourceName="ships-register.food-law-licence-date-helper"
+                             [max]="today"
+                             label="{{ 'ships-register.food-law-licence-date' | tlTranslate }}">
+                    </tl-date>
+
+                    <div fxFlex="25"></div>
+                    <div fxFlex="25"></div>
+                </tl-card-content>
+            </tl-card>
+
+            <!-- Осигурен риболовен капацитет -->
+            <tl-card *ngIf="(isApplication || isAddingRegisterEntry) && hasFishingCapacity && !showOnlyRegiXData"
+                     tooltipResourceName="ships-register.acquired-fishing-capacity-helper"
+                     [validityChecker]="form">
+                <tl-card-title>{{ 'ships-register.acquired-fishing-capacity' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <acquired-fishing-capacity formControlName="acquiredCapacityControl"
+                                               validityChecker
+                                               [minGrossTonnage]="form.controls.grossTonnageControl?.value"
+                                               [minPower]="form.controls.mainEnginePowerControl?.value"
+                                               (onGrossTonnageChanged)="onAcquiredGrossTonnageChanged($event)"
+                                               (onPowerChanged)="onAcquiredPowerChanged($event)"
+                                               (onNewCertificateDataChange)="onNewCertificateDataChanged($event)">
+                    </acquired-fishing-capacity>
+                </tl-card-content>
+            </tl-card>
+
+            <!-- Необходими действия относно остатъка на риболовния капацитет -->
+            <tl-card *ngIf="(showOnlyRegiXData && form.controls.actionsControl.value?.holders && form.controls.actionsControl.value.holders.length > 0)
+                        || (!showOnlyRegiXData && hasFishingCapacity && (remainingTonnage !== 0 || remainingPower !== 0))"
+                     tooltipResourceName="ships-register.required-actions-helper"
+                     [validityChecker]="form">
+                <tl-card-title>{{ 'ships-register.required-actions' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <fishing-capacity-freed-actions formControlName="actionsControl"
+                                                    [showOnlyRegiXData]="showOnlyRegiXData"
+                                                    [isDraft]="isDraft"
+                                                    [isEditing]="isEditing"
+                                                    [service]="fishingCapacityService"
+                                                    [maxGrossTonnage]="remainingTonnage"
+                                                    [maxPower]="remainingPower"
+                                                    [newCertificateData]="newCertificateData"
+                                                    [expectedResults]="expectedResults?.remainingCapacityAction">
+                    </fishing-capacity-freed-actions>
+                </tl-card-content>
+            </tl-card>
+
+            <!-- Информация за начин на връчване -->
+            <tl-card *ngIf="hasDelivery && isApplication && !showOnlyRegiXData && willIssueCapacityCertificates"
+                     tooltipResourceName="ships-register.delivery-data-helper"
+                     [validityChecker]="form"
+                     [validityCheckerExtraCondition]="hasNoEDeliveryRegistrationError !== true">
+                <tl-card-title>{{ 'ships-register.delivery-data' | tlTranslate }}</tl-card-title>
+
+                <tl-card-content>
+                    <delivery-data formControlName="deliveryDataControl"
+                                   [pageCode]="pageCode">
+                    </delivery-data>
+                    <mat-error *ngIf="hasNoEDeliveryRegistrationError">
+                        * {{ 'ships-register.has-no-e-delivery-registration-error' | tlTranslate }}
+                    </mat-error>
+                </tl-card-content>
+            </tl-card>
+
+            <!-- Членство в сдружение -->
+            <tl-card *ngIf="!showOnlyRegiXData"
+                     tooltipResourceName="ships-register.fishing-association-membership-helper"
+                     [validityChecker]="form">
+                <tl-card-title>{{ 'ships-register.fishing-association-membership' | tlTranslate }}</tl-card-title>
+                <tl-card-content fxLayout="row">
+                    <tl-autocomplete fxFlex="50"
+                                     formControlName="shipAssociationControl"
+                                     tooltipResourceName="ships-register.fishing-association-helper"
+                                     label="{{ 'ships-register.fishing-association' | tlTranslate }}"
+                                     [options]="shipAssociations">
+                    </tl-autocomplete>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Коментари и бележки -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'ships-register.comment' | tlTranslate }}"
+                        tooltipResourceName="ships-register.comment-helper"
+                        [validityChecker]="form">
+        <tl-textarea fxFlexFill
+                     formControlName="commentsControl"
+                     tooltipResourceName="ships-register.comment-helper"
+                     label="{{ 'ships-register.comment' | tlTranslate }}">
+        </tl-textarea>
+    </tl-expansion-panel>
+
+    <!-- Информация за плащане -->
+    <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData && paymentInformation !== undefined && paymentInformation !== null"
+                        title="{{ 'ships-register.payment-information' | tlTranslate }}"
+                        tooltipResourceName="ships-register.payment-information-helper">
+        <payment-information [paymentData]="paymentInformation"></payment-information>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'ships-register.files' | tlTranslate }}"
+                        tooltipResourceName="ships-register.files-helper"
+                        [validityChecker]="form">
+        <file-uploader-form-array formControlName="filesControl"
+                                  validityChecker
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(service)"
+                                  [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                  [refreshFileTypes]="refreshFileTypes">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+
+    <!-- Проверки -->
+    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+                        title="{{ 'ships-register.regix-checks-results' | tlTranslate }}"
+                        tooltipResourceName="ships-register.regix-checks-results-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-checks-results [regixChecksCollection]="regixChecks"></regix-checks-results>
+        </div>
+    </tl-expansion-panel>
+</div>

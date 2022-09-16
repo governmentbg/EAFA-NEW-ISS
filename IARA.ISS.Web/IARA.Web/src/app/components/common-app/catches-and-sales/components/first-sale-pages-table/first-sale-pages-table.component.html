@@ -1,0 +1,80 @@
+﻿<tl-data-table [rows]="rows"
+               [isRemote]="isRemote"
+               [isSoftDeletable]="isSoftDeletable"
+               [showInactiveRecords]="showInactiveRecords"
+               [showAddButton]="showAddButton"
+               (activeRecordChanged)="editFirstSaleLogBookPage($event, !$event.isActive 
+                                                                         || $event.status === logBookPageStatusesEnum.Canceled
+                                                                         || $event.isLogBookFinished
+                                                                         || !canEditFirstSaleLogBookRecords)">
+    <data-template-column [flexRate]="0.2"
+                          [cellClass]="'justify-center'"
+                          columnName="{{ 'catches-and-sales.first-sale-page' | tlTranslate }}">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <span>{{ row.data.pageNumber }}</span>
+        </ng-template>
+    </data-template-column>
+
+    <data-template-column propertyName="StatusName"
+                          [flexRate]="0.2"
+                          [cellClass]="'justify-center'"
+                          columnName="{{ 'catches-and-sales.first-sale-page-status' | tlTranslate }}">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.5em">
+                <span>{{ row.data.statusName }}</span>
+                <tl-icon *ngIf="row.data.status === logBookPageStatusesEnum.Canceled && row.data.cancellationReason && row.data.cancellationReason.length !== 0"
+                         icon="ic-fluent-warning-24-filled"
+                         iconClass="warn-orange-color"
+                         [matTooltip]="row.data.cancellationReason"
+                         matTooltipPosition="above"
+                         matTooltipShowDelay="250"
+                         [size]="icIconSize">
+                </tl-icon>
+            </div>
+        </ng-template>
+    </data-template-column>
+
+    <data-column propertyName="saleDate"
+                 [flexRate]="0.2"
+                 dataType="date"
+                 columnName="{{ 'catches-and-sales.first-sale-sale-date' | tlTranslate }}">
+    </data-column>
+
+    <data-column propertyName="saleLocation"
+                 [flexRate]="0.3"
+                 columnName="{{ 'catches-and-sales.first-sale-sale-location' | tlTranslate }}">
+    </data-column>
+
+    <data-column propertyName="productsInformation"
+                 [flexRate]="0.4"
+                 columnName="{{ 'catches-and-sales.first-sale-products-information' | tlTranslate }}">
+    </data-column>
+
+    <data-template-column *ngIf="showActionButtons" [flexRate]="0.2" [cellClass]="'justify-center'">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                <tl-icon-button *ngIf="!row.data.isLogBookFinished && canCancelFirstSaleLogBookRecords && row.data.status !== logBookPageStatusesEnum.Canceled"
+                                icon="ic-cancel"
+                                [size]="icIconSize"
+                                (buttonClicked)="onAnnulFirstSaleLogBookPageBtnClicked(row.data)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'catches-and-sales.anull-first-sale-log-book-page' | tlTranslate }}">
+                </tl-icon-button>
+
+                <tl-icon-button *ngIf="row.data.status !== logBookPageStatusesEnum.Missing"
+                                icon="visibility"
+                                (buttonClicked)="editFirstSaleLogBookPage(row.data, true)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'catches-and-sales.view-first-sale-log-book-page' | tlTranslate }}">
+                </tl-icon-button>
+
+                <tl-icon-button *ngIf="!row.data.isLogBookFinished && canEditFirstSaleLogBookRecords && row.data.status !== logBookPageStatusesEnum.Canceled"
+                                icon="edit"
+                                (buttonClicked)="editFirstSaleLogBookPage(row.data, false)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'catches-and-sales.edit-first-sale-log-book-page' | tlTranslate }}">
+                </tl-icon-button>
+            </div>
+        </ng-template>
+    </data-template-column>
+</tl-data-table>

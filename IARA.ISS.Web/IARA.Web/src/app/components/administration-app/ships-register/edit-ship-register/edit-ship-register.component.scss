@@ -1,0 +1,41 @@
+﻿.events-panel {
+    position: fixed;
+    transition: width 0.2s ease-in-out;
+    border-left: 1px groove;
+}
+
+.expanded-events-panel {
+    @extend .events-panel;
+    width: 400px;
+}
+
+.collapsed-events-panel {
+    @extend .events-panel;
+    width: 50px;
+}
+
+.event-save-btn-container {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.show-edits-toggle {
+    margin-left: 0.3em;
+}
+
+#change-of-circumstances-panel {
+    background-color: #ffffff;
+    height: 300px;
+    position: fixed;
+    bottom: 0;
+    z-index: 9999;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 1em;
+    overflow-y: auto;
+    box-shadow: 0px 0px 20px 10px rgba(0, 0, 0, 0.35);
+}
+
+.event-cell-temporary {
+    color: red;
+}

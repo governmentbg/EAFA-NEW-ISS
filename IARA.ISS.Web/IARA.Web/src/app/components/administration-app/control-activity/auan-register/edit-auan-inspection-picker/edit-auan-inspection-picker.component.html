@@ -1,0 +1,12 @@
+﻿<div fxFlexFill
+     fxLayout="row"
+     fxLayoutAlign="center center"
+     class="dialog-padding">
+    <tl-autocomplete fxFlex="90"
+                     [formControl]="inspectionReportControl"
+                     [options]="inspectionReports"
+                     [autoMatchTextToOption]="true"
+                     label="{{ 'auan-register.picker-report-num' | tlTranslate }}"
+                     tooltipResourceName="auan-register.picker-report-num-helper">
+    </tl-autocomplete>
+</div>

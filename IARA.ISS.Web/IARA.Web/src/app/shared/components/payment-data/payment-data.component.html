@@ -1,0 +1,38 @@
+﻿<div *ngIf="showAppliedTariffsPanel; else withoutAppliedTariffs" fxFlexFill fxLayout="column" fxLayoutGap="1em" [formGroup]="form">
+    <tl-expansion-panel title="{{ 'payment-data.tariffs-panel-title' | tlTranslate }}">
+        <payment-tariffs formControlName="paymentSummaryControl"></payment-tariffs>
+    </tl-expansion-panel>
+    <tl-expansion-panel title="{{ 'payment-data.basic-information-panel-title' | tlTranslate }}">
+        <ng-container *ngTemplateOutlet="basicPaymentInformation"></ng-container>
+    </tl-expansion-panel>
+</div>
+<ng-template #withoutAppliedTariffs>
+    <div fxFlexFill fxLayout="column" fxLayoutGap="1em" [formGroup]="form">
+        <ng-container *ngTemplateOutlet="basicPaymentInformation"></ng-container>
+    </div>
+</ng-template>
+
+<ng-template #basicPaymentInformation>
+    <div fxFlex="100" fxLayout="column" [formGroup]="form">
+        <div fxLayout="row wrap" fxLayoutGap="1em" fxLayoutAlign="space-around center">
+            <tl-select fxFlex="30"
+                       fxFlex.lt-md="100"
+                       formControlName="paymentTypeControl"
+                       [options]="paymentTypes"
+                       label="{{ 'payment-data.payment-type' | tlTranslate }}">
+            </tl-select>
+            <tl-input fxFlex="30"
+                      fxFlex.lt-md="100"
+                      formControlName="paymentRefControl"
+                      label="{{ 'payment-data.payment-num' | tlTranslate }}">
+            </tl-input>
+            <tl-date fxFlex="30"
+                     fxFlex.lt-md="100"
+                     formControlName="paymentDateControl"
+                     [min]="paymentDateMin"
+                     [max]="paymentDateMax"
+                     label="{{ 'payment-data.payment-date' | tlTranslate }}">
+            </tl-date>
+        </div>
+    </div>
+</ng-template>

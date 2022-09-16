@@ -1,0 +1,105 @@
+﻿<mat-vertical-stepper linear #stepper (selectionChange)="selectedStepChanged($event)" color="accent">
+    <mat-step [stepControl]="preliminaryDataFormGroup" [editable]="true">
+        <div [formGroup]="preliminaryDataFormGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span [ngClass]="{ 'error-color': preliminaryDataFormGroup.touched && preliminaryDataFormGroup.invalid }">
+                    {{ 'catches-and-sales.add-ship-page-document-wizard-fill-preliminary-data' | tlTranslate }}
+                </span>
+            </ng-template>
+            <div fxLayout="row wrap" fxFlex="100" fxLayoutGap="1em grid">
+                <tl-input fxFlex="49"
+                          formControlName="documentTypeControl"
+                          label="{{ 'catches-and-sales.add-ship-page-document-wizard-document-type' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.add-ship-page-document-wizard-document-type-helper"
+                          [readonly]="true">
+                </tl-input>
+                <tl-input fxFlex="49"
+                          formControlName="documentNumberControl"
+                          label="{{ 'catches-and-sales.add-ship-page-document-wizard-document-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.add-ship-page-document-wizard-document-number-helper">
+                </tl-input>
+            </div>
+            <div fxLayout="row">
+                <button mat-raised-button matStepperNext color="accent">
+                    {{ 'catches-and-sales.add-ship-page-document-wizard-confirm-preliminary-data' | tlTranslate }}
+                </button>
+            </div>
+        </div>
+    </mat-step>
+    <mat-step [stepControl]="confirmLogBookAndOwnerFormGroup" [editable]="true">
+        <div [formGroup]="confirmLogBookAndOwnerFormGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span [ngClass]="{ 'error-color': confirmLogBookAndOwnerFormGroup.touched && confirmLogBookAndOwnerFormGroup.invalid }">
+                    {{ 'catches-and-sales.add-ship-page-document-wizard-fill-log-book' | tlTranslate }}
+                </span>
+            </ng-template>
+            <div fxLayout="row" fxFlex="100" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="100"
+                                 formControlName="possibleLogBookControl"
+                                 label="{{ 'catches-and-sales.add-ship-page-document-wizard-possible-log-book' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.add-ship-page-document-wizard-possible-log-book-helper"
+                                 [options]="possibleLogBooks"
+                                 [templateOptions]="true">
+                </tl-autocomplete>
+            </div>
+            <mat-error *ngIf="confirmLogBookAndOwnerFormGroup.errors?.pageNumberNotInLogBookLicense">
+                * {{ 'catches-and-sales.add-ship-page-document-wizard-page-not-in-log-book-license' | tlTranslate }}
+            </mat-error>
+            <mat-error *ngIf="confirmLogBookAndOwnerFormGroup.errors?.pageNumberAlreadySubmitted">
+                * {{ 'catches-and-sales.add-ship-page-document-wizard-page-alread-submitted' | tlTranslate }}
+            </mat-error>
+            <div fxLayout="row">
+                <button mat-raised-button matStepperNext color="accent">
+                    {{ 'catches-and-sales.add-ship-page-document-wizard-confirm-log-book' | tlTranslate }}
+                </button>
+            </div>
+        </div>
+    </mat-step>
+    <mat-step [stepControl]="confirmationDataFormGroup" [editable]="false">
+        <div [formGroup]="confirmationDataFormGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span [ngClass]="{ 'error-color': confirmationDataFormGroup.touched && confirmationDataFormGroup.invalid }">
+                    {{ 'catches-and-sales.add-ship-page-document-wizard-confirm-additional-data' | tlTranslate }}
+                </span>
+            </ng-template>
+            <div fxLayout="row" fxFlex="100" fxLayoutGap="1em">
+                <tl-input fxFlex="49"
+                          formControlName="documentNumberControl"
+                          label="{{ 'catches-and-sales.add-ship-page-document-wizard-document-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.add-ship-page-document-wizard-document-number-helper"
+                          [readonly]="true">
+                </tl-input>
+                <tl-select fxFlex="49"
+                           formControlName="logBookOwnerTypeControl"
+                           label="{{ 'catches-and-sales.add-ship-page-document-wizard-log-book-owner-type' | tlTranslate }}"
+                           tooltipResourceName="catches-and-sales.add-ship-page-document-wizard-log-book-owner-type-helper"
+                           [options]="logBookOwnerTypes"
+                           [readonly]="true">
+                </tl-select>
+            </div>
+            <div fxLayout="row" fxFlex="100">
+                <common-log-book-page-data fxFlexFill
+                                           formControlName="sourceDataControl"
+                                           [logBookType]="logBookType"
+                                           [isReadonly]="true">
+                </common-log-book-page-data>
+            </div>
+            <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center">
+                <log-book-page-person fxFlex="100"
+                                      formControlName="personDataControl"
+                                      [service]="service"
+                                      [readonly]="true">
+                </log-book-page-person>
+            </div>
+        </div>
+    </mat-step>
+</mat-vertical-stepper>

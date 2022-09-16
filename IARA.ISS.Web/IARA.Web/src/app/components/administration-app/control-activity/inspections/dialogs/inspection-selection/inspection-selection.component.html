@@ -1,0 +1,14 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxLayoutAlign="space-between stretch"
+     class="dialog-padding">
+    <button *ngFor="let type of inspectionTypes"
+            mat-raised-button
+            color="accent"
+            (click)="inspectionSelect(type.type)">
+        <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+            <tl-icon [icon]="type.icon" [size]="type.iconSize"></tl-icon>
+            <span>{{ 'inspections.' + type.displayCode | tlTranslate }}</span>
+        </div>
+    </button>
+</div>

@@ -1,0 +1,19 @@
+﻿<div [formGroup]="form" fxFlexFill fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+    <tl-date-range *ngIf="form.controls.isIndefiniteControl.value !== true"
+                   fxFlex="60"
+                   formControlName="rangeControl"
+                   [label]="rangeLabel"
+                   [bothDatesRequired]="true">
+    </tl-date-range>
+
+    <tl-date *ngIf="form.controls.isIndefiniteControl.value === true"
+             fxFlex="60"
+             formControlName="dateControl"
+             [label]="dateLabel">
+    </tl-date>
+
+    <tl-checkbox fxFlex="40"
+                 formControlName="isIndefiniteControl"
+                 [label]="checkboxLabel">
+    </tl-checkbox>
+</div>

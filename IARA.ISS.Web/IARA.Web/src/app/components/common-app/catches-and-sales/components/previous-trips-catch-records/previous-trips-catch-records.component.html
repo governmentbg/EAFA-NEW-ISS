@@ -1,0 +1,65 @@
+﻿<div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+    <tl-data-table fxFlexFill
+                   #catchesTable
+                   [rows]="catchRecordFishes"
+                   [isRemote]="false"
+                   [isSoftDeletable]="false"
+                   [showAddButton]="false"
+                   [showInactiveRecords]="false">
+        <data-template-column propertyName="" columnName="" [flexRate]="0.001">
+            <ng-template ngx-datatable-cell-template
+                         let-rowIndex="rowIndex"
+                         let-value="value"
+                         let-row="row">
+                <label for="ep1{{ rowIndex }}" class="datatable-checkbox">
+                    <input type="checkbox"
+                           id="previous-trip-catch-record-fish-{{ rowIndex }}"
+                           [checked]="row.data['isChecked']"
+                           (change)="checkedRow(row)"/>
+                </label>
+            </ng-template>
+        </data-template-column>
+        <data-column [flexRate]="0.3"
+                     propertyName="shipLogBookPageNumber"
+                     columnName="{{ 'catches-and-sales.previous-trip-catch-records-page-number' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.2"
+                     propertyName="tripStartDateTime"
+                     dataType="datetime"
+                     columnName="{{ 'catches-and-sales.previous-trip-catch-records-trip-start-date' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.2"
+                     propertyName="tripEndDateTime"
+                     dataType="datetime"
+                     columnName="{{ 'catches-and-sales.previous-trip-catch-records-trip-end-date' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.3"
+                     propertyName="fishId"
+                     dataType="nomenclature"
+                     [options]="aquaticOrganisms"
+                     columnName="{{ 'catches-and-sales.previous-trip-catch-records-aquatic-organism' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.2"
+                     propertyName="quantityKg"
+                     columnName="{{ 'catches-and-sales.previous-trip-catch-records-quantity-kg' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.2"
+                     propertyName="catchTypeId"
+                     dataType="nomenclature"
+                     [options]="catchTypes"
+                     columnName="{{ 'catches-and-sales.previous-trip-catch-records-catch-type' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.2"
+                     propertyName="catchSizeId"
+                     dataType="nomenclature"
+                     [options]="catchSizes"
+                     columnName="{{ 'catches-and-sales.previous-trip-catch-records-catch-size' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.2"
+                     propertyName="catchQuadrantId"
+                     dataType="nomenclature"
+                     [options]="catchQuadrants"
+                     columnName="{{ 'catches-and-sales.previous-trip-catch-records-catch-zone' | tlTranslate }}">
+        </data-column>
+    </tl-data-table>
+</div>

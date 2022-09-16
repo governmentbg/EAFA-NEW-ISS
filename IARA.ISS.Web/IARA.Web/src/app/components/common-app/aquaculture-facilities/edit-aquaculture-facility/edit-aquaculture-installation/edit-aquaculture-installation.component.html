@@ -1,0 +1,387 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="form"
+     class="dialog-padding">
+    <!-- Вид съоръжение и прилежащи обобщаващи данни -->
+    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+        <tl-select fxFlex="25"
+                   formControlName="installationTypeControl"
+                   [options]="installationTypes"
+                   label="{{ 'aquacultures.edit-installation-type' | tlTranslate }}">
+        </tl-select>
+    </div>
+
+    <!-- Детайли -->
+    <div [ngSwitch]="type">
+        <!-- Басейни -->
+        <div *ngSwitchCase="types.Basins"
+             [formGroup]="form.controls.basinsGroup"
+             fxLayout="column"
+             fxLayoutAlign="start stretch"
+             fxLayoutGap="1em">
+            <!-- Описание на басейните -->
+            <tl-card>
+                <tl-card-title>{{ 'aquacultures.edit-installation-basins-description' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <tl-data-table #basinsDescriptionTable
+                                   fxFlexFill
+                                   [isRemote]="false"
+                                   [isSoftDeletable]="true"
+                                   [showInactiveRecords]="false"
+                                   [showAddButton]="!readOnly"
+                                   [rows]="basins">
+                        <data-column propertyName="basinPurposeTypeId"
+                                     [flexRate]="0.3"
+                                     [formGroup]="basinsGroup"
+                                     [options]="basinPurposeTypes"
+                                     dataType="nomenclature"
+                                     columnName="{{ 'aquacultures.installation-basin-purpose-type' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="basinMaterialTypeId"
+                                     [flexRate]="0.3"
+                                     [formGroup]="basinsGroup"
+                                     [options]="basinMaterialTypes"
+                                     dataType="nomenclature"
+                                     columnName="{{ 'aquacultures.installation-basin-material-type' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="count"
+                                     [flexRate]="0.2"
+                                     [formGroup]="basinsGroup"
+                                     columnName="{{ 'aquacultures.installation-basin-count' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="area"
+                                     [flexRate]="0.2"
+                                     [formGroup]="basinsGroup"
+                                     columnName="{{ 'aquacultures.installation-basin-area' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="volume"
+                                     [flexRate]="0.2"
+                                     [formGroup]="basinsGroup"
+                                     columnName="{{ 'aquacultures.installation-basin-volume' | tlTranslate }}">
+                        </data-column>
+                        <data-column-inline *ngIf="!readOnly"
+                                            [flexRate]="0.2">
+                        </data-column-inline>
+                    </tl-data-table>
+                </tl-card-content>
+            </tl-card>
+
+            <!-- Бележки -->
+            <tl-card>
+                <tl-card-content>
+                    <tl-textarea fxFlexFill
+                                 formControlName="commentsControl"
+                                 label="{{ 'aquacultures.edit-installation-basins-comments' | tlTranslate }}">
+                    </tl-textarea>
+                </tl-card-content>
+            </tl-card>
+        </div>
+
+        <!-- Мрежени клетки (садки) -->
+        <div *ngSwitchCase="types.NetCages"
+             [formGroup]="form.controls.netCagesGroup"
+             fxLayout="column"
+             fxLayoutAlign="start stretch"
+             fxLayoutGap="1em">
+            <tl-card>
+                <tl-card-content>
+                    <tl-data-table #netCagesTable
+                                   fxFlexFill
+                                   [rows]="netCages"
+                                   [isRemote]="false"
+                                   [isSoftDeletable]="true"
+                                   [showAddButton]="!readOnly"
+                                   (addButtonClicked)="addEditNetCage()">
+                        <data-column propertyName="netCageTypeId"
+                                     [flexRate]="0.25"
+                                     [options]="netCageTypes"
+                                     dataType="nomenclature"
+                                     columnName="{{ 'aquacultures.installation-net-cage-type' | tlTranslate }}">
+                        </data-column>
+
+                        <data-column propertyName="shape"
+                                     [flexRate]="0.25"
+                                     [options]="netCageShapes"
+                                     dataType="nomenclature"
+                                     columnName="{{ 'aquacultures.installation-net-cage-shape' | tlTranslate }}">
+                        </data-column>
+
+                        <data-column propertyName="count"
+                                     [flexRate]="0.2"
+                                     columnName="{{ 'aquacultures.installation-net-cage-count' | tlTranslate }}">
+                        </data-column>
+
+                        <data-template-column propertyName="Area"
+                                              [flexRate]="0.2"
+                                              columnName="{{ 'aquacultures.installation-net-cage-area' | tlTranslate }}">
+                            <ng-template let-row="row" ngx-datatable-template>
+                                {{ row.data.area.toFixed(2) }}
+                            </ng-template>
+                        </data-template-column>
+
+                        <data-template-column propertyName="Volume"
+                                              [flexRate]="0.2"
+                                              columnName="{{ 'aquacultures.installation-net-cage-volume' | tlTranslate }}">
+                            <ng-template let-row="row" ngx-datatable-template>
+                                {{ row.data.volume.toFixed(2) }}
+                            </ng-template>
+                        </data-template-column>
+
+                        <data-template-column [flexRate]="0.2" [cellClass]="'justify-center'">
+                            <ng-template let-row="row" ngx-datatable-cell-template>
+                                <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                    <tl-icon-button icon="visibility"
+                                                    (buttonClicked)="addEditNetCage(row.data, true)"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'aquacultures.view-net-cage' | tlTranslate }}">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="row.data.isActive && !readOnly"
+                                                    icon="edit"
+                                                    (buttonClicked)="addEditNetCage(row.data, false)"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'aquacultures.edit-net-cage' | tlTranslate }}">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="row.data.isActive && !readOnly"
+                                                    icon="delete"
+                                                    (buttonClicked)="deleteNetCage(row)"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'aquacultures.delete-net-cage' | tlTranslate }}">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="!row.data.isActive && !readOnly"
+                                                    icon="restore"
+                                                    (buttonClicked)="undoDeleteNetCage(row)"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'aquacultures.restore-net-cage' | tlTranslate }}">
+                                    </tl-icon-button>
+                                </div>
+                            </ng-template>
+                        </data-template-column>
+                    </tl-data-table>
+                </tl-card-content>
+            </tl-card>
+
+            <tl-card>
+                <tl-card-content>
+                    <tl-textarea fxFlexFill
+                                 formControlName="commentsControl"
+                                 label="{{ 'aquacultures.edit-installation-net-cages-comments' | tlTranslate }}">
+                    </tl-textarea>
+                </tl-card-content>
+            </tl-card>
+        </div>
+
+        <!-- Аквариуми -->
+        <div *ngSwitchCase="types.Aquariums"
+             [formGroup]="form.controls.aquariumsGroup"
+             fxLayout="column"
+             fxLayoutAlign="start stretch"
+             fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="countControl"
+                          label="{{ 'aquacultures.installation-aquariums-count' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="volumeControl"
+                          label="{{ 'aquacultures.installation-aquariums-volume' | tlTranslate }}">
+                </tl-input>
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+            </div>
+            <div fxLayout="row">
+                <tl-textarea fxFlexFill
+                             formControlName="commentsControl"
+                             label="{{ 'aquacultures.edit-installation-aquariums-comments' | tlTranslate }}">
+                </tl-textarea>
+            </div>
+        </div>
+
+        <!-- Колектори -->
+        <div *ngSwitchCase="types.Collectors"
+             [formGroup]="form.controls.collectorsGroup"
+             fxLayout="column"
+             fxLayoutAlign="start stretch"
+             fxLayoutGap="1em">
+            <tl-card>
+                <tl-card-content>
+                    <tl-data-table #collectorsTable
+                                   fxFlexFill
+                                   [isRemote]="false"
+                                   [isSoftDeletable]="true"
+                                   [showInactiveRecords]="false"
+                                   [showAddButton]="!readOnly"
+                                   [rows]="collectors">
+                        <data-column propertyName="collectorTypeId"
+                                     [flexRate]="0.3"
+                                     [formGroup]="collectorsGroup"
+                                     [options]="collectorTypes"
+                                     dataType="nomenclature"
+                                     columnName="{{ 'aquacultures.installation-collector-type' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="totalCount"
+                                     [flexRate]="0.2"
+                                     [formGroup]="collectorsGroup"
+                                     columnName="{{ 'aquacultures.installation-collector-total-count' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="totalArea"
+                                     [flexRate]="0.2"
+                                     [formGroup]="collectorsGroup"
+                                     columnName="{{ 'aquacultures.installation-collector-total-area' | tlTranslate }}">
+                        </data-column>
+                        <data-column-inline *ngIf="!readOnly"
+                                            [flexRate]="0.1">
+                        </data-column-inline>
+                    </tl-data-table>
+                </tl-card-content>
+            </tl-card>
+
+            <tl-card>
+                <tl-card-content>
+                    <tl-textarea fxFlexFill
+                                 formControlName="commentsControl"
+                                 label="{{ 'aquacultures.edit-installation-collectors-comments' | tlTranslate }}">
+                    </tl-textarea>
+                </tl-card-content>
+            </tl-card>
+        </div>
+
+        <!-- Рафтове -->
+        <div *ngSwitchCase="types.Rafts"
+             [formGroup]="form.controls.raftsGroup"
+             fxLayout="column"
+             fxLayoutAlign="start stretch"
+             fxLayoutGap="1em">
+            <tl-card>
+                <tl-card-content>
+                    <tl-data-table #raftsTable
+                                   fxFlexFill
+                                   [isRemote]="false"
+                                   [isSoftDeletable]="true"
+                                   [showInactiveRecords]="false"
+                                   [showAddButton]="!readOnly"
+                                   [rows]="rafts">
+                        <data-column propertyName="length"
+                                     [flexRate]="0.2"
+                                     [formGroup]="raftsGroup"
+                                     columnName="{{ 'aquacultures.installation-raft-length' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="width"
+                                     [flexRate]="0.2"
+                                     [formGroup]="raftsGroup"
+                                     columnName="{{ 'aquacultures.installation-raft-width' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="area"
+                                     [flexRate]="0.2"
+                                     [formGroup]="raftsGroup"
+                                     dataType="calculated"
+                                     [calculatedValue]="calculateRaftArea"
+                                     [calculatedColumnControlNames]="['lengthControl', 'widthControl']"
+                                     columnName="{{ 'aquacultures.installation-raft-area' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="count"
+                                     [flexRate]="0.2"
+                                     [formGroup]="raftsGroup"
+                                     columnName="{{ 'aquacultures.installation-raft-count' | tlTranslate }}">
+                        </data-column>
+                        <data-column-inline *ngIf="!readOnly"
+                                            [flexRate]="0.1">
+                        </data-column-inline>
+                    </tl-data-table>
+                </tl-card-content>
+            </tl-card>
+
+            <tl-card>
+                <tl-card-content>
+                    <tl-textarea fxFlexFill
+                                 formControlName="commentsControl"
+                                 label="{{ 'aquacultures.edit-installation-rafts-comments' | tlTranslate }}">
+                    </tl-textarea>
+                </tl-card-content>
+            </tl-card>
+        </div>
+
+        <!-- Язовири -->
+        <div *ngSwitchCase="types.Dams"
+             [formGroup]="form.controls.damsGroup"
+             fxLayout="column"
+             fxLayoutAlign="start stretch"
+             fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="50"
+                          formControlName="areaControl"
+                          label="{{ 'aquacultures.installation-dam-area' | tlTranslate }}">
+                </tl-input>
+                <div fxFlex="50"></div>
+            </div>
+            <div fxLayout="row">
+                <tl-textarea fxFlexFill
+                             formControlName="commentsControl"
+                             label="{{ 'aquacultures.edit-installation-dams-comments' | tlTranslate }}">
+                </tl-textarea>
+            </div>
+        </div>
+
+        <!-- Рециркулационни системи -->
+        <div *ngSwitchCase="types.RecirculatorySystems"
+             [formGroup]="form.controls.recirculatorySystemsGroup"
+             fxLayout="column"
+             fxLayoutAlign="start stretch"
+             fxLayoutGap="1em">
+            <tl-card>
+                <tl-card-content>
+                    <tl-data-table #recirculatorySystemsTable
+                                   fxFlexFill
+                                   [isRemote]="false"
+                                   [isSoftDeletable]="true"
+                                   [showInactiveRecords]="false"
+                                   [showAddButton]="!readOnly"
+                                   [rows]="recirculatorySystems">
+                        <data-column propertyName="basinPurposeTypeId"
+                                     [flexRate]="0.2"
+                                     [formGroup]="recirculatoryGroup"
+                                     [options]="basinPurposeTypes"
+                                     dataType="nomenclature"
+                                     columnName="{{ 'aquacultures.installation-recirculatory-basin-purpose-type' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="basinMaterialTypeId"
+                                     [flexRate]="0.2"
+                                     [formGroup]="recirculatoryGroup"
+                                     [options]="basinMaterialTypes"
+                                     dataType="nomenclature"
+                                     columnName="{{ 'aquacultures.installation-recirculatory-basin-material-type' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="area"
+                                     [flexRate]="0.2"
+                                     [formGroup]="recirculatoryGroup"
+                                     columnName="{{ 'aquacultures.installation-recirculatory-area' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="volume"
+                                     [flexRate]="0.2"
+                                     [formGroup]="recirculatoryGroup"
+                                     columnName="{{ 'aquacultures.installation-recirculatory-volume' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="count"
+                                     [flexRate]="0.2"
+                                     [formGroup]="recirculatoryGroup"
+                                     columnName="{{ 'aquacultures.installation-recirculatory-count' | tlTranslate }}">
+                        </data-column>
+                        <data-column-inline *ngIf="!readOnly"
+                                            [flexRate]="0.1">
+                        </data-column-inline>
+                    </tl-data-table>
+                </tl-card-content>
+            </tl-card>
+
+            <tl-card>
+                <tl-card-content>
+                    <tl-textarea fxFlexFill
+                                 formControlName="commentsControl"
+                                 label="{{ 'aquacultures.edit-installation-recirculatory-comments' | tlTranslate }}">
+                    </tl-textarea>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </div>
+</div>

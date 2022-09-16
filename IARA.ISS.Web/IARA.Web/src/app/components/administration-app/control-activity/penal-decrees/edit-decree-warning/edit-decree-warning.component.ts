@@ -1,0 +1,377 @@
+﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { IPenalDecreesService } from '@app/interfaces/administration-app/penal-decrees.interface';
+import { PenalDecreeEditDTO } from '@app/models/generated/dtos/PenalDecreeEditDTO';
+import { PenalDecreesService } from '@app/services/administration-app/penal-decrees.service';
+import { EditPenalDecreeDialogParams } from '../models/edit-penal-decree-params.model';
+import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
+import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
+import { CommonUtils } from '@app/shared/utils/common.utils';
+import { PenalDecreeAuanDataDTO } from '@app/models/generated/dtos/PenalDecreeAuanDataDTO';
+import { PenalDecreeTypeEnum } from '@app/enums/penal-decree-type.enum';
+import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
+import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
+import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
+import { NomenclatureTypes } from '@app/enums/nomenclature.types';
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { forkJoin } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { RequestProperties } from '@app/shared/services/request-properties';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuanViolatedRegulationDTO } from '@app/models/generated/dtos/AuanViolatedRegulationDTO';
+
+@Component({
+    selector: 'edit-decree-warning',
+    templateUrl: './edit-decree-warning.component.html'
+})
+export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialogComponent {
+    public form!: FormGroup;
+
+    public readonly service!: IPenalDecreesService;
+    public readonly pageCode: PageCodeEnum = PageCodeEnum.PenalDecrees;
+    public readonly decreeType: PenalDecreeTypeEnum = PenalDecreeTypeEnum.Warning;
+    public readonly today: Date = new Date();
+
+    public isAdding: boolean = false;
+    public viewMode: boolean = false;
+    public hasNoEDeliveryRegistrationError: boolean = false;
+    public violatedRegulationsTouched: boolean = false;
+
+    public territoryUnits: NomenclatureDTO<number>[] = [];
+    public users: NomenclatureDTO<number>[] = [];
+    public violatedRegulations: AuanViolatedRegulationDTO[] = [];
+
+    @ViewChild(ValidityCheckerGroupDirective)
+    private validityCheckerGroup!: ValidityCheckerGroupDirective;
+
+    private auanId!: number;
+    private typeId!: number;
+    private penalDecreeId!: number | undefined;
+    private model!: PenalDecreeEditDTO;
+
+    private readonly nomenclatures: CommonNomenclatures;
+    private readonly translate: FuseTranslationLoaderService;
+    private readonly snackbar: MatSnackBar;
+
+    public constructor(
+        service: PenalDecreesService,
+        nomenclatures: CommonNomenclatures,
+        translate: FuseTranslationLoaderService,
+        snackbar: MatSnackBar
+    ) {
+        this.service = service;
+        this.nomenclatures = nomenclatures;
+        this.translate = translate;
+        this.snackbar = snackbar;
+
+        this.buildForm();
+    }
+
+    public async ngOnInit(): Promise<void> {
+        this.isAdding = this.penalDecreeId === undefined || this.penalDecreeId === null;
+
+        const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin(
+            NomenclatureStore.instance.getNomenclature(
+                NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures)),
+            this.nomenclatures.getUserNames()
+        ).toPromise();
+
+        this.territoryUnits = nomenclatures[0];
+        this.users = nomenclatures[1];
+
+        this.service.getPenalDecreeAuanData(this.auanId).subscribe({
+            next: (data: PenalDecreeAuanDataDTO) => {
+                this.fillAuanData(data);
+
+                if (this.penalDecreeId === undefined || this.penalDecreeId === null) {
+                    this.model = new PenalDecreeEditDTO();
+                }
+                else {
+                    this.service.getPenalDecree(this.penalDecreeId).subscribe({
+                        next: (decree: PenalDecreeEditDTO) => {
+                            this.model = decree;
+                            this.fillForm();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public ngAfterViewInit(): void {
+        this.form.get('auanViolatedRegulationsControl')!.valueChanges.subscribe({
+            next: (result: AuanViolatedRegulationDTO[] | undefined) => {
+                if (result !== undefined && result !== null) {
+                    this.violatedRegulations = result;
+                    this.violatedRegulationsTouched = true;
+                    this.form.updateValueAndValidity({ onlySelf: true });
+                }
+            }
+        });
+    }
+
+    public setData(data: EditPenalDecreeDialogParams | undefined, wrapperData: DialogWrapperData): void {
+        if (data !== undefined && data !== null) {
+            this.auanId = data.auanId;
+            this.typeId = data.typeId;
+            this.penalDecreeId = data.id;
+            this.viewMode = data.isReadonly ?? false;
+        }
+    }
+
+    public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
+        if (this.viewMode) {
+            dialogClose();
+        }
+
+        this.markAllAsTouched();
+        this.validityCheckerGroup.validate();
+
+        if (this.form.valid) {
+            this.fillModel();
+            CommonUtils.sanitizeModelStrings(this.model);
+
+            if (this.penalDecreeId !== undefined && this.penalDecreeId !== null) {
+                this.service.editPenalDecree(this.model).subscribe({
+                    next: () => {
+                        this.hasNoEDeliveryRegistrationError = false;
+
+                        dialogClose(this.model);
+                    },
+                    error: (response: HttpErrorResponse) => {
+                        this.handleAddEditErrorResponse(response);
+                    }
+                });
+            }
+            else {
+                this.service.addPenalDecree(this.model).subscribe({
+                    next: (id: number) => {
+                        this.hasNoEDeliveryRegistrationError = false;
+
+                        this.model.id = id;
+                        dialogClose(this.model);
+                    },
+                    error: (response: HttpErrorResponse) => {
+                        this.handleAddEditErrorResponse(response);
+                    }
+                });
+            }
+        }
+    }
+
+    public cancelBtnClicked(action: IActionInfo, dialogClose: DialogCloseCallback): void {
+        dialogClose();
+    }
+
+    public dialogButtonClicked(action: IActionInfo, dialogClose: DialogCloseCallback): void {
+        if (action.id === 'print') {
+            if (this.viewMode) {
+                this.service.downloadPenalDecree(this.penalDecreeId!).subscribe({
+                    next: () => {
+                        //nothing to do
+                    }
+                });
+            }
+            else {
+                this.form.markAllAsTouched();
+                if (this.form.valid) {
+                    this.fillModel();
+                    CommonUtils.sanitizeModelStrings(this.model);
+
+                    if (this.penalDecreeId !== undefined && this.penalDecreeId !== null) {
+                        this.service.editPenalDecree(this.model).subscribe({
+                            next: () => {
+                                this.hasNoEDeliveryRegistrationError = false;
+
+                                this.service.downloadPenalDecree(this.penalDecreeId!).subscribe({
+                                    next: () => {
+                                        dialogClose();
+                                    }
+                                });
+                            },
+                            error: (response: HttpErrorResponse) => {
+                                this.handleAddEditErrorResponse(response);
+                            }
+                        });
+                    }
+                    else {
+                        this.service.addPenalDecree(this.model).subscribe({
+                            next: (id: number) => {
+                                this.hasNoEDeliveryRegistrationError = false;
+                                this.model.id = id;
+
+                                this.service.downloadPenalDecree(id).subscribe({
+                                    next: () => {
+                                        dialogClose();
+                                    }
+                                });
+                            },
+                            error: (response: HttpErrorResponse) => {
+                                this.handleAddEditErrorResponse(response);
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    private buildForm(): void {
+        this.form = new FormGroup({
+            decreeNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
+            drafterControl: new FormControl(null, Validators.required),
+            issuerPositionControl: new FormControl(null),
+            issueDateControl: new FormControl(null, Validators.required),
+            territoryUnitControl: new FormControl({ value: null, disabled: true }),
+            effectiveDateControl: new FormControl(null, Validators.required),
+
+            auanControl: new FormControl(null),
+            deliveryControl: new FormControl(null),
+
+            commentsControl: new FormControl(null, Validators.maxLength(4000)),
+            constatationCommentsControl: new FormControl(null, Validators.maxLength(4000)),
+
+            seizedFishingGearControl: new FormControl(null),
+            seizedFishControl: new FormControl(null),
+            seizedApplianceControl: new FormControl(null),
+            isRecurrentViolationControl: new FormControl(false),
+            minorCircumstancesDescriptionControl: new FormControl(null, Validators.maxLength(4000)),
+
+            auanViolatedRegulationsControl: new FormControl(null),
+            violatedRegulationsControl: new FormControl(null),
+
+            statusesControl: new FormControl(null),
+
+            filesControl: new FormControl(null)
+        }, this.violatedRegulationsValidator());
+    }
+
+    private fillForm(): void {
+        this.form.get('decreeNumControl')!.setValue(this.model.decreeNum);
+        this.form.get('issueDateControl')!.setValue(this.model.issueDate);
+        this.form.get('effectiveDateControl')!.setValue(this.model.effectiveDate);
+        this.form.get('issuerPositionControl')!.setValue(this.model.issuerPosition);
+        this.form.get('drafterControl')!.setValue(this.users.find(x => x.value === this.model.issuerUserId));
+
+        this.form.get('isRecurrentViolationControl')!.setValue(this.model.isRecurrentViolation);
+        this.form.get('commentsControl')!.setValue(this.model.comments);
+        this.form.get('minorCircumstancesDescriptionControl')!.setValue(this.model.minorCircumstancesDescription);
+        this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
+
+        this.form.get('auanViolatedRegulationsControl')!.setValue(this.model.auanViolatedRegulations);
+        this.form.get('violatedRegulationsControl')!.setValue(this.model.decreeViolatedRegulations);
+
+        this.form.get('filesControl')!.setValue(this.model.files);
+
+        if (this.model.seizedFish !== undefined && this.model.seizedFish !== null) {
+            this.form.get('seizedFishControl')!.setValue(this.model.seizedFish);
+        }
+
+        if (this.model.seizedFishingGear !== undefined && this.model.seizedFishingGear !== null) {
+            this.form.get('seizedFishingGearControl')!.setValue(this.model.seizedFishingGear);
+        }
+
+        if (this.model.seizedAppliance !== undefined && this.model.seizedAppliance !== null) {
+            this.form.get('seizedApplianceControl')!.setValue(this.model.seizedAppliance);
+        }
+
+        if (this.model.deliveryData !== undefined && this.model.deliveryData !== null) {
+            this.form.get('deliveryControl')!.setValue(this.model.deliveryData);
+        }
+
+        if (this.model.statuses !== undefined && this.model.statuses !== null) {
+            this.form.get('statusesControl')!.setValue(this.model.statuses);
+        }
+
+        if (this.viewMode) {
+            this.form.disable();
+        }
+    }
+
+    private fillModel(): void {
+        this.model.auanId = this.auanId;
+        this.model.typeId = this.typeId;
+        this.model.decreeNum = this.form.get('decreeNumControl')!.value;
+        this.model.issueDate = this.form.get('issueDateControl')!.value;
+        this.model.effectiveDate = this.form.get('effectiveDateControl')!.value;
+        this.model.issuerPosition = this.form.get('issuerPositionControl')!.value;
+        this.model.issuerUserId = this.form.get('drafterControl')!.value?.value;
+
+        this.model.isRecurrentViolation = this.form.get('isRecurrentViolationControl')!.value;
+        this.model.comments = this.form.get('commentsControl')!.value;
+        this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
+        this.model.minorCircumstancesDescription = this.form.get('minorCircumstancesDescriptionControl')!.value;
+
+        this.model.seizedFish = this.form.get('seizedFishControl')!.value;
+        this.model.seizedFishingGear = this.form.get('seizedFishingGearControl')!.value;
+        this.model.seizedAppliance = this.form.get('seizedApplianceControl')!.value;
+
+        this.model.deliveryData = this.form.get('deliveryControl')!.value;
+
+        this.model.auanViolatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
+        this.model.decreeViolatedRegulations = this.form.get('violatedRegulationsControl')!.value;
+
+        this.model.statuses = this.form.get('statusesControl')!.value;
+
+        this.model.files = this.form.get('filesControl')!.value;
+    }
+
+    private fillAuanData(data: PenalDecreeAuanDataDTO): void {
+        this.form.get('auanControl')!.setValue(data);
+        this.form.get('territoryUnitControl')!.setValue(this.territoryUnits.find(x => x.value === data.territoryUnitId));
+        this.form.get('constatationCommentsControl')!.setValue(data.constatationComments);
+
+        if (this.isAdding) {
+            setTimeout(() => {
+                this.form.get('seizedFishControl')!.setValue(data.confiscatedFish);
+                this.form.get('seizedFishingGearControl')!.setValue(data.confiscatedFishingGear);
+                this.form.get('auanViolatedRegulationsControl')!.setValue(data.violatedRegulations);
+            });
+        }
+    }
+
+    private violatedRegulationsValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (!this.violatedRegulations.some(x => x.isActive !== false)) {
+                return { 'atLeastOneViolatedRegulationNeeded': true };
+            }
+            return null;
+        }
+    }
+
+    private markAllAsTouched(): void {
+        this.form.markAllAsTouched();
+
+        this.violatedRegulationsTouched = true;
+    }
+
+    private handleAddEditErrorResponse(response: HttpErrorResponse): void {
+        if (response.error?.messages !== null && response.error?.messages !== undefined) {
+            const messages: string[] = response.error.messages;
+
+            if (messages.length !== 0) {
+                this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                    data: response.error as ErrorModel,
+                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                });
+            }
+            else {
+                this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                    data: new ErrorModel({ messages: [this.translate.getValue('service.an-error-occurred-in-the-app')] }),
+                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                });
+            }
+        }
+
+        if (response.error?.code === ErrorCode.NoEDeliveryRegistration) {
+            this.hasNoEDeliveryRegistrationError = true;
+        }
+    }
+}

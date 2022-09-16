@@ -1,0 +1,102 @@
+﻿<tl-card>
+    <tl-card-title *ngIf="_report">{{ report.name }}</tl-card-title>
+    <tl-card-content fxLayoutGap="1em">
+        <tl-card *ngIf="showParameters">
+            <tl-card-title>{{ 'report-view.report-parameters' | tlTranslate }}</tl-card-title>
+            <tl-card-content>
+                <div *ngIf="_report" fxFlexFill fxLayout="row wrap" fxLayoutGap="1em" [formGroup]="parametersFormGroup">
+                    <ng-container *ngFor="let parameter of _report.parameters">
+                        <ng-container [ngSwitch]="parameter.dataType">
+                            <tl-date *ngSwitchCase="parameterTypeEnum.Date"
+                                     fxFlex="32"
+                                     [formControlName]="parameter.code + 'Control'"
+                                     [label]="parameter.description">
+                            </tl-date>
+                            <tl-date-time *ngSwitchCase="parameterTypeEnum.DateTime"
+                                          fxFlex="32"
+                                          [formControlName]="parameter.code + 'Control'"
+                                          [label]="parameter.description">
+                            </tl-date-time>
+                            <tl-date-time *ngSwitchCase="parameterTypeEnum.Time"
+                                          fxFlex="32"
+                                          [formControlName]="parameter.code + 'Control'"
+                                          [label]="parameter.description">
+                            </tl-date-time>
+                            <tl-input *ngSwitchCase="parameterTypeEnum.Int"
+                                      fxFlex="32"
+                                      [formControlName]="parameter.code + 'Control'"
+                                      [label]="parameter.description">
+                            </tl-input>
+                            <tl-input *ngSwitchCase="parameterTypeEnum.Decimal"
+                                      fxFlex="32"
+                                      [formControlName]="parameter.code + 'Control'"
+                                      [label]="parameter.description">
+                            </tl-input>
+                            <tl-input *ngSwitchCase="parameterTypeEnum.String"
+                                      fxFlex="48"
+                                      [formControlName]="parameter.code + 'Control'"
+                                      [label]="parameter.description">
+                            </tl-input>
+                            <tl-autocomplete *ngSwitchCase="parameterTypeEnum.Nomenclature"
+                                             fxFlex="48"
+                                             [options]="parameter.parameterTypeNomenclatures"
+                                             [formControlName]="parameter.code + 'Control'"
+                                             [label]="parameter.description">
+                            </tl-autocomplete>
+                            <tl-date-year *ngSwitchCase="parameterTypeEnum.Year"
+                                          fxFlex="32"
+                                          [formControlName]="parameter.code + 'Control'"
+                                          [label]="parameter.description">
+                            </tl-date-year>
+                            <tl-date-month *ngSwitchCase="parameterTypeEnum.Month"
+                                           fxFlex="32"
+                                           [formControlName]="parameter.code + 'Control'"
+                                           [label]="parameter.description">
+                            </tl-date-month>
+                        </ng-container>
+                    </ng-container>
+                </div>
+                <button *ngIf="_report && _report.reportType === reportType.SQL"
+                        (click)="executeReport()"
+                        mat-raised-button
+                        color="accent">
+                    {{ 'report-view.report-run-button' | tlTranslate }}
+                </button>
+                <button *ngIf="_report && (_report.reportType === reportType.JasperPDF || _report.reportType === reportType.JasperWord)"
+                        (click)="downloadJasperReport()"
+                        mat-raised-button
+                        color="accent">
+                    {{ 'report-view.report-download-button' | tlTranslate }}
+                </button>
+            </tl-card-content>
+        </tl-card>
+        <div fxFlexFill>
+            <tl-card>
+                <tl-card-title>{{ 'report-view.report-result' | tlTranslate }}</tl-card-title>
+                <tl-card-subtitle *ngIf="isExecuteResultClicked" fxLayoutAlign="space-between center">
+                    <tl-icon-button size="3" icon="zoom_in" (buttonClicked)="zoomIn()" fxFlex="nogrow"></tl-icon-button>
+                    <tl-icon-button size="3" icon="zoom_out" (buttonClicked)="zoomOut()" fxFlex="nogrow"></tl-icon-button>
+                    <div fxFlex fxLayoutAlign="end center">
+                        <button (click)="exportToExcel()"
+                                mat-raised-button
+                                color="accent">
+                            {{ 'report-view.report-export-button' | tlTranslate }}
+                        </button>
+                    </div>
+                </tl-card-subtitle>
+                <tl-card-content [hidden]="!isExecuteResultClicked" style="width:100%;overflow-x:auto;">
+                    <div [style.width]="zoomPercentageString">
+                        <tl-data-table [showAddButton]="false"
+                                       [showInactiveRecords]="false">
+                            <ng-container *ngFor="let reportColumn of reportDisplayColumns">
+                                <data-column [isSortable]="true" columnName="{{ reportColumn.propertyDisplayName }}"
+                                             propertyName="{{ reportColumn.propertyName }}">
+                                </data-column>
+                            </ng-container>
+                        </tl-data-table>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </tl-card-content>
+</tl-card>

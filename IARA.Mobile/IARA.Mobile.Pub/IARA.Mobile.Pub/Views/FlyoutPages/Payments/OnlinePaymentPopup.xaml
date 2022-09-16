@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<popup:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+                 xmlns:popup="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+                 x:Class="IARA.Mobile.Pub.Views.FlyoutPages.Payments.OnlinePaymentPopup"
+                 xmlns:vm="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments"
+                 x:DataType="vm:OnlinePaymentViewModel"
+                 CloseWhenBackgroundIsClicked="False">
+    <Grid RowDefinitions="*">
+        <WebView x:Name="webView"
+                 Grid.Row="0"
+                 Source="{Binding PaymentInitialUrl}">
+            <WebView.Behaviors>
+                <xct:EventToCommandBehavior EventName="Navigating"
+                                            Command="{Binding Navigating}" />
+                <xct:EventToCommandBehavior EventName="Navigated"
+                                            Command="{Binding Navigated}" />
+            </WebView.Behaviors>
+        </WebView>
+    </Grid>
+</popup:PopupPage>

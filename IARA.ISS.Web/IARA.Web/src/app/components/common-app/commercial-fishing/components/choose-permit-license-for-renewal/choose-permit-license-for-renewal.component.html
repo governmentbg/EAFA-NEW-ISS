@@ -1,0 +1,146 @@
+﻿<mat-vertical-stepper linear #stepper (selectionChange)="selectedStepChanged($event)" color="accent">
+    <mat-step [stepControl]="chooseShipAndPermitFormGroup" [editable]="true">
+        <div [formGroup]="chooseShipAndPermitFormGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span [ngClass]="{ 'error-color': chooseShipAndPermitFormGroup.touched && chooseShipAndPermitFormGroup.invalid }">
+                    {{ 'choose-permit-license-for-renewal.choose-ship-and-permit' | tlTranslate }}
+                </span>
+            </ng-template>
+            <div fxLayout="row" fxFlex="100">
+                <tl-autocomplete fxFlex="70"
+                                 formControlName="shipControl"
+                                 label="{{ 'choose-permit-license-for-renewal.ship' | tlTranslate }}"
+                                 [options]="ships">
+                </tl-autocomplete>
+            </div>
+            <div fxLayout="row" fxFlex="100" fxLayoutAlign="start start">
+                <tl-autocomplete *ngIf="!isPublicApp"
+                                 fxFlex="70"
+                                 formControlName="permitControl"
+                                 label="{{ 'choose-permit-license-for-renewal.permit' | tlTranslate }}"
+                                 [options]="permits"
+                                 [readonly]="noShipSelected">
+                </tl-autocomplete>
+                <tl-popover-button *ngIf="noShipSelected"
+                                   iconType="MAT_ICON"
+                                   iconClass="accent-color"
+                                   icon="info"
+                                   style="vertical-align:text-bottom">
+                    <pre style="font-family: inherit !important; max-width: 500px !important;">{{ 'choose-permit-license-for-renewal.permit-is-readonly-info' | tlTranslate }}</pre>
+                </tl-popover-button>
+                <tl-input *ngIf="isPublicApp"
+                          fxFlex="50"
+                          formControlName="permitRegistrationNumberControl"
+                          label="{{ 'choose-permit-license-for-renewal.permit-registration-number' | tlTranslate }}">
+                </tl-input>
+            </div>
+            <div fxLayout="row">
+                <button mat-raised-button matStepperNext color="accent">
+                    {{ 'choose-permit-license-for-renewal.choose-permit-license' | tlTranslate }}
+                </button>
+            </div>
+        </div>
+    </mat-step>
+    <mat-step [editable]="true">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill
+             fxLayoutAlign="space-around stretch"
+             class="dialog-padding">
+            <ng-template matStepLabel>{{ 'choose-permit-license-for-renewal.choose-permit-license' | tlTranslate }}</ng-template>
+            <div fxFlex="100">
+                <tl-input label="{{ 'choose-permit-license-for-renewal.keyword-filter' | tlTranslate }}"
+                          [formControl]="filterControl">
+                </tl-input>
+            </div>
+            <div *ngIf="permitLicenses.length > 0; else noPermitLicenses"
+                 fxFlex="100"
+                 fxLayoutGap="1em"
+                 fxLayout="column">
+                <tl-data-table #table
+                               [showAddButton]="false"
+                               [showInactiveRecords]="false"
+                               [rows]="permitLicenses"
+                               [isRemote]="false"
+                               [rowClass]="getRowClass">
+                    <data-template-column [flexRate]="0.001">
+                        <ng-template ngx-datatable-cell-template
+                                     let-rowIndex="rowIndex"
+                                     let-value="value"
+                                     let-row="row">
+                            <label for="ep1{{ rowIndex }}" class="datatable-checkbox">
+                                <input type="checkbox"
+                                       id="choose-permit-license-for-renewal-{{ rowIndex }}"
+                                       [checked]="row.data['isChecked']"
+                                       (change)="checkedRow(row)" />
+                            </label>
+                        </ng-template>
+                    </data-template-column>
+                    <data-column propertyName="registrationNumber"
+                                 [flexRate]="0.2"
+                                 columnName="{{ 'choose-permit-license-for-renewal.registration-number' | tlTranslate }}">
+                    </data-column>
+                    <data-column propertyName="holderNames"
+                                 [flexRate]="0.3"
+                                 columnName="{{ 'choose-permit-license-for-renewal.holder-names' | tlTranslate }}">
+                    </data-column>
+                    <data-column propertyName="captain"
+                                 [flexRate]="0.3"
+                                 columnName="{{ 'choose-permit-license-for-renewal.captain' | tlTranslate }}">
+                    </data-column>
+                    <data-column propertyName="validFrom"
+                                 [flexRate]="0.2"
+                                 dataType="date"
+                                 columnName="{{ 'choose-permit-license-for-renewal.valid-from' | tlTranslate }}">
+                    </data-column>
+                    <data-column propertyName="validTo"
+                                 [flexRate]="0.2"
+                                 dataType="date"
+                                 columnName="{{ 'choose-permit-license-for-renewal.valid-to' | tlTranslate }}">
+                    </data-column>
+                    <data-template-column [flexRate]="0.4"
+                                          columnName="{{ 'choose-permit-license-for-renewal.fishing-gears' | tlTranslate }}">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                                <span class="text-ellipsis">
+                                    {{ row.data['fishingGears'] }}
+                                </span>
+                                <tl-popover-button *ngIf="row.data['fishingGears'] !== null && row.data['fishingGears'] !== undefined && row.data['fishingGears'].length > 0"
+                                                   iconClass="accent-color"
+                                                   icon="info"
+                                                   style="vertical-align:text-bottom">
+                                    <pre style="font-family: inherit !important; max-width: 300px !important;">{{ row.data['fishingGears'] }}</pre>
+                                </tl-popover-button>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+                    <data-template-column [flexRate]="0.4"
+                                          columnName="{{ 'choose-permit-license-for-renewal.auqatic-organisms' | tlTranslate }}">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                                <span class="text-ellipsis">
+                                    {{ row.data['auqticOrganisms'] }}
+                                </span>
+                                <tl-popover-button *ngIf="row.data['fishingGears'] !== null && row.data['fishingGears'] !== undefined && row.data['fishingGears'].length > 0"
+                                                   iconClass="accent-color"
+                                                   icon="info"
+                                                   style="vertical-align:text-bottom">
+                                    <pre style="font-family: inherit !important; max-width: 300px !important;">{{ row.data['auqticOrganisms'] }}</pre>
+                                </tl-popover-button>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+                </tl-data-table>
+                <mat-error *ngIf="noPermitLicenseChosenValidation">{{ 'choose-permit-license-for-renewal.permit-license-must-be-selected' | tlTranslate }}*</mat-error>
+            </div>
+            <ng-template #noPermitLicenses>
+                <div fxFlex="100" fxLayout="row">
+                    <mat-error>{{ 'choose-permit-license-for-renewal.no-permit-licenses-to-choose-from' | tlTranslate }}</mat-error>
+                </div>
+            </ng-template>
+        </div>
+    </mat-step>
+</mat-vertical-stepper>

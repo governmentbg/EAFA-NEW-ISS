@@ -1,0 +1,82 @@
+﻿<div fxLayout="row" fxFill>
+    <tl-card class="pad-top-10" fxFlex="20">
+        <tl-card-content>
+            <mat-tree id="nomenclatures-tree" [dataSource]="treeDataSource" [treeControl]="treeControl">
+                <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding matTreeNodePaddingIndent="20">
+                    <button #childButton 
+                            mat-button
+                            [disableRipple]="true" 
+                            matTooltip="{{ node.name }}"
+                            (click)="nodeSelected(node)">
+                        <mat-icon>{{ selectedNode === node ? 'arrow_right' : '' }}</mat-icon>
+                        <span>{{node.name}}</span>
+                    </button>
+                </mat-tree-node>
+
+                <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+                    <button #parentButton 
+                            mat-button 
+                            matTreeNodeToggle 
+                            matTooltip="{{ node.name }}">
+                        <mat-icon>{{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}</mat-icon>
+                        <span>{{ node.name }}</span>
+                    </button>
+                </mat-tree-node>
+            </mat-tree>
+        </tl-card-content>
+    </tl-card>
+
+    <div *ngIf="selectedNode" fxFlex="80">
+        <search-panel [translateService]="translate">
+            <div [formGroup]="form" fxFlexFill fxLayout="column" fxLayoutAlign="start start">
+
+            </div>
+        </search-panel>
+
+        <mat-card class="pad-sides-10">
+            <tl-data-table [showInactiveRecords]="canRestoreRecords"
+                           [showAddButton]="canAddRecords"
+                           (addButtonClicked)="addEditNomenclature(undefined, false)">
+                <data-column *ngFor="let column of dataColumns"
+                             [flexRate]="column.width"
+                             columnName="{{ column.columnName }}"
+                             propertyName="{{ column.propertyNameCamel }}"
+                             dataType="{{ column.dataType }}">
+                </data-column>
+
+                <data-template-column [flexRate]="0.5">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button icon="visibility" 
+                                            (buttonClicked)="addEditNomenclature(row.data, true)" 
+                                            iconClass="accent-color"
+                                            tooltipText="{{'nomenclatures-page.view-nom-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="canEditRecords && isActive(row.data)" 
+                                            icon="edit" 
+                                            (buttonClicked)="addEditNomenclature(row.data, false)" 
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'nomenclatures-page.edit-nom-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="canDeleteRecords && isActive(row.data)"
+                                            icon="delete" 
+                                            (buttonClicked)="deleteNomenclature(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'nomenclatures-page.delete-nom-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="canRestoreRecords && !isActive(row.data)" 
+                                            icon="restore"
+                                            (buttonClicked)="restoreNomenclature(row.data)" 
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'nomenclatures-page.restore-nom-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </mat-card>
+    </div>
+</div>

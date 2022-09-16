@@ -1,0 +1,134 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     validityCheckerGroup
+     [formGroup]="form"
+     [notifierGroup]="notifier"
+     class="dialog-padding">
+    <!-- Заявител -->
+    <application-submitted-by formControlName="submittedByControl"
+                              notifier
+                              validityChecker
+                              label="{{ 'fishing-capacity.transfer-requester' | tlTranslate }}"
+                              [isIdReadOnly]="isEditing || isPublicApp"
+                              [expectedResults]="expectedResults.submittedBy">
+    </application-submitted-by>
+
+    <!-- Получател -->
+    <application-submitted-for formControlName="submittedForControl"
+                               notifier
+                               validityChecker
+                               relationLabel="{{ 'fishing-capacity.transfer-requester-role' | tlTranslate }}"
+                               submittedForLabel="{{ 'fishing-capacity.transfer-receiver' | tlTranslate }}"
+                               [pageCode]="pageCode"
+                               [hideRelation]="showOnlyRegiXData"
+                               [isIdReadOnly]="isEditing"
+                               [showCustodianOfProperty]="false"
+                               [submittedByControl]="form.controls.submittedByControl"
+                               [expectedResults]="expectedResults.submittedFor">
+    </application-submitted-for>
+
+    <tl-expansion-panel title="{{ 'fishing-capacity.transfer-application-data' | tlTranslate }}"
+                        tooltipResourceName="fishing-capacity.transfer-application-data-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="space-between stretch">
+            <!-- Прехвърляне на риболовен апацитет от съществуващо удостоверение -->
+            <div *ngIf="!showOnlyRegiXData" fxLayout="row" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="capacityCertificateControl"
+                                 tooltipResourceName="fishing-capacity.transfer-capacity-certificate-helper"
+                                 label="{{ 'fishing-capacity.transfer-capacity-certificate' | tlTranslate }}"
+                                 [options]="certificates"
+                                 [templateOptions]="true"
+                                 [autoMatchTextToOption]="true">
+                </tl-autocomplete>
+                <tl-input *ngIf="form.controls.capacityCertificateControl.value"
+                          fxFlex="25"
+                          [formControl]="tonnageControl"
+                          tooltipResourceName="fishing-capacity.transfer-certificate-tonnage-helper"
+                          label="{{ 'fishing-capacity.transfer-certificate-tonnage' | tlTranslate }}">
+                </tl-input>
+                <tl-input *ngIf="form.controls.capacityCertificateControl.value"
+                          fxFlex="25"
+                          [formControl]="powerControl"
+                          tooltipResourceName="fishing-capacity.transfer-certificate-power-helper"
+                          label="{{ 'fishing-capacity.transfer-certificate-power' | tlTranslate }}">
+                </tl-input>
+                <tl-input *ngIf="form.controls.capacityCertificateControl.value"
+                          fxFlex="25"
+                          [formControl]="validToControl"
+                          tooltipResourceName="fishing-capacity.transfer-certificate-valid-to-helper"
+                          label="{{ 'fishing-capacity.transfer-certificate-valid-to' | tlTranslate }}">
+                </tl-input>
+                <div [fxFlex]="form.controls.capacityCertificateControl.value ? 0 : 25"></div>
+                <div [fxFlex]="form.controls.capacityCertificateControl.value ? 0 : 25"></div>
+                <div [fxFlex]="form.controls.capacityCertificateControl.value ? 0 : 25"></div>
+            </div>
+
+            <!-- Лица, на които се прехвърля риболовният капацитет -->
+            <tl-card tooltipResourceName="fishing-capacity.transfer-to-people-helper"
+                     [validityChecker]="form">
+                <tl-card-title>{{ 'fishing-capacity.transfer-to-people' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <transfer-fishing-capacity-table fxFlex="100"
+                                                     formControlName="holdersControl"
+                                                     [showOnlyRegiXData]="showOnlyRegiXData"
+                                                     [isDraft]="isDraft"
+                                                     [isEditing]="isEditing"
+                                                     [service]="service"
+                                                     [maxGrossTonnage]="maxGrossTonnage"
+                                                     [maxPower]="maxPower"
+                                                     [expectedResults]="expectedResults?.holders">
+                    </transfer-fishing-capacity-table>
+                </tl-card-content>
+            </tl-card>
+
+            <!-- Информация за начин на връчване -->
+            <tl-card *ngIf="hasDelivery && !showOnlyRegiXData"
+                     tooltipResourceName="ships-register.dereg-delivery-data-helper"
+                     [validityChecker]="form"
+                     [validityCheckerExtraCondition]="hasNoEDeliveryRegistrationError !== true">
+                <tl-card-title>{{ 'fishing-capacity.transfer-delivery-data' | tlTranslate }}</tl-card-title>
+
+                <tl-card-content>
+                    <delivery-data formControlName="deliveryDataControl"
+                                   [pageCode]="pageCode">
+                    </delivery-data>
+                    <mat-error *ngIf="hasNoEDeliveryRegistrationError">
+                        * {{ 'fishing-capacity.transfer-has-no-e-delivery-registration-error' | tlTranslate }}
+                    </mat-error>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Информация за плащане -->
+    <tl-expansion-panel *ngIf="isPaid && !showOnlyRegiXData && paymentInformation !== undefined && paymentInformation !== null"
+                        title="{{ 'fishing-capacity.transfer-payment-information' | tlTranslate }}"
+                        tooltipResourceName="fishing-capacity.transfer-payment-information-helper">
+        <payment-information [paymentData]="paymentInformation"></payment-information>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'fishing-capacity.transfer-files' | tlTranslate }}"
+                        tooltipResourceName="fishing-capacity.transfer-files-helper"
+                        [validityChecker]="form">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)"
+                                  [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                  [refreshFileTypes]="refreshFileTypes">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+
+    <!-- Проверки -->
+    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+                        title="{{ 'fishing-capacity.transfer-regix-checks-results' | tlTranslate }}"
+                        tooltipResourceName="fishing-capacity.transfer-regix-checks-results-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-checks-results [regixChecksCollection]="regixChecks"></regix-checks-results>
+        </div>
+    </tl-expansion-panel>
+</div>

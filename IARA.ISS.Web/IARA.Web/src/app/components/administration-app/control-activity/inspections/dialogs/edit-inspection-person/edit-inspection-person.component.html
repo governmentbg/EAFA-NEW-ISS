@@ -1,0 +1,96 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <!-- Основни данни -->
+    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <inspection-general-info formControlName="generalInfoControl"
+                                     [institutions]="institutions">
+            </inspection-general-info>
+            <patrol-vehicles-table formControlName="patrolVehiclesControl"
+                                   [isWaterVehicle]="false">
+            </patrol-vehicles-table>
+            <inspection-map-viewer formControlName="mapControl">
+            </inspection-map-viewer>
+            <tl-input formControlName="addressControl"
+                      label="{{ 'inspections.address' | tlTranslate }}">
+            </tl-input>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Данни за юридическо лице, регистрирано по чл. 25 от ЗРА, за отглеждане на риба и други организми -->
+    <tl-expansion-panel [formGroup]="form"
+                        title="{{ 'inspections.aquaculture-data' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <inspected-person formControlName="personControl"
+                              [countries]="countries"
+                              [personType]="inspectedPersonTypeEnum.CaptFshmn"
+                              title="{{ 'inspections.inspected-person' | tlTranslate }}">
+            </inspected-person>
+            <tl-checkbox formControlName="hasTicketControl"
+                         label="{{ 'inspections.has-ticket' | tlTranslate }}">
+            </tl-checkbox>
+            <tl-input formControlName="ticketControl"
+                      label="{{ 'inspections.fishing-ticket-number' | tlTranslate }}">
+            </tl-input>
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start center">
+                <tl-input fxFlex="50"
+                          formControlName="fishingGearCountControl"
+                          type="number"
+                          label="{{ 'inspections.fishing-gears-count' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="50"
+                          formControlName="hookCountControl"
+                          type="number"
+                          label="{{ 'inspections.hooks-count' | tlTranslate }}">
+                </tl-input>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Данни за инспекцията -->
+    <tl-expansion-panel [formGroup]="form"
+                        title="{{ 'inspections.aquaculture-catch' | tlTranslate }}">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <inspected-catches-table formControlName="catchesControl"
+                                     [ships]="ships"
+                                     [fishes]="fishes"
+                                     [types]="catchTypes"
+                                     [catchZones]="catchZones"
+                                     [fishSex]="fishSex"
+                                     [hasUnloadedQuantity]="false"
+                                     [hasAllowedDeviation]="false"
+                                     [hasCatchZone]="false">
+            </inspected-catches-table>
+            <inspection-toggle-list formControlName="catchTogglesControl"
+                                    [toggles]="catchToggles">
+            </inspection-toggle-list>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Допълнителна информация -->
+    <inspection-additional-info formControlName="additionalInfoControl">
+        <tl-textarea formControlName="fishermanCommentControl"
+                     [minRows]="3"
+                     label="{{ 'inspections.fisherman-comment' | tlTranslate }}">
+        </tl-textarea>
+    </inspection-additional-info>
+
+    <!-- Файлове -->
+    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+</div>

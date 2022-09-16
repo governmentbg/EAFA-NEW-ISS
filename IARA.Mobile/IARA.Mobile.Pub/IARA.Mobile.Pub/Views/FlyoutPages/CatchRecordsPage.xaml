@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sv:MainPage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:c="clr-namespace:IARA.Mobile.Pub.Views.Controls"
+        xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages"
+        xmlns:dto="clr-namespace:IARA.Mobile.Pub.Application.DTObjects.CatchRecords;assembly=IARA.Mobile.Pub.Application"
+        x:Class="IARA.Mobile.Pub.Views.FlyoutPages.CatchRecordsPage"
+        x:DataType="viewModels:CatchRecordsViewModel"
+        x:TypeArguments="viewModels:CatchRecordsViewModel"
+        x:Name="page"
+        PageInfo="{rt:Translate PageInfo, Group=CatchRecords}"
+        Title="{rt:Translate Title, Group=CatchRecords}"
+        BackgroundColor="{StaticResource BackgroundColor}">
+    <tl:TLFillLayout>
+        <Grid xct:StateLayout.CurrentState="{Binding State}">
+            <xct:StateLayout.StateViews>
+                <xct:StateView StateKey="Loading" VerticalOptions="FillAndExpand">
+                    <ActivityIndicator IsRunning="{Binding IsBusy}"
+                            Color="{StaticResource Primary}"
+                            HeightRequest="150"
+                            WidthRequest="150"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center" />
+                </xct:StateView>
+                <xct:StateView StateKey="Empty" VerticalOptions="FillAndExpand">
+                    <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label FontFamily="FA"
+                                Text="{Static h:IconFont.Fish}"
+                                FontSize="100"
+                                HorizontalOptions="Center"
+                                TextColor="{StaticResource Primary}" />
+                        <Label Text="{rt:Translate NoCatchRecords, Group=CatchRecords}" LineBreakMode="WordWrap" />
+                    </StackLayout>
+                </xct:StateView>
+                <xct:StateView StateKey="Success">
+                    <RefreshView Command="{Binding Reload}">
+                        <CollectionView SelectionMode="None"
+                                ItemsSource="{Binding CatchRecords}"
+                                HeightRequest="1000">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentView x:DataType="dto:CatchRecordDto">
+                                        <Frame Margin="5" Padding="10">
+                                            <Frame.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding BindingContext.Review, Source={Reference page}}" CommandParameter="{Binding}" />
+                                            </Frame.GestureRecognizers>
+                                            <Grid RowDefinitions="Auto,Auto"
+                                                    ColumnDefinitions="*,*,Auto"
+                                                    HorizontalOptions="FillAndExpand">
+                                                <StackLayout Grid.ColumnSpan="2" Orientation="Horizontal">
+                                                    <Label VerticalOptions="Center"
+                                                            FontFamily="FA"
+                                                            FontSize="24"
+                                                            Text="{Static h:IconFont.CircleExclamation}"
+                                                            TextColor="Gold"
+                                                            IsVisible="{Binding IsLocal}">
+                                                        <Label.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding BindingContext.ShowOfflineInfo, Source={Reference page}}" />
+                                                        </Label.GestureRecognizers>
+                                                    </Label>
+                                                    <Label Text="{Binding WaterArea}"
+                                                            FontAttributes="Bold"
+                                                            LineBreakMode="WordWrap"
+                                                            VerticalOptions="Center"
+                                                            FontSize="20" />
+                                                </StackLayout>
+                                                <tl:TLRichLabel Grid.Row="1">
+                                                    <Span Text="{Binding TotalCount}" />
+                                                    <Span Text=" " />
+                                                    <Span Text="{rt:Translate ShortCount, Group=CatchRecords}" />
+                                                    <Span Text=" (" />
+                                                    <Span Text="{Binding TotalQuantity}" />
+                                                    <Span Text=" " />
+                                                    <Span Text="{rt:Translate ShortKilograms, Group=CatchRecords}" />
+                                                    <Span Text=")" />
+                                                </tl:TLRichLabel>
+                                                <tl:TLRichLabel Grid.Row="1" Grid.Column="1">
+                                                    <Span Text="{rt:Translate Date, Group=Common}" />
+                                                    <Span Text=": " />
+                                                    <Span Text="{Binding CatchDate, Converter={StaticResource DateToString}}" />
+                                                </tl:TLRichLabel>
+                                                <StackLayout Grid.RowSpan="2"
+                                                        Grid.Column="2"
+                                                        Orientation="Horizontal"
+                                                        VerticalOptions="Center"
+                                                        IsVisible="{Binding IsActive}">
+                                                    <ImageButton Command="{Binding BindingContext.Edit, Source={Reference page}}"
+                                                            CommandParameter="{Binding}"
+                                                            Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.PenToSquare}, Size=20}"
+                                                            Padding="10" />
+                                                    <ImageButton Command="{Binding BindingContext.Delete, Source={Reference page}}"
+                                                            CommandParameter="{Binding}"
+                                                            Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20}"
+                                                            Padding="10"
+                                                            BackgroundColor="{StaticResource ErrorColor}" />
+                                                </StackLayout>
+                                            </Grid>
+                                        </Frame>
+                                    </ContentView>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </RefreshView>
+                </xct:StateView>
+            </xct:StateLayout.StateViews>
+        </Grid>
+        <c:FloatingAddButtonView Command="{Binding Add}" />
+    </tl:TLFillLayout>
+</sv:MainPage>

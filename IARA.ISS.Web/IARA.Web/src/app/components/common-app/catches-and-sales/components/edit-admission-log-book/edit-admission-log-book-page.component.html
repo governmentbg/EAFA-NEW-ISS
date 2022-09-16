@@ -1,0 +1,96 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     validityCheckerGroup
+     [formGroup]="form">
+    <tl-card tooltipResourceName="catches-and-sales.admission-basic-information-card-helper" [validityChecker]="form">
+        <tl-card-content fxFlexFill fxLayout="column">
+            <div fxFLex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="pageNumberControl"
+                          label="{{ 'catches-and-sales.admission-page-page-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.admission-page-page-number-helper"
+                          [readonly]="true">
+                </tl-input>
+                <tl-date fxFlex="25"
+                         formControlName="handoverDateControl"
+                         label="{{ 'catches-and-sales.admission-page-handover-date' | tlTranslate }}"
+                         tooltipResourceName="catches-and-sales.admission-page-handover-date-helper"
+                         [max]="currentDate">
+                </tl-date>
+                <tl-input fxFlex="25"
+                          formControlName="storageLocationControl"
+                          label="{{ 'catches-and-sales.admission-page-storage-location' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.admission-page-storage-location-helper">
+                </tl-input>
+                <tl-input *ngIf="!isAdd"
+                          fxFlex="25"
+                          formControlName="statusControl"
+                          label="{{ 'catches-and-sales.admission-page-status' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.admission-page-status-helper"
+                          [readonly]="true">
+                </tl-input>
+                <div *ngIf="isAdd" fxFlex="25"></div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Основна информация -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.admission-page-basic-information-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.admission-page-basic-information-panel-helper"
+                        [validityChecker]="form">
+        <div fxFlexFill fxLayout="row" fxLayoutGap="1em">
+            <common-log-book-page-data fxFlexFill
+                                       formControlName="commonLogBookPageDataControl"
+                                       validityChecker
+                                       [logBookType]="logBookType"
+                                       [isReadonly]="true">
+            </common-log-book-page-data>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Приемащ -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.admission-page-accepting-person-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.admission-page-accepting-person-panel-helper"
+                        [validityChecker]="form">
+        <log-book-page-person fxFlex="100"
+                              formControlName="acceptingPersonControl"
+                              validityChecker
+                              [isIdReadOnly]="!isAdd"
+                              [readonly]="true"
+                              [service]="service">
+        </log-book-page-person>
+    </tl-expansion-panel>
+
+    <!-- Данни за продукти от риболов, обект на предаване -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.admission-page-products-information-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.admission-page-products-information-panel-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="noAvailableProducts !== true">
+        <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+            <log-book-page-products fxFlexFill
+                                    formControlName="productsControl"
+                                    validityChecker
+                                    [isReadonly]="viewMode"
+                                    [service]="service"
+                                    [logBookType]="logBookType"
+                                    [originProducts]="originPossibleProducts">
+            </log-book-page-products>
+            <mat-error *ngIf="noAvailableProducts">
+                * {{ 'catches-and-sales.admission-page-products-no-available-products-in-origin-document-error' | tlTranslate }}
+            </mat-error>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel title="{{ 'catches-and-sales.admission-page-files-panel' | tlTranslate }}"
+                        tooltipResourceName="catches-and-sales.admission-page-files-panel-helper"
+                        [validityChecker]="form">
+        <file-uploader-form-array formControlName="filesControl"
+                                  validityChecker
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(service)">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+</div>

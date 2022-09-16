@@ -1,0 +1,73 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <!-- Филтри -->
+    <search-panel [translateService]="translate">
+        <div [formGroup]="formGroup" fxFlexFill fxLayout="column" fxLayoutAlign="start start">
+            <!-- Име на организация, ЕИК, дата на регистрация -->
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-input fxFlex="33"
+                          formControlName="legalNameControl"
+                          label="{{ 'legal-entities-page.legal-name' | tlTranslate }}"
+                          tooltipResourceName="legal-entities-page.legal-name-helper">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="eikControl"
+                          label="{{ 'legal-entities-page.eik' | tlTranslate }}"
+                          tooltipResourceName="legal-entities-page.eik-helper">
+                </tl-input>
+                <tl-date-range fxFlex="33"
+                               formControlName="registeredDateRangeControl"
+                               label="{{ 'legal-entities-page.registration-date-range' | tlTranslate }}"
+                               tooltipResourceName="legal-entities-page.registration-date-range-helper">
+                </tl-date-range>
+            </div>
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <mat-card>
+        <tl-card-content>
+            <tl-data-table [showAddButton]="canAddRecords"
+                           [showInactiveRecords]="false"
+                           (addButtonClicked)="openChooseApplicationForRegisterDialog()">
+                <data-column [flexRate]="0.3"
+                             propertyName="name"
+                             columnName="{{ 'legal-entities-page.legal-name' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="0.2"
+                             propertyName="eik"
+                             columnName="{{ 'legal-entities-page.eik' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="0.2"
+                             propertyName="registrationDate"
+                             dataType="date"
+                             columnName="{{ 'legal-entities-page.registration-date' | tlTranslate }}">
+                </data-column>
+
+                <data-column [flexRate]="0.2"
+                             propertyName="activeUsersCount"
+                             columnName="{{ 'legal-entities-page.active-users-count' | tlTranslate }}">
+                </data-column>
+
+                <data-template-column [flexRate]="0.2" [headerClass]="'justify-center'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="end center">
+                            <tl-icon-button icon="visibility"
+                                            iconClass="accent-color"
+                                            (buttonClicked)="editLegalEntity(row, true)"
+                                            tooltipText="{{ 'legal-entities-page.view-legal-entity-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="canEditRecords"
+                                            icon="edit"
+                                            iconClass="accent-color"
+                                            (buttonClicked)="editLegalEntity(row, false)"
+                                            tooltipText="{{ 'legal-entities-page.edit-legal-entity-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </tl-card-content>
+    </mat-card>
+</div>

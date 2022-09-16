@@ -1,0 +1,40 @@
+﻿<div fxLayout="column">
+    <!-- Промени -->
+    <div *ngFor="let control of formArray.controls; let i = index; last as last"
+         fxLayout="column">
+        <div class="change"
+             fxFlex="100"
+             fxLayout="row"
+             fxLayoutGap="0.5em"
+             fxLayoutAlign="start start">
+            <single-change-of-circumstances [fxFlex]="disableDelete ? 100 : 95"
+                                            [changeTypes]="types"
+                                            [formControl]="control"
+                                            [showOnlyRegiXData]="showOnlyRegiXData">
+            </single-change-of-circumstances>
+
+            <!-- Бутон за премахване -->
+            <div *ngIf="!disableDelete" fxFlex="5" fxLayout="row" fxLayoutAlign="center center" class="delete-btn">
+                <tl-icon-button type="MAT_ICON"
+                                iconClass="accent-color"
+                                icon="delete"
+                                matTooltip="{{ 'change-of-circumstances.delete-change-of-circumstances' | tlTranslate }}"
+                                matTooltipShowDelay="500"
+                                [disabled]="isDisabled || formArray.length < 2"
+                                (buttonClicked)="removeChange(i)">
+                </tl-icon-button>
+            </div>
+        </div>
+
+        <mat-divider *ngIf="!last" class="divider"></mat-divider>
+    </div>
+
+    <!-- Бутон за добавяне -->
+    <div *ngIf="!isDisabled && !showOnlyRegiXData" fxLayout="row" fxLayoutAlign="end center">
+        <button mat-raised-button
+                color="accent"
+                (click)="addChange()">
+            {{ 'change-of-circumstances.add-change-of-circumstances' | tlTranslate }}
+        </button>
+    </div>
+</div>

@@ -1,0 +1,11 @@
+﻿<div fxLayoutAlign="start center" fxLayout="row">
+    <mat-slide-toggle [color]="color"
+                      [labelPosition]="labelPosition"
+                      [formControl]="ngControl.control">
+        {{ label }}
+    </mat-slide-toggle>
+    <mat-error *ngIf="errors.length > 0">
+        <tl-error [errors]="errors" [useMultipleLines]="multilineError"></tl-error>
+    </mat-error>
+    <tl-help fxFlexFill [tooltipResource]="tooltipResourceName" class="bottom-3-btn"></tl-help>
+</div>

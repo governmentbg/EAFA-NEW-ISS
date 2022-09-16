@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="IARA.Mobile.Pub.Views.Controls.MyTicketView"
+             xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+             xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+             xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+             xmlns:local="clr-namespace:IARA.Mobile.Pub.Converters"
+             xmlns:ctrl="clr-namespace:IARA.Mobile.Pub.Views.Controls;assembly=IARA.Mobile.Pub"
+             xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API;assembly=IARA.Mobile.Pub.Application"
+             x:DataType="viewModels:FishingTicketDto"
+             x:Name="view">
+    <ContentView.Resources>
+        <local:ValidTicketColorConvertor x:Key="ValidTicketColorConvertor" />
+        <local:StatusReasonVisibilityConverter x:Key="StatusReasonConverter" />
+        <local:TicketValidToConverter x:Key="TicketValidToConverter" />
+        <local:TicketNameConverter x:Key="TicketNameConverter" />
+    </ContentView.Resources>
+    <ContentView.Content>
+        <StackLayout>
+            <Grid RowDefinitions="Auto,20,20,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition>
+                        <ColumnDefinition.Width>
+                            <OnIdiom x:TypeArguments="GridLength"
+                                     Tablet="140"
+                                     Phone="125" />
+                        </ColumnDefinition.Width>
+                    </ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding Path=Model.ViewTicket, Source={Reference view}}"
+                                          CommandParameter="{Binding}" />
+                </Grid.GestureRecognizers>
+                <BoxView Grid.RowSpan="4"
+                         CornerRadius="3"
+                         WidthRequest="10"
+                         HorizontalOptions="FillAndExpand"
+                         VerticalOptions="FillAndExpand">
+                    <BoxView.BackgroundColor>
+                        <MultiBinding Converter="{StaticResource ValidTicketColorConvertor}">
+                            <Binding Path="PaymentStatus" />
+                            <Binding Path="ValidTo" />
+                            <Binding Path="ApplicationStatusCode" />
+                            <Binding Path="StatusCode" />
+                        </MultiBinding>
+                    </BoxView.BackgroundColor>
+                </BoxView>
+                <tl:TLRichLabel Grid.Column="1"
+                                FontSize="14"
+                                FontAttributes="Bold"
+                                LineBreakMode="WordWrap">
+                    <Span FontAttributes="Bold">
+                        <Span.Text>
+                            <MultiBinding Converter="{StaticResource TicketNameConverter}">
+                                <Binding Path="PeriodCode" />
+                                <Binding Path="TypeName" />
+                                <Binding Path="PeriodName" />
+                            </MultiBinding>
+                        </Span.Text>
+                    </Span>
+                </tl:TLRichLabel>
+                <Label Grid.Row="1"
+                       Grid.Column="1"
+                       LineBreakMode="WordWrap"
+                       Text="{Binding PersonFullName}" />
+                <tl:TLRichLabel Grid.Row="2"
+                                Grid.Column="1"
+                                FontSize="12"
+                                VerticalOptions="Center">
+                    <Span Text="{rt:Translate TicketValidFrom, Group=Common}" />
+                    <Span Text=" " />
+                    <Span FontAttributes="Bold"
+                          Text="{Binding ValidFrom, Converter={StaticResource DateTimeToString}}" />
+                </tl:TLRichLabel>
+                <tl:TLRichLabel Grid.Row="3"
+                                Grid.Column="1"
+                                FontSize="12"
+                                VerticalOptions="Center">
+                    <Span Text="{rt:Translate TicketValidTo, Group=Common}" />
+                    <Span Text=" " />
+                    <Span FontAttributes="Bold">
+                        <Span.Text>
+                            <MultiBinding Converter="{StaticResource TicketValidToConverter}">
+                                <Binding Path="PeriodCode" />
+                                <Binding Path="ValidTo" />
+                            </MultiBinding>
+                        </Span.Text>
+                    </Span>
+                </tl:TLRichLabel>
+                <StackLayout Grid.Column="2"
+                             Grid.RowSpan="4"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center">
+                    <ctrl:TicketStatusBarView ValidFrom="{Binding ValidFrom}"
+                                              ValidTo="{Binding ValidTo}"
+                                              PaymentStatus="{Binding PaymentStatus}"
+                                              ApplicationStatusCode="{Binding ApplicationStatusCode}"
+                                              TicketUpdateCommand="{Binding Path=Model.UpdateTicket, Source={Reference view}}"
+                                              TicketUpdateCommandParameter="{Binding}"
+                                              TicketRenewCommand="{Binding Path=Model.RenewTicket, Source={Reference view}}"
+                                              TicketRenewCommandParameter="{Binding}"
+                                              PaymentCommand="{Binding Path=Model.ProceedToPayment, Source={Reference view}}"
+                                              PaymentCommandParameter="{Binding}"
+                                              StatusCode="{Binding StatusCode}" />
+                </StackLayout>
+            </Grid>
+            <Grid ColumnDefinitions="Auto,Auto">
+                <Grid.IsVisible>
+                    <MultiBinding Converter="{StaticResource StatusReasonConverter}">
+                        <Binding Path="ApplicationStatusCode" />
+                        <Binding Path="ApplicationStatusReason" />
+                    </MultiBinding>
+                </Grid.IsVisible>
+                <Label Grid.Column="0"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center"
+                       FontSize="25"
+                       FontFamily="FA"
+                       TextColor="RED"
+                       Margin="10,10"
+                       Text="{Static h:IconFont.TriangleExclamation}" />
+                <Label Grid.Column="1"
+                       VerticalTextAlignment="Center"
+                       FontAttributes="Bold"
+                       LineBreakMode="WordWrap"
+                       Text="{Binding ApplicationStatusReason}" />
+            </Grid>
+            <BoxView Grid.Row="1"
+                     BackgroundColor="Black"
+                     HeightRequest="1" />
+
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

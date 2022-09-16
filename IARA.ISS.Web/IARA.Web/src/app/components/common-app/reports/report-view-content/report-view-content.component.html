@@ -1,0 +1,132 @@
+﻿<div fxFlexFill class="space-cards" fxLayoutGap="1em">
+    <div fxLayout="column" fxFlex="25">
+        <tl-card>
+            <tl-card-title fxLayoutAlign="space-between center">
+                <span>{{ 'report-view.reports-title' | tlTranslate }}</span>
+            </tl-card-title>
+            <tl-card-subtitle fxLayoutAlign="end none" *ngIf="!isPublic">
+                <button *ngIf="canAddReport || canRestoreReport"
+                        mat-icon-button [matMenuTriggerFor]="menu">
+                    <mat-icon class="s-14" fxHide.xs>more_horiz</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" [overlapTrigger]="false">
+                    <button *ngIf="canAddReport"
+                            mat-menu-item
+                            (click)=openEditDialog()>
+                        <mat-icon>add</mat-icon>
+                        <span>{{ 'report-view.menu-add-group' | tlTranslate }}</span>
+                    </button>
+                    <button *ngIf="canRestoreReport"
+                            mat-menu-item
+                            (click)="switchReportNodeState()">
+                        <mat-icon>filter_list</mat-icon>
+                        <span>{{ (showActiveNodes ? 'report-view.menu-show-inactive' : 'report-view.menu-show-active') | tlTranslate }}</span>
+                    </button>
+                </mat-menu>
+            </tl-card-subtitle>
+            <tl-card-content fxLayoutGap="2em" [formGroup]="filterGroup">
+                <tl-input label="{{ 'report-view.filter-keyword-search' |  tlTranslate }}"
+                          formControlName="keywordSearchControl">
+                </tl-input>
+                <mat-tree id="reports-tree" [dataSource]="dataSource" [treeControl]="treeControl" class="tree">
+                    <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle fxLayout="column" fxLayoutGap="0.2em">
+                        <div fxFlexFill fxLayout="row" fxLayoutGap="0.2em" fxLayoutAlign="space-between start">
+                            <div id="reports-tree-text-button" fxLayout="row">
+                                <button matTooltip="{{ node.name }}"
+                                        [matTooltipShowDelay]="500"
+                                        mat-button
+                                        (click)="node.isActive && reportClicked(node.id, node.name)">
+                                    <div class="report-button" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.2em">
+                                        <mat-icon>
+                                            {{ selectedReportNodeId === node.id && isReportClicked ? 'chevron_right' : node.iconName }}
+                                        </mat-icon>
+                                        <span>{{ node.name }}</span>
+                                    </div>
+                                </button>
+                            </div>
+                            <div *ngIf="!isPublic"
+                                 id="reports-tree-action-buttons"
+                                 fxLayout="row"
+                                 fxLayoutAlign="end center"
+                                 fxLayoutGap="0.3em">
+                                <tl-icon-button *ngIf="node.isActive && canReadReport"
+                                                icon="visibility"
+                                                (buttonClicked)="openEditComponent(node.id, false, true)">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="node.isActive && canEditReport"
+                                                icon="edit"
+                                                (buttonClicked)="openEditComponent(node.id)">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="node.isActive && canDeleteReport"
+                                                icon="delete"
+                                                (buttonClicked)="deleteReport(node.id)">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="!node.isActive && canRestoreReport && isGroupActive(node)"
+                                                icon="restore"
+                                                (buttonClicked)="undoDeletedReport(node.id)">
+                                </tl-icon-button>
+                            </div>
+                        </div>
+                    </mat-tree-node>
+                    <mat-nested-tree-node *matTreeNodeDef="let node; when: isGroup">
+                        <div class="mat-tree-node">
+                            <div fxFlex="90"
+                                 class="text-ellipsis"
+                                 matTooltip="{{ node.name }}"
+                                 [matTooltipShowDelay]="500">
+                                <button mat-icon-button
+                                        matTreeNodeToggle>
+                                    <mat-icon class="mat-icon-rtl-mirror">
+                                        {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
+                                    </mat-icon>
+                                </button>{{ node.name }}
+                            </div>
+                            <div *ngIf="!isPublic">
+                                <button *ngIf="canAddReport || canEditReport || canDeleteReport || canRestoreReport"
+                                        mat-icon-button [matMenuTriggerFor]="groupMenu">
+                                    <mat-icon class="s-14" fxHide.xs>more_horiz</mat-icon>
+                                </button>
+                                <mat-menu #groupMenu="matMenu" [overlapTrigger]="false">
+                                    <button *ngIf="node.isActive && canAddReport"
+                                            mat-menu-item
+                                            (click)="openEditComponent(node.id, true)">
+                                        <mat-icon>add</mat-icon>
+                                        <span>{{ 'report-view.menu-group-add' | tlTranslate }}</span>
+                                    </button>
+                                    <button *ngIf="node.isActive && canEditReport"
+                                            mat-menu-item
+                                            (click)=openEditDialog(node.id)>
+                                        <mat-icon>edit</mat-icon>
+                                        <span>{{ 'report-view.menu-group-edit' | tlTranslate }}</span>
+                                    </button>
+                                    <button *ngIf="node.isActive && canDeleteReport"
+                                            mat-menu-item
+                                            (click)=deleteGroup(node.id)>
+                                        <mat-icon>delete</mat-icon>
+                                        <span>{{ 'report-view.menu-group-delete' | tlTranslate }}</span>
+                                    </button>
+                                    <button *ngIf="!node.isActive && canRestoreReport"
+                                            mat-menu-item
+                                            (click)=undoDeletedGroup(node.id)>
+                                        <mat-icon>restore</mat-icon>
+                                        <span>{{ 'report-view.menu-group-restore' | tlTranslate }}</span>
+                                    </button>
+                                </mat-menu>
+                            </div>
+                        </div>
+                        <div [class.tree-invisible]="!treeControl.isExpanded(node)"
+                             role="group">
+                            <ng-container matTreeNodeOutlet></ng-container>
+                        </div>
+                    </mat-nested-tree-node>
+                </mat-tree>
+            </tl-card-content>
+        </tl-card>
+    </div>
+    <div *ngIf="isReportClicked"
+         fxLayout="column"
+         fxFlex="75">
+        <report-execution [reportId]="selectedReportNodeId" [reportService]="reportService">
+        </report-execution>
+    </div>
+</div>

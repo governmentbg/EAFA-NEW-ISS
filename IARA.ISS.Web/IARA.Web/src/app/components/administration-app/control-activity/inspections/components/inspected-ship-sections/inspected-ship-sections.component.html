@@ -1,0 +1,119 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     [formGroup]="form"
+     fxLayoutAlign="start stretch">
+    <!-- Данни за риболовния кораб -->
+    <inspected-ship-with-personnel formControlName="shipControl"
+                                   [hasMap]="hasMap"
+                                   [hasPort]="hasPort"
+                                   [toggles]="shipToggles"
+                                   [ships]="ships"
+                                   [countries]="countries"
+                                   [ports]="ports"
+                                   [vesselTypes]="vesselTypes"
+                                   [shipLabel]="shipLabel"
+                                   [shipObservationCategory]="shipObservationCategory"
+                                   (shipSelected)="onShipSelected($event)">
+    </inspected-ship-with-personnel>
+
+    <!-- Инспекция на кораб -->
+    <tl-expansion-panel [formGroup]="form"
+                        [title]="checksLabel">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <inspection-toggle-list formControlName="togglesControl"
+                                    [toggles]="checkToggles">
+            </inspection-toggle-list>
+            <div fxLayout="column"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start stretch">
+                <inspection-toggle formControlName="opMembershipControl"
+                                   [toggle]="opMembership"
+                                   [options]="opMembership?.checkType === inspectionCheckTypesEnum.BOOL ? boolOptions : tripleOptions">
+                </inspection-toggle>
+                <tl-autocomplete formControlName="opMembershipAssociationControl"
+                                 [options]="associations"
+                                 label="{{ 'inspections.op-membership-association' | tlTranslate }}">
+                </tl-autocomplete>
+            </div>
+            <div fxLayout="column"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start stretch">
+                <inspection-toggle formControlName="preliminaryNoticeControl"
+                                   [toggle]="preliminaryNotice"
+                                   [options]="preliminaryNotice?.checkType === inspectionCheckTypesEnum.BOOL ? boolOptions : tripleOptions">
+                </inspection-toggle>
+                <div fxLayout="row"
+                     fxLayoutGap="1em"
+                     fxLayoutAlign="start stretch">
+                    <tl-input fxFlex="50"
+                              formControlName="preliminaryNoticeNumberControl"
+                              label="{{ 'inspections.preliminary-notice-number' | tlTranslate }}">
+                    </tl-input>
+                    <tl-input fxFlex="50"
+                              formControlName="preliminaryNoticePurposeControl"
+                              label="{{ 'inspections.preliminary-notice-purpose' | tlTranslate }}">
+                    </tl-input>
+                </div>
+            </div>
+            <inspected-permits-table formControlName="permitsControl"
+                                     (permitOptionPicked)="onPermitIdsChanged($event)">
+            </inspected-permits-table>
+            <inspected-log-books-table formControlName="logBooksControl">
+            </inspected-log-books-table>
+
+            <tl-textarea formControlName="checkObservationControl"
+                         [minRows]="3"
+                         label="{{ 'inspections.violation' | tlTranslate }}">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Инспекция на улова -->
+    <tl-expansion-panel [formGroup]="form"
+                        [title]="catchLabel">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <inspected-catches-table formControlName="catchesControl"
+                                     [hasUnloadedQuantity]="hasUnloadedQuantity"
+                                     [ships]="ships"
+                                     [fishes]="fishes"
+                                     [types]="catchTypes"
+                                     [catchZones]="catchZones"
+                                     [fishSex]="fishSex">
+            </inspected-catches-table>
+            <inspection-toggle-list formControlName="catchTogglesControl"
+                                    [toggles]="catchToggles">
+            </inspection-toggle-list>
+
+            <tl-textarea formControlName="catchObservationControl"
+                         [minRows]="3"
+                         label="{{ 'inspections.violation' | tlTranslate }}">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Инспекция на уредите -->
+    <tl-expansion-panel *ngIf="hasFishingGears"
+                        [formGroup]="form"
+                        [title]="fishingGearLabel">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <inspected-fishing-gears-table formControlName="fishingGearsControl"
+                                           [permitIds]="permitIds"
+                                           [hasAttachedAppliances]="true">
+            </inspected-fishing-gears-table>
+            <inspection-toggle-list formControlName="fishingGearTogglesControl"
+                                    [toggles]="fishingGearToggles">
+            </inspection-toggle-list>
+
+            <tl-textarea formControlName="fishingGearObservationControl"
+                         [minRows]="3"
+                         label="{{ 'inspections.violation' | tlTranslate }}">
+            </tl-textarea>
+        </div>
+    </tl-expansion-panel>
+</div>

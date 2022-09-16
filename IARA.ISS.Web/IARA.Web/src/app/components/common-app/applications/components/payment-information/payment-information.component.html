@@ -1,0 +1,19 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="form">
+    <tl-expansion-panel title="{{ 'payment-information.tariffs-panel-title' | tlTranslate }}">
+        <payment-tariffs formControlName="paymentSummaryControl"></payment-tariffs>
+    </tl-expansion-panel>
+    <tl-expansion-panel title="{{ 'payment-information.basic-payment-information-panel-title' | tlTranslate }}">
+        <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxFlex="100" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="50" formControlName="paymentTypeControl" label="{{ 'payment-information.payment-type' | tlTranslate }}" [readonly]="true"></tl-input>
+                <tl-date fxFlex="25" formControlName="paymentDateControl" label="{{ 'payment-information.payment-date' | tlTranslate }}" [readonly]="true"></tl-date>
+                <div fxFlex="25"></div>
+            </div>
+            <div fxLayout="row" fxFlex="100" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="50" formControlName="referenceNumberControl" label="{{ 'payment-information.reference-number' | tlTranslate }}" [readonly]="true"></tl-input>
+                <tl-input fxFlex="25" formControlName="paymentStatusControl" label="{{ 'payment-information.payment-status' | tlTranslate }}" [readonly]="true"></tl-input>
+                <tl-date fxFlex="25" formControlName="lastUpdateDateControl" label="{{ 'payment-information.last-update-date' | tlTranslate }}" [readonly]="true"></tl-date>
+            </div>
+        </div>
+    </tl-expansion-panel>
+</div>

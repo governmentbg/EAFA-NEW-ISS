@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<StackLayout xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:c="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        x:Class="IARA.Mobile.Insp.Controls.BuyerView"
+        x:DataType="vm:BuyerViewModel"
+        x:Name="view">
+    <c:CustomInfinitePicker Title="{Binding Title, Source={Reference view}}"
+            ValidState="{Binding Buyer}"
+            Command="{Binding BuyerChosen}"
+            DialogDisplayValue="DisplayValue"
+            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+</StackLayout>

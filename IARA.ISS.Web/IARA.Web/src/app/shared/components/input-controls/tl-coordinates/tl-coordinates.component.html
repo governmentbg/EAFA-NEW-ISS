@@ -1,0 +1,7 @@
+﻿<mat-form-field style="width:100%" floatLabel="always">
+    <mat-label>{{ label }}</mat-label>
+    <coordinates-input placeholder="" [formControl]="ngControl.control" [required]="fieldIsRequired"></coordinates-input>
+    <mat-error *ngIf="errors.length > 0">
+        <tl-error [errors]="errors" [useMultipleLines]="multilineError"></tl-error>
+    </mat-error>
+</mat-form-field>

@@ -1,0 +1,49 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="form"
+     class="dialog-padding">
+
+    <div fxLayout="row" fxLayoutGap="1em">
+        <tl-select fxFlex="60"
+                   formControlName="statusTypeControl"
+                   [options]="statusTypes"
+                   label="{{ 'penal-points.edit-complaint-status-type' | tlTranslate }}"
+                   tooltipResourceName="penal-points.edit-complaint-status-type-helper">
+        </tl-select>
+
+        <tl-input fxFlex="20"
+                  formControlName="appealNumControl"
+                  label="{{ 'penal-points.edit-complaint-num' | tlTranslate }}"
+                  tooltipResourceName="penal-points.edit-complaint-num-helper">
+        </tl-input>
+
+        <tl-date fxFlex="20"
+                 formControlName="appealDateControl"
+                 label="{{ 'penal-points.edit-complaint-date' | tlTranslate }}"
+                 tooltipResourceName="penal-points.edit-complaint-date-helper">
+        </tl-date>
+    </div>
+
+    <div fxLayout="row" fxLayoutGap="1em">
+        <tl-select fxFlex="60"
+                   formControlName="courtControl"
+                   [options]="courts"
+                   label="{{ 'penal-points.edit-complaint-court' | tlTranslate }}"
+                   tooltipResourceName="penal-points.edit-complaint-court-helper">
+        </tl-select>
+
+        <tl-input fxFlex="20"
+                  formControlName="caseNumControl"
+                  label="{{ 'penal-points.edit-complaint-case-num' | tlTranslate }}"
+                  tooltipResourceName="penal-points.edit-complaint-case-num-helper">
+        </tl-input>
+
+        <tl-date fxFlex="20"
+                 formControlName="caseDateControl"
+                 label="{{ 'penal-points.edit-complaint-case-date' | tlTranslate }}"
+                 tooltipResourceName="penal-points.edit-complaint-case-date-helper">
+        </tl-date>
+    </div>
+</div>

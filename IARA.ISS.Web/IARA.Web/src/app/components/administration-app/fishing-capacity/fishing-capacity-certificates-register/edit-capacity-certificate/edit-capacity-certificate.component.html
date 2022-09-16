@@ -1,0 +1,91 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <!-- Основни данни -->
+    <tl-card tooltipResourceName="fishing-capacity.edit-certificate-basic-data-helper">
+        <tl-card-title>{{ 'fishing-capacity.edit-certificate-basic-data' | tlTranslate }}</tl-card-title>
+        <tl-card-content>
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="25"
+                          formControlName="numberControl"
+                          tooltipResourceName="fishing-capacity.edit-certificate-number-helper"
+                          label="{{ 'fishing-capacity.edit-certificate-number' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="tonnageControl"
+                          tooltipResourceName="fishing-capacity.edit-certificate-tonnage-helper"
+                          label="{{ 'fishing-capacity.edit-certificate-tonnage' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="powerControl"
+                          tooltipResourceName="fishing-capacity.edit-certificate-power-helper"
+                          label="{{ 'fishing-capacity.edit-certificate-power' | tlTranslate }}">
+                </tl-input>
+                <tl-date-range fxFlex="25"
+                               formControlName="validityDateControl"
+                               tooltipResourceName="fishing-capacity.edit-certificate-validity-helper"
+                               label="{{ 'fishing-capacity.edit-certificate-validity' | tlTranslate }}">
+                </tl-date-range>
+            </div>
+
+            <div *ngIf="form.controls.duplicateOfNumberControl.value" fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="25"
+                          formControlName="duplicateOfNumberControl"
+                          tooltipResourceName="fishing-capacity.edit-certificate-duplicate-of-number-helper"
+                          label="{{ 'fishing-capacity.edit-certificate-duplicate-of-number' | tlTranslate }}">
+                </tl-input>
+
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Титуляр -->
+    <tl-card>
+        <tl-card-title>{{ 'fishing-capacity.edit-certificate-holder' | tlTranslate }}</tl-card-title>
+        <tl-card-content>
+            <div *ngIf="isHolderPerson !== null && isHolderPerson !== undefined">
+                <div *ngIf="isHolderPerson === true; else holderLegal">
+                    <regix-data formControlName="holderControl"
+                                [isPerson]="true"
+                                [isIdReadOnly]="isIdReadOnly"
+                                [hideDocument]="true"
+                                checkboxLabel="{{ 'fishing-capacity.has-bulgarian-address-registration' | tlTranslate }}">
+                    </regix-data>
+                    <address-registration formControlName="addressesControl"
+                                          addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                                          secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                                          checkboxLabel="{{ 'fishing-capacity.permanent-address-same-as-correspondence' | tlTranslate }}">
+                    </address-registration>
+                </div>
+
+                <ng-template #holderLegal>
+                    <regix-data formControlName="holderControl"
+                                [isPerson]="false"
+                                [isIdReadOnly]="isIdReadOnly"
+                                checkboxLabel="{{ 'fishing-capacity.has-bulgarian-address-registration' | tlTranslate }}">
+                    </regix-data>
+                    <address-registration formControlName="addressesControl"
+                                          addressLabel="{{ 'common.company-headquarters-address' | tlTranslate : 'cap' }}"
+                                          [addressType]="companyHeadquartersType">
+                    </address-registration>
+                </ng-template>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Бележки -->
+    <tl-card>
+        <tl-card-title>{{ 'fishing-capacity.edit-certificate-comments' | tlTranslate }}</tl-card-title>
+        <tl-card-content>
+            <tl-textarea fxFlexFill
+                         formControlName="commentsControl"
+                         label="{{ 'fishing-capacity.edit-certificate-comments' | tlTranslate }}">
+            </tl-textarea>
+        </tl-card-content>
+    </tl-card>
+</div>

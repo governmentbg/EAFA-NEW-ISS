@@ -1,0 +1,27 @@
+﻿<div fxLayout="row"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <tl-date fxFlex="25"
+             formControlName="dateControl"
+             [min]="minRegulationDate"
+             [max]="maxRegulationDate"
+             label="{{ 'maximum-capacity.edit-date' | tlTranslate }}">
+    </tl-date>
+
+    <tl-input fxFlex="25"
+              formControlName="regulationControl"
+              label="{{ 'maximum-capacity.edit-regulation' | tlTranslate }}">
+    </tl-input>
+
+    <tl-input fxFlex="25"
+              formControlName="tonnageControl"
+              label="{{ 'maximum-capacity.edit-tonnage' | tlTranslate }}">
+    </tl-input>
+
+    <tl-input fxFlex="25"
+              formControlName="powerControl"
+              label="{{ 'maximum-capacity.edit-power' | tlTranslate }}">
+    </tl-input>
+</div>

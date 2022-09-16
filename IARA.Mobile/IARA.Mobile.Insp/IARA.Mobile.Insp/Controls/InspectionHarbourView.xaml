@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<StackLayout xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        x:Class="IARA.Mobile.Insp.Controls.InspectionHarbourView"
+        x:DataType="vm:InspectionHarbourViewModel"
+        x:Name="view">
+    <lc:CustomCheckBoxWithPicker Title="{Binding InRegisterLabel, Source={Reference view}}"
+            ValidState="{Binding Harbour}"
+            CheckValidState="{Binding HarbourInRegister}"
+            IsVisible="{Binding HarbourInRegister.Value}"
+            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+    <tl:TLCheckView ValidState="{Binding HarbourInRegister}"
+            Text="{Binding InRegisterLabel, Source={Reference view}}"
+            IsVisible="{Binding HarbourInRegister.Value, Converter={StaticResource OppositeBool}}"
+            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+    <tl:TLFlex GrowUnit="150" IsVisible="{Binding HarbourInRegister.Value, Converter={StaticResource OppositeBool}}">
+        <tl:TLEntry tl:TLFlex.Grow="2"
+                Title="{rt:Translate Name, Group=Common}"
+                ValidState="{Binding Name}"
+                IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+        <tl:TLPicker Title="{rt:Translate Country, Group=Common}"
+                ValidState="{Binding Country}"
+                ItemsSource="{Binding Countries}"
+                IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+    </tl:TLFlex>
+</StackLayout>

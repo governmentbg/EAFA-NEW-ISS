@@ -1,0 +1,12 @@
+﻿<div fxLayout="column" [formGroup]="paymentDataFormGroup" fxLayoutGap="1em">
+    <span fxLayout="row wrap">
+        {{ 'online-payment-data.egov-offline-more-information-about' | tlTranslate }}&nbsp;
+        <a href="https://pay-test.egov.bg/Home/AccessByCode" target="_blank" rel="noopener noreferrer">
+            {{ 'online-payment-data.here' | tlTranslate }}
+        </a>.
+    </span>
+    <tl-input formControlName="referenceNumber"
+              label="{{ 'online-payment-data.egov-offline-payment-ref-number' | tlTranslate }}"
+              [readonly]="true"
+              tooltipResourceName="{{ 'online-payment-data.egov-offline-payment-ref-number-helper' | tlTranslate }}"></tl-input>
+</div>

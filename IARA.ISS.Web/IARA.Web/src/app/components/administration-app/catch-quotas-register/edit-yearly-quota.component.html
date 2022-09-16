@@ -1,0 +1,63 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     [formGroup]="editForm"
+     class="dialog-padding">
+    <!-- Обща информация -->
+    <tl-expansion-panel title="{{'catch-quotas.quota-data' | tlTranslate}}"
+                        tooltipResourceName="catch-quotas.quota-data-helper">
+        <div fxLayout="row" fxLayoutGap="1em">
+            <tl-date-year fxFlex="30"
+                          formControlName="yearControl"
+                          tooltipResourceName="catch-quotas.year-helper"
+                          label="{{ 'catch-quotas.year' | tlTranslate }}">
+            </tl-date-year>
+            <tl-autocomplete fxFlex="40"
+                             formControlName="fishesControl"
+                             [options]="fishes"
+                             [autoMatchTextToOption]="true"
+                             tooltipResourceName="catch-quotas.fishes-helper"
+                             label="{{ 'catch-quotas.fishes' | tlTranslate }}">
+            </tl-autocomplete>
+            <tl-input fxFlex="30"
+                      formControlName="quotaSizeControl"
+                      tooltipResourceName="catch-quotas.quota-size-helper"
+                      label="{{ 'catch-quotas.quota-size' | tlTranslate }}">
+            </tl-input>
+        </div>
+        <div fxLayout="row" fxLayoutGap="1em">
+            <tl-textarea *ngIf="isEditing" fxFlexFill
+                         formControlName="quotaChangeBasisControl"
+                         tooltipResourceName="catch-quotas.basis-helper"
+                         label="{{ 'catch-quotas.basis' | tlTranslate }}">
+            </tl-textarea>
+        </div>
+
+        <mat-error *ngIf="quotaAlreadyExistsErrors">
+            * {{ 'catch-quotas.quota-already-exists-error' | tlTranslate }}
+        </mat-error>
+    </tl-expansion-panel>
+
+    <!-- Разрешени пристанища за разтоварване -->
+    <tl-expansion-panel title="{{ 'catch-quotas.catch-quota-unload-ports' | tlTranslate }}"
+                        tooltipResourceName="catch-quotas.catch-quota-unload-ports-helper">
+        <div fxLayout="row" fxFlex="100" fxLayoutGap="1em">
+            <simple-select-table formControlName="portsControl"
+                                 [allRows]="ports"
+                                 autocompleteLabel="{{ 'catch-quotas.unload-ports' | tlTranslate }}"
+                                 columnName="{{ 'catch-quotas.selected-unload-ports' | tlTranslate }}"
+                                 fxFlex="100">
+            </simple-select-table>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel title="{{ 'catch-quotas.files' | tlTranslate }}"
+                        tooltipResourceName="catch-quotas.files-helper">
+        <file-uploader-form-array formControlName="filesControl"
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+</div>

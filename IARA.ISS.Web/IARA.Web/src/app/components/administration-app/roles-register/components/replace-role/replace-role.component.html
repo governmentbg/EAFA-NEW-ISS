@@ -1,0 +1,38 @@
+﻿<div *ngIf="loaded"
+     [formGroup]="form"
+     fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     class="dialog-padding">
+    <p>{{ 'roles-register.role-attached-to' | tlTranslate }} {{ users.length }} {{ 'roles-register.users-lowercase' | tlTranslate }}. {{ 'roles-register.would-you-like-to-replace' | tlTranslate }}</p>
+    <div fxLayout="row" fxLayoutGap="1em" fxFill>
+        <mat-radio-group fxFill
+                         formControlName="optionControl"
+                         fxLayout="column"
+                         fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                <mat-radio-button value="replace">{{ 'roles-register.replace-role-dialog' | tlTranslate }}</mat-radio-button>
+                <tl-autocomplete fxFlex="100"
+                                 formControlName="roleControl"
+                                 [options]="roles"
+                                 label="{{ 'roles-register.role-replacement' | tlTranslate }}">
+                </tl-autocomplete>
+            </div>
+            <div fxLayout="row">
+                <mat-radio-button value="delete">{{ 'roles-register.delete-role-dialog' | tlTranslate }}</mat-radio-button>
+            </div>
+        </mat-radio-group>
+    </div>
+
+    <h3 fxLayout="row" fxLayoutAlign="center center"><b>{{ 'roles-register.users-with-this-role' | tlTranslate }}</b></h3>
+
+    <tl-data-table [isRemote]="false"
+                   [rows]="users"
+                   [showAddButton]="false"
+                   [showInactiveRecords]="false">
+        <data-column propertyName="displayName"
+                     [options]="users"
+                     columnName="{{ 'roles-register.user' | tlTranslate }}">
+        </data-column>
+    </tl-data-table>
+</div>

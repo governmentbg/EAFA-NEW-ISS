@@ -1,0 +1,33 @@
+﻿<div fxFlexFill [formGroup]="form" validityCheckerGroup>
+    <div fxFlexFill fxLayout="column" fxLayoutGap="1em" [validityChecker]="form">
+        <tl-radio-button-group formControlName="deliveryTypeControl"
+                               label="{{ 'register-delivery.delivery-type' | tlTranslate }}"
+                               [options]="deliveryTypes">
+        </tl-radio-button-group>
+
+        <div [ngSwitch]="chosenDeliveryTypeCode">
+            <div *ngSwitchCase="deliveryTypesEnum.CopyOnEmail" fxLayout="row">
+                <tl-input fxFlex="50"
+                          formControlName="deliveryEmailControl"
+                          label="{{ 'register-delivery.delivery-ordinary-email' | tlTranslate }}">
+                </tl-input>
+            </div>
+
+            <div *ngSwitchCase="deliveryTypesEnum.Personal" fxLayout="row">
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="deliveryTerritoryUnitControl"
+                                 label="{{ 'register-delivery.delivery-territory-unit' | tlTranslate }}"
+                                 [options]="territoryUnits">
+                </tl-autocomplete>
+            </div>
+
+            <div *ngSwitchCase="deliveryTypesEnum.ByMail" fxLayout="row">
+                <single-address-registration formControlName="deliveryAddressControl"
+                                             validityChecker
+                                             label="{{ 'register-delivery.delivery-address' | tlTranslate : 'cap' }}"
+                                             [addressType]="addressTypesEnum.CORRESPONDENCE">
+                </single-address-registration>
+            </div>
+        </div>
+    </div>
+</div>

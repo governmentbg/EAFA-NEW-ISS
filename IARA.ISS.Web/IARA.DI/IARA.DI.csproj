@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <Configurations>Debug;Release;Test</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="IARA.DI.csproj.vspscc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="5.0.10" />
+    <PackageReference Include="TL.Caching" Version="22.180.41350" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IARA.Common\IARA.Common.csproj" />
+    <ProjectReference Include="..\IARA.DataAccess\IARA.DataAccess.csproj" />
+    <ProjectReference Include="..\IARA.Infrastructure\IARA.Infrastructure.csproj" />
+    <ProjectReference Include="..\IARA.Interfaces\IARA.Interfaces.csproj" />
+    <ProjectReference Include="..\IARA.Logging\IARA.Logging.csproj" />
+    <ProjectReference Include="..\IARA.Notifications\IARA.Notifications.csproj" />
+    <ProjectReference Include="..\IARA.Regix.Mockup\IARA.Regix.Mockup.csproj" />
+    <ProjectReference Include="..\IARA.RegixIntegration\IARA.RegixIntegration.csproj" />
+    <ProjectReference Include="..\IARA.Security\IARA.Security.csproj" />
+    <ProjectReference Include="..\IARA.WebHelpers\IARA.WebHelpers.csproj" />
+    <ProjectReference Include="..\IARA.Fakes\IARA.Fakes.csproj" Condition="'$(Configuration)' == 'Debug'" />
+  </ItemGroup>
+
+</Project>

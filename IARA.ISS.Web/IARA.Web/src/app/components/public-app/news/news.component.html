@@ -1,0 +1,41 @@
+﻿<div fxFlexFill class="space-cards">
+    <div fxLayout="column" fxFlex="100" fxLayoutGap="1em">
+        <div [formGroup]="formGroup" fxLayoutGap="2em">
+            <tl-input fxFlex="30"
+                      label="{{ 'news.filter-free-text-search' | tlTranslate }}"
+                      formControlName="freeTextSearchControl">
+            </tl-input>
+            <tl-date-range fxFlex="25"
+                           formControlName="dateRangeControl"
+                           label="{{ 'news.filter-date-from' | tlTranslate }} {{ 'news.filter-date-to' | tlTranslate }}">
+            </tl-date-range>
+            <tl-select fxFlex="25"
+                       label="{{ 'news.filter-districts' | tlTranslate }}"
+                       formControlName="districtsControl"
+                       [options]="districts"
+                       [isMultiple]="true">
+            </tl-select>
+            <div fxLayoutAlign="center center">
+                <button mat-raised-button
+                        color="accent"
+                        class="button-form"
+                        (click)="searchBtnClicked()">
+                    {{ 'news.filter-search-button' | tlTranslate }}
+                </button>
+            </div>
+        </div>
+
+        <div *ngFor="let news of arrayOfNews">
+            <news-card [news]="news"></news-card>
+        </div>
+
+        <mat-paginator (page)="loadNews($event)"
+                       [disabled]="false"
+                       [length]="newsCount"
+                       [pageSize]="size"
+                       [pageSizeOptions]="pageSizeOptions"
+                       aria-label="Select page">
+        </mat-paginator>
+    </div>
+</div>
+
