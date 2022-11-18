@@ -4,7 +4,7 @@ import { CommonUtils } from './common.utils';
 
 export class DateUtils {
     static readonly MIN_DATE: Date = new Date(1895, 0, 1);
-    static readonly MAX_DATE: Date = new Date(9999, 11, 31);
+    static readonly MAX_DATE: Date = new Date(9999, 0, 1);
 
     static readonly TL_DATE_FORMATS = {
         parse: {

@@ -76,9 +76,15 @@
                 </tl-date>
             </div>
 
-            <inspected-entity-basic-info formControlName="auanInspectedEntityControl"
-                                         [viewMode]="true">
-            </inspected-entity-basic-info>
+            <tl-card tooltipResourceName="penal-points.edit-decree-inspected-entity-helper">
+                <tl-card-title>{{ 'auan-register.edit-auan-inspected-person' | tlTranslate }}</tl-card-title>
+                <tl-card-content fxLayout="column" fxLayoutGap="1em">
+                    <inspected-entity-basic-info formControlName="auanInspectedEntityControl"
+                                                 [viewMode]="true"
+                                                 [isIdReadOnly]="true">
+                    </inspected-entity-basic-info>
+                </tl-card-content>
+            </tl-card>
         </div>
     </tl-expansion-panel>
 
@@ -103,6 +109,7 @@
                                  formControlName="permitControl"
                                  [options]="permits"
                                  [templateOptions]="true"
+                                 [autoMatchTextToOption]="true"
                                  [readonly]="noShipSelected"
                                  label="{{ 'penal-points.edit-permit' | tlTranslate }}"
                                  tooltipResourceName="penal-points.edit-permit-helper">
@@ -113,14 +120,16 @@
                                  formControlName="permitLicenseControl"
                                  [options]="permitLicenses"
                                  [templateOptions]="true"
+                                 [autoMatchTextToOption]="true"
                                  [readonly]="noShipSelected"
                                  label="{{ 'penal-points.edit-permit-license' | tlTranslate }}"
                                  tooltipResourceName="penal-points.edit-permit-license-helper">
                 </tl-autocomplete>
             </div>
 
-            <tl-slide-toggle formControlName="isPermitOwnerControl"
-                             label="{{ 'penal-points.edit-is-permit-owner' | tlTranslate }}">
+            <tl-slide-toggle *ngIf="type === pointsTypes.QualifiedFisher"
+                             formControlName="isPermitOwnerControl"
+                             [label]="isPermitOwnerLabel">
             </tl-slide-toggle>
 
             <div *ngIf="form.controls.isPermitOwnerControl.value === false">
@@ -306,12 +315,4 @@
             </tl-textarea>
         </div>
     </tl-expansion-panel>
-
-    <!-- Файлове -->
-    <!--<tl-expansion-panel title="{{ 'penal-points.edit-points-files' | tlTranslate }}">
-        <file-uploader-form-array formControlName="filesControl"
-                                  [pageCode]="pageCode"
-                                  [downloadFileMethod]="service.downloadFile.bind(this.service)">
-        </file-uploader-form-array>
-    </tl-expansion-panel>-->
 </div>

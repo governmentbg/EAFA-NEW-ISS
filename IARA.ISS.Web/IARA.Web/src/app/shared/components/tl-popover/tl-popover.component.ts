@@ -42,6 +42,7 @@ export class TLPopoverComponent {
             if (this.trigger !== undefined) {
                 this.trigger.closePopover();
                 this.isOpened = false;
+                this.togglePopover.emit(this.isOpened);
             }
         }
     }

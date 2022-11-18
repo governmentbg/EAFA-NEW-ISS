@@ -43,6 +43,12 @@ export class TLDateRangeComponent implements OnInit, DoCheck, ControlValueAccess
     @Input()
     public max: Date = DateUtils.MAX_DATE;
 
+    @Input()
+    public disableTooltip: boolean = false;
+
+    public readonly TOOLTIP_SHOW_DELAY_MS: number = 1000;
+    public readonly TOOLTIP_POSITION: string = 'above';
+
     public form: FormGroup;
     public errors: TLError[] = [];
 

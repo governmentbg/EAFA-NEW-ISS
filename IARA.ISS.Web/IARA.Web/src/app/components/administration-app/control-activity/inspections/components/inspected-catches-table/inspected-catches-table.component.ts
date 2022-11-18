@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Self, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { FillDef, MapOptions, SimplePolygonStyleDef, StrokeDef, TLMapViewerComponent } from '@tl/tl-angular-map';
 
 import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
@@ -18,6 +18,18 @@ import { InspectedShipParams } from '../inspected-ship/models/inspected-ship-par
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
+
+function groupBy(array: any[], f: any): any[][] {
+    const groups: any = {};
+    array.forEach(function (o) {
+        const group = JSON.stringify(f(o));
+        groups[group] = groups[group] || [];
+        groups[group].push(o);
+    });
+    return Object.keys(groups).map(function (group) {
+        return groups[group];
+    })
+}
 
 @Component({
     selector: 'inspected-catches-table',
@@ -46,6 +58,9 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     public hasCatchZone: boolean = true;
 
     @Input()
+    public hasTurbotSizeGroups: boolean = true;
+
+    @Input()
     public ships: NomenclatureDTO<number>[] = [];
 
     @Input()
@@ -56,6 +71,9 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
 
     @Input()
     public catchZones: NomenclatureDTO<number>[] = [];
+
+    @Input()
+    public turbotSizeGroups: NomenclatureDTO<number>[] = [];
 
     @Input()
     public fishSex: NomenclatureDTO<number>[] = [];
@@ -124,6 +142,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
                 fish: this.fishes.find(s => s.value === f.fishId),
                 type: this.types.find(s => s.value === f.catchInspectionTypeId),
                 catchZone: this.catchZones.find(s => s.value === f.catchZoneId),
+                turbotSizeGroup: this.turbotSizeGroups.find(s => s.value === f.turbotSizeGroupId)
             }));
 
             setTimeout(() => {
@@ -148,10 +167,14 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
 
         this.catches = this.datatable.rows;
         this.onChanged(this.getValue());
+        this.control.updateValueAndValidity();
+
+        this.catchesFormGroup.get('catchZoneControl')!.setValue(null);
     }
 
     public onPopoverToggled(isOpened: boolean): void {
         this.isMapPopoverOpened = isOpened;
+
         setTimeout(() => {
             if (this.isMapPopoverOpened === true) {
                 this.mapViewer.selectedGridSectorsChangeEvent.subscribe({
@@ -162,7 +185,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
                     }
                 });
 
-                const quadrant: string | null | undefined = this.catchesFormGroup.get('catchZoneControl')!.value;
+                const quadrant: string | null | undefined = this.catchesFormGroup.get('catchZoneControl')!.value?.code;
                 if (quadrant !== null && quadrant !== undefined) {
                     this.mapViewer.gridLayerIsRenderedEvent.subscribe({
                         next: (isMapRendered: boolean) => {
@@ -173,11 +196,13 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
                     });
                 }
             }
-        }, 1000);
+        });
     }
 
     public onQuadrantChosenBtnClicked(): void {
         this.catchesFormGroup.get('catchZoneControl')!.setValue(this.temporarySelectedGridSector);
+        this.temporarySelectedGridSector = undefined;
+        this.mapViewer.selectGridSectors([]);
         this.mapPopover.closePopover(true);
     }
 
@@ -247,10 +272,11 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
             allowedDeviationControl: new FormControl(undefined, [TLValidators.number(0, 100)]),
             catchZoneControl: new FormControl(undefined),
             shipControl: new FormControl(undefined),
+            turbotSizeGroupIdControl: new FormControl(undefined),
             fishSexIdControl: new FormControl(undefined),
         });
 
-        return new FormControl(undefined);
+        return new FormControl(undefined, this.catchesValidator());
     }
 
     protected getValue(): InspectionCatchMeasureDTO[] {
@@ -268,6 +294,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
             originShip: f.originShip,
             storageLocation: f.storageLocation,
             unloadedQuantity: f.unloadedQuantity,
+            turbotSizeGroupId: f.turbotSizeGroupId,
         }));
     }
 
@@ -286,5 +313,18 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
         layerStyle.stroke = new StrokeDef('rgb(255,177,34,1)', 3);
 
         return layerStyle;
+    }
+
+    private catchesValidator(): ValidatorFn {
+        return (): ValidationErrors | null => {
+            if (this.catches !== undefined && this.catches !== null) {
+                const result = groupBy(this.catches, ((o: InspectedCatchTableModel) => ([o.fishId, o.catchInspectionTypeId, o.catchZoneId])));
+
+                if (result.find((f: any[]) => f.length > 1)) {
+                    return { 'catchesMatch': true };
+                }
+            }
+            return null;
+        };
     }
 }

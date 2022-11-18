@@ -48,6 +48,9 @@ export class LogBookRegisterDTO {
     public isLogBookFinished?: boolean;
 
     @StrictlyTyped(Boolean)
+    public isLogBookSuspended?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isOnline?: boolean;
 
     @StrictlyTyped(Number)
@@ -55,6 +58,9 @@ export class LogBookRegisterDTO {
 
     @StrictlyTyped(ShipLogBookPageRegisterDTO)
     public shipPages?: ShipLogBookPageRegisterDTO[];
+
+    @StrictlyTyped(Boolean)
+    public isShipForbiddenForPages?: boolean;
 
     @StrictlyTyped(AdmissionLogBookPageRegisterDTO)
     public admissionPages?: AdmissionLogBookPageRegisterDTO[];

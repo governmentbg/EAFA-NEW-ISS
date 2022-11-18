@@ -21,9 +21,8 @@ import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 import { FishCodesEnum } from '@app/enums/fish-codes.enum';
 import { LogBookPageProductUtils } from '../../utils/log-book-page-product.utils';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
-import { CatchSizeCodesEnum } from '@app/enums/catch-size-codes.enum';
 
-const DEFAULT_CATCH_SIZE_CODE: CatchSizeCodesEnum = CatchSizeCodesEnum.LSC;
+const DEFAULT_SIZE_CATEGORY_CODE: string = 'N/A'; // TODO this as a parameter or enum ???
 
 @Component({
     selector: 'edit-log-book-page-product',
@@ -33,7 +32,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
     public readonly logBookTypesEnum: typeof LogBookTypesEnum = LogBookTypesEnum;
     public form!: FormGroup;
 
-    public aquaticOrganismTypes: NomenclatureDTO<number>[] = [];
+    public aquaticOrganismTypes: FishNomenclatureDTO[] = [];
     public presentations: NomenclatureDTO<number>[] = [];
     public freshnessCategories: NomenclatureDTO<number>[] = [];
     public purposes: NomenclatureDTO<number>[] = [];
@@ -43,7 +42,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
     public readOnly: boolean = false;
     public showTurbotControls: boolean = false;
     public showFishCategoryControl: boolean = false;
-    public isAdd: boolean = false;
+    public isAquaculturePage: boolean = false;
     public model!: LogBookPageProductDTO;
     public logBookType!: LogBookTypesEnum;
 
@@ -90,15 +89,22 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             this.form.get('sizeCategoryControl')!.setValidators(Validators.required);
             this.form.get('sizeCategoryControl')!.markAsPending({ emitEvent: false });
             this.form.get('sizeCategoryControl')!.updateValueAndValidity({ emitEvent: false });
+            
+            const defaultSizeCategory: NomenclatureDTO<number> | undefined = this.sizeCategories.find(x => x.code === DEFAULT_SIZE_CATEGORY_CODE);
+            this.form.get('sizeCategoryControl')!.setValue(defaultSizeCategory);
 
             this.form.get('minimumSizeControl')!.setValidators([Validators.required, TLValidators.number(0)]);
             this.form.get('minimumSizeControl')!.markAsPending({ emitEvent: false });
             this.form.get('minimumSizeControl')!.updateValueAndValidity({ emitEvent: false });
+
+            this.isAquaculturePage = false;
         }
         else {
             this.form.get('averageUnitWeightKgControl')!.setValidators([Validators.required, TLValidators.number(0)]);
             this.form.get('averageUnitWeightKgControl')!.markAsPending({ emitEvent: false });
             this.form.get('averageUnitWeightKgControl')!.updateValueAndValidity({ emitEvent: false });
+
+            this.isAquaculturePage = true;
         }
 
         if (this.readOnly) {
@@ -128,6 +134,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
         this.form.get('aquaticOrganismTypeControl')!.valueChanges.subscribe({
             next: (aquaticOrganism: FishNomenclatureDTO | undefined) => {
                 this.setTurbotFlagAndValidators(aquaticOrganism);
+                this.setMinCatchSize(aquaticOrganism);
             }
         });
     }
@@ -139,16 +146,8 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
 
         if (data.model === null || data.model === undefined) {
             this.model = new LogBookPageProductDTO({ isActive: true, logBookType: this.logBookType });
-            this.isAdd = true;
         }
         else {
-            if (data.model.id === null || data.model.id === undefined) {
-                this.isAdd = true;
-            }
-            else {
-                this.isAdd = false;
-            }
-
             if (this.readOnly) {
                 this.form.disable();
             }
@@ -234,7 +233,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             this.form.get('sizeCategoryControl')!.setValue(sizeCategory);
         }
         else {
-            const defaultSizeCategory: NomenclatureDTO<number> | undefined = this.sizeCategories.find(x => x.code === CatchSizeCodesEnum[DEFAULT_CATCH_SIZE_CODE]);
+            const defaultSizeCategory: NomenclatureDTO<number> | undefined = this.sizeCategories.find(x => x.code === DEFAULT_SIZE_CATEGORY_CODE);
             this.form.get('sizeCategoryControl')!.setValue(defaultSizeCategory);
         }
 
@@ -284,7 +283,12 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
 
         this.model.unitCount = this.form.get('unitCountControl')!.value;
         this.model.turbotSizeGroupId = this.form.get('turbotSizeGroupControl')!.value?.value;
+    }
 
+    private setMinCatchSize(value: FishNomenclatureDTO | undefined): void {
+        if (this.logBookType !== LogBookTypesEnum.Aquaculture) {
+            this.form.get('minimumSizeControl')!.setValue(value?.minCatchSize);
+        }
     }
 
     private setTurbotFlagAndValidators(value: FishNomenclatureDTO | undefined): void {

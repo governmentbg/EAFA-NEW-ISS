@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+﻿import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
@@ -25,13 +25,15 @@ import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
 import { EditAuanInspectionPickerComponent } from './edit-auan-inspection-picker/edit-auan-inspection-picker.component';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
-import { CommonUtils } from '@app/shared/utils/common.utils';
 
 @Component({
     selector: 'auan-register',
     templateUrl: './auan-register.component.html'
 })
 export class AuanRegisterComponent implements OnInit, AfterViewInit {
+    @Input()
+    public inspectionId: number | undefined;
+
     public translate: FuseTranslationLoaderService;
     public form!: FormGroup;
 
@@ -150,22 +152,27 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
     public ngAfterViewInit(): void {
         this.grid = new DataTableManager<AuanRegisterDTO, AuanRegisterFilters>({
             tlDataTable: this.datatable,
-            searchPanel: this.searchpanel,
+            searchPanel: this.inspectionId === null || this.inspectionId === undefined ? this.searchpanel : undefined,
             requestServiceMethod: this.service.getAllAuans.bind(this.service),
             filtersMapper: this.mapFilters.bind(this)
         });
 
         const isPerson: boolean | undefined = window.history.state?.isPerson;
-        const id: number | undefined = window.history.state?.id;
-
-        if (!CommonUtils.isNullOrEmpty(id)) {
-            if (isPerson) {
-                this.grid.advancedFilters = new AuanRegisterFilters({ personId: id });
-            }
-            else {
-                this.grid.advancedFilters = new AuanRegisterFilters({ legalId: id });
-            }
+        let legalId: number | undefined;
+        let personId: number | undefined;
+        if (isPerson === true) {
+            personId = window.history.state?.id;
         }
+
+        if (isPerson === false) {
+            legalId = window.history.state?.id;
+        }
+
+        this.grid.advancedFilters = new AuanRegisterFilters({
+            inspectionId: this.inspectionId ?? undefined,
+            personId: personId ?? undefined,
+            legalId: legalId ?? undefined
+        });
 
         this.grid.refreshData();
     }
@@ -323,8 +330,8 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
             fishId: filters.getValue('fishControl'),
             identifier: filters.getValue('identifierControl'),
             inspectedEntityFirstName: filters.getValue('inspEntityFirstNameControl'),
-            inspectedEntityLastName: filters.getValue('inspEntityMiddleNameControl'),
-            inspectedEntityMiddleName: filters.getValue('inspEntityLastNameControl')
+            inspectedEntityMiddleName: filters.getValue('inspEntityMiddleNameControl'),
+            inspectedEntityLastName: filters.getValue('inspEntityLastNameControl')
         });
 
         const drafter: number | string | undefined = filters.getValue('drafterControl');

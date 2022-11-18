@@ -42,6 +42,9 @@ export class ApplicationRegisterDTO {
     @StrictlyTyped(Number)
     public statusCode?: ApplicationStatusesEnum;
 
+    @StrictlyTyped(Number)
+    public prevStatusCode?: ApplicationStatusesEnum;
+
     @StrictlyTyped(String)
     public statusReason?: string;
 

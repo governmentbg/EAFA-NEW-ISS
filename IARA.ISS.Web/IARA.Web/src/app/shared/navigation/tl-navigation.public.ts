@@ -49,7 +49,7 @@ export class Navigation {
             type: 'item',
             icon: 'description',
             url: '/submitted-applications',
-            permissions: [PermissionsEnum.ApplicationsRead],
+            permissions: [PermissionsEnum.OnlineSubmittedApplicationsRead],
             component: SubmittedApplicationsComponent,
             isPublic: false
         },

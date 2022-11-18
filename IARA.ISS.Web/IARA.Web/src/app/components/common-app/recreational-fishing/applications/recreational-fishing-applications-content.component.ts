@@ -331,12 +331,12 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             this.applicationsService.initiateApplicationCorrections(ticket.applicationId!).subscribe({
                 next: (newStatus: ApplicationStatusesEnum) => {
                     status = newStatus;
-                    this.openEditDialog(ticket, status, viewMode);
+                    this.openEditDialog(ticket, status, ticket.prevStatusCode, viewMode);
                 }
             });
         }
         else {
-            this.openEditDialog(ticket, status, viewMode);
+            this.openEditDialog(ticket, status, ticket.prevStatusCode, viewMode);
         }
     }
 
@@ -365,12 +365,18 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         }
     }
 
-    private openEditDialog(ticket: RecreationalFishingTicketApplicationDTO, status: ApplicationStatusesEnum, viewMode: boolean = false): void {
+    private openEditDialog(
+        ticket: RecreationalFishingTicketApplicationDTO,
+        status: ApplicationStatusesEnum,
+        prevApplicationStatus: ApplicationStatusesEnum | undefined,
+        viewMode: boolean = false
+    ): void {
         const params = new EditTicketDialogParams({
             id: ticket.id,
             applicationId: ticket.applicationId,
             isApplication: true,
             showOnlyRegiXData: false,
+            showRegiXData: false,
             isReadonly: viewMode,
             viewMode: viewMode,
             isAssociation: this.isAssociation,
@@ -379,19 +385,25 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             period: this.periods.find(x => x.value === ticket.ticketPeriodId)!,
             service: this.service
         });
-
+        debugger;
         if (viewMode) {
             this.openEditDialogForAll(params, this.translate.getValue('recreational-fishing.application-view-ticket-dialog-title'));
         }
         else {
             switch (status) {
-                case ApplicationStatusesEnum.INSP_CORR_FROM_EMP:
+                case ApplicationStatusesEnum.INSP_CORR_FROM_EMP: {
                     params.showOnlyRegiXData = true;
                     this.openEditDialogForRegix(params, this.translate.getValue('recreational-fishing.application-edit-ticket-regix-dialog-title'));
-                    break;
-                case ApplicationStatusesEnum.FILL_BY_APPL:
+                } break;
+                case ApplicationStatusesEnum.FILL_BY_APPL: {
+                    // Ако не сме в RegiX режим И предишният статус на заявлението е бил Стартирани проверки
+                    debugger;
+                    if (prevApplicationStatus === ApplicationStatusesEnum.EXT_CHK_STARTED) {
+                        params.showRegiXData = true;
+                    }
+
                     this.openEditDialogForAll(params, this.translate.getValue('recreational-fishing.application-edit-ticket-dialog-title'));
-                    break;
+                } break;
             }
         }
     }

@@ -80,49 +80,50 @@ export class DecreeStatusesTableComponent extends CustomFormControl<PenalDecreeS
                 }
             }
 
-            if (this.decreeType === PenalDecreeTypeEnum.PenalDecree) {
-                if (readOnly) {
-                    title = this.translate.getValue('penal-decrees.view-penal-decree-status-dialog-title');
-                }
-                else {
-                    title = this.translate.getValue('penal-decrees.edit-penal-decree-status-dialog-title');
-
-                }
-            }
-
-            else if (this.decreeType === PenalDecreeTypeEnum.Agreement) {
-                if (readOnly) {
-                    title = this.translate.getValue('penal-decrees.view-agreement-status-dialog-title');
-                }
-                else {
-                    title = this.translate.getValue('penal-decrees.edit-agreement-status-dialog-title');
-
-                }
-            }
-
-            else {
-                if (readOnly) {
-                    title = this.translate.getValue('penal-decrees.view-warning-status-dialog-title');
-                }
-                else {
-                    title = this.translate.getValue('penal-decrees.edit-warning-status-dialog-title');
-
-                }
+            switch (this.decreeType) {
+                case PenalDecreeTypeEnum.PenalDecree:
+                    if (readOnly) {
+                        title = this.translate.getValue('penal-decrees.view-penal-decree-status-dialog-title');
+                    }
+                    else {
+                        title = this.translate.getValue('penal-decrees.edit-penal-decree-status-dialog-title');
+                    }
+                    break;
+                case PenalDecreeTypeEnum.Agreement:
+                    if (readOnly) {
+                        title = this.translate.getValue('penal-decrees.view-agreement-status-dialog-title');
+                    }
+                    else {
+                        title = this.translate.getValue('penal-decrees.edit-agreement-status-dialog-title');
+                    }
+                    break;
+                case PenalDecreeTypeEnum.Warning:
+                    if (readOnly) {
+                        title = this.translate.getValue('penal-decrees.view-warning-status-dialog-title');
+                    }
+                    else {
+                        title = this.translate.getValue('penal-decrees.edit-warning-status-dialog-title');
+                    }
+                    break;
+                default:
+                    title = '';
             }
         }
         else {
             data = new EditPenalDecreeStatusDialogParams(this.service, undefined, this.decreeType, false);
 
-            if (this.decreeType === PenalDecreeTypeEnum.PenalDecree) {
-                title = this.translate.getValue('penal-decrees.add-penal-decree-status-dialog-title');
-            }
-
-            else if (this.decreeType === PenalDecreeTypeEnum.Agreement) {
-                title = this.translate.getValue('penal-decrees.add-agreement-status-dialog-title');
-            }
-
-            else  {
-                title = this.translate.getValue('penal-decrees.add-warning-status-dialog-title');
+            switch (this.decreeType) {
+                case PenalDecreeTypeEnum.PenalDecree:
+                    title = this.translate.getValue('penal-decrees.add-penal-decree-status-dialog-title');
+                    break;
+                case PenalDecreeTypeEnum.Agreement:
+                    title = this.translate.getValue('penal-decrees.add-agreement-status-dialog-title');
+                    break;
+                case PenalDecreeTypeEnum.Warning:
+                    title = this.translate.getValue('penal-decrees.add-warning-status-dialog-title');
+                    break;
+                default:
+                    title = '';
             }
         }
 

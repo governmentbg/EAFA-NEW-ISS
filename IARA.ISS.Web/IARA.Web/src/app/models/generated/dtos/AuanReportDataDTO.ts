@@ -2,6 +2,7 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { AuanInspectedEntityDTO } from './AuanInspectedEntityDTO';
+import { AuanViolatedRegulationDTO } from './AuanViolatedRegulationDTO';
 
 export class AuanReportDataDTO { 
     public constructor(obj?: Partial<AuanReportDataDTO>) {
@@ -11,9 +12,6 @@ export class AuanReportDataDTO {
     @StrictlyTyped(String)
     public reportNum?: string;
 
-    @StrictlyTyped(String)
-    public drafter?: string;
-
     @StrictlyTyped(Number)
     public inspectionTypeId?: number;
 
@@ -22,4 +20,7 @@ export class AuanReportDataDTO {
 
     @StrictlyTyped(AuanInspectedEntityDTO)
     public inspectedEntities?: AuanInspectedEntityDTO[];
+
+    @StrictlyTyped(AuanViolatedRegulationDTO)
+    public violatedRegulations?: AuanViolatedRegulationDTO[];
 }

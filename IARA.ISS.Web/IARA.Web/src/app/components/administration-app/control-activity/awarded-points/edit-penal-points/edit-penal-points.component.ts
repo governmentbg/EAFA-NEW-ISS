@@ -5,7 +5,6 @@ import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/di
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
 import { CommonUtils } from '@app/shared/utils/common.utils';
-import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { forkJoin } from 'rxjs';
@@ -30,6 +29,7 @@ import { TLValidators } from '@app/shared/utils/tl-validators';
 import { PenalPointsOrderDTO } from '@app/models/generated/dtos/PenalPointsOrderDTO';
 import { PermitNomenclatureDTO } from '@app/models/generated/dtos/PermitNomenclatureDTO';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 
 @Component({
     selector: 'edit-penal-points',
@@ -42,7 +42,7 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
     public readonly pointsTypes: typeof PointsTypeEnum = PointsTypeEnum;
 
     public territoryUnits: NomenclatureDTO<number>[] = [];
-    public ships: NomenclatureDTO<number>[] = [];
+    public ships: ShipNomenclatureDTO[] = [];
     public captains: NomenclatureDTO<number>[] = [];
     public orderTypes: NomenclatureDTO<boolean>[] = [];
     public permits: PermitNomenclatureDTO[] = [];
@@ -56,6 +56,7 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
     public noShipSelected: boolean = true;
     public shipDataTitle: string | undefined;
     public complaintTitle: string | undefined;
+    public isPermitOwnerLabel: string | undefined;
 
     public complaintStatuses: PenalPointsAppealDTO[] = [];
     public pointsOrders: PenalPointsOrderDTO[] = [];
@@ -67,7 +68,7 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
 
     private decreeId!: number;
-    private pointsId!: number | undefined;
+    private pointsId: number | undefined;
     private model!: PenalPointsEditDTO;
 
     private fisherId: number | undefined;
@@ -123,10 +124,12 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
         if (this.type === PointsTypeEnum.PermitOwner) {
             this.shipDataTitle = this.translate.getValue('penal-points.edit-ship-data');
             this.complaintTitle = this.translate.getValue('penal-points.edit-ship-complaint-data');
+            this.isPermitOwnerLabel = this.translate.getValue('penal-points.edit-is-permit-owner');
         }
         else {
             this.shipDataTitle = this.translate.getValue('penal-points.edit-captain-data');
             this.complaintTitle = this.translate.getValue('penal-points.edit-captain-complaint-data');
+            this.isPermitOwnerLabel = this.translate.getValue('penal-points.edit-is-captain');
         }
 
         this.service.getPenalPointsAuanDecreeData(this.decreeId).subscribe({
@@ -142,14 +145,14 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
                             this.model = points;
                             this.fillForm();
                         }
-                    })
+                    });
                 }
             }
         });
 
         this.form.get('shipControl')!.valueChanges.subscribe({
-            next: (ship: NomenclatureDTO<number> | undefined) => {
-                if (ship !== null && ship !== undefined && ship) {
+            next: (ship: ShipNomenclatureDTO | undefined | string) => {
+                if (ship !== null && ship !== undefined && ship instanceof NomenclatureDTO) {
                     this.noShipSelected = false;
                     if (this.type === PointsTypeEnum.PermitOwner) {
                         this.getShipPermitsNomenclature(ship.value!);
@@ -179,10 +182,12 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
         if (this.type === PointsTypeEnum.PermitOwner) {
             this.form.get('permitControl')!.setValidators(Validators.required);
             this.form.get('permitControl')!.updateValueAndValidity();
+            this.form.get('permitControl')!.markAsPending();
         }
         else {
             this.form.get('permitLicenseControl')!.setValidators(Validators.required);
             this.form.get('permitLicenseControl')!.updateValueAndValidity();
+            this.form.get('permitLicenseControl')!.markAsPending();
         }
 
         this.form.controls.permitControl.valueChanges.subscribe({
@@ -373,7 +378,7 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
             isPermitOwnerControl: new FormControl(true),
             personControl: new FormControl(null),
 
-            shipControl: new FormControl(null, Validators.required),
+            shipControl: new FormControl({ value: null, disabled: true }),
             orderTypeControl: new FormControl(null, Validators.required),
             orderNumControl: new FormControl(null),
             issueDateControl: new FormControl(null, Validators.required),
@@ -446,7 +451,7 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
         this.model.permitOwnerLegalId = this.permitOwnerLegalId;
 
         this.model.qualifiedFisherId = this.fisherId;
-        this.model.isPermitOwner = this.form.get('isPermitOwnerControl')!.value;
+        this.model.isPermitOwner = this.form.get('isPermitOwnerControl')!.value ?? true;
 
         if (this.model.isPermitOwner === false) {
             this.model.personOwner = this.form.get('personControl')!.value;
@@ -465,6 +470,7 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
         this.form.get('decreeIssueDateControl')!.setValue(data.decreeIssueDate);
         this.form.get('decreeEffectiveDateControl')!.setValue(data.decreeEffectiveDate);
         this.form.get('auanInspectedEntityControl')!.setValue(data.inspectedEntity);
+        this.form.get('shipControl')!.setValue(this.ships.find(x => x.value === data.shipId));
     }
 
     private getComplaintStatusesFromTable(): PenalPointsAppealDTO[] {
@@ -491,7 +497,7 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
         this.service.getPermitNomenclatures(shipId, false).subscribe({
             next: (values: PermitNomenclatureDTO[]) => {
                 this.permits = values;
-                const permitId: number | undefined = this.model.permitId;
+                const permitId: number | undefined = this.model?.permitId;
                 if (permitId !== null && permitId !== undefined) {
                     this.form.get('permitControl')!.setValue(this.permits.find(x => x.value === permitId));
                 }
@@ -503,7 +509,7 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
         this.service.getPermitLicensesNomenclatures(shipId).subscribe({
             next: (values: PermitNomenclatureDTO[]) => {
                 this.permitLicenses = values;
-                const permitLicenseId: number | undefined = this.model.permitLicenseId;
+                const permitLicenseId: number | undefined = this.model?.permitLicenseId;
                 if (permitLicenseId !== null && permitLicenseId !== undefined) {
                     this.form.get('permitLicenseControl')!.setValue(this.permitLicenses.find(x => x.value === permitLicenseId));
                 }

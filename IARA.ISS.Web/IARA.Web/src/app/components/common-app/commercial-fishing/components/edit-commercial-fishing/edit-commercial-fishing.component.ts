@@ -1,6 +1,6 @@
 ﻿import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
+import { forkJoin, observable, Observable, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
@@ -85,12 +85,19 @@ import { ChoosePermitToCopyFromDialogParams } from '../choose-permit-to-copy-fro
 import { ChoosePermitToCopyFromDialogResult } from '../choose-permit-to-copy-from/models/choose-permit-to-copy-from-dialog-result.model';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { IGroupedOptions } from '@app/shared/components/input-controls/tl-autocomplete/interfaces/grouped-options.interface';
+import { FishingGearMarkStatusesEnum } from '@app/enums/fishing-gear-mark-statuses.enum';
+import { FishingGearPingerStatusesEnum } from '@app/enums/fishing-gear-pinger-statuses.enum';
+import { FishingGearMarkDTO } from '@app/models/generated/dtos/FishingGearMarkDTO';
+import { FishingGearPingerDTO } from '@app/models/generated/dtos/FishingGearPingerDTO';
+import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
+import { CommercialFishingAdministrationService } from '@app/services/administration-app/commercial-fishing-administration.service';
 
 type AquaticOrganismsToAddType = NomenclatureDTO<number> | NomenclatureDTO<number>[] | string | undefined | null;
 type SaveApplicationDraftFnType = ((applicationId: number, model: IApplicationRegister, dialogClose: HeaderCloseFunction) => void) | undefined;
 type SaveMethodType = 'save' | 'saveAndPrint' | 'saveAndStartPermitLicense';
 
 const SHIP_WITH_ONLINE_LOG_BOOKS_LENGTH: number = 12;
+const AQUATIC_ORGANISMS_PER_PAGE: number = 5;
 
 @Component({
     selector: 'edit-commercial-fishing',
@@ -108,9 +115,12 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public isReadonly!: boolean;
     public viewMode!: boolean;
     public showOnlyRegiXData!: boolean;
+    public showRegiXData: boolean = false;
     public isEditing: boolean = false;
     public isEditingSubmittedBy: boolean = false;
     public loadRegisterFromApplication: boolean = false;
+    public permitLicenseIsValid: boolean = true;
+    public hideBasicPaymentInfo: boolean = false;
 
     public hasAnyAquaticOrganismTypesSelected: boolean = false;
     public hasCaptainNotQualifiedFisherError: boolean = false;
@@ -121,11 +131,13 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public selectedShipAlreadyHasValidDanubePermitError: boolean = false;
     public selectedShipHasNoBlackSeaPermitError: boolean = false;
     public selectedShipHasNoDanubePermitError: boolean = false;
-    public selectedShipAlreadyHasValidPoundNetPermitError: boolean = false;
     public selectedShipHasNoPoundNetPermitError: boolean = false;
     public selectedShipIsThirdCountryError: boolean = false;
     public selectedShipIsNotThirdCountryError: boolean = false;
     public hasNoPermitRegisterForPermitLicenseError: boolean = false;
+    public hasShipEventExistsOnSameDateError: boolean = false;
+    public duplicatedMarkNumbers: string[] = [];
+    public duplicatedPingerNumbers: string[] = [];
 
     public isPublicApp: boolean = false;
     public isPermitLicense: boolean = false;
@@ -143,7 +155,10 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public expectedResults: CommercialFishingRegixDataDTO;
     public duplicates: DuplicatesEntryDTO[] = [];
 
+    public aquaticOrganismTypesControl: FormControl = new FormControl();
+
     public readonly logBookGroup: LogBookGroupsEnum = LogBookGroupsEnum.Ship;
+    public permitLicenseRegisterId: number | undefined;
 
     public ships: ShipNomenclatureDTO[] = [];
     public qualifiedFishers: QualifiedFisherNomenclatureDTO[] = []; // needed only when isApplication is FALSE
@@ -166,11 +181,16 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public qualifiedFisherSameAsSubmittedForLabel: string = '';
 
     public maxNumberOfFishingGears: number = 0;
-    public applicationPaymentInformation: ApplicationPaymentInformationDTO | undefined;
+    public readonly aquaticOrganismsPerPage: number;
     public onlyOnlineLogBooks: boolean | undefined; // needed in Register entry for pertmi licenses - to pass to log-books component
     public logBookOwnerType: LogBookPagePersonTypesEnum | undefined; // whether the type of submittedFor is Person or Legal (for admission and transportation log books)
 
     public model!: CommercialFishingEditDTO | CommercialFishingApplicationEditDTO | CommercialFishingRegixDataDTO;
+
+    /**
+     * Cast of service property - needed for <log-books> component for the register for administration app - permit licenses only
+     * */
+    public administrationService: CommercialFishingAdministrationService | undefined;
 
     @ViewChild('logBooksTable')
     private logBooksTable!: TLDataTableComponent;
@@ -203,6 +223,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     private overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
     private shipFilters!: CommercialFishingShipFilters;
     private ignoreLogBookConflicts: boolean = false;
+    private readonly loader: FormControlDataLoader;
 
     public constructor(
         translate: FuseTranslationLoaderService,
@@ -244,9 +265,13 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 isActive: true
             })
         ];
+
+        this.aquaticOrganismsPerPage = AQUATIC_ORGANISMS_PER_PAGE;
+
+        this.loader = new FormControlDataLoader(this.getNomenclatures.bind(this));
     }
 
-    public async ngOnInit(): Promise<void> {
+    public ngOnInit(): void {
         if (this.isPermitLicense) {
             this.submittedForLabel = this.translationService.getValue('commercial-fishing.permit-license-submitted-for-panel');
             this.qualifiedFisherSameAsSubmittedForLabel = this.translationService.getValue('commercial-fishing.permit-license-qualified-fisher-same-as-submitted-for');
@@ -256,54 +281,408 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             this.qualifiedFisherSameAsSubmittedForLabel = this.translationService.getValue('commercial-fishing.permit-qualified-fisher-same-as-submitted-for');
         }
 
+        this.loader.load(() => {
+            this.loadData();
+        });
+    }
+
+    public setData(data: DialogParamsModel | CommercialFishingDialogParamsModel, buttons: DialogWrapperData): void {
+        this.id = data.id;
+        this.applicationId = data.applicationId;
+        this.applicationsService = data.applicationsService;
+        this.isApplication = data.isApplication;
+        this.isReadonly = data.isReadonly;
+        this.isApplicationHistoryMode = data.isApplicationHistoryMode;
+        this.viewMode = data.viewMode;
+        this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
+        this.service = data.service as ICommercialFishingService;
+
+        if (!IS_PUBLIC_APP) {
+            this.administrationService = this.service as CommercialFishingAdministrationService;
+        }
+
+        this.dialogRightSideActions = buttons.rightSideActions;
+        this.saveApplicationDraftContentActionClicked = buttons.rightSideActions!.find(x => x.id === 'save-draft-content')?.buttonData?.callbackFn;
+        this.pageCode = data.pageCode;
+        this.onRecordAddedOrEdittedEvent = data.onRecordAddedOrEdittedEvent;
+        this.loadRegisterFromApplication = data.loadRegisterFromApplication;
+
+        if (this.pageCode === PageCodeEnum.RightToFishThirdCountry) {
+            this.isThirdCountryPermit = true;
+        }
+        else {
+            this.isThirdCountryPermit = false;
+        }
+
+        if (this.pageCode === PageCodeEnum.CommFish || this.pageCode === PageCodeEnum.RightToFishThirdCountry || this.pageCode === PageCodeEnum.PoundnetCommFish) {
+            this.isPermitLicense = false;
+        }
+        else {
+            this.isPermitLicense = true;
+        }
+
+        this.buildForm();
+
+        if (data instanceof CommercialFishingDialogParamsModel) {
+            this.model = data.model;
+            this.modelLoadedFromPermit = true;
+            if (this.model instanceof CommercialFishingApplicationEditDTO) {
+                this.model.pageCode = this.pageCode;
+            }
+        }
+    }
+
+    public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
+        this.form.markAllAsTouched();
+        this.validityCheckerGroup.validate();
+
+        if (this.form.valid && !this.viewMode && !this.isReadonly) {
+            if (actionInfo.id === 'print') {
+                this.saveAndPrintRecord(dialogClose);
+            }
+            else {
+                this.saveCommercialFishingRecord(dialogClose);
+            }
+        }
+        else if (actionInfo.id === 'print' && (this.viewMode || this.isReadonly) && this.model instanceof CommercialFishingEditDTO) {
+            this.service.downloadRegister(this.model.id!, this.pageCode).subscribe();
+        }
+    }
+
+    public cancelBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
+        dialogClose();
+    }
+
+    public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
+        let applicationAction: boolean = false;
+
+        if (actionInfo.id === 'copy-data-from-old-permit-license') {
+            this.copyDataFromOldPermitLicenseBtnClicked();
+        }
+        else if (actionInfo.id === 'copy-data-from-permit') {
+            this.copyDataFromPermitBtnClicked();
+        }
+        else if (actionInfo.id === 'flux') {
+            this.form.markAllAsTouched();
+            this.validityCheckerGroup.validate();
+
+            if (this.form.valid) {
+                this.fillModel();
+                this.model = CommonUtils.sanitizeModelStrings(this.model);
+
+                this.service.downloadPermitFluxXml(this.model).subscribe();
+            }
+        }
+        else {
+            if (this.model instanceof CommercialFishingApplicationEditDTO
+                || (this.model instanceof CommercialFishingRegixDataDTO && this.showOnlyRegiXData)
+            ) {
+                this.model = this.fillModel();
+                CommonUtils.sanitizeModelStrings(this.model);
+
+                applicationAction = ApplicationUtils.applicationDialogButtonClicked(new ApplicationDialogData({
+                    action: actionInfo,
+                    dialogClose: dialogClose,
+                    applicationId: this.applicationId!,
+                    model: this.model,
+                    readOnly: this.isReadonly,
+                    viewMode: this.viewMode,
+                    editForm: this.form,
+                    saveFn: this.saveCommercialFishingRecord.bind(this),
+                    onMarkAsTouched: () => {
+                        this.validityCheckerGroup.validate();
+                    }
+                }));
+            }
+
+            if (!this.isReadonly && !this.viewMode && !applicationAction) {
+                this.form.markAllAsTouched();
+                this.validityCheckerGroup.validate();
+
+                if (this.form.valid) {
+                    switch (actionInfo.id) {
+                        case 'save':
+                        case 'print':
+                            return this.saveBtnClicked(actionInfo, dialogClose); break;
+                        case 'save-and-start-permit-license':
+                            return this.saveAndStartPermitLicenseBtnClicked(actionInfo, dialogClose); break;
+                        case 'suspend':
+                            this.addEditSuspension(); break;
+                    }
+                }
+            }
+            else if (!applicationAction && actionInfo.id === 'print') {
+                return this.saveBtnClicked(actionInfo, dialogClose);
+            }
+        }
+    }
+
+    public addEditSuspension(suspension?: SuspensionDataDTO, viewMode: boolean = false): void {
+        let data: SuspnesionDataDialogParams;
+        let headerAuditBtn: IHeaderAuditButton | undefined;
+        let headerTitle: string = '';
+
+        if (suspension !== undefined) {
+            data = new SuspnesionDataDialogParams({
+                model: suspension!,
+                isPermit: !this.isPermitLicense,
+                viewMode: viewMode || this.isReadonly,
+                service: this.service
+            });
+
+            if (suspension.id !== undefined && !this.isPublicApp) {
+                let getAuditRecordDataMethod: (id: number) => Observable<SimpleAuditDTO>;
+                let tableName: string = '';
+
+                switch (this.pageCode) {
+                    case PageCodeEnum.CommFish:
+                    case PageCodeEnum.RightToFishThirdCountry:
+                    case PageCodeEnum.PoundnetCommFish: {
+                        getAuditRecordDataMethod = this.service.getPermitSuspensionAudit.bind(this.service);
+                        tableName = 'PermitSuspensionChangeHistory';
+                    } break;
+                    case PageCodeEnum.RightToFishResource:
+                    case PageCodeEnum.CatchQuataSpecies:
+                    case PageCodeEnum.PoundnetCommFishLic: {
+                        getAuditRecordDataMethod = this.service.getPermitLicenseSuspensionAudit.bind(this.service);
+                        tableName = 'PermitLicenseSuspensionChangeHistory';
+                    } break;
+                }
+
+                headerAuditBtn = {
+                    id: suspension.id,
+                    getAuditRecordData: getAuditRecordDataMethod!,
+                    tableName: tableName
+                };
+            }
+
+            if (this.isReadonly || viewMode) {
+                headerTitle = this.translationService.getValue('commercial-fishing.view-suspension-dialog-title');
+            }
+            else {
+                headerTitle = this.translationService.getValue('commercial-fishing.edit-suspension-dialog-title');
+            }
+        }
+        else {
+            data = new SuspnesionDataDialogParams({
+                viewMode: viewMode || this.isReadonly,
+                isPermit: !this.isPermitLicense,
+                service: this.service
+            });
+
+            headerTitle = this.translationService.getValue('commercial-fishing.add-suspension-dialog-title');
+        }
+
+        const dialog = this.editSuspensionDialog.openWithTwoButtons({
+            title: headerTitle,
+            TCtor: EditSuspensionComponent,
+            headerAuditButton: headerAuditBtn,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            componentData: data,
+            translteService: this.translationService,
+            viewMode: viewMode || this.isReadonly
+        }, '850px');
+
+        dialog.subscribe({
+            next: (result: SuspensionDataDTO | undefined) => {
+                if (result !== null && result !== undefined) {
+                    this.hasShipEventExistsOnSameDateError = false;
+
+                    if (suspension !== null && suspension !== undefined) {
+                        suspension = result;
+                    }
+                    else {
+                        this.suspensions.push(result);
+                    }
+
+                    this.suspensions = this.suspensions.slice();
+                    this.form.updateValueAndValidity({ onlySelf: true });
+                }
+            }
+        });
+    }
+
+    public deleteSuspension(suspension: GridRow<SuspensionDataDTO>): void {
+        this.confirmDialog.open({
+            title: this.translationService.getValue('commercial-fishing.delete-suspension'),
+            message: this.translationService.getValue('commercial-fishing.confirm-delete-suspension-message'),
+            okBtnLabel: this.translationService.getValue('commercial-fishing.delete')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.suspensionsTable.softDelete(suspension);
+                    this.hasShipEventExistsOnSameDateError = false;
+                    this.form.updateValueAndValidity({ onlySelf: true });
+                }
+            }
+        });
+    }
+
+    public undoDeleteSuspension(suspension: GridRow<SuspensionDataDTO>): void {
+        this.confirmDialog.open().subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.suspensionsTable.softUndoDelete(suspension);
+                    this.hasShipEventExistsOnSameDateError = false;
+                    this.form.updateValueAndValidity({ onlySelf: true });
+                }
+            }
+        });
+    }
+
+    public selectAllPermittedAquaticOrganisms(): void {
+        //setTimeout(() => {
+            this.selectedAquaticOrganismTypes = [];
+            this.aquaticOrganismTypes = this.allAquaticOrganismTypes.slice();
+
+            const selectedWaterType: NomenclatureDTO<number> | undefined = this.form.get('waterTypeControl')!.value;
+            if (selectedWaterType !== null && selectedWaterType !== undefined) {
+                this.fileterAquaticOrganismTypesByWaterType(WaterTypesEnum[selectedWaterType.code as keyof typeof WaterTypesEnum]);
+            }
+
+            this.updateSelectedAquaticOrganismTypes(this.aquaticOrganismTypes.slice());
+        //});
+
+        this.form.updateValueAndValidity({ onlySelf: true });
+    }
+
+    public deselectAllAquaticOrganisms(): void {
+        this.selectedAquaticOrganismTypes = [];
+        this.aquaticOrganismTypes = this.allAquaticOrganismTypes.slice();
+
+        const selectedWaterType: NomenclatureDTO<number> | undefined = this.form.get('waterTypeControl')!.value;
+        if (selectedWaterType !== null && selectedWaterType !== undefined) {
+            this.fileterAquaticOrganismTypesByWaterType(WaterTypesEnum[selectedWaterType.code as keyof typeof WaterTypesEnum]);
+        }
+
+        this.form.updateValueAndValidity({ onlySelf: true });
+    }
+
+    public removeAquaticOrganismType(row: NomenclatureDTO<number>): void {
+        const selectedWaterType: NomenclatureDTO<number> | undefined = this.form.get('waterTypeControl')!.value;
+        if (selectedWaterType !== null && selectedWaterType !== undefined) {
+            this.fileterAquaticOrganismTypesByWaterType(WaterTypesEnum[selectedWaterType.code as keyof typeof WaterTypesEnum]);
+        }
+
+        this.selectedAquaticOrganismTypes = this.selectedAquaticOrganismTypes.filter(x => x.value !== row.value).slice();
+        this.aquaticOrganismTypes = this.aquaticOrganismTypes.filter(x => !this.selectedAquaticOrganismTypes.includes(x));
+
+        if (this.isApplication
+            && this.isPaid
+            && !this.isReadonly
+            && !this.viewMode
+            && this.isPermitLicense
+        ) { // update applied tariffs based on selected ship
+            this.updatePermitLicenseAppliedTariffs();
+        }
+
+        this.form.updateValueAndValidity({ onlySelf: true });
+    }
+
+    public quotaAquaticOrganismChanged(event: RecordChangedEventArgs<QuotaAquaticOrganismDTO> | undefined): void {
+        switch (event!.Command) {
+            case CommandTypes.Add:
+            case CommandTypes.Edit:
+            case CommandTypes.Delete:
+            case CommandTypes.UndoDelete: {
+                this.quotaAquaticOrganismTypes = this.filterQuotaAquaticOrganismTypesCollection();
+            } break;
+        }
+
+        this.quotaAquaticOrganisms = this.quotaAquaticOrganismTypesTable.rows?.map((row: QuotaAquaticOrganismDTO) => {
+            return new QuotaAquaticOrganismDTO({
+                aquaticOrganismId: row.aquaticOrganismId,
+                portId: row.portId
+            });
+        }) ?? [];
+
+        this.form.updateValueAndValidity({ onlySelf: true });
+    }
+
+    public getControlErrorLabelText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
+        switch (errorCode) {
+            case 'egn':
+                if (errorValue === true) {
+                    return new TLError({ text: this.translationService.getValue('regix-data.invalid-egn'), type: 'warn' });
+                }
+                break;
+            case 'shipIsDestroyedOrDeregistered':
+                if (errorValue === true) {
+                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-is-destroyed-or-deregistered-error'), type: 'error' });
+                } break;
+            case 'shipIsForbinnedForLicenses':
+                if (errorValue === true) {
+                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-is-forbidden-for-permit-liceses-error'), type: 'error' });
+                } break;
+            case 'shipHasNoActiveFishQuota':
+                if (errorValue === true) {
+                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-has-no-active-fish-quota-error'), type: 'error' });
+                }
+                break;
+            case 'shipHasBlackSeaPermit':
+                if (errorValue === true) {
+                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-has-black-sea-permit-error'), type: 'error' });
+                } break;
+            case 'shipHasDanubePermit':
+                if (errorValue === true) {
+                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-has-danube-permit-error'), type: 'error' });
+                } break;
+            case 'shipHasNoBlackSeaPermit':
+                if (errorValue === true) {
+                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-has-no-black-sea-permit-error'), type: 'error' });
+                }
+                break;
+            case 'shipHasNoDanubePermit':
+                if (errorValue === true) {
+                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-has-no-danube-permit-error'), type: 'error' });
+                }
+                break;
+            case 'shipHasNoPoundNetPermit':
+                if (errorValue === true) {
+                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-has-no-pound-net-permit-error'), type: 'error' });
+                }
+                break;
+            case 'shipIsThirdParty':
+                if (errorValue === true) {
+                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-is-third-country-error'), type: 'error' });
+                }
+                break;
+            case 'shipIsNotThirdParty':
+                if (errorValue === true) {
+                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-is-not-third-country-error'), type: 'error' });
+                }
+                break;
+            case 'noPermitRegisterForPermitLicense':
+                if (errorValue === true) {
+                    return new TLError({ text: this.translationService.getValue('commercial-fishing.no-permit-register-for-permit-license'), type: 'error' });
+                }
+            case 'poundNetAlreadyHasPermit':
+                if (errorValue === true) {
+                    return new TLError({ text: this.translationService.getValue('commercial-fishing.pound-net-already-has-valid-permit'), type: 'error' });
+                }
+        }
+
+        return undefined;
+    }
+
+    public fileTypeFilterFn(options: PermittedFileTypeDTO[]): PermittedFileTypeDTO[] {
+        const pdfs: FileTypeEnum[] = [FileTypeEnum.SIGNEDAPPL, FileTypeEnum.APPLICATION_PDF];
+
+        let result: PermittedFileTypeDTO[] = options;
+
+        if (this.isApplication || !this.isOnlineApplication) {
+            result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
+        }
+
+        return result;
+    }
+
+    private async loadData(): Promise<void> {
         if (!this.showOnlyRegiXData) {
-            this.shipFilters = this.getShipFilters();
-
-            this.ships = await this.getShipNomenclatures();
-
-            if (!this.isApplication && !this.loadRegisterFromApplication) {
-                this.qualifiedFishers = await this.getQualifiedFisherNomenclatures();
-            }
-
-            this.waterTypes = await NomenclatureStore.instance.getNomenclature<number>(
-                NomenclatureTypes.WaterTypes, this.service.getWaterTypes.bind(this.service), false
-            ).toPromise();
-
-            if (this.isPermitLicense) {
-                this.allAquaticOrganismTypes = await NomenclatureStore.instance.getNomenclature<number>(
-                    NomenclatureTypes.Fishes, this.commonNomenclatures.getFishTypes.bind(this.commonNomenclatures), false
-                ).toPromise();
-
-                if (this.pageCode === PageCodeEnum.CatchQuataSpecies) {
-                    const now: Date = new Date();
-                    this.allAquaticOrganismTypes = this.allAquaticOrganismTypes.filter(x => x.quotaPeriodFrom !== null
-                        && x.quotaPeriodFrom !== undefined
-                        && x.quotaPeriodTo !== null
-                        && x.quotaPeriodTo !== undefined
-                        && new Date(x.quotaPeriodFrom) <= now && new Date(x.quotaPeriodTo) > now).slice();
-
-                    this.allPorts = await NomenclatureStore.instance.getNomenclature<number>(
-                        NomenclatureTypes.Ports, this.service.getPorts.bind(this.service), false
-                    ).toPromise();
-
-                    this.quotaAquaticOrganismTypes = this.allAquaticOrganismTypes;
-                    this.quotaAquaticOrganismTypes = this.filterQuotaAquaticOrganismTypesCollection();
-
-                    this.ports = this.filterQuotaSpiciesPortsCollection(undefined, true);
-                }
-                else {
-                    this.allAquaticOrganismTypes = this.allAquaticOrganismTypes.filter(x => x.isActive && (x.quotaId === null || x.quotaId === undefined));
-                    this.aquaticOrganismTypes = this.allAquaticOrganismTypes;
-                }
-            }
-
             this.maxNumberOfFishingGears = (await this.systemParametersService.systemParameters()).maxNumberFishingGears!;
-
-            if (this.isPermitLicense || this.pageCode === PageCodeEnum.PoundnetCommFish) {
-                this.groundForUseTypes = await NomenclatureStore.instance.getNomenclature<number>(
-                    NomenclatureTypes.GroundForUseTypes, this.service.getHolderGroundForUseTypes.bind(this.service), false
-                ).toPromise();
-            }
 
             this.form.get('shipControl')!.valueChanges.subscribe({
                 next: (ship: ShipNomenclatureDTO | undefined | string) => {
@@ -311,10 +690,10 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     this.selectedShipAlreadyHasValidDanubePermitError = false;
                     this.selectedShipHasNoBlackSeaPermitError = false;
                     this.selectedShipHasNoDanubePermitError = false;
-                    this.selectedShipAlreadyHasValidPoundNetPermitError = false;
                     this.selectedShipHasNoPoundNetPermitError = false;
                     this.selectedShipIsThirdCountryError = false;
                     this.selectedShipIsNotThirdCountryError = false;
+                    this.hasNoPermitRegisterForPermitLicenseError = false;
 
                     if (!this.isPublicApp && this.isPermitLicense && this.isApplication && !this.showOnlyRegiXData) {
                         if (ship !== null && ship !== undefined && ship instanceof NomenclatureDTO) {
@@ -347,10 +726,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             });
 
             if (this.pageCode === PageCodeEnum.PoundnetCommFish || this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
-                const poundNets: PoundNetNomenclatureDTO[] = await this.getPoundNetsNomenclature();
-
-                this.createAndFilterPoundNets(poundNets);
-
                 this.form.get('poundNetControl')!.valueChanges.subscribe({
                     next: (poundNet: PoundNetNomenclatureDTO | undefined) => {
                         if (poundNet !== null && poundNet !== undefined && poundNet instanceof NomenclatureDTO) {
@@ -501,15 +876,16 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     });
                 }
                 else if (this.isPermitLicense) {
-                    this.form.get('aquaticOrganismTypesControl')!.valueChanges.subscribe({
+                    this.aquaticOrganismTypesControl.valueChanges.subscribe({
                         next: (aquaticOrganismType: NomenclatureDTO<number> | string | undefined | null) => {
                             this.updateSelectedAquaticOrganismTypes(aquaticOrganismType);
+                            this.form.updateValueAndValidity({ onlySelf: true });
                         }
                     });
                 }
 
                 if (this.isPermitLicense === true) {
-                    this.form.get('fishingGearsControl')!.valueChanges.subscribe({
+                    this.form.get('fishingGearsGroup.fishingGearsControl')!.valueChanges.subscribe({
                         next: (value: FishingGearDTO[] | undefined) => {
                             this.form.updateValueAndValidity({ emitEvent: false });
 
@@ -530,7 +906,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             if (this.model instanceof CommercialFishingApplicationEditDTO) {
                 this.model.pageCode = this.pageCode;
 
-                this.applicationPaymentInformation = this.model.paymentInformation;
                 this.hasDelivery = this.model.hasDelivery ?? false;
                 this.isPaid = this.model.isPaid ?? false;
                 this.isOnlineApplication = this.model.isOnlineApplication!;
@@ -559,7 +934,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                             if (this.model instanceof CommercialFishingApplicationEditDTO) {
                                 this.model.pageCode = this.pageCode;
 
-                                this.applicationPaymentInformation = this.model.paymentInformation;
                                 this.hasDelivery = this.model.hasDelivery ?? false;
                                 this.isPaid = this.model.isPaid ?? false;
                                 this.isOnlineApplication = this.model.isOnlineApplication!;
@@ -583,6 +957,13 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
                             if (this.model instanceof CommercialFishingEditDTO) {
                                 this.model.pageCode = this.pageCode;
+
+                                if (this.pageCode == PageCodeEnum.PoundnetCommFishLic
+                                    || this.pageCode == PageCodeEnum.RightToFishResource
+                                    || this.pageCode == PageCodeEnum.CatchQuataSpecies
+                                ) {
+                                    this.setPermitLicenseIsValidFlag(this.model);
+                                }
                             }
 
                             this.isOnlineApplication = (commercialFishingRegister as CommercialFishingEditDTO).isOnlineApplication!;
@@ -602,6 +983,17 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
                             if (this.model instanceof CommercialFishingEditDTO) {
                                 this.model.pageCode = this.pageCode;
+
+                                if (this.pageCode == PageCodeEnum.PoundnetCommFishLic
+                                    || this.pageCode == PageCodeEnum.RightToFishResource
+                                    || this.pageCode == PageCodeEnum.CatchQuataSpecies
+                                ) {
+                                    this.setPermitLicenseIsValidFlag(this.model);
+                                }
+
+                                if (this.isPermitLicense) {
+                                    this.permitLicenseRegisterId = this.model.id;
+                                }
                             }
 
                             this.isOnlineApplication = commercialFishingRegister.isOnlineApplication!;
@@ -616,7 +1008,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     this.form.disable();
                 }
 
-                if (this.isApplication && this.applicationId !== undefined) {
+                if (this.isApplication && this.applicationId !== null && this.applicationId !== undefined) {
                     this.isEditing = false;
                     this.isEditingSubmittedBy = false;
 
@@ -645,7 +1037,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                         this.isEditing = false;
                         this.isEditingSubmittedBy = false;
 
-                        this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+                        this.service.getApplication(this.applicationId, this.showRegiXData, this.pageCode).subscribe({
                             next: (commercialFishingApplication: CommercialFishingApplicationEditDTO) => {
                                 if (commercialFishingApplication === null || commercialFishingApplication === undefined) {
                                     commercialFishingApplication = new CommercialFishingApplicationEditDTO({
@@ -665,9 +1057,13 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                                 this.model = commercialFishingApplication;
                                 this.refreshFileTypes.next();
 
+                                if (this.showRegiXData) {
+                                    this.expectedResults = new CommercialFishingRegixDataDTO(commercialFishingApplication.regiXDataModel);
+                                    commercialFishingApplication.regiXDataModel = undefined;
+                                }
+
                                 if (this.model instanceof CommercialFishingApplicationEditDTO) {
                                     this.model.pageCode = this.pageCode;
-                                    this.applicationPaymentInformation = this.model.paymentInformation;
                                     this.hasDelivery = this.model.hasDelivery ?? false;
                                     this.isPaid = this.model.isPaid ?? false;
                                     this.isOnlineApplication = this.model.isOnlineApplication!;
@@ -707,7 +1103,19 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
                             if (this.model instanceof CommercialFishingEditDTO) {
                                 this.model.pageCode = this.pageCode;
+
+                                if (this.pageCode == PageCodeEnum.PoundnetCommFishLic
+                                    || this.pageCode == PageCodeEnum.RightToFishResource
+                                    || this.pageCode == PageCodeEnum.CatchQuataSpecies
+                                ) {
+                                    this.setPermitLicenseIsValidFlag(this.model);
+                                }
+
+                                if (this.isPermitLicense) {
+                                    this.permitLicenseRegisterId = this.model.id;
+                                }
                             }
+
                             this.isOnlineApplication = commercialFishingRecord.isOnlineApplication!;
                             this.refreshFileTypes.next();
                             this.fillForm();
@@ -716,386 +1124,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 }
             }
         }
-    }
-
-    public setData(data: DialogParamsModel | CommercialFishingDialogParamsModel, buttons: DialogWrapperData): void {
-        this.id = data.id;
-        this.applicationId = data.applicationId;
-        this.applicationsService = data.applicationsService;
-        this.isApplication = data.isApplication;
-        this.isReadonly = data.isReadonly;
-        this.isApplicationHistoryMode = data.isApplicationHistoryMode;
-        this.viewMode = data.viewMode;
-        this.showOnlyRegiXData = data.showOnlyRegiXData;
-        this.service = data.service as ICommercialFishingService;
-        this.dialogRightSideActions = buttons.rightSideActions;
-        this.saveApplicationDraftContentActionClicked = buttons.rightSideActions!.find(x => x.id === 'save-draft-content')?.buttonData?.callbackFn;
-        this.pageCode = data.pageCode;
-        this.onRecordAddedOrEdittedEvent = data.onRecordAddedOrEdittedEvent;
-        this.loadRegisterFromApplication = data.loadRegisterFromApplication;
-
-        if (this.pageCode === PageCodeEnum.RightToFishThirdCountry) {
-            this.isThirdCountryPermit = true;
-        }
-        else {
-            this.isThirdCountryPermit = false;
-        }
-
-        if (this.pageCode === PageCodeEnum.CommFish || this.pageCode === PageCodeEnum.RightToFishThirdCountry || this.pageCode === PageCodeEnum.PoundnetCommFish) {
-            this.isPermitLicense = false;
-        }
-        else {
-            this.isPermitLicense = true;
-        }
-
-        this.buildForm();
-
-        if (data instanceof CommercialFishingDialogParamsModel) {
-            this.model = data.model;
-            this.modelLoadedFromPermit = true;
-            if (this.model instanceof CommercialFishingApplicationEditDTO) {
-                this.model.pageCode = this.pageCode;
-            }
-        }
-    }
-
-    public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
-        this.form.markAllAsTouched();
-        this.validityCheckerGroup.validate();
-
-        if (this.form.valid && !this.viewMode && !this.isReadonly) {
-            if (actionInfo.id === 'print') {
-                this.saveAndPrintRecord(dialogClose);
-            }
-            else {
-                this.saveCommercialFishingRecord(dialogClose);
-            }
-        }
-        else if (actionInfo.id === 'print' && (this.viewMode || this.isReadonly) && this.model instanceof CommercialFishingEditDTO) {
-            this.service.downloadRegister(this.model.id!, this.pageCode).subscribe();
-        }
-    }
-
-    public cancelBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
-        dialogClose();
-    }
-
-    public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
-        let applicationAction: boolean = false;
-
-        if (actionInfo.id === 'copy-data-from-old-permit-license') {
-            this.copyDataFromOldPermitLicenseBtnClicked();
-        }
-        else if (actionInfo.id === 'copy-data-from-permit') {
-            this.copyDataFromPermitBtnClicked();
-        }
-        else if (actionInfo.id === 'flux') {
-            this.form.markAllAsTouched();
-            this.validityCheckerGroup.validate();
-
-            if (this.form.valid) {
-                this.fillModel();
-                this.model = CommonUtils.sanitizeModelStrings(this.model);
-
-                this.service.downloadPermitFluxXml(this.model).subscribe({
-                    next: (success: boolean) => {
-                        // nothing
-                    }
-                });
-            }
-        }
-        else {
-            if (this.model instanceof CommercialFishingApplicationEditDTO
-                || (this.model instanceof CommercialFishingRegixDataDTO && this.showOnlyRegiXData)
-            ) {
-                this.model = this.fillModel();
-                CommonUtils.sanitizeModelStrings(this.model);
-
-                applicationAction = ApplicationUtils.applicationDialogButtonClicked(new ApplicationDialogData({
-                    action: actionInfo,
-                    dialogClose: dialogClose,
-                    applicationId: this.applicationId!,
-                    model: this.model,
-                    readOnly: this.isReadonly,
-                    viewMode: this.viewMode,
-                    editForm: this.form,
-                    saveFn: this.saveCommercialFishingRecord.bind(this),
-                    onMarkAsTouched: () => {
-                        this.validityCheckerGroup.validate();
-                    }
-                }));
-            }
-
-            if (!this.isReadonly && !this.viewMode && !applicationAction) {
-                this.form.markAllAsTouched();
-                this.validityCheckerGroup.validate();
-
-                if (this.form.valid) {
-                    switch (actionInfo.id) {
-                        case 'save':
-                        case 'print':
-                            return this.saveBtnClicked(actionInfo, dialogClose); break;
-                        case 'save-and-start-permit-license':
-                            return this.saveAndStartPermitLicenseBtnClicked(actionInfo, dialogClose); break;
-                        case 'suspend':
-                            this.addEditSuspension(); break;
-                    }
-                }
-            }
-            else if (!applicationAction && actionInfo.id === 'print') {
-                return this.saveBtnClicked(actionInfo, dialogClose);
-            }
-        }
-    }
-
-    public addEditSuspension(suspension?: SuspensionDataDTO, viewMode: boolean = false): void {
-        let data: SuspnesionDataDialogParams;
-        let headerAuditBtn: IHeaderAuditButton | undefined;
-        let headerTitle: string = '';
-
-        if (suspension !== undefined) {
-            data = new SuspnesionDataDialogParams({
-                model: suspension!,
-                isPermit: !this.isPermitLicense,
-                viewMode: viewMode || this.isReadonly,
-                service: this.service
-            });
-
-            if (suspension.id !== undefined && !this.isPublicApp) {
-                let getAuditRecordDataMethod: (id: number) => Observable<SimpleAuditDTO>;
-                let tableName: string = '';
-
-                switch (this.pageCode) {
-                    case PageCodeEnum.CommFish:
-                    case PageCodeEnum.RightToFishThirdCountry:
-                    case PageCodeEnum.PoundnetCommFish: {
-                        getAuditRecordDataMethod = this.service.getPermitSuspensionAudit.bind(this.service);
-                        tableName = 'PermitSuspensionChangeHistory';
-                    } break;
-                    case PageCodeEnum.RightToFishResource:
-                    case PageCodeEnum.CatchQuataSpecies:
-                    case PageCodeEnum.PoundnetCommFishLic: {
-                        getAuditRecordDataMethod = this.service.getPermitLicenseSuspensionAudit.bind(this.service);
-                        tableName = 'PermitLicenseSuspensionChangeHistory';
-                    } break;
-                }
-
-                headerAuditBtn = {
-                    id: suspension.id,
-                    getAuditRecordData: getAuditRecordDataMethod!,
-                    tableName: tableName
-                };
-            }
-
-            if (this.isReadonly || viewMode) {
-                headerTitle = this.translationService.getValue('commercial-fishing.view-suspension-dialog-title');
-            }
-            else {
-                headerTitle = this.translationService.getValue('commercial-fishing.edit-suspension-dialog-title');
-            }
-        }
-        else {
-            data = new SuspnesionDataDialogParams({
-                viewMode: viewMode || this.isReadonly,
-                isPermit: !this.isPermitLicense,
-                service: this.service
-            });
-
-            headerTitle = this.translationService.getValue('commercial-fishing.add-suspension-dialog-title');
-        }
-
-        const dialog = this.editSuspensionDialog.openWithTwoButtons({
-            title: headerTitle,
-            TCtor: EditSuspensionComponent,
-            headerAuditButton: headerAuditBtn,
-            headerCancelButton: {
-                cancelBtnClicked: this.closeEditSuspensionDialogBtnClicked.bind(this)
-            },
-            componentData: data,
-            translteService: this.translationService,
-            viewMode: viewMode || this.isReadonly
-        }, '850px');
-
-        dialog.subscribe({
-            next: (result: SuspensionDataDTO | undefined) => {
-                if (result !== null && result !== undefined) {
-                    if (suspension !== null && suspension !== undefined) {
-                        suspension = result;
-                    }
-                    else {
-                        this.suspensions.push(result);
-                    }
-
-                    this.suspensions = this.suspensions.slice();
-                }
-            }
-        });
-    }
-
-    public deleteSuspension(suspension: GridRow<SuspensionDataDTO>): void {
-        this.confirmDialog.open({
-            title: this.translationService.getValue('commercial-fishing.delete-suspension'),
-            message: this.translationService.getValue('commercial-fishing.confirm-delete-suspension-message'),
-            okBtnLabel: this.translationService.getValue('commercial-fishing.delete')
-        }).subscribe({
-            next: (ok: boolean) => {
-                if (ok) {
-                    this.suspensionsTable.softDelete(suspension);
-                }
-            }
-        });
-    }
-
-    public undoDeleteSuspension(suspension: GridRow<SuspensionDataDTO>): void {
-        this.confirmDialog.open().subscribe({
-            next: (ok: boolean) => {
-                if (ok) {
-                    this.suspensionsTable.softUndoDelete(suspension);
-                }
-            }
-        });
-    }
-
-    public selectAllPermittedAquaticOrganisms(): void {
-        setTimeout(() => {
-            this.selectedAquaticOrganismTypes = [];
-            this.aquaticOrganismTypes = this.allAquaticOrganismTypes.slice();
-
-            const selectedWaterType: NomenclatureDTO<number> | undefined = this.form.get('waterTypeControl')!.value;
-            if (selectedWaterType !== null && selectedWaterType !== undefined) {
-                this.fileterAquaticOrganismTypesByWaterType(WaterTypesEnum[selectedWaterType.code as keyof typeof WaterTypesEnum]);
-            }
-
-            this.updateSelectedAquaticOrganismTypes(this.aquaticOrganismTypes.slice());
-        });
-    }
-
-    public removeAquaticOrganismType(row: NomenclatureDTO<number>): void {
-        setTimeout(() => {
-            this.selectedAquaticOrganismTypes = this.selectedAquaticOrganismTypes.filter(x => x.value !== row.value).slice();
-            this.aquaticOrganismTypes = this.allAquaticOrganismTypes.filter(x => !this.selectedAquaticOrganismTypes.includes(x));
-            this.aquaticOrganismTypes = this.aquaticOrganismTypes.slice();
-
-            if (this.isApplication
-                && this.isPaid
-                && !this.isReadonly
-                && !this.viewMode
-                && this.isPermitLicense
-            ) { // update applied tariffs based on selected ship
-                this.updatePermitLicenseAppliedTariffs();
-            }
-        });
-    }
-
-    public quotaAquaticOrganismChanged(event: RecordChangedEventArgs<QuotaAquaticOrganismDTO> | undefined): void {
-        switch (event!.Command) {
-            case CommandTypes.Add:
-            case CommandTypes.Edit:
-            case CommandTypes.Delete:
-            case CommandTypes.UndoDelete: {
-                this.quotaAquaticOrganismTypes = this.filterQuotaAquaticOrganismTypesCollection();
-            } break;
-        }
-
-        this.quotaAquaticOrganisms = this.quotaAquaticOrganismTypesTable.rows?.map((row: QuotaAquaticOrganismDTO) => {
-            return new QuotaAquaticOrganismDTO({
-                aquaticOrganismId: row.aquaticOrganismId,
-                portId: row.portId
-            });
-        }) ?? [];
-
-        this.form.updateValueAndValidity({ onlySelf: true });
-    }
-
-    public getControlErrorLabelText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
-        switch (errorCode) {
-            case 'egn':
-                if (errorValue === true) {
-                    return new TLError({ text: this.translationService.getValue('regix-data.invalid-egn'), type: 'warn' });
-                }
-                break;
-            case 'shipIsDestroyedOrDeregistered':
-                if (errorValue === true) {
-                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-is-destroyed-or-deregistered-error'), type: 'error' });
-                } break;
-            case 'shipHasNoActiveFishQuota':
-                if (errorValue === true) {
-                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-has-no-active-fish-quota-error'), type: 'error' });
-                }
-                break;
-            case 'shipHasBlackSeaPermit':
-                if (errorValue === true) {
-                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-has-black-sea-permit-error'), type: 'error' });
-                } break;
-            case 'shipHasDanubePermit':
-                if (errorValue === true) {
-                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-has-danube-permit-error'), type: 'error' });
-                } break;
-            case 'shipHasNoBlackSeaPermit':
-                if (errorValue === true) {
-                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-has-no-black-sea-permit-error'), type: 'error' });
-                }
-                break;
-            case 'shipHasNoDanubePermit':
-                if (errorValue === true) {
-                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-has-no-danube-permit-error'), type: 'error' });
-                }
-                break;
-            case 'shipHasPoundNetPermit':
-                if (errorValue === true) {
-                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-has-pound-net-permit-error'), type: 'error' });
-                }
-                break;
-            case 'shipHasNoPoundNetPermit':
-                if (errorValue === true) {
-                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-has-no-pound-net-permit-error'), type: 'error' });
-                }
-                break;
-            case 'shipIsThirdParty':
-                if (errorValue === true) {
-                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-is-third-country-error'), type: 'error' });
-                }
-                break;
-            case 'shipIsNotThirdParty':
-                if (errorValue === true) {
-                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-is-not-third-country-error'), type: 'error' });
-                }
-                break;
-            case 'noPermitRegisterForPermitLicense':
-                if (errorValue === true) {
-                    return new TLError({ text: this.translationService.getValue('commercial-fishing.no-permit-register-for-permit-license'), type: 'error' });
-                }
-            case 'poundNetAlreadyHasPermit':
-                if (errorValue === true) {
-                    return new TLError({ text: this.translationService.getValue('commercial-fishing.pound-net-already-has-valid-permit'), type: 'error' });
-                }
-        }
-
-        return undefined;
-    }
-
-    public fileTypeFilterFn(options: PermittedFileTypeDTO[]): PermittedFileTypeDTO[] {
-        const pdfs: FileTypeEnum[] = [FileTypeEnum.SIGNEDAPPL, FileTypeEnum.APPLICATION_PDF];
-
-        let result: PermittedFileTypeDTO[] = options;
-
-        if (this.isApplication || !this.isOnlineApplication) {
-            result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
-        }
-
-        return result;
-    }
-
-    private closeEditSuspensionDialogBtnClicked(closeFn: HeaderCloseFunction): void {
-        closeFn();
-    }
-
-    private closeEditPermitLicenseDialogBtnClicked(closeFn: HeaderCloseFunction): void {
-        closeFn();
-    }
-
-    private closeChoosePermitLicenseForRenewalDialogBtnClicked(closeFn: HeaderCloseFunction): void {
-        closeFn();
     }
 
     private fileterAquaticOrganismTypesByWaterType(waterTypeCode: WaterTypesEnum | undefined): void {
@@ -1119,16 +1147,23 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
     private filterQuotaAquaticOrganismTypesCollection(): NomenclatureDTO<number>[] {
         this.quotaAquaticOrganismTypes = [...this.allAquaticOrganismTypes];
-        const aquaticOrganismTypeIds = new Set<number>(
-            this.quotaAquaticOrganismTypesTable.rows
-                .filter((x: QuotaAquaticOrganismDTO) => {
-                    return x?.aquaticOrganismId !== undefined
-                })
-                .map(x => x.aquaticOrganismId)
-        );
 
-        if (aquaticOrganismTypeIds) {
-            this.quotaAquaticOrganismTypes = this.quotaAquaticOrganismTypes.filter(x => !aquaticOrganismTypeIds.has(x.value!));
+        if (this.quotaAquaticOrganismTypesTable !== null
+            && this.quotaAquaticOrganismTypesTable !== undefined
+            && this.quotaAquaticOrganismTypesTable.rows !== null
+            && this.quotaAquaticOrganismTypesTable.rows !== undefined
+        ) {
+            const aquaticOrganismTypeIds = new Set<number>(
+                this.quotaAquaticOrganismTypesTable.rows
+                    .filter((x: QuotaAquaticOrganismDTO) => {
+                        return x?.aquaticOrganismId !== undefined
+                    })
+                    .map(x => x.aquaticOrganismId)
+            );
+
+            if (aquaticOrganismTypeIds) {
+                this.quotaAquaticOrganismTypes = this.quotaAquaticOrganismTypes.filter(x => !aquaticOrganismTypeIds.has(x.value!));
+            }
         }
 
         return this.quotaAquaticOrganismTypes.slice();
@@ -1175,7 +1210,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             title: this.translationService.getValue('commercial-fishing.choose-permit-license-for-reneal-dialog-title'),
             TCtor: ChoosePermitLicenseForRenewalComponent,
             headerCancelButton: {
-                cancelBtnClicked: this.closeChoosePermitLicenseForRenewalDialogBtnClicked.bind(this)
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
             },
             componentData: editDialogData,
             translteService: this.translationService,
@@ -1283,6 +1318,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 }
 
                 dialogClose();
+
                 const editDialogData: CommercialFishingDialogParamsModel = new CommercialFishingDialogParamsModel({
                     model: permitLicenseModel,
                     applicationId: permitLicenseModel.applicationId,
@@ -1317,7 +1353,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     TCtor: EditCommercialFishingComponent,
                     headerAuditButton: auditButton,
                     headerCancelButton: {
-                        cancelBtnClicked: this.closeEditPermitLicenseDialogBtnClicked.bind(this)
+                        cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
                     },
                     componentData: editDialogData,
                     translteService: this.translationService,
@@ -1358,6 +1394,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 else {
                     dialogClose(this.model);
                 }
+
                 NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
 
                 if (this.pageCode === PageCodeEnum.PoundnetCommFish || this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
@@ -1405,99 +1442,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         });
     }
 
-    private handleAddEditApplicationErrorResponse(errorResponse: HttpErrorResponse, dialogClose: DialogCloseCallback, saveMethod: SaveMethodType): void {
-        if (errorResponse.error !== null
-            && errorResponse.error !== undefined
-            && errorResponse.error.messages !== null
-            && errorResponse.error.messages !== undefined
-        ) {
-            const messages: string[] = errorResponse.error.messages;
-
-            if (Array.isArray(messages) === true) {
-                for (const message of messages) {
-                    const validationError = CommercialFishingValidationErrorsEnum[message as keyof typeof CommercialFishingValidationErrorsEnum];
-                    switch (validationError) {
-                        case CommercialFishingValidationErrorsEnum.CaptainNotQualifiedFisherCheck: {
-                            this.hasCaptainNotQualifiedFisherError = true;
-                            this.validityCheckerGroup.validate();
-                        } break;
-                        case CommercialFishingValidationErrorsEnum.PermitSubmittedForNotShipOwner: {
-                            this.hasSubmittedForNotShipOwnerError = true;
-                            this.validityCheckerGroup.validate();
-                        } break;
-                        case CommercialFishingValidationErrorsEnum.NoEDeliveryRegistration: {
-                            this.hasNoEDeliveryRegistrationError = true;
-                            this.validityCheckerGroup.validate();
-                        } break;
-                        case CommercialFishingValidationErrorsEnum.InvalidPermitRegistrationNumber: {
-                            if (this.isPublicApp) {
-                                this.hasInvalidPermitRegistrationNumber = true;
-                                this.validityCheckerGroup.validate();
-                            }
-                        } break;
-                        case CommercialFishingValidationErrorsEnum.ShipAlreadyHasValidBlackSeaPermit: {
-                            this.selectedShipAlreadyHasValidBlackSeaPermitError = true;
-                            this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
-                            this.form.get('shipControl')!.markAsTouched();
-                            this.validityCheckerGroup.validate();
-                        } break;
-                        case CommercialFishingValidationErrorsEnum.ShipAlreadyHasValidDanubePermit: {
-                            this.selectedShipAlreadyHasValidDanubePermitError = true;
-                            this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
-                            this.form.get('shipControl')!.markAsTouched();
-                            this.validityCheckerGroup.validate();
-                        } break;
-                        case CommercialFishingValidationErrorsEnum.ShipHasNoValidBlackSeaPermit: {
-                            this.selectedShipHasNoBlackSeaPermitError = true;
-                            this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
-                            this.form.get('shipControl')!.markAsTouched();
-                            this.validityCheckerGroup.validate();
-                        } break;
-                        case CommercialFishingValidationErrorsEnum.ShipHasNoValidDanubePermit: {
-                            this.selectedShipHasNoDanubePermitError = true;
-                            this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
-                            this.form.get('shipControl')!.markAsTouched();
-                            this.validityCheckerGroup.validate();
-                        } break;
-                        case CommercialFishingValidationErrorsEnum.ShipAlreadyHasValidPoundNetPermit: {
-                            this.selectedShipAlreadyHasValidPoundNetPermitError = true;
-                            this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
-                            this.form.get('shipControl')!.markAsTouched();
-                            this.validityCheckerGroup.validate();
-                        } break;
-                        case CommercialFishingValidationErrorsEnum.ShipHasNoPoundNetPermit: {
-                            this.selectedShipHasNoPoundNetPermitError = true;
-                            this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
-                            this.form.get('shipControl')!.markAsTouched();
-                            this.validityCheckerGroup.validate();
-                        } break;
-                        case CommercialFishingValidationErrorsEnum.ShipIsThirdCountry: {
-                            this.selectedShipIsThirdCountryError = true;
-                            this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
-                            this.form.get('shipControl')!.markAsTouched();
-                            this.validityCheckerGroup.validate();
-                        } break;
-                        case CommercialFishingValidationErrorsEnum.ShipIsNotThirdCountry: {
-                            this.selectedShipIsNotThirdCountryError = true;
-                            this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
-                            this.form.get('shipControl')!.markAsTouched();
-                            this.validityCheckerGroup.validate();
-                        } break;
-                    }
-                }
-            }
-
-            const error = errorResponse.error as ErrorModel;
-            if (error?.code === ErrorCode.InvalidLogBookLicensePagesRange && this.model instanceof CommercialFishingEditDTO) {
-                this.handleInvalidLogBookLicensePagesRangeError(error.messages[0], dialogClose, saveMethod);
-            }
-            else if (error?.code === ErrorCode.NoPermitRegisterForPermitLicense) {
-                this.hasNoPermitRegisterForPermitLicenseError = true;
-                this.form.updateValueAndValidity();
-            }
-        }
-    }
-
     private saveOrEdit(fromSaveAsDraft: boolean, pageCode: PageCodeEnum): Observable<number | void> {
         this.model = this.fillModel();
         CommonUtils.sanitizeModelStrings(this.model);
@@ -1523,6 +1467,101 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         return saveOrEditObservable;
     }
 
+    private handleAddEditApplicationErrorResponse(errorResponse: HttpErrorResponse, dialogClose: DialogCloseCallback, saveMethod: SaveMethodType): void {
+        if (errorResponse.error !== null
+            && errorResponse.error !== undefined
+            && errorResponse.error.messages !== null
+            && errorResponse.error.messages !== undefined
+        ) {
+            const messages: string[] = errorResponse.error.messages;
+
+            if (Array.isArray(messages) === true) {
+                for (const message of messages) {
+                    const validationError = CommercialFishingValidationErrorsEnum[message as keyof typeof CommercialFishingValidationErrorsEnum];
+                    switch (validationError) {
+                        case CommercialFishingValidationErrorsEnum.CaptainNotQualifiedFisherCheck: {
+                            this.hasCaptainNotQualifiedFisherError = true;
+                        } break;
+                        case CommercialFishingValidationErrorsEnum.PermitSubmittedForNotShipOwner: {
+                            this.hasSubmittedForNotShipOwnerError = true;
+                        } break;
+                        case CommercialFishingValidationErrorsEnum.NoEDeliveryRegistration: {
+                            this.hasNoEDeliveryRegistrationError = true;
+                        } break;
+                        case CommercialFishingValidationErrorsEnum.InvalidPermitRegistrationNumber: {
+                            if (this.isPublicApp) {
+                                this.hasInvalidPermitRegistrationNumber = true;
+                            }
+                        } break;
+                        case CommercialFishingValidationErrorsEnum.ShipAlreadyHasValidBlackSeaPermit: {
+                            this.selectedShipAlreadyHasValidBlackSeaPermitError = true;
+                            this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
+                            this.form.get('shipControl')!.markAsTouched();
+                        } break;
+                        case CommercialFishingValidationErrorsEnum.ShipAlreadyHasValidDanubePermit: {
+                            this.selectedShipAlreadyHasValidDanubePermitError = true;
+                            this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
+                            this.form.get('shipControl')!.markAsTouched();
+                        } break;
+                        case CommercialFishingValidationErrorsEnum.ShipHasNoValidBlackSeaPermit: {
+                            this.selectedShipHasNoBlackSeaPermitError = true;
+                            this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
+                            this.form.get('shipControl')!.markAsTouched();
+                        } break;
+                        case CommercialFishingValidationErrorsEnum.ShipHasNoValidDanubePermit: {
+                            this.selectedShipHasNoDanubePermitError = true;
+                            this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
+                            this.form.get('shipControl')!.markAsTouched();
+                        } break;
+                        case CommercialFishingValidationErrorsEnum.ShipHasNoPoundNetPermit: {
+                            this.selectedShipHasNoPoundNetPermitError = true;
+                            this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
+                            this.form.get('shipControl')!.markAsTouched();
+                        } break;
+                        case CommercialFishingValidationErrorsEnum.ShipIsThirdCountry: {
+                            this.selectedShipIsThirdCountryError = true;
+                            this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
+                            this.form.get('shipControl')!.markAsTouched();
+                        } break;
+                        case CommercialFishingValidationErrorsEnum.ShipIsNotThirdCountry: {
+                            this.selectedShipIsNotThirdCountryError = true;
+                            this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
+                            this.form.get('shipControl')!.markAsTouched();
+                        } break;
+                    }
+                }
+            }
+
+            const error = errorResponse.error as ErrorModel;
+            if (error?.code === ErrorCode.InvalidLogBookLicensePagesRange && this.model instanceof CommercialFishingEditDTO) {
+                this.handleInvalidLogBookLicensePagesRangeError(error.messages[0], dialogClose, saveMethod);
+            }
+            else if (error?.code === ErrorCode.NoPermitRegisterForPermitLicense) {
+                this.hasNoPermitRegisterForPermitLicenseError = true;
+                this.form.get('shipControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('shipControl')!.markAsTouched();
+            }
+            else if (error?.code === ErrorCode.DuplicatedMarksNumbers) {
+                this.duplicatedMarkNumbers = error?.messages ?? [];
+                this.form.get('fishingGearsGroup')!.updateValueAndValidity();
+                this.form.get('fishingGearsGroup')!.markAsTouched();
+            }
+            else if (error?.code === ErrorCode.DuplicatedPingersNumbers) {
+                this.duplicatedPingerNumbers = error?.messages ?? [];
+                this.form.get('fishingGearsGroup')!.updateValueAndValidity();
+                this.form.get('fishingGearsGroup')!.markAsTouched();
+            }
+            else if (error?.code === ErrorCode.ShipEventExistsOnSameDate) {
+                this.hasShipEventExistsOnSameDateError = true;
+                this.form.updateValueAndValidity({ onlySelf: true });
+            }
+        }
+
+        setTimeout(() => {
+            this.validityCheckerGroup.validate();
+        });
+    }
+
     private fillForm(): void {
         this.fillFormApplicationData();
 
@@ -1536,23 +1575,11 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         }
 
         if (this.model instanceof CommercialFishingRegixDataDTO && this.showOnlyRegiXData) {
-            if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
-                const applicationRegiXChecks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
-
-                setTimeout(() => {
-                    this.regixChecks = applicationRegiXChecks;
-                });
-            }
-
-            if (!this.viewMode) {
-                this.notifier.start();
-                this.notifier.onNotify.subscribe({
-                    next: () => {
-                        this.form.markAllAsTouched();
-                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
-                        this.notifier.stop();
-                    }
-                });
+            this.fillFormRegiX();
+        }
+        else {
+            if (this.showRegiXData) {
+                this.fillFormRegiX();
             }
         }
 
@@ -1566,12 +1593,42 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         }
     }
 
+    private fillFormRegiX(): void {
+        if (this.model instanceof CommercialFishingRegixDataDTO || this.model instanceof CommercialFishingApplicationEditDTO) {
+            if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
+                const applicationRegiXChecks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
+
+                setTimeout(() => {
+                    this.regixChecks = applicationRegiXChecks;
+                });
+            }
+        }
+
+        if (!this.viewMode) {
+            this.notifier.start();
+            this.notifier.onNotify.subscribe({
+                next: () => {
+                    this.form.markAllAsTouched();
+
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+
+                    this.notifier.stop();
+                }
+            });
+        }
+    }
+
     private fillFormApplicationData(): void {
         if ((this.model instanceof CommercialFishingRegixDataDTO && this.showOnlyRegiXData) || this.model instanceof CommercialFishingApplicationEditDTO) {
             this.form.get('submittedByControl')!.setValue(this.model.submittedBy);
 
             if (this.model instanceof CommercialFishingApplicationEditDTO) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+                this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
+
+                this.hideBasicPaymentInfo = this.shouldHidePaymentData();
             }
         }
 
@@ -1608,7 +1665,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 if (poundNetId !== null && poundNetId !== undefined) {
                     const poundNetGroup: IGroupedOptions<number> = this.poundNets.find(x => (x.options as PoundNetNomenclatureDTO[]).find(y => y.value === poundNetId))!;
                     const poundNet: PoundNetNomenclatureDTO = (poundNetGroup.options as PoundNetNomenclatureDTO[]).find(x => x.value === poundNetId)!;
-                    
+
                     this.form.get('poundNetControl')!.setValue(poundNet);
                     this.form.get('poundNetDepthControl')!.setValue(poundNet.depth);
                     this.form.get('poundNetStatusControl')!.setValue(poundNet.statusName);
@@ -1641,7 +1698,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             }
 
             if (this.isPermitLicense === true) {
-                this.form.get('fishingGearsControl')!.setValue(this.model.fishingGears);
+                this.form.get('fishingGearsGroup.fishingGearsControl')!.setValue(this.model.fishingGears);
             }
 
             if (this.model instanceof CommercialFishingEditDTO && this.isPermitLicense) {
@@ -1712,7 +1769,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     }
 
     private buildForm(): void {
-        this.form = new FormGroup({});
+        this.form = new FormGroup({}, [this.oneShipEventOnSameDateValidator()]);
         this.addApplicationFormControls();
 
         if (!this.showOnlyRegiXData) {
@@ -1749,13 +1806,14 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     }
 
     private addApplicationFormControls(): void {
-        this.form.addControl('submittedByControl', new FormControl(undefined));
+        this.form.addControl('submittedByControl', new FormControl());
 
         if (!this.showOnlyRegiXData) {
-            this.form.addControl('deliveryDataControl', new FormControl(undefined));
+            this.form.addControl('deliveryDataControl', new FormControl());
+            this.form.addControl('applicationPaymentInformationControl', new FormControl());
         }
 
-        this.form.addControl('submittedForControl', new FormControl(undefined));
+        this.form.addControl('submittedForControl', new FormControl());
     }
 
     private addBasicInformation(): void {
@@ -1765,21 +1823,20 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             this.form.get('shipControl')!.setValidators([Validators.required, this.shipAllowedForSelectionValidator()]);
         }
         else {
-            this.form.get('shipControl')!.setValidators([Validators.required]);
+            if (this.isPermitLicense) {
+                this.form.get('shipControl')!.setValidators([Validators.required, this.permitRegisterForPermitLicenseValidator()]);
+            }
+            else {
+                this.form.get('shipControl')!.setValidators([Validators.required]);
+            }
         }
 
-        if (this.isApplication && this.isPermitLicense) {
+        if (this.isPermitLicense && this.isApplication) {
             if (this.isPublicApp) {
                 this.form.addControl('permitLicensePermitNumberControl', new FormControl(undefined, Validators.required));
             }
             else {
-                this.form.addControl('permitLicensePermitControl', new FormControl(undefined, [Validators.required, this.permitRegisterForPermitLicenseValidator()]));
-
-                this.form.get('permitLicensePermitControl')!.valueChanges.subscribe({
-                    next: () => {
-                        this.hasNoPermitRegisterForPermitLicenseError = false;
-                    }
-                });
+                this.form.addControl('permitLicensePermitControl', new FormControl(undefined, [Validators.required]));
             }
         }
 
@@ -1794,10 +1851,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             this.form.addControl('poundNetStatusControl', new FormControl(undefined));
 
             if (this.pageCode === PageCodeEnum.PoundnetCommFish) {
-                if (this.isApplication) {
-                    this.form.get('poundNetControl')!.setValidators([Validators.required, this.poundNetAllowedForSelectionValidator()]);
-                }
-                
+
                 this.form.addControl('poundNetGroundForUseControl', new FormControl(undefined, Validators.required));
             }
         }
@@ -1820,8 +1874,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             }
         }
         else if (this.isPermitLicense) {
-            this.form.addControl('aquaticOrganismTypesControl', new FormControl(null));
-
             if (!this.isReadonly && !this.viewMode) {
                 if (this.form.validator !== null && this.form.validator !== undefined) {
                     this.form.setValidators([this.form.validator, this.atLeastOneAquaticOrganism()]);
@@ -1835,16 +1887,35 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         this.form.addControl('waterTypeControl', new FormControl(null, Validators.required));
 
         if (this.isPermitLicense === true) {
-            this.form.addControl('fishingGearsControl', new FormControl(undefined));
+            this.form.addControl('fishingGearsGroup',
+                new FormGroup({
+                    fishingGearsControl: new FormControl(undefined)
+                })
+            );
 
             if (!this.isReadonly && !this.viewMode) {
-                if (this.form.validator !== null && this.form.validator !== undefined) {
-                    this.form.setValidators([this.form.validator, this.atLeastOneFishingGear()]);
+                if (this.form.get('fishingGearsGroup')!.validator !== null && this.form.get('fishingGearsGroup')!.validator !== undefined) {
+                    this.form.get('fishingGearsGroup')!.setValidators([
+                        this.form.get('fishingGearsGroup')!.validator!,
+                        this.atLeastOneFishingGear(),
+                        this.permitLicenseDuplicateMarkNumbersValidator(),
+                        this.permitLicenseDuplicatePingerNumbersValidator()
+                    ]);
                 }
                 else {
-                    this.form.setValidators([this.atLeastOneFishingGear()]);
+                    this.form.get('fishingGearsGroup')!.setValidators([
+                        this.atLeastOneFishingGear(),
+                        this.permitLicenseDuplicateMarkNumbersValidator(),
+                        this.permitLicenseDuplicatePingerNumbersValidator()
+                    ]);
                 }
             }
+
+            this.form.get('fishingGearsGroup.fishingGearsControl')!.valueChanges.subscribe({
+                next: (values: FishingGearDTO[] | null | undefined) => {
+                    this.updateDuplicatedMarksAndPingers(values);
+                }
+            });
         }
 
         this.form.addControl('filesControl', new FormControl(undefined));
@@ -1911,6 +1982,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
             if (model instanceof CommercialFishingApplicationEditDTO) {
                 model.deliveryData = this.form.get('deliveryDataControl')!.value;
+                model.paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
             }
         }
         else if (model instanceof CommercialFishingEditDTO) {
@@ -1936,6 +2008,9 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
                 if (model.isHolderShipOwner === false) {
                     model.shipGroundForUse = this.form.get('shipGroundForUseControl')!.value;
+                }
+                else {
+                    model.shipGroundForUse = undefined;
                 }
             }
 
@@ -1967,7 +2042,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             model.waterTypeId = this.form.get('waterTypeControl')!.value?.value;
 
             if (this.isPermitLicense === true) {
-                model.fishingGears = this.form.get('fishingGearsControl')!.value;
+                model.fishingGears = this.form.get('fishingGearsGroup.fishingGearsControl')!.value;
                 model.fishingGears = model.fishingGears?.filter(x =>
                     (x.id !== null && x.id !== undefined) || ((x.id === null || x.id === undefined) && x.isActive)
                 );
@@ -2069,18 +2144,21 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         const parameters: PermitLicenseTariffCalculationParameters = this.getPermitLiceseTariffCalculationParameters();
         this.service.calculatePermitLicenseAppliedTariffs(parameters).subscribe({
             next: (appliedTariffs: PaymentTariffDTO[]) => {
-                if (this.applicationPaymentInformation!.paymentSummary !== null
-                    && this.applicationPaymentInformation!.paymentSummary !== undefined
+                if ((this.model as CommercialFishingApplicationEditDTO).paymentInformation!.paymentSummary !== null
+                    && (this.model as CommercialFishingApplicationEditDTO).paymentInformation!.paymentSummary !== undefined
                 ) {
-                    this.applicationPaymentInformation!.paymentSummary.tariffs = appliedTariffs;
-                    this.applicationPaymentInformation!.paymentSummary.totalPrice = this.calculateAppliedTariffsTotalPrice(appliedTariffs);
+                    (this.model as CommercialFishingApplicationEditDTO).paymentInformation!.paymentSummary!.tariffs = appliedTariffs;
+                    (this.model as CommercialFishingApplicationEditDTO).paymentInformation!.paymentSummary!.totalPrice = this.calculateAppliedTariffsTotalPrice(appliedTariffs);
                 }
                 else {
-                    this.applicationPaymentInformation!.paymentSummary = new PaymentSummaryDTO({
+                    (this.model as CommercialFishingApplicationEditDTO).paymentInformation!.paymentSummary = new PaymentSummaryDTO({
                         tariffs: appliedTariffs,
                         totalPrice: this.calculateAppliedTariffsTotalPrice(appliedTariffs)
                     });
                 }
+
+                this.form.get('applicationPaymentInformationControl')!.setValue((this.model as CommercialFishingApplicationEditDTO).paymentInformation);
+                this.hideBasicPaymentInfo = this.shouldHidePaymentData();
             }
         });
     }
@@ -2098,15 +2176,28 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         else if (this.isPermitLicense) {
             aquaticOrganismTypeIds = this.selectedAquaticOrganismTypes.map(x => x.value!);
         }
-        
+
+        const paymentIntormation: ApplicationPaymentInformationDTO = this.form.get('applicationPaymentInformationControl')!.value;
+
+        let excludedTariffsIds: number[] = [];
+
+        if (paymentIntormation.paymentSummary !== null
+            && paymentIntormation.paymentSummary !== undefined
+            && paymentIntormation.paymentSummary.tariffs !== null
+            && paymentIntormation.paymentSummary.tariffs !== undefined
+        ) {
+            excludedTariffsIds = paymentIntormation.paymentSummary.tariffs.filter(x => !x.isChecked).map(x => x.tariffId!);
+        }
+
         const parameters: PermitLicenseTariffCalculationParameters = new PermitLicenseTariffCalculationParameters({
             applicationId: this.applicationId,
             pageCode: this.pageCode,
             shipId: this.form.get('shipControl')!.value?.value,
-            waterTypeId: this.form.get('waterTypeControl')!.value?.value,
+            waterTypeCode: this.form.get('waterTypeControl')!.value?.code,
             aquaticOrganismTypeIds: aquaticOrganismTypeIds,
-            fishingGears: this.form.get('fishingGearsControl')!.value,
-            poundNetId: this.form.get('poundNetControl')?.value?.value
+            fishingGears: this.form.get('fishingGearsGroup.fishingGearsControl')!.value,
+            poundNetId: this.form.get('poundNetControl')?.value?.value,
+            excludedTariffsIds: excludedTariffsIds
         });
 
         return parameters;
@@ -2126,7 +2217,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             });
 
             this.aquaticOrganismTypes = this.allAquaticOrganismTypes.filter(x => !this.selectedAquaticOrganismTypes.includes(x)).slice();
-            this.form.get('aquaticOrganismTypesControl')!.setValue('');
+            this.aquaticOrganismTypesControl.setValue(undefined);
 
             if (this.isApplication
                 && this.isPaid
@@ -2192,10 +2283,210 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         this.form.get('qualifiedFisherLastNameControl')!.setValue(null);
     }
 
-    private getShipNomenclatures(): Promise<NomenclatureDTO<number>[]> {
+    private handleInvalidLogBookLicensePagesRangeError(logBookNumber: string, dialogClose: DialogCloseCallback, saveMethod: SaveMethodType): void {
+        if (this.model instanceof CommercialFishingEditDTO) {
+            this.ignoreLogBookConflicts = false;
+            const logBooks: CommercialFishingLogBookEditDTO[] = this.form.get('logBooksControl')!.value;
+
+            const logBook: CommercialFishingLogBookEditDTO | undefined = logBooks!.find(x => x.logbookNumber === logBookNumber);
+
+            if (logBook !== null && logBook !== undefined) {
+                setTimeout(() => {
+                    logBook.hasError = true;
+                    this.form.get('logBooksControl')!.setValue((this.model as CommercialFishingEditDTO).logBooks);
+                });
+            }
+
+            const ranges: OverlappingLogBooksParameters[] = [];
+
+            for (const logBook of logBooks.filter(x => x.permitLicenseIsActive)) {
+                const range: OverlappingLogBooksParameters = new OverlappingLogBooksParameters({
+                    logBookId: logBook.logBookId,
+                    typeId: logBook.logBookTypeId,
+                    OwnerType: logBook.ownerType,
+                    startPage: logBook.permitLicenseStartPageNumber,
+                    endPage: logBook.permitLicenseEndPageNumber
+                });
+                ranges.push(range);
+            }
+
+            const editDialogData: OverlappingLogBooksDialogParamsModel = new OverlappingLogBooksDialogParamsModel({
+                service: this.service as CommercialFishingAdministrationService,
+                logBookGroup: this.logBookGroup,
+                ranges: ranges
+            });
+
+            this.overlappingLogBooksDialog.open({
+                title: this.translationService.getValue('commercial-fishing.overlapping-log-books-dialog-title'),
+                TCtor: OverlappingLogBooksComponent,
+                headerCancelButton: {
+                    cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+                },
+                componentData: editDialogData,
+                translteService: this.translationService,
+                disableDialogClose: true,
+                cancelBtn: {
+                    id: 'cancel',
+                    color: 'primary',
+                    translateValue: 'common.cancel',
+                },
+                saveBtn: {
+                    id: 'save',
+                    color: 'error',
+                    translateValue: 'commercial-fishing.overlapping-log-books-save-despite-conflicts'
+                }
+            }, '1300px').subscribe({
+                next: (save: boolean | undefined) => {
+                    if (save) {
+                        this.ignoreLogBookConflicts = true;
+                        switch (saveMethod) {
+                            case 'save': this.saveCommercialFishingRecord(dialogClose); break;
+                            case 'saveAndPrint': this.saveAndPrintRecord(dialogClose); break;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    private updateDuplicatedMarksAndPingers(values: FishingGearDTO[] | null | undefined): void {
+        if (values !== null && values !== undefined) {
+            const marksMarkNumbers = values.map(x => x.marks?.filter(x => x.isActive && x.selectedStatus === FishingGearMarkStatusesEnum.NEW).map(x => x.number!));
+            if (marksMarkNumbers !== null && marksMarkNumbers !== undefined && marksMarkNumbers.length > 0) {
+                const markNumbers = marksMarkNumbers.reduce(x => x);
+                const dupMarksCopy = this.duplicatedMarkNumbers.slice();
+
+                if (markNumbers !== null && markNumbers !== undefined) {
+                    for (const mark of dupMarksCopy) {
+                        if (!markNumbers.includes(mark)) {
+                            const indexToDelete = this.duplicatedMarkNumbers.findIndex(x => x === mark);
+                            this.duplicatedMarkNumbers.splice(indexToDelete, 1);
+                        }
+                    }
+                }
+            }
+
+            const pingersPingerNumbers = values.map(x => x.pingers?.filter(x => x.isActive && x.selectedStatus === FishingGearPingerStatusesEnum.NEW)?.map(x => x.number!));
+            if (pingersPingerNumbers !== null && pingersPingerNumbers !== undefined && pingersPingerNumbers.length > 0) {
+                const pingerNumbers = pingersPingerNumbers.reduce(x => x);
+                const dupPingersCopy = this.duplicatedPingerNumbers.slice();
+
+                for (const pinger of dupPingersCopy) {
+                    if (!pingerNumbers?.includes(pinger)) {
+                        const indexToDelete = this.duplicatedPingerNumbers.findIndex(x => x === pinger);
+                        this.duplicatedPingerNumbers.splice(indexToDelete, 1);
+                    }
+                }
+            }
+
+            this.duplicatedMarkNumbers = this.duplicatedMarkNumbers.slice();
+            this.duplicatedPingerNumbers = this.duplicatedPingerNumbers.slice();
+        }
+        else {
+            this.duplicatedMarkNumbers = [];
+            this.duplicatedPingerNumbers = [];
+        }
+
+        this.form.get('fishingGearsGroup')!.updateValueAndValidity({ emitEvent: false });
+    }
+
+    /// Nomenclatures
+
+    private getNomenclatures(): Subscription {
+        type NomenclatureTypes = NomenclatureDTO<number>;
+        const observables: Observable<NomenclatureTypes[]>[] = [];
+
+        if (!this.showOnlyRegiXData) {
+            this.shipFilters = this.getShipFilters();
+
+            observables.push(this.getShipNomenclatures());
+
+            observables.push(NomenclatureStore.instance.getNomenclature<number>(NomenclatureTypes.WaterTypes, this.service.getWaterTypes.bind(this.service), false));
+
+            if (!this.isApplication && !this.loadRegisterFromApplication) {
+                observables.push(this.getQualifiedFisherNomenclatures());
+            }
+
+            if (this.isPermitLicense) {
+                observables.push(NomenclatureStore.instance.getNomenclature<number>(NomenclatureTypes.Fishes, this.commonNomenclatures.getFishTypes.bind(this.commonNomenclatures), false));
+
+                if (this.pageCode === PageCodeEnum.CatchQuataSpecies) {
+                    observables.push(NomenclatureStore.instance.getNomenclature<number>(NomenclatureTypes.Ports, this.service.getPorts.bind(this.service), false));
+                }
+            }
+
+            if (this.isPermitLicense || this.pageCode === PageCodeEnum.PoundnetCommFish) {
+                observables.push(NomenclatureStore.instance.getNomenclature<number>(NomenclatureTypes.GroundForUseTypes, this.service.getHolderGroundForUseTypes.bind(this.service), false));
+            }
+
+            if (this.pageCode === PageCodeEnum.PoundnetCommFish || this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
+                observables.push(this.getPoundNetsNomenclature()); //poundNets
+            }
+        }
+
+        if (observables.length > 0) {
+            const subscription: Subscription = forkJoin(observables).subscribe({
+                next: (nomenclatures: NomenclatureTypes[][]) => {
+                    let index = 0;
+                    if (!this.showOnlyRegiXData) {
+                        this.ships = nomenclatures[index++];
+                        this.waterTypes = nomenclatures[index++];
+
+                        if (!this.isApplication && !this.loadRegisterFromApplication) {
+                            this.qualifiedFishers = nomenclatures[index++];
+                        }
+
+                        if (this.isPermitLicense) {
+                            this.allAquaticOrganismTypes = nomenclatures[index++];
+
+                            if (this.pageCode === PageCodeEnum.CatchQuataSpecies) {
+                                const ports = nomenclatures[index++];
+                                this.allPorts = this.deepCopyPorts(ports);
+
+                                const now: Date = new Date();
+                                this.allAquaticOrganismTypes = this.allAquaticOrganismTypes.filter(x => x.quotaPeriodFrom !== null
+                                    && x.quotaPeriodFrom !== undefined
+                                    && x.quotaPeriodTo !== null
+                                    && x.quotaPeriodTo !== undefined
+                                    && new Date(x.quotaPeriodFrom) <= now && new Date(x.quotaPeriodTo) > now).slice();
+
+                                this.quotaAquaticOrganismTypes = this.allAquaticOrganismTypes;
+                                this.quotaAquaticOrganismTypes = this.filterQuotaAquaticOrganismTypesCollection();
+
+                                this.ports = this.filterQuotaSpiciesPortsCollection(undefined, true);
+                            }
+                            else {
+                                this.allAquaticOrganismTypes = this.allAquaticOrganismTypes.filter(x => x.isActive && (x.quotaId === null || x.quotaId === undefined));
+                                this.aquaticOrganismTypes = this.allAquaticOrganismTypes;
+                            }
+                        }
+
+                        if (this.isPermitLicense || this.pageCode === PageCodeEnum.PoundnetCommFish) {
+                            this.groundForUseTypes = nomenclatures[index++];
+                        }
+
+                        if (this.pageCode === PageCodeEnum.PoundnetCommFish || this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
+                            const poundNets = nomenclatures[index++];
+
+                            this.createAndFilterPoundNets(poundNets);
+                        }
+                    }
+
+                    this.loader.complete();
+                }
+            });
+
+            return subscription;
+        }
+
+        this.loader.complete();
+        return new Subscription();
+    }
+
+    private getShipNomenclatures(): Observable<NomenclatureDTO<number>[]> {
         return NomenclatureStore.instance.getNomenclature(
             NomenclatureTypes.Ships, this.commonNomenclatures.getShips.bind(this.commonNomenclatures), false
-        ).toPromise();
+        );
     }
 
     private getShipFilters(): CommercialFishingShipFilters {
@@ -2208,9 +2499,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
             filters.hasBlackSeaPermitApplication = undefined;
             filters.hasDanubePermitApplication = undefined;
-
-            filters.hasPoundNetPermit = undefined;
-            filters.hasPoundNetPermitApplication = undefined;
 
             filters.isDestroyedOrDeregistered = undefined;
             filters.isThirdCountryShip = undefined;
@@ -2260,6 +2548,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 }
 
                 filters.isDestroyedOrDeregistered = false;
+                filters.isForbiddenForLicenses = false;
             }
             else if (this.id === null || this.id === undefined) {
                 if (selectedWaterType === null || selectedWaterType === undefined) {
@@ -2280,17 +2569,14 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 }
 
                 filters.isDestroyedOrDeregistered = false;
+                filters.isForbiddenForLicenses = false;
             }
         }
         else if (this.pageCode === PageCodeEnum.PoundnetCommFish) {
             filters.isThirdCountryShip = false;
 
             if (this.isApplication) {
-                filters.hasPoundNetPermit = false;
                 filters.isDestroyedOrDeregistered = false;
-            }
-            else if (this.id === null || this.id === undefined) {
-                filters.hasPoundNetPermit = false;
             }
         }
         else if (this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
@@ -2299,9 +2585,11 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             if (this.isApplication) {
                 filters.hasPoundNetPermitApplication = true;
                 filters.isDestroyedOrDeregistered = false;
+                filters.isForbiddenForLicenses = false;
             }
             else if (this.id === null || this.id === undefined) {
                 filters.hasPoundNetPermit = true;
+                filters.isForbiddenForLicenses = false;
             }
         }
         else if (this.pageCode === PageCodeEnum.RightToFishThirdCountry) {
@@ -2351,6 +2639,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 }
 
                 filters.isDestroyedOrDeregistered = false;
+                filters.isForbiddenForLicenses = false;
             }
         }
         else {
@@ -2372,21 +2661,22 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             }
 
             filters.isThirdCountryShip = undefined;
+            filters.isForbiddenForLicenses = undefined;
         }
 
         return filters;
     }
 
-    private getQualifiedFisherNomenclatures(): Promise<QualifiedFisherNomenclatureDTO[]> {
+    private getQualifiedFisherNomenclatures(): Observable<QualifiedFisherNomenclatureDTO[]> {
         return this.service.getQualifiedFishers().pipe(map((qualifiedFishers: QualifiedFisherNomenclatureDTO[]) => {
             for (const fisher of qualifiedFishers) {
                 fisher.description = `${this.translationService.getValue('commercial-fishing.qualified-fisher-registration-number')}: ${fisher.registrationNumber}`;
             }
             return qualifiedFishers;
-        })).toPromise();
+        }));
     }
 
-    private getPoundNetsNomenclature(): Promise<PoundNetNomenclatureDTO[]> {
+    private getPoundNetsNomenclature(): Observable<PoundNetNomenclatureDTO[]> {
         return NomenclatureStore.instance.getNomenclature(
             NomenclatureTypes.PoundNets, this.service.getPoundNets.bind(this.service), false
         ).pipe(map((poundNets: PoundNetNomenclatureDTO[]) => {
@@ -2395,75 +2685,51 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             }
 
             return poundNets;
-        })).toPromise();
+        }));
     }
 
-    private handleInvalidLogBookLicensePagesRangeError(logBookNumber: string, dialogClose: DialogCloseCallback, saveMethod: SaveMethodType): void {
-        if (this.model instanceof CommercialFishingEditDTO) {
-            this.ignoreLogBookConflicts = false;
-            const logBooks: CommercialFishingLogBookEditDTO[] = this.form.get('logBooksControl')!.value;
+    private setPermitLicenseIsValidFlag(model: CommercialFishingEditDTO): void {
+        const now = new Date();
+        this.permitLicenseIsValid = model.validFrom !== null
+            && model.validFrom !== undefined
+            && model.validFrom!.getTime() <= now.getTime()
+            && model.validTo !== null
+            && model.validTo !== undefined
+            && model.validTo!.getTime() > now.getTime();
 
-            const logBook: CommercialFishingLogBookEditDTO | undefined = logBooks!.find(x => x.logbookNumber === logBookNumber);
-
-            if (logBook !== null && logBook !== undefined) {
-                setTimeout(() => {
-                    logBook.hasError = true;
-                    this.form.get('logBooksControl')!.setValue((this.model as CommercialFishingEditDTO).logBooks);
-                    this.validityCheckerGroup.validate();
-                });
+        this.form.get('validityRangeControl')!.valueChanges.subscribe({
+            next: () => {
+                this.updatePermitLicenseIsValidFlag();
             }
+        });
+    }
 
-            const ranges: OverlappingLogBooksParameters[] = [];
+    private updatePermitLicenseIsValidFlag(): void {
+        const now = new Date();
+        const validFrom = (this.form.get('validityRangeControl')!.value as DateRangeData)?.start;
+        const validTo = (this.form.get('validityRangeControl')!.value as DateRangeData)?.end;
 
-            for (const logBook of logBooks.filter(x => x.permitLicenseIsActive)) {
-                const range: OverlappingLogBooksParameters = new OverlappingLogBooksParameters({
-                    logBookId: logBook.logBookId,
-                    typeId: logBook.logBookTypeId,
-                    OwnerType: logBook.ownerType,
-                    startPage: logBook.permitLicenseStartPageNumber,
-                    endPage: logBook.permitLicenseEndPageNumber
-                });
-                ranges.push(range);
-            }
-
-            const editDialogData: OverlappingLogBooksDialogParamsModel = new OverlappingLogBooksDialogParamsModel({
-                service: this.service,
-                logBookGroup: this.logBookGroup,
-                ranges: ranges
-            });
-
-            this.overlappingLogBooksDialog.open({
-                title: this.translationService.getValue('commercial-fishing.overlapping-log-books-dialog-title'),
-                TCtor: OverlappingLogBooksComponent,
-                headerCancelButton: {
-                    cancelBtnClicked: this.closeOverlappingLogBooksDialogBtnClicked.bind(this)
-                },
-                componentData: editDialogData,
-                translteService: this.translationService,
-                disableDialogClose: true,
-                cancelBtn: {
-                    id: 'cancel',
-                    color: 'primary',
-                    translateValue: 'common.cancel',
-                },
-                saveBtn: {
-                    id: 'save',
-                    color: 'error',
-                    translateValue: 'commercial-fishing.overlapping-log-books-save-despite-conflicts'
-                }
-            }, '1300px').subscribe({
-                next: (save: boolean | undefined) => {
-                    if (save) {
-                        this.ignoreLogBookConflicts = true;
-                        switch (saveMethod) {
-                            case 'save': this.saveCommercialFishingRecord(dialogClose); break;
-                            case 'saveAndPrint': this.saveAndPrintRecord(dialogClose); break;
-                        }
-                    }
-                }
-            });
+        if (validFrom !== null
+            && validFrom !== undefined
+            && validFrom.getTime() <= now.getTime()
+            && validTo !== null
+            && validTo !== undefined
+            && validTo.getTime() > now.getTime()
+        ) {
+            this.permitLicenseIsValid = true;
+        }
+        else {
+            this.permitLicenseIsValid = false;
         }
     }
+
+    private shouldHidePaymentData(): boolean {
+        return (this.model as CommercialFishingApplicationEditDTO).paymentInformation?.paymentType === null
+            || (this.model as CommercialFishingApplicationEditDTO).paymentInformation?.paymentType === undefined
+            || (this.model as CommercialFishingApplicationEditDTO).paymentInformation?.paymentType === '';
+    }
+
+    /// Validators
 
     private atLeastOneQuotaAquaticOrganism(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
@@ -2472,7 +2738,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     return null;
                 }
             }
-
+            
             return { 'atLeastOneQuotaOrganism': true };
         }
     }
@@ -2525,6 +2791,13 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 && ShipsUtils.isDestOrDereg(ship) !== this.shipFilters.isDestroyedOrDeregistered
             ) {
                 return { 'shipIsDestroyedOrDeregistered': true };
+            }
+
+            if (this.shipFilters.isForbiddenForLicenses !== null
+                && this.shipFilters.isForbiddenForLicenses !== undefined
+                && ShipsUtils.isForbiddenForPermits(ship) !== this.shipFilters.isForbiddenForLicenses
+            ) {
+                return { 'shipIsForbinnedForLicenses': true };
             }
 
             if (this.shipFilters.hasActiveFishQuota !== null
@@ -2610,9 +2883,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 }
             }
 
-            if (this.selectedShipAlreadyHasValidPoundNetPermitError) {
-                return { 'shipHasPoundNetPermit': true };
-            }
 
             if (this.selectedShipHasNoPoundNetPermitError) {
                 return { 'shipHasNoPoundNetPermit': true };
@@ -2654,25 +2924,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         }
     }
 
-    private poundNetAllowedForSelectionValidator(): ValidatorFn {
-        return (control: AbstractControl): ValidationErrors | null => {
-            if (control === null || control === undefined) {
-                return null;
-            }
-
-            const poundNet: PoundNetNomenclatureDTO = control.value;
-
-            if (poundNet === null || poundNet === undefined) {
-                return null;
-            }
-
-            if (poundNet.hasPoundNetPermit === true) {
-                return { 'poundNetAlreadyHasPermit': true };
-            }
-
-            return null;
-        }
-    }
 
     private permitRegisterForPermitLicenseValidator(): ValidatorFn {
         return (form: AbstractControl): ValidationErrors | null => {
@@ -2680,8 +2931,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 return null;
             }
 
-            const permitLicensePermitControl: FormControl | undefined = this.form.get('permitLicensePermitControl') as FormControl;
-            if (permitLicensePermitControl === null || permitLicensePermitControl === undefined) {
+            if (this.isApplication || !this.isPermitLicense) {
                 return null;
             }
 
@@ -2693,7 +2943,141 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         }
     }
 
-    private closeOverlappingLogBooksDialogBtnClicked(closeFn: HeaderCloseFunction): void {
-        closeFn();
+    private permitLicenseDuplicateMarkNumbersValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === null || form === undefined) {
+                return null;
+            }
+
+            if (this.duplicatedMarkNumbers.length > 0) { // there are duplicated mark numbers on backend
+                return { 'duplicatedMarkNumbers': this.duplicatedMarkNumbers };
+            }
+
+            const fishingGears: FishingGearDTO[] | null | undefined = form.get('fishingGearsControl')!.value;
+
+            if (fishingGears === null || fishingGears === undefined || fishingGears.length === 0) {
+                return null;
+            }
+
+            let marks: FishingGearMarkDTO[] | null | undefined = fishingGears.filter((x: FishingGearDTO) => {
+                return x.isActive && x.marks !== null && x.marks !== undefined;
+            }).map(x => x.marks!)
+                .reduce((prev: FishingGearMarkDTO[], curr: FishingGearMarkDTO[]) => {
+                    prev.push(...curr);
+                    return prev;
+                }, []);
+            marks = marks.filter(x => x.isActive);
+
+            if (marks === null || marks === undefined || marks.length === 0) {
+                return null;
+            }
+
+            const duplicatedMarkNumbers: string[] = [];
+            const marksGrouped = CommonUtils.groupByKey(marks, 'number');
+            const entries = Object.entries(marksGrouped);
+
+            for (const entry of entries) {
+                if ((entry[1] as Array<FishingGearMarkDTO>).length > 1) {
+                    duplicatedMarkNumbers.push(entry[0]);
+                }
+            }
+
+            if (duplicatedMarkNumbers.length > 0) { // there are duplicated mark numbers on frontend
+                return { 'duplicatedMarkNumbers': duplicatedMarkNumbers };
+            }
+
+            return null;
+        }
+    }
+
+    private permitLicenseDuplicatePingerNumbersValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === null || form === undefined) {
+                return null;
+            }
+
+            if (this.duplicatedPingerNumbers.length > 0) { // there are duplicated pinger numbers on backend
+                return { 'duplicatedPingerNumbers': this.duplicatedPingerNumbers };
+            }
+
+            const fishingGears: FishingGearDTO[] | null | undefined = form.get('fishingGearsControl')!.value;
+
+            if (fishingGears === null || fishingGears === undefined || fishingGears.length === 0) {
+                return null;
+            }
+
+            let pingers: FishingGearPingerDTO[] | null | undefined = fishingGears.filter((x: FishingGearDTO) => {
+                return x.isActive && x.hasPingers && x.pingers !== null && x.pingers !== undefined;
+            }).map(x => x.pingers!)
+                .reduce((prev: FishingGearPingerDTO[], curr: FishingGearPingerDTO[]) => {
+                    prev.push(...curr);
+                    return prev;
+                }, []);
+            pingers = pingers.filter(x => x.isActive);
+
+            if (pingers === null || pingers === undefined || pingers.length === 0) {
+                return null;
+            }
+
+            const duplicatedPingersNumbers: string[] = [];
+            const pingersGrouped = CommonUtils.groupByKey(pingers, 'number');
+            const entries = Object.entries(pingersGrouped);
+
+            for (const entry of entries) {
+                if ((entry[1] as Array<FishingGearMarkDTO>).length > 1) {
+                    duplicatedPingersNumbers.push(entry[0]);
+                }
+            }
+
+            if (duplicatedPingersNumbers.length > 0) { // there are duplicated pinger numbers on frontend
+                return { 'duplicatedPingerNumbers': duplicatedPingersNumbers };
+            }
+
+            return null;
+        }
+    }
+
+    private oneShipEventOnSameDateValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === null || form === undefined) {
+                return null;
+            }
+
+            if (this.hasShipEventExistsOnSameDateError && !this.isPermitLicense && !this.isApplication) {
+                if (this.isEditing) {
+                    if (this.suspensions !== null && this.suspensions !== undefined && this.suspensions.length > 0) {
+                        return { 'suspendResumeIsSecondShipEventToday': true };
+                    }
+                    else {
+                        return null;
+                    }
+                }
+                else {
+                    return { 'addPermitIsSecondShipEventToday': true };
+                }
+            }
+
+            return null;
+        }
+    }
+
+    // helpers
+
+    private deepCopyPorts(ports: NomenclatureDTO<number>[]): NomenclatureDTO<number>[] {
+        if (ports !== null && ports !== undefined) {
+            const copiedPorts: NomenclatureDTO<number>[] = [];
+
+            for (const port of ports) {
+                const stringified: string = JSON.stringify(port);
+                const newPort: NomenclatureDTO<number> = new NomenclatureDTO<number>(JSON.parse(stringified));
+
+                copiedPorts.push(newPort);
+            }
+
+            return copiedPorts;
+        }
+        else {
+            return [];
+        }
     }
 }

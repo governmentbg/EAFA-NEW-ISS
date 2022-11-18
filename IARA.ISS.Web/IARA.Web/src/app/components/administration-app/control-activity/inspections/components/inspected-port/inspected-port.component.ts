@@ -22,6 +22,12 @@ export class InspectedPortComponent extends CustomFormControl<PortVisitDTO | und
 
     public constructor(@Self() ngControl: NgControl) {
         super(ngControl);
+
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.control.updateValueAndValidity();
+            }
+        });
     }
 
     public ngOnInit(): void {

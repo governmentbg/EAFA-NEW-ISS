@@ -35,7 +35,6 @@ import { LogBookPageDocumentTypesEnum } from '@app/components/common-app/catches
 import { LogBookNomenclatureDTO } from '@app/models/generated/dtos/LogBookNomenclatureDTO';
 import { OnBoardCatchRecordFishDTO } from '@app/models/generated/dtos/OnBoardCatchRecordFishDTO';
 
-
 @Injectable({
     providedIn: 'root'
 })
@@ -45,8 +44,13 @@ export class CatchesAndSalesAdministrationService extends BaseAuditService imple
     private readonly commonService: CatchesAndSalesCommonService;
     private readonly translationService: FuseTranslationLoaderService
 
-    public constructor(requestService: RequestService, commonService: CatchesAndSalesCommonService, translationService: FuseTranslationLoaderService) {
+    public constructor(
+        requestService: RequestService,
+        commonService: CatchesAndSalesCommonService,
+        translationService: FuseTranslationLoaderService
+    ) {
         super(requestService, AreaTypes.Administrative);
+
         this.commonService = commonService;
         this.translationService = translationService;
     }
@@ -79,8 +83,8 @@ export class CatchesAndSalesAdministrationService extends BaseAuditService imple
         return this.commonService.getPreviousTripsOnBoardCatchRecords(this.area, this.controller, shipId);
     }
 
-    public getPossibleProducts(shipLogBookPageId: number): Observable<LogBookPageProductDTO[]> {
-        return this.commonService.getPossibleProducts(this.area, this.controller, shipLogBookPageId);
+    public getPossibleProducts(shipLogBookPageId: number, documentType: LogBookPageDocumentTypesEnum): Observable<LogBookPageProductDTO[]> {
+        return this.commonService.getPossibleProducts(this.area, this.controller, shipLogBookPageId, documentType);
     }
 
     public getShipLogBookPage(id: number): Observable<ShipLogBookPageEditDTO> {

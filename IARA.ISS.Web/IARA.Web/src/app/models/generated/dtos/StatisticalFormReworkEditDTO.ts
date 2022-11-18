@@ -50,6 +50,9 @@ export class StatisticalFormReworkEditDTO {
     @StrictlyTyped(Number)
     public totalYearTurnover?: number;
 
+    @StrictlyTyped(Boolean)
+    public isOwnerEmployee?: boolean;
+
     @StrictlyTyped(StatisticalFormReworkRawMaterialDTO)
     public rawMaterial?: StatisticalFormReworkRawMaterialDTO[];
 

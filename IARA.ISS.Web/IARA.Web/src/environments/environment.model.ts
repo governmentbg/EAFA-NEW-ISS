@@ -13,6 +13,10 @@ export class EnvironmentConfig implements IEnvironmentConfig {
         this._serviceBaseUrl = env.servicesBaseUrl;
         this._apiBasePath = env.apiBasePath;
 
+        if (env.appBaseHref != undefined) {
+            this.appBaseHref = env.appBaseHref;
+        }
+
         this.ClientAuthConfiguration = env.ClientAuthConfiguration;
         this.ClientAuthConfiguration.authWellknownEndpoint = this.buildUrlFromParts([this.identityServerBaseUrl, this.ClientAuthConfiguration?.authWellknownEndpoint]);
         this.ClientAuthConfiguration.postLogoutRedirectUri = this.buildUrlFromParts([this.identityServerBaseUrl, this.ClientAuthConfiguration.postLogoutRedirectUri]);
@@ -25,6 +29,7 @@ export class EnvironmentConfig implements IEnvironmentConfig {
         return this.environmentType == EnvironmentType.Production;
     }
 
+    public appBaseHref?: string = '/';
     public hmr!: boolean;
     public hasPublicAccess!: boolean;
     public environmentType!: EnvironmentType;

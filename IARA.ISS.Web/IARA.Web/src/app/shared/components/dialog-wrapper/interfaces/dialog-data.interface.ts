@@ -11,6 +11,7 @@ export interface IDialogData<T> {
     headerCancelButton?: IHeaderCancelButton;
     headerAuditButton?: IHeaderAuditButton;
     viewMode?: boolean;
+    defaultFullscreen?: boolean;
 
     saveBtn?: IActionInfo;
     cancelBtn?: IActionInfo;

@@ -1,10 +1,10 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
-import { RecreationalFishingTicketBaseRegixDataDTO } from './RecreationalFishingTicketBaseRegixDataDTO';
 import { FileInfoDTO } from './FileInfoDTO';
 import { RecreationalFishingMembershipCardDTO } from './RecreationalFishingMembershipCardDTO';
-import { RecreationalFishingTicketDuplicateTableDTO } from './RecreationalFishingTicketDuplicateTableDTO'; 
+import { RecreationalFishingTicketDuplicateTableDTO } from './RecreationalFishingTicketDuplicateTableDTO';
+import { RecreationalFishingTicketBaseRegixDataDTO } from './RecreationalFishingTicketBaseRegixDataDTO'; 
 
 export class RecreationalFishingTicketDTO extends RecreationalFishingTicketBaseRegixDataDTO {
     public constructor(obj?: Partial<RecreationalFishingTicketDTO>) {
@@ -61,4 +61,7 @@ export class RecreationalFishingTicketDTO extends RecreationalFishingTicketBaseR
 
     @StrictlyTyped(FileInfoDTO)
     public declarationFile?: FileInfoDTO;
+
+    @StrictlyTyped(RecreationalFishingTicketBaseRegixDataDTO)
+    public regiXDataModel?: RecreationalFishingTicketBaseRegixDataDTO;
 }

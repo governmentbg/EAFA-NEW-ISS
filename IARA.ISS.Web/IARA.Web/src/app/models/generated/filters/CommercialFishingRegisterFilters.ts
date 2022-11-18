@@ -17,8 +17,10 @@ export class CommercialFishingRegisterFilters extends BaseRequestModel {
     public permitTypeId: number | undefined;
     public permitLicenseTypeId: number | undefined;
     public number: string | undefined;
-    public issuedOnRangeStartDate: Date | undefined;
-    public issuedOnRangeEndDate: Date | undefined;
+    public permitIssuedOnStartDate: Date | undefined;
+    public permitIssuedOnEndDate: Date | undefined;
+    public permitLicenseIssuedOnStartDate: Date | undefined;
+    public permitLicenseIssuedOnEndDate: Date | undefined;
     public shipId: number | undefined;
     public shipName: string | undefined;
     public shipCfr: string | undefined;

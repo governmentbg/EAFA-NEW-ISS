@@ -26,18 +26,16 @@
                           label="{{ 'users-page.last-name' | tlTranslate }}"
                           tooltipResourceName="users-page.last-name-helper">
                 </tl-input>
-                <tl-input fxFlex="33"
-                          formControlName="usernameControl"
-                          label="{{ 'users-page.username' | tlTranslate }}"
-                          tooltipResourceName="users-page.username-helper">
-                </tl-input>
+                <tl-slide-toggle *ngIf="isInternalUser; else externalUser"
+                                 fxFlex="33"
+                                 formControlName="requestedAccessControl"
+                                 label="{{ 'users-page.waiting-access' | tlTranslate}}"
+                                 tooltipResourceName="users-page.waiting-access-helper">
+                </tl-slide-toggle>
+                <ng-template #externalUser>
+                    <div fxFlex="33"></div>
+                </ng-template>
             </div>
-            <tl-slide-toggle *ngIf="isInternalUser"
-                             fxFlex="50"
-                             formControlName="requestedAccessControl"
-                             label="{{ 'users-page.waiting-access' | tlTranslate}}"
-                             tooltipResourceName="users-page.waiting-access-helper">
-            </tl-slide-toggle>
         </div>
     </search-panel>
     <mat-card>
@@ -46,33 +44,62 @@
                        [showAddButton]="isInternalUser && canAddRecords"
                        [showInactiveRecordsLabel]="showInactiveUsersLabel"
                        (addButtonClicked)="createEditUser()">
-            <data-column columnName="{{ 'users-page.first-name' | tlTranslate }}" propertyName="firstName">
+            <data-column columnName="{{ 'users-page.first-name' | tlTranslate }}" 
+                         propertyName="firstName">
             </data-column>
-            <data-column columnName="{{ 'users-page.last-name' | tlTranslate }}" propertyName="lastName">
+            <data-column columnName="{{ 'users-page.last-name' | tlTranslate }}" 
+                         propertyName="lastName">
             </data-column>
-            <data-column columnName="{{ 'users-page.username' | tlTranslate }}" propertyName="username">
+            <data-column columnName="{{ 'users-page.email' | tlTranslate }}" 
+                         propertyName="email">
             </data-column>
-            <data-column columnName="{{ 'users-page.email' | tlTranslate }}" propertyName="email">
+            <data-column columnName="{{ 'users-page.registration-date' | tlTranslate }}" 
+                         propertyName="registrationDate" 
+                         dataType="date">
             </data-column>
-            <data-column columnName="{{ 'users-page.registration-date' | tlTranslate }}" propertyName="registrationDate" dataType="date">
+            <data-column columnName="{{ 'users-page.role' | tlTranslate }}" 
+                         propertyName="userRoles" 
+                         [isSortable]="false">
             </data-column>
-            <data-column columnName="{{ 'users-page.role' | tlTranslate }}" propertyName="userRoles" [isSortable]="false">
+            <data-column *ngIf="isInternalUser" 
+                         columnName="{{ 'users-page.mobile-devices' | tlTranslate }}" 
+                         propertyName="mobileDevices" 
+                         [isSortable]="false">
             </data-column>
-            <data-column *ngIf="isInternalUser" columnName="{{ 'users-page.mobile-devices' | tlTranslate }}" propertyName="mobileDevices" [isSortable]="false">
-            </data-column>
-            <data-template-column [cellClass]="'justify-center min-w-50'" [flexRate]="1.2" [headerClass]="'justify-center'">
+            <data-template-column [cellClass]="'justify-center min-w-50'" 
+                                  [flexRate]="1.2" 
+                                  [headerClass]="'justify-center'">
                 <ng-template let-row="row" ngx-datatable-cell-template>
                     <div fxLayout="row" fxLayoutAlign="end center">
-                        <tl-icon-button *ngIf="row.isActive && isInternalUser && canAddMobileDevices" icon="smartphone" (buttonClicked)="accessFromDeviceToMobileForUser(row)" iconClass="accent-color"
-                                        tooltipText="{{ 'users-page.access-tooltip' | tlTranslate }}"></tl-icon-button>
-                        <tl-icon-button icon="visibility" (buttonClicked)="showUserInfo(row.id)" iconClass="accent-color"
-                                        tooltipText="{{ 'users-page.show-info-tooltip' | tlTranslate }}"></tl-icon-button>
-                        <tl-icon-button *ngIf="row.isActive && canEditRecords" icon="edit" (buttonClicked)="createEditUser(row.id)" iconClass="accent-color"
-                                        tooltipText="{{ 'users-page.edit-user-tooltip' | tlTranslate }}"></tl-icon-button>
-                        <tl-icon-button *ngIf="row.isActive && canDeleteRecords" icon="delete" (buttonClicked)="deactivateUser(row)" iconClass="accent-color"
-                                        tooltipText="{{ 'users-page.deactivate-user-tooltip' | tlTranslate }}"></tl-icon-button>
-                        <tl-icon-button *ngIf="!row.isActive && canRestoreRecords" icon="restore" (buttonClicked)="restoreUser(row)" iconClass="accent-color"
-                                        tooltipText="{{ 'users-page.restore-user-tooltip' | tlTranslate }}"></tl-icon-button>
+                        <tl-icon-button *ngIf="row.isActive && isInternalUser && canAddMobileDevices" 
+                                        icon="smartphone" 
+                                        (buttonClicked)="accessFromDeviceToMobileForUser(row)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'users-page.access-tooltip' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button icon="visibility" 
+                                        (buttonClicked)="showUserInfo(row.id)" 
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'users-page.show-info-tooltip' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.isActive && canEditRecords" 
+                                        icon="edit" 
+                                        (buttonClicked)="createEditUser(row.id)" 
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'users-page.edit-user-tooltip' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.isActive && canDeleteRecords" 
+                                        icon="delete"
+                                        (buttonClicked)="deactivateUser(row)" 
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'users-page.deactivate-user-tooltip' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="!row.isActive && canRestoreRecords" 
+                                        icon="restore" 
+                                        (buttonClicked)="restoreUser(row)" 
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'users-page.restore-user-tooltip' | tlTranslate }}">
+                        </tl-icon-button>
                     </div>
                 </ng-template>
             </data-template-column>

@@ -1,23 +1,27 @@
 ﻿<div fxLayout="column" fxLayoutGap="1em">
     <div fxFlex="100" fxLayout="column">
         <div fxFlex="100" fxLayout="row" fxLayoutGap="2em" fxLayoutAlign="start center" class="gray-accent">
-            <div fxFlex="40" fxLayoutAlign="start center">
+            <div *ngIf="showIsChecked" [fxFlex]="checkboxLabelFlex" fxLayoutAlign="start center">
+                <span class="bold-text italic-text">{{ 'payment-tariffs.include-checkbox' | tlTranslate }}</span>
+            </div>
+            <div [fxFlex]="showIsChecked ? nameLabelFlex : nameLabelNoCheckboxFlex" fxLayoutAlign="start center">
                 <span class="bold-text italic-text">{{ 'payment-tariffs.tariff-name' | tlTranslate }}</span>
             </div>
-            <div fxFlex="20" fxLayoutAlign="center center">
+            <div [fxFlex]="quantityLabelFlex" fxLayoutAlign="center center">
                 <span class="bold-text italic-text">{{ 'payment-tariffs.quantity' | tlTranslate }}</span>
             </div>
-            <div fxFlex="20" fxLayoutAlign="center center">
+            <div [fxFlex]="unitPriceLabelFlex" fxLayoutAlign="center center">
                 <span class="bold-text italic-text">{{ 'payment-tariffs.unit-price' | tlTranslate }}</span>
             </div>
-            <div fxFlex="20" fxLayoutAlign="end center">
+            <div [fxFlex]="priceLabelFlex" fxLayoutAlign="end center">
                 <span class="bold-text italic-text">{{ 'payment-tariffs.price' | tlTranslate }}</span>
             </div>
         </div>
     </div>
     <div fxFlex="100" fxLayout="column" fxLayoutGap="1em">
-        <payment-tariff *ngFor="let paymentTariff of paymentSummary.tariffs"
-                        [paymentTariff]="paymentTariff">
+        <payment-tariff *ngFor="let paymentTariffControl of formArray.controls"
+                        [formControl]="paymentTariffControl"
+                        [showIsChecked]="showIsChecked">
         </payment-tariff>
     </div>
     <mat-divider fxFlex="100"></mat-divider>

@@ -1,10 +1,12 @@
-﻿import { Component, Input } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+﻿import { Component, Input, OnChanges, OnInit, Optional, Self, SimpleChanges } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, NgControl } from '@angular/forms';
 
 import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
+import { CustomFormControl } from '@app/shared/utils/custom-form-control';
+import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 
-
-const NAME_DEFAULT_FLEX: number = 40;
+const CHECKBOX_DEFAULT_FLEX: number = 5;
+const NAME_DEFAULT_FLEX: number = 35;
 const QUANTITY_DEFAULT_FLEX: number = 20;
 const UNIT_PRICE_DEFAULT_FLEX: number = 20;
 const PRICE_DEFAULT_FLEX: number = 20;
@@ -13,7 +15,13 @@ const PRICE_DEFAULT_FLEX: number = 20;
     selector: 'payment-tariff',
     templateUrl: './payment-tariff.component.html'
 })
-export class PaymentTariffComponent {
+export class PaymentTariffComponent extends CustomFormControl<PaymentTariffDTO | undefined> implements OnInit, OnChanges {
+    @Input()
+    public showIsChecked: boolean = false;
+
+    @Input()
+    public isCheckboxReadonly: boolean = true;
+
     @Input()
     public set paymentTariff(value: PaymentTariffDTO | undefined) {
         this.tariff = value;
@@ -40,7 +48,20 @@ export class PaymentTariffComponent {
     }
 
     /**
-     * percent between 0 and 100, default is 40
+     * percent betweeen 0 and 100, default is 5
+     * */
+    @Input()
+    public set tariffCheckboxFlex(value: number | undefined) {
+        if (value !== null && value !== undefined) {
+            this.checkboxFlex = value;
+        }
+        else {
+            this.checkboxFlex = CHECKBOX_DEFAULT_FLEX;
+        }
+    }
+
+    /**
+     * percent between 0 and 100, default is 35 (40 when there is no checkbox)
      * */
     @Input()
     public set tariffNameFlex(value: number | undefined) {
@@ -91,6 +112,7 @@ export class PaymentTariffComponent {
         }
     }
 
+    public checkboxFlex: number = CHECKBOX_DEFAULT_FLEX;
     public nameFlex: number = NAME_DEFAULT_FLEX;
     public quantityFlex: number = QUANTITY_DEFAULT_FLEX;
     public unitPriceFlex: number = UNIT_PRICE_DEFAULT_FLEX;
@@ -101,4 +123,56 @@ export class PaymentTariffComponent {
     public hasDescription: boolean = false;
     public hasBasedOnPlea: boolean = false;
 
+    public constructor(
+        @Self() @Optional() ngControl: NgControl,
+        @Optional() @Self() validityChecker: ValidityCheckerDirective
+    ) {
+        super(ngControl, false, validityChecker);
+
+        this.control.valueChanges.subscribe({
+            next: (value: boolean) => {
+                if (this.tariff !== null && this.tariff !== undefined) {
+                    this.tariff.isChecked = value;
+                }
+
+                this.onChanged(this.getValue());
+            }
+        });
+    }
+
+    public ngOnInit(): void {
+        this.initCustomFormControl();
+    }
+
+    public ngOnChanges(changes: SimpleChanges): void {
+        if ('showIsChecked' in changes) {
+            if (!changes['showIsChecked'].currentValue) {
+                this.nameFlex = NAME_DEFAULT_FLEX + CHECKBOX_DEFAULT_FLEX;
+            }
+        }
+    }
+
+    public writeValue(value: PaymentTariffDTO | undefined): void {
+        this.paymentTariff = value;
+        this.control.setValue(this.tariff?.isChecked ?? false);
+
+        this.setDisabledCheckboxes();
+    }
+
+    protected getValue(): PaymentTariffDTO | undefined {
+        return this.tariff;
+    }
+
+    protected buildForm(): AbstractControl {
+        return new FormControl(false);
+    }
+
+    private setDisabledCheckboxes(): void {
+        if (!this.tariff?.isCalculated) {
+            this.control.disable();
+        }
+        else {
+            this.control.enable();
+        }
+    }
 }

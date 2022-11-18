@@ -5,11 +5,13 @@
     <tl-autocomplete fxFlex="33"
                      formControlName="groundForUseTypeControl"
                      label="{{ 'ground-for-use.type' | tlTranslate }}"
+                     tooltipResourceName="ground-for-use.type-helper"
                      [options]="groundForUseTypes">
     </tl-autocomplete>
     <tl-input fxFlex="20"
               formControlName="groundForUseNumberControl"
-              label="{{ 'ground-for-use.number' | tlTranslate }}">
+              label="{{ 'ground-for-use.number' | tlTranslate }}"
+              tooltipResourceName="ground-for-use.number-helper">
     </tl-input>
     <date-range-indefinite fxFlex="50"
                            formControlName="groundForUseValidityRangeControl"

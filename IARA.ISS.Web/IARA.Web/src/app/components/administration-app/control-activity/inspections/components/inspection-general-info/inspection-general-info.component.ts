@@ -20,6 +20,9 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
     @Input()
     public institutions: NomenclatureDTO<number>[] = [];
 
+    @Input()
+    public hasEmergencySignal: boolean = true;
+
     private readonly service: InspectionsService;
     private readonly translate: FuseTranslationLoaderService;
 
@@ -28,6 +31,12 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
 
         this.service = service;
         this.translate = translate;
+
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.control.updateValueAndValidity();
+            }
+        });
     }
 
     public ngOnInit(): void {

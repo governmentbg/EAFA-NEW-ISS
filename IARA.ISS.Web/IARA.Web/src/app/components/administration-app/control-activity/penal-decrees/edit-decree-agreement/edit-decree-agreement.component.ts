@@ -19,6 +19,8 @@ import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { forkJoin } from 'rxjs';
 import { AuanViolatedRegulationDTO } from '@app/models/generated/dtos/AuanViolatedRegulationDTO';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 
 @Component({
     selector: 'edit-decree-agreement',
@@ -34,6 +36,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
 
     public isAdding: boolean = false;
     public viewMode: boolean = false;
+    public isThirdParty: boolean = false;
     public violatedRegulationsTouched: boolean = false;
 
     public territoryUnits: NomenclatureDTO<number>[] = [];
@@ -43,8 +46,8 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
 
-    private auanId!: number;
     private typeId!: number;
+    private auanId: number | undefined;
     private penalDecreeId!: number | undefined;
     private model!: PenalDecreeEditDTO;
     private readonly nomenclatures: CommonNomenclatures;
@@ -61,33 +64,41 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
 
     public async ngOnInit(): Promise<void> {
         this.isAdding = this.penalDecreeId === undefined || this.penalDecreeId === null;
+        this.isThirdParty = this.auanId === undefined || this.auanId === null;
 
         const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin(
             NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures)),
-            this.nomenclatures.getUserNames()
+            this.service.getInspectorUsernames()
         ).toPromise();
 
         this.territoryUnits = nomenclatures[0];
         this.users = nomenclatures[1];
 
-        this.service.getPenalDecreeAuanData(this.auanId).subscribe({
-            next: (data: PenalDecreeAuanDataDTO) => {
-                this.fillAuanData(data);
+        if (this.auanId !== undefined && this.auanId !== null) {
+            this.form.get('territoryUnitControl')!.disable();
 
-                if (this.penalDecreeId === undefined || this.penalDecreeId === null) {
-                    this.model = new PenalDecreeEditDTO();
+            this.service.getPenalDecreeAuanData(this.auanId).subscribe({
+                next: (data: PenalDecreeAuanDataDTO) => {
+                    this.fillAuanData(data);
+
+                    if (this.penalDecreeId === undefined || this.penalDecreeId === null) {
+                        this.model = new PenalDecreeEditDTO();
+                    }
+                    else {
+                        this.service.getPenalDecree(this.penalDecreeId).subscribe({
+                            next: (decree: PenalDecreeEditDTO) => {
+                                this.model = decree;
+                                this.fillForm();
+                            }
+                        });
+                    }
                 }
-                else {
-                    this.service.getPenalDecree(this.penalDecreeId).subscribe({
-                        next: (decree: PenalDecreeEditDTO) => {
-                            this.model = decree;
-                            this.fillForm();
-                        }
-                    });
-                }
-            }
-        });
+            });
+        }
+        else {
+            this.model = new PenalDecreeEditDTO();
+        }
     }
 
     public ngAfterViewInit(): void {
@@ -136,6 +147,9 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
                 this.service.editPenalDecree(this.model).subscribe({
                     next: () => {
                         dialogClose(this.model);
+                    },
+                    error: (response: HttpErrorResponse) => {
+                        this.handleAddEditErrorResponse(response);
                     }
                 });
             }
@@ -144,6 +158,9 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
                     next: (id: number) => {
                         this.model.id = id;
                         dialogClose(this.model);
+                    },
+                    error: (response: HttpErrorResponse) => {
+                        this.handleAddEditErrorResponse(response);
                     }
                 });
             }
@@ -164,7 +181,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
                 });
             }
             else {
-                this.form.markAllAsTouched();
+                this.markAllAsTouched();
                 if (this.form.valid) {
                     this.fillModel();
                     CommonUtils.sanitizeModelStrings(this.model);
@@ -205,12 +222,12 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
             drafterControl: new FormControl(null, Validators.required),
             issueDateControl: new FormControl(null, Validators.required),
             issuerPositionControl: new FormControl(null),
-            territoryUnitControl: new FormControl({ value: null, disabled: true }),
-            effectiveDateControl: new FormControl(null, Validators.required),
+            territoryUnitControl: new FormControl(null),
+            effectiveDateControl: new FormControl(null),
             auanControl: new FormControl(null),
             auanViolatedRegulationsControl: new FormControl(null),
             violatedRegulationsControl: new FormControl(null),
-            fineControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
+            fineControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)]),
             finePercentControl: new FormControl({ value: null, disabled: true }),
             commentsControl: new FormControl(null, Validators.maxLength(4000)),
             constatationCommentsControl: new FormControl(null, Validators.maxLength(4000)),
@@ -231,7 +248,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         this.form.get('issuerPositionControl')!.setValue(this.model.issuerPosition);
         this.form.get('drafterControl')!.setValue(this.users.find(x => x.value === this.model.issuerUserId));
 
-        this.form.get('fineControl')!.setValue(this.model.fineAmount);
+        this.form.get('fineControl')!.setValue(this.model.fineAmount?.toFixed(2));
         this.form.get('commentsControl')!.setValue(this.model.comments);
         this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
 
@@ -283,6 +300,13 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         this.model.auanViolatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
         this.model.decreeViolatedRegulations = this.form.get('violatedRegulationsControl')!.value;
 
+        if (this.isThirdParty) {
+            this.model.auanData = this.form.get('auanControl')!.value;
+            this.model.auanData!.territoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
+            this.model.auanData!.constatationComments = this.form.get('constatationCommentsControl')!.value;
+            this.model.auanData!.violatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
+        }
+
         this.model.files = this.form.get('filesControl')!.value;
     }
 
@@ -294,6 +318,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         if (this.isAdding) {
             setTimeout(() => {
                 this.form.get('seizedFishControl')!.setValue(data.confiscatedFish);
+                this.form.get('seizedApplianceControl')!.setValue(data.confiscatedAppliance);
                 this.form.get('seizedFishingGearControl')!.setValue(data.confiscatedFishingGear);
                 this.form.get('auanViolatedRegulationsControl')!.setValue(data.violatedRegulations);
             });
@@ -313,5 +338,18 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         this.form.markAllAsTouched();
 
         this.violatedRegulationsTouched = true;
+    }
+
+
+    private handleAddEditErrorResponse(response: HttpErrorResponse): void {
+        const error: ErrorModel = response.error as ErrorModel;
+
+        if (error !== undefined && error !== null) {
+            if (response.error?.code === ErrorCode.AuanNumAlreadyExists) {
+                this.form.get('auanControl')!.setErrors({ 'auanNumExists': true });
+                this.form.get('auanControl')!.markAsTouched();
+                this.validityCheckerGroup.validate();
+            }
+        }
     }
 }

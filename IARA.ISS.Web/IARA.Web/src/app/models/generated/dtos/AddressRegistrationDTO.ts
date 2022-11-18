@@ -1,8 +1,9 @@
 ﻿
+
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { AddressTypesEnum } from '@app/enums/address-types.enum';
 
-export class AddressRegistrationDTO {
+export class AddressRegistrationDTO { 
     public constructor(obj?: Partial<AddressRegistrationDTO>) {
         Object.assign(this, obj);
     }

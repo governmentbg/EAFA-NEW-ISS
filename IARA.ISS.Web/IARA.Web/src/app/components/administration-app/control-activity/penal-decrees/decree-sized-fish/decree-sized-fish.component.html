@@ -9,7 +9,7 @@
                    [rows]="seizedFish"
                    (recordChanged)="seizedFishRecordChanged($event)">
         <data-column *ngIf="isAppliance === false"
-                     [flexRate]="0.2"
+                     [flexRate]="0.5"
                      [formGroup]="seizedFishForm"
                      propertyName="fishTypeId"
                      dataType="nomenclature"
@@ -18,7 +18,7 @@
         </data-column>
 
         <data-column *ngIf="isAppliance"
-                     [flexRate]="0.2"
+                     [flexRate]="0.5"
                      [formGroup]="seizedFishForm"
                      propertyName="applianceId"
                      dataType="nomenclature"
@@ -27,20 +27,27 @@
         </data-column>
 
         <data-column *ngIf="!isAppliance"
-                     [flexRate]="0.1"
+                     [flexRate]="0.2"
                      [formGroup]="seizedFishForm"
                      propertyName="weight"
                      columnName="{{ 'penal-decrees.edit-sized-fish-weight' | tlTranslate }}">
         </data-column>
 
-        <data-column [flexRate]="0.1"
+        <data-column *ngIf="isAppliance"
+                     [flexRate]="0.2"
+                     [formGroup]="seizedFishForm"
+                     propertyName="length"
+                     columnName="{{ 'penal-decrees.edit-sized-fish-length' | tlTranslate }}">
+        </data-column>
+
+        <data-column [flexRate]="0.2"
                      [formGroup]="seizedFishForm"
                      propertyName="count"
                      columnName="{{ 'penal-decrees.edit-sized-fish-count' | tlTranslate }}">
         </data-column>
 
         <data-column *ngIf="!isAppliance"
-                     [flexRate]="0.2"
+                     [flexRate]="0.3"
                      [formGroup]="seizedFishForm"
                      propertyName="turbotSizeGroupId"
                      dataType="nomenclature"
@@ -48,7 +55,7 @@
                      columnName="{{ 'auan-register.edit-confiscated-fish-turbot-size' | tlTranslate }}">
         </data-column>
 
-        <data-column [flexRate]="0.2"
+        <data-column [flexRate]="0.4"
                      [formGroup]="seizedFishForm"
                      propertyName="confiscationActionId"
                      dataType="nomenclature"
@@ -57,7 +64,7 @@
         </data-column>
 
         <data-column *ngIf="!isAuan"
-                     [flexRate]="0.2"
+                     [flexRate]="0.3"
                      [formGroup]="seizedFishForm"
                      propertyName="territoryUnitId"
                      dataType="nomenclature"
@@ -65,11 +72,39 @@
                      columnName="{{ 'penal-decrees.edit-sized-fish-storrage-territory-unit' | tlTranslate }}">
         </data-column>
 
-        <data-column [flexRate]="0.3"
+        <data-column [flexRate]="0.5"
                      [formGroup]="seizedFishForm"
                      propertyName="comments"
                      columnName="{{ 'penal-decrees.edit-sized-fish-comments' | tlTranslate }}">
         </data-column>
+
+        <data-template-column [flexRate]="0.4" columnName="{{ 'auan-register.edit-violated-law-section' | tlTranslate }}">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                <div fxLayout="row" fxLayoutAlign="space-between center">
+                    <span class="text-ellipsis">
+                        {{ row.data.lawText }}
+                    </span>
+
+                    <div *ngIf="!viewMode && !row.editMode && row.data.isActive">
+                        <tl-icon-button *ngIf="row.data.lawSectionId === null || row.data.lawSectionId === undefined"
+                                        icon="fa-plus-circle"
+                                        iconClass="accent-color"
+                                        size="1.5"
+                                        (buttonClicked)="openLawSectionsDialog(row.data)"
+                                        tooltipText="{{ 'penal-decrees.add-law-section' | tlTranslate }}">
+                        </tl-icon-button>
+
+                        <tl-icon-button *ngIf="row.data.lawSectionId !== null && row.data.lawSectionId !== undefined"
+                                        icon="fa-file-signature"
+                                        iconClass="accent-color"
+                                        size="1.5"
+                                        (buttonClicked)="openLawSectionsDialog(row.data)"
+                                        tooltipText="{{ row.data.lawText }}">
+                        </tl-icon-button>
+                    </div>
+                </div>
+            </ng-template>
+        </data-template-column>
 
         <data-column-inline *ngIf="!viewMode"
                             [flexRate]="0.2">
@@ -78,5 +113,13 @@
 
     <mat-error *ngIf="seizedFishFormTouched && seizedFishForm.errors?.fishCountValidationError === true">
         {{ 'penal-decrees.fish-count-validation' | tlTranslate }}
+    </mat-error>
+
+    <mat-error *ngIf="lawSectionError && !isAppliance">
+        {{ 'penal-decrees.law-sections-fish-validation' | tlTranslate }}
+    </mat-error>
+
+    <mat-error *ngIf="lawSectionError && isAppliance">
+        {{ 'penal-decrees.law-sections-applicance-validation' | tlTranslate }}
     </mat-error>
 </div>

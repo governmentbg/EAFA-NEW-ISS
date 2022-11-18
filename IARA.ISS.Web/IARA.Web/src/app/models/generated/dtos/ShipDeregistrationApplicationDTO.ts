@@ -7,7 +7,8 @@ import { ApplicationSubmittedForDTO } from './ApplicationSubmittedForDTO';
 import { FishingCapacityFreedActionsDTO } from './FishingCapacityFreedActionsDTO';
 import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformationDTO';
 import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
-import { FileInfoDTO } from './FileInfoDTO'; 
+import { FileInfoDTO } from './FileInfoDTO';
+import { ShipDeregistrationRegixDataDTO } from './ShipDeregistrationRegixDataDTO'; 
 
 export class ShipDeregistrationApplicationDTO extends ShipDeregistrationBaseRegixDataDTO {
     public constructor(obj?: Partial<ShipDeregistrationApplicationDTO>) {
@@ -55,4 +56,7 @@ export class ShipDeregistrationApplicationDTO extends ShipDeregistrationBaseRegi
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
+
+    @StrictlyTyped(ShipDeregistrationRegixDataDTO)
+    public regiXDataModel?: ShipDeregistrationRegixDataDTO;
 }

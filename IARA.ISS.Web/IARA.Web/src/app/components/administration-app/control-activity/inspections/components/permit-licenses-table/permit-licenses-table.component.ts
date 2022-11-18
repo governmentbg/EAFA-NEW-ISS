@@ -41,6 +41,12 @@ export class PermitLicensesTableComponent extends CustomFormControl<PermitLicens
         this.translate = translate;
         this.confirmDialog = confirmDialog;
         this.editEntryDialog = editEntryDialog;
+
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.control.updateValueAndValidity();
+            }
+        });
     }
 
     public async ngOnInit(): Promise<void> {

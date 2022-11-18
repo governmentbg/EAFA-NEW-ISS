@@ -32,4 +32,5 @@ export class AuanRegisterFilters extends BaseRequestModel {
     public isDelivered: boolean | undefined;
     public personId: number | undefined;
     public legalId: number | undefined;
+    public inspectionId: number | undefined;
 }

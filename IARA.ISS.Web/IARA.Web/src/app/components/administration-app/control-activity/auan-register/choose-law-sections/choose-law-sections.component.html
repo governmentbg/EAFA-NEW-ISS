@@ -1,0 +1,72 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     class="dialog-padding">
+    <div fxFlex="100" fxLayoutGap="1em">
+        <tl-input fxFlex="25"
+                  [formControl]="articleControl"
+                  label="{{ 'auan-register.edit-law-article' | tlTranslate }}">
+        </tl-input>
+
+        <tl-input fxFlex="75"
+                  [formControl]="textControl"
+                  label="{{ 'auan-register.edit-law-text' | tlTranslate }}">
+        </tl-input>
+    </div>
+
+    <mat-error *ngIf="noLawSectionValidation">{{ 'auan-register.law-section-must-be-selected' | tlTranslate }}</mat-error>
+
+    <tl-data-table fxFlexFill
+                   [rows]="lawSections"
+                   [isRemote]="false"
+                   [isSoftDeletable]="false"
+                   [showAddButton]="false"
+                   [showInactiveRecords]="false"
+                   [rowClass]="getRowClass">
+        <data-template-column propertyName="" columnName="" [flexRate]="0.001">
+            <ng-template ngx-datatable-cell-template
+                         let-rowIndex="rowIndex"
+                         let-value="value"
+                         let-row="row">
+                <label for="ep1{{ rowIndex }}" class="datatable-checkbox">
+                    <input type="checkbox"
+                           id="law-section-{{ rowIndex }}"
+                           [checked]="row.data['isChecked']"
+                           (change)="checkedRow(row)" />
+                </label>
+            </ng-template>
+        </data-template-column>
+
+        <data-column [flexRate]="0.1"
+                     propertyName="lawId"
+                     dataType="nomenclature"
+                     [options]="laws"
+                     columnName="{{ 'auan-register.edit-law-name' | tlTranslate }}">
+        </data-column>
+
+        <data-column [flexRate]="0.1"
+                     propertyName="article"
+                     columnName="{{ 'auan-register.edit-law-article' | tlTranslate }}">
+        </data-column>
+
+        <data-column [flexRate]="0.1"
+                     propertyName="paragraph"
+                     columnName="{{ 'auan-register.edit-law-paragraph' | tlTranslate }}">
+        </data-column>
+
+        <data-column [flexRate]="0.1"
+                     propertyName="section"
+                     columnName="{{ 'auan-register.edit-law-section' | tlTranslate }}">
+        </data-column>
+
+        <data-column [flexRate]="0.1"
+                     propertyName="letter"
+                     columnName="{{ 'auan-register.edit-law-letter' | tlTranslate }}">
+        </data-column>
+
+        <data-column [flexRate]="0.6"
+                     propertyName="lawText"
+                     columnName="{{ 'auan-register.edit-law-text' | tlTranslate }}">
+        </data-column>
+    </tl-data-table>
+</div>

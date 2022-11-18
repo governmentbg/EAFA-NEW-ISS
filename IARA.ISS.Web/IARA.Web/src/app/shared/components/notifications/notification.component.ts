@@ -1,44 +1,56 @@
-﻿import { Component, Input } from '@angular/core';
+﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { NotificationDTO } from '@app/models/generated/dtos/NotificationDTO';
+import { PageCodeEnum } from '../../../enums/page-code.enum';
 import { NotificationsHubService } from '../../notifications/notifications-hub-service';
 
 @Component({
     selector: 'notification',
     templateUrl: './notification.component.html',
-    styleUrls: ['./notifications.css']
+    styleUrls: ['./notifications.scss']
 })
 export class NotificationComponent {
+    @Input()
+    public notification!: NotificationDTO;
 
-    private router: Router;
+    @Input()
+    public notificationsHub!: NotificationsHubService;
 
-    constructor(router: Router) {
+    @Output()
+    public markedAsRead: EventEmitter<number> = new EventEmitter<number>();
+
+    private readonly router: Router;
+
+    public constructor(router: Router) {
         this.router = router;
     }
 
-    @Input() public notification?: NotificationDTO;
+    public markAsRead(event: PointerEvent): void {
+        event.stopPropagation();
+        event.preventDefault();
 
-    @Input() public notificationsHub!: NotificationsHubService;
-
-    public markAsRead() {
-        if (this.notification != undefined && this.notification.id != 0) {
-            this.notificationsHub.markAsRead(this.notification?.id).then(isRead => {
-                if (this.notification != undefined) {
-                    this.notification.isRead = isRead;
-                }
+        if (!this.notification.isRead) {
+            this.notificationsHub.markAsRead(this.notification.id).then((isRead: boolean) => {
+                this.notification.isRead = isRead;
+                this.markedAsRead.emit(this.notification.id);
             });
-
         }
-
-        this.navigate();
     }
 
-    public navigate() {
-        if (this.notification != undefined && this.notification.url != undefined) {
+    public navigate(): void {
+        if (this.notification.url && this.notification.url.length !== 0) {
             if (this.notification.url.startsWith('/')) {
                 this.router.navigateByUrl(this.notification.url);
-            } else {
+            }
+            else {
                 window.location.href = this.notification.url;
+            }
+        }
+        else if (this.notification.pageCode && this.notification.tableId) {
+            switch (this.notification.pageCode) {
+                case PageCodeEnum.AquaFarmReg:
+                    this.router.navigateByUrl('/aquaculture-farms', { state: { tableId: this.notification.tableId } });
+                    break;
             }
         }
     }

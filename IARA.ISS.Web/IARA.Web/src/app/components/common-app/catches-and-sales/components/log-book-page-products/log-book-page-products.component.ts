@@ -135,7 +135,11 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
     }
 
     public generateProductsFromOriginCatchRecords(): void {
-        this.products = [];
+        this.products = this.products.filter(x => x.id !== null && x.id !== undefined);
+
+        for (const product of this.products) {
+            product.isActive = false;
+        }
 
         for (const product of this.originProducts) {
             const newProduct: LogBookPageProductDTO = new LogBookPageProductDTO();
@@ -321,7 +325,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
             translteService: this.translate,
             disableDialogClose: true,
             viewMode: this.isReadonly || viewMode
-        }, '1200px');
+        }, '1300px');
     }
 
     private handleChangedProductsTable(): void {
@@ -379,7 +383,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
                 return null;
             }
 
-            if (this.products === null || this.products === undefined || this.products.length === 0) {
+            if (this.products === null || this.products === undefined || this.products.filter(x => x.isActive).length === 0) {
                 return { 'noProducts': true };
             }
 
@@ -393,15 +397,17 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
                 return null;
             }
 
-            if (this.products === null || this.products === undefined || this.products.length === 0) {
+            if (this.products === null || this.products === undefined || this.products.filter(x => x.isActive).length === 0) {
                 return null;
             }
 
             if (this.originProducts === null || this.originProducts === undefined || this.originProducts.length === 0) {
                 return null;
             }
-            
-            const groupedProductsByFish: Record<number, LogBookPageProductDTO[]> = CommonUtils.groupBy(this.products, x => x.fishId!);
+
+            const activeProducts: LogBookPageProductDTO[] = this.products.filter(x => x.isActive);
+
+            const groupedProductsByFish: Record<number, LogBookPageProductDTO[]> = CommonUtils.groupBy(activeProducts, x => x.fishId!);
             const groupedOriginalProductsByFish: Record<number, LogBookPageProductDTO[]> = CommonUtils.groupBy(this.originProducts, x => x.fishId!);
 
             const productsMap: Map<number, LogBookPageProductDTO[]> = new Map<number, LogBookPageProductDTO[]>();

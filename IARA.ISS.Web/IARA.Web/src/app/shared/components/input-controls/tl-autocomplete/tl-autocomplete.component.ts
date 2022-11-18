@@ -1,5 +1,5 @@
-﻿import { Component, DoCheck, ElementRef, Input, OnChanges, OnInit, Optional, Self, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
-import { AbstractControl, NgControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+﻿import { Component, ElementRef, Input, OnChanges, OnInit, Optional, Self, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
+import { AbstractControl, NgControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
@@ -16,7 +16,7 @@ type StringFilterFn = (object: string, options: string[]) => string[];
     templateUrl: './tl-autocomplete.component.html',
     styleUrls: ['./tl-autocomplete.component.scss']
 })
-export class TLInputAutocompleteComponent<T> extends BaseTLControl implements OnInit, OnChanges, DoCheck {
+export class TLInputAutocompleteComponent<T> extends BaseTLControl implements OnInit, OnChanges {
     @Input()
     public options: NomenclatureDTO<T>[] | string[] | undefined;
 
@@ -52,6 +52,8 @@ export class TLInputAutocompleteComponent<T> extends BaseTLControl implements On
 
     @Input()
     public filterFn: NomenclatureFilterFn & StringFilterFn | undefined;
+
+    public warningHint: string | undefined;
 
     public hasOptionsCollection: boolean = false;
     public hasGroupedOptionsCollection: boolean = false;
@@ -110,25 +112,27 @@ export class TLInputAutocompleteComponent<T> extends BaseTLControl implements On
             if (this.hasSelectedValueFromDropdownValidator) {
                 this.setHasSelectedValueFromDropdownValidator();
             }
+
+            // Override setValidators
+            this.overrideSetValidators();
         }
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
         const options: SimpleChange | undefined = changes['options'];
         const groupedOptions: SimpleChange | undefined = changes['groupedOptions'];
+        const hasSelectedValueFromDropdownValidator: SimpleChange | undefined = changes['hasSelectedValueFromDropdownValidator'];
 
         if (options || groupedOptions) {
             this.setOptions();
         }
-    }
 
-    public ngDoCheck(): void {
-        if (this.hasSelectedValueFromDropdownValidator) {
+        if (hasSelectedValueFromDropdownValidator && !hasSelectedValueFromDropdownValidator.firstChange) {
             this.setHasSelectedValueFromDropdownValidator();
         }
     }
 
-    public displayFunction(object: NomenclatureDTO<T> | string | null): string {
+    public displayFunction = (object: NomenclatureDTO<T> | string | null): string => {
         if (this.displayFn !== undefined && this.displayFn !== null) {
             return this.displayFn(object);
         }
@@ -142,12 +146,26 @@ export class TLInputAutocompleteComponent<T> extends BaseTLControl implements On
             }
         }
         return '';
-    }
+    };
 
     public clearBtnClicked(): void {
         if (this.ngControl.control) {
             this.ngControl.control.reset();
             this.ngControl.control.markAsTouched();
+        }
+    }
+
+    protected buildErrorsCollection(): void {
+        super.buildErrorsCollection();
+
+        if (this.ngControl && this.ngControl.control) {
+            const errors: ValidationErrors | null = this.noOptionsValidator()(this.ngControl.control);
+            if (errors && errors['novaluesindropdown'] === true) {
+                this.warningHint = this.tlTranslatePipe.transform('validation.novaluesindropdown', 'cap');
+            }
+            else {
+                this.warningHint = undefined;
+            }
         }
     }
 
@@ -179,11 +197,14 @@ export class TLInputAutocompleteComponent<T> extends BaseTLControl implements On
 
     private setHasSelectedValueFromDropdownValidator(): void {
         if (this.ngControl && this.ngControl.control) {
-            if (this.ngControl.control.validator) {
-                this.ngControl.control.setValidators([this.ngControl.control.validator, this.selectedValueFromDropdownValidator()]);
-            }
-            else {
-                this.ngControl.control.setValidators([this.selectedValueFromDropdownValidator()]);
+            if (this.hasSelectedValueFromDropdownValidator) {
+                if (this.ngControl.control.validator) {
+                    this.ngControl.control.validator = Validators.compose([this.ngControl.control.validator, this.selectedValueFromDropdownValidator()]);
+                }
+                else {
+                    this.ngControl.control.validator = this.selectedValueFromDropdownValidator();
+                }
+                this.ngControl.control.updateValueAndValidity({ onlySelf: true, emitEvent: false });
             }
         }
     }
@@ -368,6 +389,20 @@ export class TLInputAutocompleteComponent<T> extends BaseTLControl implements On
         }
     }
 
+    private noOptionsValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (this.hasSelectedValueFromDropdownValidator) {
+                if (this.hasOptionsCollection && (!this.activeOptions || this.activeOptions.length === 0)) {
+                    return { 'novaluesindropdown': true };
+                }
+                else if (this.hasGroupedOptionsCollection && (!this.groupedOptions || this.groupedOptions.length === 0)) {
+                    return { 'novaluesindropdown': true };
+                }
+            }
+            return null;
+        };
+    }
+
     private isNomenclature<T>(obj: NomenclatureDTO<T> | string): obj is NomenclatureDTO<T> {
         if (obj !== null && obj !== undefined && typeof obj === 'object') {
             return 'value' in obj && 'displayName' in obj;
@@ -388,5 +423,23 @@ export class TLInputAutocompleteComponent<T> extends BaseTLControl implements On
         setTimeout(() => {
             this.autoCompleteInputRef.nativeElement.blur();
         });
+    }
+
+    private overrideSetValidators(): void {
+        if (this.ngControl && this.ngControl.control) {
+            const self = this;
+
+            const setValidators = this.ngControl.control.setValidators;
+            this.ngControl.control.setValidators = function (newValidator: ValidatorFn | ValidatorFn[] | null) {
+                setValidators.apply(this, [newValidator]);
+                self.setHasSelectedValueFromDropdownValidator();
+            };
+
+            const clearValidators = this.ngControl.control.clearValidators;
+            this.ngControl.control.clearValidators = function () {
+                clearValidators.apply(this);
+                self.setHasSelectedValueFromDropdownValidator();
+            };
+        }
     }
 }

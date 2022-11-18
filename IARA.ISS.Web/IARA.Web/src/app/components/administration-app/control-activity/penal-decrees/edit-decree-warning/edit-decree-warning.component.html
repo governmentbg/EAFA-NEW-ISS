@@ -13,7 +13,7 @@
             <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                 <tl-input fxFlex="25"
                           formControlName="decreeNumControl"
-                          label="{{ 'penal-decrees.edit-decree-num' | tlTranslate }}"
+                          label="{{ 'penal-decrees.edit-warning-num' | tlTranslate }}"
                           tooltipResourceName="penal-decrees.edit-decree-num-helper">
                 </tl-input>
 
@@ -28,7 +28,7 @@
                                  formControlName="drafterControl"
                                  [options]="users"
                                  label="{{ 'penal-decrees.edit-drafter' | tlTranslate }}"
-                                 tooltipResourceName="penal-decrees.edit-drafter-helper">
+                                 tooltipResourceName="penal-decree.edit-drafter-helper">
                 </tl-autocomplete>
             </div>
 
@@ -52,15 +52,41 @@
                           tooltipResourceName="penal-decrees.edit-issuer-position-helper">
                 </tl-input>
             </div>
+
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="courtControl"
+                                 [options]="courts"
+                                 label="{{ 'penal-decrees.edit-court' | tlTranslate }}"
+                                 tooltipResourceName="penal-decree.edit-court-helper">
+                </tl-autocomplete>
+
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="sectorControl"
+                                 [options]="sectors"
+                                 label="{{ 'penal-decrees.edit-sector' | tlTranslate }}"
+                                 tooltipResourceName="penal-decree.edit-sector-helper">
+                </tl-autocomplete>
+
+                <div fxFlex="50"></div>
+            </div>
         </div>
     </tl-expansion-panel>
 
     <!-- Информация за АУАН -->
     <tl-expansion-panel title="{{ 'penal-decrees.edit-decree-auan' | tlTranslate }}"
                         tooltipResourceName="penal-decrees.edit-decree-auan-helper"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.controls.auanControl.errors?.auanNumExists !== true">
         <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
-            <decree-auan-basic-info formControlName="auanControl"></decree-auan-basic-info>
+            <mat-error *ngIf="form.controls.auanControl?.touched && form.controls.auanControl.errors?.auanNumExists === true">
+                * {{ 'penal-decrees.auan-num-already-exist-error' | tlTranslate }}
+            </mat-error>
+
+            <decree-auan-basic-info formControlName="auanControl"
+                                    [isAdding]="isThirdParty">
+            </decree-auan-basic-info>
 
             <div fxLayout="row" fxLayoutGap="1em">
                 <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
@@ -108,12 +134,19 @@
         <div fxLayout="column" fxLayoutGap="1em">
             <div fxLayout="column" fxLayoutGap="1em">
                 <!-- Иззети уреди -->
-                <decree-sized-fishing-gear formControlName="seizedFishingGearControl"
-                                           [viewMode]="viewMode">
-                </decree-sized-fishing-gear>
+                <tl-card [validityChecker]="form"
+                         tooltipResourceName="penal-decree.edit-decree-sized-fishing-gears-helper">
+                    <tl-card-title>{{ 'penal-decrees.edit-decree-sized-fishing-gear' | tlTranslate }}</tl-card-title>
+                    <tl-card-content>
+                        <decree-sized-fishing-gear formControlName="seizedFishingGearControl"
+                                                   [viewMode]="viewMode">
+                        </decree-sized-fishing-gear>
+                    </tl-card-content>
+                </tl-card>
 
                 <!-- Иззета риба -->
-                <tl-card tooltipResourceName="penal-decrees.edit-decree-sized-fishes-helper">
+                <tl-card [validityChecker]="form"
+                         tooltipResourceName="penal-decrees.edit-decree-sized-fishes-helper">
                     <tl-card-title>{{ 'penal-decrees.edit-decree-sized-fishes' | tlTranslate }}</tl-card-title>
                     <tl-card-content>
                         <decree-sized-fish formControlName="seizedFishControl"
@@ -123,7 +156,8 @@
                 </tl-card>
 
                 <!-- Иззети приспособления -->
-                <tl-card tooltipResourceName="penal-decrees.edit-decree-appliance-helper">
+                <tl-card [validityChecker]="form"
+                         tooltipResourceName="penal-decrees.edit-decree-appliance-helper">
                     <tl-card-title>{{ 'penal-decrees.edit-decree-appliance' | tlTranslate }}</tl-card-title>
                     <tl-card-content>
                         <decree-sized-fish formControlName="seizedApplianceControl"
@@ -151,13 +185,13 @@
     <!-- Връчване -->
     <tl-expansion-panel title="{{ 'penal-decrees.edit-decree-delivery-data' | tlTranslate }}"
                         tooltipResourceName="penal-decrees.edit-decree-delivery-data-helper"
-                        [validityCheckerExtraCondition]="form.errors?.hasNoEDeliveryRegistrationError !== true"
+                        [validityCheckerExtraCondition]="form.controls.deliveryControl.errors?.hasNoEDeliveryRegistrationError !== true"
                         [validityChecker]="form">
         <decree-delivery-data formControlName="deliveryControl"
                               [viewMode]="viewMode">
         </decree-delivery-data>
 
-        <mat-error *ngIf="hasNoEDeliveryRegistrationError">
+        <mat-error *ngIf="form.controls.deliveryControl.errors?.hasNoEDeliveryRegistrationError === true">
             * {{ 'penal-decrees.has-no-e-delivery-registration-error' | tlTranslate }}
         </mat-error>
     </tl-expansion-panel>
@@ -166,7 +200,7 @@
     <tl-expansion-panel *ngIf="!isAdding" title="{{ 'penal-decrees.edit-warning-status' | tlTranslate }}"
                         tooltipResourceName="penal-decrees.edit-warning-status-helper"
                         [validityChecker]="form">
-        <decree-statuses-table fzFlex="100"
+        <decree-statuses-table fxFlex="100"
                                formControlName="statusesControl"
                                [viewMode]="viewMode"
                                [service]="service"

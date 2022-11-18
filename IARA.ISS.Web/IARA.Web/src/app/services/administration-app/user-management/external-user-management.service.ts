@@ -46,10 +46,14 @@ export class ExternalUserManagementService extends BaseUserManagementService imp
     }
 
     public edit(user: ExternalUserDTO): Observable<void> {
-        return this.requestService.put(this.area, this.controller, 'EditExternalUser', user);
+        return this.requestService.put(this.area, this.controller, 'EditExternalUser', user, {
+            successMessage: 'succ-updated-user'
+        });
     }
 
     public changeUserStatus(userId: number): Observable<void> {
-        return this.requestService.post(this.area, this.controller, 'ChangeUserToInternal', userId);
+        return this.requestService.post(this.area, this.controller, 'ChangeUserToInternal', userId, {
+            successMessage: 'succ-user-made-internal'
+        });
     }
 }

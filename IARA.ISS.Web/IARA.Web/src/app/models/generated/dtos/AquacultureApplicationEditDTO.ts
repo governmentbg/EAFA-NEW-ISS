@@ -13,6 +13,7 @@ import { CommonDocumentDTO } from './CommonDocumentDTO';
 import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformationDTO';
 import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
 import { FileInfoDTO } from './FileInfoDTO';
+import { AquacultureRegixDataDTO } from './AquacultureRegixDataDTO';
 import { AquacultureSalinityEnum } from '@app/enums/aquaculture-salinity.enum';
 import { AquacultureTemperatureEnum } from '@app/enums/aquaculture-temperature.enum';
 import { AquacultureSystemEnum } from '@app/enums/aquaculture-system.enum'; 
@@ -123,4 +124,7 @@ export class AquacultureApplicationEditDTO extends AquacultureBaseRegixDataDTO {
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
+
+    @StrictlyTyped(AquacultureRegixDataDTO)
+    public regiXDataModel?: AquacultureRegixDataDTO;
 }

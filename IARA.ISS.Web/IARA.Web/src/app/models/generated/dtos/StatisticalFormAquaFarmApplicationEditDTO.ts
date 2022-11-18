@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { BaseRegixChecksDTO } from './BaseRegixChecksDTO';
 import { ApplicationSubmittedByDTO } from './ApplicationSubmittedByDTO';
 import { ApplicationSubmittedForDTO } from './ApplicationSubmittedForDTO';
 import { StatisticalFormGivenMedicineDTO } from './StatisticalFormGivenMedicineDTO';
@@ -11,12 +12,19 @@ import { StatisticalFormAquaFarmInstallationSystemNotFullDTO } from './Statistic
 import { StatisticalFormNumStatGroupDTO } from './StatisticalFormNumStatGroupDTO';
 import { StatisticalFormEmployeeInfoGroupDTO } from './StatisticalFormEmployeeInfoGroupDTO';
 import { FileInfoDTO } from './FileInfoDTO';
+import { StatisticalFormAquaFarmRegixDataDTO } from './StatisticalFormAquaFarmRegixDataDTO'; 
 
-export class StatisticalFormAquaFarmApplicationEditDTO { 
+export class StatisticalFormAquaFarmApplicationEditDTO extends BaseRegixChecksDTO {
     public constructor(obj?: Partial<StatisticalFormAquaFarmApplicationEditDTO>) {
-        Object.assign(this, obj);
+        if (obj != undefined) {
+            super(obj as BaseRegixChecksDTO);
+            Object.assign(this, obj);
+        } 
+        else {
+            super();
+        }
     }
-
+  
     @StrictlyTyped(Number)
     public id?: number;
 
@@ -50,6 +58,9 @@ export class StatisticalFormAquaFarmApplicationEditDTO {
     @StrictlyTyped(Number)
     public broodstockDeathRate?: number;
 
+    @StrictlyTyped(Boolean)
+    public isOwnerEmployee?: boolean;
+
     @StrictlyTyped(StatisticalFormGivenMedicineDTO)
     public medicine?: StatisticalFormGivenMedicineDTO[];
 
@@ -82,4 +93,7 @@ export class StatisticalFormAquaFarmApplicationEditDTO {
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
+
+    @StrictlyTyped(StatisticalFormAquaFarmRegixDataDTO)
+    public regiXDataModel?: StatisticalFormAquaFarmRegixDataDTO;
 }

@@ -16,10 +16,11 @@ import { DeclarationLogBookTypeEnum } from '@app/enums/declaration-log-book-type
 import { InspectedDeclarationCatchDTO } from '@app/models/generated/dtos/InspectedDeclarationCatchDTO';
 import { FillDef, MapOptions, SimplePolygonStyleDef, StrokeDef, TLMapViewerComponent } from '@tl/tl-angular-map';
 import { TLPopoverComponent } from '@app/shared/components/tl-popover/tl-popover.component';
-import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
 import { DeclarationLogBookPageDTO } from '@app/models/generated/dtos/DeclarationLogBookPageMobileDTO';
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { forkJoin } from 'rxjs';
+import { DeclarationLogBookPageFishDTO } from '@app/models/generated/dtos/DeclarationLogBookPageFishDTO';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 
 @Component({
     selector: 'edit-market-catch',
@@ -42,6 +43,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     public hasCatchType: boolean = true;
     public isMapPopoverOpened: boolean = false;
     public readOnly: boolean = false;
+    public aquacultureRegistered: boolean = true;
     public permitTypeSelected: DeclarationLogBookTypeEnum | undefined;
 
     public readonly declarationLogBookTypeEnum = DeclarationLogBookTypeEnum;
@@ -55,12 +57,17 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     public presentations: NomenclatureDTO<number>[] = [];
     public permitTypes: NomenclatureDTO<DeclarationLogBookTypeEnum>[] = [];
     public declarations: NomenclatureDTO<number>[] = [];
+    public aquacultures: NomenclatureDTO<number>[] = [];
+    public fishErrors: TLError[] = [];
 
     private temporarySelectedGridSector: NomenclatureDTO<number> | undefined;
     private logBookPages: DeclarationLogBookPageDTO[] = [];
+    private logBookFishes: DeclarationLogBookPageFishDTO[] = [];
+    private fetchData: { type: DeclarationLogBookTypeEnum, shipId?: number, aquacultureId?: number } | undefined;
 
     private readonly service: InspectionsService;
     private readonly nomenclatures: CommonNomenclatures;
+    private readonly translate: FuseTranslationLoaderService;
 
     public constructor(
         service: InspectionsService,
@@ -71,6 +78,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
 
         this.service = service;
         this.nomenclatures = nomenclatures;
+        this.translate = translate;
 
         this.permitTypes = [
             new NomenclatureDTO({
@@ -91,6 +99,11 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             new NomenclatureDTO({
                 value: DeclarationLogBookTypeEnum.ShipLogBook,
                 displayName: translate.getValue('inspections.market-ship-log-book'),
+                isActive: true,
+            }),
+            new NomenclatureDTO({
+                value: DeclarationLogBookTypeEnum.AquacultureLogBook,
+                displayName: translate.getValue('inspections.market-aquaculture-log-book'),
                 isActive: true,
             }),
             new NomenclatureDTO({
@@ -125,12 +138,14 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             ),
             NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.VesselTypes, this.nomenclatures.getVesselTypes.bind(this.nomenclatures), false
-            )
+            ),
+            this.service.getAquacultures()
         ]).toPromise();
 
         this.ships = nomenclatureTables[0];
         this.countries = nomenclatureTables[1];
         this.vesselTypes = nomenclatureTables[2];
+        this.aquacultures = nomenclatureTables[3];
 
         setTimeout(() => {
             this.fillForm();
@@ -215,18 +230,26 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
 
     protected buildForm(): void {
         this.form = new FormGroup({
+            permitControl: new FormControl(undefined, [Validators.required]),
             typeControl: new FormControl(undefined, [Validators.required]),
             countControl: new FormControl(undefined, [TLValidators.number()]),
             catchTypeControl: new FormControl(undefined, [Validators.required]),
-            quantityControl: new FormControl(undefined, [Validators.required]),
+            quantityControl: new FormControl(undefined, [Validators.required, TLValidators.number()]),
             presentationControl: new FormControl(undefined, [Validators.required]),
             unloadedQuantityControl: new FormControl(undefined, [Validators.required]),
             catchZoneControl: new FormControl(undefined, [Validators.required]),
             shipControl: new FormControl(undefined),
-            permitControl: new FormControl(undefined),
+            aquacultureRegisteredControl: new FormControl(true),
+            aquacultureControl: new FormControl(undefined, [Validators.required]),
+            aquacultureTextControl: new FormControl(undefined, [Validators.required, Validators.maxLength(4000)]),
             declarationNumberControl: new FormControl(undefined),
             declarationDateControl: new FormControl(undefined),
+            invoiceDataControl: new FormControl(undefined),
         });
+
+        this.form.get('shipControl')!.disable();
+        this.form.get('aquacultureControl')!.disable();
+        this.form.get('aquacultureTextControl')!.disable();
 
         this.form.get('declarationNumberControl')!.valueChanges.subscribe({
             next: async (value: NomenclatureDTO<number> | undefined) => {
@@ -249,45 +272,80 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             next: async (value: NomenclatureDTO<DeclarationLogBookTypeEnum>) => {
                 this.permitTypeSelected = value?.value;
 
-                if (this.permitTypeSelected === DeclarationLogBookTypeEnum.Invoice || this.permitTypeSelected === DeclarationLogBookTypeEnum.NNN) {
-                    this.form.get('catchZoneControl')!.clearValidators();
-                    this.form.get('catchZoneControl')!.markAsPending({ emitEvent: false });
-                    return;
+                if (this.permitTypeSelected === DeclarationLogBookTypeEnum.AquacultureLogBook) {
+                    this.form.get('aquacultureRegisteredControl')!.setValue(this.aquacultureRegistered);
+                }
+                else if (this.permitTypeSelected !== DeclarationLogBookTypeEnum.Invoice && this.permitTypeSelected !== DeclarationLogBookTypeEnum.NNN) {
+                    this.form.get('shipControl')!.enable();
                 }
 
-                this.form.get('catchZoneControl')!.setValidators([Validators.required]);
-                this.form.get('catchZoneControl')!.markAsPending({ emitEvent: false });
-
-                const ship: VesselDuringInspectionDTO = this.form.get('shipControl')!.value;
-
-                if (ship !== null && ship !== undefined && this.permitTypeSelected !== null && this.permitTypeSelected !== undefined) {
-                    const result = await this.service.getDeclarationLogBookPages(this.permitTypeSelected, ship.shipId!).toPromise();
-
-                    this.logBookPages = result;
-                    this.declarations = result.map(f => new NomenclatureDTO({
-                        value: f.id,
-                        displayName: f.num,
-                        isActive: true,
-                    }));
+                if (this.permitTypeSelected == null || this.permitTypeSelected === DeclarationLogBookTypeEnum.AquacultureLogBook || this.permitTypeSelected === DeclarationLogBookTypeEnum.Invoice || this.permitTypeSelected === DeclarationLogBookTypeEnum.NNN) {
+                    this.form.get('catchZoneControl')!.disable();
                 }
+                else if (!this.readOnly) {
+                    this.form.get('catchZoneControl')!.enable();
+                }
+
+                this.pullDeclarations();
             }
         });
 
         this.form.get('shipControl')!.valueChanges.subscribe({
-            next: async (value: VesselDuringInspectionDTO) => {
-                if (this.permitTypeSelected === DeclarationLogBookTypeEnum.Invoice || this.permitTypeSelected === DeclarationLogBookTypeEnum.NNN) {
+            next: this.pullDeclarations.bind(this)
+        });
+
+        this.form.get('aquacultureRegisteredControl')!.valueChanges.subscribe({
+            next: (value) => {
+                this.aquacultureRegistered = value;
+
+                if (this.readOnly) {
                     return;
                 }
 
-                if (this.permitTypeSelected !== null && this.permitTypeSelected !== undefined) {
-                    const result = await this.service.getDeclarationLogBookPages(this.permitTypeSelected, value.shipId!).toPromise();
+                if (value) {
+                    this.form.get('aquacultureControl')!.enable();
+                    this.form.get('aquacultureTextControl')!.disable();
+                }
+                else {
+                    this.form.get('aquacultureControl')!.disable();
+                    this.form.get('aquacultureTextControl')!.enable();
+                }
+            }
+        });
 
-                    this.logBookPages = result;
-                    this.declarations = result.map(f => new NomenclatureDTO({
-                        value: f.id,
-                        displayName: f.num,
-                        isActive: true,
-                    }));
+        this.form.valueChanges.subscribe({
+            next: () => {
+                const permit: NomenclatureDTO<number> | string = this.form.get('declarationNumberControl')!.value;
+                const fishCatch: NomenclatureDTO<number> = this.form.get('typeControl')!.value;
+                const quantity: number = this.form.get('quantityControl')!.value;
+
+                if (typeof permit === 'object' && permit && fishCatch && quantity) {
+                    this.fishErrors = [];
+                    let fishes = this.logBookFishes.filter(f => f.logBookId === permit.value && f.fishId === fishCatch.value);
+
+                    const presentation: NomenclatureDTO<number> = this.form.get('presentationControl')!.value;
+
+                    if (presentation) {
+                        fishes = fishes.filter(f => f.presentationId == null || f.presentationId === presentation.value);
+                    }
+
+                    for (const fish of fishes) {
+                        if (fish.quantity! < quantity) {
+                            this.fishErrors.push({
+                                text: this.translate.getValue('inspections.declaration-fish-quantity-error')
+                                    .replace('{0}', `${fishCatch.displayName} : ${fish.quantity!}`)
+                                    .replace('{1}', (quantity - fish.quantity!).toString()),
+                                type: 'error'
+                            });
+                        }
+                        else {
+                            this.fishErrors.push({
+                                text: this.translate.getValue('inspections.declaration-fish-quantity-warning')
+                                    .replace('{0}', `${fishCatch.displayName} : ${fish.quantity!}`),
+                                type: 'warn'
+                            });
+                        }
+                    }
                 }
             }
         });
@@ -295,8 +353,9 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
 
     protected async fillForm(): Promise<void> {
         this.form.get('typeControl')!.setValue(this.fishes.find(f => f.value === this.model.fishTypeId));
-        this.form.get('catchTypeControl')!.setValue(this.types.find(f => f.value === this.model.catchTypeId));
+        this.form.get('countControl')!.setValue(this.model.catchCount);
         this.form.get('quantityControl')!.setValue(this.model.catchQuantity);
+        this.form.get('catchTypeControl')!.setValue(this.types.find(f => f.value === this.model.catchTypeId));
         this.form.get('presentationControl')!.setValue(
             this.presentations.find(f => f.value === this.model.presentationId)
             ?? this.presentations.find(f => f.code === 'WHL')
@@ -308,6 +367,21 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         this.permitTypeSelected = this.model.logBookType;
 
         this.form.get('permitControl')!.setValue(this.permitTypes.find(f => f.value === this.model.logBookType), { emitEvent: false });
+
+        if (this.model.aquacultureId) {
+            this.form.get('aquacultureControl')!.setValue(this.aquacultures.find(f => f.value == this.model.aquacultureId));
+        }
+        else if (this.model.unregisteredEntityData != undefined) {
+            this.aquacultureRegistered = false;
+            this.form.get('aquacultureRegisteredControl')!.setValue(false);
+        }
+
+        if (this.model.logBookType === DeclarationLogBookTypeEnum.Invoice) {
+            this.form.get('invoiceDataControl')!.setValue(this.model.unregisteredEntityData);
+        }
+        else {
+            this.form.get('aquacultureTextControl')!.setValue(this.model.unregisteredEntityData);
+        }
 
         if (this.model.originShip?.shipId !== null && this.model.originShip?.shipId !== undefined
             && this.permitTypeSelected !== null && this.permitTypeSelected !== undefined
@@ -334,14 +408,23 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     }
 
     protected fillModel(): void {
+        const catchCount = this.form.get('countControl')!.value;
+        const catchQuantity = this.form.get('quantityControl')!.value;
+        const unloadedQuantity = this.form.get('unloadedQuantityControl')!.value;
+
         this.model.fishTypeId = this.form.get('typeControl')!.value?.value;
         this.model.catchTypeId = this.form.get('catchTypeControl')!.value?.value;
-        this.model.catchQuantity = Number(this.form.get('quantityControl')!.value);
+        this.model.catchCount = catchCount ? Number(catchCount) : undefined;
+        this.model.catchQuantity = catchQuantity ? Number(catchQuantity) : undefined;
+        this.model.unloadedQuantity = unloadedQuantity ? Number(unloadedQuantity) : undefined;
         this.model.presentationId = this.form.get('presentationControl')!.value?.value;
-        this.model.unloadedQuantity = Number(this.form.get('unloadedQuantityControl')!.value);
         this.model.catchZoneId = this.form.get('catchZoneControl')!.value?.value;
         this.model.originShip = this.form.get('shipControl')!.value;
         this.model.logBookType = this.form.get('permitControl')!.value?.value;
+        this.model.aquacultureId = this.form.get('aquacultureControl')!.value?.value;
+        this.model.unregisteredEntityData = this.model.logBookType === DeclarationLogBookTypeEnum.Invoice
+            ? this.form.get('invoiceDataControl')!.value
+            : this.form.get('aquacultureTextControl')!.value;
 
         const permit: NomenclatureDTO<number> | string = this.form.get('declarationNumberControl')!.value;
 
@@ -363,7 +446,6 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         layerStyle.stroke = new StrokeDef('rgb(0,116,2,1)', 1);
 
         return layerStyle;
-
     }
 
     private createCustomSelectGridLayerStyle(): SimplePolygonStyleDef {
@@ -372,5 +454,34 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         layerStyle.stroke = new StrokeDef('rgb(255,177,34,1)', 3);
 
         return layerStyle;
+    }
+
+    private pullDeclarations(): void {
+        if (this.permitTypeSelected == null || this.permitTypeSelected === DeclarationLogBookTypeEnum.Invoice || this.permitTypeSelected === DeclarationLogBookTypeEnum.NNN) {
+            return;
+        }
+
+        const ship: number = this.form.get('shipControl')!.value?.shipId;
+        const aquaculture: number = this.form.get('aquacultureControl')!.value?.value;
+
+        if ((ship || aquaculture) && (!this.fetchData || this.fetchData.type === this.permitTypeSelected || this.fetchData.shipId === ship || this.fetchData.aquacultureId === aquaculture)) {
+            this.fetchData = {
+                type: this.permitTypeSelected,
+                aquacultureId: aquaculture,
+                shipId: ship,
+            };
+
+            this.service.getDeclarationLogBookPages(this.permitTypeSelected, ship, aquaculture).subscribe({
+                next: (result) => {
+                    this.logBookPages = result;
+                    this.declarations = result.map(f => new NomenclatureDTO({
+                        value: f.id,
+                        displayName: f.num,
+                        isActive: true,
+                    }));
+                    this.logBookFishes = result.reduce((f, s) => f.concat(s.fishes!), [] as DeclarationLogBookPageFishDTO[]);
+                },
+            });
+        }
     }
 }

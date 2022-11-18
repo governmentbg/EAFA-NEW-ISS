@@ -57,5 +57,8 @@ export class CatchRecordFishDTO {
     public catchZone?: string;
 
     @StrictlyTyped(Boolean)
+    public isDetainedOnBoard?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isActive?: boolean;
 }

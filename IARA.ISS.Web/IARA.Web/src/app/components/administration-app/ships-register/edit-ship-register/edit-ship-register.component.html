@@ -1,14 +1,15 @@
-﻿<mat-sidenav-container [autosize]="true" fxFlexFill>
-    <mat-sidenav-content>
-        <mat-tab-group id="main-content"
-                       mat-align-tabs="start"
-                       fxFlexFill
+﻿<div class="container"
+     [style.height.px]="containerHeightPx">
+    <!-- Main panel -->
+    <div class="main-panel"
+         [style.width.px]="mainPanelWidthPx"
+         [style.height.px]="mainPanelHeightPx">
+        <mat-tab-group mat-align-tabs="start"
                        (selectedIndexChange)="onTabChange($event)">
             <!-- Данни за кораба -->
             <mat-tab label="{{ 'ships-register.ship-data' | tlTranslate }}"
                      [disabled]="disableTabs">
-                <edit-ship fxFlexFill
-                           [formControl]="shipControl"
+                <edit-ship [formControl]="shipControl"
                            [service]="service"
                            [isReadonly]="true"
                            [viewMode]="viewMode"
@@ -34,8 +35,7 @@
             <!-- УСР/РСР -->
             <mat-tab label="{{ 'ships-register.usr-rsr' | tlTranslate }}"
                      [disabled]="disableTabs">
-                <commercial-fishing-register fxFlexFill
-                                             [reloadData]="reloadUsrRsrData"
+                <commercial-fishing-register [reloadData]="reloadUsrRsrData"
                                              [shipId]="shipId">
                 </commercial-fishing-register>
             </mat-tab>
@@ -46,7 +46,6 @@
                 <tl-card>
                     <tl-card-content>
                         <tl-data-table #logbookPagesTable
-                                       fxFlexFill
                                        [showAddButton]="false"
                                        [showInactiveRecords]="false"
                                        [recordsPerPage]="13">
@@ -64,7 +63,7 @@
                                          propertyName="fishingGear"
                                          columnName="{{ 'ships-register.ship-declarations-gear-type' | tlTranslate }}">
                             </data-column>
-                            
+
                             <data-column [flexRate]="0.15"
                                          propertyName="outingStartDate"
                                          dataType="date"
@@ -214,8 +213,7 @@
             <!-- Проверки -->
             <mat-tab label="{{ 'ships-register.inspections' | tlTranslate }}"
                      [disabled]="disableTabs">
-                <inspections-register fxFlexFill
-                                      [reloadData]="reloadInspectionsData"
+                <inspections-register [reloadData]="reloadInspectionsData"
                                       [shipId]="shipId">
                 </inspections-register>
             </mat-tab>
@@ -223,83 +221,25 @@
             <!-- Присъдени точки -->
             <mat-tab label="{{ 'ships-register.given-points' | tlTranslate }}"
                      [disabled]="disableTabs">
-                <penal-points fxFlexFill
-                              [reloadData]="reloadGivenPointsData"
+                <penal-points [reloadData]="reloadGivenPointsData"
                               [shipId]="shipId">
                 </penal-points>
             </mat-tab>
         </mat-tab-group>
+    </div>
 
-        <div *ngIf="isChangeOfCircumstancesApplication" tlResizable="top" id="change-of-circumstances-panel">
-            <h2><b>{{ 'ships-register.changes-from-application' | tlTranslate }}</b></h2>
-            <change-of-circumstances [formControl]="changeOfCircumstancesControl"
-                                     [pageCode]="pageCode"
-                                     [disableDelete]="true">
-            </change-of-circumstances>
-        </div>
-
-        <div *ngIf="isDeregistrationApplication" tlResizable="top" id="change-of-circumstances-panel">
-            <h2><b>{{ 'ships-register.deregistration-application-reason' | tlTranslate }}</b></h2>
-            <tl-textarea [formControl]="deregistrationReasonControl"
-                         tooltipResourceName="ships-register.deregistration-application-reason-helper"
-                         label="{{ 'ships-register.deregistration-application-reason' | tlTranslate }}">
-            </tl-textarea>
-        </div>
-
-        <div *ngIf="isIncreaseCapacityApplication" tlResizable="top" id="change-of-circumstances-panel">
-            <h2><b>{{ 'ships-register.increase-capacity-application-parameters' | tlTranslate }}</b></h2>
-            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start start" fxFill>
-                <tl-input fxFlex="25"
-                          [formControl]="capacityChangeTonnageControl"
-                          tooltipResourceName="ships-register.increase-capacity-application-tonnage-helper"
-                          label="{{ 'ships-register.increase-capacity-application-tonnage' | tlTranslate }}">
-                </tl-input>
-
-                <tl-input fxFlex="25"
-                          [formControl]="capacityChangePowerControl"
-                          tooltipResourceName="ships-register.increase-capacity-application-power-helper"
-                          label="{{ 'ships-register.increase-capacity-application-power' | tlTranslate }}">
-                </tl-input>
-
-                <div fxFlex="25"></div>
-                <div fxFlex="25"></div>
-            </div>
-        </div>
-
-        <div *ngIf="isReduceCapacityApplication" tlResizable="top" id="change-of-circumstances-panel">
-            <h2><b>{{ 'ships-register.reduce-capacity-application-parameters' | tlTranslate }}</b></h2>
-            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start start" fxFill>
-                <tl-input fxFlex="25"
-                          [formControl]="capacityChangeTonnageControl"
-                          tooltipResourceName="ships-register.reduce-capacity-application-tonnage-helper"
-                          label="{{ 'ships-register.reduce-capacity-application-tonnage' | tlTranslate }}">
-                </tl-input>
-
-                <tl-input fxFlex="25"
-                          [formControl]="capacityChangePowerControl"
-                          tooltipResourceName="ships-register.reduce-capacity-application-power-helper"
-                          label="{{ 'ships-register.reduce-capacity-application-power' | tlTranslate }}">
-                </tl-input>
-
-                <div fxFlex="25"></div>
-                <div fxFlex="25"></div>
-            </div>
-        </div>
-    </mat-sidenav-content>
-
-    <mat-sidenav mode="side"
-                 position="end"
-                 [opened]="true"
-                 [ngClass]="{ 'expanded-events-panel' : isEventsPanelExpanded,
-                              'collapsed-events-panel' : !isEventsPanelExpanded }"
-                 [style.top.px]="eventsPanelTop">
+    <!-- Events panel -->
+    <div class="events-panel"
+         [class.expanded-events-panel]="isEventsPanelExpanded"
+         [class.collapsed-events-panel]="!isEventsPanelExpanded"
+         (transitionend)="onEventsPanelToggled($event)">
         <tl-icon-button [icon]="isEventsPanelExpanded ? 'arrow_forward_ios' : 'arrow_back_ios'"
                         (buttonClicked)="toggleEventsPanel()"
                         iconClass="primary-color"
                         tooltipText="{{ (isEventsPanelExpanded ? 'ships-register.collapse-events-panel' : 'ships-register.expand-events-panel') | tlTranslate }}">
         </tl-icon-button>
 
-        <div *ngIf="isEventsPanelExpanded" fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="1em">
+        <div *ngIf="isEventsPanelOpen" fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="1em">
             <div *ngIf="!viewMode" fxLayout="column" fxLayoutAlign="start end" class="event-save-btn-container">
                 <tl-autocomplete fxFlexFill
                                  [formControl]="eventTypeControl"
@@ -308,19 +248,25 @@
                                  [getControlErrorLabelText]="getEventTypeErrorText.bind(this)"
                                  tooltipResourceName="ships-register.add-event-helper"
                                  hint="{{ 'ships-register.selected-event-history-cannot-edit' | tlTranslate }}"
-                                 label="{{ 'ships-register.add-event' | tlTranslate }}">
+                                 label="{{ 'ships-register.choose-event-type' | tlTranslate }}">
                 </tl-autocomplete>
 
+                <!-- Application edit scheme -->
                 <div *ngIf="isChangeOfCircumstancesApplication || isDeregistrationApplication || isIncreaseCapacityApplication || isReduceCapacityApplication; else notChangeApplication"
                      fxLayout="column"
                      fxLayoutAlign="start end"
                      fxLayoutGap="0.5em"
                      fxFill>
-                    <button mat-raised-button
-                            color="accent"
-                            (click)="saveEvent(false)">
-                        {{ 'ships-register.do-application-change' | tlTranslate }}
-                    </button>
+                    <div matTooltip="{{ 'ships-register.do-application-change-btn-disabled-tooltip' | tlTranslate }}"
+                         [matTooltipDisabled]="eventTypeControl.value"
+                         [matTooltipShowDelay]="500">
+                        <button mat-raised-button
+                                color="accent"
+                                [disabled]="!eventTypeControl.value"
+                                (click)="saveEvent(false)">
+                            {{ 'ships-register.do-application-change' | tlTranslate }}
+                        </button>
+                    </div>
 
                     <mat-divider fxFill></mat-divider>
 
@@ -344,6 +290,7 @@
                     </div>
                 </div>
 
+                <!-- Simple EDIT -->
                 <ng-template #notChangeApplication>
                     <button mat-raised-button
                             color="accent"
@@ -353,7 +300,10 @@
                 </ng-template>
             </div>
 
-            <div fxLayout="column" fxLayoutAlign="start stretch">
+            <!-- Event history table -->
+            <div class="events-panel-table" 
+                 fxLayout="column" 
+                 fxLayoutAlign="start stretch">
                 <tl-slide-toggle class="show-edits-toggle"
                                  [formControl]="showEditsControl"
                                  label="{{ 'ships-register.show-edit-events' | tlTranslate }}">
@@ -364,8 +314,9 @@
                                [isRemote]="false"
                                [showInactiveRecords]="false"
                                [showAddButton]="false"
+                               [recordsPerPage]="10"
                                (activeRecordChanged)="viewHistoryShip($event)">
-                    <data-template-column [flexRate]="0.02"
+                    <data-template-column [flexRate]="0.025"
                                           propertyName="No"
                                           columnName="{{ 'ships-register.events-panel-no' | tlTranslate }}">
                         <ng-template ngx-datatable-cell-template
@@ -378,7 +329,7 @@
                         </ng-template>
                     </data-template-column>
 
-                    <data-template-column [flexRate]="0.125"
+                    <data-template-column [flexRate]="0.275"
                                           propertyName="Type"
                                           columnName="{{ 'ships-register.events-panel-event' | tlTranslate }}">
                         <ng-template let-row="row" ngx-datatable-cell-template>
@@ -390,7 +341,7 @@
                         </ng-template>
                     </data-template-column>
 
-                    <data-template-column [flexRate]="0.2"
+                    <data-template-column [flexRate]="0.4"
                                           propertyName="Date"
                                           columnName="{{ 'ships-register.events-panel-date' | tlTranslate }}">
                         <ng-template let-row="row" ngx-datatable-cell-template>
@@ -402,7 +353,7 @@
                         </ng-template>
                     </data-template-column>
 
-                    <data-template-column [flexRate]="0.1"
+                    <data-template-column [flexRate]="0.2"
                                           propertyName="UsrRsr"
                                           columnName="{{ 'ships-register.events-panel-usr-rsr' | tlTranslate }}">
                         <ng-template let-row="row" ngx-datatable-cell-template>
@@ -422,7 +373,7 @@
                         </ng-template>
                     </data-template-column>
 
-                    <data-template-column [flexRate]="0.1">
+                    <data-template-column [flexRate]="0.15">
                         <ng-template let-row="row" ngx-datatable-cell-template>
                             <div fxLayout="row" fxLayoutAlign="end center">
                                 <tl-icon-button icon="visibility"
@@ -437,5 +388,81 @@
                 </tl-data-table>
             </div>
         </div>
-    </mat-sidenav>
-</mat-sidenav-container>
+    </div>
+
+    <!-- Change of circumstances panel -->
+    <div *ngIf="isChangeOfCircumstancesApplication"
+         tlResizable="top"
+         (tlResizableChanged)="onCocPanelResized($event)"
+         class="change-of-circumstances-panel"
+         [style.width.px]="mainPanelWidthPx">
+        <h2><b>{{ 'ships-register.changes-from-application' | tlTranslate }}</b></h2>
+        <change-of-circumstances [formControl]="changeOfCircumstancesControl"
+                                 [pageCode]="pageCode"
+                                 [disableDelete]="true">
+        </change-of-circumstances>
+    </div>
+
+    <!-- Deregistration panel -->
+    <div *ngIf="isDeregistrationApplication"
+         tlResizable="top"
+         (tlResizableChanged)="onCocPanelResized($event)"
+         class="change-of-circumstances-panel"
+         [style.width.px]="mainPanelWidthPx">
+        <h2><b>{{ 'ships-register.deregistration-application-reason' | tlTranslate }}</b></h2>
+        <tl-textarea [formControl]="deregistrationReasonControl"
+                     tooltipResourceName="ships-register.deregistration-application-reason-helper"
+                     label="{{ 'ships-register.deregistration-application-reason' | tlTranslate }}">
+        </tl-textarea>
+    </div>
+
+    <!-- Increase capacity application panel -->
+    <div *ngIf="isIncreaseCapacityApplication" 
+         tlResizable="top"
+         (tlResizableChanged)="onCocPanelResized($event)"
+         class="change-of-circumstances-panel"
+         [style.width.px]="mainPanelWidthPx">
+        <h2><b>{{ 'ships-register.increase-capacity-application-parameters' | tlTranslate }}</b></h2>
+        <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start start" fxFill>
+            <tl-input fxFlex="25"
+                      [formControl]="capacityChangeTonnageControl"
+                      tooltipResourceName="ships-register.increase-capacity-application-tonnage-helper"
+                      label="{{ 'ships-register.increase-capacity-application-tonnage' | tlTranslate }}">
+            </tl-input>
+
+            <tl-input fxFlex="25"
+                      [formControl]="capacityChangePowerControl"
+                      tooltipResourceName="ships-register.increase-capacity-application-power-helper"
+                      label="{{ 'ships-register.increase-capacity-application-power' | tlTranslate }}">
+            </tl-input>
+
+            <div fxFlex="25"></div>
+            <div fxFlex="25"></div>
+        </div>
+    </div>
+
+    <!-- Reduce capacity application panel -->
+    <div *ngIf="isReduceCapacityApplication" 
+         tlResizable="top"
+         (tlResizableChanged)="onCocPanelResized($event)"
+         class="change-of-circumstances-panel" 
+         [style.width.px]="mainPanelWidthPx">
+        <h2><b>{{ 'ships-register.reduce-capacity-application-parameters' | tlTranslate }}</b></h2>
+        <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start start" fxFill>
+            <tl-input fxFlex="25"
+                      [formControl]="capacityChangeTonnageControl"
+                      tooltipResourceName="ships-register.reduce-capacity-application-tonnage-helper"
+                      label="{{ 'ships-register.reduce-capacity-application-tonnage' | tlTranslate }}">
+            </tl-input>
+
+            <tl-input fxFlex="25"
+                      [formControl]="capacityChangePowerControl"
+                      tooltipResourceName="ships-register.reduce-capacity-application-power-helper"
+                      label="{{ 'ships-register.reduce-capacity-application-power' | tlTranslate }}">
+            </tl-input>
+
+            <div fxFlex="25"></div>
+            <div fxFlex="25"></div>
+        </div>
+    </div>
+</div>

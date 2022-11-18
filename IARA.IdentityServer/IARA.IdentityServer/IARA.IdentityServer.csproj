@@ -9,11 +9,12 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RuntimeIdentifiers>win-x64;win10-x64;linux-x64;rhel-x64;</RuntimeIdentifiers>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     <AssemblyName>IARA.IdentityServer</AssemblyName>
     <UserSecretsId>de71408f-ca04-4340-bd52-1ca2092b00d9</UserSecretsId>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

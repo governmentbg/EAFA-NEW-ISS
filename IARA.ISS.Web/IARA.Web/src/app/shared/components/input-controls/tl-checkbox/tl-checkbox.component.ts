@@ -1,17 +1,25 @@
 ﻿import { Component, ContentChild, Input, OnInit, Optional, Self, TemplateRef } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { pairwise, startWith } from 'rxjs/operators';
+
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { TLTranslatePipe } from '../../../pipes/tl-translate.pipe';
+import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
 import { BaseTLControl } from '../base-tl-control';
 
 @Component({
     selector: 'tl-checkbox',
-    templateUrl: './tl-checkbox.component.html'
+    templateUrl: './tl-checkbox.component.html',
+    styleUrls: ['./tl-checkbox.component.scss']
 })
 export class TLCheckboxComponent extends BaseTLControl implements OnInit {
     @Input()
     public isThreeState: boolean = false;
+
+    /**
+     * Should be passed only when there is NO form control -> for one way binding for UI purposes
+     * */
+    @Input()
+    public value: boolean | undefined = undefined;
 
     @ContentChild(TemplateRef)
     public content: any | undefined;
@@ -26,17 +34,21 @@ export class TLCheckboxComponent extends BaseTLControl implements OnInit {
     public ngOnInit(): void {
         super.ngOnInit();
 
-        this.ngControl.control?.valueChanges.subscribe({
-            next: () => {
-                this.ngControl.control?.markAsTouched();
-            }
-        });
+        if (this.ngControl !== null && this.ngControl !== undefined) {
+            this.ngControl.control?.valueChanges.subscribe({
+                next: () => {
+                    this.ngControl.control?.markAsTouched();
+                }
+            });
+        }
+
 
         if (this.isThreeState) {
-            if (this.ngControl.control?.value === null) {
+            if (this.ngControl.control === null || this.ngControl.control === undefined || this.ngControl.control?.value === null) {
                 this.isIndeterminate = true;
             }
-            this.ngControl.control?.valueChanges?.pipe(startWith(null), pairwise()).subscribe({
+
+            this.ngControl?.control?.valueChanges?.pipe(startWith(null), pairwise()).subscribe({
                 next: ([prev, next]: [boolean, boolean]) => {
                     if (prev && !next) {
                         this.isIndeterminate = true;

@@ -1,33 +1,38 @@
-﻿import { HubConnection, HubConnectionBuilder, HubConnectionState, MessageHeaders } from '@microsoft/signalr';
+import { Inject } from '@angular/core';
+import {
+    HubConnection,
+    HubConnectionBuilder,
+    HubConnectionState,
+    LogLevel,
+    MessageHeaders
+} from '@microsoft/signalr';
 import { Subject } from 'rxjs';
-import { BaseNotification } from './base-notification';
+import { BaseNotification } from './models/base-notification';
+import { INotificationSecurity } from './models/notification-security.interface';
 
 export abstract class SignalRHubService {
 
     private connection!: HubConnection;
     private _newDataArrived: Subject<BaseNotification>;
+    protected securityService: INotificationSecurity;
     private startedListening: boolean = false;
+    private url!: string;
 
-    constructor(hubPath: string, apiBaseUrl: string) {
+    constructor(@Inject("INotificationSecurity") securityService: INotificationSecurity, hubPath: string, apiBaseUrl: string) {
         this._newDataArrived = new Subject<BaseNotification>();
-
+        this.securityService = securityService;
         if (apiBaseUrl == undefined) {
             apiBaseUrl = '';
         }
 
-        let url: string = `${apiBaseUrl}${hubPath}`;
+        this.url = `${apiBaseUrl}${hubPath}`;
         //const authorizationValue = `Bearer ${token}`;
         //const headers = { "Authorization": authorizationValue } as MessageHeaders;
-
-        this.connection = new HubConnectionBuilder().withUrl(url, {
-            accessTokenFactory: this.getToken.bind(this),
-            //headers: headers,
-            //skipNegotiation: true,
-            withCredentials: true,
-        }).withAutomaticReconnect().build();
     }
 
-    protected abstract getToken(): string | Promise<string>;
+    protected getToken(): string | Promise<string> {
+        return this.securityService.getToken() ?? '';
+    }
 
     public get newNotificationArrived(): Subject<BaseNotification> {
         return this._newDataArrived;
@@ -52,8 +57,8 @@ export abstract class SignalRHubService {
         }
     }
 
-    protected startListeningFor<T>(eventName: string, handler: (result: T) => void) {
-        if (this.connect()) {
+    protected async startListeningFor<T>(eventName: string, handler: (result: T) => void) {
+        if (await this.connect()) {
             this.connection.on(eventName, handler);
         }
     }
@@ -62,30 +67,63 @@ export abstract class SignalRHubService {
         this.connection.off(eventName);
     }
 
-    private connecting?: Promise<boolean>;
+    private connecting?: Subject<boolean>;
 
-    private connect(): Promise<boolean> {
+    protected connect(): Promise<boolean> {
+
+        const connection = this.buildConnection();
+
         if (this.connection.state == HubConnectionState.Disconnected) {
-            this.connecting = this.connection.start().then(() => {
+            this.connecting = new Subject<boolean>();
+            connection.start().then(() => {
+                this.connecting?.next(true);
+                this.connecting?.complete();
                 return true;
             });
+        }
 
-            return this.connecting;
-        } else if (this.connection.state == HubConnectionState.Connecting && this.connecting != undefined) {
-            return this.connecting;
-        } else {
+        return this.toConnectingResult(this.connecting);
+    }
+
+    private toConnectingResult(connecting: Subject<boolean> | undefined): Promise<boolean> {
+        if (connecting != undefined && !connecting.closed) {
+            return connecting.asObservable().toPromise().then(result => {
+                return result ?? false;
+            });
+        } else if (connecting != undefined && connecting.closed) {
             return Promise.resolve(true);
+        } else {
+            return Promise.resolve(false);
         }
     }
 
     protected sendDataToHub<T>(methodName: string, data?: any): Promise<T> {
-        if (this.connection.state != HubConnectionState.Connected) {
+
+        if (this.connection == undefined || this.connection.state != HubConnectionState.Connected) {
             return this.connect().then((result) => {
                 return this.invoke<T>(methodName, data);
             });
         } else {
             return this.invoke<T>(methodName, data);
         }
+    }
+
+    private buildConnection(): HubConnection {
+        const headers: MessageHeaders = {
+            'Authorization': `Bearer ${this.getToken()}`
+        } as MessageHeaders;
+
+        if (this.connection == undefined) {
+            this.connection = new HubConnectionBuilder().withUrl(this.url, {
+                accessTokenFactory: this.getToken.bind(this),
+                headers: headers,
+                logger: LogLevel.Error,
+                //skipNegotiation: true,
+                withCredentials: true,
+            }).withAutomaticReconnect().build();
+        }
+
+        return this.connection;
     }
 
     private invoke<T>(methodName: string, data?: any) {

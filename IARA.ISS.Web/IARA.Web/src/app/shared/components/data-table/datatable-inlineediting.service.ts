@@ -162,8 +162,8 @@ export class DataTableInlineEditingService {
     }
 
     public editRow(row: GridRow<any>): void {
+        this.currentCommandType = CommandTypes.Edit;
         if (!this.showInactive && this._activeRecord != undefined) {
-            this.currentCommandType = CommandTypes.Edit;
             if (this._activeRecord != row) {
                 this._activeRecord.validationError = true;
                 //this.undoAddEditRow(this._activeRecord);
@@ -333,7 +333,13 @@ export class DataTableInlineEditingService {
         if (dataColumn._formGroup != undefined) {
             const formControl: FormControl | undefined = dataColumn._formGroup.get(dataColumn._formControlName) as FormControl;
             if (formControl != undefined) {
-                formControl.setValue(record.data[dataColumn.propertyName]);
+                if (formControl.disabled) {
+                    formControl.setValue(record.data[dataColumn.propertyName]);
+                    formControl.disable({ emitEvent: false });
+                }
+                else {
+                    formControl.setValue(record.data[dataColumn.propertyName]);
+                }
             }
         }
     }

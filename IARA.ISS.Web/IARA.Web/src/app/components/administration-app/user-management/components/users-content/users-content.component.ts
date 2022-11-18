@@ -73,7 +73,6 @@ export class UsersContentComponent implements OnInit, AfterViewInit {
         this.permissions = permissions;
 
         this.userFormGroup = new FormGroup({
-            usernameControl: new FormControl(),
             firstNameControl: new FormControl(),
             lastNameControl: new FormControl(),
             roleControl: new FormControl(),
@@ -133,7 +132,7 @@ export class UsersContentComponent implements OnInit, AfterViewInit {
     public deactivateUser(user: UserDTO): void {
         this.confirmDialog.open({
             title: this.translationService.getValue('users-page.deactivate-user'),
-            message: `${this.translationService.getValue('users-page.are-you-sure-you-want-do-deactivate')} ${user.firstName} ${user.lastName} (${user.username})?`,
+            message: `${this.translationService.getValue('users-page.are-you-sure-you-want-do-deactivate')} ${user.firstName} ${user.lastName} (${user.email})?`,
             okBtnLabel: this.translationService.getValue('users-page.deactivate')
         }).subscribe(result => {
             if (result) {
@@ -312,7 +311,6 @@ export class UsersContentComponent implements OnInit, AfterViewInit {
             showInactiveRecords: filters.showInactiveRecords
         });
 
-        result.username = filters.getValue('usernameControl');
         result.firstName = filters.getValue('firstNameControl');
         result.lastName = filters.getValue('lastNameControl');
         result.roleId = filters.getValue('roleControl');

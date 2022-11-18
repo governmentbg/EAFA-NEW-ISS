@@ -269,7 +269,7 @@
     </tl-expansion-panel>
 
     <!-- Проверки -->
-    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+    <tl-expansion-panel *ngIf="showOnlyRegiXData || showRegiXData"
                         title="{{ 'statistical-forms.fish-vessel-regix-checks-results' | tlTranslate }}"
                         tooltipResourceName="statistical-forms.fish-vessel-regix-checks-results-helper">
         <div fxLayout="column" fxLayoutGap="1em">

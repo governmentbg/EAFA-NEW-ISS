@@ -1,10 +1,10 @@
-﻿import { AfterContentInit, AfterViewInit, Component, ContentChild, ElementRef, Input, OnInit, Optional, Self, TemplateRef, ViewChild } from "@angular/core";
-import { ControlContainer, NgControl } from "@angular/forms";
-import { pairwise, startWith } from "rxjs/operators";
-import { FuseTranslationLoaderService } from "@fuse/services/translation-loader.service";
-import { NomenclatureDTO } from "@app/models/generated/dtos/GenericNomenclatureDTO";
-import { TLTranslatePipe } from "../../../pipes/tl-translate.pipe";
-import { BaseTLControl } from "../base-tl-control";
+﻿import { Component, Input, Optional, Self } from '@angular/core';
+import { NgControl } from '@angular/forms';
+
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
+import { BaseTLControl } from '../base-tl-control';
 
 @Component({
     selector: 'tl-radio-button-group',
@@ -29,7 +29,8 @@ export class TLRadioButtonGroupComponent<T> extends BaseTLControl {
     @Input()
     public readonly: boolean = false;
 
-    constructor(@Self() @Optional() ngControl: NgControl,
+    constructor(
+        @Self() @Optional() ngControl: NgControl,
         fuseTranslationService: FuseTranslationLoaderService,
         tlTranslatePipe: TLTranslatePipe
     ) {

@@ -3,7 +3,8 @@
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { LegalEntityBaseRegixDataDTO } from './LegalEntityBaseRegixDataDTO';
 import { AuthorizedPersonDTO } from './AuthorizedPersonDTO';
-import { FileInfoDTO } from './FileInfoDTO'; 
+import { FileInfoDTO } from './FileInfoDTO';
+import { LegalEntityRegixDataDTO } from './LegalEntityRegixDataDTO'; 
 
 export class LegalEntityApplicationEditDTO extends LegalEntityBaseRegixDataDTO {
     public constructor(obj?: Partial<LegalEntityApplicationEditDTO>) {
@@ -24,4 +25,7 @@ export class LegalEntityApplicationEditDTO extends LegalEntityBaseRegixDataDTO {
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
+
+    @StrictlyTyped(LegalEntityRegixDataDTO)
+    public regiXDataModel?: LegalEntityRegixDataDTO;
 }

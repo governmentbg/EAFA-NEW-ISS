@@ -125,19 +125,18 @@ export class TLPictureUploaderComponent implements OnInit, OnChanges, DoCheck, O
                             this.ngControl.control?.updateValueAndValidity();
                         }
                         else if (this.requestMethod) {
-                            if (this.requestMethodSubscription === undefined || this.requestMethodSubscription === null) {
-                                this.requestMethodSubscription = this.requestMethod().subscribe({
-                                    next: (photo: string) => {
-                                        if (photo && photo.length > 0) {
-                                            this.image = photo;
-                                            this.hasImage = true;
-                                            this.ngControl.control?.updateValueAndValidity();
+                            this.requestMethodSubscription?.unsubscribe();
+                            this.requestMethodSubscription = this.requestMethod().subscribe({
+                                next: (photo: string) => {
+                                    if (photo && photo.length > 0) {
+                                        this.image = photo;
+                                        this.hasImage = true;
+                                        this.ngControl.control?.updateValueAndValidity();
 
-                                            TLPictureUploaderComponent.cachedImages.set(this.photo.id!, this.image);
-                                        }
+                                        TLPictureUploaderComponent.cachedImages.set(this.photo.id!, this.image);
                                     }
-                                });
-                            }
+                                }
+                            });
                         }
                     }
                 }

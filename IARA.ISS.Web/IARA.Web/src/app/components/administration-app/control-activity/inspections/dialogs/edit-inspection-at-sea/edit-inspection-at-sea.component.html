@@ -1,10 +1,12 @@
 ﻿<div fxLayout="column"
      fxLayoutGap="1em"
      fxFlexFill
+     validityCheckerGroup
      [formGroup]="form"
      class="dialog-padding">
     <!-- Основни данни -->
-    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
+                        [validityChecker]="form">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -29,11 +31,14 @@
                              [fishSex]="fishSex"
                              [countries]="countries"
                              [ports]="ports"
-                             [vesselTypes]="vesselTypes">
+                             [vesselTypes]="vesselTypes"
+                             [turbotSizeGroups]="turbotSizeGroups"
+                             validityChecker>
     </inspected-ship-sections>
 
     <!-- Допълнителна информация -->
-    <inspection-additional-info formControlName="additionalInfoControl">
+    <inspection-additional-info formControlName="additionalInfoControl"
+                                validityChecker>
         <tl-textarea formControlName="captainCommentControl"
                      [minRows]="3"
                      label="{{ 'inspections.captain-comment' | tlTranslate }}">
@@ -41,7 +46,8 @@
     </inspection-additional-info>
 
     <!-- Файлове -->
-    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}"
+                        [validityChecker]="form">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">

@@ -74,14 +74,18 @@
             <tl-card>
                 <tl-card-title>{{ 'report-view.report-result' | tlTranslate }}</tl-card-title>
                 <tl-card-subtitle *ngIf="isExecuteResultClicked" fxLayoutAlign="space-between center">
-                    <tl-icon-button size="3" icon="zoom_in" (buttonClicked)="zoomIn()" fxFlex="nogrow"></tl-icon-button>
-                    <tl-icon-button size="3" icon="zoom_out" (buttonClicked)="zoomOut()" fxFlex="nogrow"></tl-icon-button>
-                    <div fxFlex fxLayoutAlign="end center">
-                        <button (click)="exportToExcel()"
-                                mat-raised-button
-                                color="accent">
-                            {{ 'report-view.report-export-button' | tlTranslate }}
-                        </button>
+                    <div fxLayout="row" fxLayoutAlign="space-between center" fxFlex="100">
+                        <div fxLayout="row">
+                            <tl-icon-button size="3" icon="zoom_in" (buttonClicked)="zoomIn()" fxFlex="nogrow"></tl-icon-button>
+                            <tl-icon-button size="3" icon="zoom_out" (buttonClicked)="zoomOut()" fxFlex="nogrow"></tl-icon-button>
+                        </div>
+                        <div fxFlex fxLayoutAlign="end center">
+                            <button (click)="exportToExcel()"
+                                    mat-raised-button
+                                    color="accent">
+                                {{ 'report-view.report-export-button' | tlTranslate }}
+                            </button>
+                        </div>
                     </div>
                 </tl-card-subtitle>
                 <tl-card-content [hidden]="!isExecuteResultClicked" style="width:100%;overflow-x:auto;">

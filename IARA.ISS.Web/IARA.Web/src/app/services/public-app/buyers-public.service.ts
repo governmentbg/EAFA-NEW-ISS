@@ -103,8 +103,10 @@ export class BuyersPublicService extends ApplicationsRegisterPublicBaseService i
     }
 
     // Applications
-    public getApplication(id: number, pageCode: PageCodeEnum): Observable<IApplicationRegister> {
-        const params = new HttpParams().append('id', id.toString());
+    public getApplication(id: number, getRegiXData: boolean, pageCode: PageCodeEnum): Observable<IApplicationRegister> {
+        const params = new HttpParams()
+            .append('id', id.toString());
+
         switch (pageCode) {
             case PageCodeEnum.RegFirstSaleBuyer:
             case PageCodeEnum.RegFirstSaleCenter: {

@@ -19,6 +19,7 @@ export class CatchesAndSalesAdministrationFilters extends BaseRequestModel {
     public logBookTypeId: number | undefined;
     public logBookNumber: string | undefined;
     public documentNumber: number | undefined;
+    public showOnlyExistingPages: boolean | undefined;
     public shipId: number | undefined;
     public aquacultureId: number | undefined;
     public registeredBuyerId: number | undefined;

@@ -14,6 +14,7 @@ import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuri
 import { InspectionCheckDTO } from '@app/models/generated/dtos/InspectionCheckDTO';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 
 @Component({
     selector: 'inspected-ship-with-personnel',
@@ -61,14 +62,21 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
     private readonly service: InspectionsService;
 
     public constructor(@Self() ngControl: NgControl,
+        @Self() validityChecker: ValidityCheckerDirective,
         service: InspectionsService,
         translate: FuseTranslationLoaderService,
     ) {
-        super(ngControl);
+        super(ngControl, true, validityChecker);
 
         this.shipLabel = translate.getValue('inspections.ship-data');
 
         this.service = service;
+
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.control.updateValueAndValidity();
+            }
+        });
     }
 
     public ngOnChanges(changes: SimpleChanges): void {

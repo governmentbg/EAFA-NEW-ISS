@@ -13,9 +13,6 @@ export class UserEditDTO {
     public id?: number;
 
     @StrictlyTyped(String)
-    public username?: string;
-
-    @StrictlyTyped(String)
     public firstName?: string;
 
     @StrictlyTyped(String)

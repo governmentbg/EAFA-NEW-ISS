@@ -67,12 +67,14 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
     public isEditing: boolean = false;
     public isDraft: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isReadonly: boolean = false;
     public viewMode: boolean = false;
     public isPaid: boolean = false;
     public hasDelivery: boolean = false;
     public hasNoEDeliveryRegistrationError: boolean = false;
     public willIssueCapacityCertificates: boolean = false;
+    public hideBasicPaymentInfo: boolean = false;
     public service!: IFishingCapacityService;
 
     public remainingTonnage: number = 0;
@@ -143,6 +145,7 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
                         this.paymentInformation = application.paymentInformation;
+                        this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
 
@@ -175,7 +178,7 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData, this.pageCode).subscribe({
                         next: (application: IncreaseFishingCapacityApplicationDTO) => {
                             application.applicationId = this.applicationId;
                             application.isDraft = application.isDraft ?? true;
@@ -184,8 +187,14 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
                             this.paymentInformation = application.paymentInformation;
+                            this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.isOnlineApplication = application.isOnlineApplication!;
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new IncreaseFishingCapacityRegixDataDTO(application.regiXDataModel);
+                                application.regiXDataModel = undefined;
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (application.submittedBy === undefined || application.submittedBy === null)) {
                                 const service = this.service as FishingCapacityPublicService;
@@ -214,6 +223,7 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.viewMode = data.viewMode;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.applicationsService = data.applicationsService;
         this.service = data.service as IFishingCapacityService;
         this.dialogRightSideActions = wrapperData.rightSideActions;
@@ -336,24 +346,7 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
         this.form.get('actionsControl')!.setValue(this.model.remainingCapacityAction);
 
         if (this.model instanceof IncreaseFishingCapacityRegixDataDTO) {
-            if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
-                const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
-
-                setTimeout(() => {
-                    this.regixChecks = checks;
-                });
-            }
-
-            if (!this.viewMode) {
-                this.notifier.start();
-                this.notifier.onNotify.subscribe({
-                    next: () => {
-                        this.form.markAllAsTouched();
-                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
-                        this.notifier.stop();
-                    }
-                });
-            }
+            this.fillFormRegiX();
         }
         else {
             if (this.model.shipId !== undefined && this.model.shipId !== null) {
@@ -365,10 +358,38 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
             this.form.get('acquiredCapacityControl')!.setValue(this.model.acquiredCapacity);
             this.form.get('filesControl')!.setValue(this.model.files);
 
-
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
             }
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX();
+            }
+        }
+    }
+
+    private fillFormRegiX(): void {
+        if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
+            const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
+
+            setTimeout(() => {
+                this.regixChecks = checks;
+            });
+        }
+
+        if (!this.viewMode) {
+            this.notifier.start();
+            this.notifier.onNotify.subscribe({
+                next: () => {
+                    this.form.markAllAsTouched();
+
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+                    
+                    this.notifier.stop();
+                }
+            });
         }
     }
 
@@ -451,5 +472,11 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
             return this.service.editApplication(this.model, this.pageCode, saveAsDraft);
         }
         return this.service.addApplication(this.model, this.pageCode);
+    }
+
+    private shouldHidePaymentData(): boolean {
+        return this.paymentInformation?.paymentType === null
+            || this.paymentInformation?.paymentType === undefined
+            || this.paymentInformation?.paymentType === '';
     }
 }

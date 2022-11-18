@@ -435,8 +435,8 @@ export class EditAquacultureInstallationComponent implements OnInit, AfterViewIn
                 case AquacultureInstallationTypeEnum.NetCages:
                     this.model.netCages = this.getNetCagesFromTable();
 
-                    this.model.totalArea = this.sum(this.model.netCages.filter(x => x.isActive).map(x => x.area!));
-                    this.model.totalVolume = this.sum(this.model.netCages.filter(x => x.isActive).map(x => x.volume!));
+                    this.model.totalArea = this.sum(this.model.netCages.filter(x => x.isActive).map(x => x.area! * x.count!));
+                    this.model.totalVolume = this.sum(this.model.netCages.filter(x => x.isActive).map(x => x.volume! * x.count!));
                     this.model.totalCount = this.sum(this.model.netCages.filter(x => x.isActive).map(x => x.count!));
                     this.model.comments = this.form.get('netCagesGroup')!.get('commentsControl')!.value;
                     break;

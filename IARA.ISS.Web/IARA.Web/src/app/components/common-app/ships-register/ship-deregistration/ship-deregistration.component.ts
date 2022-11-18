@@ -63,6 +63,7 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public isEditing: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isReadonly: boolean = false;
     public viewMode: boolean = false;
     public isDraft: boolean = false;
@@ -70,6 +71,7 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
     public hasDelivery: boolean = false;
     public hasFishingCapacity: boolean = false;
     public hasNoEDeliveryRegistrationError: boolean = false;
+    public hideBasicPaymentInfo: boolean = false;
     public service!: IShipsRegisterService;
 
     public maxTonnage: number = 0;
@@ -116,7 +118,7 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
 
         this.form.get('shipControl')?.valueChanges.subscribe({
             next: (ship: ShipNomenclatureDTO | undefined) => {
-                if (ship !== undefined && ship !== null) {
+                if (ship !== undefined && ship !== null && typeof ship !== 'string') {
                     this.hasFishingCapacity = ShipsUtils.hasFishingCapacity(ship);
                     this.maxTonnage = ship.grossTonnage!;
                     this.maxPower = ship.mainEnginePower!;
@@ -162,6 +164,7 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
                         this.paymentInformation = application.paymentInformation;
+                        this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
 
@@ -195,7 +198,7 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData, this.pageCode).subscribe({
                         next: (application: ShipDeregistrationApplicationDTO) => {
                             application.applicationId = this.applicationId;
                             application.isDraft = application.isDraft ?? true;
@@ -205,7 +208,13 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
                             this.paymentInformation = application.paymentInformation;
+                            this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new ShipDeregistrationRegixDataDTO(application.regiXDataModel);
+                                application.regiXDataModel = undefined;
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (application.submittedBy === undefined || application.submittedBy === null)) {
                                 const service = this.service as ShipsRegisterPublicService;
@@ -234,6 +243,7 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.viewMode = data.viewMode;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.applicationsService = data.applicationsService;
         this.service = data.service as IShipsRegisterService;
         this.dialogRightSideActions = wrapperData.rightSideActions;
@@ -318,24 +328,7 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
         this.form.get('actionsControl')!.setValue(this.model.freedCapacityAction);
 
         if (this.model instanceof ShipDeregistrationRegixDataDTO) {
-            if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
-                const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
-
-                setTimeout(() => {
-                    this.regixChecks = checks;
-                });
-            }
-
-            if (!this.viewMode) {
-                this.notifier.start();
-                this.notifier.onNotify.subscribe({
-                    next: () => {
-                        this.form.markAllAsTouched();
-                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
-                        this.notifier.stop();
-                    }
-                });
-            }
+            this.fillFormRegiX();
         }
         else {
             const shipId: number | undefined = this.model.shipId;
@@ -349,6 +342,35 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
             }
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX();
+            }
+        }
+    }
+
+    private fillFormRegiX(): void {
+        if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
+            const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
+
+            setTimeout(() => {
+                this.regixChecks = checks;
+            });
+        }
+
+        if (!this.viewMode) {
+            this.notifier.start();
+            this.notifier.onNotify.subscribe({
+                next: () => {
+                    this.form.markAllAsTouched();
+
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+
+                    this.notifier.stop();
+                }
+            });
         }
     }
 
@@ -425,5 +447,11 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
         else {
             return this.service.addApplication(this.model, this.pageCode);
         }
+    }
+
+    private shouldHidePaymentData(): boolean {
+        return this.paymentInformation?.paymentType === null
+            || this.paymentInformation?.paymentType === undefined
+            || this.paymentInformation?.paymentType === '';
     }
 }

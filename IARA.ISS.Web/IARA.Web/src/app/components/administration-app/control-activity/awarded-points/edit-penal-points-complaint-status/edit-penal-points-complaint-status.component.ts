@@ -13,6 +13,8 @@ import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { IPenalPointsService } from '@app/interfaces/administration-app/penal-points.interface';
 import { IPenalDecreesService } from '@app/interfaces/administration-app/penal-decrees.interface';
 import { PenalDecreesService } from '@app/services/administration-app/penal-decrees.service';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { DateUtils } from '@app/shared/utils/date.utils';
 
 @Component({
     selector: 'edit-penal-points-complaint-status',
@@ -30,11 +32,14 @@ export class EditPenalPointsComplaintStatusComponent implements OnInit, IDialogC
     private service!: IPenalPointsService;
 
     private readonly decreeService: IPenalDecreesService;
+    private readonly translate: FuseTranslationLoaderService;
 
     public constructor(
-        decreeService: PenalDecreesService
+        decreeService: PenalDecreesService,
+        translate: FuseTranslationLoaderService
     ) {
         this.decreeService = decreeService;
+        this.translate = translate;
 
         this.buildForm();
     }
@@ -126,5 +131,31 @@ export class EditPenalPointsComplaintStatusComponent implements OnInit, IDialogC
         this.model.courtId = this.form.get('courtControl')!.value?.value;
         this.model.decreeNum = this.form.get('caseNumControl')!.value;
         this.model.decreeDate = this.form.get('caseDateControl')!.value;
+
+        if (this.model.appealDate !== undefined && this.model.appealDate !== null) {
+            this.model.details = `${this.translate.getValue('penal-points.edit-complaint-date')}: ${DateUtils.ToDisplayDateString(this.model.appealDate)} `;
+        }
+
+        if (this.model.appealNum !== undefined && this.model.appealNum !== null) {
+            const appealNum: string = `${this.translate.getValue('penal-points.edit-complaint-num')}: ${this.model.appealNum} `
+
+            if (this.model.details !== undefined && this.model.details !== null) {
+                this.model.details += `; ${appealNum}`;
+            }
+            else {
+                this.model.details = appealNum;
+            }
+        }
+
+        if (this.model.decreeNum !== undefined && this.model.decreeNum !== null) {
+            const decreeNum: string = `${this.translate.getValue('penal-points.edit-complaint-case-num')}: ${this.model.decreeNum}`;
+
+            if (this.model.details !== undefined && this.model.details !== null) {
+                this.model.details += `; ${decreeNum}`;
+            }
+            else {
+                this.model.details = decreeNum;
+            }
+        }
     }
 }

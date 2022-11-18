@@ -10,6 +10,8 @@ export interface IQualifiedFishersService extends IApplicationsActionsService {
     getAll(request: GridRequestModel<QualifiedFishersFilters>): Observable<GridResultModel<QualifiedFisherDTO>>;
     get(id: number): Observable<QualifiedFisherEditDTO>;
 
+    downloadRegister(id: number): Observable<boolean>;
+
     add(model: QualifiedFisherEditDTO): Observable<number>;
     addAndDownloadRegister(model: QualifiedFisherEditDTO): Observable<boolean>;
     edit(model: QualifiedFisherEditDTO): Observable<number>;

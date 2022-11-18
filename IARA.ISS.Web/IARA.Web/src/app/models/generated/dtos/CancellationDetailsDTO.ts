@@ -1,7 +1,8 @@
 ﻿
+
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 
-export class CancellationDetailsDTO {
+export class CancellationDetailsDTO { 
     public constructor(obj?: Partial<CancellationDetailsDTO>) {
         Object.assign(this, obj);
     }

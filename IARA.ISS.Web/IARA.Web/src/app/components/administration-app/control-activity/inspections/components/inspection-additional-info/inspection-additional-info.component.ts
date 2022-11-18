@@ -6,18 +6,25 @@ import { InspectionObservationTextDTO } from '@app/models/generated/dtos/Inspect
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { InspectionAdditionalInfoModel } from '../../models/inspection-additional-info.model';
 import { InspectionObservationCategoryEnum } from '@app/enums/inspection-observation-category.enum';
+import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 
 @Component({
     selector: 'inspection-additional-info',
     templateUrl: './inspection-additional-info.component.html',
 })
 export class InspectionAdditionalInfoComponent extends CustomFormControl<InspectionAdditionalInfoModel> implements OnInit {
-    public constructor(@Self() ngControl: NgControl) {
-        super(ngControl);
+    public constructor(@Self() ngControl: NgControl, @Self() validityChecker: ValidityCheckerDirective) {
+        super(ngControl, true, validityChecker);
     }
 
     public ngOnInit(): void {
         this.initCustomFormControl();
+
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.control.updateValueAndValidity();
+            }
+        });
     }
 
     public writeValue(value: InspectionAdditionalInfoModel): void {
@@ -26,11 +33,13 @@ export class InspectionAdditionalInfoComponent extends CustomFormControl<Inspect
             this.form.get('inspectorCommentControl')!.setValue(value.inspectorComment);
             this.form.get('actionsTakenControl')!.setValue(value.actionsTaken);
             this.form.get('administrativeViolationControl')!.setValue(value.administrativeViolation);
+            this.form.get('violatedRegulationsControl')!.setValue(value.violatedRegulations);
         } else {
             this.form.get('violationControl')!.setValue(null);
             this.form.get('inspectorCommentControl')!.setValue(null);
             this.form.get('actionsTakenControl')!.setValue(null);
             this.form.get('administrativeViolationControl')!.setValue(false);
+            this.form.get('violatedRegulationsControl')!.setValue(null);
         }
     }
 
@@ -40,6 +49,7 @@ export class InspectionAdditionalInfoComponent extends CustomFormControl<Inspect
             inspectorCommentControl: new FormControl(undefined),
             actionsTakenControl: new FormControl(undefined),
             administrativeViolationControl: new FormControl(false),
+            violatedRegulationsControl: new FormControl(undefined),
         });
     }
 
@@ -55,6 +65,9 @@ export class InspectionAdditionalInfoComponent extends CustomFormControl<Inspect
             inspectorComment: this.form.get('inspectorCommentControl')!.value,
             actionsTaken: this.form.get('actionsTakenControl')!.value,
             administrativeViolation: this.form.get('administrativeViolationControl')!.value ?? false,
+            violatedRegulations: this.form.get('administrativeViolationControl')!.value
+                ? this.form.get('violatedRegulationsControl')!.value
+                : undefined
         });
     }
 }

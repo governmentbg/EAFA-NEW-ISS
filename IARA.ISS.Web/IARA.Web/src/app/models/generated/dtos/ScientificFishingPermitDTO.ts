@@ -15,8 +15,8 @@ export class ScientificFishingPermitDTO {
     @StrictlyTyped(Number)
     public applicationId?: number;
 
-    @StrictlyTyped(Number)
-    public requestNumber?: number;
+    @StrictlyTyped(String)
+    public eventisNum?: string;
 
     @StrictlyTyped(String)
     public requesterName?: string;

@@ -6,31 +6,42 @@
                     <tl-radio-button-group fxFlex="100"
                                            formControlName="suspensionTypeControl"
                                            [options]="suspensionTypes"
-                                           label="{{ 'commercial-fishing.suspension-type' | tlTranslate }}">
+                                           label="{{ 'commercial-fishing.suspension-type' | tlTranslate }}"
+                                           tooltipResourceName="commercial-fishing.suspension-type-helper">
                     </tl-radio-button-group>
                 </div>
-                <div fxLayout="column" fxFlex="100" fxLayoutGap="1em">
-                    <div fxLayout="row" fxFlex="100" fxLayoutGap="1em">
+                <div *ngIf="showAdditionalControls" fxLayout="column" fxFlex="100" fxLayoutGap="1em">
+                    <div fxLayout="row" fxFlex="100" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                         <tl-autocomplete fxFlex="50"
                                          formControlName="suspensionReasonControl"
                                          [options]="reasons"
-                                         label="{{ 'commercial-fishing.suspension-reason' | tlTranslate }}">
+                                         label="{{ 'commercial-fishing.suspension-reason' | tlTranslate }}"
+                                         tooltipResourceName="commercial-fishing.suspension-reason-helper">
                         </tl-autocomplete>
+                        <tl-input fxFlex="50"
+                                  formControlName="orderNumberControl"
+                                  [label]="suspensionNumberLabel"
+                                  tooltipResourceName="commercial-fishing.suspension-order-number-helper">
+                        </tl-input>
+                    </div>
+                    <div fxLayout="row"
+                         fxFlex="100"
+                         fxLayoutGap="1em"
+                         fxLayoutAlign="space-between center">
                         <tl-date-range *ngIf="showRangeControl"
                                        fxFlex="50"
                                        formControlName="suspensionDateRangeControl"
-                                       label="{{ 'commercial-fishing.suspension-valid-from-to' | tlTranslate }}">
+                                       label="{{ 'commercial-fishing.suspension-valid-from-to' | tlTranslate }}"
+                                       tooltipResourceName="commercial-fishing.suspension-valid-from-to-helper">
                         </tl-date-range>
-                    </div>
-                    <div fxLayout="row" fxFlex="100" fxLayoutGap="1em">
-                        <tl-input fxFlex="50"
-                                  formControlName="orderNumberControl"
-                                  label="{{ 'commercial-fishing.suspension-order-number' | tlTranslate }}">
-                        </tl-input>
-                        <tl-date fxFlex="50"
+                        <tl-date *ngIf="showEnacmentDate"
+                                 fxFlex="50"
                                  formControlName="enactmentDateControl"
-                                 label="{{ 'commercial-fishing.suspension-enactment-date' | tlTranslate }}">
+                                 label="{{ 'commercial-fishing.suspension-enactment-date' | tlTranslate }}"
+                                 tooltipResourceName="commercial-fishing.suspension-enactment-date-helper">
                         </tl-date>
+                        <div *ngIf="!showRangeControl" fxFlex="50"></div>
+                        <div *ngIf="!showEnacmentDate" fxFlex="50"></div>
                     </div>
                 </div>
             </div>

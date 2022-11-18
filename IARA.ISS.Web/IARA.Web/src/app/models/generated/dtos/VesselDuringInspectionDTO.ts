@@ -21,6 +21,9 @@ export class VesselDuringInspectionDTO extends VesselDTO {
     @StrictlyTyped(LocationDTO)
     public location?: LocationDTO;
 
+    @StrictlyTyped(String)
+    public locationText?: string;
+
     @StrictlyTyped(Number)
     public catchZoneId?: number;
 

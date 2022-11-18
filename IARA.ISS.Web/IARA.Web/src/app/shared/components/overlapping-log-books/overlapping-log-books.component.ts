@@ -13,6 +13,7 @@ import { OverlappingLogBooksDialogParamsModel } from './models/overlapping-log-b
 import { OverlappingLogBooksParameters } from './models/overlapping-log-books-parameters.model';
 import { RangeOverlappingLogBooksDTO } from '@app/models/generated/dtos/RangeOverlappingLogBooksDTO';
 import { LogBookGroupsEnum } from '@app/enums/log-book-groups.enum';
+import { ILogBookService } from '@app/components/common-app/commercial-fishing/components/edit-log-book/interfaces/log-book.interface';
 
 
 @Component({
@@ -26,7 +27,7 @@ export class OverlappingLogBooksComponent implements OnInit, IDialogComponent {
     public logBookStatuses: NomenclatureDTO<number>[] = [];
     public logBookGroup!: LogBookGroupsEnum;
 
-    private service!: ICommercialFishingService;
+    private service!: ILogBookService;
     private nomenclaturesService: CommonNomenclatures;
     private parameters!: OverlappingLogBooksParameters[];
 

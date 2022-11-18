@@ -147,24 +147,6 @@ export class ReportParameterDefinitionComponent implements AfterViewInit {
         });
     }
 
-    public undoDeletedNParameter(nParameter: NReportParameterDTO): void {
-        this.confirmDialog.open({
-            title: this.translateService.getValue('report-parameter-definition.dialog-parameter-restore-title'),
-            message: this.translateService.getValue('report-parameter-definition.dialog-parameter-restore-message'),
-            okBtnLabel: this.translateService.getValue('report-parameter-definition.dialog-parameter-restore-button')
-        }).subscribe({
-            next: (result: boolean) => {
-                if (result) {
-                    this.reportService.undoDeletedNParameter(nParameter.id!).subscribe({
-                        next: () => {
-                            this.gridManager.refreshData();
-                        }
-                    });
-                }
-            }
-        });
-    }
-
     private mapFilters(filters: FilterEventArgs): ReportParameterDefinitionFilters {
         return new ReportParameterDefinitionFilters({
             freeTextSearch: filters.searchText,

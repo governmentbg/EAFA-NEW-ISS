@@ -9,7 +9,8 @@ import { FishingCapacityFreedActionsDTO } from './FishingCapacityFreedActionsDTO
 import { ShipOwnerDTO } from './ShipOwnerDTO';
 import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformationDTO';
 import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
-import { FileInfoDTO } from './FileInfoDTO'; 
+import { FileInfoDTO } from './FileInfoDTO';
+import { ShipRegisterRegixDataDTO } from './ShipRegisterRegixDataDTO'; 
 
 export class ShipRegisterApplicationEditDTO extends ShipRegisterBaseRegixDataDTO {
     public constructor(obj?: Partial<ShipRegisterApplicationEditDTO>) {
@@ -198,4 +199,7 @@ export class ShipRegisterApplicationEditDTO extends ShipRegisterBaseRegixDataDTO
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
+
+    @StrictlyTyped(ShipRegisterRegixDataDTO)
+    public regiXDataModel?: ShipRegisterRegixDataDTO;
 }

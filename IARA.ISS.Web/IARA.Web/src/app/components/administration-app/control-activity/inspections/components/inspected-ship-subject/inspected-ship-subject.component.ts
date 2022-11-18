@@ -12,6 +12,7 @@ import { InspectionUtils } from '@app/shared/utils/inspection.utils';
 import { RegixLegalDataDTO } from '@app/models/generated/dtos/RegixLegalDataDTO';
 import { InspectedPersonTypeEnum } from '@app/enums/inspected-person-type.enum';
 import { InspectionShipSubjectNomenclatureDTO } from '@app/models/generated/dtos/InspectionShipSubjectNomenclatureDTO';
+import { IdentifierTypeEnum } from '@app/enums/identifier-type.enum';
 
 @Component({
     selector: 'inspected-ship-subject',
@@ -38,6 +39,7 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
     public countries: NomenclatureDTO<number>[] = [];
 
     public isFromRegister: boolean = true;
+    public hasSubjects: boolean = true;
 
     public readonly logBookPagePersonTypesEnum: typeof LogBookPagePersonTypesEnum = LogBookPagePersonTypesEnum;
 
@@ -70,6 +72,12 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
         ];
 
         this.buildForm();
+
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.control.updateValueAndValidity();
+            }
+        });
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
@@ -88,9 +96,11 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
 
                 if ((subjects.currentValue as InspectionShipSubjectNomenclatureDTO[]).length === 0) {
                     this.form.get('personRegisteredControl')!.setValue(false);
+                    this.hasSubjects = false;
                 }
                 else {
                     this.form.get('personRegisteredControl')!.setValue(true);
+                    this.hasSubjects = true;
                 }
             }
         }
@@ -153,7 +163,7 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
             this.form.get('addressControl')!.setValue(
                 InspectionUtils.buildAddress(value.registeredAddress, this.translate) ?? value.address
             );
-            this.form.get('countryControl')!.setValue(this.countries.find(f => f.code === value.citizenshipId));
+            this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === value.citizenshipId));
         }
         else {
             this.form.get('countryControl')!.setValue(this.countries.find(f => f.code === CommonUtils.COUNTRIES_BG));
@@ -165,7 +175,7 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
             personRegisteredControl: new FormControl(true),
             personTypeControl: new FormControl(undefined, Validators.required),
             subjectControl: new FormControl(undefined, Validators.required),
-            personControl: new FormControl(),
+            personControl: new FormControl({ disabled: true }),
             legalControl: new FormControl({ disabled: true }),
             addressControl: new FormControl({ value: undefined, disabled: true }),
             countryControl: new FormControl({ value: undefined, disabled: true }),
@@ -286,9 +296,26 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
     }
 
     private onSubjectControlChanged(value: InspectionShipSubjectNomenclatureDTO): void {
-        if (value?.address !== undefined && value?.address !== null) {
-            this.form.get('addressControl')!.setValue(InspectionUtils.buildAddress(value.address, this.translate) ?? value.description);
-            this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === value.address!.countryId));
+        if (value !== null && value !== undefined) {
+            if (value.egnLnc?.identifierType === IdentifierTypeEnum.LEGAL) {
+                this.form.get('personControl')!.setValue(new RegixPersonDataDTO({
+                    egnLnc: value.egnLnc,
+                    firstName: value.firstName,
+                    middleName: value.middleName,
+                    lastName: value.lastName,
+                }), { emitEvent: false });
+            }
+            else {
+                this.form.get('personControl')!.setValue(new RegixLegalDataDTO({
+                    eik: value.egnLnc?.egnLnc,
+                    name: value.firstName,
+                }), { emitEvent: false });
+            }
+
+            if (value.address !== undefined && value.address !== null) {
+                this.form.get('addressControl')!.setValue(InspectionUtils.buildAddress(value.address, this.translate) ?? value.description);
+                this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === value.address!.countryId));
+            }
         }
     }
 

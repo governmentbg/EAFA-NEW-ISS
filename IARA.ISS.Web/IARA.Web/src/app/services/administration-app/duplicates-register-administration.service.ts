@@ -28,8 +28,10 @@ export class DuplicatesRegisterAdministrationService extends ApplicationsRegiste
         super(requestService, applicationProcessingService);
     }
 
-    public getApplication(id: number): Observable<IApplicationRegister> {
-        const params = new HttpParams().append('applicationId', id.toString());
+    public getApplication(id: number, getRegiXData: boolean): Observable<IApplicationRegister> {
+        const params = new HttpParams()
+            .append('applicationId', id.toString())
+            .append('getRegiXData', getRegiXData.toString());
 
         return this.requestService.get(this.area, this.controller, 'GetDuplicatesApplication', {
             httpParams: params,

@@ -11,7 +11,6 @@ import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { TicketPeriodEnum } from '@app/enums/ticket-period.enum';
 import { TicketTypeEnum } from '@app/enums/ticket-type.enum';
 import { IRecreationalFishingService } from '@app/interfaces/common-app/recreational-fishing.interface';
-import { ErrorModel } from '@app/models/common/exception.model';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { PaymentDataDTO } from '@app/models/generated/dtos/PaymentDataDTO';
 import { RecreationalFishingTicketDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDTO';
@@ -24,14 +23,15 @@ import { RecreationalFishingUserTicketDataDTO } from '@app/models/generated/dtos
 import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
 import { SystemPropertiesService } from '@app/services/common-app/system-properties.service';
 import { RecreationalFishingPublicService } from '@app/services/public-app/recreational-fishing-public.service';
-import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { AuthService } from '@app/shared/services/auth.service';
-import { RequestProperties } from '@app/shared/services/request-properties';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
-import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dtos/RecreationalFishingAddTicketsResultDTO';
+import { ErrorModel } from '@app/models/common/exception.model';
+import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
+import { RequestProperties } from '@app/shared/services/request-properties';
+import { EgnLncDTO } from '../../../../models/generated/dtos/EgnLncDTO';
 
 @Component({
     selector: 'recreational-fishing-tickets-content',
@@ -119,6 +119,9 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
 
     private shouldUpdatePersonalData: boolean = true;
     private ticketNumbersAvailability: Map<string, boolean> = new Map<string, boolean>();
+
+    private cannotPurchase: boolean = false;
+    private cannotPurchaseUnder14: boolean = false;
 
     private snackbar: MatSnackBar;
     private translate: FuseTranslationLoaderService;
@@ -325,6 +328,8 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
         this.validityPeriodComment = null;
 
         this.ticketNumsArray.clear();
+        this.ticketNumsApproved = false;
+        this.ticketNumsLabels = [];
         this.ticketNumsComment = null;
 
         this.showValidityStep = false;
@@ -338,57 +343,13 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
         this.totalPrice = 0;
         this.ticketsSaved = false;
         this.ticketsPayed = false;
+        this.paidTicketApplicationId = undefined;
 
         this.clearTickets();
         this.tickets = [];
         this.childTickets = [];
 
         this.registerValueChangesSubscribers();
-    }
-
-    public checkEgnLncPurchaseAbility(egnLnc: EgnLncDTO, index: number, isUnder14Ticket: boolean = false, representative: boolean = false): void {
-        if (!this.isPersonal) {
-            this.disableSaveBtnComment = null;
-
-            const ticket: RecreationalFishingTicketDTO = isUnder14Ticket ? this.childTickets[index] : this.tickets[index];
-
-            const data = new RecreationalFishingTicketValidationDTO({
-                personEgnLnc: egnLnc,
-                isRepresentative: representative,
-                typeId: ticket.typeId,
-                periodId: ticket.periodId,
-                validFrom: ticket.validFrom,
-                under14TicketsCount: this.childTickets.length
-            });
-
-            this.service.checkEgnLncPurchaseAbility(data).subscribe({
-                next: (result: RecreationalFishingTicketValidationResultDTO) => {
-                    const errors = new ErrorModel();
-
-                    if (result.currentlyActiveUnder14Tickets !== undefined && result.currentlyActiveUnder14Tickets > 0) {
-                        if (result.currentlyActiveUnder14Tickets + this.childTickets.length > this.maxUnder14Tickets) {
-                            const more: number = this.maxUnder14Tickets - result.currentlyActiveUnder14Tickets;
-
-                            this.disableSaveBtnComment = `${this.translate.getValue('recreational-fishing.person-is-representative-of')}`;
-                            this.disableSaveBtnComment = `${this.disableSaveBtnComment} ${result.currentlyActiveUnder14Tickets}`;
-                            this.disableSaveBtnComment = `${this.disableSaveBtnComment} ${this.translate.getValue('recreational-fishing.active-tickets-for-under14')}.`;
-
-                            this.disableSaveBtnComment = more !== 0
-                                ? `${this.disableSaveBtnComment} ${this.translate.getValue('recreational-fishing.person-can-buy-only')} ${more}.`
-                                : `${this.disableSaveBtnComment} ${this.translate.getValue('recreational-fishing.person-cannot-buy-more-under14')}.`
-
-                            errors.messages = [this.disableSaveBtnComment];
-
-                            this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                                data: errors,
-                                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                            });
-                        }
-                    }
-                }
-            });
-        }
     }
 
     public updatePersonalData(yes: boolean): void {
@@ -416,8 +377,8 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
             }
         }
 
-        if (!this.isPublicApp || this.isAssociation) {
-            if (step.selectedStep === this.viewAndConfirmStep) {
+        if (step.selectedStep === this.viewAndConfirmStep) {
+            if (!this.isPublicApp || this.isAssociation) {
                 for (let i = 0; i < this.ticketNumsArray.length; ++i) {
                     const ticketNum: string = this.ticketNumsArray.controls[i].value;
 
@@ -429,6 +390,8 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
                     }
                 }
             }
+
+            this.checkPurchaseAbility();
         }
     }
 
@@ -443,6 +406,10 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
             const ticketNumsStep: number = this.showValidityStep ? 2 : 1;
 
             if (this.stepper.selectedIndex === ticketNumsStep + 1 && this.ticketNumsArray.invalid) {
+                this.stepper.previous();
+            }
+
+            if (this.stepper.selectedIndex === ticketNumsStep + 2 && this.ticketsGroup.invalid) {
                 this.stepper.previous();
             }
         }
@@ -836,6 +803,81 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
             && (this.ticketNumsArray.valid || (this.isPublicApp && !this.isAssociation))
             && this.ticketsGroup.valid
             && declarationFile;
+    }
+
+    private checkPurchaseAbility(): void {
+        this.disableSaveBtnComment = null;
+
+        let data: RecreationalFishingTicketValidationDTO | undefined;
+
+        if (this.tickets.length > 0) {
+            const ticket: RecreationalFishingTicketDTO = this.tickets[0];
+
+            data = new RecreationalFishingTicketValidationDTO({
+                personEgnLnc: ticket.person!.egnLnc,
+                ticketType: TicketTypeEnum[this.ticketTypes.find(x => x.value === ticket.typeId)!.code as keyof typeof TicketTypeEnum],
+                ticketPeriod: TicketPeriodEnum[this.ticketPeriods.find(x => x.value === ticket.periodId)!.code as keyof typeof TicketPeriodEnum],
+                birthDate: ticket.person!.birthDate,
+                telkValidTo: ticket.telkData?.validTo,
+                validFrom: ticket.validFrom
+            });
+        }
+        else if (this.childTickets.length > 0) {
+            const ticket: RecreationalFishingTicketDTO = this.childTickets[0];
+
+            data = new RecreationalFishingTicketValidationDTO({
+                personEgnLnc: ticket.person!.egnLnc,
+                representativePersonEgnLnc: ticket.representativePerson!.egnLnc,
+                validFrom: ticket.validFrom
+            });
+        }
+
+        if (data !== undefined) {
+            this.service.checkEgnLncPurchaseAbility(data).subscribe({
+                next: (result: RecreationalFishingTicketValidationResultDTO) => {
+                    this.cannotPurchase = result.cannotPurchaseTicket ?? false;
+
+                    if (this.cannotPurchase) {
+                        this.disableSaveBtnComment = `${this.translate.getValue('recreational-fishing.person-already-has-ticket-in-range')}`;
+                    }
+                    else {
+                        if (result.representativeCount) {
+                            const egnLnc: EgnLncDTO = result.representativeCount.egnLnc!;
+                            const current: number = result.representativeCount.count!;
+
+                            const attempted: number = this.childTickets
+                                .filter(x => x.representativePerson?.egnLnc?.egnLnc === egnLnc.egnLnc
+                                    && x.representativePerson?.egnLnc?.identifierType === egnLnc.identifierType)
+                                .length;
+
+                            this.cannotPurchaseUnder14 = current + attempted > this.maxUnder14Tickets;
+
+                            if (this.cannotPurchaseUnder14) {
+                                this.disableSaveBtnComment = `${this.translate.getValue('recreational-fishing.person-already-has-child-tickets')}: ${current}`;
+                            }
+                            else {
+                                this.disableSaveBtnComment = null;
+                            }
+                        }
+                        else {
+                            this.cannotPurchaseUnder14 = false;
+                            this.disableSaveBtnComment = null;
+                        }
+                    }
+
+                    if (this.disableSaveBtnComment) {
+                        const errors: ErrorModel = new ErrorModel();
+                        errors.messages = [this.disableSaveBtnComment];
+
+                        this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                            data: errors,
+                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                        });
+                    }
+                }
+            });
+        }
     }
 
     private navigateToMyTickets(): void {

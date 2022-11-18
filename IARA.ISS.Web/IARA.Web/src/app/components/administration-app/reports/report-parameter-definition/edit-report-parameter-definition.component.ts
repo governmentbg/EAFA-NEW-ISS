@@ -9,7 +9,12 @@ import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { ReportParameterTypeEnum } from '@app/enums/report-parameter-type.enum';
 import { IReportService } from '@app/interfaces/administration-app/report.interface';
-import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { RequestProperties } from '@app/shared/services/request-properties';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
 @Component({
     selector: 'edit-report-parameter-definition',
@@ -20,13 +25,21 @@ export class EditReportParameterDefinitionComponent implements IDialogComponent 
     public dataTypes: string[];
 
     private readonly reportService: IReportService;
+    private readonly translate: FuseTranslationLoaderService;
+    private readonly snackbar: MatSnackBar;
 
     private model!: NReportParameterEditDTO;
     private isAddDialog: boolean;
 
-    public constructor(reportService: ReportAdministrationService) {
+    public constructor(
+        reportService: ReportAdministrationService,
+        translate: FuseTranslationLoaderService,
+        snackbar: MatSnackBar
+    ) {
         this.reportService = reportService;
         this.isAddDialog = false;
+        this.translate = translate;
+        this.snackbar = snackbar;
 
         this.dataTypes = [
             ReportParameterTypeEnum[ReportParameterTypeEnum.Int],
@@ -48,7 +61,6 @@ export class EditReportParameterDefinitionComponent implements IDialogComponent 
                 Validators.required, Validators.maxLength(500)
             ])),
             descriptionControl: new FormControl(null, Validators.maxLength(1000)),
-            dateRangeControl: new FormControl(null, Validators.required),
             typeControl: new FormControl(null, Validators.compose([
                 Validators.required, Validators.maxLength(50)
             ])),
@@ -90,6 +102,9 @@ export class EditReportParameterDefinitionComponent implements IDialogComponent 
                 this.reportService.editNParameter(this.model).subscribe({
                     next: () => {
                         dialogClose(this.model);
+                    },
+                    error: (response: HttpErrorResponse) => {
+                        this.handleSQLExceptions(response);
                     }
                 })
             }
@@ -98,6 +113,9 @@ export class EditReportParameterDefinitionComponent implements IDialogComponent 
                     next: (result: number) => {
                         this.model.id = result;
                         dialogClose(this.model);
+                    },
+                    error: (response: HttpErrorResponse) => {
+                        this.handleSQLExceptions(response);
                     }
                 })
             }
@@ -121,8 +139,6 @@ export class EditReportParameterDefinitionComponent implements IDialogComponent 
         this.model.pattern = formGroup.controls.patternControl.value;
         this.model.errorMessage = formGroup.controls.errorMessageControl.value;
         this.model.dataType = ReportParameterTypeEnum[formGroup.controls.typeControl.value as keyof typeof ReportParameterTypeEnum];
-        this.model.dateFrom = (formGroup.controls.dateRangeControl.value as DateRangeData)?.start;
-        this.model.dateTo = (formGroup.controls.dateRangeControl.value as DateRangeData)?.end;
 
         return this.model;
     }
@@ -139,7 +155,30 @@ export class EditReportParameterDefinitionComponent implements IDialogComponent 
         if (model.dataType !== undefined) {
             this.parameterPropertiesGroup.controls.typeControl.setValue(ReportParameterTypeEnum[model.dataType]);
         }
+    }
 
-        this.parameterPropertiesGroup.controls.dateRangeControl.setValue(new DateRangeData({ start: model.dateFrom, end: model.dateTo })); 
+    private handleSQLExceptions(response: HttpErrorResponse): void {
+        if (response !== null && response !== undefined && response.error !== null && response.error !== undefined) {
+            if (response.error.messages !== null && response.error.messages !== undefined) {
+                const messages: string[] = response.error.messages;
+                if (messages.length !== 0) {
+                    this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                        data: response.error as ErrorModel,
+                        duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                        panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                    });
+                }
+                else {
+                    this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                        data: new ErrorModel({ messages: [this.translate.getValue('service.an-error-occurred-in-the-app')] }),
+                        duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                        panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                    });
+                }
+            }
+            if ((response.error as ErrorModel).code === ErrorCode.InvalidSqlQuery) {
+                this.parameterPropertiesGroup.get('nomenclatureSQLControl')!.setErrors({ 'invalidSqlQuery': true });
+            }
+        }
     }
 }

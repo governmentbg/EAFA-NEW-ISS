@@ -14,6 +14,7 @@ export class ConfirmationDialogComponent {
     public title: string;
     public okBtnLabel: string;
     public cancelBtnLabel: string;
+    public hasCancelButton: boolean;
     private dialogRef: MatDialogRef<ConfirmationDialogComponent>;
     public translationService: FuseTranslationLoaderService;
     private tlTranslatePipe: TLTranslatePipe;
@@ -49,11 +50,19 @@ export class ConfirmationDialogComponent {
             } else {
                 this.cancelBtnLabel = this.tlTranslatePipe.transform(this.translationService.getValue('common.cancel'), 'cap');
             }
+
+            if (data.hasCancelButton != undefined) {
+                this.hasCancelButton = data.hasCancelButton;
+            }
+            else {
+                this.hasCancelButton = true;
+            }
         } else {
             this.message = this.translationService.getValue('common.do-you-confirm-the-action-message');
             this.title = this.tlTranslatePipe.transform(this.translationService.getValue('common.confirmation'), 'cap');
             this.okBtnLabel = this.tlTranslatePipe.transform(this.translationService.getValue('common.confirm'), 'cap');
             this.cancelBtnLabel = this.tlTranslatePipe.transform(this.translationService.getValue('common.cancel'), 'cap');
+            this.hasCancelButton = true;
         }
     }
 

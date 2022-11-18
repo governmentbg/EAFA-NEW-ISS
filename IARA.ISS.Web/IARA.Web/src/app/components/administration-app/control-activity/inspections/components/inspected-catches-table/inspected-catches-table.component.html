@@ -1,110 +1,153 @@
-<tl-data-table fxFlexFill
-               [rows]="catches"
-               [isRemote]="false"
-               [isSoftDeletable]="false"
-               [showInactiveRecords]="false"
-               [showAddButton]="!isDisabled"
-               (recordChanged)="catchRecordChanged($event)"
-               (activeRecordChanged)="onEditRecord($event)">
-    <data-column [flexRate]="0.2"
-                 propertyName="fishId"
-                 [formGroup]="catchesFormGroup"
-                 [options]="fishes"
-                 dataType="nomenclature"
-                 columnName="{{ 'inspections.catch-fish' | tlTranslate }}">
-    </data-column>
-    <data-column [flexRate]="0.2"
-                 propertyName="catchInspectionTypeId"
-                 [formGroup]="catchesFormGroup"
-                 [options]="types"
-                 dataType="nomenclature"
-                 columnName="{{ 'inspections.catch-type' | tlTranslate }}">
-    </data-column>
-    <data-column [flexRate]="0.08"
-                 propertyName="catchCount"
-                 [formGroup]="catchesFormGroup"
-                 columnName="{{ 'inspections.catch-count' | tlTranslate }}">
-    </data-column>
-    <data-column [flexRate]="0.1"
-                 propertyName="catchQuantity"
-                 [formGroup]="catchesFormGroup"
-                 columnName="{{ 'inspections.catch-quantity' | tlTranslate }}">
-    </data-column>
-    <data-column *ngIf="hasUnloadedQuantity === true"
-                 [flexRate]="0.1"
-                 propertyName="unloadedQuantity"
-                 [formGroup]="catchesFormGroup"
-                 columnName="{{ 'inspections.catch-unloaded-quantity' | tlTranslate }}">
-    </data-column>
-    <data-column *ngIf="hasAverageSize === true"
-                 [flexRate]="0.1"
-                 propertyName="unloadedQuantity"
-                 [formGroup]="catchesFormGroup"
-                 columnName="{{ 'inspections.catch-average-size' | tlTranslate }}">
-    </data-column>
-    <data-column *ngIf="hasAllowedDeviation === true"
-                 [flexRate]="0.1"
-                 propertyName="allowedDeviation"
-                 [formGroup]="catchesFormGroup"
-                 columnName="{{ 'inspections.catch-allowed-deviation' | tlTranslate }}">
-    </data-column>
-    <data-column *ngIf="hasSex === true"
-                 [flexRate]="0.2"
-                 propertyName="fishSexId"
-                 [formGroup]="catchesFormGroup"
-                 [options]="fishSex"
-                 dataType="nomenclature"
-                 columnName="{{ 'inspections.catch-fish-sex' | tlTranslate }}">
-    </data-column>
-    <data-template-column *ngIf="hasCatchZone === true" [flexRate]="0.1" columnName="{{ 'inspections.catch-zone' | tlTranslate }}">
-        <ng-template [formGroup]="catchesFormGroup" let-row="row" ngx-datatable-cell-template>
-            <div *ngIf="row.editMode === true" fxLayout="row" fxLayoutAlign="space-between center">
-                <tl-autocomplete fxFlex="81"
-                                 formControlName="catchZoneControl"
-                                 [readonly]="true"
-                                 [options]="catchZones">
-                </tl-autocomplete>
-                <div fxFlex="17" fxLayoutAlign="start start">
-                    <tl-popover-button *ngIf="!isDisabled"
-                                       iconClass="accent-color"
-                                       icon="fa-map-marker-alt"
-                                       (togglePopover)="onPopoverToggled($event)">
-                        <tl-card *ngIf="isMapPopoverOpened" tooltipResourceName="inspections.catch-map-popover-helper">
-                            <tl-card-title>
-                                {{ 'inspections.catch-map-popover-title' | tlTranslate }}
-                            </tl-card-title>
-                            <tl-card-content fxFlexFill>
-                                <div fxLayout="column" fxLayoutGap="1em">
-                                    <div class="fixed-map-size">
-                                        <tl-map-viewer [mapOptions]="mapOptions"></tl-map-viewer>
+<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxLayoutAlign="start stretch">
+    <tl-data-table fxFlexFill
+                   [rows]="catches"
+                   [isRemote]="false"
+                   [isSoftDeletable]="false"
+                   [showInactiveRecords]="false"
+                   [showAddButton]="!isDisabled"
+                   (recordChanged)="catchRecordChanged($event)"
+                   (activeRecordChanged)="onEditRecord($event)">
+        <data-column [flexRate]="0.2"
+                     propertyName="fishId"
+                     [formGroup]="catchesFormGroup"
+                     [options]="fishes"
+                     dataType="nomenclature"
+                     columnName="{{ 'inspections.catch-fish' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.2"
+                     propertyName="catchInspectionTypeId"
+                     [formGroup]="catchesFormGroup"
+                     [options]="types"
+                     dataType="nomenclature"
+                     columnName="{{ 'inspections.catch-type' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.08"
+                     propertyName="catchCount"
+                     [formGroup]="catchesFormGroup"
+                     columnName="{{ 'inspections.catch-count' | tlTranslate }}">
+        </data-column>
+        <data-column [flexRate]="0.1"
+                     propertyName="catchQuantity"
+                     [formGroup]="catchesFormGroup"
+                     columnName="{{ 'inspections.catch-quantity' | tlTranslate }}">
+        </data-column>
+        <data-column *ngIf="hasUnloadedQuantity === true"
+                     [flexRate]="0.1"
+                     propertyName="unloadedQuantity"
+                     [formGroup]="catchesFormGroup"
+                     columnName="{{ 'inspections.catch-unloaded-quantity' | tlTranslate }}">
+        </data-column>
+        <data-column *ngIf="hasAverageSize === true"
+                     [flexRate]="0.1"
+                     propertyName="unloadedQuantity"
+                     [formGroup]="catchesFormGroup"
+                     columnName="{{ 'inspections.catch-average-size' | tlTranslate }}">
+        </data-column>
+        <data-column *ngIf="hasAllowedDeviation === true"
+                     [flexRate]="0.1"
+                     propertyName="allowedDeviation"
+                     [formGroup]="catchesFormGroup"
+                     columnName="{{ 'inspections.catch-allowed-deviation' | tlTranslate }}">
+        </data-column>
+        <data-column *ngIf="hasTurbotSizeGroups"
+                     [flexRate]="0.12"
+                     propertyName="turbotSizeGroupId"
+                     [formGroup]="catchesFormGroup"
+                     [options]="turbotSizeGroups"
+                     dataType="nomenclature"
+                     columnName="{{ 'inspections.turbot-size-group' | tlTranslate }}">
+        </data-column>
+        <data-column *ngIf="hasSex === true"
+                     [flexRate]="0.2"
+                     propertyName="fishSexId"
+                     [formGroup]="catchesFormGroup"
+                     [options]="fishSex"
+                     dataType="nomenclature"
+                     columnName="{{ 'inspections.catch-fish-sex' | tlTranslate }}">
+        </data-column>
+        <data-template-column *ngIf="hasCatchZone === true"
+                              [flexRate]="0.1"
+                              columnName="{{ 'inspections.catch-zone' | tlTranslate }}">
+            <ng-template [formGroup]="catchesFormGroup"
+                         let-row="row"
+                         ngx-datatable-cell-template>
+                <div *ngIf="row.editMode === true"
+                     fxLayout="row"
+                     fxLayoutAlign="space-between center">
+                    <tl-autocomplete fxFlex="81"
+                                     formControlName="catchZoneControl"
+                                     [options]="catchZones">
+                    </tl-autocomplete>
+                    <div fxFlex="17"
+                         fxLayoutAlign="start start">
+                        <tl-popover-button *ngIf="!isDisabled"
+                                           iconClass="accent-color"
+                                           icon="fa-map-marker-alt"
+                                           (togglePopover)="onPopoverToggled($event)">
+                            <tl-card *ngIf="isMapPopoverOpened"
+                                     tooltipResourceName="inspections.catch-map-popover-helper">
+                                <tl-card-title>
+                                    {{ 'inspections.catch-map-popover-title' | tlTranslate }}
+                                </tl-card-title>
+                                <tl-card-content fxFlexFill>
+                                    <div fxLayout="column"
+                                         fxLayoutGap="1em">
+                                        <div class="fixed-map-size">
+                                            <tl-map-viewer [mapOptions]="mapOptions"></tl-map-viewer>
+                                        </div>
+                                        <div fxFlex="100"
+                                             fxLayout="row"
+                                             fxLayoutAlign="space-between center">
+                                            <button mat-raised-button
+                                                    color="primary"
+                                                    (click)="onMapPopoverCancelBtnClicked()">
+                                                {{ 'inspections.catch-map-popover-cancel' | tlTranslate }}
+                                            </button>
+                                            <button mat-raised-button
+                                                    color="accent"
+                                                    (click)="onQuadrantChosenBtnClicked()">
+                                                {{ 'inspections.catch-map-popover-save' | tlTranslate }}
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
-                                        <button mat-raised-button
-                                                color="primary"
-                                                (click)="onMapPopoverCancelBtnClicked()">
-                                            {{ 'inspections.catch-map-popover-cancel' | tlTranslate }}
-                                        </button>
-                                        <button mat-raised-button
-                                                color="accent"
-                                                (click)="onQuadrantChosenBtnClicked()">
-                                            {{ 'inspections.catch-map-popover-save' | tlTranslate }}
-                                        </button>
-                                    </div>
-                                </div>
-                            </tl-card-content>
-                        </tl-card>
-                    </tl-popover-button>
+                                </tl-card-content>
+                            </tl-card>
+                        </tl-popover-button>
+                    </div>
                 </div>
-            </div>
-            <span *ngIf="row.editMode === false">
-                {{ row.data.catchZone?.displayName }}
-            </span>
-        </ng-template>
-    </data-template-column>
-    <data-template-column *ngIf="hasShip === true" [flexRate]="0.2" columnName="{{ 'inspections.origin-ship' | tlTranslate }}">
-        <ng-template [formGroup]="catchesFormGroup" let-row="row" ngx-datatable-cell-template>
-            <div *ngIf="row.editMode === true" fxLayout="row" fxLayoutAlign="space-between center">
-                <div fxFlex="81">
+                <span *ngIf="row.editMode === false">
+                    {{ row.data.catchZone?.displayName }}
+                </span>
+            </ng-template>
+        </data-template-column>
+        <data-template-column *ngIf="hasShip === true"
+                              [flexRate]="0.2"
+                              columnName="{{ 'inspections.origin-ship' | tlTranslate }}">
+            <ng-template [formGroup]="catchesFormGroup"
+                         let-row="row"
+                         ngx-datatable-cell-template>
+                <div *ngIf="row.editMode === true"
+                     fxLayout="row"
+                     fxLayoutAlign="space-between center">
+                    <div fxFlex="81">
+                        <div *ngIf="row.data.originShip !== null && row.data.originShip !== undefined">
+                            <span>{{ row.data.originShip.name }}</span>
+                            <span> (</span>
+                            <span>{{ row.data.originShip.externalMark }}</span>
+                            <span>)</span>
+                        </div>
+                    </div>
+                    <div fxFlex="17"
+                         fxLayoutAlign="start start">
+                        <tl-icon-button iconClass="accent-color"
+                                        icon="fa-ship"
+                                        (buttonClicked)="onShipDialogOpen(row)">
+                        </tl-icon-button>
+                    </div>
+                </div>
+                <div *ngIf="row.editMode === false">
                     <div *ngIf="row.data.originShip !== null && row.data.originShip !== undefined">
                         <span>{{ row.data.originShip.name }}</span>
                         <span> (</span>
@@ -112,22 +155,13 @@
                         <span>)</span>
                     </div>
                 </div>
-                <div fxFlex="17" fxLayoutAlign="start start">
-                    <tl-icon-button iconClass="accent-color"
-                                    icon="fa-ship"
-                                    (buttonClicked)="onShipDialogOpen(row)">
-                    </tl-icon-button>
-                </div>
-            </div>
-            <div *ngIf="row.editMode === false">
-                <div *ngIf="row.data.originShip !== null && row.data.originShip !== undefined">
-                    <span>{{ row.data.originShip.name }}</span>
-                    <span> (</span>
-                    <span>{{ row.data.originShip.externalMark }}</span>
-                    <span>)</span>
-                </div>
-            </div>
-        </ng-template>
-    </data-template-column>
-    <data-column-inline [flexRate]="0.1" *ngIf="!isDisabled"></data-column-inline>
-</tl-data-table>
+            </ng-template>
+        </data-template-column>
+        <data-column-inline [flexRate]="0.1"
+                            *ngIf="!isDisabled"></data-column-inline>
+    </tl-data-table>
+
+    <mat-error *ngIf="control.errors?.catchesMatch === true">
+        * {{ 'inspections.catches-match' | tlTranslate }}
+    </mat-error>
+</div>

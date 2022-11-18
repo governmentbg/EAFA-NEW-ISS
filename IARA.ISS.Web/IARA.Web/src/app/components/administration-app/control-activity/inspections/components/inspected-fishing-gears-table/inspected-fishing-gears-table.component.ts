@@ -76,12 +76,25 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
         this.initCustomFormControl();
     }
 
+    public markAllAsNotAvailable(): void {
+        for (const gear of this.fishingGears) {
+            if (!gear.DTO.checkInspectedMatchingRegisteredGear) {
+                gear.DTO.checkInspectedMatchingRegisteredGear = InspectedFishingGearEnum.R;
+            }
+        }
+    }
+
     public writeValue(value: InspectedFishingGearDTO[]): void {
         if (value !== undefined && value !== null) {
             const fishingGears = value.map(f => {
                 const fishingGear: FishingGearDTO = (f.inspectedFishingGear ?? f.permittedFishingGear)!;
 
                 let checkName: string | undefined = undefined;
+
+                if (!f.checkInspectedMatchingRegisteredGear) {
+                    // There is a bug with TypeScript that requires us to cast this to any
+                    f.checkInspectedMatchingRegisteredGear = InspectedFishingGearEnum.R as any;
+                }
 
                 switch (f.checkInspectedMatchingRegisteredGear) {
                     case InspectedFishingGearEnum.I:
@@ -171,7 +184,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
             translteService: this.translate,
             disableDialogClose: !readOnly,
             viewMode: readOnly
-        }, '800px');
+        }, fishingGear?.DTO?.permittedFishingGear == undefined ? '800px' : '1600px');
 
         dialog.subscribe((result: InspectedFishingGearTableModel) => {
             if (result !== undefined && result !== null) {

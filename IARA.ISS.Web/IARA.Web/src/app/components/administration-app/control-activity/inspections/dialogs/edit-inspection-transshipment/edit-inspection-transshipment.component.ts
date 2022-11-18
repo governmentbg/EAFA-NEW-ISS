@@ -40,6 +40,7 @@ export class EditInspectionTransshipmentComponent extends BaseInspectionsCompone
     public ports: NomenclatureDTO<number>[] = [];
     public vesselTypes: NomenclatureDTO<number>[] = [];
     public associations: NomenclatureDTO<number>[] = [];
+    public turbotSizeGroups: NomenclatureDTO<number>[] = [];
 
     public toggles: InspectionCheckModel[] = [];
 
@@ -52,6 +53,7 @@ export class EditInspectionTransshipmentComponent extends BaseInspectionsCompone
         snackbar: MatSnackBar
     ) {
         super(service, translate, nomenclatures, snackbar);
+        this.inspectionCode = InspectionTypesEnum.ITB;
     }
 
     public async ngOnInit(): Promise<void> {
@@ -90,6 +92,9 @@ export class EditInspectionTransshipmentComponent extends BaseInspectionsCompone
             NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.ShipAssociations, this.nomenclatures.getShipAssociations.bind(this.nomenclatures), false
             ),
+            NomenclatureStore.instance.getNomenclature(
+                NomenclatureTypes.TurbotSizeGroups, this.nomenclatures.getTurbotSizeGroups.bind(this.nomenclatures), false
+            ),
             this.service.getCheckTypesForInspection(InspectionTypesEnum.ITB)
         ]).toPromise();
 
@@ -103,11 +108,12 @@ export class EditInspectionTransshipmentComponent extends BaseInspectionsCompone
         this.ports = nomenclatureTables[7];
         this.vesselTypes = nomenclatureTables[8];
         this.associations = nomenclatureTables[9];
+        this.turbotSizeGroups = nomenclatureTables[10];
 
-        this.toggles = nomenclatureTables[10].map(f => new InspectionCheckModel(f));
+        this.toggles = nomenclatureTables[11].map(f => new InspectionCheckModel(f));
 
         if (this.id !== null && this.id !== undefined) {
-            this.service.get(this.id).subscribe({
+            this.service.get(this.id, this.inspectionCode).subscribe({
                 next: (dto: InspectionTransboardingDTO) => {
                     this.model = dto;
 
@@ -158,7 +164,8 @@ export class EditInspectionTransshipmentComponent extends BaseInspectionsCompone
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
                 inspectorComment: this.model.inspectorComment,
-                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo)
+                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo),
+                violatedRegulations: this.model.violatedRegulations,
             }));
 
             const receivingShip = this.model.receivingShipInspection;
@@ -170,7 +177,8 @@ export class EditInspectionTransshipmentComponent extends BaseInspectionsCompone
                     fishingGears: this.model.fishingGears,
                     logBooks: receivingShip.logBooks,
                     observationTexts: this.model.observationTexts,
-                    permits: receivingShip.permitLicenses,
+                    permitLicenses: receivingShip.permitLicenses,
+                    permits: receivingShip.permits,
                     personnel: receivingShip.personnel,
                     ship: receivingShip.inspectedShip,
                 }));
@@ -187,7 +195,8 @@ export class EditInspectionTransshipmentComponent extends BaseInspectionsCompone
                     fishingGears: this.model.fishingGears,
                     logBooks: sendingShip.logBooks,
                     observationTexts: this.model.observationTexts,
-                    permits: sendingShip.permitLicenses,
+                    permitLicenses: sendingShip.permitLicenses,
+                    permits: sendingShip.permits,
                     personnel: sendingShip.personnel,
                     ship: sendingShip.inspectedShip,
                 }));
@@ -217,6 +226,7 @@ export class EditInspectionTransshipmentComponent extends BaseInspectionsCompone
             byEmergencySignal: generalInfo.byEmergencySignal,
             inspectionType: InspectionTypesEnum.ITB,
             inspectorComment: additionalInfo?.inspectorComment,
+            violatedRegulations: additionalInfo?.violatedRegulations,
             isActive: true,
             fishingGears: sendingShip.fishingGears,
             transboardedCatchMeasures: transshipmentCatches,
@@ -237,7 +247,8 @@ export class EditInspectionTransshipmentComponent extends BaseInspectionsCompone
                 inspectedShip: receivingShip.ship,
                 lastPortVisit: receivingShip.port,
                 logBooks: receivingShip.logBooks,
-                permitLicenses: receivingShip.permits,
+                permitLicenses: receivingShip.permitLicenses,
+                permits: receivingShip.permits,
                 personnel: receivingShip.personnel,
             }),
             sendingShipInspection: new InspectionTransboardingShipDTO({
@@ -247,7 +258,8 @@ export class EditInspectionTransshipmentComponent extends BaseInspectionsCompone
                 inspectedShip: sendingShip.ship,
                 lastPortVisit: sendingShip.port,
                 logBooks: sendingShip.logBooks,
-                permitLicenses: sendingShip.permits,
+                permitLicenses: sendingShip.permitLicenses,
+                permits: sendingShip.permits,
                 personnel: sendingShip.personnel,
             }),
         });

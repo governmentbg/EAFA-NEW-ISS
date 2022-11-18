@@ -1,4 +1,4 @@
-﻿import { Directive, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
+﻿import { Directive, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 
 type ResizableSides = 'top' | 'bottom' | 'left' | 'right';
 
@@ -8,6 +8,9 @@ type ResizableSides = 'top' | 'bottom' | 'left' | 'right';
 export class TLResizableDirective implements OnInit, OnDestroy {
     @Input('tlResizable')
     public sides: string = '';
+
+    @Output('tlResizableChanged')
+    public changed: EventEmitter<number> = new EventEmitter<number>();
 
     private readonly minHeight: number;
     private readonly maxHeight: number;
@@ -132,6 +135,7 @@ export class TLResizableDirective implements OnInit, OnDestroy {
                     newHeight = this.minHeight;
                 }
                 this.element.style.height = `${newHeight}px`;
+                this.changed.emit(newHeight);
             }
         };
 
@@ -157,6 +161,7 @@ export class TLResizableDirective implements OnInit, OnDestroy {
                     newWidth = this.minWidth;
                 }
                 this.element.style.width = `${newWidth}px`;
+                this.changed.emit(newWidth);
             }
         };
 

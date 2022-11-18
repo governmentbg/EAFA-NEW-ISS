@@ -1,8 +1,8 @@
 ﻿import { Component, EventEmitter, Input, OnInit, Output, Self } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, Validators } from '@angular/forms';
 import { AuanWitnessDTO } from '@app/models/generated/dtos/AuanWitnessDTO';
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
+import { AddressTypesEnum } from '@app/enums/address-types.enum';
 
 @Component({
     selector: 'auan-witness',
@@ -18,17 +18,14 @@ export class AuanWitnessComponent extends CustomFormControl<AuanWitnessDTO> impl
     public isDisabled: boolean = false;
     public readonly today: Date = new Date();
 
+    public readonly addressType: AddressTypesEnum = AddressTypesEnum.PERMANENT;
+
     private model: AuanWitnessDTO | undefined;
 
-    private translationService: FuseTranslationLoaderService;
-
     public constructor(
-        @Self() ngControl: NgControl,
-        translate: FuseTranslationLoaderService
+        @Self() ngControl: NgControl
     ) {
         super(ngControl, false);
-
-        this.translationService = translate;
 
         this.buildForm();
     }

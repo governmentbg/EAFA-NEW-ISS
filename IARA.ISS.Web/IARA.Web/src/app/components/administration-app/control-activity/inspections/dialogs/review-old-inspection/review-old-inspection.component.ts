@@ -14,6 +14,7 @@ import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/
 import { CPCatchTableModel } from './models/cp-catch-table.model';
 import { CPFishingGearTableModel } from './models/cp-fishing-gear-table.model';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
+import { InspectionTypesEnum } from '@app/enums/inspection-types.enum';
 
 @Component({
     selector: 'review-old-inspection',
@@ -71,7 +72,7 @@ export class ReviewOldInspectionComponent implements OnInit, IDialogComponent {
         this.fishes = nomenclatureTables[0];
         this.fishingGearTypes = nomenclatureTables[1];
 
-        const model = (await this.service.get(this.id!).toPromise()) as InspectionConstativeProtocolDTO;
+        const model = (await this.service.get(this.id!, InspectionTypesEnum.OTH).toPromise()) as InspectionConstativeProtocolDTO;
 
         this.form.get('numControl')!.setValue(model.reportNum);
         this.form.get('dateControl')!.setValue(model.startDate);

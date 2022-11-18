@@ -2,7 +2,7 @@
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
-import { FormControl, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
@@ -41,7 +41,7 @@ export class EditPenalPointsDecreePickerComponent implements OnInit, IDialogComp
         this.translate = translate;
         this.editDialog = editDialog;
 
-        this.penalDecreeControl = new FormControl(null, Validators.required);
+        this.penalDecreeControl = new FormControl(null, [Validators.required, this.noPenalDecreesValidator()]);
         this.typeControl = new FormControl(null, Validators.required);
 
         this.types = [
@@ -60,8 +60,8 @@ export class EditPenalPointsDecreePickerComponent implements OnInit, IDialogComp
 
     public ngOnInit(): void {
         this.service.getAllPenalDecrees().subscribe({
-            next: (result: NomenclatureDTO<number>[]) => {
-                this.penalDecrees = result;
+            next: (decrees: NomenclatureDTO<number>[]) => {
+                this.penalDecrees = decrees;
             }
         });
     }
@@ -76,7 +76,7 @@ export class EditPenalPointsDecreePickerComponent implements OnInit, IDialogComp
 
         if (this.penalDecreeControl.valid && this.typeControl.valid) {
             this.type = this.typeControl!.value?.value;
-            
+
             this.openEditAwardedPointsDialog().subscribe({
                 next: (points: PenalPointsEditDTO | undefined) => {
                     dialogClose(points);
@@ -115,5 +115,14 @@ export class EditPenalPointsDecreePickerComponent implements OnInit, IDialogComp
 
     private closeEditDialogBtnClicked(closeFn: HeaderCloseFunction): void {
         closeFn();
+    }
+
+    private noPenalDecreesValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (this.penalDecrees.length === 0) {
+                return { 'noPenalDecrees': true };
+            }
+            return null;
+        };
     }
 }

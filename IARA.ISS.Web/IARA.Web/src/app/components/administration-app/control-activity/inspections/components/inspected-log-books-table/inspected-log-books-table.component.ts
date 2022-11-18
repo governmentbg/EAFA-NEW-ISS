@@ -6,12 +6,12 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 import { InspectionUtils } from '@app/shared/utils/inspection.utils';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { InspectionToggleTypesEnum } from '@app/enums/inspection-toggle-types.enum';
-import { InspectionCheckModel } from '../../models/inspection-check.model';
 import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
 import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
 import { InspectionCheckDTO } from '@app/models/generated/dtos/InspectionCheckDTO';
 import { InspectedLogBookTableModel } from '../../models/inspected-log-book-table.model';
 import { InspectionLogBookDTO } from '@app/models/generated/dtos/InspectionLogBookDTO';
+import { GridRow } from '@app/shared/components/data-table/models/row.model';
 
 @Component({
     selector: 'inspected-log-books-table',
@@ -26,7 +26,6 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
     public logBooks: InspectedLogBookTableModel[] = [];
 
     public readonly options: NomenclatureDTO<InspectionToggleTypesEnum>[];
-    public readonly fakeToggle: InspectionCheckModel;
 
     private readonly translate: FuseTranslationLoaderService;
 
@@ -39,11 +38,6 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
         this.translate = translate;
 
         this.options = InspectionUtils.getToggleCheckOptions(translate);
-
-        this.fakeToggle = new InspectionCheckModel({
-            value: 0,
-            isMandatory: true
-        });
 
         this.onMarkAsTouched.subscribe({
             next: () => {
@@ -58,28 +52,36 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
 
     public writeValue(value: InspectionLogBookDTO[]): void {
         if (value !== undefined && value !== null) {
-            const logBooks = value.map(f => new InspectedLogBookTableModel({
-                id: f.id,
-                checkValue: f.checkValue,
-                description: f.description,
-                endPage: f.endPage,
-                from: f.from,
-                isRegistered: f.logBookId !== null && f.logBookId !== undefined,
-                logBookId: f.logBookId,
-                number: f.number,
-                pageNum: f.pageNum,
-                page: f.logBookId !== null && f.logBookId !== undefined
-                    ? new NomenclatureDTO<number>({
-                        value: f.logBookId,
-                        displayName: f.pageNum,
-                    }) : undefined,
-                pageId: f.pageId,
-                startPage: f.startPage,
-                checkDTO: new InspectionCheckDTO({
-                    id: 0,
+            const logBooks = value.map(f => {
+
+                if (!f.checkValue) {
+                    f.checkValue = InspectionToggleTypesEnum.X;
+                }
+
+                return new InspectedLogBookTableModel({
+                    id: f.id,
                     checkValue: f.checkValue,
-                })
-            }));
+                    description: f.description,
+                    endPage: f.endPage,
+                    from: f.from,
+                    isRegistered: f.logBookId !== null && f.logBookId !== undefined,
+                    logBookId: f.logBookId,
+                    number: f.number,
+                    pageNum: f.pageNum,
+                    page: f.logBookId !== null && f.logBookId !== undefined && f.pageNum !== undefined
+                        ? new NomenclatureDTO<number>({
+                            value: f.logBookId,
+                            displayName: f.pageNum,
+                            isActive: true
+                        }) : undefined,
+                    pageId: f.pageId,
+                    startPage: f.startPage,
+                    checkDTO: new InspectionCheckDTO({
+                        id: 0,
+                        checkValue: f.checkValue,
+                    })
+                });
+            });
 
             setTimeout(() => {
                 this.logBooks = logBooks;
@@ -103,18 +105,32 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
     public onAddRecord(): void {
         this.logBooksFormGroup.get('numberControl')!.enable();
         this.logBooksFormGroup.get('optionsControl')!.disable();
+
+        this.logBooksFormGroup.get('optionsControl')!.setValue(new NomenclatureDTO<InspectionToggleTypesEnum>({
+            value: InspectionToggleTypesEnum.Y,
+            displayName: this.translate.getValue('inspections.toggle-matches'),
+            isActive: true,
+        }));
     }
 
     public onEditRecord(record: InspectedLogBookTableModel): void {
         this.logBooksFormGroup.get('numberControl')!.disable();
         this.logBooksFormGroup.get('optionsControl')!.enable();
-        this.logBooksFormGroup.get('optionsControl')!.setValue(record.checkValue);
-        this.logBooksFormGroup.get('pageControl')!.setValue(record.page ?? record.pageNum);
+
+        if (record) {
+            this.logBooksFormGroup.get('optionsControl')!.setValue(this.options.find(f => f.value === record.checkDTO?.checkValue));
+            this.logBooksFormGroup.get('pageControl')!.setValue(record.page ?? record.pageNum);
+        }
     }
 
     public logBookRecordChanged(event: RecordChangedEventArgs<InspectedLogBookTableModel>): void {
-        event.Record.checkDTO = this.logBooksFormGroup.get('optionsControl')!.value;
-        event.Record.checkValue = event.Record.checkDTO?.checkValue;
+        const nom: NomenclatureDTO<InspectionToggleTypesEnum> = this.logBooksFormGroup.get('optionsControl')!.value;
+
+        event.Record.checkDTO = nom ? new InspectionCheckDTO({
+            id: event.Record.checkDTO?.id,
+            checkValue: nom.value,
+        }) : undefined;
+        event.Record.checkValue = nom?.value;
 
         const page: NomenclatureDTO<number> | string = this.logBooksFormGroup.get('pageControl')!.value;
 
@@ -131,6 +147,10 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
         this.onChanged(this.getValue());
     }
 
+    public hideDeleteButtonWhen(row: GridRow<InspectedLogBookTableModel>): boolean {
+        return !row.data.isRegistered;
+    }
+
     protected buildForm(): AbstractControl {
         this.logBooksFormGroup = new FormGroup({
             numberControl: new FormControl({ value: undefined, disabled: true }, [Validators.required]),
@@ -140,6 +160,10 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
             pageControl: new FormControl(undefined, [Validators.required]),
             descriptionControl: new FormControl(undefined),
             optionsControl: new FormControl(undefined, [Validators.required]),
+        });
+
+        this.logBooksFormGroup.controls.optionsControl.valueChanges.subscribe({
+            next: this.optionsChanged.bind(this)
         });
 
         return new FormControl(undefined, this.logBooksValidator());
@@ -158,6 +182,20 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
             pageNum: f.pageNum,
             startPage: f.startPage,
         }));
+    }
+
+    private optionsChanged(value: NomenclatureDTO<InspectionToggleTypesEnum>): void {
+        const pageControl = this.logBooksFormGroup.controls.pageControl;
+
+        if (value?.value === InspectionToggleTypesEnum.X) {
+            pageControl.clearValidators();
+        }
+        else {
+            pageControl.setValidators([Validators.required]);
+        }
+
+        pageControl.markAsPending();
+        pageControl.updateValueAndValidity({ emitEvent: false });
     }
 
     private logBooksValidator(): ValidatorFn {

@@ -1,4 +1,4 @@
-﻿import { Component, DoCheck, Input, OnInit, Self, ViewChild } from '@angular/core';
+﻿import { Component, DoCheck, Input, OnInit, Self, SimpleChanges, ViewChild } from '@angular/core';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
@@ -9,25 +9,23 @@ import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interf
 import { ICommercialFishingService } from '@app/interfaces/common-app/commercial-fishing.interface';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
-import { AbstractControl, ControlValueAccessor, NgControl, ValidationErrors, Validator } from '@angular/forms';
+import { AbstractControl, ControlValueAccessor, FormControl, NgControl, ValidationErrors, Validator, ValidatorFn } from '@angular/forms';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { EditFishingGearDialogParamsModel } from './models/edit-fishing-gear-dialog-params.model';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
+import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 
 @Component({
     selector: 'fishing-gears',
     templateUrl: './fishing-gears.component.html'
 })
-export class FishingGearsComponent implements OnInit, DoCheck, ControlValueAccessor, Validator {
+export class FishingGearsComponent extends CustomFormControl<FishingGearDTO[]> implements OnInit {
     @Input()
     public isReadonly: boolean = false;
 
     @Input()
     public isApplication: boolean = true; // = false;
-
-    @Input()
-    public isDraftMode: boolean = false;
 
     @Input()
     public service!: ICommercialFishingService;
@@ -43,12 +41,6 @@ export class FishingGearsComponent implements OnInit, DoCheck, ControlValueAcces
     @ViewChild('fishingGearsTable')
     private fishingGearsTable!: TLDataTableComponent;
 
-    public hasMoreThanPermittedNumberOfFishingGears: boolean = false;
-
-    private ngControl: NgControl;
-    private onChanged: (value: FishingGearDTO[]) => void = (value: FishingGearDTO[]) => { return; };
-    private onTouched: (value: FishingGearDTO[]) => void = (value: FishingGearDTO[]) => { return; };
-
     private translate: FuseTranslationLoaderService;
     private confirmDialog: TLConfirmDialog;
     private editFishingGearDialog: TLMatDialog<EditFishingGearComponent>;
@@ -60,8 +52,7 @@ export class FishingGearsComponent implements OnInit, DoCheck, ControlValueAcces
         confirmDialog: TLConfirmDialog,
         editFishingGearDialog: TLMatDialog<EditFishingGearComponent>
     ) {
-        this.ngControl = ngControl;
-        this.ngControl.valueAccessor = this;
+        super(ngControl, false);
 
         this.translate = translate;
         this.confirmDialog = confirmDialog;
@@ -70,24 +61,26 @@ export class FishingGearsComponent implements OnInit, DoCheck, ControlValueAcces
     }
 
     public ngOnInit(): void {
-        if (this.ngControl.control) {
-            this.ngControl.control.validator = this.validate.bind(this);
-        }
+        this.initCustomFormControl();
     }
 
-    public ngDoCheck(): void {
-        if (this.ngControl?.control?.touched) {
-            this.validate(this.ngControl.control!);
-        }
+    protected getValue(): FishingGearDTO[] {
+        return this.fishingGears.slice();
+    }
+
+    protected buildForm(): AbstractControl {
+        return new FormControl(undefined, [this.permittedNumberFishingGearsValidator()]);
     }
 
     public writeValue(value: FishingGearDTO[]): void {
         if (value !== null && value !== undefined) {
-            setTimeout(() => {
-                this.fishingGears = value;
-                this.onChanged(value);
-            });
+            this.fishingGears = value;
         }
+        else {
+            this.fishingGears = [];
+        }
+
+        this.onChanged(this.getValue());
     }
 
     public registerOnChange(fn: (value: FishingGearDTO[]) => void): void {
@@ -96,26 +89,6 @@ export class FishingGearsComponent implements OnInit, DoCheck, ControlValueAcces
 
     public registerOnTouched(fn: (value: FishingGearDTO[]) => void): void {
         this.onTouched = fn;
-    }
-
-    public setDisabledState(isDisabled: boolean): void {
-        if (isDisabled) {
-            this.isReadonly = true;
-        }
-        else {
-            this.isReadonly = false;
-        }
-    }
-
-    public validate(control: AbstractControl): ValidationErrors | null {
-        const errors: ValidationErrors = {};
-
-        this.checkForMoreThanPermittedNumberFishingGearsError();
-        if (this.hasMoreThanPermittedNumberOfFishingGears === true) {
-            errors['moreThanPermittedFishingGears'] = true;
-        }
-
-        return Object.keys(errors).length > 0 ? errors : null;
     }
 
     public addEditFishingGear(fishingGear?: FishingGearDTO, viewMode: boolean = false): void {
@@ -127,7 +100,6 @@ export class FishingGearsComponent implements OnInit, DoCheck, ControlValueAcces
             data = new EditFishingGearDialogParamsModel({
                 model: fishingGear,
                 readOnly: this.isReadonly || viewMode,
-                isDraft: this.isDraftMode,
                 pageCode: this.pageCode
             });
 
@@ -148,7 +120,6 @@ export class FishingGearsComponent implements OnInit, DoCheck, ControlValueAcces
         }
         else {
             data = new EditFishingGearDialogParamsModel({
-                isDraft: this.isDraftMode,
                 pageCode: this.pageCode
             });
 
@@ -160,7 +131,7 @@ export class FishingGearsComponent implements OnInit, DoCheck, ControlValueAcces
             TCtor: EditFishingGearComponent,
             headerAuditButton: headerAuditBtn,
             headerCancelButton: {
-                cancelBtnClicked: this.closeEditFishingGearDialogBtnClicked.bind(this)
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
             },
             componentData: data,
             translteService: this.translate,
@@ -177,12 +148,10 @@ export class FishingGearsComponent implements OnInit, DoCheck, ControlValueAcces
                     this.fishingGears.push(result);
                 }
 
-                setTimeout(() => {
-                    this.fishingGears = this.fishingGears.slice();
-
-                    this.onChanged(this.fishingGears);
-                    this.checkForMoreThanPermittedNumberFishingGearsError();
-                });
+                this.fishingGears = this.fishingGears.slice();
+                this.control.markAsTouched();
+                this.control.updateValueAndValidity();
+                this.onChanged(this.getValue());
             }
         });
     }
@@ -196,8 +165,9 @@ export class FishingGearsComponent implements OnInit, DoCheck, ControlValueAcces
             next: (ok: boolean) => {
                 if (ok) {
                     this.fishingGearsTable.softDelete(row);
-                    this.onChanged(this.fishingGears);
-                    this.checkForMoreThanPermittedNumberFishingGearsError();
+                    this.control.markAsTouched();
+                    this.control.updateValueAndValidity();
+                    this.onChanged(this.getValue());
                 }
             }
         });
@@ -208,34 +178,34 @@ export class FishingGearsComponent implements OnInit, DoCheck, ControlValueAcces
             next: (ok: boolean) => {
                 if (ok) {
                     this.fishingGearsTable.softUndoDelete(row);
-                    this.onChanged(this.fishingGears);
-                    this.checkForMoreThanPermittedNumberFishingGearsError();
+                    this.control.markAsTouched();
+                    this.control.updateValueAndValidity();
+                    this.onChanged(this.getValue());
                 }
             }
         });
     }
 
-    private checkForMoreThanPermittedNumberFishingGearsError(): void {
-        if (this.maxNumberOfFishingGears !== null && this.maxNumberOfFishingGears !== undefined) {
-            let numberOfFishingGears: number = 0;
-            if (this.fishingGears !== null && this.fishingGears !== undefined && this.fishingGears.length > 0) {
-                const groupedFishingGearsByType = CommonUtils.groupByKey(this.fishingGears.filter(x => x.isActive), 'typeId');
-                numberOfFishingGears = Object.getOwnPropertyNames(groupedFishingGearsByType).length;
-            }
+    private permittedNumberFishingGearsValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (this.maxNumberOfFishingGears !== null && this.maxNumberOfFishingGears !== undefined) {
+                let numberOfFishingGears: number = 0;
 
-            if (numberOfFishingGears > this.maxNumberOfFishingGears) {
-                this.hasMoreThanPermittedNumberOfFishingGears = true;
+                if (this.fishingGears !== null && this.fishingGears !== undefined && this.fishingGears.length > 0) {
+                    const groupedFishingGearsByType = CommonUtils.groupByKey(this.fishingGears.filter(x => x.isActive), 'typeId');
+                    numberOfFishingGears = Object.getOwnPropertyNames(groupedFishingGearsByType).length;
+                }
+
+                if (numberOfFishingGears > this.maxNumberOfFishingGears) {
+                    return { 'moreThanPermittedFishingGears': true };
+                }
+                else {
+                    return null;
+                }
             }
             else {
-                this.hasMoreThanPermittedNumberOfFishingGears = false;
+                return null;
             }
         }
-        else {
-            this.hasMoreThanPermittedNumberOfFishingGears = false;
-        }
-    }
-
-    private closeEditFishingGearDialogBtnClicked(closeFn: HeaderCloseFunction): void {
-        closeFn();
     }
 }

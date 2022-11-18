@@ -21,18 +21,22 @@ export class TLMatDialog<T extends IDialogComponent> {
     }
 
     public openWithTwoButtons(data: IDialogData<T>, dialogWidth: string = "1600px"): Observable<any> {
-        data.saveBtn = {
-            id: 'save-button-id',
-            translateValue: data.translteService.getValue('common.save'),
-            color: 'accent'
-        };
+        if (data.saveBtn === null || data.saveBtn === undefined) {
+            data.saveBtn = {
+                id: 'save-button-id',
+                translateValue: data.translteService.getValue('common.save'),
+                color: 'accent'
+            };
+        }
 
-        data.cancelBtn = {
-            id: 'cancel-button-id',
-            translateValue: data.translteService.getValue('common.cancel'),
-            color: 'primary'
-        };
-
+        if (data.cancelBtn === null || data.cancelBtn === undefined) {
+            data.cancelBtn = {
+                id: 'cancel-button-id',
+                translateValue: data.translteService.getValue('common.cancel'),
+                color: 'primary'
+            };
+        }
+        
         const dialogRef = this.dialog.open<DialogWrapperComponent<T>, IDialogData<T>, any>(DialogWrapperComponent, {
             width: dialogWidth,
             data

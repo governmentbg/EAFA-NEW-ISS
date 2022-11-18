@@ -37,7 +37,7 @@
                         [showCustodianOfProperty]="false"
                         [isIdReadOnly]="isEditing"
                         [expectedResults]="expectedResults.legal"
-                        checkboxLabel="{{ 'ships-register.has-bulgarian-address-registration' | tlTranslate }}">
+                        checkboxLabel="{{ 'legal-entities-page.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
 
             <address-registration formControlName="addressesControl"
@@ -171,7 +171,7 @@
     </tl-card>
 
     <!-- Проверки -->
-    <tl-card *ngIf="showOnlyRegixData">
+    <tl-card *ngIf="showOnlyRegixData || showRegiXData">
         <tl-card-title>{{ 'legal-entities-page.regix-checks-results' | tlTranslate }}</tl-card-title>
         <tl-card-content>
             <regix-checks-results [regixChecksCollection]="regixChecks"></regix-checks-results>

@@ -63,12 +63,7 @@ import { TLPictureUploaderModule } from './components/tl-picture-uploader/tl-pic
 import { TLPopoverModule } from './components/tl-popover/tl-popover.module';
 import { UsageDocumentComponent } from './components/usage-document/usage-document.component';
 import { VesselSimpleComponent } from './components/vessel-simple/vessel-simple.component';
-import { MatVerticalStepperScrollerDirective } from './directives/mat-vertical-stepper-scroller.directive';
-import { NotifierGroupDirective } from './directives/notifier/notifier-group.directive';
-import { NotifierDirective } from './directives/notifier/notifier.directive';
-import { TLResizableDirective } from './directives/resizable.directive';
-import { ValidityCheckerGroupDirective } from './directives/validity-checker/validity-checker-group.directive';
-import { ValidityCheckerDirective } from './directives/validity-checker/validity-checker.directive';
+import { TLDirectivesModule } from './directives/tl-directives.module';
 import { MaterialModule } from './material.module';
 import { TLPipesModule } from './pipes/tl-pipes.module';
 
@@ -103,7 +98,8 @@ import { TLPipesModule } from './pipes/tl-pipes.module';
         TLBoricaPaymentsModule,
         TLEPayPaymentsModule,
         NgxTextDiffModule,
-        MatDividerModule,
+        MatDividerModule, 
+        TLDirectivesModule,
         QuillModule.forRoot()
     ],
     exports: [
@@ -112,16 +108,6 @@ import { TLPipesModule } from './pipes/tl-pipes.module';
         RouterModule,
         BrowserModule,
         CommonModule,
-        ConfirmationDialogComponent,
-        DialogWrapperComponent,
-        ErrorSnackbarComponent,
-        SingleAddressRegistrationComponent,
-        AddressRegistrationComponent,
-        EgnLncInputComponent,
-        RegixDataComponent,
-        FileUploadFormComponent,
-        FileUploadFormArrayComponent,
-        LetterOfAttorneyComponent,
         TLFileUploadModule,
         FlexLayoutModule,
         FontAwesomeModule,
@@ -134,7 +120,6 @@ import { TLPipesModule } from './pipes/tl-pipes.module';
         TLAuditModule,
         TLDataTableModule,
         TLHelpModule,
-        TLIconButtonComponent,
         TLIconButtonModule,
         TLIconModule,
         TLInputControlsModule,
@@ -143,23 +128,30 @@ import { TLPipesModule } from './pipes/tl-pipes.module';
         TLCardModule,
         TLExpansionPanelModule,
         ClipboardModule,
-        CheckboxListComponent,
         MatDividerModule,
-        MatVerticalStepperScrollerDirective,
-        TLResizableDirective,
-        ValidityCheckerDirective,
-        ValidityCheckerGroupDirective,
-        NotifierDirective,
-        NotifierGroupDirective,
         TLPictureUploaderModule,
+        NgxTextDiffModule,
+        QuillModule,
+        TLDirectivesModule,
+
+        CheckboxListComponent,
+        TLIconButtonComponent,
+        ConfirmationDialogComponent,
+        DialogWrapperComponent,
+        ErrorSnackbarComponent,
+        SingleAddressRegistrationComponent,
+        AddressRegistrationComponent,
+        EgnLncInputComponent,
+        RegixDataComponent,
+        FileUploadFormComponent,
+        FileUploadFormArrayComponent,
+        LetterOfAttorneyComponent,
         PaymentDataComponent,
         RegixChecksResultsComponent,
         OnlinePaymentDataComponent,
         RegisterDeliveryComponent,
         ApplicantRelationToRecipientComponent,
         CancellationDialogComponent,
-        NgxTextDiffModule,
-        QuillModule,
         ApplicationSubmittedByComponent,
         ApplicationSubmittedForComponent,
         SingleChangeOfCircumstancesComponent,
@@ -178,6 +170,7 @@ import { TLPipesModule } from './pipes/tl-pipes.module';
         OverlappingLogBooksComponent
     ],
     declarations: [
+        CheckboxListComponent,
         DialogWrapperComponent,
         ErrorSnackbarComponent,
         ConfirmationDialogComponent,
@@ -188,13 +181,6 @@ import { TLPipesModule } from './pipes/tl-pipes.module';
         FileUploadFormComponent,
         FileUploadFormArrayComponent,
         LetterOfAttorneyComponent,
-        MatVerticalStepperScrollerDirective,
-        TLResizableDirective,
-        ValidityCheckerDirective,
-        ValidityCheckerGroupDirective,
-        NotifierDirective,
-        CheckboxListComponent,
-        NotifierGroupDirective,
         PaymentDataComponent,
         RegixChecksResultsComponent,
         OnlinePaymentDataComponent,

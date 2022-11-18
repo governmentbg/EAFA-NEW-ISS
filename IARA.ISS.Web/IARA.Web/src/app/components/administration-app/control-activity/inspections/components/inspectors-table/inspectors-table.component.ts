@@ -47,6 +47,12 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
         this.confirmDialog = confirmDialog;
         this.editEntryDialog = editEntryDialog;
         this.authService = authService;
+
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.control.updateValueAndValidity();
+            }
+        });
     }
 
     public async ngOnInit(): Promise<void> {

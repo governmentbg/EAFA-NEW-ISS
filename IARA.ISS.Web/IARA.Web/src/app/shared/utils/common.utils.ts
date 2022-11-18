@@ -72,7 +72,12 @@ export class CommonUtils {
         return model as T;
     }
 
-
+    public static isNomenclature<T>(obj: NomenclatureDTO<T> | string): obj is NomenclatureDTO<T> {
+        if (obj !== null && obj !== undefined && typeof obj === 'object') {
+            return 'value' in obj && 'displayName' in obj;
+        }
+        return false;
+    }
 
     public static toColumnDataType(originalType: string | undefined): string {
         switch (originalType) {
@@ -331,5 +336,14 @@ export class CommonUtils {
             reader.onload = (event: ProgressEvent<FileReader>) => { resolve(event.target!.result as string); };
             reader.onerror = (error: ProgressEvent<FileReader>) => { reject(error); };
         });
+    }
+
+    public static round(num: number, precision: number): number | undefined {
+        if (num !== null && num !== undefined) {
+            return Number(parseFloat(num.toString()).toFixed(precision));
+        }
+        else {
+            return undefined;
+        }
     }
 }

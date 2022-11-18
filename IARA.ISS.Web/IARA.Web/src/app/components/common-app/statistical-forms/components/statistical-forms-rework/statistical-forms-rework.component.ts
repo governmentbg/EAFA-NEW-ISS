@@ -47,6 +47,8 @@ import { StatisticalFormTypesEnum } from '@app/enums/statistical-form-types.enum
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 
+type YesNo = 'yes' | 'no';
+
 @Component({
     selector: 'statistical-forms-rework',
     templateUrl: './statistical-forms-rework.component.html',
@@ -67,6 +69,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
     public isOnlineApplication: boolean = false;
     public readOnly: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isApplication: boolean = false;
     public loadRegisterFromApplication: boolean = false;
     public viewMode: boolean = false;
@@ -83,6 +86,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
     public rawMaterialOrigin: NomenclatureDTO<StatisticalFormRawMaterialOriginEnum>[] = [];
     public allRawMaterialOrigin: NomenclatureDTO<StatisticalFormRawMaterialOriginEnum>[] = [];
     public products: StatisticalFormReworkProductDTO[] = [];
+    public ownerEmployeeOptions: NomenclatureDTO<YesNo>[] = [];
 
     public notifier: Notifier = new Notifier();
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
@@ -148,6 +152,19 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         this.loader = new FormControlDataLoader(this.getNomenclatures.bind(this));
         this.productTypes = [];
 
+        this.ownerEmployeeOptions = [
+            new NomenclatureDTO<YesNo>({
+                value: 'yes',
+                displayName: this.translate.getValue('statistical-forms.yes'),
+                isActive: true
+            }),
+            new NomenclatureDTO<YesNo>({
+                value: 'no',
+                displayName: this.translate.getValue('statistical-forms.no'),
+                isActive: true
+            })
+        ];
+
         this.buildForm();
     }
 
@@ -211,9 +228,9 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
             }
 
             if (this.isApplication && this.applicationId !== undefined) {
-                // извличане на данни за RegiX сверка от служител
                 this.isEditing = false;
 
+                // извличане на данни за RegiX сверка от служител
                 if (this.showOnlyRegiXData) {
                     this.service.getRegixData(this.applicationId, this.pageCode).subscribe({
                         next: (regixData: RegixChecksWrapperDTO<StatisticalFormReworkRegixDataDTO>) => {
@@ -228,12 +245,17 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData, this.pageCode).subscribe({
                         next: (statisticalForm: StatisticalFormReworkApplicationEditDTO) => {
                             statisticalForm.applicationId = this.applicationId;
 
                             this.isOnlineApplication = statisticalForm.isOnlineApplication!;
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new StatisticalFormReworkRegixDataDTO(statisticalForm.regiXDataModel);
+                                statisticalForm.regiXDataModel = undefined;
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (statisticalForm.submittedBy === undefined || statisticalForm.submittedBy === null)) {
                                 const service = this.service as StatisticalFormsPublicService;
@@ -310,6 +332,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.viewMode = data.viewMode;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.service = data.service as IStatisticalFormsService;
         this.loadRegisterFromApplication = data.loadRegisterFromApplication;
 
@@ -397,6 +420,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                 totalRawMaterialTonsControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
                 totalReworkedProductTonsControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
                 totalYearTurnoverControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
+                isOwnerEmployeeControl: new FormControl(null, Validators.required),
                 employeeInfoArray: new FormArray([], this.payColumnCountValidator()),
                 employeeStatsArray: new FormArray([]),
                 financialInfoArray: new FormArray([], this.costsValidator()),
@@ -426,6 +450,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                 totalRawMaterialTonsControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
                 totalReworkedProductTonsControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
                 totalYearTurnoverControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
+                isOwnerEmployeeControl: new FormControl(null, Validators.required),
                 employeeInfoArray: new FormArray([], this.payColumnCountValidator()),
                 employeeStatsArray: new FormArray([]),
                 financialInfoArray: new FormArray([], this.costsValidator()),
@@ -454,10 +479,17 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
 
     private fillForm(): void {
         if (this.model instanceof StatisticalFormReworkRegixDataDTO) {
-            this.fillFormRegix(this.model);
+            this.form.get('submittedByControl')!.setValue(this.model.submittedBy);
+            this.form.get('submittedForControl')!.setValue(this.model.submittedFor);
+
+            this.fillFormRegiX(this.model);
         }
         else if (this.model instanceof StatisticalFormReworkApplicationEditDTO) {
             this.fillFormApplication(this.model);
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX(this.model);
+            }
         }
         else if (this.model instanceof StatisticalFormReworkEditDTO) {
             this.fillFormRegister(this.model);
@@ -468,10 +500,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         }
     }
 
-    private fillFormRegix(model: StatisticalFormReworkRegixDataDTO): void {
-        this.form.get('submittedByControl')!.setValue(model.submittedBy);
-        this.form.get('submittedForControl')!.setValue(model.submittedFor);
-
+    private fillFormRegiX(model: StatisticalFormReworkRegixDataDTO): void {
         if (model.applicationRegiXChecks !== undefined && model.applicationRegiXChecks) {
             const applicationRegiXChecks: ApplicationRegiXCheckDTO[] = model.applicationRegiXChecks;
 
@@ -485,7 +514,11 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
             this.notifier.onNotify.subscribe({
                 next: () => {
                     this.form.markAllAsTouched();
-                    ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+
                     this.notifier.stop();
                 }
             });
@@ -508,6 +541,18 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         this.form.get('totalReworkedProductTonsControl')!.setValue(model.totalReworkedProductTons);
         this.form.get('totalYearTurnoverControl')!.setValue(model.totalYearTurnover);
         this.form.get('filesControl')!.setValue(model.files);
+
+        if (model.isOwnerEmployee !== undefined && model.isOwnerEmployee !== null) {
+            if (model.isOwnerEmployee) {
+                this.form.get('isOwnerEmployeeControl')!.setValue(this.ownerEmployeeOptions.find(x => x.value === 'yes'));
+            }
+            else {
+                this.form.get('isOwnerEmployeeControl')!.setValue(this.ownerEmployeeOptions.find(x => x.value === 'no'));
+            }
+        }
+        else {
+            this.form.get('isOwnerEmployeeControl')!.setValue(undefined);
+        }
 
         let id: number = 0;
         for (const group of (model.numStatGroups ?? []).filter(x => this.employeeGroupTypes.includes(x.groupType!))) {
@@ -565,6 +610,13 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         this.form.get('totalYearTurnoverControl')!.setValue(model.totalYearTurnover);
 
         this.form.get('filesControl')!.setValue(model.files);
+
+        if (model.isOwnerEmployee) {
+            this.form.get('isOwnerEmployeeControl')!.setValue(this.ownerEmployeeOptions.find(x => x.value === 'yes'));
+        }
+        else {
+            this.form.get('isOwnerEmployeeControl')!.setValue(this.ownerEmployeeOptions.find(x => x.value === 'no'));
+        }
 
         let id: number = 0;
         for (const group of (model.numStatGroups ?? []).filter(x => this.employeeGroupTypes.includes(x.groupType!))) {
@@ -640,6 +692,13 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         model.totalYearTurnover = this.form.get('totalYearTurnoverControl')!.value;
         model.files = this.form.get('filesControl')!.value;
 
+        if (this.form.get('isOwnerEmployeeControl')!.value) {
+            model.isOwnerEmployee = this.form.get('isOwnerEmployeeControl')!.value!.value === 'yes';
+        }
+        else {
+            model.isOwnerEmployee = undefined;
+        }
+
         model.rawMaterial = this.getRawMaterialFromTable();
         model.products = this.getProductFromTable();
 
@@ -658,6 +717,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         model.totalReworkedProductTons = this.form.get('totalReworkedProductTonsControl')!.value;
         model.totalYearTurnover = this.form.get('totalYearTurnoverControl')!.value;
         model.files = this.form.get('filesControl')!.value;
+        model.isOwnerEmployee = this.form.get('isOwnerEmployeeControl')!.value!.value === 'yes';
 
         model.rawMaterial = this.getRawMaterialFromTable();
         model.products = this.getProductFromTable();

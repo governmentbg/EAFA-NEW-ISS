@@ -50,6 +50,9 @@ export class RecreationalFishingTicketApplicationDTO {
     @StrictlyTyped(Number)
     public applicationStatus?: ApplicationStatusesEnum;
 
+    @StrictlyTyped(Number)
+    public prevStatusCode?: ApplicationStatusesEnum;
+
     @StrictlyTyped(Boolean)
     public isActive?: boolean;
 }

@@ -22,6 +22,7 @@ import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 import { PermissionsService } from '@app/shared/services/permissions.service';
 import { DataTableManager } from '@app/shared/utils/data-table.manager';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
+import { IRecreationalFishingAssociationService } from '@app/interfaces/common-app/recreational-fishing-association.interface';
 import { RecreationalFishingAddAssociationComponent } from './add-association/recreational-fishing-add-association.component';
 import { RecreationalFishingEditAssociationComponent } from './edit-association/recreational-fishing-edit-association.component';
 import { AssociationEditDialogParams } from './models/association-edit-dialog-params.model';
@@ -53,7 +54,7 @@ export class RecreationalFishingAssociationsComponent implements OnInit, AfterVi
 
     private grid!: DataTableManager<RecreationalFishingAssociationDTO, RecreationalFishingAssociationsFilters>;
 
-    private service: RecreationalFishingAssociationService;
+    private service: IRecreationalFishingAssociationService;
     private nomenclatures: CommonNomenclatures;
     private confirmDialog: TLConfirmDialog;
     private addDialog: TLMatDialog<RecreationalFishingAddAssociationComponent>;

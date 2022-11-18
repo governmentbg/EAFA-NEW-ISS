@@ -1,15 +1,28 @@
 ﻿<div style="display: flex !important; flex-direction: column !important;">
-    <mat-checkbox [formControl]="ngControl.control"
+    <mat-checkbox *ngIf="ngControl?.control !== null && ngControl?.control !== undefined; else checkboxWithoutFormControl"
+                  [formControl]="ngControl.control"
                   [indeterminate]="isIndeterminate"
                   [required]="fieldIsRequired"
                   [disableRipple]="readonly"
                   (click)="onCheckboxClicked($event)">
-        <div style="display: flex !important; flex-direction: row !important; align-items: center !important;">
+        <div class="checkbox-row">
             <ng-content></ng-content>
             <div *ngIf="!content">{{ label }}</div>
             <tl-help [tooltipResource]="tooltipResourceName" style="transform: translate(-10px, -10px) !important;"></tl-help>
         </div>
     </mat-checkbox>
+    <ng-template #checkboxWithoutFormControl>
+        <mat-checkbox [value]="value"
+                      [indeterminate]="isIndeterminate"
+                      [disbaleRipple]="readonly"
+                      (click)="onCheckboxClicked($event)">
+            <div class="checkbox-row">
+                <ng-content></ng-content>
+                <div *ngIf="!content">{{ label }}</div>
+                <tl-help [tooltipResource]="tooltipResourceName" style="transform: translate(-10px, -10px) !important;"></tl-help>
+            </div>
+        </mat-checkbox>
+    </ng-template>
     <mat-error *ngIf="errors.length > 0">
         <tl-error [errors]="errors" [useMultipleLines]="multilineError"></tl-error>
     </mat-error>

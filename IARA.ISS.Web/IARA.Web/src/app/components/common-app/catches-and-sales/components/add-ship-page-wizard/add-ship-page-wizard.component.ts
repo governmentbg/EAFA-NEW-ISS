@@ -15,7 +15,7 @@ import { ShipLogBookPageEditDTO } from '@app/models/generated/dtos/ShipLogBookPa
 import { AddShipWizardDialogParams } from './models/add-ship-wizard-dialog-params.model';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
 import { EditShipLogBookPageComponent } from '../ship-log-book/edit-ship-log-book-page.component';
-import { FuseTranslationLoaderService } from '@app/../@fuse/services/translation-loader.service';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { EditShipLogBookPageDialogParams } from '../ship-log-book/models/edit-ship-log-book-page-dialog-params.model';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
@@ -67,7 +67,10 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
 
     public saveBtnClicked(action: IActionInfo, dialogClose: DialogCloseCallback): void {
         this.pageNumberControl.markAllAsTouched();
+        this.pageNumberControl.updateValueAndValidity();
+
         this.dataFormGroup.markAllAsTouched();
+        this.dataFormGroup.updateValueAndValidity();
 
         if (this.pageNumberControl.valid && this.dataFormGroup.valid) {
             this.editShipLogBookPageDialog.openWithTwoButtons({
@@ -110,7 +113,7 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
         if (event.previouslySelectedIndex === 0 && event.selectedIndex === 1) {
             if (this.pageNumberControl.valid) {
                 const cached: ShipLogBookPageEditDTO[] | undefined = this.dataCache.get(this.pageNumberControl.value);
-
+                
                 if (cached === undefined || cached === null) {
                     this.subscriptions.push(
                         this.service.getNewShipLogBookPages(this.pageNumberControl.value, this.logBookId).subscribe({
@@ -161,10 +164,10 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
 
     private setNewPageData(data: ShipLogBookPageEditDTO[]): void {
         this.fillPermitLicensesNomenclature(data);
+
         if (data.length === 1) {
             this.model = data[0];
             this.model.pageNumber = this.pageNumberControl.value;
-            this.fillDataForm();
         }
         else {
             this.model = new ShipLogBookPageEditDTO({
@@ -179,6 +182,7 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
 
     private fillPermitLicensesNomenclature(data: ShipLogBookPageEditDTO[]): void {
         this.permitLicenses = [];
+        
         for (const page of data) {
             this.permitLicenses.push(new LogBookPermitLicenseNomenclatureDTO({
                 value: page.logBookPermitLicenseId,
@@ -194,6 +198,8 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
                 isActive: true
             }));
         }
+
+        this.permitLicenses = this.permitLicenses.slice();
     }
 
     private buildForm(): void {

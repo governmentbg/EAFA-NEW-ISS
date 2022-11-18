@@ -1,5 +1,6 @@
 ﻿export enum LogBookStatusesEnum {
     New,
     Finished,
-    Renewed
+    Renewed,
+    SuspLic
 }

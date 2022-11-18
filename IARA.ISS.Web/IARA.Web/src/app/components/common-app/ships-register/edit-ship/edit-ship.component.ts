@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, EventEmitter, Injector, Input, OnChanges, OnInit, Optional, Output, Self, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
+﻿import { AfterViewInit, Component, EventEmitter, Injector, Input, OnChanges, OnDestroy, OnInit, Optional, Output, Self, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -77,13 +77,14 @@ import { FishingCapacityAdministrationService } from '@app/services/administrati
 import { FishingCapacityFreedActionsDTO } from '@app/models/generated/dtos/FishingCapacityFreedActionsDTO';
 import { FishingCapacityRemainderActionEnum } from '@app/enums/fishing-capacity-remainder-action.enum';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
+import { DateUtils } from '@app/shared/utils/date.utils';
 import { NewCertificateData } from '../../fishing-capacity/acquired-fishing-capacity/acquired-fishing-capacity.component';
 
 @Component({
     selector: 'edit-ship',
     templateUrl: './edit-ship.component.html'
 })
-export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | number | null> implements OnInit, AfterViewInit, OnChanges, IDialogComponent {
+export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | number | null> implements OnInit, AfterViewInit, OnDestroy, OnChanges, IDialogComponent {
     @Input() public isThirdPartyShip: boolean = false;
     @Input() public isReadonly: boolean = false;
     @Input() public viewMode: boolean = false;
@@ -102,6 +103,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
 
     public isApplication: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isDialog: boolean = false;
     public isEditing: boolean = false;
     public isPaid: boolean = false;
@@ -114,6 +116,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
     public hasControlCard: boolean = false;
     public hasFitnessCertificate: boolean = false;
     public willIssueCapacityCertificates: boolean = false;
+    public hideBasicPaymentInfo: boolean = false;
     public dialogRightSideActions: IActionInfo[] | undefined;
 
     public notifier: Notifier = new Notifier();
@@ -177,6 +180,8 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
     private snackbar: MatSnackBar;
 
     private model!: ShipRegisterEditDTO | ShipRegisterApplicationEditDTO | ShipRegisterRegixDataDTO;
+
+    private actionsSub: Subscription | undefined;
 
     private readonly loader: FormControlDataLoader;
 
@@ -302,26 +307,22 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                             this.form.addControl('acquiredCapacityControl', new FormControl(null));
                         }
 
-                        if (!this.form.contains('actionsControl')) {
-                            this.form.addControl('actionsControl', new FormControl(null));
-
-                            this.form.get('actionsControl')!.valueChanges.subscribe({
-                                next: (actions: FishingCapacityFreedActionsDTO) => {
-                                    if (actions) {
-                                        this.willIssueCapacityCertificates =
-                                            actions.action !== FishingCapacityRemainderActionEnum.NoCertificate
-                                            && (this.remainingTonnage > 0 || this.remainingPower > 0);
-                                    }
-                                    else {
-                                        this.willIssueCapacityCertificates = false;
-                                    }
+                        this.actionsSub?.unsubscribe();
+                        this.actionsSub = this.form.get('actionsControl')!.valueChanges.subscribe({
+                            next: (actions: FishingCapacityFreedActionsDTO) => {
+                                if (actions) {
+                                    this.willIssueCapacityCertificates =
+                                        actions.action !== FishingCapacityRemainderActionEnum.NoCertificate
+                                        && (this.remainingTonnage > 0 || this.remainingPower > 0);
                                 }
-                            });
-                        }
+                                else {
+                                    this.willIssueCapacityCertificates = false;
+                                }
+                            }
+                        });
                     }
                     else {
                         this.form.removeControl('acquiredCapacityControl');
-                        this.form.removeControl('actionsControl');
                     }
 
                     const actions: FishingCapacityFreedActionsDTO = this.form.get('actionsControl')?.value;
@@ -434,6 +435,10 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
         }
     }
 
+    public ngOnDestroy(): void {
+        this.actionsSub?.unsubscribe();
+    }
+
     public writeValue(value: ShipRegisterEditDTO | number | null): void {
         if (value !== null && value !== undefined) {
             this.loader.load(() => {
@@ -453,11 +458,12 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.viewMode = data.viewMode;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.service = data.service as IShipsRegisterService;
         this.dialogRightSideActions = buttons.rightSideActions;
         this.loadRegisterFromApplication = data.loadRegisterFromApplication;
         this.pageCode = data.pageCode ?? PageCodeEnum.RegVessel;
-        
+
         this.setPermissions();
         this.buildForm();
     }
@@ -527,6 +533,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                 readOnly: readOnly,
                 isDraft: this.isDraftMode(),
                 showOnlyRegiXData: this.showOnlyRegiXData,
+                showRegiXData: this.showRegiXData,
                 isThirdPartyShip: this.isThirdPartyShip,
                 submittedFor: this.getSubmittedForAsOwner()
             });
@@ -656,7 +663,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
         const tonnage: number = this.form.get('grossTonnageControl')!.value ?? 0;
 
         acquiredTonnage ??= 0;
-        this.remainingTonnage = acquiredTonnage - tonnage;
+        this.remainingTonnage = CommonUtils.round(acquiredTonnage - tonnage, 2)!;
         this.remainingTonnage = this.remainingTonnage < 0 ? 0 : this.remainingTonnage;
 
         const actions: FishingCapacityFreedActionsDTO = this.form.get('actionsControl')?.value;
@@ -667,10 +674,15 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
     }
 
     public onAcquiredPowerChanged(acquiredPower: number | undefined): void {
-        const power: number = this.form.get('mainEnginePowerControl')!.value ?? 0;
+        let power: number = 0;
+        const powerValue: string | undefined = this.form.get('mainEnginePowerControl')!.value;
+
+        if (powerValue !== null && powerValue !== undefined) {
+            power = Number(powerValue);
+        }
 
         acquiredPower ??= 0;
-        this.remainingPower = acquiredPower - power;
+        this.remainingPower = CommonUtils.round(acquiredPower - power, 2)!;
         this.remainingPower = this.remainingPower < 0 ? 0 : this.remainingPower;
 
         const actions: FishingCapacityFreedActionsDTO = this.form.get('actionsControl')?.value;
@@ -749,7 +761,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                 isThirdPartyShip: true
             });
         }
-        
+
         // извличане на исторически данни за заявление
         if (this.isApplicationHistoryMode && this.applicationId !== undefined) {
             this.form.disable({ emitEvent: false });
@@ -765,6 +777,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                         this.isPaid = ship.isPaid!;
                         this.hasDelivery = ship.hasDelivery!;
                         this.paymentInformation = ship.paymentInformation;
+                        this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = ship.isOnlineApplication!;
                         this.refreshFileTypes.next();
 
@@ -834,7 +847,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData, this.pageCode).subscribe({
                         next: (ship: ShipRegisterApplicationEditDTO) => {
                             ship.applicationId = this.applicationId;
 
@@ -842,7 +855,17 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                             this.isPaid = ship.isPaid!;
                             this.hasDelivery = ship.hasDelivery!;
                             this.paymentInformation = ship.paymentInformation;
+                            this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new ShipRegisterRegixDataDTO(ship.regiXDataModel);
+                                ship.regiXDataModel = undefined;
+                                
+                                for (const owner of ship.owners as ShipOwnerRegixDataDTO[]) {
+                                    owner.hasRegixDataDiscrepancy = !this.ownerEqualsRegixOwner(owner);
+                                }
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (ship.submittedBy === undefined || ship.submittedBy === null)) {
                                 const service = this.service as ShipsRegisterPublicService;
@@ -942,8 +965,8 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
 
         form.addControl('forbiddenForRSRControl', new FormControl(false));
         form.addControl('forbiddenReasonControl', new FormControl(null));
-        form.addControl('forbiddenStartDateControl', new FormControl(null));
-        form.addControl('forbiddenEndDateControl', new FormControl(null));
+        form.addControl('forbiddenStartDateControl', new FormControl(this.today));
+        form.addControl('forbiddenEndDateControl', new FormControl(DateUtils.MAX_DATE));
     }
 
     private addRegistrationDataFormControls(form: FormGroup): void {
@@ -1120,24 +1143,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
         }
 
         if (this.model instanceof ShipRegisterRegixDataDTO) {
-            if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
-                const applicationRegiXChecks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
-
-                setTimeout(() => {
-                    this.regixChecks = applicationRegiXChecks;
-                });
-            }
-
-            if (!this.viewMode) {
-                this.notifier.start();
-                this.notifier.onNotify.subscribe({
-                    next: () => {
-                        this.form.markAllAsTouched();
-                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
-                        this.notifier.stop();
-                    }
-                });
-            }
+            this.fillFormRegiX(this.model);
         }
         else if (this.model instanceof ShipRegisterEditDTO) {
             if (this.model.shipUsers !== undefined && this.model.shipUsers !== null) {
@@ -1145,7 +1151,6 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
 
                 setTimeout(() => {
                     this.shipUsers = shipUsers;
-                    (this.model as ShipRegisterEditDTO).shipUsers = []; // no need to send back to backend
                 });
             }
 
@@ -1154,9 +1159,38 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
 
                 setTimeout(() => {
                     this.usedCapacityCertificates = usedCertificates;
-                    (this.model as ShipRegisterEditDTO).usedCapacityCertificates = []; // no need to send back to backend
                 });
             }
+        }
+        else {
+            if (this.showRegiXData) {
+                this.fillFormRegiX(this.model);
+            }
+        }
+    }
+
+    private fillFormRegiX(model: ShipRegisterApplicationEditDTO | ShipRegisterRegixDataDTO): void {
+        if (model.applicationRegiXChecks !== undefined && model.applicationRegiXChecks !== null) {
+            const applicationRegiXChecks: ApplicationRegiXCheckDTO[] = model.applicationRegiXChecks;
+
+            setTimeout(() => {
+                this.regixChecks = applicationRegiXChecks;
+            });
+        }
+
+        if (!this.viewMode) {
+            this.notifier.start();
+            this.notifier.onNotify.subscribe({
+                next: () => {
+                    this.form.markAllAsTouched();
+
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+
+                    this.notifier.stop();
+                }
+            });
         }
     }
 
@@ -1218,8 +1252,8 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
             }
             else {
                 this.form.get('forbiddenReasonControl')?.setValue(undefined);
-                this.form.get('forbiddenStartDateControl')?.setValue(undefined);
-                this.form.get('forbiddenEndDateControl')?.setValue(undefined);
+                this.form.get('forbiddenStartDateControl')?.setValue(this.today);
+                this.form.get('forbiddenEndDateControl')?.setValue(DateUtils.MAX_DATE);
             }
         }
     }
@@ -1475,7 +1509,6 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
             model.mmsi = this.form.get('mmsiControl')!.value;
             model.uvi = this.form.get('uviControl')!.value;
             model.fleetTypeId = this.form.get('fleetTypeControl')!.value?.value;
-            model.vesselTypeId = this.form.get('vesselTypeControl')!.value?.value;
 
             model.countryFlagId = this.form.get('flagControl')!.value?.value;
             model.hasAIS = this.form.get('aisControl')!.value;
@@ -1499,6 +1532,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
 
         model.cfr = this.form.get('cfrControl')!.value;
         model.name = this.form.get('shipNameControl')!.value;
+        model.vesselTypeId = this.form.get('vesselTypeControl')!.value?.value;
     }
 
     private fillModelRegistrationData(model: ShipRegisterEditDTO | ShipRegisterRegixDataDTO | ShipRegisterApplicationEditDTO): void {
@@ -1755,17 +1789,20 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
         document.querySelectorAll('[formControlName]').forEach((element: Element) => {
             const control: string = element.getAttribute('formControlName')!;
             if (controls.includes(control)) {
-                const underline: HTMLElement | null = element.querySelector('.mat-form-field-underline') as HTMLElement;
-                if (underline !== null) {
-                    if (active) {
-                        underline.style.bottom = '14px';
-                        underline.style.height = '7px';
-                        underline.style.background = 'linear-gradient(180deg, rgba(0,120,194,1) 0%, rgba(0,120,194,0) 100%)';
-                    }
-                    else {
-                        underline.style.bottom = '';
-                        underline.style.height = '';
-                        underline.style.background = '';
+                const underlines: HTMLElement[] = Array.from(element.querySelectorAll('.mat-form-field-underline')) as HTMLElement[];
+
+                for (const underline of underlines) {
+                    if (underline !== null) {
+                        if (active) {
+                            underline.style.bottom = '14px';
+                            underline.style.height = '7px';
+                            underline.style.background = 'linear-gradient(180deg, rgba(0,120,194,1) 0%, rgba(0,120,194,0) 100%)';
+                        }
+                        else {
+                            underline.style.bottom = '';
+                            underline.style.height = '';
+                            underline.style.background = '';
+                        }
                     }
                 }
             }
@@ -1993,5 +2030,11 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                 owner.egnLncEik = owner.regixLegalData.eik;
             }
         }
+    }
+
+    private shouldHidePaymentData(): boolean {
+        return this.paymentInformation?.paymentType === null
+            || this.paymentInformation?.paymentType === undefined
+            || this.paymentInformation?.paymentType === '';
     }
 }

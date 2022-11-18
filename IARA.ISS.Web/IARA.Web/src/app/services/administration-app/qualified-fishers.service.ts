@@ -18,7 +18,7 @@ import { RequestProperties } from '@app/shared/services/request-properties';
 import { RequestService } from '@app/shared/services/request.service';
 import { ApplicationsProcessingService } from './applications-processing.service';
 import { ApplicationsRegisterAdministrativeBaseService } from './applications-register-administrative-base.service';
-import { PageCodeEnum } from '../../enums/page-code.enum';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -56,6 +56,11 @@ export class QualifiedFishersService extends ApplicationsRegisterAdministrativeB
             httpParams: params,
             responseTypeCtr: QualifiedFisherEditDTO
         });
+    }
+
+    public downloadRegister(id: number): Observable<boolean> {
+        const params = new HttpParams().append('registerId', id.toString());
+        return this.requestService.download(this.area, this.controller, 'DownloadQualifiedFisher', '', { httpParams: params });
     }
 
     public getRegisterByApplicationId(applicationId: number): Observable<unknown> {
@@ -103,8 +108,10 @@ export class QualifiedFishersService extends ApplicationsRegisterAdministrativeB
 
     // application
 
-    public getApplication(id: number): Observable<QualifiedFisherApplicationEditDTO> {
-        const params = new HttpParams().append('id', id.toString());
+    public getApplication(id: number, getRegiXData: boolean): Observable<QualifiedFisherApplicationEditDTO> {
+        const params = new HttpParams()
+            .append('id', id.toString())
+            .append('getRegiXData', getRegiXData.toString());
 
         return this.requestService.get(this.area, this.controller, 'GetApplication', {
             httpParams: params,

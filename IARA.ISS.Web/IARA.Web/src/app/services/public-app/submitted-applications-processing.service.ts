@@ -111,7 +111,7 @@ export class SubmittedApplicationsProcessingService extends BaseAuditService imp
         throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
     }
 
-    public getApplication(id: number): Observable<IApplicationRegister> {
+    public getApplication(id: number, getRegiXData: boolean): Observable<IApplicationRegister> {
         throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
     }
 

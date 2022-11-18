@@ -9,11 +9,11 @@ import { TLValidators } from '@app/shared/utils/tl-validators';
 import { AcquiredCapacityMannerEnum } from '@app/enums/acquired-capacity-manner.enum';
 import { IFishingCapacityService } from '@app/interfaces/common-app/fishing-capacity.interface';
 import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
-import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { FishingCapacityPublicService } from '@app/services/public-app/fishing-capacity-public.service';
 import { FishingCapacityAdministrationService } from '@app/services/administration-app/fishing-capacity-administration.service';
 import { FishingCapacityCertificateNomenclatureDTO } from '@app/models/generated/dtos/FishingCapacityCertificateNomenclatureDTO';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
+import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 
 export class NewCertificateData {
     public tonnage!: number;
@@ -28,7 +28,8 @@ export class NewCertificateData {
 
 @Component({
     selector: 'acquired-fishing-capacity',
-    templateUrl: './acquired-fishing-capacity.component.html'
+    templateUrl: './acquired-fishing-capacity.component.html',
+    styleUrls: ['./acquired-fishing-capacity.component.scss']
 })
 export class AcquiredFishingCapacityComponent extends CustomFormControl<AcquiredFishingCapacityDTO> implements OnInit, OnChanges {
     @Input() public minGrossTonnage: number | undefined;
@@ -40,6 +41,7 @@ export class AcquiredFishingCapacityComponent extends CustomFormControl<Acquired
     @Output() public onPowerChanged: EventEmitter<number> = new EventEmitter<number>();
     @Output() public onNewCertificateDataChange: EventEmitter<NewCertificateData | undefined> = new EventEmitter<NewCertificateData | undefined>();
 
+    public readonly now: Date = new Date();
     public readonly manners: typeof AcquiredCapacityMannerEnum = AcquiredCapacityMannerEnum;
 
     public types: NomenclatureDTO<AcquiredCapacityMannerEnum>[] = [];
@@ -375,7 +377,7 @@ export class AcquiredFishingCapacityComponent extends CustomFormControl<Acquired
 
                 data.power = power - Number(this.minPower);
                 data.tonnage = tonnage - Number(this.minGrossTonnage);
-                
+
                 this.onNewCertificateDataChange.emit(data);
             }
         }
@@ -384,7 +386,16 @@ export class AcquiredFishingCapacityComponent extends CustomFormControl<Acquired
     private getLicences(): Subscription {
         const subscription: Subscription = this.service.getAllCapacityCertificateNomenclatures().subscribe({
             next: (licences: FishingCapacityCertificateNomenclatureDTO[]) => {
-                this.allLicences = this.licenses = licences;
+                if (IS_PUBLIC_APP) {
+                    this.allLicences = this.licenses = licences;
+
+                    for (const licence of this.allLicences) {
+                        licence.isActive = licence.isActive && licence.validTo! >= this.now;
+                    }
+                }
+                else {
+                    this.allLicences = this.licenses = licences;
+                }
 
                 this.loader.complete();
             }

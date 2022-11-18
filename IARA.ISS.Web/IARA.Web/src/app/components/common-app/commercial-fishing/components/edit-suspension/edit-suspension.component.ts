@@ -28,14 +28,20 @@ export class EditSuspensionComponent implements OnInit, AfterViewInit, IDialogCo
     public isPermit!: boolean;
     public isAdd: boolean = false;
     public showRangeControl: boolean = false;
+    public showEnacmentDate: boolean = false;
+    public showAdditionalControls: boolean = false;
     public suspensionTypes: SuspensionTypeNomenclatureDTO[] = [];
     public allReasons: SuspensionReasonNomenclatureDTO[] = [];
     public reasons: SuspensionReasonNomenclatureDTO[] = [];
+    public suspensionNumberLabel: string = '';
 
     private model!: SuspensionDataDTO;
     private service!: ICommercialFishingService;
+    private translate: FuseTranslationLoaderService;
 
     public constructor(translate: FuseTranslationLoaderService) {
+        this.translate = translate;
+        this.suspensionNumberLabel = this.translate.getValue('commercial-fishing.suspension-order-number');
         this.buildForm();
     }
 
@@ -59,7 +65,9 @@ export class EditSuspensionComponent implements OnInit, AfterViewInit, IDialogCo
         this.form.get('suspensionTypeControl')!.valueChanges.subscribe({
             next: (selectedSuspensionType: SuspensionTypeNomenclatureDTO) => {
                 this.form.get('suspensionReasonControl')!.reset(null, { emitEvent: false });
+
                 if (selectedSuspensionType !== null && selectedSuspensionType !== undefined) {
+                    this.showAdditionalControls = true;
                     this.reasons = this.allReasons.filter(x => x.suspensionTypeId === selectedSuspensionType.value);
 
                     if (this.reasons.length === 1) {
@@ -67,7 +75,9 @@ export class EditSuspensionComponent implements OnInit, AfterViewInit, IDialogCo
                     }
 
                     if (selectedSuspensionType.code === CommercialFishingSuspensionTypesEnum[CommercialFishingSuspensionTypesEnum.PermanentLicense]
-                        || selectedSuspensionType.code === CommercialFishingSuspensionTypesEnum[CommercialFishingSuspensionTypesEnum.PermenentWithdrawalPermit]) {
+                        || selectedSuspensionType.code === CommercialFishingSuspensionTypesEnum[CommercialFishingSuspensionTypesEnum.PermenentWithdrawalPermit]
+                        || selectedSuspensionType.code === CommercialFishingSuspensionTypesEnum[CommercialFishingSuspensionTypesEnum.OwnerRequest]
+                    ) {
                         this.showRangeControl = false;
                         this.form.get('suspensionDateRangeControl')!.clearValidators();
                     }
@@ -76,14 +86,35 @@ export class EditSuspensionComponent implements OnInit, AfterViewInit, IDialogCo
                         this.form.get('suspensionDateRangeControl')!.setValidators(Validators.required);
                     }
 
-                    this.form.get('suspensionDateRangeControl')!.updateValueAndValidity();
+                    if (selectedSuspensionType.code === CommercialFishingSuspensionTypesEnum[CommercialFishingSuspensionTypesEnum.OwnerRequest]) {
+                        this.showEnacmentDate = false;
+                        this.suspensionNumberLabel = this.translate.getValue('commercial-fishing.suspension-client-number');;
+                        this.form.get('enactmentDateControl')!.clearValidators();
+                    }
+                    else {
+                        this.showEnacmentDate = true;
+                        this.suspensionNumberLabel = this.translate.getValue('commercial-fishing.suspension-order-number');
+                        this.form.get('enactmentDateControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('suspensionDateRangeControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('enactmentDateControl')!.updateValueAndValidity({ emitEvent: false });
                 }
                 else {
                     this.reasons = [];
+
                     this.showRangeControl = false;
+                    this.showEnacmentDate = false;
+                    this.showAdditionalControls = false;
+
                     this.form.get('suspensionDateRangeControl')!.clearValidators();
-                    this.form.get('suspensionDateRangeControl')!.updateValueAndValidity();
+                    this.form.get('enactmentDateControl')!.clearValidators();
+
+                    this.form.get('suspensionDateRangeControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('enactmentDateControl')!.updateValueAndValidity({ emitEvent: false });
                 }
+
+                this.form.updateValueAndValidity({ emitEvent: false });
             }
         });
 
@@ -135,7 +166,7 @@ export class EditSuspensionComponent implements OnInit, AfterViewInit, IDialogCo
             dialogClose(this.model);
             return;
         }
-
+        
         this.form.markAllAsTouched();
 
         if (this.form.valid) {

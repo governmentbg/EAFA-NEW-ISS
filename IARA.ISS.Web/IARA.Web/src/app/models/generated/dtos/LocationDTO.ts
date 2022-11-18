@@ -1,7 +1,8 @@
 ﻿
+
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 
-export class LocationDTO {
+export class LocationDTO { 
     public constructor(obj?: Partial<LocationDTO>) {
         Object.assign(this, obj);
     }

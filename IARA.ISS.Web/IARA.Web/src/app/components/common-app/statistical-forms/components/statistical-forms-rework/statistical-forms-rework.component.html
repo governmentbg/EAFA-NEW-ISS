@@ -114,6 +114,17 @@
                       tooltipResourceName="statistical-forms.rework-information-employee-stats-helper">
             </tl-input>
         </div>
+
+        <div fxLayout="row">
+            <tl-radio-button-group fxFlex="100"
+                                   formControlName="isOwnerEmployeeControl"
+                                   [options]="ownerEmployeeOptions"
+                                   direction="row"
+                                   gap="0.5em"
+                                   tooltipResourceName="statistical-forms.rework-owner-employee-helper"
+                                   label="{{ 'statistical-forms.rework-owner-employee' | tlTranslate }}">
+            </tl-radio-button-group>
+        </div>
     </tl-expansion-panel>
 
     <!-- Финансова информация -->
@@ -247,7 +258,7 @@
     </tl-expansion-panel>
 
     <!-- Проверки -->
-    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+    <tl-expansion-panel *ngIf="showOnlyRegiXData || showRegiXData"
                         title="{{ 'statistical-forms.rework-regix-checks-results' | tlTranslate }}"
                         tooltipResourceName="statistical-forms.rework-regix-checks-results">
         <div fxLayout="column" fxLayoutGap="1em">

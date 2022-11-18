@@ -52,6 +52,8 @@ import { StatisticalFormTypesEnum } from '@app/enums/statistical-form-types.enum
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 
+type YesNo = 'yes' | 'no';
+
 @Component({
     selector: 'statistical-forms-aqua-farm',
     templateUrl: './statistical-forms-aqua-farm.component.html',
@@ -74,6 +76,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
     public isRegisterEntry: boolean = false;
     public readOnly: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isApplication: boolean = false;
     public loadRegisterFromApplication: boolean = false;
     public viewMode: boolean = false;
@@ -106,6 +109,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
     public allInstallationTypes: NomenclatureDTO<number>[] = [];
     public rawMaterialTypes: StatisticalFormNumStatDTO[] = [];
     public aquacultures: StatisticalFormAquacultureNomenclatureDTO[] = [];
+    public ownerEmployeeOptions: NomenclatureDTO<YesNo>[] = [];
 
     @ViewChild('medicineTable')
     private medicineTable!: TLDataTableComponent;
@@ -176,6 +180,19 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                 addresses: []
             })
         });
+
+        this.ownerEmployeeOptions = [
+            new NomenclatureDTO<YesNo>({
+                value: 'yes',
+                displayName: this.translate.getValue('statistical-forms.yes'),
+                isActive: true
+            }),
+            new NomenclatureDTO<YesNo>({
+                value: 'no',
+                displayName: this.translate.getValue('statistical-forms.no'),
+                isActive: true
+            })
+        ];
 
         this.buildForm();
     }
@@ -261,12 +278,17 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData, this.pageCode).subscribe({
                         next: (statisticalForm: StatisticalFormAquaFarmApplicationEditDTO) => {
                             statisticalForm.applicationId = this.applicationId;
 
                             this.isOnlineApplication = statisticalForm.isOnlineApplication!;
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new StatisticalFormAquaFarmRegixDataDTO(statisticalForm.regiXDataModel);
+                                statisticalForm.regiXDataModel = undefined;
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (statisticalForm.submittedBy === undefined || statisticalForm.submittedBy === null)) {
                                 const service = this.service as StatisticalFormsPublicService;
@@ -517,6 +539,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.viewMode = data.viewMode;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.service = data.service as IStatisticalFormsService;
         this.loadRegisterFromApplication = data.loadRegisterFromApplication;
 
@@ -611,6 +634,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                 consumationFishDeathRateControl: new FormControl(null, TLValidators.number(0, 100)),
                 broodstockDeathRateControl: new FormControl(null, TLValidators.number(0, 100)),
                 medicineCommentsControl: new FormControl(),
+                isOwnerEmployeeControl: new FormControl(null, Validators.required),
                 filesControl: new FormControl(),
                 employeeInfoArray: new FormArray([], this.payColumnCountValidator()),
                 employeeStatsArray: new FormArray([]),
@@ -630,6 +654,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                 consumationFishDeathRateControl: new FormControl(null, TLValidators.number(0, 100)),
                 broodstockDeathRateControl: new FormControl(null, TLValidators.number(0, 100)),
                 medicineCommentsControl: new FormControl(),
+                isOwnerEmployeeControl: new FormControl(null, Validators.required),
                 filesControl: new FormControl(),
                 employeeInfoArray: new FormArray([], this.payColumnCountValidator()),
                 employeeStatsArray: new FormArray([]),
@@ -649,13 +674,20 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
 
     private fillForm(): void {
         if (this.model instanceof StatisticalFormAquaFarmRegixDataDTO) {
-            this.fillFormRegix(this.model);
+            this.form.get('submittedByControl')!.setValue(this.model.submittedBy);
+            this.form.get('submittedForControl')!.setValue(this.model.submittedFor);
+
+            this.fillFormRegiX(this.model);
         }
         else if (this.model instanceof StatisticalFormAquaFarmApplicationEditDTO) {
             this.fillFormApplication(this.model);
         }
         else if (this.model instanceof StatisticalFormAquaFarmEditDTO) {
             this.fillFormRegister(this.model);
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX(this.model);
+            }
         }
 
         if (this.isReadonly || this.viewMode) {
@@ -663,10 +695,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         }
     }
 
-    private fillFormRegix(model: StatisticalFormAquaFarmRegixDataDTO): void {
-        this.form.get('submittedByControl')!.setValue(model.submittedBy);
-        this.form.get('submittedForControl')!.setValue(model.submittedFor);
-
+    private fillFormRegiX(model: StatisticalFormAquaFarmRegixDataDTO | StatisticalFormAquaFarmApplicationEditDTO): void {
         if (model.applicationRegiXChecks !== undefined && model.applicationRegiXChecks) {
             const applicationRegiXChecks: ApplicationRegiXCheckDTO[] = model.applicationRegiXChecks;
 
@@ -680,7 +709,11 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
             this.notifier.onNotify.subscribe({
                 next: () => {
                     this.form.markAllAsTouched();
-                    ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+
                     this.notifier.stop();
                 }
             });
@@ -704,6 +737,18 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         this.form.get('consumationFishDeathRateControl')!.setValue(model.consumationFishDeathRate);
         this.form.get('broodstockDeathRateControl')!.setValue(model.broodstockDeathRate);
         this.form.get('medicineCommentsControl')!.setValue(model.medicineComments);
+
+        if (model.isOwnerEmployee !== undefined && model.isOwnerEmployee !== null) {
+            if (model.isOwnerEmployee) {
+                this.form.get('isOwnerEmployeeControl')!.setValue(this.ownerEmployeeOptions.find(x => x.value === 'yes'));
+            }
+            else {
+                this.form.get('isOwnerEmployeeControl')!.setValue(this.ownerEmployeeOptions.find(x => x.value === 'no'));
+            }
+        }
+        else {
+            this.form.get('isOwnerEmployeeControl')!.setValue(undefined);
+        }
 
         this.form.get('filesControl')!.setValue(model.files);
 
@@ -738,6 +783,13 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         this.form.get('broodstockDeathRateControl')!.setValue(model.broodstockDeathRate);
         this.form.get('medicineCommentsControl')!.setValue(model.medicineComments);
         this.form.get('filesControl')!.setValue(model.files);
+
+        if (model.isOwnerEmployee) {
+            this.form.get('isOwnerEmployeeControl')!.setValue(this.ownerEmployeeOptions.find(x => x.value === 'yes'));
+        }
+        else {
+            this.form.get('isOwnerEmployeeControl')!.setValue(this.ownerEmployeeOptions.find(x => x.value === 'no'));
+        }
 
         this.buildEmployeeInfoFormArray(model);
         this.buildEmployeeStatsFormArray(model);
@@ -828,6 +880,13 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         model.consumationFishDeathRate = this.form.get('consumationFishDeathRateControl')!.value;
         model.broodstockDeathRate = this.form.get('broodstockDeathRateControl')!.value;
 
+        if (this.form.get('isOwnerEmployeeControl')!.value) {
+            model.isOwnerEmployee = this.form.get('isOwnerEmployeeControl')!.value!.value === 'yes';
+        }
+        else {
+            model.isOwnerEmployee = undefined;
+        }
+
         model.employeeInfoGroups = this.getEmployeeInfo(model);
         model.numStatGroups = [...this.getEmployeeStats(model), ...this.getFinancialInfo(model), ...this.getRawMaterial(model)];
 
@@ -859,6 +918,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         model.breedingMaterialDeathRate = this.form.get('breedingMaterialDeathRateControl')!.value;
         model.consumationFishDeathRate = this.form.get('consumationFishDeathRateControl')!.value;
         model.broodstockDeathRate = this.form.get('broodstockDeathRateControl')!.value;
+        model.isOwnerEmployee = this.form.get('isOwnerEmployeeControl')!.value!.value === 'yes';
 
         model.employeeInfoGroups = this.getEmployeeInfo(model);
         model.numStatGroups = [...this.getEmployeeStats(model), ...this.getFinancialInfo(model), ...this.getRawMaterial(model)];
@@ -1183,7 +1243,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                                 }
                             }
                         }
-                        
+
                     }
                 }
 

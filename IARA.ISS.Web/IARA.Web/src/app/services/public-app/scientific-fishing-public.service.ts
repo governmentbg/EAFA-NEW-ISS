@@ -51,7 +51,7 @@ export class ScientificFishingPublicService extends BaseAuditService implements 
         });
     }
 
-    public getApplication(id: number): Observable<ScientificFishingApplicationEditDTO> {
+    public getApplication(id: number, getRegiXData: boolean): Observable<ScientificFishingApplicationEditDTO> {
         return this.commonService.getPermitApplication(this.area, this.controller, id);
     }
 
@@ -81,6 +81,10 @@ export class ScientificFishingPublicService extends BaseAuditService implements 
             responseType: 'text',
             properties: RequestProperties.NO_SPINNER
         });
+    }
+
+    public getShipCaptainName(shipId: number): Observable<string> {
+        throw new Error('This method should not be called from the public app');
     }
 
     public addApplication(application: ScientificFishingApplicationEditDTO): Observable<number> {

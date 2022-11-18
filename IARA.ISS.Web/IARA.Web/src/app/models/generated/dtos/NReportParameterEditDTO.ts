@@ -20,12 +20,6 @@ export class NReportParameterEditDTO {
     @StrictlyTyped(String)
     public description?: string;
 
-    @StrictlyTyped(Date)
-    public dateFrom?: Date;
-
-    @StrictlyTyped(Date)
-    public dateTo?: Date;
-
     @StrictlyTyped(Number)
     public dataType?: ReportParameterTypeEnum;
 

@@ -1,22 +1,25 @@
 ﻿<div fxLayout="column"
      fxLayoutGap="1em"
      fxFlexFill
+     validityCheckerGroup
      [formGroup]="form"
      class="dialog-padding">
     <!-- Основни данни -->
-    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
+                        [validityChecker]="form">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
             <inspection-general-info formControlName="generalInfoControl"
-                                     [institutions]="institutions">
+                                     [institutions]="institutions"
+                                     [hasEmergencySignal]="false">
             </inspection-general-info>
         </div>
     </tl-expansion-panel>
 
     <!-- Данни за Кораб / Далян -->
-    <tl-expansion-panel [formGroup]="form"
-                        title="{{ 'inspections.fishing-gear-inspection-data' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.fishing-gear-inspection-data' | tlTranslate }}"
+                        [validityChecker]="form">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -84,8 +87,8 @@
     </tl-expansion-panel>
 
     <!-- Данни от извършената проверка -->
-    <tl-expansion-panel [formGroup]="form"
-                        title="{{ 'inspections.inspected-fishing-gears' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.inspected-fishing-gears' | tlTranslate }}"
+                        [validityChecker]="form">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -103,11 +106,13 @@
     </tl-expansion-panel>
 
     <!-- Допълнителна информация -->
-    <inspection-additional-info formControlName="additionalInfoControl">
+    <inspection-additional-info formControlName="additionalInfoControl"
+                                [validityChecker]="form">
     </inspection-additional-info>
 
     <!-- Файлове -->
-    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}"
+                        [validityChecker]="form">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">

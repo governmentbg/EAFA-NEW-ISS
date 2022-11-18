@@ -1,6 +1,6 @@
 import { FuseTranslationLoaderService } from '@/@fuse/services/translation-loader.service';
 import { NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
-import { registerLocaleData } from '@angular/common';
+import { APP_BASE_HREF, registerLocaleData } from '@angular/common';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import localeBg from '@angular/common/locales/bg';
 import { APP_INITIALIZER, Injector, LOCALE_ID, NgModule } from '@angular/core';
@@ -119,6 +119,10 @@ export function initializeApplication(translationLoad: FuseTranslationLoaderServ
                     Environment.Instance.apiBasePath = config.apiBasePath;
                 }
 
+                if (config.appBaseHref != undefined) {
+                    Environment.Instance.appBaseHref = config.appBaseHref;
+                }
+
                 authService.configureAuth().then(result => {
                     authService.checkAuthentication().then(isAuthenticated => {
                         if (isAuthenticated) {
@@ -187,10 +191,18 @@ export async function loadTranslationResources(translationLoad: FuseTranslationL
     providers: [
         AuthService,
         {
+            provide: 'INotificationSecurity',
+            useExisting: AuthService,
+        },
+        {
             provide: APP_INITIALIZER,
             useFactory: initializeApplication,
             multi: true,
             deps: [FuseTranslationLoaderService, LocalStorageService, AuthService, HttpClient]
+        },
+        {
+            provide: APP_BASE_HREF,
+            useValue: Environment.Instance.appBaseHref
         },
         {
             provide: DateAdapter,

@@ -2,5 +2,6 @@
   "apiBasePath": "/api",
   "servicesBaseUrl": "",
   "identityServerBaseUrl": "",
-  "environmentType": ""
+  "environmentType": "",
+  "appBaseHref": "/"
 }

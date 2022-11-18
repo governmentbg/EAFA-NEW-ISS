@@ -1,5 +1,5 @@
-﻿import { Component, DoCheck, Input, OnChanges, OnInit, Self, SimpleChanges, ViewChild } from '@angular/core';
-import { AbstractControl, ControlValueAccessor, NgControl, ValidationErrors, Validator } from '@angular/forms';
+﻿import { Component, Input, OnChanges, OnInit, Self, SimpleChanges, ViewChild } from '@angular/core';
+import { AbstractControl, FormControl, NgControl, ValidationErrors, Validator } from '@angular/forms';
 import { forkJoin, Observable, Subscription } from 'rxjs';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
@@ -24,6 +24,11 @@ import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatur
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { LogBookPagePersonTypesEnum } from '@app/enums/log-book-page-person-types.enum';
 import { LogBookStatusesEnum } from '@app/enums/log-book-statuses.enum';
+import { ChooseLogBookForRenewalComponent } from './components/choose-log-book-for-renewal/choose-log-book-for-renewal.component';
+import { ChooseLogBookForRenewalDialogParams } from './models/choose-log-book-for-renewal-dialog-params.model';
+import { ILogBookService } from '../edit-log-book/interfaces/log-book.interface';
+import { LogBookForRenewalDTO } from '@app/models/generated/dtos/LogBookForRenewalDTO';
+import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 
 export type SimpleAuditMethod = (id: number) => Observable<SimpleAuditDTO>;
 
@@ -31,9 +36,12 @@ export type SimpleAuditMethod = (id: number) => Observable<SimpleAuditDTO>;
     selector: 'log-books',
     templateUrl: './log-books.component.html'
 })
-export class LogBooksComponent implements OnInit, OnChanges, DoCheck, ControlValueAccessor, Validator {
+export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | CommercialFishingLogBookEditDTO[]> implements OnInit, OnChanges {
     @Input()
     public isReadonly: boolean = false;
+
+    @Input()
+    public logBooksPerPages: number = 5;
 
     @Input()
     public getLogBookSimpleAuditMethod: SimpleAuditMethod | undefined;
@@ -49,6 +57,18 @@ export class LogBooksComponent implements OnInit, OnChanges, DoCheck, ControlVal
 
     @Input()
     public isForPermitLicense: boolean = false;
+
+    /**
+     * Only for ship log books - it is used in the `choose log book for renewal` button funcionallity
+     * */
+    @Input()
+    public permitLicenseId: number | undefined;
+
+    /**
+     * Service needs to be provided when the `choose log book for renewal` funcionallity is wanted
+     * */
+    @Input()
+    public service: ILogBookService | undefined;
 
     /**
      * Length of ship, for which are these log books (in cases of LogBookGroupsEnum = ship). 
@@ -67,56 +87,40 @@ export class LogBooksComponent implements OnInit, OnChanges, DoCheck, ControlVal
     public logBookStatuses: NomenclatureDTO<number>[] = [];
     public logBookTypes: NomenclatureDTO<number>[] = [];
     public hasLogBooksForRenewal: boolean = false;
-    public isTouched: boolean = false;
     public hasNotTouchedRenewals: boolean = false; // needed only for Ship log books
 
     @ViewChild('logBooksTable')
     private logBooksTable!: TLDataTableComponent;
 
-    private ngControl: NgControl;
-    private onChanged: (value: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[]) => void = (value: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[]) => { return; };
-    private onTouched: (value: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[]) => void = (value: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[]) => { return; };
-
-    private translate: FuseTranslationLoaderService;
-    private confirmDialog: TLConfirmDialog;
-    private editLogBookDialog: TLMatDialog<EditLogBookComponent>;
+    private readonly translate: FuseTranslationLoaderService;
+    private readonly confirmDialog: TLConfirmDialog;
+    private readonly editLogBookDialog: TLMatDialog<EditLogBookComponent>;
     private readonly loader: FormControlDataLoader;
-    private nomenclaturesService: CommonNomenclatures;
+    private readonly nomenclaturesService: CommonNomenclatures;
+    private readonly chooseLogBookForRenewalDialog: TLMatDialog<ChooseLogBookForRenewalComponent>;
 
     public constructor(
         @Self() ngControl: NgControl,
         translate: FuseTranslationLoaderService,
         confirmDialog: TLConfirmDialog,
         editLogBookDialog: TLMatDialog<EditLogBookComponent>,
-        nomenclaturesService: CommonNomenclatures
+        nomenclaturesService: CommonNomenclatures,
+        chooseLogBookForRenewalDialog: TLMatDialog<ChooseLogBookForRenewalComponent>
     ) {
-        this.ngControl = ngControl;
-        this.ngControl.valueAccessor = this;
+        super(ngControl, false);
 
         this.translate = translate;
         this.confirmDialog = confirmDialog;
         this.editLogBookDialog = editLogBookDialog;
         this.nomenclaturesService = nomenclaturesService;
+        this.chooseLogBookForRenewalDialog = chooseLogBookForRenewalDialog;
 
         this.loader = new FormControlDataLoader(this.getNomenclatures.bind(this));
     }
 
     public ngOnInit(): void {
-        if (this.ngControl.control) {
-            this.ngControl.control.validator = this.validate.bind(this);
-        }
-
+        this.initCustomFormControl();
         this.loader.load();
-    }
-
-    public ngDoCheck(): void {
-        if (this.ngControl?.control?.touched) {
-            this.isTouched = true;
-            this.validate(this.ngControl.control!);
-        }
-        else {
-            this.isTouched = false;
-        }
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
@@ -128,36 +132,37 @@ export class LogBooksComponent implements OnInit, OnChanges, DoCheck, ControlVal
         }
     }
 
+    public buildForm(): AbstractControl {
+        return new FormControl();
+    }
+
     public writeValue(value: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[]): void {
         if (value !== null && value !== undefined) {
             this.loader.load(() => {
-                setTimeout(() => {
-                    this.logBooks = value;
+                this.logBooks = value.slice();
 
-                    if (this.logBooks.length > 0 && this.logBooks[0] instanceof CommercialFishingLogBookEditDTO) {
-                        setTimeout(() => {
-                            this.hasLogBooksForRenewal = (this.logBooks as CommercialFishingLogBookEditDTO[]).some(x => x.isForRenewal);
-                            this.onChanged(this.logBooks);
-                        });
-                    }
-                    else {
-                        this.onChanged(value);
-                    }
-                });
+                if (this.logBooks.length > 0 && this.logBooks[0] instanceof CommercialFishingLogBookEditDTO) {
+                    this.hasLogBooksForRenewal = (this.logBooks as CommercialFishingLogBookEditDTO[]).some(x => x.isForRenewal);
+
+                    this.control.updateValueAndValidity();
+                    this.onChanged(this.getValue());
+                }
+                else {
+                    this.control.updateValueAndValidity();
+                    this.onChanged(this.getValue());
+                }
             });
         }
         else {
             this.logBooks = [];
-            this.onChanged(this.logBooks);
+
+            this.control.updateValueAndValidity();
+            this.onChanged(this.getValue());
         }
     }
 
-    public registerOnChange(fn: (value: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[]) => void): void {
-        this.onChanged = fn;
-    }
-
-    public registerOnTouched(fn: (value: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[]) => void): void {
-        this.onTouched = fn;
+    public getValue(): CommercialFishingLogBookEditDTO[] | LogBookEditDTO[] {
+        return this.logBooks?.slice() ?? [];
     }
 
     public setDisabledState(isDisabled: boolean): void {
@@ -171,7 +176,7 @@ export class LogBooksComponent implements OnInit, OnChanges, DoCheck, ControlVal
 
     public validate(control: AbstractControl): ValidationErrors | null {
         const errors: ValidationErrors = {};
-
+        
         if (this.hasLogBooksForRenewal && this.logBookGroup === LogBookGroupsEnum.Ship) {
             this.checkLogBooksForRenewal();
 
@@ -186,7 +191,54 @@ export class LogBooksComponent implements OnInit, OnChanges, DoCheck, ControlVal
             errors['hasOverlappingRanges'] = true;
         }
 
-        return Object.keys(errors).length > 0 ? errors : null;
+        const result = Object.keys(errors).length > 0 ? errors : null;
+
+        this.control.setErrors(result);
+
+        return result;
+    }
+
+    public addLogBookFromOldPermitLicense(): void {
+        const dialog = this.chooseLogBookForRenewalDialog.openWithTwoButtons({
+            title: this.translate.getValue('catches-and-sales.choose-log-book-for-renewal-title'),
+            componentData: new ChooseLogBookForRenewalDialogParams({
+                permitLicenseId: this.permitLicenseId!,
+                service: this.service
+            }),
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            translteService: this.translate,
+            TCtor: ChooseLogBookForRenewalComponent
+        }, '1500px');
+
+        dialog.subscribe({
+            next: (chosenLogBooks: LogBookForRenewalDTO[] | undefined) => {
+                if (chosenLogBooks !== null && chosenLogBooks !== undefined && chosenLogBooks.length > 0) {
+                    let chosenLogBookIds: number[] = chosenLogBooks.map(x => x.logBookPermitLicenseId!);
+                    const logBookPermitLicenseIds: number[] = (this.logBooks as CommercialFishingLogBookEditDTO[]).map(x => x.logBookLicenseId!);
+                    chosenLogBookIds = chosenLogBookIds.filter(x => !logBookPermitLicenseIds.includes(x));
+
+                    if (chosenLogBookIds.length > 0) {
+                        this.service!.getLogBooksForRenewalByIds(chosenLogBookIds).subscribe({
+                            next: (results: CommercialFishingLogBookEditDTO[]) => {
+                                this.logBooks.push(...results);
+                                this.hasLogBooksForRenewal = true;
+
+                                this.checkLogBooksForRenewal();
+                                this.checkLocalLogBookRagnes();
+
+                                this.logBooks = this.logBooks.slice();
+
+                                this.control.updateValueAndValidity();
+                                this.control.markAsTouched();
+                                this.onChanged(this.getValue());
+                            }
+                        });
+                    }
+                }
+            }
+        });
     }
 
     public addEditLogBook(logBook?: LogBookEditDTO | CommercialFishingLogBookEditDTO, viewMode: boolean = false): void {
@@ -254,21 +306,28 @@ export class LogBooksComponent implements OnInit, OnChanges, DoCheck, ControlVal
                     this.logBooks.push(result);
                 }
 
+                this.checkLogBooksForRenewal();
                 this.checkLocalLogBookRagnes();
 
-                setTimeout(() => {
-                    this.logBooks = this.logBooks.slice();
-                    this.onChanged(this.logBooks);
-                });
+
+                this.logBooks = this.logBooks.slice();
+
+                this.control.updateValueAndValidity();
+                this.control.markAsTouched();
+                this.onChanged(this.getValue());
             }
         });
     }
 
     public removeLogBook(row: GridRow<CommercialFishingLogBookEditDTO>): void {
         this.logBooks = this.logBooks.filter(x => x.logBookId !== row.data.logBookId);
+
         this.checkLogBooksForRenewal();
         this.checkLocalLogBookRagnes();
-        this.onChanged(this.logBooks);
+
+        this.control.updateValueAndValidity();
+        this.control.markAsTouched();
+        this.onChanged(this.getValue());
     }
 
     public deleteLogBook(row: GridRow<LogBookEditDTO | CommercialFishingLogBookEditDTO>): void {
@@ -287,9 +346,13 @@ export class LogBooksComponent implements OnInit, OnChanges, DoCheck, ControlVal
                     }
 
                     this.logBooksTable.softDelete(row);
+
                     this.checkLogBooksForRenewal();
                     this.checkLocalLogBookRagnes();
-                    this.onChanged(this.logBooks);
+
+                    this.control.updateValueAndValidity();
+                    this.control.markAsTouched();
+                    this.onChanged(this.getValue());
                 }
             }
         });
@@ -307,9 +370,13 @@ export class LogBooksComponent implements OnInit, OnChanges, DoCheck, ControlVal
                     }
 
                     this.logBooksTable.softUndoDelete(row);
+
                     this.checkLogBooksForRenewal();
                     this.checkLocalLogBookRagnes();
-                    this.onChanged(this.logBooks);
+
+                    this.control.updateValueAndValidity();
+                    this.control.markAsTouched();
+                    this.onChanged(this.getValue());
                 }
             }
         });
@@ -349,7 +416,7 @@ export class LogBooksComponent implements OnInit, OnChanges, DoCheck, ControlVal
             const finishedStatusIds: (number | undefined)[] = this.logBookStatuses.filter(x => LogBookStatusesEnum[x.code as keyof typeof LogBookStatusesEnum] === LogBookStatusesEnum.Finished).map(x => x.value);
 
             let overlappingLogBooks: (LogBookEditDTO | CommercialFishingLogBookEditDTO)[] = [];
-            
+
             if (logBook instanceof CommercialFishingLogBookEditDTO) {
                 if (logBook.permitLicenseStartPageNumber !== null
                     && logBook.permitLicenseStartPageNumber !== undefined

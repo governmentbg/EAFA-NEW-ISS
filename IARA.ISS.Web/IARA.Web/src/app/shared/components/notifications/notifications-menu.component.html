@@ -1,22 +1,40 @@
 ﻿<div fxLayout="row" fxLayoutAlign="center center" fxFill>
-    <button mat-button [matMenuTriggerFor]="menu">
-        <tl-icon [size]="3"
-                 icon="notifications"
-                 matBadgeColor="warn"
-                 [matBadgeHidden]="totalUnread==0"
-                 [matBadge]="totalUnread"
-                 matBadgePosition="below after"></tl-icon>
-    </button>
+    <div class="notifications-menu-badge"
+         [matBadge]="totalUnread"
+         [matBadgeHidden]="totalUnread === 0"
+         matBadgeColor="warn"
+         matBadgePosition="below after"
+         [matBadgeOverlap]="false">
+        <button mat-button
+                [matMenuTriggerFor]="menu"
+                (menuOpened)="onMenuOpened()">
+            <tl-icon [size]="2.5"
+                     icon="notifications">
+            </tl-icon>
+        </button>
+    </div>
 
-    <mat-menu #menu="matMenu" [overlapTrigger]="false" xPosition="before" [class]="'menu-panel'" style="max-width:500px!important">
-        <ng-template matMenuContent style="max-width:500px!important">
-            <span mat-menu-item *ngIf="totalRecordsCount==0">Няма нотификации</span>
-            <cdk-virtual-scroll-viewport *ngIf="totalRecordsCount>0"
-                                         itemSize="50"
-                                         minBufferPx="200"
-                                         maxBufferPx="400"
-                                         style="height: 200px; width: 400px;">
-                <notification *cdkVirtualFor="let notification of dataSource" [notification]="notification" [notificationsHub]="notificationsHub"></notification>
+    <mat-menu #menu="matMenu"
+              class="notifications-menu-panel"
+              [overlapTrigger]="false"
+              xPosition="before">
+        <span *ngIf="totalRecordsCount === 0; else hasNotifications"
+              class="no-notifications-message"
+              (click)="$event.stopPropagation(); $event.preventDefault()">
+            {{ 'common.no-notifications' | tlTranslate : 'cap' }}
+        </span>
+
+        <ng-template #hasNotifications>
+            <cdk-virtual-scroll-viewport class="mat-menu-viewport"
+                                         [itemSize]="recordSize"
+                                         minBufferPx="500"
+                                         maxBufferPx="1000"
+                                         [style.height]="recordSize * totalRecordsCount + (NOTIFICATIONS_GAP * (totalRecordsCount - 1)) + 'px'">
+                <notification *cdkVirtualFor="let notification of dataSource"
+                              [notification]="notification"
+                              [notificationsHub]="notificationsHub"
+                              (markedAsRead)="markedAsRead($event)">
+                </notification>
             </cdk-virtual-scroll-viewport>
         </ng-template>
     </mat-menu>

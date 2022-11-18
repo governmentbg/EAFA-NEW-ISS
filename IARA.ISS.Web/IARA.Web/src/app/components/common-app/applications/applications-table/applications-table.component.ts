@@ -88,8 +88,11 @@ import { DuplicatesRegisterPublicService } from '@app/services/public-app/duplic
 import { DuplicatesRegisterAdministrationService } from '@app/services/administration-app/duplicates-register-administration.service';
 import { DuplicatesApplicationComponent } from '@app/components/common-app/duplicates/duplicates-application.component';
 import { CapacityCertificateDuplicateComponent } from '@app/components/common-app/fishing-capacity/capacity-certificate-duplicate/capacity-certificate-duplicate.component';
+import { EditLegalAssociationComponent } from '../../legal-associations/edit-legal-association/edit-legal-association.component';
+import { RecreationalFishingAssociationService } from '@app/services/administration-app/recreational-fishing-association.service';
+import { RecreationalFishingAssociationPublicService } from '@app/services/public-app/recreational-fishing-association-public.service';
 
-const DIALOG_WIDTH: string = '1500px';
+const DIALOG_WIDTH: string = '1600px';
 export type ApplicationTablePageType = 'FileInPage' | 'DashboardPage' | 'ApplicationPage' | 'PublicPage';
 
 @Component({
@@ -244,7 +247,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
             dialog.subscribe((saveData: AssignedApplicationInfoDTO) => {
                 if (saveData !== null && saveData !== undefined) {
                     const status: ApplicationStatusesEnum = ApplicationStatusesEnum[saveData.statusCode as keyof typeof ApplicationStatusesEnum];
-                    this.initiateOpenEditDialog(saveData.id!, status, saveData.pageCode!, false);
+                    this.initiateOpenEditDialog(saveData.id!, status, undefined, saveData.pageCode!, false);
                 }
             });
         }
@@ -276,6 +279,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
                         }) => {
                             this.initiateOpenEditDialog(applicationIdentification.item1,
                                 ApplicationStatusesEnum.INITIAL,
+                                undefined,
                                 selectedApplicationType.pageCode!,
                                 false);
                         });
@@ -301,12 +305,12 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
     }
 
     public openApplicationInViewMode(application: ApplicationRegisterDTO): void {
-        this.initiateOpenEditDialog(application.id!, application.statusCode as ApplicationStatusesEnum, application.pageCode!, true);
+        this.initiateOpenEditDialog(application.id!, application.statusCode as ApplicationStatusesEnum, application.prevStatusCode, application.pageCode!, true);
     }
 
     public openApplicationHistoryDraftInViewMode(applicationChangeHistory: ApplicationsChangeHistoryDTO): void {
         const application: ApplicationRegisterDTO = (this.datatable.rows as ApplicationRegisterDTO[]).find(x => x.id === applicationChangeHistory.applicationId)!;
-        this.initiateOpenEditDialog(applicationChangeHistory.id as number, undefined, application.pageCode!, true, true);
+        this.initiateOpenEditDialog(applicationChangeHistory.id as number, undefined, application.prevStatusCode, application.pageCode!, true, true);
     }
 
     public openRegisterInViewMode(application: ApplicationRegisterDTO): void {
@@ -355,6 +359,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
             case PageCodeEnum.ShipRegChange:
                 this.navigateByUrl('/fishing-vessels-applications', application.accessCode!); break;
             case PageCodeEnum.LE:
+            case PageCodeEnum.Assocs:
                 this.navigateByUrl('/legal-entities-applications', application.accessCode!); break;
             case PageCodeEnum.AptitudeCourceExam:
             case PageCodeEnum.CommFishLicense:
@@ -417,7 +422,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
     }
 
     public editActionClicked(application: ApplicationRegisterDTO): void {
-        this.initiateOpenEditDialog(application.id!, application.statusCode as ApplicationStatusesEnum, application.pageCode!, false);
+        this.initiateOpenEditDialog(application.id!, application.statusCode as ApplicationStatusesEnum, application.prevStatusCode, application.pageCode!, false);
     }
 
     public cancellationActionClicked(application: ApplicationRegisterDTO): void {
@@ -433,6 +438,11 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
                 id: application.id,
                 saveReasonServiceMethod: this.applicationsService.applicationAnnulment.bind(this.applicationsService)
             }),
+            saveBtn: {
+                id: 'save-button-id',
+                translateValue: this.translationService.getValue('applications-register.cancel-application'),
+                color: 'warn'
+            },
             disableDialogClose: true
         }, '800px')
             .subscribe(() => {
@@ -553,6 +563,11 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
                 id: application.id,
                 saveReasonServiceMethod: this.applicationsService.applicationPaymentRefusal.bind(this.applicationsService)
             }),
+            saveBtn: {
+                id: 'save-button-id',
+                translateValue: this.translationService.getValue('applications-register.refuse-payment'),
+                color: 'warn'
+            },
             disableDialogClose: true
         }, '800px')
             .subscribe((reasonData: ReasonData) => {
@@ -561,7 +576,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
     }
 
     public checkDataRegularityActionClicked(application: ApplicationRegisterDTO): void {
-        this.initiateOpenEditDialog(application.id!, application.statusCode as ApplicationStatusesEnum, application.pageCode!, false);
+        this.initiateOpenEditDialog(application.id!, application.statusCode as ApplicationStatusesEnum, application.prevStatusCode, application.pageCode!, false);
     }
 
     public confirmDataIrregularityActionClicked(applicationId: number, dialogClose: DialogCloseCallback): void {
@@ -693,16 +708,23 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
         });
     }
 
-    private initiateOpenEditDialog(applicationId: number, applicationStatus: ApplicationStatusesEnum | undefined, pageCode: PageCodeEnum, viewMode: boolean = false, isApplicationHistoryMode = false): void {
+    private initiateOpenEditDialog(
+        applicationId: number,
+        applicationStatus: ApplicationStatusesEnum | undefined,
+        prevApplicationStatus: ApplicationStatusesEnum | undefined,
+        pageCode: PageCodeEnum,
+        viewMode: boolean = false,
+        isApplicationHistoryMode = false
+    ): void {
         if (applicationStatus === ApplicationStatusesEnum.CORR_BY_USR_NEEDED && !viewMode) {
             this.applicationsService.initiateApplicationCorrections(applicationId).subscribe((newStatus: ApplicationStatusesEnum) => {
                 applicationStatus = newStatus;
                 this.onAddedOrEditted.emit(applicationId);
-                this.openEditDialog(applicationId, applicationStatus, pageCode, viewMode, isApplicationHistoryMode);
+                this.openEditDialog(applicationId, applicationStatus, prevApplicationStatus, pageCode, viewMode, isApplicationHistoryMode);
             });
         }
         else {
-            this.openEditDialog(applicationId, applicationStatus, pageCode, viewMode, isApplicationHistoryMode);
+            this.openEditDialog(applicationId, applicationStatus, prevApplicationStatus, pageCode, viewMode, isApplicationHistoryMode);
         }
     }
 
@@ -715,6 +737,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
     private openEditDialog(
         applicationId: number,
         applicationStatus: ApplicationStatusesEnum | undefined,
+        prevApplicationStatus: ApplicationStatusesEnum | undefined,
         pageCode: PageCodeEnum,
         viewMode: boolean = false,
         isApplicationHistoryMode: boolean = false
@@ -728,6 +751,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
         let isReadOnly: boolean = !this.processingPermissions.get(pageCode)?.canEditRecords || viewMode;
 
         let showOnlyRegiXData: boolean = false;
+        let showRegixData: boolean = false;
         let service: IApplicationsActionsService = this.getServiceInstanceForPageCode(pageCode);
 
         let auditButton: IHeaderAuditButton | undefined = undefined;
@@ -813,6 +837,11 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
                 default: {
                     viewMode = true;
                 } break;
+            }
+
+            // Ако не сме в RegiX режим И предишният статус на заявлението е бил Стартирани проверки
+            if (!showOnlyRegiXData && prevApplicationStatus === ApplicationStatusesEnum.EXT_CHK_STARTED) {
+                showRegixData = true;
             }
         }
         else if (this.pageType === 'FileInPage') {
@@ -907,6 +936,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
             service: service,
             applicationsService: this.applicationsService,
             showOnlyRegiXData: showOnlyRegiXData,
+            showRegiXData: showRegixData,
             pageCode: pageCode,
             onRecordAddedOrEdittedEvent: this.onAddedOrEditted,
             isThirdCountry: false // TODO CHANGE (pass as parameter somehow ...)
@@ -965,7 +995,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
             pageCode: pageCode
         });
 
-        if (viewMode && IS_PUBLIC_APP) {
+        if (viewMode) {
             editDialogData.loadRegisterFromApplication = true;
         }
         else {
@@ -1188,7 +1218,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
                 viewRegixDataTitle = this.translationService.getValue('duplicates.view-quata-species-permit-license-application-regix-data-dialog-title');
                 editRegixDataTitle = this.translationService.getValue('duplicates.edit-quata-species-permit-license-application-regix-data-dialog-title');
                 editApplicationDialogTitle = this.translationService.getValue('duplicates.edit-quata-species-permit-license-application-dialog-title');
-                viewApplicationDataAndConfrimRegularityTitle = this.translationService.getValue('duplicates.view-quata-species-permit-appl-and-confirm-regularity-title');
+                viewApplicationDataAndConfrimRegularityTitle = this.translationService.getValue('duplicates.view-quata-species-permit-license-appl-and-confirm-regularity-title');
             } break;
             case PageCodeEnum.LE: {
                 editDialog = new TLMatDialog<EditLegalEntityComponent>(this.matDialog);
@@ -1199,6 +1229,16 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
                 editRegixDataTitle = this.translationService.getValue('legal-entities-page.edit-legal-entity-application-regix-data-dialog-title');
                 editApplicationDialogTitle = this.translationService.getValue('legal-entities-page.edit-legal-entity-application-dialog-title');
                 viewApplicationDataAndConfrimRegularityTitle = this.translationService.getValue('legal-entities-page.view-legal-entity-appl-and-confirm-regularity-title');
+            } break;
+            case PageCodeEnum.Assocs: {
+                editDialog = new TLMatDialog<EditLegalAssociationComponent>(this.matDialog);
+                editDialogTCtor = EditLegalAssociationComponent;
+                viewDialogTitle = this.translationService.getValue('legal-association.view-association-dialog-title');
+                viewRegisterTitle = this.translationService.getValue('legal-association.association-register-title');
+                viewRegixDataTitle = this.translationService.getValue('legal-association.view-association-application-regix-data-dialog-title');
+                editRegixDataTitle = this.translationService.getValue('legal-association.edit-association-application-regix-data-dialog-title');
+                editApplicationDialogTitle = this.translationService.getValue('legal-association.edit-association-application-dialog-title');
+                viewApplicationDataAndConfrimRegularityTitle = this.translationService.getValue('legal-association.view-association-appl-and-confirm-regularity-title');
             } break;
             case PageCodeEnum.RegVessel: {
                 editDialog = new TLMatDialog<EditShipComponent>(this.matDialog);
@@ -1531,6 +1571,14 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
                 }
                 else {
                     service = this.injector.get(LegalEntitiesAdministrationService);
+                }
+            } break;
+            case PageCodeEnum.Assocs: {
+                if (this.pageType === 'PublicPage') {
+                    service = this.injector.get(RecreationalFishingAssociationPublicService);
+                }
+                else {
+                    service = this.injector.get(RecreationalFishingAssociationService);
                 }
             } break;
             case PageCodeEnum.RegVessel:

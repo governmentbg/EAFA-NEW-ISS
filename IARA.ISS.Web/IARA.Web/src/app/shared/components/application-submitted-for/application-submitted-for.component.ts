@@ -53,6 +53,9 @@ export class ApplicationSubmittedForComponent extends NotifyingCustomFormControl
     public showCustodianOfProperty: boolean = true;
 
     @Input()
+    public middleNameRequired: boolean = false;
+
+    @Input()
     public expectedResults!: ApplicationSubmittedForDTO;
 
     @Input()

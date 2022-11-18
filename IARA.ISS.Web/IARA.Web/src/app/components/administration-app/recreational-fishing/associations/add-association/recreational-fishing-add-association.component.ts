@@ -6,6 +6,7 @@ import { GridRow } from '@app/shared/components/data-table/models/row.model';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
+import { IRecreationalFishingAssociationService } from '@app/interfaces/common-app/recreational-fishing-association.interface';
 
 @Component({
     selector: 'recreational-fishing-add-association',
@@ -19,7 +20,7 @@ export class RecreationalFishingAddAssociationComponent implements OnInit, After
     public associations: RecreationalFishingPossibleAssociationLegalDTO[] = [];
     public allAssociations: RecreationalFishingPossibleAssociationLegalDTO[] = [];
 
-    private service: RecreationalFishingAssociationService;
+    private service: IRecreationalFishingAssociationService;
 
     public constructor(service: RecreationalFishingAssociationService) {
         this.service = service;

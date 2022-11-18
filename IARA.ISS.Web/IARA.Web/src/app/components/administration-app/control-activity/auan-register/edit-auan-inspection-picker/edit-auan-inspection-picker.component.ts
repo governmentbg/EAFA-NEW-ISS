@@ -1,5 +1,5 @@
-﻿import { Component, OnInit } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+﻿import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
@@ -14,36 +14,87 @@ import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/inter
 import { AuanRegisterEditDTO } from '@app/models/generated/dtos/AuanRegisterEditDTO';
 import { EditAuanDialogParams } from '../models/edit-auan-dialog-params.model';
 import { EditAuanComponent } from '../edit-auan/edit-auan.component';
+import { AuanInspectionDTO } from '@app/models/generated/dtos/AuanInspectionDTO';
+import { CommonUtils } from '@app/shared/utils/common.utils';
+import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
+import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
+import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 
 @Component({
     selector: 'edit-auan-inspection-picker',
     templateUrl: './edit-auan-inspection-picker.component.html'
 })
-export class EditAuanInspectionPickerComponent implements OnInit, IDialogComponent {
-    public inspectionReportControl: FormControl;
+export class EditAuanInspectionPickerComponent implements OnInit, AfterViewInit, IDialogComponent {
+    public form: FormGroup;
+    public isThirdParty: boolean = false;
 
     public inspectionReports: NomenclatureDTO<number>[] = [];
+    public users: NomenclatureDTO<number>[] = [];
+    public territoryUnits: NomenclatureDTO<number>[] = [];
 
-    private service!: IAuanRegisterService;
-    private translate: FuseTranslationLoaderService;
-    private editDialog: TLMatDialog<EditAuanComponent>;
+    private model: AuanInspectionDTO | undefined;
+    private inspectionId: number | undefined;
+
+    private readonly service!: IAuanRegisterService;
+    private readonly nomenclatures: CommonNomenclatures;
+    private readonly translate: FuseTranslationLoaderService;
+    private readonly editDialog: TLMatDialog<EditAuanComponent>;
 
     public constructor(
         service: AuanRegisterService,
+        nomenclatures: CommonNomenclatures,
         translate: FuseTranslationLoaderService,
         editDialog: TLMatDialog<EditAuanComponent>
     ) {
         this.service = service;
+        this.nomenclatures = nomenclatures;
         this.translate = translate;
         this.editDialog = editDialog;
+        this.model = new AuanInspectionDTO();
 
-        this.inspectionReportControl = new FormControl(null, Validators.required);
+        this.form = this.buildForm();
     }
 
     public ngOnInit(): void {
+        NomenclatureStore.instance.getNomenclature(
+            NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures), false
+        ).subscribe({
+            next: (result: NomenclatureDTO<number>[]) => {
+                this.territoryUnits = result;
+            }
+        });
+
         this.service.getAllInspectionReports().subscribe({
             next: (result: NomenclatureDTO<number>[]) => {
                 this.inspectionReports = result;
+            }
+        });
+
+        this.service.getInspectorUsernames().subscribe({
+            next: (result: NomenclatureDTO<number>[]) => {
+                this.users = result;
+            }
+        });
+    }
+
+    public ngAfterViewInit(): void {
+        this.form.get('isThirdPartyControl')!.valueChanges.subscribe({
+            next: (value: boolean) => {
+                this.isThirdParty = value;
+                this.form.get('inspectorControl')!.clearValidators();
+                this.form.get('inspectionReportControl')!.clearValidators();
+
+                if (value) {
+                    this.form.get('inspectorControl')!.setValidators(Validators.required);
+                }
+                else {
+                    this.form.get('inspectionReportControl')!.setValidators(Validators.required);
+                }
+
+                this.form.get('inspectorControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('inspectionReportControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('inspectorControl')!.markAsPending();
+                this.form.get('inspectionReportControl')!.markAsPending();
             }
         });
     }
@@ -53,13 +104,31 @@ export class EditAuanInspectionPickerComponent implements OnInit, IDialogCompone
     }
 
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
-        this.inspectionReportControl.markAllAsTouched();
-        if (this.inspectionReportControl.valid) {
-            this.openEditAuanDialog().subscribe({
-                next: (auan: AuanRegisterEditDTO | undefined) => {
-                    dialogClose(auan);
-                }
-            });
+        this.form.markAllAsTouched();
+        if (this.form.valid) {
+            this.fillModel();
+            CommonUtils.sanitizeModelStrings(this.model);
+            
+            if (!this.isThirdParty) {
+                this.openEditAuanDialog().subscribe({
+                    next: (auan: AuanRegisterEditDTO | undefined) => {
+                        dialogClose(auan);
+                    }
+                });
+            }
+            else {
+                this.service.addAuanInspection(this.model!).subscribe({
+                    next: (id: number) => {
+                        this.inspectionId = id;
+
+                        this.openEditAuanDialog().subscribe({
+                            next: (auan: AuanRegisterEditDTO | undefined) => {
+                                dialogClose(auan);
+                            }
+                        });
+                    }
+                });
+            }
         }
     }
 
@@ -80,7 +149,8 @@ export class EditAuanInspectionPickerComponent implements OnInit, IDialogCompone
                 cancelBtnClicked: this.closeEditDialogBtnClicked.bind(this)
             },
             componentData: new EditAuanDialogParams({
-                inspectionId: this.inspectionReportControl.value!.value,
+                inspectionId: this.inspectionId,
+                isThirdParty: this.isThirdParty,
                 isReadonly: false
             }),
             rightSideActionsCollection: [{
@@ -97,5 +167,26 @@ export class EditAuanInspectionPickerComponent implements OnInit, IDialogCompone
 
     private closeEditDialogBtnClicked(closeFn: HeaderCloseFunction): void {
         closeFn();
+    }
+
+    private buildForm(): FormGroup {
+        return new FormGroup({
+            inspectionReportControl: new FormControl(null, Validators.required),
+            isThirdPartyControl: new FormControl(null),
+            inspectorControl: new FormControl(null),
+            territoryUnitControl: new FormControl(null),
+            inspectionDateControl: new FormControl(null)
+        });
+    }
+
+    private fillModel(): void {
+        if (!this.isThirdParty) {
+            this.inspectionId = this.form.get('inspectionReportControl')!.value?.value;
+        }
+        else {
+            this.model!.userId = this.form.get('inspectorControl')!.value?.value;
+            this.model!.territoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
+            this.model!.startDate = this.form.get('inspectionDateControl')!.value;
+        }
     }
 }

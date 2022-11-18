@@ -1,10 +1,12 @@
 ﻿<div fxLayout="column"
      fxLayoutGap="1em"
      fxFlexFill
+     validityCheckerGroup
      [formGroup]="form"
      class="dialog-padding">
     <!-- Основни данни -->
-    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
+                        [validityChecker]="form">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -35,6 +37,8 @@
                              [shipObservationCategory]="inspectionObservationCategoryEnum.InspectedShipData"
                              [checksObservationCategory]="inspectionObservationCategoryEnum.InspectedShipCheck"
                              [catchObservationCategory]="inspectionObservationCategoryEnum.InspectedShipCatch"
+                             [turbotSizeGroups]="turbotSizeGroups"
+                             [validityChecker]="form"
                              shipLabel="{{ 'inspections.sending-ship-data' | tlTranslate }}"
                              checksLabel="{{ 'inspections.sending-ship-inspection' | tlTranslate }}"
                              catchLabel="{{ 'inspections.sending-ship-catch' | tlTranslate }}">
@@ -58,13 +62,16 @@
                              [shipObservationCategory]="inspectionObservationCategoryEnum.AcceptingShipData"
                              [checksObservationCategory]="inspectionObservationCategoryEnum.AcceptingShipCheck"
                              [catchObservationCategory]="inspectionObservationCategoryEnum.AcceptingShipCatch"
+                             [validityChecker]="form"
+                             [turbotSizeGroups]="turbotSizeGroups"
                              shipLabel="{{ 'inspections.receiving-ship-data' | tlTranslate }}"
                              checksLabel="{{ 'inspections.receiving-ship-inspection' | tlTranslate }}"
                              catchLabel="{{ 'inspections.receiving-ship-catch' | tlTranslate }}">
     </inspected-ship-sections>
 
     <!-- Трансбордиран улов -->
-    <tl-expansion-panel title="{{ 'inspections.transshipment-catches' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.transshipment-catches' | tlTranslate }}"
+                        [validityChecker]="form">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -73,7 +80,8 @@
                                      [fishes]="fishes"
                                      [types]="catchTypes"
                                      [catchZones]="catchZones"
-                                     [fishSex]="fishSex">
+                                     [fishSex]="fishSex"
+                                     [turbotSizeGroups]="turbotSizeGroups">
             </inspected-catches-table>
             <tl-textarea formControlName="transshipmentCatchViolationControl"
                          [minRows]="3"
@@ -83,7 +91,8 @@
     </tl-expansion-panel>
 
     <!-- Допълнителна информация -->
-    <inspection-additional-info formControlName="additionalInfoControl">
+    <inspection-additional-info formControlName="additionalInfoControl"
+                                [validityChecker]="form">
         <tl-textarea formControlName="sendingShipcaptainCommentControl"
                      [minRows]="3"
                      label="{{ 'inspections.sending-ship-captain-comment' | tlTranslate }}">
@@ -95,7 +104,8 @@
     </inspection-additional-info>
 
     <!-- Файлове -->
-    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}"
+                        [validityChecker]="form">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">

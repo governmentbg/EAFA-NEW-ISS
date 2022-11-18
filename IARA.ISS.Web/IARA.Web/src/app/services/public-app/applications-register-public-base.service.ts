@@ -19,7 +19,7 @@ export abstract class ApplicationsRegisterPublicBaseService extends BaseAuditSer
     }
 
     public abstract getRegisterByApplicationId(applicationId: number, pageCode?: PageCodeEnum): Observable<unknown>;
-    public abstract getApplication(id: number, pageCode?: PageCodeEnum): Observable<IApplicationRegister>;
+    public abstract getApplication(id: number, getRegiXData: boolean, pageCode?: PageCodeEnum): Observable<IApplicationRegister>;
     public abstract addApplication(application: IApplicationRegister, pageCode?: PageCodeEnum): Observable<number>;
     public abstract editApplication(application: IApplicationRegister, pageCode?: PageCodeEnum, fromSaveAsDraft?: boolean): Observable<number>;
 

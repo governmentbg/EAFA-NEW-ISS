@@ -39,18 +39,20 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
 
     public isAdding: boolean = false;
     public viewMode: boolean = false;
-    public hasNoEDeliveryRegistrationError: boolean = false;
+    public isThirdParty: boolean = false;
     public violatedRegulationsTouched: boolean = false;
 
     public territoryUnits: NomenclatureDTO<number>[] = [];
     public users: NomenclatureDTO<number>[] = [];
+    public courts: NomenclatureDTO<number>[] = [];
+    public sectors: NomenclatureDTO<number>[] = [];
     public violatedRegulations: AuanViolatedRegulationDTO[] = [];
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
 
-    private auanId!: number;
     private typeId!: number;
+    private auanId: number | undefined;
     private penalDecreeId!: number | undefined;
     private model!: PenalDecreeEditDTO;
 
@@ -74,33 +76,44 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
 
     public async ngOnInit(): Promise<void> {
         this.isAdding = this.penalDecreeId === undefined || this.penalDecreeId === null;
+        this.isThirdParty = this.auanId === undefined || this.auanId === null;
 
         const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin(
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures)),
-            this.nomenclatures.getUserNames()
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures)),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Courts, this.service.getCourts.bind(this.service), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Sectors, this.nomenclatures.getSectors.bind(this.nomenclatures), false),
+            this.service.getInspectorUsernames()
         ).toPromise();
 
         this.territoryUnits = nomenclatures[0];
-        this.users = nomenclatures[1];
+        this.courts = nomenclatures[1];
+        this.sectors = nomenclatures[2];
+        this.users = nomenclatures[3];
 
-        this.service.getPenalDecreeAuanData(this.auanId).subscribe({
-            next: (data: PenalDecreeAuanDataDTO) => {
-                this.fillAuanData(data);
+        if (this.auanId !== undefined && this.auanId !== null) {
+            this.form.get('territoryUnitControl')!.disable();
 
-                if (this.penalDecreeId === undefined || this.penalDecreeId === null) {
-                    this.model = new PenalDecreeEditDTO();
+            this.service.getPenalDecreeAuanData(this.auanId).subscribe({
+                next: (data: PenalDecreeAuanDataDTO) => {
+                    this.fillAuanData(data);
+
+                    if (this.penalDecreeId === undefined || this.penalDecreeId === null) {
+                        this.model = new PenalDecreeEditDTO();
+                    }
+                    else {
+                        this.service.getPenalDecree(this.penalDecreeId).subscribe({
+                            next: (decree: PenalDecreeEditDTO) => {
+                                this.model = decree;
+                                this.fillForm();
+                            }
+                        });
+                    }
                 }
-                else {
-                    this.service.getPenalDecree(this.penalDecreeId).subscribe({
-                        next: (decree: PenalDecreeEditDTO) => {
-                            this.model = decree;
-                            this.fillForm();
-                        }
-                    });
-                }
-            }
-        });
+            });
+        }
+        else {
+            this.model = new PenalDecreeEditDTO();
+        }
     }
 
     public ngAfterViewInit(): void {
@@ -131,7 +144,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
 
         this.markAllAsTouched();
         this.validityCheckerGroup.validate();
-
+        
         if (this.form.valid) {
             this.fillModel();
             CommonUtils.sanitizeModelStrings(this.model);
@@ -139,8 +152,6 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
             if (this.penalDecreeId !== undefined && this.penalDecreeId !== null) {
                 this.service.editPenalDecree(this.model).subscribe({
                     next: () => {
-                        this.hasNoEDeliveryRegistrationError = false;
-
                         dialogClose(this.model);
                     },
                     error: (response: HttpErrorResponse) => {
@@ -151,8 +162,6 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
             else {
                 this.service.addPenalDecree(this.model).subscribe({
                     next: (id: number) => {
-                        this.hasNoEDeliveryRegistrationError = false;
-
                         this.model.id = id;
                         dialogClose(this.model);
                     },
@@ -178,7 +187,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
                 });
             }
             else {
-                this.form.markAllAsTouched();
+                this.markAllAsTouched();
                 if (this.form.valid) {
                     this.fillModel();
                     CommonUtils.sanitizeModelStrings(this.model);
@@ -186,8 +195,6 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
                     if (this.penalDecreeId !== undefined && this.penalDecreeId !== null) {
                         this.service.editPenalDecree(this.model).subscribe({
                             next: () => {
-                                this.hasNoEDeliveryRegistrationError = false;
-
                                 this.service.downloadPenalDecree(this.penalDecreeId!).subscribe({
                                     next: () => {
                                         dialogClose();
@@ -202,7 +209,6 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
                     else {
                         this.service.addPenalDecree(this.model).subscribe({
                             next: (id: number) => {
-                                this.hasNoEDeliveryRegistrationError = false;
                                 this.model.id = id;
 
                                 this.service.downloadPenalDecree(id).subscribe({
@@ -227,8 +233,10 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
             drafterControl: new FormControl(null, Validators.required),
             issuerPositionControl: new FormControl(null),
             issueDateControl: new FormControl(null, Validators.required),
-            territoryUnitControl: new FormControl({ value: null, disabled: true }),
-            effectiveDateControl: new FormControl(null, Validators.required),
+            territoryUnitControl: new FormControl(null),
+            effectiveDateControl: new FormControl(null),
+            courtControl: new FormControl(null),
+            sectorControl: new FormControl(null),
 
             auanControl: new FormControl(null),
             deliveryControl: new FormControl(null),
@@ -257,6 +265,8 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         this.form.get('effectiveDateControl')!.setValue(this.model.effectiveDate);
         this.form.get('issuerPositionControl')!.setValue(this.model.issuerPosition);
         this.form.get('drafterControl')!.setValue(this.users.find(x => x.value === this.model.issuerUserId));
+        this.form.get('courtControl')!.setValue(this.courts.find(x => x.value === this.model.appealCourtId));
+        this.form.get('sectorControl')!.setValue(this.sectors.find(x => x.value === this.model.appealSectorId));
 
         this.form.get('isRecurrentViolationControl')!.setValue(this.model.isRecurrentViolation);
         this.form.get('commentsControl')!.setValue(this.model.comments);
@@ -301,6 +311,8 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         this.model.effectiveDate = this.form.get('effectiveDateControl')!.value;
         this.model.issuerPosition = this.form.get('issuerPositionControl')!.value;
         this.model.issuerUserId = this.form.get('drafterControl')!.value?.value;
+        this.model.appealCourtId = this.form.get('courtControl')!.value?.value;
+        this.model.appealSectorId = this.form.get('sectorControl')!.value?.value;
 
         this.model.isRecurrentViolation = this.form.get('isRecurrentViolationControl')!.value;
         this.model.comments = this.form.get('commentsControl')!.value;
@@ -317,6 +329,13 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         this.model.decreeViolatedRegulations = this.form.get('violatedRegulationsControl')!.value;
 
         this.model.statuses = this.form.get('statusesControl')!.value;
+        
+        if (this.isThirdParty) {
+            this.model.auanData = this.form.get('auanControl')!.value;
+            this.model.auanData!.territoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
+            this.model.auanData!.constatationComments = this.form.get('constatationCommentsControl')!.value;
+            this.model.auanData!.violatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
+        }
 
         this.model.files = this.form.get('filesControl')!.value;
     }
@@ -329,6 +348,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         if (this.isAdding) {
             setTimeout(() => {
                 this.form.get('seizedFishControl')!.setValue(data.confiscatedFish);
+                this.form.get('seizedApplianceControl')!.setValue(data.confiscatedAppliance);
                 this.form.get('seizedFishingGearControl')!.setValue(data.confiscatedFishingGear);
                 this.form.get('auanViolatedRegulationsControl')!.setValue(data.violatedRegulations);
             });
@@ -371,7 +391,15 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         }
 
         if (response.error?.code === ErrorCode.NoEDeliveryRegistration) {
-            this.hasNoEDeliveryRegistrationError = true;
+            this.form.get('deliveryControl')!.setErrors({ 'hasNoEDeliveryRegistrationError': true });
+            this.form.get('deliveryControl')!.markAsTouched();
+            this.validityCheckerGroup.validate();
+        }
+
+        if (response.error?.code === ErrorCode.AuanNumAlreadyExists) {
+            this.form.get('auanControl')!.setErrors({ 'auanNumExists': true });
+            this.form.get('auanControl')!.markAsTouched();
+            this.validityCheckerGroup.validate();
         }
     }
 }

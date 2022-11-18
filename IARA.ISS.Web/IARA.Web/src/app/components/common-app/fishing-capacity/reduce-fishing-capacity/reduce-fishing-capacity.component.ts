@@ -66,6 +66,7 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public isEditing: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isReadonly: boolean = false;
     public viewMode: boolean = false;
     public isDraft: boolean = false;
@@ -73,6 +74,7 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
     public hasDelivery: boolean = false;
     public hasNoEDeliveryRegistrationError: boolean = false;
     public willIssueCapacityCertificates: boolean = false;
+    public hideBasicPaymentInfo: boolean = false;
     public service!: IFishingCapacityService;
 
     public maxGrossTonnage: number = 0;
@@ -142,6 +144,7 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
                         this.paymentInformation = application.paymentInformation;
+                        this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
 
@@ -175,7 +178,7 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData, this.pageCode).subscribe({
                         next: (application: ReduceFishingCapacityApplicationDTO) => {
                             application.applicationId = this.applicationId;
                             application.isDraft = application.isDraft ?? true;
@@ -185,7 +188,13 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
                             this.paymentInformation = application.paymentInformation;
+                            this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new ReduceFishingCapacityRegixDataDTO(application.regiXDataModel);
+                                application.regiXDataModel = undefined;
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (application.submittedBy === undefined || application.submittedBy === null)) {
                                 const service = this.service as FishingCapacityPublicService;
@@ -214,6 +223,7 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.viewMode = data.viewMode;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.applicationsService = data.applicationsService;
         this.service = data.service as IFishingCapacityService;
         this.dialogRightSideActions = wrapperData.rightSideActions;
@@ -348,24 +358,7 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
         this.form.get('actionsControl')!.setValue(this.model.freedCapacityAction);
 
         if (this.model instanceof ReduceFishingCapacityRegixDataDTO) {
-            if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
-                const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
-
-                setTimeout(() => {
-                    this.regixChecks = checks;
-                });
-            }
-
-            if (!this.viewMode) {
-                this.notifier.start();
-                this.notifier.onNotify.subscribe({
-                    next: () => {
-                        this.form.markAllAsTouched();
-                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
-                        this.notifier.stop();
-                    }
-                });
-            }
+            this.fillFormRegiX();
         }
         else {
             if (this.model.shipId !== undefined && this.model.shipId !== null) {
@@ -379,6 +372,35 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
             }
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX();
+            }
+        }
+    }
+
+    private fillFormRegiX(): void {
+        if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
+            const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
+
+            setTimeout(() => {
+                this.regixChecks = checks;
+            });
+        }
+
+        if (!this.viewMode) {
+            this.notifier.start();
+            this.notifier.onNotify.subscribe({
+                next: () => {
+                    this.form.markAllAsTouched();
+
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+
+                    this.notifier.stop();
+                }
+            });
         }
     }
 
@@ -454,5 +476,11 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
             return this.service.editApplication(this.model, this.pageCode, saveAsDraft);
         }
         return this.service.addApplication(this.model, this.pageCode);
+    }
+
+    private shouldHidePaymentData(): boolean {
+        return this.paymentInformation?.paymentType === null
+            || this.paymentInformation?.paymentType === undefined
+            || this.paymentInformation?.paymentType === '';
     }
 }

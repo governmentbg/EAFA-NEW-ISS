@@ -17,13 +17,13 @@
                          gdColumns.lt-md="100%"
                          style="margin-bottom: 1em">
                         <tl-input gdArea="emailArea"
-                                  appearance="outline"
-                                  formControlName="email"
+                                  [appearance]="appearance"
+                                  formControlName="emailControl"
                                   label="{{ 'merge-profiles.email' | tlTranslate }}"></tl-input>
                         <tl-input gdArea="passwordArea"
-                                  appearance="outline"
+                                  [appearance]="appearance"
                                   type="password"
-                                  formControlName="password"
+                                  formControlName="passwordControl"
                                   label="{{ 'merge-profiles.password' | tlTranslate }}"></tl-input>
                     </div>
                     <mat-error *ngIf="enteredIncorrectLoginData">
@@ -40,16 +40,16 @@
                          gdRows.lt-md="auto auto auto"
                          gdColumns.lt-md="100%">
                         <tl-input gdArea="firstNameArea"
-                                  appearance="outline"
-                                  formControlName="firstName"
+                                  [appearance]="appearance"
+                                  formControlName="firstNameControl"
                                   label="{{ 'merge-profiles.first-name' | tlTranslate }}"></tl-input>
                         <tl-input gdArea="middleNameArea"
-                                  appearance="outline"
-                                  formControlName="middleName"
+                                  [appearance]="appearance"
+                                  formControlName="middleNameControl"
                                   label="{{ 'merge-profiles.second-name' | tlTranslate }}"></tl-input>
                         <tl-input gdArea="lastNameArea"
-                                  appearance="outline"
-                                  formControlName="lastName"
+                                  [appearance]="appearance"
+                                  formControlName="lastNameControl"
                                   label="{{ 'merge-profiles.last-name' | tlTranslate }}"></tl-input>
                     </div>
                     <div fxLayout="row"
@@ -62,8 +62,10 @@
                          gdColumns.lt-md="100%">
                         <egn-lnc-input gdArea="egnArea"
                                        [readonly]="true"
-                                       formControlName="egn"></egn-lnc-input>
-
+                                       [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"
+                                       [appearance]="appearance"
+                                       formControlName="egnControl">
+                        </egn-lnc-input>
                     </div>
                 </tl-expansion-panel>
             </mat-accordion>

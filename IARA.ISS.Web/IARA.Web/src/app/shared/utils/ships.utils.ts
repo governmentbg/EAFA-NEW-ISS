@@ -112,6 +112,12 @@ export class ShipsUtils {
                     }
                 }
             }
+
+            if (ship.shipIds && ship.shipIds.length !== 0) {
+                if (ship.shipIds.includes(shipId)) {
+                    return ship;
+                }
+            }
         }
 
         throw new Error(`Ship with id ${shipId} not found.`);

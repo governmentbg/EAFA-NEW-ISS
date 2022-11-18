@@ -1,37 +1,25 @@
-﻿import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { BaseGridRequestModel } from '@app/models/common/base-grid-request.model';
-import { NotificationDTO } from '@app/models/generated/dtos/NotificationDTO';
-import { NotificationsDTO } from '@app/models/generated/dtos/NotificationsDTO';
-import { Environment } from '@env/environment';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { Notification } from './notification';
-import { NotificationTypes } from './notification-types.enum';
-import { SignalRHubService } from './signalr-hub.service';
+import { BaseNotificationsHubService } from './base-notifications-hub.service';
+import { INotificationSecurity } from './models/notification-security.interface';
+import { UserNotificationsList } from './models/user-notifications-list.model';
 
 @Injectable({
     providedIn: 'root'
 })
-export class NotificationsHubService extends SignalRHubService {
+export class NotificationsHubService extends BaseNotificationsHubService {
 
-    private oidcSecurityService: OidcSecurityService;
-
-    constructor(oidcSecurityService: OidcSecurityService) {
-        const urlPath = `${Environment.Instance.apiBasePath}/notifications`;
-        super(urlPath, Environment.Instance.servicesBaseUrl);
-        console.log(urlPath);
-        console.log(Environment.Instance.servicesBaseUrl);
-        this.oidcSecurityService = oidcSecurityService;
+    public constructor(@Inject("INotificationSecurity") securityService: INotificationSecurity, hubPath: string, apiBaseUrl: string) {
+        super(securityService, hubPath, apiBaseUrl);
     }
 
-    public updateUserData(token: string): Promise<boolean> {
-        try {
-            return super.sendDataToHub<boolean>('UpdateUserData', token).then(result => {
-                if (result) {
-                    this.listenForUserNotifications();
-                }
+    public getUserNotifications(page: number, pageSize: number): Promise<UserNotificationsList> {
+        const request = new BaseGridRequestModel();
+        request.pageNumber = page;
+        request.pageSize = pageSize;
 
-                return result;
-            });
+        try {
+            return this.sendDataToHub<UserNotificationsList>('GetUserNotifications', request);
         } catch (e) {
             return Promise.reject(e);
         }
@@ -41,33 +29,11 @@ export class NotificationsHubService extends SignalRHubService {
         return this.sendDataToHub<boolean>('MarkNotificationAsRead', notificationId);
     }
 
-    public listenForUserNotifications() {
-        this.startListeningFor<Notification<NotificationDTO>>('ReceiveUser', (result) => {
-            this.newNotificationArrived.next(result);
-        });
+    public markAsUnRead(notificationId: number): Promise<boolean> {
+        return this.sendDataToHub<boolean>('MarkNotificationAsUnRead', notificationId);
     }
 
-    public subscribeFor(type: NotificationTypes): Promise<boolean> {
-        return super.sendDataToHub<boolean>('SubscribeFor', type);
-    }
-
-    public unsubscribeFrom(type: NotificationTypes): Promise<boolean> {
-        return super.sendDataToHub<boolean>('UnsubscribeFrom', type);
-    }
-
-    public getUserNotifications(page: number, pageSize: number): Promise<NotificationsDTO> {
-        const request = new BaseGridRequestModel();
-        request.pageNumber = page;
-        request.pageSize = pageSize;
-
-        try {
-            return this.sendDataToHub<NotificationsDTO>('GetUserNotifications', request);
-        } catch (e) {
-            return Promise.reject(e);
-        }
-    }
-
-    protected getToken(): string | Promise<string> {
-        return this.oidcSecurityService.getToken();
+    public markAllNotificationsAsRead(): Promise<boolean> {
+        return this.sendDataToHub<boolean>('MarkAllNotificationsAsRead');
     }
 }

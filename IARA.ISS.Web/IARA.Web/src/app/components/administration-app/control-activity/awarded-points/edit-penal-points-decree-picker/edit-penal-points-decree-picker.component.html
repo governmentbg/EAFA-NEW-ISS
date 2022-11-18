@@ -14,5 +14,9 @@
                          label="{{ 'penal-points.picker-decree-num' | tlTranslate }}"
                          tooltipResourceName="penal-points.picker-decree-num-date-helper">
         </tl-autocomplete>
+
+        <mat-error *ngIf="penalDecreeControl.touched && penalDecreeControl.errors?.noPenalDecrees === true">
+            * {{ 'penal-points.no-penal-decrees-error' | tlTranslate }}
+        </mat-error>
     </div>
 </div>

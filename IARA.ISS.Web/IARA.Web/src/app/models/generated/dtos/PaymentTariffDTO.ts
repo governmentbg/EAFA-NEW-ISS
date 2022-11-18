@@ -30,4 +30,7 @@ export class PaymentTariffDTO {
 
     @StrictlyTyped(Boolean)
     public isCalculated?: boolean;
+
+    @StrictlyTyped(Boolean)
+    public isChecked?: boolean;
 }

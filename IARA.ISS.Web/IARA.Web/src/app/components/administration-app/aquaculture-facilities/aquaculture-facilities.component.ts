@@ -230,16 +230,27 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
             excelFilename: this.translate.getValue('aquacultures.excel-filename')
         });
 
-        const isPerson: boolean | undefined = window.history.state?.isPerson;
-        const id: number | undefined = window.history.state?.id;
+        if (window.history.state) {
+            const tableId: number | undefined = window.history.state.tableId;
+            const isPerson: boolean | undefined = window.history.state.isPerson;
+            const id: number | undefined = window.history.state.id;
 
-        if (!CommonUtils.isNullOrEmpty(id)) {
-            if (isPerson) {
-                this.grid.advancedFilters = new AquacultureFacilitiesFilters({ personId: id });
+            const filters: AquacultureFacilitiesFilters = new AquacultureFacilitiesFilters();
+
+            if (tableId !== undefined && tableId !== null) {
+                filters.id = tableId;
             }
-            else {
-                this.grid.advancedFilters = new AquacultureFacilitiesFilters({ legalId: id });
+
+            if (id !== undefined && id !== null) {
+                if (isPerson) {
+                    filters.personId = id;
+                }
+                else {
+                    filters.legalId = id;
+                }
             }
+
+            this.grid.advancedFilters = filters;
         }
 
         this.grid.refreshData();

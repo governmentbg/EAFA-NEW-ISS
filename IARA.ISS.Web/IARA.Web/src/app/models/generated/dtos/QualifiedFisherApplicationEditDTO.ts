@@ -5,7 +5,7 @@ import { QualifiedFisherRegixDataDTO } from './QualifiedFisherRegixDataDTO';
 import { LetterOfAttorneyDTO } from './LetterOfAttorneyDTO';
 import { FileInfoDTO } from './FileInfoDTO';
 import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformationDTO';
-import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO'; 
+import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
 
 export class QualifiedFisherApplicationEditDTO extends QualifiedFisherRegixDataDTO {
     public constructor(obj?: Partial<QualifiedFisherApplicationEditDTO>) {
@@ -53,4 +53,7 @@ export class QualifiedFisherApplicationEditDTO extends QualifiedFisherRegixDataD
 
     @StrictlyTyped(Boolean)
     public isOnlineApplication?: boolean;
+
+    @StrictlyTyped(QualifiedFisherRegixDataDTO)
+    public regiXDataModel?: QualifiedFisherRegixDataDTO;
 }

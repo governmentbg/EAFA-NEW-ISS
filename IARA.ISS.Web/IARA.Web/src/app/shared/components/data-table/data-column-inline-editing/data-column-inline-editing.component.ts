@@ -30,6 +30,7 @@ export class TLDataColumnInlineEditingComponent extends BaseDataColumn {
     @Input() public hideEditBtn: boolean = false;
     @Input() public hideRestoreBtn: boolean = false;
     @Input() public hideDeleteBtn: boolean = false;
+    @Input() public hideDeleteBtnWhen?: (value: GridRow<any>) => boolean;
 
     @Input() public set saveConfirmationMessage(value: string) {
         if (value != undefined && value != '') {

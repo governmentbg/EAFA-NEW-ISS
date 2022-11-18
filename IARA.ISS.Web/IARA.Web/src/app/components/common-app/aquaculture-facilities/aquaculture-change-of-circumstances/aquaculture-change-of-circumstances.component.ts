@@ -57,11 +57,13 @@ export class AquacultureChangeOfCircumstancesComponent implements OnInit, AfterV
     public isOnlineApplication: boolean = false;
     public isEditing: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isReadonly: boolean = false;
     public viewMode: boolean = false;
     public isPaid: boolean = false;
     public hasDelivery: boolean = false;
     public hasNoEDeliveryRegistrationError: boolean = false;
+    public hideBasicPaymentInfo: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public service!: IAquacultureFacilitiesService;
 
@@ -108,6 +110,7 @@ export class AquacultureChangeOfCircumstancesComponent implements OnInit, AfterV
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
                         this.paymentInformation = application.paymentInformation;
+                        this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
 
@@ -140,7 +143,7 @@ export class AquacultureChangeOfCircumstancesComponent implements OnInit, AfterV
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData, this.pageCode).subscribe({
                         next: (application: AquacultureChangeOfCircumstancesApplicationDTO) => {
                             application.applicationId = this.applicationId;
                             application.isDraft = application.isDraft ?? true;
@@ -149,7 +152,13 @@ export class AquacultureChangeOfCircumstancesComponent implements OnInit, AfterV
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
                             this.paymentInformation = application.paymentInformation;
+                            this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new AquacultureChangeOfCircumstancesRegixDataDTO(application.regiXDataModel);
+                                application.regiXDataModel = undefined;
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (application.submittedBy === undefined || application.submittedBy === null)) {
                                 const service = this.service as AquacultureFacilitiesPublicService;
@@ -186,6 +195,7 @@ export class AquacultureChangeOfCircumstancesComponent implements OnInit, AfterV
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.viewMode = data.viewMode;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.applicationsService = data.applicationsService;
         this.service = data.service as IAquacultureFacilitiesService;
         this.dialogRightSideActions = wrapperData.rightSideActions;
@@ -273,26 +283,8 @@ export class AquacultureChangeOfCircumstancesComponent implements OnInit, AfterV
         this.form.get('aquacultureControl')!.setValue(this.aquacultures.find(x => x.value === aquacultureFacilityId));
 
         if (this.model instanceof AquacultureChangeOfCircumstancesRegixDataDTO) {
-            if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
-                const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
-
-                setTimeout(() => {
-                    this.regixChecks = checks;
-                });
-            }
-
             this.form.get('aquacultureControl')!.disable();
-
-            if (!this.viewMode) {
-                this.notifier.start();
-                this.notifier.onNotify.subscribe({
-                    next: () => {
-                        this.form.markAllAsTouched();
-                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
-                        this.notifier.stop();
-                    }
-                });
-            }
+            this.fillFormRegiX();
         }
         else {
             this.form.get('filesControl')!.setValue(this.model.files);
@@ -300,6 +292,35 @@ export class AquacultureChangeOfCircumstancesComponent implements OnInit, AfterV
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
             }
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX();
+            }
+        }
+    }
+
+    private fillFormRegiX(): void {
+        if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
+            const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
+
+            setTimeout(() => {
+                this.regixChecks = checks;
+            });
+        }
+
+        if (!this.viewMode) {
+            this.notifier.start();
+            this.notifier.onNotify.subscribe({
+                next: () => {
+                    this.form.markAllAsTouched();
+
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+
+                    this.notifier.stop();
+                }
+            });
         }
     }
 
@@ -385,5 +406,11 @@ export class AquacultureChangeOfCircumstancesComponent implements OnInit, AfterV
             }
             return aquacultures;
         })).toPromise();
+    }
+
+    private shouldHidePaymentData(): boolean {
+        return this.paymentInformation?.paymentType === null
+            || this.paymentInformation?.paymentType === undefined
+            || this.paymentInformation?.paymentType === '';
     }
 }

@@ -1,8 +1,17 @@
-﻿<div [formGroup]="form" fxLayout="column" fxLayoutGap="1em" fxFlexFill fxLayoutAlign="space-between stretch">
+﻿<div [formGroup]="form"
+     fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch">
 
-    <tl-checkbox formControlName="personRegisteredControl"
+    <tl-checkbox *ngIf="hasSubjects"
+                 formControlName="personRegisteredControl"
                  [label]="label">
     </tl-checkbox>
+
+    <h3 *ngIf="!hasSubjects">
+        {{ title }}
+    </h3>
 
     <tl-autocomplete *ngIf="isFromRegister"
                      formControlName="subjectControl"
@@ -19,7 +28,9 @@
                                [options]="personTypes">
         </tl-radio-button-group>
 
-        <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+        <div fxFlexFill
+             fxLayout="column"
+             fxLayoutGap="1em">
             <ng-container *ngIf="form.controls.personTypeControl.value?.value === logBookPagePersonTypesEnum.Person">
                 <regix-data formControlName="personControl"
                             [isPerson]="true"
@@ -30,7 +41,8 @@
                             checkboxLabel="{{ 'catches-and-sales.log-book-page-person-has-bulgarian-address-registration' | tlTranslate }}">
                 </regix-data>
             </ng-container>
-            <ng-container *ngIf="form.controls.personTypeControl.value?.value === logBookPagePersonTypesEnum.LegalPerson">
+            <ng-container
+                          *ngIf="form.controls.personTypeControl.value?.value === logBookPagePersonTypesEnum.LegalPerson">
                 <regix-data formControlName="legalControl"
                             [isPerson]="false"
                             [showCustodianOfProperty]="false"
@@ -43,7 +55,9 @@
         </div>
     </ng-container>
 
-    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+    <div fxLayout="row"
+         fxLayoutGap="1em"
+         fxLayoutAlign="start center">
         <tl-input fxFlex="50"
                   formControlName="addressControl"
                   label="{{ 'inspections.address' | tlTranslate }}">

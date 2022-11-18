@@ -24,7 +24,7 @@ export interface IRecreationalFishingService extends IBaseAuditService {
     getTicketPrices(): Observable<RecreationalFishingTicketPriceDTO[]>;
     getAllFishingAssociations(): Observable<NomenclatureDTO<number>[]>;
 
-    getTicket(id: number): Observable<RecreationalFishingTicketDTO>;
+    getTicket(id: number, getRegiXData: boolean): Observable<RecreationalFishingTicketDTO>;
 
     addTickets(ticket: RecreationalFishingTicketsDTO): Observable<RecreationalFishingAddTicketsResultDTO>;
     addTicketDuplicate(data: RecreationalFishingTicketDuplicateDTO): Observable<number>;

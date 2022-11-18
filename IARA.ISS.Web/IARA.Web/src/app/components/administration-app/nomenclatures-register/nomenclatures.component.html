@@ -1,41 +1,34 @@
-﻿<div fxLayout="row" fxFill>
-    <tl-card class="pad-top-10" fxFlex="20">
-        <tl-card-content>
-            <mat-tree id="nomenclatures-tree" [dataSource]="treeDataSource" [treeControl]="treeControl">
-                <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding matTreeNodePaddingIndent="20">
-                    <button #childButton 
-                            mat-button
-                            [disableRipple]="true" 
-                            matTooltip="{{ node.name }}"
-                            (click)="nodeSelected(node)">
-                        <mat-icon>{{ selectedNode === node ? 'arrow_right' : '' }}</mat-icon>
-                        <span>{{node.name}}</span>
-                    </button>
-                </mat-tree-node>
-
-                <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
-                    <button #parentButton 
-                            mat-button 
-                            matTreeNodeToggle 
-                            matTooltip="{{ node.name }}">
-                        <mat-icon>{{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}</mat-icon>
-                        <span>{{ node.name }}</span>
-                    </button>
-                </mat-tree-node>
-            </mat-tree>
-        </tl-card-content>
-    </tl-card>
-
-    <div *ngIf="selectedNode" fxFlex="80">
+﻿<div class="container"
+     [style.height.px]="containerHeightPx">
+    <!-- Entries table -->
+    <div *ngIf="selectedNode"
+         class="main-panel"
+         [style.width.px]="mainPanelWidthPx"
+         [style.height.px]="mainPanelHeightPx">
+        <!-- Filters -->
         <search-panel [translateService]="translate">
-            <div [formGroup]="form" fxFlexFill fxLayout="column" fxLayoutAlign="start start">
+            <div [formGroup]="form" fxLayout="column">
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-input fxFlex="50"
+                              formControlName="codeControl"
+                              label="{{ 'nomenclatures-page.filters-code' | tlTranslate }}"
+                              tooltipResourceName="nomenclatures-page.filters-code-helper">
+                    </tl-input>
 
+                    <tl-input fxFlex="50"
+                              formControlName="nameControl"
+                              label="{{ 'nomenclatures-page.filters-name' | tlTranslate }}"
+                              tooltipResourceName="nomenclatures-page.filters-name-helper">
+                    </tl-input>
+                </div>
             </div>
         </search-panel>
 
-        <mat-card class="pad-sides-10">
+        <!-- Table -->
+        <mat-card>
             <tl-data-table [showInactiveRecords]="canRestoreRecords"
                            [showAddButton]="canAddRecords"
+                           showInactiveRecordsLabel="{{ 'nomenclatures-page.show-inactive' | tlTranslate }}"
                            (addButtonClicked)="addEditNomenclature(undefined, false)">
                 <data-column *ngFor="let column of dataColumns"
                              [flexRate]="column.width"
@@ -47,29 +40,29 @@
                 <data-template-column [flexRate]="0.5">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row wrap" fxLayoutAlign="end center">
-                            <tl-icon-button icon="visibility" 
-                                            (buttonClicked)="addEditNomenclature(row.data, true)" 
+                            <tl-icon-button icon="visibility"
+                                            (buttonClicked)="addEditNomenclature(row.data, true)"
                                             iconClass="accent-color"
                                             tooltipText="{{'nomenclatures-page.view-nom-tooltip' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="canEditRecords && isActive(row.data)" 
-                                            icon="edit" 
-                                            (buttonClicked)="addEditNomenclature(row.data, false)" 
+                            <tl-icon-button *ngIf="canEditRecords && isActive(row.data)"
+                                            icon="edit"
+                                            (buttonClicked)="addEditNomenclature(row.data, false)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'nomenclatures-page.edit-nom-tooltip' | tlTranslate }}">
                             </tl-icon-button>
 
                             <tl-icon-button *ngIf="canDeleteRecords && isActive(row.data)"
-                                            icon="delete" 
+                                            icon="delete"
                                             (buttonClicked)="deleteNomenclature(row.data)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'nomenclatures-page.delete-nom-tooltip' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="canRestoreRecords && !isActive(row.data)" 
+                            <tl-icon-button *ngIf="canRestoreRecords && !isActive(row.data) && !isValidityNomenclature(row.data)"
                                             icon="restore"
-                                            (buttonClicked)="restoreNomenclature(row.data)" 
+                                            (buttonClicked)="restoreNomenclature(row.data)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'nomenclatures-page.restore-nom-tooltip' | tlTranslate }}">
                             </tl-icon-button>
@@ -78,5 +71,54 @@
                 </data-template-column>
             </tl-data-table>
         </mat-card>
+    </div>
+
+    <!-- Nomenclatures list tree -->
+    <div class="tree-panel"
+         [class.expanded-tree-panel]="isTreeExpanded"
+         [class.collapsed-tree-panel]="!isTreeExpanded"
+         (transitionend)="onTreePanelToggled($event)">
+        <div class="search-container">
+            <tl-input *ngIf="isTreeExpanded"
+                      [formControl]="searchInputControl"
+                      label="{{ 'nomenclatures-page.search' | tlTranslate }}"
+                      tooltipResourceName="nomenclatures-page.search-helper">
+            </tl-input>
+
+            <tl-icon-button [icon]="isTreeExpanded ? 'arrow_back_ios' : 'arrow_forward_ios'"
+                            (buttonClicked)="toggleTree()"
+                            iconClass="primaryColor"
+                            tooltipText="{{ (isTreeExpanded ? 'nomenclatures-page.collapse-tree' : 'nomenclatures-page.expand-tree') | tlTranslate }}">
+            </tl-icon-button>
+        </div>
+
+        <mat-tree *ngIf="isTreeExpanded" id="nomenclatures-tree" [dataSource]="treeDataSource" [treeControl]="treeControl">
+            <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding matTreeNodePaddingIndent="20" class="inner-node">
+                <button #childButton
+                        mat-button
+                        [class.selected-node]="selectedNode === node"
+                        [disableRipple]="true"
+                        matTooltip="{{ node.name }}"
+                        matTooltipPosition="above"
+                        matTooltipShowDelay="500"
+                        (click)="nodeSelected(node)">
+                    <mat-icon>{{ selectedNode === node ? 'arrow_right' : '' }}</mat-icon>
+                    <span>{{node.name}}</span>
+                </button>
+            </mat-tree-node>
+
+            <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+                <button #parentButton
+                        [class.selected-node]="treeControl.isExpanded(node)"
+                        mat-button
+                        matTreeNodeToggle
+                        matTooltip="{{ node.name }}"
+                        matTooltipPosition="above"
+                        matTooltipShowDelay="500">
+                    <mat-icon>{{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}</mat-icon>
+                    <span>{{ node.name }}</span>
+                </button>
+            </mat-tree-node>
+        </mat-tree>
     </div>
 </div>

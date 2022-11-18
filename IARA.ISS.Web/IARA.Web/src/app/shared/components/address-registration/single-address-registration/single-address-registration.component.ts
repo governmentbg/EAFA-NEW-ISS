@@ -1,5 +1,5 @@
 ﻿import { AfterViewInit, Component, Input, OnChanges, OnInit, Optional, Self, SimpleChanges } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, Validators } from '@angular/forms';
 import { forkJoin, Subscription } from 'rxjs';
 
 import { AddressTypesEnum } from '@app/enums/address-types.enum';
@@ -17,6 +17,8 @@ import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 import { NotifyingCustomFormControl } from '@app/shared/utils/notifying-custom-form-control';
 import { NotifierDirective } from '@app/shared/directives/notifier/notifier.directive';
+
+const BG_COUNTRY_CODE: string = 'BGR';
 
 @Component({
     selector: 'single-address-registration',
@@ -79,12 +81,16 @@ export class SingleAddressRegistrationComponent extends NotifyingCustomFormContr
                     this.form.get('districtControl')!.setValue(null);
                     this.form.get('municipalityControl')!.setValue(null);
                     this.form.get('populatedAreaControl')!.setValue(null);
-                }
-
-                if (this.isDisabled) {
                     this.form.get('districtControl')!.disable();
                     this.form.get('municipalityControl')!.disable()
                     this.form.get('populatedAreaControl')!.disable();
+                }
+                else {
+                    if (this.isDisabled) {
+                        this.form.get('districtControl')!.disable();
+                        this.form.get('municipalityControl')!.disable()
+                        this.form.get('populatedAreaControl')!.disable();
+                    }
                 }
             }
         });
@@ -114,7 +120,13 @@ export class SingleAddressRegistrationComponent extends NotifyingCustomFormContr
                 this.form.get('apartmentNumControl')!.setValue(value.apartmentNum);
 
                 this.loader.load(() => {
-                    this.form.get('countryControl')!.setValue(this.countries.find(x => x.value === value.countryId));
+                    if (value.countryId !== null && value.countryId !== undefined) {
+                        this.form.get('countryControl')!.setValue(this.countries.find(x => x.value === value.countryId));
+                    }
+                    else {
+                        this.form.get('countryControl')!.setValue(this.countries.find(x => x.code === BG_COUNTRY_CODE && x.isActive));
+                    }
+
                     this.form.get('districtControl')!.setValue(this.districts.find(x => x.value === value.districtId));
                     this.form.get('municipalityControl')!.setValue(this.municipalities.find(x => x.value === value.municipalityId));
                     this.form.get('populatedAreaControl')!.setValue(this.populatedAreas.find(x => x.value === value.populatedAreaId));
@@ -126,6 +138,22 @@ export class SingleAddressRegistrationComponent extends NotifyingCustomFormContr
                 this.form.reset();
             }
         });
+    }
+
+    public validate(control: AbstractControl): ValidationErrors | null {
+        const errors: ValidationErrors = {};
+
+        for (const key of Object.keys(this.form.controls)) {
+            if (this.form.controls[key].errors !== null && this.form.controls[key].errors !== undefined) {
+                for (const error in this.form.controls[key].errors) {
+                    if (!['expectedValueNotMatching'].includes(error)) {
+                        errors[error] = this.form.controls[key].errors![error];
+                    }
+                }
+            }
+        }
+
+        return Object.keys(errors).length === 0 ? null : errors;
     }
 
     protected buildForm(): AbstractControl {
@@ -376,7 +404,7 @@ export class SingleAddressRegistrationComponent extends NotifyingCustomFormContr
     }
 
     private isBGChosen(): boolean {
-        return this.form.get('countryControl')?.value?.code === 'BGR';
+        return this.form.get('countryControl')?.value?.code === BG_COUNTRY_CODE;
     }
 
     public getControlErrorLabelText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {

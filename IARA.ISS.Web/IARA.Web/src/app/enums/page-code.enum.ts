@@ -33,8 +33,12 @@
     RecFishAssoc,
     RecFish14And18Assoc,
     RecFishElderAssoc,
-
+    
+    /**
+    * Сдружения за любителски риболов
+    * */
     Assocs,
+
     QualiFi,
     Buyers,
     CatchQuota,
@@ -237,6 +241,11 @@
      * Статистистически формуляр за риболовни кораби
      * */
     StatFormFishVessel,
+
+    /**
+     * За данни за връчване на регистров запис
+     * */
+    Delivery,
 
     migrate
 }

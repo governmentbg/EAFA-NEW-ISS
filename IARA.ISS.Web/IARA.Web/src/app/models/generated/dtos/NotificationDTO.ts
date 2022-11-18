@@ -1,8 +1,9 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
 
-export class NotificationDTO {
+export class NotificationDTO { 
     public constructor(obj?: Partial<NotificationDTO>) {
         Object.assign(this, obj);
     }
@@ -27,4 +28,10 @@ export class NotificationDTO {
 
     @StrictlyTyped(String)
     public title!: string;
+
+    @StrictlyTyped(Number)
+    public pageCode?: PageCodeEnum;
+
+    @StrictlyTyped(Number)
+    public tableId?: number;
 }

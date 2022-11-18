@@ -21,7 +21,7 @@ export interface INomenclaturesService {
     getGroups(): Observable<NomenclatureDTO<number>[]>;
 
     add(entity: Record<string, unknown>): Observable<number>;
-    edit(entity: Record<string, unknown>): Observable<void>;
+    edit(entity: Record<string, unknown>, updateCurrent: boolean): Observable<void>;
     delete(id: number): Observable<void>;
     undoDelete(id: number): Observable<void>;
 

@@ -1,5 +1,6 @@
 ﻿import { Component, Input, OnChanges, OnInit, Self, SimpleChange, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { FishingCapacityRemainderActionEnum } from '@app/enums/fishing-capacity-remainder-action.enum';
@@ -8,7 +9,7 @@ import { FishingCapacityFreedActionsRegixDataDTO } from '@app/models/generated/d
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { IFishingCapacityService } from '@app/interfaces/common-app/fishing-capacity.interface';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
-import { DatePipe } from '@angular/common';
+import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { NewCertificateData } from '../acquired-fishing-capacity/acquired-fishing-capacity.component';
 
 type FreedActionsType = FishingCapacityFreedActionsDTO | FishingCapacityFreedActionsRegixDataDTO;
@@ -35,6 +36,9 @@ export class FishingCapacityFreedActionsComponent extends CustomFormControl<Free
 
     @Input()
     public maxPower: number | undefined;
+
+    @Input()
+    public submittedBy: ApplicationSubmittedByDTO | undefined;
 
     @Input()
     public expectedResults!: FishingCapacityFreedActionsRegixDataDTO;

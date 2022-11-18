@@ -69,7 +69,7 @@ export abstract class ApplicationsRegisterAdministrativeBaseService extends Base
     }
 
     public abstract getRegisterByApplicationId(applicationId: number, pageCode?: PageCodeEnum): Observable<unknown>;
-    public abstract getApplication(id: number, pageCode?: PageCodeEnum): Observable<IApplicationRegister>;
+    public abstract getApplication(id: number, getRegiXData: boolean, pageCode?: PageCodeEnum): Observable<IApplicationRegister>;
     public abstract getRegixData(id: number, pageCode?: PageCodeEnum): Observable<RegixChecksWrapperDTO<IApplicationRegister>>;
     public abstract getApplicationDataForRegister(applicationId: number, pageCode?: PageCodeEnum): Observable<IApplicationRegister>;
     public abstract addApplication(application: IApplicationRegister, pageCode?: PageCodeEnum): Observable<number>;

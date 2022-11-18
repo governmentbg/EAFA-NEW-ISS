@@ -91,6 +91,7 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
     public isApplication!: boolean;
     public isApplicationHistoryMode: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isOnlineApplication: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public loadRegisterFromApplication: boolean = false;
@@ -111,6 +112,8 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
+
+    private shipCaptains: Map<number, string> = new Map<number, string>();
 
     private translateService: FuseTranslationLoaderService;
     private nomenclatures: CommonNomenclatures;
@@ -259,12 +262,17 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId!).subscribe({
+                    this.service.getApplication(this.applicationId!, this.showRegiXData).subscribe({
                         next: (permit: ScientificFishingApplicationEditDTO) => {
                             permit.applicationId = this.applicationId!;
                             this.hasDelivery = permit.hasDelivery!;
                             this.isOnlineApplication = permit.isOnlineApplication!;
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new ScientificFishingPermitRegixDataDTO(permit.regiXDataModel);
+                                permit.regiXDataModel = undefined;
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (permit.requester === undefined || permit.requester === null)) {
                                 const service = this.service as ScientificFishingPublicService;
@@ -316,6 +324,7 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.viewMode = data.viewMode;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.dialogRightSideActions = buttons.rightSideActions;
         this.loadRegisterFromApplication = data.loadRegisterFromApplication;
 
@@ -810,23 +819,10 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
         this.fillCommonFormFields(model);
 
         if (model instanceof ScientificFishingPermitRegixDataDTO) {
-            setTimeout(() => {
-                this.regixChecks = model.applicationRegiXChecks ?? [];
-            });
-
-            if (!this.viewMode) {
-                this.notifier.start();
-                this.notifier.onNotify.subscribe({
-                    next: () => {
-                        this.form.markAllAsTouched();
-                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
-                        this.notifier.stop();
-                    }
-                });
-            }
+            this.fillFormRegiX(this.model);
         }
         else {
-            this.form.get('requestNumberControl')!.setValue(model.id);
+            this.form.get('requestNumberControl')!.setValue(model.eventisNum);
             this.form.get('requestDateControl')!.setValue(model.registrationDate);
 
             if (model.validFrom || model.validTo) {
@@ -903,6 +899,7 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
                 if (model.shipId !== undefined && model.shipId !== null) {
                     this.form.get('existingShipNameControl')?.setValue(ShipsUtils.get(this.ships, model.shipId));
                 }
+                this.form.get('shipCaptainNameControl')?.setValue(model.shipCaptainName);
             }
             else if (model.isShipRegistered === false) {
                 this.form.get('shipIsNotRegisteredControl')!.setValue(true);
@@ -922,6 +919,53 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
             this.form.get('filesControl')!.setValue(model.files);
 
             this.form.markAsUntouched();
+
+            if (!this.isPublicApp) {
+                this.form.get('existingShipNameControl')!.valueChanges.subscribe({
+                    next: (ship: ShipNomenclatureDTO | undefined) => {
+                        if (ship && typeof ship !== 'string') {
+                            const captain: string | undefined = this.shipCaptains.get(ship.value!);
+
+                            if (captain !== undefined) {
+                                this.form.get('shipCaptainNameControl')!.setValue(captain);
+                            }
+                            else {
+                                this.service.getShipCaptainName(ship.value!).subscribe({
+                                    next: (captain: string) => {
+                                        this.form.get('shipCaptainNameControl')!.setValue(captain);
+                                        this.shipCaptains.set(ship.value!, captain);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX(this.model);
+            }
+        }
+    }
+
+    private fillFormRegiX(model: ScientificFishingApplicationEditDTO | ScientificFishingPermitRegixDataDTO): void {
+        setTimeout(() => {
+            this.regixChecks = model.applicationRegiXChecks ?? [];
+        });
+
+        if (!this.viewMode) {
+            this.notifier.start();
+            this.notifier.onNotify.subscribe({
+                next: () => {
+                    this.form.markAllAsTouched();
+
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+
+                    this.notifier.stop();
+                }
+            });
         }
     }
 
@@ -1004,6 +1048,7 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
             this.model.isShipRegistered = !form.get('shipIsNotRegisteredControl')!.value;
             if (this.model.isShipRegistered) {
                 this.model.shipId = form.get('existingShipNameControl')!.value?.value;
+                this.model.shipCaptainName = form.get('shipCaptainNameControl')!.value;
             }
             else {
                 this.model.shipName = form.get('shipNameControl')!.value;

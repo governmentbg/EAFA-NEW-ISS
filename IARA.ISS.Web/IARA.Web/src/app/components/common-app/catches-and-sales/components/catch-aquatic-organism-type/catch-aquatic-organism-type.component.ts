@@ -93,6 +93,29 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
         this.mapOptions.showGridLayer = true;
         this.mapOptions.gridLayerStyle = this.createCustomGridLayerStyle();
         this.mapOptions.selectGridLayerStyle = this.createCustomSelectGridLayerStyle();
+
+        this.form.get('thirdCountryCatchZoneControl')!.valueChanges.subscribe({
+            next: (value: string | undefined) => {
+                this.thirdCountryCatchZoneControlValueChanged(value);
+            }
+        });
+
+        this.form.get('isContinentalCatchControl')!.valueChanges.subscribe({
+            next: (value: boolean | undefined) => {
+                this.isContinentalCatchControlValueChanged(value);
+            }
+        });
+
+        this.form.get('catchQuadrantControl')!.valueChanges.subscribe({
+            next: (quadrant: CatchZoneNomenclatureDTO | string | null | undefined) => {
+                if (quadrant !== null && quadrant !== undefined && CommonUtils.isNomenclature<number>(quadrant)) {
+                    this.form.get('catchZoneControl')!.setValue(quadrant.zone);
+                }
+                else {
+                    this.form.get('catchZoneControl')!.reset();
+                }
+            }
+        });
     }
 
     public ngOnInit(): void {
@@ -136,6 +159,7 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
 
     public onPopoverToggled(isOpened: boolean): void {
         this.isMapPopoverOpened = isOpened;
+
         setTimeout(() => {
             if (this.isMapPopoverOpened === true) {
                 this.mapViewer.selectedGridSectorsChangeEvent.subscribe({
@@ -146,18 +170,20 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
                     }
                 });
 
-                const quadrant: string | null | undefined = this.form.get('catchQuadrantControl')!.value;
+                const quadrant: string | null | undefined = this.form.get('catchQuadrantControl')!.value?.code;
                 if (quadrant !== null && quadrant !== undefined) {
                     this.mapViewer.gridLayerIsRenderedEvent.subscribe({
                         next: (isMapRendered: boolean) => {
                             if (isMapRendered === true) {
-                                this.mapViewer.selectGridSectors([quadrant]);
+                                setTimeout(() => {
+                                    this.mapViewer.selectGridSectors([quadrant]);
+                                }, 1000); // необходимо, защото иначе не се появява на картата квадрантът - ако няма забавяне
                             }
                         }
                     });
                 }
             }
-        }, 1000);
+        });
     }
 
     public onQuadrantChosenBtnClicked(): void {
@@ -256,7 +282,8 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
         this.model.fishId = this.form.get('aquaticOrganismControl')!.value?.value;
         this.model.fishName = this.form.get('aquaticOrganismControl')!.value?.displayName ?? '';
         this.model.quantityKg = this.form.get('quantityKgControl')!.value;
-        this.model.catchTypeId = this.form.get('catchTypeControl')!.value?.value;
+        const catchType: NomenclatureDTO<number> | undefined = this.form.get('catchTypeControl')!.value;
+        this.model.catchTypeId = catchType?.value;
         this.model.catchSizeId = this.form.get('catchSizeControl')!.value?.value;
 
         this.model.sturgeonGender = this.form.get('sturgeonGenderControl')!.value?.value;
@@ -270,6 +297,13 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
         this.model.catchZone = this.form.get('catchZoneControl')!.value;
         this.model.thirdCountryCatchZone = this.form.get('thirdCountryCatchZoneControl')!.value;
         this.model.isContinentalCatch = this.form.get('isContinentalCatchControl')!.value ?? false;
+
+        if (catchType !== null && catchType !== undefined) {
+            this.model.isDetainedOnBoard = CatchTypeCodesEnum[catchType.code! as keyof typeof CatchTypeCodesEnum] === CatchTypeCodesEnum.TAKEN_ONBOARD;
+        }
+        else {
+            this.model.isDetainedOnBoard = false;
+        }
 
         return this.model;
     }
@@ -362,5 +396,45 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
         layerStyle.stroke = new StrokeDef('rgb(255,177,34,1)', 3);
 
         return layerStyle;
+    }
+
+    private thirdCountryCatchZoneControlValueChanged(value: string | undefined): void {
+        const isContinentalCatchControlValue: boolean | undefined = this.form.get('isContinentalCatchControl')!.value;
+
+        if (value !== null && value !== undefined && value !== '') {
+            this.form.get('catchQuadrantControl')!.clearValidators();
+            this.form.get('catchQuadrantControl')!.markAsPending();
+            this.form.get('catchQuadrantControl')!.updateValueAndValidity({ emitEvent: false });
+        }
+        else {
+            if (isContinentalCatchControlValue === false
+                || isContinentalCatchControlValue === null
+                || isContinentalCatchControlValue === undefined
+            ) {
+                this.form.get('catchQuadrantControl')!.setValidators([Validators.required]);
+                this.form.get('catchQuadrantControl')!.markAsPending();
+                this.form.get('catchQuadrantControl')!.updateValueAndValidity({ emitEvent: false });
+            }
+        }
+    }
+
+    private isContinentalCatchControlValueChanged(value: boolean | undefined): void {
+        const thirdCountryCatchZoneControlValue: string | undefined = this.form.get('thirdCountryCatchZoneControl')!.value;
+
+        if (value === true) {
+            this.form.get('catchQuadrantControl')!.clearValidators();
+            this.form.get('catchQuadrantControl')!.markAsPending();
+            this.form.get('catchQuadrantControl')!.updateValueAndValidity({ emitEvent: false });
+        }
+        else {
+            if (thirdCountryCatchZoneControlValue === null
+                || thirdCountryCatchZoneControlValue === undefined
+                || thirdCountryCatchZoneControlValue === ''
+            ) {
+                this.form.get('catchQuadrantControl')!.setValidators([Validators.required]);
+                this.form.get('catchQuadrantControl')!.markAsPending();
+                this.form.get('catchQuadrantControl')!.updateValueAndValidity({ emitEvent: false });
+            }
+        }
     }
 }

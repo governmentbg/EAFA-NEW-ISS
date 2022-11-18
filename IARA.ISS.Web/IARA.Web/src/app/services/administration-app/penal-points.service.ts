@@ -18,6 +18,7 @@ import { PermitNomenclatureDTO } from '@app/models/generated/dtos/PermitNomencla
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { map } from 'rxjs/operators';
 import { PenalPointsOrderDTO } from '@app/models/generated/dtos/PenalPointsOrderDTO';
+import { DateUtils } from '@app/shared/utils/date.utils';
 
 @Injectable({
     providedIn: 'root'
@@ -42,24 +43,51 @@ export class PenalPointsService extends BaseAuditService implements IPenalPoints
     }
 
     public getPenalPoints(id: number): Observable<PenalPointsEditDTO> {
+        type Result = PenalPointsEditDTO;
         const params = new HttpParams().append('id', id.toString());
 
-        return this.requestService.get(this.area, this.controller, 'GetPenalPoints', {
+        return this.requestService.get<Result>(this.area, this.controller, 'GetPenalPoints', {
             httpParams: params,
             responseTypeCtr: PenalPointsEditDTO
-        });
+        }).pipe(map((points: Result) => {
+            for (const status of points.appealStatuses ?? []) {
+                if (status.appealDate !== undefined && status.appealDate !== null) {
+                    status.details = `${this.translate.getValue('penal-points.edit-complaint-date')}: ${DateUtils.ToDisplayDateString(status.appealDate)}`;
+                }
+
+                if (status.appealNum !== undefined && status.appealNum !== null) {
+                    const appealNum: string = `${this.translate.getValue('penal-points.edit-complaint-num')}: ${status.appealNum}`
+
+                    if (status.details !== undefined && status.details !== null) {
+                        status.details +=`; ${appealNum}`;
+                    }
+                    else {
+                        status.details = appealNum;
+                    }
+                }
+
+                if (status.decreeNum !== undefined && status.decreeNum !== null) {
+                    const decreeNum: string = `${this.translate.getValue('penal-points.edit-complaint-case-num')}: ${status.decreeNum}`;
+
+                    if (status.details !== undefined && status.details !== null) {
+                        status.details += `; ${decreeNum}`;
+                    }
+                    else {
+                        status.details = decreeNum;
+                    }
+                }
+            }
+
+            return points;
+        }));
     }
 
-    public addPenalPoints(auan: PenalPointsEditDTO): Observable<number> {
-        return this.requestService.post(this.area, this.controller, 'AddPenalPoints', auan, {
-            properties: new RequestProperties({ asFormData: true })
-        });
+    public addPenalPoints(points: PenalPointsEditDTO): Observable<number> {
+        return this.requestService.post(this.area, this.controller, 'AddPenalPoints', points);
     }
 
-    public editPenalPoints(auan: PenalPointsEditDTO): Observable<void> {
-        return this.requestService.post(this.area, this.controller, 'EditPenalPoints', auan, {
-            properties: new RequestProperties({ asFormData: true })
-        });
+    public editPenalPoints(points: PenalPointsEditDTO): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'EditPenalPoints', points);
     }
 
     public deletePenalPoints(id: number): Observable<void> {

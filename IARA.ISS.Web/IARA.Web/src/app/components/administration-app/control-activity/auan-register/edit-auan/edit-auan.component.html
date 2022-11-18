@@ -18,6 +18,7 @@
 
                 <tl-input fxFlex="20"
                           formControlName="auanNumControl"
+                          [getControlErrorLabelText]="auanNumErrorLabelText.bind(this)"
                           label="{{ 'auan-register.edit-auan-num' | tlTranslate }}"
                           tooltipResourceName="auan-register.edit-auan-num-helper">
                 </tl-input>
@@ -37,11 +38,12 @@
             </div>
 
             <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
-                <tl-input fxFlex="20"
-                          formControlName="drafterControl"
-                          label="{{ 'auan-register.edit-drafter' | tlTranslate }}"
-                          tooltipResourceName="auan-register.edit-drafter-helper">
-                </tl-input>
+                <tl-autocomplete fxFlex="20"
+                                 formControlName="drafterControl"
+                                 [options]="drafters"
+                                 label="{{ 'auan-register.edit-drafter' | tlTranslate }}"
+                                 tooltipResourceName="auan-register.edit-drafter-helper">
+                </tl-autocomplete>
 
                 <tl-autocomplete fxFlex="20"
                                  formControlName="territoryUnitControl"
@@ -50,14 +52,7 @@
                                  tooltipResourceName="auan-register.edit-territory-unit-helper">
                 </tl-autocomplete>
 
-                <tl-autocomplete fxFlex="20"
-                                 formControlName="statusControl"
-                                 [options]="statuses"
-                                 label="{{ 'auan-register.edit-status' | tlTranslate }}"
-                                 tooltipResourceName="auan-register.edit-status-helper">
-                </tl-autocomplete>
-
-                <tl-autocomplete fxFlex="40"
+                <tl-autocomplete fxFlex="60"
                                  formControlName="inspectionTypeControl"
                                  [options]="inspectionTypes"
                                  label="{{ 'auan-register.edit-inspection-type' | tlTranslate }}"
@@ -82,63 +77,21 @@
                         [validityChecker]="form">
         <div fxLayout="column" fxLayoutGap="1em">
             <div *ngIf="isAdding" fxLayout="row" fxLayoutAlign="start center">
-                <tl-autocomplete fxFlex="50"
+                <tl-autocomplete *ngIf="!isFromThirdPartyInspection"
+                                 fxFlex="50"
                                  formControlName="inspectedEntityControl"
                                  [options]="inspectedEntities"
+                                 [autoMatchTextToOption]="true"
                                  label="{{ 'auan-register.edit-inspected-entity-select' | tlTranslate }}"
                                  tooltipResourceName="auan-register.edit-inspected-entity-select-helper">
                 </tl-autocomplete>
             </div>
 
-            <div *ngIf="inspectedEntity !== undefined && inspectedEntity !== null">
-                <!-- Физическо лице -->
-                <div *ngIf="inspectedEntity.isPerson === true">
-                    <regix-data formControlName="personControl"
-                                [isPerson]="true"
-                                [hideDocument]="true"
-                                [isIdReadOnly]="viewMode"
-                                checkboxLabel="{{ 'auan-register.has-bulgarian-address-registration' | tlTranslate }}">
-                    </regix-data>
-
-                    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
-                        <tl-input fxFlex="25"
-                                  formControlName="personWorkPlaceControl"
-                                  label="{{ 'auan-register.edit-inspected-entity-work-place' | tlTranslate }}"
-                                  tooltipResourceName="auan-register.edit-inspected-entity-work-place-helper">
-                        </tl-input>
-
-                        <tl-input fxFlex="25"
-                                  formControlName="personWorkPositionControl"
-                                  label="{{ 'auan-register.edit-inspected-entity-work-position' | tlTranslate }}"
-                                  tooltipResourceName="auan-register.edit-inspected-entity-work-position-helper">
-                        </tl-input>
-
-                        <div fxFlex="25"></div>
-                        <div fxFlex="25"></div>
-                    </div>
-
-                    <address-registration formControlName="personAddressesControl"
-                                          addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
-                                          secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
-                                          checkboxLabel="{{ 'auan-register.permanent-address-same-as-correspondence' | tlTranslate }}">
-                    </address-registration>
-                </div>
-
-                <!-- Юридическо лице -->
-                <div *ngIf="inspectedEntity.isPerson === false">
-                    <regix-data formControlName="legalControl"
-                                [isPerson]="false"
-                                [showCustodianOfProperty]="false"
-                                [isIdReadOnly]="viewMode"
-                                checkboxLabel="{{ 'auan-regster.has-bulgarian-address-registration' | tlTranslate }}">
-                    </regix-data>
-
-                    <address-registration formControlName="legalAddressesControl"
-                                          addressLabel="{{ 'common.company-headquarters-address' | tlTranslate : 'cap' }}"
-                                          [addressType]="companyHeadquartersType">
-                    </address-registration>
-                </div>
-            </div>
+            <inspected-entity-basic-info *ngIf="(inspectedEntity !== undefined && inspectedEntity !== null) || isFromThirdPartyInspection"
+                                         formControlName="inspectedEntityBasicInfoControl"
+                                         [viewMode]="!isFromThirdPartyInspection"
+                                         [isIdReadOnly]="viewMode">
+            </inspected-entity-basic-info>
         </div>
     </tl-expansion-panel>
 
@@ -215,7 +168,7 @@
     <!-- Начин на връчване -->
     <tl-expansion-panel title="{{ 'auan-register.edit-auan-delivery' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="form.errors?.hasNoEDeliveryRegistrationError !== true"
+                        [validityCheckerExtraCondition]="form.controls.isEDeliveryRequestedControl.errors?.hasNoEDeliveryRegistrationError !== true"
                         tooltipResourceName="auan-register.edit-auan-delivery-helper">
         <div fxLayout="column" fxLayoutGap="1em">
             <div fxLayout="column" fxLayoutGap="1em">
@@ -230,7 +183,7 @@
                              tooltipResourceName="auan-register.edit-auan-e-delivery-requested-helper">
                 </tl-checkbox>
 
-                <mat-error *ngIf="hasNoEDeliveryRegistrationError">
+                <mat-error *ngIf="form.controls.isEDeliveryRequestedControl.errors?.hasNoEDeliveryRegistrationError === true">
                     * {{ 'auan-register.has-no-e-delivery-registration-error' | tlTranslate }}
                 </mat-error>
             </div>
@@ -344,16 +297,6 @@
                 </div>
             </div>
         </div>
-    </tl-expansion-panel>
-
-    <!-- Свързани НП, споразумения и предупреждения -->
-    <tl-expansion-panel *ngIf="!isAdding"
-                        [validityChecker]="form"
-                        title="{{ 'auan-register.edit-auan-penal-decrees' | tlTranslate }}"
-                        tooltipResourceName="auan-register.edit-auan-penal-decrees-helper">
-        <penal-decrees fxFlex="100"
-                       [auanId]="auanId">
-        </penal-decrees>
     </tl-expansion-panel>
 
     <!-- Файлове -->

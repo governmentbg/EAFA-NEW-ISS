@@ -1,12 +1,11 @@
 ﻿import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { Observable } from 'rxjs';
+import { forkJoin } from 'rxjs';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { PermissionTypeEnum } from '@app/enums/permission-type.enum';
-import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { ColumnDTO } from '@app/models/generated/dtos/ColumnDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { NomenclatureTableDTO } from '@app/models/generated/dtos/NomenclatureTableDTO';
@@ -29,52 +28,20 @@ import { INomenclaturesService } from '@app/interfaces/administration-app/nomenc
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { EditNomenclatureComponent } from './edit-nomenclatures.component';
-
-interface ITreeNode {
-    id?: number;
-    name: string;
-    children?: ITreeNode[]
-}
-
-class FlatNode {
-    public id: number | undefined;
-    public level: number = 0;
-    public name: string = '';
-    public expandable: boolean = false;
-
-    public constructor(init?: Partial<FlatNode>) {
-        Object.assign(this, init);
-    }
-}
-
-class ColumnDef {
-    public columnName: string | undefined;
-    public propertyNamePascal: string | undefined;
-    public propertyNameCamel: string | undefined;
-    public dataType: string | undefined;
-    public width: number | undefined;
-    public isUnique: boolean | undefined;
-
-    public constructor(init?: Partial<ColumnDef>) {
-        Object.assign(this, init);
-    }
-}
-
-interface IsActiveNomenclature {
-    isActive: boolean | undefined;
-}
-
-interface ValidityNomenclature {
-    validFrom: Date | undefined;
-    validTo: Date | undefined;
-}
+import { MenuService } from '@app/shared/services/menu.service';
+import { ColumnDef } from './models/column-def.model';
+import { FlatNode } from './models/flat-node.model';
+import { TreeNode } from './interfaces/tree-node.interface';
+import { IsActiveNomenclature } from './interfaces/is-active-nomenclaure.interface';
+import { ValidityNomenclature } from './interfaces/validity-nomenclature.interface';
+import { EditNomenclatureParams } from './models/edit-nomenclature-params.model';
 
 @Component({
     selector: 'nomenclatures',
     templateUrl: './nomenclatures.component.html',
     styleUrls: ['./nomenclatures.component.scss']
 })
-export class NomenclaturesComponent extends BasePageComponent implements OnInit {
+export class NomenclaturesComponent extends BasePageComponent implements OnInit, AfterViewInit {
     public translate: FuseTranslationLoaderService;
     public form!: FormGroup;
 
@@ -87,7 +54,14 @@ export class NomenclaturesComponent extends BasePageComponent implements OnInit 
 
     public selectedNode: FlatNode | undefined;
     public treeControl: FlatTreeControl<FlatNode>;
-    public treeDataSource: MatTreeFlatDataSource<ITreeNode, FlatNode>;
+    public treeDataSource: MatTreeFlatDataSource<TreeNode, FlatNode>;
+
+    public searchInputControl: FormControl = new FormControl();
+    public isTreeExpanded: boolean = true;
+
+    public containerHeightPx: number = 0;
+    public mainPanelWidthPx: number = 0;
+    public mainPanelHeightPx: number = 0;
 
     @ViewChild(SearchPanelComponent)
     private searchpanel!: SearchPanelComponent;
@@ -95,7 +69,12 @@ export class NomenclaturesComponent extends BasePageComponent implements OnInit 
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
 
-    private treeFlattener: MatTreeFlattener<ITreeNode, FlatNode>;
+    private treeFlattener: MatTreeFlattener<TreeNode, FlatNode>;
+
+    private host: HTMLElement;
+    private toolbarElement!: HTMLElement;
+    private containerElement!: HTMLElement;
+    private treePanelElement!: HTMLElement;
 
     private nomenclatureGroups: NomenclatureDTO<number>[] = [];
     private nomenclatureTables: NomenclatureTableDTO[] = [];
@@ -103,6 +82,7 @@ export class NomenclaturesComponent extends BasePageComponent implements OnInit 
 
     private service: INomenclaturesService;
     private confirmDialog: TLConfirmDialog;
+    private menuService: MenuService;
     private editDialog: TLMatDialog<EditNomenclatureComponent>;
 
     private grid!: DataTableManager<Record<string, unknown>, NomenclaturesFilters>;
@@ -121,6 +101,8 @@ export class NomenclaturesComponent extends BasePageComponent implements OnInit 
         confirmDialog: TLConfirmDialog,
         editDialog: TLMatDialog<EditNomenclatureComponent>,
         permissions: PermissionsService,
+        menuService: MenuService,
+        host: ElementRef,
         messageService: MessageService
     ) {
         super(messageService);
@@ -129,70 +111,89 @@ export class NomenclaturesComponent extends BasePageComponent implements OnInit 
         this.service = service;
         this.editDialog = editDialog;
         this.confirmDialog = confirmDialog;
+        this.menuService = menuService;
+
+        this.host = host.nativeElement as HTMLElement;
 
         this.hasAddPermission = permissions.has(PermissionsEnum.NomenclaturesAddRecords);
         this.hasEditPermission = permissions.has(PermissionsEnum.NomenclaturesEditRecords);
         this.hasDeletePermission = permissions.has(PermissionsEnum.NomenclaturesDeleteRecords);
         this.hasRestorePermission = permissions.has(PermissionsEnum.NomenclaturesRestoreRecords);
 
-        this.treeFlattener = new MatTreeFlattener(this.treeFlattenerTransformer, node => node.level, node => node.expandable, node => node.children);
-        this.treeControl = new FlatTreeControl<FlatNode>(node => node.level, node => node.expandable);
+        this.treeFlattener = new MatTreeFlattener(
+            this.treeFlattenerTransformer,
+            (node: FlatNode) => node.level,
+            (node: FlatNode) => node.expandable,
+            (node: TreeNode) => node.children
+        );
+
+        this.treeControl = new FlatTreeControl<FlatNode>(
+            (node: FlatNode) => node.level,
+            (node: FlatNode) => node.expandable
+        );
+
         this.treeDataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+
+        this.searchInputControl.valueChanges.subscribe({
+            next: (value: string) => {
+                this.setTreeDataSource(value);
+            }
+        });
 
         this.buildForm();
     }
 
     public ngOnInit(): void {
-        this.getNomenclatureGroups().subscribe({
-            next: (nomenclatureGroups: NomenclatureDTO<number>[]) => {
+        forkJoin(
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.NomenclatureGroups, this.service.getGroups.bind(this.service), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.NomenclatureTables, this.service.getTables.bind(this.service), false)
+        ).subscribe({
+            next: ([nomenclatureGroups, nomenclatureTables]: [NomenclatureDTO<number>[], NomenclatureTableDTO[]]) => {
                 this.nomenclatureGroups = nomenclatureGroups;
+                this.nomenclatureTables = nomenclatureTables;
 
-                this.getNomenclatureTables().subscribe({
-                    next: (nomenclatureTables: NomenclatureTableDTO[]) => {
-                        this.nomenclatureTables = nomenclatureTables;
+                if (this.nomenclatureTables.some(x => x.groupId === undefined || x.groupId === null)) {
+                    this.nomenclatureGroups.push(new NomenclatureDTO<number>({
+                        value: undefined,
+                        displayName: this.translate.getValue('nomenclatures-page.other'),
+                        isActive: true
+                    }));
+                }
 
-                        if (this.nomenclatureTables.some(x => x.groupId === undefined || x.groupId === null)) {
-                            this.nomenclatureGroups.push(new NomenclatureDTO<number>({
-                                value: undefined,
-                                displayName: this.translate.getValue('nomenclatures-page.other')
-                            }));
-                        }
+                this.setTreeDataSource();
+            }
+        });
+    }
 
-                        const groups: NomenclatureDTO<number>[] = nomenclatureGroups.filter(x => this.nomenclatureTables.some(y => y.groupId === x.value));
+    public ngAfterViewInit(): void {
+        this.calculateContainerHeightPx();
+        this.calculateMainPanelWidthPx();
 
-                        this.treeDataSource.data = groups.map((x: NomenclatureDTO<number>) => {
-                            const tables: NomenclatureTableDTO[] = nomenclatureTables.filter(y => y.groupId === x.value);
-
-                            const children: ITreeNode[] = tables.map((y: NomenclatureTableDTO) => {
-                                return {
-                                    id: y.value,
-                                    name: y.displayName!,
-                                    children: []
-                                };
-                            });
-
-                            const node: ITreeNode = {
-                                name: this.translate.getValue('nomenclatures-page.' + x.displayName).replace('nomenclatures-page.', ''),
-                                children: children
-                            };
-
-                            return node;
-                        });
-                    }
+        this.menuService.folded.subscribe({
+            next: () => {
+                setTimeout(() => {
+                    this.calculateMainPanelWidthPx();
                 });
             }
         });
     }
 
-    public addEditNomenclature(entity: Record<string, unknown>, readonly: boolean): void {
-        let data: DialogParamsModel | undefined;
+    @HostListener('window:resize')
+    public onWindowResize(): void {
+        this.calculateContainerHeightPx();
+        this.calculateMainPanelWidthPx();
+    }
+
+    public addEditNomenclature(entity: Record<string, unknown> | undefined, readonly: boolean): void {
+        let data: EditNomenclatureParams;
         let auditBtn: IHeaderAuditButton | undefined;
-        let title: string = '';
+        let title: string;
 
         if (entity !== undefined && entity !== null) {
-            data = new DialogParamsModel({
+            data = new EditNomenclatureParams({
                 id: entity.id as number,
-                isReadonly: readonly
+                viewMode: readonly,
+                columns: this.tableColumns.get(this.service.tableId!)!
             });
 
             auditBtn = {
@@ -203,6 +204,12 @@ export class NomenclaturesComponent extends BasePageComponent implements OnInit 
             title = this.translate.getValue('nomenclatures-page.edit-dialog');
         }
         else {
+            data = new EditNomenclatureParams({
+                id: undefined,
+                viewMode: false,
+                columns: this.tableColumns.get(this.service.tableId!)!
+            });
+
             title = this.translate.getValue('nomenclatures-page.add-dialog');
         }
 
@@ -266,6 +273,10 @@ export class NomenclaturesComponent extends BasePageComponent implements OnInit 
         return false;
     }
 
+    public isValidityNomenclature(element: Record<string, unknown>): boolean {
+        return this.hasValidity(element);
+    }
+
     public nodeSelected(node: FlatNode): void {
         this.selectedNode = node;
         this.selectedTable = this.nomenclatureTables.find(x => x.value === node.id)!;
@@ -277,10 +288,29 @@ export class NomenclaturesComponent extends BasePageComponent implements OnInit 
         this.messageService.sendMessage(this.translate.getValue('navigation.nomenclatures') + ' – ' + node.name);
 
         this.reloadTable();
+
+        this.calculateMainPanelWidthPx();
     }
 
     public hasChild(_: number, node: FlatNode): boolean {
         return node.expandable;
+    }
+
+    public toggleTree(): void {
+        if (this.isTreeExpanded) {
+            this.isTreeExpanded = false;
+        }
+        else {
+            setTimeout(() => {
+                this.isTreeExpanded = true;
+            }, 180);
+        }
+    }
+
+    public onTreePanelToggled(event: TransitionEvent): void {
+        if (event.propertyName === 'width') {
+            this.calculateMainPanelWidthPx();
+        }
     }
 
     private reloadTable(): void {
@@ -330,14 +360,16 @@ export class NomenclaturesComponent extends BasePageComponent implements OnInit 
 
     private setDataColumns(columns: ColumnDTO[]): void {
         this.dataColumns = columns
-            .filter(x => !x.isForeignKey)
-            .map(x => {
+            .filter((column: ColumnDTO) => {
+                return !column.isForeignKey;
+            })
+            .map((column: ColumnDTO) => {
                 return new ColumnDef({
-                    columnName: this.getColumnName(x),
-                    propertyNamePascal: x.propertyName!,
-                    propertyNameCamel: x.propertyName!.charAt(0).toLowerCase() + x.propertyName!.slice(1),
-                    dataType: CommonUtils.toColumnDataType(x.dataType),
-                    width: NomenclaturesComponent.getFlexRate(x.propertyName)
+                    columnName: this.getColumnName(column),
+                    propertyNamePascal: column.propertyName!,
+                    propertyNameCamel: column.propertyName!.charAt(0).toLowerCase() + column.propertyName!.slice(1),
+                    dataType: CommonUtils.toColumnDataType(column.dataType),
+                    width: NomenclaturesComponent.getFlexRate(column.propertyName)
                 })
             });
     }
@@ -357,7 +389,10 @@ export class NomenclaturesComponent extends BasePageComponent implements OnInit 
 
     private buildForm(): void {
         this.form = new FormGroup({
-            // TODO
+            codeControl: new FormControl(),
+            nameControl: new FormControl(),
+            validFromControl: new FormControl(),
+            validToControl: new FormControl()
         });
     }
 
@@ -366,7 +401,11 @@ export class NomenclaturesComponent extends BasePageComponent implements OnInit 
             freeTextSearch: filters.searchText,
             showInactiveRecords: filters.showInactiveRecords,
 
-            tableId: this.selectedTable.value
+            tableId: this.selectedTable.value,
+            code: filters.getValue('codeControl'),
+            name: filters.getValue('nameControl'),
+            validityDateFrom: filters.getValue('validFromControl'),
+            validityDateTo: filters.getValue('validToControl')
         });
 
         return filtersObj;
@@ -395,7 +434,7 @@ export class NomenclaturesComponent extends BasePageComponent implements OnInit 
         }
     }
 
-    private treeFlattenerTransformer(node: ITreeNode, level: number): FlatNode {
+    private treeFlattenerTransformer(node: TreeNode, level: number): FlatNode {
         return new FlatNode({
             expandable: !!node.children && node.children.length > 0,
             name: node.name,
@@ -404,16 +443,55 @@ export class NomenclaturesComponent extends BasePageComponent implements OnInit 
         });
     }
 
-    private getNomenclatureGroups(): Observable<NomenclatureDTO<number>[]> {
-        return NomenclatureStore.instance.getNomenclature(
-            NomenclatureTypes.NomenclatureGroups, this.service.getGroups.bind(this.service), false
-        );
-    }
+    private setTreeDataSource(filter?: string): void {
+        const groups: NomenclatureDTO<number>[] = this.nomenclatureGroups.filter((group: NomenclatureDTO<number>) => {
+            if (this.nomenclatureTables.some(y => y.groupId === group.value)) {
+                if (filter && filter.length > 0) {
+                    const tables: NomenclatureTableDTO[] = this.nomenclatureTables.filter(x => x.groupId === group.value);
+                    if (tables.some(x => x.displayName?.toLowerCase().includes(filter.toLowerCase()))) {
+                        return true;
+                    }
+                    return false;
+                }
 
-    private getNomenclatureTables(): Observable<NomenclatureTableDTO[]> {
-        return NomenclatureStore.instance.getNomenclature(
-            NomenclatureTypes.NomenclatureTables, this.service.getTables.bind(this.service), false
-        );
+                return true;
+            }
+            return false;
+        });
+
+        this.treeDataSource.data = groups.map((x: NomenclatureDTO<number>) => {
+            const tables: NomenclatureTableDTO[] = this.nomenclatureTables.filter((table: NomenclatureTableDTO) => {
+                if (table.groupId === x.value) {
+                    if (filter && filter.length > 0) {
+                        if (table.displayName?.toLowerCase().includes(filter.toLowerCase())) {
+                            return true;
+                        }
+                        return false;
+                    }
+                    return true;
+                }
+                return false;
+            });
+
+            const children: TreeNode[] = tables.map((y: NomenclatureTableDTO) => {
+                return {
+                    id: y.value,
+                    name: y.displayName!,
+                    children: []
+                };
+            });
+
+            const node: TreeNode = {
+                name: this.translate.getValue('nomenclatures-page.' + x.displayName).replace('nomenclatures-page.', ''),
+                children: children
+            };
+
+            return node;
+        });
+
+        if (filter && filter.length >= 3) {
+            this.treeControl.expandAll();
+        }
     }
 
     private hasIsActive(element: unknown): element is IsActiveNomenclature {
@@ -428,5 +506,26 @@ export class NomenclaturesComponent extends BasePageComponent implements OnInit 
 
     private asRecord(element: unknown): Record<string, unknown> {
         return element as Record<string, unknown>;
+    }
+
+    private calculateContainerHeightPx(): void {
+        if (!this.toolbarElement) {
+            this.toolbarElement = document.getElementsByTagName('toolbar').item(0) as HTMLElement;
+        }
+
+        this.containerHeightPx = window.innerHeight - this.toolbarElement.offsetHeight;
+        this.mainPanelHeightPx = this.containerHeightPx;
+    }
+
+    private calculateMainPanelWidthPx(): void {
+        if (!this.containerElement) {
+            this.containerElement = this.host.getElementsByClassName('container').item(0) as HTMLElement;
+        }
+
+        if (!this.treePanelElement) {
+            this.treePanelElement = this.host.getElementsByClassName('tree-panel').item(0) as HTMLElement;
+        }
+
+        this.mainPanelWidthPx = this.containerElement.offsetWidth - this.treePanelElement.offsetWidth;
     }
 }

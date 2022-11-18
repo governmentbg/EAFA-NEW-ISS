@@ -200,7 +200,8 @@
                             <single-address-registration fxFlexFill
                                                          formControlName="premiseAddressControl"
                                                          validityChecker
-                                                         label="{{ 'buyers-and-sales-centers.premise-address' | tlTranslate }}">
+                                                         label="{{ 'buyers-and-sales-centers.premise-address' | tlTranslate }}"
+                                                         [addressType]="addressTypesEnum.COMPANY_HEADQUARTERS">
                             </single-address-registration>
                         </div>
                         <div *ngIf="isApplication; else premiseUsageDocumentsTemplate" fxFlex="100" fxLayout="column">
@@ -209,7 +210,7 @@
                                             validityChecker
                                             title="{{ 'buyers-and-sales-centers.premise-usage-document-card' | tlTranslate }}"
                                             tooltipResourceName="buyers-and-sales-centers.premise-usage-document-card-helper"
-                                            [isIdReadOnly]="isEditing"
+                                            [isIdReadOnly]="false"
                                             [showOnlyRegiXData]="showOnlyRegiXData"
                                             [expectedResults]="expectedResults?.premiseUsageDocument">
                             </usage-document>
@@ -302,7 +303,8 @@
                             <single-address-registration fxFlexFill
                                                          formControlName="premiseAddressControl"
                                                          validityChecker
-                                                         label="{{ 'buyers-and-sales-centers.shop-address' | tlTranslate }}">
+                                                         label="{{ 'buyers-and-sales-centers.shop-address' | tlTranslate }}"
+                                                         [addressType]="addressTypesEnum.COMPANY_HEADQUARTERS">
                             </single-address-registration>
                         </div>
                     </div>
@@ -335,7 +337,7 @@
                     validityChecker
                     title="{{ 'buyers-and-sales-centers.premise-usage-document-card' | tlTranslate }}"
                     tooltipResourceName="buyers-and-sales-centers.premise-usage-document-card-helper"
-                    [isIdReadOnly]="isEditing"
+                    [isIdReadOnly]="false"
                     [showOnlyRegiXData]="showOnlyRegiXData"
                     [expectedResults]="expectedResults?.premiseUsageDocument">
     </usage-document>
@@ -616,7 +618,7 @@
     <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData && applicationPaymentInformation !== null && applicationPaymentInformation !== undefined"
                         title="{{ 'buyers-and-sales-centers.payment-information-panel' | tlTranslate }}"
                         [validityChecker]="editForm">
-        <payment-information fxFlex="100" [paymentData]="applicationPaymentInformation"></payment-information>
+        <payment-information fxFlex="100" [paymentData]="applicationPaymentInformation" [hideBasicInfo]="hideBasicPaymentInfo"></payment-information>
     </tl-expansion-panel>
 
     <!-- Информация за начин на връчване в заявлението -->
@@ -659,7 +661,7 @@
     </tl-expansion-panel>
 
     <!-- Проверки в RegiX режим -->
-    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+    <tl-expansion-panel *ngIf="showOnlyRegiXData || showRegiXData"
                         title="{{ 'buyers-and-sales-centers.regix-checks-results-panel' | tlTranslate }}"
                         [validityChecker]="editForm">
         <div fxLayout="column" fxLayoutGap="1em">

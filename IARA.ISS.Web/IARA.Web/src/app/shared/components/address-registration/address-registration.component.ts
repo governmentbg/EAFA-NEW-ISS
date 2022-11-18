@@ -1,5 +1,5 @@
 ﻿import { Component, Input, OnChanges, OnInit, Optional, Self, SimpleChanges } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, Validators } from '@angular/forms';
 
 import { AddressTypesEnum } from '@app/enums/address-types.enum';
 import { AddressRegistrationDTO } from '@app/models/generated/dtos/AddressRegistrationDTO';
@@ -88,6 +88,22 @@ export class AddressRegistrationComponent extends NotifyingCustomFormControl<Add
                 this.form.get('secondAddressControl')?.setValue(null);
             }
         });
+    }
+
+    public validate(control: AbstractControl): ValidationErrors | null {
+        const errors: ValidationErrors = {};
+
+        for (const key of Object.keys(this.form.controls)) {
+            if (this.form.controls[key].errors !== null && this.form.controls[key].errors !== undefined) {
+                for (const error in this.form.controls[key].errors) {
+                    if (!['expectedValueNotMatching'].includes(error)) {
+                        errors[error] = this.form.controls[key].errors![error];
+                    }
+                }
+            }
+        }
+
+        return Object.keys(errors).length === 0 ? null : errors;
     }
 
     protected buildForm(): AbstractControl {

@@ -6,6 +6,8 @@ import { PenalDecreeSeizedFishingGearDTO } from './PenalDecreeSeizedFishingGearD
 import { PenalDecreeFishCompensationDTO } from './PenalDecreeFishCompensationDTO';
 import { AuanViolatedRegulationDTO } from './AuanViolatedRegulationDTO';
 import { PenalDecreeDeliveryDataDTO } from './PenalDecreeDeliveryDataDTO';
+import { PenalDecreeAuanDataDTO } from './PenalDecreeAuanDataDTO';
+import { PenalDecreeResolutionDTO } from './PenalDecreeResolutionDTO';
 import { PenalDecreeStatusEditDTO } from './PenalDecreeStatusEditDTO';
 import { FileInfoDTO } from './FileInfoDTO';
 
@@ -68,6 +70,12 @@ export class PenalDecreeEditDTO {
     @StrictlyTyped(Boolean)
     public isRecurrentViolation?: boolean;
 
+    @StrictlyTyped(Number)
+    public appealCourtId?: number;
+
+    @StrictlyTyped(Number)
+    public appealSectorId?: number;
+
     @StrictlyTyped(String)
     public issuerPosition?: string;
 
@@ -85,6 +93,12 @@ export class PenalDecreeEditDTO {
 
     @StrictlyTyped(PenalDecreeDeliveryDataDTO)
     public deliveryData?: PenalDecreeDeliveryDataDTO;
+
+    @StrictlyTyped(PenalDecreeAuanDataDTO)
+    public auanData?: PenalDecreeAuanDataDTO;
+
+    @StrictlyTyped(PenalDecreeResolutionDTO)
+    public resolutionData?: PenalDecreeResolutionDTO;
 
     @StrictlyTyped(PenalDecreeStatusEditDTO)
     public statuses?: PenalDecreeStatusEditDTO[];

@@ -39,6 +39,10 @@ export class InspectionsService extends BaseAuditService {
         super(requestService, AreaTypes.Administrative);
     }
 
+    public getIsInspector(): Observable<boolean> {
+        return this.requestService.get(this.area, this.controller, 'GetIsInspector');
+    }
+
     public getInspectors(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetInspectors', {
             responseTypeCtr: NomenclatureDTO,
@@ -125,6 +129,15 @@ export class InspectionsService extends BaseAuditService {
         });
     }
 
+    public getShipPermits(shipId: number): Observable<InspectionPermitLicenseDTO[]> {
+        const params = new HttpParams().append('shipId', shipId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetShipPermits', {
+            httpParams: params,
+            responseTypeCtr: InspectionPermitLicenseDTO,
+        });
+    }
+
     public getShipLogBooks(shipId: number): Observable<InspectionShipLogBookDTO[]> {
         const params = new HttpParams().append('shipId', shipId.toString());
 
@@ -164,10 +177,16 @@ export class InspectionsService extends BaseAuditService {
         });
     }
 
-    public getDeclarationLogBookPages(type: DeclarationLogBookTypeEnum, shipId: number): Observable<DeclarationLogBookPageDTO[]> {
-        const params = new HttpParams()
-            .append('type', type.toString())
-            .append('shipId', shipId.toString());
+    public getDeclarationLogBookPages(type: DeclarationLogBookTypeEnum, shipId?: number, aquacultureId?: number): Observable<DeclarationLogBookPageDTO[]> {
+        let params = new HttpParams()
+            .append('type', type.toString());
+
+        if (shipId) {
+            params = params.append('shipId', shipId.toString());
+        }
+        if (aquacultureId) {
+            params = params.append('aquacultureId', aquacultureId.toString());
+        }
 
         return this.requestService.get(this.area, this.controller, 'GetDeclarationLogBookPages', {
             httpParams: params,
@@ -184,10 +203,10 @@ export class InspectionsService extends BaseAuditService {
         });
     }
 
-    public get(id: number): Observable<InspectionEditDTO> {
+    public get(id: number, inspectionCode: InspectionTypesEnum): Observable<InspectionEditDTO> {
         const params = new HttpParams().append('id', id.toString());
 
-        return this.requestService.get(this.area, this.controller, 'Get', {
+        return this.requestService.get(this.area, this.controller, 'Get' + InspectionTypesEnum[inspectionCode], {
             httpParams: params,
             responseTypeCtr: InspectionEditDTO,
         });

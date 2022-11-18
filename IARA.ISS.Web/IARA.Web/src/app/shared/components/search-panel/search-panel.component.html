@@ -36,7 +36,7 @@
                         <button mat-raised-button
                                 color="accent"
                                 class="h-fit-content"
-                                (click)="clearAllFiltersClicked($event)"
+                                (tlDebounceClick)="clearAllFiltersClicked($event)"
                                 [disabled]="noAdvancedSearchFiltersEnterted && searchTextControl?.value?.length === 0">
                             <ic-icon icon="filter-remove" size="20" color="white"></ic-icon>
                             {{ 'common.clear' | tlTranslate: 'cap' }}
@@ -48,7 +48,7 @@
                         <button mat-raised-button
                                 color="accent"
                                 class="h-fit-content"
-                                (click)="refreshClicked($event)">
+                                (tlDebounceClick)="refreshClicked($event)">
                             <fa-icon [icon]="faRedo" class="m-r-5"></fa-icon>
                             {{ 'common.refresh' | tlTranslate: 'cap' }}
                         </button>
@@ -58,9 +58,13 @@
                          matTooltipHideDelay="300">
                         <button mat-raised-button
                                 color="accent"
-                                [disabled]="!searchTextControl?.touched && !_advancedSearchFormGroup?.touched"
+                                [disabled]="!searchTextControl?.touched
+                                            && !_advancedSearchFormGroup?.touched
+                                            && (searchTextControl?.value === null 
+                                                || searchTextControl?.value === undefined 
+                                                || searchTextControl?.value === '')"
                                 class="h-fit-content"
-                                (click)="searchClicked($event)">
+                                (tlDebounceClick)="searchClicked($event)">
                             <fa-icon [icon]="faFilter" class="m-r-5"></fa-icon>
                             {{ 'common.search' | tlTranslate: 'cap' }}
                         </button>

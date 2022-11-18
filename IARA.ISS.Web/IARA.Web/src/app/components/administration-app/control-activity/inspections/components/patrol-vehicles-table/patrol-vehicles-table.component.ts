@@ -23,6 +23,9 @@ export class PatrolVehiclesTableComponent extends CustomFormControl<VesselDuring
     @Input()
     public isWaterVehicle!: boolean;
 
+    @Input()
+    public hasCoordinates: boolean = true;
+
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
 
@@ -77,6 +80,7 @@ export class PatrolVehiclesTableComponent extends CustomFormControl<VesselDuring
                 readOnly: readOnly,
                 isEdit: true,
                 excludeIds: this.patrolVehicles.map(f => f.unregisteredVesselId!),
+                hasCoordinates: this.hasCoordinates,
             });
 
             if (readOnly) {
@@ -91,6 +95,7 @@ export class PatrolVehiclesTableComponent extends CustomFormControl<VesselDuring
                 isWaterVehicle: this.isWaterVehicle,
                 isEdit: false,
                 excludeIds: this.patrolVehicles.map(f => f.unregisteredVesselId!),
+                hasCoordinates: this.hasCoordinates
             });
 
             title = this.translate.getValue('inspections.add-patrol-vehicle-dialog-title');

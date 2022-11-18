@@ -9,6 +9,7 @@ import { takeUntil } from 'rxjs/operators';
 import { FuseSidebarService } from './sidebar.service';
 import { FuseMatchMediaService } from '@fuse/services/match-media.service';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { MenuService } from '../../../app/shared/services/menu.service';
 
 @Component({
     selector: 'fuse-sidebar',
@@ -95,7 +96,8 @@ export class FuseSidebarComponent implements OnInit, OnDestroy {
         private fuseMatchMediaService: FuseMatchMediaService,
         private fuseSidebarService: FuseSidebarService,
         private mediaObserver: MediaObserver,
-        private renderer: Renderer2) {
+        private renderer: Renderer2,
+        private menuService: MenuService) {
         // Set the defaults
         this.unfolded = false;
         this.isLockedOpen = false;
@@ -319,6 +321,7 @@ export class FuseSidebarComponent implements OnInit, OnDestroy {
 
                     // Force the the opened status to true
                     this.opened = true;
+                    this.menuService.folded.next(this.folded);
 
                     // Emit the 'openedChanged' event
                     this.openedChanged.emit(this.opened);
@@ -351,6 +354,7 @@ export class FuseSidebarComponent implements OnInit, OnDestroy {
 
                     // Emit the 'openedChanged' event
                     this.openedChanged.emit(this.opened);
+                    this.menuService.opened.next(this.opened);
 
                     // Hide the sidebar
                     this._hideSidebar();
@@ -569,6 +573,7 @@ export class FuseSidebarComponent implements OnInit, OnDestroy {
 
         // Emit the 'openedChanged' event
         this.openedChanged.emit(this.opened);
+        this.menuService.opened.next(this.opened);
 
         // Mark for check
         this.changeDetectorRef.markForCheck();
@@ -593,6 +598,7 @@ export class FuseSidebarComponent implements OnInit, OnDestroy {
 
         // Emit the 'openedChanged' event
         this.openedChanged.emit(this.opened);
+        this.menuService.opened.next(this.opened);
 
         // Hide the sidebar
         this._hideSidebar();
@@ -643,6 +649,8 @@ export class FuseSidebarComponent implements OnInit, OnDestroy {
      * Fold the sidebar permanently
      */
     fold(): void {
+        this.menuService.folded.next(this.folded);
+
         // Only work if the sidebar is not folded
         if (this.folded) {
             return;
@@ -662,6 +670,8 @@ export class FuseSidebarComponent implements OnInit, OnDestroy {
      * Unfold the sidebar permanently
      */
     unfold(): void {
+        this.menuService.folded.next(this.folded);
+
         // Only work if the sidebar is folded
         if (!this.folded) {
             return;

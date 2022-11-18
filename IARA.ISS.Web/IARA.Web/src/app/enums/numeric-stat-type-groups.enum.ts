@@ -13,4 +13,5 @@
     WorkHours,
     FreeLabor,
     NumHours,
+    Debt
 }

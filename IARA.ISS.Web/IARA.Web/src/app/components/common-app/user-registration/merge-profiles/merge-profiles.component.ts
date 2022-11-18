@@ -1,6 +1,6 @@
 ﻿import { HttpErrorResponse } from "@angular/common/http";
 import { Component, ViewEncapsulation } from "@angular/core";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { FormControl, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { fuseAnimations } from "@fuse/animations";
@@ -11,6 +11,8 @@ import { UserLoginDTO } from "@app/models/generated/dtos/UserLoginDTO";
 import { UserRegistrationDTO } from "@app/models/generated/dtos/UserRegistrationDTO";
 import { AuthService } from "@app/shared/services/auth.service";
 import { RequestProperties } from "@app/shared/services/request-properties";
+import { CommonUtils } from '@app/shared/utils/common.utils';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 
 
 @Component({
@@ -21,7 +23,7 @@ import { RequestProperties } from "@app/shared/services/request-properties";
     animations: fuseAnimations
 })
 export class MergeProfilesComponent {
-
+    public readonly appearance: string = 'outline';
     public mergeProfilesForm!: FormGroup;
     public enteredIncorrectLoginData: boolean = false;
 
@@ -32,11 +34,12 @@ export class MergeProfilesComponent {
     private translationService: FuseTranslationLoaderService;
     private snackbar: MatSnackBar;
 
-    public constructor(router: Router,
+    public constructor(
+        router: Router,
         authService: AuthService,
         translationService: FuseTranslationLoaderService,
-        snackbar: MatSnackBar) {
-
+        snackbar: MatSnackBar
+    ) {
         this.router = router;
         this.authService = authService;
         this.translationService = translationService;
@@ -48,7 +51,7 @@ export class MergeProfilesComponent {
     }
 
     public deactivateOldAccount(): void {
-        this.authService.deactivateUserPasswordAccount(this.mergeProfilesForm.controls.egn.value).subscribe({
+        this.authService.deactivateUserPasswordAccount(this.mergeProfilesForm.get('egnControl')!.value).subscribe({
             next: () => {
                 this.navigateToRegistrationPage();
             }
@@ -57,13 +60,15 @@ export class MergeProfilesComponent {
 
     public confirmAccountAndLogin(): void {
         this.mergeProfilesForm.markAllAsTouched();
-        if (this.mergeProfilesForm.valid) {
+        this.mergeProfilesForm.updateValueAndValidity({ emitEvent: false });
+
+        if (this.isFormValid()) {
             const loginModel = new UserLoginDTO({
-                email: this.mergeProfilesForm.controls.email.value,
-                password: this.mergeProfilesForm.controls.password.value,
-                firstName: this.mergeProfilesForm.controls.firstName.value,
-                middleName: this.mergeProfilesForm.controls.middleName.value,
-                lastName: this.mergeProfilesForm.controls.lastName.value
+                email: this.mergeProfilesForm.get('emailControl')!.value,
+                password: this.mergeProfilesForm.get('passwordControl')!.value,
+                firstName: this.mergeProfilesForm.get('firstNameControl')!.value,
+                middleName: this.mergeProfilesForm.get('middleNameControl')!.value,
+                lastName: this.mergeProfilesForm.get('lastNameControl')!.value
             });
 
             this.authService.confirmEmailAndPassword(loginModel).subscribe({
@@ -82,26 +87,94 @@ export class MergeProfilesComponent {
         }
     }
 
+    public getControlErrorLabelText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
+        const result: TLError | undefined = CommonUtils.getControlErrorLabelTextForRegixExpectedValueValidator(controlName, errorValue, errorCode);
+
+        if (result !== undefined) {
+            return result;
+        }
+
+        if (errorCode === 'egn') {
+            if (errorValue === true) {
+                return new TLError({ text: this.translationService.getValue('regix-data.invalid-egn'), type: 'warn' });
+            }
+        }
+        else if (errorCode === 'pnf') {
+            if (errorValue === true) {
+                return new TLError({ text: this.translationService.getValue('regix-data.invalid-pnf'), type: 'warn' });
+            }
+        }
+        else if (errorCode === 'eik') {
+            if (errorValue === true) {
+                return new TLError({ text: this.translationService.getValue('regix-data.invalid-eik'), type: 'warn' });
+            }
+        }
+
+        return undefined;
+    }
+
+    private isFormValid(): boolean {
+        if (this.mergeProfilesForm.valid) {
+            return true;
+        }
+        else {
+            const errors: ValidationErrors = {};
+
+            for (const key of Object.keys(this.mergeProfilesForm.controls)) {
+                if (key === 'egnControl') {
+                    for (const error in this.mergeProfilesForm.controls[key].errors) {
+                        if (!['egn', 'pnf', 'eik'].includes(error)) {
+                            errors[error] = this.mergeProfilesForm.controls[key].errors![error];
+                        }
+                    }
+                }
+                else {
+                    const controlErrors: ValidationErrors | null = this.mergeProfilesForm.controls[key].errors;
+                    if (controlErrors !== null) {
+                        errors[key] = controlErrors;
+                    }
+                }
+            }
+
+            return Object.keys(errors).length === 0 ? true : false;
+        }
+
+        return false;
+    }
+
     private buildForm(): void {
         const userRegistrationInfo = this.authService.userRegistrationInfo;
+
         this.mergeProfilesForm = new FormGroup({
-            firstName: new FormControl(userRegistrationInfo?.firstName ?? '', [Validators.required, Validators.maxLength(100)]),
-            middleName: new FormControl(userRegistrationInfo?.middleName ?? '', [Validators.maxLength(100)]),
-            lastName: new FormControl(userRegistrationInfo?.lastName ?? '', [Validators.required, Validators.maxLength(100)]),
-            egn: new FormControl(userRegistrationInfo?.egnLnc ?? '', [Validators.required, Validators.maxLength(20)]),
-            email: new FormControl('', [Validators.required, Validators.email, Validators.maxLength(100)]),
-            password: new FormControl('', [Validators.required, Validators.maxLength(200)])
+            firstNameControl: new FormControl(userRegistrationInfo?.firstName ?? undefined, [Validators.required, Validators.maxLength(100)]),
+            middleNameControl: new FormControl(userRegistrationInfo?.middleName ?? undefined, [Validators.maxLength(100)]),
+            lastNameControl: new FormControl(userRegistrationInfo?.lastName ?? undefined, [Validators.required, Validators.maxLength(100)]),
+            egnControl: new FormControl(userRegistrationInfo?.egnLnc ?? undefined, [Validators.required, Validators.maxLength(20)]),
+            emailControl: new FormControl(undefined, [Validators.required, Validators.email, Validators.maxLength(100)]),
+            passwordControl: new FormControl(undefined, [Validators.required, Validators.maxLength(200)])
+        });
+
+        this.mergeProfilesForm.get('emailControl')!.valueChanges.subscribe({
+            next: () => {
+                this.enteredIncorrectLoginData = false;
+            }
+        });
+
+        this.mergeProfilesForm.get('passwordControl')!.valueChanges.subscribe({
+            next: () => {
+                this.enteredIncorrectLoginData = false;
+            }
         });
     }
 
-    private mapFromToAuthModel(): UserAuthDTO {
+    private mapFromToAuthModel(hasUserPassLogin: boolean): UserAuthDTO {
         const userAuthDTO: UserAuthDTO = new UserAuthDTO({
-            firstName: this.mergeProfilesForm.controls.firstName.value,
-            middleName: this.mergeProfilesForm.controls.middleName.value,
-            lastName: this.mergeProfilesForm.controls.lastName.value,
-            egnLnc: this.mergeProfilesForm.controls.egn.value,
+            firstName: this.mergeProfilesForm.get('firstNameControl')!.value,
+            middleName: this.mergeProfilesForm.get('middleNameControl')!.value,
+            lastName: this.mergeProfilesForm.get('lastNameControl')!.value,
+            egnLnc: this.mergeProfilesForm.get('egnControl')!.value,
             hasEAuthLogin: true,
-            hasUserPassLogin: true,
+            hasUserPassLogin: hasUserPassLogin,
             currentLoginType: LoginTypesEnum.EAUTH,
             isInternalUser: this.isInternalUser
         });
@@ -118,7 +191,7 @@ export class MergeProfilesComponent {
     }
 
     private navigateToRegistrationPage(): void {
-        this.authService.userRegistrationInfo = this.mapFromToAuthModel();
+        this.authService.userRegistrationInfo = this.mapFromToAuthModel(false);
         this.router.navigate(['/registration'], { state: { isFromMergeProfilesPage: true } });
     }
 

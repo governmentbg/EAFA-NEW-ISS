@@ -68,21 +68,19 @@ export class ReportAdministrationService extends BaseAuditService implements IRe
     }
 
     public addNParameter(nParameter: NReportParameterEditDTO): Observable<number> {
-        return this.requestService.post(this.area, this.controller, 'AddNParameter', nParameter);
+        return this.requestService.post(this.area, this.controller, 'AddNParameter', nParameter, {
+            properties: new RequestProperties({ showException: true, rethrowException: true })
+        });
     }
 
     public editNParameter(nParameter: NReportParameterEditDTO): Observable<void> {
-        return this.requestService.put(this.area, this.controller, 'EditNParameter', nParameter);
+        return this.requestService.put(this.area, this.controller, 'EditNParameter', nParameter, {
+            properties: new RequestProperties({ showException: true, rethrowException: true })
+        });
     }
 
     public deleteNParameter(id: number): Observable<void> {
         return this.requestService.delete(this.area, this.controller, 'DeleteNParameter', {
-            httpParams: new HttpParams().append('id', id.toString())
-        });
-    }
-
-    public undoDeletedNParameter(id: number): Observable<void> {
-        return this.requestService.patch(this.area, this.controller, 'UndoDeletedNParameter', null, {
             httpParams: new HttpParams().append('id', id.toString())
         });
     }

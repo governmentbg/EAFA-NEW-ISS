@@ -23,12 +23,18 @@ export abstract class BaseUserManagementService extends BaseAuditService impleme
 
     public delete(id: number): Observable<void> {
         const params = new HttpParams().append('id', id.toString());
-        return this.requestService.delete(this.area, this.controller, 'Delete', { httpParams: params });
+        return this.requestService.delete(this.area, this.controller, 'Delete', {
+            httpParams: params,
+            successMessage: 'succ-deleted-user'
+        });
     }
 
     public undoDelete(id: number): Observable<void> {
         const params = new HttpParams().append('id', id.toString());
-        return this.requestService.patch(this.area, this.controller, 'UndoDelete', null, { httpParams: params });
+        return this.requestService.patch(this.area, this.controller, 'UndoDelete', null, {
+            httpParams: params,
+            successMessage: 'succ-undo-delete-user'
+        });
     }
 
     public sendChangePasswordEmail(userId: number): Observable<void> {

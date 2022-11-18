@@ -29,7 +29,7 @@
             </div>
 
             <!-- Регистров запис -->
-            <div *ngIf="isRegisterEntry; else isNotRegisterEntry" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+            <div *ngIf="isRegisterEntry; else isNotRegisterEntry" fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="1em">
                 <tl-input fxFlex="25"
                           fxFlex.lt-md="50"
                           fxFlex.lt-sm="100"
@@ -42,7 +42,7 @@
                          fxFlex.lt-md="50"
                          fxFlex.lt-sm="100"
                          formControlName="validFromControl"
-                         [min]="validFrom !== undefined && validFrom !== null ? validFrom : currentDate"
+                         [readonly]="true"
                          tooltipResourceName="recreational-fishing.ticket-valid-from-helper"
                          label="{{ 'recreational-fishing.ticket-valid-from' | tlTranslate }}">
                 </tl-date>
@@ -108,7 +108,6 @@
                             [showGender]="type.code === 'ELDER'"
                             [showSearchButton]="(isAssociation || !isPersonal) && !isDialog"
                             (downloadDataBtnClicked)="downloadPersonalData($event, false)"
-                            (egnLncFocusedOut)="egnLncFocusedOut($event)"
                             checkboxLabel="{{ 'recreational-fishing.has-bulgarian-address-registration' | tlTranslate }}">
                 </regix-data>
 
@@ -150,7 +149,6 @@
                         [expectedResults]="regixChecksData?.representativePerson"
                         [showSearchButton]="(isAssociation || !isPersonal) && !isDialog"
                         (downloadDataBtnClicked)="downloadPersonalData($event, true)"
-                        (egnLncFocusedOut)="egnLncFocusedOut($event, true)"
                         checkboxLabel="{{ 'recreational-fishing.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
 
@@ -286,7 +284,7 @@
     </tl-card>
 
     <!-- Проверки -->
-    <tl-expansion-panel *ngIf="dialogData?.showOnlyRegiXData"
+    <tl-expansion-panel *ngIf="dialogData?.showOnlyRegiXData || dialogData?.showRegiXData"
                         title="{{ 'recreational-fishing.regix-checks-results' | tlTranslate }}"
                         tooltipResourceName="recreational-fishing.regix-checks-results-helper">
         <div fxLayout="column" fxLayoutGap="1em">

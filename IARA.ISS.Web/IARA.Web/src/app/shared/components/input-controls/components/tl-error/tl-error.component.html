@@ -1,9 +1,15 @@
 ﻿<span *ngIf="!useMultipleLines && errors.length > 0"
-      [ngClass]="{'warn-orange-color': errors[0].type === 'warn',
-                'error-color': errors[0].type === 'error'}">{{ errors[0].text }}</span>
+      [class.warn-orange-color]="errors[0].type === 'warn'"
+      [class.error-color]="errors[0].type === 'error'">
+    {{ errors[0].text }}
+</span>
+
 <ng-container *ngIf="useMultipleLines && errors.length > 0">
     <ul style="margin-top:0px; list-style:none; padding-left:0px">
-        <li *ngFor="let error of errors;" [ngClass]="{'warn-orange-color': error.type === 'warn',
-                'error-color': error.type === 'error'}">{{ error.text }}</li>
+        <li *ngFor="let error of errors;"
+            [class.warn-orange-color]="errors[0].type === 'warn'"
+            [class.error-color]="errors[0].type === 'error'">
+            {{ error.text }}
+        </li>
     </ul>
 </ng-container>

@@ -38,5 +38,6 @@ export interface IPenalDecreesService extends IBaseAuditService {
     getConfiscationActions(): Observable<AuanConfiscationActionsNomenclatureDTO[]>;
     getConfiscatedAppliances(): Observable<NomenclatureDTO<number>[]>;
     getTurbotSizeGroups(): Observable<NomenclatureDTO<number>[]>;
+    getInspectorUsernames(): Observable<NomenclatureDTO<number>[]>;
     getPenalDecreeStatusAudit(id: number): Observable<SimpleAuditDTO>;
 }

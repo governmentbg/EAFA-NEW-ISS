@@ -149,7 +149,6 @@ export class EditInstallationNetCageComponent implements IDialogComponent {
                     let l: number = NaN;
                     let w: number = NaN;
                     let h: number = NaN;
-                    let n: number = NaN;
 
                     if (!this.isNullOrEmptyString(this.form.get('lengthControl')!.value)) {
                         l = Number(this.form.get('lengthControl')!.value);
@@ -160,13 +159,10 @@ export class EditInstallationNetCageComponent implements IDialogComponent {
                     if (!this.isNullOrEmptyString(this.form.get('heightControl')!.value)) {
                         h = Number(this.form.get('heightControl')!.value);
                     }
-                    if (!this.isNullOrEmptyString(this.form.get('countControl')!.value)) {
-                        n = Number(this.form.get('countControl')!.value);
-                    }
 
-                    if (!isNaN(l) && !isNaN(w) && !isNaN(h) && !isNaN(n)) {
-                        this.areaControl.setValue((n * netCageRectArea(l, w, h)).toFixed(2));
-                        this.volumeControl.setValue((n * netCageRectVolume(l, w, h)).toFixed(2));
+                    if (!isNaN(l) && !isNaN(w) && !isNaN(h)) {
+                        this.areaControl.setValue(netCageRectArea(l, w, h).toFixed(2));
+                        this.volumeControl.setValue(netCageRectVolume(l, w, h).toFixed(2));
                     }
                     else {
                         this.areaControl.setValue('');
@@ -176,7 +172,6 @@ export class EditInstallationNetCageComponent implements IDialogComponent {
                 else if (shape === AquacultureInstallationNetCageShapesEnum.Circular) {
                     let r: number = NaN;
                     let h: number = NaN;
-                    let n: number = NaN;
 
                     if (!this.isNullOrEmptyString(this.form.get('radiusControl')!.value)) {
                         r = Number(this.form.get('radiusControl')!.value);
@@ -184,12 +179,10 @@ export class EditInstallationNetCageComponent implements IDialogComponent {
                     if (!this.isNullOrEmptyString(this.form.get('heightControl')!.value)) {
                         h = Number(this.form.get('heightControl')!.value);
                     }
-                    if (!this.isNullOrEmptyString(this.form.get('countControl')!.value)) {
-                        n = Number(this.form.get('countControl')!.value);
-                    }
-                    if (!isNaN(r) && !isNaN(h) && !isNaN(n)) {
-                        this.areaControl.setValue((n * netCageCircArea(r)).toFixed(2));
-                        this.volumeControl.setValue((n * netCageCircVolume(r, h)).toFixed(2));
+
+                    if (!isNaN(r) && !isNaN(h)) {
+                        this.areaControl.setValue(netCageCircArea(r).toFixed(2));
+                        this.volumeControl.setValue(netCageCircVolume(r, h).toFixed(2));
                     }
                     else {
                         this.areaControl.setValue('');

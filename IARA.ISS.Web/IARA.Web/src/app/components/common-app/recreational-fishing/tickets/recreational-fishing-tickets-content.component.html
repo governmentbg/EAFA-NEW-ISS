@@ -52,7 +52,7 @@
               && (ticketTypeGroup.valid || ticketTypeGroup.disabled)
               && (ticketPeriodGroup.valid || ticketPeriodGroup.disabled || !showValidityStep)">
         <ng-template matStepLabel>
-            <span [ngClass]="{ 'error-color': ticketNumsArray.touched && ticketNumsArray.invalid }">
+            <span [ngClass]="{ 'error-color': ticketNumsArray.touched && ticketNumsArray.invalid && ticketNumsArray.length > 0 }">
                 {{ 'recreational-fishing.wizard-title-ticket-num' | tlTranslate }}
                 {{ ticketNumsComment !== null ? ' – ' + ticketNumsComment : '' }}
             </span>
@@ -109,7 +109,6 @@
                                                  [isEgnEditable]="!isPersonal"
                                                  [isPersonal]="isPersonal"
                                                  [isAssociation]="isAssociation"
-                                                 (egnLncCheck)="checkEgnLncPurchaseAbility($event, i)"
                                                  (updatePersonalData)="updatePersonalData($event)">
                     </recreational-fishing-ticket>
                 </mat-step>
@@ -132,9 +131,7 @@
                                                  [price]="childTickets[i].price"
                                                  [isEgnEditable]="!isPersonal"
                                                  [isPersonal]="isPersonal"
-                                                 [isAssociation]="isAssociation"
-                                                 (egnLncCheck)="checkEgnLncPurchaseAbility($event, i, true)"
-                                                 (egnLncCheckRepresentative)="checkEgnLncPurchaseAbility($event, i, true, true)">
+                                                 [isAssociation]="isAssociation">
                     </recreational-fishing-ticket>
                 </mat-step>
             </div>

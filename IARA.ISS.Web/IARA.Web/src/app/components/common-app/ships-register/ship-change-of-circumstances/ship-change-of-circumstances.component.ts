@@ -61,11 +61,13 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public isEditing: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isReadonly: boolean = false;
     public viewMode: boolean = false;
     public isPaid: boolean = false;
     public hasDelivery: boolean = false;
     public hasNoEDeliveryRegistrationError: boolean = false;
+    public hideBasicPaymentInfo: boolean = false;
     public service!: IShipsRegisterService;
 
     @ViewChild(ValidityCheckerGroupDirective)
@@ -124,6 +126,7 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
                         this.paymentInformation = application.paymentInformation;
+                        this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
 
@@ -156,7 +159,7 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData, this.pageCode).subscribe({
                         next: (application: ShipChangeOfCircumstancesApplicationDTO) => {
                             application.applicationId = this.applicationId;
                             application.isDraft = application.isDraft ?? true;
@@ -165,7 +168,13 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
                             this.paymentInformation = application.paymentInformation;
+                            this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new ShipChangeOfCircumstancesRegixDataDTO(application.regiXDataModel);
+                                application.regiXDataModel = undefined;
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (application.submittedBy === undefined || application.submittedBy === null)) {
                                 const service = this.service as ShipsRegisterPublicService;
@@ -202,6 +211,7 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.viewMode = data.viewMode;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.applicationsService = data.applicationsService;
         this.service = data.service as IShipsRegisterService;
         this.dialogRightSideActions = wrapperData.rightSideActions;
@@ -291,26 +301,8 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
         }
 
         if (this.model instanceof ShipChangeOfCircumstancesRegixDataDTO) {
-            if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
-                const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
-
-                setTimeout(() => {
-                    this.regixChecks = checks;
-                });
-            }
-
             this.form.get('shipControl')!.disable();
-
-            if (!this.viewMode) {
-                this.notifier.start();
-                this.notifier.onNotify.subscribe({
-                    next: () => {
-                        this.form.markAllAsTouched();
-                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
-                        this.notifier.stop();
-                    }
-                });
-            }
+            this.fillFormRegiX();
         }
         else {
             this.form.get('filesControl')!.setValue(this.model.files);
@@ -318,8 +310,36 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
             }
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX();
+            }
         }
     }
+
+    private fillFormRegiX(): void {
+        if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
+            const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
+
+            setTimeout(() => {
+                this.regixChecks = checks;
+            });
+        }
+
+        if (!this.viewMode) {
+            this.notifier.start();
+            this.notifier.onNotify.subscribe({
+                next: () => {
+                    this.form.markAllAsTouched();
+
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+
+                    this.notifier.stop();
+                }
+            });
+        } }
 
     private fillModel(): void {
         this.model.submittedBy = this.form.get('submittedByControl')!.value;
@@ -393,5 +413,11 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
         else {
             return this.service.addApplication(this.model, this.pageCode);
         }
+    }
+
+    private shouldHidePaymentData(): boolean {
+        return this.paymentInformation?.paymentType === null
+            || this.paymentInformation?.paymentType === undefined
+            || this.paymentInformation?.paymentType === '';
     }
 }

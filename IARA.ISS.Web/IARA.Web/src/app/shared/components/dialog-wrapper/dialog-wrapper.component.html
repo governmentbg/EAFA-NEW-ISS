@@ -1,7 +1,14 @@
-﻿<mat-toolbar color="accent" class="m-0">
-    <mat-toolbar-row fxFlex fxLayout="row" class="flex-basis-Auto" fxLayoutAlign="space-between center">
+﻿<mat-toolbar color="accent"
+             class="m-0">
+    <mat-toolbar-row fxFlex
+                     fxLayout="row"
+                     class="flex-basis-Auto"
+                     fxLayoutAlign="space-between center">
         <span class="title dialog-title multi-line">{{ title }}</span>
-        <div flFlex="row" fxLayoutGap="5px" fxLayout="row" fxLayoutAlign="space-between center">
+        <div flFlex="row"
+             fxLayoutGap="5px"
+             fxLayout="row"
+             fxLayoutAlign="space-between center">
             <tl-audit *ngIf="headerAuditBtn"
                       [auditInfo]="auditInfo"
                       (openAudit)="headerAuditBtnClicked()"
@@ -10,14 +17,17 @@
             <button *ngIf="showHeaderCloseBtn"
                     mat-icon-button
                     (click)="headerCloseDialog(headerCancelButton)"
-                    matTooltip="{{ headerCloseButtonTooltip | tlTranslate: 'cap'  }}" matTooltipPosition="above" matTooltipHideDelay="700">
+                    matTooltip="{{ headerCloseButtonTooltip | tlTranslate: 'cap'  }}"
+                    matTooltipPosition="above"
+                    matTooltipHideDelay="700">
                 <mat-icon>close</mat-icon>
             </button>
         </div>
     </mat-toolbar-row>
 </mat-toolbar>
 <mat-dialog-content class="p-24 m-0 mat-dialog-content"
-                    style="padding-left: 0px !important; padding-right: 0px !important;">
+                    style="padding-left: 0px !important; padding-right: 0px !important;"
+                    [ngStyle]="{ 'max-height': isOverlayFullScreen ? 'calc(100vh - 156px)' : '65vh', 'height': isOverlayFullScreen ? 'calc(100vh - 156px)' : 'auto' }">
     <template #placeHolder>
     </template>
 </mat-dialog-content>
@@ -30,15 +40,21 @@
                            || saveBtn !== null
                            || closeBtn !== undefined
                            || closeBtn !== null"
-                    class="m-0 p-b-0" fxLayout="row" fxLayoutAlign="start stretch" fxFill>
-    <div fxFlex="25" fxLayout="row wrap" fxLayoutAlign="start stretch" fxLayoutGap="1em">
+                    class="m-0 p-b-0"
+                    fxLayout="row"
+                    fxLayoutAlign="start stretch"
+                    fxFill>
+    <div fxFlex="25"
+         fxLayout="row wrap"
+         fxLayoutAlign="start stretch"
+         fxLayoutGap="1em">
         <div>
             <button *ngIf="cancelBtn !== undefined && ((viewMode && cancelBtn.isVisibleInViewMode) || !viewMode) && !cancelBtn.hidden"
                     [id]="cancelBtn.id"
                     mat-raised-button
                     [ngClass]="cancelBtn.customClass"
                     [color]="cancelBtn.color"
-                    (click)="cancelBtnClicked(cancelBtn)">
+                    (tlDebounceClick)="cancelBtnClicked(cancelBtn)">
                 {{ cancelBtn.translateValue | tlTranslate: 'cap' }}
             </button>
         </div>
@@ -48,7 +64,7 @@
                     mat-raised-button
                     [ngClass]="leftButton.customClass"
                     [color]="leftButton.color"
-                    (click)="closeDialog(leftButton)"
+                    (tlDebounceClick)="closeDialog(leftButton)"
                     [disabled]="leftButton.disabled">
                 <tl-icon *ngIf="leftButton.icon !== undefined"
                          [icon]="leftButton.icon.id"
@@ -58,14 +74,17 @@
             </button>
         </div>
     </div>
-    <div fxFlex="75" fxLayout="row wrap" fxLayoutAlign="end stretch" fxLayoutGap="1em">
+    <div fxFlex="75"
+         fxLayout="row wrap"
+         fxLayoutAlign="end stretch"
+         fxLayoutGap="1em">
         <div *ngFor="let rightButton of rightSideActionsCollection">
             <button *ngIf="((viewMode && rightButton.isVisibleInViewMode) || !viewMode) && !rightButton.hidden"
                     [id]="rightButton.id"
                     mat-raised-button
                     [color]="rightButton.color"
                     [ngClass]="rightButton.customClass"
-                    (click)="closeDialog(rightButton)"
+                    (tlDebounceClick)="closeDialog(rightButton)"
                     [disabled]="rightButton.disabled">
                 <tl-icon *ngIf="rightButton.icon !== undefined"
                          [icon]="rightButton.icon.id"
@@ -79,16 +98,17 @@
                     mat-raised-button
                     [ngClass]="closeBtn.customClass"
                     [color]="closeBtn.color"
-                    (click)="closeBtnClicked(closeBtn)">
+                    (tlDebounceClick)="closeBtnClicked(closeBtn)">
                 {{ closeBtn.translateValue | tlTranslate: 'cap' }}
             </button>
         </div>
-        <div *ngIf="saveBtn !== undefined && ((viewMode && saveBtn.isVisibleInViewMode) || !viewMode) && !saveBtn.hidden">
+        <div
+             *ngIf="saveBtn !== undefined && ((viewMode && saveBtn.isVisibleInViewMode) || !viewMode) && !saveBtn.hidden">
             <button [id]="saveBtn.id"
                     mat-raised-button
                     [ngClass]="saveBtn.customClass"
                     [color]="saveBtn.color"
-                    (click)="saveBtnClicked(saveBtn)">
+                    (tlDebounceClick)="saveBtnClicked(saveBtn)">
                 {{ saveBtn.translateValue | tlTranslate: 'cap' }}
             </button>
         </div>

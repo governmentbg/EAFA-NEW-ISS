@@ -3,6 +3,9 @@
      fxLayout="row"
      fxLayoutGap="2em"
      fxLayoutAlign="start center">
+    <div *ngIf="showIsChecked" [fxFlex]="checkboxFlex" fxLayoutAlign="start center">
+        <tl-checkbox fxFlexOffset="1em" [formControl]="control"></tl-checkbox>
+    </div>
     <div [fxFlex]="nameFlex" fxLayoutAlign="start center">
         <div fxFlex="auto">
             <span class="multi-line">{{ tariff.tariffName }}</span>
@@ -18,7 +21,7 @@
                     <div *ngIf="hasDescription" fxLayout="row" fxFlex="100">
                         <pre style="font-family: inherit !important; max-width: 500px !important;">{{ tariff.tariffDescription }}</pre>
                     </div>
-                    <div fxFlex="100">
+                    <div *ngIf="hasDescription" fxFlex="100">
                         <mat-divider></mat-divider>
                     </div>
                     <div *ngIf="hasBasedOnPlea" fxLayout="row" fxFlex="100">

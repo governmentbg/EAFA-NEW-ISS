@@ -51,10 +51,6 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
         throw new Error('This method should not be called from the public app.');
     }
 
-    public getOverlappedLogBooks(parameters: OverlappingLogBooksParameters[]): Observable<RangeOverlappingLogBooksDTO[]> {
-        throw new Error('This method should not be called from the public app.');
-    }
-
     public getRegisterByApplicationId(applicationId: number, pageCode?: PageCodeEnum): Observable<CommercialFishingEditDTO> {
         const params = new HttpParams().append('applicationId', applicationId.toString());
         let serviceMethod: string = '';
@@ -122,6 +118,14 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
         throw new Error('This method should not be called from the public app.');
     }
 
+    public deleteLogBookPermitLicense(id: number): Observable<void> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
+    public undoDeleteLogBookPermitLicense(id: number): Observable<void> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
     public getPermitLicenseSimpleAudit(id: number): Observable<SimpleAuditDTO> {
         throw new Error('This method should not be called from the public app.');
     }
@@ -148,8 +152,9 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
     }
 
     // Applications
-    public getApplication(id: number, pageCode: PageCodeEnum): Observable<IApplicationRegister> {
-        const params = new HttpParams().append('id', id.toString());
+    public getApplication(id: number, getRegiXData: boolean, pageCode: PageCodeEnum): Observable<IApplicationRegister> {
+        const params = new HttpParams()
+            .append('id', id.toString());
         let serviceMethod: string = '';
 
         switch (pageCode) {

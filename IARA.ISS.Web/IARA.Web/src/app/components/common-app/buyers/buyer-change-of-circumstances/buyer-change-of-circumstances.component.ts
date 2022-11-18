@@ -55,6 +55,7 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
 
     public isEditing: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isOnlineApplication: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public isReadonly: boolean = false;
@@ -64,6 +65,7 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
     public hasNoEDeliveryRegistrationError: boolean = false;
     public buyerDoesNotExistError: boolean = false;
     public isPublicApp: boolean;
+    public hideBasicPaymentInfo: boolean = false;
     public service!: IBuyersService;
 
     @ViewChild(ValidityCheckerGroupDirective)
@@ -116,6 +118,7 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
                         this.paymentInformation = application.paymentInformation;
+                        this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
 
@@ -152,7 +155,7 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData, this.pageCode).subscribe({
                         next: (application: BuyerChangeOfCircumstancesApplicationDTO) => {
                             application.applicationId = this.applicationId;
                             application.isDraft = application.isDraft ?? true;
@@ -160,8 +163,14 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
                             this.paymentInformation = application.paymentInformation;
+                            this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.isOnlineApplication = application.isOnlineApplication!;
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new BuyerChangeOfCircumstancesRegixDataDTO(application.regiXDataModel);
+                                application.regiXDataModel = undefined;
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (application.submittedBy === undefined || application.submittedBy === null)) {
                                 const service = this.service as BuyersPublicService;
@@ -210,6 +219,7 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.viewMode = data.viewMode;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.applicationsService = data.applicationsService;
         this.service = data.service as IBuyersService;
         this.pageCode = data.pageCode;
@@ -316,14 +326,6 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
         }
 
         if (this.model instanceof BuyerChangeOfCircumstancesRegixDataDTO) {
-            if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
-                const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
-
-                setTimeout(() => {
-                    this.regixChecks = checks;
-                });
-            }
-
             if (this.isPublicApp === true) {
                 this.form.get('buyerUrorrNumberControl')!.disable();
             }
@@ -331,16 +333,7 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
                 this.form.get('buyerControl')!.disable();
             }
 
-            if (!this.viewMode) {
-                this.notifier.start();
-                this.notifier.onNotify.subscribe({
-                    next: () => {
-                        this.form.markAllAsTouched();
-                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
-                        this.notifier.stop();
-                    }
-                });
-            }
+            this.fillFormRegiX();
         }
         else {
             this.form.get('filesControl')!.setValue(this.model.files);
@@ -348,6 +341,35 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
             }
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX();
+            }
+        }
+    }
+
+    private fillFormRegiX(): void {
+        if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
+            const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
+
+            setTimeout(() => {
+                this.regixChecks = checks;
+            });
+        }
+
+        if (!this.viewMode) {
+            this.notifier.start();
+            this.notifier.onNotify.subscribe({
+                next: () => {
+                    this.form.markAllAsTouched();
+
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+
+                    this.notifier.stop();
+                }
+            });
         }
     }
 
@@ -437,5 +459,11 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
         else {
             return this.service.addApplication(this.model, this.pageCode);
         }
+    }
+
+    private shouldHidePaymentData(): boolean {
+        return this.paymentInformation?.paymentType === null
+            || this.paymentInformation?.paymentType === undefined
+            || this.paymentInformation?.paymentType === '';
     }
 }

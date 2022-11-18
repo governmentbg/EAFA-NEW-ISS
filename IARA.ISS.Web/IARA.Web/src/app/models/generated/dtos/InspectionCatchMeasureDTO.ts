@@ -19,6 +19,9 @@ export class InspectionCatchMeasureDTO {
     public fishId?: number;
 
     @StrictlyTyped(Number)
+    public turbotSizeGroupId?: number;
+
+    @StrictlyTyped(Number)
     public catchQuantity?: number;
 
     @StrictlyTyped(Number)

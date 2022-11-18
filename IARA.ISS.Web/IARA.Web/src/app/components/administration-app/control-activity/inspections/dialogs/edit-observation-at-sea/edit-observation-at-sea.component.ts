@@ -52,6 +52,7 @@ export class EditObservationAtSeaComponent extends BaseInspectionsComponent impl
         snackbar: MatSnackBar
     ) {
         super(service, translate, nomenclatures, snackbar);
+        this.inspectionCode = InspectionTypesEnum.OFS;
     }
 
     public async ngOnInit(): Promise<void> {
@@ -100,7 +101,7 @@ export class EditObservationAtSeaComponent extends BaseInspectionsComponent impl
         this.countries = nomenclatureTables[5];
 
         if (this.id !== null && this.id !== undefined) {
-            this.service.get(this.id).subscribe({
+            this.service.get(this.id, this.inspectionCode).subscribe({
                 next: (dto: InspectionObservationAtSeaDTO) => {
                     this.model = dto;
 
@@ -115,18 +116,18 @@ export class EditObservationAtSeaComponent extends BaseInspectionsComponent impl
             generalInfoControl: new FormControl(undefined),
             patrolVehiclesControl: new FormControl([]),
             onBoardObservationToolsControl: new FormControl([]),
-            otherOnBoardObservationToolsControl: new FormControl({ value: [], disabled: true }),
+            otherOnBoardObservationToolsControl: new FormControl({ value: undefined, disabled: true }),
             shipControl: new FormControl(undefined),
             courseControl: new FormControl(undefined),
             speedControl: new FormControl(undefined),
             centerObservationToolsControl: new FormControl([]),
-            otherCenterObservationToolsControl: new FormControl({ value: [], disabled: true }),
+            otherCenterObservationToolsControl: new FormControl({ value: undefined, disabled: true }),
             hasShipCommunicationControl: new FormControl(false),
             hasShipContactControl: new FormControl(false),
             onBoardActivitiesControl: new FormControl([]),
-            otherOnBoardActivitiesControl: new FormControl({ value: [], disabled: true }),
+            otherOnBoardActivitiesControl: new FormControl({ value: undefined, disabled: true }),
             fishingActivitiesControl: new FormControl([]),
-            otherFishingActivitiesControl: new FormControl({ value: [], disabled: true }),
+            otherFishingActivitiesControl: new FormControl({ value: undefined, disabled: true }),
             shipCommunicationControl: new FormControl(undefined),
             additionalInfoControl: new FormControl(undefined),
             filesControl: new FormControl([])
@@ -167,7 +168,8 @@ export class EditObservationAtSeaComponent extends BaseInspectionsComponent impl
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
                 inspectorComment: this.model.inspectorComment,
-                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo)
+                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo),
+                violatedRegulations: this.model.violatedRegulations,
             }));
 
             this.form.get('shipControl')!.setValue(this.model.observedVessel);
@@ -267,6 +269,7 @@ export class EditObservationAtSeaComponent extends BaseInspectionsComponent impl
             byEmergencySignal: generalInfo.byEmergencySignal,
             inspectionType: InspectionTypesEnum.OFS,
             inspectorComment: additionalInfo?.inspectorComment,
+            violatedRegulations: additionalInfo?.violatedRegulations,
             isActive: true,
             shipCommunicationDescription: this.form.get('shipCommunicationControl')!.value,
             observedVessel: ship,

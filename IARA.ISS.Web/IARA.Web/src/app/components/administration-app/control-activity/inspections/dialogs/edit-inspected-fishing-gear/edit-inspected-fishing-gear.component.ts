@@ -110,6 +110,14 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
         dialogClose();
     }
 
+    public onMarkSelected(mark: FishingGearMarkDTO): void {
+        const value: FishingGearDTO = this.form.get('inspectedGearControl')!.value;
+
+        if (value && !value.marks!.includes(mark)) {
+            value.marks = [...value.marks!, mark];
+        }
+    }
+
     protected buildForm(): void {
         this.form = new FormGroup({
             permittedGearControl: new FormControl({ value: undefined, disabled: true }),
@@ -126,7 +134,9 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
                 else {
                     this.canEditInspectedGear = true;
                     setTimeout(() => {
-                        this.form.get('inspectedGearControl')!.setValue(this.remap(this.model.DTO.inspectedFishingGear ?? this.model.DTO.permittedFishingGear));
+                        const gear = this.remap(this.model.DTO.inspectedFishingGear ?? this.model.DTO.permittedFishingGear)!;
+                        gear.marks = [];
+                        this.form.get('inspectedGearControl')!.setValue(gear);
                     }, 100);
                 }
             }

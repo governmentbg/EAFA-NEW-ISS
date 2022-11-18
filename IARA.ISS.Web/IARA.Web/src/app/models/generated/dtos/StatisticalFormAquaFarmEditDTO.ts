@@ -46,6 +46,9 @@ export class StatisticalFormAquaFarmEditDTO {
     @StrictlyTyped(Number)
     public broodstockDeathRate?: number;
 
+    @StrictlyTyped(Boolean)
+    public isOwnerEmployee?: boolean;
+
     @StrictlyTyped(StatisticalFormGivenMedicineDTO)
     public medicine?: StatisticalFormGivenMedicineDTO[];
 

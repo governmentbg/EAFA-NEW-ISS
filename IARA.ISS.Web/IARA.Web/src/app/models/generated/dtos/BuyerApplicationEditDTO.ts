@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { BaseRegixChecksDTO } from './BaseRegixChecksDTO';
 import { ApplicationSubmittedByDTO } from './ApplicationSubmittedByDTO';
 import { ApplicationSubmittedForDTO } from './ApplicationSubmittedForDTO';
 import { RegixPersonDataDTO } from './RegixPersonDataDTO';
@@ -10,24 +11,24 @@ import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformatio
 import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
 import { CommonDocumentDTO } from './CommonDocumentDTO';
 import { FileInfoDTO } from './FileInfoDTO';
-import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { BuyerRegixDataDTO } from './BuyerRegixDataDTO'; 
 
-export class BuyerApplicationEditDTO { 
+export class BuyerApplicationEditDTO extends BaseRegixChecksDTO {
     public constructor(obj?: Partial<BuyerApplicationEditDTO>) {
-        Object.assign(this, obj);
+        if (obj != undefined) {
+            super(obj as BaseRegixChecksDTO);
+            Object.assign(this, obj);
+        } 
+        else {
+            super();
+        }
     }
-
+  
     @StrictlyTyped(Number)
     public id?: number;
 
-    @StrictlyTyped(Number)
-    public applicationId?: number;
-
     @StrictlyTyped(Boolean)
     public isOnlineApplication?: boolean;
-
-    @StrictlyTyped(Number)
-    public pageCode?: PageCodeEnum;
 
     @StrictlyTyped(ApplicationSubmittedByDTO)
     public submittedBy?: ApplicationSubmittedByDTO;
@@ -98,12 +99,6 @@ export class BuyerApplicationEditDTO {
     @StrictlyTyped(String)
     public comments?: string;
 
-    @StrictlyTyped(FileInfoDTO)
-    public files?: FileInfoDTO[];
-
-    @StrictlyTyped(String)
-    public statusReason?: string;
-
     @StrictlyTyped(Boolean)
     public hasDelivery?: boolean;
 
@@ -112,4 +107,10 @@ export class BuyerApplicationEditDTO {
 
     @StrictlyTyped(Number)
     public annualTurnover?: number;
+
+    @StrictlyTyped(FileInfoDTO)
+    public files?: FileInfoDTO[];
+
+    @StrictlyTyped(BuyerRegixDataDTO)
+    public regiXDataModel?: BuyerRegixDataDTO;
 }

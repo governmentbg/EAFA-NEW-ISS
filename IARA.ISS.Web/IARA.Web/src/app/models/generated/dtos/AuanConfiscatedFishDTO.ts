@@ -17,6 +17,9 @@ export class AuanConfiscatedFishDTO {
     public weight?: number;
 
     @StrictlyTyped(Number)
+    public length?: number;
+
+    @StrictlyTyped(Number)
     public count?: number;
 
     @StrictlyTyped(Number)
@@ -30,6 +33,12 @@ export class AuanConfiscatedFishDTO {
 
     @StrictlyTyped(Number)
     public applianceId?: number;
+
+    @StrictlyTyped(Number)
+    public lawSectionId?: number;
+
+    @StrictlyTyped(String)
+    public lawText?: string;
 
     @StrictlyTyped(String)
     public comments?: string;

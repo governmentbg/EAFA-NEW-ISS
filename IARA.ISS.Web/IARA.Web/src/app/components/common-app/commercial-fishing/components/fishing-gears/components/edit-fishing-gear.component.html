@@ -11,70 +11,128 @@
                 <tl-autocomplete fxFlex="100"
                                  formControlName="typeControl"
                                  label="{{ 'fishing-gears.type' | tlTranslate }}"
+                                 tooltipResourceName="fishing-gears.type-helper"
                                  [options]="fishingGearTypes">
                 </tl-autocomplete>
             </div>
             <div fxFlex="100"
                  fxLayout="row"
-                 fxLayoutAlign="space-between center">
-                <tl-input *ngIf="form.controls.typeControl.value !== null && form.controls.typeControl.value !== undefined
-                                && form.controls.typeControl.value.code !== undefined && form.controls.typeControl.value.code !== null
-                                && form.controls.typeControl.value.code !== fishingGearTypesEnum[fishingGearTypesEnum.DLN]"
-                          fxLayout="column"
-                          fxFlex="19"
-                          formControlName="countControl"
-                          label="{{ 'fishing-gears.count' | tlTranslate }}">
-                </tl-input>
-                <tl-input fxLayout="column"
-                          fxFlex="19"
-                          formControlName="netEyeSizeControl"
-                          label="{{ 'fishing-gears.net-eye-size' | tlTranslate }}"></tl-input>
-                <div *ngIf="form.controls.typeControl.value !== null && form.controls.typeControl.value !== undefined
-                            && form.controls.typeControl.value.code !== undefined && form.controls.typeControl.value.code !== null
-                            && form.controls.typeControl.value.code !== fishingGearTypesEnum[fishingGearTypesEnum.DLN]"
+                 fxLayoutAlign="space-between center"
+                 fxLayoutGap="1em">
+                <div [fxFlex]="selectedGearTypeIsPoundNet ? 25 : 66"
                      fxLayout="row"
-                     fxFlex="60"
-                     fxLayoutAlign="space-between center">
-                    <tl-input fxFlex="24"
-                              formControlName="hooksContControl"
-                              label="{{ 'fishing-gears.hooks-count' | tlTranslate }}"></tl-input>
-                    <tl-input fxFlex="24"
-                              formControlName="lengthControl"
-                              label="{{ 'fishing-gears.length' | tlTranslate }}"></tl-input>
-                    <tl-input fxFlex="24"
-                              formControlName="heightControl"
-                              label="{{ 'fishing-gears.height' | tlTranslate }}"></tl-input>
-                    <tl-input fxFlex="24"
-                              formControlName="cordThicknessControl"
-                              label="{{ 'fishing-gears.cord-thickness' | tlTranslate }}"></tl-input>
+                     fxLayoutAlign="space-between center"
+                     fxLayoutGap="1em">
+                    <tl-input *ngIf="!selectedGearTypeIsPoundNet"
+                              fxFlex="50"
+                              formControlName="countControl"
+                              label="{{ 'fishing-gears.count' | tlTranslate }}"
+                              tooltipResourceName="fishing-gears.count-helper">
+                    </tl-input>
+                    <tl-input [fxFlex]="!selectedGearTypeIsPoundNet ? 50 : 100"
+                              formControlName="netEyeSizeControl"
+                              label="{{ 'fishing-gears.net-eye-size' | tlTranslate }}"
+                              tooltipResourceName="fishing-gears.net-eye-size-helper">
+                    </tl-input>
                 </div>
-                <div *ngIf="form.controls.typeControl.value !== null && form.controls.typeControl.value !== undefined
-                            && form.controls.typeControl.value.code !== undefined && form.controls.typeControl.value.code !== null
-                            && form.controls.typeControl.value.code === fishingGearTypesEnum[fishingGearTypesEnum.DLN]"
+                <div *ngIf="!selectedGearTypeIsPoundNet"
                      fxLayout="row"
-                     fxFlex="79"
-                     fxLayoutAlign="space-between center">
-                    <tl-input fxFlex="32"
+                     fxFlex="33"
+                     fxLayoutAlign="space-between center"
+                     fxLayoutGap="1em">
+                    <tl-input fxFlex="100"
+                              formControlName="hooksContControl"
+                              label="{{ 'fishing-gears.hooks-count' | tlTranslate }}"
+                              tooltipResourceName="fishing-gears.hooks-count-helper">
+                    </tl-input>
+                </div>
+                <div *ngIf="selectedGearTypeIsPoundNet"
+                     fxLayout="row"
+                     fxFlex="75"
+                     fxLayoutAlign="space-between center"
+                     fxLayoutGap="1em">
+                    <tl-input fxFlex="33"
                               formControlName="towelLengthControl"
-                              label="{{ 'fishing-gears.towel-length' | tlTranslate }}"></tl-input>
-                    <tl-input fxFlex="32"
+                              label="{{ 'fishing-gears.towel-length' | tlTranslate }}"
+                              tooltipResourceName="fishing-gears.towel-length-helper">
+                    </tl-input>
+                    <tl-input fxFlex="33"
                               formControlName="houseLengthControl"
-                              label="{{ 'fishing-gears.house-length' | tlTranslate }}"></tl-input>
-                    <tl-input fxFlex="32"
+                              label="{{ 'fishing-gears.house-length' | tlTranslate }}"
+                              tooltipResourceName="fishing-gears.house-length-helper">
+                    </tl-input>
+                    <tl-input fxFlex="33"
                               formControlName="houseWidthControl"
-                              label="{{ 'fishing-gears.house-width' | tlTranslate }}"></tl-input>
+                              label="{{ 'fishing-gears.house-width' | tlTranslate }}"
+                              tooltipResourceName="fishing-gears.house-width-helper">
+                    </tl-input>
                 </div>
             </div>
+            <ng-container *ngIf="!selectedGearTypeIsPoundNet">
+                <div fxLayout="row"
+                     fxFlex="100"
+                     fxLayoutAlign="space-between center"
+                     fxLayoutGap="1em">
+                    <tl-input fxFlex="33"
+                              formControlName="lengthControl"
+                              label="{{ 'fishing-gears.length' | tlTranslate }}"
+                              tooltipResourceName="fishing-gears.length-helper">
+                    </tl-input>
+                    <tl-input fxFlex="33"
+                              formControlName="heightControl"
+                              label="{{ 'fishing-gears.height' | tlTranslate }}"
+                              tooltipResourceName="fishing-gears.height-helper">
+                    </tl-input>
+                    <tl-input fxFlex="33"
+                              formControlName="cordThicknessControl"
+                              label="{{ 'fishing-gears.cord-thickness' | tlTranslate }}"
+                              tooltipResourceName="fishing-gears.cord-thickness-helper">
+                    </tl-input>
+                </div>
+                <div fxLayout="row"
+                     fxFlex="100"
+                     fxLayoutAlign="space-between center"
+                     fxLayoutGap="1em">
+                    <tl-input fxFlex="33"
+                              formControlName="lineCountControl"
+                              label="{{ 'fishing-gears.line-count' | tlTranslate }}"
+                              tooltipResourceName="fishing-gears.line-count-helper">
+                    </tl-input>
+                    <tl-input fxFlex="33"
+                              formControlName="netNominalLengthControl"
+                              label="{{ 'fishing-gears.net-nominal-length' | tlTranslate }}"
+                              tooltipResourceName="fishing-gears.net-nominal-length-helper">
+                    </tl-input>
+                    <tl-input fxFlex="33"
+                              formControlName="netsInFleetCountControl"
+                              label="{{ 'fishing-gears.nets-in-fleet-count' | tlTranslate }}"
+                              tooltipResourceName="fishing-gears.nets-in-fleet-count-helper">
+                    </tl-input>
+                </div>
+                <div fxLayout="row"
+                     fxFlex="100"
+                     fxLayoutAlign="space-between center"
+                     fxLayoutGap="1em">
+                    <tl-input fxFlex="100"
+                              formControlName="trawlModelControl"
+                              label="{{ 'fishing-gears.trawl-model' | tlTranslate }}"
+                              tooltipResourceName="fishing-gears.trawl-model-helper">
+                    </tl-input>
+                </div>
+            </ng-container>
             <div fxFlex="100"
                  fxLayout="row"
                  fxLayoutAlign="space-between center">
                 <tl-textarea fxFlex="100"
                              formControlName="descriptionControl"
-                             label="{{ 'fishing-gears.description' | tlTranslate }}"></tl-textarea>
+                             label="{{ 'fishing-gears.description' | tlTranslate }}"
+                             tooltipResourceName="fishing-gears.description-helper">
+                </tl-textarea>
             </div>
         </div>
     </tl-expansion-panel>
-    <tl-expansion-panel title="{{ 'fishing-gears.marks-panel' | tlTranslate }}">
+    <tl-expansion-panel *ngIf="hasMarks"
+                        title="{{ 'fishing-gears.marks-panel' | tlTranslate }}">
         <div fxFlexFill
              fxLayout="column"
              fxLayoutGap="1em">
@@ -100,19 +158,38 @@
                              [options]="markStatuses"
                              dataType="nomenclature">
                 </data-column>
+                <data-template-column [flexRate]="0.3"
+                                      *ngIf="canSelectMarks">
+                    <ng-template ngx-datatable-cell-template
+                                 let-row="row">
+                        <div fxLayout="row wrap"
+                             fxLayoutAlign="end center">
+                            <tl-icon-button icon="trending_flat"
+                                            tooltipText="{{ 'inspections.move-mark-to-inspected' | tlTranslate }}"
+                                            (buttonClicked)="selectedMark.emit(row.data)">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
                 <data-column-inline [flexRate]="0.3"
-                                    *ngIf="!isDisabled"></data-column-inline>
+                                    *ngIf="!isDisabled">
+                </data-column-inline>
             </tl-data-table>
+            <mat-error *ngIf="marksForm.errors?.duplicatedMark">
+                * {{ 'fishing-gears.gear-has-duplicated-mark-number' | tlTranslate }}
+            </mat-error>
         </div>
     </tl-expansion-panel>
-    <tl-expansion-panel title="{{ 'fishing-gears.pingers-panel' | tlTranslate }}">
+    <tl-expansion-panel *ngIf="hasPingers"
+                        title="{{ 'fishing-gears.pingers-panel' | tlTranslate }}">
         <div fxFlexFill
              fxLayout="column"
              fxLayoutGap="1em">
             <div fxFlex="100"
                  fxLayout="row">
                 <tl-checkbox formControlName="hasPingersControl"
-                             label="{{ 'fishing-gears.has-pingers' | tlTranslate }}"></tl-checkbox>
+                             label="{{ 'fishing-gears.has-pingers' | tlTranslate }}">
+                </tl-checkbox>
             </div>
             <div *ngIf="showPingersTable === true"
                  fxFlexFill
@@ -151,8 +228,12 @@
                                  dataType="string">
                     </data-column>
                     <data-column-inline [flexRate]="0.5"
-                                        *ngIf="!isDisabled"></data-column-inline>
+                                        *ngIf="!isDisabled">
+                    </data-column-inline>
                 </tl-data-table>
+                <mat-error *ngIf="pingersForm.errors?.duplicatedPinger">
+                    * {{ 'fishing-gears.gear-has-duplicated-pinger-number' | tlTranslate }}
+                </mat-error>
             </div>
         </div>
     </tl-expansion-panel>

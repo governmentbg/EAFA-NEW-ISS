@@ -31,6 +31,9 @@ export class FishNomenclatureDTO extends NomenclatureDTO<number> {
     @StrictlyTyped(Number)
     public familyType?: FishFamilyTypesEnum;
 
+    @StrictlyTyped(Number)
+    public minCatchSize?: number;
+
     @StrictlyTyped(Boolean)
     public isDanube?: boolean;
 
@@ -39,4 +42,7 @@ export class FishNomenclatureDTO extends NomenclatureDTO<number> {
 
     @StrictlyTyped(Boolean)
     public isInternal?: boolean;
+
+    @StrictlyTyped(Boolean)
+    public isCommon?: boolean;
 }

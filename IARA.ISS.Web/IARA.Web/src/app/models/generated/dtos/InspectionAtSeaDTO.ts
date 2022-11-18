@@ -38,6 +38,9 @@ export class InspectionAtSeaDTO extends InspectionEditDTO {
     @StrictlyTyped(InspectionPermitDTO)
     public permitLicenses?: InspectionPermitDTO[];
 
+    @StrictlyTyped(InspectionPermitDTO)
+    public permits?: InspectionPermitDTO[];
+
     @StrictlyTyped(InspectionLogBookDTO)
     public logBooks?: InspectionLogBookDTO[];
 }

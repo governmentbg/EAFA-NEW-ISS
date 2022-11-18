@@ -1,0 +1,13 @@
+﻿<div [formGroup]="form"
+     fxLayout="column"
+     fxLayoutGap="1em"
+     fxLayoutAlign="space-between stretch"
+     class="dialog-padding">
+    <regix-data formControlName="personControl"
+                [isPerson]="true"
+                [isIdReadOnly]="isEditing"
+                [hideDocument]="true"
+                [isEmailRequired]="true"
+                [expectedResults]="expectedResults.person">
+    </regix-data>
+</div>

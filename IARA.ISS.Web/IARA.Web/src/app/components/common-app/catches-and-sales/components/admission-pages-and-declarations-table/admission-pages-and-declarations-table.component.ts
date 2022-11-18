@@ -35,6 +35,9 @@ export class AdmissionPagesAndDeclarationsTableComponent {
     @Input()
     public canEditAdmissionLogBookRecords: boolean = false;
 
+    @Input()
+    public recordsPerPage: number = 10;
+
     @Output()
     public onActiveRecordChanged: EventEmitter<AdmissionPageRecordChanged> = new EventEmitter<AdmissionPageRecordChanged>();
 

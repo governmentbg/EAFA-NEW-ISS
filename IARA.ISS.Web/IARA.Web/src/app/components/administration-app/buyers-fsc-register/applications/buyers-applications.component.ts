@@ -193,7 +193,7 @@ export class BuyersFSCApplicationsComponent {
                     viewApplicationDialogTitle: this.translationService.getValue('duplicates.view-first-sale-application-dialog-title'),
                     viewRegisterDialogTitle: this.translationService.getValue('duplicates.view-first-sale-dialog-title'),
                     viewRegixDataDialogTitle: this.translationService.getValue('duplicates.view-first-sale-application-regix-data-dialog-title'),
-                    viewAndConfrimDataRegularityTitle: this.translationService.getValue('duplicates.view-center-appl-and-confirm-regularity-title'),
+                    viewAndConfrimDataRegularityTitle: this.translationService.getValue('duplicates.view-first-sale-appl-and-confirm-regularity-title'),
                     createRegisterCallback: this.openFirstSaleDuplicateDialog.bind(this)
                 })
             ]

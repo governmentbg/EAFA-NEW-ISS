@@ -88,7 +88,7 @@ export class LegalEntitiesComponent implements AfterViewInit {
             TCtor: ChooseApplicationComponent,
             title: this.translate.getValue('applications-register.choose-application-for-register-creation'),
             translteService: this.translate,
-            componentData: new ChooseApplicationDialogParams({ pageCodes: [PageCodeEnum.LE] }),
+            componentData: new ChooseApplicationDialogParams({ pageCodes: [PageCodeEnum.LE, PageCodeEnum.Assocs] }),
             disableDialogClose: true,
             headerCancelButton: {
                 cancelBtnClicked: this.closeApplicationChooseDialogBtnClicked.bind(this)

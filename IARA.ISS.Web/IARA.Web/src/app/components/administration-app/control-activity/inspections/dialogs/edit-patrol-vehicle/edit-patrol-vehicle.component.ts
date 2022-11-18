@@ -16,6 +16,7 @@ import { VesselDTO } from '@app/models/generated/dtos/VesselDTO';
 import { PatrolVehicleTableParams } from '../../components/patrol-vehicles-table/models/patrol-vehicle-table-params';
 import { PatrolVehicleTypeNomenclatureDTO } from '@app/models/generated/dtos/PatrolVehicleTypeNomenclatureDTO';
 import { PatrolVehicleTypeEnum } from '@app/enums/patrol-vehicle-type.enum';
+import { CoordinateUtils } from '@app/shared/utils/coordinate.utis';
 
 @Component({
     selector: 'edit-patrol-vehicle',
@@ -26,6 +27,7 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
 
     public isFromRegister: boolean = true;
     public isWaterVehicle: boolean = true;
+    public hasCoordinates: boolean = true;
 
     public patrolVehicles: NomenclatureDTO<number>[] = [];
     public countries: NomenclatureDTO<number>[] = [];
@@ -92,6 +94,11 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
         this.isWaterVehicle = data.isWaterVehicle;
         this.readOnly = data.readOnly;
         this.isEdit = data.isEdit;
+        this.hasCoordinates = data.hasCoordinates;
+
+        if (!this.hasCoordinates) {
+            this.form.get('mapViewerControl')!.disable();
+        }
     }
 
     public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
@@ -185,6 +192,13 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
         }
 
         this.model.location = this.form.get('mapViewerControl')!.value;
+
+        if (this.model.location) {
+            const long = CoordinateUtils.ConvertToDisplayDMS(this.model.location.longitude!);
+            const lat = CoordinateUtils.ConvertToDisplayDMS(this.model.location.latitude!);
+
+            this.model.locationText = long + ' ' + lat;
+        }
     }
 
     private onPatrolVehicleRegisteredChanged(value: boolean): void {

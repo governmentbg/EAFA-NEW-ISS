@@ -24,4 +24,7 @@ export class SystemPropertiesDTO {
 
     @StrictlyTyped(String)
     public acdrUserName?: string;
+
+    @StrictlyTyped(String)
+    public fishingAssociationRoleCode?: string;
 }

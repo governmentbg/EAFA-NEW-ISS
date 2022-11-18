@@ -2,6 +2,10 @@
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { AuanInspectedEntityDTO } from '@app/models/generated/dtos/AuanInspectedEntityDTO';
 import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { AddressTypesEnum } from '@app/enums/address-types.enum';
+import { RegixLegalDataDTO } from '@app/models/generated/dtos/RegixLegalDataDTO';
 
 @Component({
     selector: 'inspected-entity-basic-info',
@@ -11,12 +15,36 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
     @Input()
     public viewMode: boolean = false;
 
+    @Input()
+    public isIdReadOnly: boolean = false;
+
     public inspectedEntity: AuanInspectedEntityDTO | undefined;
+    public inspectedEntityOptions: NomenclatureDTO<boolean>[] = [];
+
+    public readonly companyHeadquartersType: AddressTypesEnum = AddressTypesEnum.COMPANY_HEADQUARTERS;
+
+    private readonly translate: FuseTranslationLoaderService;
 
     public constructor(
-        @Self() ngControl: NgControl
+        @Self() ngControl: NgControl,
+        translate: FuseTranslationLoaderService
     ) {
         super(ngControl);
+
+        this.translate = translate;
+
+        this.inspectedEntityOptions = [
+            new NomenclatureDTO<boolean>({
+                value: true,
+                displayName: this.translate.getValue('auan-register.inspected-entity-person'),
+                isActive: true
+            }),
+            new NomenclatureDTO<boolean>({
+                value: false,
+                displayName: this.translate.getValue('auan-register.inspected-entity-legal'),
+                isActive: true
+            })
+        ];
     }
 
     public ngOnInit(): void {
@@ -35,10 +63,55 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
                 this.form.get('personAddressesControl')!.setValue(this.inspectedEntity.addresses);
             }
             else if (this.inspectedEntity.isPerson === false) {
-                this.form.get('legalControl')!.setValue(this.inspectedEntity.legal);
+                if (this.inspectedEntity.legal !== undefined && this.inspectedEntity.legal !== null) {
+                    this.form.get('legalControl')!.setValue(this.inspectedEntity.legal);
+                }
+                else {
+                    this.form.get('legalControl')!.setValue(
+                        new RegixLegalDataDTO({
+                            eik: this.inspectedEntity.unregisteredPerson!.eik,
+                            name: this.inspectedEntity.unregisteredPerson!.firstName
+                        })
+                    );
+                }
                 this.form.get('legalAddressesControl')!.setValue(this.inspectedEntity.addresses);
             }
         }
+
+        this.form.get('isInspectedEntityPersonControl')!.valueChanges.subscribe({
+            next: (isPerson: NomenclatureDTO<boolean> | undefined) => {
+                if (isPerson !== undefined && isPerson !== null) {
+                    this.form.get('personControl')!.clearValidators();
+                    this.form.get('personAddressesControl')!.clearValidators();
+                    this.form.get('legalControl')!.clearValidators();
+                    this.form.get('legalAddressesControl')!.clearValidators();
+
+                    if (this.inspectedEntity !== undefined && this.inspectedEntity !== null) {
+                        this.inspectedEntity!.isPerson = isPerson.value;
+                    }
+                    else {
+                        this.inspectedEntity = new AuanInspectedEntityDTO({
+                            isUnregisteredPerson: false,
+                            isPerson: isPerson.value
+                        });
+                    }
+
+                    if (isPerson) {
+                        this.form.get('personControl')!.setValidators(Validators.required);
+                        this.form.get('personAddressesControl')!.setValidators(Validators.required);
+                    }
+                    else {
+                        this.form.get('legalControl')!.setValidators(Validators.required);
+                        this.form.get('legalAddressesControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('personControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('personAddressesControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('legalControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('legalAddressesControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            }
+        });
     }
 
     public writeValue(value: AuanInspectedEntityDTO): void {
@@ -57,6 +130,16 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
                     this.form.get('legalControl')!.setValue(value.legal);
                     this.form.get('legalAddressesControl')!.setValue(value.addresses);
                 }
+            }
+        }
+        else {
+            if (!this.viewMode) {
+                this.form.get('isInspectedEntityPersonControl')!.setValue(this.inspectedEntityOptions.find(x => x.value === true));
+
+                this.inspectedEntity = new AuanInspectedEntityDTO({
+                    isUnregisteredPerson: false,
+                    isPerson: true
+                });
             }
         }
     }
@@ -92,7 +175,8 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
             personWorkPlaceControl: new FormControl(null, Validators.maxLength(100)),
             personWorkPositionControl: new FormControl(null, Validators.maxLength(100)),
             legalControl: new FormControl(null),
-            legalAddressesControl: new FormControl(null)
+            legalAddressesControl: new FormControl(null),
+            isInspectedEntityPersonControl: new FormControl(null)
         });
     }
 }

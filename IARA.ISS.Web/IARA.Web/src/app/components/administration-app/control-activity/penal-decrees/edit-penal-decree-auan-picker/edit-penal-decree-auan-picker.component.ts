@@ -1,5 +1,5 @@
-﻿import { Component, OnInit } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+﻿import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
@@ -17,41 +17,47 @@ import { EditPenalDecreeDialogParams } from '../models/edit-penal-decree-params.
 import { PenalDecreeTypeEnum } from '@app/enums/penal-decree-type.enum';
 import { EditDecreeAgreementComponent } from '../edit-decree-agreement/edit-decree-agreement.component';
 import { EditDecreeWarningComponent } from '../edit-decree-warning/edit-decree-warning.component';
+import { EditDecreeResolutionComponent } from '../edit-decree-resolution/edit-decree-resolution.component';
 
 @Component({
     selector: 'edit-penal-decree-auan-picker',
     templateUrl: './edit-penal-decree-auan-picker.component.html'
 })
-export class EditPenalDecreeAuanPickerComponent implements OnInit, IDialogComponent {
-    public auanControl: FormControl;
-    public typeControl: FormControl;
+export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit, IDialogComponent {
+    public form: FormGroup;
 
     public auans: NomenclatureDTO<number>[] = [];
     public types: NomenclatureDTO<number>[] = [];
 
     public type!: PenalDecreeTypeEnum;
+    public isThirdParty: boolean = false;
+
+    private auanId: number | undefined;
+    private typeId!: number;
 
     private service: IPenalDecreesService;
     private translate: FuseTranslationLoaderService;
     private penalDecreeDialog: TLMatDialog<EditPenalDecreeComponent>;
     private agreementDialog: TLMatDialog<EditDecreeAgreementComponent>;
     private warningDialog: TLMatDialog<EditDecreeWarningComponent>;
+    private resolutionDialog: TLMatDialog<EditDecreeResolutionComponent>;
 
     public constructor(
         service: PenalDecreesService,
         translate: FuseTranslationLoaderService,
         penalDecreeDialog: TLMatDialog<EditPenalDecreeComponent>,
         agreementDialog: TLMatDialog<EditDecreeAgreementComponent>,
-        warningDialog: TLMatDialog<EditDecreeWarningComponent>
+        warningDialog: TLMatDialog<EditDecreeWarningComponent>,
+        resolutionDialog: TLMatDialog<EditDecreeResolutionComponent>
     ) {
         this.service = service;
         this.translate = translate;
         this.penalDecreeDialog = penalDecreeDialog;
         this.agreementDialog = agreementDialog;
         this.warningDialog = warningDialog;
+        this.resolutionDialog = resolutionDialog;
 
-        this.typeControl = new FormControl(null, Validators.required);
-        this.auanControl = new FormControl(null, Validators.required);
+        this.form = this.buildForm();
     }
 
     public ngOnInit(): void {
@@ -68,18 +74,33 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, IDialogCompon
         })
     }
 
+    public ngAfterViewInit(): void {
+        this.form.get('isThirdPartyControl')!.valueChanges.subscribe({
+            next: (value: boolean) => {
+                this.isThirdParty = value;
+                this.form.get('auanControl')!.clearValidators();
+                
+                if (value === false) {
+                    this.form.get('auanControl')!.setValidators(Validators.required);
+                }
+
+                this.form.get('auanControl')!.updateValueAndValidity({ emitEvent: false });
+            }
+        });
+    }
+
     public setData(data: unknown, wrapperData: DialogWrapperData): void {
         // nothing to do
     }
 
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
-        this.auanControl.markAllAsTouched();
-        this.typeControl.markAllAsTouched();
+        this.form.markAllAsTouched();
 
-        if (this.auanControl.valid && this.typeControl.valid) {
-            const rightButtons: IActionInfo[] = [];
-            const type: NomenclatureDTO<number> = this.typeControl.value;
+        if (this.form.valid) {
+            const type: NomenclatureDTO<number> = this.form.get('typeControl')!.value;
             this.type = PenalDecreeTypeEnum[type.code as keyof typeof PenalDecreeTypeEnum];
+            this.auanId = this.form.get('auanControl')!.value?.value;
+            this.typeId = this.form.get('typeControl')!.value!.value;
 
             switch (this.type) {
                 case PenalDecreeTypeEnum.PenalDecree: {
@@ -98,6 +119,13 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, IDialogCompon
                 } break;
                 case PenalDecreeTypeEnum.Warning: {
                     this.openEditWarningDialog().subscribe({
+                        next: (decree: PenalDecreeEditDTO | undefined) => {
+                            dialogClose(decree);
+                        }
+                    });
+                } break;
+                case PenalDecreeTypeEnum.Resolution: {
+                    this.openEditResolutionDialog().subscribe({
                         next: (decree: PenalDecreeEditDTO | undefined) => {
                             dialogClose(decree);
                         }
@@ -127,8 +155,8 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, IDialogCompon
                 cancelBtnClicked: this.closeEditDialogBtnClicked.bind(this)
             },
             componentData: new EditPenalDecreeDialogParams({
-                auanId: this.auanControl.value!.value,
-                typeId: this.typeControl.value!.value,
+                auanId: this.auanId,
+                typeId: this.typeId,
                 isReadonly: false
             }),
             rightSideActionsCollection: [{
@@ -152,8 +180,8 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, IDialogCompon
                 cancelBtnClicked: this.closeEditDialogBtnClicked.bind(this)
             },
             componentData: new EditPenalDecreeDialogParams({
-                auanId: this.auanControl.value!.value,
-                typeId: this.typeControl.value!.value,
+                auanId: this.form.get('auanControl')!.value?.value,
+                typeId: this.form.get('typeControl')!.value!.value,
                 isReadonly: false
             }),
             rightSideActionsCollection: [{
@@ -177,8 +205,33 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, IDialogCompon
                 cancelBtnClicked: this.closeEditDialogBtnClicked.bind(this)
             },
             componentData: new EditPenalDecreeDialogParams({
-                auanId: this.auanControl.value!.value,
-                typeId: this.typeControl.value!.value,
+                auanId: this.form.get('auanControl')!.value?.value,
+                typeId: this.form.get('typeControl')!.value!.value,
+                isReadonly: false
+            }),
+            rightSideActionsCollection: [{
+                id: 'print',
+                color: 'accent',
+                translateValue: 'penal-decrees.save-print'
+            }],
+            translteService: this.translate,
+            disableDialogClose: true
+        }, '1400px');
+
+        return dialog;
+    }
+
+    private openEditResolutionDialog(): Observable<PenalDecreeEditDTO | undefined> {
+        const dialog = this.resolutionDialog.openWithTwoButtons({
+            title: this.translate.getValue('penal-decrees.add-resolution-dialog-title'),
+            TCtor: EditDecreeResolutionComponent,
+            headerAuditButton: undefined,
+            headerCancelButton: {
+                cancelBtnClicked: this.closeEditDialogBtnClicked.bind(this)
+            },
+            componentData: new EditPenalDecreeDialogParams({
+                auanId: this.form.get('auanControl')!.value?.value,
+                typeId: this.form.get('typeControl')!.value!.value,
                 isReadonly: false
             }),
             rightSideActionsCollection: [{
@@ -195,5 +248,13 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, IDialogCompon
 
     private closeEditDialogBtnClicked(closeFn: HeaderCloseFunction): void {
         closeFn();
+    }
+
+    private buildForm(): FormGroup {
+        return new FormGroup({
+            typeControl: new FormControl(null, Validators.required),
+            auanControl: new FormControl(null, Validators.required),
+            isThirdPartyControl: new FormControl(null)
+        });
     }
 }

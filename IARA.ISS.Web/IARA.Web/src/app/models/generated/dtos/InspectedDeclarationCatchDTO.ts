@@ -37,6 +37,12 @@ export class InspectedDeclarationCatchDTO {
     public originShip?: VesselDuringInspectionDTO;
 
     @StrictlyTyped(Number)
+    public aquacultureId?: number;
+
+    @StrictlyTyped(String)
+    public unregisteredEntityData?: string;
+
+    @StrictlyTyped(Number)
     public logBookPageId?: number;
 
     @StrictlyTyped(Number)

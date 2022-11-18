@@ -1,0 +1,73 @@
+﻿.notifications-menu-badge {
+    height: 100%;
+    display: flex;
+
+    .mat-badge-content {
+        right: 0 !important;
+        bottom: 2px !important;
+    }
+}
+
+::ng-deep .notifications-menu-panel {
+    max-width: 600px !important;
+    min-width: 200px !important;
+
+    .mat-menu-content {
+        height: 100%;
+        max-width: 500px !important;
+
+        .mat-menu-viewport {
+            width: 400px;
+            max-height: 80vh;
+
+            .cdk-virtual-scroll-content-wrapper {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5em;
+            }
+        }
+    }
+
+    .no-notifications-message {
+        width: inherit;
+        height: inherit;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+.message-wrapper {
+    padding-left: 5px;
+    padding-right: 5px;
+
+    .message {
+        padding: 5px 10px;
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .message-title {
+            font-family: system-ui;
+            font-size: small;
+        }
+
+        .message-subtitle {
+            font-family: cursive;
+            font-weight: bold;
+            transform: translateY(-0.5em);
+        }
+
+        .message-text {
+            font-style: italic;
+            font-size: smaller;
+            text-align: justify;
+            transform: translateY(-1em);
+        }
+
+        .message-link {
+            cursor: pointer;
+        }
+    }
+}

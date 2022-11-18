@@ -7,6 +7,7 @@ import {
     Inject,
     Input,
     OnDestroy,
+    OnInit,
     Optional,
     Self,
     ViewChild
@@ -35,7 +36,7 @@ import { Coordinates } from './coordinates.model';
         '[id]': 'id',
     }
 })
-export class CoordinatesInputComponent implements ControlValueAccessor, MatFormFieldControl<string>, OnDestroy, AfterViewInit {
+export class CoordinatesInputComponent implements ControlValueAccessor, MatFormFieldControl<string>, OnDestroy, OnInit, AfterViewInit {
     private static nextId = 0;
     private static readonly ASCII_COMMA = 44;
     private static readonly ASCII_PERIOD = 46;
@@ -68,6 +69,37 @@ export class CoordinatesInputComponent implements ControlValueAccessor, MatFormF
         }
     }
 
+    ngOnInit(): void {
+        if (this.ngControl && this.ngControl.control) {
+            const self = this;
+
+            const markAsTouched = this.ngControl.control.markAsTouched;
+            this.ngControl.control.markAsTouched = function (opts?: any) {
+                markAsTouched.apply(this, opts);
+                self.parts.markAllAsTouched();
+            };
+
+            const markAsUntouched = this.ngControl.control.markAsUntouched;
+            this.ngControl.control.markAsUntouched = function (opts?: any) {
+                markAsUntouched.apply(this, opts);
+                self.parts.markAsUntouched();
+            };
+
+            const markAsDirty = this.ngControl.control.markAsDirty;
+            this.ngControl.control.markAsDirty = function (opts?: any) {
+                markAsDirty.apply(this, opts);
+                self.parts.markAsDirty();
+            };
+
+            const markAsPristine = this.ngControl.control.markAsPristine;
+            this.ngControl.control.markAsPristine = function (opts?: any) {
+                markAsPristine.apply(this, opts);
+                self.parts.markAsPristine();
+            };
+        }
+
+    }
+
     ngAfterViewInit(): void {
         if (this._required) {
             this.parts.controls.degreesControl.setValidators([
@@ -90,9 +122,9 @@ export class CoordinatesInputComponent implements ControlValueAccessor, MatFormF
 
     public autofilled?: boolean | undefined;
 
-    @ViewChild('degrees') public degreesInput: HTMLInputElement | undefined;
-    @ViewChild('minutes') public minutesInput: HTMLInputElement | undefined;
-    @ViewChild('seconds') public secondsInput: HTMLInputElement | undefined;
+    @ViewChild('degrees') public degreesInput: ElementRef<HTMLInputElement> | undefined;
+    @ViewChild('minutes') public minutesInput: ElementRef<HTMLInputElement> | undefined;
+    @ViewChild('seconds') public secondsInput: ElementRef<HTMLInputElement> | undefined;
 
     private _focusMonitor: FocusMonitor;
     private _elementRef: ElementRef<HTMLElement>;
@@ -104,8 +136,8 @@ export class CoordinatesInputComponent implements ControlValueAccessor, MatFormF
     public focused = false;
     public controlType = 'coordinates-input';
     public id = `coordinates-input-${CoordinatesInputComponent.nextId++}`;
-    public onChange = (_: any) => { };
-    public onTouched = () => { };
+    public onChange = (_: any) => { /**/ };
+    public onTouched = () => { /**/ };
 
     public get empty(): any {
         return this.coordinates == undefined || this.coordinates.isEmpty();
@@ -157,12 +189,11 @@ export class CoordinatesInputComponent implements ControlValueAccessor, MatFormF
         if (this.parts.valid) {
             return `${this.parts.controls.degreesControl.value} ${this.parts.controls.minutesControl.value} ${this.parts.controls.secondsControl.value}`;
         }
-        
+
         return null;
     }
 
     @Input() public set value(_value: string | null) {
-
         const coordinates = this.convertToCoordinates(_value);
         if (!coordinates.equals(this.coordinates)) {
             this.coordinates = coordinates;
@@ -179,14 +210,13 @@ export class CoordinatesInputComponent implements ControlValueAccessor, MatFormF
         return this.parts.touched && this._required && this.parts.invalid;
     }
 
-    public autoFocusNext(control: AbstractControl, nextElement: HTMLInputElement | undefined): void {
-        if (!control.errors && nextElement != undefined) {
+    public autoFocusNext(control: AbstractControl, element: HTMLInputElement | undefined, nextElement: ElementRef<HTMLInputElement> | undefined): void {
+        if (!control.errors && nextElement != undefined && element != undefined && element.value?.length === Number(element.getAttribute('maxlength'))) {
             this._focusMonitor.focusVia(nextElement, 'program');
         }
     }
 
-    public autoFocusPrev(control: AbstractControl, prevElement: HTMLInputElement | undefined): void {
-
+    public autoFocusPrev(control: AbstractControl, prevElement: ElementRef<HTMLInputElement> | undefined): void {
         if (control.value.length < 1 && prevElement != undefined) {
             this._focusMonitor.focusVia(prevElement, 'program');
         }
@@ -261,11 +291,18 @@ export class CoordinatesInputComponent implements ControlValueAccessor, MatFormF
 
     public setDisabledState(isDisabled: boolean): void {
         this.disabled = isDisabled;
+
+        if (this.disabled) {
+            this.parts.disable();
+        }
+        else {
+            this.parts.enable();
+        }
     }
 
-    public _handleInput(control: AbstractControl, nextElement?: HTMLInputElement | undefined): void {
+    public _handleInput(control: AbstractControl, element: ElementRef<HTMLInputElement> | undefined, nextElement?: ElementRef<HTMLInputElement> | undefined): void {
         if (nextElement != undefined) {
-            this.autoFocusNext(control, nextElement);
+            this.autoFocusNext(control, element?.nativeElement, nextElement);
         }
         this.onChange(this.value);
     }

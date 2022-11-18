@@ -516,6 +516,17 @@
                 </tl-input>
             </div>
         </div>
+
+        <div fxLayout="row">
+            <tl-radio-button-group fxFlex="100"
+                                   formControlName="isOwnerEmployeeControl"
+                                   [options]="ownerEmployeeOptions"
+                                   direction="row"
+                                   gap="0.5em"
+                                   tooltipResourceName="statistical-forms.aqua-farm-owner-employee-helper"
+                                   label="{{ 'statistical-forms.aqua-farm-owner-employee' | tlTranslate }}">
+            </tl-radio-button-group>
+        </div>
     </tl-expansion-panel>
 
     <!--Финансова информация-->
@@ -572,7 +583,7 @@
     </tl-expansion-panel>
 
     <!-- Проверки -->
-    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+    <tl-expansion-panel *ngIf="showOnlyRegiXData || showRegiXData"
                         title="{{ 'statistical-forms.fish-vessel-regix-checks-results' | tlTranslate }}"
                         tooltipResourceName="statistical-forms.fish-vessel-regix-checks-results-helper">
         <div fxLayout="column" fxLayoutGap="1em">

@@ -24,6 +24,7 @@ export class RegisterDeliveryComponent implements IDialogComponent, OnInit {
     public form!: FormGroup;
     public pageCode!: PageCodeEnum;
     public currentDate: Date = new Date();
+    public isDialog: boolean = false;
 
     private deliveryId!: number;
     private model!: ApplicationDeliveryDTO;
@@ -73,6 +74,8 @@ export class RegisterDeliveryComponent implements IDialogComponent, OnInit {
 
             this.rightSideButtons = buttons.rightSideActions;
         }
+
+        this.isDialog = true;
     }
 
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {

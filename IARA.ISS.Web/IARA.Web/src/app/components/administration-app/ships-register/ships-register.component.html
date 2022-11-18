@@ -149,7 +149,7 @@
                 </tl-autocomplete>
             </div>
 
-            <!-- Одобрен за улов на квотирана риба, удостворение по закона за храните, сдружение -->
+            <!-- Одобрен за улов на квотирана риба, удостворение по закона за храните, сдружение, забранен за РСР/УСР -->
             <div fxLayout="row" fxFlexFill fxLayoutAlign="space-between center" fxLayoutGap="1em">
                 <tl-autocomplete fxFlex="25"
                                  formControlName="allowedForQuotaFishControl"
@@ -168,7 +168,12 @@
                                  tooltipResourceName="ships-register.filters-is-in-ship-association-helper"
                                  label="{{ 'ships-register.filters-is-in-ship-association' | tlTranslate }}">
                 </tl-autocomplete>
-                <div fxFlex="25"></div>
+                <tl-select fxFlex="25"
+                           formControlName="isForbiddenControl"
+                           [options]="isForbiddenOptions"
+                           tooltipResourceName="ships-register.filters-forbidden-helper"
+                           label="{{ 'ships-register.filters-forbidden' | tlTranslate }}">
+                </tl-select>
             </div>
         </div>
     </search-panel>

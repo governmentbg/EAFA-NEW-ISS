@@ -34,11 +34,14 @@ import { PermitLicenseTariffCalculationParameters } from '@app/components/common
 import { OverlappingLogBooksParameters } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-parameters.model';
 import { RangeOverlappingLogBooksDTO } from '@app/models/generated/dtos/RangeOverlappingLogBooksDTO';
 import { CatchesAndSalesCommonService } from '@app/services/common-app/catches-and-sales-common.service';
+import { ILogBookService } from '@app/components/common-app/commercial-fishing/components/edit-log-book/interfaces/log-book.interface';
+import { CommercialFishingLogBookEditDTO } from '@app/models/generated/dtos/CommercialFishingLogBookEditDTO';
+import { LogBookForRenewalDTO } from '@app/models/generated/dtos/LogBookForRenewalDTO';
 
 @Injectable({
     providedIn: 'root'
 })
-export class CommercialFishingAdministrationService extends ApplicationsRegisterAdministrativeBaseService implements ICommercialFishingService {
+export class CommercialFishingAdministrationService extends ApplicationsRegisterAdministrativeBaseService implements ICommercialFishingService, ILogBookService {
     protected controller: string = 'CommercialFishingAdministration';
 
     private readonly translate: FuseTranslationLoaderService;
@@ -142,6 +145,23 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
     public getOverlappedLogBooks(parameters: OverlappingLogBooksParameters[]): Observable<RangeOverlappingLogBooksDTO[]> {
         return this.requestService.post(this.area, this.controller, 'GetOverlappedLogBooks', parameters, {
             responseTypeCtr: RangeOverlappingLogBooksDTO
+        });
+    }
+
+    public getLogBooksForRenewal(permitLicenseRegisterId: number, showFinished: boolean): Observable<LogBookForRenewalDTO[]> {
+        const params: HttpParams = new HttpParams()
+            .append('permitLicenseRegisterId', permitLicenseRegisterId.toString())
+            .append('showFinished', showFinished.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetLogBooksForRenewal', {
+            httpParams: params,
+            responseTypeCtr: LogBookForRenewalDTO
+        });
+    }
+
+    public getLogBooksForRenewalByIds(permitLicenseRegisterIds: number[]): Observable<CommercialFishingLogBookEditDTO[]> {
+        return this.requestService.post(this.area, this.controller, 'GetLogBooksForRenewalByIds', permitLicenseRegisterIds, {
+            responseTypeCtr: CommercialFishingLogBookEditDTO
         });
     }
 
@@ -340,6 +360,39 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         return this.requestService.patch(this.area, this.controller, serviceMethod, null, { httpParams: params });
     }
 
+    public getPermitLicenseLogBook(logBookPermitLicenseId: number): Observable<CommercialFishingLogBookEditDTO> {
+        const params: HttpParams = new HttpParams().append('logBookPermitLicenseId', logBookPermitLicenseId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetPermitLicenseLogBook', {
+            responseTypeCtr: CommercialFishingLogBookEditDTO,
+            httpParams: params
+        });
+    }
+
+    public editLogBook(model: CommercialFishingLogBookEditDTO, ignoreLogBookConflicts: boolean): Observable<void> {
+        const params: HttpParams = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
+
+        return this.requestService.post(this.area, this.controller, 'EditLogBook', model, {
+            httpParams: params
+        });
+    }
+
+    public deleteLogBookPermitLicense(id: number): Observable<void> {
+        const params: HttpParams = new HttpParams().append('id', id.toString());
+
+        return this.requestService.delete(this.area, this.controller, 'DeleteLogBookPermitLicense', {
+            httpParams: params
+        });
+    }
+
+    public undoDeleteLogBookPermitLicense(id: number): Observable<void> {
+        const params: HttpParams = new HttpParams().append('id', id.toString());
+
+        return this.requestService.patch(this.area, this.controller, 'UndoDeleteLogBookPermitLicense', undefined, {
+            httpParams: params
+        });
+    }
+
     public getPermitLicenseSimpleAudit(id: number): Observable<SimpleAuditDTO> {
         const params = new HttpParams().append('id', id.toString());
 
@@ -393,8 +446,10 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
     }
 
     // Applications
-    public getApplication(id: number, pageCode: PageCodeEnum): Observable<IApplicationRegister> {
-        const params = new HttpParams().append('id', id.toString());
+    public getApplication(id: number, getRegiXData: boolean, pageCode: PageCodeEnum): Observable<IApplicationRegister> {
+        const params = new HttpParams()
+            .append('id', id.toString())
+            .append('getRegiXData', getRegiXData.toString());
         let serviceMethod: string = '';
 
         switch (pageCode) {

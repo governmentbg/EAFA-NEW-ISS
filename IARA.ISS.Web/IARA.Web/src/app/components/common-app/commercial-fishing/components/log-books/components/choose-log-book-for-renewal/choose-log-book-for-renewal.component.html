@@ -1,0 +1,92 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxLayoutAlign="space-around stretch"
+     class="dialog-padding">
+    <div fxFlex="100" fxLayout="row">
+        <tl-input fxFlex="100"
+                  label="{{ 'catches-and-sales.choose-log-book-for-renewal-keyword-filter' | tlTranslate }}"
+                  [formControl]="filterControl">
+        </tl-input>
+    </div>
+    <div fxFlex="100" fxLayout="row">
+        <tl-slide-toggle fxFlex="50"
+                         [formControl]="showFinishedControl"
+                         label="{{ 'catches-and-sales.choose-log-book-for-renewal-show-finished-filter' | tlTranslate }}">
+        </tl-slide-toggle>
+    </div>
+    <div *ngIf="logBooks.length > 0; else noLogBooks"
+         fxFlex="100"
+         fxLayoutGap="1em"
+         fxLayout="column">
+        <tl-data-table [showAddButton]="false"
+                       [showInactiveRecords]="false"
+                       [rows]="logBooks"
+                       [isRemote]="false"
+                       [recordsPerPage]="logBooksPerPage"
+                       [rowClass]="getRowClass">
+            <data-template-column [flexRate]="0.001">
+                <ng-template ngx-datatable-cell-template
+                             let-rowIndex="rowIndex"
+                             let-value="value"
+                             let-row="row">
+                    <label for="el{{ rowIndex }}" class="datatable-checkbox">
+                        <input type="checkbox"
+                               id="choose-permit-license-for-renewal-{{ rowIndex }}"
+                               [checked]="row.data['isChecked']"
+                               (change)="checkedRow(row)" />
+                    </label>
+                </ng-template>
+            </data-template-column>
+            <data-column propertyName="logBookTypeName"
+                         [flexRate]="0.2"
+                         columnName="{{ 'catches-and-sales.choose-log-book-for-renewal-log-book-type' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="number"
+                         [flexRate]="0.3"
+                         columnName="{{ 'catches-and-sales.choose-log-book-for-renewal-number' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="statusName"
+                         [flexRate]="0.2"
+                         columnName="{{ 'catches-and-sales.choose-log-book-for-renewal-status-name' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="startPageNumber"
+                         [flexRate]="0.3"
+                         columnName="{{ 'catches-and-sales.choose-log-book-for-renewal-start-page' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="endPageNumber"
+                         [flexRate]="0.3"
+                         columnName="{{ 'catches-and-sales.choose-log-book-for-renewal-end-page' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="lastUsedPageNumber"
+                         [flexRate]="0.3"
+                         columnName="{{ 'catches-and-sales.choose-log-book-for-renewal-last-used-page' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="lastPermitLicenseNumber"
+                         [flexRate]="0.3"
+                         columnName="{{ 'catches-and-sales.choose-log-book-for-renewal-last-permit-license' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="isOnline"
+                         [flexRate]="0.2"
+                         dataType="boolean"
+                         columnName="{{ 'catches-and-sales.choose-log-book-for-renewal-is-online' | tlTranslate }}">
+            </data-column>
+        </tl-data-table>
+        <div *ngIf="touched && noLogBooksChosenValidation; else numberOfSelectedItemsTemplate" fxLayout="row" fxFlex="100">
+            <mat-error fxFlex="100">
+                * {{ 'catches-and-sales.choose-log-book-for-renewal-no-log-books-selected-error' | tlTranslate }}
+            </mat-error>
+        </div>
+        <ng-template #numberOfSelectedItemsTemplate>
+            <div fxLayout="row" fxFlex="100" fxLayoutAlign="end center">
+                <mat-hint fxFlex="100">
+                    {{ 'catches-and-sales.choose-log-book-for-renewal-selected-log-books-count' | tlTranslate }}: {{ numberOfSelectedLogBooks }}
+                </mat-hint>
+            </div>
+        </ng-template>
+    </div>
+    <ng-template #noLogBooks>
+        <div fxLayout="row" fxFlex="100">
+            {{ 'catches-and-sales.choose-log-book-for-renewal-no-log-books' | tlTranslate }}
+        </div>
+    </ng-template>
+</div>

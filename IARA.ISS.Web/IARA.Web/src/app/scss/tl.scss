@@ -444,24 +444,6 @@ body.theme-iara ngx-datatable.material .datatable-body .datatable-row-wrapper {
     }
 }
 
-#nomenclatures-tree mat-tree-node {
-    .mat-button-wrapper {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        text-align: left;
-
-        mat-icon {
-            display: flex;
-            align-items: flex-end;
-        }
-    }
-}
-
 // -----------------------------------------------------------------------------------------------------
 // For ngx-datatable selection mode with checkboxes
 // -----------------------------------------------------------------------------------------------------

@@ -53,12 +53,18 @@
                           tooltipResourceName="fishing-capacity.acquired-licence-power-helper">
                 </tl-input>
 
-                <tl-input fxFlex="20"
-                          value="{{ control.value?.validTo | date: 'dd.MM.yyyy' }}"
-                          [readonly]="true"
-                          label="{{ 'fishing-capacity.acquired-licence-valid-to' | tlTranslate }}"
-                          tooltipResourceName="fishing-capacity.acquired-licence-valid-to-helper">
-                </tl-input>
+                <div fxFlex="20" fxLayout="column" fxLayoutAlign="start stretch">
+                    <tl-input value="{{ control.value?.validTo | date: 'dd.MM.yyyy' }}"
+                              [readonly]="true"
+                              label="{{ 'fishing-capacity.acquired-licence-valid-to' | tlTranslate }}"
+                              tooltipResourceName="fishing-capacity.acquired-licence-valid-to-helper">
+                    </tl-input>
+
+                    <span *ngIf="!isDisabled && control.value?.validTo && control.value.validTo < now"
+                          class="warn-orange-color warning">
+                        {{ 'fishing-capacity.acquired-licence-expired' | tlTranslate }}
+                    </span>
+                </div>
 
                 <div fxFlex="15"
                      fxLayout="row"

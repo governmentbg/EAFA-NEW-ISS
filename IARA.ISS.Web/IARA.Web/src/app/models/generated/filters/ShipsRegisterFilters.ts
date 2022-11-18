@@ -19,6 +19,7 @@ export class ShipsRegisterFilters extends BaseRequestModel {
     public eventDateTo: Date | undefined;
     public cancellationReasonId: number | undefined;
     public isCancelled: boolean | undefined;
+    public isForbidden: boolean | undefined;
     public isThirdPartyShip: boolean | undefined;
     public shipOwnerName: string | undefined;
     public shipOwnerEgnLnc: string | undefined;

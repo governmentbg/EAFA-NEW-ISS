@@ -26,6 +26,9 @@ export class PenalDecreeStatusEditDTO extends PenalDecreeStatusDTO {
     public courtId?: number;
 
     @StrictlyTyped(String)
+    public courtName?: string;
+
+    @StrictlyTyped(String)
     public caseNum?: string;
 
     @StrictlyTyped(Date)
@@ -48,6 +51,9 @@ export class PenalDecreeStatusEditDTO extends PenalDecreeStatusDTO {
 
     @StrictlyTyped(Number)
     public confiscationInstitutionId?: number;
+
+    @StrictlyTyped(String)
+    public confiscationInstitution?: string;
 
     @StrictlyTyped(PenalDecreePaymentScheduleDTO)
     public paymentSchedule?: PenalDecreePaymentScheduleDTO[];

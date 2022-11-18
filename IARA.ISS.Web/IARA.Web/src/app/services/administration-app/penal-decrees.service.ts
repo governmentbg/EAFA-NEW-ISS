@@ -17,6 +17,10 @@ import { BaseAuditService } from '@app/services/common-app/base-audit.service';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { AuanConfiscationActionsNomenclatureDTO } from '@app/models/generated/dtos/AuanConfiscationActionsNomenclatureDTO';
 import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/InspDeliveryTypesNomenclatureDTO';
+import { map } from 'rxjs/operators';
+import { PenalDecreeStatusTypesEnum } from '@app/enums/penal-decree-status-types.enum';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { DateUtils } from '@app/shared/utils/date.utils';
 
 @Injectable({
     providedIn: 'root'
@@ -24,8 +28,15 @@ import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/Ins
 export class PenalDecreesService extends BaseAuditService implements IPenalDecreesService {
     protected controller: string = 'PenalDecrees';
 
-    public constructor(requestService: RequestService) {
+    private readonly translate: FuseTranslationLoaderService;
+
+    public constructor(
+        requestService: RequestService,
+        translate: FuseTranslationLoaderService
+    ) {
         super(requestService, AreaTypes.Administrative);
+
+        this.translate = translate;
     }
 
     public getAllPenalDecrees(request: GridRequestModel<PenalDecreesFilters>): Observable<GridResultModel<PenalDecreeDTO>> {
@@ -36,12 +47,56 @@ export class PenalDecreesService extends BaseAuditService implements IPenalDecre
     }
 
     public getPenalDecree(id: number): Observable<PenalDecreeEditDTO> {
+        type Result = PenalDecreeEditDTO;
         const params = new HttpParams().append('id', id.toString());
 
-        return this.requestService.get(this.area, this.controller, 'GetPenalDecree', {
+        return this.requestService.get<Result>(this.area, this.controller, 'GetPenalDecree', {
             httpParams: params,
             responseTypeCtr: PenalDecreeEditDTO
-        });
+        }).pipe(map((decree: Result) => {
+            const from: string = this.translate.getValue('common.from');
+            const instanceAppealDate: string = this.translate.getValue('penal-decrees.status-details-instance-appeal-date');
+            const decisionDate: string = this.translate.getValue('penal-decrees.status-details-decision-date');
+            const enactmentDate: string = this.translate.getValue('penal-decrees.status-details-enactment-date');
+            const dateOfWithdraw: string = this.translate.getValue('penal-decrees.status-details-withdraw-date');
+            const dateOfChange: string = this.translate.getValue('penal-decrees.status-details-change-date');
+            const compulsory: string = this.translate.getValue('penal-decrees.status-details-compulsory');
+            const partiallyPaid: string = this.translate.getValue('penal-decrees.status-details-partially-paid');
+
+            for (const status of decree.statuses ?? []) {
+                switch (status.statusType) {
+                    case PenalDecreeStatusTypesEnum.FirstInstAppealed:
+                    case PenalDecreeStatusTypesEnum.SecondInstAppealed:
+                        status.details = `${instanceAppealDate}: ${DateUtils.ToDisplayDateString(status.appealDate!)} ${from} ${status.courtName}`;
+                        break;
+                    case PenalDecreeStatusTypesEnum.FirstInstDecision:
+                        status.details = `${decisionDate}: ${DateUtils.ToDisplayDateString(status.complaintDueDate!)} ${from} ${status.courtName}`;
+                        break;
+                    case PenalDecreeStatusTypesEnum.SecondInstDecision:
+                        status.details = `${from} ${status.courtName}`;
+                        break;
+                    case PenalDecreeStatusTypesEnum.PartiallyChanged:
+                        status.details = `${dateOfChange}: ${DateUtils.ToDisplayDateString(status.enactmentDate!)} ${from} ${status.courtName}`;
+                        break;
+                    case PenalDecreeStatusTypesEnum.PartiallyPaid:
+                        status.details = `${partiallyPaid}: ${status.paidAmount}`;
+                        break;
+                    case PenalDecreeStatusTypesEnum.Valid:
+                        status.details = `${enactmentDate}: ${DateUtils.ToDisplayDateString(status.enactmentDate!)}`;
+                        break;
+                    case PenalDecreeStatusTypesEnum.Withdrawn:
+                        status.details = `${dateOfWithdraw}: ${DateUtils.ToDisplayDateString(status.enactmentDate!)} ${from} ${status.penalAuthorityName}`;
+                        break;
+                    case PenalDecreeStatusTypesEnum.Compulsory:
+                        status.details = `${compulsory} ${status.confiscationInstitution}`;
+                        break;
+                    default:
+                        status.details = undefined;
+                }
+            }
+
+            return decree;
+        }));
     }
 
     public addPenalDecree(decree: PenalDecreeEditDTO): Observable<number> {
@@ -135,6 +190,10 @@ export class PenalDecreesService extends BaseAuditService implements IPenalDecre
 
     public getTurbotSizeGroups(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetTurbotSizeGroups', { responseTypeCtr: NomenclatureDTO });
+    }
+
+    public getInspectorUsernames(): Observable<NomenclatureDTO<number>[]> {
+        return this.requestService.get(this.area, this.controller, 'GetInspectorUsernames', { responseTypeCtr: NomenclatureDTO });
     }
 
     public getPenalDecreeStatusAudit(id: number): Observable<SimpleAuditDTO> {

@@ -8,27 +8,27 @@ export const ENABLE_FIELD_CONTROLS = new Map<ShipEventTypeEnum, string[]>([
             'regLicencePublishNumControl', 'regLicencePublishPageControl', 'adminDecisionNumControl', 'adminDecisionDateControl',
             'stayPortControl', 'sailAreaControl', 'mainEngineNumControl', 'fuelTypeControl', 'totalPassengerCapacityControl',
             'controlCardNumControl', 'controlCardDateControl', 'controlCardValidityCertificateNumControl', 'controlCardValidityCertificateDateControl',
-            'controlCardDateOfLastAttestationControl', 'foodLawLicenceNumControl', 'foodLawLicenceDateControl', 'shipAssociationControl', 'commentsControl'
+            'controlCardDateOfLastAttestationControl', 'foodLawLicenceNumControl', 'foodLawLicenceDateControl', 'shipAssociationControl', 'filesControl', 'commentsControl'
         ]
     ],
     [
         ShipEventTypeEnum.CST, [
-            'commentsControl'
+            'filesControl', 'commentsControl'
         ]
     ],
     [
         ShipEventTypeEnum.CEN, [
-            'commentsControl'
+            'filesControl', 'commentsControl'
         ]
     ],
     [
         ShipEventTypeEnum.CHA, [
-            'commentsControl'
+            'filesControl', 'commentsControl'
         ]
     ],
     [
         ShipEventTypeEnum.IMP, [
-            'importCountryControl', 'commentsControl'
+            'importCountryControl', 'filesControl', 'commentsControl'
         ]
     ],
     [
@@ -39,22 +39,22 @@ export const ENABLE_FIELD_CONTROLS = new Map<ShipEventTypeEnum, string[]>([
             'totalLengthControl', 'totalWidthControl', 'grossTonnageControl', 'netTonnageControl', 'otherTonnageControl',
             'mainEnginePowerControl', 'auxiliaryEnginePowerControl', 'mainEngineModelControl', 'mainFishingGearControl',
             'additionalFishingGearControl', 'boardHeightControl', 'draughtControl', 'lengthBetweenPerpendicularsControl',
-            'hullMaterialControl', 'crewCountControl', 'fleetSegmentControl', 'commentsControl'
+            'hullMaterialControl', 'crewCountControl', 'fleetSegmentControl', 'filesControl', 'commentsControl'
         ]
     ],
     [
         ShipEventTypeEnum.EXP, [
-            'exportCountryControl', 'exportTypeControl', 'commentsControl'
+            'exportCountryControl', 'exportTypeControl', 'filesControl', 'commentsControl'
         ]
     ],
     [
         ShipEventTypeEnum.RET, [
-            'cancellationReasonControl', 'cancellationOrderNumControl', 'cancellationOrderDateControl', 'commentsControl'
+            'cancellationReasonControl', 'cancellationOrderNumControl', 'cancellationOrderDateControl', 'filesControl', 'commentsControl'
         ]
     ],
     [
         ShipEventTypeEnum.DES, [
-            'destructionTypeControl', 'commentsControl'
+            'destructionTypeControl', 'filesControl', 'commentsControl'
         ]
     ]
 ]);

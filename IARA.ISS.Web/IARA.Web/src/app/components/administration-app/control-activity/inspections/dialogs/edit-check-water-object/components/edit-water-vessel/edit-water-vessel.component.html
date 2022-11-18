@@ -1,32 +1,55 @@
-﻿<div fxLayout="column" fxLayoutGap="1em" fxFlexFill [formGroup]="form" class="dialog-padding">
-    <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
-        <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
-            <tl-autocomplete fxFlex="33" formControlName="typeControl" [options]="vesselTypes"
-                label="{{ 'inspections.water-vessel-type' | tlTranslate }}">
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     [formGroup]="form"
+     class="dialog-padding">
+    <div fxLayout="column"
+         fxLayoutGap="1em"
+         fxLayoutAlign="start stretch">
+        <div fxLayout="row"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start center">
+            <tl-autocomplete fxFlex="33"
+                             formControlName="typeControl"
+                             [options]="vesselTypes"
+                             label="{{ 'inspections.water-vessel-type' | tlTranslate }}">
             </tl-autocomplete>
-            <tl-input fxFlex="33" formControlName="numberControl"
-                label="{{ 'inspections.water-vessel-number' | tlTranslate }}">
+            <tl-input fxFlex="33"
+                      formControlName="numberControl"
+                      label="{{ 'inspections.water-vessel-number' | tlTranslate }}">
             </tl-input>
-            <tl-input fxFlex="33" formControlName="colorControl"
-                label="{{ 'inspections.water-vessel-color' | tlTranslate }}">
-            </tl-input>
-        </div>
-        <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
-            <tl-input fxFlex="33" formControlName="lengthControl" type="number"
-                label="{{ 'inspections.water-vessel-length' | tlTranslate }}">
-            </tl-input>
-            <tl-input fxFlex="33" formControlName="widthControl" type="number"
-                label="{{ 'inspections.water-vessel-width' | tlTranslate }}">
-            </tl-input>
-            <tl-input fxFlex="33" formControlName="totalControl" type="number"
-                label="{{ 'inspections.water-vessel-total-count' | tlTranslate }}">
+            <tl-input fxFlex="33"
+                      formControlName="colorControl"
+                      label="{{ 'inspections.water-vessel-color' | tlTranslate }}">
             </tl-input>
         </div>
-        <tl-checkbox formControlName="takenControl" label="{{ 'inspections.water-inspection-taken' | tlTranslate }}">
+        <div fxLayout="row"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start center">
+            <tl-input fxFlex="33"
+                      formControlName="lengthControl"
+                      type="number"
+                      label="{{ 'inspections.water-vessel-length' | tlTranslate }}">
+            </tl-input>
+            <tl-input fxFlex="33"
+                      formControlName="widthControl"
+                      type="number"
+                      label="{{ 'inspections.water-vessel-width' | tlTranslate }}">
+            </tl-input>
+            <tl-input fxFlex="33"
+                      formControlName="totalControl"
+                      type="number"
+                      label="{{ 'inspections.water-vessel-total-count' | tlTranslate }}">
+            </tl-input>
+        </div>
+        <tl-checkbox formControlName="takenControl"
+                     label="{{ 'inspections.water-inspection-taken' | tlTranslate }}">
         </tl-checkbox>
-        <tl-checkbox formControlName="storedControl" label="{{ 'inspections.water-inspection-stored' | tlTranslate }}">
+        <tl-checkbox formControlName="storedControl"
+                     label="{{ 'inspections.water-inspection-stored' | tlTranslate }}">
         </tl-checkbox>
-        <tl-input formControlName="storageControl" label="{{ 'inspections.storage-location' | tlTranslate }}">
+        <tl-input formControlName="storageControl"
+                  label="{{ 'inspections.storage-location' | tlTranslate }}">
         </tl-input>
     </div>
 </div>

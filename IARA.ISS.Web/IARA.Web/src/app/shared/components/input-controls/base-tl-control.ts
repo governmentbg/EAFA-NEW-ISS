@@ -45,8 +45,14 @@ export abstract class BaseTLControl implements OnInit {
     @Input()
     public tooltipResourceName: string = '';
 
+    @Input()
+    public disableTooltip: boolean = false;
+
     @Output()
     public focusout: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
+
+    public readonly TOOLTIP_SHOW_DELAY_MS: number = 1000;
+    public readonly TOOLTIP_POSITION: string = 'above';
 
     public set ngControl(value: NgControl) {
         this._ngControl = value;
@@ -110,8 +116,7 @@ export abstract class BaseTLControl implements OnInit {
         this.focusout.emit(event);
     }
 
-    private buildErrorsCollection(): void {
+    protected buildErrorsCollection(): void {
         this.errors = TLUtils.buildErrorsCollection(this.ngControl?.control, this.getControlErrorLabelText, this.tlTranslationService, this.tlTranslatePipe);
     }
-
 }

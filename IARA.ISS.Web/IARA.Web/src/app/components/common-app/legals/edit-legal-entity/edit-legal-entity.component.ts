@@ -52,6 +52,7 @@ export class EditLegalEntityComponent implements OnInit, IDialogComponent {
 
     public isApplication!: boolean;
     public showOnlyRegixData: boolean = false;
+    public showRegiXData: boolean = false;
     public isReadonly: boolean = false;
     public viewMode: boolean = false;
     public isEditing: boolean = false;
@@ -196,11 +197,16 @@ export class EditLegalEntityComponent implements OnInit, IDialogComponent {
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData).subscribe({
                         next: (legal: LegalEntityApplicationEditDTO) => {
                             legal.applicationId = this.applicationId!;
                             this.isOnlineApplication = legal.isOnlineApplication!;
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new LegalEntityRegixDataDTO(legal.regiXDataModel);
+                                legal.regiXDataModel = undefined;
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (legal.requester === undefined || legal.requester === null)) {
                                 const service = this.service as LegalEntitiesPublicService;
@@ -246,6 +252,7 @@ export class EditLegalEntityComponent implements OnInit, IDialogComponent {
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.viewMode = data.viewMode;
         this.showOnlyRegixData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.service = data.service as ILegalEntitiesService;
         this.dialogRightSideActions = buttons.rightSideActions;
         this.loadRegisterFromApplication = data.loadRegisterFromApplication;
@@ -492,28 +499,14 @@ export class EditLegalEntityComponent implements OnInit, IDialogComponent {
         this.form.get('addressesControl')!.setValue(this.model.addresses);
 
         if (this.model instanceof LegalEntityRegixDataDTO) {
-            const applicationRegixChecks: ApplicationRegiXCheckDTO[] | undefined = this.model.applicationRegiXChecks;
-
-            setTimeout(() => {
-                if (applicationRegixChecks !== undefined && applicationRegixChecks !== null) {
-                    this.regixChecks = applicationRegixChecks;
-                }
-            });
-
-            if (!this.viewMode) {
-                this.notifier.start();
-                this.notifier.onNotify.subscribe({
-                    next: () => {
-                        this.form.markAllAsTouched();
-                        this.authorizedPeopleTouched = true;
-                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
-                        this.notifier.stop();
-                    }
-                });
-            }
+            this.fillFormRegiX();
         }
         else {
             this.form.get('filesControl')!.setValue(this.model.files);
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX();
+            }
         }
 
         if (this.model.authorizedPeople !== undefined && this.model.authorizedPeople !== null) {
@@ -523,6 +516,34 @@ export class EditLegalEntityComponent implements OnInit, IDialogComponent {
 
                 for (const person of this.authorizedPeople) {
                     this.setAuthorizedPersonTableFields(person);
+                }
+            });
+        }
+    }
+
+    private fillFormRegiX(): void {
+        if (this.model instanceof LegalEntityApplicationEditDTO || this.model instanceof LegalEntityRegixDataDTO) {
+            const applicationRegixChecks: ApplicationRegiXCheckDTO[] | undefined = this.model.applicationRegiXChecks;
+
+            setTimeout(() => {
+                if (applicationRegixChecks !== undefined && applicationRegixChecks !== null) {
+                    this.regixChecks = applicationRegixChecks;
+                }
+            });
+        }
+
+        if (!this.viewMode) {
+            this.notifier.start();
+            this.notifier.onNotify.subscribe({
+                next: () => {
+                    this.form.markAllAsTouched();
+                    this.authorizedPeopleTouched = true;
+
+                    if (this.showOnlyRegixData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+
+                    this.notifier.stop();
                 }
             });
         }

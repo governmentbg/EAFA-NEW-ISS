@@ -23,6 +23,7 @@ import { InspectionObservationCategoryEnum } from '@app/enums/inspection-observa
 import { InspectionObservationTextDTO } from '@app/models/generated/dtos/InspectionObservationTextDTO';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
+import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 
 @Component({
     selector: 'inspected-ship-sections',
@@ -96,6 +97,9 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
     @Input()
     public vesselTypes: NomenclatureDTO<number>[] = [];
 
+    @Input()
+    public turbotSizeGroups: NomenclatureDTO<number>[] = [];
+
     public shipToggles: InspectionCheckModel[] = [];
     public checkToggles: InspectionCheckModel[] = [];
     public catchToggles: InspectionCheckModel[] = [];
@@ -114,10 +118,11 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
     private readonly service: InspectionsService;
 
     public constructor(@Self() ngControl: NgControl,
+        @Self() validityChecker: ValidityCheckerDirective,
         service: InspectionsService,
         translate: FuseTranslationLoaderService
     ) {
-        super(ngControl);
+        super(ngControl, true, validityChecker);
 
         this.service = service;
 
@@ -128,6 +133,12 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
 
         this.boolOptions = InspectionUtils.getToggleBoolOptions(translate);
         this.tripleOptions = InspectionUtils.getToggleTripleOptions(translate);
+
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.control.updateValueAndValidity();
+            }
+        });
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
@@ -179,6 +190,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
                 port: value.port,
                 observationTexts: value.observationTexts,
             }));
+            this.form.get('permitLicensesControl')!.setValue(value.permitLicenses);
             this.form.get('permitsControl')!.setValue(value.permits);
             this.form.get('togglesControl')!.setValue(value.checks);
             this.form.get('catchTogglesControl')!.setValue(value.checks);
@@ -187,7 +199,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             this.form.get('logBooksControl')!.setValue(value.logBooks);
             this.form.get('fishingGearsControl')!.setValue(value.fishingGears);
 
-            this.permitIds = value.permits
+            this.permitIds = value.permitLicenses
                 ?.filter(f => f.checkValue === InspectionToggleTypesEnum.Y || f.checkValue === InspectionToggleTypesEnum.N)
                 .map(f => f.permitLicenseId!) ?? [];
 
@@ -247,16 +259,27 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
         }
 
         const result = await forkJoin([
+            this.service.getShipPermits(ship.shipId!),
             this.service.getShipPermitLicenses(ship.shipId!),
             this.service.getShipLogBooks(ship.shipId!),
             this.service.getShipFishingGears(ship.shipId!),
         ]).toPromise();
 
         const permits: InspectionPermitLicenseDTO[] = result[0];
-        const logBooks: InspectionShipLogBookDTO[] = result[1];
-        const fishingGears: FishingGearDTO[] = result[2];
+        const permitLicenses: InspectionPermitLicenseDTO[] = result[1];
+        const logBooks: InspectionShipLogBookDTO[] = result[2];
+        const fishingGears: FishingGearDTO[] = result[3];
 
         this.form.get('permitsControl')!.setValue(permits.map(f => new InspectionPermitDTO({
+            from: f.validFrom,
+            to: f.validTo,
+            permitNumber: f.permitNumber,
+            permitLicenseId: f.id,
+            typeId: f.typeId,
+            typeName: f.typeName,
+        })));
+
+        this.form.get('permitLicensesControl')!.setValue(permitLicenses.map(f => new InspectionPermitDTO({
             from: f.validFrom,
             to: f.validTo,
             licenseNumber: f.licenseNumber,
@@ -293,6 +316,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             preliminaryNoticeControl: new FormControl(undefined),
             preliminaryNoticeNumberControl: new FormControl({ value: undefined, disabled: true }),
             preliminaryNoticePurposeControl: new FormControl({ value: undefined, disabled: true }),
+            permitLicensesControl: new FormControl(undefined),
             permitsControl: new FormControl(undefined),
             logBooksControl: new FormControl(undefined),
             catchesControl: new FormControl(undefined),
@@ -348,6 +372,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             personnel: ship.personnel,
             checks: checks,
             port: ship.port,
+            permitLicenses: this.form.get('permitLicensesControl')!.value,
             permits: this.form.get('permitsControl')!.value,
             catches: this.form.get('catchesControl')!.value,
             fishingGears: this.form.get('fishingGearsControl')!.value,

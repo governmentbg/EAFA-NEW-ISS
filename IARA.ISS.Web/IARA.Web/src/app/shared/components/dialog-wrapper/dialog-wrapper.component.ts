@@ -1,6 +1,6 @@
 ﻿import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
-import { AfterViewInit, Component, ComponentFactoryResolver, ComponentRef, Inject, OnInit, ReflectiveInjector, Type, ViewChild, ViewContainerRef } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AfterViewInit, Component, ComponentFactoryResolver, ComponentRef, ElementRef, Inject, OnInit, ReflectiveInjector, Type, ViewChild, ViewContainerRef } from '@angular/core';
+import { MatDialogContent, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CommonUtils } from '../../utils/common.utils';
 import { IActionInfo } from './interfaces/action-info.interface';
@@ -32,9 +32,21 @@ export class DialogWrapperComponent<T extends IDialogComponent> implements After
     public closeBtn?: IActionInfo;
     public headerAuditBtn: IHeaderAuditButton | undefined;
     public viewMode: boolean = false;
+    public defaultFullscreen: boolean = false;
 
     @ViewChild('placeHolder', { read: ViewContainerRef })
     private _placeHolder: ViewContainerRef | undefined;
+
+    @ViewChild(MatDialogContent, { read: ElementRef })
+    private dialogContent!: ElementRef;
+
+    private containerElement!: HTMLElement;
+    private overlayElement!: HTMLElement;
+    private overlayWidth!: string;
+    private overlayHeight!: string;
+    private overlayTop!: string;
+    private overlayLeft!: string;
+    public isOverlayFullScreen: boolean = false;
 
     private translate!: ITranslateService;
     private componentCtor: (new (...args: any[]) => T) | undefined;
@@ -58,6 +70,7 @@ export class DialogWrapperComponent<T extends IDialogComponent> implements After
             this.componentCtor = data.TCtor;
             this.saveBtn = data.saveBtn;
             this.cancelBtn = data.cancelBtn;
+            this.defaultFullscreen = data.defaultFullscreen ?? false;
             this.router = router;
 
             this.viewMode = data.viewMode ?? false;
@@ -111,6 +124,13 @@ export class DialogWrapperComponent<T extends IDialogComponent> implements After
         setTimeout(() => {
             this.placeholder.insert(component.hostView);
         });
+
+        this.containerElement = this.getContainerElement();
+        this.overlayElement = this.getOverlayElement();
+
+        if (this.defaultFullscreen === true) {
+            this.toggleFullScreen(undefined);
+        }
     }
 
     public closeDialog(actionInfo: IActionInfo | undefined): void {
@@ -171,6 +191,20 @@ export class DialogWrapperComponent<T extends IDialogComponent> implements After
         return (this._placeHolder as unknown as ViewContainerRef);
     }
 
+    private getContentElement(): HTMLElement {
+        return this.dialogContent.nativeElement;
+    }
+
+    private getContainerElement(): HTMLElement {
+        const content: HTMLElement = this.getContentElement();
+        return content.closest('mat-dialog-container') as HTMLElement;
+    }
+
+    private getOverlayElement(): HTMLElement {
+        const overlay: HTMLElement = this.containerElement.parentElement!;
+        return overlay;
+    }
+
     private createComponent(viewContainerRef: ViewContainerRef, type: Type<T>): ComponentRef<T> {
         const factory = this.componentFactoryResolver.resolveComponentFactory<T>(type);
 
@@ -196,5 +230,35 @@ export class DialogWrapperComponent<T extends IDialogComponent> implements After
         else {
             return false;
         }
+    }
+
+    // Must be an arrow function so as to bind "this" in addEventListener
+    private toggleFullScreen = (event: MouseEvent | undefined): void => {
+        if (this.isOverlayFullScreen) {
+            this.isOverlayFullScreen = false;
+
+            this.collapseFullScreen();
+        }
+        else {
+            this.isOverlayFullScreen = true;
+
+            this.expandFullScreen();
+        }
+    }
+
+    public expandFullScreen(): void {
+        this.overlayElement.style.top = '0';
+        this.overlayElement.style.left = '0';
+        this.overlayElement.style.maxWidth = '100%';
+        this.overlayElement.style.maxHeight = '100%';
+        this.overlayElement.style.width = '100%';
+        this.overlayElement.style.height = '100%';
+    }
+
+    public collapseFullScreen(): void {
+        this.overlayElement.style.width = this.overlayWidth;
+        this.overlayElement.style.height = this.overlayHeight;
+        this.overlayElement.style.top = this.overlayTop;
+        this.overlayElement.style.left = this.overlayLeft;
     }
 }

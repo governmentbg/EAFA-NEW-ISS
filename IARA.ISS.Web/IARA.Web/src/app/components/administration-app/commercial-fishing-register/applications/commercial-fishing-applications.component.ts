@@ -324,7 +324,7 @@ export class CommercialFishingApplicationsComponent {
                     viewApplicationDialogTitle: translationService.getValue('duplicates.view-quata-species-permit-license-application-dialog-title'),
                     viewRegisterDialogTitle: translationService.getValue('duplicates.view-quata-species-permit-license-dialog-title'),
                     viewRegixDataDialogTitle: translationService.getValue('duplicates.view-quata-species-permit-license-application-regix-data-dialog-title'),
-                    viewAndConfrimDataRegularityTitle: translationService.getValue('duplicates.view-quata-species-permit-appl-and-confirm-regularity-title'),
+                    viewAndConfrimDataRegularityTitle: translationService.getValue('duplicates.view-quata-species-permit-license-appl-and-confirm-regularity-title'),
                     createRegisterCallback: this.openCatchQuataSpeciesDuplicateDialog.bind(this)
                 })
             ]

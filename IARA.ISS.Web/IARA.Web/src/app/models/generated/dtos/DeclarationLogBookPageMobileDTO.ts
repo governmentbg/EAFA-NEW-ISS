@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { DeclarationLogBookPageFishDTO } from './DeclarationLogBookPageFishDTO';
 
 export class DeclarationLogBookPageDTO { 
     public constructor(obj?: Partial<DeclarationLogBookPageDTO>) {
@@ -15,4 +16,7 @@ export class DeclarationLogBookPageDTO {
 
     @StrictlyTyped(Date)
     public date?: Date;
+
+    @StrictlyTyped(DeclarationLogBookPageFishDTO)
+    public fishes?: DeclarationLogBookPageFishDTO[];
 }

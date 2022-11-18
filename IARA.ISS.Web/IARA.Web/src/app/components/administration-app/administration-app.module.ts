@@ -132,7 +132,7 @@ import { InspectedShipSectionsComponent } from './control-activity/inspections/c
 import { PermitLicensesTableComponent } from './control-activity/inspections/components/permit-licenses-table/permit-licenses-table.component';
 import { DecreeStatusesTableComponent } from './control-activity/penal-decrees/decree-statuses-table/decree-statuses-table.component';
 import { ReviewOldInspectionComponent } from './control-activity/inspections/dialogs/review-old-inspection/review-old-inspection.component';
-import { InspectedPermitsTableComponent } from './control-activity/inspections/components/inspected-permits-table/inspected-permits-table.component';
+import { InspectedPermitLicensesTableComponent } from './control-activity/inspections/components/inspected-permit-licenses-table/inspected-permit-licenses-table.component';
 import { InspectedLogBooksTableComponent } from './control-activity/inspections/components/inspected-log-books-table/inspected-log-books-table.component';
 import { PenalPointsComponent } from './control-activity/awarded-points/penal-points.component';
 import { EditPenalPointsComponent } from './control-activity/awarded-points/edit-penal-points/edit-penal-points.component';
@@ -173,6 +173,9 @@ import { AuanViolatedRegulationsComponent } from './control-activity/auan-regist
 import { SignInspectionComponent } from './control-activity/inspections/dialogs/sign-inspection/sign-inspection.component';
 import { FluxFlapRequestsComponent } from './flux-vms-requests/flux-flap-requests/flux-flap-requests.component';
 import { EditFluxFlapRequestComponent } from './flux-vms-requests/flux-flap-requests/edit-flux-flap-request/edit-flux-flap-request.component';
+import { InspectedPermitsTableComponent } from './control-activity/inspections/components/inspected-permits-table/inspected-permits-table.component';
+import { EditDecreeResolutionComponent } from './control-activity/penal-decrees/edit-decree-resolution/edit-decree-resolution.component';
+import { ChooseLawSectionsComponent } from './control-activity/auan-register/choose-law-sections/choose-law-sections.component';
 
 @NgModule({
     declarations: [
@@ -248,6 +251,7 @@ import { EditFluxFlapRequestComponent } from './flux-vms-requests/flux-flap-requ
         InspectionToggleComponent,
         InspectedShipSectionsComponent,
         ReviewOldInspectionComponent,
+        InspectedPermitLicensesTableComponent,
         InspectedPermitsTableComponent,
         InspectedLogBooksTableComponent,
         PermitLicensesTableComponent,
@@ -338,7 +342,9 @@ import { EditFluxFlapRequestComponent } from './flux-vms-requests/flux-flap-requ
         AuanViolatedRegulationsComponent,
         SignInspectionComponent,
         FluxFlapRequestsComponent,
-        EditFluxFlapRequestComponent
+        EditFluxFlapRequestComponent,
+        EditDecreeResolutionComponent,
+        ChooseLawSectionsComponent
     ],
     imports: [
         TLCommonModule,
@@ -419,6 +425,7 @@ import { EditFluxFlapRequestComponent } from './flux-vms-requests/flux-flap-requ
         InspectionToggleComponent,
         InspectedShipSectionsComponent,
         ReviewOldInspectionComponent,
+        InspectedPermitLicensesTableComponent,
         InspectedPermitsTableComponent,
         InspectedLogBooksTableComponent,
         PermitLicensesTableComponent,
@@ -508,7 +515,9 @@ import { EditFluxFlapRequestComponent } from './flux-vms-requests/flux-flap-requ
         AuanViolatedRegulationsComponent,
         SignInspectionComponent,
         FluxFlapRequestsComponent,
-        EditFluxFlapRequestComponent
+        EditFluxFlapRequestComponent,
+        EditDecreeResolutionComponent,
+        ChooseLawSectionsComponent
     ]
 })
 export class IARAApplicationModule {

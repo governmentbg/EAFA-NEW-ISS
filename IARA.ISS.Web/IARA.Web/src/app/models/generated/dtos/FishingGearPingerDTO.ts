@@ -1,7 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
-import { NomenclatureDTO } from './GenericNomenclatureDTO';
+import { FishingGearPingerStatusesEnum } from '@app/enums/fishing-gear-pinger-statuses.enum';
 
 export class FishingGearPingerDTO { 
     public constructor(obj?: Partial<FishingGearPingerDTO>) {
@@ -17,8 +17,8 @@ export class FishingGearPingerDTO {
     @StrictlyTyped(Number)
     public statusId?: number;
 
-    @StrictlyTyped(NomenclatureDTO)
-    public selectedStatus?: NomenclatureDTO<number>;
+    @StrictlyTyped(Number)
+    public selectedStatus?: FishingGearPingerStatusesEnum;
 
     @StrictlyTyped(String)
     public brand?: string;

@@ -4,8 +4,12 @@
     <mat-date-range-input [rangePicker]="picker"
                           [formGroup]="form"
                           [required]="required"
-                          [min]="min" 
-                          [max]="max">
+                          [min]="min"
+                          [max]="max"
+                          [matTooltip]="label"
+                          [matTooltipDisabled]="disableTooltip"
+                          [matTooltipShowDelay]="TOOLTIP_SHOW_DELAY_MS"
+                          [matTooltipPosition]="TOOLTIP_POSITION">
         <input matStartDate
                formControlName="startDateControl"
                placeholder="{{ 'common.from' | tlTranslate : 'cap' }}"
@@ -17,13 +21,13 @@
                [readonly]="readonly">
     </mat-date-range-input>
 
-    <mat-datepicker-toggle *ngIf="!readonly"
-                           matSuffix
-                           [for]="picker">
-    </mat-datepicker-toggle>
-    <mat-date-range-picker #picker></mat-date-range-picker>
-
-    <tl-help matSuffix [tooltipResource]="tooltipResourceName"></tl-help>
+    <div matSuffix fxLayout="row" fxLayoutAlign="end center">
+        <mat-datepicker-toggle *ngIf="!readonly"
+                               [for]="picker">
+        </mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+        <tl-help [tooltipResource]="tooltipResourceName"></tl-help>
+    </div>
 
     <mat-error *ngIf="errors.length > 0">
         <tl-error [errors]="errors" [useMultipleLines]="multilineError"></tl-error>

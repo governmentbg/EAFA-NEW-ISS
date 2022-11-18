@@ -5,9 +5,9 @@
             <!-- Номер на стр. от хартиен дневник, тип дневник, номер на дневник, статус на дневник -->
             <div fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                 <tl-input fxFlex="25"
-                          formControlName="pageNumberControl"
-                          label="{{ 'catches-and-sales.log-book-page-number' | tlTranslate }}"
-                          tooltipResourceName="catches-and-sales.log-book-page-number-helper">
+                          formControlName="logBookNumberControl"
+                          label="{{ 'catches-and-sales.log-book-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.log-book-number-helper">
                 </tl-input>
                 <tl-select fxFlex="25"
                            formControlName="logBookTypeControl"
@@ -15,11 +15,11 @@
                            tooltipResourceName="catches-and-sales.log-book-type.helper"
                            [options]="logBookTypes">
                 </tl-select>
-                <tl-input fxFlex="25"
-                          formControlName="logBookNumberControl"
-                          label="{{ 'catches-and-sales.log-book-number' | tlTranslate }}"
-                          tooltipResourceName="catches-and-sales.log-book-number-helper">
-                </tl-input>
+                <tl-date-range fxFlex="25"
+                               formControlName="logBookValidityRangeControl"
+                               label="{{ 'catches-and-sales.log-book-validity-range' | tlTranslate }}"
+                               tooltipResourceName="catches-and-sales.log-book-validity-range-helper">
+                </tl-date-range>
                 <tl-select fxFlex="25"
                            formControlName="logBookStatusesControl"
                            label="{{ 'catches-and-sales.log-book-status-filter' | tlTranslate }}"
@@ -31,31 +31,26 @@
             <!-- Същестуваща страница от онлайн дневник, Диапазон от валидност на дневник, номер на документ (за ПП, приемане, превоз),  кораб -->
             <div fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                 <tl-input fxFlex="25"
+                          formControlName="pageNumberControl"
+                          label="{{ 'catches-and-sales.log-book-page-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.log-book-page-number-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
                           formControlName="onlinePageNumberControl"
                           label="{{ 'catches-and-sales.log-book-online-page-number' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.log-book-online-page-number-helper">
                 </tl-input>
-                <tl-date-range fxFlex="25"
-                               formControlName="logBookValidityRangeControl"
-                               label="{{ 'catches-and-sales.log-book-validity-range' | tlTranslate }}"
-                               tooltipResourceName="catches-and-sales.log-book-validity-range-helper">
-                </tl-date-range>
                 <tl-input fxFlex="25"
                           formControlName="documentNumberControl"
                           label="{{ 'catches-and-sales.document-number' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.document-number-helper">
                 </tl-input>
-                <tl-autocomplete *ngIf="canReadShipLogBookRecords && !isPublicApp; else noShipFilter"
-                                 fxFlex="25"
-                                 formControlName="shipControl"
-                                 label="{{ 'catches-and-sales.ship' | tlTranslate }}"
-                                 tooltipResourceName="catches-and-sales.ship-helper"
-                                 [autoMatchTextToOption]="true"
-                                 [options]="ships">
-                </tl-autocomplete>
-               <ng-template #noShipFilter>
-                   <div fxFlex="25"></div>
-               </ng-template>
+                <tl-select fxFlex="25"
+                           formControlName="showExistingPagesControl"
+                           label="{{ 'catches-and-sales.show-existing-pages' | tlTranslate }}"
+                           tooltipResourceName="catches-and-sales.show-existing-pages-helper"
+                           [options]="showExistingPages">
+                </tl-select>
             </div>
             <!-- Аквакултурно стопанство, регистриран купувач, ЕГН/ЕИК на нерегистриран купувач -->
             <div *ngIf="!isPublicApp" fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
@@ -73,7 +68,7 @@
                           tooltipResourceName="catches-and-sales.owner-egn-eik-helper">
                 </tl-input>
                 <tl-autocomplete *ngIf="canReadAquacultureLogBookRecords"
-                                 fxFlex="50"
+                                 fxFlex="25"
                                  formControlName="aquacultureFacilityControl"
                                  label="{{ 'catches-and-sales.aquaculture-facility' | tlTranslate }}"
                                  tooltipResourceName="catches-and-sales.aquaculture-facility-helper"
@@ -81,6 +76,23 @@
                                  [options]="aquacultureFacilities"
                                  [templateOptions]="true">
                 </tl-autocomplete>
+                <tl-autocomplete *ngIf="canReadShipLogBookRecords"
+                                 fxFlex="25"
+                                 formControlName="shipControl"
+                                 label="{{ 'catches-and-sales.ship' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.ship-helper"
+                                 [autoMatchTextToOption]="true"
+                                 [options]="ships">
+                </tl-autocomplete>
+                <div *ngIf="!canReadShipLogBookRecords" 
+                     fxFlex="25">
+                </div>
+                <div *ngIf="!canReadFirstSaleLogBookRecords && !canReadAdmissionLogBookRecords && !canReadTransportationLogBookRecords"
+                     fxFlex="25">
+                </div>
+                <div *ngIf="!canReadAquacultureLogBookRecords"
+                     fxFlex="25">
+                </div>
             </div>
         </div>
     </search-panel>
@@ -92,6 +104,7 @@
                            [showAddButton]="false"
                            [showInactiveRecords]="false"
                            [recordsPerPage]="10"
+                           [disableDblClickEdit]="true"
                            (activeRecordChanged)="viewLogBook($event)">
                 <row-detail>
                     <ng-template let-row="row" ngx-datatable-row-detail-template>
@@ -259,13 +272,21 @@
                                             tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <ng-container *ngIf="!row.data.isLogBookFinished && !row.data.isOnline">
+                            <ng-container *ngIf="!row.data.isOnline">
                                 <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Ship && canAddShipLogBookRecords"
                                                 icon="fa-plus-circle"
                                                 (buttonClicked)="addLogBookPage(row.data)"
                                                 iconClass="accent-color"
                                                 size="1.5"
-                                                tooltipText="{{ 'catches-and-sales.add-log-book-page' | tlTranslate }}">
+                                                [attr.data-logbook-id]="row.data.id"
+                                                [tooltipText]="row.data.isShipForbiddenForPages 
+                                                                ? shipForbiddenForPagesTooltip 
+                                                                : row.data.isLogBookFinished
+                                                                    ? logBookFishinedTooltip
+                                                                    : row.data.isLogBookSuspended 
+                                                                        ? logBookHasSuspendedLicenseTooltip
+                                                                        : addLogBookPageTooltip"
+                                                [disabled]="row.data.isLogBookFinished || row.data.isLogBookSuspended || row.data.isShipForbiddenForPages">
                                 </tl-icon-button>
 
                                 <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.FirstSale && canAddFirstSaleLogBookRecords"
@@ -273,7 +294,11 @@
                                                 (buttonClicked)="addLogBookPage(row.data)"
                                                 iconClass="accent-color"
                                                 size="1.5"
-                                                tooltipText="{{ 'catches-and-sales.add-log-book-page' | tlTranslate }}">
+                                                [attr.data-logbook-id]="row.data.id"
+                                                [tooltipText]="row.data.isLogBookFinished
+                                                                ? logBookFishinedTooltip
+                                                                : addLogBookPageTooltip"
+                                                [disabled]="row.data.isLogBookFinished || row.data.isLogBookSuspended">
                                 </tl-icon-button>
 
                                 <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Admission && canAddAdmissionLogBookRecords"
@@ -281,7 +306,11 @@
                                                 (buttonClicked)="addLogBookPage(row.data)"
                                                 iconClass="accent-color"
                                                 size="1.5"
-                                                tooltipText="{{ 'catches-and-sales.add-log-book-page' | tlTranslate }}">
+                                                [attr.data-logbook-id]="row.data.id"
+                                                [tooltipText]="row.data.isLogBookFinished
+                                                                ? logBookFishinedTooltip
+                                                                : addLogBookPageTooltip"
+                                                [disabled]="row.data.isLogBookFinished || row.data.isLogBookSuspended">
                                 </tl-icon-button>
 
                                 <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Transportation && canAddTransportationLogBookRecords"
@@ -289,7 +318,11 @@
                                                 (buttonClicked)="addLogBookPage(row.data)"
                                                 iconClass="accent-color"
                                                 size="1.5"
-                                                tooltipText="{{ 'catches-and-sales.add-log-book-page' | tlTranslate }}">
+                                                [attr.data-logbook-id]="row.data.id"
+                                                [tooltipText]="row.data.isLogBookFinished
+                                                                ? logBookFishinedTooltip
+                                                                : addLogBookPageTooltip"
+                                                [disabled]="row.data.isLogBookFinished || row.data.isLogBookSuspended">
                                 </tl-icon-button>
 
                                 <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Aquaculture && canAddAquacultureLogBookRecords"
@@ -297,7 +330,11 @@
                                                 (buttonClicked)="addLogBookPage(row.data)"
                                                 iconClass="accent-color"
                                                 size="1.5"
-                                                tooltipText="{{ 'catches-and-sales.add-log-book-page' | tlTranslate }}">
+                                                [attr.data-logbook-id]="row.data.id"
+                                                [tooltipText]="row.data.isLogBookFinished
+                                                                ? logBookFishinedTooltip
+                                                                : addLogBookPageTooltip"
+                                                [disabled]="row.data.isLogBookFinished || row.data.isLogBookSuspended">
                                 </tl-icon-button>
                             </ng-container>
                         </div>

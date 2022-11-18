@@ -1,14 +1,20 @@
 ﻿<mat-form-field class="full-width">
     <mat-label>{{ label }}</mat-label>
-    <input matInput
-           [formControl]="ngControl.control"
-           [matAutocomplete]="auto"
-           [required]="fieldIsRequired"
-           [readonly]="readonly"
-           #autoCompleteInput />
+
+    <div [matTooltip]="label"
+         [matTooltipDisabled]="disableTooltip"
+         [matTooltipShowDelay]="TOOLTIP_SHOW_DELAY_MS"
+         [matTooltipPosition]="TOOLTIP_POSITION">
+        <input matInput
+               [formControl]="ngControl.control"
+               [matAutocomplete]="auto"
+               [required]="fieldIsRequired"
+               [readonly]="readonly"
+               #autoCompleteInput />
+    </div>
 
     <!-- Tooltip and Clear button -->
-    <div matSuffix>
+    <div matSuffix fxLayout="row" fxLayoutAlign="end center">
         <tl-help [tooltipResource]="tooltipResourceName"></tl-help>
         <tl-icon-button *ngIf="showClearButton &&
                                 (ngControl.control?.value !== '' &&
@@ -101,4 +107,5 @@
     </mat-autocomplete>
 
     <mat-hint *ngIf="showHint">{{ hint }}</mat-hint>
+    <mat-hint *ngIf="warningHint" class="warn-orange-color">{{ warningHint }}</mat-hint>
 </mat-form-field>

@@ -45,7 +45,8 @@ export class BaseDataTableManager<TDataModel> {
             this.tlDataTable!.showLoader();
             this.requestServiceMethod(this.gridRequest).subscribe({
                 next: this.successResponseHandler.bind(this),
-                error: this.errorResponseHandler.bind(this)
+                error: this.errorResponseHandler.bind(this),
+                complete: this.completeResponseHandler.bind(this)
             });
         }
     }
@@ -54,26 +55,26 @@ export class BaseDataTableManager<TDataModel> {
         setTimeout(() => {
             this.tlDataTable!.setRows(response.records);
             this.tlDataTable!.totalRecordsCount = response.totalRecordsCount;
-            this.tlDataTable!.hideLoader();
 
             this.onRequestServiceMethodCalled.next(response.records);
         });
     }
 
     protected errorResponseHandler(error: HttpErrorResponse): void {
-        this.tlDataTable!.hideLoader();
         console.log(error);
 
         this.onRequestServiceMethodCalled.next(undefined);
     }
 
+    protected completeResponseHandler(): void {
+        this.tlDataTable!.hideLoader();
+    }
+
     public deleteRecord(record: TDataModel): void {
-        //this.tlDataTable.rows = this.tlDataTable.rows.filter(item => item != record);
         this.refreshData();
     }
 
     public addRecord(record: TDataModel): void {
-        //this.tlDataTable.rows.push(record);
         this.refreshData();
     }
 

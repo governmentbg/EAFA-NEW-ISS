@@ -32,7 +32,7 @@ import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 import { BasicLogBookPageDocumentParameters } from './models/basic-log-book-page-document-parameters.model';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { LogBookNomenclatureDTO } from '@app/models/generated/dtos/LogBookNomenclatureDTO';
-import { IS_PUBLIC_APP } from '../../../../../shared/modules/application.modules';
+import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 
 
 @Component({

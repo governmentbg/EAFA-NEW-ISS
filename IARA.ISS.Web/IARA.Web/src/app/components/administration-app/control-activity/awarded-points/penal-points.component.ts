@@ -35,6 +35,9 @@ export class PenalPointsComponent implements OnInit, AfterViewInit, OnChanges {
     public shipId: number | undefined;
 
     @Input()
+    public penalDecreeId: number | undefined;
+
+    @Input()
     public reloadData: boolean = false;
 
     public translate: FuseTranslationLoaderService;
@@ -49,6 +52,8 @@ export class PenalPointsComponent implements OnInit, AfterViewInit, OnChanges {
     public readonly canEditRecords: boolean;
     public readonly canDeleteRecords: boolean;
     public readonly canRestoreRecords: boolean;
+
+    public openedFromMenu: boolean = false;
 
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
@@ -116,6 +121,8 @@ export class PenalPointsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     public ngOnInit(): void {
+        this.openedFromMenu = (this.shipId === null || this.shipId === undefined) && (this.penalDecreeId === null || this.penalDecreeId === undefined);
+
         NomenclatureStore.instance.getNomenclature(
             NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false
         ).subscribe({
@@ -128,7 +135,7 @@ export class PenalPointsComponent implements OnInit, AfterViewInit, OnChanges {
     public ngAfterViewInit(): void {
         this.grid = new DataTableManager<PenalPointsDTO, PenalPointsFilters>({
             tlDataTable: this.datatable,
-            searchPanel: this.shipId === null || this.shipId === undefined ? this.searchpanel : undefined,
+            searchPanel: this.openedFromMenu ? this.searchpanel : undefined,
             requestServiceMethod: this.service.getAllPenalPoints.bind(this.service),
             filtersMapper: this.mapFilters.bind(this)
         });
@@ -146,11 +153,12 @@ export class PenalPointsComponent implements OnInit, AfterViewInit, OnChanges {
 
         this.grid.advancedFilters = new PenalPointsFilters({
             shipId: this.shipId ?? undefined,
+            penalDecreeId: this.penalDecreeId ?? undefined,
             personId: personId ?? undefined,
             legalId: legalId ?? undefined
         });
-
-        if (this.shipId === null || this.shipId === undefined) {
+        
+        if ((this.shipId === null || this.shipId === undefined)) {
             this.grid.refreshData();
         }
     }

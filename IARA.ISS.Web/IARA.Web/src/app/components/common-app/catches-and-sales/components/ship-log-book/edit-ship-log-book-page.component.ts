@@ -421,7 +421,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             componentData: data,
             viewMode: viewMode,
             disableDialogClose: true
-        }, '1350px').subscribe({
+        }, '1400px').subscribe({
             next: (result?: CatchRecordDTO) => {
                 if (result !== undefined && result !== null) {
                     const difference: DateDifference | undefined = DateUtils.getDateDifference(result.gearEntryTime!, result.gearExitTime!);
@@ -495,7 +495,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             componentData: data,
             viewMode: false,
             disableDialogClose: true
-        }).subscribe({
+        }, '1200px').subscribe({
             next: (selectedCatches: OnBoardCatchRecordFishDTO[] | undefined) => {
                 if (selectedCatches !== null && selectedCatches !== undefined) {
                     this.selectedCatchesFromPreviousTrips = selectedCatches.slice();
@@ -917,7 +917,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             componentData: data,
             viewMode: viewMode,
             disableDialogClose: true
-        }, '1000px');
+        }, '1300px');
     }
 
     private getDaysAtSeaValue(difference: DateDifference | undefined): string {
