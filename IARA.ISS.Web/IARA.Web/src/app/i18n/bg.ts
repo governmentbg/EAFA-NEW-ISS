@@ -741,6 +741,7 @@
         'edit-person-tooltip': 'Редакция',
         'delete-person-tooltip': 'Изтриване',
         'restore-person-tooltip': 'Възстановяване',
+        'email-not-entered-for': 'Не е въведен имейл за',
         'at-least-one-person-needed': 'Трябва да има поне един потребител',
         'user-already-exists-with-egn': 'Вече съществува потребител с ЕГН/ЛНЧ',
         'or-email-address': 'или имейл адрес',

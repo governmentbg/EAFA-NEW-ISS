@@ -43,6 +43,7 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
+import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 
 @Component({
     selector: 'edit-legal-association',
@@ -79,6 +80,7 @@ export class EditLegalAssociationComponent implements OnInit, IDialogComponent {
     public legalName: string = '';
 
     public showEgnAndEmailDontMatchError: boolean = false;
+    public emailNotEnteredFor: string | undefined = undefined;
     public egnAndEmailDontMatchErrorEgnLnc: string | undefined = undefined;
     public egnAndEmailDontMatchErrorEmail: string | undefined = undefined;
 
@@ -446,8 +448,10 @@ export class EditLegalAssociationComponent implements OnInit, IDialogComponent {
                     this.currentUserPerson = person;
                     this.setPersonTableFields(this.currentUserPerson);
 
-                    this.persons.unshift(this.currentUserPerson);
-                    this.persons = this.persons.slice();
+                    if (!this.personExists(person.person!.egnLnc!)) {
+                        this.persons.unshift(this.currentUserPerson);
+                        this.persons = this.persons.slice();
+                    }
 
                     this.personsTouched = true;
                     this.form.updateValueAndValidity({ onlySelf: true });
@@ -694,6 +698,11 @@ export class EditLegalAssociationComponent implements OnInit, IDialogComponent {
         closeFn();
     }
 
+    private personExists(egnLnc: EgnLncDTO): boolean {
+        return this.persons.findIndex(x => x.person?.egnLnc?.egnLnc === egnLnc.egnLnc
+            && x.person?.egnLnc?.identifierType === egnLnc.identifierType) !== -1;
+    }
+
     private personsValidator(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
             let atLeastOneActive: boolean = false;
@@ -702,6 +711,20 @@ export class EditLegalAssociationComponent implements OnInit, IDialogComponent {
                     atLeastOneActive = true;
                     break;
                 }
+            }
+
+            if (this.persons.length > 0) {
+                const noEmailPerson: FishingAssociationPersonDTO | undefined = this.persons.find(x => !x.email || x.email === '');
+                if (noEmailPerson) {
+                    this.emailNotEnteredFor = noEmailPerson.fullName;
+                    return { 'emailNotEntered': true }
+                }
+                else {
+                    this.emailNotEnteredFor = undefined;
+                }
+            }
+            else {
+                this.emailNotEnteredFor = undefined;
             }
 
             if (!atLeastOneActive) {
