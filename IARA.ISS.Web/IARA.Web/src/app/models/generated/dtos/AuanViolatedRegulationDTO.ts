@@ -1,7 +1,6 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
-import { AuanViolatedRegulationTypesEnum } from '@app/enums/auan-violated-regulation-types.enum';
 import { ViolatedRegulationSectionTypesEnum } from '@app/enums/violated-regulation-section-types.enum';
 
 export class AuanViolatedRegulationDTO { 
@@ -25,10 +24,13 @@ export class AuanViolatedRegulationDTO {
     public letter?: string;
 
     @StrictlyTyped(Number)
-    public type?: AuanViolatedRegulationTypesEnum;
+    public sectionType?: ViolatedRegulationSectionTypesEnum;
 
     @StrictlyTyped(Number)
-    public sectionType?: ViolatedRegulationSectionTypesEnum;
+    public lawSectionId?: number;
+
+    @StrictlyTyped(String)
+    public lawText?: string;
 
     @StrictlyTyped(Boolean)
     public isActive?: boolean;

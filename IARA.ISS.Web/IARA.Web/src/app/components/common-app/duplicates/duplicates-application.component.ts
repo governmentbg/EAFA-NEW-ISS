@@ -81,10 +81,12 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
     public isEditing: boolean = false;
     public isRegisterEntry: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isReadonly: boolean = false;
     public viewMode: boolean = false;
     public isPaid: boolean = false;
     public hasDelivery: boolean = false;
+    public hideBasicPaymentInfo: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public service!: IDuplicatesRegisterService;
 
@@ -150,6 +152,7 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
                         this.paymentInformation = application.paymentInformation;
+                        this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
 
@@ -206,7 +209,7 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData, this.pageCode).subscribe({
                         next: (application: DuplicatesApplicationDTO) => {
                             application.applicationId = this.applicationId;
 
@@ -214,7 +217,13 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
                             this.paymentInformation = application.paymentInformation;
+                            this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new DuplicatesApplicationRegixDataDTO(application.regiXDataModel);
+                                application.regiXDataModel = undefined;
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (application.submittedBy === undefined || application.submittedBy === null)) {
                                 const service = this.service as DuplicatesRegisterPublicService;
@@ -295,6 +304,7 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.viewMode = data.viewMode;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.applicationsService = data.applicationsService;
         this.pageCode = data.pageCode;
         this.loadRegisterFromApplication = data.loadRegisterFromApplication;
@@ -423,9 +433,16 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
     private fillForm(): void {
         if (this.model instanceof DuplicatesApplicationDTO) {
             this.fillFormApplication(this.model);
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX(this.model);
+            }
         }
         else if (this.model instanceof DuplicatesApplicationRegixDataDTO) {
-            this.fillFormRegix(this.model);
+            this.form.get('submittedByControl')!.setValue(this.model.submittedBy);
+            this.form.get('submittedForControl')!.setValue(this.model.submittedFor);
+
+            this.fillFormRegiX(this.model);
         }
         else if (this.model instanceof DuplicatesRegisterEditDTO) {
             this.fillFormRegister(this.model);
@@ -473,10 +490,7 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
         this.form.get('filesControl')!.setValue(model.files);
     }
 
-    private fillFormRegix(model: DuplicatesApplicationRegixDataDTO): void {
-        this.form.get('submittedByControl')!.setValue(model.submittedBy);
-        this.form.get('submittedForControl')!.setValue(model.submittedFor);
-
+    private fillFormRegiX(model: DuplicatesApplicationRegixDataDTO): void {
         if (model.applicationRegiXChecks !== undefined && model.applicationRegiXChecks !== null) {
             const checks: ApplicationRegiXCheckDTO[] = model.applicationRegiXChecks;
 
@@ -490,7 +504,11 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
             this.notifier.onNotify.subscribe({
                 next: () => {
                     this.form.markAllAsTouched();
-                    ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+
                     this.notifier.stop();
                 }
             });
@@ -695,5 +713,11 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
                 }
             }
         }
+    }
+
+    private shouldHidePaymentData(): boolean {
+        return this.paymentInformation?.paymentType === null
+            || this.paymentInformation?.paymentType === undefined
+            || this.paymentInformation?.paymentType === '';
     }
 }

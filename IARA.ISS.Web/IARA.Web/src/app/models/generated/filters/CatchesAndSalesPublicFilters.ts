@@ -17,6 +17,7 @@ export class CatchesAndSalesPublicFilters extends BaseRequestModel {
     public pageNumber: number | undefined;
     public onlinePageNumber: string | undefined;
     public documentNumber: number | undefined;
+    public showOnlyExistingPages: boolean | undefined;
     public logBookTypeId: number | undefined;
     public logBookNumber: string | undefined;
     public logBookStatusIds: number[] | undefined;

@@ -1,24 +1,20 @@
 ﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="form">
-    <div fxLayout="row">
-        <tl-date fxFlex="25"
-                 formControlName="deliveryDateControl"
-                 [max]="today"
-                 label="{{ 'penal-decrees.edit-decree-delivery-date' | tlTranslate }}"
-                 tooltipResourceName="penal-decrees.edit-decree-delivery-date-helper">
-        </tl-date>
-    </div>
-
     <div fxLayout="column" fxLayoutGap="1em">
         <tl-radio-button-group fxFlex="100"
                                formControlName="deliveryTypeControl"
                                [options]="deliveryTypes">
         </tl-radio-button-group>
 
-        <mat-error *ngIf="hasNoEDeliveryRegistrationError">
-            * {{ 'penal-decrees.has-no-e-delivery-registration-error' | tlTranslate }}
-        </mat-error>
+        <div *ngIf="deliveryType !== undefined && deliveryType !== null" fxLayout="row">
+            <tl-date fxFlex="25"
+                     formControlName="deliveryDateControl"
+                     [max]="today"
+                     label="{{ 'penal-decrees.edit-decree-delivery-date' | tlTranslate }}"
+                     tooltipResourceName="penal-decrees.edit-decree-delivery-date-helper">
+            </tl-date>
+        </div>
 
-        <div fxLayout="row" fxLayoutGap="1em">
+        <div *ngIf="deliveryType !== undefined && deliveryType !== null" fxLayout="row" fxLayoutGap="1em">
             <tl-autocomplete fxFlex="50"
                              formControlName="confirmationTypeControl"
                              [options]="confirmationTypes"
@@ -26,12 +22,6 @@
                              tooltipResourceName="penal-decrees.edit-decree-delivery-confirmation-type-helper">
             </tl-autocomplete>
         </div>
-    </div>
-
-    <div fxLayout="column" fxLayoutGap="1em" *ngIf="deliveryType !== deliveryTypesEnum.DecreeReturn && deliveryType !== deliveryTypesEnum.DecreeTag">
-        <auan-witnesses-array formControlName="witnessesControl"
-                              [viewMode]="viewMode">
-        </auan-witnesses-array>
     </div>
 
     <div fxLayout="column" fxLayoutGap="1em" *ngIf="deliveryType === deliveryTypesEnum.DecreeReturn || deliveryType === deliveryTypesEnum.DecreeTag">
@@ -49,5 +39,11 @@
                       tooltipResourceName="penal-decrees.edit-decree-delivery-sent-helper">
             </tl-input>
         </div>
+    </div>
+
+    <div fxLayout="column" fxLayoutGap="1em" *ngIf="confirmationType === confirmationTypesEnum.RefusalDecree">
+        <auan-witnesses-array formControlName="witnessesControl"
+                              [viewMode]="viewMode">
+        </auan-witnesses-array>
     </div>
 </div>

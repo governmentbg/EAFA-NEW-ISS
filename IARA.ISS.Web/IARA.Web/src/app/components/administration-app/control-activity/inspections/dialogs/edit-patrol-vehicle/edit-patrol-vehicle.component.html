@@ -3,7 +3,9 @@
      fxFlexFill
      [formGroup]="form"
      class="dialog-padding">
-    <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+    <div fxLayout="column"
+         fxLayoutGap="1em"
+         fxLayoutAlign="start stretch">
         <tl-checkbox formControlName="patrolVehicleRegisteredControl"
                      label="{{ 'inspections.patrol-vehicle-registered' | tlTranslate }}">
         </tl-checkbox>
@@ -22,9 +24,15 @@
                       formControlName="nameControl"
                       label="{{ 'inspections.vehicle-name' | tlTranslate }}">
             </tl-input>
-            <tl-input fxFlex="50"
+            <tl-input *ngIf="isWaterVehicle"
+                      fxFlex="50"
                       formControlName="cfrControl"
                       label="{{ 'inspections.cfr' | tlTranslate }}">
+            </tl-input>
+            <tl-input *ngIf="!isWaterVehicle"
+                      fxFlex="50"
+                      formControlName="cfrControl"
+                      label="{{ 'inspections.register-number' | tlTranslate }}">
             </tl-input>
         </div>
 
@@ -62,7 +70,8 @@
                          [options]="patrolVehicleTypes">
         </tl-autocomplete>
 
-        <inspection-map-viewer formControlName="mapViewerControl">
+        <inspection-map-viewer *ngIf="hasCoordinates"
+                               formControlName="mapViewerControl">
         </inspection-map-viewer>
     </div>
 </div>

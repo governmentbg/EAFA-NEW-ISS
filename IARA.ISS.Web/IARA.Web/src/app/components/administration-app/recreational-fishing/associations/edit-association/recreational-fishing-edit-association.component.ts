@@ -18,6 +18,7 @@ import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { AssociationAnnulmentResult } from '../models/association-annulment-result.model';
 import { AssociationEditDialogParams } from '../models/association-edit-dialog-params.model';
 import { EikUtils } from '@app/shared/utils/eik.utils';
+import { IRecreationalFishingAssociationService } from '@app/interfaces/common-app/recreational-fishing-association.interface';
 
 @Component({
     selector: 'recreational-fishing-edit-association',
@@ -25,7 +26,7 @@ import { EikUtils } from '@app/shared/utils/eik.utils';
 })
 export class RecreationalFishingEditAssociationComponent implements OnInit, IDialogComponent {
     public form!: FormGroup;
-    public service: RecreationalFishingAssociationService;
+    public service: IRecreationalFishingAssociationService;
     public isEditing: boolean = false;
 
     public territoryUnits!: NomenclatureDTO<number>[];

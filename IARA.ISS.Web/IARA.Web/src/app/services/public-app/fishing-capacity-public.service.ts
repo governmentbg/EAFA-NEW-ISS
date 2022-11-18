@@ -26,7 +26,7 @@ import { FishingCapacityFilters } from '@app/models/generated/filters/FishingCap
 import { ShipFishingCapacityDTO } from '@app/models/generated/dtos/ShipFishingCapacityDTO';
 import { FishingCapacityStatisticsDTO } from '@app/models/generated/dtos/FishingCapacityStatistics';
 import { CapacityCertificateDuplicateApplicationDTO } from '@app/models/generated/dtos/CapacityCertificateDuplicateApplicationDTO';
-import { ExcelExporterRequestModel } from '../../shared/components/data-table/models/excel-exporter-request-model.model';
+import { ExcelExporterRequestModel } from '@app/shared/components/data-table/models/excel-exporter-request-model.model';
 
 @Injectable({
     providedIn: 'root'
@@ -91,8 +91,9 @@ export class FishingCapacityPublicService extends ApplicationsRegisterPublicBase
     }
 
     // applications
-    public getApplication(id: number, pageCode: PageCodeEnum): Observable<IApplicationRegister> {
-        const params = new HttpParams().append('id', id.toString());
+    public getApplication(id: number, getRegiXData: boolean, pageCode: PageCodeEnum): Observable<IApplicationRegister> {
+        const params = new HttpParams()
+            .append('id', id.toString());
 
         if (pageCode === PageCodeEnum.IncreaseFishCap) {
             return this.requestService.get(this.area, this.controller, 'GetIncreaseFishingCapacityApplication', {

@@ -1,16 +1,30 @@
 ﻿<mat-form-field style="width: 100%;" [appearance]="appearance">
     <mat-label>{{ label }}</mat-label>
-    <input matInput
-           *ngIf="ngControl?.control !== null && ngControl?.control !== undefined; else inputWithoutFormControl"
-           [type]="type"
-           [formControl]="ngControl.control"
-           [required]="fieldIsRequired"
-           [readonly]="readonly"
-           (focusout)="onFocusOut($event)" />
+    <div *ngIf="ngControl?.control !== null && ngControl?.control !== undefined; else inputWithoutFormControl"
+         [matTooltip]="label"
+         [matTooltipDisabled]="disableTooltip"
+         [matTooltipShowDelay]="TOOLTIP_SHOW_DELAY_MS"
+         [matTooltipPosition]="TOOLTIP_POSITION">
+        <input matInput
+               [type]="type"
+               [formControl]="ngControl.control"
+               [required]="fieldIsRequired"
+               [readonly]="readonly"
+               (focusout)="onFocusOut($event)" />
+    </div>
     <ng-template #inputWithoutFormControl>
-        <input matInput [type]="type" [value]="value" [required]="fieldIsRequired" [readonly]="readonly" />
+        <div [matTooltip]="label"
+             [matTooltipDisabled]="disableTooltip"
+             [matTooltipShowDelay]="TOOLTIP_SHOW_DELAY_MS"
+             [matTooltipPosition]="TOOLTIP_POSITION">
+            <input matInput
+                   [type]="type"
+                   [value]="value"
+                   [required]="fieldIsRequired"
+                   [readonly]="readonly" />
+        </div>
     </ng-template>
-    <div matSuffix>
+    <div matSuffix fxLayout="row" fxLayoutAlign="end center">
         <ng-content></ng-content>
         <tl-help [tooltipResource]="tooltipResourceName"></tl-help>
     </div>

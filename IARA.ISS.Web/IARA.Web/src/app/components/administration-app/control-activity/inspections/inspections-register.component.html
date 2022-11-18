@@ -124,37 +124,9 @@
                 <row-detail>
                     <ng-template let-row="row"
                                  ngx-datatable-row-detail-template>
-                        <tl-card>
-                            <tl-card-title>{{ 'inspections.auan-list-title' | tlTranslate }}</tl-card-title>
-                            <tl-card-content>
-                                <tl-data-table [isRemote]="false"
-                                               [isSoftDeletable]="false"
-                                               [showInactiveRecords]="false"
-                                               [showAddButton]="false"
-                                               [rows]="row.auaNs">
-                                    <data-column propertyName="auanNum"
-                                                 [flexRate]="0.3"
-                                                 columnName="{{ 'auan-register.table-auan-num' | tlTranslate }}">
-                                    </data-column>
-
-                                    <data-column propertyName="drafter"
-                                                 [flexRate]="0.3"
-                                                 columnName="{{ 'auan-register.table-drafter' | tlTranslate }}">
-                                    </data-column>
-
-                                    <data-column propertyName="draftDate"
-                                                 [flexRate]="0.3"
-                                                 dataType="date"
-                                                 columnName="{{ 'auan-register.table-draft-date' | tlTranslate }}">
-                                    </data-column>
-
-                                    <data-column propertyName="inspectedEntity"
-                                                 [flexRate]="0.3"
-                                                 columnName="{{ 'auan-register.table-inspected-entity' | tlTranslate }}">
-                                    </data-column>
-                                </tl-data-table>
-                            </tl-card-content>
-                        </tl-card>
+                        <auan-register fxFlexFill
+                                       [inspectionId]="row.data.id">
+                        </auan-register>
                     </ng-template>
                 </row-detail>
 
@@ -198,29 +170,28 @@
                                             tooltipText="{{ 'inspections.view-inspection-dialog-title' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.data.isActive && row.data.inspectionState === inspectionStatesEnum.Draft && canEditRecords && (shipId === null || shipId === undefined)"
+                            <tl-icon-button *ngIf="row.data.isActive && row.data.inspectionState === inspectionStatesEnum.Draft && canEditRecords && (shipId === null || shipId === undefined) && isInspector"
                                             icon="edit"
                                             (buttonClicked)="addEditEntry(row.data, false)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'inspections.edit-inspection-dialog-title' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.data.isActive && row.data.inspectionState === inspectionStatesEnum.Submitted && canEditRecords"
-                                            icon="ic-fluent-arrow-upload-16-filled"
-                                            [size]="icIconSize"
+                            <tl-icon-button *ngIf="row.data.isActive && row.data.inspectionState === inspectionStatesEnum.Submitted && canEditRecords && isInspector"
+                                            icon="fa-signature"
                                             (buttonClicked)="signEntry(row.data)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'inspections.sign-inspection' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.data.isActive && canDeleteRecords && (shipId === null || shipId === undefined)"
+                            <tl-icon-button *ngIf="row.data.isActive && canDeleteRecords && (shipId === null || shipId === undefined) && isInspector"
                                             icon="delete"
                                             (buttonClicked)="deleteEntry(row.data)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'inspections.delete' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="!row.data.isActive && canRestoreRecords && (shipId === null || shipId === undefined)"
+                            <tl-icon-button *ngIf="!row.data.isActive && canRestoreRecords && (shipId === null || shipId === undefined) && isInspector"
                                             icon="restore"
                                             (buttonClicked)="restoreEntry(row.data)"
                                             iconClass="accent-color"

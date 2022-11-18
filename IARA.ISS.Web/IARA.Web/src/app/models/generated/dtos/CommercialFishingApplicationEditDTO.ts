@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { BaseRegixChecksDTO } from './BaseRegixChecksDTO';
 import { ApplicationSubmittedByDTO } from './ApplicationSubmittedByDTO';
 import { ApplicationSubmittedForDTO } from './ApplicationSubmittedForDTO';
 import { EgnLncDTO } from './EgnLncDTO';
@@ -10,13 +11,20 @@ import { FishingGearDTO } from './FishingGearDTO';
 import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformationDTO';
 import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
 import { FileInfoDTO } from './FileInfoDTO';
-import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { CommercialFishingRegixDataDTO } from './CommercialFishingRegixDataDTO';
+import { PageCodeEnum } from '@app/enums/page-code.enum'; 
 
-export class CommercialFishingApplicationEditDTO { 
+export class CommercialFishingApplicationEditDTO extends BaseRegixChecksDTO {
     public constructor(obj?: Partial<CommercialFishingApplicationEditDTO>) {
-        Object.assign(this, obj);
+        if (obj != undefined) {
+            super(obj as BaseRegixChecksDTO);
+            Object.assign(this, obj);
+        } 
+        else {
+            super();
+        }
     }
-
+  
     @StrictlyTyped(Number)
     public id?: number;
 
@@ -104,6 +112,6 @@ export class CommercialFishingApplicationEditDTO {
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
 
-    @StrictlyTyped(String)
-    public statusReason?: string;
+    @StrictlyTyped(CommercialFishingRegixDataDTO)
+    public regiXDataModel?: CommercialFishingRegixDataDTO;
 }

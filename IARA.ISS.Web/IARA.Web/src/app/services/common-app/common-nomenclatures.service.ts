@@ -312,6 +312,10 @@ export class CommonNomenclatures {
         return this.requestService.get(this.area, this.controller, 'GetFishSex', { responseTypeCtr: NomenclatureDTO });
     }
 
+    public getTurbotSizeGroups(): Observable<NomenclatureDTO<number>[]> {
+        return this.requestService.get(this.area, this.controller, 'GetTurbotSizeGroups', { responseTypeCtr: NomenclatureDTO });
+    }
+
     public getWaterBodyTypes(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetWaterBodyTypes', { responseTypeCtr: NomenclatureDTO });
     }

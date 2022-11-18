@@ -38,6 +38,9 @@ export class InspectionTransboardingShipDTO {
     @StrictlyTyped(InspectionPermitDTO)
     public permitLicenses?: InspectionPermitDTO[];
 
+    @StrictlyTyped(InspectionPermitDTO)
+    public permits?: InspectionPermitDTO[];
+
     @StrictlyTyped(InspectionLogBookDTO)
     public logBooks?: InspectionLogBookDTO[];
 }

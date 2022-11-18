@@ -64,6 +64,7 @@ import { CommercialFishingAdministrationService } from '@app/services/administra
 import { OverlappingLogBooksComponent } from '@app/shared/components/overlapping-log-books/overlapping-log-books.component';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { DuplicatesEntryDTO } from '@app/models/generated/dtos/DuplicatesEntryDTO';
+import { AddressTypesEnum } from '@app/enums/address-types.enum';
 
 enum AgentSameAsTypesEnum {
     SubmittedByPerson,
@@ -80,6 +81,7 @@ type SaveMethod = 'save' | 'saveAndPrint' | 'completeChangeOfCircumstancesApplic
 })
 export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogComponent {
     public readonly pageCodeEnum: typeof PageCodeEnum = PageCodeEnum;
+    public readonly addressTypesEnum: typeof AddressTypesEnum = AddressTypesEnum;
     public readonly today: Date = new Date();
 
     public editForm!: FormGroup;
@@ -106,6 +108,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
     public isReadonly: boolean = false;
     public isApplication: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isApplicationHistoryMode: boolean = false;
     public loadRegisterFromApplication: boolean = false;
     public isFirstSaleCenter: boolean = false;
@@ -120,6 +123,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
     public isPaid: boolean = false;
     public hasDelivery: boolean = false;
     public isOnlineApplication: boolean = false;
+    public hideBasicPaymentInfo: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
 
     public hasNoEDeliveryRegistrationError: boolean = false;
@@ -389,7 +393,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
             this.isRegisterEntry = true;
             this.fillForm();
 
-            this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+            this.service.getApplication(this.applicationId, false, this.pageCode).subscribe({
                 next: (application: BuyerChangeOfCircumstancesApplicationDTO) => {
                     this.changeOfCircumstancesControl.setValue(application.changes);
                     this.changeOfCircumstancesControl.disable();
@@ -400,7 +404,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
             this.isRegisterEntry = true;
             this.fillForm();
 
-            this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+            this.service.getApplication(this.applicationId, false, this.pageCode).subscribe({
                 next: (application: BuyerTerminationApplicationDTO) => {
                     this.deregistrationReasonControl.setValue(application.deregistrationReason);
                     this.deregistrationReasonControl.disable();
@@ -425,6 +429,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                             this.isPaid = this.model.isPaid!;
                             this.hasDelivery = this.model.hasDelivery!;
                             this.applicationPaymentInformation = this.model.paymentInformation;
+                            this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         }
 
                         this.isOnlineApplication = application.isOnlineApplication!;
@@ -499,7 +504,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                     this.isEditing = false;
                     this.isEditingSubmittedBy = false;
 
-                    this.service.getApplication(this.applicationId!, this.pageCode).subscribe({
+                    this.service.getApplication(this.applicationId!, this.showRegiXData, this.pageCode).subscribe({
                         next: (application: BuyerApplicationEditDTO | null | undefined) => {
                             if (application === null || application === undefined) {
                                 application = new BuyerApplicationEditDTO({ applicationId: this.applicationId!, pageCode: this.pageCode });
@@ -512,6 +517,11 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                             this.isOnlineApplication = application.isOnlineApplication!;
                             this.refreshFileTypes.next();
 
+                            if (this.showRegiXData) {
+                                this.expectedResults = new BuyerRegixDataDTO(application.regiXDataModel);
+                                application.regiXDataModel = undefined;
+                            }
+
                             this.model = new BuyerApplicationEditDTO(application);
 
                             if (this.model instanceof BuyerApplicationEditDTO) {
@@ -519,6 +529,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                                 this.isPaid = this.model.isPaid!;
                                 this.hasDelivery = this.model.hasDelivery!;
                                 this.applicationPaymentInformation = this.model.paymentInformation;
+                                this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                                 this.isOnlineApplication = this.model.isOnlineApplication!;
 
                                 if (this.isPublicApp && this.isOnlineApplication) {
@@ -579,6 +590,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
         this.isReadonly = data.isReadonly;
         this.isApplication = data.isApplication;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.service = data.service as IBuyersService;
         this.applicationsService = data.applicationsService;
@@ -685,7 +697,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
         if (document !== undefined) {
             data = new UsageDocumentDialogParams({
                 model: document,
-                isIdReadOnly: this.isEditing,
+                isIdReadOnly: false,
                 showOnlyRegiXData: this.showOnlyRegiXData,
                 viewMode: this.isReadonly || viewMode
             });
@@ -1342,6 +1354,10 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
         }
         else if (this.model instanceof BuyerApplicationEditDTO) {
             this.FillFormApplicationFields();
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX();
+            }
         }
         else if (this.model instanceof BuyerRegixDataDTO) {
             this.fillFormRegixDataFields();
@@ -1476,6 +1492,12 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                 this.fillFormAgent();
             }
 
+            this.fillFormRegiX();
+        }
+    }
+
+    private fillFormRegiX(): void {
+        if (this.model instanceof BuyerApplicationEditDTO || this.model instanceof BuyerRegixDataDTO) {
             if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
                 const applicationRegiXChecks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
 
@@ -1483,17 +1505,21 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                     this.regixChecks = applicationRegiXChecks;
                 });
             }
+        }
 
-            if (!this.viewMode) {
-                this.notifier.start();
-                this.notifier.onNotify.subscribe({
-                    next: () => {
-                        this.editForm.markAllAsTouched();
+        if (!this.viewMode) {
+            this.notifier.start();
+            this.notifier.onNotify.subscribe({
+                next: () => {
+                    this.editForm.markAllAsTouched();
+
+                    if (this.showOnlyRegiXData) {
                         ApplicationUtils.enableOrDisableRegixCheckButtons(this.editForm, this.dialogRightSideActions);
-                        this.notifier.stop();
                     }
-                });
-            }
+
+                    this.notifier.stop();
+                }
+            });
         }
     }
 
@@ -1871,6 +1897,12 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
 
             return null;
         }
+    }
+
+    private shouldHidePaymentData(): boolean {
+        return this.applicationPaymentInformation?.paymentType === null
+            || this.applicationPaymentInformation?.paymentType === undefined
+            || this.applicationPaymentInformation?.paymentType === '';
     }
 
     private closeEditPremiseUsageDocumentDialogBtnClicked(closeFn: HeaderCloseFunction): void {

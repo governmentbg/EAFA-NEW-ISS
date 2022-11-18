@@ -42,6 +42,7 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
     public ships: NomenclatureDTO<number>[] = [];
     public vesselTypes: NomenclatureDTO<number>[] = [];
     public associations: NomenclatureDTO<number>[] = [];
+    public turbotSizeGroups: NomenclatureDTO<number>[] = [];
 
     public toggles: InspectionCheckModel[] = [];
 
@@ -92,6 +93,9 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
             NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.ShipAssociations, this.nomenclatures.getShipAssociations.bind(this.nomenclatures), false
             ),
+            NomenclatureStore.instance.getNomenclature(
+                NomenclatureTypes.TurbotSizeGroups, this.nomenclatures.getTurbotSizeGroups.bind(this.nomenclatures), false
+            ),
             this.service.getCheckTypesForInspection(InspectionTypesEnum.IBP)
         ]).toPromise();
 
@@ -105,11 +109,12 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
         this.ships = nomenclatureTables[7];
         this.vesselTypes = nomenclatureTables[8];
         this.associations = nomenclatureTables[9];
+        this.turbotSizeGroups = nomenclatureTables[10];
 
-        this.toggles = nomenclatureTables[10].map(f => new InspectionCheckModel(f));
+        this.toggles = nomenclatureTables[11].map(f => new InspectionCheckModel(f));
 
         if (this.id !== null && this.id !== undefined) {
-            this.service.get(this.id).subscribe({
+            this.service.get(this.id, this.inspectionCode).subscribe({
                 next: (dto: InspectionTransboardingDTO) => {
                     this.model = dto;
 
@@ -128,7 +133,7 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
             transshipmentShipControl: new FormControl({ value: undefined, disabled: true }),
             transshipmentCatchesControl: new FormControl({ value: [], disabled: true }),
             transshipmentViolationControl: new FormControl(undefined),
-            nnnShipStatusControl: new FormControl([]),
+            nnnShipStatusControl: new FormControl(undefined),
             captainCommentControl: new FormControl(undefined),
             additionalInfoControl: new FormControl(undefined),
             filesControl: new FormControl([])
@@ -163,7 +168,8 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
                 inspectorComment: this.model.inspectorComment,
-                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo)
+                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo),
+                violatedRegulations: this.model.violatedRegulations,
             }));
 
             if (this.model.receivingShipInspection !== null && this.model.receivingShipInspection !== undefined) {
@@ -173,14 +179,14 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
                     fishingGears: this.model.fishingGears,
                     logBooks: this.model.receivingShipInspection.logBooks,
                     observationTexts: this.model.observationTexts,
-                    permits: this.model.receivingShipInspection.permitLicenses,
+                    permitLicenses: this.model.receivingShipInspection.permitLicenses,
+                    permits: this.model.receivingShipInspection.permits,
                     personnel: this.model.receivingShipInspection.personnel,
                     ship: this.model.receivingShipInspection.inspectedShip,
                 }));
 
                 this.form.get('portControl')!.setValue(this.model.receivingShipInspection.lastPortVisit);
                 this.form.get('captainCommentControl')!.setValue(this.model.receivingShipInspection.captainComment);
-                this.form.get('nnnShipStatusControl')!.setValue(this.model.receivingShipInspection.nnnShipStatus);
             }
 
             if (this.model.sendingShipInspection !== null && this.model.sendingShipInspection !== undefined) {
@@ -212,6 +218,7 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
             byEmergencySignal: generalInfo.byEmergencySignal,
             inspectionType: InspectionTypesEnum.IBP,
             inspectorComment: additionalInfo?.inspectorComment,
+            violatedRegulations: additionalInfo?.violatedRegulations,
             isActive: true,
             fishingGears: shipSections.fishingGears,
             transboardedCatchMeasures: receivingShipCatches,
@@ -231,7 +238,8 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
                 inspectedShip: shipSections.ship,
                 lastPortVisit: port,
                 logBooks: shipSections.logBooks,
-                permitLicenses: shipSections.permits,
+                permitLicenses: shipSections.permitLicenses,
+                permits: shipSections.permits,
                 personnel: shipSections.personnel,
                 nnnShipStatus: this.form.get('nnnShipStatusControl')!.value,
             }),

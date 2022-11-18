@@ -3,4 +3,5 @@
     title?: string;
     okBtnLabel?: string;
     cancelBtnLabel?: string;
+    hasCancelButton?: boolean;
 }

@@ -468,7 +468,7 @@
                             formControlName="usageDocumentControl"
                             notifier
                             validityChecker
-                            [isIdReadOnly]="isEditing"
+                            [isIdReadOnly]="false"
                             [showOnlyRegiXData]="showOnlyRegiXData"
                             [expectedResults]="expectedResults?.usageDocument">
             </usage-document>
@@ -859,7 +859,7 @@
         <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData && paymentInformation !== undefined && paymentInformation !== null"
                             title="{{ 'aquacultures.payment-information' | tlTranslate }}"
                             tooltipResourceName="aquacultures.payment-information-helper">
-            <payment-information [paymentData]="paymentInformation"></payment-information>
+            <payment-information [paymentData]="paymentInformation" [hideBasicInfo]="hideBasicPaymentInfo"></payment-information>
         </tl-expansion-panel>
 
         <!-- Информация за начин на връчване -->
@@ -905,7 +905,7 @@
         </tl-expansion-panel>
 
         <!-- Проверки -->
-        <tl-expansion-panel *ngIf="showOnlyRegiXData"
+        <tl-expansion-panel *ngIf="showOnlyRegiXData || showRegiXData"
                             title="{{ 'aquacultures.regix-checks-results' | tlTranslate }}"
                             tooltipResourceName="aquacultures.regix-checks-results-helper">
             <div fxLayout="column" fxLayoutGap="1em">

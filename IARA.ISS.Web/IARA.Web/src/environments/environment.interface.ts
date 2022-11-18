@@ -11,6 +11,7 @@ export interface IEnvironmentConfig {
     identityServerBaseUrl: string;
     ClientAuthConfiguration: OpenIdConfiguration;
     environmentType: EnvironmentType;
+    appBaseHref?: string;
 }
 
 export interface IConfiguration {
@@ -18,6 +19,7 @@ export interface IConfiguration {
     servicesBaseUrl: string;
     identityServerBaseUrl: string;
     environmentType: number;
+    appBaseHref?: string;
 }
 
 

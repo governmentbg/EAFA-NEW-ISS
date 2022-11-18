@@ -8,8 +8,11 @@ import { LegalEntitiesAdministrationService } from '@app/services/administration
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 import { EditLegalEntityComponent } from '@app/components/common-app/legals/edit-legal-entity/edit-legal-entity.component';
+import { EditLegalAssociationComponent } from '@app/components/common-app/legal-associations/edit-legal-association/edit-legal-association.component';
 
-type LegalsApplicationsRegisterDataType = ApplicationsRegisterData<EditLegalEntityComponent>;
+type LegalsApplicationsRegisterDataType =
+    ApplicationsRegisterData<EditLegalEntityComponent>
+    | ApplicationsRegisterData<EditLegalAssociationComponent>;
 
 @Component({
     selector: 'legal-entities-applications',
@@ -25,6 +28,7 @@ export class LegalEntitiesApplicationsComponent {
         service: LegalEntitiesAdministrationService,
         applicationsService: ApplicationsAdministrationService,
         editDialog: TLMatDialog<EditLegalEntityComponent>,
+        assocEditDialog: TLMatDialog<EditLegalAssociationComponent>,
         translationService: FuseTranslationLoaderService
     ) {
         this.service = service;
@@ -47,6 +51,10 @@ export class LegalEntitiesApplicationsComponent {
             [
                 PageCodeEnum.LE,
                 processingPermissions
+            ],
+            [
+                PageCodeEnum.Assocs,
+                processingPermissions
             ]
         ]);
 
@@ -63,6 +71,20 @@ export class LegalEntitiesApplicationsComponent {
                     viewRegisterDialogTitle: translationService.getValue('legal-entities-page.view-legal-entity-dialog-title'),
                     viewRegixDataDialogTitle: translationService.getValue('legal-entities-page.view-legal-entity-application-regix-data-dialog-title'),
                     viewAndConfrimDataRegularityTitle: translationService.getValue('legal-entities-page.view-legal-entity-appl-and-confirm-regularity-title')
+                })
+            ],
+            [
+                PageCodeEnum.Assocs,
+                new ApplicationsRegisterData<EditLegalAssociationComponent>({
+                    editDialog: assocEditDialog,
+                    editDialogTCtor: EditLegalAssociationComponent,
+                    addRegisterDialogTitle: translationService.getValue('legal-association.add-association-dialog-title'),
+                    editApplicationDialogTitle: translationService.getValue('legal-association.edit-association-application-dialog-title'),
+                    editRegixDataDialogTitle: translationService.getValue('legal-association.edit-association-application-regix-data-dialog-title'),
+                    viewApplicationDialogTitle: translationService.getValue('legal-association.view-association-application-dialog-title'),
+                    viewRegisterDialogTitle: translationService.getValue('legal-association.view-association-dialog-title'),
+                    viewRegixDataDialogTitle: translationService.getValue('legal-association.view-association-application-regix-data-dialog-title'),
+                    viewAndConfrimDataRegularityTitle: translationService.getValue('legal-association.view-association-appl-and-confirm-regularity-title')
                 })
             ]
         ]);

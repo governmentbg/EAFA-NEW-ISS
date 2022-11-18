@@ -36,4 +36,5 @@ export class PenalPointsFilters extends BaseRequestModel {
     public pointsType: PointsTypeEnum | undefined;
     public personId: number | undefined;
     public legalId: number | undefined;
+    public penalDecreeId: number | undefined;
 }

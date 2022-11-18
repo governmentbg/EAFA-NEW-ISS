@@ -1,23 +1,34 @@
 ﻿<mat-form-field style="width: 100%" [appearance]="appearance">
     <mat-label>{{label}}</mat-label>
-    <textarea *ngIf="ngControl?.control !== null && ngControl?.control !== undefined; else areaWithoutFormControl"
-              matInput
-              [cdkTextareaAutosize]="true"
-              [cdkAutosizeMinRows]="minRows"
-              [cdkAutosizeMaxRows]="maxRows"
-              [formControl]="ngControl.control"
-              [required]="fieldIsRequired"
-              [readonly]="readonly">
-    </textarea>
-    <ng-template #areaWithoutFormControl>
-        <textarea matInput
-                  [value]="value"
+
+    <div [matTooltip]="label"
+         [matTooltipDisabled]="disableTooltip"
+         [matTooltipShowDelay]="TOOLTIP_SHOW_DELAY_MS"
+         [matTooltipPosition]="TOOLTIP_POSITION">
+        <textarea *ngIf="ngControl?.control !== null && ngControl?.control !== undefined; else areaWithoutFormControl"
+                  matInput
                   [cdkTextareaAutosize]="true"
                   [cdkAutosizeMinRows]="minRows"
                   [cdkAutosizeMaxRows]="maxRows"
+                  [formControl]="ngControl.control"
                   [required]="fieldIsRequired"
                   [readonly]="readonly">
+    </textarea>
+    </div>
+    <ng-template #areaWithoutFormControl>
+        <div [matTooltip]="label"
+             [matTooltipDisabled]="disableTooltip"
+             [matTooltipShowDelay]="TOOLTIP_SHOW_DELAY_MS"
+             [matTooltipPosition]="TOOLTIP_POSITION">
+            <textarea matInput
+                      [value]="value"
+                      [cdkTextareaAutosize]="true"
+                      [cdkAutosizeMinRows]="minRows"
+                      [cdkAutosizeMaxRows]="maxRows"
+                      [required]="fieldIsRequired"
+                      [readonly]="readonly">
         </textarea>
+        </div>
     </ng-template>
     <tl-help matSuffix [tooltipResource]="tooltipResourceName"></tl-help>
     <mat-error *ngIf="errors.length > 0">

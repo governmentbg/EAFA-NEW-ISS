@@ -15,7 +15,12 @@ import { RecordChangedEventArgs } from '@app/shared/components/data-table/models
 import { IPenalDecreesService } from '@app/interfaces/administration-app/penal-decrees.interface';
 import { PenalDecreesService } from '@app/services/administration-app/penal-decrees.service';
 import { AuanConfiscatedFishDTO } from '@app/models/generated/dtos/AuanConfiscatedFishDTO';
-import { CommandTypes } from '@app/shared/components/data-table/enums/command-type.enum';
+import { ChooseLawSectionsComponent } from '../../auan-register/choose-law-sections/choose-law-sections.component';
+import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
+import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
+import { ChooseLawSectionDialogParams } from '../../auan-register/models/choose-law-section-dialog-params.model';
+import { AuanLawSectionDTO } from '@app/models/generated/dtos/AuanLawSectionDTO';
+import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 
 @Component({
     selector: 'decree-sized-fish',
@@ -27,7 +32,7 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
     @Input() public isAppliance: boolean = false;
 
     @Input() public isAuan: boolean = false;
-
+    
     public seizedFishForm!: FormGroup;
     public seizedFish: AuanConfiscatedFishDTO[] = [];
     public translate: FuseTranslationLoaderService;
@@ -40,24 +45,28 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
     public appliances: NomenclatureDTO<number>[] = [];
     public turbotSizeGroups: NomenclatureDTO<number>[] = [];
     public seizedFishFormTouched: boolean = false;
+    public lawSectionError: boolean = false;
 
     @ViewChild('seizedFishTable')
     private seizedFishTable!: TLDataTableComponent;
 
     private readonly nomenclatures: CommonNomenclatures;
     private readonly service: IPenalDecreesService;
+    private readonly chooseLawSectionDialog: TLMatDialog<ChooseLawSectionsComponent>;
 
     public constructor(
         @Self() ngControl: NgControl,
         translate: FuseTranslationLoaderService,
         nomenclatures: CommonNomenclatures,
-        service: PenalDecreesService
+        service: PenalDecreesService,
+        chooseLawSectionDialog: TLMatDialog<ChooseLawSectionsComponent>
     ) {
         super(ngControl);
 
         this.translate = translate;
         this.nomenclatures = nomenclatures;
         this.service = service;
+        this.chooseLawSectionDialog = chooseLawSectionDialog;
     }
 
     public async ngOnInit(): Promise<void> {
@@ -102,10 +111,7 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
                 next: (event: RecordChangedEventArgs<AuanConfiscatedFishDTO>) => {
                     if (!this.isAppliance) {
                         this.seizedFishFormTouched = true;
-
-                        if (event.Command !== CommandTypes.Edit) {
-                            this.seizedFishForm.updateValueAndValidity({ onlySelf: true });
-                        }
+                        this.seizedFishForm.updateValueAndValidity({ onlySelf: true });
                     }
                 }
             });
@@ -114,10 +120,7 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
                 next: (event: RecordChangedEventArgs<AuanConfiscatedFishDTO>) => {
                     if (!this.isAppliance) {
                         this.seizedFishFormTouched = true;
-
-                        if (event.Command !== CommandTypes.Edit) {
-                            this.seizedFishForm.updateValueAndValidity({ onlySelf: true });
-                        }
+                        this.seizedFishForm.updateValueAndValidity({ onlySelf: true });
                     }
                 }
             });
@@ -151,6 +154,20 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
         }
     }
 
+    public validate(control: AbstractControl): ValidationErrors | null {
+        const errors: ValidationErrors = {};
+        this.lawSectionError = false;
+        
+        if (this.seizedFish.length > 0) {
+            if (this.seizedFish.some(x => x.lawSectionId === undefined || x.lawSectionId === null)) {
+                this.lawSectionError = true;
+                errors['lawSectionError'] = true;
+            }
+        }
+
+        return Object.keys(errors).length > 0 ? errors : null;
+    }
+
     public seizedFishRecordChanged(event: RecordChangedEventArgs<AuanConfiscatedFishDTO>): void {
         this.seizedFish = this.seizedFishTable.rows.map(x => new AuanConfiscatedFishDTO({
             id: x.id,
@@ -160,12 +177,57 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
             turbotSizeGroupId: x.turbotSizeGroupId,
             applianceId: x.applianceId,
             weight: x.weight,
+            length: x.length,
             count: x.count,
             comments: x.comments,
+            lawSectionId: x.lawSectionId,
+            lawText: x.lawText, 
             isActive: x.isActive ?? true
         }));
 
         this.onChanged(this.seizedFish);
+    }
+
+    public openLawSectionsDialog(fish: AuanConfiscatedFishDTO): void {
+        let auditButton: IHeaderAuditButton | undefined;
+        const title: string = this.translate.getValue('penal-decrees.choose-law-section-dialog-title');
+        const data: ChooseLawSectionDialogParams = new ChooseLawSectionDialogParams({
+            id: fish.lawSectionId
+        });
+
+        const dialog = this.chooseLawSectionDialog.openWithTwoButtons({
+            title: title,
+            TCtor: ChooseLawSectionsComponent,
+            headerAuditButton: auditButton,
+            headerCancelButton: {
+                cancelBtnClicked: this.closeDialogBtnClicked.bind(this)
+            },
+            componentData: data,
+            translteService: this.translate,
+            disableDialogClose: true,
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                translateValue: this.translate.getValue('penal-decrees.choose')
+            },
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: this.translate.getValue('common.cancel'),
+            }
+        }, '1400px');
+
+        dialog.subscribe((entry: AuanLawSectionDTO) => {
+            if (entry !== undefined && entry !== null) {
+                const idx: number = this.seizedFish.findIndex(x => x === fish);
+                this.seizedFish[idx].lawSectionId = entry.id;
+                this.seizedFish[idx].lawText = entry.lawText;
+
+                this.seizedFish = this.seizedFish.slice();
+            }
+
+            this.onChanged(this.seizedFish);
+        });
     }
 
     protected getValue(): AuanConfiscatedFishDTO[] {
@@ -177,6 +239,7 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
         this.seizedFishForm = new FormGroup({
             fishTypeIdControl: new FormControl(null, Validators.required),
             weightControl: new FormControl(null, TLValidators.number(0)),
+            lengthControl: new FormControl(null, TLValidators.number(0)),
             countControl: new FormControl(null, [Validators.required, TLValidators.number(1)]),
             confiscationActionIdControl: new FormControl(null, Validators.required),
             applianceIdControl: new FormControl(null, Validators.required),
@@ -190,15 +253,21 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
 
     private fishCountValidator(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
-            if (this.seizedFishTable !== undefined && this.seizedFishTable !== null) {
-                const count: number | undefined = this.seizedFishForm.get('countControl')!.value;
-                const weight: number | undefined = this.seizedFishForm.get('weightControl')!.value;
+            const group: FormGroup = control as FormGroup;
 
+            if (this.seizedFishTable !== undefined && this.seizedFishTable !== null && !this.viewMode) {
+                const count: number | undefined = group.get('countControl')!.value;
+                const weight: number | undefined = group.get('weightControl')!.value;
+                
                 if ((count === undefined || count === null) && (weight === undefined || weight === null)) {
                     return { 'fishCountValidationError': true };
                 }
             }
             return null;
         }
+    }
+
+    private closeDialogBtnClicked(closeFn: HeaderCloseFunction): void {
+        closeFn();
     }
 }

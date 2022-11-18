@@ -7,7 +7,8 @@ import { ApplicationSubmittedForDTO } from './ApplicationSubmittedForDTO';
 import { ChangeOfCircumstancesDTO } from './ChangeOfCircumstancesDTO';
 import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformationDTO';
 import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
-import { FileInfoDTO } from './FileInfoDTO'; 
+import { FileInfoDTO } from './FileInfoDTO';
+import { AquacultureChangeOfCircumstancesRegixDataDTO } from './AquacultureChangeOfCircumstancesRegixDataDTO'; 
 
 export class AquacultureChangeOfCircumstancesApplicationDTO extends AquacultureChangeOfCircumstancesBaseRegixDataDTO {
     public constructor(obj?: Partial<AquacultureChangeOfCircumstancesApplicationDTO>) {
@@ -49,4 +50,7 @@ export class AquacultureChangeOfCircumstancesApplicationDTO extends AquacultureC
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
+
+    @StrictlyTyped(AquacultureChangeOfCircumstancesRegixDataDTO)
+    public regiXDataModel?: AquacultureChangeOfCircumstancesRegixDataDTO;
 }

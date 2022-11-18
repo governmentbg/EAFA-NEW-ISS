@@ -63,6 +63,7 @@ import { LogBookPageDocumentTypesEnum } from './enums/log-book-page-document-typ
 import { PagesPermissions } from './components/ship-pages-and-declarations-table/models/pages-permissions.model';
 
 const PAGE_NUMBER_CONTROL_NAME: string = 'pageNumberControl';
+type ThreeState = 'yes' | 'no' | 'both';
 
 @Component({
     selector: 'catches-and-sales-content',
@@ -107,11 +108,17 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     public readonly canEditAquacultureLogBookRecords: boolean;
     public readonly canCancelAquacultureLogBookRecords: boolean;
 
+    public readonly shipForbiddenForPagesTooltip: string;
+    public readonly addLogBookPageTooltip: string;
+    public readonly logBookFishinedTooltip: string;
+    public readonly logBookHasSuspendedLicenseTooltip: string;
+
     public logBookTypes: NomenclatureDTO<number>[] = [];
     public ships: ShipNomenclatureDTO[] = [];
     public aquacultureFacilities: NomenclatureDTO<number>[] = [];
     public registeredBuyers: NomenclatureDTO<number>[] = [];
     public logBookStatuses: NomenclatureDTO<number>[] = [];
+    public showExistingPages: NomenclatureDTO<ThreeState>[] = [];
 
     public pagesPermissions!: PagesPermissions;
 
@@ -200,6 +207,29 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             canEditTransportationLogBookRecords: this.canEditTransportationLogBookRecords
         });
 
+        this.shipForbiddenForPagesTooltip = this.translationService.getValue('catches-and-sales.ship-is-forbidden-for-page-add');
+        this.addLogBookPageTooltip = this.translationService.getValue('catches-and-sales.add-log-book-page');
+        this.logBookFishinedTooltip = this.translationService.getValue('catches-and-sales.no-page-add-because-log-book-is-finished');
+        this.logBookHasSuspendedLicenseTooltip = this.translationService.getValue('catches-and-sales.no-page-add-because-log-book-is-suspended');
+
+        this.showExistingPages = [
+            new NomenclatureDTO<ThreeState>({
+                value: 'yes',
+                displayName: this.translationService.getValue('catches-and-sales.show-only-existing-pages-yes'),
+                isActive: true
+            }),
+            new NomenclatureDTO<ThreeState>({
+                value: 'no',
+                displayName: this.translationService.getValue('catches-and-sales.show-only-existing-pages-no'),
+                isActive: true
+            }),
+            new NomenclatureDTO<ThreeState>({
+                value: 'both',
+                displayName: this.translationService.getValue('catches-and-sales.show-only-existing-pages-all'),
+                isActive: true
+            })
+        ];
+
         this.buildForm();
     }
 
@@ -261,6 +291,25 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             this.gridManager.advancedFilters = new CatchesAndSalesAdministrationFilters({ personId: personId });
         }
 
+        this.gridManager.onRequestServiceMethodCalled.subscribe({
+            next: (rows: LogBookRegisterDTO[] | undefined) => {
+                if (rows !== null && rows !== undefined && rows.length > 0) {
+                    setTimeout(() => {
+                        const buttons = this.getMainTableButtons();
+                        for (const button of buttons) {
+                            const row = rows!.find(x => x.id!.toString() === button.getAttribute('data-logbook-id'));
+
+                            if (row !== null && row !== undefined) {
+                                if (row.isShipForbiddenForPages || row.isLogBookFinished || row.isLogBookSuspended) {
+                                    button.disabled = true;
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
         this.gridManager.refreshData();
     }
 
@@ -313,7 +362,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             headerAuditBtn = {
                 id: logBookRegister.id!,
                 getAuditRecordData: this.service.getLogBookAudit.bind(this.service),
-                tableName: 'LogBooks'
+                tableName: 'LogBook'
             }
         }
 
@@ -370,7 +419,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         if (!IS_PUBLIC_APP) {
             headerAuditBtn = {
                 id: shipPage.id!,
-                tableName: 'ShipLogBookPages',
+                tableName: 'ShipLogBookPage',
                 tooltip: '',
                 getAuditRecordData: this.service.getShipLogBookPageSimpleAudit.bind(this.service)
             };
@@ -450,7 +499,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         if (!IS_PUBLIC_APP) {
             headerAuditBtn = {
                 id: logBookPage.id!,
-                tableName: 'AquacultureLogBookPages',
+                tableName: 'AquacultureLogBookPage',
                 tooltip: '',
                 getAuditRecordData: this.service.getAquacultureLogBookPageSimpleAudit.bind(this.service)
             };
@@ -576,7 +625,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
                 shipLogBookPageId: shipLogBookPageId
             }),
             disableDialogClose: true
-        }, '1000px').subscribe({
+        }, '1500px').subscribe({
             next: (result: unknown | undefined) => { // TODO types
                 if (result !== undefined) {
                     this.gridManager.refreshData();
@@ -612,7 +661,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             }),
             disableDialogClose: true,
             viewMode: false
-        }, '1000px').subscribe({
+        }, '1500px').subscribe({
             next: (page: ShipLogBookPageEditDTO | undefined) => {
                 if (page !== undefined && page !== null) {
                     this.gridManager.refreshData();
@@ -671,7 +720,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
                 pageStatus: pageNumber !== undefined && pageNumber !== null ? LogBookPageStatusesEnum.Missing : undefined
             }),
             disableDialogClose: true
-        }, '1000px').subscribe({
+        }, '1500px').subscribe({
             next: (result: unknown | undefined) => { // TODO types
                 if (result !== undefined) {
                     this.gridManager.refreshData();
@@ -702,7 +751,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
                 viewMode: false
             }),
             disableDialogClose: true
-        }, '1300px').subscribe({
+        }, '1500px').subscribe({
             next: (result: AquacultureLogBookPageEditDTO | undefined) => {
                 if (result !== undefined) {
                     this.gridManager.refreshData();
@@ -728,7 +777,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         if (!IS_PUBLIC_APP && data.id !== null && data.id !== undefined) {
             headerAuditBtn = {
                 id: data.id!,
-                tableName: 'TransportationLogBookPages',
+                tableName: 'TransportationLogBookPage',
                 tooltip: '',
                 getAuditRecordData: this.service.getTransportationLogBookPageSimpleAudit.bind(this.service)
             };
@@ -745,7 +794,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             },
             componentData: data,
             disableDialogClose: !viewMode
-        }, '1300px').subscribe({
+        }, '1500px').subscribe({
             next: (result: TransportationLogBookPageEditDTO | undefined) => {
                 if (result !== undefined) {
                     this.gridManager.refreshData();
@@ -775,7 +824,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         if (!IS_PUBLIC_APP) {
             headerAuditBtn = {
                 id: logBookPage.id!,
-                tableName: 'AdmissionLogBookPages',
+                tableName: 'AdmissionLogBookPage',
                 tooltip: '',
                 getAuditRecordData: this.service.getAdmissionLogBookPageSimpleAudit.bind(this.service)
             };
@@ -792,7 +841,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             },
             componentData: data,
             disableDialogClose: !viewMode
-        }, '1300px').subscribe({
+        }, '1500px').subscribe({
             next: (result: AdmissionLogBookPageEditDTO | undefined) => {
                 if (result !== undefined) {
                     this.gridManager.refreshData();
@@ -822,7 +871,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         if (!IS_PUBLIC_APP) {
             headerAuditBtn = {
                 id: logBookPage.id!,
-                tableName: 'FirstSaleLogBookPages',
+                tableName: 'FirstSaleLogBookPage',
                 tooltip: '',
                 getAuditRecordData: this.service.getFirstSaleLogBookPageSimpleAudit.bind(this.service)
             };
@@ -839,7 +888,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             },
             componentData: data,
             disableDialogClose: !viewMode
-        }, '1300px').subscribe({
+        }, '1500px').subscribe({
             next: (result: FirstSaleLogBookPageEditDTO | undefined) => {
                 if (result !== undefined) {
                     this.gridManager.refreshData();
@@ -880,6 +929,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.formGroup = new FormGroup({
             logBookNumberControl: new FormControl(),
             documentNumberControl: new FormControl(null, TLValidators.number(0)),
+            showExistingPagesControl: new FormControl(),
             logBookTypeControl: new FormControl(),
             logBookStatusesControl: new FormControl(),
             logBookValidityRangeControl: new FormControl(),
@@ -894,6 +944,9 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             this.formGroup.addControl('registeredBuyerControl', new FormControl());
             this.formGroup.addControl('ownerEgnEikControl', new FormControl());
         }
+
+        const showOnlyExistingPages: NomenclatureDTO<ThreeState> = this.showExistingPages.find(x => x.value === 'yes')!;
+        this.formGroup.get('showExistingPagesControl')!.setValue(showOnlyExistingPages);
     }
 
     private mapFilters(filters: FilterEventArgs): CatchesAndSalesAdministrationFilters | CatchesAndSalesPublicFilters {
@@ -961,7 +1014,26 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             }
         }
 
+        const showOnlyExistingPages = filters.getValue<ThreeState>('showExistingPagesControl');
+        if (showOnlyExistingPages !== undefined && showOnlyExistingPages !== null) {
+            switch (showOnlyExistingPages) {
+                case 'yes':
+                    result.showOnlyExistingPages = true;
+                    break;
+                case 'no':
+                    result.showOnlyExistingPages = false;
+                    break;
+                case 'both':
+                    result.showOnlyExistingPages = undefined;
+                    break;
+            }
+        }
+
         return result;
+    }
+
+    private getMainTableButtons(): HTMLButtonElement[] {
+        return Array.from(document.querySelectorAll('[data-logbook-id]'));
     }
 
     private closeAddShipLogBookPageDialogBtnClicked(closeFn: HeaderCloseFunction): void {

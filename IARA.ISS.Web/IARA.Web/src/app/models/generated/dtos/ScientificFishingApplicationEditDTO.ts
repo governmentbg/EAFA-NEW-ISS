@@ -5,7 +5,8 @@ import { ScientificFishingPermitBaseRegixDataDTO } from './ScientificFishingPerm
 import { LetterOfAttorneyDTO } from './LetterOfAttorneyDTO';
 import { ScientificFishingPermitHolderDTO } from './ScientificFishingPermitHolderDTO';
 import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
-import { FileInfoDTO } from './FileInfoDTO'; 
+import { FileInfoDTO } from './FileInfoDTO';
+import { ScientificFishingPermitRegixDataDTO } from './ScientificFishingPermitRegixDataDTO'; 
 
 export class ScientificFishingApplicationEditDTO extends ScientificFishingPermitBaseRegixDataDTO {
     public constructor(obj?: Partial<ScientificFishingApplicationEditDTO>) {
@@ -20,6 +21,9 @@ export class ScientificFishingApplicationEditDTO extends ScientificFishingPermit
   
     @StrictlyTyped(Boolean)
     public isOnlineApplication?: boolean;
+
+    @StrictlyTyped(String)
+    public eventisNum?: string;
 
     @StrictlyTyped(Date)
     public registrationDate?: Date;
@@ -89,4 +93,7 @@ export class ScientificFishingApplicationEditDTO extends ScientificFishingPermit
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
+
+    @StrictlyTyped(ScientificFishingPermitRegixDataDTO)
+    public regiXDataModel?: ScientificFishingPermitRegixDataDTO;
 }

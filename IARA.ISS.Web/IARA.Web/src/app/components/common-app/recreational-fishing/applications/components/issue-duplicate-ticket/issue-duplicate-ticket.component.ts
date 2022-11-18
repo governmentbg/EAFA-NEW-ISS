@@ -78,7 +78,9 @@ export class IssueDuplicateTicketComponent implements OnInit, AfterViewInit, IDi
                                 tariffBasedOnPlea: tariff.basedOnPlea,
                                 quantity: 1,
                                 unitPrice: tariff.price,
-                                price: tariff.price
+                                price: tariff.price,
+                                isCalculated: tariff.isCalculated,
+                                isChecked: true
                             })
                         ],
                         totalPrice: tariff.price

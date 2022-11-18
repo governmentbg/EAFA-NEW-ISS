@@ -4,25 +4,54 @@
                       [resizeable]="isResizable"
                       [frozenLeft]="attachedLeft"
                       [frozenRight]="attachedRight">
-    <ng-template let-row="row" ngx-datatable-cell-template>
+    <ng-template let-row="row"
+                 ngx-datatable-cell-template>
         <ng-container *ngIf="!row.editMode">
-            <div *ngIf="!showInactive" fxFill fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="5px">
-                <tl-icon-button *ngIf="!hideEditBtn" icon="edit" (buttonClicked)="onEditRow(row)" iconClass="accent-color"
+            <div *ngIf="!showInactive"
+                 fxFill
+                 fxLayout="row"
+                 fxLayoutAlign="space-around center"
+                 fxLayoutGap="5px">
+                <tl-icon-button *ngIf="!hideEditBtn"
+                                icon="edit"
+                                (buttonClicked)="onEditRow(row)"
+                                iconClass="accent-color"
                                 [tooltipText]="editTooltipText"></tl-icon-button>
-                <tl-icon-button *ngIf="!hideDeleteBtn" icon="delete" (buttonClicked)="onDeleteRow(row)" iconClass="accent-color"
+                <tl-icon-button *ngIf="!hideDeleteBtn && (!hideDeleteBtnWhen || hideDeleteBtnWhen(row))"
+                                icon="delete"
+                                (buttonClicked)="onDeleteRow(row)"
+                                iconClass="accent-color"
                                 [tooltipText]="deleteTooltipText"></tl-icon-button>
             </div>
-            <div *ngIf="showInactive" fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="5px">
-                <tl-icon-button *ngIf="!hideRestoreBtn" icon="restore" (buttonClicked)="onUndoDeleteRow(row)" iconClass="accent-color"
+            <div *ngIf="showInactive"
+                 fxLayout="row"
+                 fxLayoutAlign="space-around center"
+                 fxLayoutGap="5px">
+                <tl-icon-button *ngIf="!hideRestoreBtn"
+                                icon="restore"
+                                (buttonClicked)="onUndoDeleteRow(row)"
+                                iconClass="accent-color"
                                 [tooltipText]="saveTooltipText"></tl-icon-button>
             </div>
         </ng-container>
-        <div *ngIf="row.editMode" fxFill fxLayout="row" fxLayoutAlign="space-evenly center" fxLayoutGap="5px">
-            <tl-icon-button *ngIf="!row.validationError" icon="save" (buttonClicked)="onSaveRow(row)" iconClass="accent-color"
+        <div *ngIf="row.editMode"
+             fxFill
+             fxLayout="row"
+             fxLayoutAlign="space-evenly center"
+             fxLayoutGap="5px">
+            <tl-icon-button *ngIf="!row.validationError"
+                            icon="save"
+                            (buttonClicked)="onSaveRow(row)"
+                            iconClass="accent-color"
                             [tooltipText]="saveTooltipText"></tl-icon-button>
-            <tl-icon-button *ngIf="row.validationError" icon="save" (buttonClicked)="onSaveRow(row)" iconColor="red"
+            <tl-icon-button *ngIf="row.validationError"
+                            icon="save"
+                            (buttonClicked)="onSaveRow(row)"
+                            iconColor="red"
                             [tooltipText]="saveTooltipText"></tl-icon-button>
-            <tl-icon-button icon="cancel" (buttonClicked)="onUndoAddEditRow(row)" iconClass="accent-color"
+            <tl-icon-button icon="cancel"
+                            (buttonClicked)="onUndoAddEditRow(row)"
+                            iconClass="accent-color"
                             [tooltipText]="undoTooltipText"></tl-icon-button>
         </div>
     </ng-template>

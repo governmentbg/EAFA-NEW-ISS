@@ -6,7 +6,8 @@ import { ApplicationSubmittedByDTO } from './ApplicationSubmittedByDTO';
 import { ApplicationSubmittedForDTO } from './ApplicationSubmittedForDTO';
 import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformationDTO';
 import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
-import { FileInfoDTO } from './FileInfoDTO'; 
+import { FileInfoDTO } from './FileInfoDTO';
+import { CapacityCertificateDuplicateRegixDataDTO } from './CapacityCertificateDuplicateRegixDataDTO'; 
 
 export class CapacityCertificateDuplicateApplicationDTO extends CapacityCertificateDuplicateBaseRegixDataDTO {
     public constructor(obj?: Partial<CapacityCertificateDuplicateApplicationDTO>) {
@@ -51,4 +52,7 @@ export class CapacityCertificateDuplicateApplicationDTO extends CapacityCertific
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
+
+    @StrictlyTyped(CapacityCertificateDuplicateRegixDataDTO)
+    public regiXDataModel?: CapacityCertificateDuplicateRegixDataDTO;
 }

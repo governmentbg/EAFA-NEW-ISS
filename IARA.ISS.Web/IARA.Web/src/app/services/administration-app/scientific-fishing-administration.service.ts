@@ -51,8 +51,8 @@ export class ScientificFishingAdministrationService extends ApplicationsRegister
         });
     }
 
-    public getApplication(id: number): Observable<ScientificFishingApplicationEditDTO> {
-        return this.commonService.getPermitApplication(this.area, this.controller, id);
+    public getApplication(id: number, getRegiXData: boolean): Observable<ScientificFishingApplicationEditDTO> {
+        return this.commonService.getPermitApplication(this.area, this.controller, id, getRegiXData);
     }
 
     public getPermit(id: number): Observable<ScientificFishingPermitEditDTO> {
@@ -74,6 +74,15 @@ export class ScientificFishingAdministrationService extends ApplicationsRegister
             httpParams: params,
             responseType: 'text',
             properties: RequestProperties.NO_SPINNER
+        });
+    }
+
+    public getShipCaptainName(shipId: number): Observable<string> {
+        const params = new HttpParams().append('shipId', shipId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetShipCaptainName', {
+            httpParams: params,
+            responseType: 'text'
         });
     }
 

@@ -51,6 +51,7 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
         snackbar: MatSnackBar
     ) {
         super(service, translate, nomenclatures, snackbar);
+        this.inspectionCode = InspectionTypesEnum.IFS;
     }
 
     public async ngOnInit(): Promise<void> {
@@ -92,7 +93,7 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
         this.catchToggles = nomenclatureTables[7].map(f => new InspectionCheckModel(f));
 
         if (this.id !== null && this.id !== undefined) {
-            this.service.get(this.id).subscribe({
+            this.service.get(this.id, this.inspectionCode).subscribe({
                 next: (dto: InspectionFirstSaleDTO) => {
                     this.model = dto;
 
@@ -158,7 +159,8 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
                 inspectorComment: this.model.inspectorComment,
-                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo)
+                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo),
+                violatedRegulations: this.model.violatedRegulations,
             }));
 
             this.form.get('representativeCommentControl')!.setValue(this.model.representativeComment);
@@ -184,12 +186,11 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
                 );
                 const importer = this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.Importer);
 
-                if (importer !== null && importer !== undefined) {
-                    this.hasImporter = true;
+                this.hasImporter = importer !== null && importer !== undefined;
+                this.form.get('hasImporterControl')!.setValue(this.hasImporter);
+
+                if (this.hasImporter) {
                     this.form.get('importerControl')!.setValue(importer);
-                }
-                else {
-                    this.hasImporter = false;
                 }
             }
         }
@@ -211,6 +212,7 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
             byEmergencySignal: generalInfo.byEmergencySignal,
             inspectionType: InspectionTypesEnum.IFS,
             inspectorComment: additionalInfo?.inspectorComment,
+            violatedRegulations: additionalInfo?.violatedRegulations,
             isActive: true,
             representativeComment: this.form.get('representativeCommentControl')!.value,
             catchMeasures: this.form.get('catchesControl')!.value,

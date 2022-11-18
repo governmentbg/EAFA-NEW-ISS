@@ -1,19 +1,19 @@
 ﻿
-import { BaseRequestModel } from '../../common/BaseRequestModel';
+
+import { BaseRequestModel } from '@app/models/common/BaseRequestModel';
 
 export class UserManagementFilters extends BaseRequestModel {
 
     constructor(obj?: Partial<UserManagementFilters>) {
-        if (obj != undefined) {
-            super((obj as BaseRequestModel));
-            Object.assign(this, obj);
-        } else {
-            super();
-        }
+      if (obj != undefined) { 
+        super((obj as BaseRequestModel));
+        Object.assign(this, obj);
+      } else {
+        super();
+      }
     }
 
-
-    public username: string | undefined;
+    
     public firstName: string | undefined;
     public middleName: string | undefined;
     public lastName: string | undefined;

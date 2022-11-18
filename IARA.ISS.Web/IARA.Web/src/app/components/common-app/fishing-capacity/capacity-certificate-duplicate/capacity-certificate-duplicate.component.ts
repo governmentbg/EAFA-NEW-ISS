@@ -1,6 +1,7 @@
 ﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { FileTypeEnum } from '@app/enums/file-types.enum';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
@@ -26,9 +27,8 @@ import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-c
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { ApplicationDialogData, ApplicationUtils } from '@app/shared/utils/application.utils';
 import { CommonUtils } from '@app/shared/utils/common.utils';
-import { ApplicationPaymentInformationDTO } from '../../../../models/generated/dtos/ApplicationPaymentInformationDTO';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorCode, ErrorModel } from '../../../../models/common/exception.model';
+import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 
 @Component({
     selector: 'capacity-certificate-duplicate',
@@ -53,11 +53,13 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public isEditing: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isReadonly: boolean = false;
     public viewMode: boolean = false;
     public isDraft: boolean = false;
     public isPaid: boolean = false;
     public hasDelivery: boolean = false;
+    public hideBasicPaymentInfo: boolean = false;
     public service!: IFishingCapacityService;
 
     public hasNoEDeliveryRegistrationError: boolean = false;
@@ -84,6 +86,11 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
     public async ngOnInit(): Promise<void> {
         this.certificates = await this.service.getAllCapacityCertificateNomenclatures().toPromise();
 
+        const now: Date = new Date();
+        for (const certificate of this.certificates) {
+            certificate.isActive = certificate.isActive && certificate.validTo! >= now;
+        }
+
         // извличане на исторически данни за заявление
         if (this.isApplicationHistoryMode && this.applicationId !== undefined) {
             this.form.disable();
@@ -99,6 +106,7 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
                         this.paymentInformation = application.paymentInformation;
+                        this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
 
@@ -132,7 +140,7 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData, this.pageCode).subscribe({
                         next: (application: CapacityCertificateDuplicateApplicationDTO) => {
                             application.applicationId = this.applicationId;
                             application.isDraft = application.isDraft ?? true;
@@ -141,8 +149,14 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
                             this.paymentInformation = application.paymentInformation;
+                            this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.isDraft = application.isDraft;
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new CapacityCertificateDuplicateRegixDataDTO(application.regiXDataModel);
+                                application.regiXDataModel = undefined;
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (application.submittedBy === undefined || application.submittedBy === null)) {
                                 const service = this.service as FishingCapacityPublicService;
@@ -180,6 +194,7 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.viewMode = data.viewMode;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.applicationsService = data.applicationsService;
         this.service = data.service as IFishingCapacityService;
         this.dialogRightSideActions = wrapperData.rightSideActions;
@@ -261,23 +276,8 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
         this.form.get('submittedForControl')!.setValue(this.model.submittedFor);
 
         if (this.model instanceof CapacityCertificateDuplicateRegixDataDTO) {
-            if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
-                const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
-
-                setTimeout(() => {
-                    this.regixChecks = checks;
-                });
-            }
-
-            if (!this.viewMode) {
-                this.notifier.start();
-                this.notifier.onNotify.subscribe({
-                    next: () => {
-                        this.form.markAllAsTouched();
-                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
-                        this.notifier.stop();
-                    }
-                });
+            if (this.showRegiXData) {
+                this.fillFormRegiX();
             }
         }
         else {
@@ -292,6 +292,35 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
 
             this.form.get('reasonControl')!.setValue(this.model.reason);
             this.form.get('filesControl')!.setValue(this.model.files);
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX();
+            }
+        }
+    }
+
+    private fillFormRegiX(): void {
+        if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
+            const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
+
+            setTimeout(() => {
+                this.regixChecks = checks;
+            });
+        }
+
+        if (!this.viewMode) {
+            this.notifier.start();
+            this.notifier.onNotify.subscribe({
+                next: () => {
+                    this.form.markAllAsTouched();
+
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+
+                    this.notifier.stop();
+                }
+            });
         }
     }
 
@@ -360,5 +389,11 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
                 }
             }
         }
+    }
+
+    private shouldHidePaymentData(): boolean {
+        return this.paymentInformation?.paymentType === null
+            || this.paymentInformation?.paymentType === undefined
+            || this.paymentInformation?.paymentType === '';
     }
 }

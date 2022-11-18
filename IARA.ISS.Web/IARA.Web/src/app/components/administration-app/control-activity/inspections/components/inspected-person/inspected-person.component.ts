@@ -36,6 +36,12 @@ export class InspectedPersonComponent extends CustomFormControl<InspectionSubjec
         this.translate = translate;
 
         this.buildForm();
+
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.control.updateValueAndValidity();
+            }
+        });
     }
 
     public ngOnInit(): void {

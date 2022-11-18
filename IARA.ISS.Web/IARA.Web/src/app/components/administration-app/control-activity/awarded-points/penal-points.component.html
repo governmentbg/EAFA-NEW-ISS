@@ -1,6 +1,6 @@
 ﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
     <!-- Филтри -->
-    <search-panel *ngIf="shipId === null || shipId === undefined" [translateService]="translate">
+    <search-panel *ngIf="openedFromMenu" [translateService]="translate">
         <div [formGroup]="form" fxFlexFill fxLayout="column" fxLayoutGap="1em">
             <!-- № на наказателно постановление, дата на съставяне, № на заповед, дата на издаване -->
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
@@ -113,88 +113,91 @@
     </search-panel>
 
     <!--Таблица-->
-    <mat-card>
-        <tl-data-table [showAddButton]="canAddRecords && (shipId === null || shipId === undefined)"
-                       [showInactiveRecords]="canRestoreRecords && (shipId === null || shipId === undefined)"
-                       (addButtonClicked)="addEditPenalPoints(undefined, false)">
-            <data-column propertyName="penalDecreeNum"
-                         [flexRate]="0.3"
-                         columnName="{{ 'penal-points.table-penal-decree-num' | tlTranslate }}">
-            </data-column>
+    <tl-card>
+        <tl-card-title *ngIf="this.penalDecreeId !== null && this.penalDecreeId !== undefined">{{ 'penal-points.decree-penal-points-title' | tlTranslate }}</tl-card-title>
+        <tl-card-content>
+            <tl-data-table [showAddButton]="canAddRecords && openedFromMenu"
+                           [showInactiveRecords]="canRestoreRecords && openedFromMenu"
+                           (addButtonClicked)="addEditPenalPoints(undefined, false)">
+                <data-column propertyName="penalDecreeNum"
+                             [flexRate]="0.3"
+                             columnName="{{ 'penal-points.table-penal-decree-num' | tlTranslate }}">
+                </data-column>
 
-            <data-column propertyName="decreeNum"
-                         [flexRate]="0.3"
-                         columnName="{{ 'penal-points.table-order-num' | tlTranslate }}">
-            </data-column>
+                <data-column propertyName="decreeNum"
+                             [flexRate]="0.3"
+                             columnName="{{ 'penal-points.table-order-num' | tlTranslate }}">
+                </data-column>
 
-            <data-column propertyName="issueDate"
-                         [flexRate]="0.3"
-                         dataType="date"
-                         columnName="{{ 'penal-points.table-issue-date' | tlTranslate }}">
-            </data-column>
+                <data-column propertyName="issueDate"
+                             [flexRate]="0.3"
+                             dataType="date"
+                             columnName="{{ 'penal-points.table-issue-date' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.3"
-                         propertyName="pointsType"
-                         [options]="pointsTypes"
-                         dataType="nomenclature"
-                         columnName="{{ 'penal-points.table-points-type' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.3"
+                             propertyName="pointsType"
+                             [options]="pointsTypes"
+                             dataType="nomenclature"
+                             columnName="{{ 'penal-points.table-points-type' | tlTranslate }}">
+                </data-column>
 
-            <data-column propertyName="ship"
-                         [flexRate]="0.3"
-                         columnName="{{ 'penal-points.table-ship' | tlTranslate }}">
-            </data-column>
+                <data-column propertyName="ship"
+                             [flexRate]="0.3"
+                             columnName="{{ 'penal-points.table-ship' | tlTranslate }}">
+                </data-column>
 
-            <data-column propertyName="name"
-                         [flexRate]="0.3"
-                         columnName="{{ 'penal-points.table-name' | tlTranslate }}">
-            </data-column>
+                <data-column propertyName="name"
+                             [flexRate]="0.3"
+                             columnName="{{ 'penal-points.table-name' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.3"
-                         propertyName="isIncreasePoints"
-                         [options]="orderTypes"
-                         dataType="nomenclature"
-                         columnName="{{ 'penal-points.table-order-type' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.3"
+                             propertyName="isIncreasePoints"
+                             [options]="orderTypes"
+                             dataType="nomenclature"
+                             columnName="{{ 'penal-points.table-order-type' | tlTranslate }}">
+                </data-column>
 
-            <data-column propertyName="pointsAmount"
-                         [flexRate]="0.3"
-                         columnName="{{ 'penal-points.table-points-amount' | tlTranslate }}">
-            </data-column>
+                <data-column propertyName="pointsAmount"
+                             [flexRate]="0.3"
+                             columnName="{{ 'penal-points.table-points-amount' | tlTranslate }}">
+                </data-column>
 
-            <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
-                <ng-template let-row="row" ngx-datatable-cell-template>
-                    <div fxLayout="row wrap" fxLayoutAlign="end center">
-                        <tl-icon-button *ngIf="canReadRecords"
-                                        icon="visibility"
-                                        (buttonClicked)="addEditPenalPoints(row.data, true)"
-                                        iconClass="accent-color"
-                                        tooltipText="{{ 'penal-points.view-penal-points' | tlTranslate }}">
-                        </tl-icon-button>
+                <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button *ngIf="canReadRecords"
+                                            icon="visibility"
+                                            (buttonClicked)="addEditPenalPoints(row.data, true)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'penal-points.view-penal-points' | tlTranslate }}">
+                            </tl-icon-button>
 
-                        <tl-icon-button *ngIf="row.isActive && canEditRecords && (shipId === null || shipId === undefined)"
-                                        icon="edit"
-                                        (buttonClicked)="addEditPenalPoints(row.data, false)"
-                                        iconClass="accent-color"
-                                        tooltipText="{{ 'penal-points.edit-penal-points' | tlTranslate }}">
-                        </tl-icon-button>
+                            <tl-icon-button *ngIf="row.isActive && canEditRecords && openedFromMenu"
+                                            icon="edit"
+                                            (buttonClicked)="addEditPenalPoints(row.data, false)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'penal-points.edit-penal-points' | tlTranslate }}">
+                            </tl-icon-button>
 
-                        <tl-icon-button *ngIf="row.isActive && canDeleteRecords && (shipId === null || shipId === undefined)"
-                                        icon="delete"
-                                        (buttonClicked)="deletePenalPoints(row.data)"
-                                        iconClass="accent-color"
-                                        tooltipText="{{ 'penal-points.delete-penal-points' | tlTranslate }}">
-                        </tl-icon-button>
+                            <tl-icon-button *ngIf="row.isActive && canDeleteRecords && openedFromMenu"
+                                            icon="delete"
+                                            (buttonClicked)="deletePenalPoints(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'penal-points.delete-penal-points' | tlTranslate }}">
+                            </tl-icon-button>
 
-                        <tl-icon-button *ngIf="!row.isActive && canRestoreRecords && (shipId === null || shipId === undefined)"
-                                        icon="restore"
-                                        (buttonClicked)="restorePenalPoints(row.data)"
-                                        iconClass="accent-color"
-                                        tooltipText="{{ 'penal-points.restore-penal-points' | tlTranslate }}">
-                        </tl-icon-button>
-                    </div>
-                </ng-template>
-            </data-template-column>
-        </tl-data-table>
-    </mat-card>
+                            <tl-icon-button *ngIf="!row.isActive && canRestoreRecords && openedFromMenu"
+                                            icon="restore"
+                                            (buttonClicked)="restorePenalPoints(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'penal-points.restore-penal-points' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
 </div>

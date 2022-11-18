@@ -1,6 +1,9 @@
 ﻿import { IRemoteTLDatatableComponent } from '@app/shared/components/data-table/interfaces/tl-remote-datatable.interface';
 import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Observable } from 'rxjs';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
@@ -39,8 +42,16 @@ import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatur
 import { CommercialFishingPermitLicenseRegisterDTO } from '@app/models/generated/dtos/CommercialFishingPermitLicenseRegisterDTO';
 import { FishingGearNomenclatureDTO } from '@app/models/generated/dtos/FishingGearNomenclatureDTO';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
-import { IS_PUBLIC_APP } from '../../../shared/modules/application.modules';
-
+import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
+import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
+import { LogbookDTO } from '@app/models/generated/dtos/LogbookDTO';
+import { EditLogBookComponent } from '@app/components/common-app/commercial-fishing/components/edit-log-book/edit-log-book.component';
+import { LogBookEditDTO } from '@app/models/generated/dtos/LogBookEditDTO';
+import { EditLogBookDialogParamsModel } from '@app/components/common-app/commercial-fishing/components/log-books/models/edit-log-book-dialog-params.model';
+import { LogBookGroupsEnum } from '@app/enums/log-book-groups.enum';
+import { CommercialFishingLogbookRegisterDTO } from '@app/models/generated/dtos/CommercialFishingLogbookRegisterDTO';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { RequestProperties } from '@app/shared/services/request-properties';
 
 type ThreeState = 'yes' | 'no' | 'both';
 
@@ -57,6 +68,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
 
     public translationService: FuseTranslationLoaderService;
     public formGroup!: FormGroup;
+    public logBooksPerPage: number = 5;
     public permitTypes: NomenclatureDTO<number>[] = [];
     public permitLicenseTypes: NomenclatureDTO<number>[] = [];
     public fishingGearTypes: FishingGearNomenclatureDTO[] = [];
@@ -89,14 +101,16 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
     @ViewChild(TLDataTableComponent)
     private datatable!: IRemoteTLDatatableComponent;
 
-    private service!: ICommercialFishingService;
-    private nomenclatures: CommonNomenclatures;
-    private deliveryService!: IDeliveryService;
+    private readonly service!: ICommercialFishingService;
+    private readonly nomenclatures: CommonNomenclatures;
+    private readonly deliveryService!: IDeliveryService;
+    private readonly confirmDialog: TLConfirmDialog;
+    private readonly editDialog: TLMatDialog<EditCommercialFishingComponent>;
+    private readonly logBookDialog: TLMatDialog<EditLogBookComponent>;
+    private readonly chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
+    private readonly deliveryDialog: TLMatDialog<RegisterDeliveryComponent>;
+    private readonly snackbar: MatSnackBar;
     private gridManager!: DataTableManager<CommercialFishingPermitRegisterDTO, CommercialFishingRegisterFilters>;
-    private confirmDialog: TLConfirmDialog;
-    private editDialog: TLMatDialog<EditCommercialFishingComponent>;
-    private chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
-    private deliveryDialog: TLMatDialog<RegisterDeliveryComponent>;
 
     public constructor(
         translationService: FuseTranslationLoaderService,
@@ -107,7 +121,9 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         permissions: PermissionsService,
         commercialFishingService: CommercialFishingAdministrationService,
         deliveryService: DeliveryAdministrationService,
-        commonNomenclatures: CommonNomenclatures
+        commonNomenclatures: CommonNomenclatures,
+        logBookDialog: TLMatDialog<EditLogBookComponent>,
+        snackbar: MatSnackBar
     ) {
         this.translationService = translationService;
         this.confirmDialog = confirmDialog;
@@ -117,6 +133,8 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         this.service = commercialFishingService;
         this.deliveryService = deliveryService;
         this.nomenclatures = commonNomenclatures;
+        this.logBookDialog = logBookDialog;
+        this.snackbar = snackbar;
 
         this.canReadPermitRecords = permissions.has(PermissionsEnum.CommercialFishingPermitRegisterRead);
         this.canAddPermitRecords = permissions.has(PermissionsEnum.CommercialFishingPermitRegisterAddRecords);
@@ -356,6 +374,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
     public editRegister(permit: CommercialFishingPermitRegisterDTO | CommercialFishingPermitLicenseRegisterDTO, viewMode?: boolean): void {
         let title: string = '';
         let tableName: string = '';
+        let simpleAuditMethod: ((id: number) => Observable<SimpleAuditDTO>) | undefined = undefined;
 
         const data: DialogParamsModel = new DialogParamsModel({
             id: permit.id,
@@ -375,50 +394,75 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             || permit.typeCode === CommercialFishingTypesEnum.ThirdCountryPermit) {
 
             tableName = 'PermitRegister';
+            simpleAuditMethod = this.service.getSimpleAudit.bind(this.service);
         }
         else {
             tableName = 'PermitLicensesRegister';
+            simpleAuditMethod = this.service.getPermitLicenseSimpleAudit.bind(this.service);
         }
 
         const auditButton: IHeaderAuditButton = {
             id: permit.id!,
-            getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
+            getAuditRecordData: simpleAuditMethod!,
             tableName: tableName
         };
 
-        if (viewMode) {
-            switch (permit.typeCode) {
-                case CommercialFishingTypesEnum.Permit: title = this.translationService.getValue('commercial-fishing.view-permit-dialog-title');
-                    break;
-                case CommercialFishingTypesEnum.PoundNetPermit: title = this.translationService.getValue('commercial-fishing.view-poundnet-permit-dialog-title');
-                    break;
-                case CommercialFishingTypesEnum.ThirdCountryPermit: title = this.translationService.getValue('commercial-fishing.view-3rd-country-permit-dialog-title');
-                    break;
-
-                case CommercialFishingTypesEnum.PermitLicense: title = this.translationService.getValue('commercial-fishing.view-permit-license-dialog-title');
-                    break;
-                case CommercialFishingTypesEnum.PoundNetPermitLicense: title = this.translationService.getValue('commercial-fishing.view-poundnet-permit-license-dialog-title');
-                    break;
-                case CommercialFishingTypesEnum.QuataSpeciesPermitLicense: title = this.translationService.getValue('commercial-fishing.view-quata-species-permit-license-dialog-title');
-                    break;
+        switch (permit.typeCode) {
+            case CommercialFishingTypesEnum.Permit: {
+                if (viewMode) {
+                    title = this.translationService.getValue('commercial-fishing.view-permit-dialog-title');
+                }
+                else {
+                    title = this.translationService.getValue('commercial-fishing.edit-permit-dialog-title');
+                }
             }
-        }
-        else {
-            switch (permit.typeCode) {
-                case CommercialFishingTypesEnum.Permit: title = this.translationService.getValue('commercial-fishing.edit-permit-dialog-title');
-                    break;
-                case CommercialFishingTypesEnum.PoundNetPermit: title = this.translationService.getValue('commercial-fishing.edit-poundnet-permit-dialog-title');
-                    break;
-                case CommercialFishingTypesEnum.ThirdCountryPermit: title = this.translationService.getValue('commercial-fishing.edit-3rd-country-permit-dialog-title');
-                    break;
-
-                case CommercialFishingTypesEnum.PermitLicense: title = this.translationService.getValue('commercial-fishing.edit-permit-license-dialog-title');
-                    break;
-                case CommercialFishingTypesEnum.PoundNetPermitLicense: title = this.translationService.getValue('commercial-fishing.edit-poundnet-permit-license-diloag-title');
-                    break;
-                case CommercialFishingTypesEnum.QuataSpeciesPermitLicense: title = this.translationService.getValue('commercial-fishing.edit-quata-species-permit-license-dialog-title');
-                    break;
+                break;
+            case CommercialFishingTypesEnum.PoundNetPermit: {
+                if (viewMode) {
+                    title = this.translationService.getValue('commercial-fishing.view-poundnet-permit-dialog-title');
+                }
+                else {
+                    title = this.translationService.getValue('commercial-fishing.edit-poundnet-permit-dialog-title');
+                }
             }
+                break;
+            case CommercialFishingTypesEnum.ThirdCountryPermit: {
+                if (viewMode) {
+                    title = this.translationService.getValue('commercial-fishing.view-3rd-country-permit-dialog-title');
+                }
+                else {
+                    title = this.translationService.getValue('commercial-fishing.edit-3rd-country-permit-dialog-title');
+                }
+            }
+                break;
+
+            case CommercialFishingTypesEnum.PermitLicense: {
+                if (viewMode) {
+                    title = this.translationService.getValue('commercial-fishing.view-permit-license-dialog-title');
+                }
+                else {
+                    title = this.translationService.getValue('commercial-fishing.edit-permit-license-dialog-title');
+                }
+            }
+                break;
+            case CommercialFishingTypesEnum.PoundNetPermitLicense: {
+                if (viewMode) {
+                    title = this.translationService.getValue('commercial-fishing.view-poundnet-permit-license-dialog-title');
+                }
+                else {
+                    title = this.translationService.getValue('commercial-fishing.edit-poundnet-permit-license-diloag-title');
+                }
+            }
+                break;
+            case CommercialFishingTypesEnum.QuataSpeciesPermitLicense: {
+                if (viewMode) {
+                    title = this.translationService.getValue('commercial-fishing.view-quata-species-permit-license-dialog-title');
+                }
+                else {
+                    title = this.translationService.getValue('commercial-fishing.edit-quata-species-permit-license-dialog-title');
+                }
+            }
+                break;
         }
 
         this.openPermitDialog(data, title, auditButton, viewMode ?? false, permit.isSuspended!);
@@ -502,6 +546,98 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         });
     }
 
+    public editLogBook(logBook: CommercialFishingLogbookRegisterDTO, viewMode: boolean = false): void {
+        let title: string = '';
+
+        if (viewMode) {
+            title = this.translationService.getValue('commercial-fishing.view-log-book-title');
+        }
+        else {
+            title = this.translationService.getValue('commercial-fishing.edit-log-book-title');
+        }
+
+        const data: EditLogBookDialogParamsModel = new EditLogBookDialogParamsModel({
+            permitLicenseLogBookId: logBook.id,
+            service: this.service as CommercialFishingAdministrationService,
+            readOnly: viewMode,
+            logBookGroup: LogBookGroupsEnum.Ship,
+            ownerType: logBook.ownerType,
+            pagesRangeError: false,
+            isOnline: logBook.isOnline!
+        });
+
+        const headerAuditBtn: IHeaderAuditButton = {
+            id: logBook.logbookId!,
+            getAuditRecordData: this.service.getLogBookAudit.bind(this.service),
+            tableName: 'LogBook'
+        };
+
+        const dialog = this.logBookDialog.openWithTwoButtons({
+            title: title,
+            TCtor: EditLogBookComponent,
+            headerAuditButton: headerAuditBtn,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            componentData: data,
+            translteService: this.translationService,
+            disableDialogClose: true,
+            viewMode: viewMode
+        }, '1200px');
+
+        dialog.subscribe({
+            next: (result: LogBookEditDTO | undefined) => {
+                if (result !== null && result !== undefined) {
+                    this.gridManager.refreshData();
+                }
+            }
+        });
+    }
+
+    public deleteLogBook(logBookRegister: CommercialFishingLogbookRegisterDTO, permitLicense: CommercialFishingPermitLicenseRegisterDTO,): void {
+        const title: string = this.translationService.getValue('commercial-fishing.delete-log-book');
+        const message: string = `${this.translationService.getValue('commercial-fishing.confirm-delete-log-book-message')}: ${logBookRegister.number}`;
+
+        this.confirmDialog.open({
+            title: title,
+            message: message,
+            okBtnLabel: this.translationService.getValue('commercial-fishing.delete')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.deleteLogBookPermitLicense(logBookRegister.id!).subscribe({
+                        next: () => {
+                            this.gridManager.refreshData();
+                        },
+                        error: (httpErrorResponse: HttpErrorResponse) => {
+                            if ((httpErrorResponse.error as ErrorModel)?.code === ErrorCode.LogBookHasSubmittedPages) {
+                                const message: string = this.translationService.getValue('commercial-fishing.cannot-delete-log-book-with-submitted-pages');
+                                this.snackbar.open(message, undefined, {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public restoreLogBook(logBookRegister: CommercialFishingLogbookRegisterDTO, permitLicense: CommercialFishingPermitLicenseRegisterDTO,): void {
+        this.confirmDialog.open().subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.undoDeleteLogBookPermitLicense(logBookRegister.id!).subscribe({
+                        next: () => {
+                            this.gridManager.refreshData();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     private openPermitDialog(data: DialogParamsModel, title: string, auditButton: IHeaderAuditButton | undefined, viewMode: boolean, isSuspended: boolean): void {
         const rightButtons: IActionInfo[] = [];
         const leftButtons: IActionInfo[] = [];
@@ -546,7 +682,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             rightSideActionsCollection: rightButtons,
             leftSideActionsCollection: leftButtons,
             viewMode: viewMode
-        }, '1500px');
+        }, '1600px');
 
         dialog.subscribe((entry?: CommercialFishingEditDTO) => {
             if (entry !== null && entry !== undefined) {
@@ -560,7 +696,8 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             permitTypeControl: new FormControl(),
             permitLicenseTypeControl: new FormControl(),
             numberControl: new FormControl(),
-            issuedDateRangeControl: new FormControl(),
+            permitIssuedDateRangeControl: new FormControl(),
+            permitLicenseIssuedDateRangeControl: new FormControl(),
             shipNameControl: new FormControl(),
             shipCfrControl: new FormControl(),
             shipExternalMarkingControl: new FormControl(),
@@ -590,8 +727,10 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             permitTypeId: filters.getValue('permitTypeControl'),
             permitLicenseTypeId: filters.getValue('permitLicenseTypeControl'),
             number: filters.getValue('numberControl'),
-            issuedOnRangeStartDate: filters.getValue<DateRangeData>('issuedDateRangeControl')?.start,
-            issuedOnRangeEndDate: filters.getValue<DateRangeData>('issuedDateRangeControl')?.end,
+            permitIssuedOnStartDate: filters.getValue<DateRangeData>('permitIssuedDateRangeControl')?.start,
+            permitIssuedOnEndDate: filters.getValue<DateRangeData>('permitIssuedDateRangeControl')?.end,
+            permitLicenseIssuedOnStartDate: filters.getValue<DateRangeData>('permitLicenseIssuedDateRangeControl')?.start,
+            permitLicenseIssuedOnEndDate: filters.getValue<DateRangeData>('permitLicenseIssuedDateRangeControl')?.end,
             shipName: filters.getValue('shipNameControl'),
             shipCfr: filters.getValue('shipCfrControl'),
             shipExternalMarking: filters.getValue('shipExternalMarkingControl'),

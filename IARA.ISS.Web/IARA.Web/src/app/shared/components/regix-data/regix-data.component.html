@@ -1,5 +1,10 @@
-﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="form" validityCheckerGroup>
-    <div *ngIf="isPerson === true; else isNotPerson" fxLayoutGap="0.5em" fxLayout="column">
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     [formGroup]="form"
+     validityCheckerGroup>
+    <div *ngIf="isPerson === true; else isNotPerson"
+         fxLayoutGap="0.5em"
+         fxLayout="column">
         <div *ngIf="checkboxLabel !== null && checkboxLabel !== undefined && !showOnlyBasicData">
             <tl-checkbox formControlName="checkboxControl"
                          [label]="checkboxLabel"
@@ -7,11 +12,13 @@
             </tl-checkbox>
         </div>
 
-        <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+        <div fxLayout="row wrap"
+             fxLayoutAlign="space-between center">
             <egn-lnc-input fxFlex="24"
                            fxFlex.md="49"
                            fxFlex.lt-md="100"
                            formControlName="idNumberControl"
+                           [isIdentityRequired]="isIdentityRequired"
                            [readonly]="isIdReadOnly || readonly"
                            [isForeigner]="isForeigner"
                            [includeForeigner]="includeForeigner"
@@ -48,7 +55,9 @@
             </tl-input>
         </div>
 
-        <div *ngIf="!hideDocument && !showOnlyBasicData" fxLayout="row wrap" fxLayoutAlign="space-between center">
+        <div *ngIf="!hideDocument && !showOnlyBasicData"
+             fxLayout="row wrap"
+             fxLayoutAlign="space-between center">
             <tl-select fxFlex="24"
                        fxFlex.md="49"
                        fxFlex.lt-md="100"
@@ -85,7 +94,17 @@
             </tl-input>
         </div>
 
-        <div *ngIf="!showOnlyBasicData" fxLayout="row wrap" fxLayoutAlign="space-between center">
+        <div *ngIf="!showOnlyBasicData"
+             fxLayout="row wrap"
+             fxLayoutAlign="space-between center">
+            <tl-input fxFlex="24"
+                      fxFlex.md="49"
+                      fxFlex.lt-md="100"
+                      formControlName="emailControl"
+                      label="{{ 'regix-data.email' | tlTranslate }}"
+                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [readonly]="readonly">
+            </tl-input>
             <tl-select *ngIf="showGender"
                        fxFlex="24"
                        fxFlex.md="49"
@@ -122,19 +141,13 @@
                       [getControlErrorLabelText]="getControlErrorLabelText"
                       [readonly]="readonly">
             </tl-input>
-            <tl-input fxFlex="24"
-                      fxFlex.md="49"
-                      fxFlex.lt-md="100"
-                      formControlName="emailControl"
-                      label="{{ 'regix-data.email' | tlTranslate }}"
-                      [getControlErrorLabelText]="getControlErrorLabelText"
-                      [readonly]="readonly">
-            </tl-input>
         </div>
     </div>
 
     <ng-template #isNotPerson>
-        <div *ngIf="!showOnlyBasicData" fxLayout="row wrap" fxLayoutAlign="space-between center">
+        <div *ngIf="!showOnlyBasicData"
+             fxLayout="row wrap"
+             fxLayoutAlign="space-between center">
             <tl-input fxFlex="24"
                       fxFlex.md="49"
                       fxFlex.lt-md="100"
@@ -168,7 +181,9 @@
                       [readonly]="readonly">
             </tl-input>
         </div>
-        <div *ngIf="showOnlyBasicData" fxLayout="row wrap" fxLayoutAlign="space-between center">
+        <div *ngIf="showOnlyBasicData"
+             fxLayout="row wrap"
+             fxLayoutAlign="space-between center">
             <tl-input fxFlex="24"
                       fxFlex.md="49"
                       fxFlex.lt-md="100"
@@ -185,11 +200,14 @@
                       [getControlErrorLabelText]="getControlErrorLabelText"
                       [readonly]="readonly">
             </tl-input>
-            <div fxFlex="48" fxFlex.md="98" fxFlex.lt-md="100">
+            <div fxFlex="48"
+                 fxFlex.md="98"
+                 fxFlex.lt-md="100">
             </div>
         </div>
 
-        <div *ngIf="showCustodianOfProperty && !showOnlyBasicData" [validityChecker]="form">
+        <div *ngIf="showCustodianOfProperty && !showOnlyBasicData"
+             [validityChecker]="form">
             <tl-checkbox formControlName="custodianCheckboxControl"
                          label="{{ 'regix-data.custodian-checkbox' | tlTranslate }}"
                          [readonly]="readonly">
@@ -198,7 +216,8 @@
             <tl-card>
                 <tl-card-title>{{ 'regix-data.custodian-of-property' | tlTranslate }}</tl-card-title>
                 <tl-card-content>
-                    <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+                    <div fxLayout="row wrap"
+                         fxLayoutAlign="space-between center">
                         <egn-lnc-input fxFlex="24"
                                        fxFlex.md="49"
                                        fxFlex.lt-md="100"

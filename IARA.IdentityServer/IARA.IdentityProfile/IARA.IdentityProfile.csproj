@@ -9,17 +9,19 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Version Condition=" '$(Major)$(Minor)$(Patch)' == '' ">1.0.0.0</Version>
     <Version Condition=" '$(Major)$(Minor)$(Patch)' != '' ">$(Major).$(Minor).$(Patch).0</Version>
     <Authors>Ivelin Ivanov</Authors>
     <Company>TechnoLogica</Company>
     <Description>IARA Identity Profile</Description>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.10" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.7" />
     <PackageReference Include="TechnoLogica.Authentication.Common" Version="1.0.39" />
+    <PackageReference Include="TL.Dependecy.Injection" Version="22.297.44704" />
   </ItemGroup>
 
   <ItemGroup>

@@ -86,60 +86,55 @@ export class TLValidators {
 
     public static egn: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
         const value: string = control.value;
-        if (value !== undefined && value !== null) {
-            if (EgnUtils.isEgnValid(value)) {
-                return null;
-            }
+        if (value === undefined || value === null || value === '' || EgnUtils.isEgnValid(value)) {
+            return null;
         }
         return { egn: true };
     };
 
     public static pnf: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
         const value: string = control.value;
-        if (value !== undefined && value !== null) {
-            if (PnfUtils.isPnfValid(value)) {
-                return null;
-            }
+        if (value === undefined || value === null || value === '' || PnfUtils.isPnfValid(value)) {
+            return null;
         }
         return { pnf: true };
     };
 
     public static eik: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
         const value: string = control.value;
-        if (value !== undefined && value !== null) {
-            if (EikUtils.isEikValid(value)) {
-                return null;
-            }
+        if (value === undefined || value === null || value === '' || EikUtils.isEikValid(value)) {
+            return null;
         }
         return { eik: true };
     };
 
     public static cfr: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
         const value: string = control.value;
-        if (value !== undefined && value !== null) {
-            const trimmed: string = value.replace(' ', '');
-
-            if (value !== trimmed) {
-                control.setValue(trimmed, { emitEvent: false });
-            }
-
-            if (trimmed.length !== 12) {
-                return { cfr: true };
-            }
-
-            const country: string = trimmed.substr(0, 3);
-            if (!/^[A-Z]/.test(country)) {
-                return { cfr: true };
-            }
-
-            const numbers: string = trimmed.substr(3, 9);
-            if (!/^\d/.test(numbers)) {
-                return { cfr: true };
-            }
-
+        if (value === undefined || value === null || value === '') {
             return null;
         }
-        return { cfr: true };
+
+        const trimmed: string = value.replace(' ', '');
+
+        if (value !== trimmed) {
+            control.setValue(trimmed, { emitEvent: false });
+        }
+
+        if (trimmed.length !== 12) {
+            return { cfr: true };
+        }
+
+        const country: string = trimmed.substr(0, 3);
+        if (!/^[A-Z]/.test(country)) {
+            return { cfr: true };
+        }
+
+        const numbers: string = trimmed.substr(3, 9);
+        if (!/^\d/.test(numbers)) {
+            return { cfr: true };
+        }
+
+        return null;
     };
 
     public static exactLength(length: number): ValidatorFn {
@@ -189,18 +184,26 @@ export class TLValidators {
         return { passwordsNotMatching: true };
     };
 
-    public static expectedValueMatch(expectedValue: string | number | boolean | Date | undefined): ValidatorFn {
+    public static expectedValueMatch(expectedValue: string | number | boolean | Date | undefined, toLower: boolean = true): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
+
             if (CommonUtils.isNullOrEmpty(expectedValue)) {
                 return null;
             }
-
             const controlValue = control.value;
 
             if (controlValue instanceof NomenclatureDTO) {
-                if (controlValue.displayName === expectedValue as string) {
-                    return null;
+                if (toLower) {
+                    if (controlValue.displayName?.toLowerCase() === (expectedValue as string)?.toLowerCase()) {
+                        return null;
+                    }
                 }
+                else {
+                    if (controlValue.displayName === (expectedValue as string)) {
+                        return null;
+                    }
+                }
+
             }
             else if (expectedValue instanceof Date) {
                 const controlValueDate: Date = controlValue as Date;
@@ -214,15 +217,24 @@ export class TLValidators {
             }
             else { // the type should be simple: string, number, boolean, undefined
                 switch (typeof expectedValue) {
-                    case 'number':
+                    case 'number': {
                         if (Number(controlValue) === expectedValue) {
                             return null;
                         }
+                    }
                         break;
-                    case 'string':
-                        if (String(controlValue) === expectedValue) {
-                            return null;
+                    case 'string': {
+                        if (toLower) {
+                            if (String(controlValue).toLowerCase() === expectedValue.toLowerCase()) {
+                                return null;
+                            }
                         }
+                        else {
+                            if (String(controlValue) === expectedValue) {
+                                return null;
+                            }
+                        }
+                    }
                         break;
                     case 'boolean': {
                         const controlBooleanValue: boolean = controlValue.toString() === 'true';

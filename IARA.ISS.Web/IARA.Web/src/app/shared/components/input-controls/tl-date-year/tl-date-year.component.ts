@@ -6,7 +6,7 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
 import { TLDateComponent } from '../tl-date/tl-date.component';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
-import { TLDateAdapter } from '../../../utils/date.adapter';
+import { TLDateAdapter } from '@app/shared/utils/date.adapter';
 
 export const MY_FORMATS = {
     parse: {

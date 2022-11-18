@@ -29,6 +29,12 @@ export class InspectionMapViewerComponent extends CustomFormControl<LocationDTO 
         this.mapOptions.showGridLayer = false;
         this.mapOptions.gridLayerStyle = this.createCustomGridLayerStyle();
         this.mapOptions.selectGridLayerStyle = this.createCustomSelectGridLayerStyle();
+
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.control.updateValueAndValidity();
+            }
+        });
     }
 
     public ngOnInit(): void {

@@ -1,0 +1,193 @@
+﻿<div fxLayout="column"
+     fxLayoutAlign="space-between stretch"
+     fxFlexFill
+     fxLayoutGap="1em"
+     [formGroup]="form"
+     [notifierGroup]="notifier"
+     class="dialog-padding">
+    <!-- Заявител -->
+    <tl-card *ngIf="isApplication"
+             tooltipResourceName="legal-association.application-requester-helper">
+        <tl-card-title>{{ 'legal-association.application-requester' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content fxLayout="column" fxLayoutGap="1em">
+            <regix-data formControlName="submittedByControl"
+                        notifier
+                        [isPerson]="true"
+                        [isIdReadOnly]="isEditing || isPublicApp"
+                        [expectedResults]="expectedResults.submittedBy"
+                        checkboxLabel="{{ 'legal-association.has-bulgarian-address-registration' | tlTranslate }}">
+            </regix-data>
+
+            <address-registration formControlName="submittedByAddressesControl"
+                                  notifier
+                                  addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                                  secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                                  checkboxLabel="{{ 'legal-association.permanent-address-same-as-correspondence' | tlTranslate }}"
+                                  [expectedResults]="expectedResults.submittedByAddresses">
+            </address-registration>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Получател -->
+    <tl-card tooltipResourceName="legal-association.basic-information-title-helper">
+        <tl-card-title>{{ 'legal-association.basic-information-title' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content fxLayout="column" fxLayoutGap="1em">
+            <regix-data formControlName="submittedForControl"
+                        notifier
+                        [isPerson]="false"
+                        [showCustodianOfProperty]="false"
+                        [isIdReadOnly]="isEditing"
+                        [expectedResults]="expectedResults.submittedFor"
+                        checkboxLabel="{{ 'legal-association.has-bulgarian-address-registration' | tlTranslate }}">
+            </regix-data>
+
+            <div *ngIf="isRegister"
+                 fxLayout="row">
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="territoryUnitControl"
+                                 [options]="territoryUnits"
+                                 label="{{ 'legal-association.territory-unit' | tlTranslate }}"
+                                 tooltipResourceName="legal-association.territory-unit-helper">
+                </tl-autocomplete>
+            </div>
+
+            <address-registration formControlName="submittedForAddressesControl"
+                                  notifier
+                                  [addressType]="addressTypesEnum.CORRESPONDENCE"
+                                  [secondAddressType]="addressTypesEnum.COURT_REGISTRATION"
+                                  addressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                                  secondAddressLabel="{{ 'common.court-registration-address' | tlTranslate : 'cap' }}"
+                                  checkboxLabel="{{ 'legal-association.correspondence-address-same-as-court-registration' | tlTranslate }}"
+                                  [expectedResults]="expectedResults.submittedForAddresses">
+            </address-registration>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Лица -->
+    <tl-card tooltipResourceName="legal-association.persons-helper">
+        <tl-card-title>
+            <span *ngIf="legalName !== null && legalName !== undefined && legalName !== ''; else noLegalName">
+                {{ 'legal-association.persons-title' | tlTranslate }} {{ 'common.open-quotes' | tlTranslate }}{{ legalName }}{{ 'common.close-quotes' | tlTranslate }}
+            </span>
+            <ng-template #noLegalName>
+                {{ 'legal-association.persons-title-no-legal-name' | tlTranslate }}
+            </ng-template>
+        </tl-card-title>
+        <tl-card-content>
+            <div fxLayout="column" fxLayoutGap="1em">
+                <tl-data-table fxFlexFill
+                               #personsDataTable
+                               [isRemote]="false"
+                               [isSoftDeletable]="true"
+                               [showInactiveRecords]="!showOnlyRegixData"
+                               [showAddButton]="!viewMode && !isReadonly && !showOnlyRegixData"
+                               [rows]="persons"
+                               (addButtonClicked)="addEditPerson()"
+                               (activeRecordChanged)="addEditPerson($event)">
+                    <div *ngIf="isPublicApp && !showOnlyRegixData && isApplication && !viewMode && !isReadonly"
+                         datatable-add-buttons
+                         fxLayout="row"
+                         fxLayoutGap="1em">
+                        <button mat-raised-button
+                                color="primary"
+                                (click)="addCurrentUserAsPerson()">
+                            <tl-icon icon="fa-plus-circle"
+                                     class="warn-color">
+                            </tl-icon>
+                            {{ 'legal-association.add-current-user-as-person' | tlTranslate }}
+                        </button>
+                    </div>
+
+                    <data-column [flexRate]="0.3"
+                                 columnName="{{ 'legal-association.person-email' | tlTranslate }}"
+                                 propertyName="email">
+                    </data-column>
+
+                    <data-column [flexRate]="0.4"
+                                 columnName="{{ 'legal-association.person-full-name' | tlTranslate }}"
+                                 propertyName="fullName">
+                    </data-column>
+
+                    <data-column *ngIf="!showOnlyRegixData"
+                                 [flexRate]="0.5"
+                                 columnName="{{ 'legal-association.person-role' | tlTranslate }}"
+                                 propertyName="role">
+                    </data-column>
+
+                    <data-template-column [flexRate]="0.2" [headerClass]="'justify-center'">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div fxLayout="row" fxLayoutAlign="end center">
+                                <tl-icon *ngIf="row.data.hasRegixDataDiscrepancy"
+                                         icon="ic-exclamation"
+                                         iconClass="error-color"
+                                         [size]="icIconSize">
+                                </tl-icon>
+                                <tl-icon-button icon="visibility"
+                                                (buttonClicked)="addEditPerson(row.data, true)"
+                                                [iconClass]="row.data.hasRegixDataDiscrepancy ? 'error-color' : 'accent-color'"
+                                                tooltipText="{{ 'legal-association.view-person-tooltip' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="!viewMode && !isReadonly && row.data.isActive"
+                                                icon="edit"
+                                                (buttonClicked)="addEditPerson(row.data, false)"
+                                                [iconClass]="row.data.hasRegixDataDiscrepancy ? 'error-color' : 'accent-color'"
+                                                tooltipText="{{ 'legal-association.edit-person-tooltip' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="!viewMode && !isReadonly && row.data.isActive && !showOnlyRegixData"
+                                                icon="delete"
+                                                (buttonClicked)="deletePerson(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'legal-association.delete-person-tooltip' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="!viewMode && !isReadonly && !row.data.isActive && !showOnlyRegixData"
+                                                icon="restore"
+                                                (buttonClicked)="restorePerson(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'legal-association.restore-person-tooltip' | tlTranslate }}">
+                                </tl-icon-button>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+                </tl-data-table>
+
+                <mat-error *ngIf="personsTouched && form.errors?.atLeastOnePersonNeeded === true">
+                    * {{ 'legal-association.at-least-one-person-needed' | tlTranslate }}
+                </mat-error>
+
+                <mat-error *ngIf="showEgnAndEmailDontMatchError">
+                    * {{ 'legal-association.user-already-exists-with-egn' | tlTranslate }} ({{ egnAndEmailDontMatchErrorEgnLnc }})
+                    {{ 'legal-association.or-email-address' | tlTranslate }} ({{ egnAndEmailDontMatchErrorEmail }}).
+                    {{ 'legal-association.has-mismatch-in-egn-email' | tlTranslate }}
+                    {{ 'legal-association.please-check-if-user-data-correct' | tlTranslate }}
+                </mat-error>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Файлове -->
+    <tl-card *ngIf="!showOnlyRegixData"
+             tooltipResourceName="legal-association.files-helper">
+        <tl-card-title>{{ 'legal-association.files' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content fxFlexFill fxLayout="column">
+            <file-uploader-form-array formControlName="filesControl"
+                                      [pageCode]="pageCode"
+                                      [downloadFileMethod]="service.downloadFile.bind(this.service)"
+                                      [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                      [refreshFileTypes]="refreshFileTypes">
+            </file-uploader-form-array>
+        </tl-card-content>
+    </tl-card>
+
+    <!-- Проверки -->
+    <tl-card *ngIf="showOnlyRegixData || showRegiXData"
+             tooltipResourceName="legal-association.regix-checks-results-helper">
+        <tl-card-title>{{ 'legal-association.regix-checks-results' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <regix-checks-results [regixChecksCollection]="regixChecks"></regix-checks-results>
+        </tl-card-content>
+    </tl-card>
+</div>

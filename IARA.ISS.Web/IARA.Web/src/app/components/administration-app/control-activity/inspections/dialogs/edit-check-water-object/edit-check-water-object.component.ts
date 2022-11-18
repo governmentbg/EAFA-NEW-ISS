@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
 import { IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
@@ -42,6 +42,7 @@ export class EditCheckWaterObjectComponent extends BaseInspectionsComponent impl
         snackbar: MatSnackBar
     ) {
         super(service, translate, nomenclatures, snackbar);
+        this.inspectionCode = InspectionTypesEnum.CWO;
     }
 
     public async ngOnInit(): Promise<void> {
@@ -69,7 +70,7 @@ export class EditCheckWaterObjectComponent extends BaseInspectionsComponent impl
         this.toggles = nomenclatureTables[3].map(f => new InspectionCheckModel(f));
 
         if (this.id !== null && this.id !== undefined) {
-            this.service.get(this.id).subscribe({
+            this.service.get(this.id, this.inspectionCode).subscribe({
                 next: (dto: InspectionCheckWaterObjectDTO) => {
                     this.model = dto;
 
@@ -83,8 +84,8 @@ export class EditCheckWaterObjectComponent extends BaseInspectionsComponent impl
         this.form = new FormGroup({
             generalInfoControl: new FormControl(undefined),
             patrolVehiclesControl: new FormControl([]),
-            nameControl: new FormControl(undefined),
-            typeControl: new FormControl(undefined),
+            nameControl: new FormControl(undefined, [Validators.required, Validators.maxLength(500)]),
+            typeControl: new FormControl(undefined, Validators.required),
             togglesControl: new FormControl([]),
             mapControl: new FormControl(undefined),
             fishingGearsControl: new FormControl([]),
@@ -112,7 +113,8 @@ export class EditCheckWaterObjectComponent extends BaseInspectionsComponent impl
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
                 inspectorComment: this.model.inspectorComment,
-                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo)
+                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo),
+                violatedRegulations: this.model.violatedRegulations,
             }));
 
             this.form.get('togglesControl')!.setValue(this.model.checks);
@@ -150,6 +152,7 @@ export class EditCheckWaterObjectComponent extends BaseInspectionsComponent impl
             byEmergencySignal: generalInfo.byEmergencySignal,
             inspectionType: InspectionTypesEnum.CWO,
             inspectorComment: additionalInfo?.inspectorComment,
+            violatedRegulations: additionalInfo.violatedRegulations,
             isActive: true,
             checks: this.form.get('togglesControl')!.value,
             patrolVehicles: this.form.get('patrolVehiclesControl')!.value,

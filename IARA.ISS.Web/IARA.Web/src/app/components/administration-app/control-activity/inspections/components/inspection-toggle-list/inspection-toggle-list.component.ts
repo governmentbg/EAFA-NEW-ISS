@@ -27,12 +27,18 @@ export class InspectionToggleListComponent extends CustomFormControl<InspectionC
     private values: InspectionCheckDTO[] = [];
 
     public constructor(@Self() ngControl: NgControl, translate: FuseTranslationLoaderService) {
-        super(ngControl, false);
+        super(ngControl);
 
         this.boolOptions = InspectionUtils.getToggleBoolOptions(translate);
         this.tripleOptions = InspectionUtils.getToggleTripleOptions(translate);
 
-        this.formArray.valueChanges.subscribe({
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.control.updateValueAndValidity();
+            }
+        });
+
+        this.control.valueChanges.subscribe({
             next: () => {
                 this.onChanged(this.getValue());
             }

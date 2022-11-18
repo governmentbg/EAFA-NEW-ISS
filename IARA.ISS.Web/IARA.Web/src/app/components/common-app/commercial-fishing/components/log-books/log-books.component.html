@@ -6,8 +6,22 @@
                    [isSoftDeletable]="true"
                    [showAddButton]="!isReadonly"
                    [showInactiveRecords]="showInactivePagesAndDocuments"
+                   [recordsPerPage]="logBooksPerPages"
                    (addButtonClicked)="addEditLogBook()"
                    (activeRecordChanged)="addEditLogBook($event)">
+        <div *ngIf="logBookGroup === logBookGroupsEnum.Ship 
+                    && permitLicenseId !== null 
+                    && permitLicenseId !== undefined" 
+             datatable-add-buttons 
+             fxLayout="row" 
+             fxLayoutGap="1em">
+            <button mat-raised-button color="accent"
+                    (click)="addLogBookFromOldPermitLicense()"
+                    style="margin-left:auto;">
+                <tl-icon icon="fa-plus-circle" class="white"></tl-icon>
+                {{ 'catches-and-sales.add-log-book-from-old-permit-license' | tlTranslate }}
+            </button>
+        </div>
         <data-column [flexRate]="0.3"
                      propertyName="logbookNumber"
                      columnName="{{ 'catches-and-sales.log-book-number' | tlTranslate }}">
@@ -84,7 +98,10 @@
                                     iconClass="accent-color"
                                     tooltipText="{{ 'catches-and-sales.edit-log-book' | tlTranslate }}">
                     </tl-icon-button>
-                    <tl-icon-button *ngIf="((!row.data.shipPagesAndDeclarations || row.data.shipPagesAndDeclarations.length === 0) && (!row.data.transportationPagesAndDeclarations || row.data.transportationPagesAndDeclarations.length === 0) && (!row.data.admissionPagesAndDeclarations || row.data.admissionPagesAndDeclarations.length === 0) && (!row.data.firstSalePages || row.data.firstSalePages.length > 0) && (!row.data.aquaculturePages || row.data.aquaculturePages.length > 0))
+                    <tl-icon-button *ngIf="((!row.data.shipPagesAndDeclarations || row.data.shipPagesAndDeclarations.length === 0)
+                                             && (!row.data.transportationPagesAndDeclarations || row.data.transportationPagesAndDeclarations.length === 0)
+                                             && (!row.data.admissionPagesAndDeclarations || row.data.admissionPagesAndDeclarations.length === 0)
+                                             && (!row.data.firstSalePages || row.data.firstSalePages.length === 0) && (!row.data.aquaculturePages || row.data.aquaculturePages.length === 0))
                                             && !row.data.isForRenewal
                                             && row.data.isActive
                                             && !isReadonly"
@@ -109,7 +126,10 @@
             </ng-template>
         </data-template-column>
     </tl-data-table>
-    <mat-error *ngIf="isTouched && hasNotTouchedRenewals">
-        {{ 'catches-and-sales.log-books-for-renewal-need-attention' | tlTranslate }}*
+    <mat-error *ngIf="control.touched && control.errors?.hasLogBooksForRenewal">
+        * {{ 'catches-and-sales.log-books-for-renewal-need-attention' | tlTranslate }}
+    </mat-error>
+    <mat-error *ngIf="control.touched && control.errors?.hasOverlappingRanges">
+        * {{ 'catches-and-sales.log-books-has-overlapping-ranges-error' | tlTranslate }}
     </mat-error>
 </div>

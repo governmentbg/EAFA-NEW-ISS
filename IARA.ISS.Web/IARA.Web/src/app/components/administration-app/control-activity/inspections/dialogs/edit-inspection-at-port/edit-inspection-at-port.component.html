@@ -1,10 +1,12 @@
 ﻿<div fxLayout="column"
      fxLayoutGap="1em"
      fxFlexFill
+     validityCheckerGroup
      [formGroup]="form"
      class="dialog-padding">
     <!-- Основни данни -->
-    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
+                        [validityChecker]="form">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -32,11 +34,14 @@
                              [fishSex]="fishSex"
                              [countries]="countries"
                              [ports]="ports"
-                             [vesselTypes]="vesselTypes">
+                             [vesselTypes]="vesselTypes"
+                             [turbotSizeGroups]="turbotSizeGroups"
+                             [validityChecker]="form">
     </inspected-ship-sections>
 
     <!-- Трансбордиране -->
-    <tl-expansion-panel title="{{ 'inspections.transshipment' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.transshipment' | tlTranslate }}"
+                        [validityChecker]="form">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -57,7 +62,8 @@
                                              [fishes]="fishes"
                                              [types]="catchTypes"
                                              [catchZones]="catchZones"
-                                             [fishSex]="fishSex">
+                                             [fishSex]="fishSex"
+                                             [turbotSizeGroups]="turbotSizeGroups">
                     </inspected-catches-table>
                 </tl-card-content>
             </tl-card>
@@ -70,7 +76,8 @@
     </tl-expansion-panel>
 
     <!-- Допълнителна информация -->
-    <inspection-additional-info formControlName="additionalInfoControl">
+    <inspection-additional-info formControlName="additionalInfoControl"
+                                [validityChecker]="form">
         <tl-textarea formControlName="nnnShipStatusControl"
                      [minRows]="3"
                      label="{{ 'inspections.nnn-ship-status' | tlTranslate }}">
@@ -82,7 +89,8 @@
     </inspection-additional-info>
 
     <!-- Файлове -->
-    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}"
+                        [validityChecker]="form">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">

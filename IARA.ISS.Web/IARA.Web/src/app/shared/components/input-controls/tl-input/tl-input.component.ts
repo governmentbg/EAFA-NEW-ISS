@@ -1,7 +1,7 @@
 ﻿import { Component, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { TLTranslatePipe } from '../../../pipes/tl-translate.pipe';
+import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
 import { BaseTLControl } from '../base-tl-control';
 
 type MatFormFieldAppearance = 'legacy' | 'standard' | 'fill' | 'outline';

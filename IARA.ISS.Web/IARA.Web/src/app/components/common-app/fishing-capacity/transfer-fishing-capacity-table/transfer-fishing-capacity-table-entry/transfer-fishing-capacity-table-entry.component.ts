@@ -13,6 +13,7 @@ import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { TransferFishingCapacityTableEntryParams } from '../models/transfer-fishing-capacity-table-entry-params.model';
 
 type HolderType = 'Person' | 'Legal';
@@ -23,6 +24,7 @@ type HolderType = 'Person' | 'Legal';
 })
 export class TransferFishingCapacityTableEntryComponent implements OnInit, IDialogComponent {
     public form!: FormGroup;
+    public readOnly: boolean = false;
 
     public readonly companyHeadquartersType: AddressTypesEnum = AddressTypesEnum.COMPANY_HEADQUARTERS;
 
@@ -33,8 +35,11 @@ export class TransferFishingCapacityTableEntryComponent implements OnInit, IDial
 
     public expectedResults: FishingCapacityHolderRegixDataDTO;
 
+    private remainingPower: number | undefined;
+    private remainingTonnage: number | undefined;
+    private submittedBy: ApplicationSubmittedByDTO | undefined;
+
     private model!: FishingCapacityHolderDTO | FishingCapacityHolderRegixDataDTO;
-    private readOnly: boolean = false;
 
     private translate: FuseTranslationLoaderService;
 
@@ -89,6 +94,10 @@ export class TransferFishingCapacityTableEntryComponent implements OnInit, IDial
         this.showOnlyRegiXData = data.showOnlyRegixData;
         this.isEgnLncReadOnly = data.isEgnLncReadOnly;
 
+        this.remainingPower = data.remainingPower;
+        this.remainingTonnage = data.remainingTonnage;
+        this.submittedBy = data.submittedBy;
+
         if (data.expectedResults !== null && data.expectedResults !== undefined) {
             this.expectedResults = data.expectedResults;
         }
@@ -117,6 +126,24 @@ export class TransferFishingCapacityTableEntryComponent implements OnInit, IDial
 
     public dialogButtonClicked(action: IActionInfo, dialogClose: DialogCloseCallback): void {
         dialogClose();
+    }
+
+    public copySubmittedBy(): void {
+        if (this.submittedBy) {
+            this.form.get('typeControl')!.setValue(this.types[0]);
+            this.form.get('regixDataControl')!.setValue(this.submittedBy.person);
+            this.form.get('addressControl')!.setValue(this.submittedBy.addresses);
+        }
+    }
+
+    public transferRemainingCapacity(): void {
+        if (this.remainingTonnage !== undefined && this.remainingTonnage !== null) {
+            this.form.get('tonnageControl')!.setValue(this.remainingTonnage.toFixed(2));
+        }
+
+        if (this.remainingPower !== undefined && this.remainingPower !== null) {
+            this.form.get('powerControl')!.setValue(this.remainingPower.toFixed(2));
+        }
     }
 
     private buildForm(): void {

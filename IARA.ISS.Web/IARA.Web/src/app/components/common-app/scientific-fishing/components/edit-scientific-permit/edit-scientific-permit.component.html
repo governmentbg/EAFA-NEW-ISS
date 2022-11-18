@@ -323,6 +323,11 @@
                                  tooltipResourceName="scientific-fishing.ships-in-register-helper"
                                  label="{{ 'scientific-fishing.ships-in-register' | tlTranslate }}">
                 </tl-autocomplete>
+                <tl-input fxFlex="50"
+                          formControlName="shipCaptainNameControl"
+                          tooltipResourceName="scientific-fishing.ship-captain-name-helper"
+                          label="{{ 'scientific-fishing.ship-captain-name' | tlTranslate }}">
+                </tl-input>
             </div>
 
             <div *ngIf="form.controls.shipIsNotRegisteredControl.value === true"
@@ -499,7 +504,7 @@
     </tl-expansion-panel>
 
     <!-- Резултати от проверки от RegiX -->
-    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+    <tl-expansion-panel *ngIf="showOnlyRegiXData || showRegiXData"
                         title="{{ 'scientific-fishing.regix-checks-results' | tlTranslate }}"
                         tooltipResourceName="scientific-fishing.regix-checks-results-helper"
                         [validityChecker]="form">

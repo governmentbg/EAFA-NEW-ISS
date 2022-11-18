@@ -7,7 +7,9 @@
          fxLayoutGap="1em"
          fxLayoutAlign="start stretch">
         <tl-expansion-panel title="{{ 'inspections.fishing-gear' | tlTranslate }}">
-            <edit-fishing-gear formControlName="fishingGearControl">
+            <edit-fishing-gear formControlName="fishingGearControl"
+                               [hasMarks]="false"
+                               [hasPingers]="false">
             </edit-fishing-gear>
         </tl-expansion-panel>
         <tl-checkbox formControlName="takenControl"

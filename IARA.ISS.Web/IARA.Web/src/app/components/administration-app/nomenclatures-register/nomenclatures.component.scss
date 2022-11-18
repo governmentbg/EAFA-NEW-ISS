@@ -1,13 +1,77 @@
-﻿.pad-sides-10 {
-    padding: 0px 1em 0px 1em;
+﻿.container {
+    width: 100%;
+
+    .main-panel {
+        height: inherit;
+        float: right;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .tree-panel {
+        height: inherit;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 1;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        border-right: 1px groove;
+        max-width: 300px;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        transition: width 0.1s ease-in-out;
+
+        .search-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding-left: 1em;
+            
+            tl-input {
+                width: 100%;
+            }
+        }
+    }
+
+    .expanded-tree-panel {
+        @extend .tree-panel;
+        width: 300px;
+    }
+
+    .collapsed-tree-panel {
+        @extend .tree-panel;
+        width: 67px;
+    }
 }
 
-.pad-top-10 {
-    padding-top: 1em;
+::ng-deep #nomenclatures-tree {
+    mat-tree-node {
+        min-height: 30px;
+
+        .mat-button {
+            width: 100%;
+
+            .mat-button-wrapper {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                text-align: left;
+
+                mat-icon {
+                    display: flex;
+                    align-items: flex-end;
+                }
+            }
+        }
+    }
 }
 
-.ellipsis {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis
+.selected-node {
+    background-color: rgb(235, 235, 235) !important;
 }

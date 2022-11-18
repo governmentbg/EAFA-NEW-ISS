@@ -75,6 +75,9 @@ export class AuanRegisterEditDTO {
     @StrictlyTyped(Number)
     public statusId?: number;
 
+    @StrictlyTyped(Number)
+    public inspectorId?: number;
+
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
 }

@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
 import { IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
@@ -34,6 +34,7 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
     public catchTypes: NomenclatureDTO<number>[] = [];
     public catchZones: NomenclatureDTO<number>[] = [];
     public fishSex: NomenclatureDTO<number>[] = [];
+    public turbotSizeGroups: NomenclatureDTO<number>[] = [];
 
     public catchToggles: InspectionCheckModel[] = [];
 
@@ -48,6 +49,7 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
         snackbar: MatSnackBar
     ) {
         super(service, translate, nomenclatures, snackbar);
+        this.inspectionCode = InspectionTypesEnum.IFP;
     }
 
     public async ngOnInit(): Promise<void> {
@@ -77,6 +79,9 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
             NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.FishSex, this.nomenclatures.getFishSex.bind(this.nomenclatures), false
             ),
+            NomenclatureStore.instance.getNomenclature(
+                NomenclatureTypes.TurbotSizeGroups, this.nomenclatures.getTurbotSizeGroups.bind(this.nomenclatures), false
+            ),
             this.service.getCheckTypesForInspection(InspectionTypesEnum.IFP),
         ]).toPromise();
 
@@ -87,11 +92,12 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
         this.catchTypes = nomenclatureTables[4];
         this.catchZones = nomenclatureTables[5];
         this.fishSex = nomenclatureTables[6];
+        this.turbotSizeGroups = nomenclatureTables[7];
 
-        this.catchToggles = nomenclatureTables[7].map(f => new InspectionCheckModel(f));
+        this.catchToggles = nomenclatureTables[8].map(f => new InspectionCheckModel(f));
 
         if (this.id !== null && this.id !== undefined) {
-            this.service.get(this.id).subscribe({
+            this.service.get(this.id, this.inspectionCode).subscribe({
                 next: (dto: InspectionFisherDTO) => {
                     this.model = dto;
 
@@ -103,20 +109,20 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
 
     protected buildForm(): void {
         this.form = new FormGroup({
-            generalInfoControl: new FormControl(null),
-            patrolVehiclesControl: new FormControl(null),
-            mapControl: new FormControl(null),
-            addressControl: new FormControl(null),
-            personControl: new FormControl(null),
+            generalInfoControl: new FormControl(undefined),
+            patrolVehiclesControl: new FormControl(undefined),
+            mapControl: new FormControl(undefined),
+            addressControl: new FormControl(undefined),
+            personControl: new FormControl(undefined),
             hasTicketControl: new FormControl(true),
-            ticketControl: new FormControl(null),
-            fishingGearCountControl: new FormControl(null),
-            hookCountControl: new FormControl(null),
-            catchesControl: new FormControl(null),
-            catchTogglesControl: new FormControl(null),
-            fishermanCommentControl: new FormControl(null),
-            additionalInfoControl: new FormControl(null),
-            filesControl: new FormControl(null)
+            ticketControl: new FormControl(undefined),
+            fishingGearCountControl: new FormControl(undefined, Validators.required),
+            hookCountControl: new FormControl(undefined, Validators.required),
+            catchesControl: new FormControl(undefined),
+            catchTogglesControl: new FormControl(undefined),
+            fishermanCommentControl: new FormControl(undefined),
+            additionalInfoControl: new FormControl(undefined),
+            filesControl: new FormControl(undefined)
         });
 
         this.form.get('hasTicketControl')!.valueChanges.subscribe({
@@ -140,7 +146,8 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
                 inspectorComment: this.model.inspectorComment,
-                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo)
+                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo),
+                violatedRegulations: this.model.violatedRegulations,
             }));
 
             this.form.get('mapControl')!.setValue(this.model.inspectionLocation);
@@ -188,6 +195,7 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
             byEmergencySignal: generalInfo.byEmergencySignal,
             inspectionType: InspectionTypesEnum.IFP,
             inspectorComment: additionalInfo?.inspectorComment,
+            violatedRegulations: additionalInfo?.violatedRegulations,
             isActive: true,
             checks: this.form.get('catchTogglesControl')!.value,
             inspectionLocation: this.form.get('mapControl')!.value,

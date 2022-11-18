@@ -8,6 +8,7 @@ export class EditShipOwnerDialogParams {
     public isApplication: boolean = false;
     public readOnly: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isDraft: boolean = false;
     public isThirdPartyShip: boolean = false;
     public submittedFor!: ApplicationSubmittedForDTO;

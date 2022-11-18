@@ -219,7 +219,13 @@ export class QualifiedFishersComponent extends BasePageComponent implements Afte
                 id: entry.id,
                 tableName: 'FishermenRegister'
             } as IHeaderAuditButton;
-            headerTitle = this.translationService.getValue('qualified-fishers-page.edit-dialog');
+
+            if (readOnly) {
+                headerTitle = this.translationService.getValue('qualified-fishers-page.view-dialog');
+            }
+            else {
+                headerTitle = this.translationService.getValue('qualified-fishers-page.edit-dialog');
+            }
         }
         else {
             headerTitle = this.translationService.getValue('qualified-fishers-page.add-dialog');
@@ -256,13 +262,14 @@ export class QualifiedFishersComponent extends BasePageComponent implements Afte
         viewMode: boolean = false
     ): void {
         let rightButtons: IActionInfo[] | undefined = undefined;
-        
+
         if (data instanceof DialogParamsModel) {
             rightButtons = [
                 {
-                    id: 'save-print',
+                    id: 'print',
                     color: 'accent',
-                    translateValue: this.translationService.getValue('qualified-fishers-page.save-print')
+                    translateValue: viewMode ? 'qualified-fishers-page.print' : 'qualified-fishers-page.save-print',
+                    isVisibleInViewMode: true
                 }
             ];
         }
@@ -289,7 +296,7 @@ export class QualifiedFishersComponent extends BasePageComponent implements Afte
                 translateValue: this.translationService.getValue('common.cancel'),
             },
             rightSideActionsCollection: rightButtons
-        }, '90em');
+        }, '100em');
 
         dialogResult.subscribe((result: QualifiedFisherEditDTO | undefined) => {
             if (result !== undefined && result !== null) {

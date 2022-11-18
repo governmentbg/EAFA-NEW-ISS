@@ -41,5 +41,13 @@ export enum ErrorCode {
     PermitLicenceDoesNotExist = 22,
     QualifiedFisherDoesNotExist = 23,
     NotInspector = 24,
-    NoPermitRegisterForPermitLicense = 25
+    NoPermitRegisterForPermitLicense = 25,
+    DuplicatedMarksNumbers = 26,
+    DuplicatedPingersNumbers = 27,
+    ShipEventExistsOnSameDate = 28,
+    UsernameExists = 29,
+    EmailExists = 30,
+    SendFLUXSalesFailed = 31,
+    AuanNumAlreadyExists = 32,
+    LogBookHasSubmittedPages = 33
 }

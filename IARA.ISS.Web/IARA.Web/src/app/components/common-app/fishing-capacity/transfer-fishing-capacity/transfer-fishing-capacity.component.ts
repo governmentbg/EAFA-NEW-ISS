@@ -65,12 +65,14 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public isEditing: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isReadonly: boolean = false;
     public viewMode: boolean = false;
     public isDraft: boolean = false;
     public isPaid: boolean = false;
     public hasDelivery: boolean = false;
     public hasNoEDeliveryRegistrationError: boolean = false;
+    public hideBasicPaymentInfo: boolean = false;
     public service!: IFishingCapacityService;
 
     @ViewChild(ValidityCheckerGroupDirective)
@@ -119,6 +121,11 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
 
         this.certificates = await this.service.getAllCapacityCertificateNomenclatures().toPromise();
 
+        const now: Date = new Date();
+        for (const certificate of this.certificates) {
+            certificate.isActive = certificate.isActive && certificate.validTo! >= now;
+        }
+
         // извличане на исторически данни за заявление
         if (this.isApplicationHistoryMode && this.applicationId !== undefined) {
             this.form.disable();
@@ -134,6 +141,7 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
                         this.paymentInformation = application.paymentInformation;
+                        this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
 
@@ -167,7 +175,7 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData, this.pageCode).subscribe({
                         next: (application: TransferFishingCapacityApplicationDTO) => {
                             application.applicationId = this.applicationId;
                             application.isDraft = application.isDraft ?? true;
@@ -175,9 +183,15 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
                             this.paymentInformation = application.paymentInformation;
+                            this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.isOnlineApplication = application.isOnlineApplication!;
                             this.isDraft = application.isDraft;
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new TransferFishingCapacityRegixDataDTO(application.regiXDataModel);
+                                application.regiXDataModel = undefined;
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (application.submittedBy === undefined || application.submittedBy === null)) {
                                 const service = this.service as FishingCapacityPublicService;
@@ -232,6 +246,7 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.viewMode = data.viewMode;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.applicationsService = data.applicationsService;
         this.service = data.service as IFishingCapacityService;
         this.dialogRightSideActions = wrapperData.rightSideActions;
@@ -314,24 +329,7 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
         this.form.get('holdersControl')!.setValue(this.model.holders);
 
         if (this.model instanceof TransferFishingCapacityRegixDataDTO) {
-            if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
-                const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
-
-                setTimeout(() => {
-                    this.regixChecks = checks;
-                });
-            }
-
-            if (!this.viewMode) {
-                this.notifier.start();
-                this.notifier.onNotify.subscribe({
-                    next: () => {
-                        this.form.markAllAsTouched();
-                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
-                        this.notifier.stop();
-                    }
-                });
-            }
+            this.fillFormRegiX();
         }
         else {
             const capacityCertificateId: number | undefined = this.model.capacityCertificateId;
@@ -343,6 +341,35 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
             }
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX();
+            }
+        }
+    }
+
+    private fillFormRegiX(): void {
+        if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
+            const checks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
+
+            setTimeout(() => {
+                this.regixChecks = checks;
+            });
+        }
+
+        if (!this.viewMode) {
+            this.notifier.start();
+            this.notifier.onNotify.subscribe({
+                next: () => {
+                    this.form.markAllAsTouched();
+
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+
+                    this.notifier.stop();
+                }
+            });
         }
     }
 
@@ -424,5 +451,11 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
     private markAllAsTouched(): void {
         this.form.markAllAsTouched();
         this.form.get('holdersControl')!.updateValueAndValidity();
+    }
+
+    private shouldHidePaymentData(): boolean {
+        return this.paymentInformation?.paymentType === null
+            || this.paymentInformation?.paymentType === undefined
+            || this.paymentInformation?.paymentType === '';
     }
 }

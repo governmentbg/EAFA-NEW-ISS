@@ -1,19 +1,24 @@
 ﻿
+
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { BaseRegixChecksDTO } from './BaseRegixChecksDTO';
 import { RegixPersonDataDTO } from './RegixPersonDataDTO';
 import { AddressRegistrationDTO } from './AddressRegistrationDTO';
-import { RegixLegalDataDTO } from './RegixLegalDataDTO';
+import { RegixLegalDataDTO } from './RegixLegalDataDTO'; 
 
-export class LegalEntityBaseRegixDataDTO {
+export class LegalEntityBaseRegixDataDTO extends BaseRegixChecksDTO {
     public constructor(obj?: Partial<LegalEntityBaseRegixDataDTO>) {
-        Object.assign(this, obj);
+        if (obj != undefined) {
+            super(obj as BaseRegixChecksDTO);
+            Object.assign(this, obj);
+        } 
+        else {
+            super();
+        }
     }
-
+  
     @StrictlyTyped(Number)
     public id?: number;
-
-    @StrictlyTyped(Number)
-    public applicationId?: number;
 
     @StrictlyTyped(RegixPersonDataDTO)
     public requester?: RegixPersonDataDTO;
@@ -26,7 +31,4 @@ export class LegalEntityBaseRegixDataDTO {
 
     @StrictlyTyped(AddressRegistrationDTO)
     public addresses?: AddressRegistrationDTO[];
-
-    @StrictlyTyped(String)
-    public statusReason?: string;
 }

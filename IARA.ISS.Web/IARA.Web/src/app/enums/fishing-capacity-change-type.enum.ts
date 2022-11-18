@@ -2,5 +2,6 @@
     Increase,
     Reduce,
     Transfer,
-    Duplicate
+    Duplicate,
+    Migrate
 }

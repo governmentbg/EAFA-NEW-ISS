@@ -33,6 +33,7 @@ export class EditShipOwnerComponent implements IDialogComponent, AfterViewInit {
     public isApplication: boolean = false;
     public readOnly!: boolean;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isThirdPartyShip: boolean = false;
     public isEditing!: boolean;
 
@@ -72,6 +73,7 @@ export class EditShipOwnerComponent implements IDialogComponent, AfterViewInit {
         this.readOnly = data.readOnly;
         this.isApplication = data.isApplication;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.isDraft = data.isDraft;
         this.isEditing = data.isEgnLncReadOnly;
         this.isThirdPartyShip = data.isThirdPartyShip;
@@ -98,7 +100,7 @@ export class EditShipOwnerComponent implements IDialogComponent, AfterViewInit {
             this.fillForm();
         }
 
-        if (this.showOnlyRegiXData) {
+        if (this.showOnlyRegiXData || this.showRegiXData) {
             this.form.markAllAsTouched();
         }
     }

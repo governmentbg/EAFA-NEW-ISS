@@ -51,6 +51,18 @@ export class FishingGearDTO {
     @StrictlyTyped(Number)
     public cordThickness?: number;
 
+    @StrictlyTyped(Number)
+    public lineCount?: number;
+
+    @StrictlyTyped(Number)
+    public netNominalLength?: number;
+
+    @StrictlyTyped(Number)
+    public netsInFleetCount?: number;
+
+    @StrictlyTyped(String)
+    public trawlModel?: string;
+
     @StrictlyTyped(Boolean)
     public hasPingers?: boolean;
 

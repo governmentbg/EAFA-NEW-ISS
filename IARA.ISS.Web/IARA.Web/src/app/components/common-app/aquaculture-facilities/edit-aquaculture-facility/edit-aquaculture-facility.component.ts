@@ -158,6 +158,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     public viewMode: boolean = false;
     public isReadonly: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isChangeOfCircumstancesApplication: boolean = false;
     public isDeregistrationApplication: boolean = false;
     public isEditing: boolean = false;
@@ -170,6 +171,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     public loadRegisterFromApplication: boolean = false;
     public hasNoEDeliveryRegistrationError: boolean = false;
     public showHatcheryEquipment: boolean = false;
+    public hideBasicPaymentInfo: boolean = false;
 
     public aquaticOrganismsTouched: boolean = false;
     public installationsTouched: boolean = false;
@@ -324,7 +326,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
             this.isRegisterEntry = true;
             this.fillForm();
 
-            this.service.getApplication(this.applicationId, PageCodeEnum.AquaFarmChange).subscribe({
+            this.service.getApplication(this.applicationId, false, PageCodeEnum.AquaFarmChange).subscribe({
                 next: (application: AquacultureChangeOfCircumstancesApplicationDTO) => {
                     this.changeOfCircumstancesControl.setValue(application.changes);
                     this.changeOfCircumstancesControl.disable();
@@ -336,7 +338,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
             this.isRegisterEntry = true;
             this.fillForm();
 
-            this.service.getApplication(this.applicationId, PageCodeEnum.AquaFarmDereg).subscribe({
+            this.service.getApplication(this.applicationId, false, PageCodeEnum.AquaFarmDereg).subscribe({
                 next: (application: AquacultureDeregistrationApplicationDTO) => {
                     this.deregistrationReasonControl.setValue(application.deregistrationReason);
                     this.deregistrationReasonControl.disable();
@@ -358,6 +360,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                         this.isPaid = aquaculture.isPaid!;
                         this.hasDelivery = aquaculture.hasDelivery!;
                         this.paymentInformation = aquaculture.paymentInformation;
+                        this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = aquaculture.isOnlineApplication!;
 
                         this.refreshFileTypes.next();
@@ -415,7 +418,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData, this.pageCode).subscribe({
                         next: (aquaculture: AquacultureApplicationEditDTO) => {
                             aquaculture.applicationId = this.applicationId;
 
@@ -423,7 +426,13 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                             this.isPaid = aquaculture.isPaid!;
                             this.hasDelivery = aquaculture.hasDelivery!;
                             this.paymentInformation = aquaculture.paymentInformation;
+                            this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new AquacultureRegixDataDTO(aquaculture.regiXDataModel);
+                                aquaculture.regiXDataModel = undefined;
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (aquaculture.submittedBy === undefined || aquaculture.submittedBy === null)) {
                                 const service = this.service as AquacultureFacilitiesPublicService;
@@ -493,6 +502,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         this.isApplication = data.isApplication;
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.service = data.service as IAquacultureFacilitiesService;
         this.dialogRightSideActions = wrapperData.rightSideActions;
         this.pageCode = data.pageCode ?? PageCodeEnum.AquaFarmReg;
@@ -719,7 +729,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         if (document !== undefined) {
             data = new UsageDocumentDialogParams({
                 model: document,
-                isIdReadOnly: this.isEditing,
+                isIdReadOnly: false,
                 showOnlyRegiXData: this.showOnlyRegiXData,
                 viewMode: this.isReadonly || viewMode
             });
@@ -786,8 +796,8 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     public deleteUsageDocument(document: GridRow<UsageDocumentDTO>): void {
         this.confirmDialog.open({
             title: this.translate.getValue('aquacultures.delete-usage-document-dialog-title'),
-            message: this.translate.getValue('aquaculture.delete-usage-document-dialog-message'),
-            okBtnLabel: this.translate.getValue('aquaculture.delete-usage-document-dialog-ok-btn-label')
+            message: this.translate.getValue('aquacultures.delete-usage-document-dialog-message'),
+            okBtnLabel: this.translate.getValue('aquacultures.delete-usage-document-dialog-ok-btn-label')
         }).subscribe({
             next: (ok: boolean) => {
                 if (ok) {
@@ -1518,22 +1528,26 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
 
     private fillForm(): void {
         if (this.model instanceof AquacultureRegixDataDTO) {
-            this.fillFormRegix(this.model);
+            this.form.get('submittedByControl')!.setValue(this.model.submittedBy);
+            this.form.get('submittedForControl')!.setValue(this.model.submittedFor);
+            this.form.get('usageDocumentControl')!.setValue(this.model.usageDocument);
+
+            this.fillFormRegiX(this.model);
         }
         else if (this.model instanceof AquacultureApplicationEditDTO) {
             this.fillFormApplication(this.model);
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX(this.model);
+            }
         }
         else if (this.model instanceof AquacultureFacilityEditDTO) {
             this.fillFormRegister(this.model);
         }
     }
 
-    private fillFormRegix(model: AquacultureRegixDataDTO): void {
-        this.form.get('submittedByControl')!.setValue(model.submittedBy);
-        this.form.get('submittedForControl')!.setValue(model.submittedFor);
-        this.form.get('usageDocumentControl')!.setValue(model.usageDocument);
-
-        if (model.applicationRegiXChecks !== undefined && model.applicationRegiXChecks) {
+    private fillFormRegiX(model: AquacultureRegixDataDTO): void {
+        if (model.applicationRegiXChecks !== undefined && model.applicationRegiXChecks !== null) {
             const applicationRegiXChecks: ApplicationRegiXCheckDTO[] = model.applicationRegiXChecks;
 
             setTimeout(() => {
@@ -1546,7 +1560,11 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
             this.notifier.onNotify.subscribe({
                 next: () => {
                     this.form.markAllAsTouched();
-                    ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                    }
+
                     this.notifier.stop();
                 }
             });
@@ -2062,6 +2080,12 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
 
     private sum(nums: number[]): number {
         return nums.reduce((sum: number, current: number) => { return sum + current; }, 0);
+    }
+
+    private shouldHidePaymentData(): boolean {
+        return this.paymentInformation?.paymentType === null
+            || this.paymentInformation?.paymentType === undefined
+            || this.paymentInformation?.paymentType === '';
     }
 
     private closeOverlappingLogBooksDialogBtnClicked(closeFn: HeaderCloseFunction): void {

@@ -3,6 +3,7 @@ import { NgxMatMomentModule } from '@angular-material-components/moment-adapter'
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -59,6 +60,7 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
         CommonModule,
         FormsModule,
         BrowserModule,
+        FlexLayoutModule,
         MatButtonModule,
         MatDatepickerModule,
         MatFormFieldModule,

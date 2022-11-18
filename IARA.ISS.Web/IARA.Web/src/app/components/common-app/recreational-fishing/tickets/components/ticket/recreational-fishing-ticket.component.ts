@@ -16,7 +16,6 @@ import { RecreationalFishingTicketBaseRegixDataDTO } from '@app/models/generated
 import { RecreationalFishingTicketDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDTO';
 import { RecreationalFishingTicketHolderDTO } from '@app/models/generated/dtos/RecreationalFishingTicketHolderDTO';
 import { RegixChecksWrapperDTO } from '@app/models/generated/dtos/RegixChecksWrapperDTO';
-import { RegixPersonDataDTO } from '@app/models/generated/dtos/RegixPersonDataDTO';
 import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
 import { RecreationalFishingAdministrationService } from '@app/services/administration-app/recreational-fishing-administration.service';
 import { SystemPropertiesService } from '@app/services/common-app/system-properties.service';
@@ -67,8 +66,6 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
     @Input() public isAssociation!: boolean;
 
     @Output() public updatePersonalData: EventEmitter<boolean> = new EventEmitter<boolean>();
-    @Output() public egnLncCheck: EventEmitter<EgnLncDTO> = new EventEmitter<EgnLncDTO>();
-    @Output() public egnLncCheckRepresentative: EventEmitter<EgnLncDTO> = new EventEmitter<EgnLncDTO>();
 
     public notifier: Notifier = new Notifier();
 
@@ -179,34 +176,20 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                 (this.service as RecreationalFishingAdministrationService).getRegixData(this.dialogData.id).subscribe({
                     next: (result: RegixChecksWrapperDTO<RecreationalFishingTicketBaseRegixDataDTO>) => {
                         this.regixChecksData = result.regiXDataModel;
+                        this.setupValidators();
+
                         this.writeValue(result.dialogDataModel!);
 
-                        if (this.regixChecksData?.applicationRegiXChecks) {
-                            const applicationRegiXChecks: ApplicationRegiXCheckDTO[] = this.regixChecksData.applicationRegiXChecks;
-
-                            setTimeout(() => {
-                                this.regixChecks = applicationRegiXChecks;
-                            });
-                        }
+                        this.setRegiXData();
 
                         if (this.dialogData!.viewMode) {
                             this.setDisabledState(true);
-                        }
-                        else {
-                            this.notifier.start();
-                            this.notifier.onNotify.subscribe({
-                                next: () => {
-                                    this.form.markAllAsTouched();
-                                    ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.buttons!.rightSideActions);
-                                    this.notifier.stop();
-                                }
-                            });
                         }
                     }
                 });
             }
             else {
-                this.service.getTicket(this.dialogData.id).subscribe({
+                this.service.getTicket(this.dialogData.id, this.dialogData.showRegiXData).subscribe({
                     next: (result: RecreationalFishingTicketDTO) => {
                         if (this.isRenewal) {
                             result.validFrom = this.currentDate;
@@ -214,9 +197,18 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                         else {
                             this.isRegisterEntry = true;
                             this.currentDate = result.issuedOn!;
+                            this.form.get('validFromControl')!.clearValidators();
+                        }
+
+                        if (this.dialogData!.showRegiXData) {
+                            this.regixChecksData = new RecreationalFishingTicketBaseRegixDataDTO(result.regiXDataModel);
+                            result.regiXDataModel = undefined;
+                            this.setupValidators();
                         }
 
                         this.writeValue(result);
+
+                        this.setRegiXData();
 
                         if (result.personPhoto !== null && result.personPhoto !== undefined) {
                             this.personPhotoMethod = this.service.getPhoto.bind(this.service, result.personPhoto.id!);
@@ -251,17 +243,6 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
         this.form.get('updatePersonalDataControl')?.valueChanges.subscribe({
             next: (checked: boolean) => {
                 this.updatePersonalData.emit(checked);
-            }
-        });
-
-        this.form.get('validFromControl')!.valueChanges.subscribe({
-            next: (date: Date | undefined) => {
-                if (date !== undefined && date !== null && date instanceof Date) {
-                    const egnLnc: EgnLncDTO | undefined = (this.form.get('regixDataControl')!.value as RegixPersonDataDTO)?.egnLnc;
-                    if (egnLnc !== undefined && egnLnc !== null) {
-                        this.egnLncCheck.emit(egnLnc);
-                    }
-                }
             }
         });
     }
@@ -438,7 +419,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
         else {
             this.form.markAllAsTouched();
 
-            if (this.form.valid) {
+            if (this.isFormValid()) {
                 const model: RecreationalFishingTicketDTO = this.getValue();
                 CommonUtils.sanitizeModelStrings(model);
 
@@ -542,24 +523,6 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
         }
     }
 
-    public egnLncFocusedOut(egnLnc: EgnLncDTO, representative: boolean = false): void {
-        if (!this.isPersonal) {
-            if (representative === true) {
-                if (egnLnc.egnLnc !== this.lastCheckedEgnLncRepresentative?.egnLnc
-                    || egnLnc.identifierType !== this.lastCheckedEgnLncRepresentative?.identifierType) {
-                    this.lastCheckedEgnLncRepresentative = egnLnc;
-                    this.egnLncCheckRepresentative.emit(egnLnc);
-                }
-            }
-            else {
-                if (egnLnc.egnLnc !== this.lastCheckedEgnLnc?.egnLnc || egnLnc.identifierType !== this.lastCheckedEgnLnc?.identifierType) {
-                    this.lastCheckedEgnLnc = egnLnc;
-                    this.egnLncCheck.emit(egnLnc);
-                }
-            }
-        }
-    }
-
     public fileTypeFilterFn(options: PermittedFileTypeDTO[]): PermittedFileTypeDTO[] {
         const excludedFileTypes: FileTypeEnum[] = [FileTypeEnum.TICKET_DECLARATION];
 
@@ -643,6 +606,27 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
         return result;
     }
 
+    private isFormValid(): boolean {
+        if (this.form.valid) {
+            return true;
+        }
+        else {
+            const errors: ValidationErrors = {};
+
+            for (const key of Object.keys(this.form.controls)) {
+                if (this.form.controls[key].errors !== null && this.form.controls[key].errors !== undefined) {
+                    for (const error in this.form.controls[key].errors) {
+                        if (!['expectedValueNotMatching'].includes(error)) {
+                            errors[error] = this.form.controls[key].errors![error];
+                        }
+                    }
+                }
+            }
+
+            return Object.keys(errors).length === 0;
+        }
+    }
+
     private setupValidators(): void {
         const type: TicketTypeEnum = TicketTypeEnum[this.type.code as keyof typeof TicketTypeEnum];
 
@@ -674,7 +658,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
 
         // TELK disability
         if (type === TicketTypeEnum.DISABILITY) {
-            if (this.dialogData?.showOnlyRegiXData === true) {
+            if (this.dialogData?.showOnlyRegiXData === true || this.dialogData?.showRegiXData) {
                 this.form.get('telkNumControl')!.setValidators([
                     Validators.required,
                     Validators.maxLength(50),
@@ -705,7 +689,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                     else {
                         this.form.get('telkValidToControl')?.enable();
 
-                        if (this.dialogData?.showOnlyRegiXData === true) {
+                        if (this.dialogData?.showOnlyRegiXData === true || this.dialogData?.showRegiXData) {
                             this.form.get('telkValidToControl')?.setValidators([
                                 Validators.required,
                                 TLValidators.expectedValueMatch(this.regixChecksData?.telkData?.validTo)
@@ -813,6 +797,29 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             translteService: this.translate,
             componentData: data
         }, '1000px');
+    }
+
+    private setRegiXData(): void {
+        if (this.regixChecksData?.applicationRegiXChecks) {
+            const applicationRegiXChecks: ApplicationRegiXCheckDTO[] = this.regixChecksData.applicationRegiXChecks;
+
+            setTimeout(() => {
+                this.regixChecks = applicationRegiXChecks;
+            });
+        }
+
+        this.notifier.start();
+        this.notifier.onNotify.subscribe({
+            next: () => {
+                this.form.markAllAsTouched();
+
+                if (this.dialogData?.showOnlyRegiXData) {
+                    ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.buttons!.rightSideActions);
+                }
+
+                this.notifier.stop();
+            }
+        });
     }
 
     private isPersonUnder14Validator(): ValidatorFn {

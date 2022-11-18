@@ -9,48 +9,61 @@
     <tl-expansion-panel *ngIf="!isApplication && !showOnlyRegiXData"
                         title="{{ 'commercial-fishing.validity-panel' | tlTranslate }}"
                         [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.addPermitIsSecondShipEventToday === null
+                                                         && form.errors?.addPermitIsSecondShipEventToday === undefined"
                         tooltipResourceName="commercial-fishing.validity-panel-helper">
-        <div fxFlex="100" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
-            <tl-input *ngIf="!isPermitLicense"
-                      fxFlex="20"
-                      formControlName="permitRegistrationNumberControl"
-                      label="{{ 'commercial-fishing.permit-number' | tlTranslate }}"
-                      tooltipResourceName="commercial-fishing.permit-number-helper"
-                      [readonly]="true">
-            </tl-input>
-            <tl-input *ngIf="isPermitLicense"
-                      fxFlex="20"
-                      formControlName="permitLicenseRegistrationNumberControl"
-                      label="{{ 'commercial-fishing.license-number' | tlTranslate }}"
-                      tooltipResourceName="commercial-fishing.license-number-helper"
-                      [readonly]="true">
-            </tl-input>
-            <tl-date fxFlex="20"
-                     formControlName="issueDateControl"
-                     label="{{ 'commercial-fishing.issue-date' | tlTranslate }}"
-                     tooltipResourceName="commercial-fishing.issue-date-helper">
-            </tl-date>
-            <tl-date *ngIf="form.controls.isPermitUnlimitedControl?.value === true; else permitIsLimited"
-                     fxFlex="20"
-                     formControlName="validFromUnlimitedControl"
-                     [min]="form.controls.issueDateControl?.value"
-                     label="{{ 'commercial-fishing.valid-from-when-unlimited' | tlTranslate }}"
-                     tooltipResourceName="commercial-fishing.valid-from-when-unlimited-helper">
-            </tl-date>
-            <ng-template #permitIsLimited>
-                <tl-date-range fxFlex="20"
-                               formControlName="validityRangeControl"
-                               [min]="form.controls.issueDateControl?.value"
-                               label="{{ 'commercial-fishing.valid-from-to' | tlTranslate }}"
-                               tooltipResourceName="commercial-fishing.valid-from-to-helper">
-                </tl-date-range>
-            </ng-template>
-            <tl-checkbox *ngIf="!isPermitLicense"
-                         fxFlex="30"
-                         formControlName="isPermitUnlimitedControl"
-                         label="{{ 'commercial-fishing.is-permit-unlimited' | tlTranslate }}"
-                         tooltipResourceName="commercial-fishing.is-permit-unlimited-helper">
-            </tl-checkbox>
+        <div fxFlex="100" fxLayout="column" fxLayoutGap="1em">
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-input *ngIf="!isPermitLicense"
+                          fxFlex="25"
+                          formControlName="permitRegistrationNumberControl"
+                          label="{{ 'commercial-fishing.permit-number' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.permit-number-helper"
+                          [readonly]="true">
+                </tl-input>
+                <tl-input *ngIf="isPermitLicense"
+                          fxFlex="25"
+                          formControlName="permitLicenseRegistrationNumberControl"
+                          label="{{ 'commercial-fishing.license-number' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.license-number-helper"
+                          [readonly]="true">
+                </tl-input>
+                <tl-date fxFlex="25"
+                         formControlName="issueDateControl"
+                         label="{{ 'commercial-fishing.issue-date' | tlTranslate }}"
+                         tooltipResourceName="commercial-fishing.issue-date-helper">
+                </tl-date>
+                <tl-date *ngIf="form.controls.isPermitUnlimitedControl?.value === true; else permitIsLimited"
+                         fxFlex="25"
+                         formControlName="validFromUnlimitedControl"
+                         [min]="form.controls.issueDateControl?.value"
+                         label="{{ 'commercial-fishing.valid-from-when-unlimited' | tlTranslate }}"
+                         tooltipResourceName="commercial-fishing.valid-from-when-unlimited-helper">
+                </tl-date>
+                <ng-template #permitIsLimited>
+                    <tl-date-range fxFlex="25"
+                                   formControlName="validityRangeControl"
+                                   [min]="form.controls.issueDateControl?.value"
+                                   label="{{ 'commercial-fishing.valid-from-to' | tlTranslate }}"
+                                   tooltipResourceName="commercial-fishing.valid-from-to-helper">
+                    </tl-date-range>
+                </ng-template>
+                <tl-checkbox *ngIf="!isPermitLicense"
+                             fxFlex="25"
+                             formControlName="isPermitUnlimitedControl"
+                             label="{{ 'commercial-fishing.is-permit-unlimited' | tlTranslate }}"
+                             tooltipResourceName="commercial-fishing.is-permit-unlimited-helper">
+                </tl-checkbox>
+            </div>
+            <div *ngIf="form.errors?.addPermitIsSecondShipEventToday"
+                 fxFlex="100"
+                 fxLayout="row"
+                 fxLayoutAlign="start center"
+                 fxLayoutGap="1em">
+                <mat-error>
+                    * {{ 'commercial-fishing.add-permit-is-second-ship-event-error' | tlTranslate }}
+                </mat-error>
+            </div>
         </div>
     </tl-expansion-panel>
 
@@ -58,64 +71,71 @@
     <tl-expansion-panel *ngIf="!isApplication && suspensions.length > 0"
                         title="{{ 'commercial-fishing.suspension-history-panel' | tlTranslate }}"
                         [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.suspendResumeIsSecondShipEventToday === null
+                                                         && form.errors?.suspendResumeIsSecondShipEventToday === undefined"
                         tooltipResourceName="commercial-fishing.suspension-history-panel-helper">
         <div fxFlex="100" fxLayout="column" fxLayoutGap="1em">
-            <tl-data-table fxFlexFill
-                           #suspensionsTable
-                           [rows]="suspensions"
-                           [isRemote]="false"
-                           [isSoftDeletable]="true"
-                           [showAddButton]="false"
-                           [showInactiveRecords]="true">
-                <data-column fxFlex="0.4"
-                             propertyName="suspensionTypeName"
-                             columnName="{{ 'commercial-fishing.suspension-type' | tlTranslate }}">
-                </data-column>
-                <data-column fxFlex="0.5"
-                             propertyName="reasonName"
-                             columnName="{{ 'commercial-fishing.suspension-reason' | tlTranslate }}">
-                </data-column>
-                <data-column fxFlex="0.2"
-                             propertyName="validFrom"
-                             columnName="{{ 'commercial-fishing.suspension-valid-from' | tlTranslate }}"
-                             dataType="date">
-                </data-column>
-                <data-column fxFlex="0.2"
-                             propertyName="validTo"
-                             columnName="{{ 'commercial-fishing.suspension-valid-to' | tlTranslate }}"
-                             dataType="date">
-                </data-column>
-                <data-template-column [flexRate]="0.6" [cellClass]="'justify-center'">
-                    <ng-template let-row="row" ngx-datatable-cell-template>
-                        <div fxLayout="row" fxLayoutAlign="end center">
-                            <tl-icon-button *ngIf="row.data.isActive"
-                                            icon="visibility"
-                                            (buttonClicked)="addEditSuspension(row.data, true)"
-                                            iconClass="accent-color"
-                                            tooltipText="{{ 'commercial-fishing.view-suspension' | tlTranslate }}">
-                            </tl-icon-button>
-                            <tl-icon-button *ngIf="row.data.isActive && !isReadonly && !viewMode"
-                                            icon="edit"
-                                            (buttonClicked)="addEditSuspension(row.data)"
-                                            iconClass="accent-color"
-                                            tooltipText="{{ 'commercial-fishing.edit-suspension' | tlTranslate }}">
-                            </tl-icon-button>
-                            <tl-icon-button *ngIf="row.data.isActive && !isReadonly && !viewMode"
-                                            icon="delete"
-                                            (buttonClicked)="deleteSuspension(row)"
-                                            iconClass="accent-color"
-                                            tooltipText="{{ 'commercial-fishing.delete-suspension' | tlTranslate }}">
-                            </tl-icon-button>
-                            <tl-icon-button *ngIf="!row.data.isActive && !isReadonly && !viewMode"
-                                            icon="restore"
-                                            (buttonClicked)="undoDeleteSuspension(row)"
-                                            iconClass="accent-color"
-                                            tooltipText="{{ 'commercial-fishing.restore-suspension' | tlTranslate }}">
-                            </tl-icon-button>
-                        </div>
-                    </ng-template>
-                </data-template-column>
-            </tl-data-table>
+            <div fxFlex="100" fxLayout="row">
+                <tl-data-table fxFlexFill
+                               #suspensionsTable
+                               [rows]="suspensions"
+                               [isRemote]="false"
+                               [isSoftDeletable]="true"
+                               [showAddButton]="false"
+                               [showInactiveRecords]="true">
+                    <data-column fxFlex="0.4"
+                                 propertyName="suspensionTypeName"
+                                 columnName="{{ 'commercial-fishing.suspension-type' | tlTranslate }}">
+                    </data-column>
+                    <data-column fxFlex="0.5"
+                                 propertyName="reasonName"
+                                 columnName="{{ 'commercial-fishing.suspension-reason' | tlTranslate }}">
+                    </data-column>
+                    <data-column fxFlex="0.2"
+                                 propertyName="validFrom"
+                                 columnName="{{ 'commercial-fishing.suspension-valid-from' | tlTranslate }}"
+                                 dataType="date">
+                    </data-column>
+                    <data-column fxFlex="0.2"
+                                 propertyName="validTo"
+                                 columnName="{{ 'commercial-fishing.suspension-valid-to' | tlTranslate }}"
+                                 dataType="date">
+                    </data-column>
+                    <data-template-column [flexRate]="0.6" [cellClass]="'justify-center'">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div fxLayout="row" fxLayoutAlign="end center">
+                                <tl-icon-button *ngIf="row.data.isActive"
+                                                icon="visibility"
+                                                (buttonClicked)="addEditSuspension(row.data, true)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'commercial-fishing.view-suspension' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="row.data.isActive && !isReadonly && !viewMode"
+                                                icon="edit"
+                                                (buttonClicked)="addEditSuspension(row.data)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'commercial-fishing.edit-suspension' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="row.data.isActive && !isReadonly && !viewMode"
+                                                icon="delete"
+                                                (buttonClicked)="deleteSuspension(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'commercial-fishing.delete-suspension' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="!row.data.isActive && !isReadonly && !viewMode"
+                                                icon="restore"
+                                                (buttonClicked)="undoDeleteSuspension(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'commercial-fishing.restore-suspension' | tlTranslate }}">
+                                </tl-icon-button>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+                </tl-data-table>
+            </div>
+            <mat-error *ngIf="form.errors?.suspendResumeIsSecondShipEventToday">
+                * {{ 'commercial-fishing.suspend-resume-is-second-event-for-ship-error' | tlTranslate }}
+            </mat-error>
         </div>
     </tl-expansion-panel>
 
@@ -158,7 +178,9 @@
                                      label="{{ 'commercial-fishing.ship' | tlTranslate }}"
                                      tooltipResourceName="commercial-fishing.ship-helper"
                                      [options]="ships"
-                                     [readonly]="!isApplication"
+                                     [readonly]="!isApplication
+                                                 && (pageCode !== pageCodes.PoundnetCommFishLic
+                                                      || (pageCode === pageCodes.PoundnetCommFishLic && !permitLicenseIsValid))"
                                      [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
                     </tl-autocomplete>
                 </div>
@@ -354,19 +376,29 @@
             </tl-radio-button-group>
             <div *ngIf="pageCode !== pageCodes.CatchQuataSpecies && isPermitLicense" fxLayout="column" fxFlex="100" fxLayoutGap="1em">
                 <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-                    <tl-autocomplete fxFlex="70"
-                                     formControlName="aquaticOrganismTypesControl"
-                                     [options]="aquaticOrganismTypes"
-                                     [focusoutOnSelect]="true"
-                                     label="{{ 'commercial-fishing.aquatic-organism-types' | tlTranslate }}"
-                                     tooltipResourceName="commercial-fishing.aquatic-organism-types-helper">
-                    </tl-autocomplete>
-                    <div fxFLex="30" fxLayout="row" fxLayoutAlign="end center">
+                    <div fxFlex="60">
+                        <tl-autocomplete fxFlex="100"
+                                         [formControl]="aquaticOrganismTypesControl"
+                                         [options]="aquaticOrganismTypes"
+                                         [focusoutOnSelect]="true"
+                                         label="{{ 'commercial-fishing.aquatic-organism-types' | tlTranslate }}"
+                                         tooltipResourceName="commercial-fishing.aquatic-organism-types-helper">
+                        </tl-autocomplete>
+                    </div>
+                    <div fxFLex="40" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">
                         <button *ngIf="!isReadonly && !viewMode"
+                                fxFlex="60"
                                 mat-raised-button
                                 color="accent"
                                 (click)="selectAllPermittedAquaticOrganisms()">
                             {{ 'commercial-fishing.select-all-permitted-aquatic-organisms' | tlTranslate }}
+                        </button>
+                        <button *ngIf="!isReadonly && !viewMode"
+                                fxFlex="40"
+                                mat-raised-button
+                                color="accent"
+                                (click)="deselectAllAquaticOrganisms()">
+                            {{ 'commercial-fishing.deselect-all-permitted-aquatic-organisms' | tlTranslate }}
                         </button>
                     </div>
                 </div>
@@ -376,7 +408,8 @@
                                    [isRemote]="false"
                                    [isSoftDeletable]="false"
                                    [showAddButton]="false"
-                                   [showInactiveRecords]="false">
+                                   [showInactiveRecords]="false"
+                                   [recordsPerPage]="aquaticOrganismsPerPage">
                         <data-column [flexRate]="1"
                                      propertyName="displayName"
                                      columnName="{{ 'commercial-fishing.aquatic-organism-types-column' | tlTranslate }}">
@@ -449,32 +482,40 @@
                         title="{{ 'commercial-fishing.fishing-gears-panel' | tlTranslate }}"
                         tooltipResourceName="commercial-fishing.fishing-gears-panel-helper"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="form.errors?.atLeastOneFishingGear !== true">
+                        [validityCheckerExtraCondition]="(form.get('fishingGearsGroup')!.errors === null
+                                                          || form.get('fishingGearsGroup')!.errors === undefined)
+                                                         && (form.get('fishingGearsGroup')!.get('fishingGearsControl')!.errors === null
+                                                             || form.get('fishingGearsGroup')!.get('fishingGearsControl')!.errors === undefined)">
         <div fxLayout="column" fxFlex="100" fxLayoutGap="1em">
-            <div fxLayout="column" fxFlex="100">
+            <div fxLayout="column" fxFlex="100" formGroupName="fishingGearsGroup">
                 <fishing-gears formControlName="fishingGearsControl"
                                validityChecker
                                [isReadonly]="isReadonly || viewMode"
                                [isApplication]="isApplication"
-                               [isDraftMode]="isApplication && (model?.id === null || model?.id === undefined)"
                                [service]="service"
                                [maxNumberOfFishingGears]="maxNumberOfFishingGears"
                                [pageCode]="pageCode">
-                    <!--maybe the check for isDraftMode is wrong ???-->
                 </fishing-gears>
             </div>
-            <mat-error *ngIf="form.touched && form.errors?.atLeastOneFishingGear">
-                {{ 'commercial-fishing.at-least-one-fishing-gear-must-be-selected' | tlTranslate }} *
+            <mat-error *ngIf="form.touched && form.get('fishingGearsGroup')!.errors?.atLeastOneFishingGear">
+                * {{ 'commercial-fishing.at-least-one-fishing-gear-must-be-selected' | tlTranslate }}
+            </mat-error>
+            <mat-error *ngIf="form.touched && form.get('fishingGearsGroup')!.errors?.duplicatedPingerNumbers">
+                * {{ 'commercial-fishing.permit-license-has-duplicated-pinger-numbers' | tlTranslate }}: {{ form.get('fishingGearsGroup')!.errors!.duplicatedPingerNumbers | tlJoin : ';' }}
+            </mat-error>
+            <mat-error *ngIf="form.touched && form.get('fishingGearsGroup')!.errors?.duplicatedMarkNumbers">
+                * {{ 'commercial-fishing.permit-license-has-duplicated-mark-numbers' | tlTranslate }}: {{ form.get('fishingGearsGroup')!.errors!.duplicatedMarkNumbers | tlJoin : ';' }}
             </mat-error>
         </div>
     </tl-expansion-panel>
 
     <!-- Информация за плащане -->
-    <tl-expansion-panel *ngIf="(isApplication || isApplicationHistoryMode) && !showOnlyRegiXData && isPaid && applicationPaymentInformation !== null && applicationPaymentInformation !== undefined"
+    <tl-expansion-panel *ngIf="(isApplication || isApplicationHistoryMode) && !showOnlyRegiXData && isPaid"
                         title="{{ 'commercial-fishing.payment-information-panel' | tlTranslate }}"
                         tooltipResourceName="commercial-fishing.payment-information-panel-helper"
                         [validityChecker]="form">
-        <payment-information [paymentData]="applicationPaymentInformation">
+        <payment-information formControlName="applicationPaymentInformationControl"
+                             [hideBasicInfo]="hideBasicPaymentInfo">
         </payment-information>
     </tl-expansion-panel>
 
@@ -509,6 +550,8 @@
                        [isOnline]="onlyOnlineLogBooks"
                        [ownerType]="logBookOwnerType"
                        [isForPermitLicense]="true"
+                       [permitLicenseId]="permitLicenseRegisterId"
+                       [service]="administrationService"
                        [showInactivePagesAndDocuments]="!isPublicApp">
             </log-books>
         </div>
@@ -537,7 +580,7 @@
     </tl-expansion-panel>
 
     <!-- Проверки -->
-    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+    <tl-expansion-panel *ngIf="showOnlyRegiXData || showRegiXData"
                         title="{{ 'commercial-fishing.regix-checks-results-panel' | tlTranslate }}"
                         tooltipResourceName="commercial-fishing.regix-checks-results-panel-helper">
         <div fxLayout="column" fxLayoutGap="1em">

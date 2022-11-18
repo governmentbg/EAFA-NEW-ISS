@@ -37,6 +37,9 @@ export class ShipPagesAndDeclarationsTableComponent {
     public showDocumentActionButtons: boolean = false;
 
     @Input()
+    public recordsPerPage: number = 10;
+
+    @Input()
     public set pagesPermissions(value: PagesPermissions | undefined) {
         if (value !== null && value !== undefined) {
             this._pagesPermissions = value;

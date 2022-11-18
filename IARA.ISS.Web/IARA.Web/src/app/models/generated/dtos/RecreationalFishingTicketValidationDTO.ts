@@ -2,6 +2,8 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { EgnLncDTO } from './EgnLncDTO';
+import { TicketTypeEnum } from '@app/enums/ticket-type.enum';
+import { TicketPeriodEnum } from '@app/enums/ticket-period.enum';
 
 export class RecreationalFishingTicketValidationDTO { 
     public constructor(obj?: Partial<RecreationalFishingTicketValidationDTO>) {
@@ -11,18 +13,21 @@ export class RecreationalFishingTicketValidationDTO {
     @StrictlyTyped(EgnLncDTO)
     public personEgnLnc?: EgnLncDTO;
 
-    @StrictlyTyped(Boolean)
-    public isRepresentative?: boolean;
+    @StrictlyTyped(EgnLncDTO)
+    public representativePersonEgnLnc?: EgnLncDTO;
 
     @StrictlyTyped(Number)
-    public typeId?: number;
+    public ticketType?: TicketTypeEnum;
 
     @StrictlyTyped(Number)
-    public periodId?: number;
+    public ticketPeriod?: TicketPeriodEnum;
 
     @StrictlyTyped(Date)
     public validFrom?: Date;
 
-    @StrictlyTyped(Number)
-    public under14TicketsCount?: number;
+    @StrictlyTyped(Date)
+    public birthDate?: Date;
+
+    @StrictlyTyped(Date)
+    public telkValidTo?: Date;
 }

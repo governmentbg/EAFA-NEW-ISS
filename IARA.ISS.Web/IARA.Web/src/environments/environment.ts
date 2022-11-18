@@ -21,7 +21,7 @@ export class Environment {
         identityServerBaseUrl: 'http://localhost:5050',
         hasPublicAccess: false,
         environmentType: EnvironmentType.Development,
-        ClientAuthConfiguration: new OpenIdConfigurationModel(AuthConfiguration, 'internal-web-client')
+        ClientAuthConfiguration: new OpenIdConfigurationModel(AuthConfiguration, 'internal-web-client'),
     });
 }
 /*

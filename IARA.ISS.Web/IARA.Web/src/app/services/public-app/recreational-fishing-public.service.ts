@@ -48,8 +48,8 @@ export class RecreationalFishingPublicService extends BaseAuditService implement
         this.commonService = commonService;
     }
 
-    public getTicket(id: number): Observable<RecreationalFishingTicketDTO> {
-        return this.commonService.getTicket(this.area, this.controller, id);
+    public getTicket(id: number, getRegiXData: boolean): Observable<RecreationalFishingTicketDTO> {
+        return this.commonService.getTicket(this.area, this.controller, id, getRegiXData);
     }
 
     public addTickets(tickets: RecreationalFishingTicketsDTO): Observable<RecreationalFishingAddTicketsResultDTO> {

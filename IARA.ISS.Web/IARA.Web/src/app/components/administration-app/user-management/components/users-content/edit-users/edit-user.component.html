@@ -1,56 +1,50 @@
-﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="editUserForm" fxFlexFill fxLayoutAlign="space-between stretch">
+﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="editUserForm">
     <tl-card tooltipResourceName="users-page.basic-information-helper">
         <tl-card-title>{{ 'users-page.basic-information-title' | tlTranslate }}</tl-card-title>
-        <tl-card-content fxFlexFill fxLayout="column">
-            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100">
-                <tl-input fxFlex="25"
-                          formControlName="firstNameControl"
-                          label="{{ 'users-page.first-name' | tlTranslate }}"
-                          tooltipResourceName="users-page.first-name-helper">
-                </tl-input>
-
-                <tl-input fxFlex="25"
-                          formControlName="middleNameControl"
-                          label="{{ 'users-page.middle-name' | tlTranslate }}"
-                          tooltipResourceName="users-page.middle-name-helper">
-                </tl-input>
-
-                <tl-input fxFlex="25"
-                          formControlName="lastNameControl"
-                          label="{{ 'users-page.last-name' | tlTranslate }}"
-                          tooltipResourceName="users-page.last-name-helper">
-                </tl-input>
-
-                <egn-lnc-input fxFlex="25"
-                               formControlName="egnControl">
-                </egn-lnc-input>
+        <tl-card-content fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100" fxLayoutAlign="space-between center">
+                <regix-data fxFlex="100"
+                            formControlName="identificationDataControl"
+                            [isPerson]="true"
+                            [isIdReadOnly]="!isAdd"
+                            [isForeigner]="false"
+                            [includeForeigner]="false"
+                            [showOnlyBasicData]="true">
+                </regix-data>
             </div>
-            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100">
-                <tl-input fxFlex="25"
-                          formControlName="usernameControl"
-                          label="{{ 'users-page.username' | tlTranslate }}"
-                          tooltipResourceName="users-page.username-helper">
-                </tl-input>
-
-                <tl-input fxFlex="25"
-                          formControlName="emailControl"
-                          label="{{ 'users-page.email' | tlTranslate }}"
-                          tooltipResourceName="users-page.email-helper">
-                </tl-input>
-
-                <tl-input fxFlex="25"
-                          formControlName="phoneNumberControl"
-                          label="{{ 'users-page.phone-number' | tlTranslate }}"
-                          tooltipResourceName="users-page.phone-number-helper">
-                </tl-input>
-
-                <tl-input fxFlex="25"
-                          formControlName="positionControl"
-                          label="{{ 'users-page.position' | tlTranslate }}"
-                          tooltipResourceName="users-page.position-helper">
-                </tl-input>
+            <div fxLayout="row" fxFlex="100" *ngIf="editUserForm.errors?.invalidEgnLnc">
+                <mat-error>
+                    * {{ 'users-page.must-have-one-valid-egn-lnc-error' | tlTranslate }}
+                </mat-error>
             </div>
-            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100">
+            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100" fxLayoutAlign="space-between center">
+                <div fxLayout="row" fxLayoutGap="1em" fxFlex="33" formGroupName="usernameEmailGroup" fxLayoutAlign="space-between center">
+                    <tl-input fxFlex="100"
+                              formControlName="emailControl"
+                              label="{{ 'users-page.email' | tlTranslate }}"
+                              tooltipResourceName="users-page.email-helper">
+                    </tl-input>
+                </div>
+                <div fxLayout="row" fxLayoutGap="1em" fxFlex="66" fxLayoutAlign="space-between center">
+                    <tl-input fxFlex="50"
+                              formControlName="phoneNumberControl"
+                              label="{{ 'users-page.phone-number' | tlTranslate }}"
+                              tooltipResourceName="users-page.phone-number-helper">
+                    </tl-input>
+
+                    <tl-input fxFlex="50"
+                              formControlName="positionControl"
+                              label="{{ 'users-page.position' | tlTranslate }}"
+                              tooltipResourceName="users-page.position-helper">
+                    </tl-input>
+                </div>
+            </div>
+            <div fxLayout="row" fxFlex="100" *ngIf="editUserForm.get('usernameEmailGroup')!.errors">
+                <mat-error *ngIf="editUserForm.get('usernameEmailGroup')!.errors!.emailExists">
+                    * {{ 'users-page.email-already-exists-error' | tlTranslate }}
+                </mat-error>
+            </div>
+            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100" fxLayoutAlign="space-between center">
                 <tl-select fxFlex="33"
                            label="{{ 'users-page.territorial-unit' | tlTranslate }}"
                            formControlName="territorialUnitControl"
@@ -72,7 +66,7 @@
                            tooltipResourceName="users-page.sector-helper">
                 </tl-select>
             </div>
-            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100">
+            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100" fxLayoutAlign="space-between center">
                 <tl-slide-toggle fxFlex="33"
                                  label="{{ 'users-page.user-must-change-password' | tlTranslate }}"
                                  formControlName="userMustChangePasswordControl"
@@ -84,12 +78,14 @@
                                  formControlName="isLockedControl"
                                  tooltipResourceName="users-page.unlock-user-helper">
                 </tl-slide-toggle>
+
+                <div fxFlex="33"></div>
             </div>
         </tl-card-content>
     </tl-card>
 
     <tl-card tooltipResourceName="users-page.role-helper">
-        <tl-card-title fxFlex="row">{{  'users-page.role' | tlTranslate }} </tl-card-title>
+        <tl-card-title fxFlex="row">{{  'users-page.role' | tlTranslate }}</tl-card-title>
         <tl-card-content>
             <tl-data-table #roleDataTable
                            fxFlexFill
@@ -106,7 +102,7 @@
                              [formGroup]="userRoleForm"
                              [options]="roles"
                              dataType="nomenclature"
-                             [getControlErrorLabelText]="getDatesOverlappingErrorText.bind(this)">
+                             [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
                 </data-column>
                 <data-column columnName="{{ 'users-page.valid-from' | tlTranslate }}"
                              propertyName="accessValidFrom"
@@ -127,7 +123,7 @@
 
     <tl-card *ngIf="!isInternalUser"
              tooltipResourceName="users-page.related-organizations-helper">
-        <tl-card-title fxFlex="row">{{ 'users-page.related-organizations' | tlTranslate }} </tl-card-title>
+        <tl-card-title fxFlex="row">{{ 'users-page.related-organizations' | tlTranslate }}</tl-card-title>
         <tl-card-content>
             <tl-data-table #legalDataTable fxFlexFill fxLayoutGap="1em" class="full-width-template"
                            [showAddButton]="!readOnly"
@@ -190,5 +186,6 @@
                  formControlName="mobileDevicesControl"
                  [userFullName]="userFullName"
                  [matCardTitleLabel]="mobileDevicesMatCardTitleLabel"
-                 [readOnly]="readOnly"></edit-access>
+                 [readOnly]="readOnly">
+    </edit-access>
 </div>

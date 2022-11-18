@@ -2,7 +2,7 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 
-export class ColumnDTO {
+export class ColumnDTO { 
     public constructor(obj?: Partial<ColumnDTO>) {
         Object.assign(this, obj);
     }
@@ -24,4 +24,7 @@ export class ColumnDTO {
 
     @StrictlyTyped(Number)
     public maxLength?: number;
+
+    @StrictlyTyped(Boolean)
+    public isReadOnly?: boolean;
 }

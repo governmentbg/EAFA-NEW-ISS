@@ -2,22 +2,17 @@
     <tl-card>
         <tl-card-content [formGroup]="parameterPropertiesGroup" fxLayoutGap="2em">
             <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
-                <tl-input fxFlex="33"
+                <tl-input fxFlex="50"
                           label="{{ 'report-parameter-definition.dialog-parameter-name' | tlTranslate }}"
                           formControlName="nameControl"
                           tooltipResourceName="report-parameter-definition.dialog-parameter-name-helper">
                 </tl-input>
-                <tl-select fxFlex="33"
+                <tl-select fxFlex="50"
                            [options]="dataTypes"
                            label="{{ 'report-parameter-definition.dialog-parameter-type' | tlTranslate }}"
                            formControlName="typeControl"
                            tooltipResourceName="report-parameter-definition.dialog-parameter-type-helper">
                 </tl-select>
-                <tl-date-range fxFlex="33"
-                               formControlName="dateRangeControl"
-                               label="{{ 'report-parameter-definition.dialog-parameter-date-active-from' | tlTranslate }} {{ 'report-parameter-definition.dialog-parameter-date-active-to' | tlTranslate }}"
-                               tooltipResourceName="report-parameter-definition.dialog-parameter-date-active-helper">
-                </tl-date-range>
             </div>
             <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
                 <tl-input fxFlex="33"
@@ -53,6 +48,10 @@
                 <report-sql formControlName="nomenclatureSQLControl"
                             [hasExecuteTable]="false">
                 </report-sql>
+
+                <mat-error *ngIf="parameterPropertiesGroup.controls.nomenclatureSQLControl.errors?.invalidSqlQuery">
+                    * {{ 'report-view.invalid-sql' | tlTranslate }}
+                </mat-error>
             </div>
         </tl-card-content>
     </tl-card>

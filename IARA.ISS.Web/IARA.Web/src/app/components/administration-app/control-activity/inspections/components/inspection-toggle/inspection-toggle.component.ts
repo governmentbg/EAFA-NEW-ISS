@@ -27,9 +27,15 @@ export class InspectionToggleComponent extends CustomFormControl<InspectionCheck
     public readonly inspectionToggleTypesEnum: typeof InspectionToggleTypesEnum = InspectionToggleTypesEnum;
 
     public constructor(@Self() ngControl: NgControl) {
-        super(ngControl, false);
+        super(ngControl);
 
-        this.form.valueChanges.subscribe({
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.control.updateValueAndValidity();
+            }
+        });
+
+        this.control.valueChanges.subscribe({
             next: () => {
                 this.onChanged(this.getValue());
             }

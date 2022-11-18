@@ -1,10 +1,12 @@
 ﻿<div fxLayout="column"
      fxLayoutGap="1em"
      fxFlexFill
+     validityCheckerGroup
      [formGroup]="form"
      class="dialog-padding">
     <!-- Основни данни -->
-    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
+                        [validityChecker]="form">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -23,8 +25,8 @@
     </tl-expansion-panel>
 
     <!-- Данни за юридическо лице, регистрирано по чл. 25 от ЗРА, за отглеждане на риба и други организми -->
-    <tl-expansion-panel [formGroup]="form"
-                        title="{{ 'inspections.aquaculture-data' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.aquaculture-data' | tlTranslate }}"
+                        [validityChecker]="form">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -57,8 +59,8 @@
     </tl-expansion-panel>
 
     <!-- Данни за инспекцията -->
-    <tl-expansion-panel [formGroup]="form"
-                        title="{{ 'inspections.aquaculture-catch' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.aquaculture-catch' | tlTranslate }}"
+                        [validityChecker]="form">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -68,9 +70,11 @@
                                      [types]="catchTypes"
                                      [catchZones]="catchZones"
                                      [fishSex]="fishSex"
+                                     [turbotSizeGroups]="turbotSizeGroups"
                                      [hasUnloadedQuantity]="false"
                                      [hasAllowedDeviation]="false"
-                                     [hasCatchZone]="false">
+                                     [hasCatchZone]="false"
+                                     [hasTurbotSizeGroups]="false">
             </inspected-catches-table>
             <inspection-toggle-list formControlName="catchTogglesControl"
                                     [toggles]="catchToggles">
@@ -79,7 +83,8 @@
     </tl-expansion-panel>
 
     <!-- Допълнителна информация -->
-    <inspection-additional-info formControlName="additionalInfoControl">
+    <inspection-additional-info formControlName="additionalInfoControl"
+                                [validityChecker]="form">
         <tl-textarea formControlName="fishermanCommentControl"
                      [minRows]="3"
                      label="{{ 'inspections.fisherman-comment' | tlTranslate }}">
@@ -87,7 +92,8 @@
     </inspection-additional-info>
 
     <!-- Файлове -->
-    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}"
+                        [validityChecker]="form">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">

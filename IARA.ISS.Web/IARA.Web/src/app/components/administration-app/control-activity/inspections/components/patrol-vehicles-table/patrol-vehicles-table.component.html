@@ -1,7 +1,9 @@
 ﻿<tl-card>
     <tl-card-title>{{ 'inspections.patrol-vehicles' | tlTranslate }}</tl-card-title>
     <tl-card-content>
-        <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
             <tl-data-table fxFlexFill
                            [rows]="patrolVehicles"
                            [isRemote]="false"
@@ -34,10 +36,17 @@
                              propertyName="externalMark"
                              columnName="{{ 'inspections.external-mark' | tlTranslate }}">
                 </data-column>
+                <data-column *ngIf="hasCoordinates"
+                             [flexRate]="0.4"
+                             propertyName="locationText"
+                             columnName="{{ 'inspections.location' | tlTranslate }}">
+                </data-column>
 
                 <data-template-column [flexRate]="0.5">
-                    <ng-template let-row="row" ngx-datatable-cell-template>
-                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                    <ng-template let-row="row"
+                                 ngx-datatable-cell-template>
+                        <div fxLayout="row wrap"
+                             fxLayoutAlign="end center">
                             <tl-icon-button icon="visibility"
                                             (buttonClicked)="addEditEntry(row.data, true)"
                                             iconClass="accent-color"

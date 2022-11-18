@@ -8,22 +8,26 @@
                 <tl-autocomplete fxFlex="40"
                                  formControlName="typeControl"
                                  label="{{ 'catches-and-sales.log-book-type' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.log-book-type-helper"
                                  [options]="logBookTypes"
                                  [readonly]="!isIdUndefined">
                 </tl-autocomplete>
                 <tl-input fxFlex="20"
                           formControlName="numberControl"
                           label="{{ 'catches-and-sales.log-book-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.log-book-number-helper"
                           [readonly]="true">
                 </tl-input>
                 <tl-date fxFlex="20"
                          formControlName="issueDateControl"
-                         label="{{ 'catches-and-sales.log-book-issue-date' | tlTranslate }}">
+                         label="{{ 'catches-and-sales.log-book-issue-date' | tlTranslate }}"
+                         tooltipResourceName="catches-and-sales.log-book-issue-date-helper">
                 </tl-date>
                 <tl-date *ngIf="!isAdd"
                          fxFlex="20"
                          formControlName="finishDateControl"
-                         label="{{ 'catches-and-sales.log-book-finish-date' | tlTranslate }}">
+                         label="{{ 'catches-and-sales.log-book-finish-date' | tlTranslate }}"
+                         tooltipResourceName="catches-and-sales.log-book-finish-date-helper">
                 </tl-date>
                 <div *ngIf="isAdd" fxFlex="20"></div>
             </div>
@@ -31,24 +35,29 @@
                 <tl-checkbox *ngIf="selectedLogBookType === logBookTypesEnum.Ship && isOnline"
                              fxFlex="20"
                              formControlName="isOnlineControl"
-                             label="{{ 'catches-and-sales.log-book-is-online' | tlTranslate }}">
+                             label="{{ 'catches-and-sales.log-book-is-online' | tlTranslate }}"
+                             tooltipResourceName="catches-and-sales.log-book-is-online-helper">
                 </tl-checkbox>
                 <tl-select fxFlex="20"
                            formControlName="statusControl"
                            [options]="logBookStatuses"
-                           label="{{ 'catches-and-sales.log-book-status' | tlTranslate }}">
+                           label="{{ 'catches-and-sales.log-book-status' | tlTranslate }}"
+                           tooltipResourceName="catches-and-sales.log-book-status-helper">
                 </tl-select>
                 <tl-input fxFlex="20"
                           formControlName="startPageNumberControl"
-                          label="{{ 'catches-and-sales.log-book-start-page-number' | tlTranslate }}">
+                          label="{{ 'catches-and-sales.log-book-start-page-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.log-book-start-page-number-helper">
                 </tl-input>
                 <tl-input fxFlex="20"
                           formControlName="endPageNumberControl"
-                          label="{{ 'catches-and-sales.log-book-end-page-number' | tlTranslate }}">
+                          label="{{ 'catches-and-sales.log-book-end-page-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.log-book-end-page-number-helper">
                 </tl-input>
                 <tl-input fxFlex="20"
                           formControlName="priceControl"
-                          label="{{ 'catches-and-sales.log-book-price' | tlTranslate }}">
+                          label="{{ 'catches-and-sales.log-book-price' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.log-book-price-helper">
                 </tl-input>
                 <div *ngIf="selectedLogBookType !== logBookTypesEnum.Ship || !isOnline" fxFlex="20"></div>
             </div>
@@ -82,27 +91,32 @@
                     <tl-input fxFlex="33"
                               formControlName="permitLicenseRegistrationNumberControl"
                               label="{{ 'catches-and-sales.log-book-permit-license-register-number' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.log-book-permit-license-register-number-helper"
                               [readonly]="true">
                     </tl-input>
                     <tl-date fxFlex="33"
                              formControlName="logBookLicenseValidFormControl"
                              label="{{ 'catches-and-sales.log-book-permit-license-valid-from' | tlTranslate }}"
+                             tooltipResourceName="catches-and-sales.log-book-permit-license-valid-from-helper"
                              [readonly]="true">
                     </tl-date>
                     <tl-date fxFlex="33"
                              formControlName="logBookLicenseValidToControl"
                              label="{{ 'catches-and-sales.log-book-permit-license-valid-to' | tlTranslate }}"
+                             tooltipResourceName="catches-and-sales.log-book-permit-license-valid-to-helper"
                              [readonly]="true">
                     </tl-date>
                 </div>
                 <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
                     <tl-input fxFlex="33"
                               formControlName="permitLicenseStartPageNumberControl"
-                              label="{{ 'catches-and-sales.log-book-permit-license-start-page-number' | tlTranslate }}">
+                              label="{{ 'catches-and-sales.log-book-permit-license-start-page-number' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.log-book-permit-license-start-page-number-helper">
                     </tl-input>
                     <tl-input fxFlex="33"
                               formControlName="permitLicenseEndPageNumberControl"
-                              label="{{ 'catches-and-sales.log-book-permit-license-end-page-number' | tlTranslate }}">
+                              label="{{ 'catches-and-sales.log-book-permit-license-end-page-number' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.log-book-permit-license-end-page-number-helper">
                     </tl-input>
                     <div fxFlex="33"></div>
                 </div>
@@ -115,46 +129,34 @@
             </div>
         </tl-card-content>
     </tl-card>
-    <tl-card *ngIf="!isAdd" 
-             fxFlex="100" 
-             [validityChecker]="form" 
-             [validityCheckerExtraCondition]="form.errors?.hasMissingOrInProgressPages !== true">
-        <tl-card-title>
-            <div *ngIf="isForPermitLicense; else isNotForPermitLicense">
-                <span *ngIf="isForRenewal">
-                    {{ 'catches-and-sales.log-book-pages-and-declarations-for-last-permit-license-panel' | tlTranslate }}
-                </span>
-                <span *ngIf="!isForRenewal">
-                    {{ 'catches-and-sales.log-book-declarations-of-origin-in-permit-license-panel' | tlTranslate }}
-                </span>
-            </div>
-            <ng-template #isNotForPermitLicense>
-                <span>
-                    {{ 'catches-and-sales.log-book-declarations-of-origin-panel' | tlTranslate }}
-                </span>
-            </ng-template>
-        </tl-card-title>
-        <tl-card-content>
-            <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
-                <ship-pages-and-declarations-table *ngIf="selectedLogBookType === logBookTypesEnum.Ship"
-                                                   [rows]="model.shipPagesAndDeclarations">
-                </ship-pages-and-declarations-table>
-                <admission-pages-and-declarations-table *ngIf="selectedLogBookType === logBookTypesEnum.Admission"
-                                                        [rows]="model.admissionPagesAndDeclarations">
-                </admission-pages-and-declarations-table>
-                <transportation-pages-and-declarations-table *ngIf="selectedLogBookType === logBookTypesEnum.Transportation"
-                                                             [rows]="model.transportationPagesAndDeclarations">
-                </transportation-pages-and-declarations-table>
-                <first-sale-pages-table *ngIf="selectedLogBookType === logBookTypesEnum.FirstSale"
-                                        [rows]="model.firstSalePages">
-                </first-sale-pages-table>
-                <aquaculture-pages-table *ngIf="selectedLogBookType === logBookTypesEnum.Aquaculture"
-                                         [rows]="model.aquaculturePages">
-                </aquaculture-pages-table>
-                <mat-error *ngIf="form.touched && form.errors?.hasMissingOrInProgressPages">
-                    * {{ 'catches-and-sales.log-book-cannot-be-finished-or-reissued-error' | tlTranslate }}
-                </mat-error>
-            </div>
-        </tl-card-content>
-    </tl-card>
+    <tl-expansion-panel *ngIf="!isAdd"
+                        fxFlex="100"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.hasMissingOrInProgressPages !== true"
+                        [title]="isForPermitLicense
+                                    ? isForRenewal
+                                        ? pagesAndDeclarationsForLastPermitLicenseLabel
+                                        : declarationsOfOriginInPermitLicenseLabel
+                                    : declarationsOfOriginLabel">
+        <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+            <ship-pages-and-declarations-table *ngIf="selectedLogBookType === logBookTypesEnum.Ship"
+                                               [rows]="model.shipPagesAndDeclarations">
+            </ship-pages-and-declarations-table>
+            <admission-pages-and-declarations-table *ngIf="selectedLogBookType === logBookTypesEnum.Admission"
+                                                    [rows]="model.admissionPagesAndDeclarations">
+            </admission-pages-and-declarations-table>
+            <transportation-pages-and-declarations-table *ngIf="selectedLogBookType === logBookTypesEnum.Transportation"
+                                                         [rows]="model.transportationPagesAndDeclarations">
+            </transportation-pages-and-declarations-table>
+            <first-sale-pages-table *ngIf="selectedLogBookType === logBookTypesEnum.FirstSale"
+                                    [rows]="model.firstSalePages">
+            </first-sale-pages-table>
+            <aquaculture-pages-table *ngIf="selectedLogBookType === logBookTypesEnum.Aquaculture"
+                                     [rows]="model.aquaculturePages">
+            </aquaculture-pages-table>
+            <mat-error *ngIf="form.touched && form.errors?.hasMissingOrInProgressPages">
+                * {{ 'catches-and-sales.log-book-cannot-be-finished-or-reissued-error' | tlTranslate }}
+            </mat-error>
+        </div>
+    </tl-expansion-panel>
 </div>

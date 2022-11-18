@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
 import { IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
@@ -53,6 +53,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
         snackbar: MatSnackBar
     ) {
         super(service, translate, nomenclatures, snackbar);
+        this.inspectionCode = InspectionTypesEnum.IVH;
     }
 
     public async ngOnInit(): Promise<void> {
@@ -102,7 +103,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
         this.catchToggles = nomenclatureTables[9].map(f => new InspectionCheckModel(f));
 
         if (this.id !== null && this.id !== undefined) {
-            this.service.get(this.id).subscribe({
+            this.service.get(this.id, this.inspectionCode).subscribe({
                 next: (dto: InspectionTransportVehicleDTO) => {
                     this.model = dto;
 
@@ -117,8 +118,8 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
             generalInfoControl: new FormControl(undefined),
             mapControl: new FormControl(undefined),
             addressControl: new FormControl(undefined),
-            typeControl: new FormControl(undefined),
-            countryControl: new FormControl(undefined),
+            typeControl: new FormControl(undefined, Validators.required),
+            countryControl: new FormControl(undefined, Validators.required),
             vehicleRegNumControl: new FormControl(undefined),
             vehicleMarkControl: new FormControl(undefined),
             vehicleModelControl: new FormControl(undefined),
@@ -158,7 +159,8 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
                 inspectorComment: this.model.inspectorComment,
-                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo)
+                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo),
+                violatedRegulations: this.model.violatedRegulations,
             }));
 
             this.form.get('mapControl')!.setValue(this.model.inspectionLocation);
@@ -232,6 +234,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
             byEmergencySignal: generalInfo.byEmergencySignal,
             inspectionType: InspectionTypesEnum.IVH,
             inspectorComment: additionalInfo?.inspectorComment,
+            violatedRegulations: additionalInfo?.violatedRegulations,
             isActive: true,
             transporterComment: this.form.get('transporterCommentControl')!.value,
             checks: this.form.get('catchTogglesControl')!.value,

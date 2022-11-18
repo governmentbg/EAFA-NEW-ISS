@@ -31,7 +31,7 @@ import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { LogBookPageDocumentTypesEnum } from '../../enums/log-book-page-document-types.enum';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { PossibleLogBooksForPageDTO } from '@app/models/generated/dtos/PossibleLogBooksForPageDTO';
-import { IS_PUBLIC_APP } from '../../../../../shared/modules/application.modules';
+import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 
 @Component({
     selector: 'add-log-book-page-wizard',
@@ -203,7 +203,10 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
 
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         this.preliminaryDataFormGroup.markAllAsTouched();
+        this.preliminaryDataFormGroup.updateValueAndValidity();
+
         this.confirmationDataFormGroup.markAllAsTouched();
+        this.confirmationDataFormGroup.updateValueAndValidity();
 
         if (this.preliminaryDataFormGroup.valid && this.confirmationDataFormGroup.valid) {
             switch (this.logBookType) {

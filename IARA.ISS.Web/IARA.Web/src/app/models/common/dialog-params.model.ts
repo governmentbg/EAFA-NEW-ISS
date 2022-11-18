@@ -13,6 +13,7 @@ export class DialogParamsModel {
     public isApplicationHistoryMode: boolean = false;
     public viewMode: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public service?: unknown;
     public isThirdCountry?: boolean;
     public pageCode!: PageCodeEnum;

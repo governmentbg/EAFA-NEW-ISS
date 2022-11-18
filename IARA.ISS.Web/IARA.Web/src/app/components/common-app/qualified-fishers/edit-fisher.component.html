@@ -11,7 +11,7 @@
                         title="{{'qualified-fishers-page.requester' | tlTranslate}}"
                         tooltipResourceName="qualified-fishers-page.requester-helper"
                         [validityChecker]="editForm"
-                        [validityCheckerExtraCondition]="editForm.errors?.personIsAlreadyQualifiedFisher !== true">
+                        [validityCheckerExtraCondition]="editForm.errors?.personIsAlreadyQualifiedFisher !== true || showSubmittedFor">
         <div fxLayout="column" fxLayoutGap="1em">
             <regix-data formControlName="submittedByRegixDataControl"
                         notifier
@@ -23,8 +23,8 @@
                         checkboxLabel="{{'qualified-fishers-page.has-bg-address' | tlTranslate}}">
             </regix-data>
 
-            <mat-error *ngIf="editForm.touched && editForm.errors?.personIsAlreadyQualifiedFisher === true">
-                *{{ 'qualified-fishers-page.person-is-alread-qualified-fisher' | tlTranslate }}
+            <mat-error *ngIf="!showSubmittedFor && editForm.touched && editForm.errors?.personIsAlreadyQualifiedFisher === true">
+                * {{ 'qualified-fishers-page.person-is-alread-qualified-fisher' | tlTranslate }}
             </mat-error>
 
             <address-registration formControlName="submittedByAddressDataControl"
@@ -53,7 +53,8 @@
     <tl-expansion-panel *ngIf="showSubmittedFor || !modeApplication"
                         title="{{'qualified-fishers-page.personal-data' | tlTranslate}}"
                         tooltipResourceName="qualified-fishers-page.personal-data-helper"
-                        [validityChecker]="editForm">
+                        [validityChecker]="editForm"
+                        [validityCheckerExtraCondition]="editForm.errors?.personIsAlreadyQualifiedFisher !== true">
         <div fxLayout="column" fxLayoutGap="1em">
             <regix-data formControlName="submittedForRegixDataControl"
                         notifier
@@ -65,6 +66,12 @@
                         [middleNameRequired]="true"
                         checkboxLabel="{{'qualified-fishers-page.has-bg-address' | tlTranslate}}">
             </regix-data>
+
+            <mat-error *ngIf="(showSubmittedFor || isWithMaritimeEducation) 
+                              && editForm.touched && editForm.errors?.personIsAlreadyQualifiedFisher === true">
+                * {{ 'qualified-fishers-page.person-is-alread-qualified-fisher' | tlTranslate }}
+            </mat-error>
+
             <address-registration formControlName="submittedForAddressDataControl"
                                   notifier
                                   validityChecker
@@ -169,7 +176,7 @@
                         title="{{ 'qualified-fishers-page.payment-information-panel' | tlTranslate }}"
                         tooltipResourceName="qualified-fishers-page.payment-information-panel-helper"
                         [validityChecker]="editForm">
-        <payment-information [paymentData]="applicationPaymentInformation"></payment-information>
+        <payment-information [paymentData]="applicationPaymentInformation" [hideBasicInfo]="hideBasicPaymentInfo"></payment-information>
     </tl-expansion-panel>
 
     <!-- Информация за начин на връчване -->
@@ -211,7 +218,7 @@
     </tl-expansion-panel>
 
     <!-- Проверки -->
-    <tl-expansion-panel *ngIf="modeApplicationRegixOnly"
+    <tl-expansion-panel *ngIf="modeApplicationRegixOnly || showRegiXData"
                         title="{{ 'qualified-fishers-page.regix-checks-results-panel' | tlTranslate }}"
                         tooltipResourceName="qualified-fishers-page.regix-checks-results-panel-helper">
         <div fxLayout="column" fxLayoutGap="1em">

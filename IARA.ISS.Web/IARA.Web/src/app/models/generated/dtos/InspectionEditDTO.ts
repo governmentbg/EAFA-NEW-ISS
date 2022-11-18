@@ -2,6 +2,7 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { InspectorDuringInspectionDTO } from './InspectorDuringInspectionDTO';
+import { AuanViolatedRegulationDTO } from './AuanViolatedRegulationDTO';
 import { FileInfoDTO } from './FileInfoDTO';
 import { InspectionSubjectPersonnelDTO } from './InspectionSubjectPersonnelDTO';
 import { InspectionCheckDTO } from './InspectionCheckDTO';
@@ -47,6 +48,9 @@ export class InspectionEditDTO {
 
     @StrictlyTyped(InspectorDuringInspectionDTO)
     public inspectors?: InspectorDuringInspectionDTO[];
+
+    @StrictlyTyped(AuanViolatedRegulationDTO)
+    public violatedRegulations?: AuanViolatedRegulationDTO[];
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];

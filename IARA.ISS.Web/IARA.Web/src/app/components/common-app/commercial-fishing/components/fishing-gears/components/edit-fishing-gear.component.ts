@@ -1,5 +1,5 @@
-﻿import { Component, Input, OnInit, Optional, Self, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
+﻿import { Component, EventEmitter, Input, OnInit, Optional, Output, Self, ViewChild } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { forkJoin, Subscription } from 'rxjs';
 
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
@@ -23,6 +23,8 @@ import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
 import { GridRow } from '@app/shared/components/data-table/models/row.model';
 import { FishingGearMarkStatusesEnum } from '@app/enums/fishing-gear-mark-statuses.enum';
+import { FishingGearPingerStatusesEnum } from '@app/enums/fishing-gear-pinger-statuses.enum';
+import { TLValidators } from '@app/shared/utils/tl-validators';
 
 @Component({
     selector: 'edit-fishing-gear',
@@ -35,13 +37,26 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     @Input()
     public isInspected: boolean = false;
 
-    public marksForm?: FormGroup;
-    public pingersForm?: FormGroup;
+    @Input()
+    public hasMarks: boolean = true;
+
+    @Input()
+    public hasPingers: boolean = true;
+
+    @Input()
+    public canSelectMarks: boolean = false;
+
+    @Output()
+    public selectedMark = new EventEmitter<FishingGearMarkDTO>();
+
+    public marksForm!: FormGroup;
+    public pingersForm!: FormGroup;
 
     public markStatuses: NomenclatureDTO<number>[] = [];
     public pingerStatuses: NomenclatureDTO<number>[] = [];
 
     public showPingersTable: boolean = false;
+    public selectedGearTypeIsPoundNet: boolean = false;
     public model!: FishingGearDTO;
 
     @ViewChild('marksTable')
@@ -52,7 +67,6 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
     private markedStatus!: NomenclatureDTO<number>;
     private nomenclatures: CommonNomenclatures;
-    private isDraft: boolean = false;
     private pageCode: PageCodeEnum | undefined;
     private readonly loader: FormControlDataLoader;
 
@@ -83,7 +97,6 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
     public setData(data: EditFishingGearDialogParamsModel, buttons: DialogWrapperData): void {
         this.isDisabled = data.readOnly;
-        this.isDraft = data.isDraft;
         this.pageCode = data.pageCode;
 
         if (data.model === null || data.model === undefined) {
@@ -99,17 +112,14 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         if (this.isDisabled) {
-            dialogClose(this.model);
-        }
-        else if (this.isDraft) {
-            this.fillModel();
-            CommonUtils.sanitizeModelStrings(this.model);
-            dialogClose(this.model);
+            dialogClose();
         }
         else {
             this.form.markAllAsTouched();
-            // TODO validate pingers here
-            if (this.form.valid) {
+            this.marksForm.updateValueAndValidity({ emitEvent: false });
+            this.pingersForm.updateValueAndValidity({ emitEvent: false });
+
+            if (this.isFormValid()) {
                 this.fillModel();
                 CommonUtils.sanitizeModelStrings(this.model);
                 dialogClose(this.model);
@@ -163,6 +173,10 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         if (this.isInspected) {
             this.onChanged(this.getValue());
         }
+        else {
+            this.marksForm!.updateValueAndValidity({ emitEvent: false });
+            this.pingersForm!.updateValueAndValidity({ emitEvent: false });
+        }
     }
 
     public onEditedPinger(): void {
@@ -188,22 +202,21 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     protected buildForm(): AbstractControl {
         const form = new FormGroup({
             typeControl: new FormControl(undefined, Validators.required),
-            countControl: new FormControl(undefined),
-            netEyeSizeControl: new FormControl(undefined, Validators.required),
-            descriptionControl: new FormControl(undefined),
-            hooksContControl: new FormControl(undefined),
-            lengthControl: new FormControl(undefined),
-            heightControl: new FormControl(undefined),
-            towelLengthControl: new FormControl(undefined),
-            houseLengthControl: new FormControl(undefined),
-            houseWidthControl: new FormControl(undefined),
-            hasPingersControl: new FormControl(undefined),
-            cordThicknessControl: new FormControl(undefined),
-        });
-
-        this.marksForm = new FormGroup({
-            numberControl: new FormControl(undefined, Validators.required),
-            statusIdControl: new FormControl(undefined, Validators.required)
+            countControl: new FormControl(undefined, TLValidators.number(0)),
+            netEyeSizeControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
+            descriptionControl: new FormControl(undefined, Validators.maxLength(4000)),
+            hooksContControl: new FormControl(undefined, TLValidators.number(0)),
+            lengthControl: new FormControl(undefined, TLValidators.number(0)),
+            heightControl: new FormControl(undefined, TLValidators.number(0)),
+            towelLengthControl: new FormControl(undefined, TLValidators.number(0)),
+            houseLengthControl: new FormControl(undefined, TLValidators.number(0)),
+            houseWidthControl: new FormControl(undefined, TLValidators.number(0)),
+            hasPingersControl: new FormControl(),
+            cordThicknessControl: new FormControl(undefined, TLValidators.number(0)),
+            lineCountControl: new FormControl(undefined, TLValidators.number(0)),
+            netNominalLengthControl: new FormControl(undefined, TLValidators.number(0)),
+            netsInFleetCountControl: new FormControl(undefined, TLValidators.number(0)),
+            trawlModelControl: new FormControl(undefined, Validators.maxLength(500))
         });
 
         this.pingersForm = new FormGroup({
@@ -212,6 +225,16 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             modelControl: new FormControl(undefined, Validators.maxLength(500)),
             brandControl: new FormControl(undefined, Validators.maxLength(500)),
         });
+
+        this.marksForm = new FormGroup({
+            numberControl: new FormControl(undefined, Validators.required),
+            statusIdControl: new FormControl(undefined, Validators.required)
+        });
+
+        if (!this.isInspected) {
+            this.marksForm.setValidators(this.uniqueMarkNumberValidator());
+            this.pingersForm.setValidators(this.uniquePingerNumberValidator());
+        }
 
         form.get('hasPingersControl')!.valueChanges.subscribe({
             next: (value: boolean) => {
@@ -222,23 +245,10 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         form.get('typeControl')!.valueChanges.subscribe({
             next: (value: NomenclatureDTO<number> | string | undefined) => {
                 if (value instanceof NomenclatureDTO) {
-                    if (value.code !== FishingGearTypesEnum[FishingGearTypesEnum.DLN]) {
-                        this.form.get('countControl')!.setValidators(Validators.required);
-                        this.form.get('countControl')!.markAsPending();
-                    }
-                    else {
-                        this.form.get('countControl')!.reset();
-                        this.form.get('countControl')!.setValidators(null);
-                        this.form.get('countControl')!.updateValueAndValidity();
-                    }
-
-                    if (this.pageCode === PageCodeEnum.CatchQuataSpecies) {
-                        this.setQuotaGearLength();
-                    }
-
-                    if (this.isDisabled) {
-                        this.form.get('countControl')!.disable();
-                    }
+                    this.setCountAndQuotaGearLength(value);
+                }
+                else {
+                    this.selectedGearTypeIsPoundNet = false;
                 }
             }
         });
@@ -252,23 +262,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             this.form.get('typeControl')!.setValue(type, { emitEvent: false });
 
             if (type instanceof NomenclatureDTO) {
-                if (type.code !== FishingGearTypesEnum[FishingGearTypesEnum.DLN]) {
-                    this.form.get('countControl')!.setValidators(Validators.required);
-                    this.form.get('countControl')!.markAsPending();
-                }
-                else {
-                    this.form.get('countControl')!.reset();
-                    this.form.get('countControl')!.setValidators(null);
-                    this.form.get('countControl')!.updateValueAndValidity();
-                }
-
-                if (this.pageCode === PageCodeEnum.CatchQuataSpecies) {
-                    this.setQuotaGearLength();
-                }
-
-                if (this.isDisabled) {
-                    this.form.get('countControl')!.disable();
-                }
+                this.setCountAndQuotaGearLength(type);
             }
 
             if (type.code !== FishingGearTypesEnum[FishingGearTypesEnum.DLN]) {
@@ -277,6 +271,10 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
                 this.form.get('lengthControl')!.setValue(this.model.length);
                 this.form.get('heightControl')!.setValue(this.model.height);
                 this.form.get('cordThicknessControl')!.setValue(this.model.cordThickness);
+                this.form.get('lineCountControl')!.setValue(this.model.lineCount);
+                this.form.get('netNominalLengthControl')!.setValue(this.model.netNominalLength);
+                this.form.get('netsInFleetCountControl')!.setValue(this.model.netsInFleetCount);
+                this.form.get('trawlModelControl')!.setValue(this.model.trawlModel);
             }
             else {
                 this.form.get('towelLengthControl')!.setValue(this.model.towelLength);
@@ -293,12 +291,6 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     private fillModel(): void {
         const type: NomenclatureDTO<number> = this.form.get('typeControl')!.value;
 
-        //if (this.ngControl !== null && this.ngControl !== undefined) {
-        //    if (type === null || type === undefined) {
-        //        return;
-        //    }
-        //}
-
         this.model.typeId = type.value;
         this.model.type = type.displayName;
 
@@ -312,6 +304,10 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             this.model.length = this.form.get('lengthControl')!.value;
             this.model.height = this.form.get('heightControl')!.value;
             this.model.cordThickness = this.form.get('cordThicknessControl')!.value;
+            this.model.lineCount = this.form.get('lineCountControl')!.value;
+            this.model.netNominalLength = this.form.get('netNominalLengthControl')!.value;
+            this.model.netsInFleetCount = this.form.get('netsInFleetCountControl')!.value;
+            this.model.trawlModel = this.form.get('trawlModelControl')!.value;
         }
         else {
             this.model.towelLength = this.form.get('towelLengthControl')!.value;
@@ -320,20 +316,12 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         }
 
         if (this.marksTable !== null && this.marksTable !== undefined && (!this.isInspected || this.marksTable.rows.length > 0)) {
-            this.model.marks = this.marksTable.rows.map((row: FishingGearMarkDTO) => {
-                return new FishingGearMarkDTO({
-                    id: row.id,
-                    number: row.number,
-                    statusId: row.statusId,
-                    selectedStatus: FishingGearMarkStatusesEnum[this.markStatuses.find(x => x.value === row.statusId)?.code as keyof typeof FishingGearMarkStatusesEnum],
-                    isActive: row.isActive ?? true
-                });
-            });
+            this.model.marks = this.getMarksFromTable();
         }
 
         this.model.marksNumbers = '';
         if (this.model.marks !== null && this.model.marks !== undefined && this.model.marks.length > 0) {
-            for (const mark of this.model.marks) {
+            for (const mark of this.model.marks.filter(x => x.isActive)) {
                 if (mark.number !== null && mark.number !== undefined) {
                     this.model.marksNumbers = this.model.marksNumbers?.concat(`${mark.number};`) ?? '';
                 }
@@ -342,17 +330,70 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
         if (this.form.get('hasPingersControl')!.value === true) {
             if (this.pingersTable !== null && this.pingersTable !== undefined) {
-                this.model.pingers = this.pingersTable.rows.map((row: FishingGearPingerDTO) => {
-                    return new FishingGearPingerDTO({
-                        id: row.id,
-                        number: row.number,
-                        statusId: row.statusId,
-                        isActive: row.isActive ?? true,
-                        model: row.model,
-                        brand: row.brand,
-                    });
-                });
+                this.model.pingers = this.getPingersFromTable();
             }
+        }
+    }
+
+    private isFormValid(): boolean {
+        return this.form.valid
+            && this.marksForm?.errors?.duplicatedMark == undefined
+            && this.pingersForm?.errors?.duplicatedPinger == undefined;
+    }
+
+    private getMarksFromTable(): FishingGearMarkDTO[] {
+        if (this.marksTable !== null && this.marksTable !== undefined && this.marksTable.rows !== null && this.marksTable.rows !== undefined) {
+            return this.marksTable.rows.map((row: FishingGearMarkDTO) => {
+                return new FishingGearMarkDTO({
+                    id: row.id,
+                    number: row.number,
+                    statusId: row.statusId,
+                    selectedStatus: FishingGearMarkStatusesEnum[this.markStatuses.find(x => x.value === row.statusId)!.code as keyof typeof FishingGearMarkStatusesEnum],
+                    isActive: row.isActive ?? true
+                });
+            });
+        }
+        else {
+            return new Array<FishingGearMarkDTO>();
+        }
+    }
+
+    private getPingersFromTable(): FishingGearPingerDTO[] {
+        if (this.pingersTable !== null && this.pingersTable !== undefined && this.pingersTable.rows !== null && this.pingersTable !== undefined) {
+            return this.pingersTable.rows.map((row: FishingGearPingerDTO) => {
+                return new FishingGearPingerDTO({
+                    id: row.id,
+                    number: row.number,
+                    statusId: row.statusId,
+                    selectedStatus: FishingGearPingerStatusesEnum[this.pingerStatuses.find(x => x.value === row.statusId)!.code as keyof typeof FishingGearPingerStatusesEnum],
+                    isActive: row.isActive ?? true,
+                    model: row.model,
+                    brand: row.brand,
+                });
+            });
+        }
+        else {
+            return new Array<FishingGearPingerDTO>();
+        }
+    }
+
+    private setCountAndQuotaGearLength(gearType: NomenclatureDTO<number>): void {
+        if (gearType.code !== FishingGearTypesEnum[FishingGearTypesEnum.DLN]) {
+            this.form.get('countControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+            this.form.get('countControl')!.markAsPending();
+        }
+        else {
+            this.form.get('countControl')!.reset();
+            this.form.get('countControl')!.setValidators(TLValidators.number(0));
+            this.form.get('countControl')!.updateValueAndValidity();
+        }
+
+        if (this.pageCode === PageCodeEnum.CatchQuataSpecies) {
+            this.setQuotaGearLength();
+        }
+
+        if (this.isDisabled) {
+            this.form.get('countControl')!.disable();
         }
     }
 
@@ -382,5 +423,49 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         });
 
         return subscription;
+    }
+
+    private uniqueMarkNumberValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === null || form === undefined) {
+                return null;
+            }
+
+            const markNum: string = form.get('numberControl')!.value;
+            const marks: FishingGearMarkDTO[] = this.getMarksFromTable();
+
+            if (markNum !== null
+                && markNum !== undefined
+                && marks !== null
+                && marks !== undefined
+                && marks!.filter(x => x.isActive && x.number === markNum).length > 1
+            ) {
+                return { 'duplicatedMark': true };
+            }
+
+            return null;
+        }
+    }
+
+    private uniquePingerNumberValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === null || form === undefined) {
+                return null;
+            }
+
+            const pingerNum: string = form.get('numberControl')!.value;
+            const pingers: FishingGearPingerDTO[] = this.getPingersFromTable();
+
+            if (pingerNum !== null
+                && pingerNum !== undefined
+                && pingers !== null
+                && pingers !== undefined
+                && pingers.filter(x => x.isActive && x.number === pingerNum).length > 1
+            ) {
+                return { 'duplicatedPinger': true };
+            }
+
+            return null;
+        }
     }
 }

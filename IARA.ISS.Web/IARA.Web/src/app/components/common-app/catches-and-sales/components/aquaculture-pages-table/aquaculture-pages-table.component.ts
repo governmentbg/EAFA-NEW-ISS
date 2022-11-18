@@ -35,6 +35,9 @@ export class AquaculturePagesTableComponent {
     @Input()
     public canEditAquacultureLogBookRecords: boolean = false;
 
+    @Input()
+    public recordsPerPage: number = 10;
+
     @Output()
     public onActiveRecordChanged: EventEmitter<AquaculturePageRecordChanged> = new EventEmitter<AquaculturePageRecordChanged>();
 

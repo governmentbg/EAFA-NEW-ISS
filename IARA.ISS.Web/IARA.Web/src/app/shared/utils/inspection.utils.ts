@@ -40,10 +40,12 @@ export class InspectionUtils {
             new NomenclatureDTO<InspectionToggleTypesEnum>({
                 value: InspectionToggleTypesEnum.Y,
                 displayName: translate.getValue('inspections.toggle-yes'),
+                isActive: true,
             }),
             new NomenclatureDTO<InspectionToggleTypesEnum>({
                 value: InspectionToggleTypesEnum.N,
                 displayName: translate.getValue('inspections.toggle-no'),
+                isActive: true,
             }),
         ];
     }
@@ -53,14 +55,17 @@ export class InspectionUtils {
             new NomenclatureDTO<InspectionToggleTypesEnum>({
                 value: InspectionToggleTypesEnum.Y,
                 displayName: translate.getValue('inspections.toggle-yes'),
+                isActive: true,
             }),
             new NomenclatureDTO<InspectionToggleTypesEnum>({
                 value: InspectionToggleTypesEnum.N,
                 displayName: translate.getValue('inspections.toggle-no'),
+                isActive: true,
             }),
             new NomenclatureDTO<InspectionToggleTypesEnum>({
                 value: InspectionToggleTypesEnum.X,
                 displayName: translate.getValue('inspections.toggle-not-applicable'),
+                isActive: true,
             }),
         ];
     }
@@ -70,14 +75,17 @@ export class InspectionUtils {
             new NomenclatureDTO<InspectionToggleTypesEnum>({
                 value: InspectionToggleTypesEnum.Y,
                 displayName: translate.getValue('inspections.toggle-matches'),
+                isActive: true,
             }),
             new NomenclatureDTO<InspectionToggleTypesEnum>({
                 value: InspectionToggleTypesEnum.N,
                 displayName: translate.getValue('inspections.toggle-does-not-match'),
+                isActive: true,
             }),
             new NomenclatureDTO<InspectionToggleTypesEnum>({
                 value: InspectionToggleTypesEnum.X,
                 displayName: translate.getValue('inspections.toggle-not-available'),
+                isActive: true,
             }),
         ];
     }
@@ -87,14 +95,17 @@ export class InspectionUtils {
             new NomenclatureDTO<InspectionToggleTypesEnum>({
                 value: InspectionToggleTypesEnum.Y,
                 displayName: translate.getValue('inspections.toggle-yes'),
+                isActive: true,
             }),
             new NomenclatureDTO<InspectionToggleTypesEnum>({
                 value: InspectionToggleTypesEnum.N,
                 displayName: translate.getValue('inspections.toggle-no'),
+                isActive: true,
             }),
             new NomenclatureDTO<InspectionToggleTypesEnum>({
                 value: InspectionToggleTypesEnum.X,
                 displayName: translate.getValue('inspections.toggle-not-available'),
+                isActive: true,
             }),
         ];
     }

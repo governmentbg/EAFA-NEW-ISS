@@ -1,20 +1,37 @@
-﻿<tl-expansion-panel [formGroup]="form" title="{{ 'inspections.additional-info' | tlTranslate }}">
-    <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
-        <tl-textarea formControlName="violationControl"
-                     [minRows]="3"
-                     label="{{ 'inspections.violation' | tlTranslate }}">
-        </tl-textarea>
-        <ng-content></ng-content>
-        <tl-textarea formControlName="inspectorCommentControl"
-                     [minRows]="3"
-                     label="{{ 'inspections.inspector-comment' | tlTranslate }}">
-        </tl-textarea>
-        <tl-textarea formControlName="actionsTakenControl"
-                     [minRows]="3"
-                     label="{{ 'inspections.actions-taken' | tlTranslate }}">
-        </tl-textarea>
-        <tl-checkbox formControlName="administrativeViolationControl"
-                     label="{{ 'inspections.administrative-violation' | tlTranslate }}">
-        </tl-checkbox>
-    </div>
-</tl-expansion-panel>
+﻿<div [formGroup]="form"
+     validityCheckerGroup>
+    <tl-expansion-panel title="{{ 'inspections.additional-info' | tlTranslate }}"
+                        [validityChecker]="form">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxLayoutAlign="start stretch">
+            <tl-textarea formControlName="violationControl"
+                         [minRows]="3"
+                         label="{{ 'inspections.violation' | tlTranslate }}">
+            </tl-textarea>
+            <ng-content></ng-content>
+            <tl-textarea formControlName="inspectorCommentControl"
+                         [minRows]="3"
+                         label="{{ 'inspections.inspector-comment' | tlTranslate }}">
+            </tl-textarea>
+            <tl-textarea formControlName="actionsTakenControl"
+                         [minRows]="3"
+                         label="{{ 'inspections.actions-taken' | tlTranslate }}">
+            </tl-textarea>
+            <tl-checkbox formControlName="administrativeViolationControl"
+                         label="{{ 'inspections.administrative-violation' | tlTranslate }}">
+            </tl-checkbox>
+
+            <!-- Нарушени разпоредби -->
+            <tl-card *ngIf="form.controls.administrativeViolationControl.value">
+                <tl-card-title>{{ 'inspections.edit-auan-violated-regulations' | tlTranslate }}</tl-card-title>
+                <tl-card-content>
+                    <auan-violated-regulations formControlName="violatedRegulationsControl"
+                                               [viewMode]="isDisabled"
+                                               [showInactiveRecords]="false">
+                    </auan-violated-regulations>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </tl-expansion-panel>
+</div>

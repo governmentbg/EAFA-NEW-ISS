@@ -1,6 +1,6 @@
 ﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
     <!-- Филтри -->
-    <search-panel [translateService]="translate">
+    <search-panel *ngIf="inspectionId === null || inspectionId === undefined" [translateService]="translate">
         <div [formGroup]="form" fxFlexFill fxLayout="column" fxLayoutGap="1em">
             <!-- № на АУАН, съставител, териториално звено, дата на съставяне -->
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
@@ -109,64 +109,80 @@
     </search-panel>
 
     <!-- Таблица -->
-    <mat-card>
-        <tl-data-table [showAddButton]="canAddRecords"
-                       [showInactiveRecords]="canRestoreRecords"
-                       (addButtonClicked)="addEditAuan(undefined, false)"
-                       (activeRecordChanged)="addEditAuan($event, !$event.isActive || !canEditRecords)">
-            <data-column propertyName="auanNum"
-                         [flexRate]="0.3"
-                         columnName="{{ 'auan-register.table-auan-num' | tlTranslate }}">
-            </data-column>
+    <tl-card>
+        <tl-card-title *ngIf="inspectionId !== null && inspectionId !== undefined">{{ 'auan-register.inspection-auans-title' | tlTranslate }}</tl-card-title>
+        <tl-card-content>
+            <tl-data-table [showAddButton]="canAddRecords && (inspectionId === null || inspectionId === undefined)"
+                           [showInactiveRecords]="canRestoreRecords && (inspectionId === null || inspectionId === undefined)"
+                           (addButtonClicked)="addEditAuan(undefined, false)"
+                           (activeRecordChanged)="addEditAuan($event, !$event.isActive || !canEditRecords)">
+                <row-detail>
+                    <ng-template let-row="row" ngx-datatable-row-detail-template>
+                        <penal-decrees fxFlexFill
+                                       [auanId]="row.data.id">
+                        </penal-decrees>
+                    </ng-template>
+                </row-detail>
 
-            <data-column propertyName="drafter"
-                         [flexRate]="0.3"
-                         columnName="{{ 'auan-register.table-drafter' | tlTranslate }}">
-            </data-column>
+                <data-column propertyName="auanNum"
+                             [flexRate]="0.3"
+                             columnName="{{ 'auan-register.table-auan-num' | tlTranslate }}">
+                </data-column>
 
-            <data-column propertyName="draftDate"
-                         [flexRate]="0.3"
-                         dataType="date"
-                         columnName="{{ 'auan-register.table-draft-date' | tlTranslate }}">
-            </data-column>
+                <data-column propertyName="drafter"
+                             [flexRate]="0.3"
+                             columnName="{{ 'auan-register.table-drafter' | tlTranslate }}">
+                </data-column>
 
-            <data-column propertyName="inspectedEntity"
-                         [flexRate]="0.3"
-                         columnName="{{ 'auan-register.table-inspected-entity' | tlTranslate }}">
-            </data-column>
+                <data-column propertyName="draftDate"
+                             [flexRate]="0.3"
+                             dataType="date"
+                             columnName="{{ 'auan-register.table-draft-date' | tlTranslate }}">
+                </data-column>
 
-            <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
-                <ng-template let-row="row" ngx-datatable-cell-template>
-                    <div fxLayout="row wrap" fxLayoutAlign="end center">
-                        <tl-icon-button icon="visibility"
-                                        (buttonClicked)="addEditAuan(row.data, true)"
-                                        iconClass="accent-color"
-                                        tooltipText="{{ 'auan-register.view-auan' | tlTranslate }}">
-                        </tl-icon-button>
+                <data-column propertyName="inspectedEntity"
+                             [flexRate]="0.3"
+                             columnName="{{ 'auan-register.table-inspected-entity' | tlTranslate }}">
+                </data-column>
 
-                        <tl-icon-button *ngIf="row.isActive && canEditRecords"
-                                        icon="edit"
-                                        (buttonClicked)="addEditAuan(row.data, false)"
-                                        iconClass="accent-color"
-                                        tooltipText="{{ 'auan-register.edit-auan' | tlTranslate }}">
-                        </tl-icon-button>
+                <data-column propertyName="territoryUnit"
+                             [flexRate]="0.3"
+                             columnName="{{ 'auan-register.table-territory-unit' | tlTranslate }}">
+                </data-column>
 
-                        <tl-icon-button *ngIf="row.isActive && canDeleteRecords"
-                                        icon="delete"
-                                        (buttonClicked)="deleteAuan(row.data)"
-                                        iconClass="accent-color"
-                                        tooltipText="{{ 'auan-register.delete-auan' | tlTranslate }}">
-                        </tl-icon-button>
+                <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button icon="visibility"
+                                            (buttonClicked)="addEditAuan(row.data, true)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'auan-register.view-auan' | tlTranslate }}">
+                            </tl-icon-button>
 
-                        <tl-icon-button *ngIf="!row.isActive && canRestoreRecords"
-                                        icon="restore"
-                                        (buttonClicked)="restoreAuan(row.data)"
-                                        iconClass="accent-color"
-                                        tooltipText="{{ 'auan-register.restore-auan' | tlTranslate }}">
-                        </tl-icon-button>
-                    </div>
-                </ng-template>
-            </data-template-column>
-        </tl-data-table>
-    </mat-card>
+                            <tl-icon-button *ngIf="row.isActive && canEditRecords && (inspectionId === null || inspectionId === undefined)"
+                                            icon="edit"
+                                            (buttonClicked)="addEditAuan(row.data, false)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'auan-register.edit-auan' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.isActive && canDeleteRecords && (inspectionId === null || inspectionId === undefined)"
+                                            icon="delete"
+                                            (buttonClicked)="deleteAuan(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'auan-register.delete-auan' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="!row.isActive && canRestoreRecords && (inspectionId === null || inspectionId === undefined)"
+                                            icon="restore"
+                                            (buttonClicked)="restoreAuan(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'auan-register.restore-auan' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
 </div>

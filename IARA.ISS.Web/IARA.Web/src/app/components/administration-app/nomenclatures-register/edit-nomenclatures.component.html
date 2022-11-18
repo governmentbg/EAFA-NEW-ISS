@@ -4,41 +4,34 @@
      fxLayoutAlign="space-between stretch"
      [formGroup]="form"
      class="dialog-padding">
+    <tl-checkbox *ngIf="!adding && !readOnly && isValidityNomenclature && !allReadOnly"
+                 [formControl]="editCurrentControl"
+                 label="{{ 'nomenclatures-page.edit-current-entry' | tlTranslate }}">
+    </tl-checkbox>
+
     <div fxLayout="row wrap" fxLayoutGap="1em" fxLayoutAlign="start center">
         <div *ngFor="let dataColumn of dataColumns" fxFlex="48">
             <ng-container [ngSwitch]="dataColumn.dataType">
-                <div *ngSwitchCase="'date'"
-                     matTooltip="{{ dataColumn.displayName }}"
-                     matTooltipPosition="before"
-                     [matTooltipShowDelay]="500">
+                <div *ngSwitchCase="'date'">
                     <tl-date formControlName="{{ dataColumn.propertyName }}"
                              label="{{ dataColumn.displayName }}">
                     </tl-date>
                 </div>
 
-                <div *ngSwitchCase="'boolean'"
-                     matTooltip="{{ dataColumn.displayName }}"
-                     matTooltipPosition="before"
-                     [matTooltipShowDelay]="500">
+                <div *ngSwitchCase="'boolean'">
                     <tl-checkbox formControlName="{{ dataColumn.propertyName }}"
                                  label="{{ dataColumn.displayName }}">
                     </tl-checkbox>
                 </div>
 
-                <div *ngSwitchCase="'nomenclature'"
-                     matTooltip="{{ dataColumn.displayName }}"
-                     matTooltipPosition="before"
-                     [matTooltipShowDelay]="500">
+                <div *ngSwitchCase="'nomenclature'">
                     <tl-autocomplete formControlName="{{ dataColumn.propertyName }}"
                                      [options]="dataColumn.options"
                                      label="{{ dataColumn.displayName }}">
                     </tl-autocomplete>
                 </div>
 
-                <div *ngSwitchDefault
-                     matTooltip="{{ dataColumn.displayName }}"
-                     matTooltipPosition="before"
-                     [matTooltipShowDelay]="500">
+                <div *ngSwitchDefault>
                     <tl-input formControlName="{{ dataColumn.propertyName }}"
                               label="{{ dataColumn.displayName }}">
                     </tl-input>

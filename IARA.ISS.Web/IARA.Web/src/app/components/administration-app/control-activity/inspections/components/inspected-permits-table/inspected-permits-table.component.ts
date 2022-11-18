@@ -1,21 +1,20 @@
-﻿import { Component, EventEmitter, OnInit, Output, Self, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, Self, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-
-import { CustomFormControl } from '@app/shared/utils/custom-form-control';
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { InspectedPermitTableModel } from '../../models/inspected-permit-table.model';
-import { InspectionUtils } from '@app/shared/utils/inspection.utils';
-import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { InspectionToggleTypesEnum } from '@app/enums/inspection-toggle-types.enum';
-import { InspectionCheckModel } from '../../models/inspection-check.model';
-import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
-import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { InspectionCheckDTO } from '@app/models/generated/dtos/InspectionCheckDTO';
 import { InspectionPermitDTO } from '@app/models/generated/dtos/InspectionPermitDTO';
+import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
+import { GridRow } from '@app/shared/components/data-table/models/row.model';
+import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
+import { CustomFormControl } from '@app/shared/utils/custom-form-control';
+import { InspectionUtils } from '@app/shared/utils/inspection.utils';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { InspectedPermitTableModel } from '../../models/inspected-permit-table.model';
 
 @Component({
     selector: 'inspected-permits-table',
-    templateUrl: './inspected-permits-table.component.html'
+    templateUrl: './inspected-permits-table.component.html',
 })
 export class InspectedPermitsTableComponent extends CustomFormControl<InspectionPermitDTO[]> implements OnInit {
     public permitsFormGroup!: FormGroup;
@@ -29,7 +28,6 @@ export class InspectedPermitsTableComponent extends CustomFormControl<Inspection
     public permits: InspectedPermitTableModel[] = [];
 
     public readonly options: NomenclatureDTO<InspectionToggleTypesEnum>[];
-    public readonly fakeToggle: InspectionCheckModel;
 
     private readonly translate: FuseTranslationLoaderService;
 
@@ -42,11 +40,6 @@ export class InspectedPermitsTableComponent extends CustomFormControl<Inspection
         this.translate = translate;
 
         this.options = InspectionUtils.getToggleCheckOptions(translate);
-
-        this.fakeToggle = new InspectionCheckModel({
-            value: 0,
-            isMandatory: true
-        });
 
         this.onMarkAsTouched.subscribe({
             next: () => {
@@ -65,7 +58,6 @@ export class InspectedPermitsTableComponent extends CustomFormControl<Inspection
                 description: f.description,
                 id: f.id,
                 isRegistered: f.permitLicenseId !== null && f.permitLicenseId !== undefined,
-                licenseNumber: f.licenseNumber,
                 permitNumber: f.permitNumber,
                 from: f.from,
                 to: f.to,
@@ -96,19 +88,34 @@ export class InspectedPermitsTableComponent extends CustomFormControl<Inspection
     }
 
     public onAddRecord(): void {
-        this.permitsFormGroup.get('licenseNumberControl')!.enable();
+        this.permitsFormGroup.get('permitNumberControl')!.enable();
         this.permitsFormGroup.get('optionsControl')!.disable();
+
+        this.permitsFormGroup.get('optionsControl')!.setValue(new NomenclatureDTO<InspectionToggleTypesEnum>({
+            value: InspectionToggleTypesEnum.Y,
+            displayName: this.translate.getValue('inspections.toggle-matches'),
+            isActive: true,
+        }));
     }
 
     public onEditRecord(record: InspectedPermitTableModel): void {
-        this.permitsFormGroup.get('licenseNumberControl')!.disable();
+        this.permitsFormGroup.get('permitNumberControl')!.disable();
         this.permitsFormGroup.get('optionsControl')!.enable();
-        this.permitsFormGroup.get('optionsControl')!.setValue(record.checkValue);
+
+        if (record) {
+            this.permitsFormGroup.get('optionsControl')!.setValue(record.checkValue);
+        }
     }
 
     public permitRecordChanged(event: RecordChangedEventArgs<InspectedPermitTableModel>): void {
-        event.Record.checkDTO = this.permitsFormGroup.get('optionsControl')!.value;
-        event.Record.checkValue = event.Record.checkDTO?.checkValue;
+        const nom: NomenclatureDTO<InspectionToggleTypesEnum> = this.permitsFormGroup.get('optionsControl')!.value;
+
+        event.Record.checkDTO = nom ? new InspectionCheckDTO({
+            id: event.Record.checkDTO?.id,
+            checkValue: nom.value,
+        }) : undefined;
+        event.Record.checkValue = nom?.value;
+
         this.permits = this.datatable.rows;
         this.control.updateValueAndValidity();
         this.onChanged(this.getValue());
@@ -120,9 +127,13 @@ export class InspectedPermitsTableComponent extends CustomFormControl<Inspection
         );
     }
 
+    public hideDeleteButtonWhen(row: GridRow<InspectedPermitTableModel>): boolean {
+        return !row.data.isRegistered;
+    }
+
     protected buildForm(): AbstractControl {
         this.permitsFormGroup = new FormGroup({
-            licenseNumberControl: new FormControl({ value: undefined, disabled: true }, [Validators.required]),
+            permitNumberControl: new FormControl({ value: undefined, disabled: true }, [Validators.required]),
             typeNameControl: new FormControl({ value: undefined, disabled: true }),
             validFromControl: new FormControl({ value: undefined, disabled: true }),
             validToControl: new FormControl({ value: undefined, disabled: true }),
@@ -140,7 +151,6 @@ export class InspectedPermitsTableComponent extends CustomFormControl<Inspection
             description: f.description,
             from: f.from,
             to: f.to,
-            licenseNumber: f.licenseNumber,
             permitNumber: f.permitNumber,
             typeName: f.typeName,
             typeId: f.typeId,

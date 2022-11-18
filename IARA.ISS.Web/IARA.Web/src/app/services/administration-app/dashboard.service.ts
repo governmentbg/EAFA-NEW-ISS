@@ -142,6 +142,7 @@ export class DashboardService implements IDashboardService {
                         entry.icon = CommonUtils.MENU_ICONS_MAP.get('scientific_fishing');
                         break;
                     case PageCodeEnum.LE:
+                    case PageCodeEnum.Assocs:
                         entry.icon = CommonUtils.MENU_ICONS_MAP.get('personal_data_legal_entities_and_persons_reports');
                         break;
                     case PageCodeEnum.AquaFarmReg:

@@ -6,16 +6,16 @@ import { ScientificPermitStatusEnum } from '@app/enums/scientific-permit-status.
 export class ScientificFishingFilters extends BaseRequestModel {
 
     constructor(obj?: Partial<ScientificFishingFilters>) {
-        if (obj != undefined) {
-            super((obj as BaseRequestModel));
-            Object.assign(this, obj);
-        } else {
-            super();
-        }
+      if (obj != undefined) { 
+        super((obj as BaseRequestModel));
+        Object.assign(this, obj);
+      } else {
+        super();
+      }
     }
 
-
-    public requestNumber: string | undefined;
+    
+    public eventisNum: string | undefined;
     public permitNumber: string | undefined;
     public creationDateFrom: Date | undefined;
     public creationDateTo: Date | undefined;

@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
+﻿import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -47,6 +47,7 @@ import { ShipRegisterLogBookPageDTO } from '@app/models/generated/dtos/ShipRegis
 import { ShipRegisterLogBookPagesFilters } from '@app/models/generated/filters/ShipRegisterLogBookPagesFilters';
 import { EditShipLogBookPageComponent } from '@app/components/common-app/catches-and-sales/components/ship-log-book/edit-ship-log-book-page.component';
 import { EditShipLogBookPageDialogParams } from '@app/components/common-app/catches-and-sales/components/ship-log-book/models/edit-ship-log-book-page-dialog-params.model';
+import { MenuService } from '@app/shared/services/menu.service';
 
 const SHIP_DATA_TAB_INDEX: number = 0;
 const FISHING_GEARS_TAB_INDEX: number = 1;
@@ -61,7 +62,7 @@ const GIVEN_POINTS_TAB_INDEX: number = 6;
     templateUrl: './edit-ship-register.component.html',
     styleUrls: ['./edit-ship-register.component.scss']
 })
-export class EditShipRegisterComponent extends BasePageComponent implements OnInit, DoCheck, AfterViewInit, OnDestroy {
+export class EditShipRegisterComponent extends BasePageComponent implements OnInit, AfterViewInit, OnDestroy {
     public model!: ShipRegisterEditDTO;
     public selectedEventHistoryNo!: number;
 
@@ -107,19 +108,26 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
     public allEvents: ShipRegisterEventDTO[] = [];
     public events: ShipRegisterEventDTO[] = [];
 
-    public eventsPanelTop: number = 0;
+    public containerHeightPx: number = 0;
+    public mainPanelWidthPx: number = 0;
+    public mainPanelHeightPx: number = 0;
+
     public isEventsPanelExpanded: boolean = true;
+    public isEventsPanelOpen: boolean = true;
     public disableCompleteApplicationButton: boolean = true;
 
     public disableTabs: boolean = true;
 
     public hasCatchesAndSalesReadPermission: boolean = false;
 
-    private mainContentElement: HTMLElement | undefined;
-    private changeOfContentsPanel: HTMLElement | undefined;
-
     @ViewChild('logbookPagesTable')
     private logbookPagesTable!: TLDataTableComponent;
+
+    private host: HTMLElement;
+    private toolbarElement!: HTMLElement;
+    private containerElement!: HTMLElement;
+    private eventsPanelElement!: HTMLElement;
+    private cocPanelElement!: HTMLElement;
 
     private logbookPagesGrid!: DataTableManager<ShipRegisterLogBookPageDTO, ShipRegisterLogBookPagesFilters>;
     private logbookPageEditDialog: TLMatDialog<EditShipLogBookPageComponent>;
@@ -129,6 +137,7 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
     private router: Router;
     private confirmDialog: TLConfirmDialog;
     private snackbar: MatSnackBar;
+    private menuService: MenuService;
     private catchesAndSalesService: ICatchesAndSalesService;
 
     private shipsCache: Map<number, ShipRegisterEditDTO> = new Map<number, ShipRegisterEditDTO>();
@@ -150,7 +159,9 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
         logbookPageEditDialog: TLMatDialog<EditShipLogBookPageComponent>,
         catchesAndSalesService: CatchesAndSalesAdministrationService,
         permissions: PermissionsService,
-        messageService: MessageService
+        messageService: MessageService,
+        menuService: MenuService,
+        host: ElementRef
     ) {
         super(messageService);
 
@@ -161,10 +172,13 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
         this.router = router;
         this.confirmDialog = confirmDialog;
         this.snackbar = snackbar;
+        this.menuService = menuService;
         this.logbookPageEditDialog = logbookPageEditDialog;
         this.catchesAndSalesService = catchesAndSalesService;
 
         this.hasCatchesAndSalesReadPermission = permissions.hasAny(PermissionsEnum.FishLogBookPageReadAll, PermissionsEnum.FishLogBookPageRead);
+
+        this.host = host.nativeElement as HTMLElement;
 
         this.setupRouteParameters();
         this.setTitle();
@@ -206,7 +220,7 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
                 }
             });
 
-            this.service.getApplication(this.applicationId, PageCodeEnum.ShipRegChange).subscribe({
+            this.service.getApplication(this.applicationId, false, PageCodeEnum.ShipRegChange).subscribe({
                 next: (application: ShipChangeOfCircumstancesApplicationDTO) => {
                     this.changeOfCircumstancesControl.setValue(application.changes);
                     this.changeOfCircumstancesControl.disable();
@@ -224,7 +238,7 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
                 }
             });
 
-            this.service.getApplication(this.applicationId, PageCodeEnum.DeregShip).subscribe({
+            this.service.getApplication(this.applicationId, false, PageCodeEnum.DeregShip).subscribe({
                 next: (application: ShipDeregistrationApplicationDTO) => {
                     this.deregistrationReasonControl.setValue(application.deregistrationReason);
                     this.deregistrationReasonControl.disable();
@@ -285,10 +299,16 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
     }
 
     public ngAfterViewInit(): void {
-        if (this.showBottomPanel()) {
-            this.mainContentElement = this.getMainContentPanel();
-            this.changeOfContentsPanel = this.getChangeOfCircumstancesPanel();
-        }
+        this.calculateContainerHeightPx();
+        this.calculateMainPanelWidthPx();
+
+        this.menuService.folded.subscribe({
+            next: () => {
+                setTimeout(() => {
+                    this.calculateMainPanelWidthPx();
+                });
+            }
+        });
 
         this.logbookPagesGrid = new DataTableManager<ShipRegisterLogBookPageDTO, ShipRegisterLogBookPagesFilters>({
             tlDataTable: this.logbookPagesTable,
@@ -343,21 +363,20 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
                 }
             }
         });
-
-        this.calculateMainContentPaddingBottom();
-
-        this.windowScrolledCallback(); // set initial top margin for events panel
-
-        window.addEventListener('scroll', this.windowScrolledCallback, true);
-    }
-
-    public ngDoCheck(): void {
-        this.calculateChangeOfCircumstancesPanelWidth();
     }
 
     public ngOnDestroy(): void {
         super.ngOnDestroy();
-        window.removeEventListener('scroll', this.windowScrolledCallback, true);
+    }
+
+    @HostListener('window:resize')
+    public onWindowResize(): void {
+        this.calculateContainerHeightPx();
+        this.calculateMainPanelWidthPx();
+    }
+
+    public onCocPanelResized(height: number): void {
+        this.calculateMainPanelHeightPx();
     }
 
     public viewHistoryShip(event: ShipRegisterEventDTO): void {
@@ -393,6 +412,21 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
 
     public toggleEventsPanel(): void {
         this.isEventsPanelExpanded = !this.isEventsPanelExpanded;
+
+        if (this.isEventsPanelOpen) {
+            this.isEventsPanelOpen = false;
+        }
+        else {
+            setTimeout(() => {
+                this.isEventsPanelOpen = true;
+            }, 180);
+        }
+    }
+
+    public onEventsPanelToggled(event: TransitionEvent): void {
+        if (event.propertyName === 'width') {
+            this.calculateMainPanelWidthPx();
+        }
     }
 
     public saveEvent(saveChanges: boolean): void {
@@ -415,6 +449,7 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
                                 this.service.editThirdPartyShip(this.model).subscribe({
                                     next: () => {
                                         this.shipSavedHandler();
+                                        NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
                                     }
                                 });
                             }
@@ -422,6 +457,7 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
                                 this.service.editShip(this.model).subscribe({
                                     next: () => {
                                         this.shipSavedHandler();
+                                        NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
                                     }
                                 });
                             }
@@ -434,7 +470,7 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
                                 date: new Date(),
                                 type: ShipEventTypeEnum[this.model.eventType!],
                                 no: this.allEvents.length + 1,
-                                usrRsr: !this.model.isForbiddenForRSR,
+                                usrRsr: this.allEvents[0].usrRsr,
                                 isTemporary: true
                             }));
 
@@ -646,7 +682,7 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
             },
             headerAuditButton: {
                 id: page.id!,
-                tableName: 'ShipLogBookPages',
+                tableName: 'ShipLogBookPage',
                 getAuditRecordData: this.service.getShipLogBookPageSimpleAudit.bind(this.service)
             },
             componentData: new EditShipLogBookPageDialogParams({
@@ -657,6 +693,41 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
             viewMode: true,
             disableDialogClose: false
         }, '1450px').subscribe();
+    }
+
+    private calculateContainerHeightPx(): void {
+        if (!this.toolbarElement) {
+            this.toolbarElement = document.getElementsByTagName('toolbar').item(0) as HTMLElement;
+        }
+
+        this.containerHeightPx = window.innerHeight - this.toolbarElement.offsetHeight;
+
+        this.calculateMainPanelHeightPx();
+    }
+
+    private calculateMainPanelWidthPx(): void {
+        if (!this.containerElement) {
+            this.containerElement = this.host.getElementsByClassName('container').item(0) as HTMLElement;
+        }
+
+        if (!this.eventsPanelElement) {
+            this.eventsPanelElement = this.host.getElementsByClassName('events-panel').item(0) as HTMLElement;
+        }
+
+        this.mainPanelWidthPx = this.containerElement.offsetWidth - this.eventsPanelElement.offsetWidth;
+    }
+
+    private calculateMainPanelHeightPx(): void {
+        if (!this.cocPanelElement) {
+            this.cocPanelElement = this.host.getElementsByClassName('change-of-circumstances-panel').item(0) as HTMLElement;
+        }
+
+        if (this.cocPanelElement) {
+            this.mainPanelHeightPx = this.containerHeightPx - this.cocPanelElement.offsetHeight;
+        }
+        else {
+            this.mainPanelHeightPx = this.containerHeightPx;
+        }
     }
 
     private closeViewShipLogBookPageDialog(closeFn: HeaderCloseFunction): void {
@@ -850,66 +921,22 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
 
                 if (event !== undefined && event !== null && event.value !== undefined && event.value !== null) {
                     if (event.code !== ShipEventTypeEnum[ShipEventTypeEnum.EDIT]) {
-                        const now = new Date();
-                        const yesterday = new Date(now);
-                        yesterday.setDate(yesterday.getDate() - 1);
+                        const lastEvent: ShipRegisterEventDTO | undefined = this.allEvents.find(x => x.type !== ShipEventTypeEnum[ShipEventTypeEnum.EDIT]);
 
-                        const moreThanOneMod: boolean = this.allEvents.some((event: ShipRegisterEventDTO) => {
-                            if (event.type !== ShipEventTypeEnum[ShipEventTypeEnum.EDIT]) {
-                                return event.date! > yesterday && event.date! < now;
+                        if (lastEvent) {
+                            const now: Date = new Date();
+
+                            if (this.datesEqual(lastEvent.date!, now)) {
+                                if (event.code !== lastEvent.type) {
+                                    return { moreThanOneModPerDay: true };
+                                }
                             }
-                            return false;
-                        });
-
-                        if (moreThanOneMod) {
-                            return { moreThanOneModPerDay: true };
                         }
                     }
                 }
             }
             return null;
         };
-    }
-
-    private windowScrolledCallback = (): void => {
-        // assume toolbar exists and is only one in the context (to avoid a heavy function on scroll)
-        const element: HTMLElement = document.getElementsByTagName('toolbar').item(0) as HTMLElement;
-        const rect: DOMRect = element.getBoundingClientRect();
-
-        setTimeout(() => {
-            this.eventsPanelTop = rect.bottom >= 0 ? rect.bottom : 0;
-        });
-    };
-
-    private calculateMainContentPaddingBottom(): void {
-        const mainContent: HTMLElement = this.getMainContentPanel();
-
-        if (this.isChangeOfCircumstancesApplication || this.isDeregistrationApplication || this.isIncreaseCapacityApplication || this.isReduceCapacityApplication) {
-            // assume only one element has the class
-            const element: HTMLElement = this.getChangeOfCircumstancesPanel();
-            const rect: DOMRect = element.getBoundingClientRect();
-
-            mainContent.style.paddingBottom = `${rect.height}px`;
-        }
-        else {
-            mainContent.style.paddingBottom = `${0}px`;
-        }
-    }
-
-    private calculateChangeOfCircumstancesPanelWidth(): void {
-        if (this.showBottomPanel()) {
-            if (this.mainContentElement && this.changeOfContentsPanel && this.changeOfContentsPanel.style.width !== `${this.mainContentElement.clientWidth}px`) {
-                this.changeOfContentsPanel.style.width = `${this.mainContentElement.clientWidth}px`;
-            }
-        }
-    }
-
-    private getMainContentPanel(): HTMLElement {
-        return document.getElementById('main-content')!;
-    }
-
-    private getChangeOfCircumstancesPanel(): HTMLElement {
-        return document.getElementById('change-of-circumstances-panel') as HTMLElement;
     }
 
     private showBottomPanel(): boolean {
@@ -942,5 +969,11 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
         });
 
         return result;
+    }
+
+    private datesEqual(lhs: Date, rhs: Date): boolean {
+        return lhs.getFullYear() === rhs.getFullYear()
+            && lhs.getMonth() === rhs.getMonth()
+            && lhs.getDate() === rhs.getDate();
     }
 }

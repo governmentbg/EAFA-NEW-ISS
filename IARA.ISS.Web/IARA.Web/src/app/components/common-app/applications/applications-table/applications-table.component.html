@@ -201,7 +201,7 @@
     <data-template-column [flexRate]="0.6">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <div fxLayout="row" fxLayoutAlign="end center">
-                <div *ngIf="pageType !== 'DashboardPage' && row.data.isActive">
+                <div *ngIf="pageType !== 'DashboardPage' && row.data.isActive" fxLayout="row">
                     <ng-container *ngTemplateOutlet="applicationActions; context: { value: { row: row.data } }"></ng-container>
                 </div>
                 <tl-icon-button *ngIf="pageType !== 'DashboardPage'
@@ -210,7 +210,8 @@
                                 icon="visibility"
                                 iconClass="accent-color"
                                 tooltipText="{{ 'applications-register.view-application' | tlTranslate }}"
-                                (buttonClicked)="openApplicationInViewMode(row.data)"></tl-icon-button>
+                                (buttonClicked)="openApplicationInViewMode(row.data)">
+                </tl-icon-button>
                 <tl-icon-button *ngIf="row.data.isActive && processingPermissions.get(row.data.pageCode)?.canDeleteRecords"
                                 icon="delete"
                                 (buttonClicked)="deleteApplication(row.data)"
@@ -241,7 +242,7 @@
                 <ng-container *ngIf="pageType === 'FileInPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -256,7 +257,7 @@
                     </tl-icon-button>
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -267,7 +268,7 @@
                 <ng-container *ngIf="pageType === 'FileInPage' && value.row.assignedUser == undefined">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -282,7 +283,7 @@
                     </tl-icon-button>
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -291,7 +292,7 @@
                 <ng-container *ngIf="pageType === 'ApplicationPage' && value.row.assignedUser != undefined">
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -302,7 +303,7 @@
                 <ng-container *ngIf="pageType === 'FileInPage' && value.row.assignedUser == undefined">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -332,7 +333,7 @@
                     </tl-icon-button>
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -341,7 +342,7 @@
                 <ng-container *ngIf="pageType === 'ApplicationPage' && value.row.assignedUser != undefined">
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -352,7 +353,7 @@
                 <ng-container *ngIf="pageType === 'FileInPage' && value.row.assignedUser == undefined">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -368,7 +369,7 @@
                 <ng-container *ngIf="pageType === 'ApplicationPage' && value.row.assignedUser != undefined">
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -386,7 +387,7 @@
                 <ng-container *ngIf="pageType === 'FileInPage' && value.row.assignedUser == undefined">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -395,7 +396,7 @@
                 <ng-container *ngIf="pageType === 'PublicPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -404,7 +405,7 @@
                 <ng-container *ngIf="pageType === 'ApplicationPage' && value.row.assignedUser != undefined">
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -422,7 +423,7 @@
                     </tl-icon-button>
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -431,7 +432,7 @@
                 <ng-container *ngIf="pageType === 'PublicPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -447,7 +448,7 @@
                     </tl-icon-button>
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -458,7 +459,7 @@
                 <ng-container *ngIf="pageType === 'FileInPage' && value.row.assignedUser == undefined">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -473,7 +474,7 @@
                     </tl-icon-button>
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -482,7 +483,7 @@
                 <ng-container *ngIf="pageType === 'ApplicationPage' && value.row.assignedUser != undefined">
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -500,7 +501,7 @@
                     </tl-icon-button>
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -509,7 +510,7 @@
                 <ng-container *ngIf="pageType === 'PublicPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -520,7 +521,7 @@
                 <ng-container *ngIf="pageType === 'ApplicationPage'">
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -536,7 +537,7 @@
                     </tl-icon-button>
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -547,7 +548,7 @@
                 <ng-container *ngIf="pageType === 'ApplicationPage'">
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -556,7 +557,7 @@
                 <ng-container *ngIf="pageType === 'PublicPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -567,7 +568,7 @@
                 <ng-container *ngIf="pageType === 'ApplicationPage'">
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -582,7 +583,7 @@
                     </tl-icon-button>-->
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -600,7 +601,7 @@
                     </tl-icon-button>
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -609,7 +610,7 @@
                 <ng-container *ngIf="pageType === 'PublicPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -662,7 +663,7 @@
                     </tl-icon-button>
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -673,7 +674,7 @@
                 <ng-container *ngIf="pageType === 'ApplicationPage'">
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -691,7 +692,7 @@
                     </tl-icon-button>
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -708,7 +709,7 @@
                     </tl-icon-button>
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -733,7 +734,7 @@
                     </tl-icon-button>-->
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -751,7 +752,7 @@
                     </tl-icon-button>
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
-                                    iconClass="accent-color"
+                                    iconClass="error-color"
                                     [size]="icIconSize"
                                     tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
                                     (buttonClicked)="cancellationActionClicked(value.row)">
@@ -770,7 +771,7 @@
                 </ng-container>
             </ng-container>
             <ng-container *ngSwitchCase="applicationStatusEnum.ADM_ACT_COMPLETION">
-                <ng-container *ngIf="pageType === 'PublicPage'">
+                <ng-container *ngIf="pageType === 'PublicPage' || pageType === 'ApplicationPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canViewAdministrativeActRecords"
                                     icon="visibility"
                                     iconClass="accent-color"

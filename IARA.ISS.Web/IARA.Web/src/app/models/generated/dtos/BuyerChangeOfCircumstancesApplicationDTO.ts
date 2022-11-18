@@ -7,7 +7,8 @@ import { ApplicationSubmittedForDTO } from './ApplicationSubmittedForDTO';
 import { ChangeOfCircumstancesDTO } from './ChangeOfCircumstancesDTO';
 import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformationDTO';
 import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
-import { FileInfoDTO } from './FileInfoDTO'; 
+import { FileInfoDTO } from './FileInfoDTO';
+import { BuyerChangeOfCircumstancesRegixDataDTO } from './BuyerChangeOfCircumstancesRegixDataDTO'; 
 
 export class BuyerChangeOfCircumstancesApplicationDTO extends BuyerChangeOfCircumstancesBaseRegixDataDTO {
     public constructor(obj?: Partial<BuyerChangeOfCircumstancesApplicationDTO>) {
@@ -49,4 +50,7 @@ export class BuyerChangeOfCircumstancesApplicationDTO extends BuyerChangeOfCircu
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
+
+    @StrictlyTyped(BuyerChangeOfCircumstancesRegixDataDTO)
+    public regiXDataModel?: BuyerChangeOfCircumstancesRegixDataDTO;
 }

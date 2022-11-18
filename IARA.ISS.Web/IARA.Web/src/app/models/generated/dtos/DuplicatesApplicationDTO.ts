@@ -11,6 +11,7 @@ import { QualifiedFisherDuplicateDataDTO } from './QualifiedFisherDuplicateDataD
 import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformationDTO';
 import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
 import { FileInfoDTO } from './FileInfoDTO';
+import { DuplicatesApplicationRegixDataDTO } from './DuplicatesApplicationRegixDataDTO';
 import { PageCodeEnum } from '@app/enums/page-code.enum'; 
 
 export class DuplicatesApplicationDTO extends DuplicatesApplicationBaseRegixDataDTO {
@@ -65,4 +66,7 @@ export class DuplicatesApplicationDTO extends DuplicatesApplicationBaseRegixData
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
+
+    @StrictlyTyped(DuplicatesApplicationRegixDataDTO)
+    public regiXDataModel?: DuplicatesApplicationRegixDataDTO;
 }

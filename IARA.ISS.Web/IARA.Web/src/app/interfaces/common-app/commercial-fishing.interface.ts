@@ -25,7 +25,6 @@ export interface ICommercialFishingService extends IApplicationsActionsService {
     getAllPermits(request: GridRequestModel<CommercialFishingRegisterFilters>): Observable<GridResultModel<CommercialFishingPermitRegisterDTO>>;
 
     getRecord(id: number, pageCode: PageCodeEnum): Observable<CommercialFishingEditDTO>;
-    getOverlappedLogBooks(parameters: OverlappingLogBooksParameters[]): Observable<RangeOverlappingLogBooksDTO[]>;
 
     addPermit(permit: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<number>;
     addAndDownloadRegister(model: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<boolean>;
@@ -38,6 +37,9 @@ export interface ICommercialFishingService extends IApplicationsActionsService {
 
     deletePermit(id: number, pageCode: PageCodeEnum): Observable<void>;
     undoDeletePermit(id: number, pageCode: PageCodeEnum): Observable<void>;
+
+    deleteLogBookPermitLicense(id: number): Observable<void>;
+    undoDeleteLogBookPermitLicense(id: number): Observable<void>;
 
     getPermitLicensesForRenewal(permitId: number | undefined, permitNumber: string | undefined, pageCode: PageCodeEnum): Observable<PermitLicenseForRenewalDTO[]>;
     getPermitLicenseData(permitLicenseId: number): Observable<CommercialFishingApplicationEditDTO>;

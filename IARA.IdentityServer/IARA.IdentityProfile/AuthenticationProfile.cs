@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.Composition;
-using IARA.Common;
 using IARA.Common.ConfigModels;
 using IARA.Common.Utils;
 using IARA.DataAccess.Abstractions;
@@ -11,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TechnoLogica.Authentication.Common;
-using TL.Email.ExtendedClient;
+using TL.Dependency.Injection;
 
 namespace IARA.IdentityProfile
 {
@@ -44,7 +43,7 @@ namespace IARA.IdentityProfile
 
             services.AddScoped<ISecurityService, SecurityService>();
             services.AddScoped<PasswordHasher>();
-            services.AddSingleton<ScopedServiceProviderFactory>(serviceProvider => new ScopedServiceProviderFactory(serviceProvider));
+            services.AddScopedServiceFactory();
 
             services.AddHttpContextAccessor();
 

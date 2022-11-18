@@ -39,6 +39,10 @@ export class QualifiedFishersPublicService extends ApplicationsRegisterPublicBas
         });
     }
 
+    public downloadRegister(id: number): Observable<boolean> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
     public getRegisterByApplicationId(applicationId: number): Observable<QualifiedFisherEditDTO> {
         const params = new HttpParams().append('applicationId', applicationId.toString());
 
@@ -73,8 +77,9 @@ export class QualifiedFishersPublicService extends ApplicationsRegisterPublicBas
     }
 
     // Applications
-    public getApplication(id: number): Observable<IApplicationRegister> {
-        const params = new HttpParams().append('id', id.toString());
+    public getApplication(id: number, getRegiXData: boolean): Observable<IApplicationRegister> {
+        const params = new HttpParams()
+            .append('id', id.toString());
 
         return this.requestService.get(this.area, this.controller, 'GetApplication', {
             httpParams: params,

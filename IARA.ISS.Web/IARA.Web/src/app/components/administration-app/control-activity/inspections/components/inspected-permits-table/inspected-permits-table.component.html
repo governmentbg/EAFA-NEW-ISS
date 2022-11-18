@@ -1,5 +1,5 @@
-﻿<tl-card>
-    <tl-card-title>{{ 'inspections.permit-licenses' | tlTranslate }}</tl-card-title>
+<tl-card>
+    <tl-card-title>{{ 'inspections.permits' | tlTranslate }}</tl-card-title>
     <tl-card-content>
         <div fxLayout="column"
              fxLayoutGap="1em"
@@ -11,43 +11,43 @@
                            [showInactiveRecords]="false"
                            [showAddButton]="!isDisabled"
                            (addButtonClicked)="onAddRecord()"
+                           (activeRecordChanged)="onEditRecord($event?.data)"
                            (recordChanged)="permitRecordChanged($event)">
-                <data-column [flexRate]="0.1"
-                             propertyName="licenseNumber"
+                <data-column [flexRate]="0.2"
+                             propertyName="permitNumber"
                              [formGroup]="permitsFormGroup"
-                             columnName="{{ 'inspections.permit-license-number' | tlTranslate }}">
+                             columnName="{{ 'inspections.permit-number' | tlTranslate }}">
                 </data-column>
-                <data-column [flexRate]="0.1"
+                <data-column [flexRate]="0.2"
                              propertyName="typeName"
                              [formGroup]="permitsFormGroup"
-                             columnName="{{ 'inspections.permit-license-type' | tlTranslate }}">
+                             columnName="{{ 'inspections.permit-type' | tlTranslate }}">
                 </data-column>
-                <data-template-column [flexRate]="0.15"
-                                      columnName="{{ 'inspections.permit-license-valid-range' | tlTranslate }}">
+                <data-template-column [flexRate]="0.2"
+                                      columnName="{{ 'inspections.permit-valid-range' | tlTranslate }}">
                     <ng-template let-row="row"
                                  ngx-datatable-cell-template>
                         <div *ngIf="row.data.from !== null && row.data.from !== undefined">
                             <span>{{ row.data.from | date: 'dd-MM-yyyy' }}</span>
                             <span> - </span>
-                            <span>{{ row.data.tp | date: 'dd-MM-yyyy' }}</span>
+                            <span>{{ row.data.to | date: 'dd-MM-yyyy' }}</span>
                         </div>
                     </ng-template>
                 </data-template-column>
-                <data-column [flexRate]="0.2"
+                <data-column [flexRate]="0.15"
                              propertyName="description"
                              [formGroup]="permitsFormGroup"
                              columnName="{{ 'inspections.permit-description' | tlTranslate }}">
                 </data-column>
-                <data-template-column [flexRate]="0.4"
-                                      columnName="{{ 'inspections.permit-license-check' | tlTranslate }}">
+                <data-template-column [flexRate]="0.2"
+                                      columnName="{{ 'inspections.permit-check' | tlTranslate }}">
                     <ng-template [formGroup]="permitsFormGroup"
                                  let-row="row"
                                  ngx-datatable-cell-template>
-                        <inspection-toggle *ngIf="row.editMode === true && row.data.isRegistered === true"
-                                           formControlName="optionsControl"
-                                           [options]="options"
-                                           [toggle]="fakeToggle">
-                        </inspection-toggle>
+                        <tl-select *ngIf="row.editMode === true && row.data.isRegistered === true"
+                                   formControlName="optionsControl"
+                                   [options]="options">
+                        </tl-select>
                         <span *ngIf="row.editMode === false && row.data.isRegistered === true">
                             {{ findOption(row.data.checkDTO) }}
                         </span>
@@ -59,12 +59,12 @@
                 </data-template-column>
                 <data-column-inline *ngIf="!isDisabled"
                                     [flexRate]="0.07"
-                                    [hideDeleteBtn]="true">
+                                    [hideDeleteBtnWhen]="hideDeleteButtonWhen.bind(this)">
                 </data-column-inline>
             </tl-data-table>
 
             <mat-error *ngIf="control.errors?.permitsMustBeChecked === true">
-                * {{ 'inspections.permit-must-be-checked' | tlTranslate }}
+                * {{ 'inspections.permits-must-be-checked' | tlTranslate }}
             </mat-error>
         </div>
     </tl-card-content>

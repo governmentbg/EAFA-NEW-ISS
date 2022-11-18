@@ -52,6 +52,8 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     @Input()
     public reloadData: boolean = false;
 
+    public isInspector: boolean = false;
+
     public translate: FuseTranslationLoaderService;
     public form!: FormGroup;
 
@@ -137,6 +139,12 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                         this.inspectionTypes = result;
                     },
                 });
+
+            this.service.getIsInspector().subscribe({
+                next: (value) => {
+                    this.isInspector = value ?? false;
+                }
+            })
         }
     }
 
@@ -158,6 +166,17 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     public addEditEntry(entry: InspectionDTO | undefined, viewMode: boolean = false): void {
+        if (!this.isInspector) {
+            this.confirmDialog.open({
+                title: this.translate.getValue('inspections.user-not-inspector-title'),
+                message: this.translate.getValue('inspections.user-not-inspector-msg'),
+                okBtnLabel: this.translate.getValue('inspections.okay'),
+                hasCancelButton: false
+            }).subscribe();
+
+            return;
+        }
+
         if (entry === null || entry === undefined) {
             this.openAddSelectionDialog();
         } else {
@@ -342,6 +361,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 },
                 rightSideActionsCollection: rightSideButtons,
                 viewMode: readOnly,
+                defaultFullscreen: true
             },
             '120em'
         );

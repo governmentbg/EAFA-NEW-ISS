@@ -4,17 +4,33 @@
      fxLayoutAlign="space-between stretch"
      [formGroup]="form"
      class="dialog-padding">
-    <div *ngIf="!showOnlyRegiXData" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
-        <tl-input fxFlex="25"
-                  formControlName="tonnageControl"
-                  tooltipResourceName="fishing-capacity.holder-transferred-tonnage-helper"
-                  label="{{ 'fishing-capacity.holder-transferred-tonnage' | tlTranslate }}">
-        </tl-input>
-        <tl-input fxFlex="25"
-                  formControlName="powerControl"
-                  tooltipResourceName="fishing-capacity.holder-transferred-power-helper"
-                  label="{{ 'fishing-capacity.holder-transferred-power' | tlTranslate }}">
-        </tl-input>
+    <div *ngIf="!showOnlyRegiXData" fxLayout="row" fxLayoutAlign="space-between center">
+        <div fxFlex="50" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-input fxFlex="50"
+                      formControlName="tonnageControl"
+                      tooltipResourceName="fishing-capacity.holder-transferred-tonnage-helper"
+                      label="{{ 'fishing-capacity.holder-transferred-tonnage' | tlTranslate }}">
+            </tl-input>
+            <tl-input fxFlex="50"
+                      formControlName="powerControl"
+                      tooltipResourceName="fishing-capacity.holder-transferred-power-helper"
+                      label="{{ 'fishing-capacity.holder-transferred-power' | tlTranslate }}">
+            </tl-input>
+        </div>
+
+        <div *ngIf="!readOnly" fxFlex="50" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">
+            <button mat-raised-button
+                    color="accent"
+                    (click)="transferRemainingCapacity()">
+                {{ 'fishing-capacity.holder-transfer-remaining' | tlTranslate }}
+            </button>
+
+            <button mat-raised-button
+                    color="accent"
+                    (click)="copySubmittedBy()">
+                {{ 'fishing-capacity.holder-copy-submitted-by' | tlTranslate }}
+            </button>
+        </div>
     </div>
 
     <tl-radio-button-group *ngIf="!showOnlyRegiXData"
@@ -29,6 +45,7 @@
                     [isPerson]="true"
                     [isIdReadOnly]="isEgnLncReadOnly"
                     [hideDocument]="true"
+                    [middleNameRequired]="true"
                     [expectedResults]="expectedResults?.person"
                     checkboxLabel="{{ 'fishing-capacity.has-bulgarian-address-registration' | tlTranslate }}">
         </regix-data>

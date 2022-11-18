@@ -9,4 +9,7 @@ import { ApplicationRegiXCheckDTO } from "@app/models/generated/dtos/Application
 export class RegixChecksResultsComponent {
     @Input()
     public regixChecksCollection: ApplicationRegiXCheckDTO[] = [];
+
+    @Input()
+    public recordsPerPage: number = 5;
 }

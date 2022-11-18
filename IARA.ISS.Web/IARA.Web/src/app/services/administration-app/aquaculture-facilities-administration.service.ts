@@ -224,8 +224,10 @@ export class AquacultureFacilitiesAdministrationService extends ApplicationsRegi
     }
 
     // applications
-    public getApplication(applicationId: number, pageCode: PageCodeEnum): Observable<IApplicationRegister> {
-        const params = new HttpParams().append('id', applicationId.toString());
+    public getApplication(applicationId: number, getRegiXData: boolean, pageCode: PageCodeEnum): Observable<IApplicationRegister> {
+        const params = new HttpParams()
+            .append('id', applicationId.toString())
+            .append('getRegiXData', getRegiXData.toString());
 
         if (pageCode === PageCodeEnum.AquaFarmReg) {
             return this.requestService.get(this.area, this.controller, 'GetAquacultureApplication', {

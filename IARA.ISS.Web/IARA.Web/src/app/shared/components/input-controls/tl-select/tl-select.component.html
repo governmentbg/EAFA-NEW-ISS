@@ -1,7 +1,25 @@
 ﻿<mat-form-field style="width: 100%">
     <mat-label>{{ label }}</mat-label>
-    <input matInput *ngIf="readonly" [value]="ngControl.control.value?.displayName" [readonly]="true" />
-    <mat-select matInput *ngIf="!readonly" [formControl]="ngControl.control" [required]="fieldIsRequired" [multiple]="isMultiple">
+    
+    <div [matTooltip]="label"
+         [matTooltipDisabled]="disableTooltip"
+         [matTooltipShowDelay]="TOOLTIP_SHOW_DELAY_MS"
+         [matTooltipPosition]="TOOLTIP_POSITION">
+        <input matInput
+               *ngIf="readonly"
+               [value]="ngControl.control.value?.displayName"
+               [readonly]="true" />
+    </div>
+
+    <mat-select matInput
+                *ngIf="!readonly"
+                [formControl]="ngControl.control"
+                [required]="fieldIsRequired"
+                [multiple]="isMultiple"
+                [matTooltip]="label"
+                [matTooltipDisabled]="disableTooltip"
+                [matTooltipShowDelay]="TOOLTIP_SHOW_DELAY_MS"
+                [matTooltipPosition]="TOOLTIP_POSITION">
         <ng-container *ngFor="let item of _collection">
             <mat-option *ngIf="hasStringOptions || item.value != undefined"
                         [value]="item"

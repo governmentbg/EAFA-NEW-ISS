@@ -31,7 +31,6 @@ import { TLValidators } from '@app/shared/utils/tl-validators';
 import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
 import { PenalDecreeFishCompensationDTO } from '@app/models/generated/dtos/PenalDecreeFishCompensationDTO';
 import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
-import { CommandTypes } from '@app/shared/components/data-table/enums/command-type.enum';
 import { AuanViolatedRegulationDTO } from '@app/models/generated/dtos/AuanViolatedRegulationDTO';
 
 @Component({
@@ -50,7 +49,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
 
     public isAdding: boolean = false;
     public viewMode: boolean = false;
-    public hasNoEDeliveryRegistrationError: boolean = false;
+    public isThirdParty: boolean = false;
     public fishCompensationFormTouched: boolean = false;
     public violatedRegulationsTouched: boolean = false;
 
@@ -58,6 +57,8 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
     public territoryUnits: NomenclatureDTO<number>[] = [];
     public users: NomenclatureDTO<number>[] = [];
     public fishes: NomenclatureDTO<number>[] = [];
+    public courts: NomenclatureDTO<number>[] = [];
+    public sectors: NomenclatureDTO<number>[] = [];
 
     public statuses: PenalDecreeStatusDTO[] = [];
     public fishCompensations: PenalDecreeFishCompensationDTO[] = [];
@@ -71,8 +72,8 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
 
-    private auanId!: number;
     private typeId!: number;
+    private auanId: number | undefined;
     private penalDecreeId!: number | undefined;
     private model!: PenalDecreeEditDTO;
     private readonly nomenclatures: CommonNomenclatures;
@@ -95,38 +96,50 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
 
     public async ngOnInit(): Promise<void> {
         this.isAdding = this.penalDecreeId === undefined || this.penalDecreeId === null;
+        this.isThirdParty = this.auanId === undefined || this.auanId === null;
 
         const nomenclatures: (NomenclatureDTO<number>)[][] = await forkJoin(
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.PenalDecreeSanctionTypes, this.service.getPenalDecreeSanctionTypes.bind(this.service), false),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures), false),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false),
-            this.nomenclatures.getUserNames()
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Courts, this.service.getCourts.bind(this.service), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Sectors, this.nomenclatures.getSectors.bind(this.nomenclatures), false),
+            this.service.getInspectorUsernames()
         ).toPromise();
 
         this.sanctionTypes = nomenclatures[0];
         this.territoryUnits = nomenclatures[1];
         this.fishes = nomenclatures[2];
-        this.users = nomenclatures[3];
+        this.courts = nomenclatures[3];
+        this.sectors = nomenclatures[4];
+        this.users = nomenclatures[5];
 
         this.addSanctionControls();
 
-        this.service.getPenalDecreeAuanData(this.auanId).subscribe({
-            next: (data: PenalDecreeAuanDataDTO) => {
-                this.fillAuanData(data);
+        if (this.auanId !== undefined && this.auanId !== null) {
+            this.form.get('territoryUnitControl')!.disable();
 
-                if (this.penalDecreeId === undefined || this.penalDecreeId === null) {
-                    this.model = new PenalDecreeEditDTO();
+            this.service.getPenalDecreeAuanData(this.auanId).subscribe({
+                next: (data: PenalDecreeAuanDataDTO) => {
+                    this.fillAuanData(data);
+
+                    if (this.penalDecreeId === undefined || this.penalDecreeId === null) {
+                        this.model = new PenalDecreeEditDTO();
+                    }
+                    else {
+                        this.service.getPenalDecree(this.penalDecreeId).subscribe({
+                            next: (decree: PenalDecreeEditDTO) => {
+                                this.model = decree;
+                                this.fillForm();
+                            }
+                        });
+                    }
                 }
-                else {
-                    this.service.getPenalDecree(this.penalDecreeId).subscribe({
-                        next: (decree: PenalDecreeEditDTO) => {
-                            this.model = decree;
-                            this.fillForm();
-                        }
-                    });
-                }
-            }
-        });
+            });
+        }
+        else {
+            this.model = new PenalDecreeEditDTO();
+        }
     }
 
     public ngAfterViewInit(): void {
@@ -144,9 +157,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             next: (event: RecordChangedEventArgs<PenalDecreeFishCompensationDTO>) => {
                 this.fishCompensationFormTouched = true;
 
-                 if (event.Command !== CommandTypes.Edit) {
-                     this.fishCompensationForm.updateValueAndValidity({ onlySelf: true });
-                 }
+                this.fishCompensationForm.updateValueAndValidity({ onlySelf: true });
             }
         });
 
@@ -154,9 +165,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             next: (event: RecordChangedEventArgs<PenalDecreeFishCompensationDTO>) => {
                 this.fishCompensationFormTouched = true;
 
-                 if (event.Command !== CommandTypes.Edit) {
-                     this.fishCompensationForm.updateValueAndValidity({ onlySelf: true });
-                 }
+                this.fishCompensationForm.updateValueAndValidity({ onlySelf: true });
             }
         });
     }
@@ -175,7 +184,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             dialogClose();
         }
 
-        this.form.markAllAsTouched();
+        this.markAllAsTouched();
         this.validityCheckerGroup.validate();
 
         if (this.form.valid) {
@@ -185,8 +194,6 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             if (this.penalDecreeId !== undefined && this.penalDecreeId !== null) {
                 this.service.editPenalDecree(this.model).subscribe({
                     next: () => {
-                        this.hasNoEDeliveryRegistrationError = false;
-
                         dialogClose(this.model);
                     },
                     error: (response: HttpErrorResponse) => {
@@ -197,8 +204,6 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             else {
                 this.service.addPenalDecree(this.model).subscribe({
                     next: (id: number) => {
-                        this.hasNoEDeliveryRegistrationError = false;
-
                         this.model.id = id;
                         dialogClose(this.model);
                     },
@@ -228,12 +233,10 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
                 if (this.form.valid) {
                     this.fillModel();
                     CommonUtils.sanitizeModelStrings(this.model);
-                    
+
                     if (this.penalDecreeId !== undefined && this.penalDecreeId !== null) {
                         this.service.editPenalDecree(this.model).subscribe({
                             next: () => {
-                                this.hasNoEDeliveryRegistrationError = false;
-
                                 this.service.downloadPenalDecree(this.penalDecreeId!).subscribe({
                                     next: () => {
                                         dialogClose();
@@ -248,7 +251,6 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
                     else {
                         this.service.addPenalDecree(this.model).subscribe({
                             next: (id: number) => {
-                                this.hasNoEDeliveryRegistrationError = false;
                                 this.model.id = id;
 
                                 this.service.downloadPenalDecree(id).subscribe({
@@ -273,15 +275,17 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             drafterControl: new FormControl(null, Validators.required),
             issuerPositionControl: new FormControl(null),
             issueDateControl: new FormControl(null, Validators.required),
-            effectiveDateControl: new FormControl(null, Validators.required),
-            territoryUnitControl: new FormControl({ value: null, disabled: true }),
+            effectiveDateControl: new FormControl(null),
+            territoryUnitControl: new FormControl(null),
+            courtControl: new FormControl(null),
+            sectorControl: new FormControl(null),
 
             auanControl: new FormControl(null),
             auanViolatedRegulationsControl: new FormControl(null),
 
             isRecurrentViolationControl: new FormControl(false),
             sanctionDescriptionControl: new FormControl(null, Validators.maxLength(4000)),
-            fineAmountControl: new FormControl(null, TLValidators.number(0)),
+            fineAmountControl: new FormControl(null, TLValidators.number(0, undefined, 2)),
             commentsControl: new FormControl(null, Validators.maxLength(4000)),
             constatationCommentsControl: new FormControl(null, Validators.maxLength(4000)),
 
@@ -301,8 +305,8 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             fishIdControl: new FormControl(null, Validators.required),
             weightControl: new FormControl(null, TLValidators.number(0)),
             countControl: new FormControl(null, TLValidators.number(1)),
-            totalPriceControl: new FormControl(null, [Validators.required, TLValidators.number(1)]),
-            unitPriceControl: new FormControl(null, [Validators.required, TLValidators.number(1)]),
+            totalPriceControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)]),
+            unitPriceControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)]),
             turbotSizeGroupIdControl: new FormControl(null),
         }, this.fishCountValidator());
     }
@@ -320,10 +324,12 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.form.get('effectiveDateControl')!.setValue(this.model.effectiveDate);
         this.form.get('issuerPositionControl')!.setValue(this.model.issuerPosition);
         this.form.get('drafterControl')!.setValue(this.users.find(x => x.value === this.model.issuerUserId));
+        this.form.get('courtControl')!.setValue(this.courts.find(x => x.value === this.model.appealCourtId));
+        this.form.get('sectorControl')!.setValue(this.sectors.find(x => x.value === this.model.appealSectorId));
 
         this.form.get('isRecurrentViolationControl')!.setValue(this.model.isRecurrentViolation);
         this.form.get('sanctionDescriptionControl')!.setValue(this.model.sanctionDescription);
-        this.form.get('fineAmountControl')!.setValue(this.model.fineAmount);
+        this.form.get('fineAmountControl')!.setValue(this.model.fineAmount?.toFixed(2));
         this.form.get('commentsControl')!.setValue(this.model.comments);
 
         this.form.get('auanViolatedRegulationsControl')!.setValue(this.model.auanViolatedRegulations);
@@ -384,6 +390,8 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.model.effectiveDate = this.form.get('effectiveDateControl')!.value;
         this.model.issuerPosition = this.form.get('issuerPositionControl')!.value;
         this.model.issuerUserId = this.form.get('drafterControl')!.value?.value;
+        this.model.appealCourtId = this.form.get('courtControl')!.value?.value;
+        this.model.appealSectorId = this.form.get('sectorControl')!.value?.value;
 
         this.model.isRecurrentViolation = this.form.get('isRecurrentViolationControl')!.value;
         this.model.sanctionDescription = this.form.get('sanctionDescriptionControl')!.value;
@@ -411,6 +419,13 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             if (this.form.get(controlName)!.value === true) {
                 this.model.sanctionTypeIds!.push(sanction.value!);
             }
+        }
+
+        if (this.isThirdParty) {
+            this.model.auanData = this.form.get('auanControl')!.value;
+            this.model.auanData!.territoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
+            this.model.auanData!.constatationComments = this.form.get('constatationCommentsControl')!.value;
+            this.model.auanData!.violatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
         }
     }
 
@@ -449,7 +464,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
                 const count: number | undefined = this.fishCompensationForm.get('countControl')!.value;
                 const weight: number | undefined = this.fishCompensationForm.get('weightControl')!.value;
 
-                if ((count === undefined || count === null) && (weight === undefined || weight === null)) {
+                if ((count === undefined || count === null || count === 0) && (weight === undefined || weight === null || weight === 0)) {
                     return { 'fishCountValidationError': true };
                 }
             }
@@ -491,9 +506,17 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
                 });
             }
         }
-
+        
         if (response.error?.code === ErrorCode.NoEDeliveryRegistration) {
-            this.hasNoEDeliveryRegistrationError = true;
+            this.form.get('deliveryControl')!.setErrors({ 'hasNoEDeliveryRegistrationError': true });
+            this.form.get('deliveryControl')!.markAsTouched();
+            this.validityCheckerGroup.validate();
+        }
+
+        if (response.error?.code === ErrorCode.AuanNumAlreadyExists) {
+            this.form.get('auanControl')!.setErrors({ 'auanNumExists': true });
+            this.form.get('auanControl')!.markAsTouched();
+            this.validityCheckerGroup.validate();
         }
     }
 }

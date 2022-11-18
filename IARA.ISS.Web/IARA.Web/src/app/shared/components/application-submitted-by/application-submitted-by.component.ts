@@ -28,6 +28,9 @@ export class ApplicationSubmittedByComponent extends NotifyingCustomFormControl<
     public hideDocument: boolean = false;
 
     @Input()
+    public middleNameRequired: boolean = false;
+
+    @Input()
     public expectedResults!: ApplicationSubmittedByDTO;
 
     public notifierGroup: Notifier = new Notifier();

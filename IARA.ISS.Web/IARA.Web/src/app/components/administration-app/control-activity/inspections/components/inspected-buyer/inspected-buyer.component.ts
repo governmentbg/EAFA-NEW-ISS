@@ -45,6 +45,12 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
         this.translate = translate;
 
         this.buildForm();
+
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.control.updateValueAndValidity();
+            }
+        });
     }
 
     public ngOnInit(): void {

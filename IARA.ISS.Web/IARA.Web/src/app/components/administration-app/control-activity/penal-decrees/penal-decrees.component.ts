@@ -32,6 +32,7 @@ import { EditDecreeAgreementComponent } from './edit-decree-agreement/edit-decre
 import { PenalDecreeTypeEnum } from '@app/enums/penal-decree-type.enum';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { RangeInputData } from '@app/shared/components/input-controls/tl-range-input/range-input.component';
+import { EditDecreeResolutionComponent } from './edit-decree-resolution/edit-decree-resolution.component';
 
 @Component({
     selector: 'penal-decrees',
@@ -73,6 +74,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
     private penalDecreeDialog: TLMatDialog<EditPenalDecreeComponent>;
     private agreementDialog: TLMatDialog<EditDecreeAgreementComponent>;
     private warningDialog: TLMatDialog<EditDecreeWarningComponent>;
+    private resolutionDialog: TLMatDialog<EditDecreeResolutionComponent>;
     private readonly auanPickerDialog: TLMatDialog<EditPenalDecreeAuanPickerComponent>;
     private readonly auanService: IAuanRegisterService;
 
@@ -84,6 +86,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         penalDecreeDialog: TLMatDialog<EditPenalDecreeComponent>,
         agreementDialog: TLMatDialog<EditDecreeAgreementComponent>,
         warningDialog: TLMatDialog<EditDecreeWarningComponent>,
+        resolutionDialog: TLMatDialog<EditDecreeResolutionComponent>,
         auanPickerDialog: TLMatDialog<EditPenalDecreeAuanPickerComponent>,
         permissions: PermissionsService,
         auanService: AuanRegisterService
@@ -95,6 +98,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         this.penalDecreeDialog = penalDecreeDialog;
         this.agreementDialog = agreementDialog;
         this.warningDialog = warningDialog;
+        this.resolutionDialog = resolutionDialog;
         this.auanPickerDialog = auanPickerDialog;
         this.auanService = auanService;
 
@@ -269,6 +273,11 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                 message = this.translate.getValue('penal-decrees.delete-warning-dialog-message');
                 okBtnLabel = this.translate.getValue('penal-decrees.delete-warning-dialog-ok-btn-label');
             } break;
+            case PenalDecreeTypeEnum.Resolution: {
+                title = this.translate.getValue('penal-decrees.delete-resolution-dialog-title');
+                message = this.translate.getValue('penal-decrees.delete-resolution-dialog-message');
+                okBtnLabel = this.translate.getValue('penal-decrees.delete-resolution-dialog-ok-btn-label');
+            } break;
         }
 
         this.confirmDialog.open({
@@ -431,7 +440,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             if (data.id !== undefined) {
                 title = viewMode
                     ? this.translate.getValue('penal-decrees.view-warning-dialog-title')
-                    : this.translate.getValue('penal-decrees.edit-agreement-dialog-title');
+                    : this.translate.getValue('penal-decrees.edit-warning-dialog-title');
             }
             else {
                 title = this.translate.getValue('penal-decrees.add-warning-dialog-title');
@@ -456,8 +465,38 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                 }
             });
         }
-    }
+        else if (type === PenalDecreeTypeEnum.Resolution) {
+            let title: string;
 
+            if (data.id !== undefined) {
+                title = viewMode
+                    ? this.translate.getValue('penal-decrees.view-resolution-dialog-title')
+                    : this.translate.getValue('penal-decrees.edit-resolution-dialog-title');
+            }
+            else {
+                title = this.translate.getValue('penal-decrees.add-resolution-dialog-title');
+            }
+            const dialog = this.resolutionDialog.openWithTwoButtons({
+                title: title,
+                TCtor: EditDecreeResolutionComponent,
+                headerAuditButton: auditBtn,
+                headerCancelButton: {
+                    cancelBtnClicked: this.closeEditDialogBtnClicked.bind(this)
+                },
+                componentData: data,
+                translteService: this.translate,
+                disableDialogClose: true,
+                viewMode: viewMode,
+                rightSideActionsCollection: rightButtons
+            }, '1400px');
+
+            dialog.subscribe((entry?: PenalDecreeEditDTO) => {
+                if (entry !== undefined && entry !== null) {
+                    this.grid.refreshData();
+                }
+            });
+        }
+    }
 
     private closeEditDialogBtnClicked(closeFn: HeaderCloseFunction): void {
         closeFn();

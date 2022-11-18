@@ -9,6 +9,9 @@ export class PenalPointsAuanDecreeDataDTO {
     }
 
     @StrictlyTyped(Number)
+    public shipId?: number;
+
+    @StrictlyTyped(Number)
     public territoryUnitId?: number;
 
     @StrictlyTyped(String)

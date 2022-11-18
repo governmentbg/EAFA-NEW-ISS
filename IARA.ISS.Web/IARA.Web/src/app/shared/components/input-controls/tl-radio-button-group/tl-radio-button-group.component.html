@@ -1,9 +1,13 @@
-﻿<div fxLayout="row">
-    <label *ngIf="label !== null && label !== undefined && label.length > 0" fxLayout="column" [ngClass]="{
-           'error-color': fieldIsRequired && ngControl?.control.invalid && ngControl?.control.touched
-           }">
-        {{ label }}<span *ngIf="fieldIsRequired"> *</span>
+﻿<div fxLayout="column" fxLayoutAlign="start stretch">
+    <label *ngIf="label !== null && label !== undefined && label.length > 0" 
+           [class.error-color]="fieldIsRequired && ngControl?.control.invalid && ngControl?.control.touched"
+           fxLayout="row"
+           fxLayoutAlign="start center"
+           fxLayoutGap="0.3em">
+        <span>{{ label }}</span>
+        <span *ngIf="fieldIsRequired">*</span>
     </label>
+
     <mat-radio-group [style.display]="'flex'" 
                      [style.flex-direction]="direction"
                      [style.gap]="gap"
@@ -14,7 +18,8 @@
                      [disabled]="readonly">
         <ng-container *ngFor="let option of options">
             <ng-container *ngIf="option.isActive || ngControl.control?.value?.value === option.value">
-                <mat-radio-button [value]="option">
+                <mat-radio-button [value]="option"
+                                  [style.min-width]="'fit-content'">
                     {{ option.displayName }}
                 </mat-radio-button>
             </ng-container>

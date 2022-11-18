@@ -1,43 +1,67 @@
-﻿<div fxLayout="column" fxLayoutGap="1em">
+﻿<div fxLayout="column"
+     fxLayoutGap="1em">
     <tl-data-table #violatedRegulationsTable
                    fxFlex="100"
                    [isRemote]="false"
                    [isSoftDeletable]="true"
-                   [showInactiveRecords]="true"
+                   [showInactiveRecords]="showInactiveRecords"
                    [showAddButton]="!viewMode"
                    [rows]="violatedRegulations"
                    (recordChanged)="violatedRegulationsRecordChanged($event)">
-        <data-column [flexRate]="0.1"
+        <data-column [flexRate]="0.2"
                      [formGroup]="violatedRegulationsForm"
                      propertyName="article"
                      columnName="{{ 'auan-register.edit-violated-article' | tlTranslate }}">
         </data-column>
 
-        <data-column [flexRate]="0.1"
+        <data-column [flexRate]="0.2"
                      [formGroup]="violatedRegulationsForm"
                      propertyName="paragraph"
                      columnName="{{ 'auan-register.edit-violated-paragraph' | tlTranslate }}">
         </data-column>
 
-        <data-column [flexRate]="0.1"
+        <data-column [flexRate]="0.2"
                      [formGroup]="violatedRegulationsForm"
                      propertyName="section"
                      columnName="{{ 'auan-register.edit-violated-section' | tlTranslate }}">
         </data-column>
 
-        <data-column [flexRate]="0.1"
+        <data-column [flexRate]="0.2"
                      [formGroup]="violatedRegulationsForm"
                      propertyName="letter"
                      columnName="{{ 'auan-register.edit-violated-letter' | tlTranslate }}">
         </data-column>
 
-        <data-column [flexRate]="0.2"
-                     [formGroup]="violatedRegulationsForm"
-                     propertyName="type"
-                     dataType="nomenclature"
-                     [options]="violatedRegulationTypes"
-                     columnName="{{ 'auan-register.edit-violated-type' | tlTranslate }}">
-        </data-column>
+        <data-template-column [flexRate]="0.4"
+                              columnName="{{ 'auan-register.edit-violated-law-section' | tlTranslate }}">
+            <ng-template let-row="row"
+                         ngx-datatable-cell-template>
+                <div fxLayout="row"
+                     fxLayoutAlign="space-between center">
+                    <span class="text-ellipsis">
+                        {{ row.data.lawText }}
+                    </span>
+
+                    <div *ngIf="!viewMode && !row.editMode && row.data.isActive">
+                        <tl-icon-button *ngIf="row.data.lawSectionId === null || row.data.lawSectionId === undefined"
+                                        icon="fa-plus-circle"
+                                        iconClass="accent-color"
+                                        size="1.5"
+                                        (buttonClicked)="openLawSectionsDialog(row.data)"
+                                        tooltipText="{{ 'auan-register.add-law-section' | tlTranslate }}">
+                        </tl-icon-button>
+
+                        <tl-icon-button *ngIf="row.data.lawSectionId !== null && row.data.lawSectionId !== undefined"
+                                        icon="fa-file-signature"
+                                        iconClass="accent-color"
+                                        size="1.5"
+                                        (buttonClicked)="openLawSectionsDialog(row.data)"
+                                        tooltipText="{{ row.data.lawText }}">
+                        </tl-icon-button>
+                    </div>
+                </div>
+            </ng-template>
+        </data-template-column>
 
         <data-column-inline *ngIf="!viewMode"
                             [flexRate]="0.1">

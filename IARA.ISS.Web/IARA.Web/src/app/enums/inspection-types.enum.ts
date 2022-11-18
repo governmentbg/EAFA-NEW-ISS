@@ -10,4 +10,5 @@
     IFP, //IFP - Inspection of Fishing Person - Инспекция на лица, извършващи любителски риболов
     CWO, //CWO - Check of Water Object - Проверка на воден обект без извършване на инспекция
     IGM, //IGM - Check and Mark of fishing Utility - Проверка и маркировка на риболовен уред
+    EXT  //EXT - External
 }

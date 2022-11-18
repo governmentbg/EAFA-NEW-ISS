@@ -13,6 +13,5 @@
     ShipHasNoValidBlackSeaPermit,
     ShipHasNoValidDanubePermit,
 
-    ShipAlreadyHasValidPoundNetPermit,
     ShipHasNoPoundNetPermit
 }

@@ -35,6 +35,9 @@ export class TransportationPagesAndDeclarationsTableComponent {
     @Input()
     public canEditTransportationLogBookRecords: boolean = false;
 
+    @Input()
+    public recordsPerPage: number = 10;
+
     @Output()
     public onActiveRecordChanged: EventEmitter<TransportationPageRecordChanged> = new EventEmitter<TransportationPageRecordChanged>();
 

@@ -6,7 +6,8 @@ import { ApplicationSubmittedByDTO } from './ApplicationSubmittedByDTO';
 import { ApplicationSubmittedForDTO } from './ApplicationSubmittedForDTO';
 import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformationDTO';
 import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
-import { FileInfoDTO } from './FileInfoDTO'; 
+import { FileInfoDTO } from './FileInfoDTO';
+import { BuyerTerminationRegixDataDTO } from './BuyerTerminationRegixDataDTO'; 
 
 export class BuyerTerminationApplicationDTO extends BuyerTerminationBaseRegixDataDTO {
     public constructor(obj?: Partial<BuyerTerminationApplicationDTO>) {
@@ -48,4 +49,7 @@ export class BuyerTerminationApplicationDTO extends BuyerTerminationBaseRegixDat
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
+
+    @StrictlyTyped(BuyerTerminationRegixDataDTO)
+    public regiXDataModel?: BuyerTerminationRegixDataDTO;
 }

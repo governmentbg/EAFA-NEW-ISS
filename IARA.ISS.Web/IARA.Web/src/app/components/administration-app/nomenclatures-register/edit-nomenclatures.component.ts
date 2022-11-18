@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { ColumnDTO } from '@app/models/generated/dtos/ColumnDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { NomenclaturesRegisterService } from '@app/services/administration-app/nomenclatures-register.service';
@@ -13,14 +12,9 @@ import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/di
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
 import { INomenclaturesService } from '@app/interfaces/administration-app/nomenclatures-register.interface';
 import { TLValidators } from '@app/shared/utils/tl-validators';
-
-class ExtendedColumn extends ColumnDTO {
-    public constructor(obj?: Partial<ColumnDTO>) {
-        super(obj);
-    }
-
-    public options?: NomenclatureDTO<number>[];
-}
+import { ExtendedColumn } from './models/extended-column.model';
+import { EditNomenclatureParams } from './models/edit-nomenclature-params.model';
+import { DateUtils } from '@app/shared/utils/date.utils';
 
 @Component({
     selector: 'edit-nomenclatures-component',
@@ -28,60 +22,70 @@ class ExtendedColumn extends ColumnDTO {
 })
 export class EditNomenclatureComponent implements IDialogComponent, OnInit {
     public form: FormGroup;
+    public editCurrentControl: FormControl;
     public translate: FuseTranslationLoaderService;
 
     public record: Record<string, unknown>;
     public dataColumns: ExtendedColumn[] = [];
     public readOnly: boolean = false;
 
+    public adding: boolean = true;
+    public allReadOnly: boolean = false;
+    public isValidityNomenclature: boolean = false;
+
     private id: number | undefined;
-    private adding: boolean = true;
     private childNomenclatures: Record<string, NomenclatureDTO<number>[]>;
 
-    public service: INomenclaturesService;
+    private readonly service: INomenclaturesService;
 
     public constructor(service: NomenclaturesRegisterService, translate: FuseTranslationLoaderService) {
         this.service = service;
         this.translate = translate;
         this.record = {};
         this.childNomenclatures = {};
+
         this.form = new FormGroup({});
+        this.editCurrentControl = new FormControl(true);
     }
 
-    public async ngOnInit(): Promise<void> {
-        await this.getColumns().toPromise();
-        await this.getChildNomenclatures().toPromise();
+    public ngOnInit(): void {
+        this.getChildNomenclatures().subscribe({
+            next: () => {
+                if (this.id !== undefined && this.id !== null) {
+                    this.service.get(this.id).subscribe({
+                        next: (result: Record<string, unknown>) => {
+                            this.record = result;
 
-        if (this.id !== undefined && this.id !== null) {
-            this.service.get(this.id).subscribe({
-                next: (result: Record<string, unknown>) => {
-                    this.record = result;
+                            const properties: string[] = Object.keys(this.record);
+                            for (const property of properties) {
+                                const formControl: FormControl = this.form.get(property) as FormControl;
+                                const column: ExtendedColumn | undefined = this.dataColumns.find(x => x.propertyName === property);
 
-                    const properties: string[] = Object.keys(this.record);
-                    for (const property of properties) {
-                        const formControl: FormControl = this.form.get(property) as FormControl;
-                        const column: ExtendedColumn | undefined = this.dataColumns.find(x => x.propertyName === property);
-
-                        if (formControl && column) {
-                            if (column.isForeignKey) {
-                                formControl.setValue(column.options?.find(x => x.value === this.record[property]));
-                            }
-                            else {
-                                formControl.setValue(this.record[property]);
+                                if (formControl && column) {
+                                    if (column.isForeignKey) {
+                                        formControl.setValue(column.options?.find(x => x.value === this.record[property]));
+                                    }
+                                    else {
+                                        formControl.setValue(this.record[property]);
+                                    }
+                                }
                             }
                         }
-                    }
+                    });
                 }
-            });
-        }
+            }
+        });
     }
 
-    public setData(data: DialogParamsModel | undefined, buttons: DialogWrapperData): void {
-        if (data !== undefined && data !== null) {
-            this.adding = false;
-            this.id = data.id;
-            this.readOnly = data.isReadonly;
-        }
+    public setData(data: EditNomenclatureParams, buttons: DialogWrapperData): void {
+        this.id = data.id;
+        this.readOnly = data.viewMode;
+        this.adding = this.id === undefined || this.id === null;
+
+        this.setDataColumns(data.columns);
+
+        const columns: string[] = this.dataColumns.map(x => x.propertyName.toLowerCase());
+        this.isValidityNomenclature = columns.includes('validfrom') && columns.includes('validto');
     }
 
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
@@ -93,7 +97,12 @@ export class EditNomenclatureComponent implements IDialogComponent, OnInit {
         this.form.updateValueAndValidity();
         if (this.form.valid) {
             for (const key of Object.keys(this.form.controls)) {
-                this.record[key] = this.form.controls[key].value;
+                if (this.form.controls[key].value instanceof NomenclatureDTO) {
+                    this.record[key] = this.form.controls[key].value?.value;
+                }
+                else {
+                    this.record[key] = this.form.controls[key].value;
+                }
             }
 
             if (this.adding) {
@@ -105,7 +114,7 @@ export class EditNomenclatureComponent implements IDialogComponent, OnInit {
                 });
             }
             else {
-                this.service.edit(this.record).subscribe({
+                this.service.edit(this.record, this.editCurrentControl.value).subscribe({
                     next: () => {
                         dialogClose(this.record);
                     }
@@ -122,34 +131,50 @@ export class EditNomenclatureComponent implements IDialogComponent, OnInit {
         dialogClose();
     }
 
-    private getColumns(): Observable<ColumnDTO[]> {
-        return this.service.getColumns().pipe(map((columns: ColumnDTO[]) => {
-            this.dataColumns = [];
+    private setDataColumns(columns: ColumnDTO[]): void {
+        this.dataColumns = [];
 
-            for (const column of columns) {
-                const extColumn: ExtendedColumn = new ExtendedColumn(column);
-                this.dataColumns.push(extColumn);
+        for (const column of columns) {
+            const validators: ValidatorFn[] = [];
+            if (column.isRequired && column.dataType !== 'boolean') {
+                validators.push(Validators.required);
+            }
+            if (column.maxLength !== null && column.maxLength !== undefined && column.maxLength > 0) {
+                validators.push(Validators.maxLength(column.maxLength));
+            }
+            if (column.dataType === 'number') {
+                validators.push(TLValidators.number());
+            }
 
-                const validators: ValidatorFn[] = [];
-                if (column.isRequired && column.dataType !== 'boolean') {
-                    validators.push(Validators.required);
-                }
-                if (column.maxLength !== null && column.maxLength !== undefined && column.maxLength > 0) {
-                    validators.push(Validators.maxLength(column.maxLength));
-                }
-                if (column.dataType === 'number') {
-                    validators.push(TLValidators.number());
-                }
-
+            if (this.isValidFromColumn(column.propertyName)) {
+                this.form.addControl(column.propertyName, new FormControl(new Date(), validators));
+            }
+            else if (this.isValidToColumn(column.propertyName)) {
+                this.form.addControl(column.propertyName, new FormControl(DateUtils.MAX_DATE, validators));
+            }
+            else {
                 this.form.addControl(column.propertyName, new FormControl(undefined, validators));
             }
 
-            if (this.readOnly) {
-                this.form.disable();
+            if (!this.adding) {
+                if (column.isReadOnly) {
+                    this.form.get(column.propertyName)!.disable();
+                }
+                else if (this.isValidityColumn(column.propertyName) || this.isActiveColumn(column.propertyName)) {
+                    column.isReadOnly = true;
+                    this.form.get(column.propertyName)!.disable();
+                }
             }
 
-            return columns;
-        }));
+            const extColumn: ExtendedColumn = new ExtendedColumn(column);
+            this.dataColumns.push(extColumn);
+        }
+
+        this.allReadOnly = !this.dataColumns.some(x => !x.isReadOnly);
+
+        if (this.readOnly) {
+            this.form.disable();
+        }
     }
 
     private getChildNomenclatures(): Observable<Record<string, NomenclatureDTO<number>[]>> {
@@ -169,5 +194,21 @@ export class EditNomenclatureComponent implements IDialogComponent, OnInit {
     private getForeignKeyNomenclature(column: ColumnDTO): NomenclatureDTO<number>[] {
         const nomenclature: NomenclatureDTO<number>[] = this.childNomenclatures[column.propertyName];
         return nomenclature?.map(x => new NomenclatureDTO<number>(x)) ?? [];
+    }
+
+    private isValidFromColumn(propertyName: string): boolean {
+        return ['validFrom', 'ValidFrom'].includes(propertyName);
+    }
+
+    private isValidToColumn(propertyName: string): boolean {
+        return ['validTo', 'ValidTo'].includes(propertyName);
+    }
+
+    private isValidityColumn(propertyName: string): boolean {
+        return this.isValidFromColumn(propertyName) || this.isValidToColumn(propertyName);
+    }
+
+    private isActiveColumn(propertyName: string): boolean {
+        return ['isActive', 'IsActive'].includes(propertyName);
     }
 }

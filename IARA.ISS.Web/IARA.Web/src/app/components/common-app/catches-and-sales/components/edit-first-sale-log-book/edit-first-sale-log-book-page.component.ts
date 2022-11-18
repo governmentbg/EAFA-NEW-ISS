@@ -23,6 +23,8 @@ import { BasicLogBookPageDocumentDataDTO } from '@app/models/generated/dtos/Basi
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
+import { LogBookPageDocumentTypesEnum } from '../../enums/log-book-page-document-types.enum';
+import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 
 @Component({
     selector: 'edit-first-sale-log-book-page',
@@ -85,7 +87,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
             });
         }
         else if (this.shipPageDocumentData !== null && this.shipPageDocumentData !== undefined) {
-            this.service.getPossibleProducts(this.shipPageDocumentData!.shipLogBookPageId!).subscribe({
+            this.service.getPossibleProducts(this.shipPageDocumentData!.shipLogBookPageId!, LogBookPageDocumentTypesEnum.FirstSaleDocument).subscribe({
                 next: (result: LogBookPageProductDTO[]) => {
                     this.model = new FirstSaleLogBookPageEditDTO({
                         buyerId: this.shipPageDocumentData!.registeredBuyerId,
@@ -221,6 +223,16 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
                                 panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
                             });
                         }
+                        else if (error?.code === ErrorCode.SendFLUXSalesFailed) {
+                            if (!IS_PUBLIC_APP) { // show snackbar only when not public app
+                                this.snackbar.open(this.translationService.getValue('catches-and-sales.first-sale-page-send-to-flux-sales-error'), undefined, {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
+                            }
+
+                            dialogClose();
+                        }
                     }
                 });
             }
@@ -228,6 +240,20 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
                 this.service.editFirstSaleLogBookPage(this.model).subscribe({
                     next: () => {
                         dialogClose(this.model);
+                    },
+                    error: (response: HttpErrorResponse) => {
+                        const error: ErrorModel | undefined = response.error;
+
+                        if (error?.code === ErrorCode.SendFLUXSalesFailed) {
+                            if (!IS_PUBLIC_APP) { // show snackbar only when not public app
+                                this.snackbar.open(this.translationService.getValue('catches-and-sales.first-sale-page-send-to-flux-sales-error'), undefined, {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
+                            }
+
+                            dialogClose();
+                        }
                     }
                 });
             }

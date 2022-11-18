@@ -14,6 +14,9 @@ export class AuanRegisterDTO {
     public inspectionId?: number;
 
     @StrictlyTyped(String)
+    public territoryUnit?: string;
+
+    @StrictlyTyped(String)
     public auanNum?: string;
 
     @StrictlyTyped(String)

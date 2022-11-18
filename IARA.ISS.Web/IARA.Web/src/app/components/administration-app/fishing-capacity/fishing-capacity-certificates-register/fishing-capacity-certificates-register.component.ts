@@ -517,6 +517,10 @@ export class FishingCapacityCertificatesRegisterComponent implements AfterViewIn
                 break;
         }
 
+        if (result.certificateNum !== null && result.certificateNum !== undefined) {
+            result.certificateNum = Number(result.certificateNum);
+        }
+
         return result;
     }
 

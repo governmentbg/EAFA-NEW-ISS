@@ -3,38 +3,38 @@ import { Injectable } from "@angular/core";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from "@angular/router";
 import { ChangePasswordComponent } from '@app/components/common-app/my-profile/components/change-password/change-password.component';
+import { ChangeUserDataComponent } from '@app/components/common-app/my-profile/components/change-userdata/change-userdata.component';
 import { AccountActivationStatusesEnum } from "@app/enums/account-activation-statuses.enum";
 import { LoginTypesEnum } from "@app/enums/login-types.enum";
+import { DialogParamsModel } from '@app/models/common/dialog-params.model';
+import { ChangeUserDataDTO } from '@app/models/generated/dtos/ChangeUserDataDTO';
 import { UserAuthDTO } from "@app/models/generated/dtos/UserAuthDTO";
 import { UserChangePasswordDTO } from "@app/models/generated/dtos/UserChangePasswordDTO";
 import { UserLoginDTO } from "@app/models/generated/dtos/UserLoginDTO";
+import { UserPasswordDTO } from '@app/models/generated/dtos/UserPasswordDTO';
 import { UserRegistrationDTO } from "@app/models/generated/dtos/UserRegistrationDTO";
 import { UserTokenDTO } from "@app/models/generated/dtos/UserTokenDTO";
+import { MyProfilePublicService } from '@app/services/public-app/my-profile-public.service';
 import { Environment } from "@env/environment";
 import { FuseNavigationService } from "@fuse/components/navigation/navigation.service";
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { OidcConfigService, OidcSecurityService } from "angular-auth-oidc-client";
 import { NgxPermissionsService } from "ngx-permissions";
 import { BehaviorSubject, Observable, Subject } from "rxjs";
-import { ChangeUserDataComponent } from '@app/components/common-app/my-profile/components/change-userdata/change-userdata.component';
-import { DialogParamsModel } from '@app/models/common/dialog-params.model';
-import { ChangeUserDataDTO } from '@app/models/generated/dtos/ChangeUserDataDTO';
-import { UserPasswordDTO } from '@app/models/generated/dtos/UserPasswordDTO';
-import { MyProfilePublicService } from '@app/services/public-app/my-profile-public.service';
 import { TLMatDialog } from '../components/dialog-wrapper/tl-mat-dialog';
 import { AreaTypes } from "../enums/area-type.enum";
 import { IIdentificationToken } from "../interfaces/id-token.interface";
 import { IS_PUBLIC_APP } from "../modules/application.modules";
 import { MainNavigation } from "../navigation/base/main.navigation";
+import { INotificationSecurity } from '../notifications/models/notification-security.interface';
 import { CommonUtils } from "../utils/common.utils";
 import { RequestProperties } from "./request-properties";
 import { RequestService } from "./request.service";
-import { NotificationsHubService } from '../notifications/notifications-hub-service';
 
 @Injectable({
     providedIn: 'root'
 })
-export class AuthService {
+export class AuthService implements INotificationSecurity {
 
     private static readonly OIDC_CONFIGURATION = 'assets/auth.clientConfiguration.json';
 
@@ -54,8 +54,7 @@ export class AuthService {
     private _userRegistrationInfo?: UserAuthDTO;
     private _userEmail?: string;
     private snackBarRef: MatSnackBar;
-    private notificationsService: NotificationsHubService;
-
+    
     public startedUserInfoRequest: boolean = false;
     public startedAuthenticationCheck: boolean = false;
 
@@ -116,10 +115,8 @@ export class AuthService {
         changeUserDataDialog: TLMatDialog<ChangeUserDataComponent>,
         translationService: FuseTranslationLoaderService,
         myProfileService: MyProfilePublicService,
-        snackBarRef: MatSnackBar,
-        notificationsService: NotificationsHubService) {
+        snackBarRef: MatSnackBar) {
 
-        this.notificationsService = notificationsService;
         this.snackBarRef = snackBarRef;
         this.translationService = translationService;
         this.fuseNavigationService = fuseNavigationService;
@@ -139,11 +136,15 @@ export class AuthService {
 
         this.oidcSecurityService.isAuthenticated$.subscribe(result => {
             this.changeIsAuthenticatedValue(result);
-
-            if (result) {
-                this.notificationsService.updateUserData(this.oidcSecurityService.getToken());
-            }
         });
+    }
+
+    public getToken(): string {
+        return this.oidcSecurityService.getToken();
+    }
+
+    public isAuthenticated(): BehaviorSubject<boolean> {
+        return this.isAuthenticatedEvent;
     }
 
     public logout(urlHandle?: (url: string) => any): Observable<void> {
@@ -240,7 +241,6 @@ export class AuthService {
     }
 
 
-
     public hasUserValidIdToken(): boolean {
         const token = this.oidcSecurityService.getIdToken();
 
@@ -316,7 +316,7 @@ export class AuthService {
     }
 
     public openUserModal(): boolean {
-        if (this.userRegistrationInfo != undefined) {
+        if (this.userRegistrationInfo !== undefined && this.userRegistrationInfo !== null) {
             if (this.userRegistrationInfo.userMustChangeData) {
                 this.openChangeUserDataDialog();
                 return true;
@@ -373,16 +373,16 @@ export class AuthService {
     public openChangeUserDataDialog(): void {
         if (!this.isDialogOpened) {
 
-            const userData = new ChangeUserDataDTO();
-            userData.password = '';
-
             const dialog = this.changeUserDataDialog.open({
                 title: this.translationService.getValue('my-profile.change-user-data-dialog-title'),
                 TCtor: ChangeUserDataComponent,
                 headerCancelButton: {
                     cancelBtnClicked: this.logout.bind(this)
                 },
-                componentData: { userData: userData, userMustChangePassword: this.userRegistrationInfo?.userMustChangePassword },
+                componentData: {
+                    userId: this.userRegistrationInfo!.id!,
+                    userMustChangePassword: this.userRegistrationInfo!.userMustChangePassword ?? false
+                },
                 translteService: this.translationService,
                 disableDialogClose: true,
                 saveBtn: {
@@ -397,7 +397,7 @@ export class AuthService {
                     disabled: false,
                     buttonData: this.logout.bind(this)
                 },
-            }, '1200px');
+            }, '1300px');
 
             dialog.subscribe({
                 next: (userData: ChangeUserDataDTO | undefined) => {

@@ -174,7 +174,10 @@ export class FileUploadFormArrayComponent implements OnInit, AfterViewInit, DoCh
     public onClearButtonClicked(control: FormControl, index: number): void {
         const file: FileInfoDTO = control.value;
         file.deleted = true;
-        this.deletedFiles.push(file);
+
+        if (file.id !== undefined && file.id !== null) {
+            this.deletedFiles.push(file);
+        }
 
         if (this.deletableStatusMap.get(control)) {
             this.form.removeAt(index);
@@ -220,7 +223,7 @@ export class FileUploadFormArrayComponent implements OnInit, AfterViewInit, DoCh
 
     private applyOnChanged(): void {
         const files: FileInfoDTO[] = (this.form.value as FileInfoDTO[]).filter((file: FileInfoDTO) => {
-            return (file.file !== undefined && file.file !== null) || (file.id !== undefined && file.id !== null);
+            return (file.file !== undefined && file.file !== null) || (file.id !== undefined && file.id !== null) && !file.deleted;
         });
 
         files.push(...this.deletedFiles);

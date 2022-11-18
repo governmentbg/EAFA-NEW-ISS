@@ -1,12 +1,43 @@
 ﻿<div fxFlexFill
      fxLayout="row"
      fxLayoutAlign="center center"
+     [formGroup]="form"
      class="dialog-padding">
-    <tl-autocomplete fxFlex="90"
-                     [formControl]="inspectionReportControl"
-                     [options]="inspectionReports"
-                     [autoMatchTextToOption]="true"
-                     label="{{ 'auan-register.picker-report-num' | tlTranslate }}"
-                     tooltipResourceName="auan-register.picker-report-num-helper">
-    </tl-autocomplete>
+
+    <div fxLayout="column" fxLayoutGap="1em" fxFlex="90">
+        <tl-autocomplete *ngIf="!isThirdParty"
+                         formControlName="inspectionReportControl"
+                         [options]="inspectionReports"
+                         [autoMatchTextToOption]="true"
+                         label="{{ 'auan-register.picker-report-num' | tlTranslate }}"
+                         tooltipResourceName="auan-register.picker-report-num-helper">
+        </tl-autocomplete>
+
+        <tl-autocomplete *ngIf="isThirdParty"
+                         formControlName="inspectorControl"
+                         [options]="users"
+                         [autoMatchTextToOption]="true"
+                         label="{{ 'auan-register.picker-inspector' | tlTranslate }}"
+                         tooltipResourceName="auan-register.picker-inspector-helper">
+        </tl-autocomplete>
+
+        <tl-checkbox formControlName="isThirdPartyControl"
+                     label="{{ 'auan-register.picker-is-third-party-inspection' | tlTranslate }}"
+                     tooltipResourceName="auan-register.picker-is-third-party-inspection-helper">
+        </tl-checkbox>
+
+        <div *ngIf="isThirdParty">
+            <tl-autocomplete formControlName="territoryUnitControl"
+                             [options]="territoryUnits"
+                             [autoMatchTextToOption]="true"
+                             label="{{ 'auan-register.picker-territory-unit' | tlTranslate }}"
+                             tooltipResourceName="auan-register.picker-territory-unit-helper">
+            </tl-autocomplete>
+
+            <tl-date formControlName="inspectionDateControl"
+                     label="{{ 'auan-register.picker-inspection-date' | tlTranslate }}"
+                     tooltipResourceName="auan-register.picker-inspection-date-helper">
+            </tl-date>
+        </div>
+    </div>
 </div>

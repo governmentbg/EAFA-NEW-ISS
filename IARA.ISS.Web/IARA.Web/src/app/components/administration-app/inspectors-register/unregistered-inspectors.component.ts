@@ -126,6 +126,7 @@ export class UnregisteredInspectorsComponent implements AfterViewInit {
                     },
                     error: (response: HttpErrorResponse) => {
                         this.handleInspectorAlreadyExistsError(response);
+                        this.gridManager.refreshData();
                     }
                 });
             } break;
@@ -136,6 +137,7 @@ export class UnregisteredInspectorsComponent implements AfterViewInit {
                     },
                     error: (response: HttpErrorResponse) => {
                         this.handleInspectorAlreadyExistsError(response);
+                        this.gridManager.refreshData();
                     }
                 });
             } break;

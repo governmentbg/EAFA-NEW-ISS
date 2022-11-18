@@ -17,6 +17,7 @@ import { PenalDecreePaymentScheduleDTO } from '@app/models/generated/dtos/PenalD
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { PenalDecreeStatusEditDTO } from '@app/models/generated/dtos/PenalDecreeStatusEditDTO';
 import { PenalDecreeTypeEnum } from '@app/enums/penal-decree-type.enum';
+import { DateUtils } from '@app/shared/utils/date.utils';
 
 @Component({
     selector: 'edit-penal-decree-status',
@@ -26,6 +27,7 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
     public form!: FormGroup;
     public paymentScheduleForm!: FormGroup;
     public viewMode: boolean = false;
+    public atLeastOnePaymentScheduleError: boolean = false;
 
     public model!: PenalDecreeStatusEditDTO;
 
@@ -81,6 +83,12 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
                 else {
                     this.type = undefined;
                 }
+            }
+        });
+
+        this.paymentScheduleForm.valueChanges.subscribe({
+            next: () => {
+                this.atLeastOnePaymentScheduleError = false;
             }
         });
     }
@@ -141,12 +149,12 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
             firstDecisionGroup: new FormGroup({
                 courtControl: new FormControl(null, Validators.required),
                 complaintDueDateControl: new FormControl(null, Validators.required),
-                remunerationAmountControl: new FormControl(null, [Validators.required, TLValidators.number(0)])
+                remunerationAmountControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)])
             }),
 
             secondDecisionGroup: new FormGroup({
                 courtControl: new FormControl(null, Validators.required),
-                remunerationAmountControl: new FormControl(null, [Validators.required, TLValidators.number(0)])
+                remunerationAmountControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)])
             }),
 
             intoForceGroup: new FormGroup({
@@ -170,14 +178,14 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
             }),
 
             partiallyPaidGroup: new FormGroup({
-                paidAmountControl: new FormControl(null, [Validators.required, TLValidators.number(0)])
+                paidAmountControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)])
             })
         });
 
         this.paymentScheduleForm = new FormGroup({
             dateControl: new FormControl(null, Validators.required),
-            owedAmountControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
-            paidAmountControl: new FormControl(null, TLValidators.number(0))
+            owedAmountControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)]),
+            paidAmountControl: new FormControl(null, TLValidators.number(0, undefined, 2))
         });
     }
 
@@ -196,11 +204,11 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
                 case PenalDecreeStatusTypesEnum.FirstInstDecision:
                     this.form.get('firstDecisionGroup')!.get('courtControl')!.setValue(this.courts.find(x => x.value === this.model.courtId));
                     this.form.get('firstDecisionGroup')!.get('complaintDueDateControl')!.setValue(this.model.complaintDueDate);
-                    this.form.get('firstDecisionGroup')!.get('remunerationAmountControl')!.setValue(this.model.remunerationAmount);
+                    this.form.get('firstDecisionGroup')!.get('remunerationAmountControl')!.setValue(this.model.remunerationAmount?.toFixed(2));
                     break;
                 case PenalDecreeStatusTypesEnum.SecondInstDecision:
                     this.form.get('secondDecisionGroup')!.get('courtControl')!.setValue(this.courts.find(x => x.value === this.model.courtId));
-                    this.form.get('secondDecisionGroup')!.get('remunerationAmountControl')!.setValue(this.model.remunerationAmount);
+                    this.form.get('secondDecisionGroup')!.get('remunerationAmountControl')!.setValue(this.model.remunerationAmount?.toFixed(2));
                     break;
                 case PenalDecreeStatusTypesEnum.PartiallyChanged:
                     this.form.get('partiallyChangedGroup')!.get('enactmentDateControl')!.setValue(this.model.enactmentDate);
@@ -208,7 +216,7 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
                     this.form.get('partiallyChangedGroup')!.get('amendmentsControl')!.setValue(this.model.amendments);
                     break;
                 case PenalDecreeStatusTypesEnum.PartiallyPaid:
-                    this.form.get('partiallyPaidGroup')!.get('paidAmountControl')!.setValue(this.model.paidAmount);
+                    this.form.get('partiallyPaidGroup')!.get('paidAmountControl')!.setValue(this.model.paidAmount?.toFixed(2));
                     break;
                 case PenalDecreeStatusTypesEnum.Valid:
                     this.form.get('intoForceGroup')!.get('enactmentDateControl')!.setValue(this.model.enactmentDate);
@@ -240,41 +248,57 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
             this.model.statusName = statusType.displayName;
             this.model.dateOfChange = new Date();
 
-            //TODO Details 
+            const from: string = this.translate.getValue('common.from');
+            const instanceAppealDate: string = this.translate.getValue('penal-decrees.status-details-instance-appeal-date');
+            const decisionDate: string = this.translate.getValue('penal-decrees.status-details-decision-date');
+            const enactmentDate: string = this.translate.getValue('penal-decrees.status-details-enactment-date');
+            const dateOfWithdraw: string = this.translate.getValue('penal-decrees.status-details-withdraw-date');
+            const dateOfChange: string = this.translate.getValue('penal-decrees.status-details-change-date');
+            const compulsory: string = this.translate.getValue('penal-decrees.status-details-compulsory');
+            const partiallyPaid: string = this.translate.getValue('penal-decrees.status-details-partially-paid');
+
             switch (this.type) {
                 case PenalDecreeStatusTypesEnum.FirstInstAppealed:
                 case PenalDecreeStatusTypesEnum.SecondInstAppealed:
                     this.model.courtId = this.form.get('appealGroup')!.get('courtControl')!.value?.value;
                     this.model.appealDate = this.form.get('appealGroup')!.get('appealDateControl')!.value;
                     this.model.caseNum = this.form.get('appealGroup')!.get('caseNumControl')!.value;
+                    this.model.details = `${instanceAppealDate}: ${DateUtils.ToDisplayDateString(this.model.appealDate!)} ${from} ${this.form.get('appealGroup')!.get('courtControl')!.value?.displayName}`;
                     break;
                 case PenalDecreeStatusTypesEnum.FirstInstDecision:
                     this.model.courtId = this.form.get('firstDecisionGroup')!.get('courtControl')!.value?.value;
                     this.model.complaintDueDate = this.form.get('firstDecisionGroup')!.get('complaintDueDateControl')!.value;
                     this.model.remunerationAmount = this.form.get('firstDecisionGroup')!.get('remunerationAmountControl')!.value;
+                    this.model.details = `${decisionDate}: ${DateUtils.ToDisplayDateString(this.model.complaintDueDate!)} ${from} ${this.form.get('firstDecisionGroup')!.get('courtControl')!.value?.displayName}`;
                     break;
                 case PenalDecreeStatusTypesEnum.SecondInstDecision:
                     this.model.courtId = this.form.get('secondDecisionGroup')!.get('courtControl')!.value?.value;
                     this.model.remunerationAmount = this.form.get('secondDecisionGroup')!.get('remunerationAmountControl')!.value;
+                    this.model.details = `${from} ${this.form.get('secondDecisionGroup')!.get('courtControl')!.value?.displayName}`;
                     break;
                 case PenalDecreeStatusTypesEnum.PartiallyChanged:
                     this.model.enactmentDate = this.form.get('partiallyChangedGroup')!.get('enactmentDateControl')!.value;
                     this.model.courtId = this.form.get('partiallyChangedGroup')!.get('courtControl')!.value?.value;
                     this.model.amendments = this.form.get('partiallyChangedGroup')!.get('amendmentsControl')!.value;
+                    this.model.details = `${dateOfChange}: ${DateUtils.ToDisplayDateString(this.model.enactmentDate!)} ${from} ${this.form.get('partiallyChangedGroup')!.get('courtControl')!.value?.displayName}`;
                     break;
                 case PenalDecreeStatusTypesEnum.PartiallyPaid:
                     this.model.paidAmount = this.form.get('partiallyPaidGroup')!.get('paidAmountControl')!.value;
+                    this.model.details = `${partiallyPaid}: ${this.model.paidAmount}`;
                     break;
                 case PenalDecreeStatusTypesEnum.Valid:
                     this.model.enactmentDate = this.form.get('intoForceGroup')!.get('enactmentDateControl')!.value;
+                    this.model.details = `${enactmentDate}: ${DateUtils.ToDisplayDateString(this.model.enactmentDate!)}`;
                     break;
                 case PenalDecreeStatusTypesEnum.Withdrawn:
                     this.model.penalAuthorityTypeId = this.form.get('withdrawnGroup')!.get('penalAuthorityTypeControl')!.value?.value;
                     this.model.enactmentDate = this.form.get('withdrawnGroup')!.get('enactmentDateControl')!.value;
+                    this.model.details = `${dateOfWithdraw}: ${DateUtils.ToDisplayDateString(this.model.enactmentDate!)} ${from} ${this.form.get('withdrawnGroup')!.get('penalAuthorityTypeControl')!.value?.displayName}`;
                     break;
                 case PenalDecreeStatusTypesEnum.Compulsory:
                     this.model.confiscationInstitutionId = this.form.get('compulsoryGroup')!.get('confiscationInstitutionControl')!.value?.value;
                     this.model.enactmentDate = this.form.get('compulsoryGroup')!.get('enactmentDateControl')!.value;
+                    this.model.details = `${compulsory} ${this.form.get('compulsoryGroup')!.get('confiscationInstitutionControl')!.value?.displayName}`;
                     break;
                 case PenalDecreeStatusTypesEnum.Rescheduled:
                     this.model.paymentSchedule = this.getPaymentScheduleFromTable();
@@ -320,7 +344,8 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
                 case PenalDecreeStatusTypesEnum.Compulsory:
                     return this.form.get('compulsoryGroup')!.valid;
                 case PenalDecreeStatusTypesEnum.Rescheduled:
-                    return true; //TODO 
+                    this.atLeastOnePaymentScheduleError = !this.getPaymentScheduleFromTable().some(x => x.isActive !== false);
+                    return !this.atLeastOnePaymentScheduleError; 
                 case PenalDecreeStatusTypesEnum.FullyPaid:
                     return true;
                 default:

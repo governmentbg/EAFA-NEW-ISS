@@ -2,7 +2,7 @@
     <tl-expansion-panel title="{{ 'payment-information.tariffs-panel-title' | tlTranslate }}">
         <payment-tariffs formControlName="paymentSummaryControl"></payment-tariffs>
     </tl-expansion-panel>
-    <tl-expansion-panel title="{{ 'payment-information.basic-payment-information-panel-title' | tlTranslate }}">
+    <tl-expansion-panel *ngIf="!hideBasicInfo" title="{{ 'payment-information.basic-payment-information-panel-title' | tlTranslate }}">
         <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
             <div fxLayout="row" fxFlex="100" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                 <tl-input fxFlex="50" formControlName="paymentTypeControl" label="{{ 'payment-information.payment-type' | tlTranslate }}" [readonly]="true"></tl-input>

@@ -51,23 +51,27 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
         super(ngControl);
 
         this.service = service;
+
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.control.updateValueAndValidity();
+            }
+        });
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
         if ('hasMap' in changes) {
             if (this.hasMap && this.isDisabled === false) {
                 this.form.get('shipMapControl')!.setValidators(Validators.required);
-                this.form.get('shipMapControl')!.enable();
-
                 this.form.get('shipMapControl')!.markAsPending();
                 this.form.get('shipMapControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('shipMapControl')!.enable();
             }
             else {
                 this.form.get('shipMapControl')!.clearValidators();
-                this.form.get('shipMapControl')!.disable();
-
                 this.form.get('shipMapControl')!.markAsPending();
                 this.form.get('shipMapControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('shipMapControl')!.disable();
             }
         }
 
@@ -220,6 +224,10 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
 
     private onShipRegisteredChanged(value: boolean): void {
         this.isFromRegister = value;
+
+        if (this.isDisabled) {
+            return;
+        }
 
         if (value) {
             this.form.get('shipControl')!.setValidators(this.isShipRequired ? [Validators.required] : []);

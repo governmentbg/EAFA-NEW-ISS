@@ -453,7 +453,7 @@ export class ScientificFishingContent implements OnInit, AfterViewInit {
                 freeTextSearch: filters.searchText,
                 showInactiveRecords: filters.showInactiveRecords,
 
-                requestNumber: filters.getValue('requestNumberControl'),
+                eventisNum: filters.getValue('requestNumberControl'),
                 permitNumber: filters.getValue('permitNumberControl'),
                 creationDateFrom: filters.getValue<DateRangeData>('creationDateRangeControl')?.start,
                 creationDateTo: filters.getValue<DateRangeData>('creationDateRangeControl')?.end,
@@ -466,7 +466,7 @@ export class ScientificFishingContent implements OnInit, AfterViewInit {
                 freeTextSearch: filters.searchText,
                 showInactiveRecords: filters.showInactiveRecords,
 
-                requestNumber: filters.getValue('requestNumberControl'),
+                eventisNum: filters.getValue('requestNumberControl'),
                 permitNumber: filters.getValue('permitNumberControl'),
                 creationDateFrom: filters.getValue<DateRangeData>('creationDateRangeControl')?.start,
                 creationDateTo: filters.getValue<DateRangeData>('creationDateRangeControl')?.end,

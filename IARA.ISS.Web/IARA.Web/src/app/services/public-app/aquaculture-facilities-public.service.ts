@@ -19,7 +19,7 @@ import { ApplicationsRegisterPublicBaseService } from './applications-register-p
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { CancellationHistoryEntryDTO } from '@app/models/generated/dtos/CancellationHistoryEntryDTO';
-import { ExcelExporterRequestModel } from '../../shared/components/data-table/models/excel-exporter-request-model.model';
+import { ExcelExporterRequestModel } from '@app/shared/components/data-table/models/excel-exporter-request-model.model';
 
 @Injectable({
     providedIn: 'root'
@@ -136,8 +136,9 @@ export class AquacultureFacilitiesPublicService extends ApplicationsRegisterPubl
         throw new Error('Invalid pageCode for getRegisterByApplicationId for aquaculture: ' + PageCodeEnum[pageCode]);
     }
 
-    public getApplication(applicationId: number, pageCode: PageCodeEnum): Observable<IApplicationRegister> {
-        const params = new HttpParams().append('applicationId', applicationId.toString());
+    public getApplication(applicationId: number, getRegiXData: boolean, pageCode: PageCodeEnum): Observable<IApplicationRegister> {
+        const params = new HttpParams()
+            .append('applicationId', applicationId.toString());
 
         if (pageCode === PageCodeEnum.AquaFarmReg) {
             return this.requestService.get(this.area, this.controller, 'GetAquacultureApplication', {

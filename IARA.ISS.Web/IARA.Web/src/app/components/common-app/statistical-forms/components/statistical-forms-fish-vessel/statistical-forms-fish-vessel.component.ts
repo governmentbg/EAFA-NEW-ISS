@@ -95,6 +95,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
     public loadRegisterFromApplication: boolean = false;
     public viewMode: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
     public isEditing: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public statFormShip: Map<number, StatisticalFormShipDTO> = new Map<number, StatisticalFormShipDTO>();
@@ -293,12 +294,17 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                     // извличане на данни за заявление
                     this.isEditing = false;
 
-                    this.service.getApplication(this.applicationId, this.pageCode).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData, this.pageCode).subscribe({
                         next: (fishVessel: StatisticalFormFishVesselApplicationEditDTO) => {
                             fishVessel.applicationId = this.applicationId;
 
                             this.isOnlineApplication = fishVessel.isOnlineApplication!;
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new StatisticalFormFishVesselRegixDataDTO(fishVessel.regiXDataModel);
+                                fishVessel.regiXDataModel = undefined;
+                            }
 
                             if (this.isPublicApp && this.isOnlineApplication && (fishVessel.submittedBy === undefined || fishVessel.submittedBy === null)) {
                                 const service = this.service as StatisticalFormsPublicService;
@@ -357,6 +363,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         this.isApplicationHistoryMode = data.isApplicationHistoryMode;
         this.viewMode = data.viewMode;
         this.showOnlyRegiXData = data.showOnlyRegiXData;
+        this.showRegiXData = data.showRegiXData;
         this.service = data.service as IStatisticalFormsService;
         this.dialogRightSideActions = buttons.rightSideActions;
         this.loadRegisterFromApplication = data.loadRegisterFromApplication;
@@ -467,13 +474,20 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
 
     private fillForm(): void {
         if (this.model instanceof StatisticalFormFishVesselRegixDataDTO) {
-            this.fillFormRegix(this.model);
+            this.form.get('submittedByControl')!.setValue(this.model.submittedBy);
+            this.form.get('submittedForControl')!.setValue(this.model.submittedFor);
+
+            this.fillFormRegiX(this.model);
         }
         else if (this.model instanceof StatisticalFormFishVesselApplicationEditDTO) {
             this.fillFormApplication(this.model);
         }
         else if (this.model instanceof StatisticalFormFishVesselEditDTO) {
             this.fillFormRegister(this.model);
+
+            if (this.showRegiXData) {
+                this.fillFormRegiX(this.model);
+            }
         }
 
         if (this.readOnly || this.viewMode) {
@@ -481,10 +495,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         }
     }
 
-    private fillFormRegix(model: StatisticalFormFishVesselRegixDataDTO) {
-        this.form.get('submittedByControl')!.setValue(model.submittedBy);
-        this.form.get('submittedForControl')!.setValue(model.submittedFor);
-
+    private fillFormRegiX(model: StatisticalFormFishVesselRegixDataDTO) {
         if (model.applicationRegiXChecks !== undefined && model.applicationRegiXChecks) {
             const applicationRegiXChecks: ApplicationRegiXCheckDTO[] = model.applicationRegiXChecks;
 
@@ -497,7 +508,11 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                 this.notifier.onNotify.subscribe({
                     next: () => {
                         this.form.markAllAsTouched();
-                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+
+                        if (this.showOnlyRegiXData) {
+                            ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
+                        }
+
                         this.notifier.stop();
                     }
                 });

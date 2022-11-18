@@ -1,9 +1,14 @@
 ﻿<tl-card>
     <tl-card-title>{{ title }}</tl-card-title>
     <tl-card-content>
-        <div [formGroup]="form" fxLayout="column" fxLayoutGap="1em" fxFlexFill fxLayoutAlign="space-between stretch">
+        <div [formGroup]="form"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill
+             fxLayoutAlign="space-between stretch">
 
             <regix-data formControlName="personControl"
+                        [isIdentityRequired]="false"
                         [isPerson]="true"
                         [isIdReadOnly]="false"
                         [isForeigner]="false"
@@ -12,7 +17,9 @@
                         checkboxLabel="{{ 'catches-and-sales.log-book-page-person-has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
 
-            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start center">
                 <tl-input fxFlex="50"
                           formControlName="addressControl"
                           label="{{ 'inspections.address' | tlTranslate }}">

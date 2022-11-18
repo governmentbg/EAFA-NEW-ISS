@@ -100,6 +100,7 @@ export class InspectorsRegisterComponent implements AfterViewInit, OnInit {
                     },
                     error: (response: HttpErrorResponse) => {
                         this.handleInspectorAlreadyExistsError(response);
+                        this.gridManager.refreshData();
                     }
                 });
             } break;
@@ -113,6 +114,7 @@ export class InspectorsRegisterComponent implements AfterViewInit, OnInit {
                     },
                     error: (response: HttpErrorResponse) => {
                         this.handleInspectorAlreadyExistsError(response);
+                        this.gridManager.refreshData();
                     }
                 });
             } break;

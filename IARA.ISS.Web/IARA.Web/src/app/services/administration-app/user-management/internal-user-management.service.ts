@@ -49,18 +49,23 @@ export class InternalUserManagementService extends BaseUserManagementService imp
     }
 
     public add(user: InternalUserDTO): Observable<void> {
-        return this.requestService.post(this.area, this.controller, 'AddInternalUser', user);
+        return this.requestService.post(this.area, this.controller, 'AddInternalUser', user, {
+            successMessage: 'succ-added-user'
+        });
     }
 
     public addOrEditMobileDevices(userId: number, devices: MobileDeviceDTO[]): Observable<void> {
         const params = new HttpParams().append('userId', userId.toString());
 
         return this.requestService.post(this.area, this.controller, 'AddOrEditMobileDevices', devices, {
-            httpParams: params
+            httpParams: params,
+            successMessage: 'succ-updated-user-devices'
         });
     }
 
     public edit(user: InternalUserDTO): Observable<void> {
-        return this.requestService.put(this.area, this.controller, 'EditInternalUser', user);
+        return this.requestService.put(this.area, this.controller, 'EditInternalUser', user, {
+            successMessage: 'succ-updated-user'
+        });
     }
 }

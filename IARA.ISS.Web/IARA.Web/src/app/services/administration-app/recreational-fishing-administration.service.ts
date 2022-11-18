@@ -51,7 +51,7 @@ export class RecreationalFishingAdministrationService extends ApplicationsRegist
         throw new Error('Method not implemented.');
     }
 
-    public getApplication(id: number): Observable<IApplicationRegister> {
+    public getApplication(id: number, getRegiXData: boolean): Observable<IApplicationRegister> {
         throw new Error('Method not implemented.');
     }
 
@@ -71,8 +71,8 @@ export class RecreationalFishingAdministrationService extends ApplicationsRegist
         throw new Error('Method not implemented.');
     }
 
-    public getTicket(id: number): Observable<RecreationalFishingTicketDTO> {
-        return this.commonService.getTicket(this.area, this.controller, id);
+    public getTicket(id: number, getRegiXData: boolean): Observable<RecreationalFishingTicketDTO> {
+        return this.commonService.getTicket(this.area, this.controller, id, getRegiXData);
     }
 
     public editTicket(ticket: RecreationalFishingTicketDTO): Observable<void> {

@@ -141,9 +141,12 @@ export class SearchPanelComponent implements AfterViewInit {
     public searchClicked(event: Event): void {
         event.stopPropagation();
 
-        if ((this.searchTextControl.touched && this.searchTextControl.value && this.searchTextControl.value?.length > 0)
-            || (this._advancedSearchFormGroup.touched && this._advancedSearchFormGroup.valid)
-        ) {
+        if (this.searchTextControl.touched && this.searchTextControl.value && this.searchTextControl.value?.length > 0) {
+            this.appliedFilters = [];
+            this.filtersChanged.emit(this.getFilterArguments());
+            this.closeExpansionPanel();
+        }
+        else {
             this.appliedFilters = [];
             this.filtersChanged.emit(this.getFilterArguments());
             this.closeExpansionPanel();
@@ -201,7 +204,6 @@ export class SearchPanelComponent implements AfterViewInit {
         if (!CommonUtils.isNullOrEmpty(keyWordSearchValue)) {
             this.appliedFilters.push(new MatChipFilterModel(keyWordSearchValue, keyWordSearchValue, this.searchTextControl, true));
         }
-        const keys = Object.keys(this._advancedSearchFormGroup.controls);
 
         this.getAdvancedFilterValues(filters.AdvancedFilters, this._advancedSearchFormGroup);
 
@@ -219,7 +221,7 @@ export class SearchPanelComponent implements AfterViewInit {
                 if (controlObject instanceof FormGroup) {
                     this.getAdvancedFilterValues(filters, controlObject);
                 }
-                else if (controlObject instanceof FormControl) {
+                else if (controlObject instanceof FormControl && controlObject.valid) {
                     const filterValue = controlObject.value;
                     if (this.isSimpleType(filterValue) || filterValue === null) {
                         if (typeof filterValue === 'string') {

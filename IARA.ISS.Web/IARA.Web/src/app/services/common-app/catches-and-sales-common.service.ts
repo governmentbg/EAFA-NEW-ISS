@@ -301,8 +301,8 @@ export class CatchesAndSalesCommonService {
         });
     }
 
-    public getPossibleProducts(area: AreaTypes, controller: string, shipLogBookPageId: number): Observable<LogBookPageProductDTO[]> {
-        const params: HttpParams = new HttpParams().append('shipLogBookPageId', shipLogBookPageId.toString());
+    public getPossibleProducts(area: AreaTypes, controller: string, shipLogBookPageId: number, documentType: LogBookPageDocumentTypesEnum): Observable<LogBookPageProductDTO[]> {
+        const params: HttpParams = new HttpParams().append('shipLogBookPageId', shipLogBookPageId.toString()).append('documentType', documentType.toString());
         return this.http.get(area, controller, 'GetPossibleProducts', {
             httpParams: params,
             responseTypeCtr: LogBookPageProductDTO

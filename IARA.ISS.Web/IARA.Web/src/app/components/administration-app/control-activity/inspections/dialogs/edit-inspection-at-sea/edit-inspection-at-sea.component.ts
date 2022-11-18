@@ -37,6 +37,7 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
     public ports: NomenclatureDTO<number>[] = [];
     public vesselTypes: NomenclatureDTO<number>[] = [];
     public associations: NomenclatureDTO<number>[] = [];
+    public turbotSizeGroups: NomenclatureDTO<number>[] = [];
 
     public toggles: InspectionCheckModel[] = [];
 
@@ -47,6 +48,7 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
         snackbar: MatSnackBar
     ) {
         super(service, translate, nomenclatures, snackbar);
+        this.inspectionCode = InspectionTypesEnum.IBS;
     }
 
     public async ngOnInit(): Promise<void> {
@@ -85,6 +87,9 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
             NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.ShipAssociations, this.nomenclatures.getShipAssociations.bind(this.nomenclatures), false
             ),
+            NomenclatureStore.instance.getNomenclature(
+                NomenclatureTypes.TurbotSizeGroups, this.nomenclatures.getTurbotSizeGroups.bind(this.nomenclatures), false
+            ),
             this.service.getCheckTypesForInspection(InspectionTypesEnum.IBS),
         ]).toPromise();
 
@@ -98,11 +103,12 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
         this.ports = nomenclatureTables[7];
         this.vesselTypes = nomenclatureTables[8];
         this.associations = nomenclatureTables[9];
+        this.turbotSizeGroups = nomenclatureTables[10];
 
-        this.toggles = nomenclatureTables[10].map(f => new InspectionCheckModel(f));
+        this.toggles = nomenclatureTables[11].map(f => new InspectionCheckModel(f));
 
         if (this.id !== null && this.id !== undefined) {
-            this.service.get(this.id).subscribe({
+            this.service.get(this.id, this.inspectionCode).subscribe({
                 next: (dto: InspectionAtSeaDTO) => {
                     this.model = dto;
 
@@ -141,7 +147,8 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
                 inspectorComment: this.model.inspectorComment,
-                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo)
+                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo),
+                violatedRegulations: this.model.violatedRegulations,
             }));
 
             this.form.get('shipSectionsControl')!.setValue(new InspectedShipSectionsModel({
@@ -150,7 +157,8 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
                 fishingGears: this.model.fishingGears,
                 logBooks: this.model.logBooks,
                 observationTexts: this.model.observationTexts,
-                permits: this.model.permitLicenses,
+                permitLicenses: this.model.permitLicenses,
+                permits: this.model.permits,
                 personnel: this.model.personnel,
                 port: this.model.lastPortVisit,
                 ship: this.model.inspectedShip,
@@ -177,6 +185,7 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
             byEmergencySignal: generalInfo.byEmergencySignal,
             inspectionType: InspectionTypesEnum.IBS,
             inspectorComment: additionalInfo?.inspectorComment,
+            violatedRegulations: additionalInfo?.violatedRegulations,
             isActive: true,
             captainComment: this.form.get('captainCommentControl')!.value,
             catchMeasures: shipSections.catches,
@@ -185,7 +194,8 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
             inspectedShip: shipSections.ship,
             lastPortVisit: shipSections.port,
             logBooks: shipSections.logBooks,
-            permitLicenses: shipSections.permits,
+            permitLicenses: shipSections.permitLicenses,
+            permits: shipSections.permits,
             personnel: shipSections.personnel,
             observationTexts: [
                 ...(shipSections.observationTexts ?? []),

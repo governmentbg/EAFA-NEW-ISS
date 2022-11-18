@@ -25,7 +25,6 @@ export interface IReportService extends IBaseReportService {
     addNParameter(nParameter: NReportParameterEditDTO): Observable<number>;
     editNParameter(nParameter: NReportParameterEditDTO): Observable<void>;
     deleteNParameter(id: number): Observable<void>;
-    undoDeletedNParameter(id: number): Observable<void>;
 
     getReport(id: number): Observable<ReportDTO>;
     addReport(report: ReportDTO): Observable<number>;

@@ -16,6 +16,8 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { AuanReportDataDTO } from '@app/models/generated/dtos/AuanReportDataDTO';
 import { AuanConfiscationActionsNomenclatureDTO } from '@app/models/generated/dtos/AuanConfiscationActionsNomenclatureDTO';
 import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/InspDeliveryTypesNomenclatureDTO';
+import { AuanInspectionDTO } from '@app/models/generated/dtos/AuanInspectionDTO';
+import { AuanLawSectionDTO } from '@app/models/generated/dtos/AuanLawSectionDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -65,6 +67,10 @@ export class AuanRegisterService extends BaseAuditService implements IAuanRegist
         return this.requestService.patch(this.area, this.controller, 'UndoDeleteAuan', null, { httpParams: params });
     }
 
+    public addAuanInspection(inspection: AuanInspectionDTO): Observable<number> {
+        return this.requestService.post(this.area, this.controller, 'AddAuanInspection', inspection);
+    }
+
     public getAuanReportData(inspectionId: number): Observable<AuanReportDataDTO> {
         const params = new HttpParams().append('inspectionId', inspectionId.toString());
 
@@ -88,6 +94,15 @@ export class AuanRegisterService extends BaseAuditService implements IAuanRegist
         return this.requestService.get(this.area, this.controller, 'GetAllDrafters', { responseTypeCtr: NomenclatureDTO });
     }
 
+    public getInspectionDrafters(inspectionId: number): Observable<NomenclatureDTO<number>[]> {
+        const params = new HttpParams().append('inspectionId', inspectionId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetAllDrafters', {
+            httpParams: params,
+            responseTypeCtr: NomenclatureDTO
+        });
+    }
+
     public getAllInspectionReports(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetAllInspectionReports', { responseTypeCtr: NomenclatureDTO });
     }
@@ -104,8 +119,12 @@ export class AuanRegisterService extends BaseAuditService implements IAuanRegist
         return this.requestService.get(this.area, this.controller, 'GetAuanDeliveryConfirmationTypes', { responseTypeCtr: NomenclatureDTO });
     }
 
-    public getAuanStatuses(): Observable<NomenclatureDTO<number>[]> {
-        return this.requestService.get(this.area, this.controller, 'GetAuanStatuses', { responseTypeCtr: NomenclatureDTO });
+    public getLaws(): Observable<NomenclatureDTO<number>[]> {
+        return this.requestService.get(this.area, this.controller, 'GetLaws', { responseTypeCtr: NomenclatureDTO });
+    }
+
+    public getAuanLawSections(): Observable<AuanLawSectionDTO[]> {
+        return this.requestService.get<AuanLawSectionDTO[]>(this.area, this.controller, 'GetAuanLawSections', { responseTypeCtr: AuanLawSectionDTO });
     }
 
     public getConfiscatedAppliances(): Observable<NomenclatureDTO<number>[]> {
@@ -114,5 +133,9 @@ export class AuanRegisterService extends BaseAuditService implements IAuanRegist
 
     public getTurbotSizeGroups(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetTurbotSizeGroups', { responseTypeCtr: NomenclatureDTO });
+    }
+
+    public getInspectorUsernames(): Observable<NomenclatureDTO<number>[]> {
+        return this.requestService.get(this.area, this.controller, 'GetInspectorUsernames', { responseTypeCtr: NomenclatureDTO });
     }
 }

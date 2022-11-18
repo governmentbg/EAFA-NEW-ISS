@@ -75,8 +75,11 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
         this.aquaticOrganismTypes = nomenclatures[0] as FishNomenclatureDTO[];
         this.catchStates = nomenclatures[1] as NomenclatureDTO<number>[];
         this.catchPresentations = nomenclatures[2] as NomenclatureDTO<number>[];
-        this.allPorts = nomenclatures[3] as NomenclatureDTO<number>[];
+
+        const portsNomenclature = nomenclatures[3] as NomenclatureDTO<number>[];
+        this.allPorts = this.deepCopyPorts(portsNomenclature);
         this.ports = this.allPorts.slice();
+
         this.ships = nomenclatures[4] as ShipNomenclatureDTO[];
 
         this.fillForm();
@@ -99,6 +102,7 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
     }
 
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
+        this.form.updateValueAndValidity({ emitEvent: false });
         this.form.markAllAsTouched();
         this.validityCheckerGroup.validate();
 
@@ -287,5 +291,26 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
         this.form.get('transboardTargetPortControl')!.updateValueAndValidity();
         // this.form.get('transboardNationalityControl')!.updateValueAndValidity();
         this.form.get('transboardingShipControl')!.updateValueAndValidity();
+    }
+
+
+    // helpers
+
+    private deepCopyPorts(ports: NomenclatureDTO<number>[]): NomenclatureDTO<number>[] {
+        if (ports !== null && ports !== undefined) {
+            const copiedPorts: NomenclatureDTO<number>[] = [];
+
+            for (const port of ports) {
+                const stringified: string = JSON.stringify(port);
+                const newPort: NomenclatureDTO<number> = new NomenclatureDTO<number>(JSON.parse(stringified));
+
+                copiedPorts.push(newPort);
+            }
+
+            return copiedPorts;
+        }
+        else {
+            return [];
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { BaseRegixChecksDTO } from './BaseRegixChecksDTO';
 import { ApplicationSubmittedByDTO } from './ApplicationSubmittedByDTO';
 import { ApplicationSubmittedForDTO } from './ApplicationSubmittedForDTO';
 import { StatisticalFormReworkRawMaterialDTO } from './StatisticalFormReworkRawMaterialDTO';
@@ -8,12 +9,19 @@ import { StatisticalFormReworkProductDTO } from './StatisticalFormReworkProductD
 import { StatisticalFormEmployeeInfoGroupDTO } from './StatisticalFormEmployeeInfoGroupDTO';
 import { StatisticalFormNumStatGroupDTO } from './StatisticalFormNumStatGroupDTO';
 import { FileInfoDTO } from './FileInfoDTO';
+import { StatisticalFormReworkRegixDataDTO } from './StatisticalFormReworkRegixDataDTO'; 
 
-export class StatisticalFormReworkApplicationEditDTO { 
+export class StatisticalFormReworkApplicationEditDTO extends BaseRegixChecksDTO {
     public constructor(obj?: Partial<StatisticalFormReworkApplicationEditDTO>) {
-        Object.assign(this, obj);
+        if (obj != undefined) {
+            super(obj as BaseRegixChecksDTO);
+            Object.assign(this, obj);
+        } 
+        else {
+            super();
+        }
     }
-
+  
     @StrictlyTyped(Number)
     public id?: number;
 
@@ -53,6 +61,9 @@ export class StatisticalFormReworkApplicationEditDTO {
     @StrictlyTyped(Number)
     public totalYearTurnover?: number;
 
+    @StrictlyTyped(Boolean)
+    public isOwnerEmployee?: boolean;
+
     @StrictlyTyped(StatisticalFormReworkRawMaterialDTO)
     public rawMaterial?: StatisticalFormReworkRawMaterialDTO[];
 
@@ -67,4 +78,7 @@ export class StatisticalFormReworkApplicationEditDTO {
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
+
+    @StrictlyTyped(StatisticalFormReworkRegixDataDTO)
+    public regiXDataModel?: StatisticalFormReworkRegixDataDTO;
 }

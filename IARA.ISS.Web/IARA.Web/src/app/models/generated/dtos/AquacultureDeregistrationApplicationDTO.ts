@@ -6,7 +6,8 @@ import { ApplicationSubmittedByDTO } from './ApplicationSubmittedByDTO';
 import { ApplicationSubmittedForDTO } from './ApplicationSubmittedForDTO';
 import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformationDTO';
 import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
-import { FileInfoDTO } from './FileInfoDTO'; 
+import { FileInfoDTO } from './FileInfoDTO';
+import { AquacultureDeregistrationRegixDataDTO } from './AquacultureDeregistrationRegixDataDTO'; 
 
 export class AquacultureDeregistrationApplicationDTO extends AquacultureDeregistrationBaseRegixDataDTO {
     public constructor(obj?: Partial<AquacultureDeregistrationApplicationDTO>) {
@@ -51,4 +52,7 @@ export class AquacultureDeregistrationApplicationDTO extends AquacultureDeregist
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
+
+    @StrictlyTyped(AquacultureDeregistrationRegixDataDTO)
+    public regiXDataModel?: AquacultureDeregistrationRegixDataDTO;
 }

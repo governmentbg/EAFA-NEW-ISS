@@ -2,7 +2,7 @@
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { AfterViewInit, Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
@@ -54,16 +54,19 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
     public modeReadOnly: boolean = false;
     public modeApplication: boolean = false;
     public modeApplicationRegixOnly: boolean = false;
+    public showRegiXData: boolean = false;
     public isWithMaritimeEducation: boolean = false;
     public isThirdCountryFisherman: boolean = false;
     public isEditing: boolean = false;
     public isEditingSubmittedBy: boolean = false;
     public hasNoEDeliveryRegistrationError: boolean = false;
+    public hasPersonAlreadyFisherError: boolean = false;
     public isOnlineApplication: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();;
     public isPublicApp: boolean = false;
     public loadRegisterFromApplication: boolean = false;
     public showSubmittedFor: boolean = false;
+    public hideBasicPaymentInfo: boolean = false;
 
     public notifier: Notifier = new Notifier();
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
@@ -112,6 +115,7 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
             this.loadRegisterFromApplication = data.loadRegisterFromApplication;
             this.modeReadOnly = data.isReadonly;
             this.modeApplicationRegixOnly = data.showOnlyRegiXData;
+            this.showRegiXData = data.showRegiXData;
             this.modeApplicationHistory = data.isApplicationHistoryMode;
             this.isWithMaritimeEducation = false;
         }
@@ -144,6 +148,7 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
                         application.applicationId = content.applicationId;
                         this.model = application;
                         this.applicationPaymentInformation = (this.model as QualifiedFisherApplicationEditDTO)?.paymentInformation;
+                        this.hideBasicPaymentInfo = this.shouldHidePaymentData();
 
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
@@ -212,7 +217,7 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
                     this.isEditing = false;
                     this.isEditingSubmittedBy = false;
 
-                    this.service.getApplication(this.applicationId).subscribe({
+                    this.service.getApplication(this.applicationId, this.showRegiXData).subscribe({
                         next: (application: QualifiedFisherApplicationEditDTO | null | undefined) => {
                             if (application === null || application === undefined) {
                                 application = new QualifiedFisherApplicationEditDTO({ applicationId: this.applicationId });
@@ -223,7 +228,13 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
 
                             this.model = application;
                             this.applicationPaymentInformation = (this.model as QualifiedFisherApplicationEditDTO)?.paymentInformation;
+                            this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
+
+                            if (this.showRegiXData) {
+                                this.expectedResults = new QualifiedFisherRegixDataDTO(application.regiXDataModel);
+                                application.regiXDataModel = undefined;
+                            }
 
                             if (this.model instanceof QualifiedFisherApplicationEditDTO) {
                                 this.isOnlineApplication = this.model.isOnlineApplication!;
@@ -303,7 +314,7 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
         this.validityCheckerGroup.validate();
 
         if (this.editForm.valid) {
-            if (actionInfo.id === 'save-print') {
+            if (actionInfo.id === 'print') {
                 this.saveAndPrintQualifiedFisherRecord(dialogClose);
             }
             else {
@@ -322,7 +333,6 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
         if (this.model instanceof QualifiedFisherApplicationEditDTO || this.model instanceof QualifiedFisherRegixDataDTO) {
             this.fillModel();
             CommonUtils.sanitizeModelStrings(this.model);
-            
             applicationAction = ApplicationUtils.applicationDialogButtonClicked(new ApplicationDialogData({
                 action: actionInfo,
                 dialogClose: dialogClose,
@@ -345,10 +355,13 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
             if (this.editForm.valid) {
                 switch (actionInfo.id) {
                     case 'save':
-                    case 'save-print':
+                    case 'print':
                         return this.saveBtnClicked(actionInfo, dialogClose);
                 }
             }
+        }
+        else if (actionInfo.id === 'print' && (this.modeReadOnly || this.modeViewOnly) && !applicationAction) {
+            this.service.downloadRegister(this.model.id!).subscribe();
         }
     }
 
@@ -414,7 +427,7 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
     private saveOrEdit(fromSaveAsDraft: boolean): Observable<number | void> {
         this.fillModel();
         CommonUtils.sanitizeModelStrings(this.model)
-        
+
         let saveOrEditObservable: Observable<void | number>;
 
         if (this.model instanceof QualifiedFisherEditDTO) {
@@ -452,12 +465,39 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
             this.editForm.addControl('diplomaNumberControl', new FormControl(undefined, [Validators.maxLength(50)]));
             this.editForm.addControl('diplomaDateControl', new FormControl());
             this.editForm.addControl('diplomaIssuerControl', new FormControl(undefined, Validators.maxLength(200)));
+
+            if (this.isWithMaritimeEducation === true && (this.id === null || this.id === undefined)) { // При добавяне на правоспособен рибар с диплома
+                this.editForm.setValidators([this.personNotAlreadyFisher()]);
+
+                this.editForm.get('submittedForRegixDataControl')!.valueChanges.subscribe({
+                    next: () => {
+                        this.hasPersonAlreadyFisherError = false;
+                        this.editForm.updateValueAndValidity({ emitEvent: false });
+                    }
+                });
+            }
         }
         else {
             this.editForm.addControl('submittedByRegixDataControl', new FormControl());
             this.editForm.addControl('submittedByAddressDataControl', new FormControl());
 
             if (!this.modeApplicationRegixOnly) {
+                this.editForm.setValidators([this.personNotAlreadyFisher()]);
+
+                this.editForm.get('submittedByRegixDataControl')!.valueChanges.subscribe({
+                    next: () => {
+                        this.hasPersonAlreadyFisherError = false;
+                        this.editForm.updateValueAndValidity({ emitEvent: false });
+                    }
+                });
+
+                this.editForm.get('submittedForRegixDataControl')!.valueChanges.subscribe({
+                    next: () => {
+                        this.hasPersonAlreadyFisherError = false;
+                        this.editForm.updateValueAndValidity({ emitEvent: false });
+                    }
+                });
+
                 this.editForm.addControl('applicantRelationToRecipientControl', new FormControl());
 
                 this.editForm.get('applicantRelationToRecipientControl')!.valueChanges.subscribe({
@@ -542,29 +582,43 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
         this.editForm.controls.submittedForAddressDataControl.setValue(this.model.submittedForAddresses);
 
         if (this.model instanceof QualifiedFisherRegixDataDTO && this.modeApplicationRegixOnly) {
-            if (this.model.applicationRegiXChecks !== undefined && this.model.applicationRegiXChecks !== null) {
-                const applicationRegiXChecks: ApplicationRegiXCheckDTO[] = this.model.applicationRegiXChecks;
-
-                setTimeout(() => {
-                    this.regixChecks = applicationRegiXChecks;
-                });
-            }
-
-            if (!this.modeViewOnly) {
-                this.notifier.start();
-                this.notifier.onNotify.subscribe({
-                    next: () => {
-                        this.editForm.markAllAsTouched();
-                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.editForm, this.dialogRightSideActions);
-                        this.notifier.stop();
-                    }
-                });
+            this.fillFormRegiX();
+        }
+        else {
+            if (this.showRegiXData) {
+                this.fillFormRegiX();
             }
         }
     }
 
+    private fillFormRegiX(): void {
+        if ((this.model as QualifiedFisherApplicationEditDTO).applicationRegiXChecks !== undefined
+            && (this.model as QualifiedFisherApplicationEditDTO).applicationRegiXChecks !== null
+        ) {
+            const applicationRegiXChecks: ApplicationRegiXCheckDTO[] = (this.model as QualifiedFisherApplicationEditDTO).applicationRegiXChecks!;
+
+            setTimeout(() => {
+                this.regixChecks = applicationRegiXChecks;
+            });
+        }
+
+        if (!this.modeViewOnly) {
+            this.notifier.start();
+            this.notifier.onNotify.subscribe({
+                next: () => {
+                    this.editForm.markAllAsTouched();
+
+                    if (this.modeApplicationRegixOnly) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.editForm, this.dialogRightSideActions);
+                    }
+
+                    this.notifier.stop();
+                }
+            });
+        }
+    }
+
     private fillModel(): void {
-        debugger;
         if (this.model instanceof QualifiedFisherApplicationEditDTO || this.model instanceof QualifiedFisherRegixDataDTO) {
             this.model.submittedByRegixData = this.editForm.controls.submittedByRegixDataControl.value;
             this.model.submittedByAddresses = this.editForm.controls.submittedByAddressDataControl.value;
@@ -686,12 +740,30 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
         if (error?.code === ErrorCode.QualifiedFisherAlreadyExists
             && (this.model instanceof QualifiedFisherEditDTO || this.model instanceof QualifiedFisherApplicationEditDTO)
         ) {
-            this.editForm.setErrors({ 'personIsAlreadyQualifiedFisher': true });
+            this.hasPersonAlreadyFisherError = true;
+            this.editForm.updateValueAndValidity({ emitEvent: false });
             this.validityCheckerGroup.validate();
         }
         else if (error?.code === ErrorCode.NoEDeliveryRegistration && this.model instanceof QualifiedFisherApplicationEditDTO) {
             this.hasNoEDeliveryRegistrationError = true;
+            this.editForm.markAllAsTouched();
             this.validityCheckerGroup.validate();
+        }
+    }
+
+    private shouldHidePaymentData(): boolean {
+        return this.applicationPaymentInformation?.paymentType === null
+            || this.applicationPaymentInformation?.paymentType === undefined
+            || this.applicationPaymentInformation?.paymentType === '';
+    }
+
+    private personNotAlreadyFisher(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (this.hasPersonAlreadyFisherError) {
+                return { 'personIsAlreadyQualifiedFisher': true };
+            }
+
+            return null;
         }
     }
 }

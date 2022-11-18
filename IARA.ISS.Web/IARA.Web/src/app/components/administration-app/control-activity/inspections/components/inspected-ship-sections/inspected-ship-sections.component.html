@@ -1,5 +1,6 @@
 ﻿<div fxLayout="column"
      fxLayoutGap="1em"
+     validityCheckerGroup
      [formGroup]="form"
      fxLayoutAlign="start stretch">
     <!-- Данни за риболовния кораб -->
@@ -13,12 +14,13 @@
                                    [vesselTypes]="vesselTypes"
                                    [shipLabel]="shipLabel"
                                    [shipObservationCategory]="shipObservationCategory"
+                                   validityChecker
                                    (shipSelected)="onShipSelected($event)">
     </inspected-ship-with-personnel>
 
     <!-- Инспекция на кораб -->
-    <tl-expansion-panel [formGroup]="form"
-                        [title]="checksLabel">
+    <tl-expansion-panel [title]="checksLabel"
+                        [validityChecker]="form">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -57,9 +59,11 @@
                     </tl-input>
                 </div>
             </div>
-            <inspected-permits-table formControlName="permitsControl"
-                                     (permitOptionPicked)="onPermitIdsChanged($event)">
+            <inspected-permits-table formControlName="permitsControl">
             </inspected-permits-table>
+            <inspected-permit-licenses-table formControlName="permitLicensesControl"
+                                             (permitOptionPicked)="onPermitIdsChanged($event)">
+            </inspected-permit-licenses-table>
             <inspected-log-books-table formControlName="logBooksControl">
             </inspected-log-books-table>
 
@@ -71,8 +75,8 @@
     </tl-expansion-panel>
 
     <!-- Инспекция на улова -->
-    <tl-expansion-panel [formGroup]="form"
-                        [title]="catchLabel">
+    <tl-expansion-panel [title]="catchLabel"
+                        [validityChecker]="form">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -82,7 +86,8 @@
                                      [fishes]="fishes"
                                      [types]="catchTypes"
                                      [catchZones]="catchZones"
-                                     [fishSex]="fishSex">
+                                     [fishSex]="fishSex"
+                                     [turbotSizeGroups]="turbotSizeGroups">
             </inspected-catches-table>
             <inspection-toggle-list formControlName="catchTogglesControl"
                                     [toggles]="catchToggles">
@@ -97,8 +102,8 @@
 
     <!-- Инспекция на уредите -->
     <tl-expansion-panel *ngIf="hasFishingGears"
-                        [formGroup]="form"
-                        [title]="fishingGearLabel">
+                        [title]="fishingGearLabel"
+                        [validityChecker]="form">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">

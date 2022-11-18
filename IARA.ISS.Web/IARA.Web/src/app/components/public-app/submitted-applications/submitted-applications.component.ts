@@ -38,6 +38,7 @@ export class SubmittedApplicationsComponent {
             [
                 [PageCodeEnum.SciFi, onlineProcessingPermissions],
                 [PageCodeEnum.LE, onlineProcessingPermissions],
+                [PageCodeEnum.Assocs, onlineProcessingPermissions],
                 [PageCodeEnum.CommFish, onlineProcessingPermissions],
                 [PageCodeEnum.DupCommFish, onlineProcessingPermissions],
                 [PageCodeEnum.AquaFarmReg, onlineProcessingPermissions],

@@ -19,7 +19,8 @@
                       formControlName="inspectionEndDateControl"
                       label="{{ 'inspections.inspection-end-date' | tlTranslate }}">
         </tl-date-time>
-        <tl-checkbox fxFlex="25"
+        <tl-checkbox *ngIf="hasEmergencySignal"
+                     fxFlex="25"
                      formControlName="emergencySignalControl"
                      label="{{ 'inspections.is-emergency' | tlTranslate }}">
         </tl-checkbox>

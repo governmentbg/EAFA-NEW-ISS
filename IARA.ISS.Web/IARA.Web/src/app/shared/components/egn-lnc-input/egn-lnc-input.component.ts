@@ -15,7 +15,7 @@ type ValueType = 'egn' | 'lnc';
     selector: 'egn-lnc-input',
     templateUrl: './egn-lnc-input.component.html'
 })
-export class EgnLncInputComponent extends CustomFormControl<EgnLncDTO> implements OnInit, AfterViewInit, OnChanges {
+export class EgnLncInputComponent extends CustomFormControl<EgnLncDTO | undefined> implements OnInit, AfterViewInit, OnChanges {
     @Input()
     public isForeigner: boolean = false;
 
@@ -43,6 +43,9 @@ export class EgnLncInputComponent extends CustomFormControl<EgnLncDTO> implement
     @Input()
     public emitEgnPnfErrors: boolean = false;
 
+    @Input()
+    public isIdentityRequired: boolean = true;
+
     @Output()
     public searchButtonClicked: EventEmitter<EgnLncDTO> = new EventEmitter<EgnLncDTO>();
 
@@ -62,13 +65,46 @@ export class EgnLncInputComponent extends CustomFormControl<EgnLncDTO> implement
     private translate: FuseTranslationLoaderService;
 
     private get egnValidators(): ValidatorFn[] {
-        return [TLValidators.expectedValueMatch(this.expectedValue), Validators.required, TLValidators.exactLength(10), TLValidators.egn];
+        const validators = [
+            TLValidators.expectedValueMatch(this.expectedValue),
+            TLValidators.exactLength(10),
+            TLValidators.number(0, undefined, 0),
+            TLValidators.egn
+        ];
+
+        if (this.isIdentityRequired) {
+            validators.push(Validators.required);
+        }
+
+        return validators;
     }
     private get lncValidators(): ValidatorFn[] {
-        return [TLValidators.expectedValueMatch(this.expectedValue), Validators.required, TLValidators.exactLength(10), TLValidators.pnf];
+        const validators = [
+            TLValidators.expectedValueMatch(this.expectedValue),
+            Validators.required,
+            TLValidators.exactLength(10),
+            TLValidators.number(0, undefined, 0),
+            TLValidators.pnf
+        ];
+
+        if (this.isIdentityRequired) {
+            validators.push(Validators.required);
+        }
+
+        return validators;
     }
     private get forIdValidators(): ValidatorFn[] {
-        return [TLValidators.expectedValueMatch(this.expectedValue), Validators.required, Validators.maxLength(15)];
+        const validators = [
+            TLValidators.expectedValueMatch(this.expectedValue),
+            Validators.required,
+            Validators.maxLength(15)
+        ];
+
+        if (this.isIdentityRequired) {
+            validators.push(Validators.required);
+        }
+
+        return validators;
     }
 
     public constructor(@Self() ngControl: NgControl, translate: FuseTranslationLoaderService) {
@@ -194,7 +230,7 @@ export class EgnLncInputComponent extends CustomFormControl<EgnLncDTO> implement
         for (const key of Object.keys(this.form.controls)) {
             if (key === 'valueControl') {
                 for (const error in this.form.controls[key].errors) {
-                    if (error === 'egn' || error === 'pnf') {
+                    if (error === 'egn' || error === 'pnf' || error === 'expectedValueNotMatching') {
                         if (this.emitEgnPnfErrors) {
                             errors[error] = this.form.controls[key].errors![error];
                         }
@@ -205,9 +241,14 @@ export class EgnLncInputComponent extends CustomFormControl<EgnLncDTO> implement
                 }
             }
             else {
-                const controlErrors: ValidationErrors | null = this.form.controls[key].errors;
-                if (controlErrors !== null) {
-                    errors[key] = controlErrors;
+                for (const key of Object.keys(this.form.controls)) {
+                    if (this.form.controls[key].errors !== null && this.form.controls[key].errors !== undefined) {
+                        for (const error in this.form.controls[key].errors) {
+                            if (!['expectedValueNotMatching'].includes(error)) {
+                                errors[error] = this.form.controls[key].errors![error];
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -233,9 +274,15 @@ export class EgnLncInputComponent extends CustomFormControl<EgnLncDTO> implement
         });
     }
 
-    protected getValue(): EgnLncDTO {
+    protected getValue(): EgnLncDTO | undefined {
+        const egnLnc = this.form.get('valueControl')!.value;
+
+        if (!egnLnc) {
+            return undefined;
+        }
+
         const result: EgnLncDTO = new EgnLncDTO({
-            egnLnc: this.form.get('valueControl')!.value
+            egnLnc: egnLnc
         });
 
         if (this.includeForeigner) {
@@ -322,19 +369,20 @@ export class EgnLncInputComponent extends CustomFormControl<EgnLncDTO> implement
 
     private setDropdownStyles(): void {
         const interval: number = setInterval(() => {
-            let dropdown: HTMLElement | null = null;
-            while (dropdown === null) {
-                dropdown = document.getElementById(this.selectButtonId);
+            const dropdown: HTMLElement | null = document.getElementById(this.selectButtonId);
+
+            if (dropdown !== null) {
+                dropdown.style.transform = 'translateY(3px)';
+
+                const formField: HTMLElement = dropdown.getElementsByTagName('mat-form-field').item(0) as HTMLElement;
+                formField.style.height = '2em';
+
+                if (this.appearance === 'outline') {
+                    formField.style.bottom = '0.3em';
+                }
+
+                clearInterval(interval);
             }
-
-            const formField: HTMLElement = dropdown.getElementsByTagName('mat-form-field').item(0) as HTMLElement;
-            formField.style.height = '2em';
-
-            if (this.appearance === 'outline') {
-                formField.style.bottom = '0.3em';
-            }
-
-            clearInterval(interval);
         });
     }
 

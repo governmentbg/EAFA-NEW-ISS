@@ -1,24 +1,28 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { AuanInspectionDTO } from './AuanInspectionDTO';
 import { AuanInspectedEntityDTO } from './AuanInspectedEntityDTO';
 import { PenalDecreeSeizedFishDTO } from './PenalDecreeSeizedFishDTO';
 import { PenalDecreeSeizedFishingGearDTO } from './PenalDecreeSeizedFishingGearDTO';
-import { AuanViolatedRegulationDTO } from './AuanViolatedRegulationDTO';
+import { AuanViolatedRegulationDTO } from './AuanViolatedRegulationDTO'; 
 
-export class PenalDecreeAuanDataDTO { 
+export class PenalDecreeAuanDataDTO extends AuanInspectionDTO {
     public constructor(obj?: Partial<PenalDecreeAuanDataDTO>) {
-        Object.assign(this, obj);
+        if (obj != undefined) {
+            super(obj as AuanInspectionDTO);
+            Object.assign(this, obj);
+        } 
+        else {
+            super();
+        }
     }
-
+  
     @StrictlyTyped(String)
     public auanNum?: string;
 
     @StrictlyTyped(Date)
     public draftDate?: Date;
-
-    @StrictlyTyped(Number)
-    public territoryUnitId?: number;
 
     @StrictlyTyped(String)
     public drafter?: string;

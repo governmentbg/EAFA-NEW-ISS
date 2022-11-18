@@ -1,6 +1,8 @@
 ﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { forkJoin } from 'rxjs';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { UserLegalStatusEnum } from '@app/enums/user-legal-status.enum';
 import { IUserManagementService } from '@app/interfaces/administration-app/user-management.interface';
@@ -27,11 +29,15 @@ import { PermissionsService } from '@app/shared/services/permissions.service';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { forkJoin } from 'rxjs';
 import { CommandTypes } from '@app/shared/components/data-table/enums/command-type.enum';
 import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
 import { EditUserDialogParams } from '../../models/edit-user-dialog-params';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { CommonUtils } from '@app/shared/utils/common.utils';
+import { RegixPersonDataDTO } from '@app/models/generated/dtos/RegixPersonDataDTO';
+import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 
 @Component({
     selector: 'edit-user',
@@ -57,12 +63,13 @@ export class EditUserComponent implements OnInit, IDialogComponent {
     public translationService: FuseTranslationLoaderService;
     public isInternalUser!: boolean;
     public readOnly!: boolean;
-    public userId!: number;
+    public userId: number | undefined;
     public mobileDevicesMatCardTitleLabel!: string;
     public userFullName!: string;
     public legalStatusEnum: typeof UserLegalStatusEnum = UserLegalStatusEnum;
 
     public canRestoreRecords!: boolean;
+    public isAdd: boolean = false;
 
     private service!: IUserManagementService;
     private rolesService: RolesService;
@@ -74,13 +81,20 @@ export class EditUserComponent implements OnInit, IDialogComponent {
     private snackbar: MatSnackBar;
     private authService: AuthService;
 
-    constructor(translationService: FuseTranslationLoaderService,
+    private hasEmailExistsError: boolean = false;
+    private hasInvalidEgnLnchError: boolean = false;
+
+    private lastEgnLnc: EgnLncDTO | undefined;
+
+    public constructor(
+        translationService: FuseTranslationLoaderService,
         rolesService: RolesService,
         nomenclatureService: CommonNomenclatures,
         confirmDialog: TLConfirmDialog,
         permissions: PermissionsService,
         snackbar: MatSnackBar,
-        authService: AuthService) {
+        authService: AuthService
+    ) {
         this.translationService = translationService;
         this.rolesService = rolesService;
         this.nomenclatureService = nomenclatureService;
@@ -90,6 +104,8 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         this.authService = authService;
 
         this.mobileDevicesMatCardTitleLabel = this.translationService.getValue('users-page.mobile-devices-mat-card-title-label');
+
+        this.buildForm();
     }
 
     public async ngOnInit(): Promise<void> {
@@ -102,6 +118,9 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         }
 
         if (this.isInternalUser) {
+            this.editUserForm.get('territorialUnitControl')!.setValidators(Validators.required);
+            this.editUserForm.get('territorialUnitControl')!.markAsPending();
+
             this.canRestoreRecords = this.permissions.has(PermissionsEnum.InternalUsersRestoreRecords);
 
             if (this.userId !== -1 && this.userId !== undefined) {
@@ -111,8 +130,9 @@ export class EditUserComponent implements OnInit, IDialogComponent {
                     this.userFullName = `${this.internalUserModel.firstName} ${this.internalUserModel.middleName !== undefined && this.internalUserModel.middleName !== null ? this.internalUserModel.middleName : ''} ${this.internalUserModel.lastName}`;
                 });
             }
-        } else {
-            if (this.userId !== -1 && this.userId !== undefined) {
+        }
+        else {
+            if (this.userId !== -1 && this.userId !== undefined && this.userId !== null) {
                 this.service.getUser(this.userId).subscribe(result => {
                     this.externalUserModel = result;
                     this.fillForm(this.externalUserModel);
@@ -125,47 +145,51 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         this.service = data.service;
         this.isInternalUser = data.isInternalUser;
         this.readOnly = data.isReadonly;
-
-        this.buildForm();
+        this.isAdd = data.isAddUser;
 
         if (this.isInternalUser) {
             if (data.isAddUser) {
                 this.internalUserModel = new InternalUserDTO();
-            } else {
+            }
+            else {
                 const params = (data as DialogParamsModel);
                 this.userId = params.id;
 
                 if (params.isReadonly) {
                     this.editUserForm.disable();
                 }
-
-                this.editUserForm.get('egnControl')?.disable();
             }
         } else {
             if (data.isAddUser) {
                 this.externalUserModel = new ExternalUserDTO();
-            } else {
+            }
+            else {
                 const params = (data as DialogParamsModel);
                 this.userId = params.id;
 
                 if (params.isReadonly) {
                     this.editUserForm.disable();
                 }
-
-                this.editUserForm.get('egnControl')?.disable();
             }
         }
     }
 
     public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: (dialogResult?: any) => void): void {
+        if (this.readOnly) {
+            dialogClose();
+            return;
+        }
+
         this.editUserForm.markAllAsTouched();
-        if (this.editUserForm.valid || this.readOnly) {
+
+        if (this.editUserForm.valid) {
             if (actionInfo.id === 'deactivate') {
                 this.deactivateUser(dialogClose);
-            } else if (actionInfo.id === 'send-msg-for-password-change') {
-                if (this.userId !== undefined) {
+            }
+            else if (actionInfo.id === 'send-msg-for-password-change') {
+                if (this.userId !== undefined && this.userId !== null) {
                     this.service.sendChangePasswordEmail(this.userId).subscribe(result => {
-                        if (result !== null) {
+                        if (result !== null && result !== undefined) {
                             const message: string = this.translationService.getValue('users-page.change-password-email-sent');
                             this.snackbar.open(message, undefined, {
                                 duration: RequestProperties.DEFAULT.showExceptionDurationSucc,
@@ -174,7 +198,8 @@ export class EditUserComponent implements OnInit, IDialogComponent {
                         }
                     });
                 }
-            } else if (actionInfo.id === 'impersonate-user') {
+            }
+            else if (actionInfo.id === 'impersonate-user') {
                 if (this.userId !== undefined) {
                     this.service.impersonateUser(this.userId).subscribe(result => {
 
@@ -188,7 +213,8 @@ export class EditUserComponent implements OnInit, IDialogComponent {
                         window.location.href = '/';
                     });
                 }
-            } else if (actionInfo.id === 'change-user-status') {
+            }
+            else if (actionInfo.id === 'change-user-status') {
                 this.confirmDialog.open({
                     title: this.translationService.getValue('users-page.change-user-status'),
                     message: this.translationService.getValue('users-page.change-user-message'),
@@ -197,7 +223,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
                 }).subscribe({
                     next: (ok: boolean) => {
                         if (ok) {
-                            (this.service as ExternalUserManagementService).changeUserStatus(this.userId).subscribe(result => {
+                            (this.service as ExternalUserManagementService).changeUserStatus(this.userId!).subscribe(result => {
                                 dialogClose(this.externalUserModel);
                             });
                         }
@@ -214,27 +240,47 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             if (this.editUserForm.valid) {
                 this.fillModel(this.editUserForm);
 
-                if (this.userId !== undefined) {
+                if (this.isInternalUser) {
+                    this.internalUserModel = CommonUtils.sanitizeModelStrings(this.internalUserModel);
+                }
+                else {
+                    this.externalUserModel = CommonUtils.sanitizeModelStrings(this.externalUserModel);
+                }
+
+                if (this.userId !== null && this.userId !== undefined) {
                     if (this.isInternalUser) {
-                        (this.service as InternalUserManagementService).edit(this.internalUserModel).subscribe(result => {
-                            dialogClose(this.internalUserModel);
-                        });
-                    } else {
-                        (this.service as ExternalUserManagementService).edit(this.externalUserModel).subscribe(result => {
-                            dialogClose(this.externalUserModel);
+                        (this.service as InternalUserManagementService).edit(this.internalUserModel).subscribe({
+                            next: () => {
+                                dialogClose(this.internalUserModel);
+                            },
+                            error: (httpErrorResponse: HttpErrorResponse) => {
+                                this.handleErrorResponse(httpErrorResponse);
+                            }
                         });
                     }
-                } else {
-                    if (this.isInternalUser) {
-                        (this.service as InternalUserManagementService).add(this.internalUserModel).subscribe(result => {
-                            dialogClose(this.internalUserModel);
+                    else {
+                        (this.service as ExternalUserManagementService).edit(this.externalUserModel).subscribe({
+                            next: () => {
+                                dialogClose(this.externalUserModel);
+                            },
+                            error: (httpErrorResponse: HttpErrorResponse) => {
+                                this.handleErrorResponse(httpErrorResponse);
+                            }
                         });
                     }
                 }
-            }
-
-            if (this.readOnly) {
-                dialogClose(null);
+                else {
+                    if (this.isInternalUser) {
+                        (this.service as InternalUserManagementService).add(this.internalUserModel).subscribe({
+                            next: () => {
+                                dialogClose(this.internalUserModel);
+                            },
+                            error: (httpErrorResponse: HttpErrorResponse) => {
+                                this.handleErrorResponse(httpErrorResponse);
+                            }
+                        });
+                    }
+                }
             }
         }
     }
@@ -247,8 +293,8 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         this.confirmDialog.open({
             title: this.translationService.getValue('users-page.deactivate-user'),
             message: this.isInternalUser
-                ? `${this.translationService.getValue('users-page.are-you-sure-you-want-do-deactivate')} ${this.internalUserModel.firstName} ${this.internalUserModel.lastName} (${this.internalUserModel.username})?`
-                : `${this.translationService.getValue('users-page.are-you-sure-you-want-do-deactivate')} ${this.externalUserModel.firstName} ${this.externalUserModel.lastName} (${this.externalUserModel.username})?`,
+                ? `${this.translationService.getValue('users-page.are-you-sure-you-want-do-deactivate')} ${this.internalUserModel.firstName} ${this.internalUserModel.lastName} (${this.internalUserModel.email})?`
+                : `${this.translationService.getValue('users-page.are-you-sure-you-want-do-deactivate')} ${this.externalUserModel.firstName} ${this.externalUserModel.lastName} (${this.externalUserModel.email})?`,
             okBtnLabel: this.translationService.getValue('users-page.deactivate')
         }).subscribe(result => {
             if (result) {
@@ -269,6 +315,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
 
     public allowLegal(id: number): void {
         const legal: UserLegalDTO | undefined = this.userLegals.find(x => x.legalId === id);
+
         if (legal !== undefined) {
             legal.status = UserLegalStatusEnum.Approved;
             this.userLegals = this.userLegals.slice();
@@ -277,6 +324,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
 
     public denyLegal(id: number): void {
         const legal: UserLegalDTO | undefined = this.userLegals.find(x => x.legalId === id);
+
         if (legal !== undefined) {
             legal.status = UserLegalStatusEnum.Blocked;
             this.userLegals = this.userLegals.slice();
@@ -313,6 +361,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
                 || recordChangedEvent.Record.accessValidFrom === undefined) {
                 recordChangedEvent.Record.accessValidFrom = new Date();
             }
+
             if (recordChangedEvent.Record.accessValidTo === null
                 || recordChangedEvent.Record.accessValidTo === undefined) {
                 recordChangedEvent.Record.accessValidTo = new Date(9999, 0, 1);
@@ -329,59 +378,64 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         }
     }
 
-    public getDatesOverlappingErrorText(controlName: string, error: Record<string, unknown>, errorCode: string): TLError | undefined {
+    public getControlErrorLabelText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'idControl') {
             if (errorCode === 'datesOverlap') {
                 return new TLError({
-                    text: 'fuheihfi', //this.translate.getValue('roles-register.dates-overlap-with-other-record'),
+                    text: this.translationService.getValue('users-page.dates-overlap-with-other-record'),
                     type: 'error'
                 });
             }
         }
+
         return undefined;
     }
 
     private fillForm(model: InternalUserDTO | ExternalUserDTO): void {
-        this.editUserForm.get('firstNameControl')?.setValue(model.firstName);
-        this.editUserForm.get('middleNameControl')?.setValue(model.middleName);
-        this.editUserForm.get('lastNameControl')?.setValue(model.lastName);
-        this.editUserForm.get('emailControl')?.setValue(model.email);
-        this.editUserForm.get('usernameControl')?.setValue(model.username);
-        this.editUserForm.get('egnControl')?.setValue(model.egnLnc);
-        this.editUserForm.get('phoneNumberControl')?.setValue(model.phone);
-        this.editUserForm.get('userMustChangePasswordControl')?.setValue(model.userMustChangePassword);
-        this.editUserForm.get('isLockedControl')?.setValue(model.isLocked);
-        this.editUserForm.get('positionControl')?.setValue(model.position);
+        const simpleRegixData: RegixPersonDataDTO = new RegixPersonDataDTO({
+            egnLnc: model.egnLnc,
+            firstName: model.firstName,
+            middleName: model.middleName,
+            lastName: model.lastName
+        });
+
+        this.editUserForm.get('identificationDataControl')!.setValue(simpleRegixData);
+        this.editUserForm.get('usernameEmailGroup.emailControl')!.setValue(model.email);
+        this.editUserForm.get('phoneNumberControl')!.setValue(model.phone);
+        this.editUserForm.get('userMustChangePasswordControl')!.setValue(model.userMustChangePassword);
+        this.editUserForm.get('isLockedControl')!.setValue(model.isLocked);
+        this.editUserForm.get('positionControl')!.setValue(model.position);
 
         this.userRoles = model.userRoles as RoleDTO[];
 
         if (this.isInternalUser) {
             const territoryUnit = NomenclatureStore.instance.getNomenclatureItem(NomenclatureTypes.TerritoryUnits, (model as InternalUserDTO).territoryUnitId as number);
-            this.editUserForm.controls.territorialUnitControl.setValue(territoryUnit);
+            this.editUserForm.get('territorialUnitControl')!.setValue(territoryUnit);
 
             const department = NomenclatureStore.instance.getNomenclatureItem(NomenclatureTypes.Departments, (model as InternalUserDTO).departmentId as number);
-            this.editUserForm.controls.departmentControl.setValue(department);
+            this.editUserForm.get('departmentControl')!.setValue(department);
 
             const sector = NomenclatureStore.instance.getNomenclatureItem(NomenclatureTypes.Sectors, (model as InternalUserDTO).sectorId as number);
-            this.editUserForm.controls.sectorControl.setValue(sector);
+            this.editUserForm.get('sectorControl')!.setValue(sector);
 
             setTimeout(() => {
                 if ((model as InternalUserDTO).mobileDevices !== undefined && (model as InternalUserDTO).mobileDevices !== null) {
-                    this.editUserForm.controls.mobileDevicesControl.setValue((model as InternalUserDTO).mobileDevices);
+                    this.editUserForm.get('mobileDevicesControl')!.setValue((model as InternalUserDTO).mobileDevices);
                 }
             });
-        } else {
-            const externalUser = (model as ExternalUserDTO);
+        }
+        else {
+            const externalUser: ExternalUserDTO = (model as ExternalUserDTO);
             if (externalUser.territoryUnitId !== null && externalUser.territoryUnitId !== undefined) {
 
                 const territoryUnit = NomenclatureStore.instance.getNomenclatureItem(NomenclatureTypes.TerritoryUnits, externalUser.territoryUnitId as number);
-                this.editUserForm.controls.territorialUnitControl.setValue(territoryUnit);
+                this.editUserForm.get('territorialUnitControl')!.setValue(territoryUnit);
 
                 const department = NomenclatureStore.instance.getNomenclatureItem(NomenclatureTypes.Departments, externalUser.departmentId as number);
-                this.editUserForm.controls.departmentControl.setValue(department);
+                this.editUserForm.get('departmentControl')!.setValue(department);
 
                 const sector = NomenclatureStore.instance.getNomenclatureItem(NomenclatureTypes.Sectors, externalUser.sectorId as number);
-                this.editUserForm.controls.sectorControl.setValue(sector);
+                this.editUserForm.get('sectorControl')!.setValue(sector);
             }
             if (externalUser !== undefined && externalUser.userLegals !== undefined && externalUser.userLegals !== null) {
                 this.userLegals = (model as ExternalUserDTO).userLegals as UserLegalDTO[];
@@ -391,48 +445,52 @@ export class EditUserComponent implements OnInit, IDialogComponent {
 
     private fillModel(form: FormGroup): void {
         if (this.isInternalUser) {
-            this.internalUserModel.firstName = form.controls.firstNameControl.value;
-            this.internalUserModel.middleName = form.controls.middleNameControl.value;
-            this.internalUserModel.lastName = form.controls.lastNameControl.value;
-            this.internalUserModel.email = form.controls.emailControl.value;
-            this.internalUserModel.username = form.controls.usernameControl.value;
-            this.internalUserModel.egnLnc = form.controls.egnControl.value;
-            this.internalUserModel.phone = form.controls.phoneNumberControl.value;
-            this.internalUserModel.userMustChangePassword = form.controls.userMustChangePasswordControl.value;
-            this.internalUserModel.isLocked = form.controls.isLockedControl.value ?? false;
-            this.internalUserModel.position = form.controls.positionControl.value;
+            const simpleRegixData: RegixPersonDataDTO = form.get('identificationDataControl')!.value;
+            this.internalUserModel.firstName = simpleRegixData.firstName;
+            this.internalUserModel.middleName = simpleRegixData.middleName;
+            this.internalUserModel.lastName = simpleRegixData.lastName;
+            this.internalUserModel.egnLnc = simpleRegixData.egnLnc;
 
-            this.internalUserModel.departmentId = NomenclatureStore.getValue(form.controls.departmentControl.value);
-            this.internalUserModel.sectorId = NomenclatureStore.getValue(form.controls.sectorControl.value);
-            this.internalUserModel.territoryUnitId = NomenclatureStore.getValue(form.controls.territorialUnitControl.value);
+            this.internalUserModel.email = form.get('usernameEmailGroup.emailControl')!.value;
 
-            if (this.userRoleForm.valid && this.roleDataTable.rows.length !== 0) {
+            this.internalUserModel.phone = form.get('phoneNumberControl')!.value;
+            this.internalUserModel.userMustChangePassword = form.get('userMustChangePasswordControl')!.value;
+            this.internalUserModel.isLocked = form.get('isLockedControl')!.value ?? false;
+            this.internalUserModel.position = form.get('positionControl')!.value;
+
+            this.internalUserModel.departmentId = NomenclatureStore.getValue(form.get('departmentControl')!.value);
+            this.internalUserModel.sectorId = NomenclatureStore.getValue(form.get('sectorControl')!.value);
+            this.internalUserModel.territoryUnitId = NomenclatureStore.getValue(form.get('territorialUnitControl')!.value);
+
+            if (this.roleDataTable.rows.length !== 0) {
                 this.internalUserModel.userRoles = this.roleDataTable.rows as RoleDTO[];
             }
 
-            this.internalUserModel.mobileDevices = this.editUserForm.controls.mobileDevicesControl.value;
-        } else {
-            this.externalUserModel.firstName = form.controls.firstNameControl.value;
-            this.externalUserModel.middleName = form.controls.middleNameControl.value;
-            this.externalUserModel.lastName = form.controls.lastNameControl.value;
-            this.externalUserModel.email = form.controls.emailControl.value;
-            this.externalUserModel.username = form.controls.usernameControl.value;
-            this.externalUserModel.egnLnc = form.controls.egnControl.value;
-            this.externalUserModel.phone = form.controls.phoneNumberControl.value;
-            this.externalUserModel.userMustChangePassword = form.controls.userMustChangePasswordControl.value;
-            this.externalUserModel.isLocked = form.controls.isLockedControl.value ?? false;
-            this.externalUserModel.position = form.controls.positionControl.value;
+            this.internalUserModel.mobileDevices = this.editUserForm.get('mobileDevicesControl')!.value;
+        }
+        else {
+            const simpleRegixData: RegixPersonDataDTO = form.get('identificationDataControl')!.value;
+            this.externalUserModel.firstName = simpleRegixData.firstName;
+            this.externalUserModel.middleName = simpleRegixData.middleName;
+            this.externalUserModel.lastName = simpleRegixData.lastName;
+            this.externalUserModel.egnLnc = simpleRegixData.egnLnc;
 
-            this.externalUserModel.departmentId = NomenclatureStore.getValue(form.controls.departmentControl.value);
-            this.externalUserModel.sectorId = NomenclatureStore.getValue(form.controls.sectorControl.value);
-            this.externalUserModel.territoryUnitId = NomenclatureStore.getValue(form.controls.territorialUnitControl.value);
+            this.externalUserModel.email = form.get('usernameEmailGroup.emailControl')!.value;
 
-            if (this.userRoleForm.valid && this.roleDataTable.rows.length !== 0) {
+            this.externalUserModel.phone = form.get('phoneNumberControl')!.value;
+            this.externalUserModel.userMustChangePassword = form.get('userMustChangePasswordControl')!.value;
+            this.externalUserModel.isLocked = form.get('isLockedControl')!.value ?? false;
+            this.externalUserModel.position = form.get('positionControl')!.value;
+
+            this.externalUserModel.departmentId = NomenclatureStore.getValue(form.get('departmentControl')!.value);
+            this.externalUserModel.sectorId = NomenclatureStore.getValue(form.get('sectorControl')!.value);
+            this.externalUserModel.territoryUnitId = NomenclatureStore.getValue(form.get('territorialUnitControl')!.value);
+
+            if (this.roleDataTable.rows.length !== 0) {
                 this.externalUserModel.userRoles = this.roleDataTable.rows as RoleDTO[];
             }
 
-            if (this.userLegalForm.valid && this.legalDataTable.rows.length !== 0) {
-
+            if (this.legalDataTable.rows.length !== 0) {
                 this.externalUserModel.userLegals = (this.legalDataTable.rows as UserLegalDTO[]).map(x => {
                     const legal = this.legals.find(y => y.value == x.legalId);
                     const role = this.roles.find(y => y.value === x.roleId);
@@ -452,21 +510,47 @@ export class EditUserComponent implements OnInit, IDialogComponent {
     }
 
     private buildForm(): void {
+        // editUserForm
+
         this.editUserForm = new FormGroup({
-            firstNameControl: new FormControl(null, [Validators.required, Validators.maxLength(200)]),
-            middleNameControl: new FormControl(null, Validators.maxLength(200)),
-            lastNameControl: new FormControl(null, [Validators.required, Validators.maxLength(200)]),
-            egnControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
-            usernameControl: new FormControl(null, [Validators.required, Validators.maxLength(100)]),
-            emailControl: new FormControl(null, [Validators.email, Validators.maxLength(200)]),
+            identificationDataControl: new FormControl(),
+            usernameEmailGroup: new FormGroup({
+                emailControl: new FormControl(null, [Validators.email, Validators.maxLength(200)])
+            }, this.uniqueEmailValidator()),
             phoneNumberControl: new FormControl(null, Validators.maxLength(50)),
             userMustChangePasswordControl: new FormControl(false),
             isLockedControl: new FormControl(),
             territorialUnitControl: new FormControl(),
             departmentControl: new FormControl(),
             sectorControl: new FormControl(),
-            positionControl: new FormControl()
+            positionControl: new FormControl(),
+            mobileDevicesControl: new FormControl()
+        }, this.uniqueValidEgnLncValidator());
+
+        this.editUserForm.get('identificationDataControl')!.valueChanges.subscribe({
+            next: (regixData: RegixPersonDataDTO | undefined) => {
+                if (this.lastEgnLnc?.egnLnc !== regixData?.egnLnc?.egnLnc
+                    || this.lastEgnLnc?.identifierType !== regixData?.egnLnc?.identifierType
+                ) {
+                    this.hasInvalidEgnLnchError = false;
+                    this.editUserForm.updateValueAndValidity({ emitEvent: false });
+                }
+
+                this.lastEgnLnc = regixData?.egnLnc;
+            }
         });
+
+        this.editUserForm.get('usernameEmailGroup.emailControl')!.valueChanges.subscribe({
+            next: () => {
+                this.hasEmailExistsError = false;
+                this.editUserForm.get('usernameEmailGroup')!.updateValueAndValidity({ emitEvent: false });
+            }
+        });
+
+        this.editUserForm.get('sectorControl')!.disable();
+        this.editUserForm.get('departmentControl')!.disable();
+
+        // userRoleForm
 
         this.userRoleForm = new FormGroup({
             idControl: new FormControl(null, [Validators.required, this.datesOverlappingValidator()]),
@@ -474,18 +558,12 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             accessValidFromControl: new FormControl()
         });
 
-        this.editUserForm.controls.sectorControl.disable();
-        this.editUserForm.controls.departmentControl.disable();
+        // userLegalForm
 
-        if (this.isInternalUser) {
-            this.editUserForm.controls.territorialUnitControl.setValidators(Validators.required);
-            this.editUserForm.addControl('mobileDevicesControl', new FormControl());
-        } else {
-            this.userLegalForm = new FormGroup({
-                legalIdControl: new FormControl(null, Validators.required),
-                roleIdControl: new FormControl(null, Validators.required)
-            });
-        }
+        this.userLegalForm = new FormGroup({
+            legalIdControl: new FormControl(null, Validators.required),
+            roleIdControl: new FormControl(null, Validators.required)
+        });
     }
 
     private async getNomenclatures() {
@@ -494,6 +572,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             sectors: NomenclatureStore.instance.getNomenclature<number>(NomenclatureTypes.Sectors, this.nomenclatureService.getSectors.bind(this.nomenclatureService), false),
             departments: NomenclatureStore.instance.getNomenclature<number>(NomenclatureTypes.Departments, this.nomenclatureService.getDepartments.bind(this.nomenclatureService), false),
         }).toPromise();
+
         this.territoryUnits = results.territoryUnits;
         this.sectors = results.sectors;
         this.departments = results.departments;
@@ -504,6 +583,21 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         else {
             this.legals = await NomenclatureStore.instance.getNomenclature<number>(NomenclatureTypes.Legals, (this.service as ExternalUserManagementService).getActiveLegals.bind(this.service), false).toPromise();
             this.roles = await this.rolesService.getPublicActiveRoles().toPromise();
+        }
+    }
+
+    private handleErrorResponse(errorResponse: HttpErrorResponse): void {
+        const errorCode: ErrorCode | undefined = (errorResponse.error as ErrorModel)?.code;
+
+        switch (errorCode) {
+            case ErrorCode.InvalidEgnLnch: {
+                this.hasInvalidEgnLnchError = true;
+                this.editUserForm.updateValueAndValidity({ emitEvent: false });
+            } break;
+            case ErrorCode.EmailExists: {
+                this.hasEmailExistsError = true;
+                this.editUserForm.get('usernameEmailGroup')!.updateValueAndValidity({ emitEvent: false });
+            } break;
         }
     }
 
@@ -531,5 +625,33 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             }
             return null;
         };
+    }
+
+    private uniqueEmailValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === null || form === undefined) {
+                return null;
+            }
+
+            if (this.hasEmailExistsError) {
+                return { 'emailExists': true };
+            }
+
+            return null;
+        }
+    }
+
+    private uniqueValidEgnLncValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === null || form === undefined) {
+                return null;
+            }
+
+            if (this.hasInvalidEgnLnchError) {
+                return { 'invalidEgnLnc': true };
+            }
+
+            return null;
+        }
     }
 }

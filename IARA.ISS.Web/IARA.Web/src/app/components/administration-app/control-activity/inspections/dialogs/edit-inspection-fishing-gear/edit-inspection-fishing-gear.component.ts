@@ -62,6 +62,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
         snackbar: MatSnackBar
     ) {
         super(service, translate, nomenclatures, snackbar);
+        this.inspectionCode = InspectionTypesEnum.IGM;
 
         this.inspectedTypes = [
             new NomenclatureDTO({
@@ -124,7 +125,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
         this.form.get('inspectedTypeControl')!.setValue(this.inspectedTypes[0]);
 
         if (this.id !== null && this.id !== undefined) {
-            this.service.get(this.id).subscribe({
+            this.service.get(this.id, this.inspectionCode).subscribe({
                 next: (dto: InspectionCheckToolMarkDTO) => {
                     this.model = dto;
 
@@ -189,7 +190,8 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
                 inspectorComment: this.model.inspectorComment,
-                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo)
+                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo),
+                violatedRegulations: this.model.violatedRegulations,
             }));
 
             this.form.get('togglesControl')!.setValue(this.model.checks);
@@ -255,6 +257,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             byEmergencySignal: generalInfo.byEmergencySignal,
             inspectionType: InspectionTypesEnum.IGM,
             inspectorComment: additionalInfo?.inspectorComment,
+            violatedRegulations: additionalInfo?.violatedRegulations,
             isActive: true,
             port: this.form.get('portControl')!.value,
             checks: this.form.get('togglesControl')!.value,
@@ -273,6 +276,10 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
     }
 
     private onInspectedTypeChanged(value: NomenclatureDTO<InspectionSubjectEnum>): void {
+        if (this.isSaving) {
+            return;
+        }
+
         if (value !== null && value !== undefined) {
             if (value.value === InspectionSubjectEnum.Ship) {
                 this.isShip = true;
@@ -299,14 +306,19 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
 
         this.selectedPermitIds = [];
         this.permits = [];
-        this.form.get('dalyanControl')!.setValue(null);
-        this.form.get('shipControl')!.setValue(null);
-        this.form.get('shipOwnerControl')!.setValue(null);
-        this.form.get('permitControl')!.setValue(null);
+
+        this.form.get('dalyanControl')!.setValue(undefined);
+        this.form.get('shipControl')!.setValue(undefined);
+        this.form.get('shipOwnerControl')!.setValue(undefined);
+        this.form.get('permitControl')!.setValue(undefined);
         this.form.get('fishingGearsControl')!.setValue([]);
     }
 
     private onRemarkReasonChanged(value: NomenclatureDTO<number>): void {
+        if (this.isSaving) {
+            return;
+        }
+
         if (value?.code === 'Other') {
             this.otherRemarkReasonSelected = true;
             this.form.get('otherRemarkReasonControl')!.enable();
@@ -321,6 +333,10 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
     }
 
     private async onShipChanged(value: VesselDuringInspectionDTO): Promise<void> {
+        if (this.isSaving) {
+            return;
+        }
+
         if (value?.shipId) {
             const permits = await this.service.getShipPermitLicenses(value.shipId).toPromise();
 
@@ -362,6 +378,10 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
     }
 
     private async onDalyanChanged(value: NomenclatureDTO<number>): Promise<void> {
+        if (this.isSaving) {
+            return;
+        }
+
         if (value !== null && value !== undefined) {
             const permits = await this.service.getPoundNetPermitLicenses(value.value!).toPromise();
 
@@ -384,6 +404,10 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
     }
 
     private async onPermitChanged(value: NomenclatureDTO<number>): Promise<void> {
+        if (this.isSaving) {
+            return;
+        }
+
         if (value !== null && value !== undefined) {
             let fishingGears: FishingGearDTO[] | undefined = undefined;
 

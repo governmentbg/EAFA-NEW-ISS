@@ -13,6 +13,7 @@ export class InspectedShipSectionsModel {
     public personnel: InspectionSubjectPersonnelDTO[] = [];
     public checks: InspectionCheckDTO[] = [];
     public port: PortVisitDTO | undefined;
+    public permitLicenses: InspectionPermitDTO[] = [];
     public permits: InspectionPermitDTO[] = [];
     public catches: InspectionCatchMeasureDTO[] = [];
     public fishingGears: InspectedFishingGearDTO[] = [];

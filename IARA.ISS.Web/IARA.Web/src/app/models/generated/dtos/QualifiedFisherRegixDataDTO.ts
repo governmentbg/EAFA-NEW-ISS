@@ -1,16 +1,22 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { BaseRegixChecksDTO } from './BaseRegixChecksDTO';
 import { RegixPersonDataDTO } from './RegixPersonDataDTO';
 import { AddressRegistrationDTO } from './AddressRegistrationDTO';
-import { ApplicationRegiXCheckDTO } from './ApplicationRegiXCheckDTO';
-import { SubmittedByRolesEnum } from '@app/enums/submitted-by-roles.enum';
+import { SubmittedByRolesEnum } from '@app/enums/submitted-by-roles.enum'; 
 
-export class QualifiedFisherRegixDataDTO { 
+export class QualifiedFisherRegixDataDTO extends BaseRegixChecksDTO {
     public constructor(obj?: Partial<QualifiedFisherRegixDataDTO>) {
-        Object.assign(this, obj);
+        if (obj != undefined) {
+            super(obj as BaseRegixChecksDTO);
+            Object.assign(this, obj);
+        } 
+        else {
+            super();
+        }
     }
-
+  
     @StrictlyTyped(RegixPersonDataDTO)
     public submittedByRegixData?: RegixPersonDataDTO;
 
@@ -26,15 +32,6 @@ export class QualifiedFisherRegixDataDTO {
     @StrictlyTyped(AddressRegistrationDTO)
     public submittedForAddresses?: AddressRegistrationDTO[];
 
-    @StrictlyTyped(ApplicationRegiXCheckDTO)
-    public applicationRegiXChecks?: ApplicationRegiXCheckDTO[];
-
     @StrictlyTyped(Number)
     public id?: number;
-
-    @StrictlyTyped(Number)
-    public applicationId?: number;
-
-    @StrictlyTyped(String)
-    public statusReason?: string;
 }

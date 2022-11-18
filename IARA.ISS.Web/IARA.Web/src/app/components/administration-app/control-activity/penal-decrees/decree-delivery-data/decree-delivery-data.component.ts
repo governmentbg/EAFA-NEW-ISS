@@ -15,7 +15,6 @@ import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/Ins
 import { InspDeliveryTypeGroupsEnum } from '@app/enums/insp-delivery-type-groups.enum';
 import { AuanWitnessDTO } from '@app/models/generated/dtos/AuanWitnessDTO';
 
-
 @Component({
     selector: 'decree-delivery-data',
     templateUrl: './decree-delivery-data.component.html'
@@ -27,10 +26,9 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
     public confirmationTypes: NomenclatureDTO<number>[] = [];
 
     public readonly deliveryTypesEnum: typeof InspDeliveryTypesEnum = InspDeliveryTypesEnum;
+    public readonly confirmationTypesEnum: typeof InspDeliveryConfirmationTypesEnum = InspDeliveryConfirmationTypesEnum;
 
     public delivery: PenalDecreeDeliveryDataDTO | undefined;
-
-    public hasNoEDeliveryRegistrationError: boolean = false;
     public deliveryType: InspDeliveryTypesEnum | undefined;
     public confirmationType: InspDeliveryConfirmationTypesEnum | undefined;
     public isDelivered: boolean = false;
@@ -59,12 +57,8 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
     public ngAfterViewInit(): void {
         this.form.get('deliveryTypeControl')!.valueChanges.subscribe({
             next: (type: NomenclatureDTO<number> | undefined) => {
-                this.hasNoEDeliveryRegistrationError = false;
-
                 this.form.get('deliveryDateControl')!.setValidators(Validators.required);
-
                 this.form.get('deliverySentDateControl')!.clearValidators();
-                this.form.get('witnessesControl')!.clearValidators();
 
                 if (type !== undefined && type !== null) {
                     this.deliveryType = InspDeliveryTypesEnum[type.code as keyof typeof InspDeliveryTypesEnum];
@@ -72,12 +66,8 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
                     if (this.deliveryType === InspDeliveryTypesEnum.DecreeReturn || this.deliveryType === InspDeliveryTypesEnum.DecreeTag) {
                         this.form.get('deliverySentDateControl')?.setValidators(Validators.required);
                     }
-                    else {
-                        this.form.get('witnessesControl')?.setValidators(Validators.required);
-                    }
 
                     this.form.get('deliverySentDateControl')!.updateValueAndValidity({ emitEvent: false });
-                    this.form.get('witnessesControl')!.updateValueAndValidity({ emitEvent: false });
                 }
                 else {
                     this.deliveryType = undefined;
@@ -90,6 +80,14 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
                 if (type !== null && type !== undefined) {
                     this.confirmationType = InspDeliveryConfirmationTypesEnum[type.code as keyof typeof InspDeliveryConfirmationTypesEnum];
                     this.isDelivered = true;
+
+                    this.form.get('witnessesControl')!.clearValidators();
+
+                    if (this.confirmationType === InspDeliveryConfirmationTypesEnum.RefusalDecree) {
+                        this.form.get('witnessesControl')?.setValidators(Validators.required);
+                    }
+
+                    this.form.get('witnessesControl')!.updateValueAndValidity({ emitEvent: false });
                 }
                 else {
                     this.confirmationType = undefined;
@@ -115,10 +113,11 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
         let refusalWitnesses: AuanWitnessDTO[] = [];
 
         if (this.deliveryType !== null && this.deliveryType !== undefined) {
-            if (this.deliveryType === InspDeliveryTypesEnum.DecreeReturn) {
+            if (this.deliveryType === InspDeliveryTypesEnum.DecreeReturn || this.deliveryType === InspDeliveryTypesEnum.DecreeTag) {
                 sentDate = this.form.get('deliverySentDateControl')!.value;
             }
-            else {
+
+            if (this.confirmationType === InspDeliveryConfirmationTypesEnum.RefusalDecree) {
                 refusalWitnesses = this.form.get('witnessesControl')!.value;
             }
         }
@@ -173,7 +172,7 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
             if (type !== undefined && type !== null) {
                 this.form.get('deliveryTypeControl')!.setValue(this.deliveryTypes.find(x => x.code === InspDeliveryTypesEnum[type]));
 
-                if (type === InspDeliveryTypesEnum.DecreeReturn) {
+                if (type === InspDeliveryTypesEnum.DecreeReturn || type === InspDeliveryTypesEnum.DecreeTag) {
                     this.form.get('deliverySentDateControl')!.setValue(delivery.sentDate);
                     this.form.get('deliverySentControl')!.setValue(delivery.referenceNum);
                 }

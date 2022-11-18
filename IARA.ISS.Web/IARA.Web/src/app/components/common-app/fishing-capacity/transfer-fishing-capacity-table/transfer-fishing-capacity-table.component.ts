@@ -15,6 +15,7 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { TransferFishingCapacityTableEntryParams } from './models/transfer-fishing-capacity-table-entry-params.model';
 import { TransferFishingCapacityTableEntryComponent } from './transfer-fishing-capacity-table-entry/transfer-fishing-capacity-table-entry.component';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
+import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 
 type CapacityHolderType = FishingCapacityHolderDTO | FishingCapacityHolderRegixDataDTO;
 
@@ -42,6 +43,9 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
     public maxPower: number | undefined;
 
     @Input()
+    public submittedBy: ApplicationSubmittedByDTO | undefined;
+
+    @Input()
     public expectedResults: FishingCapacityHolderRegixDataDTO[] = [];
 
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
@@ -51,6 +55,9 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
 
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
+
+    private remainingTonnage: number | undefined;
+    private remainingPower: number | undefined;
 
     private translate: FuseTranslationLoaderService;
     private confirmDialog: TLConfirmDialog;
@@ -78,6 +85,7 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
         const maxPower: SimpleChange | undefined = changes['maxPower'];
 
         if (maxGrossTonnage || maxPower) {
+            this.recalculateRemainingCapacity();
             this.control.updateValueAndValidity({ emitEvent: false });
         }
     }
@@ -105,6 +113,9 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
                 isEgnLncReadOnly: this.isEditing,
                 readOnly: readOnly,
                 showOnlyRegixData: this.showOnlyRegiXData,
+                remainingPower: this.remainingPower,
+                remainingTonnage: this.remainingTonnage,
+                submittedBy: this.submittedBy,
                 expectedResults: this.expectedResults?.find(x => x.id === holder?.id) ?? new FishingCapacityHolderRegixDataDTO()
             });
 
@@ -124,7 +135,10 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
         }
         else {
             data = new TransferFishingCapacityTableEntryParams({
-                showOnlyRegixData: this.showOnlyRegiXData
+                showOnlyRegixData: this.showOnlyRegiXData,
+                remainingPower: this.remainingPower,
+                remainingTonnage: this.remainingTonnage,
+                submittedBy: this.submittedBy
             });
 
             title = this.translate.getValue('fishing-capacity.add-fishing-capacity-holder-dialog-title');
@@ -156,6 +170,7 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
                 this.onTouched(this.entries);
                 this.onChanged(this.entries);
 
+                this.recalculateRemainingCapacity();
                 this.control.updateValueAndValidity();
             }
         });
@@ -173,6 +188,7 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
                     this.onTouched(this.entries);
                     this.onChanged(this.entries);
 
+                    this.recalculateRemainingCapacity();
                     this.control.updateValueAndValidity();
                 }
             }
@@ -187,6 +203,7 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
                     this.onTouched(this.entries);
                     this.onChanged(this.entries);
 
+                    this.recalculateRemainingCapacity();
                     this.control.updateValueAndValidity();
                 }
             }
@@ -205,6 +222,23 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
         closeFn();
     }
 
+    private recalculateRemainingCapacity(): void {
+        if (!this.showOnlyRegiXData) {
+            if (this.maxGrossTonnage !== undefined && this.maxGrossTonnage !== null && this.maxPower !== undefined && this.maxPower !== null) {
+                const entries: FishingCapacityHolderDTO[] = (this.entries as FishingCapacityHolderDTO[]).filter(x => x.isActive);
+                const tonnageSum: number = entries.map(x => x.transferredTonnage!).reduce((a, b) => a + b, 0);
+                const powerSum: number = entries.map(x => x.transferredPower!).reduce((a, b) => a + b, 0);
+
+                this.remainingTonnage = Number((this.maxGrossTonnage - tonnageSum).toFixed(2));
+                this.remainingPower = Number((this.maxPower - powerSum).toFixed(2));
+            }
+            else {
+                this.remainingTonnage = undefined;
+                this.remainingPower = undefined;
+            }
+        }
+    }
+
     private capacityValidator(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
             if (this.showOnlyRegiXData !== true) {
@@ -221,11 +255,11 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
                     const tonnageSum: number = entries.map(x => x.transferredTonnage!).reduce((a, b) => a + b, 0);
                     const powerSum: number = entries.map(x => x.transferredPower!).reduce((a, b) => a + b, 0);
 
-                    if (tonnageSum !== this.maxGrossTonnage) {
+                    if (CommonUtils.round(tonnageSum, 2) !== CommonUtils.round(this.maxGrossTonnage, 2)) {
                         errors['tonnageNotIdentical'] = true;
                     }
 
-                    if (powerSum !== this.maxPower) {
+                    if (CommonUtils.round(powerSum, 2) !== CommonUtils.round(this.maxPower, 2)) {
                         errors['powerNotIdentical'] = true;
                     }
                 }

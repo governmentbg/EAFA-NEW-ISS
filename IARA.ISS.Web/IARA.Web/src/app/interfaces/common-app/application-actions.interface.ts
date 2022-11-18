@@ -5,7 +5,7 @@ import { RegixChecksWrapperDTO } from '@app/models/generated/dtos/RegixChecksWra
 import { IApplicationRegister } from '../common-app/application-register.interface';
 
 export interface IApplicationsActionsService {
-    getApplication(id: number, pageCode?: PageCodeEnum): Observable<IApplicationRegister>;
+    getApplication(id: number, getRegiXData: boolean, pageCode?: PageCodeEnum): Observable<IApplicationRegister>;
     getRegixData(id: number, pageCode?: PageCodeEnum): Observable<RegixChecksWrapperDTO<IApplicationRegister>>;
     getApplicationDataForRegister(applicationId: number, pageCode?: PageCodeEnum): Observable<IApplicationRegister>;
     getRegisterByApplicationId(applicationId: number, pageCode?: PageCodeEnum): Observable<unknown>;

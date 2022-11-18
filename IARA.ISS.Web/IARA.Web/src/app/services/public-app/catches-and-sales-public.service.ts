@@ -74,8 +74,8 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
         return this.commonService.getPreviousTripsOnBoardCatchRecords(this.area, this.controller, shipId);
     }
 
-    public getPossibleProducts(shipLogBookPageId: number): Observable<LogBookPageProductDTO[]> {
-        return this.commonService.getPossibleProducts(this.area, this.controller, shipLogBookPageId);
+    public getPossibleProducts(shipLogBookPageId: number, documentType: LogBookPageDocumentTypesEnum): Observable<LogBookPageProductDTO[]> {
+        return this.commonService.getPossibleProducts(this.area, this.controller, shipLogBookPageId, documentType);
     }
 
     public getShipLogBookPage(id: number): Observable<ShipLogBookPageEditDTO> {

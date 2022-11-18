@@ -5,8 +5,7 @@ import { ShipRegisterBaseRegixDataDTO } from './ShipRegisterBaseRegixDataDTO';
 import { ApplicationSubmittedByRegixDataDTO } from './ApplicationSubmittedByRegixDataDTO';
 import { ApplicationSubmittedForRegixDataDTO } from './ApplicationSubmittedForRegixDataDTO';
 import { ShipOwnerRegixDataDTO } from './ShipOwnerRegixDataDTO';
-import { FishingCapacityFreedActionsRegixDataDTO } from './FishingCapacityFreedActionsRegixDataDTO';
-import { ApplicationRegiXCheckDTO } from './ApplicationRegiXCheckDTO'; 
+import { FishingCapacityFreedActionsRegixDataDTO } from './FishingCapacityFreedActionsRegixDataDTO'; 
 
 export class ShipRegisterRegixDataDTO extends ShipRegisterBaseRegixDataDTO {
     public constructor(obj?: Partial<ShipRegisterRegixDataDTO>) {
@@ -30,7 +29,4 @@ export class ShipRegisterRegixDataDTO extends ShipRegisterBaseRegixDataDTO {
 
     @StrictlyTyped(FishingCapacityFreedActionsRegixDataDTO)
     public remainingCapacityAction?: FishingCapacityFreedActionsRegixDataDTO;
-
-    @StrictlyTyped(ApplicationRegiXCheckDTO)
-    public applicationRegiXChecks?: ApplicationRegiXCheckDTO[];
 }

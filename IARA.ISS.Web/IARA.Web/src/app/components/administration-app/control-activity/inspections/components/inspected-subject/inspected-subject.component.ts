@@ -61,6 +61,12 @@ export class InspectedSubjectComponent extends CustomFormControl<InspectionSubje
         ];
 
         this.buildForm();
+
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.control.updateValueAndValidity();
+            }
+        });
     }
 
     public ngOnInit(): void {

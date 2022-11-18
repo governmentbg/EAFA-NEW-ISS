@@ -25,6 +25,15 @@ import { AdmissionLogBookPageRegisterDTO } from '@app/models/generated/dtos/Admi
 import { TransportationLogBookPageRegisterDTO } from '@app/models/generated/dtos/TransportationLogBookPageRegisterDTO';
 import { AquacultureLogBookPageRegisterDTO } from '@app/models/generated/dtos/AquacultureLogBookPageRegisterDTO';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
+import { ICatchesAndSalesService } from '@app/interfaces/common-app/catches-and-sales.interface';
+import { ILogBookService } from './interfaces/log-book.interface';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { OverlappingLogBooksParameters } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-parameters.model';
+import { OverlappingLogBooksDialogParamsModel } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-dialog-params.model';
+import { OverlappingLogBooksComponent } from '@app/shared/components/overlapping-log-books/overlapping-log-books.component';
+import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
+import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
 
 
 @Component({
@@ -35,6 +44,9 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
     public readonly logBookGroupsEnum: typeof LogBookGroupsEnum = LogBookGroupsEnum;
     public readonly logBookTypesEnum: typeof LogBookTypesEnum = LogBookTypesEnum;
     public readonly logBookPagePersonTypesEnum: typeof LogBookPagePersonTypesEnum = LogBookPagePersonTypesEnum;
+    public readonly pagesAndDeclarationsForLastPermitLicenseLabel: string;
+    public readonly declarationsOfOriginInPermitLicenseLabel: string;
+    public readonly declarationsOfOriginLabel: string;
 
     public form!: FormGroup;
     public logBookGroup!: LogBookGroupsEnum;
@@ -43,11 +55,13 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
     public logBookTypes: NomenclatureDTO<number>[] = [];
     public allLogBookStatuses: NomenclatureDTO<number>[] = [];
     public logBookStatuses: NomenclatureDTO<number>[] = [];
-    public nomenclaturesService: CommonNomenclatures;
+
     public isIdUndefined: boolean = false;
     public pagesRangeError: boolean = false;
     public isOnline: boolean = false;
     public isForRenewal: boolean = false;
+    public ignoreLogBookConflicts: boolean = false;
+
     /**
      * Indicates whether the dialog is opened from a permit license entry
      * */
@@ -59,12 +73,28 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
     public selectedLogBookType: LogBookTypesEnum | undefined;
 
     private model!: LogBookEditDTO | CommercialFishingLogBookEditDTO;
+    private permitLicenseLogBookId: number | undefined;
+
+    private readonly translate: FuseTranslationLoaderService;
+    private readonly nomenclaturesService: CommonNomenclatures;
+    private readonly overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
+    private service: ILogBookService | undefined;
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
 
-    public constructor(nomenclaturesService: CommonNomenclatures) {
+    public constructor(
+        nomenclaturesService: CommonNomenclatures,
+        translate: FuseTranslationLoaderService,
+        overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>
+    ) {
         this.nomenclaturesService = nomenclaturesService;
+        this.translate = translate;
+        this.overlappingLogBooksDialog = overlappingLogBooksDialog;
+
+        this.pagesAndDeclarationsForLastPermitLicenseLabel = this.translate.getValue('catches-and-sales.log-book-pages-and-declarations-for-last-permit-license-panel');
+        this.declarationsOfOriginInPermitLicenseLabel = this.translate.getValue('catches-and-sales.log-book-declarations-of-origin-in-permit-license-panel');
+        this.declarationsOfOriginLabel = this.translate.getValue('catches-and-sales.log-book-declarations-of-origin-panel');
     }
 
     public async ngOnInit(): Promise<void> {
@@ -72,9 +102,20 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             NomenclatureTypes.LogBookTypes, this.nomenclaturesService.getLogBookTypes.bind(this.nomenclaturesService), false
         ).toPromise();
 
-        this.allLogBookStatuses = await NomenclatureStore.instance.getNomenclature<number>(
+        const logBookStatusesNomenclature = await NomenclatureStore.instance.getNomenclature<number>(
             NomenclatureTypes.LogBookStatuses, this.nomenclaturesService.getLogBookStatuses.bind(this.nomenclaturesService), false
         ).toPromise();
+
+        this.allLogBookStatuses = this.deepCopyLogBookStatuses(logBookStatusesNomenclature);
+
+        if (this.permitLicenseLogBookId !== null && this.permitLicenseLogBookId !== undefined) {
+            if (this.service !== null && this.service !== undefined) {
+                this.model = await this.service.getPermitLicenseLogBook(this.permitLicenseLogBookId).toPromise();
+            }
+            else {
+                throw new Error("service is null. If permitLicenseLogBookId is passed to the edit log book dialog, a service property should be present as well.");
+            }
+        }
 
         if (this.model instanceof CommercialFishingLogBookEditDTO) {
             if (this.model.isForRenewal) {
@@ -260,9 +301,9 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                 }
             });
         }
+
         this.fillForm();
     }
-
 
     public setData(data: EditLogBookDialogParamsModel, buttons: DialogWrapperData): void {
         this.readOnly = data.readOnly;
@@ -271,38 +312,47 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
         this.isOnline = data.isOnline ?? false;
         this.ownerType = data.ownerType;
         this.isForPermitLicense = data.isForPermitLicense;
+        this.permitLicenseLogBookId = data.permitLicenseLogBookId;
+        this.service = data.service;
 
         this.buildForm();
 
-        if (data.model === null || data.model === undefined) {
-            this.isAdd = true;
+        if (this.permitLicenseLogBookId === null || this.permitLicenseLogBookId === undefined) {
+            if (data.model === null || data.model === undefined) {
+                this.isAdd = true;
 
-            if (this.logBookGroup === LogBookGroupsEnum.Ship) {
-                this.model = new CommercialFishingLogBookEditDTO({
-                    isActive: true,
-                    permitLicenseIsActive: true,
-                    isOnline: false
-                });
+                if (this.logBookGroup === LogBookGroupsEnum.Ship) {
+                    this.model = new CommercialFishingLogBookEditDTO({
+                        isActive: true,
+                        permitLicenseIsActive: true,
+                        isOnline: false
+                    });
+                }
+                else {
+                    this.model = new LogBookEditDTO({
+                        isActive: true,
+                        logBookIsActive: true,
+                        isOnline: false
+                    });
+                }
             }
             else {
-                this.model = new LogBookEditDTO({
-                    isActive: true,
-                    logBookIsActive: true,
-                    isOnline: false
-                });
+                this.isAdd = false;
+
+                if (this.readOnly) {
+                    this.form.disable();
+                }
+
+                this.model = data.model;
+
+                if (this.model instanceof CommercialFishingLogBookEditDTO) {
+                    this.isForRenewal = this.model.isForRenewal ?? false;
+                }
             }
         }
         else {
-            this.isAdd = false;
-
             if (this.readOnly) {
                 this.form.disable();
-            }
-
-            this.model = data.model;
-
-            if (this.model instanceof CommercialFishingLogBookEditDTO) {
-                this.isForRenewal = this.model.isForRenewal ?? false;
             }
         }
     }
@@ -319,7 +369,79 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
         if (this.form.valid) {
             this.fillModel();
             CommonUtils.sanitizeModelStrings(this.model);
-            dialogClose(this.model);
+
+            if (this.permitLicenseLogBookId !== null && this.permitLicenseLogBookId !== undefined) { // should save in DB before closing the dialog
+                this.saveEditLogBook(dialogClose);
+            }
+            else {
+                dialogClose(this.model);
+            }
+        }
+    }
+
+    private saveEditLogBook(dialogClose: DialogCloseCallback): void {
+        this.service!.editLogBook(this.model, this.ignoreLogBookConflicts).subscribe({
+            next: () => {
+                dialogClose(this.model);
+            },
+            error: (errorResponse: HttpErrorResponse) => {
+                const error = errorResponse.error as ErrorModel;
+                if (error?.code === ErrorCode.InvalidLogBookLicensePagesRange
+                    || error?.code === ErrorCode.InvalidLogBookPagesRange
+                ) {
+                    this.handleInvalidLogBookLicensePagesRangeError(error.messages[0], dialogClose);
+                }
+            }
+        });
+    }
+
+    private handleInvalidLogBookLicensePagesRangeError(logBookNumber: string, dialogClose: DialogCloseCallback): void {
+        if (this.model instanceof CommercialFishingLogBookEditDTO) {
+            this.ignoreLogBookConflicts = false;
+
+            const ranges: OverlappingLogBooksParameters[] = [
+                new OverlappingLogBooksParameters({
+                    logBookId: this.model.logBookId,
+                    typeId: this.model.logBookTypeId,
+                    OwnerType: this.model.ownerType,
+                    startPage: this.model.permitLicenseStartPageNumber,
+                    endPage: this.model.permitLicenseEndPageNumber
+                })
+            ];
+
+            const editDialogData: OverlappingLogBooksDialogParamsModel = new OverlappingLogBooksDialogParamsModel({
+                service: this.service,
+                logBookGroup: this.logBookGroup,
+                ranges: ranges
+            });
+
+            this.overlappingLogBooksDialog.open({
+                title: this.translate.getValue('commercial-fishing.overlapping-log-books-dialog-title'),
+                TCtor: OverlappingLogBooksComponent,
+                headerCancelButton: {
+                    cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+                },
+                componentData: editDialogData,
+                translteService: this.translate,
+                disableDialogClose: true,
+                cancelBtn: {
+                    id: 'cancel',
+                    color: 'primary',
+                    translateValue: 'common.cancel',
+                },
+                saveBtn: {
+                    id: 'save',
+                    color: 'error',
+                    translateValue: 'commercial-fishing.overlapping-log-books-save-despite-conflicts'
+                }
+            }, '1300px').subscribe({
+                next: (save: boolean | undefined) => {
+                    if (save) {
+                        this.ignoreLogBookConflicts = true;
+                        this.saveEditLogBook(dialogClose);
+                    }
+                }
+            });
         }
     }
 
@@ -716,6 +838,26 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             }
 
             return null;
+        }
+    }
+
+    // helpers
+
+    private deepCopyLogBookStatuses(statuses: NomenclatureDTO<number>[]): NomenclatureDTO<number>[] {
+        if (statuses !== null && statuses !== undefined) {
+            const copiedStatuses: NomenclatureDTO<number>[] = [];
+
+            for (const status of statuses) {
+                const stringified: string = JSON.stringify(status);
+                const newStatus: NomenclatureDTO<number> = new NomenclatureDTO<number>(JSON.parse(stringified));
+
+                copiedStatuses.push(newStatus);
+            }
+
+            return copiedStatuses;
+        }
+        else {
+            return [];
         }
     }
 }

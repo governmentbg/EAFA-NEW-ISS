@@ -7,7 +7,8 @@ import { ApplicationSubmittedForDTO } from './ApplicationSubmittedForDTO';
 import { FishingCapacityFreedActionsDTO } from './FishingCapacityFreedActionsDTO';
 import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformationDTO';
 import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
-import { FileInfoDTO } from './FileInfoDTO'; 
+import { FileInfoDTO } from './FileInfoDTO';
+import { ReduceFishingCapacityRegixDataDTO } from './ReduceFishingCapacityRegixDataDTO'; 
 
 export class ReduceFishingCapacityApplicationDTO extends ReduceFishingCapacityBaseRegixDataDTO {
     public constructor(obj?: Partial<ReduceFishingCapacityApplicationDTO>) {
@@ -58,4 +59,7 @@ export class ReduceFishingCapacityApplicationDTO extends ReduceFishingCapacityBa
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
+
+    @StrictlyTyped(ReduceFishingCapacityRegixDataDTO)
+    public regiXDataModel?: ReduceFishingCapacityRegixDataDTO;
 }

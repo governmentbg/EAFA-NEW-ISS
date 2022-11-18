@@ -12,6 +12,7 @@
                               validityChecker
                               label="{{ 'fishing-capacity.duplicate-requester' | tlTranslate }}"
                               [isIdReadOnly]="isEditing || isPublicApp"
+                              [middleNameRequired]="true"
                               [expectedResults]="expectedResults.submittedBy">
     </application-submitted-by>
 
@@ -25,6 +26,7 @@
                                [hideRelation]="showOnlyRegiXData"
                                [isIdReadOnly]="isEditing"
                                [showCustodianOfProperty]="false"
+                               [middleNameRequired]="true"
                                [submittedByControl]="form.controls.submittedByControl"
                                [expectedResults]="expectedResults.submittedFor">
     </application-submitted-for>
@@ -59,7 +61,7 @@
     <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData && paymentInformation !== undefined && paymentInformation !== null"
                         title="{{ 'fishing-capacity.duplicate-payment-information' | tlTranslate }}"
                         tooltipResourceName="fishing-capacity.duplicate-payment-information-helper">
-        <payment-information [paymentData]="paymentInformation"></payment-information>
+        <payment-information [paymentData]="paymentInformation" [hideBasicInfo]="hideBasicPaymentInfo"></payment-information>
     </tl-expansion-panel>
 
     <!-- Информация за начин на връчване -->
@@ -91,7 +93,7 @@
     </tl-expansion-panel>
 
     <!-- Проверки -->
-    <tl-expansion-panel *ngIf="showOnlyRegiXData"
+    <tl-expansion-panel *ngIf="showOnlyRegiXData || showRegiXData"
                         title="{{ 'fishing-capacity.duplicate-regix-checks-results' | tlTranslate }}"
                         tooltipResourceName="fishing-capacity.duplicate-regix-checks-results-helper">
         <div fxLayout="column" fxLayoutGap="1em">

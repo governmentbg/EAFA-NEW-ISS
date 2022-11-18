@@ -35,6 +35,7 @@ export class ApplicationsProcessingComponent {
             [
                 [PageCodeEnum.SciFi, applicationProcessingPermissions],
                 [PageCodeEnum.LE, applicationProcessingPermissions],
+                [PageCodeEnum.Assocs, applicationProcessingPermissions],
                 [PageCodeEnum.CommFish, applicationProcessingPermissions],
                 [PageCodeEnum.DupCommFish, applicationProcessingPermissions],
                 [PageCodeEnum.AquaFarmReg, applicationProcessingPermissions],

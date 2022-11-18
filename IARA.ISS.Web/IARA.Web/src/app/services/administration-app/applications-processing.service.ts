@@ -119,7 +119,7 @@ export class ApplicationsProcessingService extends BaseAuditService implements I
         throw new Error('Method should not be called from ApplicationsProcessing service');
     }
 
-    public getApplication(id: number): Observable<IApplicationRegister> {
+    public getApplication(id: number, getRegiXData: boolean): Observable<IApplicationRegister> {
         throw new Error('Method should not be called from ApplicationsProcessing service');
     }
 

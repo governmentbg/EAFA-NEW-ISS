@@ -12,17 +12,20 @@
                 <tl-autocomplete fxFlex="33"
                                  formControlName="aquaticOrganismTypeControl"
                                  label="{{ 'catches-and-sales.page-product-aquatic-organism-type' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.page-product-aquatic-organism-type-helper"
                                  [options]="aquaticOrganismTypes"
-                                 [readonly]="!isAdd">
+                                 [readonly]="!isAquaculturePage">
                 </tl-autocomplete>
                 <tl-input fxFlex="33"
                           formControlName="minimumSizeControl"
-                          label="{{ 'catches-and-sales.page-product-min-size' | tlTranslate }}">
+                          label="{{ 'catches-and-sales.page-product-min-size' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.page-product-min-size-helper">
                 </tl-input>
                 <tl-input fxFlex="33"
                           formControlName="catchLocationControl"
                           label="{{ 'catches-and-sales.page-product-catch-location' | tlTranslate }}"
-                          [readonly]="!isAdd">
+                          tooltipResourceName="catches-and-sales.page-product-catch-location-helper"
+                          [readonly]="!isAquaculturePage">
                 </tl-input>
             </div>
             <ng-template #noCatchLocation>
@@ -32,15 +35,18 @@
                     <tl-autocomplete fxFlex="33"
                                      formControlName="aquaticOrganismTypeControl"
                                      label="{{ 'catches-and-sales.page-product-aquatic-organism-type' | tlTranslate }}"
+                                     tooltipResourceName="catches-and-sales.page-product-aquatic-organism-type-helper"
                                      [options]="aquaticOrganismTypes">
                     </tl-autocomplete>
                     <tl-input fxFlex="33"
                               formControlName="averageUnitWeightKgControl"
-                              label="{{ 'catches-and-sales.page-product-average-unit-weight-kg' | tlTranslate }}">
+                              label="{{ 'catches-and-sales.page-product-average-unit-weight-kg' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.page-product-average-unit-weight-kg-helper">
                     </tl-input>
                     <tl-autocomplete fxFlex="33"
                                      formControlName="presentationControl"
                                      label="{{ 'catches-and-sales.page-product-presentation' | tlTranslate }}"
+                                     tooltipResourceName="catches-and-sales.page-product-presentation-helper"
                                      [options]="presentations">
                     </tl-autocomplete>
                 </div>
@@ -53,16 +59,19 @@
                 <tl-autocomplete fxFlex="50"
                                  formControlName="presentationControl"
                                  label="{{ 'catches-and-sales.page-product-presentation' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.page-product-presentation-helper"
                                  [options]="presentations">
                 </tl-autocomplete>
                 <tl-autocomplete fxFlex="50"
                                  formControlName="purposeControl"
                                  label="{{ 'catches-and-sales.page-product-purpose' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.page-product-purpose-helper"
                                  [options]="purposes">
                 </tl-autocomplete>
                 <tl-autocomplete fxFlex="50"
                                  formControlName="freshnessControl"
                                  label="{{ 'catches-and-sales.page-product-freshness' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.page-product-freshness-helper"
                                  [options]="freshnessCategories">
                 </tl-autocomplete>
             </div>
@@ -74,12 +83,14 @@
                     <tl-autocomplete fxFlex="33"
                                      formControlName="purposeControl"
                                      label="{{ 'catches-and-sales.page-product-purpose' | tlTranslate }}"
+                                     tooltipResourceName="catches-and-sales.page-product-purpose-helper"
                                      [options]="purposes">
                     </tl-autocomplete>
                     <tl-autocomplete *ngIf="showFishCategoryControl"
                                      fxFlex="33"
                                      formControlName="sizeCategoryControl"
                                      label="{{ 'catches-and-sales.page-product-size-category' | tlTranslate }}"
+                                     tooltipResourceName="catches-and-sales.page-product-size-category-helper"
                                      [codeInTemplateOptions]="true"
                                      [templateOptions]="true"
                                      [options]="sizeCategories">
@@ -97,6 +108,7 @@
                                  fxFlex="33"
                                  formControlName="sizeCategoryControl"
                                  label="{{ 'catches-and-sales.page-product-size-category' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.page-product-size-category-helper"
                                  [codeInTemplateOptions]="true"
                                  [templateOptions]="true"
                                  [options]="sizeCategories">
@@ -107,29 +119,35 @@
                 <tl-autocomplete fxFlex="33"
                                  formControlName="turbotSizeGroupControl"
                                  label="{{ 'catches-and-sales.page-product-turbot-size-group' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.page-product-turbot-size-group-helper"
                                  [options]="turbotSizeGroups">
                 </tl-autocomplete>
                 <tl-input fxFlex="33"
                           formControlName="unitCountControl"
-                          label="{{ 'catches-and-sales.page-product-turbot-count' | tlTranslate }}">
+                          label="{{ 'catches-and-sales.page-product-turbot-count' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.page-product-turbot-count-helper">
                 </tl-input>
                 <tl-input fxFlex="33"
                           formControlName="averageUnitWeightKgControl"
-                          label="{{ 'catches-and-sales.page-product-turbot-average-unit-weigth-kg' | tlTranslate }}">
+                          label="{{ 'catches-and-sales.page-product-turbot-average-unit-weigth-kg' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.page-product-turbot-average-unit-weigth-kg-helper">
                 </tl-input>
             </div>
             <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
                 <tl-input fxFlex="33"
                           formControlName="quantityKgControl"
-                          label="{{ 'catches-and-sales.page-product-quantity-kg' | tlTranslate }}">
+                          label="{{ 'catches-and-sales.page-product-quantity-kg' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.page-product-quantity-kg-helper">
                 </tl-input>
                 <tl-input fxFlex="33"
                           formControlName="unitPriceControl"
-                          label="{{ 'catches-and-sales.page-product-unit-price' | tlTranslate }}">
+                          label="{{ 'catches-and-sales.page-product-unit-price' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.page-product-unit-price-helper">
                 </tl-input>
                 <tl-input fxFlex="33"
                           formControlName="totalPriceControl"
                           label="{{ 'catches-and-sales.page-product-total-price' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.page-product-total-price-helper"
                           [readonly]="true">
                 </tl-input>
             </div>

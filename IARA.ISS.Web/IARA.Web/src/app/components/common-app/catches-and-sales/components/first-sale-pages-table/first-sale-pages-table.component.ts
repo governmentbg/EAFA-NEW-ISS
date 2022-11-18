@@ -35,6 +35,9 @@ export class FirstSalePagesTableComponent {
     @Input()
     public canEditFirstSaleLogBookRecords: boolean = false;
 
+    @Input()
+    public recordsPerPage: number = 10;
+
     @Output()
     public onActiveRecordChanged: EventEmitter<FirstSalePageRecordChanged> = new EventEmitter<FirstSalePageRecordChanged>();
 

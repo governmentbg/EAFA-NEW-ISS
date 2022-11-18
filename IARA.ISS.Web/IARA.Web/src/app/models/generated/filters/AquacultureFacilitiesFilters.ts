@@ -14,6 +14,7 @@ export class AquacultureFacilitiesFilters extends BaseRequestModel {
     }
 
     
+    public id: number | undefined;
     public regNum: string | undefined;
     public urorNum: string | undefined;
     public name: string | undefined;

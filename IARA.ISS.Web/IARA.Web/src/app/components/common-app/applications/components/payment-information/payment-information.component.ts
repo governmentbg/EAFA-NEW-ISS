@@ -1,37 +1,66 @@
 ﻿import { CurrencyPipe } from "@angular/common";
-import { Component, Input } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
-import { ApplicationPaymentInformationDTO } from "@app/models/generated/dtos/ApplicationPaymentInformationDTO";
+import { Component, Input, Optional, Self } from "@angular/core";
+import { AbstractControl, FormControl, FormGroup, NgControl } from "@angular/forms";
+import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
+import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 
 
 @Component({
     selector: 'payment-information',
     templateUrl: './payment-information.component.html'
 })
-export class PaymentInformationComponent {
+export class PaymentInformationComponent extends CustomFormControl<ApplicationPaymentInformationDTO> {
     @Input()
     public set paymentData(value: ApplicationPaymentInformationDTO) {
+        this.setModelData(value);
+    }
+
+    @Input()
+    public hideBasicInfo: boolean = false;
+
+    private currencyPipe: CurrencyPipe;
+
+    public constructor(@Optional() @Self() ngControl: NgControl, currencyPipe: CurrencyPipe) {
+        super(ngControl);
+
+        this.currencyPipe = currencyPipe;
+    }
+
+    public writeValue(value: ApplicationPaymentInformationDTO): void {
+        this.setModelData(value);
+    }
+
+    protected getValue(): ApplicationPaymentInformationDTO {
+        const model: ApplicationPaymentInformationDTO = new ApplicationPaymentInformationDTO();
+
+        model.lastUpdateDate = this.form.get('lastUpdateDateControl')!.value;
+        model.paymentDate = this.form.get('paymentDateControl')!.value;
+        model.paymentStatus = this.form.get('paymentStatusControl')!.value;
+        model.referenceNumber = this.form.get('referenceNumberControl')!.value;
+        model.paymentType = this.form.get('paymentTypeControl')!.value;
+        model.paymentSummary = this.form.get('paymentSummaryControl')!.value;
+
+        return model;
+    }
+
+    protected buildForm(): AbstractControl {
+        return new FormGroup({
+            paymentSummaryControl: new FormControl(),
+            paymentTypeControl: new FormControl(),
+            paymentDateControl: new FormControl(),
+            paymentStatusControl: new FormControl(),
+            referenceNumberControl: new FormControl(),
+            lastUpdateDateControl: new FormControl()
+        });
+    }
+
+    private setModelData(value: ApplicationPaymentInformationDTO | undefined): void {
         if (value !== null && value !== undefined) {
             this.mapModelToForm(value);
         }
         else {
             this.form.reset();
         }
-    }
-    public form: FormGroup;
-
-    private currencyPipe: CurrencyPipe;
-
-    public constructor(currencyPipe: CurrencyPipe) {
-        this.currencyPipe = currencyPipe;
-        this.form = new FormGroup({
-            paymentSummaryControl: new FormControl(),
-            paymentTypeControl: new FormControl(),
-            paymentDateControl: new FormControl(null),
-            paymentStatusControl: new FormControl(),
-            referenceNumberControl: new FormControl(),
-            lastUpdateDateControl: new FormControl()
-        });
     }
 
     private mapModelToForm(model: ApplicationPaymentInformationDTO): void {

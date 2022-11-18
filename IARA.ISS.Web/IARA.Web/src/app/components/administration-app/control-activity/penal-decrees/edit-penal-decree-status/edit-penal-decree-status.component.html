@@ -208,6 +208,7 @@
                 <tl-card tooltipResourceName="penal-decrees.edit-decree-payment-schedule-helper">
                     <tl-card-title>{{ 'penal-decrees.edit-decree-payment-schedule' | tlTranslate }}</tl-card-title>
                     <tl-card-content>
+                        <div fxLayout="column" fxLayoutGap="1em">
                             <tl-data-table #paymentScheduleTable
                                            fxFlex="100"
                                            [isRemote]="false"
@@ -238,6 +239,11 @@
                                                     [flexRate]="0.1">
                                 </data-column-inline>
                             </tl-data-table>
+
+                            <mat-error *ngIf="atLeastOnePaymentScheduleError === true">
+                                * {{ 'penal-decrees.edit-decree-status-at-least-one-payment-needed' | tlTranslate }}
+                            </mat-error>
+                        </div>
                     </tl-card-content>
                 </tl-card>
             </div>

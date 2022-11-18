@@ -102,6 +102,9 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
     @Input()
     public middleNameRequired: boolean = false;
 
+    @Input()
+    public isIdentityRequired: boolean = true;
+
     @Output()
     public downloadDataBtnClicked: EventEmitter<EgnLncDTO> = new EventEmitter<EgnLncDTO>();
 
@@ -267,16 +270,32 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
                             }
 
                             if (!this.hideDocument) {
-                                this.form.get('documentTypeControl')!.setValue(this.documentTypes.find(x => x.value === person.document?.documentTypeID));
+                                if (person.document?.documentTypeID !== null && person.document?.documentTypeID !== undefined) {
+                                    this.form.get('documentTypeControl')!.setValue(this.documentTypes.find(x => x.value === person.document?.documentTypeID));
+                                }
+                                else {
+                                    this.form.get('documentTypeControl')!.setValue(undefined);
+                                }
+
                                 this.form.get('documentNumControl')!.setValue(person.document?.documentNumber);
                                 this.form.get('documentIssueDateControl')!.setValue(person.document?.documentIssuedOn);
                                 this.form.get('documentIssuerControl')!.setValue(person.document?.documentIssuedBy);
                             }
 
-                            this.form.get('citizenshipControl')!.setValue(this.countries.find(x => x.value === person.citizenshipCountryId));
+                            if (person.citizenshipCountryId !== undefined && person.citizenshipCountryId !== null) {
+                                this.form.get('citizenshipControl')!.setValue(this.countries.find(x => x.value === person.citizenshipCountryId));
+                            }
+                            else {
+                                this.form.get('citizenshipControl')!.setValue(undefined);
+                            }
 
                             if (this.showGender) {
-                                this.form.get('genderControl')!.setValue(this.genders.find(x => x.value === person.genderId));
+                                if (person.genderId !== null && person.genderId !== undefined) {
+                                    this.form.get('genderControl')!.setValue(this.genders.find(x => x.value === person.genderId));
+                                }
+                                else {
+                                    this.form.get('genderControl')!.setValue(undefined);
+                                }
                             }
 
                             this.form.get('birthDateControl')!.setValue(person.birthDate);
@@ -337,15 +356,18 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
         for (const key of Object.keys(this.form.controls)) {
             if (key === 'idNumberControl' || key === 'custodianEgnControl') {
                 for (const error in this.form.controls[key].errors) {
-                    if (!['egn', 'pnf', 'eik'].includes(error)) {
+                    if (!['egn', 'pnf', 'eik'].includes(error) && !['expectedValueNotMatching'].includes(error)) {
                         errors[error] = this.form.controls[key].errors![error];
                     }
                 }
             }
             else {
-                const controlErrors: ValidationErrors | null = this.form.controls[key].errors;
-                if (controlErrors !== null) {
-                    errors[key] = controlErrors;
+                if (this.form.controls[key].errors !== null && this.form.controls[key].errors !== undefined) {
+                    for (const error in this.form.controls[key].errors) {
+                        if (!['expectedValueNotMatching'].includes(error)) {
+                            errors[error] = this.form.controls[key].errors![error];
+                        }
+                    }
                 }
             }
         }
@@ -492,7 +514,12 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
         if (this.isPerson) {
             const expectedResults: RegixPersonDataDTO | undefined = this.expectedRegixResults as RegixPersonDataDTO;
 
-            this.form.get('idNumberControl')!.setValidators(Validators.required);
+            if (this.isIdentityRequired) {
+                this.form.get('idNumberControl')!.setValidators(Validators.required);
+            }
+            else {
+                this.form.get('idNumberControl')!.clearValidators();
+            }
 
             this.form.get('firstNameControl')!.setValidators([
                 TLValidators.expectedValueMatch(expectedResults?.firstName), Validators.required, Validators.maxLength(200)
@@ -569,9 +596,16 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
         else {
             const expectedResults: RegixLegalDataDTO | undefined = this.expectedRegixResults as RegixLegalDataDTO;
 
-            this.form.get('idNumberControl')!.setValidators([
-                TLValidators.expectedValueMatch(expectedResults?.eik), Validators.required, Validators.maxLength(13), TLValidators.eik
-            ]);
+            if (this.isIdentityRequired) {
+                this.form.get('idNumberControl')!.setValidators([
+                    TLValidators.expectedValueMatch(expectedResults?.eik), Validators.required, Validators.maxLength(13), TLValidators.eik
+                ]);
+            }
+            else {
+                this.form.get('idNumberControl')!.setValidators([
+                    TLValidators.expectedValueMatch(expectedResults?.eik), Validators.maxLength(13), TLValidators.eik
+                ]);
+            }
 
             this.form.get('companyNameControl')!.setValidators([
                 TLValidators.expectedValueMatch(expectedResults?.name), Validators.required, Validators.maxLength(500)
@@ -633,6 +667,8 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
                     Validators.maxLength(200),
                     Validators.required
                 ]);
+
+                this.form.get('middleNameControl')!.markAsPending({ onlySelf: true, emitEvent: false });
             }
             else {
                 this.form.get('middleNameControl')!.setValidators([
@@ -640,7 +676,6 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
                     Validators.maxLength(200)
                 ]);
             }
-
         }
     }
 

@@ -22,6 +22,7 @@ import { TLPipesModule } from '../../pipes/tl-pipes.module';
 import { SearchPanelComponent } from './search-panel.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TLIconButtonModule } from '../tl-icon-button/tl-icon-button.module';
+import { TLDirectivesModule } from '@app/shared/directives/tl-directives.module';
 
 export const appIcons = {
     home,
@@ -50,6 +51,7 @@ export const appIcons = {
         TLIconButtonModule,
         TLPipesModule,
         TranslateModule,
+        TLDirectivesModule
     ],
     exports: [
         SearchPanelComponent,

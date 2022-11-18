@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
 import { IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
@@ -37,6 +37,7 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
     public catchZones: NomenclatureDTO<number>[] = [];
     public fishSex: NomenclatureDTO<number>[] = [];
     public aquacultures: NomenclatureDTO<number>[] = [];
+    public turbotSizeGroups: NomenclatureDTO<number>[] = [];
 
     public readonly inspectedPersonTypeEnum: typeof InspectedPersonTypeEnum = InspectedPersonTypeEnum;
 
@@ -47,6 +48,7 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
         snackbar: MatSnackBar
     ) {
         super(service, translate, nomenclatures, snackbar);
+        this.inspectionCode = InspectionTypesEnum.IAQ;
     }
 
     public async ngOnInit(): Promise<void> {
@@ -76,6 +78,9 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
             NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.FishSex, this.nomenclatures.getFishSex.bind(this.nomenclatures), false
             ),
+            NomenclatureStore.instance.getNomenclature(
+                NomenclatureTypes.TurbotSizeGroups, this.nomenclatures.getTurbotSizeGroups.bind(this.nomenclatures), false
+            ),
             this.service.getAquacultures(),
             this.service.getCheckTypesForInspection(InspectionTypesEnum.IAQ),
         ]).toPromise();
@@ -87,12 +92,13 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
         this.catchTypes = nomenclatureTables[4];
         this.catchZones = nomenclatureTables[5];
         this.fishSex = nomenclatureTables[6];
-        this.aquacultures = nomenclatureTables[7];
+        this.turbotSizeGroups = nomenclatureTables[7];
+        this.aquacultures = nomenclatureTables[8];
 
-        this.catchToggles = nomenclatureTables[8].map(f => new InspectionCheckModel(f));
+        this.catchToggles = nomenclatureTables[9].map(f => new InspectionCheckModel(f));
 
         if (this.id !== null && this.id !== undefined) {
-            this.service.get(this.id).subscribe({
+            this.service.get(this.id, this.inspectionCode).subscribe({
                 next: (dto: InspectionAquacultureDTO) => {
                     this.model = dto;
 
@@ -107,7 +113,7 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
             generalInfoControl: new FormControl(undefined),
             patrolVehiclesControl: new FormControl([]),
             mapControl: new FormControl(undefined),
-            aquacultureControl: new FormControl(undefined),
+            aquacultureControl: new FormControl(undefined, Validators.required),
             ownerControl: new FormControl({ disabled: true }),
             representerControl: new FormControl(undefined),
             catchesControl: new FormControl([]),
@@ -139,7 +145,8 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
                 inspectorComment: this.model.inspectorComment,
-                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo)
+                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo),
+                violatedRegulations: this.model.violatedRegulations,
             }));
 
             this.form.get('mapControl')!.setValue(this.model.location);
@@ -182,6 +189,7 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
             byEmergencySignal: generalInfo.byEmergencySignal,
             inspectionType: InspectionTypesEnum.IAQ,
             inspectorComment: additionalInfo?.inspectorComment,
+            violatedRegulations: additionalInfo?.violatedRegulations,
             isActive: true,
             checks: this.form.get('catchTogglesControl')!.value,
             location: this.form.get('mapControl')!.value,

@@ -117,12 +117,13 @@ export class TLUtils {
     ): string {
         let message: string = '';
         const validationTranslation: string = tlTranslatePipe.transform('validation.' + errorCode, 'cap');
-        
+
         switch (errorCode) {
             case 'required':
             case 'requiredtrue':
             case 'email':
             case 'selectedvaluefromdropdown':
+            case 'novaluesindropdown':
             case 'passwordcomplexity': {
                 message = validationTranslation;
             } break;

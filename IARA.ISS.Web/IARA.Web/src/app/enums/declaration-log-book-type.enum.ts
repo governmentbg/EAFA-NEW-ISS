@@ -5,4 +5,5 @@
     ShipLogBook = 3,
     Invoice = 4,
     NNN = 5,
+    AquacultureLogBook = 6,
 }

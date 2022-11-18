@@ -6,7 +6,7 @@
     }
 
     public static ConvertToDecimal(degrees: number, minutes: number, seconds: number): number {
-        return (degrees + (minutes / 60) + (seconds / 3600));
+        return Number((degrees + (minutes / 60) + (seconds / 3600)).toFixed(10));
     }
 
     public static ConvertToDMS(decimaDegrees: number): string {
@@ -15,5 +15,13 @@
         const seconds: number = Number(((decimaDegrees - degrees - (minutes / 60)) * 3600).toPrecision(2));
 
         return `${degrees} ${minutes} ${seconds}`;
+    }
+
+    public static ConvertToDisplayDMS(decimaDegrees: number): string {
+        const degrees: number = Math.floor(decimaDegrees);
+        const minutes: number = Math.floor((decimaDegrees - degrees) * 60);
+        const seconds: number = Number(((decimaDegrees - degrees - (minutes / 60)) * 3600).toPrecision(2));
+
+        return `${degrees}° ${minutes}' ${seconds}''`;
     }
 }

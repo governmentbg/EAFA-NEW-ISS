@@ -305,8 +305,10 @@ export class ShipsRegisterAdministrationService extends ApplicationsRegisterAdmi
     }
 
     // applications
-    public getApplication(id: number, pageCode: PageCodeEnum): Observable<IApplicationRegister> {
-        const params = new HttpParams().append('id', id.toString());
+    public getApplication(id: number, getRegiXData: boolean, pageCode: PageCodeEnum): Observable<IApplicationRegister> {
+        const params = new HttpParams()
+            .append('id', id.toString())
+            .append('getRegiXData', getRegiXData.toString());
 
         if (pageCode === PageCodeEnum.RegVessel) {
             return this.requestService.get(this.area, this.controller, 'GetShipApplication', {

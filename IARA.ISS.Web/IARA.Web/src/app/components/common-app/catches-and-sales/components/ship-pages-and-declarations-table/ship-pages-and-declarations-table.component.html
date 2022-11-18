@@ -3,6 +3,7 @@
                [isSoftDeletable]="isSoftDeletable"
                [showInactiveRecords]="showInactiveRecords"
                [showAddButton]="showAddButton"
+               [recordsPerPage]="recordsPerPage"
                (activeRecordChanged)="activeRecordChangedEvent($event, !$event.isActive 
                                                                         || $event.status === logBookPageStatusesEnum.Canceled
                                                                         || $event.isLogBookFinished

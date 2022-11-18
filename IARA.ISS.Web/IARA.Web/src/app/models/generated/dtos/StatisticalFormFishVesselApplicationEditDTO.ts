@@ -1,18 +1,26 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { BaseRegixChecksDTO } from './BaseRegixChecksDTO';
 import { ApplicationSubmittedByDTO } from './ApplicationSubmittedByDTO';
 import { ApplicationSubmittedForDTO } from './ApplicationSubmittedForDTO';
 import { StatisticalFormsSeaDaysDTO } from './StatisticalFormsSeaDaysDTO';
 import { StatisticalFormEmployeeInfoGroupDTO } from './StatisticalFormEmployeeInfoGroupDTO';
 import { StatisticalFormNumStatGroupDTO } from './StatisticalFormNumStatGroupDTO';
 import { FileInfoDTO } from './FileInfoDTO';
+import { StatisticalFormFishVesselRegixDataDTO } from './StatisticalFormFishVesselRegixDataDTO'; 
 
-export class StatisticalFormFishVesselApplicationEditDTO { 
+export class StatisticalFormFishVesselApplicationEditDTO extends BaseRegixChecksDTO {
     public constructor(obj?: Partial<StatisticalFormFishVesselApplicationEditDTO>) {
-        Object.assign(this, obj);
+        if (obj != undefined) {
+            super(obj as BaseRegixChecksDTO);
+            Object.assign(this, obj);
+        } 
+        else {
+            super();
+        }
     }
-
+  
     @StrictlyTyped(Number)
     public id?: number;
 
@@ -87,4 +95,7 @@ export class StatisticalFormFishVesselApplicationEditDTO {
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
+
+    @StrictlyTyped(StatisticalFormFishVesselRegixDataDTO)
+    public regiXDataModel?: StatisticalFormFishVesselRegixDataDTO;
 }

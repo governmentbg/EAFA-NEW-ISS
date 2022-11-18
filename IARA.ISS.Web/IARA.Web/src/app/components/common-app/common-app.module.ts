@@ -56,6 +56,7 @@ import { EditSuspensionComponent } from './commercial-fishing/components/edit-su
 import { EditFishingGearComponent } from './commercial-fishing/components/fishing-gears/components/edit-fishing-gear.component';
 import { FishingGearsComponent } from './commercial-fishing/components/fishing-gears/fishing-gears.component';
 import { GroudForUseComponent } from './commercial-fishing/components/ground-for-use/ground-for-use.component';
+import { ChooseLogBookForRenewalComponent } from './commercial-fishing/components/log-books/components/choose-log-book-for-renewal/choose-log-book-for-renewal.component';
 import { LogBooksComponent } from './commercial-fishing/components/log-books/log-books.component';
 import { DuplicateEntriesTableComponent } from './duplicates/duplicate-entires-table/duplicate-entries-table.component';
 import { DuplicatesApplicationComponent } from './duplicates/duplicates-application.component';
@@ -67,6 +68,8 @@ import { ReduceFishingCapacityComponent } from './fishing-capacity/reduce-fishin
 import { TransferFishingCapacityTableEntryComponent } from './fishing-capacity/transfer-fishing-capacity-table/transfer-fishing-capacity-table-entry/transfer-fishing-capacity-table-entry.component';
 import { TransferFishingCapacityTableComponent } from './fishing-capacity/transfer-fishing-capacity-table/transfer-fishing-capacity-table.component';
 import { TransferFishingCapacityComponent } from './fishing-capacity/transfer-fishing-capacity/transfer-fishing-capacity.component';
+import { EditLegalAssociationPersonComponent } from './legal-associations/edit-legal-association-person/edit-legal-association-person.component';
+import { EditLegalAssociationComponent } from './legal-associations/edit-legal-association/edit-legal-association.component';
 import { EditAuthorizedPersonComponent } from './legals/edit-authorized-person/edit-authorized-person.component';
 import { EditLegalEntityComponent } from './legals/edit-legal-entity/edit-legal-entity.component';
 import { ChangePasswordComponent } from './my-profile/components/change-password/change-password.component';
@@ -193,7 +196,10 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         DuplicatesApplicationComponent,
         DuplicateEntriesTableComponent,
         PreviousTripsCatchRecordsComponent,
-        ChoosePermitToCopyFromComponent
+        ChoosePermitToCopyFromComponent,
+        EditLegalAssociationComponent,
+        EditLegalAssociationPersonComponent,
+        ChooseLogBookForRenewalComponent
     ],
     imports: [
         TLCommonModule,
@@ -292,7 +298,10 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         DuplicatesApplicationComponent,
         DuplicateEntriesTableComponent,
         PreviousTripsCatchRecordsComponent,
-        ChoosePermitToCopyFromComponent
+        ChoosePermitToCopyFromComponent,
+        EditLegalAssociationComponent,
+        EditLegalAssociationPersonComponent,
+        ChooseLogBookForRenewalComponent
     ],
     providers: [CurrencyPipe, TLDateDifferencePipe, DatePipe]
 })

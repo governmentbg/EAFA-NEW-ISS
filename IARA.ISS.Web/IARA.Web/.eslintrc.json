@@ -20,7 +20,7 @@
     "@typescript-eslint/no-inferrable-types": 0,
     "@typescript-eslint/no-unused-vars": 0,
     "@typescript-eslint/no-non-null-assertion": 0,
-    "eqeqeq": "warn",
+    "eqeqeq": "off",
     "no-debugger": "error"
   }
 }

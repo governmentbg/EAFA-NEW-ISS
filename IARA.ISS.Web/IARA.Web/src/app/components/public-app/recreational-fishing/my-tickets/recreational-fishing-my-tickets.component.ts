@@ -71,7 +71,11 @@ export class RecreationalFishingMyTicketsComponent implements OnInit {
                                         ticket.daysRemaining = Math.ceil((ticket.validTo.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
                                     }
 
-                                    if (ticket.daysRemaining! <= 0 || ticket.paymentStatus !== PaymentStatusesEnum.PaidOK) {
+                                    if (ticket.daysRemaining! <= 0) {
+                                        this.showWarningBadge = true;
+                                    }
+
+                                    if (ticket.paymentStatus !== PaymentStatusesEnum.PaidOK && ticket.paymentStatus !== PaymentStatusesEnum.NotNeeded) {
                                         this.showWarningBadge = true;
                                     }
                                 }

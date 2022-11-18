@@ -22,6 +22,9 @@ export class ScientificFishingPermitEditDTO {
     @StrictlyTyped(Boolean)
     public isOnlineApplication?: boolean;
 
+    @StrictlyTyped(String)
+    public eventisNum?: string;
+
     @StrictlyTyped(Number)
     public permitStatus?: ScientificPermitStatusEnum;
 

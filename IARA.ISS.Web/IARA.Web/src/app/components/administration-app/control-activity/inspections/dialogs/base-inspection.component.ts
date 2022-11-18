@@ -15,7 +15,13 @@ import { InspectionsService } from '@app/services/administration-app/inspections
 import { InspectionDraftDTO } from '@app/models/generated/dtos/InspectionDraftDTO';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
+import { Component, ViewChild } from '@angular/core';
+import { InspectionTypesEnum } from '@app/enums/inspection-types.enum';
 
+@Component({
+    template: ''
+})
 export abstract class BaseInspectionsComponent implements IDialogComponent {
     public readonly pageCode: PageCodeEnum = PageCodeEnum.Inspections;
 
@@ -24,12 +30,17 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
     public service: InspectionsService;
     public viewMode: boolean = false;
 
+    @ViewChild(ValidityCheckerGroupDirective)
+    public validityCheckerGroup!: ValidityCheckerGroupDirective;
+
     protected translate: FuseTranslationLoaderService;
     protected nomenclatures: CommonNomenclatures;
     protected snackbar: MatSnackBar;
 
     protected id: number | undefined;
+    protected isSaving: boolean = false;
     protected abstract model: InspectionEditDTO;
+    protected inspectionCode!: InspectionTypesEnum;
 
     public constructor(
         service: InspectionsService,
@@ -57,8 +68,12 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
             dialogClose();
         }
 
-        this.form.markAllAsTouched();
+        this.isSaving = true;
+        this.form.markAsTouched();
         this.form.updateValueAndValidity({ onlySelf: true });
+        this.validityCheckerGroup.validate();
+        this.isSaving = false;
+
         if (this.form.valid) {
             this.fillModel();
             CommonUtils.sanitizeModelStrings(this.model);

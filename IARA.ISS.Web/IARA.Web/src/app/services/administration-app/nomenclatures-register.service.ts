@@ -21,7 +21,7 @@ import { BaseAuditService } from '../common-app/base-audit.service';
     providedIn: 'root'
 })
 export class NomenclaturesRegisterService extends BaseAuditService implements INomenclaturesService {
-    protected controller: string = 'NomenclaturesRegister';
+    protected readonly controller: string = 'NomenclaturesRegister';
 
     public tableId: number = 0;
 
@@ -89,10 +89,13 @@ export class NomenclaturesRegisterService extends BaseAuditService implements IN
         return this.requestService.post(this.area, this.controller, 'Add', entity, { httpParams: params });
     }
 
-    public edit(entity: Record<string, unknown>): Observable<void> {
+    public edit(entity: Record<string, unknown>, updateCurrent: boolean): Observable<void> {
         entity = this.stringifyFields(entity);
 
-        const params = new HttpParams().append('tableId', this.tableId.toString());
+        const params = new HttpParams()
+            .append('tableId', this.tableId.toString())
+            .append('updateCurrent', updateCurrent.toString());
+
         return this.requestService.post(this.area, this.controller, 'Edit', entity, { httpParams: params });
     }
 

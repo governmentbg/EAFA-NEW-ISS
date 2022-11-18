@@ -27,6 +27,7 @@ export interface IScientificFishingService extends IApplicationsActionsService {
     undoDeletePermit(id: number): Observable<void>;
 
     getPermitHolderPhoto(holderId: number): Observable<string>;
+    getShipCaptainName(shipId: number): Observable<string>;
 
     addOuting(outing: ScientificFishingOutingDTO): Observable<number>;
     downloadFile(fileId: number, fileName: string): Observable<boolean>;

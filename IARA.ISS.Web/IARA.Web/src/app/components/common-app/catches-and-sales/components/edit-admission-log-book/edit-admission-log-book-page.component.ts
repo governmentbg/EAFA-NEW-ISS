@@ -21,6 +21,8 @@ import { BasicLogBookPageDocumentDataDTO } from '@app/models/generated/dtos/Basi
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
+import { LogBookPageDocumentTypesEnum } from '../../enums/log-book-page-document-types.enum';
+import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 
 
 @Component({
@@ -75,7 +77,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
             });
         }
         else if (this.shipPageDocumentData !== null && this.shipPageDocumentData !== undefined) {
-            this.service.getPossibleProducts(this.shipPageDocumentData!.shipLogBookPageId!).subscribe({
+            this.service.getPossibleProducts(this.shipPageDocumentData!.shipLogBookPageId!, LogBookPageDocumentTypesEnum.AdmissionDocument).subscribe({
                 next: (result: LogBookPageProductDTO[]) => {
                     this.model = new AdmissionLogBookPageEditDTO({
                         commonData: this.shipPageDocumentData!.sourceData,
@@ -215,6 +217,16 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
                                     panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
                                 });
                         }
+                        else if (error?.code === ErrorCode.SendFLUXSalesFailed) {
+                            if (!IS_PUBLIC_APP) { // show snackbar only when not public app
+                                this.snackbar.open(this.translationService.getValue('catches-and-sales.admission-page-send-to-flux-sales-error'), undefined, {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
+                            }
+
+                            dialogClose();
+                        }
                     }
                 });
             }
@@ -222,6 +234,20 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
                 this.service.editAdmissionLogBookPage(this.model).subscribe({
                     next: () => {
                         dialogClose(this.model);
+                    },
+                    error: (errorResponse: HttpErrorResponse) => {
+                        const error: ErrorModel | undefined = errorResponse.error;
+
+                        if (error?.code === ErrorCode.SendFLUXSalesFailed) {
+                            if (!IS_PUBLIC_APP) { // show snackbar only when not public app
+                                this.snackbar.open(this.translationService.getValue('catches-and-sales.admission-page-send-to-flux-sales-error'), undefined, {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
+                            }
+
+                            dialogClose();
+                        }
                     }
                 });
             }

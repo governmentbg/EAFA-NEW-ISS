@@ -13,7 +13,7 @@
             <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                 <tl-input fxFlex="25"
                           formControlName="decreeNumControl"
-                          label="{{ 'penal-decrees.edit-decree-num' | tlTranslate }}"
+                          label="{{ 'penal-decrees.edit-agreement-num' | tlTranslate }}"
                           tooltipResourceName="penal-decree.edit-decree-num-helper">
                 </tl-input>
 
@@ -59,9 +59,16 @@
     <!-- Информация за АУАН -->
     <tl-expansion-panel title="{{ 'penal-decrees.edit-decree-auan' | tlTranslate }}"
                         tooltipResourceName="penal-decrees.edit-decree-auan-helper"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.controls.auanControl.errors?.auanNumExists !== true">
         <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
-            <decree-auan-basic-info formControlName="auanControl"></decree-auan-basic-info>
+            <mat-error *ngIf="form.controls.auanControl?.touched && form.controls.auanControl.errors?.auanNumExists === true">
+                * {{ 'penal-decrees.auan-num-already-exist-error' | tlTranslate }}
+            </mat-error>
+
+            <decree-auan-basic-info formControlName="auanControl"
+                                    [isAdding]="isThirdParty">
+            </decree-auan-basic-info>
 
             <div fxLayout="row" fxLayoutGap="1em">
                 <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
@@ -117,6 +124,15 @@
         </div>
     </tl-expansion-panel>
 
+    <!-- Законови разпоредби -->
+    <tl-expansion-panel title="{{ 'penal-decrees.edit-violated-regulations' | tlTranslate }}"
+                        tooltipResourceName="penal-decree.edit-violated-regulations-helper"
+                        [validityChecker]="form">
+        <auan-violated-regulations formControlName="violatedRegulationsControl"
+                                   [viewMode]="viewMode">
+        </auan-violated-regulations>
+    </tl-expansion-panel>
+
     <!-- Санкции -->
     <tl-expansion-panel title="{{ 'penal-decrees.edit-warning-sanctions' | tlTranslate }}"
                         tooltipResourceName="penal-decree.edit-warning-sanctions-helper"
@@ -124,12 +140,19 @@
         <div fxLayout="column" fxLayoutGap="1em">
             <div fxLayout="column" fxLayoutGap="1em">
                 <!-- Иззети уреди -->
-                <decree-sized-fishing-gear formControlName="seizedFishingGearControl"
-                                           [viewMode]="viewMode">
-                </decree-sized-fishing-gear>
+                <tl-card [validityChecker]="form"
+                         tooltipResourceName="penal-decree.edit-decree-sized-fishing-gears-helper">
+                    <tl-card-title>{{ 'penal-decrees.edit-decree-sized-fishing-gear' | tlTranslate }}</tl-card-title>
+                    <tl-card-content>
+                        <decree-sized-fishing-gear formControlName="seizedFishingGearControl"
+                                                   [viewMode]="viewMode">
+                        </decree-sized-fishing-gear>
+                    </tl-card-content>
+                </tl-card>
 
                 <!-- Иззета риба -->
-                <tl-card tooltipResourceName="penal-decree.edit-decree-sized-fishes-helper">
+                <tl-card [validityChecker]="form"
+                         tooltipResourceName="penal-decree.edit-decree-sized-fishes-helper">
                     <tl-card-title>{{ 'penal-decrees.edit-decree-sized-fishes' | tlTranslate }}</tl-card-title>
                     <tl-card-content>
                         <decree-sized-fish formControlName="seizedFishControl"
@@ -139,7 +162,8 @@
                 </tl-card>
 
                 <!-- Иззети приспособления -->
-                <tl-card tooltipResourceName="penal-decree.edit-decree-appliance-helper">
+                <tl-card [validityChecker]="form"
+                         tooltipResourceName="penal-decree.edit-decree-appliance-helper">
                     <tl-card-title>{{ 'penal-decrees.edit-decree-appliance' | tlTranslate }}</tl-card-title>
                     <tl-card-content>
                         <decree-sized-fish formControlName="seizedApplianceControl"
@@ -152,20 +176,11 @@
         </div>
     </tl-expansion-panel>
 
-    <!-- Законови разпоредби -->
-    <tl-expansion-panel title="{{ 'penal-decrees.edit-violated-regulations' | tlTranslate }}"
-                        tooltipResourceName="penal-decree.edit-violated-regulations-helper"
-                        [validityChecker]="form">
-        <auan-violated-regulations formControlName="violatedRegulationsControl"
-                                   [viewMode]="viewMode">
-        </auan-violated-regulations>
-    </tl-expansion-panel>
-
     <!-- Статус на споразумението -->
     <tl-expansion-panel *ngIf="!isAdding" title="{{ 'penal-decrees.edit-agreement-status' | tlTranslate }}"
                         tooltipResourceName="penal-decrees.edit-agreement-status-helper"
                         [validityChecker]="form">
-        <decree-statuses-table fzFlex="100"
+        <decree-statuses-table fxFlex="100"
                                formControlName="statusesControl"
                                [viewMode]="viewMode"
                                [service]="service"

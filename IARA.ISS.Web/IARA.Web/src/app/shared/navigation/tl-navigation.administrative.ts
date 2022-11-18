@@ -76,23 +76,15 @@ export class Navigation {
             isPublic: false
         },
         {
-            id: 'administrative_services',
-            title: 'Administrative services',
-            translate: 'navigation.administrative-services',
-            type: 'collapsable',
-            icon: 'fa-concierge-bell',
-            isPublic: false,
-            children: [{
-                id: 'application_processing',
-                title: 'Application processing',
-                translate: 'navigation.application-processing',
-                type: 'item',
-                icon: 'fa-hourglass-half',
-                url: '/application_processing',
-                permissions: [PermissionsEnum.ApplicationsRead],
-                component: ApplicationsProcessingComponent,
-                isPublic: false
-            }]
+            id: 'application_processing',
+            title: 'Application processing',
+            translate: 'navigation.application-processing',
+            type: 'item',
+            icon: 'fa-hourglass-half',
+            url: '/application_processing',
+            permissions: [PermissionsEnum.ApplicationsRead],
+            component: ApplicationsProcessingComponent,
+            isPublic: false
         },
         {
             id: 'fishing_vessels',
@@ -378,7 +370,7 @@ export class Navigation {
                 component: CommercialFishingRegisterComponent,
                 isPublic: false
             }]
-        },  
+        },
         {
             id: 'catches_and_sales',
             title: 'Catches and sales',

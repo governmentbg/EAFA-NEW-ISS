@@ -43,8 +43,14 @@ export class ScientificFishingCommonService {
         });
     }
 
-    public getPermitApplication(area: AreaTypes, controller: string, permitId: number): Observable<ScientificFishingApplicationEditDTO> {
-        const params = new HttpParams().append('id', permitId.toString());
+    public getPermitApplication(area: AreaTypes, controller: string, permitId: number, getRegiXData?: boolean): Observable<ScientificFishingApplicationEditDTO> {
+        let params = new HttpParams()
+            .append('id', permitId.toString());
+
+        if (getRegiXData !== null && getRegiXData !== undefined) {
+            params = params.append('getRegiXData', getRegiXData.toString());
+        }
+
         return this.http.get(area, controller, 'GetPermitApplication', {
             httpParams: params,
             responseTypeCtr: ScientificFishingApplicationEditDTO

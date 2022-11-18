@@ -71,8 +71,9 @@ export class LegalEntitiesPublicService extends ApplicationsRegisterPublicBaseSe
     }
 
     // applications
-    public getApplication(id: number): Observable<LegalEntityApplicationEditDTO> {
-        const params = new HttpParams().append('id', id.toString());
+    public getApplication(id: number, getRegiXData: boolean): Observable<LegalEntityApplicationEditDTO> {
+        const params = new HttpParams()
+            .append('id', id.toString());
 
         return this.requestService.get(this.area, this.controller, 'GetLegalEntityApplication', {
             httpParams: params,

@@ -55,6 +55,7 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
     public vesselTypes: NomenclatureDTO<number>[] = [];
     public isThirdPartyShipOptions: NomenclatureDTO<ThreeState>[] = [];
     public isCancelledOptions: NomenclatureDTO<ThreeState>[] = [];
+    public isForbiddenOptions: NomenclatureDTO<ThreeState>[] = [];
     public hasVMSOptions: NomenclatureDTO<ThreeState>[] = [];
     public hasCommercialFishingLicenceOptions: NomenclatureDTO<ThreeState>[] = [];
     public fishingGear: FishingGearNomenclatureDTO[] = [];
@@ -180,6 +181,24 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
             new NomenclatureDTO<ThreeState>({
                 value: 'yes',
                 displayName: this.translate.getValue('ships-register.is-cancelled-no'),
+                isActive: true
+            })
+        ];
+
+        this.isForbiddenOptions = [
+            new NomenclatureDTO<ThreeState>({
+                value: undefined,
+                displayName: '—',
+                isActive: true
+            }),
+            new NomenclatureDTO<ThreeState>({
+                value: 'no',
+                displayName: this.translate.getValue('ships-register.is-forbidden-yes'),
+                isActive: true
+            }),
+            new NomenclatureDTO<ThreeState>({
+                value: 'yes',
+                displayName: this.translate.getValue('ships-register.is-forbidden-no'),
                 isActive: true
             })
         ];
@@ -333,6 +352,7 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
             eventDateControl: new FormControl(),
             cancellationReasonControl: new FormControl(),
             isCancelledControl: new FormControl(),
+            isForbiddenControl: new FormControl(),
             isThirdPartyShipControl: new FormControl(),
             shipOwnerControl: new FormControl(),
             shipOwnerEgnLncControl: new FormControl(),
@@ -366,6 +386,7 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
             eventDateFrom: filters.getValue<DateRangeData>('eventDateControl')?.start,
             eventDateTo: filters.getValue<DateRangeData>('eventDateControl')?.end,
             isCancelled: this.threeStateToBoolean(filters.getValue<ThreeState>('isCancelledControl')),
+            isForbidden: this.threeStateToBoolean(filters.getValue<ThreeState>('isForbiddenControl')),
             cancellationReasonId: filters.getValue('cancellationReasonControl'),
             isThirdPartyShip: this.threeStateToBoolean(filters.getValue<ThreeState>('isThirdPartyShipControl')),
             shipOwnerName: filters.getValue('shipOwnerControl'),

@@ -23,8 +23,9 @@ export class DuplicatesRegisterPublicService extends ApplicationsRegisterPublicB
         super(requestService);
     }
 
-    public getApplication(id: number): Observable<IApplicationRegister> {
-        const params = new HttpParams().append('applicationId', id.toString());
+    public getApplication(id: number, getRegiXData: boolean): Observable<IApplicationRegister> {
+        const params = new HttpParams()
+            .append('applicationId', id.toString());
 
         return this.requestService.get(this.area, this.controller, 'GetDuplicatesApplication', {
             httpParams: params,

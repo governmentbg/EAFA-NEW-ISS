@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { LogBookPagePersonTypesEnum } from '@app/enums/log-book-page-person-types.enum';
 
 export class CommercialFishingLogbookRegisterDTO { 
     public constructor(obj?: Partial<CommercialFishingLogbookRegisterDTO>) {
@@ -19,6 +20,9 @@ export class CommercialFishingLogbookRegisterDTO {
     @StrictlyTyped(String)
     public logBookTypeName?: string;
 
+    @StrictlyTyped(Number)
+    public ownerType?: LogBookPagePersonTypesEnum;
+
     @StrictlyTyped(Date)
     public issueDate?: Date;
 
@@ -33,6 +37,9 @@ export class CommercialFishingLogbookRegisterDTO {
 
     @StrictlyTyped(Number)
     public endPageNumber?: number;
+
+    @StrictlyTyped(Boolean)
+    public isOnline?: boolean;
 
     @StrictlyTyped(Boolean)
     public isActive?: boolean;
