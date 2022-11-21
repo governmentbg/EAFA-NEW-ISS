@@ -156,6 +156,10 @@
                     * {{ 'legal-association.at-least-one-person-needed' | tlTranslate }}
                 </mat-error>
 
+                <mat-error *ngIf="personsTouched && form.errors?.emailNotEntered === true">
+                    * {{ 'legal-association.email-not-entered-for' | tlTranslate }}: {{ emailNotEnteredFor }}
+                </mat-error>
+
                 <mat-error *ngIf="showEgnAndEmailDontMatchError">
                     * {{ 'legal-association.user-already-exists-with-egn' | tlTranslate }} ({{ egnAndEmailDontMatchErrorEgnLnc }})
                     {{ 'legal-association.or-email-address' | tlTranslate }} ({{ egnAndEmailDontMatchErrorEmail }}).

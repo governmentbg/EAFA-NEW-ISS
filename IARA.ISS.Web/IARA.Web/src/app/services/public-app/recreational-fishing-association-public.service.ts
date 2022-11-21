@@ -26,7 +26,7 @@ import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
     providedIn: 'root'
 })
 export class RecreationalFishingAssociationPublicService extends BaseAuditService implements IRecreationalFishingAssociationService {
-    protected controller: string = 'RecreationalFishingAssociationPublic';
+    protected controller: string = 'RecreationalFishingAssociationsPublic';
     private applicationPublicController: string = 'ApplicationsPublic';
 
     public constructor(requestService: RequestService) {
@@ -124,7 +124,11 @@ export class RecreationalFishingAssociationPublicService extends BaseAuditServic
 
     public addApplication(application: IApplicationRegister, pageCode?: PageCodeEnum): Observable<number> {
         return this.requestService.post(this.area, this.controller, 'AddAssociationApplication', application, {
-            properties: new RequestProperties({ asFormData: true })
+            properties: new RequestProperties({
+                showException: false,
+                rethrowException: true,
+                asFormData: true
+            })
         });
     }
 
@@ -132,7 +136,11 @@ export class RecreationalFishingAssociationPublicService extends BaseAuditServic
         const params = new HttpParams().append('saveAsDraft', saveAsDraft.toString());
         return this.requestService.post(this.area, this.controller, 'EditAssociationApplication', application, {
             httpParams: params,
-            properties: new RequestProperties({ asFormData: true })
+            properties: new RequestProperties({
+                showException: false,
+                rethrowException: true,
+                asFormData: true
+            })
         });
     }
 
