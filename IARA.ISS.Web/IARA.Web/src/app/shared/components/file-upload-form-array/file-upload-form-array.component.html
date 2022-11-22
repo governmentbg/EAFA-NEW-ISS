@@ -11,14 +11,14 @@
              fxFlex="100"
              fxLayout="row"
              fxLayoutGap="0.5em">
-            <file-uploader-form fxFlex="95"
+            <file-uploader-form fxFlex
                                 [formControl]="fileUpload"
                                 [fileTypesCollection]="permittedFileTypes"
                                 [isTypeReadonly]="readonlyStatusMap.get(fileUpload)"
                                 (fileSelected)="onFileSelected($event)">
             </file-uploader-form>
 
-            <div fxFlex="5" fxLayout="row" fxLayoutGap="0.5em" fxLayoutAlign="center center">
+            <div fxFlex="nogrow" fxLayout="row" fxLayoutGap="0.5em" fxLayoutAlign="center center">
                 <!-- Download button -->
                 <tl-icon-button *ngIf="fileUpload?.value?.id; else notDownloadable"
                                 typeof="IC_ICON"

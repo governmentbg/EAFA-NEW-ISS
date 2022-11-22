@@ -194,12 +194,12 @@ export class TLValidators {
 
             if (controlValue instanceof NomenclatureDTO) {
                 if (toLower) {
-                    if (controlValue.displayName?.toLowerCase() === (expectedValue as string)?.toLowerCase()) {
+                    if (controlValue.displayName?.toLowerCase()?.replace(' ', '') === (expectedValue as string)?.toLowerCase()?.replace(' ', '')) {
                         return null;
                     }
                 }
                 else {
-                    if (controlValue.displayName === (expectedValue as string)) {
+                    if (controlValue.displayName?.replace(' ', '') === (expectedValue as string)?.replace(' ', '')) {
                         return null;
                     }
                 }

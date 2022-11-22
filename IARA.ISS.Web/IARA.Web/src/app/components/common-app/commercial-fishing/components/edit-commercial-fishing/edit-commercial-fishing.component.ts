@@ -91,6 +91,10 @@ import { FishingGearMarkDTO } from '@app/models/generated/dtos/FishingGearMarkDT
 import { FishingGearPingerDTO } from '@app/models/generated/dtos/FishingGearPingerDTO';
 import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
 import { CommercialFishingAdministrationService } from '@app/services/administration-app/commercial-fishing-administration.service';
+import { PrintConfigurationsComponent } from '@app/components/common-app/applications/components/print-configurations/print-configurations.component';
+import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { RequestProperties } from '@app/shared/services/request-properties';
 
 type AquaticOrganismsToAddType = NomenclatureDTO<number> | NomenclatureDTO<number>[] | string | undefined | null;
 type SaveApplicationDraftFnType = ((applicationId: number, model: IApplicationRegister, dialogClose: HeaderCloseFunction) => void) | undefined;
@@ -214,15 +218,19 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     private commonNomenclatures: CommonNomenclatures;
     private confirmDialog: TLConfirmDialog;
     private onRecordAddedOrEdittedEvent: EventEmitter<number> | undefined;
-    private editCommercialFishingPermitLicenseDialog: TLMatDialog<EditCommercialFishingComponent>;
     private saveApplicationDraftContentActionClicked: SaveApplicationDraftFnType;
     private modelLoadedFromPermit: boolean = false;
-    private editSuspensionDialog: TLMatDialog<EditSuspensionComponent>;
-    private choosePermitLicenseForRenewalDialog: TLMatDialog<ChoosePermitLicenseForRenewalComponent>;
-    private choosePermitToCopyFromDialog: TLMatDialog<ChoosePermitToCopyFromComponent>;
-    private overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
     private shipFilters!: CommercialFishingShipFilters;
     private ignoreLogBookConflicts: boolean = false;
+
+    private readonly editCommercialFishingPermitLicenseDialog: TLMatDialog<EditCommercialFishingComponent>;
+    private readonly editSuspensionDialog: TLMatDialog<EditSuspensionComponent>;
+    private readonly choosePermitLicenseForRenewalDialog: TLMatDialog<ChoosePermitLicenseForRenewalComponent>;
+    private readonly choosePermitToCopyFromDialog: TLMatDialog<ChoosePermitToCopyFromComponent>;
+    private readonly overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
+    private readonly printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>;
+    private readonly snackbar: MatSnackBar;
+
     private readonly loader: FormControlDataLoader;
 
     public constructor(
@@ -234,7 +242,9 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         editSuspensionDialog: TLMatDialog<EditSuspensionComponent>,
         choosePermitLicenseForRenewalDialog: TLMatDialog<ChoosePermitLicenseForRenewalComponent>,
         choosePermitToCopyFromDialog: TLMatDialog<ChoosePermitToCopyFromComponent>,
-        overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>
+        overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>,
+        printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>,
+        snackbar: MatSnackBar
     ) {
         this.translationService = translate;
         this.systemParametersService = systemParametersService;
@@ -245,6 +255,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         this.choosePermitLicenseForRenewalDialog = choosePermitLicenseForRenewalDialog;
         this.choosePermitToCopyFromDialog = choosePermitToCopyFromDialog;
         this.overlappingLogBooksDialog = overlappingLogBooksDialog;
+        this.printConfigurationsDialog = printConfigurationsDialog;
+        this.snackbar = snackbar;
 
         this.expectedResults = new CommercialFishingRegixDataDTO({
             submittedBy: new ApplicationSubmittedByRegixDataDTO({ addresses: [], person: new RegixPersonDataDTO() }),
@@ -346,7 +358,14 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             }
         }
         else if (actionInfo.id === 'print' && (this.viewMode || this.isReadonly) && this.model instanceof CommercialFishingEditDTO) {
-            this.service.downloadRegister(this.model.id!, this.pageCode).subscribe();
+            const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
+            getPrintConfig.subscribe({
+                next: (configurations: PrintConfigurationParameters | undefined) => {
+                    if (configurations !== null && configurations !== undefined) {
+                        this.service.downloadRegister(this.model.id!, this.pageCode, configurations).subscribe();
+                    }
+                }
+            });
         }
     }
 
@@ -535,15 +554,15 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
     public selectAllPermittedAquaticOrganisms(): void {
         //setTimeout(() => {
-            this.selectedAquaticOrganismTypes = [];
-            this.aquaticOrganismTypes = this.allAquaticOrganismTypes.slice();
+        this.selectedAquaticOrganismTypes = [];
+        this.aquaticOrganismTypes = this.allAquaticOrganismTypes.slice();
 
-            const selectedWaterType: NomenclatureDTO<number> | undefined = this.form.get('waterTypeControl')!.value;
-            if (selectedWaterType !== null && selectedWaterType !== undefined) {
-                this.fileterAquaticOrganismTypesByWaterType(WaterTypesEnum[selectedWaterType.code as keyof typeof WaterTypesEnum]);
-            }
+        const selectedWaterType: NomenclatureDTO<number> | undefined = this.form.get('waterTypeControl')!.value;
+        if (selectedWaterType !== null && selectedWaterType !== undefined) {
+            this.fileterAquaticOrganismTypesByWaterType(WaterTypesEnum[selectedWaterType.code as keyof typeof WaterTypesEnum]);
+        }
 
-            this.updateSelectedAquaticOrganismTypes(this.aquaticOrganismTypes.slice());
+        this.updateSelectedAquaticOrganismTypes(this.aquaticOrganismTypes.slice());
         //});
 
         this.form.updateValueAndValidity({ onlySelf: true });
@@ -1276,6 +1295,15 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                         this.service.getPermitLicenseApplicationDataFromPermitNumber(result.permitNumber, this.applicationId!).subscribe({
                             next: (result: CommercialFishingApplicationEditDTO) => {
                                 this.setResultToApplicationModelData(result);
+                            },
+                            error: (errorResponse: HttpErrorResponse) => {
+                                if ((errorResponse.error as ErrorModel)?.code === ErrorCode.InvalidPermitNumber) {
+                                    const msg: string = '';
+                                    this.snackbar.open(msg, undefined, {
+                                        duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                        panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                    });
+                                }
                             }
                         });
                     }
@@ -1413,31 +1441,38 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     }
 
     private saveAndPrintRecord(dialogClose: DialogCloseCallback): void {
-        this.model = this.fillModel();
-        CommonUtils.sanitizeModelStrings(this.model);
-        let saveOrEditObservable: Observable<boolean>;
+        const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
+        getPrintConfig.subscribe({
+            next: (configuration: PrintConfigurationParameters) => {
+                if (configuration !== null && configuration !== undefined) {
+                    this.model = this.fillModel();
+                    CommonUtils.sanitizeModelStrings(this.model);
+                    let saveOrEditObservable: Observable<boolean>;
 
-        if (this.id !== null && this.id !== undefined) {
-            saveOrEditObservable = this.service.editAndDownloadRegister(this.model, this.pageCode, this.ignoreLogBookConflicts);
-        }
-        else {
-            saveOrEditObservable = this.service.addAndDownloadRegister(this.model, this.pageCode, this.ignoreLogBookConflicts);
-        }
-
-        saveOrEditObservable.subscribe({
-            next: (downloaded: boolean) => {
-                if (downloaded === true) {
-                    NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
-
-                    if (this.pageCode === PageCodeEnum.PoundnetCommFish || this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
-                        NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.PoundNets);
+                    if (this.id !== null && this.id !== undefined) {
+                        saveOrEditObservable = this.service.editAndDownloadRegister(this.model, this.pageCode, this.ignoreLogBookConflicts, configuration);
+                    }
+                    else {
+                        saveOrEditObservable = this.service.addAndDownloadRegister(this.model, this.pageCode, this.ignoreLogBookConflicts, configuration);
                     }
 
-                    dialogClose(this.model);
+                    saveOrEditObservable.subscribe({
+                        next: (downloaded: boolean) => {
+                            if (downloaded === true) {
+                                NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
+
+                                if (this.pageCode === PageCodeEnum.PoundnetCommFish || this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
+                                    NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.PoundNets);
+                                }
+
+                                dialogClose(this.model);
+                            }
+                        },
+                        error: (errorResponse: HttpErrorResponse) => {
+                            this.handleAddEditApplicationErrorResponse(errorResponse, dialogClose, 'saveAndPrint');
+                        }
+                    });
                 }
-            },
-            error: (errorResponse: HttpErrorResponse) => {
-                this.handleAddEditApplicationErrorResponse(errorResponse, dialogClose, 'saveAndPrint');
             }
         });
     }
@@ -1465,6 +1500,25 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         }
 
         return saveOrEditObservable;
+    }
+
+    private getPrintConfigurations(): Observable<PrintConfigurationParameters> {
+        return this.printConfigurationsDialog.open({
+            TCtor: PrintConfigurationsComponent,
+            translteService: this.translationService,
+            title: this.translationService.getValue('commercial-fishing.print-configurations-dialog-title'),
+            headerCancelButton: { cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); } },
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                translateValue: this.translationService.getValue('commercial-fishing.choose-settings-and-print')
+            },
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: this.translationService.getValue('common.cancel'),
+            }
+        }, '900px');
     }
 
     private handleAddEditApplicationErrorResponse(errorResponse: HttpErrorResponse, dialogClose: DialogCloseCallback, saveMethod: SaveMethodType): void {
@@ -2738,7 +2792,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     return null;
                 }
             }
-            
+
             return { 'atLeastOneQuotaOrganism': true };
         }
     }

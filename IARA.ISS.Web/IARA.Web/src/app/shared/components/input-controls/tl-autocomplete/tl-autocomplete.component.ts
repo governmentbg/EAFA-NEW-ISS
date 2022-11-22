@@ -253,18 +253,18 @@ export class TLInputAutocompleteComponent<T> extends BaseTLControl implements On
             let filterValue: string = '';
 
             if (this.isNomenclature(value)) {
-                filterValue = value.displayName?.toLowerCase() ?? '';
+                filterValue = value.displayName?.toLowerCase()?.trim() ?? '';
             }
             else {
-                filterValue = value.toLowerCase();
+                filterValue = value.toLowerCase()?.trim() ?? '';
             }
 
             return options.filter((option: NomenclatureDTO<T>) => {
-                if (option.displayName?.toLowerCase()?.includes(filterValue)) {
+                if (option.displayName?.toLowerCase()?.trim()?.includes(filterValue)) {
                     return true;
                 }
 
-                if (this.templateOptions === true && option.description?.toLocaleLowerCase()?.includes(filterValue)) {
+                if (this.templateOptions === true && option.description?.toLowerCase()?.trim()?.includes(filterValue)) {
                     return true;
                 }
                 return false;
@@ -280,10 +280,10 @@ export class TLInputAutocompleteComponent<T> extends BaseTLControl implements On
                 return this.filterFn(value, options);
             }
 
-            const filterValue: string = value.toLowerCase();
+            const filterValue: string = value.toLowerCase()?.trim() ?? '';
 
             return options.filter((option: string) => {
-                return option.toLowerCase().includes(filterValue);
+                return option.toLowerCase()?.trim()?.includes(filterValue) ?? [];
             });
         }
 

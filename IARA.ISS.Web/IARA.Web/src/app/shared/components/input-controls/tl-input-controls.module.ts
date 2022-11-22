@@ -23,6 +23,7 @@ import { TLIconButtonModule } from '../tl-icon-button/tl-icon-button.module';
 import { TLErrorComponent } from './components/tl-error/tl-error.component';
 import { TLErrorModule } from './components/tl-error/tl-error.module';
 import { TLInputAutocompleteComponent } from './tl-autocomplete/tl-autocomplete.component';
+import { TLCheckboxTemplateComponent } from './tl-checkbox/components/tl-checkbox-template/tl-checkbox-template.component';
 import { TLCheckboxComponent } from './tl-checkbox/tl-checkbox.component';
 import { CoordinatesInputComponent } from './tl-coordinates/coordinates-input.component';
 import { TLCoordinatesComponents } from './tl-coordinates/tl-coordinates.component';
@@ -102,7 +103,8 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
         TLRadioButtonGroupComponent,
         TLRadioButtonTemplateComponent,
         TLRadioButtonComponent,
-        TLRangeInputComponent
+        TLRangeInputComponent,
+        TLCheckboxTemplateComponent
     ],
     declarations: [
         TLDateComponent,
@@ -121,7 +123,8 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
         TLInputStepperComponent,
         TLRadioButtonGroupComponent,
         TLRadioButtonTemplateComponent,
-        TLRadioButtonComponent
+        TLRadioButtonComponent,
+        TLCheckboxTemplateComponent
     ]
 })
 export class TLInputControlsModule {

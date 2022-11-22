@@ -12,6 +12,7 @@ import { IApplicationsActionsService } from './application-actions.interface';
 import { SciFiPrintTypesEnum } from '@app/enums/sci-fi-print-types.enum';
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { ScientificFishingReasonNomenclatureDTO } from '@app/models/generated/dtos/ScientificFishingReasonNomenclatureDTO';
+import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 
 export interface IScientificFishingService extends IApplicationsActionsService {
     getAllPermits(request: GridRequestModel<ScientificFishingFilters | ScientificFishingPublicFilters>): Observable<GridResultModel<ScientificFishingPermitDTO>>;
@@ -19,9 +20,9 @@ export interface IScientificFishingService extends IApplicationsActionsService {
     getCurrentUserAsSubmittedBy(): Observable<ApplicationSubmittedByDTO>;
 
     addPermit(permit: ScientificFishingPermitEditDTO): Observable<number>;
-    addAndDownloadRegister(model: ScientificFishingPermitEditDTO, printType: SciFiPrintTypesEnum): Observable<boolean>;
+    addAndDownloadRegister(model: ScientificFishingPermitEditDTO, printType: SciFiPrintTypesEnum, configurations: PrintConfigurationParameters): Observable<boolean>;
     editPermit(permit: ScientificFishingPermitEditDTO): Observable<void>;
-    editAndDownloadRegister(model: ScientificFishingPermitEditDTO, printType: SciFiPrintTypesEnum): Observable<boolean>;
+    editAndDownloadRegister(model: ScientificFishingPermitEditDTO, printType: SciFiPrintTypesEnum, configurations: PrintConfigurationParameters): Observable<boolean>;
 
     deletePermit(id: number): Observable<void>;
     undoDeletePermit(id: number): Observable<void>;
@@ -31,7 +32,7 @@ export interface IScientificFishingService extends IApplicationsActionsService {
 
     addOuting(outing: ScientificFishingOutingDTO): Observable<number>;
     downloadFile(fileId: number, fileName: string): Observable<boolean>;
-    downloadRegister(id: number, printType: SciFiPrintTypesEnum): Observable<boolean>;
+    downloadRegister(id: number, printType: SciFiPrintTypesEnum, configurations: PrintConfigurationParameters): Observable<boolean>;
 
     getPermitReasons(): Observable<ScientificFishingReasonNomenclatureDTO[]>;
     getPermitStatuses(): Observable<NomenclatureDTO<number>[]>;

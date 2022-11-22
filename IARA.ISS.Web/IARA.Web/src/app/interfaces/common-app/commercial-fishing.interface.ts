@@ -20,6 +20,7 @@ import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
 import { PermitLicenseTariffCalculationParameters } from '@app/components/common-app/commercial-fishing/models/permit-license-tariff-calculation-parameters.model';
 import { RangeOverlappingLogBooksDTO } from '@app/models/generated/dtos/RangeOverlappingLogBooksDTO';
 import { OverlappingLogBooksParameters } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-parameters.model';
+import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 
 export interface ICommercialFishingService extends IApplicationsActionsService {
     getAllPermits(request: GridRequestModel<CommercialFishingRegisterFilters>): Observable<GridResultModel<CommercialFishingPermitRegisterDTO>>;
@@ -27,12 +28,12 @@ export interface ICommercialFishingService extends IApplicationsActionsService {
     getRecord(id: number, pageCode: PageCodeEnum): Observable<CommercialFishingEditDTO>;
 
     addPermit(permit: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<number>;
-    addAndDownloadRegister(model: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<boolean>;
+    addAndDownloadRegister(model: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean, configurations: PrintConfigurationParameters): Observable<boolean>;
 
     editPermit(permit: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<void>;
-    editAndDownloadRegister(model: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<boolean>;
+    editAndDownloadRegister(model: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean, configurations: PrintConfigurationParameters): Observable<boolean>;
 
-    downloadRegister(id: number, pageCode: PageCodeEnum): Observable<boolean>;
+    downloadRegister(id: number, pageCode: PageCodeEnum, configurations: PrintConfigurationParameters): Observable<boolean>;
     downloadFile(fileId: number, fileName: string): Observable<boolean>;
 
     deletePermit(id: number, pageCode: PageCodeEnum): Observable<void>;

@@ -19,6 +19,8 @@ import { BuyerApplicationEditDTO } from '@app/models/generated/dtos/BuyerApplica
 import { BuyerChangeOfCircumstancesApplicationDTO } from '@app/models/generated/dtos/BuyerChangeOfCircumstancesApplicationDTO';
 import { CancellationHistoryEntryDTO } from '@app/models/generated/dtos/CancellationHistoryEntryDTO';
 import { BuyerTerminationApplicationDTO } from '@app/models/generated/dtos/BuyerTerminationApplicationDTO';
+import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
+import { BuyerTypesEnum } from '@app/enums/buyer-types.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -43,7 +45,7 @@ export class BuyersPublicService extends ApplicationsRegisterPublicBaseService i
         throw new Error('This method should not be called from the public app.');
     }
 
-    public editAndDownloadRegister(model: BuyerDTO, ignoreLogBookConflicts: boolean): Observable<boolean> {
+    public editAndDownloadRegister(model: BuyerDTO, configurations: PrintConfigurationParameters, ignoreLogBookConflicts: boolean): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 
@@ -51,11 +53,11 @@ export class BuyersPublicService extends ApplicationsRegisterPublicBaseService i
         throw new Error('This method should not be called from the public app.');
     }
 
-    public addAndDownloadRegister(model: BuyerDTO, ignoreLogBookConflicts: boolean): Observable<boolean> {
+    public addAndDownloadRegister(model: BuyerDTO, configurations: PrintConfigurationParameters, ignoreLogBookConflicts: boolean): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 
-    public downloadRegister(id: number): Observable<boolean> {
+    public downloadRegister(id: number, buyerType: BuyerTypesEnum, configurations: PrintConfigurationParameters): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 

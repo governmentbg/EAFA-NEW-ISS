@@ -76,11 +76,12 @@ export class ScientificFishingContent implements OnInit, AfterViewInit {
     private searchpanel!: SearchPanelComponent;
 
     private gridManager!: DataTableManager<ScientificFishingPermitDTO, ScientificFishingFilters | ScientificFishingPublicFilters>;
-    private confirmDialog: TLConfirmDialog;
-    private editDialog: TLMatDialog<EditScientificPermitComponent>;
-    private outingDialog: TLMatDialog<EditScientificFishingOutingComponent>;
-    private chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
-    private deliveryDialog: TLMatDialog<RegisterDeliveryComponent>;
+
+    private readonly confirmDialog: TLConfirmDialog;
+    private readonly editDialog: TLMatDialog<EditScientificPermitComponent>;
+    private readonly outingDialog: TLMatDialog<EditScientificFishingOutingComponent>;
+    private readonly chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
+    private readonly deliveryDialog: TLMatDialog<RegisterDeliveryComponent>;
 
     public constructor(
         translationService: FuseTranslationLoaderService,
@@ -305,7 +306,8 @@ export class ScientificFishingContent implements OnInit, AfterViewInit {
                 deliveryId: permit.deliveryId,
                 isPublicApp: this.isPublicApp,
                 service: this.deliveryService,
-                pageCode: PageCodeEnum.SciFi
+                pageCode: PageCodeEnum.SciFi,
+                registerId: permit.id
             }),
             headerCancelButton: {
                 cancelBtnClicked: this.closeDeliveryDataDialogBtnClicked.bind(this)

@@ -18,12 +18,14 @@ import { AreaTypes } from '@app/shared/enums/area-type.enum';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { RequestService } from '@app/shared/services/request.service';
 import { BaseAuditService } from '../common-app/base-audit.service';
-import { PageCodeEnum } from '../../enums/page-code.enum';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { IPrintConfigurationsService } from '@app/components/common-app/applications/interfaces/print-cofigurations.interface';
+import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
 
 @Injectable({
     providedIn: 'root'
 })
-export class ApplicationsProcessingService extends BaseAuditService implements IApplicationsRegisterService {
+export class ApplicationsProcessingService extends BaseAuditService implements IApplicationsRegisterService, IPrintConfigurationsService {
     protected controller: string = 'ApplicationsProcessing';
 
     public constructor(requestService: RequestService) {
@@ -104,6 +106,18 @@ export class ApplicationsProcessingService extends BaseAuditService implements I
         return this.requestService.get(this.area, this.controller, 'GetApplicationHistorySimpleAudit', {
             httpParams: params,
             responseTypeCtr: SimpleAuditDTO
+        });
+    }
+
+    public getUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        return this.requestService.get(this.area, this.controller, 'GetUsersNomenclature', {
+            responseTypeCtr: PrintUserNomenclatureDTO
+        });
+    }
+
+    public getMyTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        return this.requestService.get(this.area, this.controller, 'GetMyTerritoryUnitUsersNomenclature', {
+            responseTypeCtr: PrintUserNomenclatureDTO
         });
     }
 

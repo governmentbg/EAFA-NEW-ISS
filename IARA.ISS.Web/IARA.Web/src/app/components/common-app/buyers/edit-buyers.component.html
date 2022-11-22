@@ -166,13 +166,6 @@
                     * {{ 'buyers-and-sales-centers.choose-at-least-one-registration' | tlTranslate }}
                 </mat-error>
             </div>
-            <div fxLayout="row" fxLayoutGap="1em">
-                <tl-input fxFlex="25"
-                          formControlName="annualTurnoverControl"
-                          label="{{ 'buyers-and-sales-centers.annual-turnover' | tlTranslate }}"
-                          tooltipResourceName="buyers-and-sales-centers.annual-turnover-helper">
-                </tl-input>
-            </div>
             <!-- Основни данни за магазин/помещение, ако има такова -->
             <tl-card *ngIf="editForm.get('hasPremiseOrVehicleGroup.hasUtilityControl')?.value"
                      tooltipResourceName="buyers-and-sales-centers.shop-panel-helper"
@@ -310,6 +303,15 @@
                     </div>
                 </tl-card-content>
             </tl-card>
+
+            <!-- Годишен оборот -->
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="annualTurnoverControl"
+                          label="{{ 'buyers-and-sales-centers.annual-turnover' | tlTranslate }}"
+                          tooltipResourceName="buyers-and-sales-centers.annual-turnover-helper">
+                </tl-input>
+            </div>
 
             <!-- Основни данни за превозно средство, ако има такова -->
             <tl-card *ngIf="editForm.get('hasPremiseOrVehicleGroup.hasVehicleControl')?.value"

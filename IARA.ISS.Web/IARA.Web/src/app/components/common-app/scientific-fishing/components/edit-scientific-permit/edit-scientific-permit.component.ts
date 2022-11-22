@@ -58,6 +58,8 @@ import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTy
 import { ScientificFishingReasonNomenclatureDTO } from '@app/models/generated/dtos/ScientificFishingReasonNomenclatureDTO';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { ShipNomenclatureFilters, ShipsUtils } from '@app/shared/utils/ships.utils';
+import { PrintConfigurationsComponent } from '@app/components/common-app/applications/components/print-configurations/print-configurations.component';
+import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 
 @Component({
     selector: 'edit-scientific-permit',
@@ -121,10 +123,11 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
 
     private allStatuses: NomenclatureDTO<number>[] = [];
 
-    private annulDialog: TLMatDialog<CancellationDialogComponent>;
-    private editHolderDialog: TLMatDialog<EditScientificPermitHolderComponent>;
-    private editOutingDialog: TLMatDialog<EditScientificFishingOutingComponent>;
-    private confirmDialog: TLConfirmDialog;
+    private readonly annulDialog: TLMatDialog<CancellationDialogComponent>;
+    private readonly editHolderDialog: TLMatDialog<EditScientificPermitHolderComponent>;
+    private readonly editOutingDialog: TLMatDialog<EditScientificFishingOutingComponent>;
+    private readonly confirmDialog: TLConfirmDialog;
+    private readonly printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>;
 
     private model!: ScientificFishingPermitEditDTO | ScientificFishingApplicationEditDTO | ScientificFishingPermitRegixDataDTO;
 
@@ -134,7 +137,8 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
         editOutingDialog: TLMatDialog<EditScientificFishingOutingComponent>,
         confirmDialog: TLConfirmDialog,
         translate: FuseTranslationLoaderService,
-        nomenclatures: CommonNomenclatures
+        nomenclatures: CommonNomenclatures,
+        printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>
     ) {
         this.annulDialog = annulDialog;
         this.editHolderDialog = editHolderDialog;
@@ -142,6 +146,7 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
         this.confirmDialog = confirmDialog;
         this.translateService = translate;
         this.nomenclatures = nomenclatures;
+        this.printConfigurationsDialog = printConfigurationsDialog;
 
         this.isPublicApp = IS_PUBLIC_APP;
 
@@ -1162,17 +1167,25 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
             CommonUtils.sanitizeModelStrings(this.model);
             let saveOrEditObservable: Observable<boolean>;
 
-            if (this.permitId !== null && this.permitId !== undefined) {
-                saveOrEditObservable = this.service.editAndDownloadRegister(this.model, printType);
-            }
-            else {
-                saveOrEditObservable = this.service.addAndDownloadRegister(this.model, printType);
-            }
+            const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
 
-            saveOrEditObservable.subscribe({
-                next: (downloaded: boolean) => {
-                    if (downloaded === true) {
-                        dialogClose(this.model);
+            getPrintConfig.subscribe({
+                next: (configuration: PrintConfigurationParameters | undefined) => {
+                    if (configuration !== null && configuration !== undefined) {
+                        if (this.permitId !== null && this.permitId !== undefined) {
+                            saveOrEditObservable = this.service.editAndDownloadRegister(this.model, printType, configuration);
+                        }
+                        else {
+                            saveOrEditObservable = this.service.addAndDownloadRegister(this.model, printType, configuration);
+                        }
+
+                        saveOrEditObservable.subscribe({
+                            next: (downloaded: boolean) => {
+                                if (downloaded === true) {
+                                    dialogClose(this.model);
+                                }
+                            }
+                        });
                     }
                 }
             });
@@ -1180,9 +1193,17 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
     }
 
     private print(printType: SciFiPrintTypesEnum): void {
-        this.service.downloadRegister(this.model.id!, printType).subscribe({
-            next: (downloaded: boolean) => {
-                // nothing to do
+        const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
+
+        getPrintConfig.subscribe({
+            next: (configuration: PrintConfigurationParameters | undefined) => {
+                if (configuration !== null && configuration !== undefined) {
+                    this.service.downloadRegister(this.model.id!, printType, configuration).subscribe({
+                        next: (downloaded: boolean) => {
+                            // nothing to do
+                        }
+                    });
+                }
             }
         });
     }
@@ -1210,6 +1231,25 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
         }
 
         return saveOrEditObservable;
+    }
+
+    private getPrintConfigurations(): Observable<PrintConfigurationParameters> {
+        return this.printConfigurationsDialog.open({
+            TCtor: PrintConfigurationsComponent,
+            translteService: this.translateService,
+            title: this.translateService.getValue('scientific-fishing.print-configurations-dialog-title'),
+            headerCancelButton: { cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); } },
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                translateValue: this.translateService.getValue('scientific-fishing.choose-settings-and-print')
+            },
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: this.translateService.getValue('common.cancel'),
+            }
+        }, '900px');
     }
 
     private holderEqualsRegixHolder(holder: ScientificFishingPermitHolderRegixDataDTO): boolean {

@@ -114,5 +114,7 @@
     FlapCoastalParties,
     FlapRequestPurposes,
     FlapFishingCategories,
-    FlapQuotaType
+    FlapQuotaType,
+    MyTerritoryUnitUsers,
+    AllUsers
 }

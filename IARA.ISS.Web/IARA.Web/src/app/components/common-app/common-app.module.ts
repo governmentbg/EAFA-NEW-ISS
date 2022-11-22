@@ -14,6 +14,7 @@ import { EnterEventisNumberComponent } from './applications/components/enter-eve
 import { EnterReasonComponent } from './applications/components/enter-reason/enter-reason.component';
 import { FileInApplicationStepperComponent } from './applications/components/file-in-application-stepper/file-in-application-stepper.component';
 import { PaymentInformationComponent } from './applications/components/payment-information/payment-information.component';
+import { PrintConfigurationsComponent } from './applications/components/print-configurations/print-configurations.component';
 import { UploadFileDialogComponent } from './applications/components/upload-file-dialog/upload-file-dialog.component';
 import { AquacultureChangeOfCircumstancesComponent } from './aquaculture-facilities/aquaculture-change-of-circumstances/aquaculture-change-of-circumstances.component';
 import { AquacultureDeregistrationComponent } from './aquaculture-facilities/aquaculture-deregistration/aquaculture-deregistration.component';
@@ -199,7 +200,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         ChoosePermitToCopyFromComponent,
         EditLegalAssociationComponent,
         EditLegalAssociationPersonComponent,
-        ChooseLogBookForRenewalComponent
+        ChooseLogBookForRenewalComponent,
+        PrintConfigurationsComponent
     ],
     imports: [
         TLCommonModule,
@@ -301,7 +303,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         ChoosePermitToCopyFromComponent,
         EditLegalAssociationComponent,
         EditLegalAssociationPersonComponent,
-        ChooseLogBookForRenewalComponent
+        ChooseLogBookForRenewalComponent,
+        PrintConfigurationsComponent
     ],
     providers: [CurrencyPipe, TLDateDifferencePipe, DatePipe]
 })

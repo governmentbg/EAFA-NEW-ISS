@@ -1,5 +1,5 @@
 ﻿import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { SelectionType } from '@swimlane/ngx-datatable';
 
@@ -17,7 +17,8 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
-
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 
 @Component({
     selector: 'choose-permit-license-for-renewal',
@@ -44,6 +45,7 @@ export class ChoosePermitLicenseForRenewalComponent implements OnInit, AfterView
     private shipId: number | undefined;
     private permitId: number | undefined;
     private permitNumber: string | undefined;
+    private invalidPermitNumberError: boolean = false;
 
     public constructor() {
         this.filterControl = new FormControl();
@@ -56,6 +58,12 @@ export class ChoosePermitLicenseForRenewalComponent implements OnInit, AfterView
 
         if (this.isPublicApp) {
             this.chooseShipAndPermitFormGroup.addControl('permitRegistrationNumberControl', new FormControl(null, Validators.required));
+            this.chooseShipAndPermitFormGroup.setValidators(this.validPermitNumber());
+            this.chooseShipAndPermitFormGroup.get('permitRegistrationNumberControl')!.valueChanges.subscribe({
+                next: () => {
+                    this.invalidPermitNumberError = false;
+                }
+            });
         }
         else {
             this.chooseShipAndPermitFormGroup.addControl('permitControl', new FormControl(null, Validators.required));
@@ -235,7 +243,13 @@ export class ChoosePermitLicenseForRenewalComponent implements OnInit, AfterView
     public selectedStepChanged(stepperSelectionEvent: StepperSelectionEvent): void {
         if (stepperSelectionEvent.previouslySelectedIndex === 0 && stepperSelectionEvent.selectedIndex === 1) {
             this.shipId = this.chooseShipAndPermitFormGroup.get('shipControl')!.value!.value;
-            this.permitId = this.chooseShipAndPermitFormGroup.get('permitControl')!.value!.value;
+
+            if (this.isPublicApp) {
+                this.permitNumber = (this.chooseShipAndPermitFormGroup.get('permitRegistrationNumberControl')! as PermitNomenclatureDTO).registrationNumber;
+            }
+            else {
+                this.permitId = this.chooseShipAndPermitFormGroup.get('permitControl')!.value!.value;
+            }
 
             this.getPermitLicensesForRenewal();
         }
@@ -249,6 +263,12 @@ export class ChoosePermitLicenseForRenewalComponent implements OnInit, AfterView
                         this.allPermitLicenses = results;
                         this.permitLicenses = [...this.allPermitLicenses];
                     });
+                },
+                error: (errorResponse: HttpErrorResponse) => {
+                    if ((errorResponse.error as ErrorModel)?.code === ErrorCode.InvalidPermitNumber) {
+                        this.invalidPermitNumberError = true;
+                        this.chooseShipAndPermitFormGroup.updateValueAndValidity({ emitEvent: false });
+                    }
                 }
             });
         }
@@ -268,5 +288,16 @@ export class ChoosePermitLicenseForRenewalComponent implements OnInit, AfterView
         this.allPermitLicenses = [];
         this.permitLicenses = [];
         this.selectedPermitLicenses = [];
+    }
+
+    private validPermitNumber(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (this.invalidPermitNumberError) {
+                return { 'invalidPermitNumber': true };
+            }
+            else {
+                return null;
+            }
+        }
     }
 }

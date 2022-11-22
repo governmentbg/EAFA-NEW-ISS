@@ -44,4 +44,8 @@ export class DeliveryPublicService extends BaseAuditService implements IDelivery
     public editDeliveryData(deliveryData: ApplicationDeliveryDTO, sendEDelivery: boolean): Observable<void> {
         throw new Error('Method should not be called from public app');
     }
+
+    public downloadFile(fileId: number): Observable<boolean> {
+        throw new Error('Method should not be called from public app');
+    }
 }

@@ -24,6 +24,7 @@ import { ScientificFishingCommonService } from '../common-app/scientific-fishing
 import { SciFiPrintTypesEnum } from '@app/enums/sci-fi-print-types.enum';
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { ScientificFishingReasonNomenclatureDTO } from '@app/models/generated/dtos/ScientificFishingReasonNomenclatureDTO';
+import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 
 @Injectable({
     providedIn: 'root'
@@ -97,7 +98,7 @@ export class ScientificFishingPublicService extends BaseAuditService implements 
         throw new Error('This method should not be called from the public app');
     }
 
-    public addAndDownloadRegister(permit: ScientificFishingPermitEditDTO, printType: SciFiPrintTypesEnum): Observable<boolean> {
+    public addAndDownloadRegister(permit: ScientificFishingPermitEditDTO, printType: SciFiPrintTypesEnum, configurations: PrintConfigurationParameters): Observable<boolean> {
         throw new Error('This method should not be called from the public app');
     }
 
@@ -111,7 +112,7 @@ export class ScientificFishingPublicService extends BaseAuditService implements 
         throw new Error('This method should not be called from the public app');
     }
 
-    public editAndDownloadRegister(permit: ScientificFishingPermitEditDTO, printType: SciFiPrintTypesEnum): Observable<boolean> {
+    public editAndDownloadRegister(permit: ScientificFishingPermitEditDTO, printType: SciFiPrintTypesEnum, configurations: PrintConfigurationParameters): Observable<boolean> {
         throw new Error('This method should not be called from the public app');
     }
 
@@ -123,7 +124,7 @@ export class ScientificFishingPublicService extends BaseAuditService implements 
         throw new Error('This method should not be called from the public app');
     }
 
-    public downloadRegister(id: number, printType: SciFiPrintTypesEnum): Observable<boolean> {
+    public downloadRegister(id: number, printType: SciFiPrintTypesEnum, configurations: PrintConfigurationParameters): Observable<boolean> {
         throw new Error('This method should not be called from the public app');
     }
 

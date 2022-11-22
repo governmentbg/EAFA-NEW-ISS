@@ -6,6 +6,7 @@ export class RegisterDeliveryDialogParams {
     public isPublicApp: boolean = false;
     public service!: IDeliveryService;
     public pageCode!: PageCodeEnum;
+    public registerId!: number;
 
     public constructor(obj?: Partial<RegisterDeliveryDialogParams>) {
         Object.assign(this, obj);

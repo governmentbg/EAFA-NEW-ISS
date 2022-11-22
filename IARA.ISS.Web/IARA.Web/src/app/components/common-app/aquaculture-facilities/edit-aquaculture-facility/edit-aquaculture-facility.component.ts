@@ -83,6 +83,8 @@ import { OverlappingLogBooksComponent } from '@app/shared/components/overlapping
 import { CommercialFishingAdministrationService } from '@app/services/administration-app/commercial-fishing-administration.service';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { FishNomenclatureDTO } from '@app/models/generated/dtos/FishNomenclatureDTO';
+import { PrintConfigurationsComponent } from '@app/components/common-app/applications/components/print-configurations/print-configurations.component';
+import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 
 type SaveMethod = 'save' | 'saveAndPrint' | 'completeChangeOfCircumstancesApplication';
 
@@ -220,14 +222,15 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
 
     private allStatuses: NomenclatureDTO<number>[] = [];
 
-    private confirmDialog!: TLConfirmDialog;
-    private editInstallationDialog: TLMatDialog<EditAquacultureInstallationComponent>;
-    private editUsageDocumentDialog: TLMatDialog<UsageDocumentComponent>;
-    private editWaterLawCertificateDialog: TLMatDialog<EditAquacultureWaterLawCertificateComponent>;
-    private editOvosCertificateDialog: TLMatDialog<CommonDocumentComponent>;
-    private editBabhCertificateDialog: TLMatDialog<CommonDocumentComponent>;
-    private cancelDialog: TLMatDialog<CancellationHistoryDialogComponent>;
-    private overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
+    private readonly confirmDialog!: TLConfirmDialog;
+    private readonly editInstallationDialog: TLMatDialog<EditAquacultureInstallationComponent>;
+    private readonly editUsageDocumentDialog: TLMatDialog<UsageDocumentComponent>;
+    private readonly editWaterLawCertificateDialog: TLMatDialog<EditAquacultureWaterLawCertificateComponent>;
+    private readonly editOvosCertificateDialog: TLMatDialog<CommonDocumentComponent>;
+    private readonly editBabhCertificateDialog: TLMatDialog<CommonDocumentComponent>;
+    private readonly cancelDialog: TLMatDialog<CancellationHistoryDialogComponent>;
+    private readonly overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
+    private readonly printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>;
 
     private model!: AquacultureFacilityEditDTO | AquacultureApplicationEditDTO | AquacultureRegixDataDTO;
 
@@ -249,7 +252,8 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         editOvosCertificateDialog: TLMatDialog<CommonDocumentComponent>,
         editBabhCertificateDialog: TLMatDialog<CommonDocumentComponent>,
         cancelDialog: TLMatDialog<CancellationHistoryDialogComponent>,
-        overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>
+        overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>,
+        printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>
     ) {
         this.translate = translate;
         this.nomenclatures = nomenclatures;
@@ -263,6 +267,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         this.cancelDialog = cancelDialog;
         this.overlappingLogBooksDialog = overlappingLogBooksDialog;
         this.commercialFishingService = commercialFishingService;
+        this.printConfigurationsDialog = printConfigurationsDialog;
 
         this.isPublicApp = IS_PUBLIC_APP;
 
@@ -553,11 +558,19 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     public dialogButtonClicked(action: IActionInfo, dialogClose: DialogCloseCallback): void {
         if (action.id === 'print') {
             if (this.viewMode || this.isReadonly) {
-                this.service.downloadAquacultureFacility(this.id!).subscribe({
-                    next: () => {
-                        // nothing to do
+                const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
+                getPrintConfig.subscribe({
+                    next: (configuration: PrintConfigurationParameters | undefined) => {
+                        if (configuration !== null && configuration !== undefined) {
+                            this.service.downloadAquacultureFacility(this.id!, configuration).subscribe({
+                                next: () => {
+                                    // nothing to do
+                                }
+                            });
+                        }
                     }
                 });
+                
             }
             else {
                 this.editAndDownloadAquacultureFacility(dialogClose);
@@ -616,15 +629,23 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         if (this.form.valid) {
             this.fillModel();
             CommonUtils.sanitizeModelStrings(this.model);
-            
-            this.service.editAndDownloadAquaculture(this.model, this.ignoreLogBookConflicts).subscribe({
-                next: (download: boolean) => {
-                    if (download) {
-                        dialogClose(this.model);
+
+            const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
+
+            getPrintConfig.subscribe({
+                next: (configuration: PrintConfigurationParameters | undefined) => {
+                    if (configuration !== null && configuration !== undefined) {
+                        this.service.editAndDownloadAquaculture(this.model, this.ignoreLogBookConflicts, configuration).subscribe({
+                            next: (download: boolean) => {
+                                if (download) {
+                                    dialogClose(this.model);
+                                }
+                            },
+                            error: (response: HttpErrorResponse) => {
+                                this.handleSaveErrorResponse(response, dialogClose, 'saveAndPrint');
+                            }
+                        });
                     }
-                },
-                error: (response: HttpErrorResponse) => {
-                    this.handleSaveErrorResponse(response, dialogClose, 'saveAndPrint');
                 }
             });
         }
@@ -2042,6 +2063,25 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         this.openConfirmDialogForApplication(() => {
             this.saveAquaculture(dialogClose);
         })
+    }
+
+    private getPrintConfigurations(): Observable<PrintConfigurationParameters> {
+        return this.printConfigurationsDialog.open({
+            TCtor: PrintConfigurationsComponent,
+            translteService: this.translate,
+            title: this.translate.getValue('aquacultures.print-configurations-dialog-title'),
+            headerCancelButton: { cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); } },
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                translateValue: this.translate.getValue('aquacultures.choose-settings-and-print')
+            },
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: this.translate.getValue('common.cancel'),
+            }
+        }, '900px');
     }
 
     private openConfirmDialogForApplication(callback: (...args: unknown[]) => unknown): void {

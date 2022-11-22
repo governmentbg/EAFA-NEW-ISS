@@ -7,4 +7,5 @@ export interface IDeliveryService extends IBaseAuditService {
     getDeliveryTypes(applicationId: number): Observable<NomenclatureDTO<number>[]>;
     getDeliveryData(deliveryId: number): Observable<ApplicationDeliveryDTO>;
     editDeliveryData(deliveryData: ApplicationDeliveryDTO, sendEDelivery: boolean): Observable<void>;
+    downloadFile(fileId: number): Observable<boolean>;
 }

@@ -560,7 +560,10 @@
 
         'delivery-data': 'Информация за връчване',
         'has-no-e-delivery-registration-error': 'Трябва да имате достъп до системата за електронно връчване (EDelivery), за да изберете електронно връчване',
-        'delivery-data-dialog-title': 'Информация за начин на връчване'
+        'delivery-data-dialog-title': 'Информация за начин на връчване',
+
+        'print-configurations-dialog-title': 'Печат',
+        'choose-settings-and-print': 'Потвърди и изтегли'
     },
     'users-page': {
         'username': 'Потребителско име',
@@ -833,7 +836,10 @@
         'view-qualified-fisher-appl-and-confirm-regularity-title': 'Преглед на заявление и потвърждение редовността на данните',
 
         'register-title': 'правоспособни рибари',
-        'duplicate-entries': 'Издадени дубликати'
+        'duplicate-entries': 'Издадени дубликати',
+
+        'print-configurations-dialog-title': 'Печат',
+        'choose-settings-and-print': 'Потвърди и изтегли'
     },
     'permissions-register': {
         'permission-name': 'Име на право',
@@ -1324,7 +1330,9 @@
         'delivery-territory-unit': 'Териториално звено',
         'delivery-ordinary-email': 'Електронна поща',
         'e-delivery-email': 'Електронна поща, регистрирана в e-delivery',
-        'save-and-send-btn': 'Запази и изпрати чрез E-Delivery'
+        'save-and-send-btn': 'Запази и изпрати чрез E-Delivery',
+        'user-has-no-e-delivery-registration-error': 'Потребителят не е регистриран в системата за електронно връчване (e-delivery)',
+        'user-uploaded-invalid-file-error': 'Прикачен файл е невалидно подписан и/или с нарушена цялост'
     },
     'legal-entities-report-page': {
         'legal-name': 'Име',
@@ -1731,7 +1739,10 @@
         'cancel-status-date-of-change': 'Дата',
         'cancel-status-reason': 'Причина',
         'cancel-status-issue-order-num': '№ на заповед',
-        'annual-turnover': 'Годишен оборот'
+        'annual-turnover': 'Годишен оборот',
+
+        'print - configurations - dialog - title': 'Печат',
+        'choose-settings-and-print': 'Потвърди и изтегли'
     },
     'regix-check': {
         'web-service-name': 'Име на услуга',
@@ -2959,7 +2970,15 @@
         'permit-license-has-duplicated-pinger-numbers': 'Следните номера на нови пингъри са дублирани',
 
         'add-permit-is-second-ship-event-error': 'Разрешителното не може да бъде добавено към избрания кораб днес, защото това би предизвикало второ MOD събитие за деня, а само едно такова е позволено за даден кораб.',
-        'suspend-resume-is-second-event-for-ship-error': 'Разрешителното не може да бъде прекратено или възстановено днес, защото това би предизвикало второ MOD събитие за деня, а само едно такова е позволено за даден кораб.'
+        'suspend-resume-is-second-event-for-ship-error': 'Разрешителното не може да бъде прекратено или възстановено днес, защото това би предизвикало второ MOD събитие за деня, а само едно такова е позволено за даден кораб.',
+
+        'print-configurations-dialog-title': 'Печат',
+        'choose-settings-and-print': 'Потвърди и изтегли'
+    },
+    'print-configuration': {
+        'user': ' Служител, издал документа',
+        'show-only-from-my-territory-unit': 'Покажи само потребители от моето териториално звено',
+        'position': 'Длъжност на служителя'
     },
     'ground-for-use': {
         'type': 'Тип на основание',
@@ -2984,7 +3003,8 @@
         'valid-to': 'Валидно до',
         'fishing-gears': 'Уреди',
         'auqatic-organisms': 'Водни организми',
-        'permit-is-readonly-info': 'Трябва да бъде избран кораб, за да се избере разрешително'
+        'permit-is-readonly-info': 'Трябва да бъде избран кораб, за да се избере разрешително',
+        'invalid-permit-number-error': 'Невалиден номер на разрешително'
     },
     'choose-permit-to-copy-from': {
         'ship': 'Кораб',
@@ -3509,7 +3529,10 @@
         'duplicate-delivery-data': 'Информация за връчване',
         'duplicate-has-no-e-delivery-registration-error': 'Трябва да имате достъп до системата за електронно връчване (EDelivery), за да изберете електронно връчване',
         'duplicate-files': 'Приложени файлове',
-        'duplicate-regix-checks-results': 'Резултати от автоматични проверки към външни регистри'
+        'duplicate-regix-checks-results': 'Резултати от автоматични проверки към външни регистри',
+
+        'print-configurations-dialog-title': 'Печат',
+        'choose-settings-and-print': 'Потвърди и изтегли'
     },
     'patrol-vehicles': {
         'name': 'Име',
@@ -4369,7 +4392,10 @@
         'overlapping-log-books-dialog-title': 'Припокриващи се диапазони от страници на текущи дневници с други, въведени в системата',
         'overlapping-log-books-save-despite-conflicts': 'Запази въпреки конфликтите',
 
-        'excel-filename': 'Аквакултурни стопанства'
+        'excel-filename': 'Аквакултурни стопанства',
+
+        'print-configurations-dialog-title': 'Печат',
+        'choose-settings-and-print': 'Потвърди и изтегли'
     },
     'cross-check': {
         'code': 'Код',
@@ -5523,6 +5549,9 @@
         'table-entry-delivery-data-dialog-title': 'Информация за начин на връчване',
 
         'print': 'Отпечатай',
-        'save-print': 'Запази и отпечатай'
+        'save-print': 'Запази и отпечатай',
+
+        'print-configurations-dialog-title': 'Печат',
+        'choose-settings-and-print': 'Потвърди и изтегли'
     }
 };

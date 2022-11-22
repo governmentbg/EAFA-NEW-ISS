@@ -1,33 +1,47 @@
-﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="form" [class.dialog-padding]="isDialog">
-    <div fxLayout="row">
-        <delivery-data formControlName="basicDeliveryDataControl"
-                       [pageCode]="pageCode">
-        </delivery-data>
+﻿<div fxLayout="column" fxLayoutGap="1em" [class.dialog-padding]="isDialog">
+    <div fxLayout="column" fxLayoutGap="1em" [formGroup]="form">
+        <div fxLayout="row">
+            <delivery-data formControlName="basicDeliveryDataControl"
+                           [pageCode]="pageCode">
+            </delivery-data>
+        </div>
+        <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+            <tl-date fxFlex="50"
+                     formControlName="deliveryDateControl"
+                     label="{{ 'register-delivery.delivery-date' | tlTranslate }}"
+                     tooltipResourceName="register-delivery.delivery-date-helper"
+                     [max]="currentDate">
+            </tl-date>
+            <tl-date fxFlex="50"
+                     formControlName="sentDateControl"
+                     label="{{ 'register-delivery.sent-date' | tlTranslate }}"
+                     tooltipResourceName="register-delivery.sent-date-helper"
+                     [max]="currentDate">
+            </tl-date>
+        </div>
+        <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+            <tl-input fxFlex="50"
+                      formControlName="referenceNumberControl"
+                      label="{{ 'register-delivery.reference-number' | tlTranslate }}"
+                      tooltipResourceName="register-delivery.reference-number-helper">
+            </tl-input>
+            <div fxFlex="50"></div>
+        </div>
     </div>
-
-    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
-        <tl-date fxFlex="50"
-                 formControlName="deliveryDateControl"
-                 label="{{ 'register-delivery.delivery-date' | tlTranslate }}"
-                 tooltipResourceName="register-delivery.delivery-date-helper"
-                 [max]="currentDate">
-        </tl-date>
-
-        <tl-date fxFlex="50"
-                 formControlName="sentDateControl"
-                 label="{{ 'register-delivery.sent-date' | tlTranslate }}"
-                 tooltipResourceName="register-delivery.sent-date-helper"
-                 [max]="currentDate">
-        </tl-date>
-    </div>
-
-    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
-        <tl-input fxFlex="50"
-                  formControlName="referenceNumberControl"
-                  label="{{ 'register-delivery.reference-number' | tlTranslate }}"
-                  tooltipResourceName="register-delivery.reference-number-helper">
-        </tl-input>
-
-        <div fxFlex="50"></div>
+    <div *ngIf="isEDeliveryChosen" fxLayout="column" [formGroup]="deliveryForm">
+        <file-uploader-form-array formControlName="deliveryFilesControl"
+                                  [pageCode]="pageCodesEnum.Delivery"
+                                  [downloadFileMethod]="deliveryService.downloadFile.bind(this.deliveryService)"
+                                  [refreshFileTypes]="refreshFileTypes"
+                                  [hideAddButton]="true">
+        </file-uploader-form-array>
+        <div *ngIf="deliveryForm.errors" fxLayout="column" fxLayoutGap="1em">
+            <mat-error *ngIf="deliveryForm.errors!.noEDeliveryRegistration">
+                * {{ 'register-delivery.user-has-no-e-delivery-registration-error' | tlTranslate }}
+            </mat-error>
+            <mat-error *ngIf="deliveryForm.errors!.userUploadedInvalidFile">
+                * {{ 'register-delivery.user-uploaded-invalid-file-error' | tlTranslate }}
+            </mat-error>
+        </div>
     </div>
 </div>

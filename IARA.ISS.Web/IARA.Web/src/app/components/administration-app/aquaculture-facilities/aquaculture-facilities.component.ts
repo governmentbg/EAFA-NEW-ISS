@@ -402,7 +402,8 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
                 deliveryId: aquaculture.deliveryId,
                 isPublicApp: false,
                 service: this.deliveryService,
-                pageCode: PageCodeEnum.AquaFarmReg
+                pageCode: PageCodeEnum.AquaFarmReg,
+                registerId: aquaculture.id
             }),
             headerCancelButton: {
                 cancelBtnClicked: this.closeDeliveryDataDialogBtnClicked.bind(this)

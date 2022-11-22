@@ -557,7 +557,10 @@
 
         'delivery-data': 'Delivery data',
         'has-no-e-delivery-registration-error': 'You must have e-delivery access in order to choose e-delivery as delivery type',
-        'delivery-data-dialog-title': 'Delivery data'
+        'delivery-data-dialog-title': 'Delivery data',
+
+        'print-configurations-dialog-title': 'Print',
+        'choose-settings-and-print': 'Confirm and download'
     },
     'users-page': {
         'username': 'Username',
@@ -830,7 +833,10 @@
         'edit-description': 'Description',
         'edit-roles': 'Roles',
         'edit-role': 'Role',
-        'edit-add-role': 'Add role'
+        'edit-add-role': 'Add role',
+
+        'print-configurations-dialog-title': 'Print',
+        'choose-settings-and-print': 'Confirm and download'
     },
     'roles-register': {
         'code': 'Code',
@@ -1293,7 +1299,9 @@
         'delivery-territory-unit': 'Territory unit',
         'delivery-ordinary-email': 'Email',
         'e-delivery-email': 'Email registered in e-delivery',
-        'save-and-send-btn': 'Save and send via E-Delivery'
+        'save-and-send-btn': 'Save and send via E-Delivery',
+        'user-has-no-e-delivery-registration-error': 'The user is not registered in the E-delivery system',
+        'user-uploaded-invalid-file-error': 'A file is invalidly signed or has integrity violations'
     },
     'legal-entities-report-page': {
         'legal-name': 'Name',
@@ -1691,7 +1699,10 @@
         'cancel-status-date-of-change': 'Date',
         'cancel-status-reason': 'Reason',
         'cancel-status-issue-order-num': 'Order no.',
-        'annual-turnover': 'Annual turnover'
+        'annual-turnover': 'Annual turnover',
+
+        'print-configurations-dialog-title': 'Print',
+        'choose-settings-and-print': 'Confirm and download'
     },
     'regix-check': {
         'web-service-name': 'Service name',
@@ -2835,7 +2846,15 @@
         'permit-license-has-duplicated-pinger-numbers': 'The following new pinger numbers are duplicated',
 
         'add-permit-is-second-ship-event-error': 'The permit cannot be added for to the chosen ship today, because this would trigger a MOD event for the ship and that ship already has one MOD event for today.',
-        'suspend-resume-is-second-event-for-ship-error': 'The permit cannot be suspended or resumed, because this woult trigger a MOD event for the ship and that ship already has one MOD event for today.'
+        'suspend-resume-is-second-event-for-ship-error': 'The permit cannot be suspended or resumed, because this woult trigger a MOD event for the ship and that ship already has one MOD event for today.',
+
+        'print-configurations-dialog-title': 'Print',
+        'choose-settings-and-print': 'Confirm and download'
+    },
+    'print-configuration': {
+        'user': 'User issued the document',
+        'show-only-from-my-territory-unit': 'Show only users from my territory unit',
+        'position': 'Users position'
     },
     'ground-for-use': {
         'type': 'Ground for use type',
@@ -2860,7 +2879,8 @@
         'valid-to': 'Valid to',
         'fishing-gears': 'Fishing gears',
         'auqatic-organisms': 'Aquatic organisms',
-        'permit-is-readonly-info': 'A ship mush bee chosen in order to choose a permit'
+        'permit-is-readonly-info': 'A ship mush bee chosen in order to choose a permit',
+        'invalid-permit-number-error': 'Invalid permit number entered'
     },
     'choose-permit-to-copy-from': {
         'ship': 'Ship',
@@ -3369,7 +3389,10 @@
         'duplicate-delivery-data': 'Delivery information',
         'duplicate-has-no-e-delivery-registration-error': 'You must have e-delivery access in order to choose e-delivery as delivery type',
         'duplicate-files': 'Files',
-        'duplicate-regix-checks-results': 'Results of automatic checks to external registers'
+        'duplicate-regix-checks-results': 'Results of automatic checks to external registers',
+
+        'print-configurations-dialog-title': 'Print',
+        'choose-settings-and-print': 'Confirm and download'
     },
     'patrol-vehicles': {
         'name': 'Name',
@@ -4225,7 +4248,10 @@
         'overlapping-log-books-dialog-title': 'Overlapping log book page ranges',
         'overlapping-log-books-save-despite-conflicts': 'Save despite the conflicts',
 
-        'excel-filename': 'Aquaculture facilities'
+        'excel-filename': 'Aquaculture facilities',
+
+        'print-configurations-dialog-title': 'Print',
+        'choose-settings-and-print': 'Confirm and download'
     },
     'cross-check': {
         'code': 'Code',
@@ -5425,6 +5451,9 @@
         'table-entry-delivery-data-dialog-title': 'Delivery information',
 
         'print': 'Print',
-        'save-print': 'Save and print'
+        'save-print': 'Save and print',
+
+        'print-configurations-dialog-title': 'Print',
+        'choose-settings-and-print': 'Confirm and download'
     }
 };

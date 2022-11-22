@@ -27,6 +27,7 @@ import { ShipFishingCapacityDTO } from '@app/models/generated/dtos/ShipFishingCa
 import { FishingCapacityStatisticsDTO } from '@app/models/generated/dtos/FishingCapacityStatistics';
 import { CapacityCertificateDuplicateApplicationDTO } from '@app/models/generated/dtos/CapacityCertificateDuplicateApplicationDTO';
 import { ExcelExporterRequestModel } from '@app/shared/components/data-table/models/excel-exporter-request-model.model';
+import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 
 @Injectable({
     providedIn: 'root'
@@ -82,7 +83,7 @@ export class FishingCapacityPublicService extends ApplicationsRegisterPublicBase
         });
     }
 
-    public downloadFishingCapacityCertificate(certificateId: number): Observable<boolean> {
+    public downloadFishingCapacityCertificate(certificateId: number, configurations: PrintConfigurationParameters): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 

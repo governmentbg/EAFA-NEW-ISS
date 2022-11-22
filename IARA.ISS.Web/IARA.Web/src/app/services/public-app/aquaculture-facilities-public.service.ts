@@ -20,6 +20,7 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { CancellationHistoryEntryDTO } from '@app/models/generated/dtos/CancellationHistoryEntryDTO';
 import { ExcelExporterRequestModel } from '@app/shared/components/data-table/models/excel-exporter-request-model.model';
+import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 
 @Injectable({
     providedIn: 'root'
@@ -48,7 +49,7 @@ export class AquacultureFacilitiesPublicService extends ApplicationsRegisterPubl
         throw new Error('This method should not be called from the public app.');
     }
 
-    public editAndDownloadAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<boolean> {
+    public editAndDownloadAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean, configurations: PrintConfigurationParameters): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 
@@ -64,7 +65,7 @@ export class AquacultureFacilitiesPublicService extends ApplicationsRegisterPubl
         throw new Error('This method should not be called from the public app.');
     }
 
-    public downloadAquacultureFacility(aquacultureId: number): Observable<boolean> {
+    public downloadAquacultureFacility(aquacultureId: number, configurations: PrintConfigurationParameters): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 

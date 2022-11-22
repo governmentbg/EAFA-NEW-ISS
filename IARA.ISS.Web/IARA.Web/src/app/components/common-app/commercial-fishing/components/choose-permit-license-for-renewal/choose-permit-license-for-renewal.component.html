@@ -37,6 +37,11 @@
                           label="{{ 'choose-permit-license-for-renewal.permit-registration-number' | tlTranslate }}">
                 </tl-input>
             </div>
+            <div *ngIf="chooseShipAndPermitFormGroup.errors" fxLayout="row" fxFlex="100">
+                <mat-error *ngIf="chooseShipAndPermitFormGroup.errors!.invalidPermitNumber">
+                    * {{ 'choose-permit-license-for-renewal.invalid-permit-number-error' | tlTranslate }}
+                </mat-error>
+            </div>
             <div fxLayout="row">
                 <button mat-raised-button matStepperNext color="accent">
                     {{ 'choose-permit-license-for-renewal.choose-permit-license' | tlTranslate }}

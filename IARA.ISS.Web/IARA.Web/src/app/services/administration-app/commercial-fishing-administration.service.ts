@@ -37,6 +37,8 @@ import { CatchesAndSalesCommonService } from '@app/services/common-app/catches-a
 import { ILogBookService } from '@app/components/common-app/commercial-fishing/components/edit-log-book/interfaces/log-book.interface';
 import { CommercialFishingLogBookEditDTO } from '@app/models/generated/dtos/CommercialFishingLogBookEditDTO';
 import { LogBookForRenewalDTO } from '@app/models/generated/dtos/LogBookForRenewalDTO';
+import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
+import { RegisterDTO } from '@app/models/generated/dtos/RegisterDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -216,7 +218,12 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         });
     }
 
-    public addAndDownloadRegister(model: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<boolean> {
+    public addAndDownloadRegister(
+        model: CommercialFishingEditDTO,
+        pageCode: PageCodeEnum,
+        ignoreLogBookConflicts: boolean,
+        configurations: PrintConfigurationParameters
+    ): Observable<boolean> {
         let serviceMethod: string = '';
         let params: HttpParams | undefined;
 
@@ -244,7 +251,7 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         });
     }
 
-    public downloadRegister(id: number, pageCode: PageCodeEnum): Observable<boolean> {
+    public downloadRegister(id: number, pageCode: PageCodeEnum, configurations: PrintConfigurationParameters): Observable<boolean> {
         let methodName: string = '';
 
         switch (pageCode) {
@@ -261,7 +268,7 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         }
 
         const params = new HttpParams().append('registerId', id.toString());
-        return this.requestService.download(this.area, this.controller, methodName, '', { httpParams: params });
+        return this.requestService.downloadPost(this.area, this.controller, methodName, '', configurations, { httpParams: params });
     }
 
     public editPermit(permit: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<void> {
@@ -292,7 +299,12 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         });
     }
 
-    public editAndDownloadRegister(model: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<boolean> {
+    public editAndDownloadRegister(
+        model: CommercialFishingEditDTO,
+        pageCode: PageCodeEnum,
+        ignoreLogBookConflicts: boolean,
+        configurations: PrintConfigurationParameters
+    ): Observable<boolean> {
         let serviceMethod: string = '';
         let params: HttpParams | undefined;
 
@@ -314,7 +326,12 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
                 break;
         }
 
-        return this.requestService.downloadPost(this.area, this.controller, serviceMethod, '', model, {
+        const register: RegisterDTO<CommercialFishingEditDTO> = new RegisterDTO<CommercialFishingEditDTO>({
+            dto: model,
+            printConfiguration: configurations
+        });
+
+        return this.requestService.downloadPost(this.area, this.controller, serviceMethod, '', register, {
             properties: new RequestProperties({ asFormData: true }),
             httpParams: params
         });

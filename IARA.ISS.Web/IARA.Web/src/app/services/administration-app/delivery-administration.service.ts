@@ -2,12 +2,13 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { IDeliveryService } from '../../interfaces/common-app/delivery.interface';
+import { IDeliveryService } from '@app/interfaces/common-app/delivery.interface';
 import { ApplicationDeliveryDTO } from '@app/models/generated/dtos/ApplicationDeliveryDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { AreaTypes } from '@app/shared/enums/area-type.enum';
 import { RequestService } from '@app/shared/services/request.service';
-import { BaseAuditService } from '../common-app/base-audit.service';
+import { BaseAuditService } from '@app/services/common-app/base-audit.service';
+import { RequestProperties } from '@app/shared/services/request-properties';
 
 @Injectable({
     providedIn: 'root'
@@ -50,10 +51,17 @@ export class DeliveryAdministrationService extends BaseAuditService implements I
             .append('deliveryId', deliveryData.id!.toString())
             .append('sendEDelivery', sendEDelivery.toString());
 
-        return this.requestService.put(this.area, this.controller, 'UpdateDeliveryData', deliveryData, {
+        return this.requestService.post(this.area, this.controller, 'UpdateDeliveryData', deliveryData, {
             httpParams: params,
-            successMessage: 'succ-updated-delivery-data'
+            successMessage: 'succ-updated-delivery-data',
+            properties: new RequestProperties({
+                asFormData: true
+            })
         });
     }
 
+    public downloadFile(fileId: number): Observable<boolean> {
+        const params = new HttpParams().append('id', fileId.toString());
+        return this.requestService.download(this.area, this.controller, 'DownloadFile', '', { httpParams: params });
+    }
 }

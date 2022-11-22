@@ -1,10 +1,11 @@
-﻿import { Component, ContentChild, Input, OnInit, Optional, Self, TemplateRef } from '@angular/core';
+﻿import { Component, ContentChild, ElementRef, Input, OnInit, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { pairwise, startWith } from 'rxjs/operators';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
 import { BaseTLControl } from '../base-tl-control';
+import { TLCheckboxTemplateComponent } from './components/tl-checkbox-template/tl-checkbox-template.component';
 
 @Component({
     selector: 'tl-checkbox',
@@ -21,13 +22,12 @@ export class TLCheckboxComponent extends BaseTLControl implements OnInit {
     @Input()
     public value: boolean | undefined = undefined;
 
-    @ContentChild(TemplateRef)
-    public content: any | undefined;
+    @ContentChild(TLCheckboxTemplateComponent)
+    public checkboxTemplate: TLCheckboxTemplateComponent | undefined;
 
     public isIndeterminate: boolean = false;
 
-
-    constructor(@Self() @Optional() ngControl: NgControl, fuseTranslationService: FuseTranslationLoaderService, tlTranslatePipe: TLTranslatePipe) {
+    public constructor(@Self() @Optional() ngControl: NgControl, fuseTranslationService: FuseTranslationLoaderService, tlTranslatePipe: TLTranslatePipe) {
         super(ngControl, fuseTranslationService, tlTranslatePipe);
     }
 

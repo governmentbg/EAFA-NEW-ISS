@@ -23,6 +23,8 @@ import { SciFiPrintTypesEnum } from '@app/enums/sci-fi-print-types.enum';
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { ScientificFishingReasonNomenclatureDTO } from '@app/models/generated/dtos/ScientificFishingReasonNomenclatureDTO';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
+import { RegisterDTO } from '@app/models/generated/dtos/RegisterDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -102,9 +104,14 @@ export class ScientificFishingAdministrationService extends ApplicationsRegister
         });
     }
 
-    public addAndDownloadRegister(permit: ScientificFishingPermitEditDTO, printType: SciFiPrintTypesEnum): Observable<boolean> {
+    public addAndDownloadRegister(permit: ScientificFishingPermitEditDTO, printType: SciFiPrintTypesEnum, configurations: PrintConfigurationParameters): Observable<boolean> {
         const params: HttpParams = new HttpParams().append('printType', printType.toString());
-        return this.requestService.downloadPost(this.area, this.controller, 'AddAndDownloadRegister', '', permit, {
+        const registerDto: RegisterDTO<ScientificFishingPermitEditDTO> = new RegisterDTO<ScientificFishingPermitEditDTO>({
+            dto: permit,
+            printConfiguration: configurations
+        });
+
+        return this.requestService.downloadPost(this.area, this.controller, 'AddAndDownloadRegister', '', registerDto, {
             httpParams: params,
             properties: new RequestProperties({ asFormData: true })
         });
@@ -125,9 +132,14 @@ export class ScientificFishingAdministrationService extends ApplicationsRegister
         });
     }
 
-    public editAndDownloadRegister(permit: ScientificFishingPermitEditDTO, printType: SciFiPrintTypesEnum): Observable<boolean> {
+    public editAndDownloadRegister(permit: ScientificFishingPermitEditDTO, printType: SciFiPrintTypesEnum, configurations: PrintConfigurationParameters): Observable<boolean> {
         const params: HttpParams = new HttpParams().append('printType', printType.toString());
-        return this.requestService.downloadPost(this.area, this.controller, 'EditAndDownloadRegister', '', permit, {
+        const registerDto: RegisterDTO<ScientificFishingPermitEditDTO> = new RegisterDTO<ScientificFishingPermitEditDTO>({
+            dto: permit,
+            printConfiguration: configurations
+        });
+
+        return this.requestService.downloadPost(this.area, this.controller, 'EditAndDownloadRegister', '', registerDto, {
             httpParams: params,
             properties: new RequestProperties({ asFormData: true })
         });
@@ -143,12 +155,12 @@ export class ScientificFishingAdministrationService extends ApplicationsRegister
         return this.requestService.patch(this.area, this.controller, 'UndoDeletePermit', null, { httpParams: params });
     }
 
-    public downloadRegister(id: number, printType: SciFiPrintTypesEnum): Observable<boolean> {
+    public downloadRegister(id: number, printType: SciFiPrintTypesEnum, configurations: PrintConfigurationParameters): Observable<boolean> {
         const params: HttpParams = new HttpParams()
             .append('id', id.toString())
             .append('printType', printType.toString());
 
-        return this.requestService.download(this.area, this.controller, 'DownloadRegister', '', { httpParams: params, });
+        return this.requestService.downloadPost(this.area, this.controller, 'DownloadRegister', '', configurations, { httpParams: params, });
     }
 
     public addOuting(outing: ScientificFishingOutingDTO): Observable<number> {

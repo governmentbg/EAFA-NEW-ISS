@@ -1,0 +1,12 @@
+﻿<div class="dialog-padding" fxLayout="column" [formGroup]="form" fxLayoutGap="1em">
+    <tl-autocomplete formControlName="userControl"
+                     [options]="users"
+                     label="{{ 'print-configuration.user' | tlTranslate }}">
+    </tl-autocomplete>
+    <tl-checkbox formControlName="showOnlyMyTUControl"
+                 label="{{ 'print-configuration.show-only-from-my-territory-unit' | tlTranslate }}">
+    </tl-checkbox>
+    <tl-input formControlName="positionControl"
+              label="{{ 'print-configuration.position' | tlTranslate }}">
+    </tl-input>
+</div>

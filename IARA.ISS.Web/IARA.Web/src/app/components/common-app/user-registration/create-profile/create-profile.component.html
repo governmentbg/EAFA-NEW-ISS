@@ -73,9 +73,11 @@
             </mat-accordion>
             <div class="terms" fxLayout="row" fxLayoutAlign="center top">
                 <tl-checkbox formControlName="termsAndConditionsCheckbox">
-                    <span class="multi-line">
-                        {{ 'user-registration.familiar-with-and-accept' | tlTranslate }}<a target="_blank" [routerLink]="termsAndConditionsPageUrl" style="padding-top: 2px;">{{ 'user-registration.terms-and-conditions' | tlTranslate }}</a>
-                    </span>
+                    <tl-checkbox-template>
+                        <span class="multi-line">
+                            {{ 'user-registration.familiar-with-and-accept' | tlTranslate }}<a target="_blank" href="" [routerLink]="termsAndConditionsPageUrl" style="padding-top: 2px;">{{ 'user-registration.terms-and-conditions' | tlTranslate }}</a>
+                        </span>
+                    </tl-checkbox-template>
                 </tl-checkbox>
             </div>
             <div fxLayout="row" fxFlex="100" fxLayoutAlign="center center">

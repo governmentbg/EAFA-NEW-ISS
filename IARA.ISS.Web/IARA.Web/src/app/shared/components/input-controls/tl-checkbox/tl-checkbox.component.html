@@ -6,8 +6,8 @@
                   [disableRipple]="readonly"
                   (click)="onCheckboxClicked($event)">
         <div class="checkbox-row">
-            <ng-content></ng-content>
-            <div *ngIf="!content">{{ label }}</div>
+            <ng-content *ngIf="checkboxTemplate" select="tl-checkbox-template"></ng-content>
+            <div *ngIf="!checkboxTemplate">{{ label }}</div>
             <tl-help [tooltipResource]="tooltipResourceName" style="transform: translate(-10px, -10px) !important;"></tl-help>
         </div>
     </mat-checkbox>
@@ -17,8 +17,8 @@
                       [disbaleRipple]="readonly"
                       (click)="onCheckboxClicked($event)">
             <div class="checkbox-row">
-                <ng-content></ng-content>
-                <div *ngIf="!content">{{ label }}</div>
+                <ng-content *ngIf="checkboxTemplate" select="tl-checkbox-template"></ng-content>
+                <div *ngIf="!checkboxTemplate">{{ label }}</div>
                 <tl-help [tooltipResource]="tooltipResourceName" style="transform: translate(-10px, -10px) !important;"></tl-help>
             </div>
         </mat-checkbox>

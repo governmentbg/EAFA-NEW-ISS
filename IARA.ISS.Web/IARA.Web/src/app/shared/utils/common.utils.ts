@@ -49,27 +49,48 @@ export class CommonUtils {
     }
 
     public static sanitizeModelStrings<T>(model: any, trim: boolean = true): T {
-        const keys = Object.keys(model);
-
-        for (const property of keys) {
-            if (model[property] === '') {
-                model[property] = null;
-            }
-            else if (trim && typeof model[property] === 'string') {
-                model[property] = (model[property] as string)?.trim();
-            }
-            else if (model[property] instanceof Date) {
-                const date: Date = model[property] as Date;
-                if (date.getTime() < DateUtils.MIN_DATE.getTime()) {
-                    model[property] = null;
+        if ((model !== null && model !== undefined && typeof model === 'object')) {
+            const keys = Object.keys(model);
+            
+            for (const property of keys) {
+                if (model[property] !== null && model[property] !== undefined && Array.isArray(model[property])) {
+                    for (const item of model[property]) {
+                        this.sanitizeModelStrings(item, trim);
+                    }
                 }
-                else if (date.getTime() > DateUtils.MAX_DATE.getTime()) {
-                    model[property] = null;
+                else if (model[property] !== null && model[property] !== undefined && typeof model[property] === 'object') {
+                    model[property] = this.sanitizeModelStrings(model[property], trim);
+                }
+                else {
+                    model[property] = CommonUtils.sanitizeSimpleModelStings(model[property], trim);
                 }
             }
         }
+        else {
+            model = CommonUtils.sanitizeSimpleModelStings(model, trim);
+        }
 
         return model as T;
+    }
+
+    private static sanitizeSimpleModelStings<T>(item: any, trim: boolean): T {
+        if (item === '') {
+            item = null;
+        }
+        else if (trim && typeof item === 'string') {
+            item = (item as string)?.trim();
+        }
+        else if (item instanceof Date) {
+            const date: Date = item as Date;
+            if (date.getTime() < DateUtils.MIN_DATE.getTime()) {
+                item = null;
+            }
+            else if (date.getTime() > DateUtils.MAX_DATE.getTime()) {
+                item = null;
+            }
+        }
+
+        return item;
     }
 
     public static isNomenclature<T>(obj: NomenclatureDTO<T> | string): obj is NomenclatureDTO<T> {
