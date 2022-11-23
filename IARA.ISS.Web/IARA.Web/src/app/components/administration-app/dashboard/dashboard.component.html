@@ -1,5 +1,6 @@
 ﻿<div fxFlex="100" fxLayout="column">
     <div *ngIf="hasAnyApplicationsReadPermission || hasApplicationsProcessingPermission">
+        <!-- Заявления -->
         <tl-expansion-panel title="{{ 'dashboard.applications-table-label' | tlTranslate }}"
                             tooltipResourceName="dashboard.applications-table-label-helper">
             <search-panel [translateService]="translate">
@@ -67,9 +68,6 @@
                                 [processingPermissions]="applicationProcessingHasPermissions"
                                 [recordsPerPage]="5">
             </applications-table>
-
-
-
             <apx-chart *ngIf="applicationChartOptions !== undefined"
                        [series]="applicationChartOptions.series"
                        [chart]="applicationChartOptions.chart"
@@ -85,7 +83,12 @@
         <tl-expansion-panel title="{{ 'dashboard.reference-label' | tlTranslate }}"
                             tooltipResourceName="dashboard.reference-label-helper">
             <div class="cards" fxLayout="row wrap" fxLayoutGap="1em" fxLayoutAlign="start center">
-                <dashboard-card [data]="type" fxFlex="24" fxFlex.lg="32" fxFlex.lt-lg="46" fxFlex.lt-md="100" *ngFor="let type of typesCountReports">
+                <dashboard-card [data]="type" 
+                                fxFlex="24" 
+                                fxFlex.lg="32" 
+                                fxFlex.lt-lg="46" 
+                                fxFlex.lt-md="100" 
+                                *ngFor="let type of typesCountReports">
                 </dashboard-card>
             </div>
         </tl-expansion-panel>
@@ -94,12 +97,12 @@
     <div *ngIf="hasTicketsReadPermission">
         <tl-expansion-panel title="{{ 'dashboard.tickets-table-label' | tlTranslate }}"
                             tooltipResourceName="dashboard.tickets-table-label-helper">
+            <!-- Билети -->
             <recreational-fishing-applications-content [isDashboardMode]="true"
                                                        [getAllServiceMethod]="service.getAllTicketApplications.bind(service)"
                                                        [recordsPerPage]="5"
                                                        [service]="recreationalFishingService">
             </recreational-fishing-applications-content>
-
             <apx-chart *ngIf="ticketChartOptions !== undefined"
                        [series]="ticketChartOptions.series"
                        [chart]="ticketChartOptions.chart"
@@ -115,7 +118,12 @@
         <tl-expansion-panel title="{{ 'dashboard.ticket-reference-label' | tlTranslate }}"
                             tooltipResourceName="dashboard.ticket-reference-label-helper">
             <div class="cards" fxLayout="row wrap" fxLayoutGap="1em" fxLayoutAlign="start center">
-                <dashboard-card [data]="type" fxFlex="24" fxFlex.lg="32" fxFlex.lt-lg="46" fxFlex.lt-md="100" *ngFor="let type of ticketTypesCountReports">
+                <dashboard-card [data]="type" 
+                                fxFlex="24" 
+                                fxFlex.lg="32" 
+                                fxFlex.lt-lg="46" 
+                                fxFlex.lt-md="100" 
+                                *ngFor="let type of ticketTypesCountReports">
                 </dashboard-card>
             </div>
         </tl-expansion-panel>

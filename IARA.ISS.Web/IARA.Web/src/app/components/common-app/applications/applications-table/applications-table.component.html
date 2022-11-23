@@ -212,6 +212,12 @@
                                 tooltipText="{{ 'applications-register.view-application' | tlTranslate }}"
                                 (buttonClicked)="openApplicationInViewMode(row.data)">
                 </tl-icon-button>
+                <tl-icon-button *ngIf="row.data.isActive && (pageType === 'DashboardPage' || pageType === 'FileInPage')"
+                                icon="search"
+                                (buttonClicked)="showApplication(row.data)"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'applications-register.show-application' | tlTranslate }}">
+                </tl-icon-button>
                 <tl-icon-button *ngIf="row.data.isActive && processingPermissions.get(row.data.pageCode)?.canDeleteRecords"
                                 icon="delete"
                                 (buttonClicked)="deleteApplication(row.data)"
@@ -223,12 +229,6 @@
                                 (buttonClicked)="restoreApplication(row.data)"
                                 iconClass="accent-color"
                                 tooltipText="{{ 'applications-register.restore-application' | tlTranslate }}">
-                </tl-icon-button>
-                <tl-icon-button *ngIf="pageType === 'DashboardPage'"
-                                icon="search"
-                                (buttonClicked)="showApplication(row.data)"
-                                iconClass="accent-color"
-                                tooltipText="{{ 'applications-register.show-application' | tlTranslate }}">
                 </tl-icon-button>
             </div>
         </ng-template>
