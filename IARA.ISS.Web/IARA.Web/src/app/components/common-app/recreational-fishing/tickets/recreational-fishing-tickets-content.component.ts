@@ -31,7 +31,7 @@ import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dt
 import { ErrorModel } from '@app/models/common/exception.model';
 import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { RequestProperties } from '@app/shared/services/request-properties';
-import { EgnLncDTO } from '../../../../models/generated/dtos/EgnLncDTO';
+import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 
 @Component({
     selector: 'recreational-fishing-tickets-content',
@@ -712,9 +712,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     }
 
     private ticketsSavedHandler(print: boolean): void {
-        if (this.totalPrice > 0) {
-            this.showPaymentStep = true;
-        }
+        this.showPaymentStep = this.totalPrice > 0;
 
         this.ticketsSaved = true;
         this.unsubscribeOnDataChange();

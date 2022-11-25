@@ -40,7 +40,14 @@ export class NotificationComponent {
     public navigate(): void {
         if (this.notification.url && this.notification.url.length !== 0) {
             if (this.notification.url.startsWith('/')) {
-                this.router.navigateByUrl(this.notification.url);
+                const url: string = this.notification.url.split('?')[0];
+                const tableId: string | undefined = this.notification.url.split('?')[1]?.split('&')?.find(x => x.startsWith('tableId'))?.split('=')[1];
+                if (tableId) {
+                    this.router.navigateByUrl(url, { state: { tableId: Number(tableId) } });
+                }
+                else {
+                    this.router.navigateByUrl(this.notification.url);
+                }
             }
             else {
                 window.location.href = this.notification.url;
@@ -50,6 +57,9 @@ export class NotificationComponent {
             switch (this.notification.pageCode) {
                 case PageCodeEnum.AquaFarmReg:
                     this.router.navigateByUrl('/aquaculture-farms', { state: { tableId: this.notification.tableId } });
+                    break;
+                case PageCodeEnum.AuanRegister:
+                    this.router.navigateByUrl('/auan-register', { state: { tableId: this.notification.tableId } });
                     break;
             }
         }

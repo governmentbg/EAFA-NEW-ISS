@@ -22,6 +22,8 @@ import { ValidityCheckerDirective } from '@app/shared/directives/validity-checke
 })
 export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipWithPersonnelModel> implements OnInit, OnChanges {
 
+    private readonly translate: FuseTranslationLoaderService;
+
     @Output()
     public shipSelected: EventEmitter<VesselDuringInspectionDTO> = new EventEmitter<VesselDuringInspectionDTO>();
 
@@ -71,6 +73,7 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
         this.shipLabel = translate.getValue('inspections.ship-data');
 
         this.service = service;
+        this.translate = translate;
 
         this.onMarkAsTouched.subscribe({
             next: () => {
@@ -169,6 +172,49 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
 
         // nomenclature value is Person.ID (this is for removing duplicates)
         this.representatives = persons.filter((f, index) => persons.findIndex(s => s.value === f.value) === index);
+
+        for (let i = 0; i < this.representatives.length; i++) {
+            const rep = this.representatives[i];
+
+            let typeName = '';
+
+            switch (rep.type!) {
+                case InspectedPersonTypeEnum.ReprsPers:
+                    typeName = this.translate.getValue('inspections.ship-representative');
+                    break;
+                case InspectedPersonTypeEnum.ActualOwn:
+                case InspectedPersonTypeEnum.OwnerBuyer:
+                case InspectedPersonTypeEnum.OwnerLegal:
+                case InspectedPersonTypeEnum.OwnerPers:
+                    typeName = this.translate.getValue('inspections.ship-owner');
+                    break;
+                case InspectedPersonTypeEnum.CaptFshmn:
+                    typeName = this.translate.getValue('inspections.ship-captain');
+                    break;
+                case InspectedPersonTypeEnum.LicUsrLgl:
+                case InspectedPersonTypeEnum.LicUsrPers:
+                    typeName = this.translate.getValue('inspections.ship-user');
+                    break;
+            }
+
+            this.representatives[i] = new InspectionShipSubjectNomenclatureDTO({
+                address: rep.address,
+                code: rep.code,
+                countryId: rep.countryId,
+                description: rep.description,
+                displayName: rep.displayName + ` (${typeName})`,
+                egnLnc: rep.egnLnc,
+                eik: rep.eik,
+                entryId: rep.entryId,
+                firstName: rep.firstName,
+                isActive: rep.isActive,
+                isLegal: rep.isLegal,
+                lastName: rep.lastName,
+                middleName: rep.middleName,
+                type: rep.type,
+                value: rep.value
+            });
+        }
 
         this.captains = personnel.filter(f => f.type === InspectedPersonTypeEnum.CaptFshmn);
     }

@@ -14,6 +14,7 @@ export class AuanRegisterFilters extends BaseRequestModel {
     }
 
     
+    public id: number | undefined;
     public auanNum: string | undefined;
     public drafterId: number | undefined;
     public drafterName: string | undefined;
