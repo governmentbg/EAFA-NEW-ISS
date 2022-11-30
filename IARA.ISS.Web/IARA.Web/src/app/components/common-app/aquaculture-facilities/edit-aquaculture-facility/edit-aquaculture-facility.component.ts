@@ -2021,7 +2021,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
             saveBtn: {
                 id: 'save',
                 color: 'error',
-                translateValue: 'aquacultures.overlapping-log-books-save-despite-conflicts'
+                translateValue: 'catches-and-sales.overlapping-log-books-save-despite-conflicts'
             }
         }, '1300px').subscribe({
             next: (save: boolean | undefined) => {

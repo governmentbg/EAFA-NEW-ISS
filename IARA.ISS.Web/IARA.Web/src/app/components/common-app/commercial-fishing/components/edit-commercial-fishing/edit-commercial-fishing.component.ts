@@ -1320,14 +1320,21 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     }
 
     private setResultToApplicationModelData(result: CommercialFishingApplicationEditDTO): void {
+        const originalPaymentInformation = (this.model as CommercialFishingApplicationEditDTO).paymentInformation; // save payment information
+        const originalIsPaid: boolean = (this.model as CommercialFishingApplicationEditDTO).isPaid ?? false;
+        const originalHasDelivery: boolean = (this.model as CommercialFishingApplicationEditDTO).hasDelivery ?? false;
+
         this.model = result;
+
+        (this.model as CommercialFishingApplicationEditDTO).paymentInformation = originalPaymentInformation;
+        (this.model as CommercialFishingApplicationEditDTO).isPaid = originalIsPaid;
+        (this.model as CommercialFishingApplicationEditDTO).hasDelivery = originalHasDelivery;
 
         if (this.model instanceof CommercialFishingApplicationEditDTO) {
             this.model.pageCode = this.pageCode;
             this.model.applicationId = this.applicationId;
 
             this.hasDelivery = this.model.hasDelivery ?? false;
-            this.isPaid = this.model.isPaid ?? false;
             this.isOnlineApplication = this.model.isOnlineApplication!;
         }
 
@@ -2387,7 +2394,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 saveBtn: {
                     id: 'save',
                     color: 'error',
-                    translateValue: 'commercial-fishing.overlapping-log-books-save-despite-conflicts'
+                    translateValue: 'catches-and-sales.overlapping-log-books-save-despite-conflicts'
                 }
             }, '1300px').subscribe({
                 next: (save: boolean | undefined) => {

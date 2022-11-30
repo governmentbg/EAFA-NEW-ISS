@@ -1286,7 +1286,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                 saveBtn: {
                     id: 'save',
                     color: 'error',
-                    translateValue: 'buyers-and-sales-centers.overlapping-log-books-save-despite-conflicts'
+                    translateValue: 'catches-and-sales.overlapping-log-books-save-despite-conflicts'
                 }
             }, '1300px').subscribe({
                 next: (save: boolean | undefined) => {

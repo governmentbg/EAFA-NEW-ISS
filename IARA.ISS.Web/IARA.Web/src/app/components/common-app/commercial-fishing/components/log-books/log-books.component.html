@@ -10,7 +10,8 @@
                    (activeRecordChanged)="addEditLogBook($event)">
         <div *ngIf="logBookGroup === logBookGroupsEnum.Ship 
                     && permitLicenseId !== null 
-                    && permitLicenseId !== undefined" 
+                    && permitLicenseId !== undefined
+                    && !isReadonly" 
              datatable-add-buttons 
              fxLayout="row" 
              fxLayoutGap="1em">

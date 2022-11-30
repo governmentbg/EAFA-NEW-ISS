@@ -52,6 +52,10 @@ import { LogBookGroupsEnum } from '@app/enums/log-book-groups.enum';
 import { CommercialFishingLogbookRegisterDTO } from '@app/models/generated/dtos/CommercialFishingLogbookRegisterDTO';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
+import { LogBookPagePersonTypesEnum } from '@app/enums/log-book-page-person-types.enum';
+import { ChooseLogBookForRenewalComponent } from '@app/components/common-app/commercial-fishing/components/log-books/components/choose-log-book-for-renewal/choose-log-book-for-renewal.component';
+import { ChooseLogBookForRenewalDialogParams } from '@app/components/common-app/commercial-fishing/components/log-books/models/choose-log-book-for-renewal-dialog-params.model';
+import { LogBookForRenewalDTO } from '@app/models/generated/dtos/LogBookForRenewalDTO';
 
 type ThreeState = 'yes' | 'no' | 'both';
 
@@ -95,6 +99,12 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
     public readonly hasPermitsReadAllPermission: boolean;
     public readonly hasPermitLicenseReadAllPermission: boolean;
 
+    public readonly canReadLogBooks: boolean;
+    public readonly canAddLogBooks: boolean;
+    public readonly canEditLogBooks: boolean;
+    public readonly canDeleteLogBooks: boolean;
+    public readonly canRestoreLogBooks: boolean;
+
     @ViewChild(SearchPanelComponent)
     private searchpanel!: SearchPanelComponent;
 
@@ -110,6 +120,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
     private readonly chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
     private readonly deliveryDialog: TLMatDialog<RegisterDeliveryComponent>;
     private readonly snackbar: MatSnackBar;
+    private readonly chooseLogBookForRenewalDialog: TLMatDialog<ChooseLogBookForRenewalComponent>;
     private gridManager!: DataTableManager<CommercialFishingPermitRegisterDTO, CommercialFishingRegisterFilters>;
 
     public constructor(
@@ -123,7 +134,8 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         deliveryService: DeliveryAdministrationService,
         commonNomenclatures: CommonNomenclatures,
         logBookDialog: TLMatDialog<EditLogBookComponent>,
-        snackbar: MatSnackBar
+        snackbar: MatSnackBar,
+        chooseLogBookForRenewalDialog: TLMatDialog<ChooseLogBookForRenewalComponent>
     ) {
         this.translationService = translationService;
         this.confirmDialog = confirmDialog;
@@ -135,6 +147,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         this.nomenclatures = commonNomenclatures;
         this.logBookDialog = logBookDialog;
         this.snackbar = snackbar;
+        this.chooseLogBookForRenewalDialog = chooseLogBookForRenewalDialog;
 
         this.canReadPermitRecords = permissions.has(PermissionsEnum.CommercialFishingPermitRegisterRead);
         this.canAddPermitRecords = permissions.has(PermissionsEnum.CommercialFishingPermitRegisterAddRecords);
@@ -150,6 +163,12 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
 
         this.hasPermitsReadAllPermission = permissions.has(PermissionsEnum.CommercialFishingPermitRegisterReadAll);
         this.hasPermitLicenseReadAllPermission = permissions.has(PermissionsEnum.CommercialFishingPermitLicenseRegisterReadAll);
+
+        this.canReadLogBooks = permissions.has(PermissionsEnum.PermitLicenseLogBookRead);
+        this.canAddLogBooks = permissions.has(PermissionsEnum.PermitLicenseLogBookAdd);
+        this.canEditLogBooks = permissions.has(PermissionsEnum.PermitLicenseLogBookEdit);
+        this.canDeleteLogBooks = permissions.has(PermissionsEnum.PermitLicenseLogBookDelete);
+        this.canRestoreLogBooks = permissions.has(PermissionsEnum.PermitLicenseLogBookRestore);
 
         this.buildForm();
     }
@@ -547,7 +566,45 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         });
     }
 
-    public editLogBook(logBook: CommercialFishingLogbookRegisterDTO, viewMode: boolean = false): void {
+    public addLogBook(permitLicense: CommercialFishingPermitLicenseRegisterDTO): void {
+        const title: string = this.translationService.getValue('commercial-fishing.add-log-book-title');
+        
+        const data: EditLogBookDialogParamsModel = new EditLogBookDialogParamsModel({
+            logBookGroup: LogBookGroupsEnum.Ship,
+            isOnline: permitLicense.isForOnlineLogBooks,
+            ownerType: permitLicense.isSubmittedForPerson ? LogBookPagePersonTypesEnum.Person : LogBookPagePersonTypesEnum.LegalPerson,
+            isForPermitLicense: true,
+            registerId: permitLicense.id,
+            service: this.service as CommercialFishingAdministrationService
+        });
+
+        this.openLogBookDialog(title, data, undefined, false);
+    }
+
+    public addLogBookFromOldPermitLicense(permitLicenseId: number): void {
+        const dialog = this.chooseLogBookForRenewalDialog.openWithTwoButtons({
+            title: this.translationService.getValue('catches-and-sales.choose-log-book-for-renewal-title'),
+            componentData: new ChooseLogBookForRenewalDialogParams({
+                permitLicenseId: permitLicenseId,
+                service: this.service as CommercialFishingAdministrationService
+            }),
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            translteService: this.translationService,
+            TCtor: ChooseLogBookForRenewalComponent
+        }, '1500px');
+
+        dialog.subscribe({
+            next: (chosenLogBooks: LogBookForRenewalDTO[] | undefined) => {
+                if (chosenLogBooks !== null && chosenLogBooks !== undefined && chosenLogBooks.length > 0) {
+                    this.gridManager.refreshData();
+                }
+            }
+        });
+    }
+
+    public editLogBook(permitLicenseId: number, logBook: CommercialFishingLogbookRegisterDTO, viewMode: boolean = false): void {
         let title: string = '';
 
         if (viewMode) {
@@ -558,7 +615,9 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         }
 
         const data: EditLogBookDialogParamsModel = new EditLogBookDialogParamsModel({
-            permitLicenseLogBookId: logBook.id,
+            logBookPermitLicenseId: logBook.id,
+            registerId: permitLicenseId,
+            logBookId: logBook.logbookId,
             service: this.service as CommercialFishingAdministrationService,
             readOnly: viewMode,
             logBookGroup: LogBookGroupsEnum.Ship,
@@ -573,26 +632,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             tableName: 'LogBook'
         };
 
-        const dialog = this.logBookDialog.openWithTwoButtons({
-            title: title,
-            TCtor: EditLogBookComponent,
-            headerAuditButton: headerAuditBtn,
-            headerCancelButton: {
-                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
-            },
-            componentData: data,
-            translteService: this.translationService,
-            disableDialogClose: true,
-            viewMode: viewMode
-        }, '1200px');
-
-        dialog.subscribe({
-            next: (result: LogBookEditDTO | undefined) => {
-                if (result !== null && result !== undefined) {
-                    this.gridManager.refreshData();
-                }
-            }
-        });
+        this.openLogBookDialog(title, data, headerAuditBtn, viewMode);
     }
 
     public deleteLogBook(logBookRegister: CommercialFishingLogbookRegisterDTO, permitLicense: CommercialFishingPermitLicenseRegisterDTO,): void {
@@ -634,6 +674,29 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
                             this.gridManager.refreshData();
                         }
                     });
+                }
+            }
+        });
+    }
+
+    private openLogBookDialog(title: string, data: EditLogBookDialogParamsModel, headerAuditBtn: IHeaderAuditButton | undefined, viewMode: boolean): void {
+        const dialog = this.logBookDialog.openWithTwoButtons({
+            title: title,
+            TCtor: EditLogBookComponent,
+            headerAuditButton: headerAuditBtn,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            componentData: data,
+            translteService: this.translationService,
+            disableDialogClose: true,
+            viewMode: viewMode
+        }, '1200px');
+
+        dialog.subscribe({
+            next: (result: LogBookEditDTO | undefined) => {
+                if (result !== null && result !== undefined) {
+                    this.gridManager.refreshData();
                 }
             }
         });

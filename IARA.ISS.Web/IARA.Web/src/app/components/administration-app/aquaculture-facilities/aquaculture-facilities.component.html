@@ -231,6 +231,80 @@
                     </div>
                 </ng-template>
             </data-template-column>
+            <!-- Детайлен ред с дневници към стопанство -->
+            <row-detail *ngIf="canReadLogBooks">
+                <ng-template let-row="row" ngx-datatable-row-detail-template>
+                    <tl-card>
+                        <tl-card-title>{{ 'aquacultures.log-books-list-card-title' | tlTranslate }}</tl-card-title>
+                        <tl-card-content>
+                            <tl-data-table [isRemote]="false"
+                                           [isSoftDeletable]="true"
+                                           [showInactiveRecords]="canRestoreLogBooks"
+                                           [showAddButton]="canAddLogBooks"
+                                           [recordsPerPage]="logBooksPerPage"
+                                           [rows]="row.data.logBooks"
+                                           (addButtonClicked)="addLogBook(row.data)">
+                                <data-column propertyName="number"
+                                             [flexRate]="0.2"
+                                             columnName="{{ 'aquacultures.log-book-number' | tlTranslate }}">
+                                </data-column>
+                                <data-column propertyName="issueDate"
+                                             [flexRate]="0.2"
+                                             dataType="date"
+                                             columnName="{{ 'aquacultures.log-book-issue-date' | tlTranslate }}">
+                                </data-column>
+                                <data-column propertyName="finishDate"
+                                             [flexRate]="0.2"
+                                             dataType="date"
+                                             columnName="{{ 'aquacultures.log-book-finish-date' | tlTranslate }}">
+                                </data-column>
+                                <data-column propertyName="statusName"
+                                             [flexRate]="0.2"
+                                             columnName="{{ 'aquacultures.log-book-status' | tlTranslate }}">
+                                </data-column>
+                                <data-column propertyName="startPageNumber"
+                                             [flexRate]="0.3"
+                                             columnName="{{ 'aquacultures.log-book-start-page-number' | tlTranslate }}">
+                                </data-column>
+                                <data-column propertyName="endPageNumber"
+                                             [flexRate]="0.3"
+                                             columnName="{{ 'aquacultures.log-book-end-page-number' | tlTranslate }}">
+                                </data-column>
+                                <data-template-column [flexRate]="0.3">
+                                    <ng-template let-logBook="row" ngx-datatable-cell-template>
+                                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                            <tl-icon-button *ngIf="canReadLogBooks"
+                                                            icon="visibility"
+                                                            (buttonClicked)="editLogBook(row.data.id, logBook.data, true)"
+                                                            iconClass="accent-color"
+                                                            tooltipText="{{ 'aquacultures.view-log-book' | tlTranslate }}">
+                                            </tl-icon-button>
+                                            <tl-icon-button *ngIf="logBook.data.isActive && canEditLogBooks"
+                                                            icon="edit"
+                                                            (buttonClicked)="editLogBook(row.data.id, logBook.data)"
+                                                            iconClass="accent-color"
+                                                            tooltipText="{{ 'aquacultures.edit-log-book' | tlTranslate }}">
+                                            </tl-icon-button>
+                                            <tl-icon-button *ngIf="logBook.data.isActive && canDeleteLogBooks"
+                                                            icon="delete"
+                                                            (buttonClicked)="deleteLogBook(logBook.data, row)"
+                                                            iconClass="accent-color"
+                                                            tooltipText="{{ 'aquacultures.delete-log-book' | tlTranslate }}">
+                                            </tl-icon-button>
+                                            <tl-icon-button *ngIf="!logBook.data.isActive && canRestoreLogBooks"
+                                                            icon="restore"
+                                                            (buttonClicked)="restoreLogBook(logBook.data, row)"
+                                                            iconClass="accent-color"
+                                                            tooltipText="{{ 'aquacultures.restore-log-book' | tlTranslate }}">
+                                            </tl-icon-button>
+                                        </div>
+                                    </ng-template>
+                                </data-template-column>
+                            </tl-data-table>
+                        </tl-card-content>
+                    </tl-card>
+                </ng-template>
+            </row-detail>
         </tl-data-table>
     </mat-card>
 </div>

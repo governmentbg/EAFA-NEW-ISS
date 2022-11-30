@@ -139,9 +139,9 @@ namespace IARA.Mobile.Pub
             };
 
             CrossFirebasePushNotification.Current.OnNotificationError += (s, p) =>
-           {
+            {
                Debug.WriteLine("OnNotificationError");
-           };
+            };
 
 
             IsAppInTray = false;

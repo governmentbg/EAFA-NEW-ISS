@@ -157,12 +157,12 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
             filtersMapper: this.mapFilters.bind(this)
         });
 
+        const filters: AuanRegisterFilters = new AuanRegisterFilters();
+
         if (window.history.state) {
             const tableId: number | undefined = window.history.state.tableId;
             const isPerson: boolean | undefined = window.history.state.isPerson;
             const id: number | undefined = window.history.state.id;
-
-            const filters: AuanRegisterFilters = new AuanRegisterFilters();
 
             if (tableId !== undefined && tableId !== null) {
                 filters.id = tableId;
@@ -176,10 +176,13 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
                     filters.legalId = id;
                 }
             }
-
-            this.grid.advancedFilters = filters;
         }
- 
+
+        if (this.inspectionId !== null && this.inspectionId !== undefined) {
+            filters.inspectionId = this.inspectionId;
+        }
+
+        this.grid.advancedFilters = filters;
         this.grid.refreshData();
     }
 

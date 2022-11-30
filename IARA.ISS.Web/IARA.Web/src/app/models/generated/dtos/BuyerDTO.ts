@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { LogBookDetailDTO } from './LogBookDetailDTO';
 import { BuyerStatusesEnum } from '@app/enums/buyer-statuses.enum';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 
@@ -47,4 +48,7 @@ export class BuyerDTO {
 
     @StrictlyTyped(String)
     public comments?: string;
+
+    @StrictlyTyped(LogBookDetailDTO)
+    public logBooks?: LogBookDetailDTO[];
 }

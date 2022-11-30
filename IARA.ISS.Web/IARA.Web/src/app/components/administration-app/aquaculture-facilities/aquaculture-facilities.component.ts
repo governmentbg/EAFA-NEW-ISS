@@ -1,5 +1,7 @@
 ﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { IAquacultureFacilitiesService } from '@app/interfaces/common-app/aquaculture-facilities.interface';
@@ -40,6 +42,13 @@ import { RegisterDeliveryDialogParams } from '@app/shared/components/register-de
 import { ApplicationDeliveryDTO } from '@app/models/generated/dtos/ApplicationDeliveryDTO';
 import { IDeliveryService } from '@app/interfaces/common-app/delivery.interface';
 import { DeliveryAdministrationService } from '@app/services/administration-app/delivery-administration.service';
+import { EditLogBookDialogParamsModel } from '@app/components/common-app/commercial-fishing/components/log-books/models/edit-log-book-dialog-params.model';
+import { LogBookGroupsEnum } from '@app/enums/log-book-groups.enum';
+import { LogBookEditDTO } from '@app/models/generated/dtos/LogBookEditDTO';
+import { LogBookRegisterDTO } from '@app/models/generated/dtos/LogBookRegisterDTO';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { RequestProperties } from '@app/shared/services/request-properties';
+import { EditLogBookComponent } from '@app/components/common-app/commercial-fishing/components/edit-log-book/edit-log-book.component';
 
 @Component({
     selector: 'aquaculture-facilities',
@@ -67,8 +76,14 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
     public readonly canDeleteRecords: boolean;
     public readonly canRestoreRecords: boolean;
     public readonly canCancelAquacultures: boolean;
-
     public readonly hasReadAllPermission: boolean;
+
+    public readonly logBooksPerPage: number = 10;
+    public readonly canReadLogBooks: boolean;
+    public readonly canEditLogBooks: boolean;
+    public readonly canDeleteLogBooks: boolean;
+    public readonly canAddLogBooks: boolean;
+    public readonly canRestoreLogBooks: boolean;
 
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
@@ -76,14 +91,17 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
     @ViewChild(SearchPanelComponent)
     private searchpanel!: SearchPanelComponent;
 
-    private service: IAquacultureFacilitiesService;
-    private deliveryService: IDeliveryService;
-    private nomenclatures: CommonNomenclatures;
     private grid!: DataTableManager<AquacultureFacilityDTO, AquacultureFacilitiesFilters>;
-    private editDialog: TLMatDialog<EditAquacultureFacilityComponent>;
-    private chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
-    private deliveryDialog: TLMatDialog<RegisterDeliveryComponent>;
-    private confirmDialog: TLConfirmDialog;
+
+    private readonly service: IAquacultureFacilitiesService;
+    private readonly deliveryService: IDeliveryService;
+    private readonly nomenclatures: CommonNomenclatures;
+    private readonly editDialog: TLMatDialog<EditAquacultureFacilityComponent>;
+    private readonly chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
+    private readonly deliveryDialog: TLMatDialog<RegisterDeliveryComponent>;
+    private readonly confirmDialog: TLConfirmDialog;
+    private readonly snackbar: MatSnackBar;
+    private readonly logBookDialog: TLMatDialog<EditLogBookComponent>;
 
     public constructor(
         translate: FuseTranslationLoaderService,
@@ -94,7 +112,9 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
         chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>,
         deliveryDialog: TLMatDialog<RegisterDeliveryComponent>,
         confirmDialog: TLConfirmDialog,
-        permissions: PermissionsService
+        permissions: PermissionsService,
+        snackbar: MatSnackBar,
+        logBookDialog: TLMatDialog<EditLogBookComponent>
     ) {
         this.translate = translate;
         this.service = service;
@@ -104,13 +124,20 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
         this.chooseApplicationDialog = chooseApplicationDialog;
         this.deliveryDialog = deliveryDialog;
         this.confirmDialog = confirmDialog;
+        this.snackbar = snackbar;
+        this.logBookDialog = logBookDialog;
 
         this.canEditRecords = permissions.has(PermissionsEnum.AquacultureFacilitiesEditRecords);
         this.canDeleteRecords = permissions.has(PermissionsEnum.AquacultureFacilitiesDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.AquacultureFacilitiesRestoreRecords);
         this.canCancelAquacultures = permissions.has(PermissionsEnum.AquacultureFacilitiesCancel);
-
         this.hasReadAllPermission = permissions.has(PermissionsEnum.AquacultureFacilitiesReadAll);
+
+        this.canReadLogBooks = permissions.has(PermissionsEnum.AquacultureLogBook1Read);
+        this.canAddLogBooks = permissions.has(PermissionsEnum.AquacultureLogBookAdd);
+        this.canEditLogBooks = permissions.has(PermissionsEnum.AquacultureLogBookEdit);
+        this.canDeleteLogBooks = permissions.has(PermissionsEnum.AquacultureLogBookDelete);
+        this.canRestoreLogBooks = permissions.has(PermissionsEnum.AquacultureLogBookRestore);
 
         this.buildForm();
     }
@@ -412,6 +439,117 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
         }, '1200px').subscribe({
             next: (model: ApplicationDeliveryDTO | undefined) => {
                 if (model !== undefined) {
+                    this.grid.refreshData();
+                }
+            }
+        });
+    }
+
+    public addLogBook(aquacultureFacility: AquacultureFacilityDTO): void {
+        const title: string = this.translate.getValue('aquacultures.add-log-book-title');
+
+        const data: EditLogBookDialogParamsModel = new EditLogBookDialogParamsModel({
+            logBookGroup: LogBookGroupsEnum.Aquaculture,
+            isOnline: false,
+            isForPermitLicense: false,
+            registerId: aquacultureFacility.id,
+            service: this.service as AquacultureFacilitiesAdministrationService
+        });
+
+        this.openLogBookDialog(title, data, undefined, false);
+    }
+
+    public editLogBook(aqucultureFacilityId: number, logBook: LogBookRegisterDTO, viewMode: boolean = false): void {
+        let title: string = '';
+
+        if (viewMode) {
+            title = this.translate.getValue('aquacultures.view-log-book-title');
+        }
+        else {
+            title = this.translate.getValue('aquacultures.edit-log-book-title');
+        }
+
+        const data: EditLogBookDialogParamsModel = new EditLogBookDialogParamsModel({
+            registerId: aqucultureFacilityId,
+            logBookId: logBook.id,
+            service: this.service as AquacultureFacilitiesAdministrationService,
+            readOnly: viewMode,
+            logBookGroup: LogBookGroupsEnum.Aquaculture,
+            ownerType: logBook.ownerType,
+            pagesRangeError: false,
+            isOnline: logBook.isOnline!
+        });
+
+        const headerAuditBtn: IHeaderAuditButton = {
+            id: logBook.id!,
+            getAuditRecordData: this.service.getLogBookAudit.bind(this.service),
+            tableName: 'LogBook'
+        };
+
+        this.openLogBookDialog(title, data, headerAuditBtn, viewMode);
+    }
+
+    public deleteLogBook(logBookRegister: LogBookRegisterDTO, aquaculture: AquacultureFacilityDTO,): void {
+        const title: string = this.translate.getValue('aquacultures.delete-log-book-title');
+        const message: string = `${this.translate.getValue('aquacultures.confirm-delete-log-book-message')}: ${logBookRegister.number}`;
+
+        this.confirmDialog.open({
+            title: title,
+            message: message,
+            okBtnLabel: this.translate.getValue('aquacultures.delete')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    (this.service as AquacultureFacilitiesAdministrationService).deleteLogBook(logBookRegister.id!).subscribe({
+                        next: () => {
+                            this.grid.refreshData();
+                        },
+                        error: (httpErrorResponse: HttpErrorResponse) => {
+                            if ((httpErrorResponse.error as ErrorModel)?.code === ErrorCode.LogBookHasSubmittedPages) {
+                                const message: string = this.translate.getValue('aquacultures.cannot-delete-log-book-with-submitted-pages');
+                                this.snackbar.open(message, undefined, {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public restoreLogBook(logBookRegister: LogBookRegisterDTO, aquaculture: AquacultureFacilityDTO,): void {
+        this.confirmDialog.open().subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    (this.service as AquacultureFacilitiesAdministrationService).undoDeleteLogBook(logBookRegister.id!).subscribe({
+                        next: () => {
+                            this.grid.refreshData();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private openLogBookDialog(title: string, data: EditLogBookDialogParamsModel, headerAuditBtn: IHeaderAuditButton | undefined, viewMode: boolean): void {
+        const dialog = this.logBookDialog.openWithTwoButtons({
+            title: title,
+            TCtor: EditLogBookComponent,
+            headerAuditButton: headerAuditBtn,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            componentData: data,
+            translteService: this.translate,
+            disableDialogClose: true,
+            viewMode: viewMode
+        }, '1200px');
+
+        dialog.subscribe({
+            next: (result: LogBookEditDTO | undefined) => {
+                if (result !== null && result !== undefined) {
                     this.grid.refreshData();
                 }
             }

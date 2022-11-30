@@ -1,4 +1,5 @@
 ﻿<div class="picture-uploader">
+    <div *ngIf="label">{{ label }}</div>
     <div *ngIf="image"
          class="container"
          [style.width]="options.size.width"

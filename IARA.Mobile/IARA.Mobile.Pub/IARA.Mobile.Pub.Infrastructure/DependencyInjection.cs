@@ -27,9 +27,9 @@ namespace IARA.Mobile.Pub.Infrastructure
         {
             ServerUrlFactoryBuilder builder = new ServerUrlFactoryBuilder();
 
-            builder.AddUrl(Environments.PRODUCTION, "https://iara.egov.bg/api/");
+            builder.AddUrl(Environments.PRODUCTION, "https://iara-iss.egov.bg/api/");
             builder.AddExternalUrl(Environments.PRODUCTION, "PAY_EGOV", "https://pay.egov.bg/Home/AccessByCode");
-            builder.AddExternalUrl(Environments.PRODUCTION, "IARA_IDENTITY", "https://iara.egov.bg/identity");
+            builder.AddExternalUrl(Environments.PRODUCTION, "IARA_IDENTITY", "https://iara-iss.egov.bg/identity");
 
             builder.AddUrl(Environments.STAGING, "https://iara-staging.egov.bg/api/");
             builder.AddExternalUrl(Environments.STAGING, "PAY_EGOV", "https://pay-test.egov.bg/Home/AccessByCode");
@@ -43,9 +43,9 @@ namespace IARA.Mobile.Pub.Infrastructure
             builder.AddExternalUrl(Environments.DEVELOPMENT_INTERNAL, "PAY_EGOV", "https://pay-test.egov.bg/Home/AccessByCode");
             builder.AddExternalUrl(Environments.DEVELOPMENT_INTERNAL, "IARA_IDENTITY", "https://172.31.12.168/identity");
 
-            builder.AddUrl(Environments.DEVELOPMENT_LOCAL, "http://172.31.5.147:5000/api/");
+            builder.AddUrl(Environments.DEVELOPMENT_LOCAL, "http://192.168.13.117:5000/api/");
             builder.AddExternalUrl(Environments.DEVELOPMENT_LOCAL, "PAY_EGOV", "https://pay-test.egov.bg/Home/AccessByCode");
-            builder.AddExternalUrl(Environments.DEVELOPMENT_LOCAL, "IARA_IDENTITY", "https://iara.technologica.com/identity");
+            builder.AddExternalUrl(Environments.DEVELOPMENT_LOCAL, "IARA_IDENTITY", "https://172.31.12.168/identity");
 
             builder.AddUrl("PAYMENT_OK", "xamarinformsclients://okcallback");
             builder.AddUrl("PAYMENT_CANCELED", "xamarinformsclients://cancelcallback");

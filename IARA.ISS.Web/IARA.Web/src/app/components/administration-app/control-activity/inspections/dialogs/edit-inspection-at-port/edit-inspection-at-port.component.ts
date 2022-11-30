@@ -55,6 +55,7 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
         snackbar: MatSnackBar
     ) {
         super(service, translate, nomenclatures, snackbar);
+        this.inspectionCode = InspectionTypesEnum.IBP;
     }
 
     public async ngOnInit(): Promise<void> {

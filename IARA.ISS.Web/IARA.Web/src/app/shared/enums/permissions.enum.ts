@@ -133,6 +133,7 @@
     ApplicationsInspectAndCorrectRegiXData = 'ApplicationsInspectAndCorrectRegiXData',
     ApplicationsCancelRecords = 'ApplicationsCancelRecords',
     ApplicationsReadRegister = 'ApplicationsReadRegister',
+    ReAssignApplication = 'ReAssignApplication',
 
     // Applications register delivery
     ApplicationRegisterDeliveryRead = 'ApplicationRegisterDeliveryRead',
@@ -179,6 +180,12 @@
     BuyersApplicationsInspectAndCorrectRegiXData = 'BuyersApplicationsInspectAndCorrectRegiXData',
     BuyersApplicationsProcessPaymentData = 'BuyersApplicationsProcessPaymentData',
     BuyersApplicationsCheckDataRegularity = 'BuyersApplicationsCheckDataRegularity',
+
+    BuyerLogBookRead = 'BuyerLogBookRead',
+    BuyerLogBookEdit = 'BuyerLogBookEdit',
+    BuyerLogBookAdd = 'BuyerLogBookAdd',
+    BuyerLogBookDelete = 'BuyerLogBookDelete',
+    BuyerLogBookRestore = 'BuyerLogBookRestore',
 
     // Online Application processing in Public app
     OnlineSubmittedApplicationsRead = 'OnlineSubmittedApplicationsRead',
@@ -280,6 +287,12 @@
     CommercialFishingPermitLicenseApplicationsProcessPaymentData = 'CommercialFishingPermitLicenseApplicationsProcessPaymentData',
     CommercialFishingPermitLicenseApplicationsCheckDataRegularity = 'CommercialFishingPermitLicenseApplicationsCheckDataRegularity',
 
+    PermitLicenseLogBookRead = 'PermitLicenseLogBookRead',
+    PermitLicenseLogBookAdd = 'PermitLicenseLogBookAdd',
+    PermitLicenseLogBookEdit = 'PermitLicenseLogBookEdit',
+    PermitLicenseLogBookDelete = 'PermitLicenseLogBookDelete',
+    PermitLicenseLogBookRestore = 'PermitLicenseLogBookRestore',
+
     // Report Definition
     ReportRead = 'ReportRead',
     ReportAddRecords = 'ReportAddRecords',
@@ -351,6 +364,12 @@
     AquacultureFacilitiesApplicationsInspectAndCorrectRegiXData = 'AquacultureFacilitiesApplicationsInspectAndCorrectRegiXData',
     AquacultureFacilitiesApplicationsProcessPaymentData = 'AquacultureFacilitiesApplicationsProcessPaymentData',
     AquacultureFacilitiesApplicationsCheckDataRegularity = 'AquacultureFacilitiesApplicationsCheckDataRegularity',
+
+    AquacultureLogBook1Read = 'AquacultureLogBook1Read',
+    AquacultureLogBookEdit = 'AquacultureLogBookEdit',
+    AquacultureLogBookAdd = 'AquacultureLogBookAdd',
+    AquacultureLogBookDelete = 'AquacultureLogBookDelete',
+    AquacultureLogBookRestore = 'AquacultureLogBookRestore',
 
     //PatrolVehicles
     PatrolVehiclesRead = 'PatrolVehiclesRead',

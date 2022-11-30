@@ -1,7 +1,7 @@
 ﻿import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { IApplicationRegister } from '@app/interfaces/common-app/application-register.interface';
 import { IBuyersService } from '@app/interfaces/common-app/buyers.interface';
@@ -28,23 +28,76 @@ import { BuyerTerminationApplicationDTO } from '@app/models/generated/dtos/Buyer
 import { BuyerTerminationBaseRegixDataDTO } from '@app/models/generated/dtos/BuyerTerminationBaseRegixDataDTO';
 import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 import { RegisterDTO } from '@app/models/generated/dtos/RegisterDTO';
+import { ILogBookService } from '@app/components/common-app/commercial-fishing/components/edit-log-book/interfaces/log-book.interface';
+import { LogBookEditDTO } from '@app/models/generated/dtos/LogBookEditDTO';
+import { LogBookForRenewalDTO } from '@app/models/generated/dtos/LogBookForRenewalDTO';
+import { RangeOverlappingLogBooksDTO } from '@app/models/generated/dtos/RangeOverlappingLogBooksDTO';
+import { OverlappingLogBooksParameters } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-parameters.model';
+import { CommercialFishingLogBookEditDTO } from '@app/models/generated/dtos/CommercialFishingLogBookEditDTO';
+import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
+import { PermissionsService } from '@app/shared/services/permissions.service';
+import { LogBookDetailDTO } from '@app/models/generated/dtos/LogBookDetailDTO';
 
 @Injectable({
     providedIn: 'root'
 })
-export class BuyersAdministrationService extends ApplicationsRegisterAdministrativeBaseService implements IBuyersService {
+export class BuyersAdministrationService extends ApplicationsRegisterAdministrativeBaseService implements IBuyersService, ILogBookService {
     protected controller: string = 'Buyers';
     protected applicationsProcessingController: string = 'ApplicationsProcessing';
 
-    public constructor(requestService: RequestService, applicationsRegisterService: ApplicationsProcessingService) {
+    private readonly permissions: PermissionsService;
+
+
+    public constructor(
+        requestService: RequestService,
+        applicationsRegisterService: ApplicationsProcessingService,
+        permissions: PermissionsService
+    ) {
         super(requestService, applicationsRegisterService);
+
+        this.permissions = permissions;
     }
 
     public getAll(request: GridRequestModel<BuyersFilters>): Observable<GridResultModel<BuyerDTO>> {
-        return this.requestService.post(this.area, this.controller, 'GetAll', request, {
+        type Result = GridResultModel<BuyerDTO>;
+        type Body = GridRequestModel<BuyersFilters>;
+
+        return this.requestService.post<Result, Body>(this.area, this.controller, 'GetAll', request, {
             properties: RequestProperties.NO_SPINNER,
             responseTypeCtr: GridResultModel
-        });
+        }).pipe(switchMap((entries: Result) => {
+            const buyerIds: number[] = entries.records.map((buyer: BuyerDTO) => {
+                return buyer.id!;
+            });
+
+            if (buyerIds.length === 0) {
+                return of(entries);
+            }
+
+            if (this.permissions.has(PermissionsEnum.BuyerLogBookRead)) {
+                return this.getLogBooksForTable(this.controller, buyerIds, request.filters).pipe(map((logBooks: LogBookDetailDTO[]) => {
+                    for (const logBook of logBooks) {
+                        const found = entries.records.find((entry: BuyerDTO) => {
+                            return entry.id === logBook.registerId;
+                        });
+
+                        if (found !== undefined) {
+                            if (found.logBooks !== undefined && found.logBooks !== null) {
+                                found.logBooks.push(new LogBookDetailDTO(logBook));
+                            }
+                            else {
+                                found.logBooks = [logBook];
+                            }
+                        }
+                    }
+
+                    return entries;
+                }))
+            }
+            else {
+                return of(entries);
+            }
+        }));
     }
 
     public get(id: number): Observable<BuyerEditDTO> {
@@ -140,7 +193,73 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
         return this.requestService.patch(this.area, this.controller, 'UndoDelete', null, { httpParams: params });
     }
 
+    // log books
+
+    public getLogBook(logBookId: number): Observable<LogBookEditDTO> {
+        const params: HttpParams = new HttpParams().append('logBookId', logBookId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetLogBook', {
+            httpParams: params,
+            responseTypeCtr: LogBookEditDTO
+        });
+    }
+
+    public getPermitLicenseLogBook(logBookPermitLicenseId: number): Observable<CommercialFishingLogBookEditDTO> {
+        throw new Error('Should call getLogBook method instead');
+    }
+
+    public addLogBook(model: LogBookEditDTO, registerId: number, ignoreLogBookConflicts: boolean): Observable<void> {
+        const params: HttpParams = new HttpParams()
+            .append('registerId', registerId.toString())
+            .append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
+
+        return this.requestService.post(this.area, this.controller, 'AddLogBook', model, {
+            httpParams: params
+        });
+    }
+
+    public editLogBook(model: LogBookEditDTO, registerId: number, ignoreLogBookConflicts: boolean): Observable<void> {
+        const params: HttpParams = new HttpParams()
+            .append('registerId', registerId.toString())
+            .append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
+
+        return this.requestService.put(this.area, this.controller, 'EditLogBook', model, {
+            httpParams: params
+        });
+    }
+
+    public getOverlappedLogBooks(parameters: OverlappingLogBooksParameters[]): Observable<RangeOverlappingLogBooksDTO[]> {
+        return this.requestService.post(this.area, this.controller, 'GetOverlappedLogBooks', parameters, {
+            responseTypeCtr: RangeOverlappingLogBooksDTO
+        });
+    }
+
+    public getLogBooksForRenewal(permitLicenseRegisterId: number, showFinished: boolean): Observable<LogBookForRenewalDTO[]> {
+        throw new Error('Functionality not implemented so far.');
+    }
+
+    public getLogBooksForRenewalByIds(permitLicenseRegisterIds: number[]): Observable<LogBookEditDTO[]> {
+        throw new Error('Functionality not implemented so far.');
+    }
+
+    public deleteLogBook(logBookId: number): Observable<void> {
+        const params: HttpParams = new HttpParams().append('id', logBookId.toString());
+
+        return this.requestService.delete(this.area, this.controller, 'DeleteLogBook', {
+            httpParams: params
+        });
+    }
+
+    public undoDeleteLogBook(logBookId: number): Observable<void> {
+        const params: HttpParams = new HttpParams().append('id', logBookId.toString());
+
+        return this.requestService.patch(this.area, this.controller, 'UndoDeleteLogBook', undefined, {
+            httpParams: params
+        });
+    }
+
     // audits
+
     public getPremiseUsageDocumentAudit(id: number): Observable<SimpleAuditDTO> {
         const params = new HttpParams().append('id', id.toString());
         return this.requestService.get(this.area, this.controller, 'GetPremiseUsageDocumentAudit', {
@@ -388,6 +507,14 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
 
         return this.requestService.put(this.area, this.controller, 'UpdateBuyerStatus', status, {
             httpParams: params
+        });
+    }
+
+    // helpers
+
+    private getLogBooksForTable(controller: string, buyerIds: number[], filters: BuyersFilters | undefined): Observable<LogBookDetailDTO[]> {
+        return this.requestService.post(this.area, controller, 'GetLogBooksForTable', buyerIds, {
+            responseTypeCtr: LogBookDetailDTO
         });
     }
 }

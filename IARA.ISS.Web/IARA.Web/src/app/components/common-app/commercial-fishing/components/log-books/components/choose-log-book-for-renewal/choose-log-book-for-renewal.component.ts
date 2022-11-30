@@ -6,8 +6,8 @@ import { LogBookForRenewalDTO } from '@app/models/generated/dtos/LogBookForRenew
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
+import { ILogBookService } from '@app/components/common-app/commercial-fishing/components/edit-log-book/interfaces/log-book.interface';
 import { ChooseLogBookForRenewalDialogParams } from '../../models/choose-log-book-for-renewal-dialog-params.model';
-import { ILogBookService } from '../../../edit-log-book/interfaces/log-book.interface';
 
 @Component({
     selector: 'choose-log-book-for-renewal',
@@ -29,6 +29,7 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
 
     private permitLicenseId!: number;
     private service!: ILogBookService;
+    private saveToDB: boolean = false;
 
     public constructor() {
         this.filterControl = new FormControl();
@@ -56,6 +57,7 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
     public setData(data: ChooseLogBookForRenewalDialogParams, wrapperData: DialogWrapperData): void {
         this.permitLicenseId = data.permitLicenseId!;
         this.service = data.service!;
+        this.saveToDB = data.saveToDB;
     }
 
     public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
@@ -66,7 +68,13 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
         this.touched = true;
 
         if (!this.noLogBooksChosenValidation) {
-            dialogClose(this.selectedLogBooks);
+            if (this.saveToDB) {
+                // TODO
+                const chosenLogBookPermitLicenseIds: number[] = this.selectedLogBooks.map(x => x.logBookPermitLicenseId!);
+            }
+            else {
+                dialogClose(this.selectedLogBooks);
+            }
         }
     }
 

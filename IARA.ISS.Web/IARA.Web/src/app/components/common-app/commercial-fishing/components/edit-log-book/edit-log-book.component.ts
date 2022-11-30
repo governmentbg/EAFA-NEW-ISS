@@ -73,7 +73,9 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
     public selectedLogBookType: LogBookTypesEnum | undefined;
 
     private model!: LogBookEditDTO | CommercialFishingLogBookEditDTO;
-    private permitLicenseLogBookId: number | undefined;
+    private registerId: number | undefined;
+    private logBookPermitLicenseId: number | undefined;
+    private logBookId: number | undefined;
 
     private readonly translate: FuseTranslationLoaderService;
     private readonly nomenclaturesService: CommonNomenclatures;
@@ -108,9 +110,21 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
 
         this.allLogBookStatuses = this.deepCopyLogBookStatuses(logBookStatusesNomenclature);
 
-        if (this.permitLicenseLogBookId !== null && this.permitLicenseLogBookId !== undefined) {
+        if ((this.logBookId !== null && this.logBookId !== undefined) || (this.logBookPermitLicenseId !== null && this.logBookPermitLicenseId !== undefined)) {
             if (this.service !== null && this.service !== undefined) {
-                this.model = await this.service.getPermitLicenseLogBook(this.permitLicenseLogBookId).toPromise();
+                switch (this.logBookGroup) {
+                    case LogBookGroupsEnum.Ship: {
+                        this.model = await this.service.getPermitLicenseLogBook(this.logBookPermitLicenseId!).toPromise();
+                    } break;
+                    case LogBookGroupsEnum.DeclarationsAndDocuments: {
+                        this.model = await this.service.getLogBook(this.logBookId!).toPromise();
+                    } break;
+                    case LogBookGroupsEnum.Aquaculture: {
+                        this.model = await this.service.getLogBook(this.logBookId!).toPromise();
+                    } break;
+                    default:
+                        throw new Error(`Invalid log book group ${LogBookGroupsEnum[this.logBookGroup]}, so cannot get log book with id ${this.logBookId ?? this.logBookPermitLicenseId} from the server`);
+                }
             }
             else {
                 throw new Error("service is null. If permitLicenseLogBookId is passed to the edit log book dialog, a service property should be present as well.");
@@ -312,12 +326,14 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
         this.isOnline = data.isOnline ?? false;
         this.ownerType = data.ownerType;
         this.isForPermitLicense = data.isForPermitLicense;
-        this.permitLicenseLogBookId = data.permitLicenseLogBookId;
+        this.registerId = data.registerId;
+        this.logBookId = data.logBookId;
+        this.logBookPermitLicenseId = data.logBookPermitLicenseId;
         this.service = data.service;
 
         this.buildForm();
 
-        if (this.permitLicenseLogBookId === null || this.permitLicenseLogBookId === undefined) {
+        if (this.service === null || this.service === undefined) {
             if (data.model === null || data.model === undefined) {
                 this.isAdd = true;
 
@@ -354,6 +370,25 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             if (this.readOnly) {
                 this.form.disable();
             }
+
+            if (this.logBookId === null || this.logBookId === undefined) {
+                this.isAdd = true;
+
+                if (this.logBookGroup === LogBookGroupsEnum.Ship) {
+                    this.model = new CommercialFishingLogBookEditDTO({
+                        isActive: true,
+                        permitLicenseIsActive: true,
+                        isOnline: this.isOnline
+                    });
+                }
+                else {
+                    this.model = new LogBookEditDTO({
+                        isActive: true,
+                        logBookIsActive: true,
+                        isOnline: this.isOnline
+                    });
+                }
+            }
         }
     }
 
@@ -370,8 +405,8 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             this.fillModel();
             CommonUtils.sanitizeModelStrings(this.model);
 
-            if (this.permitLicenseLogBookId !== null && this.permitLicenseLogBookId !== undefined) { // should save in DB before closing the dialog
-                this.saveEditLogBook(dialogClose);
+            if (this.service !== null && this.service !== undefined) { // should save in DB before closing the dialog
+                this.saveLogBook(dialogClose);
             }
             else {
                 dialogClose(this.model);
@@ -379,27 +414,45 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
         }
     }
 
-    private saveEditLogBook(dialogClose: DialogCloseCallback): void {
-        this.service!.editLogBook(this.model, this.ignoreLogBookConflicts).subscribe({
-            next: () => {
-                dialogClose(this.model);
-            },
-            error: (errorResponse: HttpErrorResponse) => {
-                const error = errorResponse.error as ErrorModel;
-                if (error?.code === ErrorCode.InvalidLogBookLicensePagesRange
-                    || error?.code === ErrorCode.InvalidLogBookPagesRange
-                ) {
-                    this.handleInvalidLogBookLicensePagesRangeError(error.messages[0], dialogClose);
+    private saveLogBook(dialogClose: DialogCloseCallback): void {
+        if (this.logBookId !== null && this.logBookId !== undefined) {
+            this.service!.editLogBook(this.model, this.registerId!, this.ignoreLogBookConflicts).subscribe({
+                next: () => {
+                    dialogClose(this.model);
+                },
+                error: (errorResponse: HttpErrorResponse) => {
+                    const error = errorResponse.error as ErrorModel;
+                    if (error?.code === ErrorCode.InvalidLogBookLicensePagesRange
+                        || error?.code === ErrorCode.InvalidLogBookPagesRange
+                    ) {
+                        this.handleInvalidLogBookLicensePagesRangeError(error.messages[0], dialogClose);
+                    }
                 }
-            }
-        });
+            });
+        }
+        else {
+            this.service!.addLogBook(this.model, this.registerId!, this.ignoreLogBookConflicts).subscribe({
+                next: () => {
+                    dialogClose(this.model);
+                },
+                error: (errorResponse: HttpErrorResponse) => {
+                    const error = errorResponse.error as ErrorModel;
+                    if (error?.code === ErrorCode.InvalidLogBookLicensePagesRange
+                        || error?.code === ErrorCode.InvalidLogBookPagesRange
+                    ) {
+                        this.handleInvalidLogBookLicensePagesRangeError(error.messages[0], dialogClose);
+                    }
+                }
+            });
+        }
     }
 
     private handleInvalidLogBookLicensePagesRangeError(logBookNumber: string, dialogClose: DialogCloseCallback): void {
-        if (this.model instanceof CommercialFishingLogBookEditDTO) {
-            this.ignoreLogBookConflicts = false;
+        let ranges: OverlappingLogBooksParameters[] = [];
+        this.ignoreLogBookConflicts = false;
 
-            const ranges: OverlappingLogBooksParameters[] = [
+        if (this.model instanceof CommercialFishingLogBookEditDTO) {
+            ranges.push(
                 new OverlappingLogBooksParameters({
                     logBookId: this.model.logBookId,
                     typeId: this.model.logBookTypeId,
@@ -407,42 +460,53 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                     startPage: this.model.permitLicenseStartPageNumber,
                     endPage: this.model.permitLicenseEndPageNumber
                 })
-            ];
-
-            const editDialogData: OverlappingLogBooksDialogParamsModel = new OverlappingLogBooksDialogParamsModel({
-                service: this.service,
-                logBookGroup: this.logBookGroup,
-                ranges: ranges
-            });
-
-            this.overlappingLogBooksDialog.open({
-                title: this.translate.getValue('commercial-fishing.overlapping-log-books-dialog-title'),
-                TCtor: OverlappingLogBooksComponent,
-                headerCancelButton: {
-                    cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
-                },
-                componentData: editDialogData,
-                translteService: this.translate,
-                disableDialogClose: true,
-                cancelBtn: {
-                    id: 'cancel',
-                    color: 'primary',
-                    translateValue: 'common.cancel',
-                },
-                saveBtn: {
-                    id: 'save',
-                    color: 'error',
-                    translateValue: 'commercial-fishing.overlapping-log-books-save-despite-conflicts'
-                }
-            }, '1300px').subscribe({
-                next: (save: boolean | undefined) => {
-                    if (save) {
-                        this.ignoreLogBookConflicts = true;
-                        this.saveEditLogBook(dialogClose);
-                    }
-                }
-            });
+            );
         }
+        else {
+            ranges.push(
+                new OverlappingLogBooksParameters({
+                    logBookId: this.model.logBookId,
+                    typeId: this.model.logBookTypeId,
+                    OwnerType: this.model.ownerType,
+                    startPage: this.model.startPageNumber,
+                    endPage: this.model.endPageNumber
+                })
+            );
+        }
+
+        const editDialogData: OverlappingLogBooksDialogParamsModel = new OverlappingLogBooksDialogParamsModel({
+            service: this.service,
+            logBookGroup: this.logBookGroup,
+            ranges: ranges
+        });
+
+        this.overlappingLogBooksDialog.open({
+            title: this.translate.getValue('catches-and-sales.overlapping-log-books-dialog-title'),
+            TCtor: OverlappingLogBooksComponent,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            componentData: editDialogData,
+            translteService: this.translate,
+            disableDialogClose: true,
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: 'common.cancel',
+            },
+            saveBtn: {
+                id: 'save',
+                color: 'error',
+                translateValue: 'catches-and-sales.overlapping-log-books-save-despite-conflicts'
+            }
+        }, '1300px').subscribe({
+            next: (save: boolean | undefined) => {
+                if (save) {
+                    this.ignoreLogBookConflicts = true;
+                    this.saveLogBook(dialogClose);
+                }
+            }
+        });
     }
 
     public cancelBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {

@@ -163,6 +163,7 @@ namespace IARA.Mobile.Pub.Application.Transactions
                     select new SFCatchDto
                     {
                         Id = sfCatch.Id,
+                        FishTypeId = fishType.Id,
                         FishType = new NomenclatureDto
                         {
                             DisplayName = fishType.Name,

@@ -139,7 +139,8 @@
     </div>
 
     <!-- Преглед и потвърждение -->
-    <mat-step *ngIf="(ticketPeriodGroup.valid || ticketPeriodGroup.disabled || !showValidityStep)
+    <mat-step *ngIf="(ticketsGroup.valid || ticketsGroup.disabled)
+              && (ticketPeriodGroup.valid || ticketPeriodGroup.disabled || !showValidityStep)
               && (tickets.length !== 0 || childTickets.length !== 0)
               && (((ticketNumsArray.valid || ticketNumsArray.disabled) && ticketNumsApproved) || (isPublicApp && !isAssociation))"
               #viewAndConfirmStep>
