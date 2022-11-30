@@ -21,6 +21,9 @@ export class ChangeUserDataDTO extends RegixPersonDataDTO {
     @StrictlyTyped(String)
     public username?: string;
 
+    @StrictlyTyped(Boolean)
+    public userMustChangePassword?: boolean;
+
     @StrictlyTyped(String)
     public password?: string;
 
