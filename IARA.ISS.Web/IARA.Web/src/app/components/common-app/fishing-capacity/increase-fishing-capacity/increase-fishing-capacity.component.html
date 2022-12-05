@@ -46,6 +46,7 @@
                     <tl-autocomplete fxFlex="50"
                                      formControlName="shipControl"
                                      [options]="ships"
+                                     [getControlErrorLabelText]="shipControlErrorLabelTest.bind(this)"
                                      tooltipResourceName="fishing-capacity.increase-ship-from-register-helper"
                                      label="{{ 'fishing-capacity.increase-ship-from-register' | tlTranslate }}">
                     </tl-autocomplete>

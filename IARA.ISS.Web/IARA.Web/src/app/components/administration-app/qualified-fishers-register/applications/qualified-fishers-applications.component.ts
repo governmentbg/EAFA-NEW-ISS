@@ -61,7 +61,8 @@ export class QualifiedFishersApplicationsComponent {
             processPaymentDataPermission: PermissionsEnum.QualifiedFishersApplicationsProcessPaymentData,
             checkDataRegularityPermission: PermissionsEnum.QualifiedFishersApplicationsCheckDataRegularity,
             addAdministrativeActPermission: PermissionsEnum.QualifiedFishersAddRecords,
-            readAdministrativeActPermission: PermissionsEnum.QualifiedFishersRead
+            readAdministrativeActPermission: PermissionsEnum.QualifiedFishersRead,
+            canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication
         });
 
         this.processingPermissions = new Map<PageCodeEnum, ApplicationProcessingPermissions>([

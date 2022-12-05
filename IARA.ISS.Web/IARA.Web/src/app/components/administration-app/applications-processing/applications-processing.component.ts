@@ -28,7 +28,9 @@ export class ApplicationsProcessingComponent {
             restorePermission: PermissionsEnum.ApplicationsRestoreRecords,
             enterEventisNumberPermission: PermissionsEnum.ApplicationsEnterEventisNumber,
             cancelPermssion: PermissionsEnum.ApplicationsCancelRecords,
-            inspectAndCorrectPermssion: PermissionsEnum.ApplicationsInspectAndCorrectRegiXData
+            inspectAndCorrectPermssion: PermissionsEnum.ApplicationsInspectAndCorrectRegiXData,
+            canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication,
+            processPaymentDataPermission: PermissionsEnum.ApplicationsProcessPaymentData
         });
 
         this.processingPermissions = new Map<PageCodeEnum, ApplicationProcessingPermissions>(

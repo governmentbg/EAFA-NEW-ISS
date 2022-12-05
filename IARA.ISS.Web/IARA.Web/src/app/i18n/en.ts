@@ -523,6 +523,7 @@
         'holder-no-address-provided': 'No address provided',
 
         'holders-validation-errors': 'There are unfilled required fields for some of the holders',
+        'ship-deregistered-error': 'The vessel is deregistered',
 
         'add-outing-dialog-title': 'Add an outing',
         'edit-outing-dialog-title': 'Edit outing',
@@ -1218,6 +1219,7 @@
         'entering-eventis-number': 'Enter Eventis number',
         'initiate-online-payment': 'Pay online',
         'cancel-application': 'Cancel application',
+        'assign-application-via-user': 'Assign application to user',
         'send-for-additional-editing': 'Send application for further editing from applicant',
         'completion-of-inspection': 'Complete inspection',
         'enter-payment-data': 'Enter payment data',
@@ -1235,6 +1237,11 @@
 
         'add-application-request-dialog-title': 'Add request for application',
         'enter-eventis-number-dialog-title': 'Enter filed in number',
+
+        'assign-application-by-user-dialog-title': 'Assign application to user',
+        'user-to-assign': 'User to assign to',
+        'only-my-territory-unit-toggle': 'Show only users from my territory unit',
+        'assign-application-by-user-btn': 'Assign',
 
         'assign-invalid-state-machine-transition-operation-error': 'Invalid access code assignment of application. The application is not in the right status.',
         'access-code-copied-successfully': 'Access code copied successfully',
@@ -2036,6 +2043,8 @@
         'coc-regix-checks-results': 'Results of automatic checks to external registers',
         'coc-ship': 'Ship',
         'coc-ship-from-register': 'Ship from register',
+        'coc-ship-deregistered-error': 'The vessel is deregistered',
+        'coc-ship-third-party-error': 'The vessel is from a third party',
 
         'coc-payment-information': 'Payment information',
         'coc-delivery-data': 'Manner of obtaining a document issued by NAFA',
@@ -2058,6 +2067,8 @@
         'dereg-required-actions': 'Required actions pertaining the remaning fishing capacity',
         'dereg-files': 'Files',
         'dereg-regix-checks-results': 'Results of automatic checks to external registers',
+        'dereg-ship-deregistered-error': 'The vessel is deregistered',
+        'dereg-ship-third-party-error': 'The vessel is from a third party',
 
         'dereg-payment-information': 'Payment information',
         'dereg-delivery-data': 'Manner of obtaining a document issued by NAFA',
@@ -3271,6 +3282,9 @@
         'increase-payment-information': 'Payment information',
         'increase-files': 'Files',
         'increase-regix-checks-results': 'Results of automatic checks to external registers',
+        'increase-ship-deregistered-error': 'The vessel is deregistered',
+        'increase-ship-third-party-error': 'The vessel is from a third party',
+        'increase-ship-no-fishing-capacity-error': 'The vessel is not from the Black Sea fleet',
 
         'reduce-requester': 'Applicant',
         'reduce-requester-role': 'Applicant\'s role in relation to the recipient',
@@ -3289,6 +3303,9 @@
         'reduce-payment-information': 'Payment information',
         'reduce-files': 'Files',
         'reduce-regix-checks-results': 'Results of automatic checks to external registers',
+        'reduce-ship-deregistered-error': 'The vessel is deregistered',
+        'reduce-ship-third-party-error': 'The vessel is from a third party',
+        'reduce-ship-no-fishing-capacity-error': 'The vessel is not from the Black Sea fleet',
 
         'transfer-requester': 'Applicant',
         'transfer-requester-role': 'Applicant\'s role in relation to the recipient',
@@ -4819,6 +4836,8 @@
         'vessel-information-employee-stats-helper': 'If the field is not applicable, a 0 (zero) must be entered',
         'fish-vessel-count-error': 'The sum of the values by ​columns ​does not match the sum from the previous table',
         'fish-vessel-costs-error': 'The value in the field of staff costs cannot be zero when there are men or women with pay.',
+
+        'ship-no-fishing-capacity-error': 'The vessel is not from the Black Sea fleet'
     },
     'penal-decrees': {
         'filters-penal-decree-num': 'Penal decree no.',

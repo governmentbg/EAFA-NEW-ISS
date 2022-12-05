@@ -7,7 +7,7 @@ import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/ac
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
 import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
-import { IPrintConfigurationsService } from '../../interfaces/print-cofigurations.interface';
+import { IPrintConfigurationsService } from '@app/components/common-app/applications/interfaces/print-cofigurations.interface';
 import { ApplicationsProcessingService } from '@app/services/administration-app/applications-processing.service';
 import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
@@ -20,7 +20,7 @@ import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 })
 export class PrintConfigurationsComponent implements IDialogComponent, OnInit {
     public form!: FormGroup;
-    public users: any[] = [];
+    public users: PrintUserNomenclatureDTO[] = [];
 
     private readonly nomenclatureLoader: FormControlDataLoader;
     private readonly service: IPrintConfigurationsService;

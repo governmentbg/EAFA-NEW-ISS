@@ -527,6 +527,7 @@
         'holder-no-address-provided': 'Няма предоставен адрес',
 
         'holders-validation-errors': 'Има непопълнени задължителни полета при някои от титулярите',
+        'ship-deregistered-error': 'Корабът е отписан от регистъра',
 
         'add-outing-dialog-title': 'Добавяне на излет',
         'edit-outing-dialog-title': 'Редактиране на излет',
@@ -1249,6 +1250,7 @@
         'entering-eventis-number': 'Въвеждане на входящ номер от Евентис',
         'initiate-online-payment': 'Плати онлайн',
         'cancel-application': 'Анулиране на заявление',
+        'assign-application-via-user': 'Присвояване на потребител',
         'send-for-additional-editing': 'Изпращане за допълнителни корекции от заявителя',
         'completion-of-inspection': 'Приключване на проверка',
         'enter-payment-data': 'Въвеждане на платежни данни',
@@ -1265,6 +1267,11 @@
 
         'add-application-request-dialog-title': 'Добавяне на заявка за услуга',
         'enter-eventis-number-dialog-title': 'Въвеждане на входящ номер',
+
+        'assign-application-by-user-dialog-title': 'Присвояване на заявление към потребител',
+        'user-to-assign': 'Потребител за присвояване',
+        'only-my-territory-unit-toggle': 'Покажи само потребители от моето териториално звено',
+        'assign-application-by-user-btn': 'Присвои',
 
         'assign-invalid-state-machine-transition-operation-error': 'Невалидно присвояване на заявление. Заявелението не е в подходящ статус.',
         'access-code-copied-successfully': 'Кодът за достъп е копиран успешно',
@@ -2077,6 +2084,8 @@
         'coc-regix-checks-results': 'Резултати от автоматични проверки към външни регистри',
         'coc-ship': 'Кораб',
         'coc-ship-from-register': 'Кораб от регистъра',
+        'coc-ship-deregistered-error': 'Корабът е отписан от регистъра',
+        'coc-ship-third-party-error': 'Корабът е от трета страна',
 
         'coc-payment-information': 'Информация за плащане',
         'coc-delivery-data': 'Начин на получаване на издаден от ИАРА документ',
@@ -2099,6 +2108,8 @@
         'dereg-required-actions': 'Необходими действия относно освободения риболовен капацитет',
         'dereg-files': 'Приложени файлове',
         'dereg-regix-checks-results': 'Резултати от автоматични проверки към външни регистри',
+        'dereg-ship-deregistered-error': 'Корабът е отписан от регистъра',
+        'dereg-ship-third-party-error': 'Корабът е от трета страна',
 
         'dereg-payment-information': 'Информация за плащане',
         'dereg-delivery-data': 'Начин на получаване на издаден от ИАРА документ',
@@ -3407,6 +3418,9 @@
         'increase-payment-information': 'Информация за плащане',
         'increase-files': 'Приложени файлове',
         'increase-regix-checks-results': 'Резултати от автоматични проверки към външни регистри',
+        'increase-ship-deregistered-error': 'Корабът е отписан от регистъра',
+        'increase-ship-third-party-error': 'Корабът е от трета страна',
+        'increase-ship-no-fishing-capacity-error': 'Корабът не е от черноморския флот',
 
         'reduce-requester': 'Заявител',
         'reduce-requester-role': 'Качество на заявителя спрямо получателя',
@@ -3425,6 +3439,9 @@
         'reduce-payment-information': 'Информация за плащане',
         'reduce-files': 'Приложени файлове',
         'reduce-regix-checks-results': 'Резултати от автоматични проверки към външни регистри',
+        'reduce-ship-deregistered-error': 'Корабът е отписан от регистъра',
+        'reduce-ship-third-party-error': 'Корабът е от трета страна',
+        'reduce-ship-no-fishing-capacity-error': 'Корабът не е от черноморския флот',
 
         'transfer-requester': 'Заявител',
         'transfer-requester-role': 'Качество на заявителя спрямо получателя',
@@ -4729,7 +4746,7 @@
         'aqua-farm-basic-information-title': 'Основна информация',
         'aqua-farm-form-num': 'Номер',
         'aqua-farm-aquaculture-facilities': 'Стопанство',
-        'aqua-farm-year': 'Година',
+        'aqua-farm-year': 'Година на ИСФ',
         'aqua-farm-death-title': 'Смъртност',
         'aqua-farm-breeding-material-death-rate': 'На зарибителния материал (%)',
         'aqua-farm-consumation-fish-death-rate': 'На рибата за консумация (%)',
@@ -4836,7 +4853,7 @@
         'rework-receiver': 'Подадено от името на',
         'rework-basic-information-title': 'Основна информация',
         'rework-form-num': 'Номер',
-        'rework-year': 'Година',
+        'rework-year': 'Година на ИСФ',
         'rework-legal': 'Лице',
         'rework-legal-addresses': 'Адрес на регистрация',
         'rework-vet-registration-num': 'Ветеринарен регистрационен номер',
@@ -4949,7 +4966,7 @@
         'form-activity-person': 'Физическо лице',
         'form-activity-legal': 'Юридическо лице',
         'form-activity-association': 'Сдружение',
-        'fish-vessel-year': 'Година',
+        'fish-vessel-year': 'Година на ИСФ',
 
         'men-with-pay': 'Мъже със заплащане (бр.)',
         'men-without-pay': 'Мъже без заплащане (бр.)',
@@ -4967,6 +4984,8 @@
         'vessel-information-employee-stats-helper': 'Ако полето не е приложимо, трябва да бъде въведена 0 (нула)',
         'fish-vessel-count-error': 'Сумите на бройките по колони не съвпада със сумите от предходната таблица',
         'fish-vessel-costs-error': 'Стойността в поле разходи за персонал не може да бъде нула, когато има мъже или жени със заплащане.',
+
+        'ship-no-fishing-capacity-error': 'Корабът не е от черноморския флот'
     },
     'penal-decrees': {
         'filters-penal-decree-num': '№ на наказателно постановление',

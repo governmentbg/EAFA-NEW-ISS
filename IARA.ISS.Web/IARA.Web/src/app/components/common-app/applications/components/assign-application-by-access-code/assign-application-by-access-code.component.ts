@@ -35,9 +35,8 @@ export class AssignApplicationByAccessCodeComponent implements IDialogComponent 
         });
     }
 
-    public setData(data: unknown, buttons: DialogWrapperData): void {
-        const params = (data as DialogParamsModel);
-        this.service = params.service as IApplicationsRegisterService;
+    public setData(data: DialogParamsModel, buttons: DialogWrapperData): void {
+        this.service = data.service as IApplicationsRegisterService;
     }
 
     public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {

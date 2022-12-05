@@ -100,15 +100,6 @@ export class ApplicationsProcessingService extends BaseAuditService implements I
         return this.requestService.get(this.area, this.controller, 'GetApplicationSources', { responseTypeCtr: NomenclatureDTO });
     }
 
-    public getApplicationHistorySimpleAudit(id: number): Observable<SimpleAuditDTO> {
-        const params = new HttpParams().append('id', id.toString());
-
-        return this.requestService.get(this.area, this.controller, 'GetApplicationHistorySimpleAudit', {
-            httpParams: params,
-            responseTypeCtr: SimpleAuditDTO
-        });
-    }
-
     public getUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
         return this.requestService.get(this.area, this.controller, 'GetUsersNomenclature', {
             responseTypeCtr: PrintUserNomenclatureDTO
@@ -121,8 +112,28 @@ export class ApplicationsProcessingService extends BaseAuditService implements I
         });
     }
 
+    public getApplicationHistorySimpleAudit(id: number): Observable<SimpleAuditDTO> {
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetApplicationHistorySimpleAudit', {
+            httpParams: params,
+            responseTypeCtr: SimpleAuditDTO
+        });
+    }
+
     public assignApplicationViaAccessCode(accessCode: string): Observable<AssignedApplicationInfoDTO> {
         throw new Error('method should not be called from ApplicationsProcessing service');
+    }
+
+    public assignApplicationViaUserId(applicationId: number, userId: number): Observable<AssignedApplicationInfoDTO> {
+        const params: HttpParams = new HttpParams()
+            .append('applicationId', applicationId.toString())
+            .append('userId', userId.toString());
+
+        return this.requestService.post(this.area, this.controller, 'AssignApplicationViaUserId', undefined, {
+            httpParams: params,
+            responseTypeCtr: AssignedApplicationInfoDTO
+        });
     }
 
     public editApplicationAndSendForCorrections(model: IApplicationRegister): Observable<void> {

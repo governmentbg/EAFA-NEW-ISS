@@ -62,7 +62,8 @@ export class CommercialFishingApplicationsComponent {
             processPaymentDataPermission: PermissionsEnum.CommercialFishingPermitApplicationsProcessPaymentData,
             checkDataRegularityPermission: PermissionsEnum.CommercialFishingPermitApplicationsCheckDataRegularity,
             addAdministrativeActPermission: PermissionsEnum.CommercialFishingPermitRegisterAddRecords,
-            readAdministrativeActPermission: PermissionsEnum.CommercialFishingPermitRegisterRead
+            readAdministrativeActPermission: PermissionsEnum.CommercialFishingPermitRegisterRead,
+            canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication
         });
 
         const permitLicenseProcessingPermissions: ApplicationProcessingPermissions = new ApplicationProcessingPermissions({
@@ -75,7 +76,8 @@ export class CommercialFishingApplicationsComponent {
             processPaymentDataPermission: PermissionsEnum.CommercialFishingPermitLicenseApplicationsProcessPaymentData,
             checkDataRegularityPermission: PermissionsEnum.CommercialFishingPermitLicenseApplicationsCheckDataRegularity,
             addAdministrativeActPermission: PermissionsEnum.CommercialFishingPermitLicenseRegisterAddRecords,
-            readAdministrativeActPermission: PermissionsEnum.CommercialFishingPermitLicenseRegisterRead
+            readAdministrativeActPermission: PermissionsEnum.CommercialFishingPermitLicenseRegisterRead,
+            canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication
         });
 
         this.processingPermissions = new Map<PageCodeEnum, ApplicationProcessingPermissions>([

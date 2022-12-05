@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subject } from 'rxjs';
@@ -42,7 +42,8 @@ import { RequestProperties } from '@app/shared/services/request-properties';
 import { ApplicationValidationErrorsEnum } from '@app/enums/application-validation-errors.enum';
 import { FishingCapacityFreedActionsDTO } from '@app/models/generated/dtos/FishingCapacityFreedActionsDTO';
 import { FishingCapacityRemainderActionEnum } from '@app/enums/fishing-capacity-remainder-action.enum';
-import { ShipNomenclatureFilters, ShipsUtils } from '@app/shared/utils/ships.utils';
+import { ShipsUtils } from '@app/shared/utils/ships.utils';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 
 @Component({
     selector: 'increase-fishing-capacity',
@@ -124,12 +125,6 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
             NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false
         ).toPromise();
 
-        this.ships = ShipsUtils.filter(this.ships, new ShipNomenclatureFilters({
-            isThirdPartyShip: false,
-            hasFishingCapacity: true,
-            isDestOrDereg: false
-        }));
-
         // извличане на исторически данни за заявление
         if (this.isApplicationHistoryMode && this.applicationId !== undefined) {
             this.form.disable();
@@ -209,6 +204,10 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
                             else {
                                 this.model = application;
                                 this.fillForm();
+                            }
+
+                            if (!this.isDraft) {
+                                this.form.get('shipControl')!.disable();
                             }
                         }
                     });
@@ -313,11 +312,37 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
         return result;
     }
 
+    public shipControlErrorLabelTest(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+        if (controlName === 'shipControl') {
+            if (errorCode === 'shipDestroyedOrDeregistered' && error === true) {
+                return new TLError({
+                    text: this.translate.getValue('fishing-capacity.increase-ship-deregistered-error'),
+                    type: 'error'
+                });
+            }
+
+            if (errorCode === 'shipThirdParty' && error === true) {
+                return new TLError({
+                    text: this.translate.getValue('fishing-capacity.increase-ship-third-party-error'),
+                    type: 'error'
+                });
+            }
+
+            if (errorCode === 'shipNoFishingCapacity' && error === true) {
+                return new TLError({
+                    text: this.translate.getValue('fishing-capacity.increase-ship-no-fishing-capacity-error'),
+                    type: 'error'
+                });
+            }
+        }
+        return undefined;
+    }
+
     private buildForm(): void {
         this.form = new FormGroup({
             submittedByControl: new FormControl(null),
             submittedForControl: new FormControl(null),
-            shipControl: new FormControl(null, Validators.required),
+            shipControl: new FormControl(null, [Validators.required, this.shipValidator()]),
             grossTonnageControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)]),
             powerControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)]),
             acquiredCapacityControl: new FormControl(null),
@@ -386,7 +411,7 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
                     if (this.showOnlyRegiXData) {
                         ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
                     }
-                    
+
                     this.notifier.stop();
                 }
             });
@@ -472,6 +497,29 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
             return this.service.editApplication(this.model, this.pageCode, saveAsDraft);
         }
         return this.service.addApplication(this.model, this.pageCode);
+    }
+
+    private shipValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            const shipId: number | undefined = this.form?.get('shipControl')?.value?.value;
+            if (shipId !== undefined && shipId !== null) {
+                const ship: ShipNomenclatureDTO = ShipsUtils.get(this.ships, shipId);
+
+                if (ShipsUtils.isDestOrDereg(ship)) {
+                    return { shipDestroyedOrDeregistered: true };
+                }
+
+                if (ShipsUtils.isThirdParty(ship)) {
+                    return { shipThirdParty: true };
+                }
+
+                if (!ShipsUtils.hasFishingCapacity(ship)) {
+                    return { shipNoFishingCapacity: true };
+                }
+            }
+
+            return null;
+        };
     }
 
     private shouldHidePaymentData(): boolean {

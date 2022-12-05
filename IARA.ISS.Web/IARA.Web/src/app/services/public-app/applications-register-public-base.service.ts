@@ -10,6 +10,7 @@ import { RegixChecksWrapperDTO } from '@app/models/generated/dtos/RegixChecksWra
 import { AreaTypes } from '@app/shared/enums/area-type.enum';
 import { RequestService } from '@app/shared/services/request.service';
 import { BaseAuditService } from '@app/services/common-app/base-audit.service';
+import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
 
 export abstract class ApplicationsRegisterPublicBaseService extends BaseAuditService implements IApplicationsActionsService {
     private readonly applicationPublicController: string = 'ApplicationsPublic';
@@ -22,6 +23,14 @@ export abstract class ApplicationsRegisterPublicBaseService extends BaseAuditSer
     public abstract getApplication(id: number, getRegiXData: boolean, pageCode?: PageCodeEnum): Observable<IApplicationRegister>;
     public abstract addApplication(application: IApplicationRegister, pageCode?: PageCodeEnum): Observable<number>;
     public abstract editApplication(application: IApplicationRegister, pageCode?: PageCodeEnum, fromSaveAsDraft?: boolean): Observable<number>;
+
+    public getUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
+    public getMyTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        throw new Error('This method should not be called from the public app.');
+    }
 
     public getCurrentUserAsSubmittedBy(...params: unknown[]): Observable<ApplicationSubmittedByDTO> {
         return this.requestService.get(this.area, this.applicationPublicController, 'GetCurrentUserAsSubmittedBy', {
@@ -43,6 +52,10 @@ export abstract class ApplicationsRegisterPublicBaseService extends BaseAuditSer
     }
 
     public assignApplicationViaAccessCode(accessCode: string): Observable<AssignedApplicationInfoDTO> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
+    public assignApplicationViaUserId(applicationId: number, userId: number): Observable<AssignedApplicationInfoDTO> {
         throw new Error('This method should not be called from the public app.');
     }
 

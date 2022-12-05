@@ -88,9 +88,10 @@ import { DuplicatesRegisterPublicService } from '@app/services/public-app/duplic
 import { DuplicatesRegisterAdministrationService } from '@app/services/administration-app/duplicates-register-administration.service';
 import { DuplicatesApplicationComponent } from '@app/components/common-app/duplicates/duplicates-application.component';
 import { CapacityCertificateDuplicateComponent } from '@app/components/common-app/fishing-capacity/capacity-certificate-duplicate/capacity-certificate-duplicate.component';
-import { EditLegalAssociationComponent } from '../../legal-associations/edit-legal-association/edit-legal-association.component';
+import { EditLegalAssociationComponent } from '@app/components/common-app/legal-associations/edit-legal-association/edit-legal-association.component';
 import { RecreationalFishingAssociationService } from '@app/services/administration-app/recreational-fishing-association.service';
 import { RecreationalFishingAssociationPublicService } from '@app/services/public-app/recreational-fishing-association-public.service';
+import { AssignApplicationByUserComponent } from '../components/assign-application-by-user/assign-application-by-user.component';
 
 const DIALOG_WIDTH: string = '1600px';
 export type ApplicationTablePageType = 'FileInPage' | 'DashboardPage' | 'ApplicationPage' | 'PublicPage';
@@ -123,20 +124,22 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
     public readonly applicationStatusEnum: typeof ApplicationStatusesEnum = ApplicationStatusesEnum;
     public readonly applicationPaymentStatusEnum: typeof PaymentStatusesEnum = PaymentStatusesEnum;
 
-    private confirmDialog: TLConfirmDialog;
-    private translationService: FuseTranslationLoaderService;
-    private nomenclaturesService: CommonNomenclatures;
-    private addApplicationRequestDialog: TLMatDialog<FileInApplicationStepperComponent>;
-    private enterEventisNumberDialog: TLMatDialog<FileInApplicationStepperComponent>;
-    private assignApplicationByAccessCodeDialog: TLMatDialog<AssignApplicationByAccessCodeComponent>;
-    private statusReasonDialog: TLMatDialog<EnterReasonComponent>;
-    private paymentDataDialog: TLMatDialog<PaymentDataComponent>;
-    private chooseApplicationTypeDialog: TLMatDialog<ChooseApplicationTypeComponent>;
-    private uploadFileDialog: TLMatDialog<UploadFileDialogComponent>;
-    private onlinePaymentDialog: TLMatDialog<OnlinePaymentDataComponent>;
-    private matDialog: MatDialog;
-    private injector: Injector;
-    private paymentTypes!: NomenclatureDTO<number>[];
+    private readonly confirmDialog: TLConfirmDialog;
+    private readonly translationService: FuseTranslationLoaderService;
+    private readonly nomenclaturesService: CommonNomenclatures;
+    private readonly addApplicationRequestDialog: TLMatDialog<FileInApplicationStepperComponent>;
+    private readonly enterEventisNumberDialog: TLMatDialog<FileInApplicationStepperComponent>;
+    private readonly assignApplicationByAccessCodeDialog: TLMatDialog<AssignApplicationByAccessCodeComponent>;
+    private readonly assignApplicationByUserIdDialog: TLMatDialog<AssignApplicationByUserComponent>;
+    private readonly statusReasonDialog: TLMatDialog<EnterReasonComponent>;
+    private readonly paymentDataDialog: TLMatDialog<PaymentDataComponent>;
+    private readonly chooseApplicationTypeDialog: TLMatDialog<ChooseApplicationTypeComponent>;
+    private readonly uploadFileDialog: TLMatDialog<UploadFileDialogComponent>;
+    private readonly onlinePaymentDialog: TLMatDialog<OnlinePaymentDataComponent>;
+    private readonly matDialog: MatDialog;
+    private readonly injector: Injector;
+
+    private paymentTypes: NomenclatureDTO<number>[] = [];
 
     private editDialog!: TLMatDialog<T>;
     private editDialogTCtor!: new (...args: unknown[]) => T;
@@ -160,6 +163,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
         addApplicationRequestDialog: TLMatDialog<FileInApplicationStepperComponent>,
         enterEventisNumberDialog: TLMatDialog<FileInApplicationStepperComponent>,
         assignApplicationByAccessCodeDialog: TLMatDialog<AssignApplicationByAccessCodeComponent>,
+        assignApplicationByUserIdDialog: TLMatDialog<AssignApplicationByUserComponent>,
         statusReasonDialog: TLMatDialog<EnterReasonComponent>,
         paymentDataDialog: TLMatDialog<PaymentDataComponent>,
         chooseApplicationTypeDialog: TLMatDialog<ChooseApplicationTypeComponent>,
@@ -177,6 +181,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
         this.addApplicationRequestDialog = addApplicationRequestDialog;
         this.enterEventisNumberDialog = enterEventisNumberDialog;
         this.assignApplicationByAccessCodeDialog = assignApplicationByAccessCodeDialog;
+        this.assignApplicationByUserIdDialog = assignApplicationByUserIdDialog;
         this.statusReasonDialog = statusReasonDialog;
         this.paymentDataDialog = paymentDataDialog;
         this.onlinePaymentDialog = onlinePaymentDialog;
@@ -421,6 +426,37 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
         closeFn();
     }
 
+    public assignApplicationViaUserId(application: ApplicationRegisterDTO): void {
+        if (this.pageType === 'FileInPage' || this.pageType === 'ApplicationPage') { // Не се позволява присвояване в публичното и в таблото
+            const dialog = this.assignApplicationByUserIdDialog.openWithTwoButtons({
+                TCtor: AssignApplicationByUserComponent,
+                title: this.translationService.getValue('applications-register.assign-application-by-user-dialog-title'),
+                translteService: this.translationService,
+                componentData: new DialogParamsModel({
+                    applicationId: application.id,
+                    service: this.service
+                }),
+                headerCancelButton: {
+                    cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+                },
+                saveBtn: {
+                    id: 'save',
+                    translateValue: 'applications-register.assign-application-by-user-btn',
+                    color: 'accent'
+                },
+                viewMode: false
+            }, '1000px');
+
+            dialog.subscribe({
+                next: (result: AssignedApplicationInfoDTO | undefined) => {
+                    if (result !== null && result !== undefined) {
+                        this.onAddedOrEditted.emit(application.id);
+                    }
+                }
+            });
+        }
+    }
+
     public editActionClicked(application: ApplicationRegisterDTO): void {
         this.initiateOpenEditDialog(application.id!, application.statusCode as ApplicationStatusesEnum, application.prevStatusCode, application.pageCode!, false);
     }
@@ -488,6 +524,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
     }
 
     public enterPaymentDataActionClicked(application: ApplicationRegisterDTO): void {
+        debugger;
         const headerTitle: string = this.translationService.getValue('applications-register.enter-payment-data-dialog-title');
         const data = new PaymentDataInfo({
             paymentTypes: this.paymentTypes,
@@ -747,7 +784,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
         let leftButtons: IActionInfo[] | undefined;
 
         this.setApplicationDataFields(pageCode);
-        
+
         let isReadOnly: boolean = !this.processingPermissions.get(pageCode)?.canEditRecords || viewMode;
 
         let showOnlyRegiXData: boolean = false;

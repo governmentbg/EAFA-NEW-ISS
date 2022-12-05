@@ -178,7 +178,7 @@
                        #rawMaterialTable
                        [rows]="rawMaterials"
                        [isRemote]="false"
-                       [isSoftDeletable]="true"
+                       [showInactiveRecords]="false"
                        [showAddButton]="!viewMode && !isReadonly">
             <data-column [flexRate]="0.25"
                          propertyName="fishTypeId"
@@ -223,7 +223,7 @@
                        #productTable
                        [rows]="products"
                        [isRemote]="false"
-                       [isSoftDeletable]="true"
+                       [showInactiveRecords]="false"
                        [showAddButton]="!viewMode && !isReadonly">
             <data-column [flexRate]="0.5"
                          propertyName="productTypeId"

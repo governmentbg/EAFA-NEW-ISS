@@ -1,0 +1,11 @@
+﻿<div class="dialog-padding">
+    <div fxLayoutAlign="center strech" fxLayout="column" [formGroup]="form">
+        <tl-autocomplete formControlName="userControl"
+                         label="{{ 'applications-register.user-to-assign' | tlTranslate }}"
+                         [options]="users">
+        </tl-autocomplete>
+        <tl-slide-toggle formControlName="onlyMyTerritoryUnitControl"
+                         label="{{ 'applications-register.only-my-territory-unit-toggle' | tlTranslate }}">
+        </tl-slide-toggle>
+    </div>
+</div>

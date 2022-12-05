@@ -58,6 +58,7 @@
                                  formControlName="shipNameControl"
                                  tooltipResourceName="statistical-forms.ship-name-helper"
                                  [options]="ships"
+                                 [getControlErrorLabelText]="shipControlErrorLabelTest.bind(this)"
                                  [templateOptions]="true"
                                  label="{{ 'statistical-forms.ship-name' | tlTranslate }}">
                 </tl-autocomplete>
@@ -137,7 +138,7 @@
                            [rows]="seaDays"
                            [isRemote]="false"
                            [isSoftDeletable]="true"
-                           [showInactiveRecords]="true"
+                           [showInactiveRecords]="false"
                            [showAddButton]="!viewMode && !readOnly">
                 <data-column columnName="{{ 'statistical-forms.fishing-gear' | tlTranslate }}"
                              propertyName="fishingGearId"

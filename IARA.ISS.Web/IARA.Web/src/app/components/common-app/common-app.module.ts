@@ -8,6 +8,7 @@ import { TLEGovPaymentsModule } from '@tl/tl-egov-payments';
 import { ApplicationsRegisterComponent } from './applications/applications-register/applications-register.component';
 import { ApplicationsTableComponent } from './applications/applications-table/applications-table.component';
 import { AssignApplicationByAccessCodeComponent } from './applications/components/assign-application-by-access-code/assign-application-by-access-code.component';
+import { AssignApplicationByUserComponent } from './applications/components/assign-application-by-user/assign-application-by-user.component';
 import { ChooseApplicationTypeComponent } from './applications/components/choose-application-type/choose-application-type.component';
 import { ChooseApplicationComponent } from './applications/components/choose-application/choose-application.component';
 import { EnterEventisNumberComponent } from './applications/components/enter-eventis-number/enter-eventis-number.component';
@@ -201,7 +202,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         EditLegalAssociationComponent,
         EditLegalAssociationPersonComponent,
         ChooseLogBookForRenewalComponent,
-        PrintConfigurationsComponent
+        PrintConfigurationsComponent,
+        AssignApplicationByUserComponent
     ],
     imports: [
         TLCommonModule,
@@ -304,7 +306,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         EditLegalAssociationComponent,
         EditLegalAssociationPersonComponent,
         ChooseLogBookForRenewalComponent,
-        PrintConfigurationsComponent
+        PrintConfigurationsComponent,
+        AssignApplicationByUserComponent
     ],
     providers: [CurrencyPipe, TLDateDifferencePipe, DatePipe]
 })

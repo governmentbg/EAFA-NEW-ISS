@@ -45,7 +45,8 @@ import { StatisticalFormTypesEnum } from '@app/enums/statistical-form-types.enum
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
-import { ShipNomenclatureFilters, ShipsUtils } from '@app/shared/utils/ships.utils';
+import { ShipsUtils } from '@app/shared/utils/ships.utils';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 
 type YesNo = 'yes' | 'no';
 
@@ -215,10 +216,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
             this.grossTonnageIntervals = nomenclatures[1];
             this.shipLengthIntervals = nomenclatures[2];
             this.fuelTypes = nomenclatures[3];
-
-            this.ships = ShipsUtils.filter(this.ships, new ShipNomenclatureFilters({
-                hasFishingCapacity: true
-            }));
         }
 
         // извличане на исторически данни за заявление
@@ -428,6 +425,18 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         }
 
         return result;
+    }
+
+    public shipControlErrorLabelTest(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+        if (controlName === 'shipNameControl') {
+            if (errorCode === 'shipNoFishingCapacity' && error === true) {
+                return new TLError({
+                    text: this.translate.getValue('statistical-forms.ship-no-fishing-capacity-error'),
+                    type: 'error'
+                });
+            }
+        }
+        return undefined;
     }
 
     private saveFishVesselForm(dialogClose: DialogCloseCallback, saveAsDraft: boolean = false): Observable<boolean> {
@@ -774,7 +783,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                 submittedByWorkPositionControl: new FormControl(null, [Validators.required, Validators.maxLength(200)]),
                 submittedForControl: new FormControl(),
                 filesControl: new FormControl(),
-                shipNameControl: new FormControl(null, Validators.required),
+                shipNameControl: new FormControl(null, [Validators.required, this.shipValidator()]),
                 yearControl: new FormControl(null, Validators.required),
                 shipYearsControl: new FormControl({ value: null, disabled: true }),
                 shipPriceControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
@@ -802,7 +811,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                 submittedForControl: new FormControl(),
                 filesControl: new FormControl(),
                 formNumControl: new FormControl({ value: null, disabled: true }),
-                shipNameControl: new FormControl(null, Validators.required),
+                shipNameControl: new FormControl(null, [Validators.required, this.shipValidator()]),
                 yearControl: new FormControl(null, Validators.required),
                 shipYearsControl: new FormControl({ value: null, disabled: true }),
                 shipPriceControl: new FormControl(null, Validators.required),
@@ -1081,5 +1090,20 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         const womenWithPay: number = stat.map(x => x.womenWithPay!).reduce((sum, a) => sum + a, 0);
 
         return menWithPay !== 0 || womenWithPay !== 0;
+    }
+
+    private shipValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            const shipId: number | undefined = this.form?.get('shipNameControl')?.value?.value;
+            if (shipId !== undefined && shipId !== null) {
+                const ship: ShipNomenclatureDTO = ShipsUtils.get(this.ships, shipId);
+
+                if (!ShipsUtils.hasFishingCapacity(ship)) {
+                    return { shipNoFishingCapacity: true };
+                }
+            }
+
+            return null;
+        };
     }
 }

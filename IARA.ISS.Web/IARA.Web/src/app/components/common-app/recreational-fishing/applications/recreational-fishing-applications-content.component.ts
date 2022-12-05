@@ -385,7 +385,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             period: this.periods.find(x => x.value === ticket.ticketPeriodId)!,
             service: this.service
         });
-        debugger;
+
         if (viewMode) {
             this.openEditDialogForAll(params, this.translate.getValue('recreational-fishing.application-view-ticket-dialog-title'));
         }
@@ -397,7 +397,6 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
                 } break;
                 case ApplicationStatusesEnum.FILL_BY_APPL: {
                     // Ако не сме в RegiX режим И предишният статус на заявлението е бил Стартирани проверки
-                    debugger;
                     if (prevApplicationStatus === ApplicationStatusesEnum.EXT_CHK_STARTED) {
                         params.showRegiXData = true;
                     }

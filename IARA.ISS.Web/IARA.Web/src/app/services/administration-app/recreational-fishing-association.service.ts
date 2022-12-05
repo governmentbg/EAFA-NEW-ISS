@@ -22,6 +22,7 @@ import { FishingAssociationEditDTO } from '@app/models/generated/dtos/FishingAss
 import { FishingAssociationApplicationEditDTO } from '@app/models/generated/dtos/FishingAssociationApplicationEditDTO';
 import { FishingAssociationRegixDataDTO } from '@app/models/generated/dtos/FishingAssociationRegixDataDTO';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
+import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -193,8 +194,19 @@ export class RecreationalFishingAssociationService extends BaseAuditService impl
     }
 
     public assignApplicationViaAccessCode(accessCode: string): Observable<AssignedApplicationInfoDTO> {
-        const params = new HttpParams().append('accessCode', accessCode);
-        return this.requestService.post(this.area, this.controller, 'AssignApplicationViaAccessCode', null, { httpParams: params });
+        throw new Error('Method not implemented.');
+    }
+
+    public assignApplicationViaUserId(applicationId: number, userId: number): Observable<AssignedApplicationInfoDTO> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getMyTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        throw new Error('Method not implemented.');
     }
 
     public getFishingAssociationSimpleAudit(id: number): Observable<SimpleAuditDTO> {

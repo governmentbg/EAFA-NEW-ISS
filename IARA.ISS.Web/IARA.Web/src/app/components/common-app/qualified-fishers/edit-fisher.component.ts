@@ -547,8 +547,8 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
                 this.editForm.addControl('applicantRelationToRecipientControl', new FormControl());
 
                 this.editForm.get('applicantRelationToRecipientControl')!.valueChanges.subscribe({
-                    next: () => {
-                        if (this.editForm.get('applicantRelationToRecipientControl')!.value.role === SubmittedByRolesEnum.Personal) {
+                    next: (value: ApplicantRelationToRecipientDTO | undefined) => {
+                        if (value?.role === SubmittedByRolesEnum.Personal) {
                             this.showSubmittedFor = false;
                             this.editForm.get('submittedForAddressDataControl')!.setErrors(null);
                             this.editForm.get('submittedForRegixDataControl')!.setErrors(null);

@@ -134,6 +134,7 @@
     ApplicationsCancelRecords = 'ApplicationsCancelRecords',
     ApplicationsReadRegister = 'ApplicationsReadRegister',
     ReAssignApplication = 'ReAssignApplication',
+    ApplicationsProcessPaymentData = 'ApplicationsProcessPaymentData',
 
     // Applications register delivery
     ApplicationRegisterDeliveryRead = 'ApplicationRegisterDeliveryRead',

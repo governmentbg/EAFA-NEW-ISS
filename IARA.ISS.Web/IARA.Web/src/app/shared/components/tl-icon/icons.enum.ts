@@ -134,6 +134,8 @@ import editArrowBack16Regular from '@iconify-icons/fluent/edit-arrow-back-16-reg
 import warning24Filled from '@iconify-icons/fluent/warning-24-filled';
 import cancel from '@iconify/icons-mdi/cancel';
 import buildingRetailMoney20Regular from '@iconify-icons/fluent/building-retail-20-regular';
+import arrowForwardDownPerson20Regular from '@iconify-icons/fluent/arrow-forward-down-person-20-regular';
+import accountSwitch from '@iconify/icons-mdi/account-switch';
 
 export class AppIcons {
     /*
@@ -175,7 +177,9 @@ export class AppIcons {
         'ic-fluent-edit-arrow-back-16-regular': editArrowBack16Regular,
         'ic-fluent-warning-24-filled': warning24Filled,
         'ic-cancel': cancel,
-        'ic-building-retail-money-20-regular': buildingRetailMoney20Regular
+        'ic-building-retail-money-20-regular': buildingRetailMoney20Regular,
+        'ic-arrow-forward-down-person-20-regular': arrowForwardDownPerson20Regular,
+        'ic-account-switch': accountSwitch
     };
 
     /*
