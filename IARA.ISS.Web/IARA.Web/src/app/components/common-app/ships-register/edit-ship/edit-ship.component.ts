@@ -139,8 +139,6 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
     public expectedResults: ShipRegisterRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
 
-    public paymentInformation: ApplicationPaymentInformationDTO | undefined;
-
     public shipOwners: ShipOwnerDTO[] | ShipOwnerRegixDataDTO[] = [];
     public allowOwnersEdit: boolean = false;
     public ownersTouched: boolean = false;
@@ -776,7 +774,6 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
 
                         this.isPaid = ship.isPaid!;
                         this.hasDelivery = ship.hasDelivery!;
-                        this.paymentInformation = ship.paymentInformation;
                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = ship.isOnlineApplication!;
                         this.refreshFileTypes.next();
@@ -854,7 +851,6 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                             this.isOnlineApplication = ship.isOnlineApplication!;
                             this.isPaid = ship.isPaid!;
                             this.hasDelivery = ship.hasDelivery!;
-                            this.paymentInformation = ship.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
 
@@ -1030,6 +1026,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
         form.addControl('commentsControl', new FormControl(null));
 
         form.addControl('deliveryDataControl', new FormControl(null));
+        form.addControl('applicationPaymentInformationControl', new FormControl());
         form.addControl('filesControl', new FormControl(null));
 
         form.addControl('acquiredCapacityControl', new FormControl(null));
@@ -1431,6 +1428,10 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                 if (this.hasDelivery === true) {
                     this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
                 }
+
+                if (this.isPaid === true) {
+                    this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
+                }
             }
             else {
                 if (this.isAddingRegisterEntry) {
@@ -1646,6 +1647,10 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
 
                 if (this.hasDelivery === true) {
                     model.deliveryData = this.form.get('deliveryDataControl')!.value;
+                }
+
+                if (this.isPaid === true) {
+                    (this.model as ShipRegisterApplicationEditDTO).paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
                 }
             }
             else {
@@ -2033,8 +2038,8 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
     }
 
     private shouldHidePaymentData(): boolean {
-        return this.paymentInformation?.paymentType === null
-            || this.paymentInformation?.paymentType === undefined
-            || this.paymentInformation?.paymentType === '';
+        return (this.model as ShipRegisterApplicationEditDTO)?.paymentInformation?.paymentType === null
+            || (this.model as ShipRegisterApplicationEditDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as ShipRegisterApplicationEditDTO)?.paymentInformation?.paymentType === '';
     }
 }

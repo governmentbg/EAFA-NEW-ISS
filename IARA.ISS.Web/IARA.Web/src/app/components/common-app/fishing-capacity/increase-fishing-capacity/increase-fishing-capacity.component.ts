@@ -60,8 +60,6 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
     public expectedResults: IncreaseFishingCapacityRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
 
-    public paymentInformation: ApplicationPaymentInformationDTO | undefined;
-
     public isPublicApp: boolean = false;
     public isOnlineApplication: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
@@ -139,7 +137,6 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
 
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
-                        this.paymentInformation = application.paymentInformation;
                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
@@ -181,7 +178,6 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
                             this.isDraft = application.isDraft;
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
-                            this.paymentInformation = application.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.isOnlineApplication = application.isOnlineApplication!;
                             this.refreshFileTypes.next();
@@ -340,15 +336,16 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
 
     private buildForm(): void {
         this.form = new FormGroup({
-            submittedByControl: new FormControl(null),
-            submittedForControl: new FormControl(null),
-            shipControl: new FormControl(null, [Validators.required, this.shipValidator()]),
-            grossTonnageControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)]),
-            powerControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)]),
-            acquiredCapacityControl: new FormControl(null),
-            actionsControl: new FormControl(null),
-            deliveryDataControl: new FormControl(null),
-            filesControl: new FormControl(null)
+            submittedByControl: new FormControl(undefined),
+            submittedForControl: new FormControl(undefined),
+            shipControl: new FormControl(undefined, [Validators.required, this.shipValidator()]),
+            grossTonnageControl: new FormControl(undefined, [Validators.required, TLValidators.number(0, undefined, 2)]),
+            powerControl: new FormControl(undefined, [Validators.required, TLValidators.number(0, undefined, 2)]),
+            acquiredCapacityControl: new FormControl(undefined),
+            actionsControl: new FormControl(undefined),
+            deliveryDataControl: new FormControl(undefined),
+            applicationPaymentInformationControl: new FormControl(),
+            filesControl: new FormControl(undefined)
         });
 
         this.form.get('actionsControl')!.valueChanges.subscribe({
@@ -385,6 +382,10 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
 
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+            }
+
+            if (this.isPaid === true) {
+                this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
             }
 
             if (this.showRegiXData) {
@@ -438,6 +439,10 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
 
             if (this.hasDelivery === true) {
                 this.model.deliveryData = this.form.get('deliveryDataControl')!.value;
+            }
+
+            if (this.isPaid === true) {
+                this.model.paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
             }
         }
     }
@@ -523,8 +528,8 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
     }
 
     private shouldHidePaymentData(): boolean {
-        return this.paymentInformation?.paymentType === null
-            || this.paymentInformation?.paymentType === undefined
-            || this.paymentInformation?.paymentType === '';
+        return (this.model as IncreaseFishingCapacityApplicationDTO)?.paymentInformation?.paymentType === null
+            || (this.model as IncreaseFishingCapacityApplicationDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as IncreaseFishingCapacityApplicationDTO)?.paymentInformation?.paymentType === '';
     }
 }

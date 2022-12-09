@@ -421,13 +421,6 @@
             </ng-container>
             <ng-container *ngSwitchCase="applicationStatusEnum.INSP_CORR_FROM_EMP">
                 <ng-container *ngIf="pageType === 'FileInPage'">
-                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canReAssignApplicationRecords"
-                                    icon="ic-account-switch"
-                                    iconClass="accent-color"
-                                    [size]="icIconSize"
-                                    tooltipText="{{ 'applications-register.assign-application-via-user' | tlTranslate }}"
-                                    (buttonClicked)="assignApplicationViaUserId(value.row)">
-                    </tl-icon-button>
                     <ng-container *ngIf="value.row.assignedUser == undefined">
                         <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canInspectAndCorrectRecords"
                                         icon="ic-fluent-doc-question-mark-24-regular"
@@ -436,6 +429,15 @@
                                         tooltipText="{{ 'applications-register.view-and-edit-application' | tlTranslate }}"
                                         (buttonClicked)="editActionClicked(value.row)">
                         </tl-icon-button>
+                    </ng-container>
+                    <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canReAssignApplicationRecords"
+                                    icon="ic-account-switch"
+                                    iconClass="accent-color"
+                                    [size]="icIconSize"
+                                    tooltipText="{{ 'applications-register.assign-application-via-user' | tlTranslate }}"
+                                    (buttonClicked)="assignApplicationViaUserId(value.row)">
+                    </tl-icon-button>
+                    <ng-container *ngIf="value.row.assignedUser == undefined">
                         <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                         icon="ic-fluent-doc-prohibited-24-regular"
                                         iconClass="error-color"

@@ -1,18 +1,42 @@
-﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="form">
+﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="form" [validityChecker]="form">
     <tl-expansion-panel title="{{ 'payment-information.tariffs-panel-title' | tlTranslate }}">
         <payment-tariffs formControlName="paymentSummaryControl"></payment-tariffs>
     </tl-expansion-panel>
-    <tl-expansion-panel *ngIf="!hideBasicInfo" title="{{ 'payment-information.basic-payment-information-panel-title' | tlTranslate }}">
+    <tl-expansion-panel *ngIf="!hideBasicInfo"
+                        title="{{ 'payment-information.basic-payment-information-panel-title' | tlTranslate }}"
+                        validityCheckerGroup>
         <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
             <div fxLayout="row" fxFlex="100" fxLayoutGap="1em" fxLayoutAlign="space-between center">
-                <tl-input fxFlex="50" formControlName="paymentTypeControl" label="{{ 'payment-information.payment-type' | tlTranslate }}" [readonly]="true"></tl-input>
-                <tl-date fxFlex="25" formControlName="paymentDateControl" label="{{ 'payment-information.payment-date' | tlTranslate }}" [readonly]="true"></tl-date>
-                <div fxFlex="25"></div>
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="paymentTypeControl"
+                                 label="{{ 'payment-information.payment-type' | tlTranslate }}"
+                                 [options]="paymentTypes">
+                </tl-autocomplete>
+                <tl-date fxFlex="25"
+                         formControlName="paymentDateControl"
+                         label="{{ 'payment-information.payment-date' | tlTranslate }}">
+                </tl-date>
+                <tl-input fxFlex="25"
+                          formControlName="totalPaidPriceControl"
+                          label="{{ 'payment-information.total-paid-price' | tlTranslate }}">
+                </tl-input>
             </div>
             <div fxLayout="row" fxFlex="100" fxLayoutGap="1em" fxLayoutAlign="space-between center">
-                <tl-input fxFlex="50" formControlName="referenceNumberControl" label="{{ 'payment-information.reference-number' | tlTranslate }}" [readonly]="true"></tl-input>
-                <tl-input fxFlex="25" formControlName="paymentStatusControl" label="{{ 'payment-information.payment-status' | tlTranslate }}" [readonly]="true"></tl-input>
-                <tl-date fxFlex="25" formControlName="lastUpdateDateControl" label="{{ 'payment-information.last-update-date' | tlTranslate }}" [readonly]="true"></tl-date>
+                <tl-input fxFlex="50"
+                          formControlName="referenceNumberControl"
+                          label="{{ 'payment-information.reference-number' | tlTranslate }}">
+                </tl-input>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="paymentStatusControl"
+                                 label="{{ 'payment-information.payment-status' | tlTranslate }}"
+                                 [options]="paymentStatuses"
+                                 [readonly]="true">
+                </tl-autocomplete>
+                <tl-date fxFlex="25"
+                         formControlName="lastUpdateDateControl"
+                         label="{{ 'payment-information.last-update-date' | tlTranslate }}"
+                         [readonly]="true">
+                </tl-date>
             </div>
         </div>
     </tl-expansion-panel>

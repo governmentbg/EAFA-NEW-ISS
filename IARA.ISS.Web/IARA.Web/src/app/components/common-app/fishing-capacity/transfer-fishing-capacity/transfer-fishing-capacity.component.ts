@@ -53,8 +53,6 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
     public expectedResults: TransferFishingCapacityRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
 
-    public paymentInformation: ApplicationPaymentInformationDTO | undefined;
-
     public certificates: FishingCapacityCertificateNomenclatureDTO[] = [];
 
     public maxGrossTonnage: number = 0;
@@ -140,7 +138,6 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
 
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
-                        this.paymentInformation = application.paymentInformation;
                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
@@ -182,7 +179,6 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
 
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
-                            this.paymentInformation = application.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.isOnlineApplication = application.isOnlineApplication!;
                             this.isDraft = application.isDraft;
@@ -314,12 +310,13 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
 
     private buildForm(): void {
         this.form = new FormGroup({
-            submittedByControl: new FormControl(null),
-            submittedForControl: new FormControl(null),
-            capacityCertificateControl: new FormControl(null, Validators.required),
-            holdersControl: new FormControl(null),
-            deliveryDataControl: new FormControl(null),
-            filesControl: new FormControl(null)
+            submittedByControl: new FormControl(undefined),
+            submittedForControl: new FormControl(undefined),
+            capacityCertificateControl: new FormControl(undefined, Validators.required),
+            holdersControl: new FormControl(undefined),
+            deliveryDataControl: new FormControl(undefined),
+            applicationPaymentInformationControl: new FormControl(),
+            filesControl: new FormControl(undefined)
         });
     }
 
@@ -340,6 +337,10 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
 
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+            }
+
+            if (this.isPaid === true) {
+                this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
             }
 
             if (this.showRegiXData) {
@@ -384,6 +385,10 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
 
             if (this.hasDelivery === true) {
                 this.model.deliveryData = this.form.get('deliveryDataControl')!.value;
+            }
+
+            if (this.isPaid === true) {
+                this.model.paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
             }
         }
     }
@@ -454,8 +459,8 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
     }
 
     private shouldHidePaymentData(): boolean {
-        return this.paymentInformation?.paymentType === null
-            || this.paymentInformation?.paymentType === undefined
-            || this.paymentInformation?.paymentType === '';
+        return (this.model as TransferFishingCapacityApplicationDTO)?.paymentInformation?.paymentType === null
+            || (this.model as TransferFishingCapacityApplicationDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as TransferFishingCapacityApplicationDTO)?.paymentInformation?.paymentType === '';
     }
 }

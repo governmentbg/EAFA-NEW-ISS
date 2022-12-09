@@ -38,12 +38,20 @@
             </div>
 
             <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
-                <tl-autocomplete fxFlex="20"
+                <tl-autocomplete *ngIf="isInspector"
+                                 fxFlex="20"
                                  formControlName="drafterControl"
                                  [options]="drafters"
                                  label="{{ 'auan-register.edit-drafter' | tlTranslate }}"
                                  tooltipResourceName="auan-register.edit-drafter-helper">
                 </tl-autocomplete>
+
+                <tl-input *ngIf="!isInspector"
+                          fxFlex="20"
+                          formControlName="drafterNameControl"
+                          label="{{ 'auan-register.edit-drafter' | tlTranslate }}"
+                          tooltipResourceName="auan-register.edit-drafter-helper">
+                </tl-input>
 
                 <tl-autocomplete fxFlex="20"
                                  formControlName="territoryUnitControl"
@@ -149,6 +157,7 @@
                         tooltipResourceName="auan-register.edit-auan-confiscated-appliances-helper">
         <decree-sized-fish formControlName="confiscatedApplianceControl"
                            [viewMode]="viewMode"
+                           [isAuan]="true"
                            [isAppliance]="true">
         </decree-sized-fish>
     </tl-expansion-panel>

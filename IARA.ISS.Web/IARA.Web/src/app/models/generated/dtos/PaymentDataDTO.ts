@@ -1,8 +1,9 @@
 ﻿
+
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
 
-export class PaymentDataDTO {
+export class PaymentDataDTO { 
     public constructor(obj?: Partial<PaymentDataDTO>) {
         Object.assign(this, obj);
     }
@@ -15,4 +16,7 @@ export class PaymentDataDTO {
 
     @StrictlyTyped(String)
     public paymentRefNumber?: string;
+
+    @StrictlyTyped(Number)
+    public totalPaidPrice?: number;
 }

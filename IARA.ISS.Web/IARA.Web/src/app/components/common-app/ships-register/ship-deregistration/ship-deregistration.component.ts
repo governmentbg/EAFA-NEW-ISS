@@ -60,8 +60,6 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
     public expectedResults: ShipDeregistrationRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
 
-    public paymentInformation: ApplicationPaymentInformationDTO | undefined;
-
     public isPublicApp: boolean = false;
     public isOnlineApplication: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
@@ -172,7 +170,6 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
 
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
-                        this.paymentInformation = application.paymentInformation;
                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
@@ -216,7 +213,6 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
                             this.isDraft = application.isDraft!;
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
-                            this.paymentInformation = application.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
 
@@ -344,13 +340,14 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
 
     private buildForm(): void {
         this.form = new FormGroup({
-            submittedByControl: new FormControl(null),
-            submittedForControl: new FormControl(null),
-            shipControl: new FormControl(null, [Validators.required, this.shipValidator()]),
-            reasonControl: new FormControl(null, Validators.required),
-            actionsControl: new FormControl(null),
-            deliveryDataControl: new FormControl(null),
-            filesControl: new FormControl(null)
+            submittedByControl: new FormControl(undefined),
+            submittedForControl: new FormControl(undefined),
+            shipControl: new FormControl(undefined, [Validators.required, this.shipValidator()]),
+            reasonControl: new FormControl(undefined, Validators.required),
+            actionsControl: new FormControl(undefined),
+            deliveryDataControl: new FormControl(undefined),
+            applicationPaymentInformationControl: new FormControl(),
+            filesControl: new FormControl(undefined)
         });
     }
 
@@ -373,6 +370,10 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
 
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+            }
+
+            if (this.isPaid === true) {
+                this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
             }
 
             if (this.showRegiXData) {
@@ -421,6 +422,10 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
 
             if (this.hasDelivery === true) {
                 this.model.deliveryData = this.form.get('deliveryDataControl')!.value;
+            }
+
+            if (this.isPaid === true) {
+                this.model.paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
             }
         }
         else {
@@ -507,8 +512,8 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
     }
 
     private shouldHidePaymentData(): boolean {
-        return this.paymentInformation?.paymentType === null
-            || this.paymentInformation?.paymentType === undefined
-            || this.paymentInformation?.paymentType === '';
+        return (this.model as ShipDeregistrationApplicationDTO)?.paymentInformation?.paymentType === null
+            || (this.model as ShipDeregistrationApplicationDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as ShipDeregistrationApplicationDTO)?.paymentInformation?.paymentType === '';
     }
 }

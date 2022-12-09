@@ -51,8 +51,6 @@ export class AquacultureChangeOfCircumstancesComponent implements OnInit, AfterV
     public expectedResults: AquacultureChangeOfCircumstancesRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
 
-    public paymentInformation: ApplicationPaymentInformationDTO | undefined;
-
     public isPublicApp: boolean = false;
     public isOnlineApplication: boolean = false;
     public isEditing: boolean = false;
@@ -109,7 +107,6 @@ export class AquacultureChangeOfCircumstancesComponent implements OnInit, AfterV
 
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
-                        this.paymentInformation = application.paymentInformation;
                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
@@ -151,7 +148,6 @@ export class AquacultureChangeOfCircumstancesComponent implements OnInit, AfterV
                             this.isOnlineApplication = application.isOnlineApplication!;
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
-                            this.paymentInformation = application.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
 
@@ -270,6 +266,7 @@ export class AquacultureChangeOfCircumstancesComponent implements OnInit, AfterV
             aquacultureControl: new FormControl(null, Validators.required),
             changesControl: new FormControl(null),
             deliveryDataControl: new FormControl(),
+            applicationPaymentInformationControl: new FormControl(),
             filesControl: new FormControl(null)
         });
     }
@@ -291,6 +288,10 @@ export class AquacultureChangeOfCircumstancesComponent implements OnInit, AfterV
 
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+            }
+
+            if (this.isPaid === true) {
+                this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
             }
 
             if (this.showRegiXData) {
@@ -335,6 +336,10 @@ export class AquacultureChangeOfCircumstancesComponent implements OnInit, AfterV
 
             if (this.hasDelivery === true) {
                 this.model.deliveryData = this.form.get('deliveryDataControl')!.value;
+            }
+
+            if (this.isPaid === true) {
+                this.model.paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
             }
         }
     }
@@ -409,8 +414,8 @@ export class AquacultureChangeOfCircumstancesComponent implements OnInit, AfterV
     }
 
     private shouldHidePaymentData(): boolean {
-        return this.paymentInformation?.paymentType === null
-            || this.paymentInformation?.paymentType === undefined
-            || this.paymentInformation?.paymentType === '';
+        return (this.model as AquacultureChangeOfCircumstancesApplicationDTO)?.paymentInformation?.paymentType === null
+            || (this.model as AquacultureChangeOfCircumstancesApplicationDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as AquacultureChangeOfCircumstancesApplicationDTO)?.paymentInformation?.paymentType === '';
     }
 }

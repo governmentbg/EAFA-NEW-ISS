@@ -23,4 +23,7 @@ export class ApplicationPaymentDTO {
 
     @StrictlyTyped(Number)
     public paymentStatus?: PaymentStatusesEnum;
+
+    @StrictlyTyped(Number)
+    public totalPaidPrice?: number;
 }

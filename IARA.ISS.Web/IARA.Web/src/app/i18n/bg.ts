@@ -1125,7 +1125,10 @@
         'renew-ticket-dialog-title': 'Подновяване на билет',
 
         'choose-association': 'Изберете сдружение',
-        'no-associations-with-permission': 'Вие не членувате в сдружение, от чието име имате право да издавате билети',
+        'no-associations-with-permission': 'За да издадете билет за любителски риболов е необходимо да регистрирате Вашата организация в обновената информационна система на ИАРА. Моля, попълнете заявлението, като посочите лицата с право на достъп. Заявлението ще бъде прегледано и одобрено от служител на ИАРА, за което ще получите известие на посочената електронна поща.',
+        'association-submit-application': 'Подай заявление',
+        'no-associations-with-permission-has-started': 'Имате започнато или подадено заявление за регистриране на Вашата организация в обновената информационна система на ИАРА. За да прегледате статуса на Вашето заявление, навигирайте към страница „Подадени заявления“ в менюто',
+        'association-navigate-to-application': 'Към заявлението',
 
         'association-name': 'Наименование',
         'association-territory-unit': 'Териториално звено',
@@ -1178,6 +1181,7 @@
         'payment-type': 'Начин на плащане',
         'payment-num': 'Приходен документ №',
         'payment-date': 'Дата на плащане',
+        'total-paid-price': 'Платена цена (в лева)'
     },
     'online-payment-data': {
         'choose-payment-method-panel-title': 'Начин на плащане',
@@ -1198,6 +1202,7 @@
         'basic-payment-information-panel-title': 'Основна платежна информация',
         'payment-type': 'Начин на плащане',
         'payment-date': 'Дата на плащане',
+        'total-paid-price': 'Платена цена (в лева)',
         'payment-status': 'Статус на плащането',
         'reference-number': 'Номер на плащането',
         'last-update-date': 'Дата на последна промяна'
@@ -1207,7 +1212,8 @@
         'quantity': 'Количество (брой)',
         'unit-price': 'Единична цена',
         'price': 'Цена',
-        'total-price': 'Обща цена',
+        'total-price': 'Обща изчислена цена',
+        'total-paid-price': 'Обща платена цена',
         'include-checkbox': 'Включена'
     },
     'payment-tariff': {
@@ -4597,6 +4603,7 @@
         'edit-violated-section': 'Точка',
         'edit-violated-letter': 'Буква',
         'edit-violated-type': 'Нормативен акт',
+        'edit-violated-comments': 'Бележки',
         'violated-regulation-type-law': 'Закон',
         'violated-regulation-type-regulation': 'Наредба',
         'edit-auan-at-least-one-violated-regulation-needed': 'Необходима е поне една нарушена разпоредба',

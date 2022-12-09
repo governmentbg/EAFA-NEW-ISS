@@ -13,4 +13,10 @@ export class PaymentSummaryDTO {
 
     @StrictlyTyped(Number)
     public totalPrice?: number;
+
+    @StrictlyTyped(Boolean)
+    public hasCalculatedTariffs?: boolean;
+
+    @StrictlyTyped(Number)
+    public totalPaidPrice?: number;
 }

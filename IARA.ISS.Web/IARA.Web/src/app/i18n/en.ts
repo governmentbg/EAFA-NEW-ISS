@@ -1096,7 +1096,10 @@
         'renew-ticket-dialog-title': 'Renew ticket',
 
         'choose-association': 'Choose an association',
-        'no-associations-with-permission': 'You do not have the right to issue tickets from an association',
+        'no-associations-with-permission': 'To issue a fishing ticket your organization needs to be registered in the new IARA system. Please submit an application which will be reviewed and approved by an employee from IARA. You will be notified upon the approval of your application at the given email address.',
+        'association-submit-application': 'Submit application',
+        'no-associations-with-permission-has-started': 'You have already started an application for registering your organization in the new IARA system. To view the status of your application, navigate to "Submitted applications" in the menu.',
+        'association-navigate-to-application': 'To application',
 
         'association-name': 'Name',
         'association-territory-unit': 'Territory unit',
@@ -1147,6 +1150,7 @@
         'payment-type': 'Payment type',
         'payment-num': 'Payment number',
         'payment-date': 'Payment date',
+        'total-paid-price': 'Paid price (in lv)'
     },
     'online-payment-data': {
         'choose-payment-method-panel-title': 'Payment method',
@@ -1167,6 +1171,7 @@
         'basic-payment-information-panel-title': 'Basic payment information',
         'payment-type': 'Payment type',
         'payment-date': 'Payment date',
+        'total-paid-price': 'Paid price (in lv)',
         'payment-status': 'Payment status',
         'reference-number': 'Reference number',
         'last-update-date': 'Last update'
@@ -1176,7 +1181,8 @@
         'quantity': 'Quantity',
         'unit-price': 'Unit price',
         'price': 'Price',
-        'total-price': 'Total price',
+        'total-price': 'Total calculated price',
+        'total-paid-price': 'Total paid price',
         'include-checkbox': 'Included'
     },
     'payment-tariff': {
@@ -4453,6 +4459,7 @@
         'edit-violated-section': 'Section',
         'edit-violated-letter': 'Letter',
         'edit-violated-type': 'Normative act',
+        'edit-violated-comments': 'Comments',
         'violated-regulation-type-law': 'Law',
         'violated-regulation-type-regulation': 'Regulation',
         'edit-auan-at-least-one-violated-regulation-needed': 'At least one violated regulation needed',

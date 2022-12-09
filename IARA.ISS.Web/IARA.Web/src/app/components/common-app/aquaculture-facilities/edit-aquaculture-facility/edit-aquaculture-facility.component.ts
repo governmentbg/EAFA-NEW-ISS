@@ -152,7 +152,6 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     public expectedResults: AquacultureRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
 
-    public paymentInformation: ApplicationPaymentInformationDTO | undefined;
     public logBookGroup: LogBookGroupsEnum = LogBookGroupsEnum.Aquaculture;
 
     public service!: IAquacultureFacilitiesService;
@@ -364,7 +363,6 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
 
                         this.isPaid = aquaculture.isPaid!;
                         this.hasDelivery = aquaculture.hasDelivery!;
-                        this.paymentInformation = aquaculture.paymentInformation;
                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = aquaculture.isOnlineApplication!;
 
@@ -430,7 +428,6 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                             this.isOnlineApplication = aquaculture.isOnlineApplication!;
                             this.isPaid = aquaculture.isPaid!;
                             this.hasDelivery = aquaculture.hasDelivery!;
-                            this.paymentInformation = aquaculture.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
 
@@ -1342,7 +1339,8 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                 commentsControl: new FormControl(null, Validators.maxLength(4000)),
                 filesControl: new FormControl(),
 
-                deliveryDataControl: new FormControl()
+                deliveryDataControl: new FormControl(),
+                applicationPaymentInformationControl: new FormControl()
             }, this.baseFormValidators());
 
             this.coordinatesForm = new FormGroup({
@@ -1667,6 +1665,10 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         if (this.hasDelivery === true) {
             this.form.get('deliveryDataControl')!.setValue(model.deliveryData);
         }
+
+        if (this.isPaid === true) {
+            this.form.get('applicationPaymentInformationControl')!.setValue((this.model as AquacultureApplicationEditDTO).paymentInformation);
+        }
     }
 
     private fillFormRegister(model: AquacultureFacilityEditDTO): void {
@@ -1826,6 +1828,10 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
 
         if (this.hasDelivery === true) {
             model.deliveryData = this.form.get('deliveryDataControl')!.value;
+        }
+
+        if (this.isPaid === true) {
+            (this.model as AquacultureApplicationEditDTO).paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
         }
     }
 
@@ -2123,9 +2129,9 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     }
 
     private shouldHidePaymentData(): boolean {
-        return this.paymentInformation?.paymentType === null
-            || this.paymentInformation?.paymentType === undefined
-            || this.paymentInformation?.paymentType === '';
+        return (this.model as AquacultureApplicationEditDTO)?.paymentInformation?.paymentType === null
+            || (this.model as AquacultureApplicationEditDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as AquacultureApplicationEditDTO)?.paymentInformation?.paymentType === '';
     }
 
     private closeOverlappingLogBooksDialogBtnClicked(closeFn: HeaderCloseFunction): void {

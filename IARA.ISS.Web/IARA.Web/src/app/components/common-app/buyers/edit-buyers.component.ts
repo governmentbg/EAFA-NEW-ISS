@@ -93,7 +93,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
     public duplicates: DuplicatesEntryDTO[] = [];
     public service!: IBuyersService;
-    public applicationPaymentInformation: ApplicationPaymentInformationDTO | undefined;
     public agentSameAsOptions: NomenclatureDTO<AgentSameAsTypesEnum>[] = []; // needed only for first sale buyers
     public isAgentSameAsSubmittedForCustodian: boolean = false; // needed only for first sale buyers
     public selectedDocumentForUseType: NomenclatureDTO<number> | undefined;
@@ -433,7 +432,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                             this.model.pageCode = this.pageCode;
                             this.isPaid = this.model.isPaid!;
                             this.hasDelivery = this.model.hasDelivery!;
-                            this.applicationPaymentInformation = this.model.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         }
 
@@ -533,7 +531,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                                 this.model.pageCode = this.pageCode;
                                 this.isPaid = this.model.isPaid!;
                                 this.hasDelivery = this.model.hasDelivery!;
-                                this.applicationPaymentInformation = this.model.paymentInformation;
                                 this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                                 this.isOnlineApplication = this.model.isOnlineApplication!;
 
@@ -1405,7 +1402,10 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
             this.editForm.addControl('filesControl', new FormControl());
         }
 
-        this.editForm.addControl('deliveryDataControl', new FormControl());
+        if (this.isApplication) {
+            this.editForm.addControl('deliveryDataControl', new FormControl());
+            this.editForm.addControl('applicationPaymentInformationControl', new FormControl());
+        }
     }
 
     private fillForm(): void {
@@ -1533,8 +1533,16 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
             }
 
             this.editForm.get('annualTurnoverControl')!.setValue(this.model.annualTurnover);
-            this.editForm.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+
+            if (this.hasDelivery) {
+                this.editForm.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+            }
+
             this.editForm.get('filesControl')!.setValue(this.model.files);
+
+            if (this.isPaid === true) {
+                this.editForm.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
+            }
         }
     }
 
@@ -1713,7 +1721,15 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
             }
 
             this.model.annualTurnover = this.editForm.get('annualTurnoverControl')!.value;
-            this.model.deliveryData = this.editForm.get('deliveryDataControl')!.value;
+
+            if (this.hasDelivery) {
+                this.model.deliveryData = this.editForm.get('deliveryDataControl')!.value;
+            }
+            
+            if (this.isPaid === true) {
+                this.model.paymentInformation = this.editForm.get('applicationPaymentInformationControl')!.value;
+            }
+
             this.model.files = this.editForm.get('filesControl')!.value;
         }
     }
@@ -1960,9 +1976,9 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
     }
 
     private shouldHidePaymentData(): boolean {
-        return this.applicationPaymentInformation?.paymentType === null
-            || this.applicationPaymentInformation?.paymentType === undefined
-            || this.applicationPaymentInformation?.paymentType === '';
+        return (this.model as BuyerApplicationEditDTO)?.paymentInformation?.paymentType === null
+            || (this.model as BuyerApplicationEditDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as BuyerApplicationEditDTO)?.paymentInformation?.paymentType === '';
     }
 
     private closeEditPremiseUsageDocumentDialogBtnClicked(closeFn: HeaderCloseFunction): void {

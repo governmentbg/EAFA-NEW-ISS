@@ -70,6 +70,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
     public isAdding: boolean = false;
     public viewMode: boolean = false;
+    public isInspector: boolean = false;
     public isFromThirdPartyInspection: boolean = false;
     public violatedRegulationsTouched: boolean = false;
 
@@ -125,10 +126,11 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         this.territoryUnits = nomenclatures[1];
         this.deliveryTypes = (nomenclatures[2] as InspDeliveryTypesNomenclatureDTO[]).filter(x => x.group === InspDeliveryTypeGroupsEnum.AUAN);
         this.deliveryConfirmationTypes = (nomenclatures[3] as InspDeliveryTypesNomenclatureDTO[]).filter(x => x.group === InspDeliveryTypeGroupsEnum.AUAN);
-        this.drafters = nomenclatures[4]; 
+        this.drafters = nomenclatures[4];
 
         this.service.getAuanReportData(this.inspectionId).subscribe({
             next: (data: AuanReportDataDTO) => {
+                this.isInspector = true;
 
                 this.fillReportData(data);
                 if (this.auanId === undefined || this.auanId === null) {
@@ -138,9 +140,19 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                     this.form.get('inspectedEntityControl')!.clearValidators();
                     this.form.get('inspectedEntityControl')!.updateValueAndValidity({ emitEvent: false });
 
+                    this.form.get('drafterControl')!.disable();
+                    this.form.get('territoryUnitControl')!.disable();
+
                     this.service.getAuan(this.auanId).subscribe({
                         next: (auan: AuanRegisterEditDTO) => {
                             this.model = auan;
+
+                            if (auan.inspectorName !== undefined && auan.inspectorName !== null) {
+                                this.isInspector = false;
+                                this.form.get('drafterControl')!.clearValidators();
+                                this.form.get('drafterControl')!.updateValueAndValidity({ emitEvent: false });
+                            }
+
                             this.fillForm();
                         }
                     });
@@ -194,7 +206,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                             this.form.get('refusalWitnessesControl')!.setValidators(Validators.required);
                             break;
                     }
-                    
+
                     this.form.get('deliveryTerritoryUnitControl')!.updateValueAndValidity({ emitEvent: false });
                     this.form.get('stateServiceControl')!.updateValueAndValidity({ emitEvent: false });
                     this.form.get('deliveryAddressControl')!.updateValueAndValidity({ emitEvent: false });
@@ -278,7 +290,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
         this.markAllAsTouched();
         this.validityCheckerGroup.validate();
-       
+
         if (this.form.valid) {
             this.fillModel();
             CommonUtils.sanitizeModelStrings(this.model);
@@ -325,7 +337,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                 if (this.form.valid) {
                     this.fillModel();
                     CommonUtils.sanitizeModelStrings(this.model);
-                    
+
                     if (this.auanId !== undefined && this.auanId !== null) {
                         this.service.editAuan(this.model).subscribe({
                             next: () => {
@@ -374,8 +386,9 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         this.form = new FormGroup({
             reportNumControl: new FormControl({ value: null, disabled: true }),
             drafterControl: new FormControl(null, Validators.required),
+            drafterNameControl: new FormControl({ value: null, disabled: true }),
             inspectionTypeControl: new FormControl({ value: null, disabled: true }),
-            territoryUnitControl: new FormControl({ value: null, disabled: true }),
+            territoryUnitControl: new FormControl(null),
 
             auanNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
             draftDateControl: new FormControl(null, Validators.required),
@@ -419,14 +432,21 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
     private fillForm(): void {
         this.form.get('auanNumControl')!.setValue(this.model.auanNum);
         this.form.get('draftDateControl')!.setValue(this.model.draftDate);
-        this.form.get('drafterControl')!.setValue(this.drafters.find(x => x.value === this.model.inspectorId));
         this.form.get('locationDescriptionControl')!.setValue(this.model.locationDescription);
+        this.form.get('territoryUnitControl')!.setValue(this.territoryUnits.find(x => x.value === this.model.territoryUnitId));
 
         this.form.get('witnessesControl')!.setValue(this.model.auanWitnesses);
 
         if (this.model.inspectedEntity !== undefined && this.model.inspectedEntity !== null) {
             this.inspectedEntity = this.model.inspectedEntity;
             this.form.get('inspectedEntityBasicInfoControl')!.setValue(this.model.inspectedEntity);
+        }
+
+        if (this.isInspector) {
+            this.form.get('drafterControl')!.setValue(this.drafters.find(x => x.value === this.model.inspectorId));
+        }
+        else {
+            this.form.get('drafterNameControl')!.setValue(this.model.inspectorName);
         }
 
         this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
@@ -491,8 +511,8 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         this.model.inspectionId = this.inspectionId;
         this.model.auanNum = this.form.get('auanNumControl')!.value;
         this.model.draftDate = this.form.get('draftDateControl')!.value;
-        this.model.inspectorId = this.form.get('drafterControl')!.value?.value;
         this.model.locationDescription = this.form.get('locationDescriptionControl')!.value;
+        this.model.territoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
 
         this.model.auanWitnesses = this.form.get('witnessesControl')!.value;
 
@@ -500,6 +520,10 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
         this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
         this.model.offenderComments = this.form.get('offenderCommentsControl')!.value;
+
+        if (this.isInspector) {
+            this.model.inspectorId = this.form.get('drafterControl')!.value?.value;
+        }
 
         const deliveryType: NomenclatureDTO<number> | undefined = this.form.get('deliveryTypeControl')!.value;
 
@@ -621,7 +645,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
     private handleAddEditErrorResponse(response: HttpErrorResponse): void {
         if (response.error?.messages !== null && response.error?.messages !== undefined) {
             const messages: string[] = response.error.messages;
-            
+
             if (messages.length !== 0) {
                 this.snackbar.openFromComponent(ErrorSnackbarComponent, {
                     data: response.error as ErrorModel,

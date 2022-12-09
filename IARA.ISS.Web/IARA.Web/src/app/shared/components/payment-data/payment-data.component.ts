@@ -17,6 +17,7 @@ import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/
 import { PaymentDataInfo } from './models/payment-data-info.model';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO';
+import { TLValidators } from '@app/shared/utils/tl-validators';
 
 @Component({
     selector: 'payment-data',
@@ -43,8 +44,8 @@ export class PaymentDataComponent extends CustomFormControl<PaymentDataDTO> impl
     public paymentTypes: NomenclatureDTO<number>[] = [];
 
     private applicationId: number | undefined;
-    private nomenclatures: CommonNomenclatures;
 
+    private readonly nomenclatures: CommonNomenclatures;
     private readonly loader: FormControlDataLoader;
 
     public constructor(@Optional() @Self() ngControl: NgControl, nomenclatures: CommonNomenclatures) {
@@ -56,12 +57,32 @@ export class PaymentDataComponent extends CustomFormControl<PaymentDataDTO> impl
 
     public ngOnInit(): void {
         this.initCustomFormControl();
+
+        this.form.get('totalPaidPriceControl')!.valueChanges.subscribe({
+            next: (price: number | undefined) => {
+                if (this.paymentSummary !== null && this.paymentSummary !== undefined) {
+                    this.paymentSummary = this.form.get('paymentSummaryControl')!.value;
+
+                    if (price !== null && price !== undefined) {
+                        price = Number(price);
+                    }
+
+                    this.paymentSummary!.totalPaidPrice = price;
+
+                    this.form.get('paymentSummaryControl')!.setValue(this.paymentSummary);
+                }
+            }
+        });
+
         this.resetForm();
 
         if (this.applicationsService !== null && this.applicationsService !== undefined && this.applicationId !== null && this.applicationId !== undefined) {
             this.applicationsService.getApplicationPaymentSummary(this.applicationId).subscribe({
                 next: (result: PaymentSummaryDTO) => {
-                    this.form.get('paymentSummaryControl')!.setValue(result);
+                    this.paymentSummary = result;
+                    this.form.get('paymentSummaryControl')!.setValue(this.paymentSummary);
+
+                    this.setAppliedTariffsFlag();
                 }
             });
         }
@@ -69,8 +90,7 @@ export class PaymentDataComponent extends CustomFormControl<PaymentDataDTO> impl
             this.form.get('paymentSummaryControl')!.setValue(this.paymentSummary);
         }
 
-        this.showAppliedTariffsPanel = (this.applicationsService !== undefined && this.applicationsService !== null)
-            || (this.paymentSummary !== undefined && this.paymentSummary !== null);
+        this.setAppliedTariffsFlag();
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
@@ -79,8 +99,7 @@ export class PaymentDataComponent extends CustomFormControl<PaymentDataDTO> impl
             this.form.get('paymentSummaryControl')!.setValue(this.paymentSummary);
         }
 
-        this.showAppliedTariffsPanel = (this.applicationsService !== undefined && this.applicationsService !== null)
-            || (this.paymentSummary !== undefined && this.paymentSummary !== null);
+        this.setAppliedTariffsFlag();
     }
 
     public setData(data: PaymentDataInfo, buttons: DialogWrapperData): void {
@@ -89,8 +108,6 @@ export class PaymentDataComponent extends CustomFormControl<PaymentDataDTO> impl
         this.applicationId = data.applicationId;
         this.paymentDateMin = data.paymentDateMin;
         this.paymentDateMax = data.paymentDateMax;
-
-        this.showAppliedTariffsPanel = this.applicationsService !== null && this.applicationsService !== undefined;
 
         if (data.viewMode) {
             this.form.disable();
@@ -121,8 +138,10 @@ export class PaymentDataComponent extends CustomFormControl<PaymentDataDTO> impl
             this.loader.load(() => {
                 this.form.get('paymentTypeControl')!.setValue(this.paymentTypes.find(x => x.code === PaymentTypesEnum[value.paymentType!]));
             });
+
             this.form.get('paymentRefControl')!.setValue(value.paymentRefNumber);
             this.form.get('paymentDateControl')!.setValue(value.paymentDateTime);
+            this.form.get('totalPaidPriceControl')!.setValue(value.totalPaidPrice);
         }
         else {
             this.resetForm();
@@ -134,27 +153,31 @@ export class PaymentDataComponent extends CustomFormControl<PaymentDataDTO> impl
             paymentSummaryControl: new FormControl(),
             paymentTypeControl: new FormControl(undefined, Validators.required),
             paymentRefControl: new FormControl(undefined, Validators.maxLength(50)),
+            totalPaidPriceControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
             paymentDateControl: new FormControl(undefined, Validators.required)
         });
     }
 
     protected getValue(): PaymentDataDTO {
+        debugger;
         return new PaymentDataDTO({
             paymentType: PaymentTypesEnum[this.form.get('paymentTypeControl')?.value?.code as keyof typeof PaymentTypesEnum],
             paymentRefNumber: this.form.get('paymentRefControl')?.value ?? undefined,
-            paymentDateTime: this.form.get('paymentDateControl')?.value ?? undefined
+            paymentDateTime: this.form.get('paymentDateControl')?.value ?? undefined,
+            totalPaidPrice: this.form.get('totalPaidPriceControl')?.value ?? undefined
         });
     }
 
     private resetForm(): void {
-        this.form.get('paymentSummaryControl')!.setValue(null);
+        this.form.get('paymentSummaryControl')!.setValue(undefined);
 
         this.loader.load(() => {
             this.form.get('paymentTypeControl')!.setValue(this.paymentTypes.find(x => x.code === PaymentTypesEnum[PaymentTypesEnum.CASH]));
         });
 
-        this.form.get('paymentRefControl')!.setValue(null);
-        this.form.get('paymentDateControl')!.setValue(this.defaultDate ?? null);
+        this.form.get('paymentRefControl')!.setValue(undefined);
+        this.form.get('paymentDateControl')!.setValue(this.defaultDate);
+        this.form.get('totalPaidPriceControl')!.setValue(undefined);
     }
 
     private getPaymentTypes(): Subscription {
@@ -167,5 +190,9 @@ export class PaymentDataComponent extends CustomFormControl<PaymentDataDTO> impl
                 this.loader.complete();
             }
         });
+    }
+
+    private setAppliedTariffsFlag(): void {
+        this.showAppliedTariffsPanel = this.paymentSummary !== undefined && this.paymentSummary !== null && !this.paymentSummary.hasCalculatedTariffs;
     }
 }

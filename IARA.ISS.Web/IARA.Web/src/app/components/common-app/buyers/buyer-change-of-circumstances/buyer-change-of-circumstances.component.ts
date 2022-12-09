@@ -51,8 +51,6 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
     public expectedResults: BuyerChangeOfCircumstancesRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
 
-    public paymentInformation: ApplicationPaymentInformationDTO | undefined;
-
     public isEditing: boolean = false;
     public showOnlyRegiXData: boolean = false;
     public showRegiXData: boolean = false;
@@ -117,7 +115,6 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
 
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
-                        this.paymentInformation = application.paymentInformation;
                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
@@ -162,7 +159,6 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
 
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
-                            this.paymentInformation = application.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.isOnlineApplication = application.isOnlineApplication!;
                             this.refreshFileTypes.next();
@@ -301,6 +297,7 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
             submittedForControl: new FormControl(null),
             changesControl: new FormControl(null),
             deliveryDataControl: new FormControl(),
+            applicationPaymentInformationControl: new FormControl(),
             filesControl: new FormControl(null)
         });
 
@@ -462,8 +459,8 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
     }
 
     private shouldHidePaymentData(): boolean {
-        return this.paymentInformation?.paymentType === null
-            || this.paymentInformation?.paymentType === undefined
-            || this.paymentInformation?.paymentType === '';
+        return (this.model as BuyerChangeOfCircumstancesApplicationDTO)?.paymentInformation?.paymentType === null
+            || (this.model as BuyerChangeOfCircumstancesApplicationDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as BuyerChangeOfCircumstancesApplicationDTO)?.paymentInformation?.paymentType === '';
     }
 }

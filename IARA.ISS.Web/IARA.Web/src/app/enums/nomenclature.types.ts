@@ -116,5 +116,6 @@
     FlapFishingCategories,
     FlapQuotaType,
     MyTerritoryUnitUsers,
-    AllUsers
+    AllUsers,
+    PaymentStatuses
 }

@@ -32,6 +32,12 @@
                      columnName="{{ 'auan-register.edit-violated-letter' | tlTranslate }}">
         </data-column>
 
+        <data-column [flexRate]="0.3"
+                     [formGroup]="violatedRegulationsForm"
+                     propertyName="comments"
+                     columnName="{{ 'auan-register.edit-violated-comments' | tlTranslate }}">
+        </data-column>
+
         <data-template-column [flexRate]="0.4"
                               columnName="{{ 'auan-register.edit-violated-law-section' | tlTranslate }}">
             <ng-template let-row="row"
@@ -67,8 +73,4 @@
                             [flexRate]="0.1">
         </data-column-inline>
     </tl-data-table>
-
-    <mat-error *ngIf="violatedRegulationsTouched && form.errors?.atLeastOneViolatedRegulationNeeded === true">
-        * {{ 'auan-register.edit-auan-at-least-one-violated-regulation-needed' | tlTranslate }}
-    </mat-error>
 </div>

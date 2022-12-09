@@ -14,7 +14,7 @@
         </tl-input>
     </div>
 
-    <mat-error *ngIf="noLawSectionValidation">{{ 'auan-register.law-section-must-be-selected' | tlTranslate }}</mat-error>
+    <mat-error *ngIf="noLawSectionValidation"> * {{ 'auan-register.law-section-must-be-selected' | tlTranslate }}</mat-error>
 
     <tl-data-table fxFlexFill
                    [rows]="lawSections"

@@ -271,7 +271,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             },
             componentData: data,
             translteService: this.translate
-        }, '850px');
+        }, '1200px');
 
         dialog.subscribe((paymentData: PaymentDataDTO) => {
             if (paymentData !== null && paymentData !== undefined) {

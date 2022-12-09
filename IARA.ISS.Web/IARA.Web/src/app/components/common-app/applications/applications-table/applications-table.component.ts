@@ -541,7 +541,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
             },
             componentData: data,
             translteService: this.translationService
-        }, '1000px');
+        }, '1200px');
 
         dialog.subscribe((paymentData: PaymentDataDTO) => {
             if (paymentData !== null && paymentData !== undefined) {

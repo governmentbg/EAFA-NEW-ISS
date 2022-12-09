@@ -515,7 +515,9 @@
                         tooltipResourceName="commercial-fishing.payment-information-panel-helper"
                         [validityChecker]="form">
         <payment-information formControlName="applicationPaymentInformationControl"
-                             [hideBasicInfo]="hideBasicPaymentInfo">
+                             validityChecker
+                             [hideBasicInfo]="hideBasicPaymentInfo"
+                             [isOnlineApplication]="isOnlineApplication">
         </payment-information>
     </tl-expansion-panel>
 

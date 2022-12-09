@@ -55,8 +55,6 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
     public expectedResults: ShipChangeOfCircumstancesRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
 
-    public paymentInformation: ApplicationPaymentInformationDTO | undefined;
-
     public isPublicApp: boolean = false;
     public isOnlineApplication: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
@@ -121,7 +119,6 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
 
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
-                        this.paymentInformation = application.paymentInformation;
                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
@@ -163,7 +160,6 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
                             this.isOnlineApplication = application.isOnlineApplication!;
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
-                            this.paymentInformation = application.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
 
@@ -297,12 +293,13 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
 
     private buildForm(): void {
         this.form = new FormGroup({
-            submittedByControl: new FormControl(null),
-            submittedForControl: new FormControl(null),
-            shipControl: new FormControl(null, [Validators.required, this.shipValidator()]),
-            changesControl: new FormControl(null),
-            deliveryDataControl: new FormControl(null),
-            filesControl: new FormControl(null)
+            submittedByControl: new FormControl(undefined),
+            submittedForControl: new FormControl(undefined),
+            shipControl: new FormControl(undefined, [Validators.required, this.shipValidator()]),
+            changesControl: new FormControl(undefined),
+            deliveryDataControl: new FormControl(undefined),
+            applicationPaymentInformationControl: new FormControl(),
+            filesControl: new FormControl(undefined)
         });
     }
 
@@ -324,6 +321,10 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
 
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+            }
+
+            if (this.isPaid === true) {
+                this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
             }
 
             if (this.showRegiXData) {
@@ -368,6 +369,10 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
 
             if (this.hasDelivery === true) {
                 this.model.deliveryData = this.form.get('deliveryDataControl')!.value;
+            }
+
+            if (this.isPaid === true) {
+                this.model.paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
             }
         }
     }
@@ -451,8 +456,8 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
     }
 
     private shouldHidePaymentData(): boolean {
-        return this.paymentInformation?.paymentType === null
-            || this.paymentInformation?.paymentType === undefined
-            || this.paymentInformation?.paymentType === '';
+        return (this.model as ShipChangeOfCircumstancesApplicationDTO)?.paymentInformation?.paymentType === null
+            || (this.model as ShipChangeOfCircumstancesApplicationDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as ShipChangeOfCircumstancesApplicationDTO)?.paymentInformation?.paymentType === '';
     }
 }

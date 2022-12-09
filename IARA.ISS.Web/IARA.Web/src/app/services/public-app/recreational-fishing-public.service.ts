@@ -168,6 +168,10 @@ export class RecreationalFishingPublicService extends BaseAuditService implement
         }));
     }
 
+    public hasUserStartedAssociationApplication(): Observable<boolean> {
+        return this.requestService.get(this.area, this.controller, 'HasUserStartedAssociationApplication');
+    }
+
     public downloadFile(fileId: number, fileName: string): Observable<boolean> {
         const params = new HttpParams().append('id', fileId.toString());
         return this.requestService.download(this.area, this.controller, 'DownloadFile', fileName, { httpParams: params });

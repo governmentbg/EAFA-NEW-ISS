@@ -856,10 +856,13 @@
         </tl-expansion-panel>
 
         <!-- Информация за плащане -->
-        <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData && paymentInformation !== undefined && paymentInformation !== null"
+        <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData"
                             title="{{ 'aquacultures.payment-information' | tlTranslate }}"
                             tooltipResourceName="aquacultures.payment-information-helper">
-            <payment-information [paymentData]="paymentInformation" [hideBasicInfo]="hideBasicPaymentInfo"></payment-information>
+            <payment-information formControlName="applicationPaymentInformationControl" 
+                                 [hideBasicInfo]="hideBasicPaymentInfo" 
+                                 [isOnlineApplication]="isOnlineApplication">
+            </payment-information>
         </tl-expansion-panel>
 
         <!-- Информация за начин на връчване -->

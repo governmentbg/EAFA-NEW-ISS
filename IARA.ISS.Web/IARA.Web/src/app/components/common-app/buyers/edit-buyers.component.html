@@ -617,10 +617,14 @@
     </tl-expansion-panel>
 
     <!-- Информация за плащане в заявлението -->
-    <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData && applicationPaymentInformation !== null && applicationPaymentInformation !== undefined"
+    <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData"
                         title="{{ 'buyers-and-sales-centers.payment-information-panel' | tlTranslate }}"
                         [validityChecker]="editForm">
-        <payment-information fxFlex="100" [paymentData]="applicationPaymentInformation" [hideBasicInfo]="hideBasicPaymentInfo"></payment-information>
+        <payment-information fxFlex="100" 
+                             formControlName="applicationPaymentInformationControl"
+                             [hideBasicInfo]="hideBasicPaymentInfo" 
+                             [isOnlineApplication]="isOnlineApplication">
+        </payment-information>
     </tl-expansion-panel>
 
     <!-- Информация за начин на връчване в заявлението -->

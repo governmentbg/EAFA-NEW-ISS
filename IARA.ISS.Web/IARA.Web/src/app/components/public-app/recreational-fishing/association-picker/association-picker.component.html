@@ -9,15 +9,43 @@
 
     <div *ngFor="let association of associations"
          class="associations-list">
-        <button mat-raised-button
+        <button class="multi-line"
+                mat-raised-button
                 color="accent"
                 (click)="chooseAssociation(association)">
             {{ association.displayName }}
         </button>
     </div>
 
-    <label *ngIf="associations.length === 0"
-           id="no-associations-label">
-        {{ 'recreational-fishing.no-associations-with-permission' | tlTranslate }}
-    </label>
+    <div *ngIf="associations.length === 0">
+        <div *ngIf="hasStartedApplication; else notStartedApplication" fxLayout="column">
+            <label id="no-associations-label">
+                {{ 'recreational-fishing.no-associations-with-permission-has-started' | tlTranslate }}
+            </label>
+
+            <div fxLayout="row" fxLayoutAlign="end center">
+                <button mat-raised-button
+                        color="accent"
+                        (click)="navigateToApplication()">
+                    {{ 'recreational-fishing.association-navigate-to-application' | tlTranslate }}
+                </button>
+            </div>
+        </div>
+
+        <ng-template #notStartedApplication>
+            <div fxLayout="column">
+                <label id="no-associations-label">
+                    {{ 'recreational-fishing.no-associations-with-permission' | tlTranslate }}
+                </label>
+
+                <div fxLayout="row" fxLayoutAlign="end center">
+                    <button mat-raised-button
+                            color="accent"
+                            (click)="submitApplication()">
+                        {{ 'recreational-fishing.association-submit-application' | tlTranslate }}
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+    </div>
 </div>
