@@ -35,8 +35,6 @@ import { PermitDuplicateDataDTO } from '@app/models/generated/dtos/PermitDuplica
 import { PermitLicenseDuplicateDataDTO } from '@app/models/generated/dtos/PermitLicenseDuplicateDataDTO';
 import { QualifiedFisherDuplicateDataDTO } from '@app/models/generated/dtos/QualifiedFisherDuplicateDataDTO';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
-import { PrintConfigurationsComponent } from '@app/components/common-app/applications/components/print-configurations/print-configurations.component';
-import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 
@@ -115,12 +113,10 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
 
     private model!: DuplicatesApplicationDTO | DuplicatesApplicationRegixDataDTO | DuplicatesRegisterEditDTO;
 
-    private readonly printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>;
     private readonly translate: FuseTranslationLoaderService;
 
-    public constructor(printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>, translate: FuseTranslationLoaderService) {
+    public constructor(translate: FuseTranslationLoaderService) {
         this.isPublicApp = IS_PUBLIC_APP;
-        this.printConfigurationsDialog = printConfigurationsDialog;
         this.translate = translate;
 
         this.expectedResults = new DuplicatesApplicationRegixDataDTO({
@@ -335,17 +331,9 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
 
     public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         if (actionInfo.id === 'print') {
-            const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
-
-            getPrintConfig.subscribe({
-                next: (configuration: PrintConfigurationParameters | undefined) => {
-                    if (configuration !== null && configuration !== undefined) {
-                        this.service.downloadDuplicate(this.id!, configuration).subscribe({
-                            next: () => {
-                                // nothing to do
-                            }
-                        });
-                    }
+            this.service.downloadDuplicate(this.id!).subscribe({
+                next: () => {
+                    // nothing to do
                 }
             });
         }
@@ -378,17 +366,9 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
                         this.saveBtnClicked(actionInfo, dialogClose);
                     }
                     else if (actionInfo.id === 'save-print') {
-                        const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
-
-                        getPrintConfig.subscribe({
-                            next: (configuration: PrintConfigurationParameters | undefined) => {
-                                if (configuration !== null && configuration !== undefined) {
-                                    this.service.addAndDownloadDuplicateRegister(this.model, configuration).subscribe({
-                                        next: () => {
-                                            dialogClose(this.model);
-                                        }
-                                    });
-                                }
+                        this.service.addAndDownloadDuplicateRegister(this.model).subscribe({
+                            next: () => {
+                                dialogClose(this.model);
                             }
                         });
                     }
@@ -410,25 +390,6 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
         }
 
         return result;
-    }
-
-    private getPrintConfigurations(): Observable<PrintConfigurationParameters> {
-        return this.printConfigurationsDialog.open({
-            TCtor: PrintConfigurationsComponent,
-            translteService: this.translate,
-            title: this.translate.getValue('aquacultures.print-configurations-dialog-title'),
-            headerCancelButton: { cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); } },
-            saveBtn: {
-                id: 'save',
-                color: 'accent',
-                translateValue: this.translate.getValue('aquacultures.choose-settings-and-print')
-            },
-            cancelBtn: {
-                id: 'cancel',
-                color: 'primary',
-                translateValue: this.translate.getValue('common.cancel'),
-            }
-        }, '900px');
     }
 
     private buildForm(): void {

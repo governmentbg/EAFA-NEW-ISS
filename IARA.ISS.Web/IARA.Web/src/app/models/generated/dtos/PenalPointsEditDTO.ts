@@ -27,6 +27,12 @@ export class PenalPointsEditDTO {
     @StrictlyTyped(String)
     public decreeNum?: string;
 
+    @StrictlyTyped(String)
+    public reportNoteNum?: string;
+
+    @StrictlyTyped(Date)
+    public reportNoteDate?: Date;
+
     @StrictlyTyped(Boolean)
     public isIncreasePoints?: boolean;
 

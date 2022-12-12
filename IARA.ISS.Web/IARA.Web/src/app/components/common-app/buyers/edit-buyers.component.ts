@@ -65,8 +65,6 @@ import { OverlappingLogBooksComponent } from '@app/shared/components/overlapping
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { DuplicatesEntryDTO } from '@app/models/generated/dtos/DuplicatesEntryDTO';
 import { AddressTypesEnum } from '@app/enums/address-types.enum';
-import { PrintConfigurationsComponent } from '@app/components/common-app/applications/components/print-configurations/print-configurations.component';
-import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 
 enum AgentSameAsTypesEnum {
     SubmittedByPerson,
@@ -164,7 +162,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
     private readonly cancelDialog: TLMatDialog<CancellationHistoryDialogComponent>;
     private readonly confirmDialog: TLConfirmDialog;
     private readonly overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
-    private readonly printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>;
     private readonly commercialFishingService: CommercialFishingAdministrationService;
 
     private dialogRightSideActions: Array<IActionInfo> | undefined;
@@ -180,7 +177,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
         cancelDialog: TLMatDialog<CancellationHistoryDialogComponent>,
         confirmDialog: TLConfirmDialog,
         overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>,
-        printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>
     ) {
         this.commonNomenclatureService = commonNomenclatureService;
         this.commercialFishingService = commercialFishingService;
@@ -191,7 +187,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
         this.cancelDialog = cancelDialog;
         this.confirmDialog = confirmDialog;
         this.overlappingLogBooksDialog = overlappingLogBooksDialog;
-        this.printConfigurationsDialog = printConfigurationsDialog;
 
         this.isPublicApp = IS_PUBLIC_APP;
 
@@ -630,17 +625,9 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
     public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         if (actionInfo.id === 'print') {
             if ((this.viewMode || this.isReadonly) && this.model instanceof BuyerEditDTO) {
-                const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
-
-                getPrintConfig.subscribe({
-                    next: (configuration: PrintConfigurationParameters | undefined) => {
-                        if (configuration !== null && configuration !== undefined) {
-                            this.service.downloadRegister(this.model.id!, (this.model as BuyerEditDTO).buyerType!, configuration).subscribe({
-                                next: () => {
-                                    // nothing to do
-                                }
-                            });
-                        }
+                this.service.downloadRegister(this.model.id!, (this.model as BuyerEditDTO).buyerType!).subscribe({
+                    next: () => {
+                        // nothing to do
                     }
                 });
             }
@@ -1140,47 +1127,30 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
         let saveOrEditObservable: Observable<boolean>;
 
         if (this.id !== null && this.id !== undefined) {
-            const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
+            saveOrEditObservable = this.service.editAndDownloadRegister(this.model, this.ignoreLogBookConflicts);
 
-            getPrintConfig.subscribe({
-                next: (configuration: PrintConfigurationParameters | undefined) => {
-                    if (configuration !== null && configuration !== undefined) {
-                        saveOrEditObservable = this.service.editAndDownloadRegister(this.model, configuration, this.ignoreLogBookConflicts);
-
-                        saveOrEditObservable.subscribe({
-                            next: (downloaded: boolean) => {
-                                if (downloaded === true) {
-                                    dialogClose(this.model);
-                                }
-                            },
-                            error: (errorResponse: HttpErrorResponse) => {
-                                this.handleAddApplicationErrorResponse(errorResponse, dialogClose, 'saveAndPrint');
-                            }
-                        });
+            saveOrEditObservable.subscribe({
+                next: (downloaded: boolean) => {
+                    if (downloaded === true) {
+                        dialogClose(this.model);
                     }
+                },
+                error: (errorResponse: HttpErrorResponse) => {
+                    this.handleAddApplicationErrorResponse(errorResponse, dialogClose, 'saveAndPrint');
                 }
             });
-            
         }
         else {
-            const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
+            saveOrEditObservable = this.service.addAndDownloadRegister(this.model, this.ignoreLogBookConflicts);
 
-            getPrintConfig.subscribe({
-                next: (configuration: PrintConfigurationParameters | undefined) => {
-                    if (configuration !== null && configuration !== undefined) {
-                        saveOrEditObservable = this.service.addAndDownloadRegister(this.model, configuration, this.ignoreLogBookConflicts);
-
-                        saveOrEditObservable.subscribe({
-                            next: (downloaded: boolean) => {
-                                if (downloaded === true) {
-                                    dialogClose(this.model);
-                                }
-                            },
-                            error: (errorResponse: HttpErrorResponse) => {
-                                this.handleAddApplicationErrorResponse(errorResponse, dialogClose, 'saveAndPrint');
-                            }
-                        });
+            saveOrEditObservable.subscribe({
+                next: (downloaded: boolean) => {
+                    if (downloaded === true) {
+                        dialogClose(this.model);
                     }
+                },
+                error: (errorResponse: HttpErrorResponse) => {
+                    this.handleAddApplicationErrorResponse(errorResponse, dialogClose, 'saveAndPrint');
                 }
             });
         }
@@ -1326,25 +1296,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
         }
 
         return saveOrEditObservable;
-    }
-
-    private getPrintConfigurations(): Observable<PrintConfigurationParameters> {
-        return this.printConfigurationsDialog.open({
-            TCtor: PrintConfigurationsComponent,
-            translteService: this.translationService,
-            title: this.translationService.getValue('buyers-and-sales-centers.print-configurations-dialog-title'),
-            headerCancelButton: { cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); } },
-            saveBtn: {
-                id: 'save',
-                color: 'accent',
-                translateValue: this.translationService.getValue('buyers-and-sales-centers.choose-settings-and-print')
-            },
-            cancelBtn: {
-                id: 'cancel',
-                color: 'primary',
-                translateValue: this.translationService.getValue('common.cancel'),
-            }
-        }, '900px');
     }
 
     private buildForm(): void {

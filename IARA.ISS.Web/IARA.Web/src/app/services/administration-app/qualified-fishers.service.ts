@@ -19,7 +19,6 @@ import { RequestService } from '@app/shared/services/request.service';
 import { ApplicationsProcessingService } from './applications-processing.service';
 import { ApplicationsRegisterAdministrativeBaseService } from './applications-register-administrative-base.service';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
-import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 import { RegisterDTO } from '@app/models/generated/dtos/RegisterDTO';
 
 @Injectable({
@@ -60,9 +59,9 @@ export class QualifiedFishersService extends ApplicationsRegisterAdministrativeB
         });
     }
 
-    public downloadRegister(id: number, configurations: PrintConfigurationParameters): Observable<boolean> {
+    public downloadRegister(id: number): Observable<boolean> {
         const params = new HttpParams().append('registerId', id.toString());
-        return this.requestService.downloadPost(this.area, this.controller, 'DownloadQualifiedFisher', '', configurations, { httpParams: params });
+        return this.requestService.downloadPost(this.area, this.controller, 'DownloadQualifiedFisher', '', undefined, { httpParams: params });
     }
 
     public getRegisterByApplicationId(applicationId: number): Observable<unknown> {
@@ -80,10 +79,9 @@ export class QualifiedFishersService extends ApplicationsRegisterAdministrativeB
         });
     }
 
-    public addAndDownloadRegister(model: QualifiedFisherEditDTO, configurations: PrintConfigurationParameters): Observable<boolean> {
+    public addAndDownloadRegister(model: QualifiedFisherEditDTO): Observable<boolean> {
         const registerDto: RegisterDTO<QualifiedFisherEditDTO> = new RegisterDTO<QualifiedFisherEditDTO>({
-            dto: model,
-            printConfiguration: configurations
+            dto: model
         });
 
         return this.requestService.downloadPost(this.area, this.controller, 'AddAndDownloadRegister', '', registerDto, {
@@ -97,10 +95,9 @@ export class QualifiedFishersService extends ApplicationsRegisterAdministrativeB
         });
     }
 
-    public editAndDownloadRegister(model: QualifiedFisherDTO, configurations: PrintConfigurationParameters): Observable<boolean> {
+    public editAndDownloadRegister(model: QualifiedFisherDTO): Observable<boolean> {
         const registerDto: RegisterDTO<QualifiedFisherEditDTO> = new RegisterDTO<QualifiedFisherEditDTO>({
-            dto: model,
-            printConfiguration: configurations
+            dto: model
         });
 
         return this.requestService.downloadPost(this.area, this.controller, 'EditAndDownloadRegister', '', registerDto, {

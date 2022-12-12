@@ -26,7 +26,6 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { CancellationHistoryEntryDTO } from '@app/models/generated/dtos/CancellationHistoryEntryDTO';
 import { ExcelExporterRequestModel } from '@app/shared/components/data-table/models/excel-exporter-request-model.model';
-import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 import { RegisterDTO } from '@app/models/generated/dtos/RegisterDTO';
 import { ILogBookService } from '@app/components/common-app/commercial-fishing/components/edit-log-book/interfaces/log-book.interface';
 import { CommercialFishingLogBookEditDTO } from '@app/models/generated/dtos/CommercialFishingLogBookEditDTO';
@@ -124,12 +123,11 @@ export class AquacultureFacilitiesAdministrationService extends ApplicationsRegi
         });
     }
 
-    public editAndDownloadAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean, configurations: PrintConfigurationParameters): Observable<boolean> {
+    public editAndDownloadAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<boolean> {
         const params: HttpParams = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
 
         const registerDto: RegisterDTO<AquacultureFacilityEditDTO> = new RegisterDTO<AquacultureFacilityEditDTO>({
-            dto: aquaculture,
-            printConfiguration: configurations
+            dto: aquaculture
         });
 
         return this.requestService.downloadPost(this.area, this.controller, 'EditAndDownloadAquaculture', 'aquaculture', registerDto, {
@@ -160,9 +158,9 @@ export class AquacultureFacilitiesAdministrationService extends ApplicationsRegi
         return this.requestService.patch(this.area, this.controller, 'UndoDeleteAquaculture', null, { httpParams: params });
     }
 
-    public downloadAquacultureFacility(aquacultureId: number, configurations: PrintConfigurationParameters): Observable<boolean> {
+    public downloadAquacultureFacility(aquacultureId: number): Observable<boolean> {
         const params = new HttpParams().append('aquacultureId', aquacultureId.toString());
-        return this.requestService.downloadPost(this.area, this.controller, 'DownloadAquacultureFacility', 'aquaculture', configurations, {
+        return this.requestService.downloadPost(this.area, this.controller, 'DownloadAquacultureFacility', 'aquaculture', undefined, {
             httpParams: params
         });
     }

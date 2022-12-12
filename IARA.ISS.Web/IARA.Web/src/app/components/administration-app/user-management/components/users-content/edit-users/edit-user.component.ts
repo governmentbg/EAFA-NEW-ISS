@@ -409,6 +409,8 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         this.userRoles = model.userRoles as RoleDTO[];
 
         if (this.isInternalUser) {
+            this.editUserForm.get('titleControl')!.setValue((model as InternalUserDTO).title);
+
             const territoryUnit = NomenclatureStore.instance.getNomenclatureItem(NomenclatureTypes.TerritoryUnits, (model as InternalUserDTO).territoryUnitId as number);
             this.editUserForm.get('territorialUnitControl')!.setValue(territoryUnit);
 
@@ -457,6 +459,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             this.internalUserModel.userMustChangePassword = form.get('userMustChangePasswordControl')!.value;
             this.internalUserModel.isLocked = form.get('isLockedControl')!.value ?? false;
             this.internalUserModel.position = form.get('positionControl')!.value;
+            this.internalUserModel.title = form.get('titleControl')!.value;
 
             this.internalUserModel.departmentId = NomenclatureStore.getValue(form.get('departmentControl')!.value);
             this.internalUserModel.sectorId = NomenclatureStore.getValue(form.get('sectorControl')!.value);
@@ -523,7 +526,8 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             territorialUnitControl: new FormControl(),
             departmentControl: new FormControl(),
             sectorControl: new FormControl(),
-            positionControl: new FormControl(),
+            positionControl: new FormControl(null, Validators.maxLength(500)),
+            titleControl: new FormControl(null, Validators.maxLength(50)),
             mobileDevicesControl: new FormControl()
         }, this.uniqueValidEgnLncValidator());
 

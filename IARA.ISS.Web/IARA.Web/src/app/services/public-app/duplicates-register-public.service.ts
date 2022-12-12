@@ -12,7 +12,6 @@ import { RequestProperties } from '@app/shared/services/request-properties';
 import { QualifiedFisherNomenclatureDTO } from '@app/models/generated/dtos/QualifiedFisherNomenclatureDTO';
 import { PermitLicenseNomenclatureDTO } from '@app/models/generated/dtos/PermitLicenseNomenclatureDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
-import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 
 @Injectable({
     providedIn: 'root'
@@ -63,11 +62,11 @@ export class DuplicatesRegisterPublicService extends ApplicationsRegisterPublicB
         throw new Error('Method should not be called from the public app.');
     }
 
-    public addAndDownloadDuplicateRegister(duplicate: DuplicatesRegisterEditDTO, configurations: PrintConfigurationParameters): Observable<boolean> {
+    public addAndDownloadDuplicateRegister(duplicate: DuplicatesRegisterEditDTO): Observable<boolean> {
         throw new Error('Method should not be called from the public app.');
     }
 
-    public downloadDuplicate(id: number, configurations: PrintConfigurationParameters): Observable<boolean> {
+    public downloadDuplicate(id: number): Observable<boolean> {
         throw new Error('Method should not be called from the public app.');
     }
 

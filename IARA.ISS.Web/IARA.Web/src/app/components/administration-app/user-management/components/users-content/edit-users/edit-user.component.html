@@ -67,6 +67,13 @@
                 </tl-select>
             </div>
             <div fxLayout="row" fxLayoutGap="1em" fxFlex="100" fxLayoutAlign="space-between center">
+                <tl-input *ngIf="isInternalUser"
+                          fxFlex="33"
+                          formControlName="titleControl"
+                          label="{{ 'users-page.title' | tlTranslate }}"
+                          tooltipResourceName="users-page.title-helper">
+                </tl-input>
+
                 <tl-slide-toggle fxFlex="33"
                                  label="{{ 'users-page.user-must-change-password' | tlTranslate }}"
                                  formControlName="userMustChangePasswordControl"
@@ -79,7 +86,7 @@
                                  tooltipResourceName="users-page.unlock-user-helper">
                 </tl-slide-toggle>
 
-                <div fxFlex="33"></div>
+                <div *ngIf="!isInternalUser" fxFlex="33"></div>
             </div>
         </tl-card-content>
     </tl-card>

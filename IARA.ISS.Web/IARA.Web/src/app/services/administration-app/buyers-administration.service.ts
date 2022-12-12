@@ -26,7 +26,6 @@ import { ApplicationsRegisterAdministrativeBaseService } from './applications-re
 import { BuyerTypesEnum } from '@app/enums/buyer-types.enum';
 import { BuyerTerminationApplicationDTO } from '@app/models/generated/dtos/BuyerTerminationApplicationDTO';
 import { BuyerTerminationBaseRegixDataDTO } from '@app/models/generated/dtos/BuyerTerminationBaseRegixDataDTO';
-import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 import { RegisterDTO } from '@app/models/generated/dtos/RegisterDTO';
 import { ILogBookService } from '@app/components/common-app/commercial-fishing/components/edit-log-book/interfaces/log-book.interface';
 import { LogBookEditDTO } from '@app/models/generated/dtos/LogBookEditDTO';
@@ -139,12 +138,11 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
         });
     }
 
-    public addAndDownloadRegister(model: BuyerDTO, configurations: PrintConfigurationParameters, ignoreLogBookConflicts: boolean): Observable<boolean> {
+    public addAndDownloadRegister(model: BuyerDTO, ignoreLogBookConflicts: boolean): Observable<boolean> {
         const params: HttpParams = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
 
         const registerDto: RegisterDTO<BuyerDTO> = new RegisterDTO<BuyerDTO>({
-            dto: model,
-            printConfiguration: configurations
+            dto: model
         });
 
         return this.requestService.downloadPost(this.area, this.controller, 'AddAndDownloadRegister', '', registerDto, {
@@ -162,12 +160,11 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
         });
     }
 
-    public editAndDownloadRegister(model: BuyerDTO, configurations: PrintConfigurationParameters, ignoreLogBookConflicts: boolean): Observable<boolean> {
+    public editAndDownloadRegister(model: BuyerDTO, ignoreLogBookConflicts: boolean): Observable<boolean> {
         const params: HttpParams = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
 
         const registerDto: RegisterDTO<BuyerDTO> = new RegisterDTO<BuyerDTO>({
-            dto: model,
-            printConfiguration: configurations
+            dto: model
         });
 
         return this.requestService.downloadPost(this.area, this.controller, 'EditAndDownloadRegister', '', registerDto, {
@@ -176,11 +173,11 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
         });
     }
 
-    public downloadRegister(id: number, buyerType: BuyerTypesEnum, configurations: PrintConfigurationParameters): Observable<boolean> {
+    public downloadRegister(id: number, buyerType: BuyerTypesEnum): Observable<boolean> {
         const params = new HttpParams()
             .append('buyerId', id.toString())
             .append('buyerType', buyerType.toString());
-        return this.requestService.downloadPost(this.area, this.controller, 'DownloadRegister', '', configurations, { httpParams: params });
+        return this.requestService.downloadPost(this.area, this.controller, 'DownloadRegister', '', undefined, { httpParams: params });
     }
 
     public delete(id: number): Observable<void> {

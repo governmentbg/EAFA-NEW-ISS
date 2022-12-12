@@ -19,7 +19,6 @@ import { TransferFishingCapacityApplicationDTO } from '@app/models/generated/dto
 import { FishingCapacityStatisticsDTO } from '@app/models/generated/dtos/FishingCapacityStatistics';
 import { CapacityCertificateDuplicateApplicationDTO } from '@app/models/generated/dtos/CapacityCertificateDuplicateApplicationDTO';
 import { ExcelExporterRequestModel } from '@app/shared/components/data-table/models/excel-exporter-request-model.model';
-import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 
 export interface IFishingCapacityService extends IApplicationsActionsService, IBaseAuditService {
     getAllCapacityCertificates(request: GridRequestModel<FishingCapacityCertificatesFilters>): Observable<GridResultModel<FishingCapacityCertificateDTO>>;
@@ -29,7 +28,7 @@ export interface IFishingCapacityService extends IApplicationsActionsService, IB
     undoDeleteCapacityCertificate(id: number): Observable<void>;
     getFishingCapacityCertificateSimpleAudit(id: number): Observable<SimpleAuditDTO>;
     getAllCapacityCertificateNomenclatures(): Observable<FishingCapacityCertificateNomenclatureDTO[]>;
-    downloadFishingCapacityCertificate(certificateId: number, configurations: PrintConfigurationParameters): Observable<boolean>;
+    downloadFishingCapacityCertificate(certificateId: number): Observable<boolean>;
     downloadFishingCapacityCertificateExcel(request: ExcelExporterRequestModel<FishingCapacityCertificatesFilters>): Observable<boolean>;
 
     completeTransferFishingCapacityApplication(model: TransferFishingCapacityApplicationDTO): Observable<void>;

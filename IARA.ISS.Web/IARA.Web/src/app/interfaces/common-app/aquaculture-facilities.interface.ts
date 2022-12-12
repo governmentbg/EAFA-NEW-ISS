@@ -11,7 +11,6 @@ import { CancellationHistoryEntryDTO } from '@app/models/generated/dtos/Cancella
 import { IBaseAuditService } from '../base-audit.interface';
 import { IApplicationsActionsService } from './application-actions.interface';
 import { ExcelExporterRequestModel } from '@app/shared/components/data-table/models/excel-exporter-request-model.model';
-import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 
 export interface IAquacultureFacilitiesService extends IApplicationsActionsService, IBaseAuditService {
     // Register
@@ -19,11 +18,11 @@ export interface IAquacultureFacilitiesService extends IApplicationsActionsServi
     getAquaculture(id: number): Observable<AquacultureFacilityEditDTO>;
     addAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<number>;
     editAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<void>;
-    editAndDownloadAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean, configurations: PrintConfigurationParameters): Observable<boolean>;
+    editAndDownloadAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<boolean>;
     updateAquacultureStatus(aquacultureId: number, status: CancellationHistoryEntryDTO, applicationId?: number): Observable<void>;
     deleteAquaculture(id: number): Observable<void>;
     undoDeleteAquaculture(id: number): Observable<void>;
-    downloadAquacultureFacility(aquacultureId: number, configurations: PrintConfigurationParameters): Observable<boolean>;
+    downloadAquacultureFacility(aquacultureId: number): Observable<boolean>;
     downloadAquacultureFacilitiesExcel(request: ExcelExporterRequestModel<AquacultureFacilitiesFilters>): Observable<boolean>;
 
     getAquacultureFromChangeOfCircumstancesApplication(applicationId: number): Observable<AquacultureFacilityEditDTO>;

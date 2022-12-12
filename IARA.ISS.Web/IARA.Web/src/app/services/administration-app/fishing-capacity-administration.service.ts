@@ -39,7 +39,6 @@ import { FishingCapacityStatisticsDTO } from '@app/models/generated/dtos/Fishing
 import { CapacityCertificateDuplicateApplicationDTO } from '@app/models/generated/dtos/CapacityCertificateDuplicateApplicationDTO';
 import { CapacityCertificateDuplicateRegixDataDTO } from '@app/models/generated/dtos/CapacityCertificateDuplicateRegixDataDTO';
 import { ExcelExporterRequestModel } from '@app/shared/components/data-table/models/excel-exporter-request-model.model';
-import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 
 @Injectable({
     providedIn: 'root'
@@ -139,9 +138,9 @@ export class FishingCapacityAdministrationService extends ApplicationsRegisterAd
         });
     }
 
-    public downloadFishingCapacityCertificate(certificateId: number, configurations: PrintConfigurationParameters): Observable<boolean> {
+    public downloadFishingCapacityCertificate(certificateId: number): Observable<boolean> {
         const params = new HttpParams().append('certificateId', certificateId.toString());
-        return this.requestService.downloadPost(this.area, this.controller, 'DownloadFishingCapacityCertificate', 'certificate', configurations, {
+        return this.requestService.downloadPost(this.area, this.controller, 'DownloadFishingCapacityCertificate', 'certificate', undefined, {
             httpParams: params
         });
     }

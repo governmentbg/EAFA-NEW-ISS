@@ -13,8 +13,6 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { AddressTypesEnum } from '@app/enums/address-types.enum';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
-import { PrintConfigurationsComponent } from '@app/components/common-app/applications/components/print-configurations/print-configurations.component';
-import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
@@ -34,16 +32,13 @@ export class EditCapacityCertificateComponent implements OnInit, IDialogComponen
     private readOnly: boolean = false;
 
     private readonly service: IFishingCapacityService;
-    private readonly printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>;
     private readonly translate: FuseTranslationLoaderService;
 
     public constructor(
         service: FishingCapacityAdministrationService,
-        printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>,
         translate: FuseTranslationLoaderService
     ) {
         this.service = service;
-        this.printConfigurationsDialog = printConfigurationsDialog;
         this.translate = translate;
 
         this.buildForm();
@@ -80,21 +75,11 @@ export class EditCapacityCertificateComponent implements OnInit, IDialogComponen
     public dialogButtonClicked(action: IActionInfo, dialogClose: DialogCloseCallback): void {
         if (action.id === 'print') {
             if (this.readOnly) {
-
-                const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
-
-                getPrintConfig.subscribe({
-                    next: (configuration: PrintConfigurationParameters | undefined) => {
-                        if (configuration !== null && configuration !== undefined) {
-                            this.service.downloadFishingCapacityCertificate(this.id, configuration).subscribe({
-                                next: () => {
-                                    // nothing to do
-                                }
-                            });
-                        }
+                this.service.downloadFishingCapacityCertificate(this.id).subscribe({
+                    next: () => {
+                        // nothing to do
                     }
                 });
-                
             }
             else {
                 this.form.markAllAsTouched();
@@ -104,17 +89,9 @@ export class EditCapacityCertificateComponent implements OnInit, IDialogComponen
 
                     this.service.editCapacityCertificate(this.model).subscribe({
                         next: () => {
-                            const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
-
-                            getPrintConfig.subscribe({
-                                next: (configuration: PrintConfigurationParameters | undefined) => {
-                                    if (configuration !== null && configuration !== undefined) {
-                                        this.service.downloadFishingCapacityCertificate(this.id, configuration).subscribe({
-                                            next: () => {
-                                                dialogClose();
-                                            }
-                                        });
-                                    }
+                            this.service.downloadFishingCapacityCertificate(this.id).subscribe({
+                                next: () => {
+                                    dialogClose();
                                 }
                             });
                         }
@@ -128,26 +105,6 @@ export class EditCapacityCertificateComponent implements OnInit, IDialogComponen
         this.id = data?.id;
         this.readOnly = data?.isReadonly ?? false;
     }
-
-    private getPrintConfigurations(): Observable<PrintConfigurationParameters> {
-        return this.printConfigurationsDialog.open({
-            TCtor: PrintConfigurationsComponent,
-            translteService: this.translate,
-            title: this.translate.getValue('fishing-capacity.print-configurations-dialog-title'),
-            headerCancelButton: { cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); } },
-            saveBtn: {
-                id: 'save',
-                color: 'accent',
-                translateValue: this.translate.getValue('fishing-capacity.choose-settings-and-print')
-            },
-            cancelBtn: {
-                id: 'cancel',
-                color: 'primary',
-                translateValue: this.translate.getValue('common.cancel'),
-            }
-        }, '900px');
-    }
-
 
     private buildForm(): void {
         this.form = new FormGroup({

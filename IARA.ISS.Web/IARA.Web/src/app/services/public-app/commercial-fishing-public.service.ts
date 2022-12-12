@@ -28,8 +28,6 @@ import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
 import { OverlappingLogBooksParameters } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-parameters.model';
 import { RangeOverlappingLogBooksDTO } from '@app/models/generated/dtos/RangeOverlappingLogBooksDTO';
 import { CatchesAndSalesCommonService } from '@app/services/common-app/catches-and-sales-common.service';
-import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
-
 
 @Injectable({
     providedIn: 'root'
@@ -95,11 +93,11 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
         throw new Error('This method should not be called from the public app.');
     }
 
-    public addAndDownloadRegister(model: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean, configurations: PrintConfigurationParameters): Observable<boolean> {
+    public addAndDownloadRegister(model: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 
-    public downloadRegister(id: number, pageCode: PageCodeEnum, configurations: PrintConfigurationParameters): Observable<boolean> {
+    public downloadRegister(id: number, pageCode: PageCodeEnum): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 
@@ -107,7 +105,7 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
         throw new Error('This method should not be called from the public app.');
     }
 
-    public editAndDownloadRegister(model: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean, configurations: PrintConfigurationParameters): Observable<boolean> {
+    public editAndDownloadRegister(model: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 

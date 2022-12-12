@@ -640,6 +640,7 @@
         'user-must-change-password': 'Reset password',
         'unlock-user': 'User is locked',
         'position': 'Position',
+        'Title': 'Title',
         'username-already-exists-error': 'The entered username already exists in the system',
         'email-already-exists-error': 'The entered email address already exists in the system',
         'must-have-one-valid-egn-lnc-error': 'There is already a valid user with the specified EGN/PNF',
@@ -5321,8 +5322,8 @@
         'decrease-points': 'Decrease points',
 
         'edit-points-basic-data': 'Basic information',
-        'edit-report-num': 'Report num',
-        'edit-effective-date': 'Date',
+        'edit-report-note-num': 'Report note num',
+        'edit-report-note-date': 'Report note date',
         'edit-issuer': 'Issuer',
         'edit-territory-unit': 'Territory unit',
 

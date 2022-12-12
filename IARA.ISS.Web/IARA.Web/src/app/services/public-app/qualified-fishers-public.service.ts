@@ -13,7 +13,6 @@ import { GridResultModel } from '@app/models/common/grid-result.model';
 import { QualifiedFisherDTO } from '@app/models/generated/dtos/QualifiedFisherDTO';
 import { QualifiedFisherEditDTO } from '@app/models/generated/dtos/QualifiedFisherEditDTO';
 import { QualifiedFishersFilters } from '@app/models/generated/filters/QualifiedFishersFilters';
-import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 
 @Injectable({
     providedIn: 'root'
@@ -40,7 +39,7 @@ export class QualifiedFishersPublicService extends ApplicationsRegisterPublicBas
         });
     }
 
-    public downloadRegister(id: number, configurations: PrintConfigurationParameters): Observable<boolean> {
+    public downloadRegister(id: number): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 
@@ -57,7 +56,7 @@ export class QualifiedFishersPublicService extends ApplicationsRegisterPublicBas
         throw new Error('This method should not be called from the public app.');
     }
 
-    public addAndDownloadRegister(model: QualifiedFisherEditDTO, configurations: PrintConfigurationParameters): Observable<boolean> {
+    public addAndDownloadRegister(model: QualifiedFisherEditDTO): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 
@@ -65,7 +64,7 @@ export class QualifiedFishersPublicService extends ApplicationsRegisterPublicBas
         throw new Error('This method should not be called from the public app.');
     }
 
-    public editAndDownloadRegister(model: QualifiedFisherDTO, configurations: PrintConfigurationParameters): Observable<boolean> {
+    public editAndDownloadRegister(model: QualifiedFisherDTO): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 

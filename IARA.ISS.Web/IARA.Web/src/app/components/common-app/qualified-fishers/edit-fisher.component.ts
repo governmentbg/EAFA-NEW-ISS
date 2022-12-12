@@ -40,8 +40,6 @@ import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTy
 import { SubmittedByRolesEnum } from '@app/enums/submitted-by-roles.enum';
 import { DuplicatesEntryDTO } from '@app/models/generated/dtos/DuplicatesEntryDTO';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
-import { PrintConfigurationsComponent } from '@app/components/common-app/applications/components/print-configurations/print-configurations.component';
-import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 
 @Component({
@@ -92,16 +90,13 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
 
     private readonly translationService: FuseTranslationLoaderService;
     private readonly nomenclatures: CommonNomenclatures;
-    private readonly printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>;
 
     public constructor(
         translationService: FuseTranslationLoaderService,
         nomenclatures: CommonNomenclatures,
-        printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>
     ) {
         this.translationService = translationService;
         this.nomenclatures = nomenclatures;
-        this.printConfigurationsDialog = printConfigurationsDialog;
 
         this.isPublicApp = IS_PUBLIC_APP;
 
@@ -373,15 +368,7 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
             }
         }
         else if (actionInfo.id === 'print' && (this.modeReadOnly || this.modeViewOnly) && !applicationAction) {
-            const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
-
-            getPrintConfig.subscribe({
-                next: (configuration: PrintConfigurationParameters | undefined) => {
-                    if (configuration !== null && configuration !== undefined) {
-                        this.service.downloadRegister(this.model.id!, configuration).subscribe();
-                    }
-                }
-            });
+            this.service.downloadRegister(this.model.id!).subscribe();
         }
     }
 
@@ -428,25 +415,17 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
         CommonUtils.sanitizeModelStrings(this.model);
         let saveOrEditObservable: Observable<boolean>;
 
-        const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
+        if (this.id !== null && this.id !== undefined) {
+            saveOrEditObservable = this.service.editAndDownloadRegister(this.model);
+        }
+        else {
+            saveOrEditObservable = this.service.addAndDownloadRegister(this.model);
+        }
 
-        getPrintConfig.subscribe({
-            next: (configuration: PrintConfigurationParameters | undefined) => {
-                if (configuration !== null && configuration !== undefined) {
-                    if (this.id !== null && this.id !== undefined) {
-                        saveOrEditObservable = this.service.editAndDownloadRegister(this.model, configuration);
-                    }
-                    else {
-                        saveOrEditObservable = this.service.addAndDownloadRegister(this.model, configuration);
-                    }
-
-                    saveOrEditObservable.subscribe({
-                        next: (downloaded: boolean) => {
-                            if (downloaded === true) {
-                                dialogClose(this.model);
-                            }
-                        }
-                    });
+        saveOrEditObservable.subscribe({
+            next: (downloaded: boolean) => {
+                if (downloaded === true) {
+                    dialogClose(this.model);
                 }
             }
         });
@@ -476,25 +455,6 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
         }
 
         return saveOrEditObservable;
-    }
-
-    private getPrintConfigurations(): Observable<PrintConfigurationParameters> {
-        return this.printConfigurationsDialog.open({
-            TCtor: PrintConfigurationsComponent,
-            translteService: this.translationService,
-            title: this.translationService.getValue('qualified-fishers-page.print-configurations-dialog-title'),
-            headerCancelButton: { cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); } },
-            saveBtn: {
-                id: 'save',
-                color: 'accent',
-                translateValue: this.translationService.getValue('qualified-fishers-page.choose-settings-and-print')
-            },
-            cancelBtn: {
-                id: 'cancel',
-                color: 'primary',
-                translateValue: this.translationService.getValue('common.cancel'),
-            }
-        }, '900px');
     }
 
     private buildForm(): void {

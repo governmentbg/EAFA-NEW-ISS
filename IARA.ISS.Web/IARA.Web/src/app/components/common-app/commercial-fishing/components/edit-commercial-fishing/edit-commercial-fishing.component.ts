@@ -2,6 +2,7 @@
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { forkJoin, observable, Observable, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
@@ -91,9 +92,6 @@ import { FishingGearMarkDTO } from '@app/models/generated/dtos/FishingGearMarkDT
 import { FishingGearPingerDTO } from '@app/models/generated/dtos/FishingGearPingerDTO';
 import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
 import { CommercialFishingAdministrationService } from '@app/services/administration-app/commercial-fishing-administration.service';
-import { PrintConfigurationsComponent } from '@app/components/common-app/applications/components/print-configurations/print-configurations.component';
-import { PrintConfigurationParameters } from '@app/components/common-app/applications/models/print-configuration-parameters.model';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { RequestProperties } from '@app/shared/services/request-properties';
 
 type AquaticOrganismsToAddType = NomenclatureDTO<number> | NomenclatureDTO<number>[] | string | undefined | null;
@@ -228,7 +226,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     private readonly choosePermitLicenseForRenewalDialog: TLMatDialog<ChoosePermitLicenseForRenewalComponent>;
     private readonly choosePermitToCopyFromDialog: TLMatDialog<ChoosePermitToCopyFromComponent>;
     private readonly overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
-    private readonly printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>;
     private readonly snackbar: MatSnackBar;
 
     private readonly loader: FormControlDataLoader;
@@ -243,7 +240,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         choosePermitLicenseForRenewalDialog: TLMatDialog<ChoosePermitLicenseForRenewalComponent>,
         choosePermitToCopyFromDialog: TLMatDialog<ChoosePermitToCopyFromComponent>,
         overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>,
-        printConfigurationsDialog: TLMatDialog<PrintConfigurationsComponent>,
         snackbar: MatSnackBar
     ) {
         this.translationService = translate;
@@ -255,7 +251,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         this.choosePermitLicenseForRenewalDialog = choosePermitLicenseForRenewalDialog;
         this.choosePermitToCopyFromDialog = choosePermitToCopyFromDialog;
         this.overlappingLogBooksDialog = overlappingLogBooksDialog;
-        this.printConfigurationsDialog = printConfigurationsDialog;
         this.snackbar = snackbar;
 
         this.expectedResults = new CommercialFishingRegixDataDTO({
@@ -358,14 +353,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             }
         }
         else if (actionInfo.id === 'print' && (this.viewMode || this.isReadonly) && this.model instanceof CommercialFishingEditDTO) {
-            const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
-            getPrintConfig.subscribe({
-                next: (configurations: PrintConfigurationParameters | undefined) => {
-                    if (configurations !== null && configurations !== undefined) {
-                        this.service.downloadRegister(this.model.id!, this.pageCode, configurations).subscribe();
-                    }
-                }
-            });
+            this.service.downloadRegister(this.model.id!, this.pageCode).subscribe();
         }
     }
 
@@ -1448,38 +1436,31 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     }
 
     private saveAndPrintRecord(dialogClose: DialogCloseCallback): void {
-        const getPrintConfig: Observable<PrintConfigurationParameters> = this.getPrintConfigurations();
-        getPrintConfig.subscribe({
-            next: (configuration: PrintConfigurationParameters) => {
-                if (configuration !== null && configuration !== undefined) {
-                    this.model = this.fillModel();
-                    CommonUtils.sanitizeModelStrings(this.model);
-                    let saveOrEditObservable: Observable<boolean>;
+        this.model = this.fillModel();
+        CommonUtils.sanitizeModelStrings(this.model);
+        let saveOrEditObservable: Observable<boolean>;
 
-                    if (this.id !== null && this.id !== undefined) {
-                        saveOrEditObservable = this.service.editAndDownloadRegister(this.model, this.pageCode, this.ignoreLogBookConflicts, configuration);
+        if (this.id !== null && this.id !== undefined) {
+            saveOrEditObservable = this.service.editAndDownloadRegister(this.model, this.pageCode, this.ignoreLogBookConflicts);
+        }
+        else {
+            saveOrEditObservable = this.service.addAndDownloadRegister(this.model, this.pageCode, this.ignoreLogBookConflicts);
+        }
+
+        saveOrEditObservable.subscribe({
+            next: (downloaded: boolean) => {
+                if (downloaded === true) {
+                    NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
+
+                    if (this.pageCode === PageCodeEnum.PoundnetCommFish || this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
+                        NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.PoundNets);
                     }
-                    else {
-                        saveOrEditObservable = this.service.addAndDownloadRegister(this.model, this.pageCode, this.ignoreLogBookConflicts, configuration);
-                    }
 
-                    saveOrEditObservable.subscribe({
-                        next: (downloaded: boolean) => {
-                            if (downloaded === true) {
-                                NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
-
-                                if (this.pageCode === PageCodeEnum.PoundnetCommFish || this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
-                                    NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.PoundNets);
-                                }
-
-                                dialogClose(this.model);
-                            }
-                        },
-                        error: (errorResponse: HttpErrorResponse) => {
-                            this.handleAddEditApplicationErrorResponse(errorResponse, dialogClose, 'saveAndPrint');
-                        }
-                    });
+                    dialogClose(this.model);
                 }
+            },
+            error: (errorResponse: HttpErrorResponse) => {
+                this.handleAddEditApplicationErrorResponse(errorResponse, dialogClose, 'saveAndPrint');
             }
         });
     }
@@ -1507,25 +1488,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         }
 
         return saveOrEditObservable;
-    }
-
-    private getPrintConfigurations(): Observable<PrintConfigurationParameters> {
-        return this.printConfigurationsDialog.open({
-            TCtor: PrintConfigurationsComponent,
-            translteService: this.translationService,
-            title: this.translationService.getValue('commercial-fishing.print-configurations-dialog-title'),
-            headerCancelButton: { cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); } },
-            saveBtn: {
-                id: 'save',
-                color: 'accent',
-                translateValue: this.translationService.getValue('commercial-fishing.choose-settings-and-print')
-            },
-            cancelBtn: {
-                id: 'cancel',
-                color: 'primary',
-                translateValue: this.translationService.getValue('common.cancel'),
-            }
-        }, '900px');
     }
 
     private handleAddEditApplicationErrorResponse(errorResponse: HttpErrorResponse, dialogClose: DialogCloseCallback, saveMethod: SaveMethodType): void {

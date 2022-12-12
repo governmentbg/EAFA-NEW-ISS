@@ -644,6 +644,7 @@
         'user-must-change-password': 'Смяна на паролата на потребителя',
         'unlock-user': 'Потребителят е заключен',
         'position': 'Длъжност',
+        'title': 'Титла',
         'username-already-exists-error': 'Въведеното потребителско име вече съществува в системата',
         'email-already-exists-error': 'Въведеният имейл вече съществува в системата',
         'must-have-one-valid-egn-lnc-error': 'В системата вече има валиден потребител с посоченото ЕГН/ЛНЧ',
@@ -5419,9 +5420,9 @@
         'decrease-points': 'За заличаване на присъдени точки',
 
         'edit-points-basic-data': 'Основна информация',
-        'edit-report-num': 'Номер на докладна записка',
-        'edit-effective-date': 'Дата',
-        'edit-issuer': 'Издател на докладна записка',
+        'edit-report-note-num': 'Номер на докладна записка',
+        'edit-report-note-date': 'Дата на докладна записка',
+        'edit-issuer': 'Издател',
         'edit-territory-unit': 'Териториално звено',
 
         'edit-points-decree-auan-data': 'Данни за наказателно постановление и АУАН',
