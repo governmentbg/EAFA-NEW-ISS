@@ -121,6 +121,7 @@ export class CancellationHistoryDialogComponent implements OnInit, IDialogCompon
     private getValue(): CancellationHistoryEntryDTO {
         const result = new CancellationHistoryEntryDTO({
             isCancelled: this.cancelling,
+            dateOfChange: this.form.get('dateControl')!.value,
             cancellationReasonId: this.form.get('reasonControl')!.value.value,
             issueOrderNum: this.form.get('issueOrderNumControl')!.value,
             description: this.form.get('descriptionControl')!.value
