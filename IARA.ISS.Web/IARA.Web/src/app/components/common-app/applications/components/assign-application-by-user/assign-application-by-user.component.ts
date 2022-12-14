@@ -78,8 +78,6 @@ export class AssignApplicationByUserComponent implements OnInit, IDialogComponen
 
     private getNomenclatures(): Subscription {
         const subscription: Subscription = this.getUsers();
-
-        this.nomenclatureLoader.complete();
         return subscription;
     }
 
@@ -94,6 +92,7 @@ export class AssignApplicationByUserComponent implements OnInit, IDialogComponen
             ).subscribe({
                 next: (results: PrintUserNomenclatureDTO[]) => {
                     this.users = results;
+                    this.nomenclatureLoader.complete();
                 }
             });
         }
@@ -105,6 +104,7 @@ export class AssignApplicationByUserComponent implements OnInit, IDialogComponen
             ).subscribe({
                 next: (results: PrintUserNomenclatureDTO[]) => {
                     this.users = results;
+                    this.nomenclatureLoader.complete();
                 }
             });
         }

@@ -109,7 +109,7 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
         this.form.get('catchQuadrantControl')!.valueChanges.subscribe({
             next: (quadrant: CatchZoneNomenclatureDTO | string | null | undefined) => {
                 if (quadrant !== null && quadrant !== undefined && CommonUtils.isNomenclature<number>(quadrant)) {
-                    this.form.get('catchZoneControl')!.setValue(quadrant.zone);
+                    this.form.get('catchZoneControl')!.setValue(quadrant.zone?.toString());
                 }
                 else {
                     this.form.get('catchZoneControl')!.reset();
@@ -188,7 +188,7 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
 
     public onQuadrantChosenBtnClicked(): void {
         this.form.get('catchQuadrantControl')!.setValue(this.temporarySelectedGridSector);
-        this.form.get('catchZoneControl')!.setValue(this.temporarySelectedGridSector?.zone);
+        this.form.get('catchZoneControl')!.setValue(this.temporarySelectedGridSector?.zone?.toString());
         this.mapPopover.closePopover(true);
     }
 
@@ -244,7 +244,7 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
             if (this.model.catchQuadrantId !== null && this.model.catchQuadrantId !== undefined) {
                 const quadrant: CatchZoneNomenclatureDTO = this.catchQuadrants.find(x => x.value === this.model!.catchQuadrantId)!;
                 this.form.get('catchQuadrantControl')!.setValue(quadrant);
-                this.form.get('catchZoneControl')!.setValue(quadrant.zone);
+                this.form.get('catchZoneControl')!.setValue(quadrant.zone?.toString());
             }
 
             this.form.get('thirdCountryCatchZoneControl')!.setValue(this.model.thirdCountryCatchZone);
