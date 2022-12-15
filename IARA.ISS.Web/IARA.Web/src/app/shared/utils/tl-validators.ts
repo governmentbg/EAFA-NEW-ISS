@@ -1,5 +1,6 @@
-﻿import { AbstractControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+﻿import { AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO';
 import { CommonUtils } from './common.utils';
 import { EgnUtils } from './egn.utils';
 import { EikUtils } from './eik.utils';
@@ -259,6 +260,44 @@ export class TLValidators {
             }
 
             return { passwordcomplexity: true };
+        }
+    }
+
+    public static sameTotalPriceAndPaidPriceValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === null || form === undefined) {
+                return null;
+            }
+
+            const totalPaidPriceControl: FormControl | undefined = form.get('totalPaidPriceControl') as FormControl;
+
+            if (totalPaidPriceControl === null || totalPaidPriceControl === undefined) {
+                return null;
+            }
+
+            const totalPaidPrice: number = Number(totalPaidPriceControl!.value);
+
+            if (totalPaidPrice === null || totalPaidPrice === undefined || isNaN(totalPaidPrice)) {
+                return null;
+            }
+
+            const paymentSummaryControl: FormControl | undefined = form.get('paymentSummaryControl') as FormControl;
+
+            if (paymentSummaryControl === null || paymentSummaryControl === undefined) {
+                return null;
+            }
+
+            const totalPrice: number = Number((paymentSummaryControl!.value as PaymentSummaryDTO)?.totalPrice);
+
+            if (totalPrice === null || totalPrice === undefined || isNaN(totalPaidPrice)) {
+                return null;
+            }
+
+            if (totalPrice !== totalPaidPrice) {
+                return { 'totalPriceNotEqualToPaid': Math.abs(totalPrice - totalPaidPrice) };
+            }
+
+            return null;
         }
     }
 }

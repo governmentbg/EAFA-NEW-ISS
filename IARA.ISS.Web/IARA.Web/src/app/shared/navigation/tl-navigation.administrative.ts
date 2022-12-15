@@ -57,6 +57,7 @@ import { ReportViewComponent } from '@app/components/administration-app/reports/
 import { FluxVmsRequestsComponent } from '@app/components/administration-app/flux-vms-requests/flux-vms-requests.component';
 import { ApplicationRegixChecksComponent } from '@app/components/administration-app/applications-regix-checks/application-regix-checks.component';
 import { PenalPointsComponent } from '@app/components/administration-app/control-activity/awarded-points/penal-points.component';
+import { PrintConfigurationsComponent } from '@app/components/administration-app/print-configurations/print-configurations.component';
 
 export class Navigation {
     public static getMenu(isPublic: boolean): ITLNavigation[] {
@@ -729,6 +730,39 @@ export class Navigation {
                     isPublic: false
                 },
                 {
+                    id: 'external_users',
+                    title: 'External users',
+                    translate: 'navigation.external-users',
+                    type: 'item',
+                    icon: 'fa-address-book-regular',
+                    url: '/external-users',
+                    permissions: [PermissionsEnum.ExternalUsersRead],
+                    component: ExternalUsersComponent,
+                    isPublic: false
+                },
+                {
+                    id: 'internal_users',
+                    title: 'Internal users',
+                    translate: 'navigation.internal-users',
+                    type: 'item',
+                    icon: 'fa-address-book',
+                    url: '/internal-users',
+                    permissions: [PermissionsEnum.InternalUsersRead],
+                    component: InternalUsersComponent,
+                    isPublic: false
+                },
+                {
+                    id: 'roles',
+                    title: 'Roles',
+                    translate: 'navigation.roles',
+                    type: 'item',
+                    icon: 'group',
+                    url: '/roles',
+                    permissions: [PermissionsEnum.RolesRegisterRead],
+                    component: RolesRegisterComponent,
+                    isPublic: false
+                },
+                {
                     id: 'translation_labels_management',
                     title: 'Label translations management',
                     translate: 'navigation.interface-translations-labels',
@@ -762,25 +796,14 @@ export class Navigation {
                     isPublic: false
                 },
                 {
-                    id: 'external_users',
-                    title: 'External users',
-                    translate: 'navigation.external-users',
+                    id: 'print_configurations',
+                    title: 'Print Configurations',
+                    translate: 'navigation.print-configurations',
                     type: 'item',
-                    icon: 'fa-address-book-regular',
-                    url: '/external-users',
-                    permissions: [PermissionsEnum.ExternalUsersRead],
-                    component: ExternalUsersComponent,
-                    isPublic: false
-                },
-                {
-                    id: 'internal_users',
-                    title: 'Internal users',
-                    translate: 'navigation.internal-users',
-                    type: 'item',
-                    icon: 'fa-address-book',
-                    url: '/internal-users',
-                    permissions: [PermissionsEnum.InternalUsersRead],
-                    component: InternalUsersComponent,
+                    icon: 'ic-printer-pos-cog',
+                    url: '/print-configurations',
+                    permissions: [PermissionsEnum.PrintConfigurationsRead],
+                    component: PrintConfigurationsComponent,
                     isPublic: false
                 },
                 {
@@ -814,17 +837,6 @@ export class Navigation {
                     url: '/news-management',
                     permissions: [PermissionsEnum.NewsManagementRead],
                     component: NewsManagementComponent,
-                    isPublic: false
-                },
-                {
-                    id: 'roles',
-                    title: 'Roles',
-                    translate: 'navigation.roles',
-                    type: 'item',
-                    icon: 'group',
-                    url: '/roles',
-                    permissions: [PermissionsEnum.RolesRegisterRead],
-                    component: RolesRegisterComponent,
                     isPublic: false
                 },
                 {

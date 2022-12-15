@@ -173,7 +173,11 @@
         'succ-add-aquaculture-log-book-page': 'Успешно добавяне на декларация за произход на продукция от аквакултурно стопанство',
         'succ-edit-aquaculture-log-book-page': 'Успешно обновяване на декларация за произход на продукция от аквакултурно стопанство',
         'succ-log-book-page-annulment': 'Успешно анулиране на страница от дневник',
-        'succ-updated-delivery-data': 'Успешно обновени данни за връчване'
+        'succ-updated-delivery-data': 'Успешно обновени данни за връчване',
+        'succ-add-print-configuration': 'Успешно добавени настройки за принтиране',
+        'succ-edit-print-configuration': 'Успешно редактирани настройки за принтиране',
+        'succ-delete-print-configuration': 'Успешно изтрити настройки за принтиране',
+        'succ-restore-print-configuration': 'Успешно възстановени настройки за принтиране'
     },
     'navigation': {
         'applications': 'Приложения',
@@ -240,6 +244,7 @@
         'interface-translations-labels': 'Превод на интерфейс',
         'interface-translations-help': 'Превод на помощна информация',
         'nomenclatures': 'Номенклатури',
+        'print-configurations': 'Настройки за принтиране',
         'legal-entities': 'Достъп на юридически лица',
         'external-users': 'Външни потребители',
         'internal-users': 'Вътрешни потребители',
@@ -1182,7 +1187,8 @@
         'payment-type': 'Начин на плащане',
         'payment-num': 'Приходен документ №',
         'payment-date': 'Дата на плащане',
-        'total-paid-price': 'Платена цена (в лева)'
+        'total-paid-price': 'Платена цена (в лева)',
+        'total-price-not-equal-to-paid-price-error': 'Има разлика между изчислената и платената цена за заявлението от'
     },
     'online-payment-data': {
         'choose-payment-method-panel-title': 'Начин на плащане',
@@ -1206,7 +1212,8 @@
         'total-paid-price': 'Платена цена (в лева)',
         'payment-status': 'Статус на плащането',
         'reference-number': 'Номер на плащането',
-        'last-update-date': 'Дата на последна промяна'
+        'last-update-date': 'Дата на последна промяна',
+        'total-price-not-equal-to-paid-price-error': 'Има разлика между изчислената и платената цена за заявлението от'
     },
     'payment-tariffs': {
         'tariff-name': 'Име на тарифа',
@@ -2996,8 +3003,9 @@
         'regix-checks-results-panel': 'Резултати от автоматични проверки към външни регистри',
         'validity-panel': 'Информация за издаване и валидност',
         'issue-date': 'Дата на издаване',
-        'valid-from-to': 'Период на валидност',
         'valid-from-when-unlimited': 'Начална дата на валидност',
+        'valid-from': 'Валидно от',
+        'valid-to': 'Валидно до',
         'is-permit-unlimited': 'Безсрочно разрешително',
 
         'permit-license-has-duplicated-mark-numbers': 'Следните номера на нови марки са дублирани',
@@ -5615,5 +5623,32 @@
 
         'print-configurations-dialog-title': 'Печат',
         'choose-settings-and-print': 'Потвърди и изтегли'
+    },
+    'print-configurations': {
+        'filters-application-type': 'Тип заявление',
+        'filters-territory-unit': 'Териториално звено',
+        'filters-user-egn-lnch': 'ЕГН/ЛНЧ на служител',
+        'filters-user-names': 'Имена на служител',
+        'filters-substitute-reason': 'Причина/заповед за заместване',
+
+        'application-type': 'Тип заявление',
+        'territory-unit': 'Териториално звено',
+        'sign-user': 'Подписващ служител',
+        'substitute-user': 'Заместващ служител',
+        'substitute-reason': 'Причина/заповед за заместване',
+        'view-print-configuration': 'Преглед на настройки',
+        'edit-print-configuration': 'Редакция на настройки',
+        'delete-print-configuration': 'Изтриване на настройки',
+        'restore-print-configuration': 'Възстановяване на настройки',
+
+        'view-print-configuration-title': 'Преглед на настройки за принтиране',
+        'add-print-configuration-title': 'Добавяне на настройки за принтиране',
+        'edit-print-configuration-title': 'Редакция на настройки за принтиране',
+        'delete-print-configuration-title': 'Изтриване на настройки за принтиране',
+        'restore-print-configuration-title': 'Възстановяване на настройки за принтиране',
+        'delete-print-configuration-dialog-message': 'Сигурни ли сте, че искате да изтриете настройки за принтиране за тип заявлние',
+        'delete-dialog-ok-btn-label': 'Изтрий',
+
+        'print-configuration-already-exists-error': 'Вече съществува настройка за принтиране за комбинацията от тип заявление и териториално звено.'
     }
 };

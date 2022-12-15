@@ -1,0 +1,43 @@
+﻿<div class="dialog-padding">
+    <div [formGroup]="form" fxLayout="column" fxLayoutGap="1em">
+        <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <div fxLayout="column" fxFlex="100">
+                <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-autocomplete fxFlex="50"
+                                     formControlName="applicationTypeControl"
+                                     label="{{ 'print-configurations.application-type' | tlTranslate }}"
+                                     [options]="applicationTypes">
+                    </tl-autocomplete>
+                    <tl-autocomplete fxFlex="50"
+                                     formControlName="territoryUnitControl"
+                                     label="{{ 'print-configurations.territory-unit' | tlTranslate }}"
+                                     [options]="territoryUnits">
+                    </tl-autocomplete>
+                </div>
+                <div *ngIf="form.touched && form.errors?.printConfigurationNotUnique">
+                    <mat-error>* {{ 'print-configurations.print-configuration-already-exists-error' | tlTranslate }}</mat-error>
+                </div>
+            </div>
+        </div>
+        <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-autocomplete fxFlex="50"
+                             formControlName="signUserControl"
+                             label="{{ 'print-configurations.sign-user' | tlTranslate }}"
+                             [options]="signUsers">
+            </tl-autocomplete>
+            <tl-autocomplete fxFlex="50"
+                             formControlName="substituteUserControl"
+                             label="{{ 'print-configurations.substitute-user' | tlTranslate }}"
+                             [options]="substituteUsers">
+            </tl-autocomplete>
+        </div>
+        <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-textarea fxFlex="100"
+                         formControlName="substituteReasonControl"
+                         label="{{ 'print-configurations.substitute-reason' | tlTranslate }}"
+                         [minRows]="3"
+                         [maxRows]="5">
+            </tl-textarea>
+        </div>
+    </div>
+</div>

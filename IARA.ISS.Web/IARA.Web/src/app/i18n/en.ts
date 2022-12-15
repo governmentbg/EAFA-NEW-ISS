@@ -169,7 +169,12 @@
         'succ-add-aquaculture-log-book-page': 'Successfully added origin declaration for aquaculture facility production',
         'succ-edit-aquaculture-log-book-page': 'Successfully updated origin declaration for aquaculture facility production',
         'succ-log-book-page-annulment': 'Successfully log book page annulment',
-        'succ-updated-delivery-data': 'Successfully updated delivery information'
+        'succ-updated-delivery-data': 'Successfully updated delivery information',
+        'succ-add-print-configuration': 'Successfully added print configuration',
+        'succ-edit-print-configuration': 'Successfully updated print configuration',
+        'succ-delete-print-configuration': 'Successfully deleted print configuration',
+        'succ-restore-print-configuration': 'Successfully restored print configuration'
+
     },
     'navigation': {
         'applications': 'Applications',
@@ -236,6 +241,7 @@
         'interface-translations-labels': 'Interface translations',
         'interface-translations-help': 'Interface help translations',
         'nomenclatures': 'Nomenclatures',
+        'pring-configurations': 'Print settings',
         'legal-entities': 'Access for legal entities',
         'external-users': 'External users',
         'internal-users': 'Internal users',
@@ -1151,7 +1157,8 @@
         'payment-type': 'Payment type',
         'payment-num': 'Payment number',
         'payment-date': 'Payment date',
-        'total-paid-price': 'Paid price (in lv)'
+        'total-paid-price': 'Paid price (in lv)',
+        'total-price-not-equal-to-paid-price-error': 'There is a difference from the paid price and the total paid price'
     },
     'online-payment-data': {
         'choose-payment-method-panel-title': 'Payment method',
@@ -1175,7 +1182,8 @@
         'total-paid-price': 'Paid price (in lv)',
         'payment-status': 'Payment status',
         'reference-number': 'Reference number',
-        'last-update-date': 'Last update'
+        'last-update-date': 'Last update',
+        'total-price-not-equal-to-paid-price-error': 'There is a difference from the paid price and the total paid price'
     },
     'payment-tariffs': {
         'tariff-name': 'Tariff name',
@@ -2872,8 +2880,9 @@
         'regix-checks-results-panel': 'Results of automatic checks to external registers',
         'validity-panel': 'Issuing and validity information',
         'issue-date': 'Isuue date',
-        'valid-from-to': 'Validity range',
         'valid-from-when-unlimited': 'Validity start date',
+        'valid-from': 'Valid from',
+        'valid-to': 'Valid to',
         'is-permit-unlimited': 'Unlimited permits',
 
         'permit-license-has-duplicated-mark-numbers': 'The following new mark numbers are duplicated',
@@ -5517,5 +5526,32 @@
 
         'print-configurations-dialog-title': 'Print',
         'choose-settings-and-print': 'Confirm and download'
+    },
+    'print-configurations': {
+        'filters-application-type': 'Application type',
+        'filters-territory-unit': 'Territory unit',
+        'filters-user-egn-lnch': 'User egn/lnch',
+        'filters-user-names': 'User names',
+        'filters-substitute-reason': 'Substitution reason',
+
+        'application-type': 'Application type',
+        'territory-unit': 'Territory unit',
+        'sign-user': 'Sign user',
+        'substitute-user': 'Substitute user',
+        'substitute-reason': 'Substitution reason',
+        'view-print-configuration': 'View print configuration',
+        'edit-print-configuration': 'Edit print configuration',
+        'delete-print-configuration': 'Delete print configuration',
+        'restore-print-configuration': 'Restore print configuration',
+
+        'view-print-configuration-title': 'View print configuration',
+        'add-print-configuration-title': 'Add print configuration',
+        'edit-print-configuration-title': 'Edit print configuration',
+        'delete-print-configuration-title': 'Delete print configuration',
+        'restore-print-configuration-title': 'Restore print configuration',
+        'delete-print-configuration-dialog-message': 'Are you sure that you want to delete print configurations for application type',
+        'delete-dialog-ok-btn-label': 'Delete',
+
+        'print-configuration-already-exists-error': 'Already exists a configuration for this pair of application type and territory unit.'
     }
 };

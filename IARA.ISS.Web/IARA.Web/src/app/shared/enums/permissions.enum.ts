@@ -90,6 +90,13 @@
     RolesRegisterDeleteRecords = 'RolesRegisterDeleteRecords',
     RolesRegisterRestoreRecords = 'RolesRegisterRestoreRecords',
 
+    // Print configurations
+    PrintConfigurationsRead = 'PrintConfigurationsRead',
+    PrintConfigurationsAddRecords = 'PrintConfigurationsAddRecords',
+    PrintConfigurationsEditRecords = 'PrintConfigurationsEditRecords',
+    PrintConfigurationsDeleteRecords = 'PrintConfigurationsDeleteRecords',
+    PrintConfigurationsRestoreRecords = 'PrintConfigurationsRestoreRecords',
+
     // Nomenclatures
     NomenclaturesRead = 'NomenclaturesRead',
     NomenclaturesAddRecords = 'NomenclaturesAddRecords',

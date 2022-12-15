@@ -40,4 +40,7 @@
             </div>
         </div>
     </tl-expansion-panel>
+    <mat-error *ngIf="form.errors?.totalPriceNotEqualToPaid" class="warn-orange-color">
+        * {{ 'payment-information.total-price-not-equal-to-paid-price-error' | tlTranslate }}: {{ form.errors?.totalPriceNotEqualToPaid | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}
+    </mat-error>
 </div>

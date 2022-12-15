@@ -1,6 +1,6 @@
 ﻿import { CurrencyPipe } from "@angular/common";
 import { Component, Input, OnInit, Optional, Self } from "@angular/core";
-import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from "@angular/forms";
+import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn, Validators } from "@angular/forms";
 import { forkJoin, Observable, Subscription } from 'rxjs';
 
 import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
@@ -76,6 +76,26 @@ export class PaymentInformationComponent extends CustomFormControl<ApplicationPa
         this.setModelData(value);
     }
 
+    public validate(control: AbstractControl): ValidationErrors | null {
+        const errors: ValidationErrors = {};
+
+        if (this.form.errors !== null) {
+            for (const key of Object.keys(this.form.errors)) {
+                if (key !== 'totalPriceNotEqualToPaid') {
+                    errors[key] = this.form.errors[key]; 
+                }
+            }
+        }
+
+        for (const key of Object.keys(this.form.controls)) {
+            for (const error in this.form.controls[key].errors) {
+                errors[error] = this.form.controls[key].errors![error];
+            }
+        }
+
+        return Object.keys(errors).length === 0 ? null : errors;
+    }
+
     protected getValue(): ApplicationPaymentInformationDTO {
         const model: ApplicationPaymentInformationDTO = new ApplicationPaymentInformationDTO({
             id: this.id
@@ -101,7 +121,9 @@ export class PaymentInformationComponent extends CustomFormControl<ApplicationPa
             paymentStatusControl: new FormControl(),
             referenceNumberControl: new FormControl(undefined, Validators.maxLength(50)),
             lastUpdateDateControl: new FormControl()
-        });
+        }, [
+            TLValidators.sameTotalPriceAndPaidPriceValidator()
+        ]);
     }
 
     private setModelData(value: ApplicationPaymentInformationDTO | undefined): void {

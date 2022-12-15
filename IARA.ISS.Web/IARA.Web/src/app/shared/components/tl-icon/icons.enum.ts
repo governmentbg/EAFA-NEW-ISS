@@ -136,6 +136,7 @@ import cancel from '@iconify/icons-mdi/cancel';
 import buildingRetailMoney20Regular from '@iconify-icons/fluent/building-retail-20-regular';
 import arrowForwardDownPerson20Regular from '@iconify-icons/fluent/arrow-forward-down-person-20-regular';
 import accountSwitch from '@iconify/icons-mdi/account-switch';
+import printerPosCog from '@iconify/icons-mdi/printer-pos-cog';
 
 export class AppIcons {
     /*
@@ -179,7 +180,8 @@ export class AppIcons {
         'ic-cancel': cancel,
         'ic-building-retail-money-20-regular': buildingRetailMoney20Regular,
         'ic-arrow-forward-down-person-20-regular': arrowForwardDownPerson20Regular,
-        'ic-account-switch': accountSwitch
+        'ic-account-switch': accountSwitch,
+        'ic-printer-pos-cog': printerPosCog
     };
 
     /*

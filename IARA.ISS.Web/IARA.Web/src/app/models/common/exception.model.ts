@@ -51,5 +51,6 @@ export enum ErrorCode {
     AuanNumAlreadyExists = 32,
     LogBookHasSubmittedPages = 33,
     ApplicationFileInvalid = 34,
-    InvalidPermitNumber = 35
+    InvalidPermitNumber = 35,
+    PrintConfigurationAlreadyExists = 36
 }

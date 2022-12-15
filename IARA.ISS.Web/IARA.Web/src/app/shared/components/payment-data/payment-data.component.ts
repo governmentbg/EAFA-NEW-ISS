@@ -1,5 +1,5 @@
 ﻿import { Component, Input, OnChanges, OnInit, Optional, Self, SimpleChange, SimpleChanges } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { ApplicationStatusesEnum } from '@app/enums/application-statuses.enum';
@@ -121,7 +121,7 @@ export class PaymentDataComponent extends CustomFormControl<PaymentDataDTO> impl
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         this.form.markAllAsTouched();
 
-        if (this.form.valid) {
+        if (this.isFormValid()) {
             const paymentData: PaymentDataDTO = this.getValue();
             this.applicationsService!.enterPaymentData(this.applicationId!, paymentData).subscribe((value: ApplicationStatusesEnum) => {
                 dialogClose(paymentData);
@@ -148,6 +148,26 @@ export class PaymentDataComponent extends CustomFormControl<PaymentDataDTO> impl
         }
     }
 
+    public validate(control: AbstractControl): ValidationErrors | null {
+        const errors: ValidationErrors = {};
+
+        if (this.form.errors !== null) {
+            for (const key of Object.keys(this.form.errors)) {
+                if (key !== 'totalPriceNotEqualToPaid') {
+                    errors[key] = this.form.errors[key];
+                }
+            }
+        }
+
+        for (const key of Object.keys(this.form.controls)) {
+            for (const error in this.form.controls[key].errors) {
+                errors[error] = this.form.controls[key].errors![error];
+            }
+        }
+
+        return Object.keys(errors).length === 0 ? null : errors;
+    }
+
     protected buildForm(): AbstractControl {
         return new FormGroup({
             paymentSummaryControl: new FormControl(),
@@ -155,11 +175,12 @@ export class PaymentDataComponent extends CustomFormControl<PaymentDataDTO> impl
             paymentRefControl: new FormControl(undefined, Validators.maxLength(50)),
             totalPaidPriceControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
             paymentDateControl: new FormControl(undefined, Validators.required)
-        });
+        }, [
+            TLValidators.sameTotalPriceAndPaidPriceValidator()
+        ]);
     }
 
     protected getValue(): PaymentDataDTO {
-        debugger;
         return new PaymentDataDTO({
             paymentType: PaymentTypesEnum[this.form.get('paymentTypeControl')?.value?.code as keyof typeof PaymentTypesEnum],
             paymentRefNumber: this.form.get('paymentRefControl')?.value ?? undefined,
@@ -194,5 +215,16 @@ export class PaymentDataComponent extends CustomFormControl<PaymentDataDTO> impl
 
     private setAppliedTariffsFlag(): void {
         this.showAppliedTariffsPanel = this.paymentSummary !== undefined && this.paymentSummary !== null && !this.paymentSummary.hasCalculatedTariffs;
+    }
+
+    private isFormValid(): boolean {
+        if (this.form.valid) {
+            return true;
+        }
+        else {
+            const errors: ValidationErrors | null = this.validate(this.form);
+
+            return errors === null;
+        }
     }
 }

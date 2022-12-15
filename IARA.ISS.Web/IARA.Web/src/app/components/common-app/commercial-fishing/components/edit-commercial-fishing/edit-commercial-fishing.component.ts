@@ -856,20 +856,28 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 this.form.get('isPermitUnlimitedControl')!.valueChanges.subscribe({
                     next: (isUnlimited: boolean) => {
                         if (isUnlimited) {
-                            this.form.get('validityRangeControl')!.reset();
-                            this.form.get('validityRangeControl')!.clearValidators();
+                            this.form.get('validFromControl')!.reset();
+                            this.form.get('validFromControl')!.clearValidators();
+
+                            this.form.get('validToControl')!.reset();
+                            this.form.get('validToControl')!.clearValidators();
 
                             this.form.get('validFromUnlimitedControl')!.setValidators(Validators.required);
                             this.form.get('validFromUnlimitedControl')!.markAsPending();
                         }
                         else {
-                            this.form.get('validityRangeControl')!.setValidators(Validators.required);
+                            this.form.get('validFromControl')!.setValidators(Validators.required);
+                            this.form.get('validToControl')!.setValidators(Validators.required);
 
                             this.form.get('validFromUnlimitedControl')!.clearValidators();
                             this.form.get('validFromUnlimitedControl')!.reset();
                         }
 
-                        this.form.get('validityRangeControl')!.updateValueAndValidity();
+                        this.form.get('validFromControl')!.markAsPending();
+                        this.form.get('validFromControl')!.updateValueAndValidity({ emitEvent: false });
+
+                        this.form.get('validToControl')!.markAsPending();
+                        this.form.get('validToControl')!.updateValueAndValidity({ emitEvent: false });
                     }
                 });
             }
@@ -1757,7 +1765,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         if (this.model instanceof CommercialFishingEditDTO) {
             if (this.model.id !== null && this.model.id !== undefined) {
                 this.form.get('issueDateControl')!.setValue(this.model.issueDate);
-                this.form.get('validityRangeControl')!.setValue(new DateRangeData({ start: this.model.validFrom, end: this.model.validTo }));
+                this.form.get('validFromControl')!.setValue(this.model.validFrom);
+                this.form.get('validToControl')!.setValue(this.model.validTo);
 
                 if (!this.isPermitLicense) {
                     this.form.get('permitRegistrationNumberControl')!.setValue(this.model.permitRegistrationNumber);
@@ -1968,11 +1977,17 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             this.form.addControl('validFromUnlimitedControl', new FormControl(undefined, Validators.required));
             this.form.addControl('isPermitUnlimitedControl', new FormControl(true));
 
-            this.form.addControl('validityRangeControl', new FormControl(undefined));
+            this.form.addControl('validFromControl', new FormControl());
+            this.form.addControl('validToControl', new FormControl());
         }
         else {
             this.form.addControl('permitLicenseRegistrationNumberControl', new FormControl());
-            this.form.addControl('validityRangeControl', new FormControl(undefined, Validators.required));
+
+            const now: Date = new Date();
+            const validToDate: Date = new Date(now.getFullYear(), 11, 31); // последният ден от текущата година
+
+            this.form.addControl('validFromControl', new FormControl(undefined, Validators.required));
+            this.form.addControl('validToControl', new FormControl(validToDate, Validators.required));
         }
 
         if (this.isPermitLicense) {
@@ -2105,13 +2120,13 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 model.validFrom = this.form.get('validFromUnlimitedControl')!.value;
             }
             else {
-                model.validFrom = (this.form.get('validityRangeControl')!.value as DateRangeData)?.start;
-                model.validTo = (this.form.get('validityRangeControl')!.value as DateRangeData)?.end;
+                model.validFrom = this.form.get('validFromControl')!.value;
+                model.validTo = this.form.get('validToControl')!.value;
             }
         }
         else {
-            model.validFrom = (this.form.get('validityRangeControl')!.value as DateRangeData)?.start;
-            model.validTo = (this.form.get('validityRangeControl')!.value as DateRangeData)?.end;
+            model.validFrom = this.form.get('validFromControl')!.value;
+            model.validTo = this.form.get('validToControl')!.value;
         }
 
         model.suspensions = this.suspensions;
@@ -2720,7 +2735,13 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             && model.validTo !== undefined
             && model.validTo!.getTime() > now.getTime();
 
-        this.form.get('validityRangeControl')!.valueChanges.subscribe({
+        this.form.get('validFromControl')!.valueChanges.subscribe({
+            next: () => {
+                this.updatePermitLicenseIsValidFlag();
+            }
+        });
+
+        this.form.get('validToControl')!.valueChanges.subscribe({
             next: () => {
                 this.updatePermitLicenseIsValidFlag();
             }
@@ -2729,8 +2750,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
     private updatePermitLicenseIsValidFlag(): void {
         const now = new Date();
-        const validFrom = (this.form.get('validityRangeControl')!.value as DateRangeData)?.start;
-        const validTo = (this.form.get('validityRangeControl')!.value as DateRangeData)?.end;
+        const validFrom = this.form.get('validFromControl')!.value;
+        const validTo = this.form.get('validToControl')!.value;
 
         if (validFrom !== null
             && validFrom !== undefined
