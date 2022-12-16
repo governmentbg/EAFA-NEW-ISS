@@ -31,6 +31,9 @@ export class InspectorsRegisterDTO {
     @StrictlyTyped(Number)
     public institutionId?: number;
 
+    @StrictlyTyped(Number)
+    public inspectionSequenceNum?: number;
+
     @StrictlyTyped(String)
     public comments?: string;
 

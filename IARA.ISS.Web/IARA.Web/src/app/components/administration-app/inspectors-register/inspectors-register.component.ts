@@ -22,6 +22,7 @@ import { PermissionsService } from '@app/shared/services/permissions.service';
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
+import { TLValidators } from '@app/shared/utils/tl-validators';
 
 @Component({
     selector: 'inspectors',
@@ -92,6 +93,8 @@ export class InspectorsRegisterComponent implements AfterViewInit, OnInit {
     }
 
     public inspectorRecordChanged(event: RecordChangedEventArgs<InspectorsRegisterDTO>): void {
+        event.Record.inspectionSequenceNum = Number(event.Record.inspectionSequenceNum)!;
+
         switch (event.Command) {
             case CommandTypes.Add: {
                 this.service.addInspector(event.Record).subscribe({
@@ -166,7 +169,8 @@ export class InspectorsRegisterComponent implements AfterViewInit, OnInit {
             firstNameControl: new FormControl({ value: null, disabled: true }),
             lastNameControl: new FormControl({ value: null, disabled: true }),
             userIdControl: new FormControl(null, Validators.required),
-            inspectorCardNumControl: new FormControl(null, [Validators.required, Validators.maxLength(5)])
+            inspectorCardNumControl: new FormControl(null, [Validators.required, Validators.maxLength(5)]),
+            inspectionSequenceNumControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 0)])
         });
     }
 

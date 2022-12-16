@@ -3,6 +3,7 @@
         <auan-witness fxLayout="column"
                       [formControl]="witnessControl"
                       [orderNum]="i"
+                      validityChecker
                       (deletePanelBtnClicked)="deleteWitnessControl(witnessControl, i)">
         </auan-witness>
         <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">

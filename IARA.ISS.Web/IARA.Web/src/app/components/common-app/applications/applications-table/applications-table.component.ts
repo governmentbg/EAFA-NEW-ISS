@@ -524,7 +524,6 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
     }
 
     public enterPaymentDataActionClicked(application: ApplicationRegisterDTO): void {
-        debugger;
         const headerTitle: string = this.translationService.getValue('applications-register.enter-payment-data-dialog-title');
         const data = new PaymentDataInfo({
             paymentTypes: this.paymentTypes,

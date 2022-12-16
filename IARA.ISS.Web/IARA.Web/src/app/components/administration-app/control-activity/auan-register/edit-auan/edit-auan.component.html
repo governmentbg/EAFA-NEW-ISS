@@ -75,6 +75,7 @@
                         tooltipResourceName="auan-register.edit-auan-witnesses-helper"
                         [validityChecker]="form">
         <auan-witnesses-array formControlName="witnessesControl"
+                              validityChecker
                               [viewMode]="viewMode">
         </auan-witnesses-array>
     </tl-expansion-panel>
@@ -97,6 +98,7 @@
 
             <inspected-entity-basic-info *ngIf="(inspectedEntity !== undefined && inspectedEntity !== null) || isFromThirdPartyInspection"
                                          formControlName="inspectedEntityBasicInfoControl"
+                                         validityChecker
                                          [viewMode]="!isFromThirdPartyInspection"
                                          [isIdReadOnly]="viewMode">
             </inspected-entity-basic-info>
@@ -227,6 +229,7 @@
                     </div>
                     <single-address-registration formControlName="deliveryAddressControl"
                                                  [addressType]="correspondenceAddressType"
+                                                 validityChecker
                                                  label="{{ 'auan-register.edit-auan-delivery-address' | tlTranslate : 'cap' }}">
                     </single-address-registration>
                 </div>
@@ -256,6 +259,7 @@
                     </div>
 
                     <auan-witnesses-array formControlName="refusalWitnessesControl"
+                                          validityChecker
                                           [viewMode]="viewMode">
                     </auan-witnesses-array>
                 </div>
@@ -313,6 +317,7 @@
                         tooltipResourceName="auan-register.edit-auan-files-helper"
                         [validityChecker]="form">
         <file-uploader-form-array formControlName="filesControl"
+                                  validityChecker
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">
         </file-uploader-form-array>

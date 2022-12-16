@@ -93,6 +93,11 @@ import { FishingGearPingerDTO } from '@app/models/generated/dtos/FishingGearPing
 import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
 import { CommercialFishingAdministrationService } from '@app/services/administration-app/commercial-fishing-administration.service';
 import { RequestProperties } from '@app/shared/services/request-properties';
+import { PaymentDataComponent } from '@app/shared/components/payment-data/payment-data.component';
+import { PaymentDataInfo } from '@app/shared/components/payment-data/models/payment-data-info.model';
+import { PaymentDataDTO } from '@app/models/generated/dtos/PaymentDataDTO';
+import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
+import { PaymentStatusesEnum } from '@app/enums/payment-statuses.enum';
 
 type AquaticOrganismsToAddType = NomenclatureDTO<number> | NomenclatureDTO<number>[] | string | undefined | null;
 type SaveApplicationDraftFnType = ((applicationId: number, model: IApplicationRegister, dialogClose: HeaderCloseFunction) => void) | undefined;
@@ -227,6 +232,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     private readonly choosePermitToCopyFromDialog: TLMatDialog<ChoosePermitToCopyFromComponent>;
     private readonly overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
     private readonly snackbar: MatSnackBar;
+    private readonly paymentDataDialog: TLMatDialog<PaymentDataComponent>;
 
     private readonly loader: FormControlDataLoader;
 
@@ -240,7 +246,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         choosePermitLicenseForRenewalDialog: TLMatDialog<ChoosePermitLicenseForRenewalComponent>,
         choosePermitToCopyFromDialog: TLMatDialog<ChoosePermitToCopyFromComponent>,
         overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>,
-        snackbar: MatSnackBar
+        snackbar: MatSnackBar,
+        paymentDataDialog: TLMatDialog<PaymentDataComponent>
     ) {
         this.translationService = translate;
         this.systemParametersService = systemParametersService;
@@ -252,6 +259,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         this.choosePermitToCopyFromDialog = choosePermitToCopyFromDialog;
         this.overlappingLogBooksDialog = overlappingLogBooksDialog;
         this.snackbar = snackbar;
+        this.paymentDataDialog = paymentDataDialog;
 
         this.expectedResults = new CommercialFishingRegixDataDTO({
             submittedBy: new ApplicationSubmittedByRegixDataDTO({ addresses: [], person: new RegixPersonDataDTO() }),
@@ -1341,70 +1349,127 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         this.model = this.fillModel();
         CommonUtils.sanitizeModelStrings(this.model);
         this.service.addPermitApplicationAndStartPermitLicenseApplication(this.model).subscribe({
-            next: (permitLicenseModel: CommercialFishingApplicationEditDTO) => {
+            next: async (permitLicenseModel: CommercialFishingApplicationEditDTO) => {
                 NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
 
                 if (this.pageCode === PageCodeEnum.PoundnetCommFish || this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
                     NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.PoundNets);
                 }
 
-                dialogClose();
+                // Open payment dialog
+                const paymentDialog = await this.openPaymentDialog(permitLicenseModel.applicationId!);
 
-                const editDialogData: CommercialFishingDialogParamsModel = new CommercialFishingDialogParamsModel({
-                    model: permitLicenseModel,
-                    applicationId: permitLicenseModel.applicationId,
-                    isApplication: true,
-                    isApplicationHistoryMode: false,
-                    isReadonly: false,
-                    viewMode: false,
-                    service: this.service,
-                    applicationsService: this.applicationsService,
-                    showOnlyRegiXData: false,
-                    pageCode: permitLicenseModel.pageCode,
-                    onRecordAddedOrEdittedEvent: this.onRecordAddedOrEdittedEvent
-                });
+                paymentDialog.subscribe(async (paymentData: PaymentDataDTO) => {
+                    if (paymentData !== null && paymentData !== undefined) {
+                        // Open permit license dialog
+                        if (permitLicenseModel.paymentInformation === null || permitLicenseModel.paymentInformation === undefined) {
+                            permitLicenseModel.paymentInformation = new ApplicationPaymentInformationDTO();
+                        }
 
-                const auditButton: IHeaderAuditButton | undefined = undefined;
+                        const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin([
+                            NomenclatureStore.instance.getNomenclature<number>(NomenclatureTypes.OfflinePaymentTypes, this.commonNomenclatures.getOfflinePaymentTypes.bind(this.commonNomenclatures), false),
+                            NomenclatureStore.instance.getNomenclature<number>(NomenclatureTypes.PaymentStatuses, this.commonNomenclatures.getPaymentStatuses, false)
+                        ]).toPromise();
 
-                const rightButtons = [
-                    {
-                        id: 'save-draft-content',
-                        color: 'accent',
-                        translateValue: 'applications-register.save-draft-content',
-                        buttonData: { callbackFn: this.saveApplicationDraftContentActionClicked }
-                    }, {
-                        id: 'save',
-                        color: 'accent',
-                        translateValue: 'applications-register.save-application'
+                        const paymentTypes = nomenclatures[0];
+                        const paymentStatuses = nomenclatures[1];
+
+                        permitLicenseModel.paymentInformation.paymentType = paymentTypes.find(x => x.code === PaymentTypesEnum[paymentData.paymentType!])!.code;
+                        permitLicenseModel.paymentInformation.paymentDate = paymentData.paymentDateTime;
+                        permitLicenseModel.paymentInformation.referenceNumber = paymentData.paymentRefNumber;
+                        permitLicenseModel.paymentInformation.totalPaidPrice = paymentData.totalPaidPrice;
+                        permitLicenseModel.paymentInformation.lastUpdateDate = new Date();
+                        permitLicenseModel.paymentInformation.paymentStatus = paymentStatuses.find(x => x.code === PaymentStatusesEnum[PaymentStatusesEnum.PaidOK])!.code; // би трябвало това да е статусът, защото е офлайн плащане и щом сме стигнали до тази стъпка, то е успешно
+                        
+                        this.openPermitLicenseDialog(permitLicenseModel);
                     }
-                ];
 
-                const dialog = this.editCommercialFishingPermitLicenseDialog.open({
-                    title: this.translationService.getValue('commercial-fishing.edit-permit-license-application-dialog-title'),
-                    TCtor: EditCommercialFishingComponent,
-                    headerAuditButton: auditButton,
-                    headerCancelButton: {
-                        cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
-                    },
-                    componentData: editDialogData,
-                    translteService: this.translationService,
-                    disableDialogClose: true,
-                    cancelBtn: {
-                        id: 'cancel',
-                        color: 'primary',
-                        translateValue: 'common.cancel',
-                    },
-                    rightSideActionsCollection: rightButtons,
-                    viewMode: false
-                }, '1400px');
-
-                dialog.subscribe((result: CommercialFishingApplicationEditDTO | undefined) => {
-                    if (this.onRecordAddedOrEdittedEvent !== null && this.onRecordAddedOrEdittedEvent !== undefined) {
-                        this.onRecordAddedOrEdittedEvent.emit(result?.id);
-                    }
+                    dialogClose();
                 });
             }, error: (errorResponse: HttpErrorResponse) => {
                 this.handleAddEditApplicationErrorResponse(errorResponse, dialogClose, 'saveAndStartPermitLicense');
+            }
+        });
+    }
+
+    private async openPaymentDialog(applicationId: number): Promise<Observable<any>> {
+        const paymentTypes = await NomenclatureStore.instance.getNomenclature<number>(
+            NomenclatureTypes.OfflinePaymentTypes,
+            this.commonNomenclatures.getOfflinePaymentTypes.bind(this.commonNomenclatures),
+            false).toPromise();
+
+        const headerTitle: string = this.translationService.getValue('commercial-fishing.enter-permit-license-payment-data-dialog-title');
+        const data = new PaymentDataInfo({
+            paymentTypes: paymentTypes,
+            viewMode: false,
+            service: this.applicationsService,
+            applicationId: applicationId,
+            paymentDateMax: new Date()
+        });
+
+        return this.paymentDataDialog.openWithTwoButtons({
+            title: headerTitle,
+            TCtor: PaymentDataComponent,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            componentData: data,
+            translteService: this.translationService
+        }, '1200px');
+    }
+
+    private openPermitLicenseDialog(permitLicenseModel: CommercialFishingApplicationEditDTO): void {
+        const editDialogData: CommercialFishingDialogParamsModel = new CommercialFishingDialogParamsModel({
+            model: permitLicenseModel,
+            applicationId: permitLicenseModel.applicationId,
+            isApplication: true,
+            isApplicationHistoryMode: false,
+            isReadonly: false,
+            viewMode: false,
+            service: this.service,
+            applicationsService: this.applicationsService,
+            showOnlyRegiXData: false,
+            pageCode: permitLicenseModel.pageCode,
+            onRecordAddedOrEdittedEvent: this.onRecordAddedOrEdittedEvent
+        });
+
+        const auditButton: IHeaderAuditButton | undefined = undefined;
+
+        const rightButtons = [
+            {
+                id: 'save-draft-content',
+                color: 'accent',
+                translateValue: 'applications-register.save-draft-content',
+                buttonData: { callbackFn: this.saveApplicationDraftContentActionClicked }
+            }, {
+                id: 'save',
+                color: 'accent',
+                translateValue: 'applications-register.save-application'
+            }
+        ];
+
+        const dialog = this.editCommercialFishingPermitLicenseDialog.open({
+            title: this.translationService.getValue('commercial-fishing.edit-permit-license-application-dialog-title'),
+            TCtor: EditCommercialFishingComponent,
+            headerAuditButton: auditButton,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            componentData: editDialogData,
+            translteService: this.translationService,
+            disableDialogClose: true,
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: 'common.cancel',
+            },
+            rightSideActionsCollection: rightButtons,
+            viewMode: false
+        }, '1400px');
+
+        dialog.subscribe((result: CommercialFishingApplicationEditDTO | undefined) => {
+            if (this.onRecordAddedOrEdittedEvent !== null && this.onRecordAddedOrEdittedEvent !== undefined) {
+                this.onRecordAddedOrEdittedEvent.emit(result?.id);
             }
         });
     }
@@ -2179,7 +2244,10 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     }
 
     private updatePermitLicenseAppliedTariffs(): void {
+        (this.model as CommercialFishingApplicationEditDTO).paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
+
         const parameters: PermitLicenseTariffCalculationParameters = this.getPermitLiceseTariffCalculationParameters();
+
         this.service.calculatePermitLicenseAppliedTariffs(parameters).subscribe({
             next: (appliedTariffs: PaymentTariffDTO[]) => {
                 if ((this.model as CommercialFishingApplicationEditDTO).paymentInformation!.paymentSummary !== null

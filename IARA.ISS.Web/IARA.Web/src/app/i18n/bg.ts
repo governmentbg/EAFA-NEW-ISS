@@ -3015,7 +3015,9 @@
         'suspend-resume-is-second-event-for-ship-error': 'Разрешителното не може да бъде прекратено или възстановено днес, защото това би предизвикало второ MOD събитие за деня, а само едно такова е позволено за даден кораб.',
 
         'print-configurations-dialog-title': 'Печат',
-        'choose-settings-and-print': 'Потвърди и изтегли'
+        'choose-settings-and-print': 'Потвърди и изтегли',
+
+        'enter-permit-license-payment-data-dialog-title': 'Въвеждане на платежни данни за удостоверение за стопански риболов'
     },
     'print-configuration': {
         'user': ' Служител, издал документа',

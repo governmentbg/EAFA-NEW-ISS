@@ -160,20 +160,12 @@ export class CatchAquaticOrganismTypesArrayComponent extends CustomFormControl<C
                 this.fishSizes = nomenclatures[3];
                 this.catchTypes = nomenclatures[4];
 
-                let isDanube: boolean = false;
-                let isBlackSea: boolean = false;
-
                 if (this.waterType === WaterTypesEnum.BLACK_SEA) {
-                    isBlackSea = true;
+                    this.aquaticOrganisms = this.aquaticOrganisms.filter(x => x.isBlackSea === true);
                 }
                 else if (this.waterType === WaterTypesEnum.DANUBE) {
-                    isDanube = true;
+                    this.aquaticOrganisms = this.aquaticOrganisms.filter(x => x.isDanube === true);
                 }
-
-                this.aquaticOrganisms = this.aquaticOrganisms.filter(x =>
-                    this.waterType === WaterTypesEnum.Unknown
-                    || (x.isBlackSea === isBlackSea && x.isDanube === isDanube)
-                );
 
                 this.loader.complete();
             }

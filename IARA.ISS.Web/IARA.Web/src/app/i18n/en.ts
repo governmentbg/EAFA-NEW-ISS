@@ -2892,7 +2892,9 @@
         'suspend-resume-is-second-event-for-ship-error': 'The permit cannot be suspended or resumed, because this woult trigger a MOD event for the ship and that ship already has one MOD event for today.',
 
         'print-configurations-dialog-title': 'Print',
-        'choose-settings-and-print': 'Confirm and download'
+        'choose-settings-and-print': 'Confirm and download',
+
+        'enter-permit-license-payment-data-dialog-title': 'Enter permit license payment information'
     },
     'print-configuration': {
         'user': 'User issued the document',

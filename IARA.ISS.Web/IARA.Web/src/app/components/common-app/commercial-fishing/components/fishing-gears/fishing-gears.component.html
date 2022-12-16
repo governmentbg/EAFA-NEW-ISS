@@ -3,7 +3,7 @@
                    [rows]="fishingGears"
                    [isRemote]="false"
                    [isSoftDeletable]="true"
-                   [showAddButton]="!isDisabled"
+                   [showAddButton]="!isReadonly && !isDisabled"
                    [showInactiveRecords]="true"
                    (addButtonClicked)="addEditFishingGear()"
                    (activeRecordChanged)="addEditFishingGear($event, !$event.isActive)">
@@ -40,19 +40,19 @@
                                     iconClass="accent-color"
                                     tooltipText="{{ 'fishing-gears.view-fishing-gear' | tlTranslate }}">
                     </tl-icon-button>
-                    <tl-icon-button *ngIf="row.data.isActive && !isDisabled"
+                    <tl-icon-button *ngIf="row.data.isActive && !isReadonly && !isDisabled"
                                     icon="edit"
                                     (buttonClicked)="addEditFishingGear(row.data)"
                                     iconClass="accent-color"
                                     tooltipText="{{ 'fishing-gears.edit-fishing-gear' | tlTranslate }}">
                     </tl-icon-button>
-                    <tl-icon-button *ngIf="row.data.isActive && !isDisabled"
+                    <tl-icon-button *ngIf="row.data.isActive && !isReadonly && !isDisabled"
                                     icon="delete"
                                     (buttonClicked)="deleteFishingGear(row)"
                                     iconClass="accent-color"
                                     tooltipText="{{ 'fishing-gears.delete-fishing-gear' | tlTranslate }}">
                     </tl-icon-button>
-                    <tl-icon-button *ngIf="!row.data.isActive && !isDisabled"
+                    <tl-icon-button *ngIf="!row.data.isActive && !isReadonly && !isDisabled"
                                     icon="restore"
                                     (buttonClicked)="undoDeleteFishingGear(row)"
                                     iconClass="accent-color"
