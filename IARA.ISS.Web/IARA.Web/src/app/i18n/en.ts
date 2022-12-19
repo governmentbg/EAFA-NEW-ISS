@@ -5559,6 +5559,11 @@
         'delete-print-configuration-dialog-message': 'Are you sure that you want to delete print configurations for application type',
         'delete-dialog-ok-btn-label': 'Delete',
 
+        'update-print-configuration-dialog-title': 'Save print configurations',
+        'update-print-configuration-dialog-message': 'Do you want to update all entries with this sign user?',
+        'update-print-configuration-dialog-ok-btn-label': 'Yes',
+        'update-print-configuration-dialog-cancel-btn-label': 'No',
+
         'print-configuration-already-exists-error': 'Already exists a configuration for this pair of application type and territory unit.'
     }
 };

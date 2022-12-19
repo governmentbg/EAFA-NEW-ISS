@@ -683,7 +683,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         this.form.get('shipYearsControl')!.setValue(ship.shipYears);
         this.form.get('shipLengthControl')!.setValue(this.shipLengthIntervals.find(x => x.value === ship.shipLenghtId!));
         this.form.get('shipTonnageControl')!.setValue(this.grossTonnageIntervals.find(x => x.value === ship.grossTonnageId!));
-        this.form.get('hasEngineControl')!.setValue(true);
+        this.form.get('hasEngineControl')!.setValue(ship.hasEngine);
         this.form.get('fuelTypeControl')!.setValue(this.fuelTypes.find(x => x.value === ship.fuelTypeId!));
     }
 

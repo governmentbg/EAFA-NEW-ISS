@@ -5656,6 +5656,11 @@
         'delete-print-configuration-dialog-message': 'Сигурни ли сте, че искате да изтриете настройки за принтиране за тип заявлние',
         'delete-dialog-ok-btn-label': 'Изтрий',
 
+        'update-print-configuration-dialog-title': 'Запазване на настройки за принтиране',
+        'update-print-configuration-dialog-message': 'В случай, че този подписващ служител участва и в други записи, желаете ли да обновите данните за заместващ служител в тях?',
+        'update-print-configuration-dialog-ok-btn-label': 'Да',
+        'update-print-configuration-dialog-cancel-btn-label': 'Не',
+
         'print-configuration-already-exists-error': 'Вече съществува настройка за принтиране за комбинацията от тип заявление и териториално звено.'
     }
 };

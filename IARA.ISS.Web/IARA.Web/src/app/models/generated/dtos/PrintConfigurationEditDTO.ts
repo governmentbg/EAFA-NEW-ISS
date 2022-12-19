@@ -24,4 +24,7 @@ export class PrintConfigurationEditDTO {
 
     @StrictlyTyped(String)
     public substituteReason?: string;
+
+    @StrictlyTyped(Boolean)
+    public shouldUpdateAllEntries?: boolean;
 }

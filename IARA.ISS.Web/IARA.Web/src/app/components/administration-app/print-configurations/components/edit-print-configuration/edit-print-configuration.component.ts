@@ -17,6 +17,8 @@ import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatur
 import { PrintConfigurationEditDTO } from '@app/models/generated/dtos/PrintConfigurationEditDTO';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
 @Component({
     selector: 'edit-print-configuration',
@@ -39,11 +41,20 @@ export class EditPrintConfigurationComponent implements OnInit, IDialogComponent
     private readonly nomenclatureLoader: FormControlDataLoader;
     private readonly service: PrintConfigurationsService;
     private readonly nomenclaturesService: CommonNomenclatures;
+    private readonly translate: FuseTranslationLoaderService;
+    private readonly confirmDialog: TLConfirmDialog;
 
-    public constructor(service: PrintConfigurationsService, nomenclaturesService: CommonNomenclatures) {
+    public constructor(
+        service: PrintConfigurationsService,
+        nomenclaturesService: CommonNomenclatures,
+        translate: FuseTranslationLoaderService,
+        confirmDialog: TLConfirmDialog
+    ) {
         this.nomenclatureLoader = new FormControlDataLoader(this.getNomenclatures.bind(this));
         this.service = service;
         this.nomenclaturesService = nomenclaturesService;
+        this.translate = translate;
+        this.confirmDialog = confirmDialog;
 
         this.buildForm();
     }
@@ -84,27 +95,42 @@ export class EditPrintConfigurationComponent implements OnInit, IDialogComponent
             this.model = this.fillModel();
             this.model = CommonUtils.sanitizeModelStrings(this.model);
 
-            if (this.id !== null && this.id !== undefined) { // edit
-                this.service.editPrintConfiguration(this.model).subscribe({
-                    next: () => {
-                        dialogClose(this.model);
-                    },
-                    error: (httpErrorResponse: HttpErrorResponse) => {
-                        this.handleHttpErrorResponse(httpErrorResponse);
-                    }
-                });
-            }
-            else { // add
-                this.service.addPrintConfiguratoin(this.model).subscribe({
-                    next: (id: number) => {
-                        this.model.id = id;
-                        dialogClose(this.model);
-                    },
-                    error: (httpErrorResponse: HttpErrorResponse) => {
-                        this.handleHttpErrorResponse(httpErrorResponse);
-                    }
-                });
-            }
+            this.confirmDialog.open({
+                title: this.translate.getValue('print-configurations.update-print-configuration-dialog-title'),
+                message: this.translate.getValue('print-configurations.update-print-configuration-dialog-message'),
+                okBtnLabel: this.translate.getValue('print-configurations.update-print-configuration-dialog-ok-btn-label'),
+                cancelBtnLabel: this.translate.getValue('print-configurations.update-print-configuration-dialog-cancel-btn-label')
+            }).subscribe((ok: boolean) => {
+                debugger;
+                if (ok) {
+                    this.model.shouldUpdateAllEntries = true;
+                }
+                else {
+                    this.model.shouldUpdateAllEntries = false;
+                }
+
+                if (this.id !== null && this.id !== undefined) { // edit
+                    this.service.editPrintConfiguration(this.model).subscribe({
+                        next: () => {
+                            dialogClose(this.model);
+                        },
+                        error: (httpErrorResponse: HttpErrorResponse) => {
+                            this.handleHttpErrorResponse(httpErrorResponse);
+                        }
+                    });
+                }
+                else { // add
+                    this.service.addPrintConfiguratoin(this.model).subscribe({
+                        next: (id: number) => {
+                            this.model.id = id;
+                            dialogClose(this.model);
+                        },
+                        error: (httpErrorResponse: HttpErrorResponse) => {
+                            this.handleHttpErrorResponse(httpErrorResponse);
+                        }
+                    });
+                }
+            });
         }
     }
 
@@ -209,6 +235,7 @@ export class EditPrintConfigurationComponent implements OnInit, IDialogComponent
         }
         else {
             this.form.get('substituteReasonControl')!.setValidators([Validators.maxLength(1000)]);
+            this.form.get('substituteReasonControl')!.reset();
         }
 
         this.form.get('substituteReasonControl')!.markAsPending();
