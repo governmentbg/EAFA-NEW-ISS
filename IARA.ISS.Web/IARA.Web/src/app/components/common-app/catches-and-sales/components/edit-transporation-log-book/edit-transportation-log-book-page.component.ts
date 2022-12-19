@@ -223,6 +223,15 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
                                     panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
                                 });
                         }
+                        else if (error?.code === ErrorCode.LogBookPageAlreadySubmittedOtherLogBook) {
+                            this.snackbar.open(
+                                `${this.translationService.getValue('catches-and-sales.transportation-page-already-submitted-other-logbook-error')}: ${error.messages[0]}`,
+                                undefined,
+                                {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
+                        }
                         else if (error?.code === ErrorCode.SendFLUXSalesFailed) {
                             if (!IS_PUBLIC_APP) { // show snackbar only when not public app
                                 this.snackbar.open(this.translationService.getValue('catches-and-sales.transportation-page-send-to-flux-sales-error'), undefined, {

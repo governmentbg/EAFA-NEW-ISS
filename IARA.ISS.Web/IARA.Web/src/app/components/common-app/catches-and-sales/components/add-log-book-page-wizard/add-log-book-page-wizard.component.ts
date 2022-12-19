@@ -60,6 +60,8 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
     public hasInvalidAdmissionDocNumber: boolean = false;
     public hasPageNotInLogBookError: boolean = false;
     public hasPageAlreadySubmittedError: boolean = false;
+    public hasPageAlreadySubmittedOtherLogBookError: boolean = false;
+    public pageAlreadySubmittedOtherLogBook: string = '';
 
     private translationService: FuseTranslationLoaderService;
     private dialogRef: MatDialogRef<DialogWrapperComponent<IDialogComponent>> | undefined;
@@ -285,6 +287,12 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
                                         this.preliminaryDataFormGroup.get('pageNumberControl')!.updateValueAndValidity({ emitEvent: false });
                                         this.preliminaryDataFormGroup.get('pageNumberControl')!.markAsTouched();
                                     } break;
+                                    case ErrorCode.LogBookPageAlreadySubmittedOtherLogBook: {
+                                        this.hasPageAlreadySubmittedOtherLogBookError = true;
+                                        this.pageAlreadySubmittedOtherLogBook = error.messages[0];
+                                        this.preliminaryDataFormGroup.get('pageNumberControl')!.updateValueAndValidity({ emitEvent: false });
+                                        this.preliminaryDataFormGroup.get('pageNumberControl')!.markAsTouched();
+                                    } break;
                                     case ErrorCode.InvalidOriginDeclarationNumber: {
                                         this.hasInvalidOriginDeclarationNumber = true;
                                         this.preliminaryDataFormGroup.updateValueAndValidity({ emitEvent: false });
@@ -343,10 +351,22 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
 
     public getControlErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         if (errorCode === 'pageNotInLogBook') {
-            return new TLError({ type: 'error', text: this.translationService.getValue('catches-and-sales.add-log-book-page-wizard-page-not-in-log-book-error') });
+            return new TLError({
+                type: 'error',
+                text: this.translationService.getValue('catches-and-sales.add-log-book-page-wizard-page-not-in-log-book-error')
+            });
         }
         else if (errorCode === 'pageAlreadySubmitted') {
-            return new TLError({ type: 'error', text: this.translationService.getValue('catches-and-sales.add-log-book-page-wizard-page-already-submitted-error') });
+            return new TLError({
+                type: 'error',
+                text: this.translationService.getValue('catches-and-sales.add-log-book-page-wizard-page-already-submitted-error')
+            });
+        }
+        else if (errorCode === 'pageAlreadySubmittedOtherLogBook') {
+            return new TLError({
+                type: 'error',
+                text: `${this.translationService.getValue('catches-and-sales.add-log-book-page-wizard-page-already-submitted-other-logbook-error')}: ${this.pageAlreadySubmittedOtherLogBook}`
+            });
         }
         else {
             return undefined;
@@ -373,6 +393,8 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
             next: () => {
                 this.hasPageNotInLogBookError = false;
                 this.hasPageAlreadySubmittedError = false;
+                this.hasPageAlreadySubmittedOtherLogBookError = false;
+                this.pageAlreadySubmittedOtherLogBook = '';
             }
         });
     }
@@ -589,6 +611,9 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
             }
             else if (this.hasPageAlreadySubmittedError) {
                 return { 'pageAlreadySubmitted': true };
+            }
+            else if (this.hasPageAlreadySubmittedOtherLogBookError) {
+                return { 'pageAlreadySubmittedOtherLogBook': true };
             }
             else {
                 return null;

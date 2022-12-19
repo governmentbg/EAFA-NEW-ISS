@@ -55,6 +55,8 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
     public logBookOwnerTypes: NomenclatureDTO<LogBookPagePersonTypesEnum>[] = [];
     public possibleLogBooks: LogBookNomenclatureDTO[] = [];
 
+    public pageAlreadySubmittedOtherLogbook: string = '';
+
     public service!: ICatchesAndSalesService;
 
     private translationService: FuseTranslationLoaderService;
@@ -192,6 +194,11 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
                         }
                         else if (error?.code === ErrorCode.LogBookPageAlreadySubmitted) {
                             this.confirmLogBookAndOwnerFormGroup.setErrors({ 'pageNumberAlreadySubmitted': true });
+                            this.stepper.previous();
+                        }
+                        else if (error?.code === ErrorCode.LogBookPageAlreadySubmittedOtherLogBook) {
+                            this.confirmLogBookAndOwnerFormGroup.setErrors({ 'pageNumberAlreadySubmittedOtherLogBook': true });
+                            this.pageAlreadySubmittedOtherLogbook = error.messages[0];
                             this.stepper.previous();
                         }
                     }

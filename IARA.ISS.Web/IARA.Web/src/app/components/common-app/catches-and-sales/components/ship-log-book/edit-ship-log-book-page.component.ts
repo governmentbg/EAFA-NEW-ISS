@@ -332,6 +332,15 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                                 panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
                             });
                         }
+                        else if (error?.code === ErrorCode.LogBookPageAlreadySubmittedOtherLogBook) {
+                            this.snackbar.open(
+                                `${this.translationService.getValue('catches-and-sales.ship-log-book-page-already-submitted-other-logbook-error')}: ${error.messages[0]}`,
+                                undefined,
+                                {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
+                        }
                     }
                 });
             }
@@ -794,8 +803,8 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
 
             filesControl: new FormControl()
         }, [this.originDeclarationFishesValidator(),
-            this.delcarationOfOriginCatchRecordQuantitiesValidator(),
-            this.originDeclarationCatchRecordFishesDatesValidator()]);
+        this.delcarationOfOriginCatchRecordQuantitiesValidator(),
+        this.originDeclarationCatchRecordFishesDatesValidator()]);
 
         this.form.get('allCatchIsTransboardedControl')!.valueChanges.subscribe({
             next: (value: boolean | undefined) => {
@@ -1004,7 +1013,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                 }
             }
         }
-        
+
         return differences;
     }
 
@@ -1050,13 +1059,13 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             if (fishesFromPreviousTrips.length === 0) {
                 return null;
             }
-            
+
             const tripUnloadDateTime: Date | undefined = ((control as FormGroup).get('unloadDateTimeControl')?.value as Moment)?.toDate();
 
             if (tripUnloadDateTime === null || tripUnloadDateTime === undefined) {
                 return null;
             }
-            
+
             const previousTripFishIds: number[] = fishesFromPreviousTrips.map(x => x.catchRecordFishId!);
 
             const hasInvalidFishRecordDates: boolean = this.selectedCatchesFromPreviousTrips.some((x: OnBoardCatchRecordFishDTO) => {

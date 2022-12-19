@@ -54,6 +54,9 @@
             <mat-error *ngIf="confirmLogBookAndOwnerFormGroup.errors?.pageNumberAlreadySubmitted">
                 * {{ 'catches-and-sales.add-ship-page-document-wizard-page-alread-submitted' | tlTranslate }}
             </mat-error>
+            <mat-error *ngIf="confirmLogBookAndOwnerFormGroup.errors?.pageNumberAlreadySubmittedOtherLogBook">
+                * {{ 'catches-and-sales.add-ship-page-document-wizard-page-alread-submitted-other-logbook' | tlTranslate }}
+            </mat-error>
             <div fxLayout="row">
                 <button mat-raised-button matStepperNext color="accent">
                     {{ 'catches-and-sales.add-ship-page-document-wizard-confirm-log-book' | tlTranslate }}

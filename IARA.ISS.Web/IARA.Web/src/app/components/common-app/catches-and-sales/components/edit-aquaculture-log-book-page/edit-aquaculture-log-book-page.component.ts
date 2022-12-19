@@ -121,6 +121,16 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
                                 panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
                             });
                         }
+                        else if (error?.code === ErrorCode.LogBookPageAlreadySubmittedOtherLogBook) {
+                            debugger;
+                            this.snackbar.open(
+                                `${this.translationService.getValue('catches-and-sales.aquaculture-page-already-submitted-other-logbook-error')}: ${error.messages[0]}`,
+                                undefined,
+                                {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
+                        }
                     }
                 });
             }

@@ -52,5 +52,6 @@ export enum ErrorCode {
     LogBookHasSubmittedPages = 33,
     ApplicationFileInvalid = 34,
     InvalidPermitNumber = 35,
-    PrintConfigurationAlreadyExists = 36
+    PrintConfigurationAlreadyExists = 36,
+    LogBookPageAlreadySubmittedOtherLogBook = 37
 }

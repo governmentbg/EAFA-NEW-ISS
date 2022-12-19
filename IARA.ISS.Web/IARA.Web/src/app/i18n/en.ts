@@ -3577,6 +3577,7 @@
         'add-ship-page-document-wizard-possible-log-book-helper': 'If more than one log books are present, you must choose the one you want the page to be added to. The log books will be more than you if the page you want to add falls into more than one log book page range.',
         'add-ship-page-document-wizard-page-not-in-log-book-license': 'The log book number does not fall into any log book range (in the context of any permit license)',
         'add-ship-page-document-wizard-page-alread-submitted': 'The page is already submitted/cancelled',
+        'add-ship-page-document-wizard-page-alread-submitted-other-logbook': 'The page is already submitted/cancelled for a different logbook',
 
         'justified-cancellation-reason-default-label': 'Annulment reason',
 
@@ -3616,7 +3617,8 @@
         'add-log-book-page-wizard-is-import-not-by-ship': 'Imports are made in a different way than imports by ship',
         'add-log-book-page-wizard-place-of-import': 'Place of import',
         'add-log-book-page-wizard-page-not-in-log-book-error': 'The page is not in the range of the log book',
-        'add-log-book-page-wizard-page-already-submitted-error': 'The page is already sumitted/canceled in the system',
+        'add-log-book-page-wizard-page-already-submitted-error': 'The page is already submitted/canceled in the system',
+        'add-log-book-page-wizard-page-already-submitted-other-logbook-error': 'The lage is already submitted/canceled in the system for a different logbook',
         'add-log-book-page-wizard-chosen-log-book-for-page': 'Chosen log book for page',
         'add-log-book-page-wizard-page-number-to-add': 'Page number to add',
         'add-log-book-page-wizard-page-permit-license-number': 'Permit License number',
@@ -3752,6 +3754,7 @@
         'ship-log-book-page-not-in-range-error': 'The chosen page is not part of this log book',
         'ship-log-book-page-not-in-log-book-license-range-error': 'The chosen page is not a part of log book range for any permit license for this log book',
         'ship-log-book-page-already-submitted-error': 'The chosen page is already submitted or is annulled',
+        'ship-log-book-page-already-submitted-other-logbook-error': 'The chosen page is already submitted or is annulled for a different logbook',
         'ship-log-book-page-qualified-fisher': 'Qualified fisher',
         'ship-log-book-page-water-type': 'Water type',
 
@@ -3792,6 +3795,7 @@
         'first-sale-page-status': 'Status',
         'first-sale-page-not-in-range-error': 'The chosen page is not part of this log book',
         'first-sale-page-already-submitted-error': 'The chosen page is already submitted or is annulled',
+        'first-sale-page-already-submitted-other-logbook-error': 'The chosen page is already submitted or is annulled for a different logbook',
         'first-sale-page-send-to-flux-sales-error': 'An error occurred when sending sales data to FLUX',
 
         'add-admission-log-book-page-dialog-title': 'Add admission log book page',
@@ -3817,6 +3821,7 @@
         'admission-page-not-in-range-error': 'The chosen page is not part of this log book',
         'admission-page-not-in-log-book-license-range-error': 'The chosen page is not a part of log book range for any permit license for this log book',
         'admission-page-already-submitted-error': 'The chosen page is already submitted or is annulled',
+        'admission-page-already-submitted-other-logbook-error': 'The chosen page is already submitted or is annulled for a different logbook',
         'admission-page-send-to-flux-sales-error': 'An error occurred when sending admission data to FLUX',
 
         'add-transportation-log-book-page-dialog-title': 'Add transporation log book page',
@@ -3845,6 +3850,7 @@
         'transportation-page-not-in-range-error': 'The chosen page is not part of this log book',
         'transportation-page-not-in-log-book-license-range-error': 'The chosen page is not a part of log book range for any permit license for this log book',
         'transportation-page-already-submitted-error': 'The chosen page is already submitted or is annulled',
+        'transportation-page-already-submitted-other-logbook-error': 'The chosen page is already submitted or is annulled for a different logbook',
         'transportation-page-send-to-flux-sales-error': 'An error occurred when sending transportation data to FLUX',
 
         'add-aquaculture-log-book-page-dialog-title': 'Add aquaculture log book page',
@@ -3861,6 +3867,7 @@
         'aquaculture-page-status': 'Status',
         'aquaculture-page-not-in-range-error': 'The chosen page is not part of this log book',
         'aquaculture-page-already-submitted-error': 'The chosen page is already submitted or is annulled',
+        'aquaculture-page-already-submitted-other-logbook-error': 'The chosen page is already submitted or is annulled for a different logbook',
 
         'log-book-page-person-has-bulgarian-address-registration': 'Has Bulgarian address registration',
         'log-book-page-person-registered-buyer': 'Registered buyer/first sale center',

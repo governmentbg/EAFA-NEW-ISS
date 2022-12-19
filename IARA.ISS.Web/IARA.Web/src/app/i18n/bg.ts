@@ -3717,6 +3717,7 @@
         'add-ship-page-document-wizard-possible-log-book-helper': 'При наличие на няколко дневника, изберете за кой дневник става въпрос. Ако има повече от 1 дневника, то избраната от Вас страница попада в диапазоните на всеки от наличните в списъка дневници.',
         'add-ship-page-document-wizard-page-not-in-log-book-license': 'Страницата не влиза в диапазона на избрания дневник (в рамките на удостоверение)',
         'add-ship-page-document-wizard-page-alread-submitted': 'Страницата е вече попълнена/анулирана',
+        'add-ship-page-document-wizard-page-alread-submitted-other-logbook': 'Страницата е вече попълнена/анулирана към друг дневник',
 
         'justified-cancellation-reason-default-label': 'Причина за анулиране',
 
@@ -3757,6 +3758,7 @@
         'add-log-book-page-wizard-place-of-import': 'Място на внос',
         'add-log-book-page-wizard-page-not-in-log-book-error': 'Страница не принадлежи към диапазона от страници за дневника',
         'add-log-book-page-wizard-page-already-submitted-error': 'Страницата е вече въведена/анулирана в системата',
+        'add-log-book-page-wizard-page-already-submitted-other-logbook-error': 'Страницата е вече въведе/анулирана в системата към друг дневник',
         'add-log-book-page-wizard-chosen-log-book-for-page': 'Избран дневник за страницата',
         'add-log-book-page-wizard-page-number-to-add': 'Номер на страница за добавяне',
         'add-log-book-page-wizard-page-permit-license-number': 'Удостоверение №',
@@ -3893,6 +3895,7 @@
         'ship-log-book-page-not-in-range-error': 'Избраната страница не е част от този дневник',
         'ship-log-book-page-not-in-log-book-license-range-error': 'Избраната страница не е част от диапазон на дневника към конкретно удостоверение',
         'ship-log-book-page-already-submitted-error': 'Избраната страница вече е попълнена или е анулирана',
+        'ship-log-book-page-already-submitted-other-logbook-error': 'Избраната страница вече е попълнена или е анулирана към друг дневник',
         'ship-log-book-page-qualified-fisher': 'Правоспособен рибар',
         'ship-log-book-page-water-type': 'Тип на водите',
 
@@ -3933,6 +3936,7 @@
         'first-sale-page-status': 'Статус',
         'first-sale-page-not-in-range-error': 'Избраната страница не е част от този дневник',
         'first-sale-page-already-submitted-error': 'Избраната страница вече е попълнена или е анулирана',
+        'first-sale-page-already-submitted-other-logbook-error': 'Избраната страница вече е попълнена или е анулирана към друг дневник',
         'first-sale-page-send-to-flux-sales-error': 'Настъпи грешка при изпращането на данни за продажба към FLUX',
 
         'add-admission-log-book-page-dialog-title': 'Добавяне на страница от дневник за приемане',
@@ -3958,6 +3962,7 @@
         'admission-page-not-in-range-error': 'Избраната страница не е част от този дневник',
         'admission-page-not-in-log-book-license-range-error': 'Избраната страница не е част от диапазон на дневника към конкретно удостоверение',
         'admission-page-already-submitted-error': 'Избраната страница вече е попълнена или е анулирана',
+        'admission-page-already-submitted-other-logbook-error': 'Избраната страница вече е попълнена или е анулирана към друг дневник',
         'admission-page-send-to-flux-sales-error': 'Настъпи грешка при изпращането на данни за приемане към FLUX',
 
         'add-transportation-log-book-page-dialog-title': 'Добавяне на страница от дневник за превоз',
@@ -3986,6 +3991,7 @@
         'transportation-page-not-in-range-error': 'Избраната страница не е част от този дневник',
         'transportation-page-not-in-log-book-license-range-error': 'Избраната страница не е част от диапазон на дневника към конкретно удостоверение',
         'transportation-page-already-submitted-error': 'Избраната страница вече е попълнена или е анулирана',
+        'transportation-page-already-submitted-other-logbook-error': 'Избраната страница вече е попълнена или е анулирана към друг дневник',
         'transportation-page-send-to-flux-sales-error': 'Настъпи грешка при изпращането на данни за превоз към FLUX',
 
         'add-aquaculture-log-book-page-dialog-title': 'Добавяне на страница от дневник за аквакултурно стопанство',
@@ -4002,6 +4008,7 @@
         'aquaculture-page-status': 'Статус',
         'aquaculture-page-not-in-range-error': 'Избраната страница не е част от този дневник',
         'aquaculture-page-already-submitted-error': 'Избраната страница вече е попълнена или е анулирана',
+        'aquaculture-page-already-submitted-other-logbook-error': 'Избраната страница вече е попълнена или е анулирана към друг дневник',
 
         'log-book-page-person-has-bulgarian-address-registration': 'Притежава българска адресна регистрация',
         'log-book-page-person-registered-buyer': 'Регистриран купувач/център за първа продажба',
