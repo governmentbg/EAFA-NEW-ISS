@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { TicketStatusEnum } from '@app/enums/ticket-status.enum';
 import { ApplicationStatusesEnum } from '@app/enums/application-statuses.enum';
 
 export class RecreationalFishingTicketApplicationDTO { 
@@ -46,6 +47,9 @@ export class RecreationalFishingTicketApplicationDTO {
 
     @StrictlyTyped(String)
     public ticketStatusName?: string;
+
+    @StrictlyTyped(Number)
+    public ticketStatus?: TicketStatusEnum;
 
     @StrictlyTyped(Number)
     public applicationStatus?: ApplicationStatusesEnum;

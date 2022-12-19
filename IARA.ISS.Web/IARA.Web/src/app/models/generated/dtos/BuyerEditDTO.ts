@@ -7,7 +7,6 @@ import { ApplicationSubmittedForDTO } from './ApplicationSubmittedForDTO';
 import { RegixPersonDataDTO } from './RegixPersonDataDTO';
 import { CommonDocumentDTO } from './CommonDocumentDTO';
 import { CancellationHistoryEntryDTO } from './CancellationHistoryEntryDTO';
-import { LogBookEditDTO } from './LogBookEditDTO';
 import { DuplicatesEntryDTO } from './DuplicatesEntryDTO';
 import { FileInfoDTO } from './FileInfoDTO';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
@@ -117,9 +116,6 @@ export class BuyerEditDTO {
 
     @StrictlyTyped(CancellationHistoryEntryDTO)
     public cancellationHistory?: CancellationHistoryEntryDTO[];
-
-    @StrictlyTyped(LogBookEditDTO)
-    public logBooks?: LogBookEditDTO[];
 
     @StrictlyTyped(DuplicatesEntryDTO)
     public duplicateEntries?: DuplicatesEntryDTO[];

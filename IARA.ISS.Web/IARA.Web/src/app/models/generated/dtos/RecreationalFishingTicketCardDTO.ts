@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { TicketStatusEnum } from '@app/enums/ticket-status.enum';
 import { PaymentStatusesEnum } from '@app/enums/payment-statuses.enum';
 import { ApplicationStatusesEnum } from '@app/enums/application-statuses.enum';
 
@@ -43,6 +44,9 @@ export class RecreationalFishingTicketCardDTO {
     public price?: number;
 
     @StrictlyTyped(Number)
+    public ticketStatus?: TicketStatusEnum;
+
+    @StrictlyTyped(Number)
     public paymentStatus?: PaymentStatusesEnum;
 
     @StrictlyTyped(Number)
@@ -59,10 +63,4 @@ export class RecreationalFishingTicketCardDTO {
 
     @StrictlyTyped(Boolean)
     public isExpiringSoon?: boolean;
-
-    @StrictlyTyped(Boolean)
-    public isExpired?: boolean;
-
-    @StrictlyTyped(Boolean)
-    public isCanceled?: boolean;
 }

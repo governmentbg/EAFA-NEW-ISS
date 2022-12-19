@@ -23,7 +23,6 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { RegixChecksWrapperDTO } from '@app/models/generated/dtos/RegixChecksWrapperDTO';
 import { ApplicationDialogData, ApplicationUtils } from '@app/shared/utils/application.utils';
 import { CommonUtils } from '@app/shared/utils/common.utils';
-import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
 import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';

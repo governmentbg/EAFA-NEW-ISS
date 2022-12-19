@@ -129,47 +129,35 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
         });
     }
 
-    public add(item: BuyerDTO, ignoreLogBookConflicts: boolean): Observable<number> {
-        const params: HttpParams = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
-
+    public add(item: BuyerDTO): Observable<number> {
         return this.requestService.post(this.area, this.controller, 'Add', item, {
-            properties: new RequestProperties({ asFormData: true }),
-            httpParams: params
+            properties: new RequestProperties({ asFormData: true })
         });
     }
 
-    public addAndDownloadRegister(model: BuyerDTO, ignoreLogBookConflicts: boolean): Observable<boolean> {
-        const params: HttpParams = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
-
+    public addAndDownloadRegister(model: BuyerDTO): Observable<boolean> {
         const registerDto: RegisterDTO<BuyerDTO> = new RegisterDTO<BuyerDTO>({
             dto: model
         });
 
         return this.requestService.downloadPost(this.area, this.controller, 'AddAndDownloadRegister', '', registerDto, {
-            properties: new RequestProperties({ asFormData: true }),
-            httpParams: params
+            properties: new RequestProperties({ asFormData: true })
         });
     }
 
-    public edit(item: BuyerDTO, ignoreLogBookConflicts: boolean): Observable<number> {
-        const params: HttpParams = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
-
+    public edit(item: BuyerDTO): Observable<number> {
         return this.requestService.post(this.area, this.controller, 'Edit', item, {
-            properties: new RequestProperties({ asFormData: true }),
-            httpParams: params
+            properties: new RequestProperties({ asFormData: true })
         });
     }
 
-    public editAndDownloadRegister(model: BuyerDTO, ignoreLogBookConflicts: boolean): Observable<boolean> {
-        const params: HttpParams = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
-
+    public editAndDownloadRegister(model: BuyerDTO): Observable<boolean> {
         const registerDto: RegisterDTO<BuyerDTO> = new RegisterDTO<BuyerDTO>({
             dto: model
         });
 
         return this.requestService.downloadPost(this.area, this.controller, 'EditAndDownloadRegister', '', registerDto, {
-            properties: new RequestProperties({ asFormData: true }),
-            httpParams: params
+            properties: new RequestProperties({ asFormData: true })
         });
     }
 
@@ -452,12 +440,9 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
         });
     }
 
-    public completeBuyerChangeOfCircumstancesApplication(buyer: BuyerEditDTO, ignoreLogBookConflicts: boolean): Observable<void> {
-        const params: HttpParams = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
-
+    public completeBuyerChangeOfCircumstancesApplication(buyer: BuyerEditDTO): Observable<void> {
         return this.requestService.post(this.area, this.controller, 'CompleteBuyerChangeOfCircumstancesApplication', buyer, {
-            properties: new RequestProperties({ asFormData: true }),
-            httpParams: params
+            properties: new RequestProperties({ asFormData: true })
         });
     }
 

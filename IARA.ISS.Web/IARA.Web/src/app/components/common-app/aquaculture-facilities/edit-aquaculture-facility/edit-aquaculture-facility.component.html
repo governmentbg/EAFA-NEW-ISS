@@ -879,20 +879,6 @@
             </mat-error>
         </tl-expansion-panel>
 
-        <!-- Дневници -->
-        <tl-expansion-panel *ngIf="!isApplication"
-                            tooltipResourceName="aquacultures.log-books-panel-helper"
-                            title="{{ 'aquacultures.log-books-panel' | tlTranslate }}"
-                            [validityChecker]="form">
-            <log-books fxFlexFill
-                       formControlName="logBooksControl"
-                       [isReadonly]="isReadonly || viewMode"
-                       [getLogBookSimpleAuditMethod]="service.getLogBookAudit.bind(service)"
-                       [logBookGroup]="logBookGroup"
-                       [showInactivePagesAndDocuments]="!isPublicApp">
-            </log-books>
-        </tl-expansion-panel>
-
         <!-- Файлове -->
         <tl-expansion-panel *ngIf="!showOnlyRegiXData"
                             [validityChecker]="form"

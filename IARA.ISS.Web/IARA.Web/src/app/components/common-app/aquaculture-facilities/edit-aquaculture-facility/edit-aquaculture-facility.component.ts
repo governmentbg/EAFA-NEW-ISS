@@ -47,7 +47,6 @@ import { EditAquacultureInstallationComponent } from './edit-aquaculture-install
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { PopulatedAreaNomenclatureExtendedDTO } from '@app/models/generated/dtos/PopulatedAreaNomenclatureExtendedDTO';
 import { AquacultureInstallationEditDTO } from '@app/models/generated/dtos/AquacultureInstallationEditDTO';
-import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
 import { AquacultureHatcheryEquipmentDTO } from '@app/models/generated/dtos/AquacultureHatcheryEquipmentDTO';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
@@ -69,22 +68,15 @@ import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-c
 import { AquacultureFacilitiesPublicService } from '@app/services/public-app/aquaculture-facilities-public.service';
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { FileTypeEnum } from '@app/enums/file-types.enum';
-import { LogBookEditDTO } from '@app/models/generated/dtos/LogBookEditDTO';
-import { LogBookGroupsEnum } from '@app/enums/log-book-groups.enum';
 import { Notifier } from '@app/shared/directives/notifier/notifier.class';
 import { CancellationReasonGroupEnum } from '@app/enums/cancellation-reason-group.enum';
 import { AquacultureStatusEnum } from '@app/enums/aquaculture-status.enum';
 import { CancellationHistoryDialogComponent } from '@app/shared/components/cancellation-history-dialog/cancellation-history-dialog.component';
 import { CancellationHistoryDialogParams } from '@app/shared/components/cancellation-history-dialog/cancellation-history-dialog-params.model';
 import { CancellationHistoryEntryDTO } from '@app/models/generated/dtos/CancellationHistoryEntryDTO';
-import { OverlappingLogBooksParameters } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-parameters.model';
-import { OverlappingLogBooksDialogParamsModel } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-dialog-params.model';
-import { OverlappingLogBooksComponent } from '@app/shared/components/overlapping-log-books/overlapping-log-books.component';
 import { CommercialFishingAdministrationService } from '@app/services/administration-app/commercial-fishing-administration.service';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { FishNomenclatureDTO } from '@app/models/generated/dtos/FishNomenclatureDTO';
-
-type SaveMethod = 'save' | 'saveAndPrint' | 'completeChangeOfCircumstancesApplication';
 
 class AquaticOrganismTableModel {
     public aquaticOrganismId: number;
@@ -149,8 +141,6 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     public notifier: Notifier = new Notifier();
     public expectedResults: AquacultureRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
-
-    public logBookGroup: LogBookGroupsEnum = LogBookGroupsEnum.Aquaculture;
 
     public service!: IAquacultureFacilitiesService;
     public isApplication: boolean = false;
@@ -226,15 +216,12 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     private readonly editOvosCertificateDialog: TLMatDialog<CommonDocumentComponent>;
     private readonly editBabhCertificateDialog: TLMatDialog<CommonDocumentComponent>;
     private readonly cancelDialog: TLMatDialog<CancellationHistoryDialogComponent>;
-    private readonly overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
 
     private model!: AquacultureFacilityEditDTO | AquacultureApplicationEditDTO | AquacultureRegixDataDTO;
 
     private readonly internalFishCodes: string[] = ['4'];
     private readonly danubeFishCodes: string[] = ['2', '3', '4'];
     private readonly blackSeaFishCodes: string[] = ['1', '3', '4', '6'];
-
-    private ignoreLogBookConflicts: boolean = false;
 
     public constructor(
         translate: FuseTranslationLoaderService,
@@ -247,8 +234,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         editWaterLawCertificateDialog: TLMatDialog<EditAquacultureWaterLawCertificateComponent>,
         editOvosCertificateDialog: TLMatDialog<CommonDocumentComponent>,
         editBabhCertificateDialog: TLMatDialog<CommonDocumentComponent>,
-        cancelDialog: TLMatDialog<CancellationHistoryDialogComponent>,
-        overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>,
+        cancelDialog: TLMatDialog<CancellationHistoryDialogComponent>
     ) {
         this.translate = translate;
         this.nomenclatures = nomenclatures;
@@ -260,7 +246,6 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         this.editOvosCertificateDialog = editOvosCertificateDialog;
         this.editBabhCertificateDialog = editBabhCertificateDialog;
         this.cancelDialog = cancelDialog;
-        this.overlappingLogBooksDialog = overlappingLogBooksDialog;
         this.commercialFishingService = commercialFishingService;
 
         this.isPublicApp = IS_PUBLIC_APP;
@@ -614,14 +599,14 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
             this.fillModel();
             CommonUtils.sanitizeModelStrings(this.model);
 
-            this.service.editAndDownloadAquaculture(this.model, this.ignoreLogBookConflicts).subscribe({
+            this.service.editAndDownloadAquaculture(this.model).subscribe({
                 next: (download: boolean) => {
                     if (download) {
                         dialogClose(this.model);
                     }
                 },
                 error: (response: HttpErrorResponse) => {
-                    this.handleSaveErrorResponse(response, dialogClose, 'saveAndPrint');
+                    this.handleSaveErrorResponse(response);
                 }
             });
         }
@@ -1204,12 +1189,12 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     }
 
     private completeChangeOfCircumstancesApplication(dialogClose: DialogCloseCallback): void {
-        this.service.completeChangeOfCircumstancesApplication(this.model, this.ignoreLogBookConflicts).subscribe({
+        this.service.completeChangeOfCircumstancesApplication(this.model).subscribe({
             next: () => {
                 dialogClose(this.model);
             },
             error: (response: HttpErrorResponse) => {
-                this.handleSaveErrorResponse(response, dialogClose, 'completeChangeOfCircumstancesApplication');
+                this.handleSaveErrorResponse(response);
             }
         });
     }
@@ -1359,7 +1344,6 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                 totalProductionCapacityControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
                 hatcheryCapacityControl: new FormControl(null),
                 commentsControl: new FormControl(null, Validators.maxLength(4000)),
-                logBooksControl: new FormControl(null),
                 filesControl: new FormControl()
             }, this.baseFormValidators());
 
@@ -1669,7 +1653,6 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         this.form.get('totalProductionCapacityControl')!.setValue(model.totalProductionCapacity);
         this.form.get('hatcheryCapacityControl')!.setValue(model.hatcheryCapacity);
         this.form.get('commentsControl')!.setValue(model.comments);
-        this.form.get('logBooksControl')!.setValue(model.logBooks);
         this.form.get('filesControl')!.setValue(model.files);
 
         if (model.status === AquacultureStatusEnum.Canceled) {
@@ -1830,7 +1813,6 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         model.totalWaterArea = this.form.get('totalWaterAreaControl')!.value;
         model.totalProductionCapacity = this.form.get('totalProductionCapacityControl')!.value;
         model.comments = this.form.get('commentsControl')!.value;
-        model.logBooks = this.form.get('logBooksControl')!.value;
         model.files = this.form.get('filesControl')!.value;
 
         if (this.showHatcheryEquipment) {
@@ -1928,23 +1910,16 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                 saveOrEditDone.complete();
             },
             error: (response: HttpErrorResponse) => {
-                this.handleSaveErrorResponse(response, dialogClose, 'save');
+                this.handleSaveErrorResponse(response);
             }
         });
 
         return saveOrEditDone;
     }
 
-    private handleSaveErrorResponse(errorResponse: HttpErrorResponse, dialogClose: DialogCloseCallback, saveMethod: SaveMethod): void {
+    private handleSaveErrorResponse(errorResponse: HttpErrorResponse): void {
         if (errorResponse.error !== undefined && errorResponse.error !== null) {
             const error: ErrorModel = errorResponse.error as ErrorModel;
-
-            if (this.model instanceof AquacultureFacilityEditDTO) {
-                if (error.code === ErrorCode.InvalidLogBookPagesRange) {
-                    this.handleInvalidLogBookPagesRangeError(error.messages[0], dialogClose, saveMethod);
-
-                }
-            }
 
             if (error.code === ErrorCode.NoEDeliveryRegistration) {
                 this.hasNoEDeliveryRegistrationError = true;
@@ -1953,88 +1928,19 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         }
     }
 
-    private handleInvalidLogBookPagesRangeError(logBookNumber: string, dialogClose: DialogCloseCallback, saveMethod: SaveMethod): void {
-        this.ignoreLogBookConflicts = false;
-        const logBooks: LogBookEditDTO[] = this.form.get('logBooksControl')!.value ?? [];
-        const model: AquacultureFacilityEditDTO = this.model as AquacultureFacilityEditDTO;
-        const logBook: LogBookEditDTO | undefined = logBooks.find(x => x.logbookNumber === logBookNumber);
-
-        if (logBook !== null && logBook !== undefined) {
-            logBook.hasError = true;
-
-            setTimeout(() => {
-                model.logBooks = model.logBooks?.slice() ?? [];
-                this.form.get('logBooksControl')!.setValue(model.logBooks);
-
-                this.validityCheckerGroup.validate();
-            });
-        }
-
-        const ranges: OverlappingLogBooksParameters[] = [];
-
-        for (const logBook of logBooks) {
-            const range: OverlappingLogBooksParameters = new OverlappingLogBooksParameters({
-                logBookId: logBook.logBookId,
-                typeId: logBook.logBookTypeId,
-                OwnerType: logBook.ownerType,
-                startPage: logBook.startPageNumber,
-                endPage: logBook.endPageNumber
-            });
-            ranges.push(range);
-        }
-
-        const editDialogData: OverlappingLogBooksDialogParamsModel = new OverlappingLogBooksDialogParamsModel({
-            service: this.commercialFishingService,
-            logBookGroup: this.logBookGroup,
-            ranges: ranges
-        });
-
-        this.overlappingLogBooksDialog.open({
-            title: this.translate.getValue('aquacultures.overlapping-log-books-dialog-title'),
-            TCtor: OverlappingLogBooksComponent,
-            headerCancelButton: {
-                cancelBtnClicked: this.closeOverlappingLogBooksDialogBtnClicked.bind(this)
-            },
-            componentData: editDialogData,
-            translteService: this.translate,
-            disableDialogClose: true,
-            cancelBtn: {
-                id: 'cancel',
-                color: 'primary',
-                translateValue: 'common.cancel',
-            },
-            saveBtn: {
-                id: 'save',
-                color: 'error',
-                translateValue: 'catches-and-sales.overlapping-log-books-save-despite-conflicts'
-            }
-        }, '1300px').subscribe({
-            next: (save: boolean | undefined) => {
-                if (save) {
-                    this.ignoreLogBookConflicts = true;
-                    switch (saveMethod) {
-                        case 'save': this.saveAquaculture(dialogClose); break;
-                        case 'saveAndPrint': this.editAndDownloadAquacultureFacility(dialogClose); break;
-                        case 'completeChangeOfCircumstancesApplication': this.completeChangeOfCircumstancesApplication(dialogClose); break;
-                    }
-                }
-            }
-        });
-    }
-
     private saveOrEdit(saveAsDraft: boolean): Observable<number | void> {
         this.fillModel();
         CommonUtils.sanitizeModelStrings(this.model);
 
         if (this.model instanceof AquacultureFacilityEditDTO) {
             if (this.isChangeOfCircumstancesApplication === true) {
-                return this.service.completeChangeOfCircumstancesApplication(this.model, this.ignoreLogBookConflicts);
+                return this.service.completeChangeOfCircumstancesApplication(this.model);
             }
 
             if (this.id !== undefined) {
-                return this.service.editAquaculture(this.model, this.ignoreLogBookConflicts);
+                return this.service.editAquaculture(this.model);
             }
-            return this.service.addAquaculture(this.model, this.ignoreLogBookConflicts);
+            return this.service.addAquaculture(this.model);
         }
         else {
             if (this.model.id !== undefined && this.model.id !== null) {
@@ -2092,9 +1998,5 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         return (this.model as AquacultureApplicationEditDTO)?.paymentInformation?.paymentType === null
             || (this.model as AquacultureApplicationEditDTO)?.paymentInformation?.paymentType === undefined
             || (this.model as AquacultureApplicationEditDTO)?.paymentInformation?.paymentType === '';
-    }
-
-    private closeOverlappingLogBooksDialogBtnClicked(closeFn: HeaderCloseFunction): void {
-        closeFn();
     }
 }

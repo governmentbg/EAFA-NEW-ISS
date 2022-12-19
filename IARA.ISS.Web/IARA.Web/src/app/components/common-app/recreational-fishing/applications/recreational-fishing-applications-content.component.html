@@ -252,5 +252,14 @@
                             (buttonClicked)="cancellationActionClicked(value.row)">
             </tl-icon-button>
         </ng-container>
+        <ng-container *ngSwitchDefault>
+            <tl-icon-button *ngIf="canCancelRecords && value.row.ticketStatus !== ticketStatusEnum.CANCELED"
+                            icon="ic-fluent-doc-prohibited-24-regular"
+                            iconClass="accent-color"
+                            [size]="icIconSize"
+                            tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                            (buttonClicked)="cancelTicket(value.row)">
+            </tl-icon-button>
+        </ng-container>
     </ng-container>
 </ng-template>

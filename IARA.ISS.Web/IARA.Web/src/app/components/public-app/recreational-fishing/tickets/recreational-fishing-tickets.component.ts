@@ -22,6 +22,7 @@ import { EnterReasonComponent } from '@app/components/common-app/applications/co
 import { ReasonDialogParams } from '@app/components/common-app/applications/components/enter-reason/models/reason-dialog-params.model';
 import { EditTicketDialogParams } from '@app/components/common-app/recreational-fishing/applications/models/edit-ticket-dialog-params.model';
 import { RecreationalFishingTicketComponent } from '@app/components/common-app/recreational-fishing/tickets/components/ticket/recreational-fishing-ticket.component';
+import { TicketStatusEnum } from '@app/enums/ticket-status.enum';
 
 @Component({
     selector: 'recreational-fishing-tickets',
@@ -34,6 +35,7 @@ export class RecreationalFishingTicketsComponent implements OnInit, AfterViewIni
     public initialLoadComplete: boolean = false;
 
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
+    public readonly ticketStatuses: typeof TicketStatusEnum = TicketStatusEnum;
     public readonly paymentStatuses: typeof PaymentStatusesEnum = PaymentStatusesEnum;
     public readonly applicationStatuses: typeof ApplicationStatusesEnum = ApplicationStatusesEnum;
 
@@ -279,10 +281,14 @@ export class RecreationalFishingTicketsComponent implements OnInit, AfterViewIni
         this.pageEvent = event;
 
         if (this.activeTickets === true) {
-            this.tickets = this.allTickets.filter(x => !x.isExpired && !x.isCanceled);
+            this.tickets = this.allTickets.filter(x =>
+                x.ticketStatus !== TicketStatusEnum.EXPIRED
+                && x.ticketStatus !== TicketStatusEnum.CANCELED);
         }
         else {
-            this.tickets = this.allTickets.filter(x => x.isExpired || x.isCanceled);
+            this.tickets = this.allTickets.filter(x => 
+                x.ticketStatus === TicketStatusEnum.EXPIRED
+                || x.ticketStatus === TicketStatusEnum.CANCELED);
         }
 
         this.ticketsLength = this.tickets.length;
@@ -312,10 +318,10 @@ export class RecreationalFishingTicketsComponent implements OnInit, AfterViewIni
                     ticket.period = this.periods.find(x => x.value === ticket.periodId)!.displayName;
                     ticket.type = this.types.find(x => x.value === ticket.typeId)!.displayName;
 
-                    if (ticket.isExpired) {
+                    if (ticket.ticketStatus === TicketStatusEnum.EXPIRED) {
                         ticket.status = this.translate.getValue('recreational-fishing.ticket-card-expired');
                     }
-                    else if (ticket.isCanceled) {
+                    else if (ticket.ticketStatus === TicketStatusEnum.CANCELED) {
                         ticket.status = this.translate.getValue('recreational-fishing.ticket-card-canceled');
                     }
                     else if (ticket.isPaymentProcessing) {

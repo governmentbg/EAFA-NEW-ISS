@@ -1552,7 +1552,6 @@
         'view-first-sale-center-dialog-title': 'Преглед на регистриран център за първа продажба',
         'edit-buyer-dialog-title': 'Редакция на регистриран купувач за първа продажба',
         'edit-first-sale-dialog-title': 'Редакция на регистриран център за първа продажба',
-        'log-books-panel': 'Дневници',
         'buyer-basic-information-panel': 'Основна информация',
         'buyer-basic-information-panel-helper': '',
         'buyer-has-utility-checkbox': 'Регистрация на магазин',
@@ -1950,7 +1949,7 @@
         'sail-area': 'Район на плаване',
 
         'certificate-for-use-of-free-fishing-capacity': 'Използване на удостоверение за свободен риболовен капацитет',
-        'ship-used-cap-certificate-date': 'Дата',
+        'ship-used-cap-certificate-date': 'Дата на събитие',
         'ship-used-cap-certificate-num': '№ на удостоверение',
         'ship-used-cap-certificate-power': 'Използвана мощност (kW)',
         'ship-used-cap-certificate-tonnage': 'Използван бруто тонаж',
@@ -4258,7 +4257,6 @@
         'has-no-babh-certificate': 'Няма издадено удостоверение от БАБХ',
         'babh-certificate': 'Удостоверение от БАБХ',
         'comments': 'Бележки',
-        'log-books-panel': 'Дневници',
         'files': 'Приложени файлове',
         'regix-checks-results': 'Резултати от автоматични проверки към външни регистри',
 

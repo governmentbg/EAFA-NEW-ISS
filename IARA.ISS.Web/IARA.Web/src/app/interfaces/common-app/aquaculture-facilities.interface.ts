@@ -16,9 +16,9 @@ export interface IAquacultureFacilitiesService extends IApplicationsActionsServi
     // Register
     getAllAquacultures(request: GridRequestModel<AquacultureFacilitiesFilters>): Observable<GridResultModel<AquacultureFacilityDTO>>;
     getAquaculture(id: number): Observable<AquacultureFacilityEditDTO>;
-    addAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<number>;
-    editAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<void>;
-    editAndDownloadAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<boolean>;
+    addAquaculture(aquaculture: AquacultureFacilityEditDTO): Observable<number>;
+    editAquaculture(aquaculture: AquacultureFacilityEditDTO): Observable<void>;
+    editAndDownloadAquaculture(aquaculture: AquacultureFacilityEditDTO): Observable<boolean>;
     updateAquacultureStatus(aquacultureId: number, status: CancellationHistoryEntryDTO, applicationId?: number): Observable<void>;
     deleteAquaculture(id: number): Observable<void>;
     undoDeleteAquaculture(id: number): Observable<void>;
@@ -27,7 +27,7 @@ export interface IAquacultureFacilitiesService extends IApplicationsActionsServi
 
     getAquacultureFromChangeOfCircumstancesApplication(applicationId: number): Observable<AquacultureFacilityEditDTO>;
     getAquacultureFromDeregistrationApplication(applicationId: number): Observable<AquacultureFacilityEditDTO>;
-    completeChangeOfCircumstancesApplication(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<void>;
+    completeChangeOfCircumstancesApplication(aquaculture: AquacultureFacilityEditDTO): Observable<void>;
 
     getInstallationAudit(id: number): Observable<SimpleAuditDTO>;
     getInstallationNetCageAudit(id: number): Observable<SimpleAuditDTO>;

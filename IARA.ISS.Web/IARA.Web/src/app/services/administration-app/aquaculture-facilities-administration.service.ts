@@ -105,34 +105,25 @@ export class AquacultureFacilitiesAdministrationService extends ApplicationsRegi
         });
     }
 
-    public addAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<number> {
-        const params: HttpParams = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
-
+    public addAquaculture(aquaculture: AquacultureFacilityEditDTO): Observable<number> {
         return this.requestService.post(this.area, this.controller, 'AddAquaculture', aquaculture, {
-            properties: new RequestProperties({ asFormData: true }),
-            httpParams: params
+            properties: new RequestProperties({ asFormData: true })
         });
     }
 
-    public editAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<void> {
-        const params: HttpParams = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
-
+    public editAquaculture(aquaculture: AquacultureFacilityEditDTO): Observable<void> {
         return this.requestService.post(this.area, this.controller, 'EditAquaculture', aquaculture, {
-            properties: new RequestProperties({ asFormData: true }),
-            httpParams: params
+            properties: new RequestProperties({ asFormData: true })
         });
     }
 
-    public editAndDownloadAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<boolean> {
-        const params: HttpParams = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
-
+    public editAndDownloadAquaculture(aquaculture: AquacultureFacilityEditDTO): Observable<boolean> {
         const registerDto: RegisterDTO<AquacultureFacilityEditDTO> = new RegisterDTO<AquacultureFacilityEditDTO>({
             dto: aquaculture
         });
 
         return this.requestService.downloadPost(this.area, this.controller, 'EditAndDownloadAquaculture', 'aquaculture', registerDto, {
-            properties: new RequestProperties({ asFormData: true }),
-            httpParams: params
+            properties: new RequestProperties({ asFormData: true })
         });
     }
 
@@ -183,12 +174,9 @@ export class AquacultureFacilitiesAdministrationService extends ApplicationsRegi
         });
     }
 
-    public completeChangeOfCircumstancesApplication(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<void> {
-        const params: HttpParams = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
-
+    public completeChangeOfCircumstancesApplication(aquaculture: AquacultureFacilityEditDTO): Observable<void> {
         return this.requestService.post(this.area, this.controller, 'CompleteChangeOfCircumstancesApplication', aquaculture, {
-            properties: new RequestProperties({ asFormData: true }),
-            httpParams: params
+            properties: new RequestProperties({ asFormData: true })
         });
     }
 

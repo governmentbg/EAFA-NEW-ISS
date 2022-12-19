@@ -9,7 +9,6 @@ import { UsageDocumentDTO } from './UsageDocumentDTO';
 import { AquacultureWaterLawCertificateDTO } from './AquacultureWaterLawCertificateDTO';
 import { CommonDocumentDTO } from './CommonDocumentDTO';
 import { CancellationHistoryEntryDTO } from './CancellationHistoryEntryDTO';
-import { LogBookEditDTO } from './LogBookEditDTO';
 import { FileInfoDTO } from './FileInfoDTO';
 import { AquacultureStatusEnum } from '@app/enums/aquaculture-status.enum';
 import { AquacultureSalinityEnum } from '@app/enums/aquaculture-salinity.enum';
@@ -113,9 +112,6 @@ export class AquacultureFacilityEditDTO {
 
     @StrictlyTyped(CancellationHistoryEntryDTO)
     public cancellationHistory?: CancellationHistoryEntryDTO[];
-
-    @StrictlyTyped(LogBookEditDTO)
-    public logBooks?: LogBookEditDTO[];
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];

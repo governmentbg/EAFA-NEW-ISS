@@ -601,21 +601,6 @@
         </div>
     </tl-expansion-panel>
 
-    <!-- Дневници при регистров запис -->
-    <tl-expansion-panel *ngIf="!isApplication"
-                        title="{{ 'buyers-and-sales-centers.log-books-panel' | tlTranslate }}"
-                        tooltipResourceName="buyers-and-sales-centers.log-helper"
-                        [validityChecker]="editForm">
-        <log-books fxFlex="100"
-                   formControlName="logBooksControl"
-                   validityChecker
-                   [isReadonly]="isReadonly || viewMode"
-                   [getLogBookSimpleAuditMethod]="service.getLogBookAudit.bind(service)"
-                   [logBookGroup]="logBookGroup"
-                   [showInactivePagesAndDocuments]="!isPublicApp">
-        </log-books>
-    </tl-expansion-panel>
-
     <!-- Информация за плащане в заявлението -->
     <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData"
                         title="{{ 'buyers-and-sales-centers.payment-information-panel' | tlTranslate }}"
