@@ -318,7 +318,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     private catchesValidator(): ValidatorFn {
         return (): ValidationErrors | null => {
             if (this.catches !== undefined && this.catches !== null) {
-                const result = groupBy(this.catches, ((o: InspectedCatchTableModel) => ([o.fishId, o.catchInspectionTypeId, o.catchZoneId])));
+                const result = groupBy(this.catches, ((o: InspectedCatchTableModel) => ([o.fishId, o.catchInspectionTypeId, o.catchZoneId, o.turbotSizeGroupId])));
 
                 if (result.find((f: any[]) => f.length > 1)) {
                     return { 'catchesMatch': true };
