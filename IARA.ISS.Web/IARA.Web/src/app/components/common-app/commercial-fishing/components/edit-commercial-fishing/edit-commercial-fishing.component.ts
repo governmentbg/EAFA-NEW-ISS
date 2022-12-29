@@ -2423,7 +2423,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             });
 
             this.overlappingLogBooksDialog.open({
-                title: this.translationService.getValue('commercial-fishing.overlapping-log-books-dialog-title'),
+                title: this.translationService.getValue('catches-and-sales.overlapping-log-books-dialog-title'),
                 TCtor: OverlappingLogBooksComponent,
                 headerCancelButton: {
                     cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }

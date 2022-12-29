@@ -70,6 +70,18 @@ export class PrintConfigurationsService extends BaseAuditService {
         });
     }
 
+    public getApplicationPrintSignUserCountBySignUserId(signUserId: number, id?: number): Observable<number> {
+        let params: HttpParams = new HttpParams().append('signUserId', signUserId.toString());
+
+        if (id !== undefined && id !== null) {
+            params = params.append('id', id.toString());
+        }
+
+        return this.requestService.get(this.area, this.controller, 'GetApplicationPrintSignUserCountBySignUserId', {
+            httpParams: params
+        });
+    }
+
     // Nomenclatures
 
     public getApplicationTypes(): Observable<NomenclatureDTO<number>[]> {

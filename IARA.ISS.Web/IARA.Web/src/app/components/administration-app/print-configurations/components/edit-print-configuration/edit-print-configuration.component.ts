@@ -95,40 +95,69 @@ export class EditPrintConfigurationComponent implements OnInit, IDialogComponent
             this.model = this.fillModel();
             this.model = CommonUtils.sanitizeModelStrings(this.model);
 
-            this.confirmDialog.open({
-                title: this.translate.getValue('print-configurations.update-print-configuration-dialog-title'),
-                message: this.translate.getValue('print-configurations.update-print-configuration-dialog-message'),
-                okBtnLabel: this.translate.getValue('print-configurations.update-print-configuration-dialog-ok-btn-label'),
-                cancelBtnLabel: this.translate.getValue('print-configurations.update-print-configuration-dialog-cancel-btn-label')
-            }).subscribe((ok: boolean) => {
-                debugger;
-                if (ok) {
-                    this.model.shouldUpdateAllEntries = true;
-                }
-                else {
-                    this.model.shouldUpdateAllEntries = false;
-                }
+            this.service.getApplicationPrintSignUserCountBySignUserId(this.model.signUserId!, this.model.id).subscribe({
+                next: (result: number | undefined) => {
+                    if (result !== undefined && result !== null && result > 0) {
+                        this.confirmDialog.open({ 
+                            title: this.translate.getValue('print-configurations.update-print-configuration-dialog-title'),
+                            message: `${this.translate.getValue('print-configurations.update-print-configuration-dialog-message-user')} ${result} 
+                                      ${this.translate.getValue('print-configurations.update-print-configuration-dialog-message-count')}`,
+                            okBtnLabel: this.translate.getValue('print-configurations.update-print-configuration-dialog-ok-btn-label'),
+                            cancelBtnLabel: this.translate.getValue('print-configurations.update-print-configuration-dialog-cancel-btn-label')
+                        }).subscribe((ok: boolean) => {
+                            if (ok) {
+                                this.model.shouldUpdateAllEntries = true;
+                            }
+                            else {
+                                this.model.shouldUpdateAllEntries = false;
+                            }
 
-                if (this.id !== null && this.id !== undefined) { // edit
-                    this.service.editPrintConfiguration(this.model).subscribe({
-                        next: () => {
-                            dialogClose(this.model);
-                        },
-                        error: (httpErrorResponse: HttpErrorResponse) => {
-                            this.handleHttpErrorResponse(httpErrorResponse);
+                            if (this.id !== null && this.id !== undefined) { // edit
+                                this.service.editPrintConfiguration(this.model).subscribe({
+                                    next: () => {
+                                        dialogClose(this.model);
+                                    },
+                                    error: (httpErrorResponse: HttpErrorResponse) => {
+                                        this.handleHttpErrorResponse(httpErrorResponse);
+                                    }
+                                });
+                            }
+                            else { // add
+                                this.service.addPrintConfiguratoin(this.model).subscribe({
+                                    next: (id: number) => {
+                                        this.model.id = id;
+                                        dialogClose(this.model);
+                                    },
+                                    error: (httpErrorResponse: HttpErrorResponse) => {
+                                        this.handleHttpErrorResponse(httpErrorResponse);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    else { 
+                        if (this.id !== null && this.id !== undefined) { // edit
+                            this.service.editPrintConfiguration(this.model).subscribe({
+                                next: () => {
+                                    dialogClose(this.model);
+                                },
+                                error: (httpErrorResponse: HttpErrorResponse) => {
+                                    this.handleHttpErrorResponse(httpErrorResponse);
+                                }
+                            });
                         }
-                    });
-                }
-                else { // add
-                    this.service.addPrintConfiguratoin(this.model).subscribe({
-                        next: (id: number) => {
-                            this.model.id = id;
-                            dialogClose(this.model);
-                        },
-                        error: (httpErrorResponse: HttpErrorResponse) => {
-                            this.handleHttpErrorResponse(httpErrorResponse);
+                        else { // add
+                            this.service.addPrintConfiguratoin(this.model).subscribe({
+                                next: (id: number) => {
+                                    this.model.id = id;
+                                    dialogClose(this.model);
+                                },
+                                error: (httpErrorResponse: HttpErrorResponse) => {
+                                    this.handleHttpErrorResponse(httpErrorResponse);
+                                }
+                            });
                         }
-                    });
+                    }
                 }
             });
         }

@@ -5657,7 +5657,8 @@
         'delete-dialog-ok-btn-label': 'Изтрий',
 
         'update-print-configuration-dialog-title': 'Запазване на настройки за принтиране',
-        'update-print-configuration-dialog-message': 'В случай, че този подписващ служител участва и в други записи, желаете ли да обновите данните за заместващ служител в тях?',
+        'update-print-configuration-dialog-message-user': 'Този подписващ служител вече участва в',
+        'update-print-configuration-dialog-message-count':'на брой други записи. Желаете ли да обновите данните за заместващ служител в тях?',
         'update-print-configuration-dialog-ok-btn-label': 'Да',
         'update-print-configuration-dialog-cancel-btn-label': 'Не',
 
