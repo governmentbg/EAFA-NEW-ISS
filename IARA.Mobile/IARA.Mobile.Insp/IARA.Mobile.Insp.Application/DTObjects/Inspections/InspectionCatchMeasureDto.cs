@@ -7,6 +7,7 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public int? Id { get; set; }
         public int? CatchInspectionTypeId { get; set; }
         public int? FishId { get; set; }
+        public int? TurbotSizeGroupId { get; set; }
         public decimal? CatchQuantity { get; set; }
         public decimal? AllowedDeviation { get; set; }
         public int? CatchZoneId { get; set; }

@@ -24,8 +24,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public FishingGearsViewModel FishingGears { get; }
 
-        public ValidStateValidatableTable<ToggleViewModel> Toggles { get; set; }
-
         [MaxLength(4000)]
         public ValidStateObservation ObservationsOrViolations { get; set; }
     }

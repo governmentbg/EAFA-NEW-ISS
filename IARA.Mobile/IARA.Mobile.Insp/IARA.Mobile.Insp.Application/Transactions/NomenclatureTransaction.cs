@@ -950,6 +950,28 @@ namespace IARA.Mobile.Insp.Application.Transactions
             }
         }
 
+        public List<PermitDto> GetPermits(int shipUid)
+        {
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+                return (
+                    from permit in context.Permits
+                    join type in context.NPermitTypes on permit.TypeId equals type.Id
+                    where permit.ShipUid == shipUid
+                    orderby permit.Id
+                    select new PermitDto
+                    {
+                        Id = permit.Id,
+                        PermitNumber = permit.PermitNumber,
+                        From = permit.ValidFrom,
+                        To = permit.ValidTo,
+                        TypeId = permit.TypeId,
+                        TypeName = type.Name,
+                    }
+                ).ToList();
+            }
+        }
+
         public List<LogBookDto> GetLogBooks(int shipUid)
         {
             using (IAppDbContext context = ContextBuilder.CreateContext())
@@ -1291,23 +1313,9 @@ namespace IARA.Mobile.Insp.Application.Transactions
             return GetNomenclatureDtos<NFishingGearCheckReason>();
         }
 
-        private List<SelectNomenclatureDto> GetNomenclatureDtos<TEntity>()
-            where TEntity : ICodeNomenclature
+        public List<SelectNomenclatureDto> GetTurbotSizeGroups()
         {
-            using (IAppDbContext context = ContextBuilder.CreateContext())
-            {
-                // This can't be done with the C# Query language because it doesn't get translated in sqlite net pcl
-                return context.TLTable<TEntity>()
-                    .Where(f => f.IsActive)
-                    .Select(f => new SelectNomenclatureDto
-                    {
-                        Id = f.Id,
-                        Code = f.Code,
-                        Name = f.Name,
-                    })
-                    .OrderBy(f => f.Id)
-                    .ToList();
-            }
+            return GetNomenclatureDtos<NTurbotSizeGroup>();
         }
 
         public ShipPersonnelDetailedDto GetAquacultureOwner(int aquacultureId)
@@ -1346,6 +1354,25 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         } : null,
                     }
                 ).FirstOrDefault();
+            }
+        }
+
+        private List<SelectNomenclatureDto> GetNomenclatureDtos<TEntity>()
+            where TEntity : ICodeNomenclature
+        {
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+                // This can't be done with the C# Query language because it doesn't get translated in sqlite net pcl
+                return context.TLTable<TEntity>()
+                    .Where(f => f.IsActive)
+                    .Select(f => new SelectNomenclatureDto
+                    {
+                        Id = f.Id,
+                        Code = f.Code,
+                        Name = f.Name,
+                    })
+                    .OrderBy(f => f.Id)
+                    .ToList();
             }
         }
     }

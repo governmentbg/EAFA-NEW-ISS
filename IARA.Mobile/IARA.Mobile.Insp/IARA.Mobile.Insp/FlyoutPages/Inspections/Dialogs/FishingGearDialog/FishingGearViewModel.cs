@@ -92,6 +92,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         public ICommand RemoveMark { get; }
         public ICommand AddPinger { get; }
         public ICommand RemovePinger { get; }
+        public ICommand MoveMark { get; set; }
 
         public void Init(List<SelectNomenclatureDto> fishingGearTypes, List<SelectNomenclatureDto> markStatuses, List<SelectNomenclatureDto> pingerStatuses)
         {

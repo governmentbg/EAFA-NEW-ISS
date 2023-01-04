@@ -7,6 +7,7 @@
         xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
         xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
         xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:conv="clr-namespace:IARA.Mobile.Insp.Converters"
         x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialog.DeclarationCatchDialog"
         x:Name="dialog"
         x:DataType="local:DeclarationCatchDialogViewModel"
@@ -16,8 +17,59 @@
         IconColor="White"
         TitleBackgroundColor="{StaticResource Primary}"
         TitleColor="White">
+    <ContentView.Resources>
+        <conv:IsSubjectPoundnetConverter x:Key="IsSubjectPoundnet" />
+        <conv:IsSubjectShipConverter x:Key="IsSubjectShip" />
+        <conv:IsSubjectNotNNNConverter x:Key="IsSubjectNotNNN" />
+    </ContentView.Resources>
     <tl:TLScrollView>
         <StackLayout Padding="10">
+            <sv:SectionView Text="{rt:Translate GeneralInfo, Group=DeclarationCatch}"
+                    IsExpanded="True">
+                <StackLayout Padding="10">
+                    <tl:TLNativePicker Title="{rt:Translate DeclarationType, Group=DeclarationCatch}"
+                            ItemsSource="{Binding DeclarationTypes}"
+                            ValidState="{Binding DeclarationType}"
+                            Command="{Binding DeclarationSelected}"
+                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                    <lc:InspectedShipDataView BindingContext="{Binding InspectedShip}"
+                            ShipInRegisterLabel="{rt:Translate ShipInRegister, Group=DeclarationCatch}"
+                            IsVisible="{Binding BindingContext.SubjectType, Converter={StaticResource IsSubjectShip}, Source={Reference dialog}}" />
+                    <lc:CustomInfinitePicker Title="{rt:Translate Aquaculture, Group=AquacultureFarmInspection}"
+                            ValidState="{Binding Aquaculture}"
+                            DisplayValue="DisplayValue"
+                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                            IsVisible="{Binding SubjectType, Converter={StaticResource IsSubjectPoundnet}}" />
+                    <tl:TLCheckView Text="{rt:Translate IsDeclarationRegistered, Group=DeclarationCatch}"
+                            IsChecked="{Binding IsDeclarationRegistered}"
+                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                            IsVisible="{Binding OnlyUnregisteredDeclaration, Converter={StaticResource OppositeBool}}" />
+                    <tl:TLFlex GrowUnit="250"
+                            IsVisible="{Binding SubjectType, Converter={StaticResource IsSubjectNotNNN}}">
+                        <tl:TLPicker Title="{rt:Translate DeclarationNumber, Group=DeclarationCatch}"
+                                ValidState="{Binding LogBookPage}"
+                                ItemsSource="{Binding LogBookPages}"
+                                DisplayValue="Num"
+                                IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                                IsVisible="{Binding IsDeclarationRegistered}" />
+                        <tl:TLEntry Title="{rt:Translate DeclarationNumber, Group=DeclarationCatch}"
+                                ValidState="{Binding LogBookPageNum}"
+                                IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                                IsVisible="{Binding IsDeclarationRegistered, Converter={StaticResource OppositeBool}}" />
+                        <tl:TLDatePicker Title="{rt:Translate DeclarationDate, Group=DeclarationCatch}"
+                                ValidState="{Binding LogBookPageDate}">
+                            <tl:TLDatePicker.IsEnabled>
+                                <MultiBinding Converter="{StaticResource All}">
+                                    <Binding Converter="{StaticResource IsNotReview}"
+                                            Path="DialogType" />
+                                    <Binding Converter="{StaticResource OppositeBool}"
+                                            Path="IsDeclarationRegistered" />
+                                </MultiBinding>
+                            </tl:TLDatePicker.IsEnabled>
+                        </tl:TLDatePicker>
+                    </tl:TLFlex>
+                </StackLayout>
+            </sv:SectionView>
             <sv:SectionView Text="{rt:Translate Catch, Group=DeclarationCatch}"
                     IsExpanded="True">
                 <tl:TLAutoGrid Padding="10"
@@ -26,6 +78,10 @@
                             ItemsSource="{Binding FishTypes}"
                             ValidState="{Binding FishType}"
                             DisplayValue="DisplayValue"
+                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                    <tl:TLEntry Title="{rt:Translate CatchCount, Group=DeclarationCatch}"
+                            ValidState="{Binding CatchCount}"
+                            Keyboard="Numeric"
                             IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
                     <tl:TLNativePicker Title="{rt:Translate CatchType, Group=DeclarationCatch}"
                             ItemsSource="{Binding CatchTypes}"
@@ -51,50 +107,6 @@
                             ValidState="{Binding CatchZone}"
                             IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
                 </tl:TLAutoGrid>
-            </sv:SectionView>
-            <sv:SectionView Text="{rt:Translate Ship, Group=DeclarationCatch}"
-                    IsExpanded="True">
-                <StackLayout Padding="10">
-                    <lc:InspectedShipDataView BindingContext="{Binding InspectedShip}"
-                            ShipInRegisterLabel="{rt:Translate ShipInRegister, Group=DeclarationCatch}" />
-                </StackLayout>
-            </sv:SectionView>
-            <sv:SectionView Text="{rt:Translate Declaration, Group=DeclarationCatch}"
-                    IsExpanded="True">
-                <StackLayout Padding="10">
-                    <tl:TLNativePicker Title="{rt:Translate DeclarationType, Group=DeclarationCatch}"
-                            ItemsSource="{Binding DeclarationTypes}"
-                            ValidState="{Binding DeclarationType}"
-                            Command="{Binding DeclarationSelected}"
-                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
-                    <tl:TLCheckView Text="{rt:Translate IsDeclarationRegistered, Group=DeclarationCatch}"
-                            IsChecked="{Binding IsDeclarationRegistered}"
-                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                            IsVisible="{Binding OnlyUnregisteredDeclaration, Converter={StaticResource OppositeBool}}" />
-                    <tl:TLFlex GrowUnit="250">
-                        <tl:TLPicker Title="{rt:Translate DeclarationNumber, Group=DeclarationCatch}"
-                                ValidState="{Binding LogBookPage}"
-                                ItemsSource="{Binding LogBookPages}"
-                                DisplayValue="Num"
-                                IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                                IsVisible="{Binding IsDeclarationRegistered}" />
-                        <tl:TLEntry Title="{rt:Translate DeclarationNumber, Group=DeclarationCatch}"
-                                ValidState="{Binding LogBookPageNum}"
-                                IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                                IsVisible="{Binding IsDeclarationRegistered, Converter={StaticResource OppositeBool}}" />
-                        <tl:TLDatePicker Title="{rt:Translate DeclarationDate, Group=DeclarationCatch}"
-                                ValidState="{Binding LogBookPageDate}">
-                            <tl:TLDatePicker.IsEnabled>
-                                <MultiBinding Converter="{StaticResource All}">
-                                    <Binding Converter="{StaticResource IsNotReview}"
-                                            Path="DialogType" />
-                                    <Binding Converter="{StaticResource OppositeBool}"
-                                            Path="IsDeclarationRegistered" />
-                                </MultiBinding>
-                            </tl:TLDatePicker.IsEnabled>
-                        </tl:TLDatePicker>
-                    </tl:TLFlex>
-                </StackLayout>
             </sv:SectionView>
             <Button Command="{Binding Save}"
                     IsVisible="{Binding DialogType, Converter={StaticResource IsNotReview}}"

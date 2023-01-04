@@ -424,10 +424,13 @@ export class CatchesAndSalesCommonService {
         });
     }
 
-    public addShipLogBookPage(area: AreaTypes, controller: string, model: ShipLogBookPageEditDTO): Observable<number> {
+    public addShipLogBookPage(area: AreaTypes, controller: string, model: ShipLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
+        const params: HttpParams = new HttpParams().append('hasMissingPagesRangePermission', hasMissingPagesRangePermission.toString());
+
         return this.http.post(area, controller, 'AddShipLogBookPage', model, {
             properties: new RequestProperties({ asFormData: true }),
-            successMessage: 'succ-add-ship-log-book-page'
+            successMessage: 'succ-add-ship-log-book-page',
+            httpParams: params
         });
     }
 
@@ -438,10 +441,13 @@ export class CatchesAndSalesCommonService {
         });
     }
 
-    public addFirstSaleLogBookPage(area: AreaTypes, controller: string, model: FirstSaleLogBookPageEditDTO): Observable<number> {
+    public addFirstSaleLogBookPage(area: AreaTypes, controller: string, model: FirstSaleLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
+        const params: HttpParams = new HttpParams().append('hasMissingPagesRangePermission', hasMissingPagesRangePermission.toString());
+
         return this.http.post(area, controller, 'AddFirstSaleLogBookPage', model, {
             properties: new RequestProperties({ asFormData: true }),
-            successMessage: 'succ-add-first-sale-log-book-page'
+            successMessage: 'succ-add-first-sale-log-book-page',
+            httpParams: params
         });
     }
 
@@ -452,10 +458,13 @@ export class CatchesAndSalesCommonService {
         });
     }
 
-    public addAdmissionLogBookPage(area: AreaTypes, controller: string, model: AdmissionLogBookPageEditDTO): Observable<number> {
+    public addAdmissionLogBookPage(area: AreaTypes, controller: string, model: AdmissionLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
+        const params: HttpParams = new HttpParams().append('hasMissingPagesRangePermission', hasMissingPagesRangePermission.toString());
+
         return this.http.post(area, controller, 'AddAdmissionLogBookPage', model, {
             properties: new RequestProperties({ asFormData: true }),
-            successMessage: 'succ-add-admission-log-book-page'
+            successMessage: 'succ-add-admission-log-book-page',
+            httpParams: params
         });
     }
 
@@ -466,10 +475,13 @@ export class CatchesAndSalesCommonService {
         });
     }
 
-    public addTransportationLogBookPage(area: AreaTypes, controller: string, model: TransportationLogBookPageEditDTO): Observable<number> {
+    public addTransportationLogBookPage(area: AreaTypes, controller: string, model: TransportationLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
+        const params: HttpParams = new HttpParams().append('hasMissingPagesRangePermission', hasMissingPagesRangePermission.toString());
+
         return this.http.post(area, controller, 'AddTransportationLogBookPage', model, {
             properties: new RequestProperties({ asFormData: true }),
-            successMessage: 'succ-add-transportation-log-book-page'
+            successMessage: 'succ-add-transportation-log-book-page',
+            httpParams: params
         });
     }
 
@@ -480,10 +492,13 @@ export class CatchesAndSalesCommonService {
         });
     }
 
-    public addAquacultureLogBookPage(area: AreaTypes, controller: string, model: AquacultureLogBookPageEditDTO): Observable<number> {
+    public addAquacultureLogBookPage(area: AreaTypes, controller: string, model: AquacultureLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
+        const params: HttpParams = new HttpParams().append('hasMissingPagesRangePermission', hasMissingPagesRangePermission.toString());
+
         return this.http.post(area, controller, 'AddAquacultureLogBookPage', model, {
             properties: new RequestProperties({ asFormData: true }),
-            successMessage: 'succ-add-aquaculture-log-book-page'
+            successMessage: 'succ-add-aquaculture-log-book-page',
+            httpParams: params
         });
     }
 

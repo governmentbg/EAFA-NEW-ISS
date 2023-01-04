@@ -25,6 +25,7 @@ import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { LogBookPageDocumentTypesEnum } from '../../enums/log-book-page-document-types.enum';
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 
 @Component({
     selector: 'edit-first-sale-log-book-page',
@@ -59,15 +60,19 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
     private shipPageDocumentData: BasicLogBookPageDocumentDataDTO | undefined;
     private translationService: FuseTranslationLoaderService;
     private snackbar: MatSnackBar;
+    private confirmDialog: TLConfirmDialog;
+    private hasMissingPagesRangePermission: boolean = false;
 
     public constructor(
         translationService: FuseTranslationLoaderService,
         currencyPipe: CurrencyPipe,
-        snackbar: MatSnackBar
+        snackbar: MatSnackBar,
+        confirmDialog: TLConfirmDialog
     ) {
         this.translationService = translationService;
         this.currencyPipe = currencyPipe;
         this.snackbar = snackbar;
+        this.confirmDialog = confirmDialog;
     }
 
     public async ngOnInit(): Promise<void> {
@@ -203,47 +208,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
             this.model = CommonUtils.sanitizeModelStrings(this.model);
 
             if (this.id === null || this.id === undefined) {
-                this.service.addFirstSaleLogBookPage(this.model).subscribe({
-                    next: (id: number) => {
-                        this.model.id = id;
-                        dialogClose(this.model);
-                    },
-                    error: (response: HttpErrorResponse) => {
-                        const error: ErrorModel | undefined = response.error;
-
-                        if (error?.code === ErrorCode.PageNumberNotInLogbook) {
-                            this.snackbar.open(this.translationService.getValue('catches-and-sales.first-sale-page-not-in-range-error'), undefined, {
-                                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                            });
-                        }
-                        else if (error?.code === ErrorCode.LogBookPageAlreadySubmitted) {
-                            this.snackbar.open(this.translationService.getValue('catches-and-sales.first-sale-page-already-submitted-error'), undefined, {
-                                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                            });
-                        }
-                        else if (error?.code === ErrorCode.LogBookPageAlreadySubmittedOtherLogBook) {
-                            this.snackbar.open(
-                                `${this.translationService.getValue('catches-and-sales.first-sale-page-already-submitted-other-logbook-error')}: ${error.messages[0]}`,
-                                undefined,
-                                {
-                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                                });
-                        }
-                        else if (error?.code === ErrorCode.SendFLUXSalesFailed) {
-                            if (!IS_PUBLIC_APP) { // show snackbar only when not public app
-                                this.snackbar.open(this.translationService.getValue('catches-and-sales.first-sale-page-send-to-flux-sales-error'), undefined, {
-                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                                });
-                            }
-
-                            dialogClose();
-                        }
-                    }
-                });
+                this.addFirstSaleLogBookPage(dialogClose);
             }
             else {
                 this.service.editFirstSaleLogBookPage(this.model).subscribe({
@@ -338,6 +303,107 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
         this.model.products = this.form.get('productsControl')!.value;
         this.model.productsTotalPrice = this.form.get('productsTotalValueControl')!.value;
         this.model.files = this.form.get('filesControl')!.value;
+    }
+
+    private addFirstSaleLogBookPage(dialogClose: DialogCloseCallback): void {
+        this.service.addFirstSaleLogBookPage(this.model, this.hasMissingPagesRangePermission).subscribe({
+            next: (id: number) => {
+                this.model.id = id;
+                dialogClose(this.model);
+            },
+            error: (response: HttpErrorResponse) => {
+                const error: ErrorModel | undefined = response.error;
+
+                if (error?.code === ErrorCode.PageNumberNotInLogbook) {
+                    this.snackbar.open(this.translationService.getValue('catches-and-sales.first-sale-page-not-in-range-error'), undefined, {
+                        duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                        panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                    });
+                }
+                else if (error?.code === ErrorCode.LogBookPageAlreadySubmitted) {
+                    this.snackbar.open(this.translationService.getValue('catches-and-sales.first-sale-page-already-submitted-error'), undefined, {
+                        duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                        panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                    });
+                }
+                else if (error?.code === ErrorCode.LogBookPageAlreadySubmittedOtherLogBook) {
+                    const message: string = this.translationService.getValue('catches-and-sales.first-sale-page-already-submitted-other-logbook-error');
+                    this.snackbar.open(
+                        `${message}: ${error.messages[0]}`,
+                        undefined,
+                        {
+                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                        });
+                }
+                else if (error?.code === ErrorCode.SendFLUXSalesFailed) {
+                    if (!IS_PUBLIC_APP) { // show snackbar only when not public app
+                        this.snackbar.open(this.translationService.getValue('catches-and-sales.first-sale-page-send-to-flux-sales-error'), undefined, {
+                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                        });
+                    }
+
+                    dialogClose();
+                }
+                else if (error?.code === ErrorCode.MaxNumberMissingPagesExceeded) {
+                    if (error!.messages === null || error!.messages === undefined || error!.messages.length < 2) {
+                        throw new Error('In MaxNumberMissingPagesExceeded exception at least the last used page number and a number saying the difference should be passed in the messages property.');
+                    }
+
+                    const lastUsedPageNum: number = Number(error!.messages[0]);
+                    const diff: number = Number(error!.messages[1]);
+                    const pageToAdd: number = this.model.pageNumber!;
+
+                    // confirmation message
+
+                    let message: string = '';
+
+                    if (lastUsedPageNum === 0) { // няма добавени страници все още към този дневник
+                        const currentStartPage: number = Number(error!.messages[2]);
+
+                        const msg1: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-no-pages-first-message');
+                        const msg2: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-second-message');
+                        const msg3: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-third-message');
+                        const msg4: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-forth-message');
+                        const msg5: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-fifth-message');
+                        const msg6: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-sixth-message');
+
+                        message = `${msg1} ${currentStartPage} ${msg2} ${pageToAdd} ${msg3} ${diff} ${msg4}.\n\n${msg5} ${diff} ${msg6}.`;
+                    }
+                    else {
+                        const msg1: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-first-message');
+                        const msg2: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-second-message');
+                        const msg3: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-third-message');
+                        const msg4: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-forth-message');
+                        const msg5: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-fifth-message');
+                        const msg6: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-sixth-message');
+
+                        message = `${msg1} ${lastUsedPageNum} ${msg2} ${pageToAdd} ${msg3} ${diff} ${msg4}.\n\n${msg5} ${diff} ${msg6}.`;
+                    }
+
+                    // button label
+
+                    const btnMsg1: string = this.translationService.getValue('catches-and-sales.first-sale-page-permit-generate-missing-pages-first-part');
+                    const btnMsg2: string = this.translationService.getValue('catches-and-sales.first-sale-page-permit-generate-missing-pages-second-part');
+
+                    this.confirmDialog.open({
+                        title: this.translationService.getValue('catches-and-sales.first-sale-page-generate-missing-pages-permission-dialog-title'),
+                        message: message,
+                        okBtnLabel: `${btnMsg1} ${diff} ${btnMsg2}`,
+                        okBtnColor: 'warn'
+                    }).subscribe({
+                        next: (ok: boolean | undefined) => {
+                            this.hasMissingPagesRangePermission = ok ?? false;
+
+                            if (this.hasMissingPagesRangePermission) {
+                                this.addFirstSaleLogBookPage(dialogClose); // start add method again
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private updateProductsTotalPrice(products: LogBookPageProductDTO[] | undefined): void {

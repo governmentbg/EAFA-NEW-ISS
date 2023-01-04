@@ -136,6 +136,37 @@
         <div fxFlexFill
              fxLayout="column"
              fxLayoutGap="1em">
+            <tl-card *ngIf="!isInspected && !isDisabled" class="m-r-1">
+                <tl-card-content>
+                    <div fxLayout="column" fxLayoutGap="1em">
+                        <div fxFlex="100" fxLayout="row" fxLayoutAling="space-between center" fxLayoutGap="1em">
+                            <div fxFlex="30" fxLayoutAlign="start center">
+                                <span>{{ 'fishing-gears.generate-marks-from-number-range' | tlTranslate }}:</span>
+                            </div>
+                            <div fxFlex="30" fxLayoutAlign="start center">
+                                <tl-range-input fxFlex="100"
+                                                [formControl]="markNumbersRangeControl"
+                                                label="{{ 'fishing-gears.mark-numbers-range' | tlTranslate }}"
+                                                fromLabel="{{ 'fishing-gears.mark-numbers-range-from' | tlTranslate }}"
+                                                toLabel="{{ 'fishing-gears.mark-numbers-range-to' | tlTranslate }}"
+                                                tooltipResourceName="fishing-gears.mark-numbers-range-helper"
+                                                [min]="markNumbersRangeMinValue">
+                                </tl-range-input>
+                            </div>
+                            <div fxFlex="40" fxLayoutAlign="end center">
+                                <button mat-raised-button
+                                        color="accent"
+                                        (tlDebounceClick)="generateMarksByRange()">
+                                    {{ 'fishing-gears.generate-mark-numbers-btn-label' | tlTranslate }}
+                                </button>
+                            </div>
+                        </div>
+                        <div fxFlex="100" fxLayout="row" fxLayoutAling="space-between center" fxLayoutGap="1em">
+                            <mat-hint fxFlex="100">{{ 'fishing-gears.generate-mark-numbers-hint' | tlTranslate }}</mat-hint>
+                        </div>
+                    </div>
+                </tl-card-content>
+            </tl-card>
             <tl-data-table #marksTable
                            fxFlexFill
                            fxLayoutGap="1em"
@@ -144,7 +175,8 @@
                            [showInactiveRecords]="!isInspected"
                            [isRemote]="false"
                            [isSoftDeletable]="true"
-                           [rows]="model.marks"
+                           [rows]="marks"
+                           [recordsPerPage]="marksPerPage"
                            (activeRecordChanged)="onEditMark($event)"
                            (recordChanged)="onEditedMark()">
                 <data-column columnName="{{ 'fishing-gears.mark-number' | tlTranslate }}"
@@ -204,7 +236,8 @@
                                [isRemote]="false"
                                [isSoftDeletable]="true"
                                [disableDblClickEdit]="true"
-                               [rows]="model.pingers"
+                               [rows]="pingers"
+                               [recordsPerPage]="pingersPerPage"
                                (recordChanged)="onEditedPinger()">
                     <data-column columnName="{{ 'fishing-gears.pinger-number' | tlTranslate }}"
                                  propertyName="number"

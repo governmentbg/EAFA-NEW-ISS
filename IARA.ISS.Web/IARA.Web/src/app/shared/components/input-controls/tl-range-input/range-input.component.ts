@@ -61,11 +61,9 @@ export class RangeInputComponent implements OnInit, AfterViewInit, DoCheck, OnCh
     public describedBy: string = '';
 
     public set value(value: RangeInputData | null) {
-        if (value !== null) {
-            this.writeValue(value);
-            this.onChanged(value);
-            this.stateChanges.next();
-        }
+        this.writeValue(value);
+        this.onChanged(value);
+        this.stateChanges.next();
     }
 
     public get placeholder(): string {
@@ -98,8 +96,8 @@ export class RangeInputComponent implements OnInit, AfterViewInit, DoCheck, OnCh
     private endValueElement!: ElementRef;
 
     private translate: TLTranslatePipe;
-    private onChanged: (value: RangeInputData) => void;
-    private onTouched: (value: RangeInputData) => void;
+    private onChanged: (value: RangeInputData | null) => void;
+    private onTouched: (value: RangeInputData | null) => void;
 
     private focusMonitor: FocusMonitor;
     private elementRef: ElementRef;
@@ -123,8 +121,8 @@ export class RangeInputComponent implements OnInit, AfterViewInit, DoCheck, OnCh
         this.elementRef = elementRef;
         this.translate = translate;
 
-        this.onChanged = (value: RangeInputData) => { return; };
-        this.onTouched = (value: RangeInputData) => { return; };
+        this.onChanged = (value: RangeInputData | null) => { return; };
+        this.onTouched = (value: RangeInputData | null) => { return; };
 
         this.ngControl.valueAccessor = this;
 
@@ -202,18 +200,22 @@ export class RangeInputComponent implements OnInit, AfterViewInit, DoCheck, OnCh
         }
     }
 
-    public writeValue(value: RangeInputData): void {
+    public writeValue(value: RangeInputData | null): void {
         if (value !== undefined && value !== null) {
             this.form.get('startValueControl')!.setValue(value.start);
             this.form.get('endValueControl')!.setValue(value.end);
         }
+        else {
+            this.form.get('startValueControl')!.setValue(undefined);
+            this.form.get('endValueControl')!.setValue(undefined);
+        }
     }
 
-    public registerOnChange(fn: (value: RangeInputData) => void): void {
+    public registerOnChange(fn: (value: RangeInputData | null) => void): void {
         this.onChanged = fn;
     }
 
-    public registerOnTouched(fn: (value: RangeInputData) => void): void {
+    public registerOnTouched(fn: (value: RangeInputData | null) => void): void {
         this.onTouched = fn;
     }
 

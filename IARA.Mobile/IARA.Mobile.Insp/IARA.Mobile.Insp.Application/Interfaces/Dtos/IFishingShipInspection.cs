@@ -11,6 +11,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Dtos
         List<InspectionCatchMeasureDto> CatchMeasures { get; set; }
         List<InspectionCheckDto> Checks { get; set; }
         List<InspectionPermitDto> PermitLicenses { get; set; }
+        List<InspectionPermitDto> Permits { get; set; }
         List<InspectionLogBookDto> LogBooks { get; set; }
     }
 }

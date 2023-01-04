@@ -6,6 +6,7 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
 {
     public class InspectionTransboardingShipDto : IFishingShipInspection
     {
+        public string NNNShipStatus { get; set; }
         public string CaptainComment { get; set; }
         public VesselDuringInspectionDto InspectedShip { get; set; }
         public PortVisitDto LastPortVisit { get; set; }
@@ -13,6 +14,7 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public List<InspectionSubjectPersonnelDto> Personnel { get; set; }
         public List<InspectionCheckDto> Checks { get; set; }
         public List<InspectionPermitDto> PermitLicenses { get; set; }
+        public List<InspectionPermitDto> Permits { get; set; }
         public List<InspectionLogBookDto> LogBooks { get; set; }
     }
 }

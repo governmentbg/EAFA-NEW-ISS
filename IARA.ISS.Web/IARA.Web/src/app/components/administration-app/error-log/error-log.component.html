@@ -2,32 +2,42 @@
     <search-panel [translateService]="translationService">
         <div [formGroup]="errorLogFormGroup" fxLayout="column" fxLayoutAlign="start start">
             <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
-                <tl-date-range fxFlex="25"
+                <tl-input fxFlex="33"
+                          formControlName="idControl"
+                          label="{{ 'error-log.filters-id' | tlTranslate }}"
+                          tooltipResourceName="error-log.filters-id-helper">
+                </tl-input>
+
+                <tl-date-range fxFlex="33"
                                formControlName="errorLogDateRangeControl"
                                label="{{ 'error-log.log-date' | tlTranslate }}"
                                tooltipResourceName="error-log.log-date-helper">
                 </tl-date-range>
 
-                <tl-autocomplete fxFlex="25"
+                <tl-autocomplete fxFlex="33"
                                  formControlName="usernameControl"
                                  [options]="usernames"
                                  label="{{ 'error-log.username' | tlTranslate }}"
                                  tooltipResourceName="error-log.username-helper">
                 </tl-autocomplete>
+            </div>
 
-                <tl-input fxFlex="25"
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-input fxFlex="33"
                           formControlName="classControl"
                           label="{{ 'error-log.class' | tlTranslate }}"
                           tooltipResourceName="error-log.class-helper">
                 </tl-input>
 
-                <tl-select fxFlex="25"
+                <tl-select fxFlex="33"
                            label="{{ 'error-log.severity' | tlTranslate }}"
                            formControlName="severityControl"
                            [options]="severityTypes"
                            [isMultiple]="true"
                            tooltipResourceName="error-log.severity-helper">
                 </tl-select>
+
+                <div fxFlex="33"></div>
             </div>
         </div>
     </search-panel>
@@ -36,6 +46,10 @@
         <tl-card-content>
             <tl-data-table [showAddButton]="false"
                            [showInactiveRecords]="false">
+                <data-column propertyName="id"
+                             [flexRate]="0.2"
+                             columnName="{{ 'error-log.id' | tlTranslate }}">
+                </data-column>
                 <data-column propertyName="logDate"
                              [flexRate]="0.2"
                              columnName="{{ 'error-log.log-date' | tlTranslate }}"

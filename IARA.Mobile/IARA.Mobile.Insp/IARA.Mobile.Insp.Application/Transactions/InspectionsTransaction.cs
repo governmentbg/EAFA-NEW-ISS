@@ -319,57 +319,57 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
         public Task<ObservationAtSeaDto> GetOFS(int id, bool isLocal)
         {
-            return Get<ObservationAtSeaDto>(id, isLocal);
+            return Get<ObservationAtSeaDto>(id, isLocal, InspectionType.OFS);
         }
 
         public Task<InspectionAtSeaDto> GetIBS(int id, bool isLocal)
         {
-            return Get<InspectionAtSeaDto>(id, isLocal);
+            return Get<InspectionAtSeaDto>(id, isLocal, InspectionType.IBS);
         }
 
         public Task<InspectionTransboardingDto> GetIBP(int id, bool isLocal)
         {
-            return Get<InspectionTransboardingDto>(id, isLocal);
+            return Get<InspectionTransboardingDto>(id, isLocal, InspectionType.IBP);
         }
 
         public Task<InspectionTransboardingDto> GetITB(int id, bool isLocal)
         {
-            return Get<InspectionTransboardingDto>(id, isLocal);
+            return Get<InspectionTransboardingDto>(id, isLocal, InspectionType.ITB);
         }
 
         public Task<InspectionTransportVehicleDto> GetIVH(int id, bool isLocal)
         {
-            return Get<InspectionTransportVehicleDto>(id, isLocal);
+            return Get<InspectionTransportVehicleDto>(id, isLocal, InspectionType.IVH);
         }
 
         public Task<InspectionFirstSaleDto> GetIFS(int id, bool isLocal)
         {
-            return Get<InspectionFirstSaleDto>(id, isLocal);
+            return Get<InspectionFirstSaleDto>(id, isLocal, InspectionType.IFS);
         }
 
         public Task<InspectionAquacultureDto> GetIAQ(int id, bool isLocal)
         {
-            return Get<InspectionAquacultureDto>(id, isLocal);
+            return Get<InspectionAquacultureDto>(id, isLocal, InspectionType.IAQ);
         }
 
         public Task<InspectionFisherDto> GetIFP(int id, bool isLocal)
         {
-            return Get<InspectionFisherDto>(id, isLocal);
+            return Get<InspectionFisherDto>(id, isLocal, InspectionType.IFP);
         }
 
         public Task<InspectionCheckWaterObjectDto> GetCWO(int id, bool isLocal)
         {
-            return Get<InspectionCheckWaterObjectDto>(id, isLocal);
+            return Get<InspectionCheckWaterObjectDto>(id, isLocal, InspectionType.CWO);
         }
 
         public Task<InspectionCheckToolMarkDto> GetIGM(int id, bool isLocal)
         {
-            return Get<InspectionCheckToolMarkDto>(id, isLocal);
+            return Get<InspectionCheckToolMarkDto>(id, isLocal, InspectionType.IGM);
         }
 
         public Task<InspectionConstativeProtocolDto> GetOTH(int id, bool isLocal)
         {
-            return Get<InspectionConstativeProtocolDto>(id, isLocal);
+            return Get<InspectionConstativeProtocolDto>(id, isLocal, InspectionType.OTH);
         }
 
         public async Task<PostEnum> HandleInspection<TDto>(TDto dto, SubmitType submitType, bool fromOffline = false)
@@ -888,7 +888,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
             return result.IsSuccessful;
         }
 
-        private async Task<TDto> Get<TDto>(int id, bool isLocal)
+        private async Task<TDto> Get<TDto>(int id, bool isLocal, InspectionType type)
             where TDto : InspectionEditDto
         {
             if (isLocal)
@@ -911,7 +911,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
             }
             else
             {
-                HttpResult<TDto> result = await RestClient.GetAsync<TDto>(UrlPrefix + "Get", new { id });
+                HttpResult<TDto> result = await RestClient.GetAsync<TDto>(UrlPrefix + "Get" + type.ToString(), new { id });
 
                 if (result.IsSuccessful)
                 {

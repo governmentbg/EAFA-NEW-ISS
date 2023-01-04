@@ -40,7 +40,7 @@ namespace IARA.Mobile.Insp.Infrastructure
             builder.AddExternalUrl(Environments.DEVELOPMENT_INTERNAL, "IARA_IDENTITY", "https://172.31.12.168/identity");
 
             builder.AddUrl(Environments.DEVELOPMENT_LOCAL, "http://localhost:5000/api/");
-            builder.AddExternalUrl(Environments.DEVELOPMENT_LOCAL, "IARA_IDENTITY", "https://iara.technologica.com/identity");
+            builder.AddExternalUrl(Environments.DEVELOPMENT_LOCAL, "IARA_IDENTITY", "https://iara-iss.egov.bg/identity");
 
             builder.AddExtension("Services", "Mobile/Administrative/");
             builder.AddExtension("Common", "Common/");

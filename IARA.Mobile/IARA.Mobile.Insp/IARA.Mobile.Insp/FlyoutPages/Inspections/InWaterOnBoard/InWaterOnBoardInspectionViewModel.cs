@@ -112,7 +112,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
 
             InspectionGeneralInfo.Init();
             InspectedShip.Init(countries, nomTransaction.GetVesselTypes(), catchAreas);
-            ShipCatches.Init(nomTransaction.GetFishes(), nomTransaction.GetCatchInspectionTypes(), catchAreas);
+            ShipCatches.Init(nomTransaction.GetFishes(), nomTransaction.GetCatchInspectionTypes(), catchAreas, nomTransaction.GetTurbotSizeGroups());
 
             ShipChecks.Toggles.Value.AddRange(
                 checkTypes
@@ -153,18 +153,18 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
                     .ToList()
             );
 
-            ShipFishingGears.Toggles.Value.AddRange(
-                checkTypes
-                    .Where(f => f.Code.StartsWith(Constants.FishingGearBase))
-                    .Select(f => new ToggleViewModel(f.IsMandatory, f.HasDescription)
-                    {
-                        CheckTypeId = f.Id,
-                        Text = f.Name,
-                        Type = f.Type,
-                        DescriptionLabel = f.DescriptionLabel,
-                    })
-                    .ToList()
-            );
+            //ShipFishingGears.Toggles.Value.AddRange(
+            //    checkTypes
+            //        .Where(f => f.Code.StartsWith(Constants.FishingGearBase))
+            //        .Select(f => new ToggleViewModel(f.IsMandatory, f.HasDescription)
+            //        {
+            //            CheckTypeId = f.Id,
+            //            Text = f.Name,
+            //            Type = f.Type,
+            //            DescriptionLabel = f.DescriptionLabel,
+            //        })
+            //        .ToList()
+            //);
 
             ShipChecks.Init(checkTypes, nomTransaction.GetAssociations());
 
@@ -181,7 +181,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
                 InspectionFiles.OnEdit(Edit);
                 InspectedShip.OnEdit(Edit, Edit.LastPortVisit);
                 ShipCatches.OnEdit(Edit);
-                ShipFishingGears.Toggles.AssignFrom(Edit.Checks);
+                //ShipFishingGears.Toggles.AssignFrom(Edit.Checks);
                 ShipFishingGears.FishingGears.OnEdit(Edit.FishingGears,
                     Edit.PermitLicenses
                         .Where(f => f.CheckValue == CheckTypeEnum.Y || f.CheckValue == CheckTypeEnum.N)
@@ -256,10 +256,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
                                 .Select(f => (InspectionCheckDto)f)
                                 .Where(f => f != null)
                             )
-                            .Concat(ShipFishingGears.Toggles
-                                .Select(f => (InspectionCheckDto)f)
-                                .Where(f => f != null)
-                            )
+                            //.Concat(ShipFishingGears.Toggles
+                            //    .Select(f => (InspectionCheckDto)f)
+                            //    .Where(f => f != null)
+                            //)
                             .Concat((List<InspectionCheckDto>)ShipChecks)
                             .ToList(),
                         IsOfflineOnly = IsLocal,
@@ -274,6 +274,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
                         }.Where(f => !string.IsNullOrWhiteSpace(f.Text)).ToList(),
                         LogBooks = ShipChecks.LogBooks,
                         PermitLicenses = ShipChecks.PermitLicenses,
+                        Permits = ShipChecks.Permits,
                         LastPortVisit = InspectedShip.LastHarbour,
                     };
 

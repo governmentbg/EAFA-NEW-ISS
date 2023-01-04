@@ -88,6 +88,8 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 
         List<PermitLicenseDto> GetPermitLicenses(int shipUid);
 
+        List<PermitDto> GetPermits(int shipUid);
+
         List<LogBookDto> GetLogBooks(int shipUid);
 
         List<SelectNomenclatureDto> GetAssociations();
@@ -117,5 +119,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
         List<SelectNomenclatureDto> GetFishingGearCheckReasons();
 
         ShipPersonnelDetailedDto GetAquacultureOwner(int aquacultureId);
+
+        List<SelectNomenclatureDto> GetTurbotSizeGroups();
     }
 }

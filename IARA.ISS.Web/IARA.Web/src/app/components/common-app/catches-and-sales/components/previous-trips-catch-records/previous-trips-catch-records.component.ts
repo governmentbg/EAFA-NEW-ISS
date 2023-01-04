@@ -38,7 +38,7 @@ export class PreviousTripsCatchRecordsComponent implements OnInit, IDialogCompon
     public async ngOnInit(): Promise<void> {
         const nomenclatures: (NomenclatureDTO<number> | FishNomenclatureDTO | CatchZoneNomenclatureDTO)[][] = await forkJoin([
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Fishes, this.commonNomenclaturesService.getFishTypes.bind(this.commonNomenclaturesService)),
-            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchTypes, this.service.getCatchTypes.bind(this.service)),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.AquacultureCatchTypes, this.service.getCatchTypes.bind(this.service)),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.FishSizes, this.service.getFishSizes.bind(this.service)),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchZones, this.commonNomenclaturesService.getCatchZones.bind(this.commonNomenclaturesService))
         ]).toPromise();

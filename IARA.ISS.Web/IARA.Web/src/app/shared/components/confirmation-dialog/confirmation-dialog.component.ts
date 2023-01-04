@@ -13,13 +13,14 @@ export class ConfirmationDialogComponent {
     public message: string;
     public title: string;
     public okBtnLabel: string;
+    public okBtnColor: 'accent' | 'primary' | 'warn';
     public cancelBtnLabel: string;
     public hasCancelButton: boolean;
     private dialogRef: MatDialogRef<ConfirmationDialogComponent>;
     public translationService: FuseTranslationLoaderService;
     private tlTranslatePipe: TLTranslatePipe;
 
-    constructor(@Inject(MAT_DIALOG_DATA) data: IConfirmDialogData,
+    public constructor(@Inject(MAT_DIALOG_DATA) data: IConfirmDialogData,
         dialogRef: MatDialogRef<ConfirmationDialogComponent>,
         translationService: FuseTranslationLoaderService,
         tlTranslatePipe: TLTranslatePipe) {
@@ -45,6 +46,12 @@ export class ConfirmationDialogComponent {
                 this.okBtnLabel = this.tlTranslatePipe.transform(this.translationService.getValue('common.confirm'), 'cap');
             }
 
+            if (data.okBtnColor != undefined) {
+                this.okBtnColor = data.okBtnColor;
+            } else {
+                this.okBtnColor = 'accent';
+            }
+
             if (data.cancelBtnLabel != undefined) {
                 this.cancelBtnLabel = data.cancelBtnLabel;
             } else {
@@ -61,6 +68,7 @@ export class ConfirmationDialogComponent {
             this.message = this.translationService.getValue('common.do-you-confirm-the-action-message');
             this.title = this.tlTranslatePipe.transform(this.translationService.getValue('common.confirmation'), 'cap');
             this.okBtnLabel = this.tlTranslatePipe.transform(this.translationService.getValue('common.confirm'), 'cap');
+            this.okBtnColor = 'accent';
             this.cancelBtnLabel = this.tlTranslatePipe.transform(this.translationService.getValue('common.cancel'), 'cap');
             this.hasCancelButton = true;
         }

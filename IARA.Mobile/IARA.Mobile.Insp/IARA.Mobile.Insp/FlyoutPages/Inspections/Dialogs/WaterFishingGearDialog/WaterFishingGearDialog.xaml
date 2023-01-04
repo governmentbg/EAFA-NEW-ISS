@@ -53,43 +53,6 @@
             <tl:TLEntry Title="{rt:Translate Location, Group=WaterFishingGear}"
                     IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
                     ValidState="{Binding Location}" />
-            <tl:TLTable Title="{rt:Translate Marks, Group=WaterFishingGear}"
-                    ValidState="{Binding Marks}">
-                <tl:TLTable.TableColumns>
-                    <tl:TLTableColumn Width="*"
-                            Text="{rt:Translate Number, Group=WaterFishingGear}" />
-                    <tl:TLTableColumn Width="*"
-                            Text="{rt:Translate Status, Group=WaterFishingGear}" />
-                    <tl:TLTableColumn Width="{Binding BindingContext.DialogType, Converter={StaticResource ReviewToWidth}, ConverterParameter=40, Source={Reference dialog}}" />
-                </tl:TLTable.TableColumns>
-                <DataTemplate>
-                    <tl:TLTableRow x:DataType="local:MarkViewModel">
-                        <tl:TLEntry IsEnabled="{Binding BindingContext.DialogType, Converter={StaticResource IsNotReview}, Source={Reference dialog}}"
-                                IsTitleVisible="False"
-                                ValidState="{Binding Number}" />
-                        <tl:TLNativePicker IsEnabled="{Binding BindingContext.DialogType, Converter={StaticResource IsNotReview}, Source={Reference dialog}}"
-                                IsTitleVisible="False"
-                                ItemsSource="{Binding BindingContext.MarkStatuses, Source={Reference dialog}}"
-                                ValidState="{Binding Status}" />
-                        <ImageButton Padding="10"
-                                Command="{Binding BindingContext.RemoveMark, Source={Reference dialog}}"
-                                CommandParameter="{Binding}"
-                                IsEnabled="{Binding BindingContext.DialogType, Converter={StaticResource IsNotReview}, Source={Reference dialog}}"
-                                Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}" />
-                    </tl:TLTableRow>
-                </DataTemplate>
-                <tl:TLTable.FooterView>
-                    <Button Command="{Binding AddMark}"
-                            HorizontalOptions="End"
-                            ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
-                            IsVisible="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                            Text="{rt:Translate AddMark, Group=WaterFishingGear}" />
-                </tl:TLTable.FooterView>
-                <tl:TLTable.EmptyView>
-                    <Label Margin="20,10"
-                            Text="{rt:Translate NoInformation, Group=Common}" />
-                </tl:TLTable.EmptyView>
-            </tl:TLTable>
             <tl:TLEditor Title="{rt:Translate Description, Group=WaterFishingGear}"
                     IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
                     ValidState="{Binding Description}" />

@@ -1,10 +1,14 @@
 ﻿
+
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 
-export class ErrorLogDTO {
+export class ErrorLogDTO { 
     public constructor(obj?: Partial<ErrorLogDTO>) {
         Object.assign(this, obj);
     }
+
+    @StrictlyTyped(Number)
+    public id?: number;
 
     @StrictlyTyped(Date)
     public logDate?: Date;

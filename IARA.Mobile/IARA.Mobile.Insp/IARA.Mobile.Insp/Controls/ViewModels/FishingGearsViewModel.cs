@@ -28,6 +28,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             Edit = CommandBuilder.CreateFrom<FishingGearModel>(OnEdit);
             Remove = CommandBuilder.CreateFrom<FishingGearModel>(OnRemove);
 
+            AllFishingGears = new List<FishingGearModel>();
+
             this.AddValidation();
         }
 

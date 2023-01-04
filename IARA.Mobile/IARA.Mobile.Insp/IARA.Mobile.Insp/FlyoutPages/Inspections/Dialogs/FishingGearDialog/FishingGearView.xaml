@@ -6,9 +6,14 @@
         xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
         xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog"
         xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:conv="clr-namespace:IARA.Mobile.Insp.Converters"
         x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog.FishingGearView"
         x:DataType="local:FishingGearViewModel"
         x:Name="view">
+    <ContentView.Resources>
+        <conv:MarkColumnWidthConverter x:Key="MarkColumnWidth"
+                HasMoveMark="{Binding MoveMark, Converter={StaticResource IsNotNull}}" />
+    </ContentView.Resources>
     <StackLayout Padding="10">
         <tl:TLPicker Title="{rt:Translate Type, Group=FishingGear}"
                 ValidState="{Binding FishingGearType}"
@@ -96,7 +101,7 @@
                         Width="*" />
                 <tl:TLTableColumn Text="{rt:Translate Status, Group=FishingGear}"
                         Width="*" />
-                <tl:TLTableColumn Width="{Binding BindingContext.DialogType, Converter={StaticResource ReviewToWidth}, ConverterParameter=40, Source={Reference view}}" />
+                <tl:TLTableColumn Width="{Binding BindingContext.DialogType, Converter={StaticResource MarkColumnWidth}, Source={Reference view}}" />
             </tl:TLTable.TableColumns>
             <DataTemplate>
                 <tl:TLTableRow x:DataType="local:MarkViewModel">
@@ -128,20 +133,27 @@
                             </MultiBinding>
                         </tl:TLNativePicker.IsEnabled>
                     </tl:TLNativePicker>
-                    <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
-                            Padding="10"
-                            Command="{Binding BindingContext.RemoveMark, Source={Reference view}}"
-                            CommandParameter="{Binding}">
-                        <ImageButton.IsVisible>
-                            <MultiBinding Converter="{StaticResource All}">
-                                <Binding Path="BindingContext.DialogType"
-                                        Converter="{StaticResource IsNotReview}"
-                                        Source="{Reference view}" />
-                                <Binding Path="BindingContext.IsEditable"
-                                        Source="{Reference view}" />
-                            </MultiBinding>
-                        </ImageButton.IsVisible>
-                    </ImageButton>
+                    <Grid>
+                        <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
+                                Padding="10"
+                                Command="{Binding BindingContext.RemoveMark, Source={Reference view}}"
+                                CommandParameter="{Binding}">
+                            <ImageButton.IsVisible>
+                                <MultiBinding Converter="{StaticResource All}">
+                                    <Binding Path="BindingContext.DialogType"
+                                            Converter="{StaticResource IsNotReview}"
+                                            Source="{Reference view}" />
+                                    <Binding Path="BindingContext.IsEditable"
+                                            Source="{Reference view}" />
+                                </MultiBinding>
+                            </ImageButton.IsVisible>
+                        </ImageButton>
+                        <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.ArrowRight}, Size=20, Color=White}"
+                                Padding="10"
+                                Command="{Binding BindingContext.MoveMark, Source={Reference view}}"
+                                CommandParameter="{Binding}"
+                                IsVisible="{Binding BindingContext.MoveMark, Converter={StaticResource IsNotNull}, Source={Reference view}}" />
+                    </Grid>
                 </tl:TLTableRow>
             </DataTemplate>
             <tl:TLTable.FooterView>

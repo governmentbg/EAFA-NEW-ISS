@@ -179,6 +179,9 @@ namespace IARA.Mobile.Insp.Application.Helpers
                 case NomenclatureEnum.FishingGearPinger:
                     pullData = PullFishingGearsPingers();
                     break;
+                case NomenclatureEnum.Permit:
+                    pullData = PullPermits();
+                    break;
                 default:
                     throw new NotImplementedException($"{nameof(nomenclatureEnum)} doesn't have specified {nameof(NomenclatureEnum)} implemented");
             }
@@ -462,6 +465,24 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     FishingGearId = f.FishingGearId,
                     Number = f.Number,
                     StatusId = f.StatusId,
+                },
+                f => f.Id
+            );
+        }
+
+        private static IPullData PullPermits()
+        {
+            return new PullData<PermitApiDto, Permit>(
+                NomenclatureEnum.Permit,
+                "InspectionData/GetPermits",
+                f => new Permit
+                {
+                    Id = f.Id,
+                    PermitNumber = f.PermitNumber,
+                    ShipUid = f.ShipUid,
+                    TypeId = f.TypeId,
+                    ValidFrom = f.ValidFrom,
+                    ValidTo = f.ValidTo,
                 },
                 f => f.Id
             );

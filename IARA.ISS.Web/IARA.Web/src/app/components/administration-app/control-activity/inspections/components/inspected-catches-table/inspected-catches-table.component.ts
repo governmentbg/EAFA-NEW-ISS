@@ -142,7 +142,8 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
                 fish: this.fishes.find(s => s.value === f.fishId),
                 type: this.types.find(s => s.value === f.catchInspectionTypeId),
                 catchZone: this.catchZones.find(s => s.value === f.catchZoneId),
-                turbotSizeGroup: this.turbotSizeGroups.find(s => s.value === f.turbotSizeGroupId)
+                turbotSizeGroup: this.turbotSizeGroups.find(s => s.value === f.turbotSizeGroupId),
+                turbotSizeGroupId: f.turbotSizeGroupId,
             }));
 
             setTimeout(() => {

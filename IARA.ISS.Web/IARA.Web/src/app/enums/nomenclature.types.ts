@@ -90,6 +90,7 @@
     PoundnetStatuses,
     FishSizes,
     CatchTypes,
+    AquacultureCatchTypes,
     CatchInspectionTypes,
     PenalDecreeStatuses,
     AuanStatuses,

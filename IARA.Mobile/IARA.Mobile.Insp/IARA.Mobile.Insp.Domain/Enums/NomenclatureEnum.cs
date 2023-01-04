@@ -52,5 +52,8 @@
         FishingGearPingerStatus,
         FishingGearCheckReason,
         FishingGearRecheckReason,
+        Permit,
+        PermitType,
+        TurbotSizeGroup,
     }
 }

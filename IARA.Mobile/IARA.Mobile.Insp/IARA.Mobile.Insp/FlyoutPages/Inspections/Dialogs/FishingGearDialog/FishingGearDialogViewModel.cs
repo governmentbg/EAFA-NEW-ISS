@@ -1,15 +1,15 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Base;
@@ -44,6 +44,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
             {
                 IsEditable = false,
                 HasPingers = HasPingers,
+                MoveMark = DialogType != ViewActivityType.Review
+                    ? CommandBuilder.CreateFrom<MarkViewModel>(OnMoveMark)
+                    : null,
             };
             InspectedFishingGear = new FishingGearViewModel(Inspection, DialogType)
             {
@@ -80,13 +83,30 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
             if (Edit != null)
             {
                 PermittedFishingGear.AssignEdit(Edit.Dto.PermittedFishingGear);
-                InspectedFishingGear.AssignEdit(Edit.Dto.InspectedFishingGear ?? Edit.Dto.PermittedFishingGear);
+                InspectedFishingGear.AssignEdit(Edit.Dto.InspectedFishingGear ?? RemapFishingGear(Edit.Dto.PermittedFishingGear));
                 Corresponds.Value = Edit.CheckedValue?.ToString();
 
                 Validation.Force();
             }
 
             return Task.CompletedTask;
+        }
+
+        private void OnMoveMark(MarkViewModel mark)
+        {
+            if (!InspectedFishingGear.Marks.Any(f => f.Id == mark.Id))
+            {
+                MarkViewModel newMark =new MarkViewModel
+                {
+                    Id = mark.Id,
+                    AddedByInspector = mark.Status.Value.Code == nameof(FishingGearMarkStatus.MARKED),
+                };
+
+                newMark.Status.Value = mark.Status.Value;
+                newMark.Number.Value = mark.Number.Value;
+
+                InspectedFishingGear.Marks.Value.Add(newMark);
+            }
         }
 
         private Task OnSave()
@@ -125,6 +145,34 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                     PermittedFishingGear = Edit?.Dto.PermittedFishingGear == null ? null : (FishingGearDto)PermittedFishingGear,
                 }
             });
+        }
+
+        private FishingGearDto RemapFishingGear(FishingGearDto fishingGear)
+        {
+            if (fishingGear == null)
+            {
+                return null;
+            }
+
+            return new FishingGearDto
+            {
+                Id = fishingGear.Id,
+                CordThickness = fishingGear.CordThickness,
+                Count = fishingGear.Count,
+                Description = fishingGear.Description,
+                Height = fishingGear.Height,
+                HookCount = fishingGear.HookCount,
+                HouseLength = fishingGear.HouseLength,
+                HouseWidth = fishingGear.HouseWidth,
+                IsActive = fishingGear.IsActive,
+                Length = fishingGear.Length,
+                NetEyeSize = fishingGear.NetEyeSize,
+                PermitId = fishingGear.PermitId,
+                Pingers = fishingGear.Pingers,
+                TowelLength = fishingGear.TowelLength,
+                TypeId = fishingGear.TypeId,
+                Marks = new List<FishingGearMarkDto>(),
+            };
         }
     }
 }

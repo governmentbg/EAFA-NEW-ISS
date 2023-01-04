@@ -18,5 +18,6 @@ export class ErrorLogFilters extends BaseRequestModel {
     public errorLogDateTo: Date | undefined;
     public severity: string[] | undefined;
     public class: string | undefined;
+    public errorLogId: string | undefined;
     public userId: number | undefined;
 }

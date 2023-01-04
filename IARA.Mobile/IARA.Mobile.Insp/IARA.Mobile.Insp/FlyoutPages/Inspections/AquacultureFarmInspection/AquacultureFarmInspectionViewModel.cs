@@ -132,6 +132,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
                 nomTransaction.GetFishes(),
                 nomTransaction.GetCatchInspectionTypes(),
                 nomTransaction.GetCatchZones(),
+                nomTransaction.GetTurbotSizeGroups(),
                 nomTransaction.GetFishSex()
             );
             LegalEntity.Init(countries);

@@ -1,6 +1,7 @@
 ﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
+using IARA.Mobile.Insp.Attributes;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Helpers;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         private List<SelectNomenclatureDto> _catchTypes;
         private List<CatchZoneNomenclatureDto> _catchAreas;
         private List<SelectNomenclatureDto> _fishSexTypes;
+        private List<SelectNomenclatureDto> _turbotSizeGroups;
 
         public CatchInspectionsViewModel(
             InspectionPageViewModel inspection,
@@ -52,6 +54,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public bool ShowAverageSize { get; }
         public bool ShowFishSex { get; }
 
+        [DuplicateCatches]
         public ValidStateValidatableTable<CatchInspectionViewModel> Catches { get; set; }
 
         public List<SelectNomenclatureDto> FishTypes
@@ -74,6 +77,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             get => _fishSexTypes;
             private set => SetProperty(ref _fishSexTypes, value);
         }
+        public List<SelectNomenclatureDto> TurbotSizeGroups
+        {
+            get => _turbotSizeGroups;
+            private set => SetProperty(ref _turbotSizeGroups, value);
+        }
 
         public ICommand AddCatch { get; }
         public ICommand RemoveCatch { get; }
@@ -82,13 +90,15 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             List<SelectNomenclatureDto> fishTypes,
             List<SelectNomenclatureDto> catchTypes,
             List<CatchZoneNomenclatureDto> catchAreas,
-            List<SelectNomenclatureDto> fishSexTypes = null
+            List<SelectNomenclatureDto> turbotSizeGroups,
+            List<SelectNomenclatureDto> fishSexTypes
         )
         {
             FishTypes = fishTypes;
             CatchTypes = catchTypes;
             CatchAreas = catchAreas;
             FishSexTypes = fishSexTypes;
+            TurbotSizeGroups = turbotSizeGroups;
         }
 
         public void OnEdit(List<InspectionCatchMeasureDto> catchMeasures)
@@ -111,6 +121,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 viewModel.AverageSize.AssignFrom(f.AverageSize);
                 viewModel.FishSex.AssignFrom(f.FishSexId, FishSexTypes);
                 viewModel.CatchCount.AssignFrom(f.CatchCount);
+                viewModel.TurbotSizeGroup.AssignFrom(f.TurbotSizeGroupId, TurbotSizeGroups);
 
                 if (f.OriginShip != null)
                 {
