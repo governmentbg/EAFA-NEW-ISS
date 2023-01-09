@@ -49,7 +49,12 @@ export class RecreationalFishingPublicService extends BaseAuditService implement
     }
 
     public getTicket(id: number, getRegiXData: boolean): Observable<RecreationalFishingTicketDTO> {
-        return this.commonService.getTicket(this.area, this.controller, id, getRegiXData);
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetTicket', {
+            httpParams: params,
+            responseTypeCtr: RecreationalFishingTicketDTO
+        });
     }
 
     public addTickets(tickets: RecreationalFishingTicketsDTO): Observable<RecreationalFishingAddTicketsResultDTO> {
@@ -71,6 +76,10 @@ export class RecreationalFishingPublicService extends BaseAuditService implement
         return this.requestService.patch(this.area, this.controller, 'CancelTicket', reasonData, {
             httpParams: params
         });
+    }
+
+    public cancelTicketRegister(id: number, reason: string): Observable<void> {
+        throw new Error('This method should not be called from the public app');
     }
 
     public calculateTicketValidToDate(params: RecreationalFishingTicketValidToCalculationParamsDTO): Observable<Date> {
@@ -166,6 +175,10 @@ export class RecreationalFishingPublicService extends BaseAuditService implement
         }).pipe(map((assocs: NomenclatureDTO<number>[]) => {
             this.currentUserAssociations.next(assocs);
         }));
+    }
+
+    public hasUserStartedAssociationApplication(): Observable<boolean> {
+        return this.requestService.get(this.area, this.controller, 'HasUserStartedAssociationApplication');
     }
 
     public downloadFile(fileId: number, fileName: string): Observable<boolean> {

@@ -37,6 +37,8 @@ import { EnterReasonComponent } from '../../applications/components/enter-reason
 import { ReasonDialogParams } from '../../applications/components/enter-reason/models/reason-dialog-params.model';
 import { RecreationalFishingTicketComponent } from '../tickets/components/ticket/recreational-fishing-ticket.component';
 import { EditTicketDialogParams } from './models/edit-ticket-dialog-params.model';
+import { TicketStatusEnum } from '@app/enums/ticket-status.enum';
+import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 
 type ThreeState = 'yes' | 'no' | 'both';
 
@@ -79,6 +81,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
     public canCancelRecords!: boolean;
     public canInspectAndCorrectRecords!: boolean;
 
+    public readonly ticketStatusEnum: typeof TicketStatusEnum = TicketStatusEnum;
     public readonly applicationStatusEnum: typeof ApplicationStatusesEnum = ApplicationStatusesEnum;
     public readonly applicationSourceTypeEnum: typeof ApplicationHierarchyTypesEnum = ApplicationHierarchyTypesEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
@@ -271,7 +274,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             },
             componentData: data,
             translteService: this.translate
-        }, '850px');
+        }, '1200px');
 
         dialog.subscribe((paymentData: PaymentDataDTO) => {
             if (paymentData !== null && paymentData !== undefined) {
@@ -314,6 +317,28 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
                 isApplication: true,
                 id: ticket.applicationId,
                 saveReasonServiceMethod: this.applicationsService.applicationAnnulment.bind(this.applicationsService)
+            }),
+            disableDialogClose: true
+        }, '800px')
+            .subscribe((reasonData: ReasonData) => {
+                if (reasonData !== null && reasonData !== undefined) {
+                    this.grid.refreshData();
+                }
+            });
+    }
+
+    public cancelTicket(ticket: RecreationalFishingTicketApplicationDTO): void {
+        this.statusReasonDialog.openWithTwoButtons({
+            title: this.translate.getValue('applications-register.cancellation-reason-dialog-title'),
+            TCtor: EnterReasonComponent,
+            headerCancelButton: {
+                cancelBtnClicked: this.closeCancellationActionDialogBtnClicked.bind(this)
+            },
+            translteService: this.translate,
+            componentData: new ReasonDialogParams({
+                isApplication: false,
+                id: ticket.id,
+                saveReasonServiceMethod: this.service.cancelTicketRegister.bind(this.service)
             }),
             disableDialogClose: true
         }, '800px')
@@ -385,9 +410,9 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             period: this.periods.find(x => x.value === ticket.ticketPeriodId)!,
             service: this.service
         });
-        debugger;
+
         if (viewMode) {
-            this.openEditDialogForAll(params, this.translate.getValue('recreational-fishing.application-view-ticket-dialog-title'));
+            this.openEditDialogForAll(ticket, params, this.translate.getValue('recreational-fishing.application-view-ticket-dialog-title'));
         }
         else {
             switch (status) {
@@ -397,12 +422,11 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
                 } break;
                 case ApplicationStatusesEnum.FILL_BY_APPL: {
                     // Ако не сме в RegiX режим И предишният статус на заявлението е бил Стартирани проверки
-                    debugger;
                     if (prevApplicationStatus === ApplicationStatusesEnum.EXT_CHK_STARTED) {
                         params.showRegiXData = true;
                     }
 
-                    this.openEditDialogForAll(params, this.translate.getValue('recreational-fishing.application-edit-ticket-dialog-title'));
+                    this.openEditDialogForAll(ticket, params, this.translate.getValue('recreational-fishing.application-edit-ticket-dialog-title'));
                 } break;
             }
         }
@@ -461,7 +485,27 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             });
     }
 
-    private openEditDialogForAll(params: EditTicketDialogParams, title: string): void {
+    private openEditDialogForAll(ticket: RecreationalFishingTicketApplicationDTO, params: EditTicketDialogParams, title: string): void {
+        const rightButtons: IActionInfo[] = [];
+
+        if (ticket.ticketStatus !== TicketStatusEnum.CANCELED) {
+            rightButtons.push({
+                id: 'issue-duplicate',
+                color: 'accent',
+                translateValue: this.translate.getValue('recreational-fishing.issue-duplicate'),
+                isVisibleInViewMode: true
+            });
+        }
+
+        if (ticket.ticketStatus === TicketStatusEnum.APPROVED) {
+            rightButtons.push({
+                id: 'print',
+                color: 'accent',
+                translateValue: this.translate.getValue('recreational-fishing.print'),
+                isVisibleInViewMode: true
+            });
+        }
+
         this.editDialog.openWithTwoButtons({
             title: title,
             TCtor: RecreationalFishingTicketComponent,
@@ -473,17 +517,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
                 tableName: 'FishingTicket'
             },
-            rightSideActionsCollection: [{
-                id: 'issue-duplicate',
-                color: 'accent',
-                translateValue: this.translate.getValue('recreational-fishing.issue-duplicate'),
-                isVisibleInViewMode: true
-            }, {
-                id: 'print',
-                color: 'accent',
-                translateValue: this.translate.getValue('recreational-fishing.print'),
-                isVisibleInViewMode: true
-            }],
+            rightSideActionsCollection: rightButtons,
             cancelBtn: {
                 id: 'cancel',
                 color: 'primary',

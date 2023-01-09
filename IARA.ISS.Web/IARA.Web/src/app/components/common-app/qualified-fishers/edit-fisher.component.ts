@@ -39,6 +39,8 @@ import { Notifier } from '@app/shared/directives/notifier/notifier.class';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { SubmittedByRolesEnum } from '@app/enums/submitted-by-roles.enum';
 import { DuplicatesEntryDTO } from '@app/models/generated/dtos/DuplicatesEntryDTO';
+import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
+import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 
 @Component({
     selector: 'edit-fisher-component',
@@ -67,6 +69,8 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
     public loadRegisterFromApplication: boolean = false;
     public showSubmittedFor: boolean = false;
     public hideBasicPaymentInfo: boolean = false;
+    public isPaid: boolean = false;
+    public hasDelivery: boolean = false;
 
     public notifier: Notifier = new Notifier();
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
@@ -74,10 +78,6 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
 
     public territoryUnits: NomenclatureDTO<number>[] = [];
 
-    public applicationPaymentInformation: ApplicationPaymentInformationDTO | undefined;
-
-    private translationService: FuseTranslationLoaderService;
-    private nomenclatures: CommonNomenclatures;
     private applicationsService: IApplicationsService | undefined;
     private id: number | undefined;
     private applicationId: number | undefined;
@@ -88,7 +88,13 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
 
-    public constructor(translationService: FuseTranslationLoaderService, nomenclatures: CommonNomenclatures) {
+    private readonly translationService: FuseTranslationLoaderService;
+    private readonly nomenclatures: CommonNomenclatures;
+
+    public constructor(
+        translationService: FuseTranslationLoaderService,
+        nomenclatures: CommonNomenclatures,
+    ) {
         this.translationService = translationService;
         this.nomenclatures = nomenclatures;
 
@@ -147,9 +153,9 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
                         application.files = content.files;
                         application.applicationId = content.applicationId;
                         this.model = application;
-                        this.applicationPaymentInformation = (this.model as QualifiedFisherApplicationEditDTO)?.paymentInformation;
                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
-
+                        this.isPaid = application.isPaid ?? false;
+                        this.hasDelivery = application.hasDelivery ?? false;
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
                         this.fillForm();
@@ -227,7 +233,6 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
                             }
 
                             this.model = application;
-                            this.applicationPaymentInformation = (this.model as QualifiedFisherApplicationEditDTO)?.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
 
@@ -238,6 +243,8 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
 
                             if (this.model instanceof QualifiedFisherApplicationEditDTO) {
                                 this.isOnlineApplication = this.model.isOnlineApplication!;
+                                this.isPaid = application.isPaid ?? false;
+                                this.hasDelivery = application.hasDelivery ?? false;
 
                                 if (this.isPublicApp && this.isOnlineApplication) {
                                     this.isEditingSubmittedBy = true;
@@ -501,8 +508,8 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
                 this.editForm.addControl('applicantRelationToRecipientControl', new FormControl());
 
                 this.editForm.get('applicantRelationToRecipientControl')!.valueChanges.subscribe({
-                    next: () => {
-                        if (this.editForm.get('applicantRelationToRecipientControl')!.value.role === SubmittedByRolesEnum.Personal) {
+                    next: (value: ApplicantRelationToRecipientDTO | undefined) => {
+                        if (value?.role === SubmittedByRolesEnum.Personal) {
                             this.showSubmittedFor = false;
                             this.editForm.get('submittedForAddressDataControl')!.setErrors(null);
                             this.editForm.get('submittedForRegixDataControl')!.setErrors(null);
@@ -511,11 +518,13 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
                         }
                     }
                 });
+
+                this.editForm.addControl('deliveryDataControl', new FormControl());
+                this.editForm.addControl('applicationPaymentInformationControl', new FormControl());
             }
         }
 
         if (!this.modeApplicationRegixOnly) {
-            this.editForm.addControl('deliveryDataControl', new FormControl());
             this.editForm.addControl('filesControl', new FormControl());
             this.editForm.addControl('commentsControl', new FormControl(undefined, Validators.maxLength(1000)));
             this.editForm.addControl('examTerritoryUnitControl', new FormControl());
@@ -541,7 +550,13 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
                 letterOfAttorney: this.model.letterOfAttorney
             }));
 
-            this.editForm.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+            if (this.hasDelivery) {
+                this.editForm.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+            }
+            
+            if (this.isPaid === true) {
+                this.editForm.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
+            }
         }
 
         if (this.model instanceof QualifiedFisherEditDTO) {
@@ -641,7 +656,14 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
             const relation: ApplicantRelationToRecipientDTO = this.editForm.controls.applicantRelationToRecipientControl.value;
             this.model.submittedByRole = relation.role;
             this.model.letterOfAttorney = relation.letterOfAttorney;
-            this.model.deliveryData = this.editForm.get('deliveryDataControl')!.value;
+
+            if (this.hasDelivery) {
+                this.model.deliveryData = this.editForm.get('deliveryDataControl')!.value;
+            }
+
+            if (this.isPaid === true) {
+                this.model.paymentInformation = this.editForm.get('applicationPaymentInformationControl')!.value;
+            }
         }
 
         if (this.model instanceof QualifiedFisherEditDTO) {
@@ -752,9 +774,9 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
     }
 
     private shouldHidePaymentData(): boolean {
-        return this.applicationPaymentInformation?.paymentType === null
-            || this.applicationPaymentInformation?.paymentType === undefined
-            || this.applicationPaymentInformation?.paymentType === '';
+        return (this.model as QualifiedFisherApplicationEditDTO)?.paymentInformation?.paymentType === null
+            || (this.model as QualifiedFisherApplicationEditDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as QualifiedFisherApplicationEditDTO)?.paymentInformation?.paymentType === '';
     }
 
     private personNotAlreadyFisher(): ValidatorFn {

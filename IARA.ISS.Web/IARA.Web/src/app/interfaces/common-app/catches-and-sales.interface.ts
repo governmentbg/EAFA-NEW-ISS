@@ -68,19 +68,19 @@ export interface ICatchesAndSalesService {
     getCatchTypes(): Observable<NomenclatureDTO<number>[]>;
     getFishingGearsRegister(permitLicenseId: number): Observable<FishingGearRegisterNomenclatureDTO[]>;
 
-    addShipLogBookPage(model: ShipLogBookPageEditDTO): Observable<number>;
+    addShipLogBookPage(model: ShipLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number>;
     editShipLogBookPage(model: ShipLogBookPageEditDTO): Observable<void>;
 
-    addFirstSaleLogBookPage(model: FirstSaleLogBookPageEditDTO): Observable<number>;
+    addFirstSaleLogBookPage(model: FirstSaleLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number>;
     editFirstSaleLogBookPage(model: FirstSaleLogBookPageEditDTO): Observable<void>;
 
-    addAdmissionLogBookPage(model: AdmissionLogBookPageEditDTO): Observable<number>;
+    addAdmissionLogBookPage(model: AdmissionLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number>;
     editAdmissionLogBookPage(model: AdmissionLogBookPageEditDTO): Observable<void>;
 
-    addTransportationLogBookPage(model: TransportationLogBookPageEditDTO): Observable<number>;
+    addTransportationLogBookPage(model: TransportationLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number>;
     editTransportationLogBookPage(model: TransportationLogBookPageEditDTO): Observable<void>;
 
-    addAquacultureLogBookPage(model: AquacultureLogBookPageEditDTO): Observable<number>;
+    addAquacultureLogBookPage(model: AquacultureLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number>;
     editAquacultureLogBookPage(model: AquacultureLogBookPageEditDTO): Observable<void>;
 
     annulLogBookPage(reasonData: LogBookPageCancellationReasonDTO): Observable<void>;

@@ -176,6 +176,8 @@ import { EditFluxFlapRequestComponent } from './flux-vms-requests/flux-flap-requ
 import { InspectedPermitsTableComponent } from './control-activity/inspections/components/inspected-permits-table/inspected-permits-table.component';
 import { EditDecreeResolutionComponent } from './control-activity/penal-decrees/edit-decree-resolution/edit-decree-resolution.component';
 import { ChooseLawSectionsComponent } from './control-activity/auan-register/choose-law-sections/choose-law-sections.component';
+import { PrintConfigurationsComponent } from './print-configurations/print-configurations.component';
+import { EditPrintConfigurationComponent } from './print-configurations/components/edit-print-configuration/edit-print-configuration.component';
 
 @NgModule({
     declarations: [
@@ -344,7 +346,9 @@ import { ChooseLawSectionsComponent } from './control-activity/auan-register/cho
         FluxFlapRequestsComponent,
         EditFluxFlapRequestComponent,
         EditDecreeResolutionComponent,
-        ChooseLawSectionsComponent
+        ChooseLawSectionsComponent,
+        PrintConfigurationsComponent,
+        EditPrintConfigurationComponent
     ],
     imports: [
         TLCommonModule,
@@ -517,7 +521,9 @@ import { ChooseLawSectionsComponent } from './control-activity/auan-register/cho
         FluxFlapRequestsComponent,
         EditFluxFlapRequestComponent,
         EditDecreeResolutionComponent,
-        ChooseLawSectionsComponent
+        ChooseLawSectionsComponent,
+        PrintConfigurationsComponent,
+        EditPrintConfigurationComponent
     ]
 })
 export class IARAApplicationModule {

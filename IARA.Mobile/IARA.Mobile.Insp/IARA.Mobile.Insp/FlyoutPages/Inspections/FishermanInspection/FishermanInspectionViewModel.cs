@@ -130,7 +130,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
             List<SelectNomenclatureDto> countries = nomTransaction.GetCountries();
 
             InspectionGeneralInfo.Init();
-            Catches.Init(nomTransaction.GetFishes(), nomTransaction.GetCatchInspectionTypes(), nomTransaction.GetCatchZones());
+            Catches.Init(nomTransaction.GetFishes(), nomTransaction.GetCatchInspectionTypes(), nomTransaction.GetCatchZones(), nomTransaction.GetTurbotSizeGroups(), null);
             InspectedPerson.Init(countries);
             InspectionFiles.Init(nomTransaction.GetFileTypes(Constants.InspectionFileTypeCode));
 

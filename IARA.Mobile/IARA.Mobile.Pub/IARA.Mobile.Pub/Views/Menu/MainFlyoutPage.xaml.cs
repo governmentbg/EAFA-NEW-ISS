@@ -23,6 +23,7 @@ namespace IARA.Mobile.Pub.Views.Menu
     public partial class MainFlyoutPage : ContentPage, IFlyoutPage
     {
         private int versionTappedCount;
+
         public MainFlyoutPage(
             bool hasScientificFishingPermission,
             bool hasTicketPermission,

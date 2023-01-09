@@ -1,0 +1,108 @@
+﻿<div fxLayout="column" fxLayoutGap="5px" fxLayoutAlign="start stretch" fxFill>
+    <search-panel [translateService]="translationService">
+        <div [formGroup]="formGroup" fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start start">
+            <div fxLayout="row" fxFlexFill fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-select fxFlex="100"
+                           formControlName="applicationTypeControl"
+                           label="{{ 'print-configurations.filters-application-type' | tlTranslate }}"
+                           tooltipResourceName="print-configurations.filters-application-type-helper"
+                           [options]="applicationTypes"
+                           [isMultiple]="true">
+                </tl-select>
+            </div>
+            <div fxLayout="row" fxFlexFill fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-select fxFlex="66"
+                           formControlName="territoryUnitControl"
+                           label="{{ 'print-configurations.filters-territory-unit' | tlTranslate }}"
+                           tooltipResourceName="print-configurations.filters-territory-unit-helper"
+                           [options]="territoryUnits"
+                           [isMultiple]="true">
+                </tl-select>
+                <tl-input fxFlex="33"
+                          formControlName="userEgnLnchControl"
+                          tooltipResourceName="print-configurations.user-egn-lnch-helper"
+                          label="{{ 'print-configurations.filters-user-egn-lnch' | tlTranslate }}">
+                </tl-input>
+            </div>
+            <div fxLayout="row" fxFlexFill fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="66"
+                          formControlName="substituteReasonControl"
+                          label="{{ 'print-configurations.filters-substitute-reason' | tlTranslate }}"
+                          tooltipResourceName="print-configurations.filters-substitute-reason-helper">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="userNamesControl"
+                          label="{{ 'print-configurations.filters-user-names' | tlTranslate }}"
+                          tooltipResourceName="print-configurations.filters-user-names-helper">
+                </tl-input>
+            </div>
+        </div>
+    </search-panel>
+
+    <tl-card tooltipResourceName="print-configurations.register-table-card-helper">
+        <tl-card-content>
+            <tl-data-table [showAddButton]="canAddRecords"
+                           [showInactiveRecords]="canRestoreRecords"
+                           (addButtonClicked)="createPrintConfiguration()">
+                <data-column propertyName="applicationTypeName"
+                             [flexRate]="0.4"
+                             columnName="{{ 'print-configurations.application-type' | tlTranslate }}">
+                </data-column>
+                <data-column [flexRate]="0.2"
+                             propertyName="territoryUnitName"
+                             columnName="{{ 'print-configurations.territory-unit' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="signUserNames"
+                             [flexRate]="0.3"
+                             columnName="{{ 'print-configurations.sign-user' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="substituteUserNames"
+                             [flexRate]="0.3"
+                             columnName="{{ 'print-configurations.substitute-user' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="substituteReason"
+                             [flexRate]="0.2"
+                             columnName="{{ 'print-configurations.substitute-reason' | tlTranslate }}">
+                </data-column>
+                <data-template-column [flexRate]="0.3">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button icon="visibility"
+                                            (buttonClicked)="editPrintConfiguration(row.data.id, true)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'print-configurations.view-print-configuration' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.isActive 
+                                                    && canEditRecords 
+                                                    && ((row.data.applicationTypeName !== null && row.data.applicationTypeName !== undefined && row.data.applicationTypeName !== '')
+                                                         || (row.data.territoryUnitName !== null && row.data.territoryUnitName !== undefined && row.data.territoryUnitName !== ''))"
+                                            icon="edit"
+                                            (buttonClicked)="editPrintConfiguration(row.data.id, false)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'print-configurations.edit-print-configuration' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.isActive 
+                                                    && canDeleteRecords
+                                                     && ((row.data.applicationTypeName !== null && row.data.applicationTypeName !== undefined && row.data.applicationTypeName !== '')
+                                                         || (row.data.territoryUnitName !== null && row.data.territoryUnitName !== undefined && row.data.territoryUnitName !== ''))"
+                                            icon="delete"
+                                            (buttonClicked)="deletePrintConfiguration(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'print-configurations.delete-print-configuration' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="!row.data.isActive 
+                                                    && canRestoreRecords
+                                                    && ((row.data.applicationTypeName !== null && row.data.applicationTypeName !== undefined && row.data.applicationTypeName !== '')
+                                                         || (row.data.territoryUnitName !== null && row.data.territoryUnitName !== undefined && row.data.territoryUnitName !== ''))"
+                                            icon="restore"
+                                            (buttonClicked)="restorePrintConfiguration(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'print-configurations.restore-print-configuration' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+</div>

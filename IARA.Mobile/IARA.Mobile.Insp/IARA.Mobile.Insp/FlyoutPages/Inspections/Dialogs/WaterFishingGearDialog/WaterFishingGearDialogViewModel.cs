@@ -1,4 +1,8 @@
-﻿using IARA.Mobile.Application.Attributes;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
@@ -7,11 +11,6 @@ using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Base;
@@ -30,8 +29,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialo
         public WaterFishingGearDialogViewModel()
         {
             Save = CommandBuilder.CreateFrom(OnSave);
-            AddMark = CommandBuilder.CreateFrom(OnAddMark);
-            RemoveMark = CommandBuilder.CreateFrom<MarkViewModel>(OnRemoveMark);
 
             this.AddValidation();
         }
@@ -76,8 +73,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialo
         [TLRange(1, 10000, true)]
         public ValidState Height { get; set; }
 
-        public ValidStateValidatableTable<MarkViewModel> Marks { get; set; }
-
         [MaxLength(4000)]
         public ValidState Description { get; set; }
 
@@ -96,8 +91,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialo
         }
 
         public ICommand Save { get; }
-        public ICommand AddMark { get; }
-        public ICommand RemoveMark { get; }
 
         public override Task Initialize(object sender)
         {
@@ -127,20 +120,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialo
                     FishingGearType.Value = FishingGearTypes[0];
                 }
 
-                if (Edit.Dto.Marks?.Count > 0)
-                {
-                    foreach (FishingGearMarkDto mark in Edit.Dto.Marks)
-                    {
-                        MarkViewModel markViewModel = new MarkViewModel
-                        {
-                            Id = mark.Id
-                        };
-                        markViewModel.Number.Value = mark.Number;
-                        markViewModel.Status.Value = MarkStatuses.Find(f => f.Id == mark.StatusId);
-                        Marks.Value.Add(markViewModel);
-                    }
-                }
-
                 if (DialogType == ViewActivityType.Edit)
                 {
                     Validation.Force();
@@ -150,26 +129,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialo
             return Task.CompletedTask;
         }
 
-        private void OnAddMark()
-        {
-            MarkViewModel mark = new MarkViewModel();
-            mark.Status.Value = MarkStatuses[0];
-            Marks.Value.Add(mark);
-        }
-
-        private void OnRemoveMark(MarkViewModel mark)
-        {
-            Marks.Value.Remove(mark);
-        }
-
         private Task OnSave()
         {
             return HideDialog(new WaterFishingGearModel
             {
-                Marks = string.Join(", ", Marks
-                    .Select(f => f.Number.Value)
-                    .Where(f => !string.IsNullOrWhiteSpace(f))
-                    .ToArray()),
                 Type = FishingGearType.Value,
                 Dto = new WaterInspectionFishingGearDto
                 {
@@ -184,10 +147,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialo
                     IsTaken = IsTaken,
                     IsStored = IsStored,
                     StorageLocation = Location,
-                    Marks = Marks
-                        .Select(f => (FishingGearMarkDto)f)
-                        .Where(f => f != null)
-                        .ToList(),
                 }
             });
         }

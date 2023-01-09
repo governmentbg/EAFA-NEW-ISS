@@ -19,6 +19,7 @@ import { BuyerApplicationEditDTO } from '@app/models/generated/dtos/BuyerApplica
 import { BuyerChangeOfCircumstancesApplicationDTO } from '@app/models/generated/dtos/BuyerChangeOfCircumstancesApplicationDTO';
 import { CancellationHistoryEntryDTO } from '@app/models/generated/dtos/CancellationHistoryEntryDTO';
 import { BuyerTerminationApplicationDTO } from '@app/models/generated/dtos/BuyerTerminationApplicationDTO';
+import { BuyerTypesEnum } from '@app/enums/buyer-types.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -39,23 +40,23 @@ export class BuyersPublicService extends ApplicationsRegisterPublicBaseService i
         throw new Error('This method should not be called from the public app.');
     }
 
-    public edit(item: BuyerDTO, ignoreLogBookConflicts: boolean): Observable<number> {
+    public edit(item: BuyerDTO): Observable<number> {
         throw new Error('This method should not be called from the public app.');
     }
 
-    public editAndDownloadRegister(model: BuyerDTO, ignoreLogBookConflicts: boolean): Observable<boolean> {
+    public editAndDownloadRegister(model: BuyerDTO): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 
-    public add(item: BuyerDTO, ignoreLogBookConflicts: boolean): Observable<number> {
+    public add(item: BuyerDTO): Observable<number> {
         throw new Error('This method should not be called from the public app.');
     }
 
-    public addAndDownloadRegister(model: BuyerDTO, ignoreLogBookConflicts: boolean): Observable<boolean> {
+    public addAndDownloadRegister(model: BuyerDTO): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 
-    public downloadRegister(id: number): Observable<boolean> {
+    public downloadRegister(id: number, buyerType: BuyerTypesEnum): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 
@@ -186,7 +187,7 @@ export class BuyersPublicService extends ApplicationsRegisterPublicBaseService i
         throw new Error('This method should not be called from the public app.');
     }
 
-    public completeBuyerChangeOfCircumstancesApplication(buyer: BuyerEditDTO, ignoreLogBookConflicts: boolean): Observable<void> {
+    public completeBuyerChangeOfCircumstancesApplication(buyer: BuyerEditDTO): Observable<void> {
         throw new Error('This method should not be called from the public app.');
     }
 

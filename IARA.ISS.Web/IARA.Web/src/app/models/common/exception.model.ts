@@ -49,5 +49,10 @@ export enum ErrorCode {
     EmailExists = 30,
     SendFLUXSalesFailed = 31,
     AuanNumAlreadyExists = 32,
-    LogBookHasSubmittedPages = 33
+    LogBookHasSubmittedPages = 33,
+    ApplicationFileInvalid = 34,
+    InvalidPermitNumber = 35,
+    PrintConfigurationAlreadyExists = 36,
+    LogBookPageAlreadySubmittedOtherLogBook = 37,
+    MaxNumberMissingPagesExceeded = 38
 }

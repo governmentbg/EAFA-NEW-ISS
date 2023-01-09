@@ -1,5 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { IDeliveryService } from '@app/interfaces/common-app/delivery.interface';
 import { ApplicationDeliveryDTO } from '@app/models/generated/dtos/ApplicationDeliveryDTO';
@@ -15,6 +17,8 @@ import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatur
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { DeliveryTypesEnum } from '@app/enums/delivery-types.enum';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { ApplicationValidationErrorsEnum } from '@app/enums/application-validation-errors.enum';
 
 @Component({
     selector: 'register-delivery',
@@ -25,6 +29,23 @@ export class RegisterDeliveryComponent implements IDialogComponent, OnInit {
     public pageCode!: PageCodeEnum;
     public currentDate: Date = new Date();
     public isDialog: boolean = false;
+
+    public isEDeliveryChosen: boolean = false;
+    public refreshFileTypes: Subject<void> = new Subject<void>();
+    public pageCodesEnum: typeof PageCodeEnum = PageCodeEnum;
+    public deliveryForm: FormGroup = new FormGroup(
+        {
+            deliveryFilesControl: new FormControl()
+        },
+        [
+            this.userHasEDelivery(),
+            this.validUploadedFile()
+        ]);
+
+    private hasNoEDeliveryRegistrationError: boolean = false;
+    private hasInvalidFile: boolean = false;
+
+    private registerId!: number;
 
     private deliveryId!: number;
     private model!: ApplicationDeliveryDTO;
@@ -38,6 +59,13 @@ export class RegisterDeliveryComponent implements IDialogComponent, OnInit {
         this.nomenclatures = nomenclatures;
 
         this.buildForm();
+
+        this.deliveryForm.get('deliveryFilesControl')!.valueChanges.subscribe({
+            next: () => {
+                this.hasInvalidFile = false;
+                this.deliveryForm.updateValueAndValidity({ emitEvent: false });
+            }
+        });
     }
 
     public async ngOnInit(): Promise<void> {
@@ -46,6 +74,7 @@ export class RegisterDeliveryComponent implements IDialogComponent, OnInit {
                 next: (result: ApplicationDeliveryDTO) => {
                     this.model = result;
                     this.fillForm();
+                    this.refreshFileTypes.next();
                 }
             });
         }
@@ -63,6 +92,7 @@ export class RegisterDeliveryComponent implements IDialogComponent, OnInit {
         this.isPublicApp = data.isPublicApp;
         this.deliveryService = data.service;
         this.pageCode = data.pageCode;
+        this.registerId = data.registerId;
 
         if (buttons.rightSideActions !== undefined) {
             buttons.rightSideActions.push({
@@ -117,7 +147,7 @@ export class RegisterDeliveryComponent implements IDialogComponent, OnInit {
             next: async (data: ApplicationBaseDeliveryDTO) => {
                 const saveAndSendBtn: IActionInfo | undefined = this.rightSideButtons.find(x => x.id === 'save-and-send');
 
-                if (saveAndSendBtn !== undefined) {
+                if (saveAndSendBtn !== null && saveAndSendBtn !== undefined) {
                     if (data !== undefined && data !== null) {
                         const deliveryTypes: ApplicationDeliveryTypeDTO[] = await NomenclatureStore.instance.getNomenclature(
                             NomenclatureTypes.DeliveryTypes, this.nomenclatures.getDeliveryTypes.bind(this.nomenclatures), false
@@ -127,9 +157,11 @@ export class RegisterDeliveryComponent implements IDialogComponent, OnInit {
 
                         if (deliveryType !== undefined && deliveryType.code === DeliveryTypesEnum[DeliveryTypesEnum.eDelivery]) {
                             saveAndSendBtn.hidden = false;
+                            this.isEDeliveryChosen = true;
                         }
                         else {
                             saveAndSendBtn.hidden = true;
+                            this.isEDeliveryChosen = false;
                         }
                     }
                     else {
@@ -152,6 +184,8 @@ export class RegisterDeliveryComponent implements IDialogComponent, OnInit {
         this.form.get('sentDateControl')!.setValue(this.model.sentDate);
         this.form.get('deliveryDateControl')!.setValue(this.model.deliveryDate);
         this.form.get('referenceNumberControl')!.setValue(this.model.referenceNumber);
+
+        this.deliveryForm.get('deliveryFilesControl')!.setValue(this.model.files);
     }
 
     private fillModel(): ApplicationDeliveryDTO {
@@ -166,21 +200,75 @@ export class RegisterDeliveryComponent implements IDialogComponent, OnInit {
         this.model.referenceNumber = this.form.get('referenceNumberControl')!.value;
         this.model.isDelivered = this.model.deliveryDate !== undefined && this.model.deliveryDate !== null;
 
+        this.model.registerId = this.registerId;
+
+        this.model.files = this.deliveryForm.get('deliveryFilesControl')!.value;
+
         return this.model;
     }
 
     private fillModelAndSave(send: boolean, dialogClose: DialogCloseCallback): void {
         this.form.markAllAsTouched();
 
-        if (this.form.valid) {
+        if (this.isEDeliveryChosen && send) {
+            this.deliveryForm.get('deliveryFilesControl')!.markAsTouched();
+        }
+
+        if (this.isFormValid(send)) {
             this.fillModel();
             CommonUtils.sanitizeModelStrings(this.model);
 
             this.deliveryService.editDeliveryData(this.model, send).subscribe({
                 next: () => {
                     dialogClose(this.model);
+                },
+                error: (response: HttpErrorResponse) => {
+                    this.handleSaveErrorResponse(response);
                 }
             });
+        }
+    }
+
+    private isFormValid(send: boolean): boolean {
+        return this.form.valid
+            && (!send || this.deliveryForm.get('deliveryFilesControl')!.valid)
+            && (!this.isEDeliveryChosen || !this.hasNoEDeliveryRegistrationError);
+    }
+
+    private handleSaveErrorResponse(response: HttpErrorResponse): void {
+        if (response.error !== null && response.error !== undefined) {
+            const messages: string[] = response.error.messages;
+            
+            if (messages.find(message => message === ApplicationValidationErrorsEnum[ApplicationValidationErrorsEnum.NoEDeliveryRegistration])) {
+                this.hasNoEDeliveryRegistrationError = true;
+                this.deliveryForm.updateValueAndValidity({ emitEvent: false });
+            }
+            else if ((response.error as ErrorModel)?.code === ErrorCode.ApplicationFileInvalid) {
+                this.hasInvalidFile = true;
+                this.deliveryForm.updateValueAndValidity({ emitEvent: false });
+            }
+        }
+    }
+
+    private userHasEDelivery(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (this.hasNoEDeliveryRegistrationError) {
+                return { 'noEDeliveryRegistration': true };
+            }
+            else {
+                return null;
+            }
+        }
+    }
+
+    private validUploadedFile(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (this.hasInvalidFile) {
+                return { 'userUploadedInvalidFile': true };
+            }
+            else {
+                return null;
+            }
         }
     }
 }

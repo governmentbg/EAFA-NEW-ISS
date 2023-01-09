@@ -51,8 +51,6 @@ export class AquacultureDeregistrationComponent implements OnInit, AfterViewInit
     public expectedResults: AquacultureDeregistrationRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
 
-    public paymentInformation: ApplicationPaymentInformationDTO | undefined;
-
     public isPublicApp: boolean = false;
     public isOnlineApplication: boolean = false;
     public isEditing: boolean = false;
@@ -111,7 +109,6 @@ export class AquacultureDeregistrationComponent implements OnInit, AfterViewInit
 
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
-                        this.paymentInformation = application.paymentInformation;
                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
@@ -155,7 +152,6 @@ export class AquacultureDeregistrationComponent implements OnInit, AfterViewInit
                             this.isDraft = application.isDraft!;
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
-                            this.paymentInformation = application.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
 
@@ -272,6 +268,7 @@ export class AquacultureDeregistrationComponent implements OnInit, AfterViewInit
             aquacultureControl: new FormControl(null, Validators.required),
             reasonControl: new FormControl(null, Validators.required),
             deliveryDataControl: new FormControl(),
+            applicationPaymentInformationControl: new FormControl(),
             filesControl: new FormControl(null)
         });
     }
@@ -292,6 +289,10 @@ export class AquacultureDeregistrationComponent implements OnInit, AfterViewInit
 
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+            }
+
+            if (this.isPaid === true) {
+                this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
             }
 
             if (this.showRegiXData) {
@@ -336,6 +337,10 @@ export class AquacultureDeregistrationComponent implements OnInit, AfterViewInit
 
             if (this.hasDelivery === true) {
                 this.model.deliveryData = this.form.get('deliveryDataControl')!.value;
+            }
+
+            if (this.isPaid === true) {
+                this.model.paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
             }
         }
     }
@@ -410,8 +415,8 @@ export class AquacultureDeregistrationComponent implements OnInit, AfterViewInit
     }
 
     private shouldHidePaymentData(): boolean {
-        return this.paymentInformation?.paymentType === null
-            || this.paymentInformation?.paymentType === undefined
-            || this.paymentInformation?.paymentType === '';
+        return (this.model as AquacultureDeregistrationApplicationDTO)?.paymentInformation?.paymentType === null
+            || (this.model as AquacultureDeregistrationApplicationDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as AquacultureDeregistrationApplicationDTO)?.paymentInformation?.paymentType === '';
     }
 }

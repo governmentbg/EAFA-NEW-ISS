@@ -23,16 +23,6 @@ export class RecreationalFishingCommonService {
         this.http = requestService;
     }
 
-    public getTicket(area: AreaTypes, controller: string, id: number, getRegiXData: boolean): Observable<RecreationalFishingTicketDTO> {
-        const params = new HttpParams()
-            .append('id', id.toString())
-            .append('getRegiXData', getRegiXData.toString());
-        return this.http.get(area, controller, 'GetTicket', {
-            httpParams: params,
-            responseTypeCtr: RecreationalFishingTicketDTO
-        });
-    }
-
     public addTickets(area: AreaTypes, controller: string, tickets: RecreationalFishingTicketsDTO): Observable<RecreationalFishingAddTicketsResultDTO> {
         return this.http.post(area, controller, 'AddTickets', tickets, {
             properties: new RequestProperties({ asFormData: true }),

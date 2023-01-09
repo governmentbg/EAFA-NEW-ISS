@@ -46,6 +46,7 @@
                     <tl-autocomplete fxFlex="50"
                                      formControlName="shipControl"
                                      [options]="ships"
+                                     [getControlErrorLabelText]="shipControlErrorLabelTest.bind(this)"
                                      tooltipResourceName="fishing-capacity.reduce-ship-from-register-helper"
                                      label="{{ 'fishing-capacity.reduce-ship-from-register' | tlTranslate }}">
                     </tl-autocomplete>
@@ -130,10 +131,13 @@
     </tl-expansion-panel>
 
     <!-- Информация за плащане -->
-    <tl-expansion-panel *ngIf="isPaid && !showOnlyRegiXData && paymentInformation !== undefined && paymentInformation !== null"
+    <tl-expansion-panel *ngIf="isPaid && !showOnlyRegiXData"
                         title="{{ 'fishing-capacity.reduce-payment-information' | tlTranslate }}"
                         tooltipResourceName="fishing-capacity.reduce-payment-information-helper">
-        <payment-information [paymentData]="paymentInformation" [hideBasicInfo]="hideBasicPaymentInfo"></payment-information>
+        <payment-information formControlName="applicationPaymentInformationControl"
+                             [hideBasicInfo]="hideBasicPaymentInfo" 
+                             [isOnlineApplication]="isOnlineApplication">
+        </payment-information>
     </tl-expansion-panel>
 
     <!-- Файлове -->

@@ -1,6 +1,5 @@
-﻿<div fxLayout="column" fxFlexFill fxLayoutGap="1em">
-    <tl-data-table fxFlexFill
-                   #logBooksTable
+﻿<div fxLayout="column" fxLayoutGap="1em">
+    <tl-data-table #logBooksTable
                    [rows]="logBooks"
                    [isRemote]="false"
                    [isSoftDeletable]="true"
@@ -11,7 +10,8 @@
                    (activeRecordChanged)="addEditLogBook($event)">
         <div *ngIf="logBookGroup === logBookGroupsEnum.Ship 
                     && permitLicenseId !== null 
-                    && permitLicenseId !== undefined" 
+                    && permitLicenseId !== undefined
+                    && !isReadonly" 
              datatable-add-buttons 
              fxLayout="row" 
              fxLayoutGap="1em">

@@ -140,13 +140,14 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
             List<SelectNomenclatureDto> catchTypes = nomTransaction.GetCatchInspectionTypes();
             List<CatchZoneNomenclatureDto> catchAreas = nomTransaction.GetCatchZones();
             List<SelectNomenclatureDto> associations = nomTransaction.GetAssociations();
+            List<SelectNomenclatureDto> turbotSizeGroups = nomTransaction.GetTurbotSizeGroups();
 
             InspectionGeneralInfo.Init();
             InspectedShip.Init(countries, vesselTypes, catchAreas);
-            InspectedShipCatches.Init(fishTypes, catchTypes, catchAreas);
+            InspectedShipCatches.Init(fishTypes, catchTypes, catchAreas, turbotSizeGroups);
             AcceptingShip.Init(countries, vesselTypes, catchAreas);
-            AcceptingShipCatches.Init(fishTypes, catchTypes, catchAreas);
-            TranshippedCatches.Init(fishTypes, catchTypes, catchAreas);
+            AcceptingShipCatches.Init(fishTypes, catchTypes, catchAreas, turbotSizeGroups);
+            TranshippedCatches.Init(fishTypes, catchTypes, catchAreas, turbotSizeGroups, null);
 
             InspectedShip.Toggles.Value.AddRange(checkTypes
                 .Where(f => f.Code.StartsWith(Constants.ShipBase) && !f.Code.StartsWith(Constants.ObjectCheckBase))
@@ -286,6 +287,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
                             Personnel = InspectedShip,
                             LogBooks = InspectedShipChecks.LogBooks,
                             PermitLicenses = InspectedShipChecks.PermitLicenses,
+                            Permits = InspectedShipChecks.Permits,
                             Checks = InspectedShipChecks.Toggles
                                 .Select(f => (InspectionCheckDto)f)
                                 .Where(f => f != null)
@@ -304,6 +306,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
                             Personnel = AcceptingShip,
                             LogBooks = AcceptingShipChecks.LogBooks,
                             PermitLicenses = AcceptingShipChecks.PermitLicenses,
+                            Permits = AcceptingShipChecks.Permits,
                             Checks = AcceptingShipChecks.Toggles
                                 .Select(f => (InspectionCheckDto)f)
                                 .Where(f => f != null)

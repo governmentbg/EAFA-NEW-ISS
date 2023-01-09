@@ -166,13 +166,6 @@
                     * {{ 'buyers-and-sales-centers.choose-at-least-one-registration' | tlTranslate }}
                 </mat-error>
             </div>
-            <div fxLayout="row" fxLayoutGap="1em">
-                <tl-input fxFlex="25"
-                          formControlName="annualTurnoverControl"
-                          label="{{ 'buyers-and-sales-centers.annual-turnover' | tlTranslate }}"
-                          tooltipResourceName="buyers-and-sales-centers.annual-turnover-helper">
-                </tl-input>
-            </div>
             <!-- Основни данни за магазин/помещение, ако има такова -->
             <tl-card *ngIf="editForm.get('hasPremiseOrVehicleGroup.hasUtilityControl')?.value"
                      tooltipResourceName="buyers-and-sales-centers.shop-panel-helper"
@@ -310,6 +303,15 @@
                     </div>
                 </tl-card-content>
             </tl-card>
+
+            <!-- Годишен оборот -->
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="annualTurnoverControl"
+                          label="{{ 'buyers-and-sales-centers.annual-turnover' | tlTranslate }}"
+                          tooltipResourceName="buyers-and-sales-centers.annual-turnover-helper">
+                </tl-input>
+            </div>
 
             <!-- Основни данни за превозно средство, ако има такова -->
             <tl-card *ngIf="editForm.get('hasPremiseOrVehicleGroup.hasVehicleControl')?.value"
@@ -599,26 +601,15 @@
         </div>
     </tl-expansion-panel>
 
-    <!-- Дневници при регистров запис -->
-    <tl-expansion-panel *ngIf="!isApplication"
-                        title="{{ 'buyers-and-sales-centers.log-books-panel' | tlTranslate }}"
-                        tooltipResourceName="buyers-and-sales-centers.log-helper"
-                        [validityChecker]="editForm">
-        <log-books fxFlex="100"
-                   formControlName="logBooksControl"
-                   validityChecker
-                   [isReadonly]="isReadonly || viewMode"
-                   [getLogBookSimpleAuditMethod]="service.getLogBookAudit.bind(service)"
-                   [logBookGroup]="logBookGroup"
-                   [showInactivePagesAndDocuments]="!isPublicApp">
-        </log-books>
-    </tl-expansion-panel>
-
     <!-- Информация за плащане в заявлението -->
-    <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData && applicationPaymentInformation !== null && applicationPaymentInformation !== undefined"
+    <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData"
                         title="{{ 'buyers-and-sales-centers.payment-information-panel' | tlTranslate }}"
                         [validityChecker]="editForm">
-        <payment-information fxFlex="100" [paymentData]="applicationPaymentInformation" [hideBasicInfo]="hideBasicPaymentInfo"></payment-information>
+        <payment-information fxFlex="100" 
+                             formControlName="applicationPaymentInformationControl"
+                             [hideBasicInfo]="hideBasicPaymentInfo" 
+                             [isOnlineApplication]="isOnlineApplication">
+        </payment-information>
     </tl-expansion-panel>
 
     <!-- Информация за начин на връчване в заявлението -->

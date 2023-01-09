@@ -50,8 +50,6 @@ export class BuyerTerminationComponent implements OnInit, AfterViewInit, IDialog
     public expectedResults: BuyerTerminationRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
 
-    public paymentInformation: ApplicationPaymentInformationDTO | undefined;
-
     public isEditing: boolean = false;
     public showOnlyRegiXData: boolean = false;
     public showRegiXData: boolean = false;
@@ -115,7 +113,6 @@ export class BuyerTerminationComponent implements OnInit, AfterViewInit, IDialog
 
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
-                        this.paymentInformation = application.paymentInformation;
                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
@@ -160,7 +157,6 @@ export class BuyerTerminationComponent implements OnInit, AfterViewInit, IDialog
 
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
-                            this.paymentInformation = application.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.isOnlineApplication = application.isOnlineApplication!;
                             this.refreshFileTypes.next();
@@ -292,6 +288,7 @@ export class BuyerTerminationComponent implements OnInit, AfterViewInit, IDialog
             submittedForControl: new FormControl(null),
             reasonControl: new FormControl(null, Validators.required),
             deliveryDataControl: new FormControl(),
+            applicationPaymentInformationControl: new FormControl(),
             filesControl: new FormControl(null)
         });
 
@@ -324,6 +321,10 @@ export class BuyerTerminationComponent implements OnInit, AfterViewInit, IDialog
 
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+            }
+
+            if (this.isPaid === true) {
+                this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
             }
 
             if (this.showRegiXData) {
@@ -375,6 +376,10 @@ export class BuyerTerminationComponent implements OnInit, AfterViewInit, IDialog
 
             if (this.hasDelivery === true) {
                 this.model.deliveryData = this.form.get('deliveryDataControl')!.value;
+            }
+
+            if (this.isPaid === true) {
+                this.model.paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
             }
         }
     }
@@ -446,8 +451,8 @@ export class BuyerTerminationComponent implements OnInit, AfterViewInit, IDialog
     }
 
     private shouldHidePaymentData(): boolean {
-        return this.paymentInformation?.paymentType === null
-            || this.paymentInformation?.paymentType === undefined
-            || this.paymentInformation?.paymentType === '';
+        return (this.model as BuyerTerminationApplicationDTO)?.paymentInformation?.paymentType === null
+            || (this.model as BuyerTerminationApplicationDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as BuyerTerminationApplicationDTO)?.paymentInformation?.paymentType === '';
     }
 }

@@ -47,12 +47,14 @@
                 <tl-input fxFlex="20"
                           formControlName="startPageNumberControl"
                           label="{{ 'catches-and-sales.log-book-start-page-number' | tlTranslate }}"
-                          tooltipResourceName="catches-and-sales.log-book-start-page-number-helper">
+                          tooltipResourceName="catches-and-sales.log-book-start-page-number-helper"
+                          [readonly]="isForRenewal">
                 </tl-input>
                 <tl-input fxFlex="20"
                           formControlName="endPageNumberControl"
                           label="{{ 'catches-and-sales.log-book-end-page-number' | tlTranslate }}"
-                          tooltipResourceName="catches-and-sales.log-book-end-page-number-helper">
+                          tooltipResourceName="catches-and-sales.log-book-end-page-number-helper"
+                          [readonly]="isForRenewal">
                 </tl-input>
                 <tl-input fxFlex="20"
                           formControlName="priceControl"

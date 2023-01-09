@@ -19,9 +19,9 @@ import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclature
 import { TariffNomenclatureDTO } from '@app/models/generated/dtos/TariffNomenclatureDTO';
 import { InspectionObservationToolNomenclatureDTO } from '@app/models/generated/dtos/InspectionObservationToolNomenclatureDTO';
 import { InspectionVesselActivityNomenclatureDTO } from '@app/models/generated/dtos/InspectionVesselActivityNomenclatureDTO';
-import { ShipsUtils } from '../../shared/utils/ships.utils';
-import { ShipNomenclatureFlags } from '../../enums/ship-nomenclature-flags.enum';
-import { ShipNomenclatureChangeFlags } from '../../enums/ship-nomenclature-change-flags.enum';
+import { ShipsUtils } from '@app/shared/utils/ships.utils';
+import { ShipNomenclatureFlags } from '@app/enums/ship-nomenclature-flags.enum';
+import { ShipNomenclatureChangeFlags } from '@app/enums/ship-nomenclature-change-flags.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -134,6 +134,10 @@ export class CommonNomenclatures {
 
     public getOnlinePaymentTypes(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetOnlinePaymentTypes', { responseTypeCtr: NomenclatureDTO });
+    }
+
+    public getPaymentStatuses(): Observable<NomenclatureDTO<number>[]> {
+        return this.requestService.get(this.area, this.controller, 'GetPaymentStatuses', { responseTypeCtr: NomenclatureDTO });
     }
 
     public getGenders(): Observable<NomenclatureDTO<number>[]> {

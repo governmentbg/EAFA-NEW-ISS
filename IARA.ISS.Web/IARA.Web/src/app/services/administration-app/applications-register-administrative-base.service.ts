@@ -2,8 +2,8 @@
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
-import { IApplicationsRegisterService } from '../../interfaces/administration-app/applications-register.interface';
-import { IApplicationRegister } from '../../interfaces/common-app/application-register.interface';
+import { IApplicationsRegisterService } from '@app/interfaces/administration-app/applications-register.interface';
+import { IApplicationRegister } from '@app/interfaces/common-app/application-register.interface';
 import { GridRequestModel } from '@app/models/common/grid-request.model';
 import { GridResultModel } from '@app/models/common/grid-result.model';
 import { ApplicationRegisterDTO } from '@app/models/generated/dtos/ApplicationRegisterDTO';
@@ -18,6 +18,7 @@ import { RequestProperties } from '@app/shared/services/request-properties';
 import { RequestService } from '@app/shared/services/request.service';
 import { BaseAuditService } from '../common-app/base-audit.service';
 import { ApplicationsProcessingService } from './applications-processing.service';
+import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
 
 export abstract class ApplicationsRegisterAdministrativeBaseService extends BaseAuditService implements IApplicationsRegisterService {
     protected readonly applicationsProcessingController: string = 'ApplicationsProcessing';
@@ -91,6 +92,17 @@ export abstract class ApplicationsRegisterAdministrativeBaseService extends Base
         return this.requestService.post(this.area, this.controller, 'AssignApplicationViaAccessCode', null, { httpParams: params });
     }
 
+    public assignApplicationViaUserId(applicationId: number, userId: number): Observable<AssignedApplicationInfoDTO> {
+        const params: HttpParams = new HttpParams()
+            .append('applicationId', applicationId.toString())
+            .append('userId', userId.toString());
+
+        return this.requestService.post(this.area, this.applicationsProcessingController, 'AssignApplicationViaUserId', undefined, {
+            httpParams: params,
+            responseTypeCtr: AssignedApplicationInfoDTO
+        });
+    }
+
     public downloadFile(fileId: number, fileName: string): Observable<boolean> {
         const params = new HttpParams().append('id', fileId.toString());
         return this.requestService.download(this.area, this.controller, 'DownloadFile', fileName, { httpParams: params });
@@ -106,6 +118,18 @@ export abstract class ApplicationsRegisterAdministrativeBaseService extends Base
 
     public getApplicationSources(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetApplicationSources', { responseTypeCtr: NomenclatureDTO });
+    }
+
+    public getUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        return this.requestService.get(this.area, this.applicationsProcessingController, 'GetUsersNomenclature', {
+            responseTypeCtr: PrintUserNomenclatureDTO
+        });
+    }
+
+    public getMyTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        return this.requestService.get(this.area, this.applicationsProcessingController, 'GetMyTerritoryUnitUsersNomenclature', {
+            responseTypeCtr: PrintUserNomenclatureDTO
+        });
     }
 
     public getApplicationHistorySimpleAudit(id: number): Observable<SimpleAuditDTO> {

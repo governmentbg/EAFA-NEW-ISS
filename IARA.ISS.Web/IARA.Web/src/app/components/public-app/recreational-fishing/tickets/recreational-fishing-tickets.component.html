@@ -93,13 +93,16 @@
                                                     tooltipText="{{ 'recreational-fishing.edit-ticket' | tlTranslate }}"
                                                     (buttonClicked)="editTicket(ticket, false)">
                                     </tl-icon-button>
-                                    <tl-icon-button *ngIf="ticket.applicationStatus === applicationStatuses.CONFIRMED_ISSUED_TICKET && ticket.isExpired"
+                                    <tl-icon-button *ngIf="ticket.applicationStatus === applicationStatuses.CONFIRMED_ISSUED_TICKET 
+                                                        && ticket.ticketStatus === ticketStatuses.EXPIRED"
                                                     icon="fa-ticket-alt"
                                                     iconClass="accent-color"
                                                     tooltipText="{{ 'recreational-fishing.renew-ticket' | tlTranslate }}"
                                                     (buttonClicked)="renewTicket(ticket)">
                                     </tl-icon-button>
-                                    <tl-icon-button icon="fa-download"
+                                    <tl-icon-button *ngIf="ticket.ticketStatus === ticketStatuses.APPROVED 
+                                                        || ticket.ticketStatus === ticketStatuses.ISSUED"
+                                                    icon="fa-download"
                                                     iconClass="accent-color"
                                                     tooltipText="{{ 'recreational-fishing.download-ticket' | tlTranslate }}"
                                                     (buttonClicked)="downloadTicket(ticket)">

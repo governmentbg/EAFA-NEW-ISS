@@ -14,10 +14,10 @@ import { BuyerTypesEnum } from '@app/enums/buyer-types.enum';
 export interface IBuyersService extends IApplicationsActionsService {
     getAll(request: GridRequestModel<BuyersFilters>): Observable<GridResultModel<BuyerDTO>>;
     get(id: number): Observable<BuyerEditDTO>;
-    edit(item: BuyerDTO, ignoreLogBookConflicts: boolean): Observable<number>;
-    editAndDownloadRegister(model: BuyerEditDTO, ignoreLogBookConflicts: boolean): Observable<boolean>;
-    add(item: BuyerDTO, ignoreLogBookConflicts: boolean): Observable<number>;
-    addAndDownloadRegister(model: BuyerEditDTO, ignoreLogBookConflicts: boolean): Observable<boolean>;
+    edit(item: BuyerDTO): Observable<number>;
+    editAndDownloadRegister(model: BuyerEditDTO): Observable<boolean>;
+    add(item: BuyerDTO): Observable<number>;
+    addAndDownloadRegister(model: BuyerEditDTO): Observable<boolean>;
     downloadRegister(id: number, buyerType: BuyerTypesEnum): Observable<boolean>;
     updateBuyerStatus(buyerId: number, status: CancellationHistoryEntryDTO, applicationId?: number): Observable<void>;
 
@@ -28,7 +28,7 @@ export interface IBuyersService extends IApplicationsActionsService {
 
     getBuyerFromChangeOfCircumstancesApplication(applicationId: number): Observable<BuyerEditDTO>;
     getBuyerFromTerminationApplication(applicationId: number): Observable<BuyerEditDTO>;
-    completeBuyerChangeOfCircumstancesApplication(buyer: BuyerEditDTO, ignoreLogBookConflicts: boolean): Observable<void>;
+    completeBuyerChangeOfCircumstancesApplication(buyer: BuyerEditDTO): Observable<void>;
 
     getPremiseUsageDocumentAudit(id: number): Observable<SimpleAuditDTO>;
     getLogBookAudit(id: number): Observable<SimpleAuditDTO>;

@@ -58,6 +58,12 @@ export class CommercialFishingPermitLicenseRegisterDTO {
     @StrictlyTyped(Number)
     public pageCode?: PageCodeEnum;
 
+    @StrictlyTyped(Boolean)
+    public isSubmittedForPerson?: boolean;
+
+    @StrictlyTyped(Boolean)
+    public isForOnlineLogBooks?: boolean;
+
     @StrictlyTyped(CommercialFishingLogbookRegisterDTO)
     public logbooks?: CommercialFishingLogbookRegisterDTO[];
 }

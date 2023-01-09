@@ -1,7 +1,6 @@
 ﻿import { Component, Input, OnInit, Self } from '@angular/core';
-import { AbstractControl, FormArray, FormControl, NgControl, ValidationErrors, Validator } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, NgControl } from '@angular/forms';
 import { AuanWitnessDTO } from '@app/models/generated/dtos/AuanWitnessDTO';
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 
 @Component({
@@ -13,15 +12,10 @@ export class AuanWitnessesArrayComponent extends CustomFormControl<AuanWitnessDT
 
     public isDisabled: boolean = false;
 
-    private translationService: FuseTranslationLoaderService;
-
     public constructor(
-        @Self() ngControl: NgControl,
-        translate: FuseTranslationLoaderService
+        @Self() ngControl: NgControl
     ) {
         super(ngControl);
-
-        this.translationService = translate;
     }
 
     public ngOnInit(): void {

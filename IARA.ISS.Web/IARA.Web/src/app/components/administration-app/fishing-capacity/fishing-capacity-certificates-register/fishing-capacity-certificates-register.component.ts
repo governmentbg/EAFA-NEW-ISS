@@ -448,7 +448,8 @@ export class FishingCapacityCertificatesRegisterComponent implements AfterViewIn
                 deliveryId: certificate.deliveryId,
                 isPublicApp: false,
                 service: this.deliveryService,
-                pageCode: PageCodeEnum.AquaFarmReg
+                pageCode: certificate.pageCode,
+                registerId: certificate.id
             }),
             headerCancelButton: {
                 cancelBtnClicked: this.closeDeliveryDataDialogBtnClicked.bind(this)

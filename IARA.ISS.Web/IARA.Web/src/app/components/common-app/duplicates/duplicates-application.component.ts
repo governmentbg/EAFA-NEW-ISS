@@ -34,6 +34,9 @@ import { BuyerDuplicateDataDTO } from '@app/models/generated/dtos/BuyerDuplicate
 import { PermitDuplicateDataDTO } from '@app/models/generated/dtos/PermitDuplicateDataDTO';
 import { PermitLicenseDuplicateDataDTO } from '@app/models/generated/dtos/PermitLicenseDuplicateDataDTO';
 import { QualifiedFisherDuplicateDataDTO } from '@app/models/generated/dtos/QualifiedFisherDuplicateDataDTO';
+import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 
 @Component({
     selector: 'duplicates-application',
@@ -71,8 +74,6 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
     public notifier: Notifier = new Notifier();
     public expectedResults: DuplicatesApplicationRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
-
-    public paymentInformation: ApplicationPaymentInformationDTO | undefined;
 
     public isPublicApp: boolean = false;
     public isOnlineApplication: boolean = false;
@@ -112,8 +113,11 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
 
     private model!: DuplicatesApplicationDTO | DuplicatesApplicationRegixDataDTO | DuplicatesRegisterEditDTO;
 
-    public constructor() {
+    private readonly translate: FuseTranslationLoaderService;
+
+    public constructor(translate: FuseTranslationLoaderService) {
         this.isPublicApp = IS_PUBLIC_APP;
+        this.translate = translate;
 
         this.expectedResults = new DuplicatesApplicationRegixDataDTO({
             submittedBy: new ApplicationSubmittedByRegixDataDTO(),
@@ -151,7 +155,6 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
 
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
-                        this.paymentInformation = application.paymentInformation;
                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
@@ -216,7 +219,6 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
                             this.isOnlineApplication = application.isOnlineApplication!;
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
-                            this.paymentInformation = application.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
 
@@ -390,13 +392,13 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
         return result;
     }
 
-
     private buildForm(): void {
         this.form = new FormGroup({
             submittedByControl: new FormControl(null),
             submittedForControl: new FormControl(null),
             reasonControl: new FormControl(null, [Validators.required, Validators.maxLength(4000)]),
             deliveryDataControl: new FormControl(),
+            applicationPaymentInformationControl: new FormControl(),
             filesControl: new FormControl(null)
         });
 
@@ -485,6 +487,10 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
 
         if (this.hasDelivery === true) {
             this.form.get('deliveryDataControl')!.setValue(model.deliveryData);
+        }
+
+        if (this.isPaid === true) {
+            this.form.get('applicationPaymentInformationControl')!.setValue((this.model as DuplicatesApplicationDTO).paymentInformation);
         }
 
         this.form.get('filesControl')!.setValue(model.files);
@@ -611,6 +617,10 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
             model.deliveryData = this.form.get('deliveryDataControl')!.value;
         }
 
+        if (this.isPaid === true) {
+            (this.model as DuplicatesApplicationDTO).paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
+        }
+
         model.files = this.form.get('filesControl')!.value;
     }
 
@@ -716,8 +726,8 @@ export class DuplicatesApplicationComponent implements OnInit, AfterViewInit, ID
     }
 
     private shouldHidePaymentData(): boolean {
-        return this.paymentInformation?.paymentType === null
-            || this.paymentInformation?.paymentType === undefined
-            || this.paymentInformation?.paymentType === '';
+        return (this.model as DuplicatesApplicationDTO)?.paymentInformation?.paymentType === null
+            || (this.model as DuplicatesApplicationDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as DuplicatesApplicationDTO)?.paymentInformation?.paymentType === '';
     }
 }

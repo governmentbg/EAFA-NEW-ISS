@@ -12,6 +12,7 @@ namespace IARA.Mobile.Pub.Application.DTObjects.ScientificFishing.LocalDb
         public DateTime DateOfOuting { get; set; }
         public string WaterArea { get; set; }
         public List<SFCatchDto> Catches { get; set; }
+        public bool IsActive { get; set; } = true;
 
         public void Mapping(AutoMapper.Profile profile)
         {

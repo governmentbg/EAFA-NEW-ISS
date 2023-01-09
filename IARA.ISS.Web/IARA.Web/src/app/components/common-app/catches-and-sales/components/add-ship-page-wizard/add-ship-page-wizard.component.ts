@@ -113,7 +113,7 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
         if (event.previouslySelectedIndex === 0 && event.selectedIndex === 1) {
             if (this.pageNumberControl.valid) {
                 const cached: ShipLogBookPageEditDTO[] | undefined = this.dataCache.get(this.pageNumberControl.value);
-                
+
                 if (cached === undefined || cached === null) {
                     this.subscriptions.push(
                         this.service.getNewShipLogBookPages(this.pageNumberControl.value, this.logBookId).subscribe({
@@ -145,6 +145,15 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
                                         duration: RequestProperties.DEFAULT.showExceptionDurationErr,
                                         panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
                                     });
+                                }
+                                else if (error?.code === ErrorCode.LogBookPageAlreadySubmittedOtherLogBook) {
+                                    this.snackbar.open(
+                                        `${this.translate.getValue('catches-and-sales.ship-log-book-page-already-submitted-other-logbook-error')}: ${error.messages[0]}`,
+                                        undefined,
+                                        {
+                                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                        });
                                 }
 
                                 event.selectedStep.completed = false;
@@ -182,7 +191,7 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
 
     private fillPermitLicensesNomenclature(data: ShipLogBookPageEditDTO[]): void {
         this.permitLicenses = [];
-        
+
         for (const page of data) {
             this.permitLicenses.push(new LogBookPermitLicenseNomenclatureDTO({
                 value: page.logBookPermitLicenseId,

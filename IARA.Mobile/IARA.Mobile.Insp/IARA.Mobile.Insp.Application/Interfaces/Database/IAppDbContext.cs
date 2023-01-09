@@ -13,6 +13,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Database
         TLTableQuery<Buyer> Buyers { get; }
         TLTableQuery<NFish> NFishes { get; }
         TLTableQuery<Person> Persons { get; }
+        TLTableQuery<Permit> Permits { get; }
         TLTableQuery<NGender> NGenders { get; }
         TLTableQuery<LogBook> LogBooks { get; }
         TLTableQuery<NFishSex> NFishSex { get; }
@@ -25,6 +26,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Database
         TLTableQuery<NFleetType> NFleetTypes { get; }
         TLTableQuery<NCatchZone> NCatchZones { get; }
         TLTableQuery<Inspection> Inspections { get; }
+        TLTableQuery<NPermitType> NPermitTypes { get; }
         TLTableQuery<FishingGear> FishingGears { get; }
         TLTableQuery<NVesselType> NVesselTypes { get; }
         TLTableQuery<NPermission> NPermissions { get; }
@@ -41,6 +43,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Database
         TLTableQuery<NInspectionType> NInspectionTypes { get; }
         TLTableQuery<FishingGearMark> FishingGearMarks { get; }
         TLTableQuery<RecentInspector> RecentInspectors { get; }
+        TLTableQuery<NTurbotSizeGroup> NTurbotSizeGroups { get; }
         TLTableQuery<NInspectionState> NInspectionStates { get; }
         TLTableQuery<NObservationTool> NObservationTools { get; }
         TLTableQuery<NShipAssociation> NShipAssociations { get; }

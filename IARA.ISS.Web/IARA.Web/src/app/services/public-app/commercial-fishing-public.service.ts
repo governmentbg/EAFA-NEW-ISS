@@ -29,7 +29,6 @@ import { OverlappingLogBooksParameters } from '@app/shared/components/overlappin
 import { RangeOverlappingLogBooksDTO } from '@app/models/generated/dtos/RangeOverlappingLogBooksDTO';
 import { CatchesAndSalesCommonService } from '@app/services/common-app/catches-and-sales-common.service';
 
-
 @Injectable({
     providedIn: 'root'
 })

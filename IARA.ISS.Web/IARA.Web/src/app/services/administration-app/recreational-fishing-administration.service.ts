@@ -32,6 +32,7 @@ import { RecreationalFishingTicketDeclarationParametersDTO } from '@app/models/g
 import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dtos/RecreationalFishingAddTicketsResultDTO';
 import { RecreationalFishingTicketDuplicateDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDuplicateDTO';
+import { ReasonDTO } from '@app/models/generated/dtos/ReasonDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -72,11 +73,36 @@ export class RecreationalFishingAdministrationService extends ApplicationsRegist
     }
 
     public getTicket(id: number, getRegiXData: boolean): Observable<RecreationalFishingTicketDTO> {
-        return this.commonService.getTicket(this.area, this.controller, id, getRegiXData);
+        const params = new HttpParams()
+            .append('id', id.toString())
+            .append('getRegiXData', getRegiXData.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetTicket', {
+            httpParams: params,
+            responseTypeCtr: RecreationalFishingTicketDTO
+        });
     }
 
     public editTicket(ticket: RecreationalFishingTicketDTO): Observable<void> {
         return this.commonService.editTicket(this.area, this.controller, ticket);
+    }
+
+    public cancelTicket(id: number, reason: string): Observable<void> {
+        const params = new HttpParams().append('id', id.toString());
+        const reasonData: ReasonDTO = new ReasonDTO({ reason: reason });
+
+        return this.requestService.patch(this.area, this.controller, 'CancelTicket', reasonData, {
+            httpParams: params
+        });
+    }
+
+    public cancelTicketRegister(id: number, reason: string): Observable<void> {
+        const params = new HttpParams().append('id', id.toString());
+        const reasonData: ReasonDTO = new ReasonDTO({ reason: reason });
+
+        return this.requestService.patch(this.area, this.controller, 'CancelTicketRegister', reasonData, {
+            httpParams: params
+        });
     }
 
     public getRegixData(id: number): Observable<RegixChecksWrapperDTO<RecreationalFishingTicketBaseRegixDataDTO>> {

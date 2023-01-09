@@ -21,6 +21,7 @@ import { RecreationalFishingAssociationEditDTO } from '@app/models/generated/dto
 import { RecreationalFishingPossibleAssociationLegalDTO } from '@app/models/generated/dtos/RecreationalFishingPossibleAssociationLegalDTO';
 import { RecreationalFishingAssociationsFilters } from '@app/models/generated/filters/RecreationalFishingAssociationsFilters';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
+import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -156,7 +157,19 @@ export class RecreationalFishingAssociationPublicService extends BaseAuditServic
         throw new Error('This method should not be called from the public app.');
     }
 
+    public assignApplicationViaUserId(applicationId: number, userId: number): Observable<AssignedApplicationInfoDTO> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
     public editApplicationDataAndStartRegixChecks(model: IApplicationRegister): Observable<void> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
+    public getUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
+    public getMyTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
         throw new Error('This method should not be called from the public app.');
     }
 

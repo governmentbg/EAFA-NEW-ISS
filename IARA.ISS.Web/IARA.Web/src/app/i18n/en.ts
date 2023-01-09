@@ -169,7 +169,12 @@
         'succ-add-aquaculture-log-book-page': 'Successfully added origin declaration for aquaculture facility production',
         'succ-edit-aquaculture-log-book-page': 'Successfully updated origin declaration for aquaculture facility production',
         'succ-log-book-page-annulment': 'Successfully log book page annulment',
-        'succ-updated-delivery-data': 'Successfully updated delivery information'
+        'succ-updated-delivery-data': 'Successfully updated delivery information',
+        'succ-add-print-configuration': 'Successfully added print configuration',
+        'succ-edit-print-configuration': 'Successfully updated print configuration',
+        'succ-delete-print-configuration': 'Successfully deleted print configuration',
+        'succ-restore-print-configuration': 'Successfully restored print configuration'
+
     },
     'navigation': {
         'applications': 'Applications',
@@ -236,6 +241,7 @@
         'interface-translations-labels': 'Interface translations',
         'interface-translations-help': 'Interface help translations',
         'nomenclatures': 'Nomenclatures',
+        'pring-configurations': 'Print settings',
         'legal-entities': 'Access for legal entities',
         'external-users': 'External users',
         'internal-users': 'Internal users',
@@ -523,6 +529,7 @@
         'holder-no-address-provided': 'No address provided',
 
         'holders-validation-errors': 'There are unfilled required fields for some of the holders',
+        'ship-deregistered-error': 'The vessel is deregistered',
 
         'add-outing-dialog-title': 'Add an outing',
         'edit-outing-dialog-title': 'Edit outing',
@@ -557,7 +564,10 @@
 
         'delivery-data': 'Delivery data',
         'has-no-e-delivery-registration-error': 'You must have e-delivery access in order to choose e-delivery as delivery type',
-        'delivery-data-dialog-title': 'Delivery data'
+        'delivery-data-dialog-title': 'Delivery data',
+
+        'print-configurations-dialog-title': 'Print',
+        'choose-settings-and-print': 'Confirm and download'
     },
     'users-page': {
         'username': 'Username',
@@ -636,6 +646,7 @@
         'user-must-change-password': 'Reset password',
         'unlock-user': 'User is locked',
         'position': 'Position',
+        'Title': 'Title',
         'username-already-exists-error': 'The entered username already exists in the system',
         'email-already-exists-error': 'The entered email address already exists in the system',
         'must-have-one-valid-egn-lnc-error': 'There is already a valid user with the specified EGN/PNF',
@@ -830,7 +841,10 @@
         'edit-description': 'Description',
         'edit-roles': 'Roles',
         'edit-role': 'Role',
-        'edit-add-role': 'Add role'
+        'edit-add-role': 'Add role',
+
+        'print-configurations-dialog-title': 'Print',
+        'choose-settings-and-print': 'Confirm and download'
     },
     'roles-register': {
         'code': 'Code',
@@ -944,6 +958,7 @@
         'register-ticket-num': 'Ticket no.',
         'ticket-duplicate-of-num': 'Duplicate of',
         'ticket-holder-data': 'Personal data',
+        'attached-photo': 'Attached photo',
         'ticket-holder-representative-data': 'Personal data of parent/legal guardian',
         'has-bulgarian-address-registration': 'Has Bulgarian address registration',
         'permanent-address-same-as-correspondence': 'Permanent address is the same as the correspondence address',
@@ -1088,7 +1103,10 @@
         'renew-ticket-dialog-title': 'Renew ticket',
 
         'choose-association': 'Choose an association',
-        'no-associations-with-permission': 'You do not have the right to issue tickets from an association',
+        'no-associations-with-permission': 'To issue a fishing ticket your organization needs to be registered in the new IARA system. Please submit an application which will be reviewed and approved by an employee from IARA. You will be notified upon the approval of your application at the given email address.',
+        'association-submit-application': 'Submit application',
+        'no-associations-with-permission-has-started': 'You have already started an application for registering your organization in the new IARA system. To view the status of your application, navigate to "Submitted applications" in the menu.',
+        'association-navigate-to-application': 'To application',
 
         'association-name': 'Name',
         'association-territory-unit': 'Territory unit',
@@ -1139,6 +1157,8 @@
         'payment-type': 'Payment type',
         'payment-num': 'Payment number',
         'payment-date': 'Payment date',
+        'total-paid-price': 'Paid price (in lv)',
+        'total-price-not-equal-to-paid-price-error': 'There is a difference from the paid price and the total paid price'
     },
     'online-payment-data': {
         'choose-payment-method-panel-title': 'Payment method',
@@ -1159,16 +1179,19 @@
         'basic-payment-information-panel-title': 'Basic payment information',
         'payment-type': 'Payment type',
         'payment-date': 'Payment date',
+        'total-paid-price': 'Paid price (in lv)',
         'payment-status': 'Payment status',
         'reference-number': 'Reference number',
-        'last-update-date': 'Last update'
+        'last-update-date': 'Last update',
+        'total-price-not-equal-to-paid-price-error': 'There is a difference from the paid price and the total paid price'
     },
     'payment-tariffs': {
         'tariff-name': 'Tariff name',
         'quantity': 'Quantity',
         'unit-price': 'Unit price',
         'price': 'Price',
-        'total-price': 'Total price',
+        'total-price': 'Total calculated price',
+        'total-paid-price': 'Total paid price',
         'include-checkbox': 'Included'
     },
     'payment-tariff': {
@@ -1181,7 +1204,7 @@
         'application-type': 'Type of application',
         'application-status': 'Application status',
         'application-submitted-for': 'Application recipient',
-        'application-submitted-for-egn-lnc': 'Application recipient EGN/PNF',
+        'application-submitted-for-egn-lnc': 'Application recipient EGN/PNF/EIK',
         'application-submitted-by': 'Applicant',
         'application-source': 'Type of service',
         'application-assigned-user': 'Assigned to',
@@ -1211,6 +1234,7 @@
         'entering-eventis-number': 'Enter Eventis number',
         'initiate-online-payment': 'Pay online',
         'cancel-application': 'Cancel application',
+        'assign-application-via-user': 'Assign application to user',
         'send-for-additional-editing': 'Send application for further editing from applicant',
         'completion-of-inspection': 'Complete inspection',
         'enter-payment-data': 'Enter payment data',
@@ -1228,6 +1252,11 @@
 
         'add-application-request-dialog-title': 'Add request for application',
         'enter-eventis-number-dialog-title': 'Enter filed in number',
+
+        'assign-application-by-user-dialog-title': 'Assign application to user',
+        'user-to-assign': 'User to assign to',
+        'only-my-territory-unit-toggle': 'Show only users from my territory unit',
+        'assign-application-by-user-btn': 'Assign',
 
         'assign-invalid-state-machine-transition-operation-error': 'Invalid access code assignment of application. The application is not in the right status.',
         'access-code-copied-successfully': 'Access code copied successfully',
@@ -1293,7 +1322,9 @@
         'delivery-territory-unit': 'Territory unit',
         'delivery-ordinary-email': 'Email',
         'e-delivery-email': 'Email registered in e-delivery',
-        'save-and-send-btn': 'Save and send via E-Delivery'
+        'save-and-send-btn': 'Save and send via E-Delivery',
+        'user-has-no-e-delivery-registration-error': 'The user is not registered in the E-delivery system',
+        'user-uploaded-invalid-file-error': 'A file is invalidly signed or has integrity violations'
     },
     'legal-entities-report-page': {
         'legal-name': 'Name',
@@ -1484,7 +1515,6 @@
         'view-first-sale-center-dialog-title': 'View first sale center registration',
         'edit-buyer-dialog-title': 'Edit first sale buyer registration',
         'edit-first-sale-dialog-title': 'Edit firt sale center registration',
-        'log-books-panel': 'Log books',
         'buyer-basic-information-panel': 'Basic information',
         'buyer-basic-information-panel-helper': '',
         'buyer-has-utility-checkbox': 'Shop registration',
@@ -1635,6 +1665,24 @@
         'concessioner': 'Concessioner',
         'registration-number': 'Registration number',
 
+        'log-books-list-card-title': 'Related log books',
+        'log-book-type': 'Type',
+        'log-book-issue-date': 'Issue date',
+        'log-book-finish-date': 'Finish date',
+        'log-book-status': 'Status',
+        'log-book-start-page-number': 'Start page',
+        'log-book-end-page-number': 'End page',
+        'view-log-book': 'View log book',
+        'edit-log-book': 'Edit log book',
+        'delete-log-book': 'Delete log book',
+        'restore-log-book': 'Restore log book',
+        'add-log-book-title': 'Add log book',
+        'view-log-book-title': 'View log book',
+        'edit-log-book-title': 'Edit log book',
+        'delete-log-book-title': 'Delete log book',
+        'confirm-delete-log-book-message': 'Are you sure that you want to delete log book with number',
+        'delete-log-book-btn-label': 'Delete',
+
         'add-buyer-dialog-title': 'Add first sale buyer registration',
         'add-first-sale-dialog-title': 'Add first sale center registration',
         'edit-first-sale-application-dialog-title': 'Edit first sale center registration application',
@@ -1680,8 +1728,6 @@
         'activate': 'Activate registration',
         'cancel-buyers-and-sales-center-facility': 'Cancel first sale buyer registration',
         'activate-buyers-and-sales-center-facility': 'Retore first sale buyer registration',
-        'overlapping-log-books-dialog-title': 'Overlapping log book page ranges',
-        'overlapping-log-books-save-despite-conflicts': 'Save despite the conflicts',
 
         'cancel-status-history': 'Cancellation history',
         'cancel-status-description': 'Description',
@@ -1691,7 +1737,10 @@
         'cancel-status-date-of-change': 'Date',
         'cancel-status-reason': 'Reason',
         'cancel-status-issue-order-num': 'Order no.',
-        'annual-turnover': 'Annual turnover'
+        'annual-turnover': 'Annual turnover',
+
+        'print-configurations-dialog-title': 'Print',
+        'choose-settings-and-print': 'Confirm and download'
     },
     'regix-check': {
         'web-service-name': 'Service name',
@@ -2008,6 +2057,8 @@
         'coc-regix-checks-results': 'Results of automatic checks to external registers',
         'coc-ship': 'Ship',
         'coc-ship-from-register': 'Ship from register',
+        'coc-ship-deregistered-error': 'The vessel is deregistered',
+        'coc-ship-third-party-error': 'The vessel is from a third party',
 
         'coc-payment-information': 'Payment information',
         'coc-delivery-data': 'Manner of obtaining a document issued by NAFA',
@@ -2030,6 +2081,8 @@
         'dereg-required-actions': 'Required actions pertaining the remaning fishing capacity',
         'dereg-files': 'Files',
         'dereg-regix-checks-results': 'Results of automatic checks to external registers',
+        'dereg-ship-deregistered-error': 'The vessel is deregistered',
+        'dereg-ship-third-party-error': 'The vessel is from a third party',
 
         'dereg-payment-information': 'Payment information',
         'dereg-delivery-data': 'Manner of obtaining a document issued by NAFA',
@@ -2058,6 +2111,8 @@
         'copy-stack-trace': 'Copy',
         'stack-trace-copied-successfully': 'Stack trace copied successfully',
         'stack-trace-copy-failed': 'Stack trace copy failed',
+        'id': 'Number',
+        'filters-id': 'Error number',
 
         'severity-debug': 'Debug',
         'severity-error': 'Error',
@@ -2722,6 +2777,7 @@
         'confirm-delete-log-book-message': 'Are you sure you want to delete log book with number',
         'delete-log-book-title': 'Delete log book',
         'cannot-delete-log-book-with-submitted-pages': 'You cannot delete this log book, because it already has submitted pages',
+        'add-log-book-title': 'Add log book',
         'edit-log-book-title': 'Edit log book',
         'view-log-book-title': 'View log book',
 
@@ -2749,8 +2805,6 @@
         'log-book-permit-license-start-page-number': 'Permit license start page',
         'log-book-permit-license-end-page-number': 'Permit license end page',
         'log-book-pages-range-invalid': 'The range of pages overlaps with that of an existing log book of the same type',
-        'overlapping-log-books-dialog-title': 'Overlapping log book page ranges',
-        'overlapping-log-books-save-despite-conflicts': 'Save despite the conflicts',
         'log-book-type': 'Log book type',
         'duplicate-entries': 'Issued duplicates',
 
@@ -2827,15 +2881,26 @@
         'regix-checks-results-panel': 'Results of automatic checks to external registers',
         'validity-panel': 'Issuing and validity information',
         'issue-date': 'Isuue date',
-        'valid-from-to': 'Validity range',
         'valid-from-when-unlimited': 'Validity start date',
+        'valid-from': 'Valid from',
+        'valid-to': 'Valid to',
         'is-permit-unlimited': 'Unlimited permits',
 
         'permit-license-has-duplicated-mark-numbers': 'The following new mark numbers are duplicated',
         'permit-license-has-duplicated-pinger-numbers': 'The following new pinger numbers are duplicated',
 
         'add-permit-is-second-ship-event-error': 'The permit cannot be added for to the chosen ship today, because this would trigger a MOD event for the ship and that ship already has one MOD event for today.',
-        'suspend-resume-is-second-event-for-ship-error': 'The permit cannot be suspended or resumed, because this woult trigger a MOD event for the ship and that ship already has one MOD event for today.'
+        'suspend-resume-is-second-event-for-ship-error': 'The permit cannot be suspended or resumed, because this woult trigger a MOD event for the ship and that ship already has one MOD event for today.',
+
+        'print-configurations-dialog-title': 'Print',
+        'choose-settings-and-print': 'Confirm and download',
+
+        'enter-permit-license-payment-data-dialog-title': 'Enter permit license payment information'
+    },
+    'print-configuration': {
+        'user': 'User issued the document',
+        'show-only-from-my-territory-unit': 'Show only users from my territory unit',
+        'position': 'Users position'
     },
     'ground-for-use': {
         'type': 'Ground for use type',
@@ -2860,7 +2925,8 @@
         'valid-to': 'Valid to',
         'fishing-gears': 'Fishing gears',
         'auqatic-organisms': 'Aquatic organisms',
-        'permit-is-readonly-info': 'A ship mush bee chosen in order to choose a permit'
+        'permit-is-readonly-info': 'A ship mush bee chosen in order to choose a permit',
+        'invalid-permit-number-error': 'Invalid permit number entered'
     },
     'choose-permit-to-copy-from': {
         'ship': 'Ship',
@@ -2930,6 +2996,17 @@
 
         'gear-has-duplicated-mark-number': 'Mark numbers must not be duplicated',
         'gear-has-duplicated-pinger-number': 'Pinger numbers must not be duplicated',
+
+        'generate-marks-from-number-range': 'Generate marks from number range',
+        'mark-numbers-range': 'Range to generate',
+        'mark-numbers-range-from': 'From',
+        'mark-numbers-range-to': 'To',
+        'generate-mark-numbers-btn-label': 'Generate marks',
+        'generate-mark-numbers-hint': 'You can generate marks using the range input and clicking "Generate" button or using the "Add" button.',
+
+        'generate-marks-from-range-confirm-dialog-title': 'Confirmation for generating marks',
+        'generate-marks-from-range-confirm-message': 'Are you sure that you want to generate this number of marks',
+        'generate': 'Генерирай',
     },
     'report-definition': {
         'tables-title': 'Tables',
@@ -3235,6 +3312,9 @@
         'increase-payment-information': 'Payment information',
         'increase-files': 'Files',
         'increase-regix-checks-results': 'Results of automatic checks to external registers',
+        'increase-ship-deregistered-error': 'The vessel is deregistered',
+        'increase-ship-third-party-error': 'The vessel is from a third party',
+        'increase-ship-no-fishing-capacity-error': 'The vessel is not from the Black Sea fleet',
 
         'reduce-requester': 'Applicant',
         'reduce-requester-role': 'Applicant\'s role in relation to the recipient',
@@ -3253,6 +3333,9 @@
         'reduce-payment-information': 'Payment information',
         'reduce-files': 'Files',
         'reduce-regix-checks-results': 'Results of automatic checks to external registers',
+        'reduce-ship-deregistered-error': 'The vessel is deregistered',
+        'reduce-ship-third-party-error': 'The vessel is from a third party',
+        'reduce-ship-no-fishing-capacity-error': 'The vessel is not from the Black Sea fleet',
 
         'transfer-requester': 'Applicant',
         'transfer-requester-role': 'Applicant\'s role in relation to the recipient',
@@ -3369,7 +3452,10 @@
         'duplicate-delivery-data': 'Delivery information',
         'duplicate-has-no-e-delivery-registration-error': 'You must have e-delivery access in order to choose e-delivery as delivery type',
         'duplicate-files': 'Files',
-        'duplicate-regix-checks-results': 'Results of automatic checks to external registers'
+        'duplicate-regix-checks-results': 'Results of automatic checks to external registers',
+
+        'print-configurations-dialog-title': 'Print',
+        'choose-settings-and-print': 'Confirm and download'
     },
     'patrol-vehicles': {
         'name': 'Name',
@@ -3504,6 +3590,7 @@
         'add-ship-page-document-wizard-possible-log-book-helper': 'If more than one log books are present, you must choose the one you want the page to be added to. The log books will be more than you if the page you want to add falls into more than one log book page range.',
         'add-ship-page-document-wizard-page-not-in-log-book-license': 'The log book number does not fall into any log book range (in the context of any permit license)',
         'add-ship-page-document-wizard-page-alread-submitted': 'The page is already submitted/cancelled',
+        'add-ship-page-document-wizard-page-alread-submitted-other-logbook': 'The page is already submitted/cancelled for a different logbook',
 
         'justified-cancellation-reason-default-label': 'Annulment reason',
 
@@ -3543,7 +3630,8 @@
         'add-log-book-page-wizard-is-import-not-by-ship': 'Imports are made in a different way than imports by ship',
         'add-log-book-page-wizard-place-of-import': 'Place of import',
         'add-log-book-page-wizard-page-not-in-log-book-error': 'The page is not in the range of the log book',
-        'add-log-book-page-wizard-page-already-submitted-error': 'The page is already sumitted/canceled in the system',
+        'add-log-book-page-wizard-page-already-submitted-error': 'The page is already submitted/canceled in the system',
+        'add-log-book-page-wizard-page-already-submitted-other-logbook-error': 'The lage is already submitted/canceled in the system for a different logbook',
         'add-log-book-page-wizard-chosen-log-book-for-page': 'Chosen log book for page',
         'add-log-book-page-wizard-page-number-to-add': 'Page number to add',
         'add-log-book-page-wizard-page-permit-license-number': 'Permit License number',
@@ -3679,6 +3767,17 @@
         'ship-log-book-page-not-in-range-error': 'The chosen page is not part of this log book',
         'ship-log-book-page-not-in-log-book-license-range-error': 'The chosen page is not a part of log book range for any permit license for this log book',
         'ship-log-book-page-already-submitted-error': 'The chosen page is already submitted or is annulled',
+        'ship-log-book-page-already-submitted-other-logbook-error': 'The chosen page is already submitted or is annulled for a different logbook',
+        'ship-log-book-page-generate-missing-pages-permission-dialog-title': 'Confirmation for generation of missing pages',
+        'ship-log-book-page-permit-generate-missing-pages-first-part': 'Add',
+        'ship-log-book-page-permit-generate-missing-pages-second-part': 'missing pages',
+        'ship-log-book-page-generate-missing-pages-permission-first-message': 'The last added page for this log book is',
+        'ship-log-book-page-generate-missing-pages-permission-second-message': 'and in order to add the current page=',
+        'ship-log-book-page-generate-missing-pages-permission-third-message': 'for this log book must be added first',
+        'ship-log-book-page-generate-missing-pages-permission-forth-message': 'pages with status Missing',
+        'ship-log-book-page-generate-missing-pages-permission-fifth-message': 'Please confirm the generation of',
+        'ship-log-book-page-generate-missing-pages-permission-sixth-message': 'pages for the current log book with status Missing',
+        'ship-log-book-page-generate-missing-pages-permission-no-pages-first-message': 'There are no added pages for the current log book. The start page of this log book is',
         'ship-log-book-page-qualified-fisher': 'Qualified fisher',
         'ship-log-book-page-water-type': 'Water type',
 
@@ -3719,7 +3818,18 @@
         'first-sale-page-status': 'Status',
         'first-sale-page-not-in-range-error': 'The chosen page is not part of this log book',
         'first-sale-page-already-submitted-error': 'The chosen page is already submitted or is annulled',
+        'first-sale-page-already-submitted-other-logbook-error': 'The chosen page is already submitted or is annulled for a different logbook',
         'first-sale-page-send-to-flux-sales-error': 'An error occurred when sending sales data to FLUX',
+        'first-sale-page-generate-missing-pages-permission-dialog-title': 'Confirmation for generation of missing pages',
+        'first-sale-page-permit-generate-missing-pages-first-part': 'Add',
+        'first-sale-page-permit-generate-missing-pages-second-part': 'missing pages',
+        'first-sale-page-generate-missing-pages-permission-first-message': 'The last added page for this log book is',
+        'first-sale-page-generate-missing-pages-permission-second-message': 'and in order to add the current page=',
+        'first-sale-page-generate-missing-pages-permission-third-message': 'for this log book must be added first',
+        'first-sale-page-generate-missing-pages-permission-forth-message': 'pages with status Missing',
+        'first-sale-page-generate-missing-pages-permission-fifth-message': 'Please confirm the generation of',
+        'first-sale-page-generate-missing-pages-permission-sixth-message': 'pages for the current log book with status Missing',
+        'first-sale-page-generate-missing-pages-permission-no-pages-first-message': 'There are no added pages for the current log book. The start page of this log book is',
 
         'add-admission-log-book-page-dialog-title': 'Add admission log book page',
         'edit-admission-log-book-page-dialog-title': 'Edit admission log book page',
@@ -3744,7 +3854,18 @@
         'admission-page-not-in-range-error': 'The chosen page is not part of this log book',
         'admission-page-not-in-log-book-license-range-error': 'The chosen page is not a part of log book range for any permit license for this log book',
         'admission-page-already-submitted-error': 'The chosen page is already submitted or is annulled',
+        'admission-page-already-submitted-other-logbook-error': 'The chosen page is already submitted or is annulled for a different logbook',
         'admission-page-send-to-flux-sales-error': 'An error occurred when sending admission data to FLUX',
+        'admission-page-generate-missing-pages-permission-dialog-title': 'Confirmation for generation of missing pages',
+        'admission-page-permit-generate-missing-pages-first-part': 'Add',
+        'admission-page-permit-generate-missing-pages-second-part': 'missing pages',
+        'admission-page-generate-missing-pages-permission-first-message': 'The last added page for this log book is',
+        'admission-page-generate-missing-pages-permission-second-message': 'and in order to add the current page=',
+        'admission-page-generate-missing-pages-permission-third-message': 'for this log book must be added first',
+        'admission-page-generate-missing-pages-permission-forth-message': 'pages with status Missing',
+        'admission-page-generate-missing-pages-permission-fifth-message': 'Please confirm the generation of',
+        'admission-page-generate-missing-pages-permission-sixth-message': 'pages for the current log book with status Missing',
+        'admission-page-generate-missing-pages-permission-no-pages-first-message': 'There are no added pages for the current log book. The start page of this log book is',
 
         'add-transportation-log-book-page-dialog-title': 'Add transporation log book page',
         'edit-transportation-log-book-page-dialog-title': 'Edit transporation log book page',
@@ -3772,7 +3893,18 @@
         'transportation-page-not-in-range-error': 'The chosen page is not part of this log book',
         'transportation-page-not-in-log-book-license-range-error': 'The chosen page is not a part of log book range for any permit license for this log book',
         'transportation-page-already-submitted-error': 'The chosen page is already submitted or is annulled',
+        'transportation-page-already-submitted-other-logbook-error': 'The chosen page is already submitted or is annulled for a different logbook',
         'transportation-page-send-to-flux-sales-error': 'An error occurred when sending transportation data to FLUX',
+        'transportation-page-generate-missing-pages-permission-dialog-title': 'Confirmation for generation of missing pages',
+        'transportation-page-permit-generate-missing-pages-first-part': 'Add',
+        'transportation-page-permit-generate-missing-pages-second-part': 'missing pages',
+        'transportation-page-generate-missing-pages-permission-first-message': 'The last added page for this log book is',
+        'transportation-page-generate-missing-pages-permission-second-message': 'and in order to add the current page=',
+        'transportation-page-generate-missing-pages-permission-third-message': 'for this log book must be added first',
+        'transportation-page-generate-missing-pages-permission-forth-message': 'pages with status Missing',
+        'transportation-page-generate-missing-pages-permission-fifth-message': 'Please confirm the generation of',
+        'transportation-page-generate-missing-pages-permission-sixth-message': 'pages for the current log book with status Missing',
+        'transportation-page-generate-missing-pages-permission-no-pages-first-message': 'There are no added pages for the current log book. The start page of this log book is',
 
         'add-aquaculture-log-book-page-dialog-title': 'Add aquaculture log book page',
         'edit-aquaculture-log-book-page-dialog-title': 'Edit aquaculture log book page',
@@ -3788,6 +3920,17 @@
         'aquaculture-page-status': 'Status',
         'aquaculture-page-not-in-range-error': 'The chosen page is not part of this log book',
         'aquaculture-page-already-submitted-error': 'The chosen page is already submitted or is annulled',
+        'aquaculture-page-already-submitted-other-logbook-error': 'The chosen page is already submitted or is annulled for a different logbook',
+        'aquaculture-page-generate-missing-pages-permission-dialog-title': 'Confirmation for generation of missing pages',
+        'aquaculture-page-permit-generate-missing-pages-first-part': 'Add',
+        'aquaculture-page-permit-generate-missing-pages-second-part': 'missing pages',
+        'aquaculture-page-generate-missing-pages-permission-first-message': 'The last added page for this log book is',
+        'aquaculture-page-generate-missing-pages-permission-second-message': 'and in order to add the current page=',
+        'aquaculture-page-generate-missing-pages-permission-third-message': 'for this log book must be added first',
+        'aquaculture-page-generate-missing-pages-permission-forth-message': 'pages with status Missing',
+        'aquaculture-page-generate-missing-pages-permission-fifth-message': 'Please confirm the generation of',
+        'aquaculture-page-generate-missing-pages-permission-sixth-message': 'pages for the current log book with status Missing',
+        'aquaculture-page-generate-missing-pages-permission-no-pages-first-message': 'There are no added pages for the current log book. The start page of this log book is',
 
         'log-book-page-person-has-bulgarian-address-registration': 'Has Bulgarian address registration',
         'log-book-page-person-registered-buyer': 'Registered buyer/first sale center',
@@ -3884,7 +4027,9 @@
         'log-book-declarations-of-origin-panel': 'Related pages and declarations',
         'delete-log-book-dialog-label': 'Delete log book',
         'confirm-delete-log-book-message': 'Are you sure that you want to delete this log book?',
-        'delete-log-book-btn-label': 'Delete'
+        'delete-log-book-btn-label': 'Delete',
+        'overlapping-log-books-dialog-title': 'Overlapping log book page ranges',
+        'overlapping-log-books-save-despite-conflicts': 'Save despite the conflicts'
     },
     'aquacultures': {
         'aquaculture-dropdown-uror': 'URORR',
@@ -4009,6 +4154,25 @@
         'edit-aquaculture-installation-dialog-title': 'Edit installation',
         'view-aquaculture-installation-dialog-title': 'View installation',
 
+        'view-log-book': 'View log book',
+        'edit-log-book': 'Edit log book',
+        'delete-log-book': 'Delete log book',
+        'restore-log-book': 'Restore log book',
+        'add-log-book-title': 'Add log book',
+        'view-log-book-title': 'View log book',
+        'edit-log-book-title': 'Edit log book',
+        'delete-log-book-title': 'Delete log book',
+        'confirm-delete-log-book-message': 'Are you sure that you want to delete aquaculture log book with number',
+        'delete': 'Delete',
+        'log-books-list-card-title': 'Related aquaculture log books',
+        'log-book-number': 'Number',
+        'log-book-issue-date': 'Issue date',
+        'log-book-finish-date': 'Finish date',
+        'log-book-status': 'Status',
+        'log-book-start-page-number': 'Start page',
+        'log-book-end-page-number': 'End page',
+        'cannot-delete-log-book-with-submitted-pages': 'You cannot delete a log book with already submitted pages',
+
         'grounds-for-use': 'Grounds for use',
         'licences': 'Licences',
         'water-law-certificate': 'Licence per Water law',
@@ -4021,7 +4185,6 @@
         'ovos-certificate': 'Decision under ch. 6 of EPA or licence under art. 64, par. 2 of the BDA (EIA permit)',
         'has-no-babh-certificate': 'No BFSA certificate issued',
         'babh-certificate': 'BFSA certificate',
-        'log-books-panel': 'Log books',
         'comments': 'Comments',
         'files': 'Files',
         'regix-checks-results': 'Results of automatic checks to external registers',
@@ -4222,10 +4385,11 @@
         'complete-application-confirm-dialog-title': 'Finish application',
         'complete-application-confirm-dialog-message': 'Are you sure you have finished with all changes for this application?',
         'complete-application-confirm-dialog-ok-btn-label': 'Finish',
-        'overlapping-log-books-dialog-title': 'Overlapping log book page ranges',
-        'overlapping-log-books-save-despite-conflicts': 'Save despite the conflicts',
 
-        'excel-filename': 'Aquaculture facilities'
+        'excel-filename': 'Aquaculture facilities',
+
+        'print-configurations-dialog-title': 'Print',
+        'choose-settings-and-print': 'Confirm and download'
     },
     'cross-check': {
         'code': 'Code',
@@ -4375,6 +4539,7 @@
         'edit-violated-section': 'Section',
         'edit-violated-letter': 'Letter',
         'edit-violated-type': 'Normative act',
+        'edit-violated-comments': 'Comments',
         'violated-regulation-type-law': 'Law',
         'violated-regulation-type-regulation': 'Regulation',
         'edit-auan-at-least-one-violated-regulation-needed': 'At least one violated regulation needed',
@@ -4758,6 +4923,8 @@
         'vessel-information-employee-stats-helper': 'If the field is not applicable, a 0 (zero) must be entered',
         'fish-vessel-count-error': 'The sum of the values by ​columns ​does not match the sum from the previous table',
         'fish-vessel-costs-error': 'The value in the field of staff costs cannot be zero when there are men or women with pay.',
+
+        'ship-no-fishing-capacity-error': 'The vessel is not from the Black Sea fleet'
     },
     'penal-decrees': {
         'filters-penal-decree-num': 'Penal decree no.',
@@ -5234,8 +5401,8 @@
         'decrease-points': 'Decrease points',
 
         'edit-points-basic-data': 'Basic information',
-        'edit-report-num': 'Report num',
-        'edit-effective-date': 'Date',
+        'edit-report-note-num': 'Report note num',
+        'edit-report-note-date': 'Report note date',
         'edit-issuer': 'Issuer',
         'edit-territory-unit': 'Territory unit',
 
@@ -5425,6 +5592,42 @@
         'table-entry-delivery-data-dialog-title': 'Delivery information',
 
         'print': 'Print',
-        'save-print': 'Save and print'
+        'save-print': 'Save and print',
+
+        'print-configurations-dialog-title': 'Print',
+        'choose-settings-and-print': 'Confirm and download'
+    },
+    'print-configurations': {
+        'filters-application-type': 'Application type',
+        'filters-territory-unit': 'Territory unit',
+        'filters-user-egn-lnch': 'User egn/lnch',
+        'filters-user-names': 'User names',
+        'filters-substitute-reason': 'Substitution reason',
+
+        'application-type': 'Application type',
+        'territory-unit': 'Territory unit',
+        'sign-user': 'Sign user',
+        'substitute-user': 'Substitute user',
+        'substitute-reason': 'Substitution reason',
+        'view-print-configuration': 'View print configuration',
+        'edit-print-configuration': 'Edit print configuration',
+        'delete-print-configuration': 'Delete print configuration',
+        'restore-print-configuration': 'Restore print configuration',
+
+        'view-print-configuration-title': 'View print configuration',
+        'add-print-configuration-title': 'Add print configuration',
+        'edit-print-configuration-title': 'Edit print configuration',
+        'delete-print-configuration-title': 'Delete print configuration',
+        'restore-print-configuration-title': 'Restore print configuration',
+        'delete-print-configuration-dialog-message': 'Are you sure that you want to delete print configurations for application type',
+        'delete-dialog-ok-btn-label': 'Delete',
+
+        'update-print-configuration-dialog-title': 'Save print configurations',
+        'update-print-configuration-dialog-message-user': 'There are',
+        'update-print-configuration-dialog-message-count': 'entries with this sign user. Do you want to update their substitute user?',
+        'update-print-configuration-dialog-ok-btn-label': 'Yes',
+        'update-print-configuration-dialog-cancel-btn-label': 'No',
+
+        'print-configuration-already-exists-error': 'Already exists a configuration for this pair of application type and territory unit.'
     }
 };

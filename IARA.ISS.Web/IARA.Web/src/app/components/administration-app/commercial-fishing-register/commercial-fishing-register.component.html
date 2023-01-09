@@ -170,17 +170,29 @@
                                                [showInactiveRecords]="canRestorePermitLicenseRecords && (shipId === null || shipId === undefined)"
                                                [showAddButton]="false"
                                                [rows]="row.data.licenses">
-                                    <row-detail>
+                                    <row-detail *ngIf="canReadLogBooks">
                                         <ng-template let-row="row" ngx-datatable-row-detail-template>
                                             <tl-card>
                                                 <tl-card-title>{{ 'commercial-fishing.permit-license-log-books-list-card-title' | tlTranslate }}</tl-card-title>
                                                 <tl-card-content>
                                                     <tl-data-table [isRemote]="false"
                                                                    [isSoftDeletable]="true"
-                                                                   [showInactiveRecords]="shipId === null || shipId === undefined"
-                                                                   [showAddButton]="false"
+                                                                   [showInactiveRecords]="canRestoreLogBooks && (shipId === null || shipId === undefined)"
+                                                                   [showAddButton]="canAddLogBooks"
                                                                    [recordsPerPage]="logBooksPerPage"
-                                                                   [rows]="row.data.logbooks">
+                                                                   [rows]="row.data.logbooks"
+                                                                   (addButtonClicked)="addLogBook(row.data)">
+                                                        <!--<div datatable-add-buttons
+                                                             fxLayout="row"
+                                                             fxLayoutGap="1em"
+                                                             *ngIf="canAddLogBooks">
+                                                            <button mat-raised-button color="accent"
+                                                                    (click)="addLogBookFromOldPermitLicense(row.data.id)"
+                                                                    style="margin-left:auto;">
+                                                                <tl-icon icon="fa-plus-circle" class="white"></tl-icon>
+                                                                {{ 'catches-and-sales.add-log-book-from-old-permit-license' | tlTranslate }}
+                                                            </button>
+                                                        </div>--> <!-- TODO -->
                                                         <data-column propertyName="number"
                                                                      [flexRate]="0.2"
                                                                      columnName="{{ 'commercial-fishing.log-book-number' | tlTranslate }}">
@@ -214,25 +226,24 @@
                                                         <data-template-column [flexRate]="0.3">
                                                             <ng-template let-logBook="row" ngx-datatable-cell-template>
                                                                 <div fxLayout="row wrap" fxLayoutAlign="end center">
-                                                                    <tl-icon-button *ngIf="canReadPermitLicenseRecords || hasPermitLicenseReadAllPermission"
-                                                                                    icon="visibility"
-                                                                                    (buttonClicked)="editLogBook(logBook.data, true)"
+                                                                    <tl-icon-button icon="visibility"
+                                                                                    (buttonClicked)="editLogBook(row.data.id, logBook.data, true)"
                                                                                     iconClass="accent-color"
                                                                                     tooltipText="{{ 'commercial-fishing.view-log-book' | tlTranslate }}">
                                                                     </tl-icon-button>
-                                                                    <tl-icon-button *ngIf="logBook.data.isActive && canEditPermitLicenseRecords && (shipId === null || shipId === undefined)"
+                                                                    <tl-icon-button *ngIf="logBook.data.isActive && canEditLogBooks && (shipId === null || shipId === undefined)"
                                                                                     icon="edit"
-                                                                                    (buttonClicked)="editLogBook(logBook.data)"
+                                                                                    (buttonClicked)="editLogBook(row.data.id, logBook.data)"
                                                                                     iconClass="accent-color"
                                                                                     tooltipText="{{ 'commercial-fishing.edit-log-book' | tlTranslate }}">
                                                                     </tl-icon-button>
-                                                                    <tl-icon-button *ngIf="logBook.data.isActive && canDeletePermitLicenseRecords && (shipId === null || shipId === undefined)"
+                                                                    <tl-icon-button *ngIf="logBook.data.isActive && canDeleteLogBooks && (shipId === null || shipId === undefined)"
                                                                                     icon="delete"
                                                                                     (buttonClicked)="deleteLogBook(logBook.data, row)"
                                                                                     iconClass="accent-color"
                                                                                     tooltipText="{{ 'commercial-fishing.delete-log-book' | tlTranslate }}">
                                                                     </tl-icon-button>
-                                                                    <tl-icon-button *ngIf="!logBook.data.isActive && canRestorePermitLicenseRecords && (shipId === null || shipId === undefined)"
+                                                                    <tl-icon-button *ngIf="!logBook.data.isActive && canRestoreLogBooks && (shipId === null || shipId === undefined)"
                                                                                     icon="restore"
                                                                                     (buttonClicked)="restoreLogBook(logBook.data, row)"
                                                                                     iconClass="accent-color"

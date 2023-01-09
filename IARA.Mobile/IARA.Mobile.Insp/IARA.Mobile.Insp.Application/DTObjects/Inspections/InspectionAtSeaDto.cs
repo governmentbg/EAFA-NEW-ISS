@@ -10,6 +10,7 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public PortVisitDto LastPortVisit { get; set; }
         public List<InspectionCatchMeasureDto> CatchMeasures { get; set; }
         public List<InspectedFishingGearDto> FishingGears { get; set; }
+        public List<InspectionPermitDto> Permits { get; set; }
         public List<InspectionPermitDto> PermitLicenses { get; set; }
         public List<InspectionLogBookDto> LogBooks { get; set; }
     }

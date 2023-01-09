@@ -12,6 +12,7 @@
     public canDownloadOnlineApplications: boolean = false;
     public canUploadOnlineApplications: boolean = false;
     public canViewAdministrativeActRecords: boolean = false;
+    public canReAssignApplicationRecords: boolean = false;
 
     constructor(obj?: Partial<ApplicationProcessingHasPermissions>) {
         Object.assign(this, obj);

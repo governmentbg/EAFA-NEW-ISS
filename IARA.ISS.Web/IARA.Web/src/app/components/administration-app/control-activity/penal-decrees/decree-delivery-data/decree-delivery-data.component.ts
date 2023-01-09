@@ -57,10 +57,11 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
     public ngAfterViewInit(): void {
         this.form.get('deliveryTypeControl')!.valueChanges.subscribe({
             next: (type: NomenclatureDTO<number> | undefined) => {
-                this.form.get('deliveryDateControl')!.setValidators(Validators.required);
-                this.form.get('deliverySentDateControl')!.clearValidators();
-
                 if (type !== undefined && type !== null) {
+                    this.form.get('deliveryDateControl')!.setValidators(Validators.required);
+                    this.form.get('deliveryDateControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('deliverySentDateControl')!.clearValidators();
+
                     this.deliveryType = InspDeliveryTypesEnum[type.code as keyof typeof InspDeliveryTypesEnum];
 
                     if (this.deliveryType === InspDeliveryTypesEnum.DecreeReturn || this.deliveryType === InspDeliveryTypesEnum.DecreeTag) {

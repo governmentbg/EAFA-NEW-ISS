@@ -40,15 +40,15 @@ export class AquacultureFacilitiesPublicService extends ApplicationsRegisterPubl
         throw new Error('This method should not be called from the public app.');
     }
 
-    public addAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<number> {
+    public addAquaculture(aquaculture: AquacultureFacilityEditDTO): Observable<number> {
         throw new Error('This method should not be called from the public app.');
     }
 
-    public editAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<void> {
+    public editAquaculture(aquaculture: AquacultureFacilityEditDTO): Observable<void> {
         throw new Error('This method should not be called from the public app.');
     }
 
-    public editAndDownloadAquaculture(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<boolean> {
+    public editAndDownloadAquaculture(aquaculture: AquacultureFacilityEditDTO): Observable<boolean> {
         throw new Error('This method should not be called from the public app.');
     }
 
@@ -76,7 +76,7 @@ export class AquacultureFacilitiesPublicService extends ApplicationsRegisterPubl
         throw new Error('This method should not be called from the public app.');
     }
 
-    public completeChangeOfCircumstancesApplication(aquaculture: AquacultureFacilityEditDTO, ignoreLogBookConflicts: boolean): Observable<void> {
+    public completeChangeOfCircumstancesApplication(aquaculture: AquacultureFacilityEditDTO): Observable<void> {
         throw new Error('This method should not be called from the public app.');
     }
 

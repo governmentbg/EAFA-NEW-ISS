@@ -52,7 +52,8 @@ export class ErrorLogComponent implements AfterViewInit, OnInit {
             errorLogDateRangeControl: new FormControl(),
             usernameControl: new FormControl(),
             severityControl: new FormControl(),
-            classControl: new FormControl()
+            classControl: new FormControl(),
+            idControl: new FormControl()
         });
 
         this.severityTypes = [
@@ -138,7 +139,8 @@ export class ErrorLogComponent implements AfterViewInit, OnInit {
             errorLogDateFrom: filters.getValue<DateRangeData>('errorLogDateRangeControl')?.start,
             errorLogDateTo: filters.getValue<DateRangeData>('errorLogDateRangeControl')?.end,
             userId: filters.getValue('usernameControl'),
-            class: filters.getValue('classControl')
+            class: filters.getValue('classControl'),
+            errorLogId: filters.getValue('idControl')
         });
 
         const severityTypes: ErrorLogSeverityEnum[] | undefined = filters.getValue('severityControl');

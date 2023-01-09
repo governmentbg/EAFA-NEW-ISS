@@ -23,6 +23,7 @@ import { SciFiPrintTypesEnum } from '@app/enums/sci-fi-print-types.enum';
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { ScientificFishingReasonNomenclatureDTO } from '@app/models/generated/dtos/ScientificFishingReasonNomenclatureDTO';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { RegisterDTO } from '@app/models/generated/dtos/RegisterDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -104,7 +105,11 @@ export class ScientificFishingAdministrationService extends ApplicationsRegister
 
     public addAndDownloadRegister(permit: ScientificFishingPermitEditDTO, printType: SciFiPrintTypesEnum): Observable<boolean> {
         const params: HttpParams = new HttpParams().append('printType', printType.toString());
-        return this.requestService.downloadPost(this.area, this.controller, 'AddAndDownloadRegister', '', permit, {
+        const registerDto: RegisterDTO<ScientificFishingPermitEditDTO> = new RegisterDTO<ScientificFishingPermitEditDTO>({
+            dto: permit
+        });
+
+        return this.requestService.downloadPost(this.area, this.controller, 'AddAndDownloadRegister', '', registerDto, {
             httpParams: params,
             properties: new RequestProperties({ asFormData: true })
         });
@@ -127,7 +132,11 @@ export class ScientificFishingAdministrationService extends ApplicationsRegister
 
     public editAndDownloadRegister(permit: ScientificFishingPermitEditDTO, printType: SciFiPrintTypesEnum): Observable<boolean> {
         const params: HttpParams = new HttpParams().append('printType', printType.toString());
-        return this.requestService.downloadPost(this.area, this.controller, 'EditAndDownloadRegister', '', permit, {
+        const registerDto: RegisterDTO<ScientificFishingPermitEditDTO> = new RegisterDTO<ScientificFishingPermitEditDTO>({
+            dto: permit
+        });
+
+        return this.requestService.downloadPost(this.area, this.controller, 'EditAndDownloadRegister', '', registerDto, {
             httpParams: params,
             properties: new RequestProperties({ asFormData: true })
         });
@@ -148,7 +157,7 @@ export class ScientificFishingAdministrationService extends ApplicationsRegister
             .append('id', id.toString())
             .append('printType', printType.toString());
 
-        return this.requestService.download(this.area, this.controller, 'DownloadRegister', '', { httpParams: params, });
+        return this.requestService.downloadPost(this.area, this.controller, 'DownloadRegister', '', undefined, { httpParams: params, });
     }
 
     public addOuting(outing: ScientificFishingOutingDTO): Observable<number> {

@@ -131,6 +131,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 NomenclatureEnum.LogBook,
                 NomenclatureEnum.Buyer,
                 NomenclatureEnum.Aquaculture,
+                NomenclatureEnum.Permit,
             };
 
             if (nomTasks?.Length > 0)

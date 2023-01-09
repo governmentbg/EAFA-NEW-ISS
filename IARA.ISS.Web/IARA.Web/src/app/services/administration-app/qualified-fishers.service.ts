@@ -19,6 +19,7 @@ import { RequestService } from '@app/shared/services/request.service';
 import { ApplicationsProcessingService } from './applications-processing.service';
 import { ApplicationsRegisterAdministrativeBaseService } from './applications-register-administrative-base.service';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { RegisterDTO } from '@app/models/generated/dtos/RegisterDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -60,7 +61,7 @@ export class QualifiedFishersService extends ApplicationsRegisterAdministrativeB
 
     public downloadRegister(id: number): Observable<boolean> {
         const params = new HttpParams().append('registerId', id.toString());
-        return this.requestService.download(this.area, this.controller, 'DownloadQualifiedFisher', '', { httpParams: params });
+        return this.requestService.downloadPost(this.area, this.controller, 'DownloadQualifiedFisher', '', undefined, { httpParams: params });
     }
 
     public getRegisterByApplicationId(applicationId: number): Observable<unknown> {
@@ -79,7 +80,11 @@ export class QualifiedFishersService extends ApplicationsRegisterAdministrativeB
     }
 
     public addAndDownloadRegister(model: QualifiedFisherEditDTO): Observable<boolean> {
-        return this.requestService.downloadPost(this.area, this.controller, 'AddAndDownloadRegister', '', model, {
+        const registerDto: RegisterDTO<QualifiedFisherEditDTO> = new RegisterDTO<QualifiedFisherEditDTO>({
+            dto: model
+        });
+
+        return this.requestService.downloadPost(this.area, this.controller, 'AddAndDownloadRegister', '', registerDto, {
             properties: new RequestProperties({ asFormData: true })
         });
     }
@@ -91,7 +96,11 @@ export class QualifiedFishersService extends ApplicationsRegisterAdministrativeB
     }
 
     public editAndDownloadRegister(model: QualifiedFisherDTO): Observable<boolean> {
-        return this.requestService.downloadPost(this.area, this.controller, 'EditAndDownloadRegister', '', model, {
+        const registerDto: RegisterDTO<QualifiedFisherEditDTO> = new RegisterDTO<QualifiedFisherEditDTO>({
+            dto: model
+        });
+
+        return this.requestService.downloadPost(this.area, this.controller, 'EditAndDownloadRegister', '', registerDto, {
             properties: new RequestProperties({ asFormData: true })
         });
     }

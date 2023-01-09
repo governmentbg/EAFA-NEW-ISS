@@ -26,6 +26,12 @@ export class ApplicationPaymentInformationDTO {
     @StrictlyTyped(Date)
     public lastUpdateDate?: Date;
 
+    @StrictlyTyped(Boolean)
+    public hasCalculatedTariffs?: boolean;
+
+    @StrictlyTyped(Number)
+    public totalPaidPrice?: number;
+
     @StrictlyTyped(PaymentSummaryDTO)
     public paymentSummary?: PaymentSummaryDTO;
 }

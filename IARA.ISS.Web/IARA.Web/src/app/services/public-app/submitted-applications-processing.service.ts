@@ -2,8 +2,8 @@
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { IApplicationsRegisterService } from '../../interfaces/administration-app/applications-register.interface';
-import { IApplicationRegister } from '../../interfaces/common-app/application-register.interface';
+import { IApplicationsRegisterService } from '@app/interfaces/administration-app/applications-register.interface';
+import { IApplicationRegister } from '@app/interfaces/common-app/application-register.interface';
 import { GridRequestModel } from '@app/models/common/grid-request.model';
 import { GridResultModel } from '@app/models/common/grid-result.model';
 import { ApplicationRegisterDTO } from '@app/models/generated/dtos/ApplicationRegisterDTO';
@@ -16,8 +16,9 @@ import { ApplicationsRegisterFilters } from '@app/models/generated/filters/Appli
 import { AreaTypes } from '@app/shared/enums/area-type.enum';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { RequestService } from '@app/shared/services/request.service';
-import { BaseAuditService } from '../common-app/base-audit.service';
-import { PageCodeEnum } from '../../enums/page-code.enum';
+import { BaseAuditService } from '@app/services/common-app/base-audit.service';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -88,23 +89,35 @@ export class SubmittedApplicationsProcessingService extends BaseAuditService imp
     }
 
     public getApplicationHistorySimpleAudit(id: number): Observable<SimpleAuditDTO> {
-        throw new Error('This method should not be called from public app.');
+        throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
     }
 
     public deleteApplication(id: number): Observable<void> {
-        throw new Error('This method should not be called from public app.');
+        throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
     }
 
     public undoDeleteApplication(id: number): Observable<void> {
-        throw new Error('This method should not be called from public app.');
+        throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
     }
 
     public assignApplicationViaAccessCode(accessCode: string): Observable<AssignedApplicationInfoDTO> {
-        throw new Error('This method should not be called from public app.');
+        throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
+    }
+
+    public assignApplicationViaUserId(applicationId: number, userId: number): Observable<AssignedApplicationInfoDTO> {
+        throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
+    }
+
+    public getUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
+    }
+
+    public getMyTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
     }
 
     public getSimpleAudit(id: number): Observable<SimpleAuditDTO> {
-        throw new Error('This method should not be called from public app.');
+        throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
     }
 
     public editApplicationDataAndStartRegixChecks(model: IApplicationRegister): Observable<void> {

@@ -41,15 +41,24 @@
                          tooltipResourceName="commercial-fishing.valid-from-when-unlimited-helper">
                 </tl-date>
                 <ng-template #permitIsLimited>
-                    <tl-date-range fxFlex="25"
-                                   formControlName="validityRangeControl"
-                                   [min]="form.controls.issueDateControl?.value"
-                                   label="{{ 'commercial-fishing.valid-from-to' | tlTranslate }}"
-                                   tooltipResourceName="commercial-fishing.valid-from-to-helper">
-                    </tl-date-range>
+                    <div [fxFlex]="isPermitLicense ? 50 : 30" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                        <tl-date fxFlex="50"
+                                 formControlName="validFromControl"
+                                 [min]="form.controls.issueDateControl?.value"
+                                 [max]="form.controls.validToControl?.value"
+                                 label="{{ 'commercial-fishing.valid-from' | tlTranslate }}"
+                                 tooltipResourceName="commercial-fishing.valid-from-helper">
+                        </tl-date>
+                        <tl-date fxFlex="50"
+                                 formControlName="validToControl"
+                                 [min]="form.controls.validFromControl?.value"
+                                 label="{{ 'commercial-fishing.valid-to' | tlTranslate }}"
+                                 tooltipResourceName="commercial-fishing.valid-to-helper">
+                        </tl-date>
+                    </div>
                 </ng-template>
                 <tl-checkbox *ngIf="!isPermitLicense"
-                             fxFlex="25"
+                             fxFlex="20"
                              formControlName="isPermitUnlimitedControl"
                              label="{{ 'commercial-fishing.is-permit-unlimited' | tlTranslate }}"
                              tooltipResourceName="commercial-fishing.is-permit-unlimited-helper">
@@ -515,7 +524,9 @@
                         tooltipResourceName="commercial-fishing.payment-information-panel-helper"
                         [validityChecker]="form">
         <payment-information formControlName="applicationPaymentInformationControl"
-                             [hideBasicInfo]="hideBasicPaymentInfo">
+                             validityChecker
+                             [hideBasicInfo]="hideBasicPaymentInfo"
+                             [isOnlineApplication]="isOnlineApplication">
         </payment-information>
     </tl-expansion-panel>
 

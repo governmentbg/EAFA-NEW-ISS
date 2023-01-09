@@ -30,8 +30,6 @@ export class AuanViolatedRegulationsComponent extends CustomFormControl<AuanViol
 
     public isDisabled: boolean = false;
 
-    public violatedRegulationsTouched: boolean = false;
-
     @ViewChild('violatedRegulationsTable')
     private violatedRegulationsTable!: TLDataTableComponent;
 
@@ -88,6 +86,7 @@ export class AuanViolatedRegulationsComponent extends CustomFormControl<AuanViol
             letter: x.letter,
             lawSectionId: x.lawSectionId,
             lawText: x.lawText,
+            comments: x.comments,
             isActive: x.isActive ?? true
         }));
 
@@ -147,7 +146,8 @@ export class AuanViolatedRegulationsComponent extends CustomFormControl<AuanViol
             articleControl: new FormControl(null, [Validators.required, Validators.maxLength(10)]),
             paragraphControl: new FormControl(null, Validators.maxLength(10)),
             sectionControl: new FormControl(null, Validators.maxLength(10)),
-            letterControl: new FormControl(null, Validators.maxLength(10))
+            letterControl: new FormControl(null, Validators.maxLength(10)),
+            commentsControl: new FormControl(null, Validators.maxLength(4000))
         });
 
         return new FormControl(null);

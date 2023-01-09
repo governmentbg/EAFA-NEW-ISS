@@ -31,7 +31,7 @@ import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dt
 import { ErrorModel } from '@app/models/common/exception.model';
 import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { RequestProperties } from '@app/shared/services/request-properties';
-import { EgnLncDTO } from '../../../../models/generated/dtos/EgnLncDTO';
+import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 
 @Component({
     selector: 'recreational-fishing-tickets-content',
@@ -396,12 +396,6 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     }
 
     public onStepAnimationDone(): void {
-        if (this.stepper.selectedIndex === this.stepper.steps.length - 1) {
-            if (this.ticketsGroup.invalid) {
-                this.stepper.previous();
-            }
-        }
-
         if (!this.isPublicApp || this.isAssociation) {
             const ticketNumsStep: number = this.showValidityStep ? 2 : 1;
 
@@ -655,7 +649,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
             payment = this.paymentDataControl.value;
             hasPaymentData = true;
         }
-
+        debugger;
         return new RecreationalFishingTicketsDTO({
             tickets: this.tickets.concat(this.childTickets),
             associationId: associationId,
@@ -712,9 +706,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     }
 
     private ticketsSavedHandler(print: boolean): void {
-        if (this.totalPrice > 0) {
-            this.showPaymentStep = true;
-        }
+        this.showPaymentStep = this.totalPrice > 0;
 
         this.ticketsSaved = true;
         this.unsubscribeOnDataChange();
@@ -813,23 +805,27 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
         if (this.tickets.length > 0) {
             const ticket: RecreationalFishingTicketDTO = this.tickets[0];
 
-            data = new RecreationalFishingTicketValidationDTO({
-                personEgnLnc: ticket.person!.egnLnc,
-                ticketType: TicketTypeEnum[this.ticketTypes.find(x => x.value === ticket.typeId)!.code as keyof typeof TicketTypeEnum],
-                ticketPeriod: TicketPeriodEnum[this.ticketPeriods.find(x => x.value === ticket.periodId)!.code as keyof typeof TicketPeriodEnum],
-                birthDate: ticket.person!.birthDate,
-                telkValidTo: ticket.telkData?.validTo,
-                validFrom: ticket.validFrom
-            });
+            if (ticket.person && ticket.person.egnLnc && ticket.person.egnLnc.egnLnc && ticket.person.egnLnc.identifierType) {
+                data = new RecreationalFishingTicketValidationDTO({
+                    personEgnLnc: ticket.person!.egnLnc,
+                    ticketType: TicketTypeEnum[this.ticketTypes.find(x => x.value === ticket.typeId)!.code as keyof typeof TicketTypeEnum],
+                    ticketPeriod: TicketPeriodEnum[this.ticketPeriods.find(x => x.value === ticket.periodId)!.code as keyof typeof TicketPeriodEnum],
+                    birthDate: ticket.person!.birthDate,
+                    telkValidTo: ticket.telkData?.validTo,
+                    validFrom: ticket.validFrom
+                });
+            }
         }
         else if (this.childTickets.length > 0) {
             const ticket: RecreationalFishingTicketDTO = this.childTickets[0];
 
-            data = new RecreationalFishingTicketValidationDTO({
-                personEgnLnc: ticket.person!.egnLnc,
-                representativePersonEgnLnc: ticket.representativePerson!.egnLnc,
-                validFrom: ticket.validFrom
-            });
+            if (ticket.person && ticket.person.egnLnc && ticket.person.egnLnc.egnLnc && ticket.person.egnLnc.identifierType) {
+                data = new RecreationalFishingTicketValidationDTO({
+                    personEgnLnc: ticket.person!.egnLnc,
+                    representativePersonEgnLnc: ticket.representativePerson!.egnLnc,
+                    validFrom: ticket.validFrom
+                });
+            }
         }
 
         if (data !== undefined) {

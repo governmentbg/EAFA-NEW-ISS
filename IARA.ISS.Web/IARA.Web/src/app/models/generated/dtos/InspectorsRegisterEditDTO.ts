@@ -15,4 +15,7 @@ export class InspectorsRegisterEditDTO {
 
     @StrictlyTyped(String)
     public inspectorCardNum?: string;
+
+    @StrictlyTyped(Number)
+    public inspectionSequenceNum?: number;
 }

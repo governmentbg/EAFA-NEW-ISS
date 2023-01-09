@@ -19,9 +19,6 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-
-
-
 @Component({
     selector: 'create-profile',
     templateUrl: './create-profile.component.html',

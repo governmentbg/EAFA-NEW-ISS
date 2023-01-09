@@ -7,7 +7,7 @@
                    [showAddButton]="!viewMode"
                    [rows]="seizedFishingGear"
                    (recordChanged)="seizedFishingGearRecordChanged($event)">
-        <data-column [flexRate]="0.2"
+        <data-column [flexRate]="0.4"
                      [formGroup]="seizedFishingGearForm"
                      propertyName="fishingGearId"
                      dataType="nomenclature"
@@ -15,27 +15,27 @@
                      columnName="{{ 'penal-decrees.edit-sized-fishing-gear-type' | tlTranslate }}">
         </data-column>
 
-        <data-column [flexRate]="0.1"
+        <data-column [flexRate]="0.2"
                      [formGroup]="seizedFishingGearForm"
                      propertyName="count"
                      columnName="{{ 'penal-decrees.edit-sized-fishing-gear-count' | tlTranslate }}">
         </data-column>
 
         <data-column *ngIf="isAuan"
-                     [flexRate]="0.1"
+                     [flexRate]="0.2"
                      [formGroup]="seizedFishingGearForm"
                      propertyName="length"
                      columnName="{{ 'penal-decrees.edit-confiscated-gear-length' | tlTranslate }}">
         </data-column>
 
         <data-column *ngIf="isAuan"
-                     [flexRate]="0.1"
+                     [flexRate]="0.2"
                      [formGroup]="seizedFishingGearForm"
                      propertyName="netEyeSize"
                      columnName="{{ 'penal-decrees.edit-confiscated-gear-net-eye-size' | tlTranslate }}">
         </data-column>
 
-        <data-column [flexRate]="0.2"
+        <data-column [flexRate]="0.4"
                      [formGroup]="seizedFishingGearForm"
                      propertyName="confiscationActionId"
                      dataType="nomenclature"
@@ -44,7 +44,7 @@
         </data-column>
 
         <data-column *ngIf="!isAuan"
-                     [flexRate]="0.2"
+                     [flexRate]="0.4"
                      [formGroup]="seizedFishingGearForm"
                      propertyName="storageTerritoryUnitId"
                      dataType="nomenclature"
@@ -52,7 +52,7 @@
                      columnName="{{ 'penal-decrees.edit-sized-fishing-gear-storrage-territory-unit' | tlTranslate }}">
         </data-column>
 
-        <data-column [flexRate]="0.3"
+        <data-column [flexRate]="0.5"
                      [formGroup]="seizedFishingGearForm"
                      propertyName="comments"
                      columnName="{{ 'penal-decrees.edit-sized-fishing-gear-comments' | tlTranslate }}">

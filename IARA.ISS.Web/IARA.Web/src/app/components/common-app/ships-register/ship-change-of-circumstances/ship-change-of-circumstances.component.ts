@@ -1,5 +1,5 @@
 ﻿import { AfterViewInit, Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subject } from 'rxjs';
@@ -37,7 +37,8 @@ import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/Applicatio
 import { FileTypeEnum } from '@app/enums/file-types.enum';
 import { Notifier } from '@app/shared/directives/notifier/notifier.class';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
-import { ShipNomenclatureFilters, ShipsUtils } from '@app/shared/utils/ships.utils';
+import { ShipsUtils } from '@app/shared/utils/ships.utils';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 
 @Component({
     selector: 'ship-change-of-circumstances',
@@ -53,8 +54,6 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
     public notifier: Notifier = new Notifier();
     public expectedResults: ShipChangeOfCircumstancesRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
-
-    public paymentInformation: ApplicationPaymentInformationDTO | undefined;
 
     public isPublicApp: boolean = false;
     public isOnlineApplication: boolean = false;
@@ -106,11 +105,6 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
             NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false
         ).toPromise();
 
-        this.ships = ShipsUtils.filter(this.ships, new ShipNomenclatureFilters({
-            isThirdPartyShip: false,
-            isDestOrDereg: false
-        }));
-
         // извличане на исторически данни за заявление
         if (this.isApplicationHistoryMode && this.applicationId !== undefined) {
             this.form.disable();
@@ -125,7 +119,6 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
 
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
-                        this.paymentInformation = application.paymentInformation;
                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
@@ -167,7 +160,6 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
                             this.isOnlineApplication = application.isOnlineApplication!;
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
-                            this.paymentInformation = application.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
 
@@ -280,14 +272,34 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
         return result;
     }
 
+    public shipControlErrorLabelTest(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+        if (controlName === 'shipControl') {
+            if (errorCode === 'shipDestroyedOrDeregistered' && error === true) {
+                return new TLError({
+                    text: this.translate.getValue('ships-register.coc-ship-deregistered-error'),
+                    type: 'error'
+                });
+            }
+
+            if (errorCode === 'shipThirdParty' && error === true) {
+                return new TLError({
+                    text: this.translate.getValue('ships-register.coc-ship-third-party-error'),
+                    type: 'error'
+                });
+            }
+        }
+        return undefined;
+    }
+
     private buildForm(): void {
         this.form = new FormGroup({
-            submittedByControl: new FormControl(null),
-            submittedForControl: new FormControl(null),
-            shipControl: new FormControl(null, Validators.required),
-            changesControl: new FormControl(null),
-            deliveryDataControl: new FormControl(null),
-            filesControl: new FormControl(null)
+            submittedByControl: new FormControl(undefined),
+            submittedForControl: new FormControl(undefined),
+            shipControl: new FormControl(undefined, [Validators.required, this.shipValidator()]),
+            changesControl: new FormControl(undefined),
+            deliveryDataControl: new FormControl(undefined),
+            applicationPaymentInformationControl: new FormControl(),
+            filesControl: new FormControl(undefined)
         });
     }
 
@@ -309,6 +321,10 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
 
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+            }
+
+            if (this.isPaid === true) {
+                this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
             }
 
             if (this.showRegiXData) {
@@ -339,7 +355,8 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
                     this.notifier.stop();
                 }
             });
-        } }
+        }
+    }
 
     private fillModel(): void {
         this.model.submittedBy = this.form.get('submittedByControl')!.value;
@@ -352,6 +369,10 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
 
             if (this.hasDelivery === true) {
                 this.model.deliveryData = this.form.get('deliveryDataControl')!.value;
+            }
+
+            if (this.isPaid === true) {
+                this.model.paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
             }
         }
     }
@@ -415,9 +436,28 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
         }
     }
 
+    private shipValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            const shipId: number | undefined = this.form?.get('shipControl')?.value?.value;
+            if (shipId !== undefined && shipId !== null) {
+                const ship: ShipNomenclatureDTO = ShipsUtils.get(this.ships, shipId);
+
+                if (ShipsUtils.isDestOrDereg(ship)) {
+                    return { shipDestroyedOrDeregistered: true };
+                }
+
+                if (ShipsUtils.isThirdParty(ship)) {
+                    return { shipThirdParty: true };
+                }
+            }
+
+            return null;
+        };
+    }
+
     private shouldHidePaymentData(): boolean {
-        return this.paymentInformation?.paymentType === null
-            || this.paymentInformation?.paymentType === undefined
-            || this.paymentInformation?.paymentType === '';
+        return (this.model as ShipChangeOfCircumstancesApplicationDTO)?.paymentInformation?.paymentType === null
+            || (this.model as ShipChangeOfCircumstancesApplicationDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as ShipChangeOfCircumstancesApplicationDTO)?.paymentInformation?.paymentType === '';
     }
 }

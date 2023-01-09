@@ -1,5 +1,5 @@
-﻿import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+﻿import { Component, EventEmitter, Injector, OnInit, ViewChild } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subject } from 'rxjs';
@@ -39,7 +39,11 @@ import { Notifier } from '@app/shared/directives/notifier/notifier.class';
 import { FishingCapacityFreedActionsRegixDataDTO } from '@app/models/generated/dtos/FishingCapacityFreedActionsRegixDataDTO';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { NewCertificateData } from '../../fishing-capacity/acquired-fishing-capacity/acquired-fishing-capacity.component';
-import { ShipNomenclatureFilters, ShipsUtils } from '@app/shared/utils/ships.utils';
+import { ShipsUtils } from '@app/shared/utils/ships.utils';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { IFishingCapacityService } from '@app/interfaces/common-app/fishing-capacity.interface';
+import { FishingCapacityAdministrationService } from '@app/services/administration-app/fishing-capacity-administration.service';
+import { FishingCapacityPublicService } from '@app/services/public-app/fishing-capacity-public.service';
 
 @Component({
     selector: 'ship-deregistration',
@@ -56,8 +60,6 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
     public expectedResults: ShipDeregistrationRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
 
-    public paymentInformation: ApplicationPaymentInformationDTO | undefined;
-
     public isPublicApp: boolean = false;
     public isOnlineApplication: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
@@ -73,6 +75,8 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
     public hasNoEDeliveryRegistrationError: boolean = false;
     public hideBasicPaymentInfo: boolean = false;
     public service!: IShipsRegisterService;
+
+    public fishingCapacityService: IFishingCapacityService;
 
     public maxTonnage: number = 0;
     public maxPower: number = 0;
@@ -94,13 +98,21 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
     public constructor(
         nomenclatures: CommonNomenclatures,
         translate: FuseTranslationLoaderService,
-        snackbar: MatSnackBar
+        snackbar: MatSnackBar,
+        injector: Injector
     ) {
         this.nomenclatures = nomenclatures;
         this.translate = translate;
         this.snackbar = snackbar;
 
         this.isPublicApp = IS_PUBLIC_APP;
+
+        if (this.isPublicApp) {
+            this.fishingCapacityService = injector.get(FishingCapacityPublicService);
+        }
+        else {
+            this.fishingCapacityService = injector.get(FishingCapacityAdministrationService);
+        }
 
         this.expectedResults = new ShipDeregistrationRegixDataDTO({
             submittedBy: new ApplicationSubmittedByRegixDataDTO(),
@@ -142,11 +154,6 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
             this.ships = await NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false
             ).toPromise();
-
-            this.ships = ShipsUtils.filter(this.ships, new ShipNomenclatureFilters({
-                isThirdPartyShip: false,
-                isDestOrDereg: false
-            }));
         }
 
         // извличане на исторически данни за заявление
@@ -163,7 +170,6 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
 
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
-                        this.paymentInformation = application.paymentInformation;
                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
@@ -207,7 +213,6 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
                             this.isDraft = application.isDraft!;
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
-                            this.paymentInformation = application.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
 
@@ -229,6 +234,10 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
                             else {
                                 this.model = application;
                                 this.fillForm();
+                            }
+
+                            if (!this.isDraft) {
+                                this.form.get('shipControl')!.disable();
                             }
                         }
                     });
@@ -310,15 +319,35 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
         return result;
     }
 
+    public shipControlErrorLabelTest(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+        if (controlName === 'shipControl') {
+            if (errorCode === 'shipDestroyedOrDeregistered' && error === true) {
+                return new TLError({
+                    text: this.translate.getValue('ships-register.dereg-ship-deregistered-error'),
+                    type: 'error'
+                });
+            }
+
+            if (errorCode === 'shipThirdParty' && error === true) {
+                return new TLError({
+                    text: this.translate.getValue('ships-register.dereg-ship-third-party-error'),
+                    type: 'error'
+                });
+            }
+        }
+        return undefined;
+    }
+
     private buildForm(): void {
         this.form = new FormGroup({
-            submittedByControl: new FormControl(null),
-            submittedForControl: new FormControl(null),
-            shipControl: new FormControl(null, Validators.required),
-            reasonControl: new FormControl(null, Validators.required),
-            actionsControl: new FormControl(null),
-            deliveryDataControl: new FormControl(null),
-            filesControl: new FormControl(null)
+            submittedByControl: new FormControl(undefined),
+            submittedForControl: new FormControl(undefined),
+            shipControl: new FormControl(undefined, [Validators.required, this.shipValidator()]),
+            reasonControl: new FormControl(undefined, Validators.required),
+            actionsControl: new FormControl(undefined),
+            deliveryDataControl: new FormControl(undefined),
+            applicationPaymentInformationControl: new FormControl(),
+            filesControl: new FormControl(undefined)
         });
     }
 
@@ -341,6 +370,10 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
 
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+            }
+
+            if (this.isPaid === true) {
+                this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
             }
 
             if (this.showRegiXData) {
@@ -377,16 +410,26 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
     private fillModel(): void {
         this.model.submittedBy = this.form.get('submittedByControl')!.value;
         this.model.submittedFor = this.form.get('submittedForControl')!.value;
-        this.model.freedCapacityAction = this.form.get('actionsControl')!.value;
 
         if (this.model instanceof ShipDeregistrationApplicationDTO) {
             this.model.shipId = this.form.get('shipControl')!.value?.value;
             this.model.deregistrationReason = this.form.get('reasonControl')!.value;
             this.model.files = this.form.get('filesControl')!.value;
 
+            if (this.hasFishingCapacity === true) {
+                this.model.freedCapacityAction = this.form.get('actionsControl')!.value;
+            }
+
             if (this.hasDelivery === true) {
                 this.model.deliveryData = this.form.get('deliveryDataControl')!.value;
             }
+
+            if (this.isPaid === true) {
+                this.model.paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
+            }
+        }
+        else {
+            this.model.freedCapacityAction = this.form.get('actionsControl')!.value;
         }
     }
 
@@ -449,9 +492,28 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
         }
     }
 
+    private shipValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            const shipId: number | undefined = this.form?.get('shipControl')?.value?.value;
+            if (shipId !== undefined && shipId !== null) {
+                const ship: ShipNomenclatureDTO = ShipsUtils.get(this.ships, shipId);
+
+                if (ShipsUtils.isDestOrDereg(ship)) {
+                    return { shipDestroyedOrDeregistered: true };
+                }
+
+                if (ShipsUtils.isThirdParty(ship)) {
+                    return { shipThirdParty: true };
+                }
+            }
+
+            return null;
+        };
+    }
+
     private shouldHidePaymentData(): boolean {
-        return this.paymentInformation?.paymentType === null
-            || this.paymentInformation?.paymentType === undefined
-            || this.paymentInformation?.paymentType === '';
+        return (this.model as ShipDeregistrationApplicationDTO)?.paymentInformation?.paymentType === null
+            || (this.model as ShipDeregistrationApplicationDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as ShipDeregistrationApplicationDTO)?.paymentInformation?.paymentType === '';
     }
 }

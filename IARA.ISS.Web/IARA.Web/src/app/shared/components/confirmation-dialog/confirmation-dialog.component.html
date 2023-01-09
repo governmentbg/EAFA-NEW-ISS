@@ -11,7 +11,9 @@
 </mat-toolbar>
 <div class="dialog-size">
     <mat-dialog-content class="m-t-8">
-        <span>{{ message }}</span>
+        <div class="dialog-padding">
+            <pre class="default-font">{{ message }}</pre>
+        </div>
     </mat-dialog-content>
 </div>
 <mat-dialog-actions class="m-0 p-b-0"
@@ -23,6 +25,6 @@
             (click)="cancel()">{{ cancelBtnLabel }}</button>
     <div *ngIf="!hasCancelButton"></div>
     <button mat-raised-button
-            color="accent"
+            [color]="okBtnColor"
             (click)="confirm()">{{ okBtnLabel }}</button>
 </mat-dialog-actions>

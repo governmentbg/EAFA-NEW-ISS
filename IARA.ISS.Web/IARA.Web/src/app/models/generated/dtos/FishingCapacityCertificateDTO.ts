@@ -2,6 +2,7 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { CapacityCertificateHistoryDTO } from './CapacityCertificateHistoryDTO';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
 
 export class FishingCapacityCertificateDTO { 
     public constructor(obj?: Partial<FishingCapacityCertificateDTO>) {
@@ -37,6 +38,9 @@ export class FishingCapacityCertificateDTO {
 
     @StrictlyTyped(Number)
     public deliveryId?: number;
+
+    @StrictlyTyped(Number)
+    public pageCode?: PageCodeEnum;
 
     @StrictlyTyped(CapacityCertificateHistoryDTO)
     public history?: CapacityCertificateHistoryDTO;

@@ -16,7 +16,8 @@ import { RequestProperties } from '@app/shared/services/request-properties';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { PermitLicenseNomenclatureDTO } from '@app/models/generated/dtos/PermitLicenseNomenclatureDTO';
 import { QualifiedFisherNomenclatureDTO } from '@app/models/generated/dtos/QualifiedFisherNomenclatureDTO';
-import { PageCodeEnum } from '../../enums/page-code.enum';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { RegisterDTO } from '@app/models/generated/dtos/RegisterDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -108,14 +109,20 @@ export class DuplicatesRegisterAdministrationService extends ApplicationsRegiste
     }
 
     public addAndDownloadDuplicateRegister(duplicate: DuplicatesRegisterEditDTO): Observable<boolean> {
-        return this.requestService.downloadPost(this.area, this.controller, 'AddAndDownloadDuplicateRegister', 'duplicate', duplicate, {
+        const registerDto: RegisterDTO<DuplicatesRegisterEditDTO> = new RegisterDTO<DuplicatesRegisterEditDTO>({
+            dto: duplicate
+        });
+
+        return this.requestService.downloadPost(this.area, this.controller, 'AddAndDownloadDuplicateRegister', 'duplicate', registerDto, {
             properties: new RequestProperties({ asFormData: true })
         });
     }
 
     public downloadDuplicate(id: number): Observable<boolean> {
         const params = new HttpParams().append('id', id.toString());
-        return this.requestService.download(this.area, this.controller, 'DownloadDuplicateRegister', 'duplicate', { httpParams: params });
+        return this.requestService.downloadPost(this.area, this.controller, 'DownloadDuplicateRegister', 'duplicate', undefined, {
+            httpParams: params
+        });
     }
 
     public getRegisteredBuyers(): Observable<NomenclatureDTO<number>[]> {

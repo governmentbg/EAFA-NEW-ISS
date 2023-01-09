@@ -158,7 +158,7 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
         const errors: ValidationErrors = {};
         this.lawSectionError = false;
         
-        if (this.seizedFish.length > 0) {
+        if (this.isAuan && this.seizedFish.length > 0) {
             if (this.seizedFish.some(x => x.lawSectionId === undefined || x.lawSectionId === null)) {
                 this.lawSectionError = true;
                 errors['lawSectionError'] = true;

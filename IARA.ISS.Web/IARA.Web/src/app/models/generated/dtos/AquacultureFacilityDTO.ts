@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { LogBookRegisterDTO } from './LogBookRegisterDTO';
 import { AquacultureStatusEnum } from '@app/enums/aquaculture-status.enum';
 
 export class AquacultureFacilityDTO { 
@@ -40,6 +41,9 @@ export class AquacultureFacilityDTO {
 
     @StrictlyTyped(Number)
     public deliveryId?: number;
+
+    @StrictlyTyped(LogBookRegisterDTO)
+    public logBooks?: LogBookRegisterDTO[];
 
     @StrictlyTyped(Boolean)
     public isActive?: boolean;

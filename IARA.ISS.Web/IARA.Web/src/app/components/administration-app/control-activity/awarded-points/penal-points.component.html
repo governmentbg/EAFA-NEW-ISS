@@ -114,7 +114,7 @@
 
     <!--Таблица-->
     <tl-card>
-        <tl-card-title *ngIf="this.penalDecreeId !== null && this.penalDecreeId !== undefined">{{ 'penal-points.decree-penal-points-title' | tlTranslate }}</tl-card-title>
+        <tl-card-title *ngIf="penalDecreeId !== null && penalDecreeId !== undefined">{{ 'penal-points.decree-penal-points-title' | tlTranslate }}</tl-card-title>
         <tl-card-content>
             <tl-data-table [showAddButton]="canAddRecords && openedFromMenu"
                            [showInactiveRecords]="canRestoreRecords && openedFromMenu"
@@ -135,7 +135,7 @@
                              columnName="{{ 'penal-points.table-issue-date' | tlTranslate }}">
                 </data-column>
 
-                <data-column [flexRate]="0.3"
+                <data-column [flexRate]="0.5"
                              propertyName="pointsType"
                              [options]="pointsTypes"
                              dataType="nomenclature"
@@ -148,11 +148,11 @@
                 </data-column>
 
                 <data-column propertyName="name"
-                             [flexRate]="0.3"
+                             [flexRate]="0.4"
                              columnName="{{ 'penal-points.table-name' | tlTranslate }}">
                 </data-column>
 
-                <data-column [flexRate]="0.3"
+                <data-column [flexRate]="0.4"
                              propertyName="isIncreasePoints"
                              [options]="orderTypes"
                              dataType="nomenclature"

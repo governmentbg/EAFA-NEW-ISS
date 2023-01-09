@@ -24,6 +24,7 @@ import { ScientificFishingCommonService } from '../common-app/scientific-fishing
 import { SciFiPrintTypesEnum } from '@app/enums/sci-fi-print-types.enum';
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { ScientificFishingReasonNomenclatureDTO } from '@app/models/generated/dtos/ScientificFishingReasonNomenclatureDTO';
+import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -153,11 +154,24 @@ export class ScientificFishingPublicService extends BaseAuditService implements 
     }
 
     // applications
+
+    public getUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
+    public getMyTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
     public assignApplicationViaAccessCode(accessCode: string): Observable<AssignedApplicationInfoDTO> {
-        throw new Error('This method should not be called from the public app');
+        throw new Error('This method should not be called from the public app.');
+    }
+
+    public assignApplicationViaUserId(applicationId: number, userId: number): Observable<AssignedApplicationInfoDTO> {
+        throw new Error('This method should not be called from the public app.');
     }
 
     public editApplicationDataAndStartRegixChecks(model: IApplicationRegister): Observable<void> {
-        throw new Error('This method should not be called from the public app');
+        throw new Error('This method should not be called from the public app.');
     }
 }

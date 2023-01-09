@@ -32,6 +32,9 @@ export class AuanViolatedRegulationDTO {
     @StrictlyTyped(String)
     public lawText?: string;
 
+    @StrictlyTyped(String)
+    public comments?: string;
+
     @StrictlyTyped(Boolean)
     public isActive?: boolean;
 }

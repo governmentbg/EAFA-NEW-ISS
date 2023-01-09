@@ -64,9 +64,10 @@ namespace IARA.Mobile.Insp.Helpers
                         fishingShip.ShipData.Flag.AssignFrom(chosenShip.FlagId, fishingShip.ShipData.Flags);
                         fishingShip.ShipData.ShipType.AssignFrom(chosenShip.ShipTypeId, fishingShip.ShipData.ShipTypes);
 
-                        List<PermitLicenseDto> permits = nomTransaction.GetPermitLicenses(uid);
+                        List<PermitLicenseDto> permitLicenses = nomTransaction.GetPermitLicenses(uid);
+                        List<PermitDto> permits = nomTransaction.GetPermits(uid);
 
-                        if (permits.Count > 0)
+                        if (permitLicenses.Count > 0)
                         {
                             shipChecks.PermitLicenses.ActionSelected = CommandBuilder.CreateFrom(() =>
                             {
@@ -85,7 +86,7 @@ namespace IARA.Mobile.Insp.Helpers
                             });
 
                             shipChecks.PermitLicenses.PermitLicenses.Value.ReplaceRange(
-                                permits.ConvertAll(f =>
+                                permitLicenses.ConvertAll(f =>
                                 {
                                     PermitLicenseModel permit = new PermitLicenseModel
                                     {
@@ -102,6 +103,31 @@ namespace IARA.Mobile.Insp.Helpers
                                     };
 
                                     permit.LicenseNumber.AssignFrom(f.LicenseNumber);
+
+                                    return permit;
+                                })
+                            );
+                        }
+
+                        if (permits.Count > 0)
+                        {
+                            shipChecks.Permits.Permits.Value.ReplaceRange(
+                                permits.ConvertAll(f =>
+                                {
+                                    PermitModel permit = new PermitModel
+                                    {
+                                        Dto = new InspectionPermitDto
+                                        {
+                                            PermitLicenseId = f.Id,
+                                            PermitNumber = f.PermitNumber,
+                                            From = f.From,
+                                            To = f.To,
+                                            TypeId = f.TypeId,
+                                            TypeName = f.TypeName,
+                                        }
+                                    };
+
+                                    permit.Number.AssignFrom(f.PermitNumber);
 
                                     return permit;
                                 })

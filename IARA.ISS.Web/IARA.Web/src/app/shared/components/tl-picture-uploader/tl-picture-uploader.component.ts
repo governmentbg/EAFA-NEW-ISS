@@ -26,6 +26,9 @@ export class TLPictureUploaderComponent implements OnInit, OnChanges, DoCheck, O
     @Input()
     public requestMethod?: TLPictureRequestMethod;
 
+    @Input()
+    public label: string | undefined;
+
     public inputId: string;
 
     public photo!: FileInfoDTO;

@@ -17,4 +17,7 @@ export class InternalUserDTO extends UserEditDTO {
   
     @StrictlyTyped(MobileDeviceDTO)
     public mobileDevices?: MobileDeviceDTO[];
+
+    @StrictlyTyped(String)
+    public title?: string;
 }

@@ -18,7 +18,7 @@ import { ShipFishingCapacityDTO } from '@app/models/generated/dtos/ShipFishingCa
 import { TransferFishingCapacityApplicationDTO } from '@app/models/generated/dtos/TransferFishingCapacityApplicationDTO';
 import { FishingCapacityStatisticsDTO } from '@app/models/generated/dtos/FishingCapacityStatistics';
 import { CapacityCertificateDuplicateApplicationDTO } from '@app/models/generated/dtos/CapacityCertificateDuplicateApplicationDTO';
-import { ExcelExporterRequestModel } from '../../shared/components/data-table/models/excel-exporter-request-model.model';
+import { ExcelExporterRequestModel } from '@app/shared/components/data-table/models/excel-exporter-request-model.model';
 
 export interface IFishingCapacityService extends IApplicationsActionsService, IBaseAuditService {
     getAllCapacityCertificates(request: GridRequestModel<FishingCapacityCertificatesFilters>): Observable<GridResultModel<FishingCapacityCertificateDTO>>;

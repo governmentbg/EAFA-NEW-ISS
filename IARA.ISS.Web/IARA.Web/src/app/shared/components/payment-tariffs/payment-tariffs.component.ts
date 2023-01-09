@@ -25,7 +25,7 @@ export class PaymentTariffsComponent extends CustomFormControl<PaymentSummaryDTO
     @Input()
     public showIsChecked: boolean = false;
 
-    public paymentSummary: PaymentSummaryDTO = new PaymentSummaryDTO({ tariffs: [], totalPrice: 0 });
+    public paymentSummary: PaymentSummaryDTO = new PaymentSummaryDTO({ tariffs: [], totalPrice: 0, totalPaidPrice: 0 });
 
     public checkboxLabelFlex: number = CHECKBOX_LABEL_DEFAULT_FLEX;
     public nameLabelFlex: number = NAME_LABEL_DEFAULT_FLEX;
@@ -80,7 +80,7 @@ export class PaymentTariffsComponent extends CustomFormControl<PaymentSummaryDTO
             });
         }
         else {
-            this.paymentSummary = new PaymentSummaryDTO({ tariffs: [], totalPrice: 0 });
+            this.paymentSummary = new PaymentSummaryDTO({ tariffs: [], totalPrice: 0, totalPaidPrice: 0 });
             this.formArray.reset();
         }
     }
@@ -92,7 +92,8 @@ export class PaymentTariffsComponent extends CustomFormControl<PaymentSummaryDTO
     protected getValue(): PaymentSummaryDTO {
         const paymentSummary: PaymentSummaryDTO = new PaymentSummaryDTO({
             tariffs: [],
-            totalPrice: this.paymentSummary.totalPrice
+            totalPrice: this.paymentSummary.totalPrice,
+            totalPaidPrice: this.paymentSummary.totalPaidPrice
         });
 
         for (const control of this.formArray.controls) {

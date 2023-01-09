@@ -213,44 +213,9 @@ export class InspectionsService extends BaseAuditService {
     }
 
     public getAll(request: GridRequestModel<InspectionsFilters>): Observable<GridResultModel<InspectionDTO>> {
-        type Result = GridResultModel<InspectionDTO>;
-        type Body = GridRequestModel<InspectionsFilters>;
-
-        return this.requestService.post<Result, Body>(this.area, this.controller, 'GetAll', request, {
+        return this.requestService.post(this.area, this.controller, 'GetAll', request, {
             properties: RequestProperties.NO_SPINNER,
             responseTypeCtr: GridResultModel,
-        }).pipe(switchMap((entries: Result) => {
-            const ids = entries.records.map((insp: InspectionDTO) => insp.id!);
-
-            if (ids.length === 0) {
-                return of(entries);
-            }
-
-            return this.getInspectionAUANs(ids).pipe(map((auans) => {
-                for (const auan of auans) {
-                    const found = entries.records.find((entry: InspectionDTO) => {
-                        return entry.id === auan.inspectionId;
-                    });
-
-                    if (found !== undefined) {
-                        if (found.auaNs !== undefined && found.auaNs !== null) {
-                            found.auaNs.push(auan);
-                        }
-                        else {
-                            found.auaNs = [auan];
-                        }
-                    }
-                }
-
-                return entries;
-            }));
-        }));
-    }
-
-    public getInspectionAUANs(inspectionIds: number[]): Observable<AuanRegisterDTO[]> {
-        return this.requestService.post(this.area, this.controller, 'GetInspectionAUANs', inspectionIds, {
-            properties: RequestProperties.NO_SPINNER,
-            responseTypeCtr: AuanRegisterDTO,
         });
     }
 

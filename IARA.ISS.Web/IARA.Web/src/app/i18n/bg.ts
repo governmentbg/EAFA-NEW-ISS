@@ -173,7 +173,11 @@
         'succ-add-aquaculture-log-book-page': 'Успешно добавяне на декларация за произход на продукция от аквакултурно стопанство',
         'succ-edit-aquaculture-log-book-page': 'Успешно обновяване на декларация за произход на продукция от аквакултурно стопанство',
         'succ-log-book-page-annulment': 'Успешно анулиране на страница от дневник',
-        'succ-updated-delivery-data': 'Успешно обновени данни за връчване'
+        'succ-updated-delivery-data': 'Успешно обновени данни за връчване',
+        'succ-add-print-configuration': 'Успешно добавени настройки за принтиране',
+        'succ-edit-print-configuration': 'Успешно редактирани настройки за принтиране',
+        'succ-delete-print-configuration': 'Успешно изтрити настройки за принтиране',
+        'succ-restore-print-configuration': 'Успешно възстановени настройки за принтиране'
     },
     'navigation': {
         'applications': 'Приложения',
@@ -240,6 +244,7 @@
         'interface-translations-labels': 'Превод на интерфейс',
         'interface-translations-help': 'Превод на помощна информация',
         'nomenclatures': 'Номенклатури',
+        'print-configurations': 'Настройки за принтиране',
         'legal-entities': 'Достъп на юридически лица',
         'external-users': 'Външни потребители',
         'internal-users': 'Вътрешни потребители',
@@ -527,6 +532,7 @@
         'holder-no-address-provided': 'Няма предоставен адрес',
 
         'holders-validation-errors': 'Има непопълнени задължителни полета при някои от титулярите',
+        'ship-deregistered-error': 'Корабът е отписан от регистъра',
 
         'add-outing-dialog-title': 'Добавяне на излет',
         'edit-outing-dialog-title': 'Редактиране на излет',
@@ -560,7 +566,10 @@
 
         'delivery-data': 'Информация за връчване',
         'has-no-e-delivery-registration-error': 'Трябва да имате достъп до системата за електронно връчване (EDelivery), за да изберете електронно връчване',
-        'delivery-data-dialog-title': 'Информация за начин на връчване'
+        'delivery-data-dialog-title': 'Информация за начин на връчване',
+
+        'print-configurations-dialog-title': 'Печат',
+        'choose-settings-and-print': 'Потвърди и изтегли'
     },
     'users-page': {
         'username': 'Потребителско име',
@@ -640,6 +649,7 @@
         'user-must-change-password': 'Смяна на паролата на потребителя',
         'unlock-user': 'Потребителят е заключен',
         'position': 'Длъжност',
+        'title': 'Титла',
         'username-already-exists-error': 'Въведеното потребителско име вече съществува в системата',
         'email-already-exists-error': 'Въведеният имейл вече съществува в системата',
         'must-have-one-valid-egn-lnc-error': 'В системата вече има валиден потребител с посоченото ЕГН/ЛНЧ',
@@ -833,7 +843,10 @@
         'view-qualified-fisher-appl-and-confirm-regularity-title': 'Преглед на заявление и потвърждение редовността на данните',
 
         'register-title': 'правоспособни рибари',
-        'duplicate-entries': 'Издадени дубликати'
+        'duplicate-entries': 'Издадени дубликати',
+
+        'print-configurations-dialog-title': 'Печат',
+        'choose-settings-and-print': 'Потвърди и изтегли'
     },
     'permissions-register': {
         'permission-name': 'Име на право',
@@ -973,6 +986,7 @@
         'register-ticket-num': 'Номер на билет',
         'ticket-duplicate-of-num': 'Дубликат на',
         'ticket-holder-data': 'Лични данни',
+        'attached-photo': 'Прикачена снимка',
         'ticket-holder-representative-data': 'Лични данни на родител/настойник',
         'has-bulgarian-address-registration': 'Притежава българска адресна регистрация',
         'permanent-address-same-as-correspondence': 'Постоянният адрес съвпада с адреса за кореспонденция',
@@ -1117,7 +1131,10 @@
         'renew-ticket-dialog-title': 'Подновяване на билет',
 
         'choose-association': 'Изберете сдружение',
-        'no-associations-with-permission': 'Вие не членувате в сдружение, от чието име имате право да издавате билети',
+        'no-associations-with-permission': 'За да издадете билет за любителски риболов е необходимо да регистрирате Вашата организация в обновената информационна система на ИАРА. Моля, попълнете заявлението, като посочите лицата с право на достъп. Заявлението ще бъде прегледано и одобрено от служител на ИАРА, за което ще получите известие на посочената електронна поща.',
+        'association-submit-application': 'Подай заявление',
+        'no-associations-with-permission-has-started': 'Имате започнато или подадено заявление за регистриране на Вашата организация в обновената информационна система на ИАРА. За да прегледате статуса на Вашето заявление, навигирайте към страница „Подадени заявления“ в менюто',
+        'association-navigate-to-application': 'Към заявлението',
 
         'association-name': 'Наименование',
         'association-territory-unit': 'Териториално звено',
@@ -1170,6 +1187,8 @@
         'payment-type': 'Начин на плащане',
         'payment-num': 'Приходен документ №',
         'payment-date': 'Дата на плащане',
+        'total-paid-price': 'Платена цена (в лева)',
+        'total-price-not-equal-to-paid-price-error': 'Има разлика между изчислената и платената цена за заявлението от'
     },
     'online-payment-data': {
         'choose-payment-method-panel-title': 'Начин на плащане',
@@ -1190,16 +1209,19 @@
         'basic-payment-information-panel-title': 'Основна платежна информация',
         'payment-type': 'Начин на плащане',
         'payment-date': 'Дата на плащане',
+        'total-paid-price': 'Платена цена (в лева)',
         'payment-status': 'Статус на плащането',
         'reference-number': 'Номер на плащането',
-        'last-update-date': 'Дата на последна промяна'
+        'last-update-date': 'Дата на последна промяна',
+        'total-price-not-equal-to-paid-price-error': 'Има разлика между изчислената и платената цена за заявлението от'
     },
     'payment-tariffs': {
         'tariff-name': 'Име на тарифа',
         'quantity': 'Количество (брой)',
         'unit-price': 'Единична цена',
         'price': 'Цена',
-        'total-price': 'Обща цена',
+        'total-price': 'Обща изчислена цена',
+        'total-paid-price': 'Обща платена цена',
         'include-checkbox': 'Включена'
     },
     'payment-tariff': {
@@ -1212,7 +1234,7 @@
         'application-type': 'Вид услуга',
         'application-status': 'Статус на заявлението',
         'application-submitted-for': 'Получател на заявлението',
-        'application-submitted-for-egn-lnc': 'ЕГН/ЛНЧ на получателя на заявлението',
+        'application-submitted-for-egn-lnc': 'ЕГН/ЛНЧ/ЕИК на получателя на заявлението',
         'application-submitted-by': 'Заявител',
         'application-source': 'Тип на услугата',
         'application-assigned-user': 'Назначено на',
@@ -1242,6 +1264,7 @@
         'entering-eventis-number': 'Въвеждане на входящ номер от Евентис',
         'initiate-online-payment': 'Плати онлайн',
         'cancel-application': 'Анулиране на заявление',
+        'assign-application-via-user': 'Присвояване на потребител',
         'send-for-additional-editing': 'Изпращане за допълнителни корекции от заявителя',
         'completion-of-inspection': 'Приключване на проверка',
         'enter-payment-data': 'Въвеждане на платежни данни',
@@ -1258,6 +1281,11 @@
 
         'add-application-request-dialog-title': 'Добавяне на заявка за услуга',
         'enter-eventis-number-dialog-title': 'Въвеждане на входящ номер',
+
+        'assign-application-by-user-dialog-title': 'Присвояване на заявление към потребител',
+        'user-to-assign': 'Потребител за присвояване',
+        'only-my-territory-unit-toggle': 'Покажи само потребители от моето териториално звено',
+        'assign-application-by-user-btn': 'Присвои',
 
         'assign-invalid-state-machine-transition-operation-error': 'Невалидно присвояване на заявление. Заявелението не е в подходящ статус.',
         'access-code-copied-successfully': 'Кодът за достъп е копиран успешно',
@@ -1287,7 +1315,7 @@
         'enter-payment-data-dialog-title': 'Въвеждане на платежни данни',
         'payment-refusal-reason-dialog-title': 'Причина за отказ от плащане',
         'refuse-payment': 'Откажи плащане',
-        'choose-application-for-register-creation': 'Избор на заявление за издаване на разрешително',
+        'choose-application-for-register-creation': 'Избор на заявление за създаване на регистров запис',
         'applications-for-choice-list': 'Списък със заявления',
         'applications-for-choice-keywork-filter': 'Търсене по ключова дума',
         'choose': 'Избери',
@@ -1324,7 +1352,9 @@
         'delivery-territory-unit': 'Териториално звено',
         'delivery-ordinary-email': 'Електронна поща',
         'e-delivery-email': 'Електронна поща, регистрирана в e-delivery',
-        'save-and-send-btn': 'Запази и изпрати чрез E-Delivery'
+        'save-and-send-btn': 'Запази и изпрати чрез E-Delivery',
+        'user-has-no-e-delivery-registration-error': 'Потребителят не е регистриран в системата за електронно връчване (e-delivery)',
+        'user-uploaded-invalid-file-error': 'Прикачен файл е невалидно подписан и/или с нарушена цялост'
     },
     'legal-entities-report-page': {
         'legal-name': 'Име',
@@ -1522,7 +1552,6 @@
         'view-first-sale-center-dialog-title': 'Преглед на регистриран център за първа продажба',
         'edit-buyer-dialog-title': 'Редакция на регистриран купувач за първа продажба',
         'edit-first-sale-dialog-title': 'Редакция на регистриран център за първа продажба',
-        'log-books-panel': 'Дневници',
         'buyer-basic-information-panel': 'Основна информация',
         'buyer-basic-information-panel-helper': '',
         'buyer-has-utility-checkbox': 'Регистрация на магазин',
@@ -1673,6 +1702,24 @@
         'concessioner': 'Концесионер',
         'registration-number': 'Изходящ номер',
 
+        'log-books-list-card-title': 'Свързани дневници',
+        'log-book-type': 'Тип',
+        'log-book-issue-date': 'Дата на издаване',
+        'log-book-finish-date': 'Дата на приключване',
+        'log-book-status': 'Статус',
+        'log-book-start-page-number': 'Начална страница',
+        'log-book-end-page-number': 'Крайна страница',
+        'view-log-book': 'Преглед на дневник',
+        'edit-log-book': 'Редакция на дневник',
+        'delete-log-book': 'Изтриване на дневник',
+        'restore-log-book': 'Възстановяване на дневник',
+        'add-log-book-title': 'Добавяне на дневник',
+        'view-log-book-title': 'Преглед на дневник',
+        'edit-log-book-title': 'Редакция на дневник',
+        'delete-log-book-title': 'Изтриване на дневник',
+        'confirm-delete-log-book-message': 'Сигурни ли сте, че искате да изтриете дневник с номер',
+        'delete-log-book-btn-label': 'Изтрий',
+
         'view-application-dialog-title': 'Преглед на заявление за купувач или център за първа продажба',
         'add-buyer-dialog-title': 'Добавяне на регистрация на купувач за първа продажба',
         'add-first-sale-dialog-title': 'Добавяне на регистрация на център за първа продажба',
@@ -1720,8 +1767,6 @@
         'activate': 'Възобновяване на регистрацията',
         'cancel-buyers-and-sales-center-facility': 'Прекратяване регистрацията на регистриран купувач за първа продажба',
         'activate-buyers-and-sales-center-facility': 'Възобновяване регистрацията на регистриран купувач за първа продажба',
-        'overlapping-log-books-dialog-title': 'Припокриващи се диапазони от страници на текущи дневници с други, въведени в системата',
-        'overlapping-log-books-save-despite-conflicts': 'Запази въпреки конфликтите',
 
         'cancel-status-history': 'История на прекратяванията',
         'cancel-status-description': 'Описание',
@@ -1731,7 +1776,10 @@
         'cancel-status-date-of-change': 'Дата',
         'cancel-status-reason': 'Причина',
         'cancel-status-issue-order-num': '№ на заповед',
-        'annual-turnover': 'Годишен оборот'
+        'annual-turnover': 'Годишен оборот',
+
+        'print - configurations - dialog - title': 'Печат',
+        'choose-settings-and-print': 'Потвърди и изтегли'
     },
     'regix-check': {
         'web-service-name': 'Име на услуга',
@@ -1901,7 +1949,7 @@
         'sail-area': 'Район на плаване',
 
         'certificate-for-use-of-free-fishing-capacity': 'Използване на удостоверение за свободен риболовен капацитет',
-        'ship-used-cap-certificate-date': 'Дата',
+        'ship-used-cap-certificate-date': 'Дата на събитие',
         'ship-used-cap-certificate-num': '№ на удостоверение',
         'ship-used-cap-certificate-power': 'Използвана мощност (kW)',
         'ship-used-cap-certificate-tonnage': 'Използван бруто тонаж',
@@ -2049,6 +2097,8 @@
         'coc-regix-checks-results': 'Резултати от автоматични проверки към външни регистри',
         'coc-ship': 'Кораб',
         'coc-ship-from-register': 'Кораб от регистъра',
+        'coc-ship-deregistered-error': 'Корабът е отписан от регистъра',
+        'coc-ship-third-party-error': 'Корабът е от трета страна',
 
         'coc-payment-information': 'Информация за плащане',
         'coc-delivery-data': 'Начин на получаване на издаден от ИАРА документ',
@@ -2071,6 +2121,8 @@
         'dereg-required-actions': 'Необходими действия относно освободения риболовен капацитет',
         'dereg-files': 'Приложени файлове',
         'dereg-regix-checks-results': 'Резултати от автоматични проверки към външни регистри',
+        'dereg-ship-deregistered-error': 'Корабът е отписан от регистъра',
+        'dereg-ship-third-party-error': 'Корабът е от трета страна',
 
         'dereg-payment-information': 'Информация за плащане',
         'dereg-delivery-data': 'Начин на получаване на издаден от ИАРА документ',
@@ -2188,6 +2240,8 @@
         'copy-stack-trace': 'Копирай',
         'stack-trace-copied-successfully': 'Копирано успешно',
         'stack-trace-copy-failed': 'Настъпи грешка при копирането',
+        'id': 'Номер',
+        'filters-id': 'Номер на грешка',
 
         'severity-debug': 'Debug',
         'severity-error': 'Error',
@@ -2842,6 +2896,7 @@
         'confirm-delete-log-book-message': 'Сигурни ли сте, че искате да изтриете дневник с номер',
         'delete-log-book-title': 'Изтриване на дневник',
         'cannot-delete-log-book-with-submitted-pages': 'Не можете да изтриете дневника, тъй като към него вече има попълнени страници',
+        'add-log-book-title': 'Добавяне на дневник',
         'edit-log-book-title': 'Редакция на дневник',
         'view-log-book-title': 'Преглед на дневник',
 
@@ -2871,8 +2926,6 @@
         'log-book-permit-license-start-page-number': 'Начална страница в удостоверението',
         'log-book-permit-license-end-page-number': 'Крайна страница в удостоверението',
         'log-book-pages-range-invalid': 'Диапазонът от страници се припокрива с такъв на вече съществуващ дневник от същия тип',
-        'overlapping-log-books-dialog-title': 'Припокриващи се диапазони от страници на текущи дневници с други, въведени в системата',
-        'overlapping-log-books-save-despite-conflicts': 'Запази въпреки конфликтите',
         'log-book-type': 'Тип на дневника',
         'duplicate-entries': 'Издадени дубликати',
 
@@ -2951,15 +3004,26 @@
         'regix-checks-results-panel': 'Резултати от автоматични проверки към външни регистри',
         'validity-panel': 'Информация за издаване и валидност',
         'issue-date': 'Дата на издаване',
-        'valid-from-to': 'Период на валидност',
         'valid-from-when-unlimited': 'Начална дата на валидност',
+        'valid-from': 'Валидно от',
+        'valid-to': 'Валидно до',
         'is-permit-unlimited': 'Безсрочно разрешително',
 
         'permit-license-has-duplicated-mark-numbers': 'Следните номера на нови марки са дублирани',
         'permit-license-has-duplicated-pinger-numbers': 'Следните номера на нови пингъри са дублирани',
 
         'add-permit-is-second-ship-event-error': 'Разрешителното не може да бъде добавено към избрания кораб днес, защото това би предизвикало второ MOD събитие за деня, а само едно такова е позволено за даден кораб.',
-        'suspend-resume-is-second-event-for-ship-error': 'Разрешителното не може да бъде прекратено или възстановено днес, защото това би предизвикало второ MOD събитие за деня, а само едно такова е позволено за даден кораб.'
+        'suspend-resume-is-second-event-for-ship-error': 'Разрешителното не може да бъде прекратено или възстановено днес, защото това би предизвикало второ MOD събитие за деня, а само едно такова е позволено за даден кораб.',
+
+        'print-configurations-dialog-title': 'Печат',
+        'choose-settings-and-print': 'Потвърди и изтегли',
+
+        'enter-permit-license-payment-data-dialog-title': 'Въвеждане на платежни данни за удостоверение за стопански риболов'
+    },
+    'print-configuration': {
+        'user': ' Служител, издал документа',
+        'show-only-from-my-territory-unit': 'Покажи само потребители от моето териториално звено',
+        'position': 'Длъжност на служителя'
     },
     'ground-for-use': {
         'type': 'Тип на основание',
@@ -2984,7 +3048,8 @@
         'valid-to': 'Валидно до',
         'fishing-gears': 'Уреди',
         'auqatic-organisms': 'Водни организми',
-        'permit-is-readonly-info': 'Трябва да бъде избран кораб, за да се избере разрешително'
+        'permit-is-readonly-info': 'Трябва да бъде избран кораб, за да се избере разрешително',
+        'invalid-permit-number-error': 'Невалиден номер на разрешително'
     },
     'choose-permit-to-copy-from': {
         'ship': 'Кораб',
@@ -3055,6 +3120,17 @@
 
         'gear-has-duplicated-mark-number': 'Не може да имате марки с повтарящи се номера',
         'gear-has-duplicated-pinger-number': 'Не може да имате пингъри с повтаращи се номера',
+
+        'generate-marks-from-number-range': 'Генериране на номера на марки по диапазон',
+        'mark-numbers-range': 'Диапазон за генериране',
+        'mark-numbers-range-from': 'От',
+        'mark-numbers-range-to': 'До',
+        'generate-mark-numbers-btn-label': 'Генерирай марки',
+        'generate-mark-numbers-hint': 'Можете да генериране марки чрез попълване на диапазон и натискане на бутон "Генерирай" или да добавите нови макри чрез бутона "Добави".',
+
+        'generate-marks-from-range-confirm-dialog-title': 'Потвърждение за генериране на голям диапазон от марки',
+        'generate-marks-from-range-confirm-message': 'Сигурни ли сте, че искате да генерирате следния брой марки',
+        'generate': 'Генерирай',
 
         'type-helper': '',
         'count-helper': '',
@@ -3371,6 +3447,9 @@
         'increase-payment-information': 'Информация за плащане',
         'increase-files': 'Приложени файлове',
         'increase-regix-checks-results': 'Резултати от автоматични проверки към външни регистри',
+        'increase-ship-deregistered-error': 'Корабът е отписан от регистъра',
+        'increase-ship-third-party-error': 'Корабът е от трета страна',
+        'increase-ship-no-fishing-capacity-error': 'Корабът не е от черноморския флот',
 
         'reduce-requester': 'Заявител',
         'reduce-requester-role': 'Качество на заявителя спрямо получателя',
@@ -3389,6 +3468,9 @@
         'reduce-payment-information': 'Информация за плащане',
         'reduce-files': 'Приложени файлове',
         'reduce-regix-checks-results': 'Резултати от автоматични проверки към външни регистри',
+        'reduce-ship-deregistered-error': 'Корабът е отписан от регистъра',
+        'reduce-ship-third-party-error': 'Корабът е от трета страна',
+        'reduce-ship-no-fishing-capacity-error': 'Корабът не е от черноморския флот',
 
         'transfer-requester': 'Заявител',
         'transfer-requester-role': 'Качество на заявителя спрямо получателя',
@@ -3509,7 +3591,10 @@
         'duplicate-delivery-data': 'Информация за връчване',
         'duplicate-has-no-e-delivery-registration-error': 'Трябва да имате достъп до системата за електронно връчване (EDelivery), за да изберете електронно връчване',
         'duplicate-files': 'Приложени файлове',
-        'duplicate-regix-checks-results': 'Резултати от автоматични проверки към външни регистри'
+        'duplicate-regix-checks-results': 'Резултати от автоматични проверки към външни регистри',
+
+        'print-configurations-dialog-title': 'Печат',
+        'choose-settings-and-print': 'Потвърди и изтегли'
     },
     'patrol-vehicles': {
         'name': 'Име',
@@ -3645,6 +3730,7 @@
         'add-ship-page-document-wizard-possible-log-book-helper': 'При наличие на няколко дневника, изберете за кой дневник става въпрос. Ако има повече от 1 дневника, то избраната от Вас страница попада в диапазоните на всеки от наличните в списъка дневници.',
         'add-ship-page-document-wizard-page-not-in-log-book-license': 'Страницата не влиза в диапазона на избрания дневник (в рамките на удостоверение)',
         'add-ship-page-document-wizard-page-alread-submitted': 'Страницата е вече попълнена/анулирана',
+        'add-ship-page-document-wizard-page-alread-submitted-other-logbook': 'Страницата е вече попълнена/анулирана към друг дневник',
 
         'justified-cancellation-reason-default-label': 'Причина за анулиране',
 
@@ -3685,6 +3771,7 @@
         'add-log-book-page-wizard-place-of-import': 'Място на внос',
         'add-log-book-page-wizard-page-not-in-log-book-error': 'Страница не принадлежи към диапазона от страници за дневника',
         'add-log-book-page-wizard-page-already-submitted-error': 'Страницата е вече въведена/анулирана в системата',
+        'add-log-book-page-wizard-page-already-submitted-other-logbook-error': 'Страницата е вече въведе/анулирана в системата към друг дневник',
         'add-log-book-page-wizard-chosen-log-book-for-page': 'Избран дневник за страницата',
         'add-log-book-page-wizard-page-number-to-add': 'Номер на страница за добавяне',
         'add-log-book-page-wizard-page-permit-license-number': 'Удостоверение №',
@@ -3821,6 +3908,17 @@
         'ship-log-book-page-not-in-range-error': 'Избраната страница не е част от този дневник',
         'ship-log-book-page-not-in-log-book-license-range-error': 'Избраната страница не е част от диапазон на дневника към конкретно удостоверение',
         'ship-log-book-page-already-submitted-error': 'Избраната страница вече е попълнена или е анулирана',
+        'ship-log-book-page-already-submitted-other-logbook-error': 'Избраната страница вече е попълнена или е анулирана към друг дневник',
+        'ship-log-book-page-generate-missing-pages-permission-dialog-title': 'Потвърждение за генериране на липсващи страници',
+        'ship-log-book-page-permit-generate-missing-pages-first-part': 'Добави',
+        'ship-log-book-page-permit-generate-missing-pages-second-part': 'липсващи страници',
+        'ship-log-book-page-generate-missing-pages-permission-first-message': 'За текущия дневник последната въведена страница в системата е',
+        'ship-log-book-page-generate-missing-pages-permission-second-message': 'и за да добавите текущата страница',
+        'ship-log-book-page-generate-missing-pages-permission-third-message': 'ще трябва да бъдат изгенерирани',
+        'ship-log-book-page-generate-missing-pages-permission-forth-message': 'страници със статус Липсваща',
+        'ship-log-book-page-generate-missing-pages-permission-fifth-message': 'Моля, потвърдете дали одобрявате добавяне на',
+        'ship-log-book-page-generate-missing-pages-permission-sixth-message': 'страници със статус Липсваща',
+        'ship-log-book-page-generate-missing-pages-permission-no-pages-first-message': 'За текущия дневник няма въведени страници в системата. Началната му страница е',
         'ship-log-book-page-qualified-fisher': 'Правоспособен рибар',
         'ship-log-book-page-water-type': 'Тип на водите',
 
@@ -3861,7 +3959,18 @@
         'first-sale-page-status': 'Статус',
         'first-sale-page-not-in-range-error': 'Избраната страница не е част от този дневник',
         'first-sale-page-already-submitted-error': 'Избраната страница вече е попълнена или е анулирана',
+        'first-sale-page-already-submitted-other-logbook-error': 'Избраната страница вече е попълнена или е анулирана към друг дневник',
         'first-sale-page-send-to-flux-sales-error': 'Настъпи грешка при изпращането на данни за продажба към FLUX',
+        'first-sale-page-generate-missing-pages-permission-dialog-title': 'Потвърждение за генериране на липсващи страници',
+        'first-sale-page-permit-generate-missing-pages-first-part': 'Добави',
+        'first-sale-page-permit-generate-missing-pages-second-part': 'липсващи страници',
+        'first-sale-page-generate-missing-pages-permission-first-message': 'За текущия дневник последната въведена страница в системата е',
+        'first-sale-page-generate-missing-pages-permission-second-message': 'и за да добавите текущата страница',
+        'first-sale-page-generate-missing-pages-permission-third-message': 'ще трябва да бъдат изгенерирани',
+        'first-sale-page-generate-missing-pages-permission-forth-message': 'страници със статус Липсваща',
+        'first-sale-page-generate-missing-pages-permission-fifth-message': 'Моля, потвърдете дали одобрявате добавяне на',
+        'first-sale-page-generate-missing-pages-permission-sixth-message': 'страници със статус Липсваща',
+        'first-sale-page-generate-missing-pages-permission-no-pages-first-message': 'За текущия дневник няма въведени страници в системата. Началната му страница е',
 
         'add-admission-log-book-page-dialog-title': 'Добавяне на страница от дневник за приемане',
         'edit-admission-log-book-page-dialog-title': 'Редакция на страница от дневник за приемане',
@@ -3886,7 +3995,18 @@
         'admission-page-not-in-range-error': 'Избраната страница не е част от този дневник',
         'admission-page-not-in-log-book-license-range-error': 'Избраната страница не е част от диапазон на дневника към конкретно удостоверение',
         'admission-page-already-submitted-error': 'Избраната страница вече е попълнена или е анулирана',
+        'admission-page-already-submitted-other-logbook-error': 'Избраната страница вече е попълнена или е анулирана към друг дневник',
         'admission-page-send-to-flux-sales-error': 'Настъпи грешка при изпращането на данни за приемане към FLUX',
+        'admission-page-generate-missing-pages-permission-dialog-title': 'Потвърждение за генериране на липсващи страници',
+        'admission-page-permit-generate-missing-pages-first-part': 'Добави',
+        'admission-page-permit-generate-missing-pages-second-part': 'липсващи страници',
+        'admission-page-generate-missing-pages-permission-first-message': 'За текущия дневник последната въведена страница в системата е',
+        'admission-page-generate-missing-pages-permission-second-message': 'и за да добавите текущата страница',
+        'admission-page-generate-missing-pages-permission-third-message': 'ще трябва да бъдат изгенерирани',
+        'admission-page-generate-missing-pages-permission-forth-message': 'страници със статус Липсваща',
+        'admission-page-generate-missing-pages-permission-fifth-message': 'Моля, потвърдете дали одобрявате добавяне на',
+        'admission-page-generate-missing-pages-permission-sixth-message': 'страници със статус Липсваща',
+        'admission-page-generate-missing-pages-permission-no-pages-first-message': 'За текущия дневник няма въведени страници в системата. Началната му страница е',
 
         'add-transportation-log-book-page-dialog-title': 'Добавяне на страница от дневник за превоз',
         'edit-transportation-log-book-page-dialog-title': 'Редакция на страница от дневник за превоз',
@@ -3914,7 +4034,18 @@
         'transportation-page-not-in-range-error': 'Избраната страница не е част от този дневник',
         'transportation-page-not-in-log-book-license-range-error': 'Избраната страница не е част от диапазон на дневника към конкретно удостоверение',
         'transportation-page-already-submitted-error': 'Избраната страница вече е попълнена или е анулирана',
+        'transportation-page-already-submitted-other-logbook-error': 'Избраната страница вече е попълнена или е анулирана към друг дневник',
         'transportation-page-send-to-flux-sales-error': 'Настъпи грешка при изпращането на данни за превоз към FLUX',
+        'transportation-page-generate-missing-pages-permission-dialog-title': 'Потвърждение за генериране на липсващи страници',
+        'transportation-page-permit-generate-missing-pages-first-part': 'Добави',
+        'transportation-page-permit-generate-missing-pages-second-part': 'липсващи страници',
+        'transportation-page-generate-missing-pages-permission-first-message': 'За текущия дневник последната въведена страница в системата е',
+        'transportation-page-generate-missing-pages-permission-second-message': 'и за да добавите текущата страница',
+        'transportation-page-generate-missing-pages-permission-third-message': 'ще трябва да бъдат изгенерирани',
+        'transportation-page-generate-missing-pages-permission-forth-message': 'страници със статус Липсваща',
+        'transportation-page-generate-missing-pages-permission-fifth-message': 'Моля, потвърдете дали одобрявате добавяне на',
+        'transportation-page-generate-missing-pages-permission-sixth-message': 'страници със статус Липсваща',
+        'transportation-page-generate-missing-pages-permission-no-pages-first-message': 'За текущия дневник няма въведени страници в системата. Началната му страница е',
 
         'add-aquaculture-log-book-page-dialog-title': 'Добавяне на страница от дневник за аквакултурно стопанство',
         'edit-aquaculture-log-book-page-dialog-title': 'Редакция на страница от дневник за аквакултурно стопанство',
@@ -3930,6 +4061,17 @@
         'aquaculture-page-status': 'Статус',
         'aquaculture-page-not-in-range-error': 'Избраната страница не е част от този дневник',
         'aquaculture-page-already-submitted-error': 'Избраната страница вече е попълнена или е анулирана',
+        'aquaculture-page-already-submitted-other-logbook-error': 'Избраната страница вече е попълнена или е анулирана към друг дневник',
+        'aquaculture-page-generate-missing-pages-permission-dialog-title': 'Потвърждение за генериране на липсващи страници',
+        'aquaculture-page-permit-generate-missing-pages-first-part': 'Добави',
+        'aquaculture-page-permit-generate-missing-pages-second-part': 'липсващи страници',
+        'aquaculture-page-generate-missing-pages-permission-first-message': 'За текущия дневник последната въведена страница в системата е',
+        'aquaculture-page-generate-missing-pages-permission-second-message': 'и за да добавите текущата страница',
+        'aquaculture-page-generate-missing-pages-permission-third-message': 'ще трябва да бъдат изгенерирани',
+        'aquaculture-page-generate-missing-pages-permission-forth-message': 'страници със статус Липсваща',
+        'aquaculture-page-generate-missing-pages-permission-fifth-message': 'Моля, потвърдете дали одобрявате добавяне на',
+        'aquaculture-page-generate-missing-pages-permission-sixth-message': 'страници със статус Липсваща',
+        'aquaculture-page-generate-missing-pages-permission-no-pages-first-message': 'За текущия дневник няма въведени страници в системата. Началната му страница е',
 
         'log-book-page-person-has-bulgarian-address-registration': 'Притежава българска адресна регистрация',
         'log-book-page-person-registered-buyer': 'Регистриран купувач/център за първа продажба',
@@ -4026,7 +4168,9 @@
         'log-book-declarations-of-origin-panel': 'Свързани страници и декларации',
         'delete-log-book-dialog-label': 'Изтриване на дневник',
         'confirm-delete-log-book-message': 'Сигурни ли сте, че искате да изтриете избрания дневник?',
-        'delete-log-book-btn-label': 'Изтриване'
+        'delete-log-book-btn-label': 'Изтриване',
+        'overlapping-log-books-dialog-title': 'Припокриващи се диапазони от страници на текущи дневници с други, въведени в системата',
+        'overlapping-log-books-save-despite-conflicts': 'Запази въпреки конфликтите'
     },
     'aquacultures': {
         'aquaculture-dropdown-uror': 'УРОРР',
@@ -4081,6 +4225,25 @@
         'view-aquaculture-application-dialog-title': 'Преглед на заявление за вписване на аквакултурно стопанство',
         'view-aquaculture-application-regix-data-dialog-title': 'Преглед на RegiX данни от заявление за впсиване на аквакултурно стопанство',
         'view-aquaculture-appl-and-confirm-regularity-title': 'Преглед на заявление и потвърждение редовността на данните',
+
+        'view-log-book': 'Преглед на дневник',
+        'edit-log-book': 'Редакция на дневник',
+        'delete-log-book': 'Изтриване на дневник',
+        'restore-log-book': 'Възстановяване на дневник',
+        'add-log-book-title': 'Добавяне на дневник',
+        'view-log-book-title': 'Преглед на дневник',
+        'edit-log-book-title': 'Редакция на дневник',
+        'delete-log-book-title': 'Изтриване на дневник',
+        'confirm-delete-log-book-message': 'Сигурни ли сте, че искате да изтриете дневник за стопанство с номер',
+        'delete': 'Изтрий',
+        'log-books-list-card-title': 'Дневници към стопанството',
+        'log-book-number': 'Номер',
+        'log-book-issue-date': 'Дата на издаване',
+        'log-book-finish-date': 'Дата на приключване',
+        'log-book-status': 'Статус',
+        'log-book-start-page-number': 'Начална страница',
+        'log-book-end-page-number': 'Крайна страница',
+        'cannot-delete-log-book-with-submitted-pages': 'Не можете да изтриете дневник, към който има вече въведени страници',
 
         'activate': 'Възобновяване на регистрацията',
         'cancel': 'Прекратяване на регистрацията',
@@ -4164,7 +4327,6 @@
         'has-no-babh-certificate': 'Няма издадено удостоверение от БАБХ',
         'babh-certificate': 'Удостоверение от БАБХ',
         'comments': 'Бележки',
-        'log-books-panel': 'Дневници',
         'files': 'Приложени файлове',
         'regix-checks-results': 'Резултати от автоматични проверки към външни регистри',
 
@@ -4366,10 +4528,11 @@
         'complete-application-confirm-dialog-title': 'Приключване на заявление',
         'complete-application-confirm-dialog-message': 'Сигурни ли сте, че сте приключили с всички промени от това заявление?',
         'complete-application-confirm-dialog-ok-btn-label': 'Приключи',
-        'overlapping-log-books-dialog-title': 'Припокриващи се диапазони от страници на текущи дневници с други, въведени в системата',
-        'overlapping-log-books-save-despite-conflicts': 'Запази въпреки конфликтите',
 
-        'excel-filename': 'Аквакултурни стопанства'
+        'excel-filename': 'Аквакултурни стопанства',
+
+        'print-configurations-dialog-title': 'Печат',
+        'choose-settings-and-print': 'Потвърди и изтегли'
     },
     'cross-check': {
         'code': 'Код',
@@ -4519,6 +4682,7 @@
         'edit-violated-section': 'Точка',
         'edit-violated-letter': 'Буква',
         'edit-violated-type': 'Нормативен акт',
+        'edit-violated-comments': 'Бележки',
         'violated-regulation-type-law': 'Закон',
         'violated-regulation-type-regulation': 'Наредба',
         'edit-auan-at-least-one-violated-regulation-needed': 'Необходима е поне една нарушена разпоредба',
@@ -4668,7 +4832,7 @@
         'aqua-farm-basic-information-title': 'Основна информация',
         'aqua-farm-form-num': 'Номер',
         'aqua-farm-aquaculture-facilities': 'Стопанство',
-        'aqua-farm-year': 'Година',
+        'aqua-farm-year': 'Година на ИСФ',
         'aqua-farm-death-title': 'Смъртност',
         'aqua-farm-breeding-material-death-rate': 'На зарибителния материал (%)',
         'aqua-farm-consumation-fish-death-rate': 'На рибата за консумация (%)',
@@ -4775,7 +4939,7 @@
         'rework-receiver': 'Подадено от името на',
         'rework-basic-information-title': 'Основна информация',
         'rework-form-num': 'Номер',
-        'rework-year': 'Година',
+        'rework-year': 'Година на ИСФ',
         'rework-legal': 'Лице',
         'rework-legal-addresses': 'Адрес на регистрация',
         'rework-vet-registration-num': 'Ветеринарен регистрационен номер',
@@ -4888,7 +5052,7 @@
         'form-activity-person': 'Физическо лице',
         'form-activity-legal': 'Юридическо лице',
         'form-activity-association': 'Сдружение',
-        'fish-vessel-year': 'Година',
+        'fish-vessel-year': 'Година на ИСФ',
 
         'men-with-pay': 'Мъже със заплащане (бр.)',
         'men-without-pay': 'Мъже без заплащане (бр.)',
@@ -4906,6 +5070,8 @@
         'vessel-information-employee-stats-helper': 'Ако полето не е приложимо, трябва да бъде въведена 0 (нула)',
         'fish-vessel-count-error': 'Сумите на бройките по колони не съвпада със сумите от предходната таблица',
         'fish-vessel-costs-error': 'Стойността в поле разходи за персонал не може да бъде нула, когато има мъже или жени със заплащане.',
+
+        'ship-no-fishing-capacity-error': 'Корабът не е от черноморския флот'
     },
     'penal-decrees': {
         'filters-penal-decree-num': '№ на наказателно постановление',
@@ -5332,9 +5498,9 @@
         'decrease-points': 'За заличаване на присъдени точки',
 
         'edit-points-basic-data': 'Основна информация',
-        'edit-report-num': 'Номер на докладна записка',
-        'edit-effective-date': 'Дата',
-        'edit-issuer': 'Издател на докладна записка',
+        'edit-report-note-num': 'Номер на докладна записка',
+        'edit-report-note-date': 'Дата на докладна записка',
+        'edit-issuer': 'Издател',
         'edit-territory-unit': 'Териториално звено',
 
         'edit-points-decree-auan-data': 'Данни за наказателно постановление и АУАН',
@@ -5523,6 +5689,42 @@
         'table-entry-delivery-data-dialog-title': 'Информация за начин на връчване',
 
         'print': 'Отпечатай',
-        'save-print': 'Запази и отпечатай'
+        'save-print': 'Запази и отпечатай',
+
+        'print-configurations-dialog-title': 'Печат',
+        'choose-settings-and-print': 'Потвърди и изтегли'
+    },
+    'print-configurations': {
+        'filters-application-type': 'Тип заявление',
+        'filters-territory-unit': 'Териториално звено',
+        'filters-user-egn-lnch': 'ЕГН/ЛНЧ на служител',
+        'filters-user-names': 'Имена на служител',
+        'filters-substitute-reason': 'Причина/заповед за заместване',
+
+        'application-type': 'Тип заявление',
+        'territory-unit': 'Териториално звено',
+        'sign-user': 'Подписващ служител',
+        'substitute-user': 'Заместващ служител',
+        'substitute-reason': 'Причина/заповед за заместване',
+        'view-print-configuration': 'Преглед на настройки',
+        'edit-print-configuration': 'Редакция на настройки',
+        'delete-print-configuration': 'Изтриване на настройки',
+        'restore-print-configuration': 'Възстановяване на настройки',
+
+        'view-print-configuration-title': 'Преглед на настройки за принтиране',
+        'add-print-configuration-title': 'Добавяне на настройки за принтиране',
+        'edit-print-configuration-title': 'Редакция на настройки за принтиране',
+        'delete-print-configuration-title': 'Изтриване на настройки за принтиране',
+        'restore-print-configuration-title': 'Възстановяване на настройки за принтиране',
+        'delete-print-configuration-dialog-message': 'Сигурни ли сте, че искате да изтриете настройки за принтиране за тип заявлние',
+        'delete-dialog-ok-btn-label': 'Изтрий',
+
+        'update-print-configuration-dialog-title': 'Запазване на настройки за принтиране',
+        'update-print-configuration-dialog-message-user': 'Този подписващ служител вече участва в',
+        'update-print-configuration-dialog-message-count':'на брой други записи. Желаете ли да обновите данните за заместващ служител в тях?',
+        'update-print-configuration-dialog-ok-btn-label': 'Да',
+        'update-print-configuration-dialog-cancel-btn-label': 'Не',
+
+        'print-configuration-already-exists-error': 'Вече съществува настройка за принтиране за комбинацията от тип заявление и териториално звено.'
     }
 };

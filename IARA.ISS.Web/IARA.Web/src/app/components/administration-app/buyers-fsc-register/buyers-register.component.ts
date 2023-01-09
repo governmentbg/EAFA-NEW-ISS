@@ -1,5 +1,7 @@
 ﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
@@ -30,6 +32,13 @@ import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/ac
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { BuyerStatusesEnum } from '@app/enums/buyer-statuses.enum';
+import { EditLogBookDialogParamsModel } from '@app/components/common-app/commercial-fishing/components/log-books/models/edit-log-book-dialog-params.model';
+import { LogBookGroupsEnum } from '@app/enums/log-book-groups.enum';
+import { LogBookRegisterDTO } from '@app/models/generated/dtos/LogBookRegisterDTO';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { RequestProperties } from '@app/shared/services/request-properties';
+import { EditLogBookComponent } from '@app/components/common-app/commercial-fishing/components/edit-log-book/edit-log-book.component';
+import { LogBookEditDTO } from '@app/models/generated/dtos/LogBookEditDTO';
 
 @Component({
     selector: 'buyers-register',
@@ -52,12 +61,22 @@ export class BuyersComponent implements OnInit, AfterViewInit {
 
     public readonly hasReadAllPermission: boolean;
 
-    private editDialog: TLMatDialog<EditBuyersComponent>;
-    private confirmDialog: TLConfirmDialog;
-    private chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
-    private service: BuyersAdministrationService;
-    private permissions: PermissionsService;
-    private commonNomenclatureService: CommonNomenclatures;
+    public readonly canReadLogBooks: boolean;
+    public readonly canAddLogBooks: boolean;
+    public readonly canEditLogBooks: boolean;
+    public readonly canDeleteLogBooks: boolean;
+    public readonly canRestoreLogBooks: boolean;
+
+    private readonly logBooksPerPage: number = 10;
+
+    private readonly editDialog: TLMatDialog<EditBuyersComponent>;
+    private readonly confirmDialog: TLConfirmDialog;
+    private readonly chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
+    private readonly service: BuyersAdministrationService;
+    private readonly permissions: PermissionsService;
+    private readonly commonNomenclatureService: CommonNomenclatures;
+    private readonly snackbar: MatSnackBar;
+    private readonly logBookDialog: TLMatDialog<EditLogBookComponent>;
 
     private gridManager!: DataTableManager<BuyerDTO, BuyersFilters>;
 
@@ -74,7 +93,9 @@ export class BuyersComponent implements OnInit, AfterViewInit {
         permissions: PermissionsService,
         translationService: FuseTranslationLoaderService,
         commonNomenclatureService: CommonNomenclatures,
-        chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>
+        chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>,
+        snackbar: MatSnackBar,
+        logBookDialog: TLMatDialog<EditLogBookComponent>
     ) {
         this.service = service;
         this.editDialog = editDialog;
@@ -83,12 +104,20 @@ export class BuyersComponent implements OnInit, AfterViewInit {
         this.translationService = translationService;
         this.commonNomenclatureService = commonNomenclatureService;
         this.chooseApplicationDialog = chooseApplicationDialog;
+        this.snackbar = snackbar;
+        this.logBookDialog = logBookDialog;
 
         this.canAddRecords = permissions.has(PermissionsEnum.BuyersAddRecords);
         this.canEditRecords = permissions.has(PermissionsEnum.BuyersEditRecords);
         this.canDeleteRecords = permissions.has(PermissionsEnum.BuyersDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.BuyersRestoreRecords);
         this.hasReadAllPermission = permissions.has(PermissionsEnum.BuyersApplicationsReadAll);
+
+        this.canReadLogBooks = permissions.has(PermissionsEnum.BuyerLogBookRead);
+        this.canAddLogBooks = permissions.has(PermissionsEnum.BuyerLogBookAdd);
+        this.canEditLogBooks = permissions.has(PermissionsEnum.BuyerLogBookEdit);
+        this.canDeleteLogBooks = permissions.has(PermissionsEnum.BuyerLogBookDelete);
+        this.canRestoreLogBooks = permissions.has(PermissionsEnum.BuyerLogBookRestore);
 
         this.filterFormGroup = new FormGroup({
             entryTypesControl: new FormControl(),
@@ -329,6 +358,117 @@ export class BuyersComponent implements OnInit, AfterViewInit {
         });
 
         this.openEditDialog(data, headerTitle, headerAuditBtn, rightButtons, viewMode || entry.status === BuyerStatusesEnum.Canceled);
+    }
+
+    public addLogBook(buyer: BuyerDTO): void {
+        const title: string = this.translationService.getValue('buyers-and-sales-centers.add-log-book-title');
+
+        const data: EditLogBookDialogParamsModel = new EditLogBookDialogParamsModel({
+            logBookGroup: LogBookGroupsEnum.DeclarationsAndDocuments,
+            isOnline: false,
+            isForPermitLicense: false,
+            registerId: buyer.id,
+            service: this.service
+        });
+
+        this.openLogBookDialog(title, data, undefined, false);
+    }
+
+    public editLogBook(buyerId: number, logBook: LogBookRegisterDTO, viewMode: boolean = false): void {
+        let title: string = '';
+
+        if (viewMode) {
+            title = this.translationService.getValue('buyers-and-sales-centers.view-log-book-title');
+        }
+        else {
+            title = this.translationService.getValue('buyers-and-sales-centers.edit-log-book-title');
+        }
+
+        const data: EditLogBookDialogParamsModel = new EditLogBookDialogParamsModel({
+            registerId: buyerId,
+            logBookId: logBook.id,
+            service: this.service,
+            readOnly: viewMode,
+            logBookGroup: LogBookGroupsEnum.DeclarationsAndDocuments,
+            ownerType: logBook.ownerType,
+            pagesRangeError: false,
+            isOnline: logBook.isOnline!
+        });
+
+        const headerAuditBtn: IHeaderAuditButton = {
+            id: logBook.id!,
+            getAuditRecordData: this.service.getLogBookAudit.bind(this.service),
+            tableName: 'LogBook'
+        };
+
+        this.openLogBookDialog(title, data, headerAuditBtn, viewMode);
+    }
+
+    public deleteLogBook(logBookRegister: LogBookRegisterDTO, buyer: BuyerDTO): void {
+        const title: string = this.translationService.getValue('buyers-and-sales-centers.delete-log-book-title');
+        const message: string = `${this.translationService.getValue('buyers-and-sales-centers.confirm-delete-log-book-message')}: ${logBookRegister.number}`;
+
+        this.confirmDialog.open({
+            title: title,
+            message: message,
+            okBtnLabel: this.translationService.getValue('buyers-and-sales-centers.delete-log-book-btn-label')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.deleteLogBook(logBookRegister.id!).subscribe({
+                        next: () => {
+                            this.gridManager.refreshData();
+                        },
+                        error: (httpErrorResponse: HttpErrorResponse) => {
+                            if ((httpErrorResponse.error as ErrorModel)?.code === ErrorCode.LogBookHasSubmittedPages) {
+                                const message: string = this.translationService.getValue('buyers-and-sales-centers.cannot-delete-log-book-with-submitted-pages');
+                                this.snackbar.open(message, undefined, {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public restoreLogBook(logBookRegister: LogBookRegisterDTO, buyer: BuyerDTO): void {
+        this.confirmDialog.open().subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.undoDeleteLogBook(logBookRegister.id!).subscribe({
+                        next: () => {
+                            this.gridManager.refreshData();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private openLogBookDialog(title: string, data: EditLogBookDialogParamsModel, headerAuditBtn: IHeaderAuditButton | undefined, viewMode: boolean): void {
+        const dialog = this.logBookDialog.openWithTwoButtons({
+            title: title,
+            TCtor: EditLogBookComponent,
+            headerAuditButton: headerAuditBtn,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            componentData: data,
+            translteService: this.translationService,
+            disableDialogClose: true,
+            viewMode: viewMode
+        }, '1200px');
+
+        dialog.subscribe({
+            next: (result: LogBookEditDTO | undefined) => {
+                if (result !== null && result !== undefined) {
+                    this.gridManager.refreshData();
+                }
+            }
+        });
     }
 
     private openEditDialog(data: DialogParamsModel, headerTitle: string, headerAuditBtn: IHeaderAuditButton | undefined, rightButtons: IActionInfo[], viewMode: boolean = false): void {

@@ -192,6 +192,10 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
 
         this.form.controls.permitControl.valueChanges.subscribe({
             next: (permit: PermitNomenclatureDTO | undefined) => {
+                this.pointsOrders = [];
+                this.form.get('pointsTotalCountControl')!.reset();
+                this.form.get('pointsTotalCountControl')!.updateValueAndValidity();
+
                 if (permit !== undefined && permit !== null && typeof permit !== 'string') {
                     this.permitOwnerPersonId = permit.shipOwnerPersonId;
                     this.permitOwnerLegalId = permit.shipOwnerLegalId;
@@ -210,6 +214,10 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
 
         this.form.controls.permitLicenseControl.valueChanges.subscribe({
             next: (permit: PermitNomenclatureDTO | undefined) => {
+                this.pointsOrders = [];
+                this.form.get('pointsTotalCountControl')!.reset();
+                this.form.get('pointsTotalCountControl')!.updateValueAndValidity();
+
                 if (permit !== undefined && permit !== null && typeof permit !== 'string') {
                     this.fisherId = permit.captainId;
                     this.isQualifiedFisher = true;
@@ -361,10 +369,10 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
 
     private buildForm(): void {
         this.form = new FormGroup({
-            reportNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
-            dateControl: new FormControl(null, Validators.required),
             issuerControl: new FormControl(null, Validators.maxLength(500)),
             territoryUnitControl: new FormControl({ value: null, disabled: true }),
+            reportNoteNumControl: new FormControl(null, Validators.maxLength(50)),
+            reportNoteDateControl: new FormControl(null),
 
             auanNumControl: new FormControl({ value: null, disabled: true }),
             auanDateControl: new FormControl({ value: null, disabled: true }),
@@ -377,10 +385,10 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
             permitLicenseControl: new FormControl(null),
             isPermitOwnerControl: new FormControl(true),
             personControl: new FormControl(null),
-
+            
             shipControl: new FormControl({ value: null, disabled: true }),
             orderTypeControl: new FormControl(null, Validators.required),
-            orderNumControl: new FormControl(null),
+            orderNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
             issueDateControl: new FormControl(null, Validators.required),
             effectiveDateControl: new FormControl(null),
             deliveryDateControl: new FormControl(null),
@@ -396,9 +404,8 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
     }
 
     private fillForm(): void {
-        this.form.get('reportNumControl')!.setValue(this.model.decreeNum);
-        this.form.get('dateControl')!.setValue(this.model.issueDate);
-        this.form.get('issuerControl')!.setValue(this.model.issuer);
+        this.form.get('reportNoteNumControl')!.setValue(this.model.reportNoteNum);
+        this.form.get('reportNoteDateControl')!.setValue(this.model.reportNoteDate);
 
         this.form.get('shipControl')!.setValue(this.ships.find(x => x.value === this.model.shipId));
         this.form.get('permitControl')!.setValue(this.permits.find(x => x.value === this.model.permitId));
@@ -409,6 +416,8 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
             this.form.get('personControl')!.setValue(this.model.personOwner);
         }
 
+        this.form.get('orderNumControl')!.setValue(this.model.decreeNum);
+        this.form.get('issuerControl')!.setValue(this.model.issuer);
         this.form.get('issueDateControl')!.setValue(this.model.issueDate);
         this.form.get('deliveryDateControl')!.setValue(this.model.deliveryDate);
         this.form.get('effectiveDateControl')!.setValue(this.model.effectiveDate);
@@ -434,18 +443,21 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
         this.model.decreeId = this.decreeId;
         this.model.pointsType = this.type;
 
+        this.model.reportNoteNum = this.form.get('reportNoteNumControl')!.value;
+        this.model.reportNoteDate = this.form.get('reportNoteDateControl')!.value;
+
         this.model.isIncreasePoints = (this.form.get('orderTypeControl')!.value as NomenclatureDTO<boolean>)?.value;
 
         this.model.shipId = this.form.get('shipControl')!.value?.value;
         this.model.permitId = this.form.get('permitControl')!.value?.value;
         this.model.permitLicenseId = this.form.get('permitLicenseControl')!.value?.value;
-        this.model.decreeNum = this.form.get('reportNumControl')!.value;
+        this.model.decreeNum = this.form.get('orderNumControl')!.value;
+        this.model.issuer = this.form.get('issuerControl')!.value;
         this.model.issueDate = this.form.get('issueDateControl')!.value;
         this.model.effectiveDate = this.form.get('effectiveDateControl')!.value;
         this.model.deliveryDate = this.form.get('deliveryDateControl')!.value;
         this.model.pointsAmount = this.form.get('pointsAmountControl')!.value;
         this.model.comments = this.form.get('commentsControl')!.value;
-        this.model.issuer = this.form.get('issuerControl')!.value;
 
         this.model.permitOwnerPersonId = this.permitOwnerPersonId;
         this.model.permitOwnerLegalId = this.permitOwnerLegalId;

@@ -19,7 +19,6 @@ import { RegixChecksWrapperDTO } from '@app/models/generated/dtos/RegixChecksWra
 import { ApplicationDialogData, ApplicationUtils } from '@app/shared/utils/application.utils';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { IBuyersService } from '@app/interfaces/common-app/buyers.interface';
-import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApplicationRegiXCheckDTO } from '@app/models/generated/dtos/ApplicationRegiXCheckDTO';
@@ -39,12 +38,9 @@ import { UsageDocumentComponent } from '@app/shared/components/usage-document/us
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { GridRow } from '@app/shared/components/data-table/models/row.model';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
-import { LogBookGroupsEnum } from '@app/enums/log-book-groups.enum';
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { CustodianOfPropertyDTO } from '@app/models/generated/dtos/CustodianOfPropertyDTO';
 import { BuyerChangeOfCircumstancesApplicationDTO } from '@app/models/generated/dtos/BuyerChangeOfCircumstancesApplicationDTO';
-import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
-import { LogBookEditDTO } from '@app/models/generated/dtos/LogBookEditDTO';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { BuyersPublicService } from '@app/services/public-app/buyers-public.service';
 import { FileTypeEnum } from '@app/enums/file-types.enum';
@@ -58,10 +54,7 @@ import { CancellationReasonGroupEnum } from '@app/enums/cancellation-reason-grou
 import { CancellationHistoryDialogParams } from '@app/shared/components/cancellation-history-dialog/cancellation-history-dialog-params.model';
 import { BuyerStatusesEnum } from '@app/enums/buyer-statuses.enum';
 import { BuyerTerminationApplicationDTO } from '@app/models/generated/dtos/BuyerTerminationApplicationDTO';
-import { OverlappingLogBooksParameters } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-parameters.model';
-import { OverlappingLogBooksDialogParamsModel } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-dialog-params.model';
 import { CommercialFishingAdministrationService } from '@app/services/administration-app/commercial-fishing-administration.service';
-import { OverlappingLogBooksComponent } from '@app/shared/components/overlapping-log-books/overlapping-log-books.component';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { DuplicatesEntryDTO } from '@app/models/generated/dtos/DuplicatesEntryDTO';
 import { AddressTypesEnum } from '@app/enums/address-types.enum';
@@ -71,8 +64,6 @@ enum AgentSameAsTypesEnum {
     SubmittedForCustodianOfPropertyPerson,
     Other
 }
-
-type SaveMethod = 'save' | 'saveAndPrint' | 'completeChangeOfCircumstancesApplication';
 
 @Component({
     selector: 'edit-buyers.component',
@@ -91,7 +82,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
     public duplicates: DuplicatesEntryDTO[] = [];
     public service!: IBuyersService;
-    public applicationPaymentInformation: ApplicationPaymentInformationDTO | undefined;
     public agentSameAsOptions: NomenclatureDTO<AgentSameAsTypesEnum>[] = []; // needed only for first sale buyers
     public isAgentSameAsSubmittedForCustodian: boolean = false; // needed only for first sale buyers
     public selectedDocumentForUseType: NomenclatureDTO<number> | undefined;
@@ -134,8 +124,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
     public changeOfCircumstancesControl: FormControl = new FormControl();
     public deregistrationReasonControl: FormControl = new FormControl();
 
-    public logBookGroup: LogBookGroupsEnum = LogBookGroupsEnum.DeclarationsAndDocuments;
-
     @ViewChild('premiseUsageDocumentsTable')
     private premiseUsageDocumentsTable!: TLDataTableComponent;
 
@@ -154,20 +142,17 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
 
     private allBuyerStatuses: NomenclatureDTO<number>[] = [];
 
-    private translationService: FuseTranslationLoaderService;
     private applicationsService?: IApplicationsService;
-    private commonNomenclatureService: CommonNomenclatures;
-    private editUsageDocumentDialog: TLMatDialog<UsageDocumentComponent>;
-    private editBabhLicenseDialog: TLMatDialog<CommonDocumentComponent>;
-    private editVeterinaryVehicleLicenseDialog: TLMatDialog<CommonDocumentComponent>;
-    private cancelDialog: TLMatDialog<CancellationHistoryDialogComponent>;
-    private confirmDialog: TLConfirmDialog;
-    private overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
-    private commercialFishingService: CommercialFishingAdministrationService;
+    private readonly translationService: FuseTranslationLoaderService;
+    private readonly commonNomenclatureService: CommonNomenclatures;
+    private readonly editUsageDocumentDialog: TLMatDialog<UsageDocumentComponent>;
+    private readonly editBabhLicenseDialog: TLMatDialog<CommonDocumentComponent>;
+    private readonly editVeterinaryVehicleLicenseDialog: TLMatDialog<CommonDocumentComponent>;
+    private readonly cancelDialog: TLMatDialog<CancellationHistoryDialogComponent>;
+    private readonly confirmDialog: TLConfirmDialog;
+    private readonly commercialFishingService: CommercialFishingAdministrationService;
 
     private dialogRightSideActions: Array<IActionInfo> | undefined;
-
-    private ignoreLogBookConflicts: boolean = false;
 
     public constructor(translationService: FuseTranslationLoaderService,
         commonNomenclatureService: CommonNomenclatures,
@@ -176,8 +161,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
         editBabhLicenseDialog: TLMatDialog<CommonDocumentComponent>,
         editVeterinaryVehicleLicenseDialog: TLMatDialog<CommonDocumentComponent>,
         cancelDialog: TLMatDialog<CancellationHistoryDialogComponent>,
-        confirmDialog: TLConfirmDialog,
-        overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>
+        confirmDialog: TLConfirmDialog
     ) {
         this.commonNomenclatureService = commonNomenclatureService;
         this.commercialFishingService = commercialFishingService;
@@ -187,7 +171,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
         this.editVeterinaryVehicleLicenseDialog = editVeterinaryVehicleLicenseDialog;
         this.cancelDialog = cancelDialog;
         this.confirmDialog = confirmDialog;
-        this.overlappingLogBooksDialog = overlappingLogBooksDialog;
 
         this.isPublicApp = IS_PUBLIC_APP;
 
@@ -428,7 +411,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                             this.model.pageCode = this.pageCode;
                             this.isPaid = this.model.isPaid!;
                             this.hasDelivery = this.model.hasDelivery!;
-                            this.applicationPaymentInformation = this.model.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         }
 
@@ -528,7 +510,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                                 this.model.pageCode = this.pageCode;
                                 this.isPaid = this.model.isPaid!;
                                 this.hasDelivery = this.model.hasDelivery!;
-                                this.applicationPaymentInformation = this.model.paymentInformation;
                                 this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                                 this.isOnlineApplication = this.model.isOnlineApplication!;
 
@@ -628,7 +609,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
     public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         if (actionInfo.id === 'print') {
             if ((this.viewMode || this.isReadonly) && this.model instanceof BuyerEditDTO) {
-                this.service.downloadRegister(this.model.id!, this.model.buyerType!).subscribe({
+                this.service.downloadRegister(this.model.id!, (this.model as BuyerEditDTO).buyerType!).subscribe({
                     next: () => {
                         // nothing to do
                     }
@@ -1072,12 +1053,12 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
     }
 
     private completeChangeOfCircumstancesApplication(dialogClose: DialogCloseCallback): void {
-        this.service.completeBuyerChangeOfCircumstancesApplication(this.model, this.ignoreLogBookConflicts).subscribe({
+        this.service.completeBuyerChangeOfCircumstancesApplication(this.model).subscribe({
             next: () => {
                 dialogClose(this.model);
             },
             error: (errorResponse: HttpErrorResponse) => {
-                this.handleAddApplicationErrorResponse(errorResponse, dialogClose, 'completeChangeOfCircumstancesApplication');
+                this.handleAddApplicationErrorResponse(errorResponse);
             }
         });
     }
@@ -1130,22 +1111,33 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
         let saveOrEditObservable: Observable<boolean>;
 
         if (this.id !== null && this.id !== undefined) {
-            saveOrEditObservable = this.service.editAndDownloadRegister(this.model, this.ignoreLogBookConflicts);
+            saveOrEditObservable = this.service.editAndDownloadRegister(this.model);
+
+            saveOrEditObservable.subscribe({
+                next: (downloaded: boolean) => {
+                    if (downloaded === true) {
+                        dialogClose(this.model);
+                    }
+                },
+                error: (errorResponse: HttpErrorResponse) => {
+                    this.handleAddApplicationErrorResponse(errorResponse);
+                }
+            });
         }
         else {
-            saveOrEditObservable = this.service.addAndDownloadRegister(this.model, this.ignoreLogBookConflicts);
-        }
+            saveOrEditObservable = this.service.addAndDownloadRegister(this.model);
 
-        saveOrEditObservable.subscribe({
-            next: (downloaded: boolean) => {
-                if (downloaded === true) {
-                    dialogClose(this.model);
+            saveOrEditObservable.subscribe({
+                next: (downloaded: boolean) => {
+                    if (downloaded === true) {
+                        dialogClose(this.model);
+                    }
+                },
+                error: (errorResponse: HttpErrorResponse) => {
+                    this.handleAddApplicationErrorResponse(errorResponse);
                 }
-            },
-            error: (errorResponse: HttpErrorResponse) => {
-                this.handleAddApplicationErrorResponse(errorResponse, dialogClose, 'saveAndPrint');
-            }
-        });
+            });
+        }
     }
 
     private saveData(dialogClose: DialogCloseCallback, fromSaveAsDraft: boolean = false): Observable<boolean> {
@@ -1167,14 +1159,14 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                 saveOrEditDone.complete();
             },
             error: (errorResponse: HttpErrorResponse) => {
-                this.handleAddApplicationErrorResponse(errorResponse, dialogClose, 'save');
+                this.handleAddApplicationErrorResponse(errorResponse);
             }
         });
 
         return saveOrEditDone.asObservable();
     }
 
-    private handleAddApplicationErrorResponse(errorResponse: HttpErrorResponse, dialogClose: DialogCloseCallback, saveMethod: SaveMethod): void {
+    private handleAddApplicationErrorResponse(errorResponse: HttpErrorResponse): void {
         const messages: string[] = errorResponse.error.messages;
         if (Array.isArray(messages) === true) {
             for (const message of messages) {
@@ -1184,82 +1176,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                 }
             }
         }
-
-        if (this.model instanceof BuyerEditDTO) {
-            const error = errorResponse.error as ErrorModel;
-
-            if (error?.code === ErrorCode.InvalidLogBookPagesRange) {
-                this.handleInvalidLogBookPagesRangeError(error.messages[0], dialogClose, saveMethod);
-            }
-        }
-    }
-
-    private handleInvalidLogBookPagesRangeError(logBookNumber: string, dialogClose: DialogCloseCallback, saveMethod: SaveMethod): void {
-        if (this.model instanceof BuyerEditDTO) {
-            this.ignoreLogBookConflicts = false;
-            const logBooks: LogBookEditDTO[] = this.editForm.get('logBooksControl')!.value ?? [];
-            const logBook: LogBookEditDTO | undefined = logBooks.find(x => x.logbookNumber === logBookNumber);
-
-            if (logBook !== null && logBook !== undefined) {
-                logBook.hasError = true;
-                setTimeout(() => {
-                    (this.model as BuyerEditDTO).logBooks = (this.model as BuyerEditDTO).logBooks?.slice();
-                    this.editForm.get('logBooksControl')!.setValue((this.model as BuyerEditDTO).logBooks);
-                    this.validityCheckerGroup.validate();
-                });
-            }
-
-            const ranges: OverlappingLogBooksParameters[] = [];
-
-            for (const logBook of logBooks.filter(x => x.logBookIsActive)) {
-                const range: OverlappingLogBooksParameters = new OverlappingLogBooksParameters({
-                    logBookId: logBook.logBookId,
-                    typeId: logBook.logBookTypeId,
-                    OwnerType: logBook.ownerType,
-                    startPage: logBook.startPageNumber,
-                    endPage: logBook.endPageNumber
-                });
-                ranges.push(range);
-            }
-
-            const editDialogData: OverlappingLogBooksDialogParamsModel = new OverlappingLogBooksDialogParamsModel({
-                service: this.commercialFishingService,
-                logBookGroup: this.logBookGroup,
-                ranges: ranges
-            });
-
-            this.overlappingLogBooksDialog.open({
-                title: this.translationService.getValue('buyers-and-sales-centers.overlapping-log-books-dialog-title'),
-                TCtor: OverlappingLogBooksComponent,
-                headerCancelButton: {
-                    cancelBtnClicked: this.closeOverlappingLogBooksDialogBtnClicked.bind(this)
-                },
-                componentData: editDialogData,
-                translteService: this.translationService,
-                disableDialogClose: true,
-                cancelBtn: {
-                    id: 'cancel',
-                    color: 'primary',
-                    translateValue: 'common.cancel',
-                },
-                saveBtn: {
-                    id: 'save',
-                    color: 'error',
-                    translateValue: 'buyers-and-sales-centers.overlapping-log-books-save-despite-conflicts'
-                }
-            }, '1300px').subscribe({
-                next: (save: boolean | undefined) => {
-                    if (save) {
-                        this.ignoreLogBookConflicts = true;
-                        switch (saveMethod) {
-                            case 'save': this.saveData(dialogClose); break;
-                            case 'saveAndPrint': this.saveAndPrintRecord(dialogClose); break;
-                            case 'completeChangeOfCircumstancesApplication': this.completeChangeOfCircumstancesApplication(dialogClose); break;
-                        }
-                    }
-                }
-            });
-        }
     }
 
     private saveOrEdit(fromSaveAsDraft: boolean = false): Observable<number | void> {
@@ -1268,14 +1184,14 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
         let saveOrEditObservable: Observable<void | number>;
 
         if (this.isChangeOfCircumstancesApplication === true) {
-            saveOrEditObservable = this.service.completeBuyerChangeOfCircumstancesApplication(this.model, this.ignoreLogBookConflicts);
+            saveOrEditObservable = this.service.completeBuyerChangeOfCircumstancesApplication(this.model);
         }
         else if (this.model instanceof BuyerEditDTO) {
             if (this.id !== undefined && this.id !== null) {
-                saveOrEditObservable = this.service.edit(this.model, this.ignoreLogBookConflicts);
+                saveOrEditObservable = this.service.edit(this.model);
             }
             else {
-                saveOrEditObservable = this.service.add(this.model, this.ignoreLogBookConflicts);
+                saveOrEditObservable = this.service.add(this.model);
             }
         }
         else {
@@ -1323,8 +1239,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
             this.editForm.addControl('territoryUnitControl', new FormControl(undefined, Validators.required));
             this.editForm.addControl('registrationDateControl', new FormControl(undefined, Validators.required));
             this.editForm.addControl('buyerStatusControl', new FormControl(undefined, Validators.required));
-
-            this.editForm.addControl('logBooksControl', new FormControl(undefined));
         }
 
         if (!this.showOnlyRegiXData) {
@@ -1345,7 +1259,10 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
             this.editForm.addControl('filesControl', new FormControl());
         }
 
-        this.editForm.addControl('deliveryDataControl', new FormControl());
+        if (this.isApplication) {
+            this.editForm.addControl('deliveryDataControl', new FormControl());
+            this.editForm.addControl('applicationPaymentInformationControl', new FormControl());
+        }
     }
 
     private fillForm(): void {
@@ -1433,7 +1350,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
             }
 
             this.editForm.get('annualTurnoverControl')!.setValue(this.model.annualTurnover);
-            this.editForm.get('logBooksControl')!.setValue(this.model.logBooks);
             this.editForm.get('filesControl')!.setValue(this.model.files);
 
             this.cancellationHistory = this.model.cancellationHistory ?? [];
@@ -1473,8 +1389,16 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
             }
 
             this.editForm.get('annualTurnoverControl')!.setValue(this.model.annualTurnover);
-            this.editForm.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+
+            if (this.hasDelivery) {
+                this.editForm.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+            }
+
             this.editForm.get('filesControl')!.setValue(this.model.files);
+
+            if (this.isPaid === true) {
+                this.editForm.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
+            }
         }
     }
 
@@ -1610,7 +1534,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
 
             this.model.annualTurnover = this.editForm.get('annualTurnoverControl')!.value;
             this.model.babhLawLicenseDocuments = this.babhLicenses;
-            this.model.logBooks = this.editForm.get('logBooksControl')!.value;
             this.model.territoryUnitId = this.editForm.get('territoryUnitControl')!.value.value;
             this.model.files = this.editForm.get('filesControl')!.value;
         }
@@ -1653,7 +1576,15 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
             }
 
             this.model.annualTurnover = this.editForm.get('annualTurnoverControl')!.value;
-            this.model.deliveryData = this.editForm.get('deliveryDataControl')!.value;
+
+            if (this.hasDelivery) {
+                this.model.deliveryData = this.editForm.get('deliveryDataControl')!.value;
+            }
+            
+            if (this.isPaid === true) {
+                this.model.paymentInformation = this.editForm.get('applicationPaymentInformationControl')!.value;
+            }
+
             this.model.files = this.editForm.get('filesControl')!.value;
         }
     }
@@ -1900,16 +1831,12 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
     }
 
     private shouldHidePaymentData(): boolean {
-        return this.applicationPaymentInformation?.paymentType === null
-            || this.applicationPaymentInformation?.paymentType === undefined
-            || this.applicationPaymentInformation?.paymentType === '';
+        return (this.model as BuyerApplicationEditDTO)?.paymentInformation?.paymentType === null
+            || (this.model as BuyerApplicationEditDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as BuyerApplicationEditDTO)?.paymentInformation?.paymentType === '';
     }
 
     private closeEditPremiseUsageDocumentDialogBtnClicked(closeFn: HeaderCloseFunction): void {
-        closeFn();
-    }
-
-    private closeOverlappingLogBooksDialogBtnClicked(closeFn: HeaderCloseFunction): void {
         closeFn();
     }
 }

@@ -90,6 +90,7 @@
     PoundnetStatuses,
     FishSizes,
     CatchTypes,
+    AquacultureCatchTypes,
     CatchInspectionTypes,
     PenalDecreeStatuses,
     AuanStatuses,
@@ -114,5 +115,8 @@
     FlapCoastalParties,
     FlapRequestPurposes,
     FlapFishingCategories,
-    FlapQuotaType
+    FlapQuotaType,
+    MyTerritoryUnitUsers,
+    AllUsers,
+    PaymentStatuses
 }

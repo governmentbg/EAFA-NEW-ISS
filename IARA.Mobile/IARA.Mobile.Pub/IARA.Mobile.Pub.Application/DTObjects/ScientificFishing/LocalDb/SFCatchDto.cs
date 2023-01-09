@@ -10,6 +10,7 @@ namespace IARA.Mobile.Pub.Application.DTObjects.ScientificFishing.LocalDb
     {
         public int Id { get; set; }
         public int OutingId { get; set; }
+        public int FishTypeId { get; set; }
         public NomenclatureDto FishType { get; set; }
         public int CatchUnder100 { get; set; }
         public int Catch100To500 { get; set; }
@@ -17,13 +18,14 @@ namespace IARA.Mobile.Pub.Application.DTObjects.ScientificFishing.LocalDb
         public int CatchOver1000 { get; set; }
         public int TotalKeptCount { get; set; }
         public int TotalCatch { get; set; }
+        public bool IsActive { get; set; } = true;
 
         public DtoResultEnum Result { get; set; }
 
         public void Mapping(AutoMapper.Profile profile)
         {
             profile.CreateMap<SFCatchDto, SFCatch>()
-                .ForMember(f => f.FishTypeId, f => f.MapFrom(s => s.FishType.Value));
+                .ForMember(f => f.FishTypeId, f => f.MapFrom(s => s.FishTypeId));
         }
     }
 }

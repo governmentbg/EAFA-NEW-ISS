@@ -8,12 +8,14 @@ import { TLEGovPaymentsModule } from '@tl/tl-egov-payments';
 import { ApplicationsRegisterComponent } from './applications/applications-register/applications-register.component';
 import { ApplicationsTableComponent } from './applications/applications-table/applications-table.component';
 import { AssignApplicationByAccessCodeComponent } from './applications/components/assign-application-by-access-code/assign-application-by-access-code.component';
+import { AssignApplicationByUserComponent } from './applications/components/assign-application-by-user/assign-application-by-user.component';
 import { ChooseApplicationTypeComponent } from './applications/components/choose-application-type/choose-application-type.component';
 import { ChooseApplicationComponent } from './applications/components/choose-application/choose-application.component';
 import { EnterEventisNumberComponent } from './applications/components/enter-eventis-number/enter-eventis-number.component';
 import { EnterReasonComponent } from './applications/components/enter-reason/enter-reason.component';
 import { FileInApplicationStepperComponent } from './applications/components/file-in-application-stepper/file-in-application-stepper.component';
 import { PaymentInformationComponent } from './applications/components/payment-information/payment-information.component';
+import { PrintConfigurationsDialogComponent } from './applications/components/print-configurations-dialog/print-configurations-dialog.component';
 import { UploadFileDialogComponent } from './applications/components/upload-file-dialog/upload-file-dialog.component';
 import { AquacultureChangeOfCircumstancesComponent } from './aquaculture-facilities/aquaculture-change-of-circumstances/aquaculture-change-of-circumstances.component';
 import { AquacultureDeregistrationComponent } from './aquaculture-facilities/aquaculture-deregistration/aquaculture-deregistration.component';
@@ -199,7 +201,9 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         ChoosePermitToCopyFromComponent,
         EditLegalAssociationComponent,
         EditLegalAssociationPersonComponent,
-        ChooseLogBookForRenewalComponent
+        ChooseLogBookForRenewalComponent,
+        PrintConfigurationsDialogComponent,
+        AssignApplicationByUserComponent
     ],
     imports: [
         TLCommonModule,
@@ -301,7 +305,9 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         ChoosePermitToCopyFromComponent,
         EditLegalAssociationComponent,
         EditLegalAssociationPersonComponent,
-        ChooseLogBookForRenewalComponent
+        ChooseLogBookForRenewalComponent,
+        PrintConfigurationsDialogComponent,
+        AssignApplicationByUserComponent
     ],
     providers: [CurrencyPipe, TLDateDifferencePipe, DatePipe]
 })

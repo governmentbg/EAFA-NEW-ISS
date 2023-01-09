@@ -132,40 +132,40 @@ export class CatchesAndSalesAdministrationService extends BaseAuditService imple
         return this.commonService.getNewAquacultureLogBookPage(this.area, this.controller, logBookId);
     }
 
-    public addShipLogBookPage(model: ShipLogBookPageEditDTO): Observable<number> {
-        return this.commonService.addShipLogBookPage(this.area, this.controller, model);
+    public addShipLogBookPage(model: ShipLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
+        return this.commonService.addShipLogBookPage(this.area, this.controller, model, hasMissingPagesRangePermission);
     }
 
     public editShipLogBookPage(model: ShipLogBookPageEditDTO): Observable<void> {
         return this.commonService.editShipLogBookPage(this.area, this.controller, model);
     }
 
-    public addFirstSaleLogBookPage(model: FirstSaleLogBookPageEditDTO): Observable<number> {
-        return this.commonService.addFirstSaleLogBookPage(this.area, this.controller, model);
+    public addFirstSaleLogBookPage(model: FirstSaleLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
+        return this.commonService.addFirstSaleLogBookPage(this.area, this.controller, model, hasMissingPagesRangePermission);
     }
 
     public editFirstSaleLogBookPage(model: FirstSaleLogBookPageEditDTO): Observable<void> {
         return this.commonService.editFirstSaleLogBookPage(this.area, this.controller, model);
     }
 
-    public addAdmissionLogBookPage(model: AdmissionLogBookPageEditDTO): Observable<number> {
-        return this.commonService.addAdmissionLogBookPage(this.area, this.controller, model);
+    public addAdmissionLogBookPage(model: AdmissionLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
+        return this.commonService.addAdmissionLogBookPage(this.area, this.controller, model, hasMissingPagesRangePermission);
     }
 
     public editAdmissionLogBookPage(model: AdmissionLogBookPageEditDTO): Observable<void> {
         return this.commonService.editAdmissionLogBookPage(this.area, this.controller, model);
     }
 
-    public addTransportationLogBookPage(model: TransportationLogBookPageEditDTO): Observable<number> {
-        return this.commonService.addTransportationLogBookPage(this.area, this.controller, model);
+    public addTransportationLogBookPage(model: TransportationLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
+        return this.commonService.addTransportationLogBookPage(this.area, this.controller, model, hasMissingPagesRangePermission);
     }
 
     public editTransportationLogBookPage(model: TransportationLogBookPageEditDTO): Observable<void> {
         return this.commonService.editTransportationLogBookPage(this.area, this.controller, model);
     }
 
-    public addAquacultureLogBookPage(model: AquacultureLogBookPageEditDTO): Observable<number> {
-        return this.commonService.addAquacultureLogBookPage(this.area, this.controller, model);
+    public addAquacultureLogBookPage(model: AquacultureLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
+        return this.commonService.addAquacultureLogBookPage(this.area, this.controller, model, hasMissingPagesRangePermission);
     }
 
     public editAquacultureLogBookPage(model: AquacultureLogBookPageEditDTO): Observable<void> {

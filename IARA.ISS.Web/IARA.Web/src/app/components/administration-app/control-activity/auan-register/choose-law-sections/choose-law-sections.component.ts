@@ -35,6 +35,7 @@ export class ChooseLawSectionsComponent implements OnInit, AfterViewInit, IDialo
         this.articleControl = new FormControl();
         this.textControl = new FormControl();
     }
+
     public ngOnInit(): void {
         this.service.getLaws().subscribe({
             next: (result: NomenclatureDTO<number>[]) => {

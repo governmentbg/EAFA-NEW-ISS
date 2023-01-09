@@ -43,8 +43,6 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
     public expectedResults: CapacityCertificateDuplicateRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
 
-    public paymentInformation: ApplicationPaymentInformationDTO | undefined;
-
     public certificates: FishingCapacityCertificateNomenclatureDTO[] = [];
 
     public isPublicApp: boolean = false;
@@ -105,7 +103,6 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
 
                         this.isPaid = application.isPaid!;
                         this.hasDelivery = application.hasDelivery!;
-                        this.paymentInformation = application.paymentInformation;
                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
@@ -148,7 +145,6 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
                             this.isOnlineApplication = application.isOnlineApplication!;
                             this.isPaid = application.isPaid!;
                             this.hasDelivery = application.hasDelivery!;
-                            this.paymentInformation = application.paymentInformation;
                             this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.isDraft = application.isDraft;
                             this.refreshFileTypes.next();
@@ -267,6 +263,7 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
             capacityCertificateControl: new FormControl(null, Validators.required),
             reasonControl: new FormControl(null, [Validators.required, Validators.maxLength(4000)]),
             deliveryDataControl: new FormControl(),
+            applicationPaymentInformationControl: new FormControl(),
             filesControl: new FormControl(null)
         });
     }
@@ -283,6 +280,10 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
         else {
             if (this.hasDelivery === true) {
                 this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
+            }
+
+            if (this.isPaid === true) {
+                this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
             }
 
             const capacityCertificateId: number | undefined = this.model.capacityCertificateId;
@@ -331,6 +332,10 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
         if (this.model instanceof CapacityCertificateDuplicateApplicationDTO) {
             if (this.hasDelivery === true) {
                 this.model.deliveryData = this.form.get('deliveryDataControl')!.value;
+            }
+
+            if (this.isPaid === true) {
+                this.model.paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
             }
 
             this.model.capacityCertificateId = this.form.get('capacityCertificateControl')!.value?.value;
@@ -392,8 +397,8 @@ export class CapacityCertificateDuplicateComponent implements OnInit, AfterViewI
     }
 
     private shouldHidePaymentData(): boolean {
-        return this.paymentInformation?.paymentType === null
-            || this.paymentInformation?.paymentType === undefined
-            || this.paymentInformation?.paymentType === '';
+        return (this.model as CapacityCertificateDuplicateApplicationDTO)?.paymentInformation?.paymentType === null
+            || (this.model as CapacityCertificateDuplicateApplicationDTO)?.paymentInformation?.paymentType === undefined
+            || (this.model as CapacityCertificateDuplicateApplicationDTO)?.paymentInformation?.paymentType === '';
     }
 }

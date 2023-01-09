@@ -29,6 +29,8 @@ export interface IRecreationalFishingService extends IBaseAuditService {
     addTickets(ticket: RecreationalFishingTicketsDTO): Observable<RecreationalFishingAddTicketsResultDTO>;
     addTicketDuplicate(data: RecreationalFishingTicketDuplicateDTO): Observable<number>;
     editTicket(ticket: RecreationalFishingTicketDTO): Observable<void>;
+    cancelTicket(id: number, reason: string): Observable<void>;
+    cancelTicketRegister(id: number, reason: string): Observable<void>;
 
     calculateTicketValidToDate(params: RecreationalFishingTicketValidToCalculationParamsDTO): Observable<Date>;
     checkEgnLncPurchaseAbility(data: RecreationalFishingTicketValidationDTO): Observable<RecreationalFishingTicketValidationResultDTO>;

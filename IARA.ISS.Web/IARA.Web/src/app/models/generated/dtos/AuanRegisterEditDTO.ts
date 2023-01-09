@@ -78,6 +78,12 @@ export class AuanRegisterEditDTO {
     @StrictlyTyped(Number)
     public inspectorId?: number;
 
+    @StrictlyTyped(String)
+    public inspectorName?: string;
+
+    @StrictlyTyped(Number)
+    public territoryUnitId?: number;
+
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
 }

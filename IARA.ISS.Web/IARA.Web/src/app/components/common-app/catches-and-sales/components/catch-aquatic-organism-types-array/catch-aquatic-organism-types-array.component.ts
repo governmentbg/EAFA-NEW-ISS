@@ -77,7 +77,7 @@ export class CatchAquaticOrganismTypesArrayComponent extends CustomFormControl<C
 
         const control: FormControl = new FormControl(catchAquaticOrganismType);
         this.formArray.push(control);
-        
+
         this.onChanged(this.getValue());
     }
 
@@ -111,7 +111,7 @@ export class CatchAquaticOrganismTypesArrayComponent extends CustomFormControl<C
         for (const aquaticOrganism of aquaticOrganisms) {
             const newControl: FormControl = new FormControl(aquaticOrganism);
             this.formArray.push(newControl);
-            
+
             this.onChanged(this.getValue());
         }
     }
@@ -149,7 +149,7 @@ export class CatchAquaticOrganismTypesArrayComponent extends CustomFormControl<C
         ));
 
         observables.push(NomenclatureStore.instance.getNomenclature(
-            NomenclatureTypes.CatchTypes, this.service.getCatchTypes.bind(this.service), false
+            NomenclatureTypes.AquacultureCatchTypes, this.service.getCatchTypes.bind(this.service), false
         ));
 
         const subscription: Subscription = forkJoin(observables).subscribe({
@@ -160,20 +160,12 @@ export class CatchAquaticOrganismTypesArrayComponent extends CustomFormControl<C
                 this.fishSizes = nomenclatures[3];
                 this.catchTypes = nomenclatures[4];
 
-                let isDanube: boolean = false;
-                let isBlackSea: boolean = false;
-
                 if (this.waterType === WaterTypesEnum.BLACK_SEA) {
-                    isBlackSea = true;
+                    this.aquaticOrganisms = this.aquaticOrganisms.filter(x => x.isBlackSea === true);
                 }
                 else if (this.waterType === WaterTypesEnum.DANUBE) {
-                    isDanube = true;
+                    this.aquaticOrganisms = this.aquaticOrganisms.filter(x => x.isDanube === true);
                 }
-
-                this.aquaticOrganisms = this.aquaticOrganisms.filter(x =>
-                    this.waterType === WaterTypesEnum.Unknown
-                    || (x.isBlackSea === isBlackSea && x.isDanube === isDanube)
-                );
 
                 this.loader.complete();
             }

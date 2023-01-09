@@ -21,6 +21,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence.Migrations
             context.CreateTable<Legal>();
             context.CreateTable<Buyer>();
             context.CreateTable<Person>();
+            context.CreateTable<Permit>();
             context.CreateTable<NGender>();
             context.CreateTable<LogBook>();
             context.CreateTable<NFishSex>();
@@ -34,6 +35,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence.Migrations
             context.CreateTable<NFleetType>();
             context.CreateTable<NCatchZone>();
             context.CreateTable<Inspection>();
+            context.CreateTable<NPermitType>();
             context.CreateTable<FishingGear>();
             context.CreateTable<NPermission>();
             context.CreateTable<NVesselType>();
@@ -53,6 +55,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence.Migrations
             context.CreateTable<NInspectionState>();
             context.CreateTable<NObservationTool>();
             context.CreateTable<NShipAssociation>();
+            context.CreateTable<NTurbotSizeGroup>();
             context.CreateTable<InspectorsHistory>();
             context.CreateTable<NFishPresentation>();
             context.CreateTable<NTranslationGroup>();

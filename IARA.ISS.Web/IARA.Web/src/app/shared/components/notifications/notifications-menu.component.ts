@@ -1,16 +1,13 @@
 ﻿import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
-import { NotificationDTO } from '@app/models/generated/dtos/NotificationDTO';
-import { NotificationsDTO } from '@app/models/generated/dtos/NotificationsDTO';
-import { NotificationsHubService } from '@app/shared/notifications/notifications-hub-service';
 import { GridResultModel } from '@app/models/common/grid-result.model';
+import { NotificationDTO } from '@app/models/generated/dtos/NotificationDTO';
+import { INotificationSecurity } from '@app/shared/notifications/models/notification-security.interface';
+import { UserNotification } from '@app/shared/notifications/models/user-notification.model';
+import { UserNotificationsList } from '@app/shared/notifications/models/user-notifications-list.model';
+import { NotificationsHubService } from '@app/shared/notifications/notifications-hub-service';
+import { Environment } from '@env/environment';
 import { NotificationTypes } from '../../notifications/notification-types.enum';
 import { PagedDatasource } from '../../utils/paged-datasource/paged-datasource';
-import { BaseNotification } from '@app/shared/notifications/models/base-notification';
-import { UserNotification } from '@app/shared/notifications/models/user-notification.model';
-import { WebNotification } from '@app/shared/notifications/models/notification';
-import { INotificationSecurity } from '@app/shared/notifications/models/notification-security.interface';
-import { Environment } from '@env/environment';
-import { UserNotificationsList } from '@app/shared/notifications/models/user-notifications-list.model';
 
 @Component({
     selector: 'notifications-menu',

@@ -68,10 +68,13 @@
     </tl-expansion-panel>
 
     <!-- Информация за плащане -->
-    <tl-expansion-panel *ngIf="isPaid && !showOnlyRegiXData && paymentInformation !== undefined && paymentInformation !== null"
+    <tl-expansion-panel *ngIf="isPaid && !showOnlyRegiXData"
                         title="{{ 'buyers-and-sales-centers.coc-payment-information-panel' | tlTranslate }}"
                         tooltipResourceName="buyers-and-sales-centers.coc-payment-information-panel-helper">
-        <payment-information [paymentData]="paymentInformation" [hideBasicInfo]="hideBasicPaymentInfo"></payment-information>
+        <payment-information formControlName="applicationPaymentInformationControl"
+                             [hideBasicInfo]="hideBasicPaymentInfo" 
+                             [isOnlineApplication]="isOnlineApplication">
+        </payment-information>
     </tl-expansion-panel>
 
     <!-- Информация за начин на връчване -->

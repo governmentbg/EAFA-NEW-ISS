@@ -6,27 +6,48 @@
                [showAddButton]="false"
                [showInactiveRecords]="false"
                [recordsPerPage]="recordsPerPage">
-    <data-column propertyName="webServiceName"
-                 columnName="{{ 'regix-check.web-service-name' | tlTranslate }}"
-                 [flexRate]="0.5"></data-column>
+    <data-template-column propertyName="webServiceName"
+                          columnName="{{ 'regix-check.web-service-name' | tlTranslate }}"
+                          [flexRate]="0.5">
+        <ng-template ngx-datatable-cell-template let-row="row">
+            <div fxLayout="row" fxLayoutAlign="start center">
+                <span class="break-all-words">
+                    {{ row.data.webServiceName }}
+                </span>
+            </div>
+        </ng-template>
+    </data-template-column>
     <data-column propertyName="requestDateTime"
                  columnName="{{ 'regix-check.request-date-time' | tlTranslate }}"
                  dataType="datetime"
-                 [flexRate]="0.3"></data-column>
+                 [flexRate]="0.3">
+    </data-column>
     <data-column propertyName="responseStatus"
                  columnName="{{ 'regix-check.response-status' | tlTranslate }}"
-                 [flexRate]="0.2"></data-column>
+                 [flexRate]="0.2">
+    </data-column>
     <data-column propertyName="responseDateTime"
                  columnName="{{ 'regix-check.response-date-time' | tlTranslate }}"
                  dataType="datetime"
-                 [flexRate]="0.3"></data-column>
+                 [flexRate]="0.3">
+    </data-column>
     <data-column propertyName="errorLevel"
                  columnName="{{ 'regix-check.error-level' | tlTranslate }}"
-                 [flexRate]="0.2"></data-column>
-    <data-column propertyName="errorDescription"
-                 columnName="{{ 'regix-check.error-description' | tlTranslate }}"
-                 [flexRate]="0.5"></data-column>
+                 [flexRate]="0.2">
+    </data-column>
+    <data-template-column propertyName="errorDescription"
+                          columnName="{{ 'regix-check.error-description' | tlTranslate }}"
+                          [flexRate]="0.5">
+        <ng-template ngx-datatable-cell-template let-row="row">
+            <div fxLayout="row" fxLayoutAlign="start center">
+                <span class="break-all-words">
+                    {{ row.data.errorDescription }}
+                </span>
+            </div>
+        </ng-template>
+    </data-template-column>
     <data-column propertyName="attempts"
                  columnName="{{ 'regix-check.attempts' | tlTranslate }}"
-                 [flexRate]="0.2"></data-column>
+                 [flexRate]="0.2">
+    </data-column>
 </tl-data-table>

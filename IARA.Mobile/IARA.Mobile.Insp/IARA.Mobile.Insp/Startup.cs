@@ -1,4 +1,7 @@
-﻿using IARA.Mobile.Application;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Users;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
@@ -19,9 +22,6 @@ using IARA.Mobile.Shared.ResourceTranslator;
 using IARA.Mobile.Shared.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Rg.Plugins.Popup.Services;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Core;
 using TechnoLogica.Xamarin.ResourceTranslator;
 using Xamarin.Essentials;

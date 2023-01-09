@@ -28,6 +28,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         {
             Inspection = inspection;
 
+            Permits = new PermitsViewModel(inspection);
             PermitLicenses = new PermitLicensesViewModel(inspection);
             LogBooks = new LogBooksViewModel(inspection);
 
@@ -41,6 +42,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public int PreliminaryNoticeCheckTypeId { get; private set; }
         public int OPMembershipCheckTypeId { get; private set; }
 
+        public PermitsViewModel Permits { get; }
         public PermitLicensesViewModel PermitLicenses { get; }
         public LogBooksViewModel LogBooks { get; }
 
@@ -130,6 +132,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         {
             Toggles.AssignFrom(fishingShipInspection.Checks);
 
+            Permits.OnEdit(fishingShipInspection.Permits);
             PermitLicenses.OnEdit(fishingShipInspection.PermitLicenses);
             await LogBooks.OnEdit(fishingShipInspection.LogBooks);
 

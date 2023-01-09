@@ -157,23 +157,32 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
             filtersMapper: this.mapFilters.bind(this)
         });
 
-        const isPerson: boolean | undefined = window.history.state?.isPerson;
-        let legalId: number | undefined;
-        let personId: number | undefined;
-        if (isPerson === true) {
-            personId = window.history.state?.id;
+        const filters: AuanRegisterFilters = new AuanRegisterFilters();
+
+        if (window.history.state) {
+            const tableId: number | undefined = window.history.state.tableId;
+            const isPerson: boolean | undefined = window.history.state.isPerson;
+            const id: number | undefined = window.history.state.id;
+
+            if (tableId !== undefined && tableId !== null) {
+                filters.id = tableId;
+            }
+
+            if (id !== undefined && id !== null) {
+                if (isPerson) {
+                    filters.personId = id;
+                }
+                else {
+                    filters.legalId = id;
+                }
+            }
         }
 
-        if (isPerson === false) {
-            legalId = window.history.state?.id;
+        if (this.inspectionId !== null && this.inspectionId !== undefined) {
+            filters.inspectionId = this.inspectionId;
         }
 
-        this.grid.advancedFilters = new AuanRegisterFilters({
-            inspectionId: this.inspectionId ?? undefined,
-            personId: personId ?? undefined,
-            legalId: legalId ?? undefined
-        });
-
+        this.grid.advancedFilters = filters;
         this.grid.refreshData();
     }
 

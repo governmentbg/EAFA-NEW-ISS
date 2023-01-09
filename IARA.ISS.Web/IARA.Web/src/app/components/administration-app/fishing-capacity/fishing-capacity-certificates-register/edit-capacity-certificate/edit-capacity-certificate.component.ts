@@ -1,5 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 import { IFishingCapacityService } from '@app/interfaces/common-app/fishing-capacity.interface';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
@@ -11,6 +12,9 @@ import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { AddressTypesEnum } from '@app/enums/address-types.enum';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
+import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
+import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
 @Component({
     selector: 'edit-capacity-certificate',
@@ -23,13 +27,19 @@ export class EditCapacityCertificateComponent implements OnInit, IDialogComponen
 
     public readonly companyHeadquartersType: AddressTypesEnum = AddressTypesEnum.COMPANY_HEADQUARTERS;
 
-    private service: IFishingCapacityService;
     private id!: number;
     private model!: FishingCapacityCertificateEditDTO;
     private readOnly: boolean = false;
 
-    public constructor(service: FishingCapacityAdministrationService) {
+    private readonly service: IFishingCapacityService;
+    private readonly translate: FuseTranslationLoaderService;
+
+    public constructor(
+        service: FishingCapacityAdministrationService,
+        translate: FuseTranslationLoaderService
+    ) {
         this.service = service;
+        this.translate = translate;
 
         this.buildForm();
     }

@@ -142,7 +142,8 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
                 fish: this.fishes.find(s => s.value === f.fishId),
                 type: this.types.find(s => s.value === f.catchInspectionTypeId),
                 catchZone: this.catchZones.find(s => s.value === f.catchZoneId),
-                turbotSizeGroup: this.turbotSizeGroups.find(s => s.value === f.turbotSizeGroupId)
+                turbotSizeGroup: this.turbotSizeGroups.find(s => s.value === f.turbotSizeGroupId),
+                turbotSizeGroupId: f.turbotSizeGroupId,
             }));
 
             setTimeout(() => {
@@ -318,7 +319,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     private catchesValidator(): ValidatorFn {
         return (): ValidationErrors | null => {
             if (this.catches !== undefined && this.catches !== null) {
-                const result = groupBy(this.catches, ((o: InspectedCatchTableModel) => ([o.fishId, o.catchInspectionTypeId, o.catchZoneId])));
+                const result = groupBy(this.catches, ((o: InspectedCatchTableModel) => ([o.fishId, o.catchInspectionTypeId, o.catchZoneId, o.turbotSizeGroupId])));
 
                 if (result.find((f: any[]) => f.length > 1)) {
                     return { 'catchesMatch': true };

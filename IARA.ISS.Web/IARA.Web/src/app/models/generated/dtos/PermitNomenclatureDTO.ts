@@ -15,6 +15,9 @@ export class PermitNomenclatureDTO extends NomenclatureDTO<number> {
         }
     }
   
+    @StrictlyTyped(String)
+    public registrationNumber?: string;
+
     @StrictlyTyped(Number)
     public type?: CommercialFishingTypesEnum;
 

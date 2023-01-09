@@ -63,6 +63,11 @@
                                      [formGroup]="addInspectorFormGroup"
                                      columnName="{{ 'inspectors-register.inspector-card-num' | tlTranslate }}">
                         </data-column>
+                        <data-column propertyName="inspectionSequenceNum"
+                                     [flexRate]="0.3"
+                                     [formGroup]="addInspectorFormGroup"
+                                     columnName="{{ 'inspectors-register.inspection-sequence-num' | tlTranslate }}">
+                        </data-column>
                         <data-column-inline [flexRate]="0.1" *ngIf="canEditRecords"></data-column-inline>
                     </tl-data-table>
                 </tl-card-content>

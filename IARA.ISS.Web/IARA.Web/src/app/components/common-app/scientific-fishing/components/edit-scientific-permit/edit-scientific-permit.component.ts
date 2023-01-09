@@ -57,7 +57,7 @@ import { CancellationReasonGroupEnum } from '@app/enums/cancellation-reason-grou
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { ScientificFishingReasonNomenclatureDTO } from '@app/models/generated/dtos/ScientificFishingReasonNomenclatureDTO';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
-import { ShipNomenclatureFilters, ShipsUtils } from '@app/shared/utils/ships.utils';
+import { ShipsUtils } from '@app/shared/utils/ships.utils';
 
 @Component({
     selector: 'edit-scientific-permit',
@@ -121,10 +121,10 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
 
     private allStatuses: NomenclatureDTO<number>[] = [];
 
-    private annulDialog: TLMatDialog<CancellationDialogComponent>;
-    private editHolderDialog: TLMatDialog<EditScientificPermitHolderComponent>;
-    private editOutingDialog: TLMatDialog<EditScientificFishingOutingComponent>;
-    private confirmDialog: TLConfirmDialog;
+    private readonly annulDialog: TLMatDialog<CancellationDialogComponent>;
+    private readonly editHolderDialog: TLMatDialog<EditScientificPermitHolderComponent>;
+    private readonly editOutingDialog: TLMatDialog<EditScientificFishingOutingComponent>;
+    private readonly confirmDialog: TLConfirmDialog;
 
     private model!: ScientificFishingPermitEditDTO | ScientificFishingApplicationEditDTO | ScientificFishingPermitRegixDataDTO;
 
@@ -183,10 +183,6 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
             if (!this.isApplication) {
                 this.buildPermitLegalReasonsFormGroup();
             }
-
-            this.ships = ShipsUtils.filter(this.ships, new ShipNomenclatureFilters({
-                isDestOrDereg: false
-            }));
         }
 
         if (this.isApplicationHistoryMode && this.applicationId !== undefined) {
@@ -648,6 +644,18 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
         return result;
     }
 
+    public shipControlErrorLabelTest(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+        if (controlName === 'existingShipNameControl') {
+            if (errorCode === 'shipDestroyedOrDeregistered' && error === true) {
+                return new TLError({
+                    text: this.translateService.getValue('scientific-fishing.ship-deregistered-error'),
+                    type: 'error'
+                });
+            }
+        }
+        return undefined;
+    }
+
     // form handlers
     private buildForm(): void {
         if (this.showOnlyRegiXData) {
@@ -678,7 +686,7 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
                 fishingGearControl: new FormControl('', [Validators.maxLength(4000)]),
 
                 shipIsNotRegisteredControl: new FormControl(false),
-                existingShipNameControl: new FormControl(null),
+                existingShipNameControl: new FormControl(null, [this.shipValidator()]),
                 shipNameControl: new FormControl('', Validators.maxLength(500)),
                 shipExternalMarkingControl: new FormControl('', Validators.maxLength(50)),
                 shipCaptainNameControl: new FormControl('', Validators.maxLength(500)),
@@ -812,6 +820,21 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
             }
 
             return Object.keys(errors).length !== 0 ? errors : null;
+        };
+    }
+
+    private shipValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            const shipId: number | undefined = this.form?.get('existingShipNameControl')?.value?.value;
+            if (shipId !== undefined && shipId !== null) {
+                const ship: ShipNomenclatureDTO = ShipsUtils.get(this.ships, shipId);
+
+                if (ShipsUtils.isDestOrDereg(ship)) {
+                    return { shipDestroyedOrDeregistered: true };
+                }
+            }
+
+            return null;
         };
     }
 

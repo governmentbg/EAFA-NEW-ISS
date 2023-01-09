@@ -107,7 +107,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
     private formId: number | undefined;
     private applicationId: number | undefined;
     private model!: StatisticalFormReworkEditDTO | StatisticalFormReworkApplicationEditDTO | StatisticalFormReworkRegixDataDTO;
-    private rawMaterialsMap: Map<number, number[]> = new Map<number, number[]>();
+    private rawMaterialsMap = new Map<number, { origin: StatisticalFormRawMaterialOriginEnum, isActive: boolean }[]>();
 
     private get employeeStatsFormArray(): FormArray {
         return this.form?.get('employeeStatsArray') as FormArray;
@@ -309,10 +309,13 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                 this.validateRows();
 
                 if (this.rawMaterialGroup?.get('fishTypeIdControlHidden')!.value !== undefined && this.rawMaterialsMap.size !== 0) {
-                    this.rawMaterialOrigin = this.rawMaterialOrigin.filter(x => !this.rawMaterialsMap.get(this.rawMaterialGroup?.get('fishTypeIdControlHidden')!.value.value)?.includes(x.value!));
+                    const origins: StatisticalFormRawMaterialOriginEnum[] | undefined = this.rawMaterialsMap
+                        .get(this.rawMaterialGroup?.get('fishTypeIdControlHidden')!.value.value)
+                        ?.filter(x => x.isActive)
+                        ?.map(x => x.origin);
+
+                    this.rawMaterialOrigin = this.rawMaterialOrigin.filter(x => !origins?.includes(x.value!));
                 }
-
-
             }
         });
 
@@ -827,14 +830,31 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
     private getRawMaterialFromTable(): StatisticalFormReworkRawMaterialDTO[] {
         const rows = this.rawMaterialTable.rows as StatisticalFormReworkRawMaterialDTO[];
 
-        return rows.map(x => new StatisticalFormReworkRawMaterialDTO({
+        const materials: StatisticalFormReworkRawMaterialDTO[] = rows.map(x => new StatisticalFormReworkRawMaterialDTO({
             id: x.id,
             fishTypeId: x.fishTypeId,
             origin: x.origin,
             tons: x.tons,
-            isActive: x.isActive ?? true,
-            countryZone: x.countryZone
+            countryZone: x.countryZone,
+            isActive: x.isActive ?? true
         }));
+
+        const result: StatisticalFormReworkRawMaterialDTO[] = [];
+
+        for (const material of materials) {
+            if (result.findIndex(x => x.fishTypeId === material.fishTypeId && x.origin === material.origin) === -1) {
+                const original = materials.filter(x => x.fishTypeId === material.fishTypeId && x.origin === material.origin);
+
+                if (original.length === 1) {
+                    result.push(material);
+                }
+                else {
+                    result.push(original.find(x => x.isActive === true)!);
+                }
+            }
+        }
+
+        return result;
     }
 
     private getProductFromTable(): StatisticalFormReworkProductDTO[] {
@@ -922,31 +942,38 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
     private validateRows() {
         this.fishTypes = [...this.allFishTypes];
         this.rawMaterialOrigin = [...this.allRawMaterialOrigin];
-        this.rawMaterialsMap = new Map<number, number[]>();
-        this.rawMaterialTable.rows.map((x: StatisticalFormReworkRawMaterialDTO) => {
-            if (this.rawMaterialsMap.has(x.fishTypeId!)) {
-                this.rawMaterialsMap.get(x.fishTypeId!)?.push(x.origin!);
-            } else {
-                this.rawMaterialsMap.set(x.fishTypeId!, [x.origin!])
-            }
-        });
 
-        const fishTypesCurrentIds: number[] = [];
+        this.rawMaterialsMap = new Map<number, { origin: StatisticalFormRawMaterialOriginEnum, isActive: boolean }[]>();
 
-        this.rawMaterialsMap.forEach((value: number[], key: number) => {
-            if (value.length === this.allRawMaterialOrigin.length) {
-                fishTypesCurrentIds.push(key);
-                this.rawMaterialsMap.delete(key);
-                if (this.rawMaterialsMap.size === 0) {
-                    this.rawMaterialOrigin = [];
-                }
+        for (const x of this.rawMaterialTable.rows) {
+            if (this.rawMaterialsMap.has(x.fishTypeId)) {
+                const values: { origin: StatisticalFormRawMaterialOriginEnum, isActive: boolean }[] = this.rawMaterialsMap.get(x.fishTypeId)!;
+                values.push({
+                    origin: x.origin!,
+                    isActive: x.isActive ?? true
+                });
+
+                this.rawMaterialsMap.set(x.fishTypeId, values);
             }
             else {
-                value = value.filter(x => !value.includes(x));
+                this.rawMaterialsMap.set(x.fishTypeId!, [{
+                    origin: x.origin!,
+                    isActive: x.isActive ?? true
+                }]);
             }
-        });
+        }
 
-        this.fishTypes = this.fishTypes.filter(x => !fishTypesCurrentIds.includes(x.value!));
+        const excemptFishTypeIds: number[] = [];
+
+        for (const [key, value] of this.rawMaterialsMap) {
+            const count: number = value.filter(x => x.isActive).length;
+
+            if (count === this.allRawMaterialOrigin.length) {
+                excemptFishTypeIds.push(key);
+            }
+        }
+
+        this.fishTypes = this.fishTypes.filter(x => !excemptFishTypeIds.includes(x.value!));
         this.fishTypes = this.fishTypes.slice();
     }
 

@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
@@ -15,12 +15,13 @@ import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { PatrolVehiclesTypeEnum } from '@app/enums/patrol-vehicles-type.enum';
 
 @Component({
     selector: 'edit-patrol-vehicles',
     templateUrl: './edit-patrol-vehicles.component.html'
 })
-export class EditPatrolVehiclesComponent implements OnInit, IDialogComponent {
+export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDialogComponent {
     public editVehicleForm!: FormGroup;
     public readOnly: boolean = false;
     public flagCountries: NomenclatureDTO<number>[] = [];
@@ -58,7 +59,7 @@ export class EditPatrolVehiclesComponent implements OnInit, IDialogComponent {
         this.vesselTypes = nomenclatures[1];
         this.flagCountries = nomenclatures[2];
         this.institutions = nomenclatures[3];
-
+        
         if (this.vehicleId === undefined) {
             this.model = new PatrolVehiclesEditDTO();
         }
@@ -70,6 +71,26 @@ export class EditPatrolVehiclesComponent implements OnInit, IDialogComponent {
                 }
             });
         }
+    }
+
+    public ngAfterViewInit(): void{
+        this.editVehicleForm.get('patrolVehicleTypeIdControl')!.valueChanges.subscribe({
+            next: (type: NomenclatureDTO<number> | undefined) => {
+                this.editVehicleForm.get('cfrControl')!.clearValidators();
+                this.editVehicleForm.get('cfrControl')!.setValidators(TLValidators.cfr);
+
+                if (type !== undefined && type !== null) {
+                    const vehicleType = PatrolVehiclesTypeEnum[type.code as keyof typeof PatrolVehiclesTypeEnum];
+
+                    if (vehicleType === PatrolVehiclesTypeEnum.Ship) {
+                        this.editVehicleForm.get('cfrControl')!.setValidators([Validators.required, TLValidators.cfr]);
+                    }
+                }
+
+                this.editVehicleForm.get('cfrControl')!.markAsPending({ emitEvent: false });
+                this.editVehicleForm.get('cfrControl')!.updateValueAndValidity({ emitEvent: false });
+            }
+        });
     }
 
     public setData(data: DialogParamsModel, wrapperData: DialogWrapperData): void {
@@ -127,7 +148,7 @@ export class EditPatrolVehiclesComponent implements OnInit, IDialogComponent {
             institutionIdControl: new FormControl(null, Validators.required),
             patrolVehicleTypeIdControl: new FormControl(null, Validators.required),
             externalMarkControl: new FormControl(null, Validators.maxLength(50)),
-            cfrControl: new FormControl(null, [Validators.required, TLValidators.cfr]),
+            cfrControl: new FormControl(null, TLValidators.cfr),
             uviControl: new FormControl(null, [TLValidators.exactLength(7), TLValidators.number(0)]),
             ircsCallSignControl: new FormControl(null, Validators.maxLength(7)),
             mmsiControl: new FormControl(null, [TLValidators.exactLength(9), TLValidators.number(0)]),

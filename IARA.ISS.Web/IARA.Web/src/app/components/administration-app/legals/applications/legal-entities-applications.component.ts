@@ -44,7 +44,8 @@ export class LegalEntitiesApplicationsComponent {
             processPaymentDataPermission: PermissionsEnum.LegalEntitiesApplicationsProcessPaymentData,
             checkDataRegularityPermission: PermissionsEnum.LegalEntitiesApplicationsCheckDataRegularity,
             addAdministrativeActPermission: PermissionsEnum.LegalEntitiesAddRecords,
-            readAdministrativeActPermission: PermissionsEnum.LegalEntitiesRead
+            readAdministrativeActPermission: PermissionsEnum.LegalEntitiesRead,
+            canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication
         });
 
         this.processingPermissions = new Map<PageCodeEnum, ApplicationProcessingPermissions>([

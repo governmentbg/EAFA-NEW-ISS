@@ -19,6 +19,9 @@ export class StatisticalFormShipDTO {
     @StrictlyTyped(Number)
     public grossTonnageId?: number;
 
+    @StrictlyTyped(Boolean)
+    public hasEngine?: boolean;
+
     @StrictlyTyped(Number)
     public fuelTypeId?: number;
 

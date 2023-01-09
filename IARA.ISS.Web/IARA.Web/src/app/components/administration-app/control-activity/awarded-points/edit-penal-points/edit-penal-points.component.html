@@ -11,25 +11,19 @@
                         [validityChecker]="form">
         <div fxLayout="column" fxLayoutGap="1em">
             <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
-                <tl-input fxFlex="25"
-                          formControlName="reportNumControl"
-                          label="{{ 'penal-points.edit-report-num' | tlTranslate }}"
+                <tl-input fxFlex="33"
+                          formControlName="reportNoteNumControl"
+                          label="{{ 'penal-points.edit-report-note-num' | tlTranslate }}"
                           tooltipResourceName="penal-points.edit-report-num-helper">
                 </tl-input>
 
-                <tl-date fxFlex="25"
-                         formControlName="dateControl"
-                         label="{{ 'penal-points.edit-effective-date' | tlTranslate }}"
-                         tooltipResourceName="penal-points.edit-effective-date-helper">
+                <tl-date fxFlex="33"
+                         formControlName="reportNoteDateControl"
+                         label="{{ 'penal-points.edit-report-note-date' | tlTranslate }}"
+                         tooltipResourceName="penal-points.edit-report-note-date-helper">
                 </tl-date>
 
-                <tl-input fxFlex="25"
-                          formControlName="issuerControl"
-                          label="{{ 'penal-points.edit-issuer' | tlTranslate }}"
-                          tooltipResourceName="penal-points.edit-issuer-helper">
-                </tl-input>
-
-                <tl-autocomplete fxFlex="25"
+                <tl-autocomplete fxFlex="33"
                                  formControlName="territoryUnitControl"
                                  [options]="territoryUnits"
                                  label="{{ 'penal-points.edit-territory-unit' | tlTranslate }}"
@@ -147,14 +141,20 @@
             </div>
 
             <div fxLayout="row" fxLayoutGap="1em">
-                <tl-select fxFlex="50"
+                <tl-input fxFlex="33"
+                          formControlName="orderNumControl"
+                          label="{{ 'penal-points.edit-order-num' | tlTranslate }}"
+                          tooltipResourceName="penal-points.edit-order-num-helper">
+                </tl-input>
+
+                <tl-select fxFlex="33"
                            formControlName="orderTypeControl"
                            [options]="orderTypes"
                            label="{{ 'penal-points.edit-order-type' | tlTranslate }}"
                            tooltipResourceName="penal-points.edit-order-type-helper">
                 </tl-select>
 
-                <tl-input fxFlex="50"
+                <tl-input fxFlex="33"
                           formControlName="pointsAmountControl"
                           label="{{ 'penal-points.edit-order-points' | tlTranslate }}"
                           tooltipResourceName="penal-points.edit-order-points-helper">
@@ -162,78 +162,81 @@
             </div>
 
             <div fxLayout="row" fxLayoutGap="1em">
-                <tl-date fxFlex="33"
+                <tl-input fxFlex="25"
+                          formControlName="issuerControl"
+                          label="{{ 'penal-points.edit-issuer' | tlTranslate }}"
+                          tooltipResourceName="penal-points.edit-issuer-helper">
+                </tl-input>
+
+                <tl-date fxFlex="25"
                          formControlName="issueDateControl"
                          label="{{ 'penal-points.edit-order-issue-date' | tlTranslate }}"
                          tooltipResourceName="penal-points.edit-order-issue-date-helper">
                 </tl-date>
 
-                <tl-date fxFlex="33"
+                <tl-date fxFlex="25"
                          formControlName="effectiveDateControl"
                          label="{{ 'penal-points.edit-order-effective-date' | tlTranslate }}"
                          tooltipResourceName="penal-points.edit-order-effective-date-helper">
                 </tl-date>
 
-                <tl-date fxFlex="33"
+                <tl-date fxFlex="25"
                          formControlName="deliveryDateControl"
                          label="{{ 'penal-points.edit-order-delivery-date' | tlTranslate }}"
                          tooltipResourceName="penal-points.edit-order-delivery-date-helper">
                 </tl-date>
             </div>
+        </div>
+    </tl-expansion-panel>
 
-            <div fxLayout="column" fxLayoutGap="1em" *ngIf="form.controls.isPermitOwnerControl.value === true">
+    <tl-expansion-panel title="{{ 'penal-points.edit-penal-points-orders' | tlTranslate }}"
+                        tooltipResourceName="penal-points.edit-penal-points-orders-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <tl-data-table #pointsOrdersTable
+                           fxFlex="100"
+                           [rows]="pointsOrders"
+                           [isRemote]="false"
+                           [showInactiveRecords]="false"
+                           [showAddButton]="false">
+                <data-column [flexRate]="0.3"
+                             propertyName="decreeNum"
+                             columnName="{{ 'penal-points.edit-order-num' | tlTranslate }}">
+                </data-column>
 
-                <!-- Заповед -->
-                <tl-card tooltipResourceName="penal-points.edit-penal-points-orders-helper">
-                    <tl-card-title>{{ 'penal-points.edit-penal-points-orders' | tlTranslate }}</tl-card-title>
-                    <tl-card-content>
-                        <tl-data-table #pointsOrdersTable
-                                       fxFlex="100"
-                                       [rows]="pointsOrders"
-                                       [isRemote]="false"
-                                       [showInactiveRecords]="false"
-                                       [showAddButton]="false">
-                            <data-column [flexRate]="0.3"
-                                         propertyName="decreeNum"
-                                         columnName="{{ 'penal-points.edit-order-num' | tlTranslate }}">
-                            </data-column>
+                <data-column [flexRate]="0.3"
+                             propertyName="isIncreasePoints"
+                             [options]="orderTypes"
+                             dataType="nomenclature"
+                             columnName="{{ 'penal-points.edit-order-type' | tlTranslate }}">
+                </data-column>
 
-                            <data-column [flexRate]="0.3"
-                                         propertyName="isIncreasePoints"
-                                         [options]="orderTypes"
-                                         dataType="nomenclature"
-                                         columnName="{{ 'penal-points.edit-order-type' | tlTranslate }}">
-                            </data-column>
+                <data-column [flexRate]="0.3"
+                             propertyName="issueDate"
+                             dataType="date"
+                             columnName="{{ 'penal-points.edit-order-issue-date' | tlTranslate }}">
+                </data-column>
 
-                            <data-column [flexRate]="0.3"
-                                         propertyName="issueDate"
-                                         dataType="date"
-                                         columnName="{{ 'penal-points.edit-order-issue-date' | tlTranslate }}">
-                            </data-column>
+                <data-column [flexRate]="0.3"
+                             propertyName="effectiveDate"
+                             dataType="date"
+                             columnName="{{ 'penal-points.edit-order-effective-date' | tlTranslate }}">
+                </data-column>
 
-                            <data-column [flexRate]="0.3"
-                                         propertyName="effectiveDate"
-                                         dataType="date"
-                                         columnName="{{ 'penal-points.edit-order-effective-date' | tlTranslate }}">
-                            </data-column>
+                <data-column [flexRate]="0.3"
+                             propertyName="deliveryDate"
+                             dataType="date"
+                             columnName="{{ 'penal-points.edit-order-delivery-date' | tlTranslate }}">
+                </data-column>
 
-                            <data-column [flexRate]="0.3"
-                                         propertyName="deliveryDate"
-                                         dataType="date"
-                                         columnName="{{ 'penal-points.edit-order-delivery-date' | tlTranslate }}">
-                            </data-column>
-
-                            <data-column [flexRate]="0.3"
-                                         propertyName="pointsAmount"
-                                         columnName="{{ 'penal-points.edit-order-points' | tlTranslate }}">
-                            </data-column>
-                        </tl-data-table>
-                    </tl-card-content>
-                </tl-card>
-            </div>
+                <data-column [flexRate]="0.3"
+                             propertyName="pointsAmount"
+                             columnName="{{ 'penal-points.edit-order-points' | tlTranslate }}">
+                </data-column>
+            </tl-data-table>
 
             <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="end center" *ngIf="form.controls.isPermitOwnerControl.value === true">
-                <tl-input fxFlex="25"
+                <tl-input fxFlex="15"
                           formControlName="pointsTotalCountControl"
                           label="{{ 'penal-points.edit-points-total-count' | tlTranslate }}"
                           tooltipResourceName="penal-points.edit-points-total-count-helper">

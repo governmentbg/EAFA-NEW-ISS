@@ -26,6 +26,8 @@
         <tl:TLTableColumn Text="{rt:Translate UnloadedQuantity, Group=CatchInspection}"
                 Width="150"
                 IsVisible="{Binding BindingContext.ShowUnloadedQuantity, Source={Reference view}}" />
+        <tl:TLTableColumn Text="{rt:Translate TurbotSizeGroup, Group=CatchInspection}"
+                Width="150" />
         <tl:TLTableColumn Text="{rt:Translate AllowedDeviation, Group=CatchInspection}"
                 Width="150"
                 IsVisible="{Binding BindingContext.ShowAllowedDeviation, Source={Reference view}}" />
@@ -73,6 +75,10 @@
                 <tl:TLEntry ValidState="{Binding AllowedDeviation}"
                         IsTitleVisible="False"
                         Keyboard="Numeric"
+                        IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                <tl:TLNativePicker ValidState="{Binding TurbotSizeGroup}"
+                        ItemsSource="{Binding BindingContext.TurbotSizeGroups, Source={Reference view}}"
+                        IsTitleVisible="False"
                         IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                 <tl:TLPicker ValidState="{Binding CatchArea}"
                         ItemsSource="{Binding BindingContext.CatchAreas, Source={Reference view}}"
@@ -137,6 +143,10 @@
                             Keyboard="Numeric"
                             IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}"
                             IsVisible="{Binding BindingContext.ShowAllowedDeviation, Source={Reference view}}" />
+                    <tl:TLNativePicker Title="{rt:Translate TurbotSizeGroup, Group=CatchInspection}"
+                            ValidState="{Binding TurbotSizeGroup}"
+                            ItemsSource="{Binding BindingContext.TurbotSizeGroups, Source={Reference view}}"
+                            IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                     <tl:TLPicker Title="{rt:Translate CatchArea, Group=CatchInspection}"
                             ValidState="{Binding CatchArea}"
                             ItemsSource="{Binding BindingContext.CatchAreas, Source={Reference view}}"
@@ -170,7 +180,7 @@
     </tl:TLResponsiveTable.DefaultSectionItemTemplate>
     <tl:TLResponsivleTableChild TableLayout="Table" />
     <tl:TLResponsivleTableChild TableLayout="Sections"
-            QueryWidth="1000" />
+            QueryWidth="1400" />
     <tl:TLResponsiveTable.FooterView>
         <Button Text="{rt:Translate AddCatch, Group=CatchInspection}"
                 Command="{Binding AddCatch}"

@@ -78,7 +78,7 @@
                      columnName="{{ 'penal-decrees.edit-sized-fish-comments' | tlTranslate }}">
         </data-column>
 
-        <data-template-column [flexRate]="0.4" columnName="{{ 'auan-register.edit-violated-law-section' | tlTranslate }}">
+        <data-template-column *ngIf="isAuan" [flexRate]="0.4" columnName="{{ 'auan-register.edit-violated-law-section' | tlTranslate }}">
             <ng-template let-row="row" ngx-datatable-cell-template>
                 <div fxLayout="row" fxLayoutAlign="space-between center">
                     <span class="text-ellipsis">
@@ -112,14 +112,14 @@
     </tl-data-table>
 
     <mat-error *ngIf="seizedFishFormTouched && seizedFishForm.errors?.fishCountValidationError === true">
-        {{ 'penal-decrees.fish-count-validation' | tlTranslate }}
+        * {{ 'penal-decrees.fish-count-validation' | tlTranslate }}
     </mat-error>
 
     <mat-error *ngIf="lawSectionError && !isAppliance">
-        {{ 'penal-decrees.law-sections-fish-validation' | tlTranslate }}
+        * {{ 'penal-decrees.law-sections-fish-validation' | tlTranslate }}
     </mat-error>
 
     <mat-error *ngIf="lawSectionError && isAppliance">
-        {{ 'penal-decrees.law-sections-applicance-validation' | tlTranslate }}
+        * {{ 'penal-decrees.law-sections-applicance-validation' | tlTranslate }}
     </mat-error>
 </div>

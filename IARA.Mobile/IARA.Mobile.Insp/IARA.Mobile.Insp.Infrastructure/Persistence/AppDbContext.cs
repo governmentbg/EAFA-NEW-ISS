@@ -34,6 +34,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
         public TLTableQuery<NCatchZone> NCatchZones => TLTable<NCatchZone>();
         public TLTableQuery<NVesselType> NVesselTypes => TLTable<NVesselType>();
         public TLTableQuery<NPermission> NPermissions => TLTable<NPermission>();
+        public TLTableQuery<NPermitType> NPermitTypes => TLTable<NPermitType>();
         public TLTableQuery<NFishingGear> NFishingGears => TLTable<NFishingGear>();
         public TLTableQuery<NInstitution> NInstitutions => TLTable<NInstitution>();
         public TLTableQuery<NDocumentType> NDocumentTypes => TLTable<NDocumentType>();
@@ -45,6 +46,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
         public TLTableQuery<NInspectionState> NInspectionStates => TLTable<NInspectionState>();
         public TLTableQuery<NObservationTool> NObservationTools => TLTable<NObservationTool>();
         public TLTableQuery<NShipAssociation> NShipAssociations => TLTable<NShipAssociation>();
+        public TLTableQuery<NTurbotSizeGroup> NTurbotSizeGroups => TLTable<NTurbotSizeGroup>();
         public TLTableQuery<NFishPresentation> NFishPresentations => TLTable<NFishPresentation>();
         public TLTableQuery<NTranslationGroup> NTranslationGroups => TLTable<NTranslationGroup>();
         public TLTableQuery<NRequiredFileType> NRequiredFileTypes => TLTable<NRequiredFileType>();
@@ -82,6 +84,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
         public TLTableQuery<PoundNet> PoundNets => TLTable<PoundNet>();
         public TLTableQuery<LogBook> LogBooks => TLTable<LogBook>();
         public TLTableQuery<Person> Persons => TLTable<Person>();
+        public TLTableQuery<Permit> Permits => TLTable<Permit>();
         public TLTableQuery<Buyer> Buyers => TLTable<Buyer>();
         public TLTableQuery<Legal> Legals => TLTable<Legal>();
         public TLTableQuery<Ship> Ships => TLTable<Ship>();

@@ -104,6 +104,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.ScientificFishing
 
             if (SFCatch != null)
             {
+                SFCatch.FishTypeId = FishType.Value.Id;
                 SFCatch.FishType = new NomenclatureDto
                 {
                     DisplayName = FishType.Value.Name,
@@ -124,6 +125,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.ScientificFishing
 
             return HideDialog(new SFCatchDto
             {
+                FishTypeId = FishType.Value.Id,
                 FishType = new NomenclatureDto
                 {
                     DisplayName = FishType.Value.Name,

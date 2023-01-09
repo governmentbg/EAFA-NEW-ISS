@@ -172,11 +172,14 @@
     </tl-expansion-panel>
 
     <!-- Информация за плащане -->
-    <tl-expansion-panel *ngIf="modeApplication && !modeApplicationRegixOnly && applicationPaymentInformation !== null && applicationPaymentInformation !== undefined"
+    <tl-expansion-panel *ngIf="modeApplication && !modeApplicationRegixOnly && isPaid"
                         title="{{ 'qualified-fishers-page.payment-information-panel' | tlTranslate }}"
                         tooltipResourceName="qualified-fishers-page.payment-information-panel-helper"
                         [validityChecker]="editForm">
-        <payment-information [paymentData]="applicationPaymentInformation" [hideBasicInfo]="hideBasicPaymentInfo"></payment-information>
+        <payment-information formControlName="applicationPaymentInformationControl" 
+                             [hideBasicInfo]="hideBasicPaymentInfo" 
+                             [isOnlineApplication]="isOnlineApplication">
+        </payment-information>
     </tl-expansion-panel>
 
     <!-- Информация за начин на връчване -->

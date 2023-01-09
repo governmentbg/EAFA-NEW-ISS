@@ -13,26 +13,36 @@
 </ng-template>
 
 <ng-template #basicPaymentInformation>
-    <div fxFlex="100" fxLayout="column" [formGroup]="form">
-        <div fxLayout="row wrap" fxLayoutGap="1em" fxLayoutAlign="space-around center">
-            <tl-select fxFlex="30"
+    <div fxFlex="100" fxLayout="column" fxLayoutGap="1em" [formGroup]="form">
+        <div fxLayout="row wrap" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+            <tl-select fxFlex="23"
                        fxFlex.lt-md="100"
                        formControlName="paymentTypeControl"
                        [options]="paymentTypes"
                        label="{{ 'payment-data.payment-type' | tlTranslate }}">
             </tl-select>
-            <tl-input fxFlex="30"
+            <tl-input fxFlex="23"
                       fxFlex.lt-md="100"
                       formControlName="paymentRefControl"
                       label="{{ 'payment-data.payment-num' | tlTranslate }}">
             </tl-input>
-            <tl-date fxFlex="30"
+            <tl-date fxFlex="23"
                      fxFlex.lt-md="100"
                      formControlName="paymentDateControl"
                      [min]="paymentDateMin"
                      [max]="paymentDateMax"
                      label="{{ 'payment-data.payment-date' | tlTranslate }}">
             </tl-date>
+            <tl-input fxFlex="23"
+                      fxFlex.lt-md="100"
+                      formControlName="totalPaidPriceControl"
+                      label="{{ 'payment-data.total-paid-price' | tlTranslate }}">
+            </tl-input>
+        </div>
+        <div fxFlex="100" fxLayout="row">
+            <mat-error *ngIf="showAppliedTariffsPanel && form.errors?.totalPriceNotEqualToPaid" class="warn-orange-color">
+                * {{ 'payment-data.total-price-not-equal-to-paid-price-error' | tlTranslate }}: {{ form.errors?.totalPriceNotEqualToPaid | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}
+            </mat-error>
         </div>
     </div>
 </ng-template>

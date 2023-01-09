@@ -156,7 +156,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
     }
 
     private employeeStatsGroups: Map<number, number[]> = new Map<number, number[]>();
-    private tableMap: Map<number, number[]> = new Map<number, number[]>();
+    private tableMap: Map<number, { id: number, isActive: boolean }[]> = new Map<number, { id: number, isActive: boolean }[]>();
 
     private employeeStatsLabels: string[] = [];
     private employeeInfoLabels: string[] = [];
@@ -399,7 +399,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
             this.installationSystemFullGroup?.get('installationTypeIdControl')?.valueChanges.subscribe({
                 next: () => {
                     this.installationTypes = [...this.allInstallationTypes];
-                    const currentIds: number[] = this.systemFullTable.rows.map(x => x.installationTypeId);
+                    const currentIds: number[] = this.systemFullTable.rows.filter(x => x.isActive).map(x => x.installationTypeId);
 
                     this.installationTypes = this.installationTypes.filter(x => !currentIds.includes(x.value!));
                     this.installationTypes = this.installationTypes.slice();
@@ -409,7 +409,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
             this.installationSystemNotFullGroup?.get('installationTypeIdControl')?.valueChanges.subscribe({
                 next: () => {
                     this.installationTypes = [...this.allInstallationTypes];
-                    const currentIds: number[] = this.systemNotFullTable.rows.map(x => x.installationTypeId);
+                    const currentIds: number[] = this.systemNotFullTable.rows.filter(x => x.isActive).map(x => x.installationTypeId);
 
                     this.installationTypes = this.installationTypes.filter(x => !currentIds.includes(x.value!));
                     this.installationTypes = this.installationTypes.slice();
@@ -421,7 +421,12 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                     this.validateRows(this.producedFishOrganismTable);
 
                     if (this.producedFishOrganismGroup?.get('installationTypeIdControlHidden')!.value !== undefined && this.tableMap.size !== 0) {
-                        this.fishTypes = this.fishTypes.filter(x => !this.tableMap.get(this.producedFishOrganismGroup?.get('installationTypeIdControlHidden')!.value.value)?.includes(x.value!));
+                        const fishIds: number[] | undefined = this.tableMap
+                            .get(this.producedFishOrganismGroup?.get('installationTypeIdControlHidden')!.value.value)
+                            ?.filter(x => x.isActive)
+                            ?.map(x => x.id);
+
+                        this.fishTypes = this.fishTypes.filter(x => !fishIds?.includes(x.value!));
                     }
                 }
             });
@@ -436,8 +441,13 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                 next: () => {
                     this.validateRows(this.soldFishOrganismTable);
 
-                    if (this.producedFishOrganismGroup?.get('installationTypeIdControlHidden')!.value !== undefined && this.tableMap.size !== 0) {
-                        this.fishTypes = this.fishTypes.filter(x => !this.tableMap.get(this.producedFishOrganismGroup?.get('installationTypeIdControlHidden')!.value.value)?.includes(x.value!));
+                    if (this.soldFishOrganismGroup?.get('installationTypeIdControlHidden')!.value !== undefined && this.tableMap.size !== 0) {
+                        const fishIds: number[] | undefined = this.tableMap
+                            .get(this.soldFishOrganismGroup?.get('installationTypeIdControlHidden')!.value.value)
+                            ?.filter(x => x.isActive)
+                            ?.map(x => x.id);
+
+                        this.fishTypes = this.fishTypes.filter(x => !fishIds?.includes(x.value!));
                     }
                 }
             });
@@ -452,8 +462,13 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                 next: () => {
                     this.validateRows(this.unrealizedFishOrganismTable);
 
-                    if (this.producedFishOrganismGroup?.get('installationTypeIdControlHidden')!.value !== undefined && this.tableMap.size !== 0) {
-                        this.fishTypes = this.fishTypes.filter(x => !this.tableMap.get(this.producedFishOrganismGroup?.get('installationTypeIdControlHidden')!.value.value)?.includes(x.value!));
+                    if (this.unrealizedFishOrganismGroup?.get('installationTypeIdControlHidden')!.value !== undefined && this.tableMap.size !== 0) {
+                        const fishIds: number[] | undefined = this.tableMap
+                            .get(this.unrealizedFishOrganismGroup?.get('installationTypeIdControlHidden')!.value.value)
+                            ?.filter(x => x.isActive)
+                            ?.map(x => x.id);
+
+                        this.fishTypes = this.fishTypes.filter(x => !fishIds?.includes(x.value!));
                     }
                 }
             });
@@ -468,8 +483,13 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                 next: () => {
                     this.validateRows(this.broodstockTable);
 
-                    if (this.producedFishOrganismGroup?.get('installationTypeIdControlHidden')!.value !== undefined && this.tableMap.size !== 0) {
-                        this.fishTypes = this.fishTypes.filter(x => !this.tableMap.get(this.producedFishOrganismGroup?.get('installationTypeIdControlHidden')!.value.value)?.includes(x.value!));
+                    if (this.broodstockGroup?.get('installationTypeIdControlHidden')!.value !== undefined && this.tableMap.size !== 0) {
+                        const fishIds: number[] | undefined = this.tableMap
+                            .get(this.broodstockGroup?.get('installationTypeIdControlHidden')!.value.value)
+                            ?.filter(x => x.isActive)
+                            ?.map(x => x.id);
+
+                        this.fishTypes = this.fishTypes.filter(x => !fishIds?.includes(x.value!));
                     }
                 }
             });
@@ -1053,7 +1073,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
     }
 
     private getFishOrganismFromTable(rows: StatisticalFormAquaFarmFishOrganismDTO[]): StatisticalFormAquaFarmFishOrganismDTO[] {
-        return rows.map(x => new StatisticalFormAquaFarmFishOrganismDTO({
+        const organisms: StatisticalFormAquaFarmFishOrganismDTO[] = rows.map(x => new StatisticalFormAquaFarmFishOrganismDTO({
             id: x.id,
             installationTypeId: x.installationTypeId,
             fishTypeId: x.fishTypeId,
@@ -1066,12 +1086,29 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
             caviarForConsumption: x.caviarForConsumption,
             isActive: x.isActive ?? true
         }));
+
+        const result: StatisticalFormAquaFarmFishOrganismDTO[] = [];
+
+        for (const organism of organisms) {
+            if (result.findIndex(x => x.installationTypeId === organism.installationTypeId && x.fishTypeId === organism.fishTypeId) === -1) {
+                const original = organisms.filter(x => x.installationTypeId === organism.installationTypeId && x.fishTypeId === organism.fishTypeId);
+
+                if (original.length === 1) {
+                    result.push(organism);
+                }
+                else {
+                    result.push(original.find(x => x.isActive === true)!);
+                }
+            }
+        }
+
+        return result;
     }
 
     private getBroodstockFromTable(): StatisticalFormAquaFarmBroodstockDTO[] {
         const rows = this.broodstockTable.rows as StatisticalFormAquaFarmBroodstockDTO[];
 
-        return rows.map(x => new StatisticalFormAquaFarmBroodstockDTO({
+        const broodstocks: StatisticalFormAquaFarmBroodstockDTO[] = rows.map(x => new StatisticalFormAquaFarmBroodstockDTO({
             id: x.id,
             installationTypeId: x.installationTypeId,
             fishTypeId: x.fishTypeId,
@@ -1083,29 +1120,80 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
             femaleAge: x.femaleAge,
             isActive: x.isActive ?? true
         }));
+
+        const result: StatisticalFormAquaFarmBroodstockDTO[] = [];
+
+        for (const broodstock of broodstocks) {
+            if (result.findIndex(x => x.installationTypeId === broodstock.installationTypeId && x.fishTypeId === broodstock.fishTypeId) === -1) {
+                const original = broodstocks.filter(x => x.installationTypeId === broodstock.installationTypeId && x.fishTypeId === broodstock.fishTypeId);
+
+                if (original.length === 1) {
+                    result.push(broodstock);
+                }
+                else {
+                    result.push(original.find(x => x.isActive === true)!);
+                }
+            }
+        }
+
+        return result;
     }
 
     private getSystemFullFromTable(): StatisticalFormAquaFarmInstallationSystemFullDTO[] {
         const rows = this.systemFullTable.rows as StatisticalFormAquaFarmInstallationSystemFullDTO[];
 
-        return rows.map(x => new StatisticalFormAquaFarmInstallationSystemFullDTO({
+        const systems: StatisticalFormAquaFarmInstallationSystemFullDTO[] = rows.map(x => new StatisticalFormAquaFarmInstallationSystemFullDTO({
             id: x.id,
             installationTypeId: x.installationTypeId,
             isInstallationUsed: x.isInstallationUsed ?? false,
             isActive: x.isActive ?? true
         }));
+
+        const result: StatisticalFormAquaFarmInstallationSystemFullDTO[] = [];
+
+        for (const system of systems) {
+            if (result.findIndex(x => x.installationTypeId === system.installationTypeId) === -1) {
+                const original = systems.filter(x => x.installationTypeId === system.installationTypeId);
+
+                if (original.length === 1) {
+                    result.push(system);
+                }
+                else {
+                    result.push(original.find(x => x.isActive === true)!);
+                }
+            }
+        }
+
+        return result;
     }
 
     private getSystemNotFullFromTable(): StatisticalFormAquaFarmInstallationSystemNotFullDTO[] {
         const rows = this.systemNotFullTable.rows as StatisticalFormAquaFarmInstallationSystemNotFullDTO[];
 
-        return rows.map(x => new StatisticalFormAquaFarmInstallationSystemNotFullDTO({
+        const systems: StatisticalFormAquaFarmInstallationSystemNotFullDTO[] = rows.map(x => new StatisticalFormAquaFarmInstallationSystemNotFullDTO({
             id: x.id,
             installationTypeId: x.installationTypeId,
             isInstallationUsedBreedingMaterial: x.isInstallationUsedBreedingMaterial ?? false,
             isInstallationUsedConsumationFish: x.isInstallationUsedConsumationFish ?? false,
             isActive: x.isActive ?? true
         }));
+
+        const result: StatisticalFormAquaFarmInstallationSystemNotFullDTO[] = [];
+
+        for (const system of systems) {
+            if (result.findIndex(x => x.installationTypeId === system.installationTypeId) === -1) {
+                const original = systems.filter(x => x.installationTypeId === system.installationTypeId);
+
+                if (original.length === 1) {
+                    result.push(system);
+                }
+                else {
+                    result.push(original.find(x => x.isActive === true)!);
+                }
+            }
+        }
+
+        return result;
     }
 
     private initTableFormGroups(): void {
@@ -1175,30 +1263,38 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
     private validateRows(table: TLDataTableComponent) {
         this.fishTypes = [...this.allFishTypes];
         this.installationTypes = [...this.allInstallationTypes];
-        this.tableMap = new Map<number, number[]>();
-        table.rows.map((x: Record<string, number>) => {
+
+        this.tableMap = new Map<number, { id: number, isActive: boolean }[]>();
+
+        for (const x of table.rows) {
             if (this.tableMap.has(x.installationTypeId)) {
-                this.tableMap.get(x.installationTypeId)?.push(x.fishTypeId);
-            } else {
-                this.tableMap.set(x.installationTypeId, [x.fishTypeId]);
+                const values: { id: number, isActive: boolean }[] = this.tableMap.get(x.installationTypeId)!;
+                values.push({
+                    id: x.fishTypeId,
+                    isActive: x.isActive ?? true
+                });
+
+                this.tableMap.set(x.installationTypeId, values);
             }
-        });
-
-        const currentIds: number[] = [];
-
-        this.tableMap.forEach((value: number[], key: number) => {
-            if (value.length === this.allFishTypes.length) {
-                currentIds.push(key);
-                this.tableMap.delete(key);
-                if (this.tableMap.size === 0) {
-                    this.fishTypes = [];
-                }
-            } else {
-                value = value.filter(x => !value.includes(x));
+            else {
+                this.tableMap.set(x.installationTypeId, [{
+                    id: x.fishTypeId,
+                    isActive: x.isActive ?? true
+                }]);
             }
-        });
+        }
 
-        this.installationTypes = this.installationTypes.filter(x => !currentIds.includes(x.value!));
+        const excemptInstallationTypeIds: number[] = [];
+
+        for (const [key, value] of this.tableMap) {
+            const fishCount: number = value.filter(x => x.isActive).length;
+
+            if (fishCount === this.allFishTypes.length) {
+                excemptInstallationTypeIds.push(key);
+            }
+        }
+
+        this.installationTypes = this.installationTypes.filter(x => !excemptInstallationTypeIds.includes(x.value!));
         this.installationTypes = this.installationTypes.slice();
     }
 

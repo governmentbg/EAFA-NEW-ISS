@@ -59,6 +59,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         [TLRange(0, 10000, true)]
         public ValidState AverageSize { get; set; }
 
+        public ValidStateSelect<SelectNomenclatureDto> TurbotSizeGroup { get; set; }
+
         public ValidStateSelect<SelectNomenclatureDto> FishSex { get; set; }
 
         public string ShipText
@@ -100,6 +102,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 FishSexId = viewModel.FishSex.Value,
                 CatchCount = ParseHelper.ParseInteger(viewModel.CatchCount.Value),
                 OriginShip = viewModel.Ship,
+                TurbotSizeGroupId = viewModel.TurbotSizeGroup.Value,
             };
         }
     }

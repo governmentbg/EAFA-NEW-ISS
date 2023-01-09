@@ -140,7 +140,9 @@ export class FishingCapacityAdministrationService extends ApplicationsRegisterAd
 
     public downloadFishingCapacityCertificate(certificateId: number): Observable<boolean> {
         const params = new HttpParams().append('certificateId', certificateId.toString());
-        return this.requestService.download(this.area, this.controller, 'DownloadFishingCapacityCertificate', 'certificate', { httpParams: params });
+        return this.requestService.downloadPost(this.area, this.controller, 'DownloadFishingCapacityCertificate', 'certificate', undefined, {
+            httpParams: params
+        });
     }
 
     public downloadFishingCapacityCertificateExcel(request: ExcelExporterRequestModel<FishingCapacityCertificatesFilters>): Observable<boolean> {

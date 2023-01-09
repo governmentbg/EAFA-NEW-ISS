@@ -1,7 +1,8 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
-import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO'; 
+import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
+import { FileInfoDTO } from './FileInfoDTO'; 
 
 export class ApplicationDeliveryDTO extends ApplicationBaseDeliveryDTO {
     public constructor(obj?: Partial<ApplicationDeliveryDTO>) {
@@ -25,4 +26,10 @@ export class ApplicationDeliveryDTO extends ApplicationBaseDeliveryDTO {
 
     @StrictlyTyped(Boolean)
     public isDelivered?: boolean;
+
+    @StrictlyTyped(Number)
+    public registerId?: number;
+
+    @StrictlyTyped(FileInfoDTO)
+    public files?: FileInfoDTO[];
 }

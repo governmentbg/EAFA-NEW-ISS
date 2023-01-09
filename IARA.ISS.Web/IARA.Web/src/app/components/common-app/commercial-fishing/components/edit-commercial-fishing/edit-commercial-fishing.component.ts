@@ -2,6 +2,7 @@
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { forkJoin, observable, Observable, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
@@ -91,6 +92,12 @@ import { FishingGearMarkDTO } from '@app/models/generated/dtos/FishingGearMarkDT
 import { FishingGearPingerDTO } from '@app/models/generated/dtos/FishingGearPingerDTO';
 import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
 import { CommercialFishingAdministrationService } from '@app/services/administration-app/commercial-fishing-administration.service';
+import { RequestProperties } from '@app/shared/services/request-properties';
+import { PaymentDataComponent } from '@app/shared/components/payment-data/payment-data.component';
+import { PaymentDataInfo } from '@app/shared/components/payment-data/models/payment-data-info.model';
+import { PaymentDataDTO } from '@app/models/generated/dtos/PaymentDataDTO';
+import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
+import { PaymentStatusesEnum } from '@app/enums/payment-statuses.enum';
 
 type AquaticOrganismsToAddType = NomenclatureDTO<number> | NomenclatureDTO<number>[] | string | undefined | null;
 type SaveApplicationDraftFnType = ((applicationId: number, model: IApplicationRegister, dialogClose: HeaderCloseFunction) => void) | undefined;
@@ -214,15 +221,19 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     private commonNomenclatures: CommonNomenclatures;
     private confirmDialog: TLConfirmDialog;
     private onRecordAddedOrEdittedEvent: EventEmitter<number> | undefined;
-    private editCommercialFishingPermitLicenseDialog: TLMatDialog<EditCommercialFishingComponent>;
     private saveApplicationDraftContentActionClicked: SaveApplicationDraftFnType;
     private modelLoadedFromPermit: boolean = false;
-    private editSuspensionDialog: TLMatDialog<EditSuspensionComponent>;
-    private choosePermitLicenseForRenewalDialog: TLMatDialog<ChoosePermitLicenseForRenewalComponent>;
-    private choosePermitToCopyFromDialog: TLMatDialog<ChoosePermitToCopyFromComponent>;
-    private overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
     private shipFilters!: CommercialFishingShipFilters;
     private ignoreLogBookConflicts: boolean = false;
+
+    private readonly editCommercialFishingPermitLicenseDialog: TLMatDialog<EditCommercialFishingComponent>;
+    private readonly editSuspensionDialog: TLMatDialog<EditSuspensionComponent>;
+    private readonly choosePermitLicenseForRenewalDialog: TLMatDialog<ChoosePermitLicenseForRenewalComponent>;
+    private readonly choosePermitToCopyFromDialog: TLMatDialog<ChoosePermitToCopyFromComponent>;
+    private readonly overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
+    private readonly snackbar: MatSnackBar;
+    private readonly paymentDataDialog: TLMatDialog<PaymentDataComponent>;
+
     private readonly loader: FormControlDataLoader;
 
     public constructor(
@@ -234,7 +245,9 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         editSuspensionDialog: TLMatDialog<EditSuspensionComponent>,
         choosePermitLicenseForRenewalDialog: TLMatDialog<ChoosePermitLicenseForRenewalComponent>,
         choosePermitToCopyFromDialog: TLMatDialog<ChoosePermitToCopyFromComponent>,
-        overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>
+        overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>,
+        snackbar: MatSnackBar,
+        paymentDataDialog: TLMatDialog<PaymentDataComponent>
     ) {
         this.translationService = translate;
         this.systemParametersService = systemParametersService;
@@ -245,6 +258,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         this.choosePermitLicenseForRenewalDialog = choosePermitLicenseForRenewalDialog;
         this.choosePermitToCopyFromDialog = choosePermitToCopyFromDialog;
         this.overlappingLogBooksDialog = overlappingLogBooksDialog;
+        this.snackbar = snackbar;
+        this.paymentDataDialog = paymentDataDialog;
 
         this.expectedResults = new CommercialFishingRegixDataDTO({
             submittedBy: new ApplicationSubmittedByRegixDataDTO({ addresses: [], person: new RegixPersonDataDTO() }),
@@ -535,15 +550,15 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
     public selectAllPermittedAquaticOrganisms(): void {
         //setTimeout(() => {
-            this.selectedAquaticOrganismTypes = [];
-            this.aquaticOrganismTypes = this.allAquaticOrganismTypes.slice();
+        this.selectedAquaticOrganismTypes = [];
+        this.aquaticOrganismTypes = this.allAquaticOrganismTypes.slice();
 
-            const selectedWaterType: NomenclatureDTO<number> | undefined = this.form.get('waterTypeControl')!.value;
-            if (selectedWaterType !== null && selectedWaterType !== undefined) {
-                this.fileterAquaticOrganismTypesByWaterType(WaterTypesEnum[selectedWaterType.code as keyof typeof WaterTypesEnum]);
-            }
+        const selectedWaterType: NomenclatureDTO<number> | undefined = this.form.get('waterTypeControl')!.value;
+        if (selectedWaterType !== null && selectedWaterType !== undefined) {
+            this.fileterAquaticOrganismTypesByWaterType(WaterTypesEnum[selectedWaterType.code as keyof typeof WaterTypesEnum]);
+        }
 
-            this.updateSelectedAquaticOrganismTypes(this.aquaticOrganismTypes.slice());
+        this.updateSelectedAquaticOrganismTypes(this.aquaticOrganismTypes.slice());
         //});
 
         this.form.updateValueAndValidity({ onlySelf: true });
@@ -849,20 +864,28 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 this.form.get('isPermitUnlimitedControl')!.valueChanges.subscribe({
                     next: (isUnlimited: boolean) => {
                         if (isUnlimited) {
-                            this.form.get('validityRangeControl')!.reset();
-                            this.form.get('validityRangeControl')!.clearValidators();
+                            this.form.get('validFromControl')!.reset();
+                            this.form.get('validFromControl')!.clearValidators();
+
+                            this.form.get('validToControl')!.reset();
+                            this.form.get('validToControl')!.clearValidators();
 
                             this.form.get('validFromUnlimitedControl')!.setValidators(Validators.required);
                             this.form.get('validFromUnlimitedControl')!.markAsPending();
                         }
                         else {
-                            this.form.get('validityRangeControl')!.setValidators(Validators.required);
+                            this.form.get('validFromControl')!.setValidators(Validators.required);
+                            this.form.get('validToControl')!.setValidators(Validators.required);
 
                             this.form.get('validFromUnlimitedControl')!.clearValidators();
                             this.form.get('validFromUnlimitedControl')!.reset();
                         }
 
-                        this.form.get('validityRangeControl')!.updateValueAndValidity();
+                        this.form.get('validFromControl')!.markAsPending();
+                        this.form.get('validFromControl')!.updateValueAndValidity({ emitEvent: false });
+
+                        this.form.get('validToControl')!.markAsPending();
+                        this.form.get('validToControl')!.updateValueAndValidity({ emitEvent: false });
                     }
                 });
             }
@@ -1276,6 +1299,15 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                         this.service.getPermitLicenseApplicationDataFromPermitNumber(result.permitNumber, this.applicationId!).subscribe({
                             next: (result: CommercialFishingApplicationEditDTO) => {
                                 this.setResultToApplicationModelData(result);
+                            },
+                            error: (errorResponse: HttpErrorResponse) => {
+                                if ((errorResponse.error as ErrorModel)?.code === ErrorCode.InvalidPermitNumber) {
+                                    const msg: string = '';
+                                    this.snackbar.open(msg, undefined, {
+                                        duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                        panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                    });
+                                }
                             }
                         });
                     }
@@ -1292,14 +1324,21 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     }
 
     private setResultToApplicationModelData(result: CommercialFishingApplicationEditDTO): void {
+        const originalPaymentInformation = (this.model as CommercialFishingApplicationEditDTO).paymentInformation; // save payment information
+        const originalIsPaid: boolean = (this.model as CommercialFishingApplicationEditDTO).isPaid ?? false;
+        const originalHasDelivery: boolean = (this.model as CommercialFishingApplicationEditDTO).hasDelivery ?? false;
+
         this.model = result;
+
+        (this.model as CommercialFishingApplicationEditDTO).paymentInformation = originalPaymentInformation;
+        (this.model as CommercialFishingApplicationEditDTO).isPaid = originalIsPaid;
+        (this.model as CommercialFishingApplicationEditDTO).hasDelivery = originalHasDelivery;
 
         if (this.model instanceof CommercialFishingApplicationEditDTO) {
             this.model.pageCode = this.pageCode;
             this.model.applicationId = this.applicationId;
 
             this.hasDelivery = this.model.hasDelivery ?? false;
-            this.isPaid = this.model.isPaid ?? false;
             this.isOnlineApplication = this.model.isOnlineApplication!;
         }
 
@@ -1310,70 +1349,127 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         this.model = this.fillModel();
         CommonUtils.sanitizeModelStrings(this.model);
         this.service.addPermitApplicationAndStartPermitLicenseApplication(this.model).subscribe({
-            next: (permitLicenseModel: CommercialFishingApplicationEditDTO) => {
+            next: async (permitLicenseModel: CommercialFishingApplicationEditDTO) => {
                 NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
 
                 if (this.pageCode === PageCodeEnum.PoundnetCommFish || this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
                     NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.PoundNets);
                 }
 
-                dialogClose();
+                // Open payment dialog
+                const paymentDialog = await this.openPaymentDialog(permitLicenseModel.applicationId!);
 
-                const editDialogData: CommercialFishingDialogParamsModel = new CommercialFishingDialogParamsModel({
-                    model: permitLicenseModel,
-                    applicationId: permitLicenseModel.applicationId,
-                    isApplication: true,
-                    isApplicationHistoryMode: false,
-                    isReadonly: false,
-                    viewMode: false,
-                    service: this.service,
-                    applicationsService: this.applicationsService,
-                    showOnlyRegiXData: false,
-                    pageCode: permitLicenseModel.pageCode,
-                    onRecordAddedOrEdittedEvent: this.onRecordAddedOrEdittedEvent
-                });
+                paymentDialog.subscribe(async (paymentData: PaymentDataDTO) => {
+                    if (paymentData !== null && paymentData !== undefined) {
+                        // Open permit license dialog
+                        if (permitLicenseModel.paymentInformation === null || permitLicenseModel.paymentInformation === undefined) {
+                            permitLicenseModel.paymentInformation = new ApplicationPaymentInformationDTO();
+                        }
 
-                const auditButton: IHeaderAuditButton | undefined = undefined;
+                        const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin([
+                            NomenclatureStore.instance.getNomenclature<number>(NomenclatureTypes.OfflinePaymentTypes, this.commonNomenclatures.getOfflinePaymentTypes.bind(this.commonNomenclatures), false),
+                            NomenclatureStore.instance.getNomenclature<number>(NomenclatureTypes.PaymentStatuses, this.commonNomenclatures.getPaymentStatuses, false)
+                        ]).toPromise();
 
-                const rightButtons = [
-                    {
-                        id: 'save-draft-content',
-                        color: 'accent',
-                        translateValue: 'applications-register.save-draft-content',
-                        buttonData: { callbackFn: this.saveApplicationDraftContentActionClicked }
-                    }, {
-                        id: 'save',
-                        color: 'accent',
-                        translateValue: 'applications-register.save-application'
+                        const paymentTypes = nomenclatures[0];
+                        const paymentStatuses = nomenclatures[1];
+
+                        permitLicenseModel.paymentInformation.paymentType = paymentTypes.find(x => x.code === PaymentTypesEnum[paymentData.paymentType!])!.code;
+                        permitLicenseModel.paymentInformation.paymentDate = paymentData.paymentDateTime;
+                        permitLicenseModel.paymentInformation.referenceNumber = paymentData.paymentRefNumber;
+                        permitLicenseModel.paymentInformation.totalPaidPrice = paymentData.totalPaidPrice;
+                        permitLicenseModel.paymentInformation.lastUpdateDate = new Date();
+                        permitLicenseModel.paymentInformation.paymentStatus = paymentStatuses.find(x => x.code === PaymentStatusesEnum[PaymentStatusesEnum.PaidOK])!.code; // би трябвало това да е статусът, защото е офлайн плащане и щом сме стигнали до тази стъпка, то е успешно
+                        
+                        this.openPermitLicenseDialog(permitLicenseModel);
                     }
-                ];
 
-                const dialog = this.editCommercialFishingPermitLicenseDialog.open({
-                    title: this.translationService.getValue('commercial-fishing.edit-permit-license-application-dialog-title'),
-                    TCtor: EditCommercialFishingComponent,
-                    headerAuditButton: auditButton,
-                    headerCancelButton: {
-                        cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
-                    },
-                    componentData: editDialogData,
-                    translteService: this.translationService,
-                    disableDialogClose: true,
-                    cancelBtn: {
-                        id: 'cancel',
-                        color: 'primary',
-                        translateValue: 'common.cancel',
-                    },
-                    rightSideActionsCollection: rightButtons,
-                    viewMode: false
-                }, '1400px');
-
-                dialog.subscribe((result: CommercialFishingApplicationEditDTO | undefined) => {
-                    if (this.onRecordAddedOrEdittedEvent !== null && this.onRecordAddedOrEdittedEvent !== undefined) {
-                        this.onRecordAddedOrEdittedEvent.emit(result?.id);
-                    }
+                    dialogClose();
                 });
             }, error: (errorResponse: HttpErrorResponse) => {
                 this.handleAddEditApplicationErrorResponse(errorResponse, dialogClose, 'saveAndStartPermitLicense');
+            }
+        });
+    }
+
+    private async openPaymentDialog(applicationId: number): Promise<Observable<any>> {
+        const paymentTypes = await NomenclatureStore.instance.getNomenclature<number>(
+            NomenclatureTypes.OfflinePaymentTypes,
+            this.commonNomenclatures.getOfflinePaymentTypes.bind(this.commonNomenclatures),
+            false).toPromise();
+
+        const headerTitle: string = this.translationService.getValue('commercial-fishing.enter-permit-license-payment-data-dialog-title');
+        const data = new PaymentDataInfo({
+            paymentTypes: paymentTypes,
+            viewMode: false,
+            service: this.applicationsService,
+            applicationId: applicationId,
+            paymentDateMax: new Date()
+        });
+
+        return this.paymentDataDialog.openWithTwoButtons({
+            title: headerTitle,
+            TCtor: PaymentDataComponent,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            componentData: data,
+            translteService: this.translationService
+        }, '1200px');
+    }
+
+    private openPermitLicenseDialog(permitLicenseModel: CommercialFishingApplicationEditDTO): void {
+        const editDialogData: CommercialFishingDialogParamsModel = new CommercialFishingDialogParamsModel({
+            model: permitLicenseModel,
+            applicationId: permitLicenseModel.applicationId,
+            isApplication: true,
+            isApplicationHistoryMode: false,
+            isReadonly: false,
+            viewMode: false,
+            service: this.service,
+            applicationsService: this.applicationsService,
+            showOnlyRegiXData: false,
+            pageCode: permitLicenseModel.pageCode,
+            onRecordAddedOrEdittedEvent: this.onRecordAddedOrEdittedEvent
+        });
+
+        const auditButton: IHeaderAuditButton | undefined = undefined;
+
+        const rightButtons = [
+            {
+                id: 'save-draft-content',
+                color: 'accent',
+                translateValue: 'applications-register.save-draft-content',
+                buttonData: { callbackFn: this.saveApplicationDraftContentActionClicked }
+            }, {
+                id: 'save',
+                color: 'accent',
+                translateValue: 'applications-register.save-application'
+            }
+        ];
+
+        const dialog = this.editCommercialFishingPermitLicenseDialog.open({
+            title: this.translationService.getValue('commercial-fishing.edit-permit-license-application-dialog-title'),
+            TCtor: EditCommercialFishingComponent,
+            headerAuditButton: auditButton,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            componentData: editDialogData,
+            translteService: this.translationService,
+            disableDialogClose: true,
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: 'common.cancel',
+            },
+            rightSideActionsCollection: rightButtons,
+            viewMode: false
+        }, '1400px');
+
+        dialog.subscribe((result: CommercialFishingApplicationEditDTO | undefined) => {
+            if (this.onRecordAddedOrEdittedEvent !== null && this.onRecordAddedOrEdittedEvent !== undefined) {
+                this.onRecordAddedOrEdittedEvent.emit(result?.id);
             }
         });
     }
@@ -1734,7 +1830,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         if (this.model instanceof CommercialFishingEditDTO) {
             if (this.model.id !== null && this.model.id !== undefined) {
                 this.form.get('issueDateControl')!.setValue(this.model.issueDate);
-                this.form.get('validityRangeControl')!.setValue(new DateRangeData({ start: this.model.validFrom, end: this.model.validTo }));
+                this.form.get('validFromControl')!.setValue(this.model.validFrom);
+                this.form.get('validToControl')!.setValue(this.model.validTo);
 
                 if (!this.isPermitLicense) {
                     this.form.get('permitRegistrationNumberControl')!.setValue(this.model.permitRegistrationNumber);
@@ -1945,11 +2042,17 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             this.form.addControl('validFromUnlimitedControl', new FormControl(undefined, Validators.required));
             this.form.addControl('isPermitUnlimitedControl', new FormControl(true));
 
-            this.form.addControl('validityRangeControl', new FormControl(undefined));
+            this.form.addControl('validFromControl', new FormControl());
+            this.form.addControl('validToControl', new FormControl());
         }
         else {
             this.form.addControl('permitLicenseRegistrationNumberControl', new FormControl());
-            this.form.addControl('validityRangeControl', new FormControl(undefined, Validators.required));
+
+            const now: Date = new Date();
+            const validToDate: Date = new Date(now.getFullYear(), 11, 31); // последният ден от текущата година
+
+            this.form.addControl('validFromControl', new FormControl(undefined, Validators.required));
+            this.form.addControl('validToControl', new FormControl(validToDate, Validators.required));
         }
 
         if (this.isPermitLicense) {
@@ -2082,13 +2185,13 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 model.validFrom = this.form.get('validFromUnlimitedControl')!.value;
             }
             else {
-                model.validFrom = (this.form.get('validityRangeControl')!.value as DateRangeData)?.start;
-                model.validTo = (this.form.get('validityRangeControl')!.value as DateRangeData)?.end;
+                model.validFrom = this.form.get('validFromControl')!.value;
+                model.validTo = this.form.get('validToControl')!.value;
             }
         }
         else {
-            model.validFrom = (this.form.get('validityRangeControl')!.value as DateRangeData)?.start;
-            model.validTo = (this.form.get('validityRangeControl')!.value as DateRangeData)?.end;
+            model.validFrom = this.form.get('validFromControl')!.value;
+            model.validTo = this.form.get('validToControl')!.value;
         }
 
         model.suspensions = this.suspensions;
@@ -2141,7 +2244,10 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     }
 
     private updatePermitLicenseAppliedTariffs(): void {
+        (this.model as CommercialFishingApplicationEditDTO).paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
+
         const parameters: PermitLicenseTariffCalculationParameters = this.getPermitLiceseTariffCalculationParameters();
+
         this.service.calculatePermitLicenseAppliedTariffs(parameters).subscribe({
             next: (appliedTariffs: PaymentTariffDTO[]) => {
                 if ((this.model as CommercialFishingApplicationEditDTO).paymentInformation!.paymentSummary !== null
@@ -2317,7 +2423,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             });
 
             this.overlappingLogBooksDialog.open({
-                title: this.translationService.getValue('commercial-fishing.overlapping-log-books-dialog-title'),
+                title: this.translationService.getValue('catches-and-sales.overlapping-log-books-dialog-title'),
                 TCtor: OverlappingLogBooksComponent,
                 headerCancelButton: {
                     cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
@@ -2333,7 +2439,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 saveBtn: {
                     id: 'save',
                     color: 'error',
-                    translateValue: 'commercial-fishing.overlapping-log-books-save-despite-conflicts'
+                    translateValue: 'catches-and-sales.overlapping-log-books-save-despite-conflicts'
                 }
             }, '1300px').subscribe({
                 next: (save: boolean | undefined) => {
@@ -2697,7 +2803,13 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             && model.validTo !== undefined
             && model.validTo!.getTime() > now.getTime();
 
-        this.form.get('validityRangeControl')!.valueChanges.subscribe({
+        this.form.get('validFromControl')!.valueChanges.subscribe({
+            next: () => {
+                this.updatePermitLicenseIsValidFlag();
+            }
+        });
+
+        this.form.get('validToControl')!.valueChanges.subscribe({
             next: () => {
                 this.updatePermitLicenseIsValidFlag();
             }
@@ -2706,8 +2818,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
     private updatePermitLicenseIsValidFlag(): void {
         const now = new Date();
-        const validFrom = (this.form.get('validityRangeControl')!.value as DateRangeData)?.start;
-        const validTo = (this.form.get('validityRangeControl')!.value as DateRangeData)?.end;
+        const validFrom = this.form.get('validFromControl')!.value;
+        const validTo = this.form.get('validToControl')!.value;
 
         if (validFrom !== null
             && validFrom !== undefined
@@ -2738,7 +2850,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     return null;
                 }
             }
-            
+
             return { 'atLeastOneQuotaOrganism': true };
         }
     }

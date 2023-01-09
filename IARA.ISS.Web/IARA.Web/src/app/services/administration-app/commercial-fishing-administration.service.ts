@@ -37,6 +37,8 @@ import { CatchesAndSalesCommonService } from '@app/services/common-app/catches-a
 import { ILogBookService } from '@app/components/common-app/commercial-fishing/components/edit-log-book/interfaces/log-book.interface';
 import { CommercialFishingLogBookEditDTO } from '@app/models/generated/dtos/CommercialFishingLogBookEditDTO';
 import { LogBookForRenewalDTO } from '@app/models/generated/dtos/LogBookForRenewalDTO';
+import { RegisterDTO } from '@app/models/generated/dtos/RegisterDTO';
+import { LogBookEditDTO } from '@app/models/generated/dtos/LogBookEditDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -216,7 +218,11 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         });
     }
 
-    public addAndDownloadRegister(model: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<boolean> {
+    public addAndDownloadRegister(
+        model: CommercialFishingEditDTO,
+        pageCode: PageCodeEnum,
+        ignoreLogBookConflicts: boolean
+    ): Observable<boolean> {
         let serviceMethod: string = '';
         let params: HttpParams | undefined;
 
@@ -238,7 +244,11 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
                 break;
         }
 
-        return this.requestService.downloadPost(this.area, this.controller, serviceMethod, '', model, {
+        const registerDto: RegisterDTO<CommercialFishingEditDTO> = new RegisterDTO<CommercialFishingEditDTO>({
+            dto: model
+        });
+
+        return this.requestService.downloadPost(this.area, this.controller, serviceMethod, '', registerDto, {
             properties: new RequestProperties({ asFormData: true }),
             httpParams: params
         });
@@ -261,7 +271,7 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         }
 
         const params = new HttpParams().append('registerId', id.toString());
-        return this.requestService.download(this.area, this.controller, methodName, '', { httpParams: params });
+        return this.requestService.downloadPost(this.area, this.controller, methodName, '', undefined, { httpParams: params });
     }
 
     public editPermit(permit: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<void> {
@@ -292,7 +302,11 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         });
     }
 
-    public editAndDownloadRegister(model: CommercialFishingEditDTO, pageCode: PageCodeEnum, ignoreLogBookConflicts: boolean): Observable<boolean> {
+    public editAndDownloadRegister(
+        model: CommercialFishingEditDTO,
+        pageCode: PageCodeEnum,
+        ignoreLogBookConflicts: boolean
+    ): Observable<boolean> {
         let serviceMethod: string = '';
         let params: HttpParams | undefined;
 
@@ -314,7 +328,11 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
                 break;
         }
 
-        return this.requestService.downloadPost(this.area, this.controller, serviceMethod, '', model, {
+        const register: RegisterDTO<CommercialFishingEditDTO> = new RegisterDTO<CommercialFishingEditDTO>({
+            dto: model
+        });
+
+        return this.requestService.downloadPost(this.area, this.controller, serviceMethod, '', register, {
             properties: new RequestProperties({ asFormData: true }),
             httpParams: params
         });
@@ -360,6 +378,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         return this.requestService.patch(this.area, this.controller, serviceMethod, null, { httpParams: params });
     }
 
+    // log books
+
     public getPermitLicenseLogBook(logBookPermitLicenseId: number): Observable<CommercialFishingLogBookEditDTO> {
         const params: HttpParams = new HttpParams().append('logBookPermitLicenseId', logBookPermitLicenseId.toString());
 
@@ -369,8 +389,24 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         });
     }
 
-    public editLogBook(model: CommercialFishingLogBookEditDTO, ignoreLogBookConflicts: boolean): Observable<void> {
-        const params: HttpParams = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
+    public getLogBook(logBookId: number): Observable<LogBookEditDTO> {
+        throw new Error('Method getPermitLicenseLogBook should be called instead.');
+    }
+
+    public addLogBook(model: CommercialFishingLogBookEditDTO, registerId: number, ignoreLogBookConflicts: boolean): Observable<void> {
+        const params: HttpParams = new HttpParams()
+            .append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString())
+            .append('registerId', registerId.toString());
+
+        return this.requestService.post(this.area, this.controller, 'AddLogBook', model, {
+            httpParams: params
+        });
+    }
+
+    public editLogBook(model: CommercialFishingLogBookEditDTO, registerId: number, ignoreLogBookConflicts: boolean): Observable<void> {
+        const params: HttpParams = new HttpParams()
+            .append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString())
+            .append('registerId', registerId.toString());
 
         return this.requestService.post(this.area, this.controller, 'EditLogBook', model, {
             httpParams: params
@@ -391,6 +427,14 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         return this.requestService.patch(this.area, this.controller, 'UndoDeleteLogBookPermitLicense', undefined, {
             httpParams: params
         });
+    }
+
+    public deleteLogBook(logBookId: number): Observable<void> {
+        throw new Error('Should call deleteLogBookPermitLicense method instead.');
+    }
+
+    public undoDeleteLogBook(logBookId: number): Observable<void> {
+        throw new Error('Should call undoDeleteLogBookPermitLicense method instead.');
     }
 
     public getPermitLicenseSimpleAudit(id: number): Observable<SimpleAuditDTO> {
@@ -706,7 +750,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         }));
     }
 
-    // private
+    // helpers
+
     private getPermitLicensesForTable(controller: string, permitIDs: number[], filters: CommercialFishingRegisterFilters | undefined): Observable<CommercialFishingPermitLicenseRegisterDTO[]> {
         const request = new PermitLicenseData({ filters: filters, permitIds: permitIDs });
         return this.requestService.post(this.area, controller, 'GetPermitLicensesForTable', request, {
