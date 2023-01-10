@@ -1,4 +1,7 @@
-﻿<div fxLayout="column" fxLayoutGap="1em" fxFlexFill class="dialog-padding container">
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     class="dialog-padding container">
     <div fxLayout="column"
          fxLayoutGap="1em"
          fxFlexFill
@@ -45,8 +48,11 @@
                            [showAddButton]="false"
                            [recordsPerPage]="2">
                 <row-detail>
-                    <ng-template let-row="row" ngx-datatable-row-detail-template>
-                        <div fxLayout="row" fxLayoutAlign="center center" style="margin-top: 1em;">
+                    <ng-template let-row="row"
+                                 ngx-datatable-row-detail-template>
+                        <div fxLayout="row"
+                             fxLayoutAlign="center center"
+                             style="margin-top: 1em;">
                             <tl-textarea fxFlex="95"
                                          [value]="row.data.description"
                                          [readonly]="true"
@@ -59,12 +65,16 @@
                 <data-template-column propertyName="IsCancelled"
                                       [flexRate]="0.2"
                                       columnName="{{ 'aquacultures.cancel-status-status' | tlTranslate }}">
-                    <ng-template let-row="row" ngx-datatable-cell-template>
-                        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.3em">
+                    <ng-template let-row="row"
+                                 ngx-datatable-cell-template>
+                        <div fxLayout="row"
+                             fxLayoutAlign="start center"
+                             fxLayoutGap="0.3em">
                             <tl-icon [icon]="row.data.isCancelled ? 'highlight_off' : 'done_outline'"
                                      iconClass="accent-color">
                             </tl-icon>
-                            <div>{{ row.data.isCancelled ? ('aquacultures.cancelled-status' | tlTranslate) : ('aquacultures.active-status' | tlTranslate) }}</div>
+                            <div>{{ row.data.isCancelled ? ('aquacultures.cancelled-status' | tlTranslate) :
+                                ('aquacultures.active-status' | tlTranslate) }}</div>
                         </div>
                     </ng-template>
                 </data-template-column>
@@ -94,8 +104,11 @@
                             [validityChecker]="form"
                             title="{{ 'aquacultures.basic-data' | tlTranslate }}"
                             tooltipResourceName="aquacultures.basic-data-helper">
-            <div fxLayout="column" fxLayoutGap="1em">
-                <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+            <div fxLayout="column"
+                 fxLayoutGap="1em">
+                <div fxLayout="row"
+                     fxLayoutAlign="start center"
+                     fxLayoutGap="1em">
                     <tl-input fxFlex="50"
                               formControlName="nameControl"
                               label="{{ 'aquacultures.name' | tlTranslate }}"
@@ -125,14 +138,20 @@
                     </tl-select>
                 </div>
 
-                <div fxLayout="row" fxLayoutAlign="space-between stretch" fxLayoutGap="1em">
+                <div fxLayout="row"
+                     fxLayoutAlign="space-between stretch"
+                     fxLayoutGap="1em">
                     <!-- Местоположение -->
                     <tl-card fxFlex="50"
                              tooltipResourceName="aquacultures.location-helper"
                              [validityChecker]="form">
                         <tl-card-title>{{ 'aquacultures.aquaculture-location' | tlTranslate }}</tl-card-title>
-                        <tl-card-content fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="1em">
-                            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                        <tl-card-content fxLayout="column"
+                                         fxLayoutAlign="start stretch"
+                                         fxLayoutGap="1em">
+                            <div fxLayout="row"
+                                 fxLayoutAlign="space-between center"
+                                 fxLayoutGap="1em">
                                 <tl-autocomplete fxFlex="50"
                                                  formControlName="territoryUnitControl"
                                                  [options]="territoryUnits"
@@ -148,7 +167,9 @@
                                 </tl-autocomplete>
                             </div>
 
-                            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                            <div fxLayout="row"
+                                 fxLayoutAlign="space-between center"
+                                 fxLayoutGap="1em">
                                 <tl-autocomplete fxFlex="50"
                                                  formControlName="populatedAreaControl"
                                                  [options]="populatedAreas"
@@ -164,10 +185,13 @@
                                           tooltipResourceName="aquacultures.ekatte-helper">
                                 </tl-input>
 
-                                <div *ngIf="!form.controls.populatedAreaControl.value" fxFlex="50"></div>
+                                <div *ngIf="!form.controls.populatedAreaControl.value"
+                                     fxFlex="50"></div>
                             </div>
 
-                            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                            <div fxLayout="row"
+                                 fxLayoutAlign="space-between center"
+                                 fxLayoutGap="1em">
                                 <tl-textarea fxFlex="100"
                                              formControlName="locationDescriptionControl"
                                              label="{{ 'aquacultures.location-description' | tlTranslate }}"
@@ -199,16 +223,16 @@
                                 <data-column [flexRate]="0.3"
                                              [formGroup]="coordinatesForm"
                                              [isSortable]="false"
-                                             propertyName="longitude"
+                                             propertyName="latitude"
                                              dataType="coordinates"
-                                             columnName="{{ 'aquacultures.longitude' | tlTranslate }}">
+                                             columnName="{{ 'aquacultures.latitude' | tlTranslate }}">
                                 </data-column>
                                 <data-column [flexRate]="0.3"
                                              [formGroup]="coordinatesForm"
                                              [isSortable]="false"
-                                             propertyName="latitude"
+                                             propertyName="longitude"
                                              dataType="coordinates"
-                                             columnName="{{ 'aquacultures.latitude' | tlTranslate }}">
+                                             columnName="{{ 'aquacultures.longitude' | tlTranslate }}">
                                 </data-column>
                                 <data-column-inline *ngIf="!viewMode && !isReadonly"
                                                     [flexRate]="0.2">
@@ -237,7 +261,8 @@
                             [validityCheckerExtraCondition]="form.errors?.atLeastOneAquaticOrganismNeeded !== true"
                             tooltipResourceName="aquacultures.aquatic-organisms-helper"
                             title="{{ 'aquacultures.aquatic-organisms' | tlTranslate }}">
-            <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="column"
+                 fxLayoutGap="1em">
                 <tl-data-table #aquaticOrganismsTable
                                fxFlex="100"
                                [isRemote]="false"
@@ -269,8 +294,11 @@
                             [validityChecker]="form"
                             tooltipResourceName="aquacultures.technical-info-helper"
                             title="{{ 'aquacultures.technical-info' | tlTranslate }}">
-            <div fxLayout="column" fxLayoutGap="1em">
-                <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+            <div fxLayout="column"
+                 fxLayoutGap="1em">
+                <div fxLayout="row"
+                     fxLayoutGap="1em"
+                     fxLayoutAlign="space-between center">
                     <tl-autocomplete fxFlex="25"
                                      formControlName="powerSupplyTypeControl"
                                      [options]="powerSupplyTypes"
@@ -295,7 +323,9 @@
                     </tl-select>
                 </div>
 
-                <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <div fxLayout="row"
+                     fxLayoutGap="1em"
+                     fxLayoutAlign="space-between center">
                     <tl-select fxFlex="25"
                                formControlName="waterSalinityControl"
                                [options]="waterSalinityTypes"
@@ -319,7 +349,10 @@
                               label="{{ 'aquacultures.total-production-capacity' | tlTranslate }}">
                     </tl-input>
                 </div>
-                <div *ngIf="showHatcheryEquipment" fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <div *ngIf="showHatcheryEquipment"
+                     fxLayout="row"
+                     fxLayoutGap="1em"
+                     fxLayoutAlign="space-between center">
                     <tl-input fxFlex="25"
                               formControlName="hatcheryCapacityControl"
                               tooltipResourceName="aquacultures.hatchery-capacity-helper"
@@ -339,7 +372,8 @@
                                                             && form.errors?.installationsValidation !== true"
                             tooltipResourceName="aquacultures.installations-helper"
                             title="{{ 'aquacultures.installations' | tlTranslate }}">
-            <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="column"
+                 fxLayoutGap="1em">
                 <tl-data-table fxFlexFill
                                #installationsTable
                                [rows]="installations"
@@ -360,7 +394,8 @@
                     <data-template-column [flexRate]="0.2"
                                           propertyName="TotalArea"
                                           columnName="{{ 'aquacultures.installation-total-area' | tlTranslate }}">
-                        <ng-template let-row="row" ngx-datatable-cell-template>
+                        <ng-template let-row="row"
+                                     ngx-datatable-cell-template>
                             {{ row.data.totalArea?.toFixed(2) }}
                         </ng-template>
                     </data-template-column>
@@ -368,14 +403,18 @@
                     <data-template-column [flexRate]="0.2"
                                           propertyName="totalVolume"
                                           columnName="{{ 'aquacultures.installation-total-volume' | tlTranslate }}">
-                        <ng-template let-row="row" ngx-datatable-cell-template>
+                        <ng-template let-row="row"
+                                     ngx-datatable-cell-template>
                             {{ row.data.totalVolume?.toFixed(2) }}
                         </ng-template>
                     </data-template-column>
 
-                    <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
-                        <ng-template let-row="row" ngx-datatable-cell-template>
-                            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                    <data-template-column [flexRate]="0.3"
+                                          [cellClass]="'justify-center'">
+                        <ng-template let-row="row"
+                                     ngx-datatable-cell-template>
+                            <div fxLayout="row wrap"
+                                 fxLayoutAlign="end center">
                                 <tl-icon *ngIf="installationsTouched && form.touched && row.data.isActive && row.data.hasValidationErrors"
                                          icon="ic-exclamation"
                                          iconClass="error-color"
@@ -413,7 +452,8 @@
                     * {{ 'aquacultures.at-least-one-installation-neccessary-error' | tlTranslate }}
                 </mat-error>
 
-                <mat-error *ngIf="installationsTouched && form.touched && form.errors?.installationsValidation === true">
+                <mat-error
+                           *ngIf="installationsTouched && form.touched && form.errors?.installationsValidation === true">
                     * {{ 'aquacultures.installations-validation-errors' | tlTranslate }}
                 </mat-error>
 
@@ -480,7 +520,8 @@
                             [validityCheckerExtraCondition]="form.errors?.atLeastOneActiveUsageDocumentNeeded !== true"
                             tooltipResourceName="aquacultures.grounds-for-use-helper"
                             title="{{ 'aquacultures.grounds-for-use' | tlTranslate }}">
-            <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="column"
+                 fxLayoutGap="1em">
                 <tl-data-table fxFlexFill
                                #usageDocumentsTable
                                [rows]="usageDocuments"
@@ -512,9 +553,12 @@
                                  columnName="{{ 'aquacultures.usage-document-table-valid-to' | tlTranslate }}">
                     </data-column>
 
-                    <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
-                        <ng-template let-row="row" ngx-datatable-cell-template>
-                            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                    <data-template-column [flexRate]="0.3"
+                                          [cellClass]="'justify-center'">
+                        <ng-template let-row="row"
+                                     ngx-datatable-cell-template>
+                            <div fxLayout="row wrap"
+                                 fxLayoutAlign="end center">
                                 <tl-icon-button *ngIf="row.data.isActive"
                                                 icon="visibility"
                                                 (buttonClicked)="addEditUsageDocument(row.data, true)"
@@ -555,7 +599,8 @@
                             [validityChecker]="form"
                             tooltipResourceName="aquacultures.licences-helper"
                             title="{{ 'aquacultures.licences' | tlTranslate }}">
-            <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="column"
+                 fxLayoutGap="1em">
                 <!-- Разрешително по Закона за водите -->
                 <tl-card [validityChecker]="form"
                          tooltipResourceName="aquacultures.water-law-certificate-helper">
@@ -571,7 +616,8 @@
                 </tl-card>
 
                 <!-- Решение по глава шеста от ЗООС или разрешение по чл. 67, ал. 2 от ЗБР (Разрешително по ОВОС) -->
-                <div fxLayout="column" fxLayoutGap="1em">
+                <div fxLayout="column"
+                     fxLayoutGap="1em">
                     <tl-card [validityChecker]="form"
                              tooltipResourceName="aquacultures.ovos-certificate-helper">
                         <tl-card-title>{{ 'aquacultures.ovos-certificate' | tlTranslate }}</tl-card-title>
@@ -586,7 +632,8 @@
                 </div>
 
                 <!-- Удостоверение от БАБХ -->
-                <div fxLayout="column" fxLayoutGap="1em">
+                <div fxLayout="column"
+                     fxLayoutGap="1em">
                     <tl-checkbox formControlName="hasNoBabhCertificateControl"
                                  label="{{ 'aquacultures.has-no-babh-certificate' | tlTranslate }}"
                                  tooltipResourceName="aquacultures.has-no-babh-certificate-helper">
@@ -614,7 +661,8 @@
                             [validityCheckerExtraCondition]="form.errors?.atLeastOneActiveWaterLawCertificateNeeded !== true"
                             tooltipResourceName="aquacultures.water-law-certificates-helper"
                             title="{{ 'aquacultures.water-law-certificates' | tlTranslate }}">
-            <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="column"
+                 fxLayoutGap="1em">
                 <tl-data-table fxFlexFill
                                #waterLawCertificatesTable
                                [rows]="waterLawCertificates"
@@ -651,9 +699,12 @@
                                  columnName="{{ 'aquacultures.water-law-certificate-table-valid-to' | tlTranslate }}">
                     </data-column>
 
-                    <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
-                        <ng-template let-row="row" ngx-datatable-cell-template>
-                            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                    <data-template-column [flexRate]="0.3"
+                                          [cellClass]="'justify-center'">
+                        <ng-template let-row="row"
+                                     ngx-datatable-cell-template>
+                            <div fxLayout="row wrap"
+                                 fxLayoutAlign="end center">
                                 <tl-icon-button *ngIf="row.data.isActive"
                                                 icon="visibility"
                                                 (buttonClicked)="addEditWaterLawCertificate(row.data, true)"
@@ -683,7 +734,8 @@
                     </data-template-column>
                 </tl-data-table>
 
-                <mat-error *ngIf="waterLawCertificatesTouched && form.errors?.atLeastOneActiveWaterLawCertificateNeeded === true">
+                <mat-error
+                           *ngIf="waterLawCertificatesTouched && form.errors?.atLeastOneActiveWaterLawCertificateNeeded === true">
                     * {{ 'aquacultures.at-least-one-active-water-law-certificate-neccessary-error' | tlTranslate }}
                 </mat-error>
             </div>
@@ -695,7 +747,8 @@
                             [validityCheckerExtraCondition]="form.errors?.atLeastOneActiveOvosCertificateNeeded !== true"
                             tooltipResourceName="aquacultures.ovos-certificates-table-helper"
                             title="{{ 'aquacultures.ovos-certificates' | tlTranslate }}">
-            <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="column"
+                 fxLayoutGap="1em">
                 <tl-data-table fxFlexFill
                                #ovosCertificatesTable
                                [rows]="ovosCertificates"
@@ -731,9 +784,12 @@
                                  columnName="{{ 'aquacultures.ovos-certificate-table-valid-to' | tlTranslate }}">
                     </data-column>
 
-                    <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
-                        <ng-template let-row="row" ngx-datatable-cell-template>
-                            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                    <data-template-column [flexRate]="0.3"
+                                          [cellClass]="'justify-center'">
+                        <ng-template let-row="row"
+                                     ngx-datatable-cell-template>
+                            <div fxLayout="row wrap"
+                                 fxLayoutAlign="end center">
                                 <tl-icon-button *ngIf="row.data.isActive"
                                                 icon="visibility"
                                                 (buttonClicked)="addEditOvosCertificate(row.data, true)"
@@ -810,9 +866,12 @@
                              columnName="{{ 'aquacultures.babh-certificate-table-valid-to' | tlTranslate }}">
                 </data-column>
 
-                <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
-                    <ng-template let-row="row" ngx-datatable-cell-template>
-                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                <data-template-column [flexRate]="0.3"
+                                      [cellClass]="'justify-center'">
+                    <ng-template let-row="row"
+                                 ngx-datatable-cell-template>
+                        <div fxLayout="row wrap"
+                             fxLayoutAlign="end center">
                             <tl-icon-button *ngIf="row.data.isActive"
                                             icon="visibility"
                                             (buttonClicked)="addEditBabhCertificate(row.data, true)"
@@ -859,8 +918,8 @@
         <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData"
                             title="{{ 'aquacultures.payment-information' | tlTranslate }}"
                             tooltipResourceName="aquacultures.payment-information-helper">
-            <payment-information formControlName="applicationPaymentInformationControl" 
-                                 [hideBasicInfo]="hideBasicPaymentInfo" 
+            <payment-information formControlName="applicationPaymentInformationControl"
+                                 [hideBasicInfo]="hideBasicPaymentInfo"
                                  [isOnlineApplication]="isOnlineApplication">
             </payment-information>
         </tl-expansion-panel>
@@ -897,13 +956,16 @@
         <tl-expansion-panel *ngIf="showOnlyRegiXData || showRegiXData"
                             title="{{ 'aquacultures.regix-checks-results' | tlTranslate }}"
                             tooltipResourceName="aquacultures.regix-checks-results-helper">
-            <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="column"
+                 fxLayoutGap="1em">
                 <regix-checks-results [regixChecksCollection]="regixChecks"></regix-checks-results>
             </div>
         </tl-expansion-panel>
     </div>
 
-    <div *ngIf="isChangeOfCircumstancesApplication" tlResizable="top" id="change-of-circumstances-panel">
+    <div *ngIf="isChangeOfCircumstancesApplication"
+         tlResizable="top"
+         id="change-of-circumstances-panel">
         <h2><b>{{ 'aquacultures.changes-from-application' | tlTranslate }}</b></h2>
         <change-of-circumstances [formControl]="changeOfCircumstancesControl"
                                  [pageCode]="pageCode"
@@ -911,7 +973,9 @@
         </change-of-circumstances>
     </div>
 
-    <div *ngIf="isDeregistrationApplication" tlResizable="top" id="change-of-circumstances-panel">
+    <div *ngIf="isDeregistrationApplication"
+         tlResizable="top"
+         id="change-of-circumstances-panel">
         <h2><b>{{ 'aquacultures.deregistration-application-reason' | tlTranslate }}</b></h2>
         <tl-textarea [formControl]="deregistrationReasonControl"
                      tooltipResourceName="aquacultures.deregistration-application-reason-helper"

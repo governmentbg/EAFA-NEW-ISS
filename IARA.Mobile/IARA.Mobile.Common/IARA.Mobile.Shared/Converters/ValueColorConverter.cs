@@ -23,6 +23,5 @@ namespace IARA.Mobile.Shared.Converters
         {
             throw new NotImplementedException();
         }
-
     }
 }

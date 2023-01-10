@@ -1,7 +1,6 @@
-﻿using IARA.Mobile.Pub.Domain.Enums;
-using System;
+﻿using System;
 using System.Globalization;
-using TechnoLogica.Xamarin.Converters.Base;
+using IARA.Mobile.Pub.Domain.Enums;
 using Xamarin.Forms;
 
 namespace IARA.Mobile.Pub.Converters
@@ -35,5 +34,4 @@ namespace IARA.Mobile.Pub.Converters
             throw new NotImplementedException();
         }
     }
-
 }

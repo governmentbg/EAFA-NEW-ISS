@@ -1,12 +1,12 @@
-﻿using FFImageLoading.Forms;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using FFImageLoading.Forms;
 using FFImageLoading.Transformations;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Shared.Helpers;
 using IARA.Mobile.Shared.Popups;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Controls;
 using TechnoLogica.Xamarin.Extensions;
@@ -147,25 +147,17 @@ namespace IARA.Mobile.Shared.Views
 
         private async Task OnResultChosen(MenuResult option)
         {
-            TLFileResult result;
-
             if (Device.RuntimePlatform == Device.iOS)
             {
                 await Task.Delay(1000);
             }
 
-            switch ((ImageOption)option.Option)
+            TLFileResult result = (ImageOption)option.Option switch
             {
-                case ImageOption.Take:
-                    result = await TLMediaPicker.CapturePhotoAsync();
-                    break;
-                case ImageOption.Pick:
-                    result = await TLMediaPicker.PickPhotoAsync();
-                    break;
-                default:
-                    throw new NotImplementedException($"Internal error: {nameof(ImageOption)} not implemented inside {nameof(OnResultChosen)}");
-            }
-
+                ImageOption.Take => await TLMediaPicker.CapturePhotoAsync(),
+                ImageOption.Pick => await TLMediaPicker.PickPhotoAsync(),
+                _ => throw new NotImplementedException($"Internal error: {nameof(ImageOption)} not implemented inside {nameof(OnResultChosen)}"),
+            };
             if (result != null)
             {
                 result = result.ImageResize(ImageResizeConstants.MAX_WIDTH, ImageResizeConstants.MAX_HEIGTH, ImageResizeConstants.COMPRESSION_RATE);

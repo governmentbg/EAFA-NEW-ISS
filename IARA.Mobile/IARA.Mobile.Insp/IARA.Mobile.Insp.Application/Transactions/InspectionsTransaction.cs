@@ -1,4 +1,10 @@
-﻿using IARA.Mobile.Application;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Text.Json;
+using System.Threading.Tasks;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.Extensions;
 using IARA.Mobile.Domain.Enums;
@@ -15,12 +21,6 @@ using IARA.Mobile.Insp.Application.Transactions.Base;
 using IARA.Mobile.Insp.Domain.Entities.Inspections;
 using IARA.Mobile.Insp.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Insp.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace IARA.Mobile.Insp.Application.Transactions
 {
@@ -39,6 +39,23 @@ namespace IARA.Mobile.Insp.Application.Transactions
             _messagingCenter = messagingCenter;
         }
 
+        public async Task<string> GetNextReportNumber(int userId = -1)
+        {
+            if (userId == -1)
+            {
+                userId = CurrentUser.Id;
+            }
+
+            HttpResult<string> result = await RestClient.GetAsync<string>(UrlPrefix + "GetNextReportNumber", new { userId });
+
+            if (result.IsSuccessful)
+            {
+                return result.JsonResponse;
+            }
+
+            return string.Empty;
+        }
+
         public async Task<FileResponse> GetFile(int fileId)
         {
             HttpResult<FileResponse> result = await RestClient.GetAsync<FileResponse>(UrlPrefix + "DownloadFile", new { id = fileId });
@@ -49,6 +66,22 @@ namespace IARA.Mobile.Insp.Application.Transactions
             }
 
             return null;
+        }
+
+        public InspectorInfoDto GetInspectorInfo(int id)
+        {
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+                return (
+                    from insp in context.Inspectors
+                    where insp.Id == id
+                    select new InspectorInfoDto
+                    {
+                        CardNum = insp.CardNum,
+                        TerritoryCode = insp.TerritoryCode
+                    }
+                ).FirstOrDefault();
+            }
         }
 
         public InspectorDuringInspectionDto GetInspector(int id)
@@ -63,6 +96,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         InspectorId = insp.Id,
                         CitizenshipId = insp.CitizenshipId,
                         CardNum = insp.CardNum,
+                        TerritoryCode = insp.TerritoryCode,
                         InstitutionId = insp.InstitutionId,
                         IsNotRegistered = insp.IsNotRegistered,
                         FirstName = insp.FirstName,
@@ -135,7 +169,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     join inspector in context.Inspectors on recentInsp.InspectorId equals inspector.Id
                     select new
                     {
-                        Id = inspHistory.Id,
+                        inspHistory.Id,
                         Inspector = $"{inspector.FirstName} {(inspector.MiddleName == null ? string.Empty : inspector.MiddleName + " ")}{inspector.LastName}",
                     }
                 ).ToList();

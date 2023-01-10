@@ -1,8 +1,8 @@
-﻿using IARA.Mobile.Application;
+﻿using System.Threading.Tasks;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Shared.Views;
 using Rg.Plugins.Popup.Pages;
-using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Commands;
 using Xamarin.Essentials;
 using Xamarin.Forms;

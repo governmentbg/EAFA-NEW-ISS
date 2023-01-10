@@ -1,9 +1,9 @@
-﻿using IARA.Mobile.Application.Interfaces.Utilities;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
+using IARA.Mobile.Application.Interfaces.Utilities;
 using IdentityModel.OidcClient;
 using IdentityModel.OidcClient.Browser;
 using IdentityModel.OidcClient.Results;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace IARA.Mobile.Shared.Utilities
 {

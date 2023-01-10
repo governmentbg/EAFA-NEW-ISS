@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using TechnoLogica.Xamarin.Helpers;
 
 namespace IARA.Mobile.Shared.ViewModels.Models

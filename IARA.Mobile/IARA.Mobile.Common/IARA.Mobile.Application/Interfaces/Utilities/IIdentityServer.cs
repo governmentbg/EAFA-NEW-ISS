@@ -1,6 +1,6 @@
-﻿using IdentityModel.OidcClient;
+﻿using System.Threading.Tasks;
+using IdentityModel.OidcClient;
 using IdentityModel.OidcClient.Results;
-using System.Threading.Tasks;
 
 namespace IARA.Mobile.Application.Interfaces.Utilities
 {

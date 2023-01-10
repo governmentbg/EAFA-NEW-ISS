@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Application.DTObjects.Users;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using IARA.Mobile.Application.DTObjects.Users;
 
 namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 {

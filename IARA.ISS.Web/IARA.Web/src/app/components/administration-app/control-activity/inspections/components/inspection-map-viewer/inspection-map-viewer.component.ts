@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, Self, ViewChild } from '@angular/core';
+﻿import { Component, Input, OnChanges, OnInit, Self, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -13,9 +13,12 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
     selector: 'inspection-map-viewer',
     templateUrl: './inspection-map-viewer.component.html'
 })
-export class InspectionMapViewerComponent extends CustomFormControl<LocationDTO | undefined> implements OnInit {
+export class InspectionMapViewerComponent extends CustomFormControl<LocationDTO | undefined> implements OnInit, OnChanges {
 
     public mapOptions: MapOptions | undefined;
+
+    @Input()
+    public isRequired: boolean = true;
 
     @ViewChild(TLMapViewerComponent)
     private mapViewer!: TLMapViewerComponent;
@@ -35,6 +38,19 @@ export class InspectionMapViewerComponent extends CustomFormControl<LocationDTO 
                 this.control.updateValueAndValidity();
             }
         });
+    }
+
+    public ngOnChanges(changes: SimpleChanges): void {
+        if ('isRequired' in changes) {
+            if (this.isRequired) {
+                this.form.get('longitudeControl')!.setValidators(Validators.required);
+                this.form.get('latitudeControl')!.setValidators(Validators.required);
+            }
+            else {
+                this.form.get('longitudeControl')!.clearValidators();
+                this.form.get('latitudeControl')!.clearValidators();
+            }
+        }
     }
 
     public ngOnInit(): void {

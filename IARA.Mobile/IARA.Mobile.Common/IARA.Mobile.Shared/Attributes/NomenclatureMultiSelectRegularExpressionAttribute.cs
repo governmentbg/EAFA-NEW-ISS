@@ -3,7 +3,6 @@ using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 
-
 namespace IARA.Mobile.Shared.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]

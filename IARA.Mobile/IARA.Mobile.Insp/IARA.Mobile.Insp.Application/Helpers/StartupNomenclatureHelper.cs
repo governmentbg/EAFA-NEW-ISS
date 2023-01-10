@@ -1,4 +1,9 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.DTObjects.Translations;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Interfaces;
@@ -9,11 +14,6 @@ using IARA.Mobile.Insp.Application.Interfaces.Database;
 using IARA.Mobile.Insp.Application.Interfaces.Utilities;
 using IARA.Mobile.Insp.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Insp.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace IARA.Mobile.Insp.Application.Helpers
 {
@@ -406,7 +406,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     return NomenclatureEnum.FishingGearCheckReason;
                 case "FishingGearRecheckReasons":
                     return NomenclatureEnum.FishingGearRecheckReason;
-                case "PermitTypes":
+                case "CommercialFishingPermitTypes":
                     return NomenclatureEnum.PermitType;
                 case "TurbotSizeGroups":
                     return NomenclatureEnum.TurbotSizeGroup;

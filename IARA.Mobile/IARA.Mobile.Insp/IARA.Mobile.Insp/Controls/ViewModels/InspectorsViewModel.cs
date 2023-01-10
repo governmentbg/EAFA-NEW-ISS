@@ -1,4 +1,8 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Attributes;
@@ -7,10 +11,6 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.InspectorDialog;
 using IARA.Mobile.Insp.Models;
 using IARA.Mobile.Shared.Popups;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -23,9 +23,10 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         private bool hasRecentInspectors;
         private List<MenuOption> _recentInspectors;
 
-        public InspectorsViewModel(InspectionPageViewModel inspection)
+        public InspectorsViewModel(InspectionPageViewModel inspection, InspectionGeneralInfoViewModel generalInfo)
         {
             Inspection = inspection;
+            GeneralInfo = generalInfo;
 
             RecentInspectorChosen = CommandBuilder.CreateFrom<MenuResult>(OnRecentInspectorChosen);
             Review = CommandBuilder.CreateFrom<InspectorModel>(OnReview);
@@ -37,6 +38,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         }
 
         public InspectionPageViewModel Inspection { get; }
+        public InspectionGeneralInfoViewModel GeneralInfo { get; }
 
         [ListMinLength(1)]
         public ValidStateValidatableTable<InspectorModel> Inspectors { get; set; }
@@ -58,7 +60,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public ICommand Edit { get; }
         public ICommand Remove { get; }
 
-        public void Init()
+        public async Task Init()
         {
             int currentUserId = CurrentUser.Id;
 
@@ -79,11 +81,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             if (currentInspector != null)
             {
                 currentInspector.IsInCharge = true;
-                OnEdit(new List<InspectorDuringInspectionDto> { currentInspector });
+                await OnEdit(new List<InspectorDuringInspectionDto> { currentInspector }, true);
             }
         }
 
-        public void OnEdit(List<InspectorDuringInspectionDto> inspectors)
+        public async Task OnEdit(List<InspectorDuringInspectionDto> inspectors, bool changeNumber)
         {
             if (inspectors == null || inspectors.Count == 0)
             {
@@ -102,9 +104,14 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 HasIdentified = f.HasIdentifiedHimself,
                 IsInCharge = f.IsInCharge,
             }));
+
+            if (changeNumber)
+            {
+                await ChangeReportNumber(Inspectors.Value.First(f => f.IsInCharge));
+            }
         }
 
-        private void OnRecentInspectorChosen(MenuResult result)
+        private async Task OnRecentInspectorChosen(MenuResult result)
         {
             RecentInspectorDto dto = result.Option as RecentInspectorDto;
             List<InspectorDuringInspectionDto> inspectors = InspectionsTransaction.GetInspectorHistory(dto.Id);
@@ -116,7 +123,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             inspectors[0].IsInCharge = true;
 
-            OnEdit(inspectors);
+            await OnEdit(inspectors, true);
         }
 
         private Task OnReview(InspectorModel model)
@@ -137,6 +144,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                         inspector.IsInCharge = false;
                         inspector.Dto.IsInCharge = false;
                     }
+
+                    await ChangeReportNumber(result);
                 }
 
                 Inspectors.Value.Add(result);
@@ -146,6 +155,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                     InspectorModel inspector = Inspectors.Value[0];
                     inspector.IsInCharge = true;
                     inspector.Dto.IsInCharge = true;
+
+                    await ChangeReportNumber(inspector);
                 }
             }
         }
@@ -166,6 +177,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                             inspector.IsInCharge = false;
                         }
                     }
+
+                    await ChangeReportNumber(result);
                 }
 
                 model.IsInCharge = result.IsInCharge;
@@ -179,6 +192,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                     InspectorModel inspector = Inspectors.Value[0];
                     inspector.IsInCharge = true;
                     inspector.Dto.IsInCharge = true;
+
+                    await ChangeReportNumber(inspector);
                 }
             }
         }
@@ -200,8 +215,18 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                     InspectorModel inspector = Inspectors.Value[0];
                     inspector.IsInCharge = true;
                     inspector.Dto.IsInCharge = true;
+
+                    await ChangeReportNumber(inspector);
                 }
             }
+        }
+
+        private async Task ChangeReportNumber(InspectorModel inspector)
+        {
+            InspectorInfoDto info = InspectionsTransaction.GetInspectorInfo(inspector.Dto.InspectorId.Value);
+            string nextReportNum = await InspectionsTransaction.GetNextReportNumber(inspector.Dto.UserId.Value);
+
+            GeneralInfo.ChangeReportNum(info.TerritoryCode, info.CardNum, nextReportNum);
         }
 
         public static implicit operator List<InspectorDuringInspectionDto>(InspectorsViewModel viewModel)

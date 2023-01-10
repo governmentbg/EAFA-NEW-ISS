@@ -1,5 +1,5 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 
 namespace IARA.Mobile.Application.Interfaces.Transactions
 {

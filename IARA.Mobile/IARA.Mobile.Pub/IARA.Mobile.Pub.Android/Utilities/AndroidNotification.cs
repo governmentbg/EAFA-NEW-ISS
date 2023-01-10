@@ -1,13 +1,13 @@
-﻿using Android.App;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Android.App;
 using Android.Content;
 using Android.OS;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Pub.Application.Interfaces.Utilities;
 using IARA.Mobile.Pub.Domain.Models;
 using Plugin.FirebasePushNotification;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace IARA.Mobile.Pub.Droid.Utilities
 {

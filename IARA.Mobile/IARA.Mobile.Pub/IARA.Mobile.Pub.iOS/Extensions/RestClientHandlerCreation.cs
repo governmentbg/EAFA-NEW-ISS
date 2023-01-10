@@ -1,10 +1,10 @@
-﻿using Foundation;
-using IARA.Mobile.Application.Interfaces.Factories;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Foundation;
+using IARA.Mobile.Application.Interfaces.Factories;
 
 namespace IARA.Mobile.Pub.iOS.Extensions
 {

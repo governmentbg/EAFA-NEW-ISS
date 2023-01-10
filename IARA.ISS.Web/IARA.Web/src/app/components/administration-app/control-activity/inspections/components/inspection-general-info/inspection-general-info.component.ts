@@ -10,6 +10,7 @@ import { InspectorTableModel } from '../../models/inspector-table-model';
 import { InspectorDTO } from '@app/models/generated/dtos/InspectorDTO';
 import { InspectionsService } from '@app/services/administration-app/inspections.service';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { TLValidators } from '@app/shared/utils/tl-validators';
 
 @Component({
     selector: 'inspection-general-info',
@@ -22,6 +23,10 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
 
     @Input()
     public hasEmergencySignal: boolean = true;
+
+    public numPrefix?: string;
+
+    private numberWritten: boolean = false;
 
     private readonly service: InspectionsService;
     private readonly translate: FuseTranslationLoaderService;
@@ -45,14 +50,16 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
 
     public writeValue(value: InspectionGeneralInfoModel): void {
         if (value !== undefined && value !== null) {
-            this.form.get('reportNumberControl')!.setValue(value.reportNum);
+            this.onReportNumChanged(value.reportNum!.split('-'));
+            this.numberWritten = true;
+
             this.form.get('inspectionStartDateControl')!.setValue(value.startDate);
             this.form.get('inspectionEndDateControl')!.setValue(value.endDate);
             this.form.get('inspectorsControl')!.setValue(value.inspectors);
             this.form.get('emergencySignalControl')!.setValue(value.byEmergencySignal === true);
         }
         else {
-            this.form.get('reportNumberControl')!.setValue(this.translate.getValue('inspections.report-num-on-save'));
+            //this.form.get('reportNumberControl')!.setValue(this.translate.getValue('inspections.report-num-on-save'));
             this.form.get('inspectionStartDateControl')!.setValue(new Date());
             this.form.get('inspectionEndDateControl')!.setValue(this.getDateWith1HourInFuture());
             this.form.get('emergencySignalControl')!.setValue(false);
@@ -66,9 +73,19 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
         }
     }
 
+    public onReportNumChanged(codes: string[]): void {
+        if (this.numberWritten) {
+            this.numberWritten = false;
+            return;
+        }
+
+        this.numPrefix = `${this.handleNumber(codes[0])}-${this.handleNumber(codes[1])}-`;
+        this.form.get('reportNumberControl')!.setValue(codes[2]);
+    }
+
     protected buildForm(): AbstractControl {
         return new FormGroup({
-            reportNumberControl: new FormControl({ value: undefined, disabled: true }),
+            reportNumberControl: new FormControl(undefined, [Validators.required, TLValidators.number(1, 999)]),
             inspectionStartDateControl: new FormControl(undefined, Validators.required),
             inspectionEndDateControl: new FormControl(undefined, Validators.required),
             emergencySignalControl: new FormControl(false),
@@ -78,7 +95,7 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
 
     protected getValue(): InspectionGeneralInfoModel {
         return new InspectionGeneralInfoModel({
-            //reportNum: this.form.get('reportNumberControl')!.value, No reason to pass the value
+            reportNum: this.numPrefix + this.handleNumber(this.form.get('reportNumberControl')!.value),
             startDate: this.form.get('inspectionStartDateControl')!.value,
             endDate: this.form.get('inspectionEndDateControl')!.value,
             inspectors: this.form.get('inspectorsControl')!.value,
@@ -102,5 +119,15 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
 
                 return model;
             }));
+    }
+
+    private handleNumber(num: string): string {
+        if (!num) {
+            return num;
+        }
+
+        return num.length > 3
+            ? num.substring(0, 3)
+            : num.padStart(3, '0');
     }
 }

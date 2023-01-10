@@ -1,7 +1,7 @@
-﻿using IARA.Mobile.Application.Interfaces.Factories;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using IARA.Mobile.Application.Interfaces.Factories;
 
 namespace IARA.Mobile.Infrastructure.Factories
 {

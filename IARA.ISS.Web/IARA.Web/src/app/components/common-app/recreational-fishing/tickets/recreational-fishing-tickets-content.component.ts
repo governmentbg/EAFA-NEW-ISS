@@ -649,7 +649,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
             payment = this.paymentDataControl.value;
             hasPaymentData = true;
         }
-        debugger;
+
         return new RecreationalFishingTicketsDTO({
             tickets: this.tickets.concat(this.childTickets),
             associationId: associationId,

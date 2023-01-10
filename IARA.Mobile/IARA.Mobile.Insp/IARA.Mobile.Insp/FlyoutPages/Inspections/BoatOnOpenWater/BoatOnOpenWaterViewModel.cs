@@ -1,4 +1,8 @@
-﻿using IARA.Mobile.Application;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
@@ -9,14 +13,11 @@ using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures.API;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Attributes;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using IARA.Mobile.Shared.Views;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
@@ -71,6 +72,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
                 ProtectedEdit = value;
             }
         }
+
+        public TLForwardSections Sections { get; set; }
 
         public InspectionGeneralInfoViewModel InspectionGeneralInfo { get; }
         public PatrolVehiclesViewModel PatrolVehicles { get; }
@@ -138,8 +141,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
             set => SetProperty(ref _fishingObservedVesselActivities, value);
         }
 
-        public Action ExpandAll { get; set; }
-
         public override void OnDisappearing()
         {
             GlobalVariables.IsAddingInspection = false;
@@ -177,7 +178,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
 
             List<SelectNomenclatureDto> countries = nomTransaction.GetCountries();
 
-            InspectionGeneralInfo.Init();
+            await InspectionGeneralInfo.Init();
 
             ObservedVessel.Init(countries, nomTransaction.GetVesselTypes(), nomTransaction.GetCatchZones());
 
@@ -204,7 +205,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
 
                 InspectionState = Edit.InspectionState;
 
-                InspectionGeneralInfo.OnEdit(Edit);
+                await InspectionGeneralInfo.OnEdit(Edit);
                 InspectionFiles.OnEdit(Edit);
                 ObservedVessel.OnEdit(Edit.ObservedVessel);
                 Signatures.OnEdit(Edit.Files, fileTypes);
@@ -225,8 +226,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
                     int otherCenterObservationToolId = CenterObservationTools.Find(f => f.Code == CommonConstants.NomenclatureOther).Id;
                     int otherOnBoardObservationToolId = OnBoardObservationTools.Find(f => f.Code == CommonConstants.NomenclatureOther).Id;
 
-                    ObservationToolDto centerDesc = Edit.ObservationTools.Find(f => f.IsOnBoard && f.ObservationToolId == otherCenterObservationToolId);
-                    ObservationToolDto onBoardDesc = Edit.ObservationTools.Find(f => !f.IsOnBoard && f.ObservationToolId == otherOnBoardObservationToolId);
+                    ObservationToolDto centerDesc = Edit.ObservationTools.Find(f => !f.IsOnBoard && f.ObservationToolId == otherCenterObservationToolId);
+                    ObservationToolDto onBoardDesc = Edit.ObservationTools.Find(f => f.IsOnBoard && f.ObservationToolId == otherOnBoardObservationToolId);
 
                     if (centerDesc != null)
                     {
@@ -267,7 +268,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
 
             if (ActivityType == ViewActivityType.Review)
             {
-                ExpandAll();
+                foreach (SectionView item in Sections.Children.OfType<SectionView>())
+                {
+                    item.IsExpanded = true;
+                }
             }
 
             await TLLoadingHelper.HideFullLoadingScreen();
@@ -304,7 +308,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
 
         private Task OnFinish()
         {
-            return InspectionSaveHelper.Finish(ExpandAll, Validation, Save);
+            return InspectionSaveHelper.Finish(Sections, Validation, Save);
         }
 
         private Task Save(SubmitType submitType)
@@ -316,7 +320,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
                     ObservationAtSeaDto dto = new ObservationAtSeaDto
                     {
                         Id = Edit?.Id ?? 0,
-                        ReportNum = Edit?.ReportNum,
+                        ReportNum = InspectionGeneralInfo.BuildReportNum(),
                         LocalIdentifier = inspectionIdentifier,
                         Files = files,
                         InspectionState = submitType == SubmitType.Draft || submitType == SubmitType.Edit ? InspectionState.Draft : InspectionState.Submitted,

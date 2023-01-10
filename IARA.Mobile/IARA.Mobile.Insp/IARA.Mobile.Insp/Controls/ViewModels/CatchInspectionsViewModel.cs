@@ -1,12 +1,12 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Input;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Attributes;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Helpers;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
@@ -54,7 +54,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public bool ShowAverageSize { get; }
         public bool ShowFishSex { get; }
 
-        [DuplicateCatches]
+        [DuplicateMarketCatches(ErrorMessageResourceName = "DuplicateCatches")]
+        [ListMinLength(1)]
         public ValidStateValidatableTable<CatchInspectionViewModel> Catches { get; set; }
 
         public List<SelectNomenclatureDto> FishTypes

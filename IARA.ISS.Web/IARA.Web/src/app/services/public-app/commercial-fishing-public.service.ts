@@ -117,11 +117,11 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
         throw new Error('This method should not be called from the public app.');
     }
 
-    public deleteLogBookPermitLicense(id: number): Observable<void> {
+    public deleteLogBookPermitLicense(logBookPermitLicenseId: number): Observable<void> {
         throw new Error('This method should not be called from the public app.');
     }
 
-    public undoDeleteLogBookPermitLicense(id: number): Observable<void> {
+    public undoDeleteLogBookPermitLicense(logBookPermitLicenseId: number): Observable<void> {
         throw new Error('This method should not be called from the public app.');
     }
 

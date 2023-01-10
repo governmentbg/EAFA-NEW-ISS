@@ -1,7 +1,7 @@
-﻿using IARA.Mobile.Insp.Application.DTObjects.Inspections;
-using IARA.Mobile.Insp.Models;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
+using IARA.Mobile.Insp.Application.DTObjects.Inspections;
+using IARA.Mobile.Insp.Models;
 
 namespace IARA.Mobile.Insp.Attributes
 {

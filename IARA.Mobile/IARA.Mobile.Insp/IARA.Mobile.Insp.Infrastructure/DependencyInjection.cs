@@ -27,8 +27,8 @@ namespace IARA.Mobile.Insp.Infrastructure
         {
             ServerUrlFactoryBuilder builder = new ServerUrlFactoryBuilder();
 
-            builder.AddUrl(Environments.PRODUCTION, "https://iara.egov.bg/api/");
-            builder.AddExternalUrl(Environments.PRODUCTION, "IARA_IDENTITY", "https://iara.egov.bg/identity");
+            builder.AddUrl(Environments.PRODUCTION, "https://iara-iss.egov.bg/api/");
+            builder.AddExternalUrl(Environments.PRODUCTION, "IARA_IDENTITY", "https://iara-iss.egov.bg/identity");
 
             builder.AddUrl(Environments.STAGING, "https://iara-staging.egov.bg/api/");
             builder.AddExternalUrl(Environments.STAGING, "IARA_IDENTITY", "https://iara-staging.egov.bg/identity");

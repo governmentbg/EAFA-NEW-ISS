@@ -1,4 +1,11 @@
-﻿using IARA.Mobile.Application.DTObjects.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
@@ -14,13 +21,6 @@ using IARA.Mobile.Shared.Menu;
 using IARA.Mobile.Shared.Popups;
 using Rg.Plugins.Popup.Pages;
 using Rg.Plugins.Popup.Services;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Controls;
 using TechnoLogica.Xamarin.Helpers;
@@ -38,7 +38,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.CatchRecords
         private bool _ticketChosen;
         private List<NomenclatureDto> _fishTypes;
         private List<MenuOption> _addPictureChoices;
-        private List<CatchFileLocallyAdded> _locallyUploadedFiles;
+        private readonly List<CatchFileLocallyAdded> _locallyUploadedFiles;
         public AddCatchRecordViewModel()
         {
             _pictures = new List<CatchImageModel>();
@@ -406,7 +406,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.CatchRecords
                 }
                 else
                 {
-                    var pic = _pictures.Where(x => x.Id == picture.Id).FirstOrDefault();
+                    CatchImageModel pic = _pictures.Where(x => x.Id == picture.Id).FirstOrDefault();
                     if (pic != null)
                     {
                         pic.WasDeleted = true;

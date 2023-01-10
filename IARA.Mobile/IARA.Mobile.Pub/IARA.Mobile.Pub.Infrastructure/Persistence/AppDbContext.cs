@@ -1,4 +1,8 @@
-﻿using IARA.Mobile.Domain.Entities.Exceptions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using IARA.Mobile.Domain.Entities.Exceptions;
 using IARA.Mobile.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Pub.Application.Interfaces.Database;
@@ -8,10 +12,6 @@ using IARA.Mobile.Pub.Domain.Entities.FishingTicket;
 using IARA.Mobile.Pub.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Pub.Domain.Entities.ScientificFishing;
 using SQLite;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace IARA.Mobile.Pub.Infrastructure.Persistence
 {

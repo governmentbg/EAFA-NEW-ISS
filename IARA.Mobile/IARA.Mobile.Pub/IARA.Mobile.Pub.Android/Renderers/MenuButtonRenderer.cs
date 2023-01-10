@@ -1,7 +1,7 @@
-﻿using Android.Content;
+﻿using System.Linq;
+using Android.Content;
 using IARA.Mobile.Pub.Droid.Renderers;
 using IARA.Mobile.Shared.Views;
-using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 

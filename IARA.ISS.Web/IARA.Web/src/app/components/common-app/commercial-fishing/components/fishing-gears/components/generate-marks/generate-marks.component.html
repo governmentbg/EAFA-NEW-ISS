@@ -1,0 +1,23 @@
+﻿<div class="dialog-padding">
+    <tl-card>
+        <tl-card-content>
+            <div fxLayout="column" fxLayoutGap="1em">
+                <div fxFlex="100" fxLayout="row" fxLayoutAling="space-between center" fxLayoutGap="1em">
+                    <tl-range-input fxFlex="70"
+                                    label="{{ 'fishing-gears.mark-numbers-range' | tlTranslate }}"
+                                    fromLabel="{{ 'fishing-gears.mark-numbers-range-from' | tlTranslate }}"
+                                    toLabel="{{ 'fishing-gears.mark-numbers-range-to' | tlTranslate }}"
+                                    tooltipResourceName="fishing-gears.mark-numbers-range-helper"
+                                    [formControl]="markNumbersRangeControl"
+                                    [min]="markNumbersRangeMinValue"
+                                    [required]="true">
+                    </tl-range-input>
+                    <div fxFlex="30"></div>
+                </div>
+                <div fxFlex="100" fxLayout="row" fxLayoutAling="space-between center" fxLayoutGap="1em">
+                    <mat-hint fxFlex="100">{{ 'fishing-gears.generate-mark-numbers-hint' | tlTranslate }}</mat-hint>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

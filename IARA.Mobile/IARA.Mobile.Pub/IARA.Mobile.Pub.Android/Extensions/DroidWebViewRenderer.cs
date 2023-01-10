@@ -19,7 +19,6 @@ namespace IARA.Mobile.Pub.Droid.Extensions
             return base.DispatchTouchEvent(e);
         }
 
-
         protected override void OnElementChanged(ElementChangedEventArgs<Xamarin.Forms.WebView> e)
         {
             base.OnElementChanged(e);
@@ -32,7 +31,7 @@ namespace IARA.Mobile.Pub.Droid.Extensions
 
         internal class MyFormsWebViewClient : FormsWebViewClient
         {
-            DroidWebViewRenderer _renderer;
+            readonly DroidWebViewRenderer _renderer;
 
             public MyFormsWebViewClient(DroidWebViewRenderer renderer) : base(renderer)
             {

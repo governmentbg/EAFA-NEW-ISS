@@ -2508,6 +2508,7 @@
         'declaration-fish-quantity-warning': 'Quantity entered in catch declaration {0}.',
         'edit-auan-violated-regulations': 'Regulations violated',
         'invoice-data': 'Invoice data',
+        'no-catches': 'At least one catch must be added',
 
         'add-catch-ship-dialog-title': 'Add ship',
         'edit-catch-ship-dialog-title': 'Edit ship',
@@ -2996,13 +2997,14 @@
 
         'gear-has-duplicated-mark-number': 'Mark numbers must not be duplicated',
         'gear-has-duplicated-pinger-number': 'Pinger numbers must not be duplicated',
+        'gear-must-have-at-least-one-pinger-error': 'The fishing gear must have at least one pinger',
 
-        'generate-marks-from-number-range': 'Generate marks from number range',
+        'generate-marks-dialog-title': 'Generate marks from number range',
         'mark-numbers-range': 'Range to generate',
         'mark-numbers-range-from': 'From',
         'mark-numbers-range-to': 'To',
         'generate-mark-numbers-btn-label': 'Generate marks',
-        'generate-mark-numbers-hint': 'You can generate marks using the range input and clicking "Generate" button or using the "Add" button.',
+        'generate-mark-numbers-hint': 'You can generate marks using the range input and clicking "Generate marks".',
 
         'generate-marks-from-range-confirm-dialog-title': 'Confirmation for generating marks',
         'generate-marks-from-range-confirm-message': 'Are you sure that you want to generate this number of marks',
@@ -4028,6 +4030,7 @@
         'delete-log-book-dialog-label': 'Delete log book',
         'confirm-delete-log-book-message': 'Are you sure that you want to delete this log book?',
         'delete-log-book-btn-label': 'Delete',
+        'cannot-delete-log-book-with-submitted-pages': 'You cannot delete a log book with already submitted pages',
         'overlapping-log-books-dialog-title': 'Overlapping log book page ranges',
         'overlapping-log-books-save-despite-conflicts': 'Save despite the conflicts'
     },

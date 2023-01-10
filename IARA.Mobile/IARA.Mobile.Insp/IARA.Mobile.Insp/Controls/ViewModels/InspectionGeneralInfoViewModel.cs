@@ -1,21 +1,24 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Base;
-using System;
-using System.ComponentModel.DataAnnotations;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Helpers;
-using TechnoLogica.Xamarin.ResourceTranslator;
 using TechnoLogica.Xamarin.ViewModels.Models;
 
 namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class InspectionGeneralInfoViewModel : ViewModel
     {
+        private string _reportNrStart;
+
         public InspectionGeneralInfoViewModel(InspectionPageViewModel inspection)
         {
             Inspection = inspection;
-            Inspectors = new InspectorsViewModel(inspection);
+            Inspectors = new InspectorsViewModel(inspection, this);
 
             this.AddValidation(others: new[] { Inspectors });
 
@@ -27,7 +30,15 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public InspectorsViewModel Inspectors { get; }
 
+        [Required]
+        [TLRange(1, 999)]
         public ValidState ReportNr { get; set; }
+
+        public string ReportNrStart
+        {
+            get => _reportNrStart;
+            set => SetProperty(ref _reportNrStart, value);
+        }
 
         [Required]
         [UpdateFrom(nameof(EndDate))]
@@ -41,22 +52,52 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public ValidStateBool ByEmergencySignal { get; set; }
 
-        public void Init()
+        public Task Init()
         {
-            ReportNr.Value = TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/GeneratedOnSave"];
-            Inspectors.Init();
+            return Inspectors.Init();
         }
 
-        public void OnEdit(InspectionEditDto dto)
+        public void ChangeReportNum(string territoryCode, string cardNum, string nextReportNum)
         {
-            ReportNr.Value = string.IsNullOrEmpty(dto.ReportNum)
-                ? TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/NoReportNumber"]
-                : dto.ReportNum;
+            ReportNrStart = $"{HandleNumber(territoryCode)}-{HandleNumber(cardNum)}-";
+            ReportNr.Value = nextReportNum ?? "001";
+        }
+
+        public Task OnEdit(InspectionEditDto dto)
+        {
+            if (!string.IsNullOrEmpty(dto.ReportNum))
+            {
+                string[] numSplit = dto.ReportNum.Split('-');
+
+                ReportNrStart = string.Join("-", numSplit.Take(2)) + "-";
+
+                if (numSplit.Length == 3)
+                {
+                    string num = numSplit[2];
+
+                    ReportNr.Value = num.Length > 3
+                        ? num.Substring(0, 3)
+                        : num.PadLeft(3, '0');
+                }
+            }
+
             EndDate.Value = dto.EndDate ?? DateTime.Now;
             StartDate.Value = dto.StartDate ?? DateTime.Now;
             ByEmergencySignal.Value = dto.ByEmergencySignal ?? false;
 
-            Inspectors.OnEdit(dto.Inspectors);
+            return Inspectors.OnEdit(dto.Inspectors, false);
+        }
+
+        public string BuildReportNum()
+        {
+            return ReportNrStart + HandleNumber(ReportNr.Value);
+        }
+
+        private string HandleNumber(string num)
+        {
+            return num.Length > 3
+                ? num.Substring(0, 3)
+                : num.PadRight(3, '0');
         }
     }
 }

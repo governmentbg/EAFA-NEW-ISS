@@ -1,7 +1,7 @@
-﻿using IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments;
-using IARA.Mobile.Shared.Views;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments;
+using IARA.Mobile.Shared.Views;
 using Xamarin.Forms.Xaml;
 
 namespace IARA.Mobile.Pub.Views.FlyoutPages.Payments

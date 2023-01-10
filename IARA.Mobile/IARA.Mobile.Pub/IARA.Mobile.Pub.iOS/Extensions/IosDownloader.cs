@@ -1,12 +1,8 @@
-﻿using Foundation;
-using IARA.Mobile.Application.Interfaces.Utilities;
-using IARA.Mobile.Domain.Models;
-using IARA.Mobile.Pub.Application.Transactions;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using UIKit;
+using IARA.Mobile.Application.Interfaces.Utilities;
+using IARA.Mobile.Domain.Models;
 using Xamarin.Essentials;
 
 namespace IARA.Mobile.Pub.iOS.Extensions

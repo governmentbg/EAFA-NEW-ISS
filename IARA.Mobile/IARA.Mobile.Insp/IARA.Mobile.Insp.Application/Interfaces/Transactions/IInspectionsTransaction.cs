@@ -1,15 +1,19 @@
-﻿using IARA.Mobile.Domain.Models;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Domain.Enums;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 {
     public interface IInspectionsTransaction
     {
+        Task<string> GetNextReportNumber(int userId = -1);
+
         Task<FileResponse> GetFile(int fileId);
+
+        InspectorInfoDto GetInspectorInfo(int id);
 
         InspectorDuringInspectionDto GetInspector(int id);
 

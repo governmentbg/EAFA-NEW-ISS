@@ -10,6 +10,11 @@ namespace IARA.Mobile.Application.DTObjects.Nomenclatures
 
         public string DisplayValue => $"{Name} ({Code})";
 
+        public override string ToString()
+        {
+            return DisplayValue;
+        }
+
         public static implicit operator int(SelectNomenclatureDto nom)
         {
             return nom.Id;

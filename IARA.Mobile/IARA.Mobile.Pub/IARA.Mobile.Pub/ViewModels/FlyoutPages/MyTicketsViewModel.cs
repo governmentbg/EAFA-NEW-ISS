@@ -1,4 +1,8 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API;
 using IARA.Mobile.Pub.Domain.Enums;
 using IARA.Mobile.Pub.ViewModels.Base;
@@ -7,10 +11,6 @@ using IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments;
 using IARA.Mobile.Pub.Views.FlyoutPages.FishingTicket;
 using IARA.Mobile.Pub.Views.FlyoutPages.Payments;
 using IARA.Mobile.Shared.Menu;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -91,7 +91,6 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
                 {
                     tickets = await FishingTicketsTransaction.GetMyTickets();
                 }
-
             }
             else
             {
@@ -114,7 +113,6 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
                     //Android rendering takes some time for each ticket, loading screen is on until full load;
                     await Task.Delay(tickets.Count * 10);
                 }
-
             }
 
             IsBusy = false;
@@ -169,20 +167,22 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
         {
             if (Enum.TryParse(ticket.Type, true, out TicketTypeEnum ticketType))
             {
-                TicketMetadataModel metadata = new TicketMetadataModel();
-                metadata.Action = action;
-                metadata.Name = ticket.TypeName;
-                metadata.BadgeText = ticket.PeriodName.ToUpper() + (ticket.Price != default ? " - " + ticket.Price.ToString("F2") + TranslateExtension.Translator[nameof(GroupResourceEnum.FishingTicket) + "/Leva"] : null);
-                metadata.PeriodId = ticket.PeriodId;
-                metadata.PeriodCode = ticket.PeriodCode;
-                metadata.TypeId = ticket.TypeId;
-                metadata.TypeCode = ticket.Type;
-                metadata.TypeName = ticket.TypeName;
-                metadata.Id = ticket.Id;
-                metadata.Price = ticket.Price;
-                metadata.ApplicationId = ticket.ApplicationId;
-                metadata.ApplicationStatusCode = ticket.ApplicationStatusCode;
-                metadata.PaymentStatus = ticket.PaymentStatus;
+                TicketMetadataModel metadata = new TicketMetadataModel
+                {
+                    Action = action,
+                    Name = ticket.TypeName,
+                    BadgeText = ticket.PeriodName.ToUpper() + (ticket.Price != default ? " - " + ticket.Price.ToString("F2") + TranslateExtension.Translator[nameof(GroupResourceEnum.FishingTicket) + "/Leva"] : null),
+                    PeriodId = ticket.PeriodId,
+                    PeriodCode = ticket.PeriodCode,
+                    TypeId = ticket.TypeId,
+                    TypeCode = ticket.Type,
+                    TypeName = ticket.TypeName,
+                    Id = ticket.Id,
+                    Price = ticket.Price,
+                    ApplicationId = ticket.ApplicationId,
+                    ApplicationStatusCode = ticket.ApplicationStatusCode,
+                    PaymentStatus = ticket.PaymentStatus
+                };
 
                 if (action == TicketAction.Renew)
                 {

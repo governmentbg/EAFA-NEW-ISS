@@ -1,10 +1,10 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Windows.Input;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Shared.Popups;
 using IARA.Mobile.Shared.Views;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Effects;
 using TechnoLogica.Xamarin.Extensions;
 using TechnoLogica.Xamarin.Helpers;

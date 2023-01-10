@@ -1,4 +1,4 @@
-﻿import { Component, Input, OnInit, Self, ViewChild } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnInit, Output, Self, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup, NgControl } from '@angular/forms';
 
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
@@ -14,6 +14,7 @@ import { InspectorTableModel } from '../../models/inspector-table-model';
 import { InspectorDuringInspectionDTO } from '@app/models/generated/dtos/InspectorDuringInspectionDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { AuthService } from '@app/shared/services/auth.service';
+import { InspectionsService } from '@app/services/administration-app/inspections.service';
 
 @Component({
     selector: 'inspectors-table',
@@ -24,6 +25,9 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
     @Input()
     public institutions: NomenclatureDTO<number>[] = [];
 
+    @Output()
+    public headInspectorChanged = new EventEmitter<string[]>();
+
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
 
@@ -33,6 +37,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
     private readonly confirmDialog: TLConfirmDialog;
     private readonly editEntryDialog: TLMatDialog<EditInspectorComponent>;
     private readonly authService: AuthService;
+    private readonly service: InspectionsService;
 
     public constructor(
         @Self() ngControl: NgControl,
@@ -40,6 +45,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
         confirmDialog: TLConfirmDialog,
         editEntryDialog: TLMatDialog<EditInspectorComponent>,
         authService: AuthService,
+        service: InspectionsService
     ) {
         super(ngControl);
 
@@ -47,6 +53,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
         this.confirmDialog = confirmDialog;
         this.editEntryDialog = editEntryDialog;
         this.authService = authService;
+        this.service = service;
 
         this.onMarkAsTouched.subscribe({
             next: () => {
@@ -66,6 +73,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
             const inspectors = value.map(f => new InspectorTableModel({
                 address: f.address,
                 cardNum: f.cardNum,
+                territoryCode: f.territoryCode,
                 citizenshipId: f.citizenshipId,
                 comment: f.comment,
                 egnLnc: f.egnLnc,
@@ -90,11 +98,20 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
 
             setTimeout(() => {
                 this.inspectors = inspectors;
+
+                this.changeReportNumber(this.inspectors.find(f => f.isInCharge)!);
             });
         }
         else {
             setTimeout(() => {
                 this.inspectors = this.inspectors.filter(f => f.isCurrentUser);
+
+                if (this.inspectors.length === 0) {
+                    return;
+                }
+
+                this.inspectors[0].isInCharge = true;
+                this.changeReportNumber(this.inspectors[0]);
             });
         }
     }
@@ -146,6 +163,8 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
                     for (const insp of this.inspectors) {
                         insp.isInCharge = false;
                     }
+
+                    this.changeReportNumber(result);
                 }
 
                 if (inspector !== undefined) {
@@ -160,6 +179,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
 
                 if (!this.inspectors.find(f => f.isInCharge)) {
                     this.inspectors[0].isInCharge = true;
+                    this.changeReportNumber(this.inspectors[0]);
                 }
 
                 this.inspectors = this.inspectors.slice();
@@ -181,6 +201,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
 
                     if (this.inspectors.length > 0 && !this.inspectors.find(f => f.isInCharge)) {
                         this.inspectors[0].isInCharge = true;
+                        this.changeReportNumber(this.inspectors[0]);
                     }
 
                     this.onChanged(this.getValue());
@@ -215,6 +236,16 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
             middleName: f.middleName,
             unregisteredPersonId: f.unregisteredPersonId,
             userId: f.userId,
+            territoryCode: f.territoryCode,
+            institution: f.institution,
         }));
+    }
+
+    private changeReportNumber(inspector: InspectorTableModel): void {
+        this.service.getNextReportNumber(inspector.userId!).subscribe({
+            next: (value) => {
+                this.headInspectorChanged.emit([inspector.territoryCode!, inspector.cardNum!, value!.num]);
+            }
+        })
     }
 }

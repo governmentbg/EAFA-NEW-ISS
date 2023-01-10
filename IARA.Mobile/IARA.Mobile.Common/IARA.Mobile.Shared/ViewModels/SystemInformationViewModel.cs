@@ -1,12 +1,12 @@
-﻿using IARA.Mobile.Application.Interfaces.Utilities;
-using IARA.Mobile.Domain.Enums;
-using IARA.Mobile.Shared.ResourceTranslator;
-using IARA.Mobile.Shared.ViewModels.Base;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using IARA.Mobile.Application.Interfaces.Utilities;
+using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Shared.ResourceTranslator;
+using IARA.Mobile.Shared.ViewModels.Base;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Base;

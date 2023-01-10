@@ -1,7 +1,7 @@
-﻿using IARA.Mobile.Domain.Enums;
-using Rg.Plugins.Popup.Pages;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using IARA.Mobile.Domain.Enums;
+using Rg.Plugins.Popup.Pages;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Controls;
 using TechnoLogica.Xamarin.Extensions;

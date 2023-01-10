@@ -16,7 +16,7 @@
         PageInfo="{rt:Translate PageInfo, Group=FishingGearInspection}"
         Title="{rt:Translate Title, Group=FishingGearInspection}"
         BackgroundColor="{StaticResource BackgroundColor}">
-    <lc:TLForwardSections ExpandAll="{Binding ExpandAll}">
+    <lc:TLForwardSections x:Name="forwardSections">
         <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
                 Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
             <StackLayout Padding="10">

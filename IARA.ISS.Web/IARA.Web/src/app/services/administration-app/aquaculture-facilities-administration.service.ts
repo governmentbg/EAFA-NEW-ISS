@@ -36,6 +36,11 @@ import { OverlappingLogBooksParameters } from '@app/shared/components/overlappin
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 import { LogBookDetailDTO } from '@app/models/generated/dtos/LogBookDetailDTO';
 import { PermissionsService } from '@app/shared/services/permissions.service';
+import { ShipLogBookPageRegisterDTO } from '@app/models/generated/dtos/ShipLogBookPageRegisterDTO';
+import { AquacultureLogBookPageRegisterDTO } from '@app/models/generated/dtos/AquacultureLogBookPageRegisterDTO';
+import { AdmissionLogBookPageRegisterDTO } from '@app/models/generated/dtos/AdmissionLogBookPageRegisterDTO';
+import { TransportationLogBookPageRegisterDTO } from '@app/models/generated/dtos/TransportationLogBookPageRegisterDTO';
+import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -71,7 +76,7 @@ export class AquacultureFacilitiesAdministrationService extends ApplicationsRegi
             }
 
             if (this.permissions.has(PermissionsEnum.AquacultureLogBook1Read)) {
-                return this.getLogBooksForTable(this.controller, aquacultureIds, request.filters).pipe(map((logBooks: LogBookDetailDTO[]) => {
+                return this.getLogBooksForTableHelper(this.controller, aquacultureIds, request.filters).pipe(map((logBooks: LogBookDetailDTO[]) => {
                     for (const logBook of logBooks) {
                         const found = entries.records.find((entry: AquacultureFacilityDTO) => {
                             return entry.id === logBook.registerId;
@@ -207,6 +212,10 @@ export class AquacultureFacilitiesAdministrationService extends ApplicationsRegi
 
     // log books
 
+    public getLogBooksForTable(permitLicenseId: number): Observable<CommercialFishingLogBookEditDTO[]> {
+        throw new Error('Not implemented funcionality for aquaculture log book pages');
+    }
+
     public getLogBook(logBookId: number): Observable<LogBookEditDTO> {
         const params: HttpParams = new HttpParams().append('logBookId', logBookId.toString());
 
@@ -218,6 +227,19 @@ export class AquacultureFacilitiesAdministrationService extends ApplicationsRegi
 
     public getPermitLicenseLogBook(logBookPermitLicenseId: number): Observable<CommercialFishingLogBookEditDTO> {
         throw new Error('Should call getLogBook method');
+    }
+
+    public getLogBookPagesAndDeclarations(logBookId: number, permitLicenseId: number, logBookType: LogBookTypesEnum): Observable<ShipLogBookPageRegisterDTO[] | AdmissionLogBookPageRegisterDTO[] | TransportationLogBookPageRegisterDTO[]> {
+        throw new Error('Should call getLogBookPages method');
+    }
+
+    public getLogBookPages(logBookId: number, logBookType: LogBookTypesEnum): Observable<AquacultureLogBookPageRegisterDTO[]> {
+        const params: HttpParams = new HttpParams().append('logBookId', logBookId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetLogBookPages', {
+            httpParams: params,
+            responseTypeCtr: AquacultureLogBookPageRegisterDTO
+        });
     }
 
     public addLogBook(model: LogBookEditDTO, registerId: number, ignoreLogBookConflicts: boolean): Observable<void> {
@@ -238,6 +260,10 @@ export class AquacultureFacilitiesAdministrationService extends ApplicationsRegi
         return this.requestService.put(this.area, this.controller, 'EditLogBook', model, {
             httpParams: params
         });
+    }
+
+    public addLogBooksFromOldPermitLicenses(logBooks: CommercialFishingLogBookEditDTO[], permitLicenseId: number, ignoreLogBookConflicts: boolean): Observable<void> {
+        throw new Error('Not implemented funcionality for aquaculture log book pages');
     }
 
     public getOverlappedLogBooks(parameters: OverlappingLogBooksParameters[]): Observable<RangeOverlappingLogBooksDTO[]> {
@@ -262,12 +288,20 @@ export class AquacultureFacilitiesAdministrationService extends ApplicationsRegi
         });
     }
 
+    public deleteLogBookPermitLicense(id: number): Observable<void> {
+        throw new Error('Should call deleteLogBook method instead.');
+    }
+
     public undoDeleteLogBook(logBookId: number): Observable<void> {
         const params: HttpParams = new HttpParams().append('id', logBookId.toString());
 
         return this.requestService.patch(this.area, this.controller, 'UndoDeleteLogBook', undefined, {
             httpParams: params
         });
+    }
+
+    public undoDeleteLogBookPermitLicense(id: number): Observable<void> {
+        throw new Error('Should call undoDeleteLogBook method instead.');
     }
 
     // audits
@@ -524,7 +558,7 @@ export class AquacultureFacilitiesAdministrationService extends ApplicationsRegi
 
     // helpers
 
-    private getLogBooksForTable(controller: string, aquacultureIds: number[], filters: AquacultureFacilitiesFilters | undefined): Observable<LogBookDetailDTO[]> {
+    private getLogBooksForTableHelper(controller: string, aquacultureIds: number[], filters: AquacultureFacilitiesFilters | undefined): Observable<LogBookDetailDTO[]> {
         return this.requestService.post(this.area, controller, 'GetLogBooksForTable', aquacultureIds, {
             responseTypeCtr: LogBookDetailDTO
         });

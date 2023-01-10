@@ -55,7 +55,7 @@ namespace IARA.Mobile.Pub.Views.FlyoutPages.News
                                          <div>
   
                                          <div>
-                                           <label class=""tl-time"">{news.PublishStart.ToString("yyyy-MM-dd HH\\:mm")}</label>
+                                           <label class=""tl-time"">{news.PublishStart:yyyy-MM-dd HH\:mm}</label>
                                          </div> " +
                                      (string.IsNullOrEmpty(news.MainPhotoUrl) ? null : $@" <div class=""tl-image""><img src=""{news.MainPhotoUrl}"" class=""center"" alt=""News""></div>") +
                                      $@"{news.Content}
@@ -70,8 +70,8 @@ namespace IARA.Mobile.Pub.Views.FlyoutPages.News
             {
                 this.width = width;
                 this.height = height;
-                var vm = (NewsDetailsViewModel)this.BindingContext;
-                var wView = new WebView
+                NewsDetailsViewModel vm = (NewsDetailsViewModel)this.BindingContext;
+                WebView wView = new WebView
                 {
                     VerticalOptions = LayoutOptions.FillAndExpand,
                     HorizontalOptions = LayoutOptions.FillAndExpand,

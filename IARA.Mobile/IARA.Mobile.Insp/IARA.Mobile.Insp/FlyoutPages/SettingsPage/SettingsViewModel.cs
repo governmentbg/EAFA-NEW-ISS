@@ -1,12 +1,12 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
-using IARA.Mobile.Domain.Enums;
-using IARA.Mobile.Insp.Application.Interfaces.Utilities;
-using IARA.Mobile.Insp.Base;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
+using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Insp.Application.Interfaces.Utilities;
+using IARA.Mobile.Insp.Base;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 

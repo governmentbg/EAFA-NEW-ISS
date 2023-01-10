@@ -1,9 +1,9 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System;
+using System.Threading.Tasks;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.LocationMapDialog;
 using IARA.Mobile.Shared.Popups;
-using System;
-using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Controls;
 using TechnoLogica.Xamarin.Controls.Base;

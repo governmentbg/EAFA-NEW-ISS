@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System.Collections.Generic;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
-using System.Collections.Generic;
 
 namespace IARA.Mobile.Application.DTObjects.Reports
 {

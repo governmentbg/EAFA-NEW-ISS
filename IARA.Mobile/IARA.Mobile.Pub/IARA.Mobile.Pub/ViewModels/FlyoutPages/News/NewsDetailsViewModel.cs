@@ -1,8 +1,7 @@
-﻿using IARA.Mobile.Domain.Enums;
-using IARA.Mobile.Pub.ViewModels.Base;
-using System;
+﻿using System;
 using System.Threading.Tasks;
-using Xamarin.Forms;
+using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Pub.ViewModels.Base;
 
 namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.News
 {

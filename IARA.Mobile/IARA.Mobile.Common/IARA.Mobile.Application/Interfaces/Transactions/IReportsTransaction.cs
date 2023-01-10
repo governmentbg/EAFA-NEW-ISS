@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Application.DTObjects.Reports;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using IARA.Mobile.Application.DTObjects.Reports;
 
 namespace IARA.Mobile.Application.Interfaces.Transactions
 {

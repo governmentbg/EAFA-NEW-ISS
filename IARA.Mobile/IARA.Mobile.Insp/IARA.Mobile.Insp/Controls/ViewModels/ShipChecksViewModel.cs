@@ -1,4 +1,9 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
+using IARA.Mobile.Application.Extensions;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
@@ -7,10 +12,6 @@ using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
 
@@ -105,6 +106,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 PreliminaryNoticeText = preliminaryNoticeCheck.Name;
                 PreliminaryNoticeCheckTypeId = preliminaryNoticeCheck.Id;
 
+                Toggles.Value.RemoveWhere(f => f.CheckTypeId == preliminaryNoticeCheck.Id);
+
                 if (preliminaryNoticeCheck.IsMandatory)
                 {
                     PreliminaryNotice.HasAsterisk = true;
@@ -118,7 +121,9 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                     ? InspectionTogglesHelper.YesNoMultiToggles
                     : InspectionTogglesHelper.YesNoNotApplicableMultiToggles;
                 OPMembershipText = opMembershipCheck.Name;
-                OPMembershipCheckTypeId = preliminaryNoticeCheck.Id;
+                OPMembershipCheckTypeId = opMembershipCheck.Id;
+
+                Toggles.Value.RemoveWhere(f => f.CheckTypeId == opMembershipCheck.Id);
 
                 if (opMembershipCheck.IsMandatory)
                 {

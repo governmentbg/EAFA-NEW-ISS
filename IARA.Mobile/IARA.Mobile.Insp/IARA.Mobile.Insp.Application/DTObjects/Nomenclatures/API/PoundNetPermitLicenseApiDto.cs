@@ -1,5 +1,5 @@
-﻿using IARA.Mobile.Domain.Interfaces;
-using System;
+﻿using System;
+using IARA.Mobile.Domain.Interfaces;
 
 namespace IARA.Mobile.Insp.Application.DTObjects.Nomenclatures.API
 {

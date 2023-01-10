@@ -1,7 +1,7 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
-using System;
+﻿using System;
 using System.Collections;
 using System.Globalization;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using Xamarin.Forms;
 
 namespace IARA.Mobile.Insp.Converters

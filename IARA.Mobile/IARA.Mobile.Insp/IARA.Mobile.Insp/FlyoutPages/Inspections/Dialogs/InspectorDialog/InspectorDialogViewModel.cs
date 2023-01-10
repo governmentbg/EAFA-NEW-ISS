@@ -1,4 +1,10 @@
-﻿using IARA.Mobile.Application;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
@@ -9,12 +15,6 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
 using IARA.Mobile.Insp.ViewModels.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
@@ -214,6 +214,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.InspectorDialog
                     FirstName = FirstName.Value,
                     MiddleName = MiddleName.Value,
                     LastName = LastName.Value,
+                    TerritoryCode = Edit?.Dto.TerritoryCode
                 };
             }
 

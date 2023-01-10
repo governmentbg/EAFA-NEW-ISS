@@ -38,8 +38,8 @@ export interface ICommercialFishingService extends IApplicationsActionsService {
     deletePermit(id: number, pageCode: PageCodeEnum): Observable<void>;
     undoDeletePermit(id: number, pageCode: PageCodeEnum): Observable<void>;
 
-    deleteLogBookPermitLicense(id: number): Observable<void>;
-    undoDeleteLogBookPermitLicense(id: number): Observable<void>;
+    deleteLogBookPermitLicense(logBookPermitLicenseId: number): Observable<void>;
+    undoDeleteLogBookPermitLicense(logBookPermitLicenseId: number): Observable<void>;
 
     getPermitLicensesForRenewal(permitId: number | undefined, permitNumber: string | undefined, pageCode: PageCodeEnum): Observable<PermitLicenseForRenewalDTO[]>;
     getPermitLicenseData(permitLicenseId: number): Observable<CommercialFishingApplicationEditDTO>;

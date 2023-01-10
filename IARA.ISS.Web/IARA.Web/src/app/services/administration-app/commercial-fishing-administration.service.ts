@@ -39,6 +39,12 @@ import { CommercialFishingLogBookEditDTO } from '@app/models/generated/dtos/Comm
 import { LogBookForRenewalDTO } from '@app/models/generated/dtos/LogBookForRenewalDTO';
 import { RegisterDTO } from '@app/models/generated/dtos/RegisterDTO';
 import { LogBookEditDTO } from '@app/models/generated/dtos/LogBookEditDTO';
+import { FirstSaleLogBookPageRegisterDTO } from '@app/models/generated/dtos/FirstSaleLogBookPageRegisterDTO';
+import { AdmissionLogBookPageRegisterDTO } from '@app/models/generated/dtos/AdmissionLogBookPageRegisterDTO';
+import { TransportationLogBookPageRegisterDTO } from '@app/models/generated/dtos/TransportationLogBookPageRegisterDTO';
+import { AquacultureLogBookPageRegisterDTO } from '@app/models/generated/dtos/AquacultureLogBookPageRegisterDTO';
+import { ShipLogBookPageRegisterDTO } from '@app/models/generated/dtos/ShipLogBookPageRegisterDTO';
+import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -125,23 +131,7 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         return this.requestService.get<CommercialFishingEditDTO>(this.area, this.controller, serviceMethod, {
             httpParams: params,
             responseTypeCtr: CommercialFishingEditDTO
-        }).pipe(map((entry: CommercialFishingEditDTO) => {
-            for (const logBook of entry.logBooks ?? []) {
-                for (const shipPage of logBook.shipPagesAndDeclarations ?? []) {
-                    shipPage.statusName = this.catchesAndSalesCommonService.getPageStatusTranslation(shipPage.status!);
-                }
-
-                for (const admissionPage of logBook.admissionPagesAndDeclarations ?? []) {
-                    admissionPage.statusName = this.catchesAndSalesCommonService.getPageStatusTranslation(admissionPage.status!);
-                }
-
-                for (const transportationPage of logBook.transportationPagesAndDeclarations ?? []) {
-                    transportationPage.statusName = this.catchesAndSalesCommonService.getPageStatusTranslation(transportationPage.status!);
-                }
-            }
-
-            return entry;
-        }));
+        });
     }
 
     public getOverlappedLogBooks(parameters: OverlappingLogBooksParameters[]): Observable<RangeOverlappingLogBooksDTO[]> {
@@ -380,6 +370,15 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
 
     // log books
 
+    public getLogBooksForTable(permitLicenseId: number): Observable<CommercialFishingLogBookEditDTO[]> {
+        const params: HttpParams = new HttpParams().append('permitLicenseId', permitLicenseId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetLogBooksForTable', {
+            httpParams: params,
+            responseTypeCtr: CommercialFishingLogBookEditDTO
+        });
+    }
+
     public getPermitLicenseLogBook(logBookPermitLicenseId: number): Observable<CommercialFishingLogBookEditDTO> {
         const params: HttpParams = new HttpParams().append('logBookPermitLicenseId', logBookPermitLicenseId.toString());
 
@@ -391,6 +390,67 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
 
     public getLogBook(logBookId: number): Observable<LogBookEditDTO> {
         throw new Error('Method getPermitLicenseLogBook should be called instead.');
+    }
+
+    public getLogBookPagesAndDeclarations(logBookId: number, permitLicenseId: number, logBookType: LogBookTypesEnum): Observable<ShipLogBookPageRegisterDTO[] | AdmissionLogBookPageRegisterDTO[] | TransportationLogBookPageRegisterDTO[]> {
+        const params: HttpParams = new HttpParams()
+            .append('logBookId', logBookId.toString())
+            .append('permitLicenseId', permitLicenseId.toString());
+
+        let responseTypeCtr: (new (...args: any[]) => any) | undefined = undefined;
+        let requestMethod: string | undefined = undefined;
+
+        switch (logBookType) {
+            case LogBookTypesEnum.Ship:
+                responseTypeCtr = ShipLogBookPageRegisterDTO;
+                requestMethod = 'GetShipLogBookPagesAndDeclarations';
+                break;
+            case LogBookTypesEnum.Admission:
+                responseTypeCtr = AdmissionLogBookPageRegisterDTO;
+                requestMethod = 'GetShipAdmissionLogBookPagesAndDeclarations';
+                break;
+            case LogBookTypesEnum.Transportation:
+                responseTypeCtr = TransportationLogBookPageRegisterDTO;
+                requestMethod = 'GetTransportationLogBookPagesAndDeclarations';
+                break;
+            default:
+                throw new Error(`Invalid log book type (${LogBookTypesEnum[logBookType]}) of getLogBookPages of buyer log book.`);
+                break;
+        }
+
+        return this.requestService.get<
+            ShipLogBookPageRegisterDTO[]
+            | AdmissionLogBookPageRegisterDTO[]
+            | TransportationLogBookPageRegisterDTO[]>(this.area, this.controller, requestMethod, {
+                httpParams: params,
+                responseTypeCtr: responseTypeCtr
+            }).pipe(map((entries: ShipLogBookPageRegisterDTO[] | AdmissionLogBookPageRegisterDTO[] | TransportationLogBookPageRegisterDTO[]) => {
+                if (entries[0] instanceof ShipLogBookPageRegisterDTO) {
+                    for (const shipPage of entries) {
+                        shipPage.statusName = this.catchesAndSalesCommonService.getPageStatusTranslation(shipPage.status!);
+                    }
+                }
+                else if (entries[0] instanceof AdmissionLogBookPageRegisterDTO) {
+                    for (const admissionPage of entries) {
+                        admissionPage.statusName = this.catchesAndSalesCommonService.getPageStatusTranslation(admissionPage.status!);
+                    }
+                }
+                else if (entries[0] instanceof TransportationLogBookPageRegisterDTO) {
+                    for (const transportationPage of entries) {
+                        transportationPage.statusName = this.catchesAndSalesCommonService.getPageStatusTranslation(transportationPage.status!);
+                    }
+                }
+
+                return entries;
+            }));
+    }
+
+    public getLogBookPages(logBookId: number, logBookType: LogBookTypesEnum): Observable<FirstSaleLogBookPageRegisterDTO[]
+        | AdmissionLogBookPageRegisterDTO[]
+        | TransportationLogBookPageRegisterDTO[]
+        | AquacultureLogBookPageRegisterDTO[]
+    > {
+        throw new Error('Method getLogBookPagesAndDeclarations should be called instead.');
     }
 
     public addLogBook(model: CommercialFishingLogBookEditDTO, registerId: number, ignoreLogBookConflicts: boolean): Observable<void> {
@@ -413,16 +473,26 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         });
     }
 
-    public deleteLogBookPermitLicense(id: number): Observable<void> {
-        const params: HttpParams = new HttpParams().append('id', id.toString());
+    public addLogBooksFromOldPermitLicenses(logBooks: CommercialFishingLogBookEditDTO[], permitLicenseId: number, ignoreLogBookConflicts: boolean): Observable<void> {
+        const params: HttpParams = new HttpParams()
+            .append('permitLicenseId', permitLicenseId.toString())
+            .append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
+
+        return this.requestService.post(this.area, this.controller, 'AddLogBookFromOldPermitLicenses', logBooks, {
+            httpParams: params
+        });
+    }
+
+    public deleteLogBookPermitLicense(logBookPermitLicenseId: number): Observable<void> {
+        const params: HttpParams = new HttpParams().append('id', logBookPermitLicenseId.toString());
 
         return this.requestService.delete(this.area, this.controller, 'DeleteLogBookPermitLicense', {
             httpParams: params
         });
     }
 
-    public undoDeleteLogBookPermitLicense(id: number): Observable<void> {
-        const params: HttpParams = new HttpParams().append('id', id.toString());
+    public undoDeleteLogBookPermitLicense(logBookPermitLicenseId: number): Observable<void> {
+        const params: HttpParams = new HttpParams().append('id', logBookPermitLicenseId.toString());
 
         return this.requestService.patch(this.area, this.controller, 'UndoDeleteLogBookPermitLicense', undefined, {
             httpParams: params

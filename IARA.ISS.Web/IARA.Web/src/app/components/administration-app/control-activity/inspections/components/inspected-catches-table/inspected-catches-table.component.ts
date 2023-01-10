@@ -277,7 +277,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
             fishSexIdControl: new FormControl(undefined),
         });
 
-        return new FormControl(undefined, this.catchesValidator());
+        return new FormControl(undefined, [this.catchesValidator(), this.minLengthValidator()]);
     }
 
     protected getValue(): InspectionCatchMeasureDTO[] {
@@ -323,6 +323,17 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
 
                 if (result.find((f: any[]) => f.length > 1)) {
                     return { 'catchesMatch': true };
+                }
+            }
+            return null;
+        };
+    }
+
+    private minLengthValidator(): ValidatorFn {
+        return (): ValidationErrors | null => {
+            if (this.catches !== undefined && this.catches !== null) {
+                if (this.catches.length === 0) {
+                    return { 'minLength': true };
                 }
             }
             return null;

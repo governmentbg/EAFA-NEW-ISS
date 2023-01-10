@@ -316,8 +316,8 @@ export class EditPoundnetComponent implements OnInit, IDialogComponent {
 
     private convertToCoordinates(coordinate: PoundnetCoordinateDTO): number[] {
         const coordinates: number[] = [
-            CoordinateUtils.ConvertFromDMS(coordinate.latitude!),
-            CoordinateUtils.ConvertFromDMS(coordinate.longitude!)
+            CoordinateUtils.ConvertFromDMS(coordinate.longitude!),
+            CoordinateUtils.ConvertFromDMS(coordinate.latitude!)
         ];
         return coordinates;
     }

@@ -19,6 +19,9 @@ namespace IARA.Mobile.Shared.Views
         public static readonly BindableProperty IsExpandedProperty =
             BindableProperty.Create(nameof(IsExpanded), typeof(bool), typeof(SectionView), true);
 
+        public static readonly BindableProperty IsInvalidProperty =
+            BindableProperty.Create(nameof(IsInvalid), typeof(bool), typeof(SectionView), false);
+
         private readonly StackLayout _stack;
         private bool _hasInnerContent;
         private View _header;
@@ -106,6 +109,12 @@ namespace IARA.Mobile.Shared.Views
         {
             get => (bool)GetValue(IsExpandedProperty);
             set => SetValue(IsExpandedProperty, value);
+        }
+
+        public bool IsInvalid
+        {
+            get => (bool)GetValue(IsInvalidProperty);
+            set => SetValue(IsInvalidProperty, value);
         }
     }
 }

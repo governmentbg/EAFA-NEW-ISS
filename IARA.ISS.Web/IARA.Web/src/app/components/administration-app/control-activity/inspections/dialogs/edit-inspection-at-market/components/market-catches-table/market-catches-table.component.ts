@@ -1,5 +1,5 @@
 ﻿import { Component, Input, OnInit, Self, ViewChild } from '@angular/core';
-import { AbstractControl, FormGroup, NgControl } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { GridRow } from '@app/shared/components/data-table/models/row.model';
@@ -12,6 +12,19 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { EditMarketCatchComponent } from '../edit-market-catch/edit-market-catch.component';
 import { MarketCatchTableParams } from './models/market-catch-table-params';
 import { InspectedDeclarationCatchDTO } from '@app/models/generated/dtos/InspectedDeclarationCatchDTO';
+import { InspectedCatchTableModel } from '../../../../models/inspected-catch-table.model';
+
+function groupBy(array: any[], f: any): any[][] {
+    const groups: any = {};
+    array.forEach(function (o) {
+        const group = JSON.stringify(f(o));
+        groups[group] = groups[group] || [];
+        groups[group].push(o);
+    });
+    return Object.keys(groups).map(function (group) {
+        return groups[group];
+    })
+}
 
 @Component({
     selector: 'market-catches-table',
@@ -151,10 +164,34 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
     }
 
     protected buildForm(): AbstractControl {
-        return new FormGroup({});
+        return new FormControl(undefined, [this.catchesValidator(), this.minLengthValidator()]);
     }
 
     protected getValue(): InspectedDeclarationCatchDTO[] {
         return this.catches;
+    }
+
+    private catchesValidator(): ValidatorFn {
+        return (): ValidationErrors | null => {
+            if (this.catches !== undefined && this.catches !== null) {
+                const result = groupBy(this.catches, ((o: InspectedCatchTableModel) => ([o.fishId, o.catchInspectionTypeId, o.catchZoneId, o.turbotSizeGroupId])));
+
+                if (result.find((f: any[]) => f.length > 1)) {
+                    return { 'catchesMatch': true };
+                }
+            }
+            return null;
+        };
+    }
+
+    private minLengthValidator(): ValidatorFn {
+        return (): ValidationErrors | null => {
+            if (this.catches !== undefined && this.catches !== null) {
+                if (this.catches.length === 0) {
+                    return { 'minLength': true };
+                }
+            }
+            return null;
+        };
     }
 }

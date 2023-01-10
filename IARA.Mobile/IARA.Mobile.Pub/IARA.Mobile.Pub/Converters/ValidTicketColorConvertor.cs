@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Pub.Domain.Enums;
-using System;
+﻿using System;
 using System.Globalization;
+using IARA.Mobile.Pub.Domain.Enums;
 using Xamarin.Forms;
 
 namespace IARA.Mobile.Pub.Converters
@@ -29,7 +29,7 @@ namespace IARA.Mobile.Pub.Converters
             {
                 return Color.Red;
             }
-            else if (validTo > now && !needCorrections && paymentStatus == PaymentStatusEnum.Unpaid
+            else if ((validTo > now && !needCorrections && paymentStatus == PaymentStatusEnum.Unpaid)
                 || (applicationStatusCode == ApplicationStatuses.PAYMENT_PROCESSING))
             {
                 return Color.Gray;

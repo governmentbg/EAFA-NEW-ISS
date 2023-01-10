@@ -1,14 +1,14 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using AutoMapper;
 using IARA.Mobile.Application.Interfaces.Mappings;
 using IARA.Mobile.Application.Interfaces.Transactions;
 using IARA.Mobile.Pub.Application.Interfaces.Transactions;
 using IARA.Mobile.Pub.Application.Transactions;
 using IARA.Mobile.Pub.Application.Transactions.Base;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace IARA.Mobile.Pub.Application
 {

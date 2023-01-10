@@ -1,10 +1,10 @@
-﻿using IARA.Mobile.Application.Interfaces.Utilities;
+﻿using System;
+using System.Reflection;
+using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Insp.Application.Interfaces.Utilities;
 using IARA.Mobile.Insp.Utilities;
 using IARA.Mobile.Shared.Utilities;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Reflection;
 
 namespace IARA.Mobile.Insp
 {

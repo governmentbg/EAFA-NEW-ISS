@@ -1,5 +1,5 @@
-﻿using IARA.Mobile.Insp.DataTemplateSelectors;
-using System.Collections;
+﻿using System.Collections;
+using IARA.Mobile.Insp.DataTemplateSelectors;
 using TechnoLogica.Xamarin.Controls.Base;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;

@@ -1,7 +1,7 @@
-﻿using IARA.Mobile.Application.Interfaces.Utilities;
+﻿using System;
+using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Pub.Application.Interfaces.Utilities;
 using IARA.Mobile.Pub.Domain.Enums;
-using System;
 using Xamarin.Essentials;
 
 namespace IARA.Mobile.Pub.Utilities

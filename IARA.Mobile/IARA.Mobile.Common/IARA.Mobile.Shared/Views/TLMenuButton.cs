@@ -1,10 +1,10 @@
-﻿using IARA.Mobile.Shared.Popups;
-using Rg.Plugins.Popup.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using IARA.Mobile.Shared.Popups;
+using Rg.Plugins.Popup.Services;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Extensions;
 using Xamarin.Forms;

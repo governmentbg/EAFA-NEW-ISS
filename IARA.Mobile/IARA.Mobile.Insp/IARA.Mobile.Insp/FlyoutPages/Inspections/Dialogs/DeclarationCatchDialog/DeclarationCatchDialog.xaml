@@ -35,7 +35,7 @@
                     <lc:InspectedShipDataView BindingContext="{Binding InspectedShip}"
                             ShipInRegisterLabel="{rt:Translate ShipInRegister, Group=DeclarationCatch}"
                             IsVisible="{Binding BindingContext.SubjectType, Converter={StaticResource IsSubjectShip}, Source={Reference dialog}}" />
-                    <lc:CustomInfinitePicker Title="{rt:Translate Aquaculture, Group=AquacultureFarmInspection}"
+                    <lc:CustomInfinitePicker Title="{rt:Translate Aquaculture, Group=DeclarationCatch}"
                             ValidState="{Binding Aquaculture}"
                             DisplayValue="DisplayValue"
                             IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"

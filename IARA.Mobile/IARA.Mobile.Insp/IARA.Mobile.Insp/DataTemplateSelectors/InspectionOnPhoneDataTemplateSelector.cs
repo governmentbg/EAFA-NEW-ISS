@@ -1,8 +1,8 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.FlyoutPages.InspectionsPage;
-using System;
 using TechnoLogica.Xamarin.Converters;
 using TechnoLogica.Xamarin.DataTemplates.Base;
 using TechnoLogica.Xamarin.Extensions;

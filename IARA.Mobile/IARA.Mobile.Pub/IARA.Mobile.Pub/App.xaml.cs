@@ -1,4 +1,9 @@
-﻿using IARA.Mobile.Application;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Users;
 using IARA.Mobile.Application.Interfaces.Transactions;
 using IARA.Mobile.Application.Interfaces.Utilities;
@@ -15,11 +20,6 @@ using IARA.Mobile.Shared.Menu;
 using IARA.Mobile.Shared.ResourceTranslator;
 using IARA.Mobile.Shared.Views;
 using Plugin.FirebasePushNotification;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Controls;
 using TechnoLogica.Xamarin.ResourceTranslator;
 using Xamarin.Essentials;
@@ -140,9 +140,8 @@ namespace IARA.Mobile.Pub
 
             CrossFirebasePushNotification.Current.OnNotificationError += (s, p) =>
             {
-               Debug.WriteLine("OnNotificationError");
+                Debug.WriteLine("OnNotificationError");
             };
-
 
             IsAppInTray = false;
         }

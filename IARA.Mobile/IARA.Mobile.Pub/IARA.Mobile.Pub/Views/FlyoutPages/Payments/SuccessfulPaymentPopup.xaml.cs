@@ -1,6 +1,5 @@
 ﻿using IARA.Mobile.Shared.Menu;
 using Rg.Plugins.Popup.Pages;
-using System.Threading.Tasks;
 using Xamarin.Forms.Xaml;
 
 namespace IARA.Mobile.Pub.Views.FlyoutPages.Payments

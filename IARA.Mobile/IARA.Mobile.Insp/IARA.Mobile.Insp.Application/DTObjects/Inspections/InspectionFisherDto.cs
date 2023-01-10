@@ -1,5 +1,5 @@
-﻿using IARA.Mobile.Application.DTObjects.Common;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using IARA.Mobile.Application.DTObjects.Common;
 
 namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
 {

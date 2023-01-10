@@ -1,9 +1,9 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
-using System;
-using System.ComponentModel.DataAnnotations;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
 

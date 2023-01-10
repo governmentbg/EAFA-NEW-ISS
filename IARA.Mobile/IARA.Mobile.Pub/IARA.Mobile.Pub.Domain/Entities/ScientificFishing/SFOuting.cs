@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Domain.Interfaces;
+﻿using System;
+using IARA.Mobile.Domain.Interfaces;
 using SQLite;
-using System;
 
 namespace IARA.Mobile.Pub.Domain.Entities.ScientificFishing
 {

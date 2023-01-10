@@ -1,21 +1,21 @@
 ﻿<div [formGroup]="form" validityCheckerGroup [notifierGroup]="notifierGroup" fxLayout="column" fxLayoutGap="1em">
     <tl-expansion-panel *ngIf="!hideRelation"
                         [validityChecker]="form"
-                        [title]="relationLabel"
-                        validityCheckerGroup>
-        <applicant-relation-to-recipient formControlName="relationControl"
-                                         validityChecker
-                                         [pageCode]="pageCode">
-        </applicant-relation-to-recipient>
+                        [title]="relationLabel">
+        <div fxLayout="column" fxLayoutGap="1em" validityCheckerGroup>
+            <applicant-relation-to-recipient formControlName="relationControl"
+                                             validityChecker
+                                             [pageCode]="pageCode">
+            </applicant-relation-to-recipient>
+        </div>
     </tl-expansion-panel>
 
     <ng-content select="[middle]"></ng-content>
 
     <tl-expansion-panel *ngIf="role !== undefined && role !== null && (role !== roles.Personal || showPersonal)"
                         [validityChecker]="form"
-                        [title]="submittedForLabel"
-                        validityCheckerGroup>
-        <div fxLayout="column" fxLayoutGap="1em">
+                        [title]="submittedForLabel">
+        <div fxLayout="column" fxLayoutGap="1em" validityCheckerGroup>
             <regix-data *ngIf="role === roles.PersonalRepresentative || (showPersonal && role === roles.Personal)"
                         formControlName="personControl"
                         notifier

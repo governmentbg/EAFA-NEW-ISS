@@ -1,11 +1,11 @@
-﻿using IARA.Mobile.Insp.UWP.Renderers.Internal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using IARA.Mobile.Insp.UWP.Renderers.Internal;
 using Windows.Devices.Geolocation;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -214,8 +214,7 @@ namespace IARA.Mobile.Insp.UWP.Renderers
         {
             DependencyObject pushPin = Control.Children.FirstOrDefault(c =>
             {
-                PushPin pin = (c as PushPin);
-                return (pin != null && pin.DataContext.Equals(pinToRemove));
+                return c is PushPin pin && pin.DataContext.Equals(pinToRemove);
             });
 
             if (pushPin != null)
@@ -503,13 +502,13 @@ namespace IARA.Mobile.Insp.UWP.Renderers
         {
             BasicGeoposition nw = new BasicGeoposition
             {
-                Latitude = span.Center.Latitude + span.LatitudeDegrees / 2,
-                Longitude = span.Center.Longitude - span.LongitudeDegrees / 2
+                Latitude = span.Center.Latitude + (span.LatitudeDegrees / 2),
+                Longitude = span.Center.Longitude - (span.LongitudeDegrees / 2)
             };
             BasicGeoposition se = new BasicGeoposition
             {
-                Latitude = span.Center.Latitude - span.LatitudeDegrees / 2,
-                Longitude = span.Center.Longitude + span.LongitudeDegrees / 2
+                Latitude = span.Center.Latitude - (span.LatitudeDegrees / 2),
+                Longitude = span.Center.Longitude + (span.LongitudeDegrees / 2)
             };
             GeoboundingBox boundingBox = new GeoboundingBox(nw, se);
             try

@@ -1,4 +1,6 @@
-﻿using IARA.Mobile.Application;
+﻿using System;
+using System.Threading.Tasks;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.Extensions;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
@@ -6,8 +8,6 @@ using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Shared.Extensions;
 using IARA.Mobile.Shared.Popups;
 using Rg.Plugins.Popup.Services;
-using System;
-using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 

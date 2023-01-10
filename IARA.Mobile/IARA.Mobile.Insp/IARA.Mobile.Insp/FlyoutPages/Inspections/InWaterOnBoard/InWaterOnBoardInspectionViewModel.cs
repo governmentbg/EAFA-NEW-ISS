@@ -1,18 +1,19 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using IARA.Mobile.Shared.Views;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
@@ -33,7 +34,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
             PatrolVehicles = new PatrolVehiclesViewModel(this, true);
             InspectedShip = new FishingShipViewModel(this, hasLastPort: true);
             ShipChecks = new ShipChecksViewModel(this);
-            ShipCatches = new ShipCatchesViewModel(this, showUnloadedQuantity: true);
+            ShipCatches = new ShipCatchesViewModel(this);
             ShipFishingGears = new ShipFishingGearsViewModel(this);
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
@@ -63,6 +64,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
             }
         }
 
+        public TLForwardSections Sections { get; set; }
+
         public InspectionGeneralInfoViewModel InspectionGeneralInfo { get; }
         public PatrolVehiclesViewModel PatrolVehicles { get; }
         public FishingShipViewModel InspectedShip { get; }
@@ -75,8 +78,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
 
         [MaxLength(4000)]
         public ValidState CaptainComment { get; set; }
-
-        public Action ExpandAll { get; set; }
 
         public override void OnDisappearing()
         {
@@ -110,7 +111,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
             List<InspectionCheckTypeDto> checkTypes = nomTransaction.GetInspectionCheckTypes(InspectionType.IBS);
             List<CatchZoneNomenclatureDto> catchAreas = nomTransaction.GetCatchZones();
 
-            InspectionGeneralInfo.Init();
+            await InspectionGeneralInfo.Init();
             InspectedShip.Init(countries, nomTransaction.GetVesselTypes(), catchAreas);
             ShipCatches.Init(nomTransaction.GetFishes(), nomTransaction.GetCatchInspectionTypes(), catchAreas, nomTransaction.GetTurbotSizeGroups());
 
@@ -176,7 +177,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
 
                 InspectionState = Edit.InspectionState;
 
-                InspectionGeneralInfo.OnEdit(Edit);
+                await InspectionGeneralInfo.OnEdit(Edit);
                 PatrolVehicles.OnEdit(Edit.PatrolVehicles);
                 InspectionFiles.OnEdit(Edit);
                 InspectedShip.OnEdit(Edit, Edit.LastPortVisit);
@@ -203,7 +204,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
 
             if (ActivityType == ViewActivityType.Review)
             {
-                ExpandAll();
+                foreach (SectionView item in Sections.Children.OfType<SectionView>())
+                {
+                    item.IsExpanded = true;
+                }
             }
 
             await TLLoadingHelper.HideFullLoadingScreen();
@@ -216,7 +220,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
 
         private Task OnFinish()
         {
-            return InspectionSaveHelper.Finish(ExpandAll, Validation, Save);
+            return InspectionSaveHelper.Finish(Sections, Validation, Save);
         }
 
         private Task Save(SubmitType submitType)
@@ -228,7 +232,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
                     InspectionAtSeaDto dto = new InspectionAtSeaDto
                     {
                         Id = Edit?.Id ?? 0,
-                        ReportNum = Edit?.ReportNum,
+                        ReportNum = InspectionGeneralInfo.BuildReportNum(),
                         LocalIdentifier = inspectionIdentifier,
                         Files = files,
                         InspectionState = submitType == SubmitType.Draft || submitType == SubmitType.Edit ? InspectionState.Draft : InspectionState.Submitted,

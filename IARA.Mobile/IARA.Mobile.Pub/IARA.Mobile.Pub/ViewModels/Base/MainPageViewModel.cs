@@ -1,7 +1,7 @@
-﻿using IARA.Mobile.Application.Interfaces.Utilities;
+﻿using System;
+using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Pub.Views.FlyoutPages;
 using IARA.Mobile.Shared.Menu;
-using System;
 using Xamarin.Forms;
 
 namespace IARA.Mobile.Pub.ViewModels.Base

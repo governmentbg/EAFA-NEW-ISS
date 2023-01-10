@@ -1,8 +1,8 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System.Collections.Generic;
+using System.IO;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.ViewModels.Models;
 using SignaturePad.Forms;
-using System.Collections.Generic;
-using System.IO;
 using TechnoLogica.Xamarin.Controls;
 using TechnoLogica.Xamarin.Extensions;
 using Xamarin.CommunityToolkit.Markup;

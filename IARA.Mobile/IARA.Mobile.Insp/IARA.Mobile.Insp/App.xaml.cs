@@ -1,12 +1,12 @@
-﻿using IARA.Mobile.Application.Interfaces.Transactions;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using IARA.Mobile.Application.Interfaces.Transactions;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.FlyoutPages.LoadingPage;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Shared.ResourceTranslator;
 using IARA.Mobile.Shared.Views;
-using System.Collections.Generic;
-using System.ComponentModel;
 using TechnoLogica.Xamarin.Controls;
 using TechnoLogica.Xamarin.ResourceTranslator;
 using Xamarin.Forms;

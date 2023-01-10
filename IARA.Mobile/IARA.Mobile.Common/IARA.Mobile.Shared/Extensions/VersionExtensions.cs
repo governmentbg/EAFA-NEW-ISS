@@ -1,5 +1,4 @@
-﻿using System;
-using Xamarin.Essentials;
+﻿using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace IARA.Mobile.Shared.Extensions
@@ -15,7 +14,9 @@ namespace IARA.Mobile.Shared.Extensions
             }
 
             if (Device.RuntimePlatform == Device.UWP)
+            {
                 return int.Parse(VersionTracking.CurrentBuild);
+            }
 
             int dotIndex = currentVersion.LastIndexOf('.') + 1;
             string buildNumber = currentVersion.Substring(dotIndex);

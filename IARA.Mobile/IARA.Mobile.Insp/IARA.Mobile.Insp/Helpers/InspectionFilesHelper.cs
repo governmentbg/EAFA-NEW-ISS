@@ -1,9 +1,9 @@
-﻿using IARA.Mobile.Domain.Models;
-using IARA.Mobile.Insp.Controls.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using IARA.Mobile.Domain.Models;
+using IARA.Mobile.Insp.Controls.ViewModels;
 using Xamarin.Essentials;
 
 namespace IARA.Mobile.Insp.Helpers

@@ -1,10 +1,10 @@
-﻿using IARA.Mobile.Application;
-using IARA.Mobile.Application.Interfaces.Utilities;
-using IARA.Mobile.Insp.Application.Interfaces.Transactions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using IARA.Mobile.Application;
+using IARA.Mobile.Application.Interfaces.Utilities;
+using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using Xamarin.Essentials;
 
 namespace IARA.Mobile.Insp.Utilities

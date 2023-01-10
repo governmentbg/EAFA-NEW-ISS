@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Application.DTObjects.Common.API;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using IARA.Mobile.Application.DTObjects.Common.API;
 
 namespace IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API
 {

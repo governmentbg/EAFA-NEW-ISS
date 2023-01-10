@@ -5,11 +5,16 @@
      fxFlexFill
      fxLayoutAlign="space-between stretch"
      class="dialog-padding">
-    <tl-card tooltipResourceName="poundnet-page.basic-information-title-helper" [validityChecker]="form">
+    <tl-card tooltipResourceName="poundnet-page.basic-information-title-helper"
+             [validityChecker]="form">
         <tl-card-title>{{ 'poundnet-page.basic-information-title' | tlTranslate }}</tl-card-title>
 
-        <tl-card-content fxFlexFill fxLayout="column" fxLayoutGap="1em">
-            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+        <tl-card-content fxFlexFill
+                         fxLayout="column"
+                         fxLayoutGap="1em">
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="space-between center">
                 <tl-input fxFlex="33"
                           formControlName="numberControl"
                           label="{{ 'poundnet-page.number' | tlTranslate }}"
@@ -30,7 +35,9 @@
                 </tl-select>
             </div>
 
-            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="space-between center">
                 <tl-date fxFlex="33"
                          formControlName="dateControl"
                          label="{{ 'poundnet-page.registration-date' | tlTranslate }}"
@@ -52,7 +59,9 @@
                 </tl-autocomplete>
             </div>
 
-            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="space-between center">
                 <tl-input fxFlex="33"
                           formControlName="permitLicensePriceControl"
                           label="{{ 'poundnet-page.permit-license-price' | tlTranslate }}"
@@ -63,11 +72,14 @@
         </tl-card-content>
     </tl-card>
 
-    <tl-card tooltipResourceName="poundnet-page.order-to-determine-poundnet-action-helper" [validityChecker]="form">
+    <tl-card tooltipResourceName="poundnet-page.order-to-determine-poundnet-action-helper"
+             [validityChecker]="form">
         <tl-card-title>{{ 'poundnet-page.order-to-determine-poundnet-action' | tlTranslate }}</tl-card-title>
 
         <tl-card-content>
-            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="space-between center">
                 <tl-input fxFlex="50"
                           formControlName="orderNumberControl"
                           label="{{ 'poundnet-page.number' | tlTranslate }}"
@@ -81,7 +93,9 @@
                 </tl-date>
             </div>
 
-            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="space-between center">
                 <tl-textarea fxFlex="50"
                              formControlName="commentsControl"
                              label="{{ 'poundnet-page.comments-territorial-unit' | tlTranslate }}"
@@ -101,10 +115,13 @@
         </tl-card-content>
     </tl-card>
 
-    <tl-card tooltipResourceName="poundnet-page.technical-characteristics-helper" [validityChecker]="form">
+    <tl-card tooltipResourceName="poundnet-page.technical-characteristics-helper"
+             [validityChecker]="form">
         <tl-card-title>{{ 'poundnet-page.technical-characteristics' | tlTranslate }}</tl-card-title>
 
-        <tl-card-content fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+        <tl-card-content fxLayout="row"
+                         fxLayoutGap="1em"
+                         fxLayoutAlign="space-between center">
             <tl-range-input fxFlex="20"
                             formControlName="placeDepthControl"
                             label="{{ 'poundnet-page.depth-of-the-place' | tlTranslate }}"
@@ -137,11 +154,15 @@
         </tl-card-content>
     </tl-card>
 
-    <tl-card tooltipResourceName="poundnet-page.address-info-title-helper" [validityChecker]="form">
+    <tl-card tooltipResourceName="poundnet-page.address-info-title-helper"
+             [validityChecker]="form">
         <tl-card-title>{{ 'poundnet-page.address-info-title' | tlTranslate }}</tl-card-title>
 
-        <tl-card-content fxLayout="column" fxLayoutGap="1em">
-            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+        <tl-card-content fxLayout="column"
+                         fxLayoutGap="1em">
+            <div fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="space-between center">
                 <tl-autocomplete fxFlex="25"
                                  formControlName="districtControl"
                                  [options]="districts"
@@ -189,8 +210,12 @@
         <tl-card-title>{{ 'poundnet-page.coordinates' | tlTranslate }}</tl-card-title>
 
         <tl-card-content fxFlexFill>
-            <div fxLayout="row" fxLayoutAlign="space-between start center" fxLayoutGap="1em">
-                <div fxLayout="column" fxLayoutGap="1em" fxFlex="50">
+            <div fxLayout="row"
+                 fxLayoutAlign="space-between start center"
+                 fxLayoutGap="1em">
+                <div fxLayout="column"
+                     fxLayoutGap="1em"
+                     fxFlex="50">
                     <tl-data-table fxFlex="100"
                                    [isRemote]="false"
                                    [isSoftDeletable]="false"
@@ -204,19 +229,19 @@
                                      [isSortable]="false">
                         </data-column>
 
-                        <data-column columnName="{{ 'poundnet-page.longitude' | tlTranslate:'cap' }}"
-                                     [formGroup]="coordinatesForm"
-                                     [flexRate]="0.2"
-                                     [isSortable]="false"
-                                     propertyName="longitude"
-                                     dataType="coordinates">
-                        </data-column>
-
                         <data-column columnName="{{ 'poundnet-page.latitude' | tlTranslate:'cap' }}"
                                      [formGroup]="coordinatesForm"
                                      [flexRate]="0.2"
                                      [isSortable]="false"
                                      propertyName="latitude"
+                                     dataType="coordinates">
+                        </data-column>
+
+                        <data-column columnName="{{ 'poundnet-page.longitude' | tlTranslate:'cap' }}"
+                                     [formGroup]="coordinatesForm"
+                                     [flexRate]="0.2"
+                                     [isSortable]="false"
+                                     propertyName="longitude"
                                      dataType="coordinates">
                         </data-column>
 
@@ -228,7 +253,8 @@
                                      dataType="boolean">
                         </data-column>
 
-                        <data-column-inline *ngIf="!viewMode" [flexRate]="0.1"> </data-column-inline>
+                        <data-column-inline *ngIf="!viewMode"
+                                            [flexRate]="0.1"> </data-column-inline>
                     </tl-data-table>
                     <mat-error *ngIf="gpsCoordinatesTouched && form.errors?.atLeastOneCoordinateNeeded === true">
                         * {{ 'poundnet-page.at-least-one-coordinate-needed' | tlTranslate }}
@@ -238,7 +264,8 @@
                     </mat-error>
                 </div>
 
-                <div fxFlex="50" style="height:400px;max-height:600px">
+                <div fxFlex="50"
+                     style="height:400px;max-height:600px">
                     <tl-map-viewer [mapOptions]="mapOptions"></tl-map-viewer>
                 </div>
             </div>

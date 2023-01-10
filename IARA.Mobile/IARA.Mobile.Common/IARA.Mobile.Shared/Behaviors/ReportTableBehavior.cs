@@ -1,7 +1,7 @@
-﻿using IARA.Mobile.Application.DTObjects.Reports;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using IARA.Mobile.Application.DTObjects.Reports;
 using TechnoLogica.Xamarin.Behaviors.Base;
 using TechnoLogica.Xamarin.Controls;
 using TechnoLogica.Xamarin.Helpers;

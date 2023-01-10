@@ -1,4 +1,10 @@
-﻿using IARA.Mobile.Application;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application;
@@ -6,17 +12,13 @@ using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
 using IARA.Mobile.Insp.ViewModels.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
+using IARA.Mobile.Shared.Views;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
@@ -94,6 +96,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             }
         }
 
+        public TLForwardSections Sections { get; set; }
+
         public InspectedShipDataViewModel ShipData { get; }
         public InspectionHarbourViewModel LastHarbour { get; }
         public InspectedPersonViewModel Owner { get; }
@@ -121,8 +125,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
         public ValidStateInfiniteSelect<PermitNomenclatureDto> Permit { get; set; }
 
         public ValidStateValidatableTable<ToggleViewModel> Toggles { get; set; }
-
-        public Action ExpandAll { get; set; }
 
         public List<SelectNomenclatureDto> CheckReasons
         {
@@ -191,7 +193,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
 
             List<SelectNomenclatureDto> countries = nomTransaction.GetCountries();
 
-            InspectionGeneralInfo.Init();
+            await InspectionGeneralInfo.Init();
             ShipData.Init(countries, nomTransaction.GetVesselTypes(), nomTransaction.GetCatchZones());
             Owner.Init(countries);
             LastHarbour.Init(countries);
@@ -216,7 +218,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             {
                 List<SelectNomenclatureDto> fileTypes = nomTransaction.GetFileTypes();
 
-                InspectionGeneralInfo.OnEdit(Edit);
+                await InspectionGeneralInfo.OnEdit(Edit);
                 InspectionFiles.OnEdit(Edit);
                 Signatures.OnEdit(Edit.Files, fileTypes);
                 AdditionalInfo.OnEdit(Edit);
@@ -301,7 +303,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
 
             if (ActivityType == ViewActivityType.Review)
             {
-                ExpandAll();
+                foreach (SectionView item in Sections.Children.OfType<SectionView>())
+                {
+                    item.IsExpanded = true;
+                }
             }
 
             await TLLoadingHelper.HideFullLoadingScreen();
@@ -419,19 +424,22 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
         {
             List<SelectNomenclatureDto> fishingGearTypes = NomenclaturesTransaction.GetFishingGears();
 
-            FishingGears.FishingGears.Value.ReplaceRange(
-                fishingGears.ConvertAll(f => new FishingGearModel
+            List<FishingGearModel> models = fishingGears.ConvertAll(f => new FishingGearModel
+            {
+                Count = f.Count,
+                NetEyeSize = f.NetEyeSize,
+                Marks = string.Join(", ", f.Marks.Select(s => s.Number)),
+                Type = fishingGearTypes.Find(s => s.Id == f.TypeId) ?? fishingGearTypes[0],
+                Dto = new InspectedFishingGearDto
                 {
-                    Count = f.Count,
-                    NetEyeSize = f.NetEyeSize,
-                    Marks = string.Join(", ", f.Marks.Select(s => s.Number)),
-                    Type = fishingGearTypes.Find(s => s.Id == f.TypeId) ?? fishingGearTypes[0],
-                    Dto = new InspectedFishingGearDto
-                    {
-                        PermittedFishingGear = f
-                    },
-                })
-            );
+                    PermittedFishingGear = f
+                },
+            });
+
+            FishingGears.AllFishingGears.Clear();
+            FishingGears.AllFishingGears.AddRange(models);
+
+            FishingGears.FishingGears.Value.ReplaceRange(models);
         }
 
         private Task OnSaveDraft()
@@ -441,7 +449,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
 
         private Task OnFinish()
         {
-            return InspectionSaveHelper.Finish(ExpandAll, Validation, Save);
+            return InspectionSaveHelper.Finish(Sections, Validation, Save);
         }
 
         private Task Save(SubmitType submitType)
@@ -453,7 +461,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
                     InspectionCheckToolMarkDto dto = new InspectionCheckToolMarkDto
                     {
                         Id = Edit?.Id ?? 0,
-                        ReportNum = Edit?.ReportNum,
+                        ReportNum = InspectionGeneralInfo.BuildReportNum(),
                         LocalIdentifier = inspectionIdentifier,
                         Files = files,
                         InspectionState = submitType == SubmitType.Draft || submitType == SubmitType.Edit ? InspectionState.Draft : InspectionState.Submitted,

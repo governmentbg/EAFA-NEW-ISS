@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Domain.Entities.Exceptions;
+﻿using System;
+using IARA.Mobile.Domain.Entities.Exceptions;
 using IARA.Mobile.Domain.Models;
-using System;
 
 namespace IARA.Mobile.Application.Interfaces.Database
 {

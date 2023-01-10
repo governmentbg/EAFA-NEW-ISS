@@ -1,8 +1,8 @@
-﻿using IARA.Mobile.Domain.Models;
+﻿using System;
+using System.Collections.Generic;
+using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Domain.Enums;
-using System;
-using System.Collections.Generic;
 
 namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
 {

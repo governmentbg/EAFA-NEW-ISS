@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Application.DTObjects.Common;
+﻿using System;
+using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
-using System;
 
 namespace IARA.Mobile.Pub.Application.DTObjects.ReportViolations
 {

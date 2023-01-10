@@ -1,19 +1,21 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using IARA.Mobile.Shared.Views;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
@@ -74,6 +76,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
             }
         }
 
+        public TLForwardSections Sections { get; set; }
+
         public InspectionGeneralInfoViewModel InspectionGeneralInfo { get; }
         public InspectedBuyerViewModel Owner { get; }
         public PersonViewModel Representative { get; }
@@ -105,8 +109,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
         [MaxLength(4000)]
         public ValidState RepresentativeComment { get; set; }
 
-        public Action ExpandAll { get; set; }
-
         public override void OnDisappearing()
         {
             GlobalVariables.IsAddingInspection = false;
@@ -132,7 +134,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
 
             List<SelectNomenclatureDto> countries = nomTransaction.GetCountries();
 
-            InspectionGeneralInfo.Init();
+            await InspectionGeneralInfo.Init();
             Owner.Init(countries);
             Representative.Init(countries);
             Importer.Init(countries);
@@ -157,7 +159,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
 
                 InspectionState = Edit.InspectionState;
 
-                InspectionGeneralInfo.OnEdit(Edit);
+                await InspectionGeneralInfo.OnEdit(Edit);
                 InspectionFiles.OnEdit(Edit);
                 Signatures.OnEdit(Edit.Files, fileTypes);
                 Catches.OnEdit(Edit.CatchMeasures);
@@ -177,7 +179,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
 
             if (ActivityType == ViewActivityType.Review)
             {
-                ExpandAll();
+                foreach (SectionView item in Sections.Children.OfType<SectionView>())
+                {
+                    item.IsExpanded = true;
+                }
             }
 
             await TLLoadingHelper.HideFullLoadingScreen();
@@ -204,7 +209,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
 
         private Task OnFinish()
         {
-            return InspectionSaveHelper.Finish(ExpandAll, Validation, Save);
+            return InspectionSaveHelper.Finish(Sections, Validation, Save);
         }
 
         private Task Save(SubmitType submitType)
@@ -216,7 +221,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
                     InspectionFirstSaleDto dto = new InspectionFirstSaleDto
                     {
                         Id = Edit?.Id ?? 0,
-                        ReportNum = Edit?.ReportNum,
+                        ReportNum = InspectionGeneralInfo.BuildReportNum(),
                         LocalIdentifier = inspectionIdentifier,
                         Files = files,
                         InspectionState = submitType == SubmitType.Draft || submitType == SubmitType.Edit ? InspectionState.Draft : InspectionState.Submitted,

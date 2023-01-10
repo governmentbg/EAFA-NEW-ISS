@@ -14,6 +14,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
             ViewModel.Edit = dto;
             ViewModel.IsLocal = isLocal;
             InitializeComponent();
+            ViewModel.Sections = forwardSections;
         }
     }
 }

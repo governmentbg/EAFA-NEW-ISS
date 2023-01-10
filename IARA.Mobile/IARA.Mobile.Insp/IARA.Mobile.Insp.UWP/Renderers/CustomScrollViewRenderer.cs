@@ -147,10 +147,7 @@ namespace IARA.Mobile.Insp.UWP.Renderers
 
         private void UpdateContent()
         {
-            if (_currentView != null)
-            {
-                _currentView.Cleanup();
-            }
+            _currentView?.Cleanup();
 
             if (Control?.Content is FrameworkElement oldElement)
             {
@@ -171,7 +168,7 @@ namespace IARA.Mobile.Insp.UWP.Renderers
                 renderer = _currentView.GetOrCreateRenderer();
             }
 
-            Control.Content = renderer != null ? renderer.ContainerElement : null;
+            Control.Content = renderer?.ContainerElement;
 
             UpdateContentMargins();
             if (renderer?.Element != null)
@@ -246,7 +243,7 @@ namespace IARA.Mobile.Insp.UWP.Renderers
                 return;
             }
 
-            FrameworkElement element = (Control.Content as FrameworkElement);
+            FrameworkElement element = Control.Content as FrameworkElement;
             if (element.ActualWidth == Control.ActualWidth)
             {
                 return;
@@ -385,8 +382,7 @@ namespace IARA.Mobile.Insp.UWP.Renderers
 
             foreach (Element element in self.Descendants())
             {
-                VisualElement visual = element as VisualElement;
-                if (visual == null)
+                if (!(element is VisualElement visual))
                 {
                     continue;
                 }

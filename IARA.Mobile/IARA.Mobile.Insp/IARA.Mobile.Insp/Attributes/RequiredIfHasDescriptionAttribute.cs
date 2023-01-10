@@ -1,8 +1,8 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
-using IARA.Mobile.Insp.Converters;
-using System;
+﻿using System;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
+using IARA.Mobile.Insp.Converters;
 
 namespace IARA.Mobile.Insp.Attributes
 {

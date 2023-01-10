@@ -1,4 +1,8 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Interfaces;
 using IARA.Mobile.Domain.Models;
@@ -9,10 +13,6 @@ using IARA.Mobile.Insp.Application.Interfaces.Factories;
 using IARA.Mobile.Insp.Application.Interfaces.Utilities;
 using IARA.Mobile.Insp.Domain.Entities.Inspections;
 using IARA.Mobile.Insp.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace IARA.Mobile.Insp.Application.Helpers
 {
@@ -196,9 +196,10 @@ namespace IARA.Mobile.Insp.Application.Helpers
                 "InspectionData/GetInspectors",
                 f => new Inspector
                 {
+                    Id = f.InspectorId.Value,
                     CitizenshipId = f.CitizenshipId,
                     CardNum = f.CardNum,
-                    Id = f.InspectorId.Value,
+                    TerritoryCode = f.TerritoryCode,
                     InstitutionId = f.InstitutionId,
                     IsNotRegistered = false,
                     FirstName = f.FirstName,
@@ -207,7 +208,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     UnregisteredPersonId = f.UnregisteredPersonId,
                     UserId = f.UserId,
                     NormalizedCardNum = f.CardNum?.ToLower(),
-                    NormalizedName = $"{f.FirstName} {(f.MiddleName == null ? string.Empty : f.MiddleName)} {f.LastName}".ToLower(),
+                    NormalizedName = $"{f.FirstName} {f.MiddleName ?? string.Empty} {f.LastName}".ToLower(),
                 },
                 f => f.InspectorId.Value
             );
@@ -330,6 +331,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     ShipUid = f.ShipUid,
                     ValidFrom = f.ValidFrom,
                     ValidTo = f.ValidTo,
+                    IsSuspended = f.IsSuspended,
                 },
                 f => f.Id,
                 (context, permits, _, inactive) =>
@@ -483,6 +485,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     TypeId = f.TypeId,
                     ValidFrom = f.ValidFrom,
                     ValidTo = f.ValidTo,
+                    IsSuspended = f.IsSuspended,
                 },
                 f => f.Id
             );

@@ -1,4 +1,6 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System.Collections.Generic;
+using System.Linq;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
@@ -8,9 +10,8 @@ using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Models;
-using System.Collections.Generic;
-using System.Linq;
 using TechnoLogica.Xamarin.Commands;
+using TechnoLogica.Xamarin.ResourceTranslator;
 using Xamarin.Forms;
 
 namespace IARA.Mobile.Insp.Helpers
@@ -160,6 +161,7 @@ namespace IARA.Mobile.Insp.Helpers
 
                                     logBook.EndPage.Value = f.EndPage.ToString();
                                     logBook.Number.AssignFrom(f.Number);
+                                    logBook.Corresponds.Value = nameof(CheckTypeEnum.X);
 
                                     return logBook;
                                 })
@@ -179,6 +181,7 @@ namespace IARA.Mobile.Insp.Helpers
                                 NetEyeSize = f.NetEyeSize,
                                 Marks = string.Join(", ", f.Marks.Select(s => s.Number)),
                                 Type = fishingGearTypes.Find(s => s.Id == f.TypeId) ?? fishingGearTypes[0],
+                                CheckedValue = InspectedFishingGearEnum.R,
                                 Dto = new InspectedFishingGearDto
                                 {
                                     PermittedFishingGear = f
@@ -208,6 +211,41 @@ namespace IARA.Mobile.Insp.Helpers
                         .Where(f => f.Type != InspectedPersonType.OwnerLegal && f.Type != InspectedPersonType.LicUsrLgl)
                         .GroupBy(f => f.Id)
                         .Select(f => f.First())
+                        .Select(f =>
+                        {
+                            const string prefix = nameof(GroupResourceEnum.FishingShip);
+
+                            string typeName = string.Empty;
+
+                            switch (f.Type)
+                            {
+                                case InspectedPersonType.ReprsPers:
+                                    typeName = TranslateExtension.Translator[prefix + "/ShipRepresentative"];
+                                    break;
+                                case InspectedPersonType.OwnerPers:
+                                case InspectedPersonType.OwnerLegal:
+                                case InspectedPersonType.ActualOwn:
+                                case InspectedPersonType.OwnerBuyer:
+                                    typeName = TranslateExtension.Translator[prefix + "/ShipOwner"];
+                                    break;
+                                case InspectedPersonType.LicUsrPers:
+                                case InspectedPersonType.LicUsrLgl:
+                                    typeName = TranslateExtension.Translator[prefix + "/ShipUser"];
+                                    break;
+                                case InspectedPersonType.CaptFshmn:
+                                    typeName = TranslateExtension.Translator[prefix + "/ShipCaptain"];
+                                    break;
+                            }
+
+                            return new ShipPersonnelDto
+                            {
+                                Id = f.Id,
+                                Code = f.Code,
+                                EntryId = f.EntryId,
+                                Name = $"{f.Name} ({typeName})",
+                                Type = f.Type
+                            };
+                        })
                         .ToList();
                     fishingShip.ShipRepresentative.InRegister.Value = fishingShip.ShipRepresentative.People.Count > 0;
 

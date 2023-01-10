@@ -108,13 +108,12 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
         {
             await base.Initialize(sender);
             await TLLoadingHelper.ShowFullLoadingScreen();
-            Person = new PersonViewModel()
+            Person = new PersonViewModel
             {
                 DateOfBirthRequired = true,
                 GenderRequired = true,
+                Genders = NomenclaturesTransaction.GetGenders(new List<string> { nameof(GenderEnum.M), nameof(GenderEnum.F) })
             };
-
-            Person.Genders = NomenclaturesTransaction.GetGenders(new List<string> { nameof(GenderEnum.M), nameof(GenderEnum.F) });
             Associations = await FishingTicketsTransaction.GetFishingAssiciations();
             this.AddValidation(new Dictionary<string, Func<bool>>()
             {

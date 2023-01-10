@@ -98,6 +98,7 @@ import { PaymentDataInfo } from '@app/shared/components/payment-data/models/paym
 import { PaymentDataDTO } from '@app/models/generated/dtos/PaymentDataDTO';
 import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
 import { PaymentStatusesEnum } from '@app/enums/payment-statuses.enum';
+import { SimpleAuditMethod } from '../log-books/log-books.component';
 
 type AquaticOrganismsToAddType = NomenclatureDTO<number> | NomenclatureDTO<number>[] | string | undefined | null;
 type SaveApplicationDraftFnType = ((applicationId: number, model: IApplicationRegister, dialogClose: HeaderCloseFunction) => void) | undefined;
@@ -193,6 +194,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public logBookOwnerType: LogBookPagePersonTypesEnum | undefined; // whether the type of submittedFor is Person or Legal (for admission and transportation log books)
 
     public model!: CommercialFishingEditDTO | CommercialFishingApplicationEditDTO | CommercialFishingRegixDataDTO;
+
+    public getLogBookAuditMethod!: SimpleAuditMethod;
 
     /**
      * Cast of service property - needed for <log-books> component for the register for administration app - permit licenses only
@@ -312,6 +315,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         this.showOnlyRegiXData = data.showOnlyRegiXData;
         this.showRegiXData = data.showRegiXData;
         this.service = data.service as ICommercialFishingService;
+
+        this.getLogBookAuditMethod = this.service.getLogBookAudit.bind(this.service);
 
         if (!IS_PUBLIC_APP) {
             this.administrationService = this.service as CommercialFishingAdministrationService;
@@ -549,7 +554,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     }
 
     public selectAllPermittedAquaticOrganisms(): void {
-        //setTimeout(() => {
         this.selectedAquaticOrganismTypes = [];
         this.aquaticOrganismTypes = this.allAquaticOrganismTypes.slice();
 
@@ -559,7 +563,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         }
 
         this.updateSelectedAquaticOrganismTypes(this.aquaticOrganismTypes.slice());
-        //});
 
         this.form.updateValueAndValidity({ onlySelf: true });
     }
@@ -1650,6 +1653,13 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             else if (error?.code === ErrorCode.ShipEventExistsOnSameDate) {
                 this.hasShipEventExistsOnSameDateError = true;
                 this.form.updateValueAndValidity({ onlySelf: true });
+            }
+            else if (error?.code === ErrorCode.LogBookHasSubmittedPages) {
+                const message: string = this.translationService.getValue('catches-and-sales.cannot-delete-log-book-with-submitted-pages');
+                this.snackbar.open(message, undefined, {
+                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                });
             }
         }
 

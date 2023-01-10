@@ -1,5 +1,4 @@
 ﻿using IARA.Mobile.Shared.ViewModels;
-using TechnoLogica.Xamarin.Controls;
 using Xamarin.Forms.Xaml;
 
 namespace IARA.Mobile.Shared.Views

@@ -48,6 +48,9 @@ export class CommercialFishingLogBookEditDTO extends LogBookEditDTO {
     @StrictlyTyped(Boolean)
     public permitLicenseIsActive?: boolean;
 
+    @StrictlyTyped(Boolean)
+    public hasRelatedPages?: boolean;
+
     @StrictlyTyped(ShipLogBookPageRegisterDTO)
     public shipPagesAndDeclarations?: ShipLogBookPageRegisterDTO[];
 }

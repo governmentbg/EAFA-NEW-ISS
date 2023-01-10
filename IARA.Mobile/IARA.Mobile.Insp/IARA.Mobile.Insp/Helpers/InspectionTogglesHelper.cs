@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System.Collections.Generic;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Domain.Enums;
-using System.Collections.Generic;
 using TechnoLogica.Xamarin.ResourceTranslator;
 using TechnoLogica.Xamarin.ViewModels.Models;
 using Xamarin.Forms;

@@ -1,5 +1,5 @@
-﻿using IARA.Mobile.Domain.Enums;
-using System;
+﻿using System;
+using IARA.Mobile.Domain.Enums;
 
 namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
 {

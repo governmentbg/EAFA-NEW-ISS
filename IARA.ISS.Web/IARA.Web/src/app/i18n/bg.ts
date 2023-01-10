@@ -2605,6 +2605,7 @@
         'declaration-fish-quantity-warning': 'Въведено количесвто в декларацията за улов {0}.',
         'edit-auan-violated-regulations': 'Нарушени разпоредби',
         'invoice-data': 'Данни за фактурата',
+        'no-catches': 'Трябва да бъде добаве поне един улов',
 
         'add-catch-ship-dialog-title': 'Добави кораб',
         'edit-catch-ship-dialog-title': 'Редактирай кораб',
@@ -3120,13 +3121,14 @@
 
         'gear-has-duplicated-mark-number': 'Не може да имате марки с повтарящи се номера',
         'gear-has-duplicated-pinger-number': 'Не може да имате пингъри с повтаращи се номера',
+        'gear-must-have-at-least-one-pinger-error': 'След като е отбелязано, че уредът има пингъри, трябва да се попълнят данни за поне един пингър',
 
-        'generate-marks-from-number-range': 'Генериране на номера на марки по диапазон',
+        'generate-marks-dialog-title': 'Генериране на номера на марки по диапазон',
         'mark-numbers-range': 'Диапазон за генериране',
         'mark-numbers-range-from': 'От',
         'mark-numbers-range-to': 'До',
         'generate-mark-numbers-btn-label': 'Генерирай марки',
-        'generate-mark-numbers-hint': 'Можете да генериране марки чрез попълване на диапазон и натискане на бутон "Генерирай" или да добавите нови макри чрез бутона "Добави".',
+        'generate-mark-numbers-hint': 'Можете да генериране марки чрез попълване на диапазон и натискане на бутон "Генерирай марки".',
 
         'generate-marks-from-range-confirm-dialog-title': 'Потвърждение за генериране на голям диапазон от марки',
         'generate-marks-from-range-confirm-message': 'Сигурни ли сте, че искате да генерирате следния брой марки',
@@ -4169,6 +4171,7 @@
         'delete-log-book-dialog-label': 'Изтриване на дневник',
         'confirm-delete-log-book-message': 'Сигурни ли сте, че искате да изтриете избрания дневник?',
         'delete-log-book-btn-label': 'Изтриване',
+        'cannot-delete-log-book-with-submitted-pages': 'Не можете да изтриете дневник, към който има вече въведени страници',
         'overlapping-log-books-dialog-title': 'Припокриващи се диапазони от страници на текущи дневници с други, въведени в системата',
         'overlapping-log-books-save-despite-conflicts': 'Запази въпреки конфликтите'
     },
@@ -4631,7 +4634,7 @@
 
         'choose-inspection-report-dialog-title': 'Избор на доклад от инспекция',
         'picker-report-num': '№ на доклад',
-        'picker-is-third-party-inspection': 'Инспекция от външна организация',
+        'picker-is-third-party-inspection': 'Без доклад или Инспекция от външна организация',
         'picker-inspector': 'Актосъставител',
         'picker-territory-unit': 'Териториално звено',
         'picker-inspection-date': 'Дата на съставяне',

@@ -3,6 +3,7 @@
     public class InspectorDto : UnregisteredPersonDto
     {
         public string CardNum { get; set; }
+        public string TerritoryCode { get; set; }
         public int? InspectorId { get; set; }
         public int? UserId { get; set; }
         public int? UnregisteredPersonId { get; set; }

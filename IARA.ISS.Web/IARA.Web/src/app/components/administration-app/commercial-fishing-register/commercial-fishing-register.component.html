@@ -175,84 +175,19 @@
                                             <tl-card>
                                                 <tl-card-title>{{ 'commercial-fishing.permit-license-log-books-list-card-title' | tlTranslate }}</tl-card-title>
                                                 <tl-card-content>
-                                                    <tl-data-table [isRemote]="false"
-                                                                   [isSoftDeletable]="true"
-                                                                   [showInactiveRecords]="canRestoreLogBooks && (shipId === null || shipId === undefined)"
-                                                                   [showAddButton]="canAddLogBooks"
-                                                                   [recordsPerPage]="logBooksPerPage"
-                                                                   [rows]="row.data.logbooks"
-                                                                   (addButtonClicked)="addLogBook(row.data)">
-                                                        <!--<div datatable-add-buttons
-                                                             fxLayout="row"
-                                                             fxLayoutGap="1em"
-                                                             *ngIf="canAddLogBooks">
-                                                            <button mat-raised-button color="accent"
-                                                                    (click)="addLogBookFromOldPermitLicense(row.data.id)"
-                                                                    style="margin-left:auto;">
-                                                                <tl-icon icon="fa-plus-circle" class="white"></tl-icon>
-                                                                {{ 'catches-and-sales.add-log-book-from-old-permit-license' | tlTranslate }}
-                                                            </button>
-                                                        </div>--> <!-- TODO -->
-                                                        <data-column propertyName="number"
-                                                                     [flexRate]="0.2"
-                                                                     columnName="{{ 'commercial-fishing.log-book-number' | tlTranslate }}">
-                                                        </data-column>
-                                                        <data-column [flexRate]="0.2"
-                                                                     propertyName="logBookTypeName"
-                                                                     columnName="{{ 'commercial-fishing.log-book-type' | tlTranslate }}">
-                                                        </data-column>
-                                                        <data-column propertyName="issueDate"
-                                                                     [flexRate]="0.2"
-                                                                     dataType="date"
-                                                                     columnName="{{ 'commercial-fishing.log-book-issue-date' | tlTranslate }}">
-                                                        </data-column>
-                                                        <data-column propertyName="finishDate"
-                                                                     [flexRate]="0.2"
-                                                                     dataType="date"
-                                                                     columnName="{{ 'commercial-fishing.log-book-finish-date' | tlTranslate }}">
-                                                        </data-column>
-                                                        <data-column propertyName="statusName"
-                                                                     [flexRate]="0.2"
-                                                                     columnName="{{ 'commercial-fishing.log-book-status' | tlTranslate }}">
-                                                        </data-column>
-                                                        <data-column propertyName="startPageNumber"
-                                                                     [flexRate]="0.3"
-                                                                     columnName="{{ 'commercial-fishing.log-book-start-page-number' | tlTranslate }}">
-                                                        </data-column>
-                                                        <data-column propertyName="endPageNumber"
-                                                                     [flexRate]="0.3"
-                                                                     columnName="{{ 'commercial-fishing.log-book-end-page-number' | tlTranslate }}">
-                                                        </data-column>
-                                                        <data-template-column [flexRate]="0.3">
-                                                            <ng-template let-logBook="row" ngx-datatable-cell-template>
-                                                                <div fxLayout="row wrap" fxLayoutAlign="end center">
-                                                                    <tl-icon-button icon="visibility"
-                                                                                    (buttonClicked)="editLogBook(row.data.id, logBook.data, true)"
-                                                                                    iconClass="accent-color"
-                                                                                    tooltipText="{{ 'commercial-fishing.view-log-book' | tlTranslate }}">
-                                                                    </tl-icon-button>
-                                                                    <tl-icon-button *ngIf="logBook.data.isActive && canEditLogBooks && (shipId === null || shipId === undefined)"
-                                                                                    icon="edit"
-                                                                                    (buttonClicked)="editLogBook(row.data.id, logBook.data)"
-                                                                                    iconClass="accent-color"
-                                                                                    tooltipText="{{ 'commercial-fishing.edit-log-book' | tlTranslate }}">
-                                                                    </tl-icon-button>
-                                                                    <tl-icon-button *ngIf="logBook.data.isActive && canDeleteLogBooks && (shipId === null || shipId === undefined)"
-                                                                                    icon="delete"
-                                                                                    (buttonClicked)="deleteLogBook(logBook.data, row)"
-                                                                                    iconClass="accent-color"
-                                                                                    tooltipText="{{ 'commercial-fishing.delete-log-book' | tlTranslate }}">
-                                                                    </tl-icon-button>
-                                                                    <tl-icon-button *ngIf="!logBook.data.isActive && canRestoreLogBooks && (shipId === null || shipId === undefined)"
-                                                                                    icon="restore"
-                                                                                    (buttonClicked)="restoreLogBook(logBook.data, row)"
-                                                                                    iconClass="accent-color"
-                                                                                    tooltipText="{{ 'commercial-fishing.restore-log-book' | tlTranslate }}">
-                                                                    </tl-icon-button>
-                                                                </div>
-                                                            </ng-template>
-                                                        </data-template-column>
-                                                    </tl-data-table>
+                                                    <log-books fxFlex="100"
+                                                               [getLogBookSimpleAuditMethod]="service.getLogBookAudit.bind(service)"
+                                                               [logBookGroup]="logBookGroup"
+                                                               [hasRenewalValidator]="false"
+                                                               [isOnline]="row.data.isForOnlineLogBooks"
+                                                               [ownerType]="row.data.isSubmittedForPerson ? logBookPagePersonTypesEnum.Person : logBookPagePersonTypesEnum.LegalPerson"
+                                                               [isForPermitLicense]="true"
+                                                               [permitLicenseId]="row.data.id"
+                                                               [service]="service"
+                                                               [permitLicenseLogBookCacheService]="cacheService"
+                                                               [showInactivePagesAndDocuments]="true"
+                                                               (onActionEnded)="onLogBookActionEnded($event)">
+                                                    </log-books>
                                                 </tl-card-content>
                                             </tl-card>
                                         </ng-template>

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 using IARA.Mobile.Domain.Enums;
@@ -17,9 +16,6 @@ namespace IARA.Mobile.Insp.Controls
     [ContentProperty(nameof(Children))]
     public class TLForwardSections : TLScrollView
     {
-        public static readonly BindableProperty ExpandAllProperty =
-            BindableProperty.Create(nameof(ExpandAll), typeof(Action), typeof(TLForwardSections), null, BindingMode.OneWayToSource);
-
         private readonly StackLayout _stack;
 
         public TLForwardSections()
@@ -33,16 +29,13 @@ namespace IARA.Mobile.Insp.Controls
             TLObservableCollection<View> children = new TLObservableCollection<View>();
             children.CollectionChanged += OnChildrenCollectionChanged;
             Children = children;
-
-            ExpandAll = OnExpandAll;
         }
 
         public new IList<View> Children { get; }
 
-        public Action ExpandAll
+        public Task ScrollToSection(SectionView section)
         {
-            get => (Action)GetValue(ExpandAllProperty);
-            set => SetValue(ExpandAllProperty, value);
+            return InnerScrollView.ScrollToAsync(section, ScrollToPosition.Start, false);
         }
 
         private void OnChildrenCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -140,17 +133,6 @@ namespace IARA.Mobile.Insp.Controls
             }
 
             return Task.CompletedTask;
-        }
-
-        private void OnExpandAll()
-        {
-            for (int i = 0; i < Children.Count; i++)
-            {
-                if (Children[i] is SectionView section)
-                {
-                    section.IsExpanded = true;
-                }
-            }
         }
     }
 }

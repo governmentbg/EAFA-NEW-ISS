@@ -1,49 +1,66 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Shared.Menu;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using IARA.Mobile.Shared.Views;
+using TechnoLogica.Xamarin.Controls.Base;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
+using TechnoLogica.Xamarin.ViewModels.Base;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
-using Xamarin.CommunityToolkit.UI.Views.Options;
 using Xamarin.Forms;
 
 namespace IARA.Mobile.Insp.Helpers
 {
     public static class InspectionSaveHelper
     {
-        public static async Task Finish(Action expandAll, IViewModelValidation validation, Func<SubmitType, Task> save)
+        public static async Task Finish(TLForwardSections sections, IViewModelValidation validation, Func<SubmitType, Task> save)
         {
             // Show all the ValidStates or the validation won't work
-            expandAll?.Invoke();
+            List<SectionView> sectionList = sections.Children.OfType<SectionView>().ToList();
+
+            foreach (SectionView section in sectionList)
+            {
+                section.IsExpanded = true;
+            }
+
             await Task.Delay(100);
 
             validation.Force();
 
             if (!validation.IsValid)
             {
-                MessageOptions options = new MessageOptions
-                {
-                    Message = TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InvalidValidation"]
-                };
+                SectionView firstInvalidSection = null;
 
-                if (Device.RuntimePlatform == Device.UWP)
+                foreach (SectionView section in sectionList)
                 {
-                    options.Padding = 10;
+                    bool isSectionValid = IsViewValid(section, sections.BindingContext);
+
+                    section.IsExpanded = !isSectionValid;
+                    section.IsInvalid = !isSectionValid;
+
+                    if (firstInvalidSection == null && !isSectionValid)
+                    {
+                        firstInvalidSection = section;
+                    }
                 }
 
-                await TLSnackbar.Show(new SnackBarOptions
+                await Task.Delay(100);
+
+                if (firstInvalidSection != null)
                 {
-                    MessageOptions = options,
-                    BackgroundColor = App.GetResource<Color>("ErrorColor"),
-                    Duration = TimeSpan.FromSeconds(5)
-                });
+                    await sections.ScrollToSection(firstInvalidSection);
+                }
+
                 return;
             }
 
@@ -100,6 +117,61 @@ namespace IARA.Mobile.Insp.Helpers
                 await TLLoadingHelper.HideFullLoadingScreen();
                 await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/SavedFailed"], App.GetResource<Color>("ErrorColor"));
             }
+        }
+
+        private static bool IsViewValid(View view, object parentContext)
+        {
+            if (view.BindingContext != parentContext && view.BindingContext is TLBaseViewModel viewModel)
+            {
+                return !viewModel.HasValidation || viewModel.Validation.IsValid;
+            }
+
+            Type type = view.GetType();
+
+            if (type.GetProperties().Any(f => f.Name == nameof(TLBaseValidatableView<int>.ValidState)))
+            {
+                object stateObj = type
+                    .GetProperty(nameof(TLBaseValidatableView<int>.ValidState))
+                    .GetValue(view);
+
+                if (stateObj is IValidState validState)
+                {
+                    return validState.IsValid;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+            if (!(Attribute.GetCustomAttribute(type, typeof(ContentPropertyAttribute)) is ContentPropertyAttribute attr))
+            {
+                return true;
+            }
+
+            object content = type.GetProperties().First(f => f.Name == attr.Name).GetValue(view);
+
+            if (content == null)
+            {
+                return true;
+            }
+
+            if (content is ICollection viewCollection)
+            {
+                foreach (View contentView in viewCollection.OfType<View>())
+                {
+                    if (!IsViewValid(contentView, parentContext))
+                    {
+                        return false;
+                    }
+                }
+            }
+            else if (content is View contentView)
+            {
+                return IsViewValid(contentView, parentContext);
+            }
+
+            return true;
         }
     }
 }

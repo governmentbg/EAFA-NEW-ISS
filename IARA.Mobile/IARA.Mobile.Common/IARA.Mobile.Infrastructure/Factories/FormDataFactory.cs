@@ -1,13 +1,13 @@
-﻿using IARA.Mobile.Application.Extensions;
-using IARA.Mobile.Application.Interfaces.Factories;
-using IARA.Mobile.Domain.Models;
-using System;
+﻿using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
+using IARA.Mobile.Application.Extensions;
+using IARA.Mobile.Application.Interfaces.Factories;
+using IARA.Mobile.Domain.Models;
 
 namespace IARA.Mobile.Infrastructure.Factories
 {

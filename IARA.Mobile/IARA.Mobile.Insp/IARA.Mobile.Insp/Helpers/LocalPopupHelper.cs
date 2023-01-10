@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Insp.FlyoutPages.AddInspectionsPage;
+﻿using System.Threading.Tasks;
+using IARA.Mobile.Insp.FlyoutPages.AddInspectionsPage;
 using Rg.Plugins.Popup.Services;
-using System.Threading.Tasks;
 
 namespace IARA.Mobile.Insp.Helpers
 {

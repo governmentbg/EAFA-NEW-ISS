@@ -1,11 +1,11 @@
-﻿using IARA.Mobile.Application;
-using IARA.Mobile.Application.DTObjects.Profile.API;
-using IARA.Mobile.Pub.Application.DTObjects.AddressNomenclatures.LocalDb;
-using IARA.Mobile.Pub.ViewModels.Base;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Input;
+using IARA.Mobile.Application;
+using IARA.Mobile.Application.DTObjects.Profile.API;
+using IARA.Mobile.Pub.Application.DTObjects.AddressNomenclatures.LocalDb;
+using IARA.Mobile.Pub.ViewModels.Base;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.ViewModels.Models;
@@ -126,7 +126,6 @@ namespace IARA.Mobile.Pub.ViewModels.Controls.PersonView
             IsMunicipalitySelected = true;
             PopulatedArea.Value = null;
         }
-
 
         public void AssignAddressRegistration(AddressRegistrationApiDto dto, List<CountrySelectDto> countries, List<DistrictSelectDto> disticts, bool bulgarianAddressRequired = false)
         {

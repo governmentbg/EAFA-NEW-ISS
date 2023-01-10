@@ -1,4 +1,11 @@
-﻿using IARA.Mobile.Application.DTObjects.Common.API;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Application.DTObjects.Common.API;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.DTObjects.Profile;
 using IARA.Mobile.Application.DTObjects.Profile.API;
@@ -8,13 +15,6 @@ using IARA.Mobile.Pub.Application.Attributes;
 using IARA.Mobile.Pub.Application.DTObjects.DocumentTypes.LocalDb;
 using IARA.Mobile.Pub.ViewModels.Base;
 using IARA.Mobile.Shared.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
@@ -346,8 +346,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
                     UploadedOn = DateTime.Now
                 } : null,
                 HasBulgarianAddressRegistration = HasBulgarianAddressRegistration,
-            };
-            edit.UserAddresses = new List<AddressRegistrationApiDto>
+                UserAddresses = new List<AddressRegistrationApiDto>
             {
                 new AddressRegistrationApiDto
                 {
@@ -365,8 +364,9 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
                     Street = PermanentAddress.Street.Value,
                     StreetNum = PermanentAddress.Number.Value
                 }
+            },
+                GenderId = Gender.Value?.Value
             };
-            edit.GenderId = Gender.Value?.Value;
             if (DocumentType.Value != null || !string.IsNullOrEmpty(DocumentNumber))
             {
                 edit.Document = new PersonDocumentApiDto
@@ -433,7 +433,6 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
             }
         }
 
-
         private void OnDocumentChanged()
         {
             if (DocumentType == null && string.IsNullOrEmpty(DocumentNumber))
@@ -453,7 +452,6 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
             _imageFile = file;
             Photo = file.FullPath;
         }
-
 
         private SelectNomenclatureDto AllDistrictsValue()
         {

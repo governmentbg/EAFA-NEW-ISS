@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System.Threading.Tasks;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Shared.Helpers;
-using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Controls;
 using TechnoLogica.Xamarin.Controls.Base;

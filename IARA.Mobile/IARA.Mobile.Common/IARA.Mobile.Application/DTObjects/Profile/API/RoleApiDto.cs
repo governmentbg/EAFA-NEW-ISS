@@ -1,5 +1,5 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
-using System;
+﻿using System;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 
 namespace IARA.Mobile.Application.DTObjects.Profile.API
 {

@@ -1,7 +1,7 @@
-﻿using IARA.Mobile.Application.Interfaces.Factories;
+﻿using System.Collections.Concurrent;
+using IARA.Mobile.Application.Interfaces.Factories;
 using IARA.Mobile.Infrastructure.Factories;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Concurrent;
 
 namespace IARA.Mobile.Infrastructure.Builders
 {

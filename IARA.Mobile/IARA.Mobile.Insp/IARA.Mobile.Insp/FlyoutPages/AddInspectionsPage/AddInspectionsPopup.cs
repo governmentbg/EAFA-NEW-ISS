@@ -1,11 +1,11 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Shared.Views;
 using Rg.Plugins.Popup.Animations;
 using Rg.Plugins.Popup.Enums;
 using Rg.Plugins.Popup.Services;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Controls;
 using TechnoLogica.Xamarin.Extensions;

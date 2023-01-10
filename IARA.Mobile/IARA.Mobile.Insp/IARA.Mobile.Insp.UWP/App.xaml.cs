@@ -1,16 +1,15 @@
-﻿using FFImageLoading.Forms.Platform;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using FFImageLoading.Forms.Platform;
 using IARA.Mobile.Insp.Fonts;
 using IARA.Mobile.Insp.UWP.Renderers;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 using TechnoLogica.Xamarin.Fonts;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -65,13 +64,12 @@ namespace IARA.Mobile.Insp.UWP
             {
                 DebugSettings.EnableFrameRateCounter = true;
             }
-#endif
 
-            Frame rootFrame = Window.Current.Content as Frame;
+#endif
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
-            if (rootFrame == null)
+            if (!(Window.Current.Content is Frame rootFrame))
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();

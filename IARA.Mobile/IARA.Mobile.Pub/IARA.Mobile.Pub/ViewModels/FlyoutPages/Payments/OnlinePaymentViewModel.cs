@@ -1,12 +1,10 @@
-﻿using IARA.Mobile.Pub.Application.Interfaces.Transactions;
-using IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket;
-using IARA.Mobile.Pub.Views.FlyoutPages;
-using IARA.Mobile.Pub.Views.FlyoutPages.Payments;
-using IARA.Mobile.Shared.Menu;
-using Rg.Plugins.Popup.Services;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using IARA.Mobile.Pub.Application.Interfaces.Transactions;
+using IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket;
+using IARA.Mobile.Pub.Views.FlyoutPages.Payments;
+using Rg.Plugins.Popup.Services;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.ViewModels.Base.Models;
 using Xamarin.Forms;
@@ -83,7 +81,6 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments
                     Debug.WriteLine($"EvaluateJavaScriptAsync Result:{result}");
                 }
             }
-
         }
     }
 }

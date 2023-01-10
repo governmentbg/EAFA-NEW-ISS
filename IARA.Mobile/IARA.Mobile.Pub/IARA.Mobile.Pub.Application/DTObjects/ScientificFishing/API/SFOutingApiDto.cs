@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Application.Interfaces.Mappings;
+﻿using System;
+using IARA.Mobile.Application.Interfaces.Mappings;
 using IARA.Mobile.Pub.Domain.Entities.ScientificFishing;
-using System;
 
 namespace IARA.Mobile.Pub.Application.DTObjects.ScientificFishing.API
 {

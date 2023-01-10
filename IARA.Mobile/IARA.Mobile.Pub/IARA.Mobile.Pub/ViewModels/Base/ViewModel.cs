@@ -1,5 +1,4 @@
-﻿using IARA.Mobile.Application.Interfaces.Transactions;
-using IARA.Mobile.Pub.Application.Interfaces.Transactions;
+﻿using IARA.Mobile.Pub.Application.Interfaces.Transactions;
 using TechnoLogica.Xamarin.ViewModels.Base;
 using Xamarin.Forms;
 

@@ -1,13 +1,13 @@
-﻿using IARA.Mobile.Domain.Enums;
-using IARA.Mobile.Insp.Application.DTObjects.Inspections;
-using IARA.Mobile.Insp.Base;
-using IARA.Mobile.Insp.Helpers;
-using IARA.Mobile.Insp.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Insp.Application.DTObjects.Inspections;
+using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Helpers;
+using IARA.Mobile.Insp.Models;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -46,10 +46,9 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             {
                 PermitLicenseModel model = new PermitLicenseModel
                 {
-                    Dto = f
+                    Dto = f,
+                    AddedByInspector = f.PermitLicenseId == null
                 };
-
-                model.AddedByInspector = f.PermitLicenseId == null;
                 model.Corresponds.Value = f.CheckValue?.ToString();
                 model.LicenseNumber.AssignFrom(f.LicenseNumber);
                 model.Description.AssignFrom(f.Description);
