@@ -2612,7 +2612,7 @@
         'edit-auan-violated-regulations': 'Нарушени разпоредби',
         'invoice-data': 'Данни за фактурата',
         'no-catches': 'Трябва да бъде добаве поне един улов',
-        'buyer-is-legal': 'Копувача е фирма',
+        'buyer-is-legal': 'Купувача е юридическо лице',
 
         'add-catch-ship-dialog-title': 'Добави кораб',
         'edit-catch-ship-dialog-title': 'Редактирай кораб',
