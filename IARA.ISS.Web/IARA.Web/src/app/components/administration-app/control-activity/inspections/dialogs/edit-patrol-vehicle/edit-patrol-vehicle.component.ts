@@ -134,7 +134,7 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
             countryControl: new FormControl({ value: undefined, disabled: true }, Validators.required),
             institutionControl: new FormControl({ value: undefined, disabled: true }, Validators.required),
             patrolVehicleTypeControl: new FormControl({ value: undefined, disabled: true }, Validators.required),
-            mapViewerControl: new FormControl(undefined, Validators.required),
+            mapViewerControl: new FormControl(undefined),
         });
 
         this.form.get('patrolVehicleRegisteredControl')!.valueChanges.subscribe({

@@ -15,8 +15,6 @@
     <tl:TLResponsiveTable.TableColumns>
         <tl:TLTableColumn Text="{rt:Translate LicenseNumber, Group=ShipChecks}"
                 Width="150" />
-        <tl:TLTableColumn Text="{rt:Translate PermitNumber, Group=ShipChecks}"
-                Width="125" />
         <tl:TLTableColumn Text="{rt:Translate Type, Group=ShipChecks}"
                 Width="200" />
         <tl:TLTableColumn Text="{rt:Translate From, Group=ShipChecks}"
@@ -54,9 +52,6 @@
                         </DataTrigger>
                     </ContentView.Triggers>
                 </ContentView>
-                <Label Text="{Binding Dto.PermitNumber}"
-                        LineBreakMode="WordWrap"
-                        VerticalOptions="Center" />
                 <Label Text="{Binding Dto.TypeName}"
                         LineBreakMode="WordWrap"
                         VerticalOptions="Center" />
@@ -170,12 +165,6 @@
                                     </tl:TLRichLabel>
                                     <tl:TLRichLabel LineBreakMode="WordWrap"
                                             VerticalOptions="Center">
-                                        <Span Text="{rt:Translate PermitNumber, Group=ShipChecks}" />
-                                        <Span Text=": " />
-                                        <Span Text="{Binding Dto.PermitNumber}" />
-                                    </tl:TLRichLabel>
-                                    <tl:TLRichLabel LineBreakMode="WordWrap"
-                                            VerticalOptions="Center">
                                         <Span Text="{rt:Translate Type, Group=ShipChecks}" />
                                         <Span Text=": " />
                                         <Span Text="{Binding Dto.TypeName}" />
@@ -210,7 +199,7 @@
     </tl:TLResponsiveTable.DefaultSectionItemTemplate>
     <tl:TLResponsivleTableChild TableLayout="Table" />
     <tl:TLResponsivleTableChild TableLayout="Sections"
-            QueryWidth="1500" />
+            QueryWidth="1300" />
     <tl:TLResponsiveTable.FooterView>
         <Button Text="{rt:Translate AddPermitLicense, Group=ShipChecks}"
                 Command="{Binding Add}"

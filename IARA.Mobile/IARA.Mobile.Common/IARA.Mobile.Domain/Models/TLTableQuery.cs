@@ -1,5 +1,5 @@
-﻿using SQLite;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using SQLite;
 
 namespace IARA.Mobile.Domain.Models
 {

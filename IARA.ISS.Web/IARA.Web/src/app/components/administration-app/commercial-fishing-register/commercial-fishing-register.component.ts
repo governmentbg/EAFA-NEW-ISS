@@ -56,12 +56,15 @@ import { LogBookPagePersonTypesEnum } from '@app/enums/log-book-page-person-type
 import { ChooseLogBookForRenewalComponent } from '@app/components/common-app/commercial-fishing/components/log-books/components/choose-log-book-for-renewal/choose-log-book-for-renewal.component';
 import { ChooseLogBookForRenewalDialogParams } from '@app/components/common-app/commercial-fishing/components/log-books/models/choose-log-book-for-renewal-dialog-params.model';
 import { LogBookForRenewalDTO } from '@app/models/generated/dtos/LogBookForRenewalDTO';
+import { OnActionEndedType, SimpleAuditMethod } from '@app/components/common-app/commercial-fishing/components/log-books/log-books.component';
+import { CommercialFishingRegisterCacheService } from './services/commercial-fishing-register-cache.service';
 
 type ThreeState = 'yes' | 'no' | 'both';
 
 @Component({
     selector: 'commercial-fishing-register',
-    templateUrl: './commercial-fishing-register.component.html'
+    templateUrl: './commercial-fishing-register.component.html',
+    providers: [CommercialFishingRegisterCacheService]
 })
 export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit, OnChanges {
     @Input()
@@ -105,6 +108,11 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
     public readonly canDeleteLogBooks: boolean;
     public readonly canRestoreLogBooks: boolean;
 
+    public readonly getLogBookAuditMethod!: SimpleAuditMethod;
+    public readonly logBookGroup: LogBookGroupsEnum = LogBookGroupsEnum.Ship;
+    public readonly logBookPagePersonTypesEnum: typeof LogBookPagePersonTypesEnum = LogBookPagePersonTypesEnum;
+    public readonly cacheService: CommercialFishingRegisterCacheService;
+
     @ViewChild(SearchPanelComponent)
     private searchpanel!: SearchPanelComponent;
 
@@ -135,7 +143,8 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         commonNomenclatures: CommonNomenclatures,
         logBookDialog: TLMatDialog<EditLogBookComponent>,
         snackbar: MatSnackBar,
-        chooseLogBookForRenewalDialog: TLMatDialog<ChooseLogBookForRenewalComponent>
+        chooseLogBookForRenewalDialog: TLMatDialog<ChooseLogBookForRenewalComponent>,
+        cacheService: CommercialFishingRegisterCacheService
     ) {
         this.translationService = translationService;
         this.confirmDialog = confirmDialog;
@@ -148,6 +157,9 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         this.logBookDialog = logBookDialog;
         this.snackbar = snackbar;
         this.chooseLogBookForRenewalDialog = chooseLogBookForRenewalDialog;
+        this.cacheService = cacheService;
+
+        this.getLogBookAuditMethod = this.service.getLogBookAudit.bind(this.service);
 
         this.canReadPermitRecords = permissions.has(PermissionsEnum.CommercialFishingPermitRegisterRead);
         this.canAddPermitRecords = permissions.has(PermissionsEnum.CommercialFishingPermitRegisterAddRecords);
@@ -301,6 +313,12 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             filtersMapper: this.mapFilters.bind(this)
         });
 
+        this.searchpanel.filtersChanged.subscribe({
+            next: () => {
+                this.cacheService.clearPermitLicenseLogBooksCache(); // clear all cache
+            }
+        });
+
         const isPerson: boolean | undefined = window.history.state?.isPerson;
         let legalId: number | undefined;
         let personId: number | undefined;
@@ -320,6 +338,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
 
         if (this.shipId === null || this.shipId === undefined) {
             this.gridManager.refreshData();
+            this.cacheService.clearPermitLicenseLogBooksCache(); // clear all cache
         }
     }
 
@@ -517,6 +536,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             next: (model: ApplicationDeliveryDTO | undefined) => {
                 if (model !== undefined) {
                     this.gridManager.refreshData();
+                    this.cacheService.clearPermitLicenseLogBooksCache(); // clear all cache
                 }
             }
         });
@@ -545,6 +565,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
                     this.service.deletePermit(permit.id, permit.pageCode!).subscribe({
                         next: () => {
                             this.gridManager.refreshData();
+                            this.cacheService.clearPermitLicenseLogBooksCache(); // clear all cache
                         }
                     });
                 }
@@ -559,6 +580,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
                     this.service.undoDeletePermit(permit.id, permit.pageCode!).subscribe({
                         next: () => {
                             this.gridManager.refreshData();
+                            this.cacheService.clearPermitLicenseLogBooksCache(); // clear all cache
                         }
                     });
                 }
@@ -566,140 +588,9 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         });
     }
 
-    public addLogBook(permitLicense: CommercialFishingPermitLicenseRegisterDTO): void {
-        const title: string = this.translationService.getValue('commercial-fishing.add-log-book-title');
-        
-        const data: EditLogBookDialogParamsModel = new EditLogBookDialogParamsModel({
-            logBookGroup: LogBookGroupsEnum.Ship,
-            isOnline: permitLicense.isForOnlineLogBooks,
-            ownerType: permitLicense.isSubmittedForPerson ? LogBookPagePersonTypesEnum.Person : LogBookPagePersonTypesEnum.LegalPerson,
-            isForPermitLicense: true,
-            registerId: permitLicense.id,
-            service: this.service as CommercialFishingAdministrationService
-        });
-
-        this.openLogBookDialog(title, data, undefined, false);
-    }
-
-    public addLogBookFromOldPermitLicense(permitLicenseId: number): void {
-        const dialog = this.chooseLogBookForRenewalDialog.openWithTwoButtons({
-            title: this.translationService.getValue('catches-and-sales.choose-log-book-for-renewal-title'),
-            componentData: new ChooseLogBookForRenewalDialogParams({
-                permitLicenseId: permitLicenseId,
-                service: this.service as CommercialFishingAdministrationService
-            }),
-            headerCancelButton: {
-                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
-            },
-            translteService: this.translationService,
-            TCtor: ChooseLogBookForRenewalComponent
-        }, '1500px');
-
-        dialog.subscribe({
-            next: (chosenLogBooks: LogBookForRenewalDTO[] | undefined) => {
-                if (chosenLogBooks !== null && chosenLogBooks !== undefined && chosenLogBooks.length > 0) {
-                    this.gridManager.refreshData();
-                }
-            }
-        });
-    }
-
-    public editLogBook(permitLicenseId: number, logBook: CommercialFishingLogbookRegisterDTO, viewMode: boolean = false): void {
-        let title: string = '';
-
-        if (viewMode) {
-            title = this.translationService.getValue('commercial-fishing.view-log-book-title');
-        }
-        else {
-            title = this.translationService.getValue('commercial-fishing.edit-log-book-title');
-        }
-
-        const data: EditLogBookDialogParamsModel = new EditLogBookDialogParamsModel({
-            logBookPermitLicenseId: logBook.id,
-            registerId: permitLicenseId,
-            logBookId: logBook.logbookId,
-            service: this.service as CommercialFishingAdministrationService,
-            readOnly: viewMode,
-            logBookGroup: LogBookGroupsEnum.Ship,
-            ownerType: logBook.ownerType,
-            pagesRangeError: false,
-            isOnline: logBook.isOnline!
-        });
-
-        const headerAuditBtn: IHeaderAuditButton = {
-            id: logBook.logbookId!,
-            getAuditRecordData: this.service.getLogBookAudit.bind(this.service),
-            tableName: 'LogBook'
-        };
-
-        this.openLogBookDialog(title, data, headerAuditBtn, viewMode);
-    }
-
-    public deleteLogBook(logBookRegister: CommercialFishingLogbookRegisterDTO, permitLicense: CommercialFishingPermitLicenseRegisterDTO,): void {
-        const title: string = this.translationService.getValue('commercial-fishing.delete-log-book');
-        const message: string = `${this.translationService.getValue('commercial-fishing.confirm-delete-log-book-message')}: ${logBookRegister.number}`;
-
-        this.confirmDialog.open({
-            title: title,
-            message: message,
-            okBtnLabel: this.translationService.getValue('commercial-fishing.delete')
-        }).subscribe({
-            next: (ok: boolean) => {
-                if (ok) {
-                    this.service.deleteLogBookPermitLicense(logBookRegister.id!).subscribe({
-                        next: () => {
-                            this.gridManager.refreshData();
-                        },
-                        error: (httpErrorResponse: HttpErrorResponse) => {
-                            if ((httpErrorResponse.error as ErrorModel)?.code === ErrorCode.LogBookHasSubmittedPages) {
-                                const message: string = this.translationService.getValue('commercial-fishing.cannot-delete-log-book-with-submitted-pages');
-                                this.snackbar.open(message, undefined, {
-                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                                });
-                            }
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    public restoreLogBook(logBookRegister: CommercialFishingLogbookRegisterDTO, permitLicense: CommercialFishingPermitLicenseRegisterDTO,): void {
-        this.confirmDialog.open().subscribe({
-            next: (ok: boolean) => {
-                if (ok) {
-                    this.service.undoDeleteLogBookPermitLicense(logBookRegister.id!).subscribe({
-                        next: () => {
-                            this.gridManager.refreshData();
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    private openLogBookDialog(title: string, data: EditLogBookDialogParamsModel, headerAuditBtn: IHeaderAuditButton | undefined, viewMode: boolean): void {
-        const dialog = this.logBookDialog.openWithTwoButtons({
-            title: title,
-            TCtor: EditLogBookComponent,
-            headerAuditButton: headerAuditBtn,
-            headerCancelButton: {
-                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
-            },
-            componentData: data,
-            translteService: this.translationService,
-            disableDialogClose: true,
-            viewMode: viewMode
-        }, '1200px');
-
-        dialog.subscribe({
-            next: (result: LogBookEditDTO | undefined) => {
-                if (result !== null && result !== undefined) {
-                    this.gridManager.refreshData();
-                }
-            }
-        });
+    public onLogBookActionEnded(actionType: OnActionEndedType): void {
+        this.gridManager.refreshData(); // refresh grid
+        this.cacheService.clearPermitLicenseLogBooksCache(); // clear all cache
     }
 
     private openPermitDialog(data: DialogParamsModel, title: string, auditButton: IHeaderAuditButton | undefined, viewMode: boolean, isSuspended: boolean): void {
@@ -751,6 +642,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         dialog.subscribe((entry?: CommercialFishingEditDTO) => {
             if (entry !== null && entry !== undefined) {
                 this.gridManager.refreshData();
+                this.cacheService.clearPermitLicenseLogBooksCache(); // clear all cache
             }
         });
     }

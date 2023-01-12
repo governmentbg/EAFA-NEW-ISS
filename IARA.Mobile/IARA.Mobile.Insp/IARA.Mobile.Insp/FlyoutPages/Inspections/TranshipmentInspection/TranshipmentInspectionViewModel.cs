@@ -1,19 +1,20 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using IARA.Mobile.Shared.Views;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
@@ -80,6 +81,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
             }
         }
 
+        public TLForwardSections Sections { get; set; }
+
         public InspectionGeneralInfoViewModel InspectionGeneralInfo { get; }
         public PatrolVehiclesViewModel PatrolVehicles { get; }
         public FishingShipViewModel InspectedShip { get; }
@@ -101,8 +104,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
 
         [MaxLength(4000)]
         public ValidState AcceptingShipCaptainComment { get; set; }
-
-        public Action ExpandAll { get; set; }
 
         public override void OnDisappearing()
         {
@@ -142,7 +143,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
             List<SelectNomenclatureDto> associations = nomTransaction.GetAssociations();
             List<SelectNomenclatureDto> turbotSizeGroups = nomTransaction.GetTurbotSizeGroups();
 
-            InspectionGeneralInfo.Init();
+            await InspectionGeneralInfo.Init();
             InspectedShip.Init(countries, vesselTypes, catchAreas);
             InspectedShipCatches.Init(fishTypes, catchTypes, catchAreas, turbotSizeGroups);
             AcceptingShip.Init(countries, vesselTypes, catchAreas);
@@ -204,7 +205,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
 
                 InspectionState = Edit.InspectionState;
 
-                InspectionGeneralInfo.OnEdit(Edit);
+                await InspectionGeneralInfo.OnEdit(Edit);
                 InspectionFiles.OnEdit(Edit);
                 Signatures.OnEdit(Edit.Files, fileTypes);
                 PatrolVehicles.OnEdit(Edit.PatrolVehicles);
@@ -242,7 +243,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
 
             if (ActivityType == ViewActivityType.Review)
             {
-                ExpandAll();
+                foreach (SectionView item in Sections.Children.OfType<SectionView>())
+                {
+                    item.IsExpanded = true;
+                }
             }
 
             await TLLoadingHelper.HideFullLoadingScreen();
@@ -255,7 +259,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
 
         private Task OnFinish()
         {
-            return InspectionSaveHelper.Finish(ExpandAll, Validation, Save);
+            return InspectionSaveHelper.Finish(Sections, Validation, Save);
         }
 
         private Task Save(SubmitType submitType)
@@ -267,7 +271,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
                     InspectionTransboardingDto dto = new InspectionTransboardingDto
                     {
                         Id = Edit?.Id ?? 0,
-                        ReportNum = Edit?.ReportNum,
+                        ReportNum = InspectionGeneralInfo.BuildReportNum(),
                         LocalIdentifier = inspectionIdentifier,
                         Files = files,
                         InspectionState = submitType == SubmitType.Draft || submitType == SubmitType.Edit ? InspectionState.Draft : InspectionState.Submitted,

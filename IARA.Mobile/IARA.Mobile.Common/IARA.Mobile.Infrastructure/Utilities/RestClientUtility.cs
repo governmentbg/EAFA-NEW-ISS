@@ -1,10 +1,4 @@
-﻿using IARA.Mobile.Application;
-using IARA.Mobile.Application.Interfaces.Factories;
-using IARA.Mobile.Application.Interfaces.Utilities;
-using IARA.Mobile.Domain.Enums;
-using IARA.Mobile.Domain.Models;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
@@ -12,6 +6,12 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using IARA.Mobile.Application;
+using IARA.Mobile.Application.Interfaces.Factories;
+using IARA.Mobile.Application.Interfaces.Utilities;
+using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Domain.Models;
+using Newtonsoft.Json;
 
 namespace IARA.Mobile.Infrastructure.Utilities
 {

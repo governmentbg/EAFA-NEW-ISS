@@ -4,6 +4,9 @@ using System.Globalization;
 
 namespace IARA.Mobile.Application.Attributes
 {
+    /// <summary>
+    /// Makes sure that the value is a number between or equal to the <see cref="Minimum"/> and <see cref="Maximum"/>.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class TLRangeAttribute : ValidationAttribute
     {
@@ -32,9 +35,9 @@ namespace IARA.Mobile.Application.Attributes
             string s = value as string;
 
             return string.IsNullOrEmpty(s)
-                || double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out double res)
-                    && (_isInt && res % 1 == 0 || !_isInt) // Check if it has a floating point
-                    && Maximum >= res && res >= Minimum;
+                || (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out double res)
+                    && ((_isInt && res % 1 == 0) || !_isInt) // Check if it has a floating point
+                    && Maximum >= res && res >= Minimum);
         }
 
         public override string FormatErrorMessage(string name)

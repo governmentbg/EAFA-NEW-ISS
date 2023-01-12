@@ -1,9 +1,9 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Pub.ViewModels.Base;
 using IARA.Mobile.Pub.Views.FlyoutPages.Payments;
 using IARA.Mobile.Shared.Menu;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 

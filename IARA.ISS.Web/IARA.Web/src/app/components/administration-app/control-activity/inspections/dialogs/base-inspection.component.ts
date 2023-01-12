@@ -69,10 +69,13 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
         }
 
         this.isSaving = true;
-        this.form.markAsTouched();
+        this.form.markAllAsTouched();
         this.form.updateValueAndValidity({ onlySelf: true });
-        this.validityCheckerGroup.validate();
-        this.isSaving = false;
+
+        setTimeout(() => {
+            this.validityCheckerGroup.validate();
+            this.isSaving = false;
+        });
 
         if (this.form.valid) {
             this.fillModel();

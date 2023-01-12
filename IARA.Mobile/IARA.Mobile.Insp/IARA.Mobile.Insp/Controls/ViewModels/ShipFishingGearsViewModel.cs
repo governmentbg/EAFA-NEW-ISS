@@ -1,9 +1,8 @@
-﻿using IARA.Mobile.Insp.Base;
+﻿using System.ComponentModel.DataAnnotations;
+using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Models;
-using System.ComponentModel.DataAnnotations;
 using TechnoLogica.Xamarin.Helpers;
-using TechnoLogica.Xamarin.ViewModels.Models;
 
 namespace IARA.Mobile.Insp.Controls.ViewModels
 {

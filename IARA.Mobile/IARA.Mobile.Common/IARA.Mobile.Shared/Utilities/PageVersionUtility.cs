@@ -1,10 +1,10 @@
-﻿using IARA.Mobile.Application.Interfaces.Database;
+﻿using System;
+using System.Linq;
+using IARA.Mobile.Application.Interfaces.Database;
 using IARA.Mobile.Application.Interfaces.Factories;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Shared.Extensions;
-using System;
-using System.Linq;
 
 namespace IARA.Mobile.Shared.Utilities
 {
@@ -26,12 +26,10 @@ namespace IARA.Mobile.Shared.Utilities
 
             int buildNumber = VersionExtensions.GetBuilderNumber();
 
-            using (IDbContext context = _builder.CreateContext())
-            {
-                return !context.TLTable<NVersion>()
-                    .Where(f => f.Name == pageName && f.OSType == platform && f.Version > buildNumber)
-                    .Any();
-            }
+            using IDbContext context = _builder.CreateContext();
+            return !context.TLTable<NVersion>()
+                .Where(f => f.Name == pageName && f.OSType == platform && f.Version > buildNumber)
+                .Any();
         }
     }
 }

@@ -143,4 +143,3 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
     }
 }
 
-

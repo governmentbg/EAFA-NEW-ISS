@@ -1,5 +1,5 @@
-﻿using IARA.Mobile.Shared.Helpers;
-using System.Windows.Input;
+﻿using System.Windows.Input;
+using IARA.Mobile.Shared.Helpers;
 using TechnoLogica.Xamarin.Helpers;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;

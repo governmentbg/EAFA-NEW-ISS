@@ -1,9 +1,9 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System.Collections.Generic;
+using System.Linq;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.Interfaces.Transactions;
 using IARA.Mobile.Pub.Application.Interfaces.Database;
 using IARA.Mobile.Pub.Application.Transactions.Base;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace IARA.Mobile.Pub.Application.Transactions
 {

@@ -28,6 +28,10 @@ import { TLValidators } from '@app/shared/utils/tl-validators';
 import { RangeInputData } from '@app/shared/components/input-controls/tl-range-input/range-input.component';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
+import { GenerateMarksComponent } from './generate-marks/generate-marks.component';
+import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
+import { MarksRangeData } from '../models/marks-range.model';
 
 const MARK_NUMBERS_RANGE_WARNING_DIFFERENCE = 100;
 
@@ -72,9 +76,6 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     public showPingersTable: boolean = false;
     public selectedGearTypeIsPoundNet: boolean = false;
 
-    public markNumbersRangeControl: FormControl;
-    public readonly markNumbersRangeMinValue: number = 0;
-
     @ViewChild('marksTable')
     private marksTable!: TLDataTableComponent;
 
@@ -89,21 +90,23 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     private readonly loader: FormControlDataLoader;
     private readonly confirmationDialog: TLConfirmDialog;
     private readonly translateService: FuseTranslationLoaderService;
+    private readonly generateMarksDialog: TLMatDialog<GenerateMarksComponent>;
 
     public constructor(
         @Self() @Optional() ngControl: NgControl,
         commonNomenclatures: CommonNomenclatures,
         confirmationDialog: TLConfirmDialog,
-        translateService: FuseTranslationLoaderService
+        translateService: FuseTranslationLoaderService,
+        generateMarksDialog: TLMatDialog<GenerateMarksComponent>
     ) {
         super(ngControl);
 
         this.nomenclatures = commonNomenclatures;
         this.confirmationDialog = confirmationDialog;
         this.translateService = translateService;
-        this.loader = new FormControlDataLoader(this.getNomenclatures.bind(this));
+        this.generateMarksDialog = generateMarksDialog;
 
-        this.markNumbersRangeControl = new FormControl();
+        this.loader = new FormControlDataLoader(this.getNomenclatures.bind(this));
     }
 
     public ngOnInit(): void {
@@ -142,6 +145,8 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         }
         else {
             this.form.markAllAsTouched();
+            this.form.updateValueAndValidity({ emitEvent: false });
+
             this.marksForm.updateValueAndValidity({ emitEvent: false });
             this.pingersForm.updateValueAndValidity({ emitEvent: false });
 
@@ -195,40 +200,24 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         }
     }
 
-    public generateMarksByRange(): void {
-        this.markNumbersRangeControl.markAsTouched();
-
-        const marksRange: RangeInputData | undefined = this.markNumbersRangeControl.value;
-
-        if (marksRange !== null
-            && marksRange !== undefined
-            && marksRange.start !== null
-            && marksRange.start !== undefined
-            && marksRange.end !== null
-            && marksRange.end !== undefined
-        ) {
-            const difference: number = marksRange.end - marksRange.start;
-
-            if (difference > MARK_NUMBERS_RANGE_WARNING_DIFFERENCE) {
-                const message: string = this.translateService.getValue('fishing-gears.generate-marks-from-range-confirm-message');
-                this.confirmationDialog.open({
-                    okBtnLabel: this.translateService.getValue('fishing-gears.generate'),
-                    title: this.translateService.getValue('fishing-gears.generate-marks-from-range-confirm-dialog-title'),
-                    message: `${message}: ${difference}`
-                }).subscribe({
-                    next: (ok: boolean) => {
-                        if (ok) {
-                            this.addMarksByRange(marksRange.start!, marksRange.end!);
-                            this.markNumbersRangeControl.reset();
-                        }
-                    }
-                });
+    public openGenerateMarksDialog(): void {
+        this.generateMarksDialog.openWithTwoButtons({
+            TCtor: GenerateMarksComponent,
+            translteService: this.translateService,
+            title: this.translateService.getValue('fishing-gears.generate-marks-dialog-title'),
+            headerCancelButton: { cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); } },
+            saveBtn: {
+                color: 'accent',
+                id: 'save',
+                translateValue: 'fishing-gears.generate-mark-numbers-btn-label'
             }
-            else {
-                this.addMarksByRange(marksRange.start!, marksRange.end!);
-                this.markNumbersRangeControl.reset();
+        }, '600px').subscribe({
+            next: (range: MarksRangeData | undefined) => {
+                if (range !== null && range !== undefined) {
+                    this.addMarksByRange(range.start, range.end);
+                }
             }
-        }
+        });
     }
 
     private addMarksByRange(start: number, end: number): void {
@@ -264,6 +253,9 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     public onEditedPinger(): void {
         if (this.isInspected) {
             this.onChanged(this.getValue());
+        }
+        else {
+            this.form.updateValueAndValidity({ emitEvent: false });
         }
     }
 
@@ -309,7 +301,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         });
 
         this.marksForm = new FormGroup({
-            numberControl: new FormControl(undefined, Validators.required),
+            numberControl: new FormControl(undefined, [Validators.required, TLValidators.number(0, undefined, 0)]),
             statusIdControl: new FormControl(undefined, Validators.required)
         });
 
@@ -321,6 +313,17 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         form.get('hasPingersControl')!.valueChanges.subscribe({
             next: (value: boolean) => {
                 this.showPingersTable = value;
+
+                if (this.isInspected) {
+                    if (this.showPingersTable) {
+                        this.form.setValidators(this.atLeastOnePingerValidator());
+                    }
+                    else {
+                        this.form.clearValidators();
+                    }
+
+                    this.form.updateValueAndValidity({ emitEvent: false, onlySelf: true });
+                }
             }
         });
 
@@ -551,6 +554,25 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             }
 
             return null;
+        }
+    }
+
+    private atLeastOnePingerValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === null || form === undefined) {
+                return null;
+            }
+
+            if (this.pingersTable === null || this.pingersTable === undefined) {
+                return null;
+            }
+
+            if (this.pingersTable.rows !== null && this.pingersTable.rows !== undefined && this.pingersTable.rows.length > 0) {
+                return null;
+            }
+            else {
+                return { 'noPingers': true };
+            }
         }
     }
 }

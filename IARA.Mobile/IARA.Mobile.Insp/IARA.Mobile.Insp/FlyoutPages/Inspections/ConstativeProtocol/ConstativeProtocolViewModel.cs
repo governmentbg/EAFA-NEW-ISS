@@ -1,11 +1,11 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Helpers;
 
 namespace IARA.Mobile.Insp.FlyoutPages.Inspections.ConstativeProtocol

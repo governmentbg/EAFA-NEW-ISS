@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Pub.Domain.Enums;
+﻿using System;
+using IARA.Mobile.Pub.Domain.Enums;
 using SQLite;
-using System;
 
 namespace IARA.Mobile.Pub.Domain.Entities.FishingTicket
 {

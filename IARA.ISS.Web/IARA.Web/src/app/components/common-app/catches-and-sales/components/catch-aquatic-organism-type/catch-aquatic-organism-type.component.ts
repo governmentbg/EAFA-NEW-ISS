@@ -66,9 +66,6 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
     public isMapPopoverOpened: boolean = false;
     public mapOptions: MapOptions | undefined;
 
-    @ViewChild(ValidityCheckerGroupDirective)
-    protected validityCheckerGroup!: ValidityCheckerGroupDirective;
-
     @ViewChild(TLMapViewerComponent)
     private mapViewer!: TLMapViewerComponent;
 

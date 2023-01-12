@@ -1,8 +1,8 @@
-﻿using IARA.Mobile.Application.Interfaces.Utilities;
+﻿using System;
+using System.IO;
+using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Insp.Application.Interfaces.Utilities;
 using IARA.Mobile.Insp.Helpers;
-using System;
-using System.IO;
 using Xamarin.Essentials;
 
 namespace IARA.Mobile.Insp.Utilities

@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Shared.Views;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Input;
+using IARA.Mobile.Shared.Views;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Controls;
 using TechnoLogica.Xamarin.Extensions;

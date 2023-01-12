@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Application.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
+using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Shared.Attributes;
-using System.ComponentModel.DataAnnotations;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Base;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;

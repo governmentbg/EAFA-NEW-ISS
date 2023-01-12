@@ -1,12 +1,12 @@
-﻿using IARA.Mobile.Application;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.ViewModels.Models;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Xamarin.Forms;
 
 namespace IARA.Mobile.Insp.Controls.ViewModels

@@ -231,6 +231,11 @@ export class InspectionsService extends BaseAuditService {
         return this.requestService.patch(this.area, this.controller, 'UndoDelete', null, { httpParams: params });
     }
 
+    public getNextReportNumber(userId: number): Observable<{ num: string }> {
+        const params = new HttpParams().append('userId', userId.toString());
+        return this.requestService.get(this.area, this.controller, 'GetNextReportNumber', { httpParams: params });
+    }
+
     public downloadFile(fileId: number, fileName: string): Observable<boolean> {
         const params = new HttpParams().append('id', fileId.toString());
         return this.requestService.download(this.area, this.controller, 'DownloadFile', fileName, { httpParams: params });

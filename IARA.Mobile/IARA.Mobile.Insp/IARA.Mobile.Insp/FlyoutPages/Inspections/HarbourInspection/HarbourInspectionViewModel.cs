@@ -1,19 +1,21 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using IARA.Mobile.Shared.Views;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
@@ -36,7 +38,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
             ShipChecks = new ShipChecksViewModel(this);
             ShipCatches = new ShipCatchesViewModel(this);
             ShipFishingGears = new ShipFishingGearsViewModel(this);
-            TransshippedShip = new InspectedShipDataViewModel(this, canPickLocation: false);
+            TransshippedShip = new InspectedShipDataViewModel(this, canPickLocation: false)
+            {
+                ShipSelected = CommandBuilder.CreateFrom<ShipSelectNomenclatureDto>(OnShipSelected),
+            };
             InspectionFiles = new InspectionFilesViewModel(this);
             TransshippedCatches = new CatchInspectionsViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
@@ -78,6 +83,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
             }
         }
 
+        public TLForwardSections Sections { get; set; }
+
         public InspectionGeneralInfoViewModel InspectionGeneralInfo { get; }
         public InspectionHarbourViewModel InspectionHarbour { get; }
         public FishingShipViewModel InspectedShip { get; }
@@ -114,8 +121,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
             set => SetProperty(ref _countries, value);
         }
 
-        public Action ExpandAll { get; set; }
-
         public override void OnDisappearing()
         {
             GlobalVariables.IsAddingInspection = false;
@@ -151,7 +156,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
             List<CatchZoneNomenclatureDto> catchZones = nomTransaction.GetCatchZones();
             List<SelectNomenclatureDto> turbotSizeGroups = nomTransaction.GetTurbotSizeGroups();
 
-            InspectionGeneralInfo.Init();
+            await InspectionGeneralInfo.Init();
             InspectedShip.Init(countries, nomTransaction.GetVesselTypes(), catchZones);
             ShipCatches.Init(fishTypes, catchTypes, catchZones, turbotSizeGroups);
             InspectionHarbour.Init(countries);
@@ -209,7 +214,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
 
                 InspectionState = Edit.InspectionState;
 
-                InspectionGeneralInfo.OnEdit(Edit);
+                await InspectionGeneralInfo.OnEdit(Edit);
                 InspectionFiles.OnEdit(Edit);
                 Signatures.OnEdit(Edit.Files, fileTypes);
                 TransshippedCatches.OnEdit(Edit.TransboardedCatchMeasures);
@@ -234,6 +239,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
 
                 if (Edit.SendingShipInspection?.InspectedShip != null)
                 {
+                    HasTranshipment = true;
                     TransshippedShip.OnEdit(Edit.SendingShipInspection.InspectedShip);
                 }
 
@@ -246,10 +252,34 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
 
             if (ActivityType == ViewActivityType.Review)
             {
-                ExpandAll();
+                foreach (SectionView item in Sections.Children.OfType<SectionView>())
+                {
+                    item.IsExpanded = true;
+                }
             }
 
             await TLLoadingHelper.HideFullLoadingScreen();
+        }
+
+        private void OnShipSelected(ShipSelectNomenclatureDto nom)
+        {
+            ShipDto chosenShip = NomenclaturesTransaction.GetShip(nom.Id);
+
+            if (chosenShip == null)
+            {
+                return;
+            }
+
+            TransshippedShip.InspectedShip = chosenShip;
+
+            TransshippedShip.CallSign.AssignFrom(chosenShip.CallSign);
+            TransshippedShip.MMSI.AssignFrom(chosenShip.MMSI);
+            TransshippedShip.CFR.AssignFrom(chosenShip.CFR);
+            TransshippedShip.ExternalMarkings.AssignFrom(chosenShip.ExtMarkings);
+            TransshippedShip.Name.AssignFrom(chosenShip.Name);
+            TransshippedShip.UVI.AssignFrom(chosenShip.UVI);
+            TransshippedShip.Flag.AssignFrom(chosenShip.FlagId, TransshippedShip.Flags);
+            TransshippedShip.ShipType.AssignFrom(chosenShip.ShipTypeId, TransshippedShip.ShipTypes);
         }
 
         private Task OnSaveDraft()
@@ -259,7 +289,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
 
         private Task OnFinish()
         {
-            return InspectionSaveHelper.Finish(ExpandAll, Validation, Save);
+            return InspectionSaveHelper.Finish(Sections, Validation, Save);
         }
 
         private Task Save(SubmitType submitType)
@@ -271,7 +301,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                     InspectionTransboardingDto dto = new InspectionTransboardingDto
                     {
                         Id = Edit?.Id ?? 0,
-                        ReportNum = Edit?.ReportNum,
+                        ReportNum = InspectionGeneralInfo.BuildReportNum(),
                         LocalIdentifier = inspectionIdentifier,
                         Files = files,
                         InspectionState = submitType == SubmitType.Draft || submitType == SubmitType.Edit ? InspectionState.Draft : InspectionState.Submitted,

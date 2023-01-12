@@ -1,7 +1,7 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System.Collections.Generic;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Pub.Application.DTObjects.AddressNomenclatures.LocalDb;
 using IARA.Mobile.Pub.Application.DTObjects.DocumentTypes.LocalDb;
-using System.Collections.Generic;
 
 namespace IARA.Mobile.Pub.Application.Interfaces.Transactions
 {

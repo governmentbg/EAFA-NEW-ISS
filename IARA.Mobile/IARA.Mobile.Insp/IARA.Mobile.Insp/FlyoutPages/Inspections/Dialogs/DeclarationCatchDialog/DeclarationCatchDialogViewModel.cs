@@ -247,6 +247,15 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
                     DeclarationType.AssignFrom(Edit.Dto.LogBookType?.ToString(), DeclarationTypes);
                     LogBookPageNum.AssignFrom(Edit.Dto.UnregisteredPageNum);
                     LogBookPageDate.AssignFrom(Edit.Dto.UnregisteredPageDate ?? DateTime.Now);
+
+                    SubjectType = Edit.Dto.LogBookType.Value;
+                }
+
+                if (Edit.Dto.LogBookType != null)
+                {
+                    SubjectType = Edit.Dto.LogBookType.Value;
+                    //OnlyUnregisteredDeclaration = false;
+                    //IsDeclarationRegistered = LogBookPages.Count > 0;
                 }
 
                 if (DialogType == ViewActivityType.Edit)

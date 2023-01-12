@@ -1,8 +1,8 @@
-﻿using IARA.Mobile.Domain.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using IARA.Mobile.Domain.Enums;
 using TechnoLogica.Xamarin.ResourceTranslator;
 
 namespace IARA.Mobile.Shared.ResourceTranslator

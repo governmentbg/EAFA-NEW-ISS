@@ -7,17 +7,13 @@ namespace IARA.Mobile.Shared.Converters
     {
         public override string ConvertTo(string value)
         {
-            switch (value)
+            return value switch
             {
-                case "Approved":
-                    return IconFont.Check;
-                case "Blocked":
-                    return IconFont.Xmark;
-                case "Requested":
-                    return IconFont.Clock;
-                default:
-                    return string.Empty;
-            }
+                "Approved" => IconFont.Check,
+                "Blocked" => IconFont.Xmark,
+                "Requested" => IconFont.Clock,
+                _ => string.Empty,
+            };
         }
     }
 }

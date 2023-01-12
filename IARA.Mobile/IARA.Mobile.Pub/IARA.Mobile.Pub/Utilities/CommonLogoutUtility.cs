@@ -1,8 +1,8 @@
-﻿using IARA.Mobile.Application.Interfaces.Utilities;
+﻿using System;
+using System.IO;
+using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Pub.Application.Interfaces.Utilities;
 using IARA.Mobile.Pub.Helpers;
-using System;
-using System.IO;
 using Xamarin.Essentials;
 
 namespace IARA.Mobile.Pub.Utilities

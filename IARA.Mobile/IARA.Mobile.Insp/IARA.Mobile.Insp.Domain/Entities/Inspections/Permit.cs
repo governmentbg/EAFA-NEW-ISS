@@ -13,5 +13,6 @@ namespace IARA.Mobile.Insp.Domain.Entities.Inspections
         public int TypeId { get; set; }
         public DateTime ValidFrom { get; set; }
         public DateTime? ValidTo { get; set; }
+        public bool IsSuspended { get; set; }
     }
 }

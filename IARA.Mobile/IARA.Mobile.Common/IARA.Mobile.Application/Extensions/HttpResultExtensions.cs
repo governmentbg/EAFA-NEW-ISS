@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Domain.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using IARA.Mobile.Domain.Models;
 
 namespace IARA.Mobile.Application.Extensions
 {

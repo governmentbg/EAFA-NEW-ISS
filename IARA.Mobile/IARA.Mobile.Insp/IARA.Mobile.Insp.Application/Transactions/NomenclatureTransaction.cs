@@ -1,4 +1,8 @@
-﻿using IARA.Mobile.Application;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Interfaces;
@@ -9,10 +13,6 @@ using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Application.Transactions.Base;
 using IARA.Mobile.Insp.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Insp.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 
 namespace IARA.Mobile.Insp.Application.Transactions
 {
@@ -477,7 +477,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     join person in context.Persons on permit.PersonCaptainId equals person.Id
                     where permit.ShipUid == shipUid
                     orderby permit.Id
-                    group permit.CaptainId by new
+                    group permit.Id by new
                     {
                         person.Id,
                         person.EgnLnc,
@@ -934,7 +934,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 return (
                     from permit in context.PermitLicenses
                     join type in context.NPermitLicenseTypes on permit.TypeId equals type.Id
-                    where permit.ShipUid == shipUid
+                    where !permit.IsSuspended && permit.ShipUid == shipUid
                     orderby permit.Id
                     select new PermitLicenseDto
                     {
@@ -957,7 +957,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 return (
                     from permit in context.Permits
                     join type in context.NPermitTypes on permit.TypeId equals type.Id
-                    where permit.ShipUid == shipUid
+                    where !permit.IsSuspended && permit.ShipUid == shipUid
                     orderby permit.Id
                     select new PermitDto
                     {
@@ -1068,6 +1068,8 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     where buyer.Id == id
                     select new InspectionSubjectPersonnelDto
                     {
+                        Id = person?.Id ?? legal?.Id,
+                        Type = InspectedPersonType.RegBuyer,
                         EntryId = buyer.Id,
                         CitizenshipId = person != null ? person.CountryId : legal.CountryId,
                         EgnLnc = person != null ? new EgnLncDto
@@ -1075,11 +1077,11 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             EgnLnc = person != null ? person.EgnLnc : legal.Eik,
                             IdentifierType = person.IdentifierType
                         } : null,
-                        Eik = legal != null ? legal.Eik : null,
+                        Eik = legal?.Eik,
                         IsLegal = legal != null,
                         FirstName = person != null ? person.FirstName : legal.Name,
-                        LastName = person != null ? person.LastName : null,
-                        MiddleName = person != null ? person.MiddleName : null,
+                        LastName = person?.LastName,
+                        MiddleName = person?.MiddleName,
                         RegisteredAddress = person != null && person.HasAddress
                             ? new InspectionSubjectAddressDto
                             {

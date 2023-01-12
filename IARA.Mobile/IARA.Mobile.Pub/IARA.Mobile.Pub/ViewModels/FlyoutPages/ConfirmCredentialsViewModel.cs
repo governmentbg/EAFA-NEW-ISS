@@ -1,14 +1,13 @@
-﻿using IARA.Mobile.Application;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Users;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Pub.ViewModels.Base;
 using IARA.Mobile.Pub.Views.FlyoutPages;
-using IARA.Mobile.Application.DTObjects.Users;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
@@ -86,7 +85,6 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
             {
                 await TLSnackbar.Show(TranslateExtension.Translator["CommonOffline/UnhandledError"], App.GetResource<Color>("ErrorColor"));
             }
-
         }
 
         private async Task OnConfirm()

@@ -15,6 +15,9 @@ type HTMLInputTypes = 'button' | 'checkbox' | 'color' | 'date' | 'datetime-local
 export class TLInputComponent extends BaseTLControl {
 
     @Input()
+    public prefixText?: string;
+
+    @Input()
     public appearance: MatFormFieldAppearance = 'legacy';
 
     @Input()

@@ -1,5 +1,6 @@
 ﻿using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
+using IARA.Mobile.Insp.Application.Interfaces.Utilities;
 using TechnoLogica.Xamarin.ViewModels.Base;
 using Xamarin.Forms;
 
@@ -15,5 +16,8 @@ namespace IARA.Mobile.Insp.Base
 
         protected ICurrentUser CurrentUser =>
             DependencyService.Resolve<ICurrentUser>();
+
+        protected ISettings SettingsUtility =>
+            DependencyService.Resolve<ISettings>();
     }
 }

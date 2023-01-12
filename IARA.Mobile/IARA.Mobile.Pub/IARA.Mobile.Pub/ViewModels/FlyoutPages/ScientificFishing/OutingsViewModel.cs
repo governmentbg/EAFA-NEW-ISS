@@ -1,11 +1,11 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Pub.Application.DTObjects.ScientificFishing.LocalDb;
 using IARA.Mobile.Pub.ViewModels.Base;
 using IARA.Mobile.Pub.Views.FlyoutPages.ScientificFishing;
 using IARA.Mobile.Shared.Menu;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;

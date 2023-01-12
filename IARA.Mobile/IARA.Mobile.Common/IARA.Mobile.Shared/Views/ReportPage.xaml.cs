@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Application.DTObjects.Reports;
+﻿using System.Collections.Generic;
+using IARA.Mobile.Application.DTObjects.Reports;
 using IARA.Mobile.Shared.ViewModels;
-using System.Collections.Generic;
 using Xamarin.Forms.Xaml;
 
 namespace IARA.Mobile.Shared.Views

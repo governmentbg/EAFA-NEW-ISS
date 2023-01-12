@@ -39,6 +39,7 @@ import { RecreationalFishingTicketComponent } from '../tickets/components/ticket
 import { EditTicketDialogParams } from './models/edit-ticket-dialog-params.model';
 import { TicketStatusEnum } from '@app/enums/ticket-status.enum';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
+import { AuthService } from '@app/shared/services/auth.service';
 
 type ThreeState = 'yes' | 'no' | 'both';
 
@@ -81,6 +82,8 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
     public canCancelRecords!: boolean;
     public canInspectAndCorrectRecords!: boolean;
 
+    public currentUserId!: number;
+
     public readonly ticketStatusEnum: typeof TicketStatusEnum = TicketStatusEnum;
     public readonly applicationStatusEnum: typeof ApplicationStatusesEnum = ApplicationStatusesEnum;
     public readonly applicationSourceTypeEnum: typeof ApplicationHierarchyTypesEnum = ApplicationHierarchyTypesEnum;
@@ -102,6 +105,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
     private paymentDataDialog: TLMatDialog<PaymentDataComponent>;
     private statusReasonDialog: TLMatDialog<EnterReasonComponent>;
     private editDialog: TLMatDialog<RecreationalFishingTicketComponent>;
+    private authService: AuthService;
 
     public constructor(
         translate: FuseTranslationLoaderService,
@@ -111,7 +115,8 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         permissions: PermissionsService,
         paymentDataDialog: TLMatDialog<PaymentDataComponent>,
         statusReasonDialog: TLMatDialog<EnterReasonComponent>,
-        editDialog: TLMatDialog<RecreationalFishingTicketComponent>
+        editDialog: TLMatDialog<RecreationalFishingTicketComponent>,
+        authService: AuthService
     ) {
         this.translate = translate;
         this.confirmDialog = confirmDialog;
@@ -121,6 +126,8 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         this.paymentDataDialog = paymentDataDialog;
         this.statusReasonDialog = statusReasonDialog;
         this.editDialog = editDialog;
+        this.authService = authService;
+        this.currentUserId = this.authService.userRegistrationInfo!.id!;
 
         this.buildForm();
     }

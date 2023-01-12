@@ -1,10 +1,10 @@
-﻿using Android.Net;
-using IARA.Mobile.Application.Interfaces.Factories;
-using Javax.Net.Ssl;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Android.Net;
+using IARA.Mobile.Application.Interfaces.Factories;
+using Javax.Net.Ssl;
 using Xamarin.Android.Net;
 
 namespace IARA.Mobile.Insp.Droid.Extensions

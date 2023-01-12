@@ -1,12 +1,12 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AutoMapper;
 using IARA.Mobile.Application.Interfaces.Transactions;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Shared.ResourceTranslator;
 using IARA.Mobile.Shared.ViewModels.Base;
-using System.Collections.Generic;
-using System.Linq;
 using Xamarin.Forms;
 
 namespace IARA.Mobile.Insp.Base

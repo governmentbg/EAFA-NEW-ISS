@@ -1,6 +1,8 @@
-﻿import { Component, Input, OnChanges, OnInit, Self, SimpleChanges, ViewChild } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnChanges, OnInit, Optional, Output, Self, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, NgControl, ValidationErrors, Validator } from '@angular/forms';
 import { forkJoin, Observable, Subscription } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { LogBookEditDTO } from '@app/models/generated/dtos/LogBookEditDTO';
@@ -29,12 +31,27 @@ import { ChooseLogBookForRenewalDialogParams } from './models/choose-log-book-fo
 import { ILogBookService } from '../edit-log-book/interfaces/log-book.interface';
 import { LogBookForRenewalDTO } from '@app/models/generated/dtos/LogBookForRenewalDTO';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
+import { OverlappingLogBooksParameters } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-parameters.model';
+import { OverlappingLogBooksDialogParamsModel } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-dialog-params.model';
+import { OverlappingLogBooksComponent } from '@app/shared/components/overlapping-log-books/overlapping-log-books.component';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { RequestProperties } from '@app/shared/services/request-properties';
+import { CommercialFishingRegisterCacheService } from '@app/components/administration-app/commercial-fishing-register/services/commercial-fishing-register-cache.service';
+import { ShipLogBookPageRegisterDTO } from '@app/models/generated/dtos/ShipLogBookPageRegisterDTO';
+import { AdmissionLogBookPageRegisterDTO } from '@app/models/generated/dtos/AdmissionLogBookPageRegisterDTO';
+import { TransportationLogBookPageRegisterDTO } from '@app/models/generated/dtos/TransportationLogBookPageRegisterDTO';
+import { FirstSaleLogBookPageRegisterDTO } from '@app/models/generated/dtos/FirstSaleLogBookPageRegisterDTO';
+import { AquacultureLogBookPageRegisterDTO } from '@app/models/generated/dtos/AquacultureLogBookPageRegisterDTO';
+import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
+import { LogBooksCacheService } from './services/log-books-cache.service';
 
 export type SimpleAuditMethod = (id: number) => Observable<SimpleAuditDTO>;
+export type OnActionEndedType = 'add' | 'edit' | 'delete' | 'remove' | 'restore';
 
 @Component({
     selector: 'log-books',
-    templateUrl: './log-books.component.html'
+    templateUrl: './log-books.component.html',
+    providers: [LogBooksCacheService]
 })
 export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | CommercialFishingLogBookEditDTO[]> implements OnInit, OnChanges {
     @Input()
@@ -65,10 +82,16 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     public permitLicenseId: number | undefined;
 
     /**
-     * Service needs to be provided when the `choose log book for renewal` funcionallity is wanted
+     * Service needs to be provided when the `choose log book for renewal` funcionallity is wanted or when there is NO ngControl
      * */
     @Input()
     public service: ILogBookService | undefined;
+
+    /**
+     * Needed only when there is NO ngControl
+     * */
+    @Input()
+    public permitLicenseLogBookCacheService: CommercialFishingRegisterCacheService | undefined;
 
     /**
      * Length of ship, for which are these log books (in cases of LogBookGroupsEnum = ship). 
@@ -79,6 +102,9 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
 
     @Input()
     public showInactivePagesAndDocuments: boolean = false;
+
+    @Output()
+    public onActionEnded: EventEmitter<OnActionEndedType> = new EventEmitter<OnActionEndedType>();
 
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
     public readonly logBookGroupsEnum: typeof LogBookGroupsEnum = LogBookGroupsEnum;
@@ -98,14 +124,20 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     private readonly loader: FormControlDataLoader;
     private readonly nomenclaturesService: CommonNomenclatures;
     private readonly chooseLogBookForRenewalDialog: TLMatDialog<ChooseLogBookForRenewalComponent>;
+    private readonly overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
+    private readonly snackbar: MatSnackBar;
+    private readonly logBooksCacheService: LogBooksCacheService;
 
     public constructor(
-        @Self() ngControl: NgControl,
+        @Self() @Optional() ngControl: NgControl,
         translate: FuseTranslationLoaderService,
         confirmDialog: TLConfirmDialog,
         editLogBookDialog: TLMatDialog<EditLogBookComponent>,
         nomenclaturesService: CommonNomenclatures,
-        chooseLogBookForRenewalDialog: TLMatDialog<ChooseLogBookForRenewalComponent>
+        chooseLogBookForRenewalDialog: TLMatDialog<ChooseLogBookForRenewalComponent>,
+        overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>,
+        snackbar: MatSnackBar,
+        logBooksCacheService: LogBooksCacheService
     ) {
         super(ngControl, false);
 
@@ -114,6 +146,9 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
         this.editLogBookDialog = editLogBookDialog;
         this.nomenclaturesService = nomenclaturesService;
         this.chooseLogBookForRenewalDialog = chooseLogBookForRenewalDialog;
+        this.overlappingLogBooksDialog = overlappingLogBooksDialog;
+        this.snackbar = snackbar;
+        this.logBooksCacheService = logBooksCacheService;
 
         this.loader = new FormControlDataLoader(this.getNomenclatures.bind(this));
     }
@@ -121,6 +156,37 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     public ngOnInit(): void {
         this.initCustomFormControl();
         this.loader.load();
+
+        if (!this.ngControl) {
+            if (this.service === null || this.service === undefined) {
+                throw new Error('The service @Input() must be provided, when there si NO ngControl');
+            }
+
+            let cachedLogBooks: CommercialFishingLogBookEditDTO[] | undefined = undefined;
+
+            if (this.permitLicenseLogBookCacheService !== null && this.permitLicenseLogBookCacheService !== undefined) {
+                cachedLogBooks = this.permitLicenseLogBookCacheService.getLogBooks(this.permitLicenseId!);
+            }
+
+            if (cachedLogBooks !== null && cachedLogBooks !== undefined) {
+                this.writeValue(cachedLogBooks.slice());
+            }
+            else {
+                this.service!.getLogBooksForTable(this.permitLicenseId!).subscribe({
+                    next: (logBooks: CommercialFishingLogBookEditDTO[]) => {
+                        if (this.permitLicenseLogBookCacheService !== null && this.permitLicenseLogBookCacheService !== undefined) {
+                            this.permitLicenseLogBookCacheService?.cacheLogBooks(this.permitLicenseId!, logBooks);
+                        }
+                        else {
+                            console.warn('There is no cache service provided for log-books component! This means that the log books will not be cached...');
+                        }
+
+                        this.writeValue(logBooks.slice());
+                    }
+                });
+            }
+
+        }
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
@@ -144,20 +210,26 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                 if (this.logBooks.length > 0 && this.logBooks[0] instanceof CommercialFishingLogBookEditDTO) {
                     this.hasLogBooksForRenewal = (this.logBooks as CommercialFishingLogBookEditDTO[]).some(x => x.isForRenewal);
 
-                    this.control.updateValueAndValidity();
-                    this.onChanged(this.getValue());
+                    if (this.ngControl) {
+                        this.control.updateValueAndValidity();
+                        this.onChanged(this.getValue());
+                    }
                 }
                 else {
-                    this.control.updateValueAndValidity();
-                    this.onChanged(this.getValue());
+                    if (this.ngControl) {
+                        this.control.updateValueAndValidity();
+                        this.onChanged(this.getValue());
+                    }
                 }
             });
         }
         else {
             this.logBooks = [];
 
-            this.control.updateValueAndValidity();
-            this.onChanged(this.getValue());
+            if (this.ngControl) {
+                this.control.updateValueAndValidity();
+                this.onChanged(this.getValue());
+            }
         }
     }
 
@@ -176,7 +248,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
 
     public validate(control: AbstractControl): ValidationErrors | null {
         const errors: ValidationErrors = {};
-        
+
         if (this.hasLogBooksForRenewal && this.logBookGroup === LogBookGroupsEnum.Ship) {
             this.checkLogBooksForRenewal();
 
@@ -185,7 +257,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
             }
         }
 
-        this.checkLocalLogBookRagnes();
+        this.checkLocalLogBookRanges();
 
         if (this.logBooks.some(x => x.hasError && x.isActive)) {
             errors['hasOverlappingRanges'] = true;
@@ -222,17 +294,54 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                     if (chosenLogBookIds.length > 0) {
                         this.service!.getLogBooksForRenewalByIds(chosenLogBookIds).subscribe({
                             next: (results: CommercialFishingLogBookEditDTO[]) => {
-                                this.logBooks.push(...results);
-                                this.hasLogBooksForRenewal = true;
+                                if (this.ngControl) {
+                                    this.handleAddLogBooksFromOldPermitLicenses(results);
 
-                                this.checkLogBooksForRenewal();
-                                this.checkLocalLogBookRagnes();
+                                    this.control.updateValueAndValidity();
+                                    this.control.markAsTouched();
+                                    this.onChanged(this.getValue());
+                                }
+                                else {
+                                    const renewedStatusId: number = this.logBookStatuses.find(x => x.code === LogBookStatusesEnum[LogBookStatusesEnum.Renewed])!.value!;
+                                    for (const logBook of results) {
+                                        let permitLicenseStartPageProposal: number;
 
-                                this.logBooks = this.logBooks.slice();
+                                        if (logBook.lastPageNumber !== null && logBook.lastPageNumber !== undefined && logBook.lastPageNumber > 0) {
+                                            permitLicenseStartPageProposal = logBook.lastPageNumber + 1;
+                                        }
+                                        else {
+                                            permitLicenseStartPageProposal = logBook.startPageNumber!;
+                                        }
 
-                                this.control.updateValueAndValidity();
-                                this.control.markAsTouched();
-                                this.onChanged(this.getValue());
+                                        if (permitLicenseStartPageProposal > logBook.endPageNumber!) {
+                                            permitLicenseStartPageProposal = logBook.endPageNumber!;
+                                        }
+
+                                        logBook.permitLicenseStartPageNumber = permitLicenseStartPageProposal;
+                                        logBook.permitLicenseEndPageNumber = logBook.endPageNumber;
+
+                                        logBook.statusId = renewedStatusId;
+                                    }
+
+                                    this.service!.addLogBooksFromOldPermitLicenses(results, this.permitLicenseId!, false).subscribe({
+                                        next: () => {
+                                            this.handleAddLogBooksFromOldPermitLicenses(results);
+                                            this.onActionEnded.emit('add');
+                                        },
+                                        error: (errorResponse: HttpErrorResponse) => {
+                                            const error = errorResponse.error as ErrorModel;
+
+                                            if (error?.code === ErrorCode.InvalidLogBookLicensePagesRange
+                                                || error?.code === ErrorCode.InvalidLogBookPagesRange
+                                            ) {
+                                                const logBookNumber: string = error!.messages[0];
+
+                                                const logBook: CommercialFishingLogBookEditDTO = results.find(x => x.logbookNumber === logBookNumber)!;
+                                                this.handleInvalidLogBookLicensePagesRangeError(logBook, false, logBook, error.messages[0], results);
+                                            }
+                                        }
+                                    });
+                                }
                             }
                         });
                     }
@@ -242,11 +351,215 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     }
 
     public addEditLogBook(logBook?: LogBookEditDTO | CommercialFishingLogBookEditDTO, viewMode: boolean = false): void {
+        if (logBook !== null && logBook !== undefined) { // edit
+            // first get log book relared pages and declarations (from in memory cache or the server)
+
+            const logBookType: LogBookTypesEnum = LogBookTypesEnum[this.logBookTypes.find(x => x.value === logBook.logBookTypeId)!.code as keyof typeof LogBookTypesEnum];
+            let hasCachedData: boolean = false;
+
+            switch (logBookType) {
+                case LogBookTypesEnum.Ship: {
+                    if (logBook instanceof CommercialFishingLogBookEditDTO) {
+                        logBook.shipPagesAndDeclarations = this.logBooksCacheService.getShipLogBookPages(logBook.logBookId!, this.permitLicenseId!);
+
+                        if (logBook.shipPagesAndDeclarations !== null && (logBook as CommercialFishingLogBookEditDTO).shipPagesAndDeclarations !== undefined) {
+                            hasCachedData = true;
+                        }
+                    }
+
+                } break;
+                case LogBookTypesEnum.FirstSale: {
+                    logBook.firstSalePages = this.logBooksCacheService.getFirstSaleLogBookPages(logBook.logBookId!);
+
+                    if (logBook.firstSalePages !== null && logBook.firstSalePages !== undefined) {
+                        hasCachedData = true;
+                    }
+                } break;
+                case LogBookTypesEnum.Admission: {
+                    switch (logBook.ownerType) {
+                        case LogBookPagePersonTypesEnum.RegisteredBuyer: {
+                            logBook.admissionPagesAndDeclarations = this.logBooksCacheService.getAdmissionLogBookPages(logBook.logBookId!);
+                        } break;
+                        case LogBookPagePersonTypesEnum.Person:
+                        case LogBookPagePersonTypesEnum.LegalPerson: {
+                            logBook.admissionPagesAndDeclarations = this.logBooksCacheService.getShipAdmissionLogBookPages(logBook.logBookId!, this.permitLicenseId!);
+                        } break;
+                    }
+
+                    if (logBook.admissionPagesAndDeclarations !== null && logBook.admissionPagesAndDeclarations !== undefined) {
+                        hasCachedData = true;
+                    }
+                } break;
+                case LogBookTypesEnum.Transportation: {
+                    switch (logBook.ownerType) {
+                        case LogBookPagePersonTypesEnum.RegisteredBuyer: {
+                            logBook.transportationPagesAndDeclarations = this.logBooksCacheService.getTransportationLogBookPages(logBook.logBookId!);
+                        } break;
+                        case LogBookPagePersonTypesEnum.Person:
+                        case LogBookPagePersonTypesEnum.LegalPerson: {
+                            logBook.transportationPagesAndDeclarations = this.logBooksCacheService.getShipTransportationLogBookPages(logBook.logBookId!, this.permitLicenseId!);
+                        } break;
+                    }
+                    
+                    if (logBook.transportationPagesAndDeclarations !== null && logBook.transportationPagesAndDeclarations !== undefined) {
+                        hasCachedData = true;
+                    }
+                } break;
+                case LogBookTypesEnum.Aquaculture: {
+                    logBook.aquaculturePages = this.logBooksCacheService.getAquacultureLogBookPages(logBook.logBookId!);
+
+                    if (logBook.aquaculturePages !== null && logBook.aquaculturePages !== undefined) {
+                        hasCachedData = true;
+                    }
+                } break;
+            }
+
+            if (!hasCachedData) { // Ако не са кеширани все още данните за този дневник, вземаме ги от сървъра и ги кешираме
+                if (logBook instanceof CommercialFishingLogBookEditDTO) {
+                    this.service!.getLogBookPagesAndDeclarations(logBook.logBookId!, this.permitLicenseId!, logBookType).subscribe({
+                        next: (pages: ShipLogBookPageRegisterDTO[] | AdmissionLogBookPageRegisterDTO[] | TransportationLogBookPageRegisterDTO[]) => {
+                            if (pages !== null && pages !== undefined && pages.length > 0) {
+                                if (pages[0] instanceof ShipLogBookPageRegisterDTO) {
+                                    logBook.shipPagesAndDeclarations = pages as ShipLogBookPageRegisterDTO[];
+                                    this.logBooksCacheService.cacheShipLogBookPages(logBook.logBookId!, this.permitLicenseId!, logBook.shipPagesAndDeclarations.slice());
+                                }
+                                else if (pages[0] instanceof AdmissionLogBookPageRegisterDTO) {
+                                    logBook.admissionPagesAndDeclarations = pages as AdmissionLogBookPageRegisterDTO[];
+                                    this.logBooksCacheService.cacheShipAdmissionLogBookPages(logBook.logBookId!, this.permitLicenseId!, logBook.admissionPagesAndDeclarations.slice());
+                                }
+                                else if (pages[0] instanceof TransportationLogBookPageRegisterDTO) {
+                                    logBook.transportationPagesAndDeclarations = pages as TransportationLogBookPageRegisterDTO[];
+                                    this.logBooksCacheService.cacheShipTransportationLogBookPages(logBook.logBookId!, this.permitLicenseId!, logBook.transportationPagesAndDeclarations.slice());
+                                }
+                            }
+
+                            this.handleOpenLogBookDialog(logBook, viewMode);
+                        }
+                    });
+                }
+                else {
+                    this.service!.getLogBookPages(logBook.logBookId!, logBookType).subscribe({
+                        next: (
+                            pages: AdmissionLogBookPageRegisterDTO[]
+                                | TransportationLogBookPageRegisterDTO[]
+                                | FirstSaleLogBookPageRegisterDTO[]
+                                | AquacultureLogBookPageRegisterDTO[]
+                        ) => {
+                            if (pages !== null && pages !== undefined && pages.length > 0) {
+                                if (pages[0] instanceof AdmissionLogBookPageRegisterDTO) {
+                                    logBook.admissionPagesAndDeclarations = pages;
+                                    this.logBooksCacheService.cacheAdmissionLogBookPages(logBook.logBookId!, logBook.admissionPagesAndDeclarations.slice());
+                                }
+                                else if (pages[0] instanceof TransportationLogBookPageRegisterDTO) {
+                                    logBook.transportationPagesAndDeclarations = pages;
+                                    this.logBooksCacheService.cacheTransportationLogBookPages(logBook.logBookId!, logBook.transportationPagesAndDeclarations.slice());
+                                }
+                                else if (pages[0] instanceof FirstSaleLogBookPageRegisterDTO) {
+                                    logBook.firstSalePages = pages;
+                                    this.logBooksCacheService.cacheFirstSaleLogBookPages(logBook.logBookId!, logBook.firstSalePages.slice());
+                                }
+                                else if (pages[0] instanceof AquacultureLogBookPageRegisterDTO) {
+                                    logBook.aquaculturePages = pages;
+                                    this.logBooksCacheService.cacheAquacultureLogBookPages(logBook.logBookId!, logBook.aquaculturePages.slice());
+                                }
+                            }
+
+                            this.handleOpenLogBookDialog(logBook, viewMode);
+                        }
+                    });
+                }
+            }
+            else {
+                this.handleOpenLogBookDialog(logBook, viewMode);
+            }
+        }
+        else { // add
+            this.handleOpenLogBookDialog(logBook, viewMode);
+        }
+    }
+
+    public removeLogBook(row: GridRow<CommercialFishingLogBookEditDTO>): void {
+        this.logBooks = this.logBooks.filter(x => x.logBookId !== row.data.logBookId);
+
+        this.checkLogBooksForRenewal();
+        this.checkLocalLogBookRanges();
+
+        if (this.ngControl) {
+            this.control.updateValueAndValidity();
+            this.control.markAsTouched();
+            this.onChanged(this.getValue());
+        }
+
+        this.onActionEnded.emit('remove');
+    }
+
+    public deleteLogBook(row: GridRow<LogBookEditDTO | CommercialFishingLogBookEditDTO>): void {
+        this.confirmDialog.open({
+            title: this.translate.getValue('catches-and-sales.delete-log-book-dialog-label'),
+            message: this.translate.getValue('catches-and-sales.confirm-delete-log-book-message'),
+            okBtnLabel: this.translate.getValue('catches-and-sales.delete-log-book-btn-label')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    if (this.ngControl) {
+                        this.handleDeleteLogBook(row);
+
+                        this.control.updateValueAndValidity();
+                        this.control.markAsTouched();
+                        this.onChanged(this.getValue());
+                    }
+                    else {
+                        this.service!.deleteLogBookPermitLicense((row.data as CommercialFishingLogBookEditDTO).logBookLicenseId!).subscribe({
+                            next: () => {
+                                this.handleDeleteLogBook(row);
+                                this.onActionEnded.emit('delete');
+                            },
+                            error: (httpErrorResponse: HttpErrorResponse) => {
+                                if ((httpErrorResponse.error as ErrorModel)?.code === ErrorCode.LogBookHasSubmittedPages) {
+                                    const message: string = this.translate.getValue('catches-and-sales.cannot-delete-log-book-with-submitted-pages');
+                                    this.snackbar.open(message, undefined, {
+                                        duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                        panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    public undoDeleteLogBook(row: GridRow<LogBookEditDTO | CommercialFishingLogBookEditDTO>): void {
+        this.confirmDialog.open().subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    if (this.ngControl) {
+                        this.handleUndoDeleteLogBook(row);
+
+                        this.control.updateValueAndValidity();
+                        this.control.markAsTouched();
+                        this.onChanged(this.getValue());
+                    }
+                    else {
+                        this.service!.undoDeleteLogBookPermitLicense((row.data as CommercialFishingLogBookEditDTO).logBookLicenseId!).subscribe({
+                            next: () => {
+                                this.handleUndoDeleteLogBook(row);
+                                this.onActionEnded.emit('restore');
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    private handleOpenLogBookDialog(logBook: LogBookEditDTO | CommercialFishingLogBookEditDTO | undefined, viewMode: boolean): void {
         let data: EditLogBookDialogParamsModel | undefined;
         let headerAuditBtn: IHeaderAuditButton | undefined;
         let title: string;
 
-        if (logBook !== undefined) {
+        if (logBook !== null && logBook !== undefined) { // edit
             data = new EditLogBookDialogParamsModel({
                 model: logBook,
                 readOnly: this.isReadonly || viewMode,
@@ -272,7 +585,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                 title = this.translate.getValue('catches-and-sales.edit-log-book-dialog-title');
             }
         }
-        else {
+        else { // add
             data = new EditLogBookDialogParamsModel({
                 logBookGroup: this.logBookGroup,
                 isOnline: this.isOnline,
@@ -294,92 +607,85 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
             translteService: this.translate,
             disableDialogClose: true,
             viewMode: this.isReadonly || viewMode
-        }, '1200px');
+        }, '1400px');
 
         dialog.subscribe((result: LogBookEditDTO | CommercialFishingLogBookEditDTO | null | undefined) => {
             if (result !== null && result !== undefined) {
+                let isEdit: boolean = false;
+
                 if (logBook !== null && logBook !== undefined) {
-                    result.hasError = false;
-                    logBook = result;
+                    isEdit = true;
                 }
                 else {
-                    this.logBooks.push(result);
+                    isEdit = false;
                 }
 
-                this.checkLogBooksForRenewal();
-                this.checkLocalLogBookRagnes();
+                if (this.ngControl) {
+                    this.handleAddOrEditLogBook(logBook, result);
 
-
-                this.logBooks = this.logBooks.slice();
-
-                this.control.updateValueAndValidity();
-                this.control.markAsTouched();
-                this.onChanged(this.getValue());
+                    this.control.updateValueAndValidity();
+                    this.control.markAsTouched();
+                    this.onChanged(this.getValue());
+                }
+                else {
+                    this.saveLogBook(logBook, isEdit, result, this.permitLicenseId!, false);
+                }
             }
         });
     }
 
-    public removeLogBook(row: GridRow<CommercialFishingLogBookEditDTO>): void {
-        this.logBooks = this.logBooks.filter(x => x.logBookId !== row.data.logBookId);
+    private handleAddLogBooksFromOldPermitLicenses(results: CommercialFishingLogBookEditDTO[]): void {
+        this.logBooks.push(...results);
+        this.hasLogBooksForRenewal = true;
 
         this.checkLogBooksForRenewal();
-        this.checkLocalLogBookRagnes();
+        this.checkLocalLogBookRanges();
 
-        this.control.updateValueAndValidity();
-        this.control.markAsTouched();
-        this.onChanged(this.getValue());
+        this.logBooks = this.logBooks.slice();
     }
 
-    public deleteLogBook(row: GridRow<LogBookEditDTO | CommercialFishingLogBookEditDTO>): void {
-        this.confirmDialog.open({
-            title: this.translate.getValue('catches-and-sales.delete-log-book-dialog-label'),
-            message: this.translate.getValue('catches-and-sales.confirm-delete-log-book-message'),
-            okBtnLabel: this.translate.getValue('catches-and-sales.delete-log-book-btn-label')
-        }).subscribe({
-            next: (ok: boolean) => {
-                if (ok) {
-                    if (row.data instanceof CommercialFishingLogBookEditDTO) {
-                        (this.logBooks as CommercialFishingLogBookEditDTO[]).find(x => x === row.data)!.permitLicenseIsActive = false;
-                    }
-                    else {
-                        (this.logBooks as LogBookEditDTO[]).find(x => x === row.data)!.logBookIsActive = false;
-                    }
+    private handleAddOrEditLogBook(logBook: LogBookEditDTO | CommercialFishingLogBookEditDTO | undefined, result: LogBookEditDTO | CommercialFishingLogBookEditDTO): void {
+        if (logBook !== null && logBook !== undefined) {
+            result.hasError = false;
+            logBook = result;
+        }
+        else {
+            this.logBooks.push(result);
+        }
 
-                    this.logBooksTable.softDelete(row);
+        this.checkLogBooksForRenewal();
+        this.checkLocalLogBookRanges();
 
-                    this.checkLogBooksForRenewal();
-                    this.checkLocalLogBookRagnes();
 
-                    this.control.updateValueAndValidity();
-                    this.control.markAsTouched();
-                    this.onChanged(this.getValue());
-                }
-            }
-        });
+        this.logBooks = this.logBooks.slice();
     }
 
-    public undoDeleteLogBook(row: GridRow<LogBookEditDTO | CommercialFishingLogBookEditDTO>): void {
-        this.confirmDialog.open().subscribe({
-            next: (ok: boolean) => {
-                if (ok) {
-                    if (row.data instanceof CommercialFishingLogBookEditDTO) {
-                        (this.logBooks as CommercialFishingLogBookEditDTO[]).find(x => x === row.data)!.permitLicenseIsActive = true;
-                    }
-                    else {
-                        (this.logBooks as LogBookEditDTO[]).find(x => x === row.data)!.logBookIsActive = true;
-                    }
+    private handleDeleteLogBook(row: GridRow<LogBookEditDTO | CommercialFishingLogBookEditDTO>): void {
+        if (row.data instanceof CommercialFishingLogBookEditDTO) {
+            (this.logBooks as CommercialFishingLogBookEditDTO[]).find(x => x === row.data)!.permitLicenseIsActive = false;
+        }
+        else {
+            (this.logBooks as LogBookEditDTO[]).find(x => x === row.data)!.logBookIsActive = false;
+        }
 
-                    this.logBooksTable.softUndoDelete(row);
+        this.logBooksTable.softDelete(row);
 
-                    this.checkLogBooksForRenewal();
-                    this.checkLocalLogBookRagnes();
+        this.checkLogBooksForRenewal();
+        this.checkLocalLogBookRanges();
+    }
 
-                    this.control.updateValueAndValidity();
-                    this.control.markAsTouched();
-                    this.onChanged(this.getValue());
-                }
-            }
-        });
+    private handleUndoDeleteLogBook(row: GridRow<LogBookEditDTO | CommercialFishingLogBookEditDTO>): void {
+        if (row.data instanceof CommercialFishingLogBookEditDTO) {
+            (this.logBooks as CommercialFishingLogBookEditDTO[]).find(x => x === row.data)!.permitLicenseIsActive = true;
+        }
+        else {
+            (this.logBooks as LogBookEditDTO[]).find(x => x === row.data)!.logBookIsActive = true;
+        }
+
+        this.logBooksTable.softUndoDelete(row);
+
+        this.checkLogBooksForRenewal();
+        this.checkLocalLogBookRanges();
     }
 
     private getNomenclatures(): Subscription {
@@ -407,7 +713,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
         }
     }
 
-    private checkLocalLogBookRagnes(): void {
+    private checkLocalLogBookRanges(): void {
         this.checkLogBooksForOverlappingLogBookRanges();
     }
 
@@ -463,6 +769,125 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
         }
 
         this.logBooks = this.logBooks.slice();
+    }
+
+    private handleInvalidLogBookLicensePagesRangeError(
+        logBook: CommercialFishingLogBookEditDTO | LogBookEditDTO | undefined,
+        isEdit: boolean,
+        model: CommercialFishingLogBookEditDTO | LogBookEditDTO,
+        logBookNumber: string,
+        logBookForRenew: CommercialFishingLogBookEditDTO[] | undefined
+    ): void {
+        let ranges: OverlappingLogBooksParameters[] = [];
+        let ignoreLogBookConflicts = false;
+
+        if (model instanceof CommercialFishingLogBookEditDTO) {
+            ranges.push(
+                new OverlappingLogBooksParameters({
+                    logBookId: model.logBookId,
+                    typeId: model.logBookTypeId,
+                    OwnerType: model.ownerType,
+                    startPage: model.permitLicenseStartPageNumber,
+                    endPage: model.permitLicenseEndPageNumber
+                })
+            );
+        }
+        else {
+            ranges.push(
+                new OverlappingLogBooksParameters({
+                    logBookId: model.logBookId,
+                    typeId: model.logBookTypeId,
+                    OwnerType: model.ownerType,
+                    startPage: model.startPageNumber,
+                    endPage: model.endPageNumber
+                })
+            );
+        }
+
+        const editDialogData: OverlappingLogBooksDialogParamsModel = new OverlappingLogBooksDialogParamsModel({
+            service: this.service,
+            logBookGroup: this.logBookGroup,
+            ranges: ranges
+        });
+
+        this.overlappingLogBooksDialog.open({
+            title: this.translate.getValue('catches-and-sales.overlapping-log-books-dialog-title'),
+            TCtor: OverlappingLogBooksComponent,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            componentData: editDialogData,
+            translteService: this.translate,
+            disableDialogClose: true,
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: 'common.cancel',
+            },
+            saveBtn: {
+                id: 'save',
+                color: 'error',
+                translateValue: 'catches-and-sales.overlapping-log-books-save-despite-conflicts'
+            }
+        }, '1300px').subscribe({
+            next: (save: boolean | undefined) => {
+                if (save) {
+                    ignoreLogBookConflicts = true;
+                    if (logBookForRenew) {
+                        this.service!.addLogBooksFromOldPermitLicenses(logBookForRenew, this.permitLicenseId!, ignoreLogBookConflicts).subscribe({
+                            next: () => {
+                                this.handleAddLogBooksFromOldPermitLicenses(logBookForRenew);
+                                this.onActionEnded.emit('add');
+                            }
+                        });
+                    }
+                    else {
+                        this.saveLogBook(logBook, isEdit, model, this.permitLicenseId!, ignoreLogBookConflicts);
+                    }   
+                }
+            }
+        });
+    }
+
+    private saveLogBook(
+        logBook: CommercialFishingLogBookEditDTO | LogBookEditDTO | undefined,
+        isEdit: boolean,
+        model: CommercialFishingLogBookEditDTO,
+        registerId: number,
+        ignoreLogBookConflicts: boolean
+    ): void {
+        if (isEdit) {
+            this.service!.editLogBook(model, registerId, ignoreLogBookConflicts).subscribe({
+                next: () => {
+                    this.handleAddOrEditLogBook(logBook, model);
+                    this.onActionEnded.emit('edit');
+                },
+                error: (errorResponse: HttpErrorResponse) => {
+                    const error = errorResponse.error as ErrorModel;
+                    if (error?.code === ErrorCode.InvalidLogBookLicensePagesRange
+                        || error?.code === ErrorCode.InvalidLogBookPagesRange
+                    ) {
+                        this.handleInvalidLogBookLicensePagesRangeError(logBook, isEdit, model, error.messages[0], undefined);
+                    }
+                }
+            });
+        }
+        else {
+            this.service!.addLogBook(model, registerId, ignoreLogBookConflicts).subscribe({
+                next: () => {
+                    this.handleAddOrEditLogBook(logBook, model);
+                    this.onActionEnded.emit('add');
+                },
+                error: (errorResponse: HttpErrorResponse) => {
+                    const error = errorResponse.error as ErrorModel;
+                    if (error?.code === ErrorCode.InvalidLogBookLicensePagesRange
+                        || error?.code === ErrorCode.InvalidLogBookPagesRange
+                    ) {
+                        this.handleInvalidLogBookLicensePagesRangeError(logBook, isEdit, model, error.messages[0], undefined);
+                    }
+                }
+            });
+        }
     }
 
     private closeEditLogBookDialogBtnClicked(closeFn: HeaderCloseFunction): void {

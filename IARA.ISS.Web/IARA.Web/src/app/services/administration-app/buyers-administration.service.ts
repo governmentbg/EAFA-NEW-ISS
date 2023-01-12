@@ -36,6 +36,11 @@ import { CommercialFishingLogBookEditDTO } from '@app/models/generated/dtos/Comm
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 import { PermissionsService } from '@app/shared/services/permissions.service';
 import { LogBookDetailDTO } from '@app/models/generated/dtos/LogBookDetailDTO';
+import { ShipLogBookPageRegisterDTO } from '@app/models/generated/dtos/ShipLogBookPageRegisterDTO';
+import { FirstSaleLogBookPageRegisterDTO } from '@app/models/generated/dtos/FirstSaleLogBookPageRegisterDTO';
+import { AdmissionLogBookPageRegisterDTO } from '@app/models/generated/dtos/AdmissionLogBookPageRegisterDTO';
+import { TransportationLogBookPageRegisterDTO } from '@app/models/generated/dtos/TransportationLogBookPageRegisterDTO';
+import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -74,7 +79,7 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
             }
 
             if (this.permissions.has(PermissionsEnum.BuyerLogBookRead)) {
-                return this.getLogBooksForTable(this.controller, buyerIds, request.filters).pipe(map((logBooks: LogBookDetailDTO[]) => {
+                return this.getLogBooksForTableHelper(this.controller, buyerIds, request.filters).pipe(map((logBooks: LogBookDetailDTO[]) => {
                     for (const logBook of logBooks) {
                         const found = entries.records.find((entry: BuyerDTO) => {
                             return entry.id === logBook.registerId;
@@ -180,6 +185,10 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
 
     // log books
 
+    public getLogBooksForTable(permitLicenseId: number): Observable<CommercialFishingLogBookEditDTO[]> {
+        throw new Error('Not implemented funcionality for buyer log book pages');
+    }
+
     public getLogBook(logBookId: number): Observable<LogBookEditDTO> {
         const params: HttpParams = new HttpParams().append('logBookId', logBookId.toString());
 
@@ -191,6 +200,40 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
 
     public getPermitLicenseLogBook(logBookPermitLicenseId: number): Observable<CommercialFishingLogBookEditDTO> {
         throw new Error('Should call getLogBook method instead');
+    }
+
+    public getLogBookPagesAndDeclarations(logBookId: number, permitLicenseId: number, logBookType: LogBookTypesEnum): Observable<ShipLogBookPageRegisterDTO[] | AdmissionLogBookPageRegisterDTO[] | TransportationLogBookPageRegisterDTO[]> {
+        throw new Error('Should call getLogBookPages method instead');
+    }
+
+    public getLogBookPages(logBookId: number, logBookType: LogBookTypesEnum): Observable<FirstSaleLogBookPageRegisterDTO[] | AdmissionLogBookPageRegisterDTO[] | TransportationLogBookPageRegisterDTO[]> {
+        const params: HttpParams = new HttpParams().append('logBookId', logBookId.toString());
+
+        let responseTypeCtr: (new (...args: any[]) => any) | undefined = undefined;
+        let requestMethod: string | undefined = undefined;
+
+        switch (logBookType) {
+            case LogBookTypesEnum.FirstSale:
+                responseTypeCtr = FirstSaleLogBookPageRegisterDTO;
+                requestMethod = 'GetFirstSaleLogBookPages';
+                break;
+            case LogBookTypesEnum.Admission:
+                responseTypeCtr = AdmissionLogBookPageRegisterDTO;
+                requestMethod = 'GetAdmissionLogBookPages';
+                break;
+            case LogBookTypesEnum.Transportation:
+                responseTypeCtr = TransportationLogBookPageRegisterDTO;
+                requestMethod = 'GetTransportationLogBookPages';
+                break;
+            default:
+                throw new Error(`invalid log book type (${LogBookTypesEnum[logBookType]}) of getLogBookPages of buyer log book.`);
+                break;
+        }
+
+        return this.requestService.get(this.area, this.controller, requestMethod, {
+            httpParams: params,
+            responseTypeCtr: responseTypeCtr
+        });
     }
 
     public addLogBook(model: LogBookEditDTO, registerId: number, ignoreLogBookConflicts: boolean): Observable<void> {
@@ -211,6 +254,10 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
         return this.requestService.put(this.area, this.controller, 'EditLogBook', model, {
             httpParams: params
         });
+    }
+
+    public addLogBooksFromOldPermitLicenses(logBooks: CommercialFishingLogBookEditDTO[], permitLicenseId: number, ignoreLogBookConflicts: boolean): Observable<void> {
+        throw new Error('Not implemented funcionality for buyer log book pages');
     }
 
     public getOverlappedLogBooks(parameters: OverlappingLogBooksParameters[]): Observable<RangeOverlappingLogBooksDTO[]> {
@@ -235,12 +282,20 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
         });
     }
 
+    public deleteLogBookPermitLicense(id: number): Observable<void> {
+        throw new Error('Should call deleteLogBook method instead.');
+    }
+
     public undoDeleteLogBook(logBookId: number): Observable<void> {
         const params: HttpParams = new HttpParams().append('id', logBookId.toString());
 
         return this.requestService.patch(this.area, this.controller, 'UndoDeleteLogBook', undefined, {
             httpParams: params
         });
+    }
+
+    public undoDeleteLogBookPermitLicense(id: number): Observable<void> {
+        throw new Error('Should call undoDeleteLogBook method instead.');
     }
 
     // audits
@@ -494,7 +549,7 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
 
     // helpers
 
-    private getLogBooksForTable(controller: string, buyerIds: number[], filters: BuyersFilters | undefined): Observable<LogBookDetailDTO[]> {
+    private getLogBooksForTableHelper(controller: string, buyerIds: number[], filters: BuyersFilters | undefined): Observable<LogBookDetailDTO[]> {
         return this.requestService.post(this.area, controller, 'GetLogBooksForTable', buyerIds, {
             responseTypeCtr: LogBookDetailDTO
         });

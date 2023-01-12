@@ -1,14 +1,14 @@
-﻿using IARA.Mobile.Application;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Windows.Input;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.ViewModels.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
@@ -100,6 +100,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public void OnEdit(InspectionSubjectPersonnelDto buyer, bool assignBuyer = true)
         {
+            SelectedBuyer = buyer;
+
             if (buyer != null)
             {
                 string name = buyer.FirstName
@@ -108,11 +110,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
                 if (assignBuyer)
                 {
-                    if (buyer.EntryId.HasValue)
+                    if (buyer.Id.HasValue)
                     {
                         Buyer.Value = new SelectNomenclatureDto
                         {
-                            Id = buyer.EntryId.Value,
+                            Id = buyer.Id.Value,
                             Code = buyer.Eik,
                             Name = name
                         };

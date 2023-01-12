@@ -73,7 +73,6 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
             return Task.CompletedTask;
         }
 
-
         protected override async Task<bool> CustomValidation()
         {
             if (Photo == null)

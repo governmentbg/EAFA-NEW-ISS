@@ -1,7 +1,7 @@
-﻿using IARA.Mobile.Application.Interfaces.Mappings;
-using IARA.Mobile.Pub.Application.DTObjects.ScientificFishing.LocalDb;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using IARA.Mobile.Application.Interfaces.Mappings;
+using IARA.Mobile.Pub.Application.DTObjects.ScientificFishing.LocalDb;
 
 namespace IARA.Mobile.Pub.Application.DTObjects.ScientificFishing.API
 {

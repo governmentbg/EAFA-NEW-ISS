@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Application.DTObjects.Common.API;
+﻿using System.Collections.Generic;
+using IARA.Mobile.Application.DTObjects.Common.API;
 using IARA.Mobile.Domain.Enums;
-using System.Collections.Generic;
 
 namespace IARA.Mobile.Application.DTObjects.Profile.API
 {

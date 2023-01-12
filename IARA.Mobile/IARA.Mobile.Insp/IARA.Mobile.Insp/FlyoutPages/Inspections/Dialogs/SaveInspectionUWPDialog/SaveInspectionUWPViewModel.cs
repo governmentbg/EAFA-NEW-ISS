@@ -1,7 +1,7 @@
-﻿using IARA.Mobile.Domain.Models;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using IARA.Mobile.Domain.Models;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Base;

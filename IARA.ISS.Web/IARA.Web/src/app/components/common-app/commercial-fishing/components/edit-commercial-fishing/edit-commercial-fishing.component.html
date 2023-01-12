@@ -10,7 +10,7 @@
                         title="{{ 'commercial-fishing.validity-panel' | tlTranslate }}"
                         [validityChecker]="form"
                         [validityCheckerExtraCondition]="form.errors?.addPermitIsSecondShipEventToday === null
-                                                         && form.errors?.addPermitIsSecondShipEventToday === undefined"
+                                                         || form.errors?.addPermitIsSecondShipEventToday === undefined"
                         tooltipResourceName="commercial-fishing.validity-panel-helper">
         <div fxFlex="100" fxLayout="column" fxLayoutGap="1em">
             <div fxFlex="100" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
@@ -555,7 +555,7 @@
                        formControlName="logBooksControl"
                        validityChecker
                        [isReadonly]="isReadonly || viewMode"
-                       [getLogBookSimpleAuditMethod]="service.getLogBookAudit.bind(service)"
+                       [getLogBookSimpleAuditMethod]="getLogBookAuditMethod"
                        [logBookGroup]="logBookGroup"
                        [hasRenewalValidator]="true"
                        [isOnline]="onlyOnlineLogBooks"

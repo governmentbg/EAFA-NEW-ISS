@@ -1,9 +1,9 @@
-﻿using IARA.Mobile.Domain.Enums;
-using IARA.Mobile.Pub.ViewModels.Base;
-using IARA.Mobile.Pub.Views.FlyoutPages;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Pub.ViewModels.Base;
+using IARA.Mobile.Pub.Views.FlyoutPages;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;

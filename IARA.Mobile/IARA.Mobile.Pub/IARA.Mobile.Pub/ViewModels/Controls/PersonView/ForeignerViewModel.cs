@@ -1,8 +1,8 @@
-﻿using IARA.Mobile.Domain.Interfaces;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using IARA.Mobile.Domain.Interfaces;
 using IARA.Mobile.Pub.Application.DTObjects.DocumentTypes.LocalDb;
 using IARA.Mobile.Pub.ViewModels.Base;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.ViewModels.Models;
 

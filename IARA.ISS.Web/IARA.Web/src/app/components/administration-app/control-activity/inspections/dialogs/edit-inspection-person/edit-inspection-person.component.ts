@@ -189,6 +189,7 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
             startDate: generalInfo.startDate,
             endDate: generalInfo.endDate,
             inspectors: generalInfo.inspectors,
+            reportNum: generalInfo.reportNum,
             files: this.form.get('filesControl')!.value,
             actionsTaken: additionalInfo?.actionsTaken,
             administrativeViolation: additionalInfo?.administrativeViolation === true,

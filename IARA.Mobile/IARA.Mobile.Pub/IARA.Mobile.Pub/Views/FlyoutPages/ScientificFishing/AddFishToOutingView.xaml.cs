@@ -1,7 +1,7 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System.Collections.Generic;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Pub.Application.DTObjects.ScientificFishing.LocalDb;
 using IARA.Mobile.Pub.ViewModels.FlyoutPages.ScientificFishing;
-using System.Collections.Generic;
 using TechnoLogica.Xamarin.Controls;
 using Xamarin.Forms.Xaml;
 

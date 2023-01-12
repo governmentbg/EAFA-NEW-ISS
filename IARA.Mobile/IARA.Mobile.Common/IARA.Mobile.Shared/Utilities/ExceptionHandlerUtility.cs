@@ -1,14 +1,14 @@
-﻿using IARA.Mobile.Application;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Exceptions;
 using IARA.Mobile.Application.Interfaces.Database;
 using IARA.Mobile.Application.Interfaces.Factories;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Entities.Exceptions;
 using IARA.Mobile.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace IARA.Mobile.Shared.Utilities
@@ -103,17 +103,15 @@ namespace IARA.Mobile.Shared.Utilities
 
                     if (builder.DatabaseExists)
                     {
-                        using (IDbContext context = builder.CreateContext())
+                        using IDbContext context = builder.CreateContext();
+                        context.ErrorLogs.Add(new ErrorLog
                         {
-                            context.ErrorLogs.Add(new ErrorLog
-                            {
-                                ExceptionSource = dto.ExceptionSource,
-                                Level = dto.Level,
-                                LogDate = dto.LogDate.Value,
-                                Message = dto.Message,
-                                StackTrace = dto.StackTrace
-                            });
-                        }
+                            ExceptionSource = dto.ExceptionSource,
+                            Level = dto.Level,
+                            LogDate = dto.LogDate.Value,
+                            Message = dto.Message,
+                            StackTrace = dto.StackTrace
+                        });
                     }
                 }
                 else

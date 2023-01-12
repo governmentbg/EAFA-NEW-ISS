@@ -1,5 +1,5 @@
-﻿using IARA.Mobile.Domain.Models;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using IARA.Mobile.Domain.Models;
 
 namespace IARA.Mobile.Application.Interfaces.Utilities
 {
@@ -146,7 +146,6 @@ namespace IARA.Mobile.Application.Interfaces.Utilities
         /// <param name="alertOnException">If <see langword="false"/> then it will not display alert dialog on exception.</param>
         /// <returns>Returns weather or not the request performed successfully</returns>
         Task<HttpResult> PatchAsync(string url, object parameters = null, bool alertOnException = true);
-
 
         /// <summary>
         /// Send a restore request to the IARA API using PATCH protocol

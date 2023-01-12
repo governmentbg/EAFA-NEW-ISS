@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
+﻿using System.Collections.Generic;
+using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Interfaces.Dtos;
-using System.Collections.Generic;
 
 namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
 {

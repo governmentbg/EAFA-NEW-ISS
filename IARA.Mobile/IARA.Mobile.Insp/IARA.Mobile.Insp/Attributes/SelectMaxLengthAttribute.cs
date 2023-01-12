@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 
 namespace IARA.Mobile.Insp.Attributes
 {

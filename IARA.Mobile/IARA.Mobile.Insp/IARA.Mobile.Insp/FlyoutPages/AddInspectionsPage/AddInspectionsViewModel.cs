@@ -1,4 +1,7 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection;
@@ -12,9 +15,6 @@ using IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection;
 using IARA.Mobile.Shared.Menu;
-using System;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using Xamarin.Forms;

@@ -1,9 +1,9 @@
-﻿using IARA.Mobile.Domain.Enums;
-using IARA.Mobile.Shared.Popups;
-using IARA.Mobile.Shared.ViewModels.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Shared.Popups;
+using IARA.Mobile.Shared.ViewModels.Models;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Controls;
 using TechnoLogica.Xamarin.Extensions;

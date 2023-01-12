@@ -219,6 +219,7 @@ export class EditInspectionTransshipmentComponent extends BaseInspectionsCompone
             startDate: generalInfo.startDate,
             endDate: generalInfo.endDate,
             inspectors: generalInfo.inspectors,
+            reportNum: generalInfo.reportNum,
             patrolVehicles: this.form.get('patrolVehiclesControl')!.value,
             files: this.form.get('filesControl')!.value,
             actionsTaken: additionalInfo?.actionsTaken,

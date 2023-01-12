@@ -1,5 +1,5 @@
-﻿using IARA.Mobile.Pub.Domain.Enums;
-using System;
+﻿using System;
+using IARA.Mobile.Pub.Domain.Enums;
 
 namespace IARA.Mobile.Pub.Application.Interfaces.Utilities
 {

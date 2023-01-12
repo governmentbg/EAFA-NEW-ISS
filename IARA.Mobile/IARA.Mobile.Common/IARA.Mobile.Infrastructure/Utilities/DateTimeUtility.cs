@@ -1,5 +1,5 @@
-﻿using IARA.Mobile.Application.Interfaces.Utilities;
-using System;
+﻿using System;
+using IARA.Mobile.Application.Interfaces.Utilities;
 
 namespace IARA.Mobile.Infrastructure.Utilities
 {

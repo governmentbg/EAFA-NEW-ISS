@@ -1,11 +1,11 @@
-﻿using IARA.Mobile.Application;
-using IARA.Mobile.Application.Interfaces.Utilities;
-using IARA.Mobile.Pub.Application.Interfaces.Transactions;
-using Plugin.FirebasePushNotification;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using IARA.Mobile.Application;
+using IARA.Mobile.Application.Interfaces.Utilities;
+using IARA.Mobile.Pub.Application.Interfaces.Transactions;
+using Plugin.FirebasePushNotification;
 using Xamarin.Essentials;
 
 namespace IARA.Mobile.Pub.Utilities

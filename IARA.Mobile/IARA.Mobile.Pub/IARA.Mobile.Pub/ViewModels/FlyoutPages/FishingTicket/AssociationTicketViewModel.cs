@@ -156,7 +156,6 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
                 }
             }
 
-
             await TLLoadingHelper.HideFullLoadingScreen();
         }
 

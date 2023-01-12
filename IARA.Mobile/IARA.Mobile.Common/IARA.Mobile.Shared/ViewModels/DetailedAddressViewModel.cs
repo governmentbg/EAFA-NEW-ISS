@@ -1,11 +1,11 @@
-﻿using IARA.Mobile.Application;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
-using IARA.Mobile.Application.DTObjects.Profile.API;
-using IARA.Mobile.Application.Interfaces.Transactions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Input;
+using IARA.Mobile.Application;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
+using IARA.Mobile.Application.DTObjects.Profile.API;
+using IARA.Mobile.Application.Interfaces.Transactions;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Base;

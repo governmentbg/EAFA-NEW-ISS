@@ -1,8 +1,8 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System;
+using System.Windows.Input;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Pub.Domain.Enums;
 using IARA.Mobile.Shared.Views;
-using System;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
 using Xamarin.CommunityToolkit.Markup;
@@ -44,7 +44,6 @@ namespace IARA.Mobile.Pub.Views.Controls
 
         public static readonly BindableProperty TicketUpdateCommandParameterProperty =
             BindableProperty.Create(nameof(TicketUpdateCommandParameter), typeof(object), typeof(TicketStatusBarView));
-
 
         public TicketStatusBarView()
         {
@@ -377,7 +376,7 @@ namespace IARA.Mobile.Pub.Views.Controls
                 int hoursLeft = (int)value.TotalHours;
                 duration += $"{hoursLeft} " + (hoursLeft == 1 ? TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Hour"] : TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Hours"]);
 
-                int minutes = (int)value.TotalHours - hoursLeft * 60;
+                int minutes = (int)value.TotalHours - (hoursLeft * 60);
                 if (minutes > 0)
                 {
                     duration += $" и {minutes} " + (minutes == 1 ? TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Minute"] : TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Minutes"]);
@@ -390,7 +389,7 @@ namespace IARA.Mobile.Pub.Views.Controls
 
                 if (daysLeft < 30)
                 {
-                    int hoursLeft = (int)value.TotalHours - daysLeft * 24;
+                    int hoursLeft = (int)value.TotalHours - (daysLeft * 24);
                     if (hoursLeft > 0)
                     {
                         duration += $" и {hoursLeft} " + (hoursLeft == 1 ? TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Hour"] : TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Hours"]);
@@ -411,6 +410,5 @@ namespace IARA.Mobile.Pub.Views.Controls
             }
             return duration;
         }
-
     }
 }

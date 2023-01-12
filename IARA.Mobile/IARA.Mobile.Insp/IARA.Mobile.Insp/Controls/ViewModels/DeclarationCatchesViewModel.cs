@@ -1,16 +1,17 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
+using IARA.Mobile.Insp.Attributes;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialog;
 using IARA.Mobile.Insp.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -36,6 +37,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public InspectionPageViewModel Inspection { get; }
         public bool HasCatchType { get; }
 
+        [DuplicateCatches]
+        [ListMinLength(1)]
         public ValidStateValidatableTable<DeclarationCatchModel> Catches { get; set; }
 
         public ICommand Review { get; }

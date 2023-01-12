@@ -57,7 +57,6 @@ namespace IARA.Mobile.Pub.iOS.Renderers
                 return;
             }
 
-
             CGRect frameBegin = UIKeyboard.FrameBeginFromNotification(notification);
             CGRect frameEnd = UIKeyboard.FrameEndFromNotification(notification);
 

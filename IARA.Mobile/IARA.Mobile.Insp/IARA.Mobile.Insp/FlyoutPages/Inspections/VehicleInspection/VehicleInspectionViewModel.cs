@@ -1,4 +1,8 @@
-﻿using IARA.Mobile.Application;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application;
@@ -6,15 +10,12 @@ using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.ViewModels.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using IARA.Mobile.Shared.Views;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
@@ -67,6 +68,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
                 ProtectedEdit = value;
             }
         }
+
+        public TLForwardSections Sections { get; set; }
 
         public InspectionGeneralInfoViewModel InspectionGeneralInfo { get; }
         public SubjectViewModel Owner { get; }
@@ -131,8 +134,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
             set => SetProperty(ref _institutions, value);
         }
 
-        public Action ExpandAll { get; set; }
-
         public override void OnDisappearing()
         {
             GlobalVariables.IsAddingInspection = false;
@@ -159,7 +160,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
             List<SelectNomenclatureDto> countries = nomTransaction.GetCountries();
             List<SelectNomenclatureDto> institutions = nomTransaction.GetInstitutions();
 
-            InspectionGeneralInfo.Init();
+            await InspectionGeneralInfo.Init();
             Owner.Init(countries);
             Driver.Init(countries);
             Buyer.Init();
@@ -189,7 +190,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
 
                 InspectionState = Edit.InspectionState;
 
-                InspectionGeneralInfo.OnEdit(Edit);
+                await InspectionGeneralInfo.OnEdit(Edit);
                 InspectionFiles.OnEdit(Edit);
                 Signatures.OnEdit(Edit.Files, fileTypes);
                 Catches.OnEdit(Edit.CatchMeasures);
@@ -217,7 +218,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
 
             if (ActivityType == ViewActivityType.Review)
             {
-                ExpandAll();
+                foreach (SectionView item in Sections.Children.OfType<SectionView>())
+                {
+                    item.IsExpanded = true;
+                }
             }
 
             await TLLoadingHelper.HideFullLoadingScreen();
@@ -230,7 +234,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
 
         private Task OnFinish()
         {
-            return InspectionSaveHelper.Finish(ExpandAll, Validation, Save);
+            return InspectionSaveHelper.Finish(Sections, Validation, Save);
         }
 
         private Task Save(SubmitType submitType)
@@ -242,7 +246,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
                     InspectionTransportVehicleDto dto = new InspectionTransportVehicleDto
                     {
                         Id = Edit?.Id ?? 0,
-                        ReportNum = Edit?.ReportNum,
+                        ReportNum = InspectionGeneralInfo.BuildReportNum(),
                         LocalIdentifier = inspectionIdentifier,
                         Files = files,
                         InspectionState = submitType == SubmitType.Draft || submitType == SubmitType.Edit ? InspectionState.Draft : InspectionState.Submitted,

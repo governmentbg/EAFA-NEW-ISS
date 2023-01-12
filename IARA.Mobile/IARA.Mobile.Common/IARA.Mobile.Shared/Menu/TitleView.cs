@@ -1,8 +1,8 @@
-﻿using IARA.Mobile.Application;
+﻿using System.Threading.Tasks;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Shared.ViewModels.Intrerfaces;
-using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;

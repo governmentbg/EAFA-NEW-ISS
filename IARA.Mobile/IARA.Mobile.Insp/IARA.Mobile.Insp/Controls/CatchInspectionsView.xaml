@@ -129,11 +129,11 @@
                             ValidState="{Binding CatchCount}"
                             Keyboard="Numeric"
                             IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
-                    <tl:TLEntry Title="{rt:Translate Quantity, Group=CatchInspection}"
+                    <tl:TLEntry Title="{rt:Translate CatchQuantity, Group=CatchInspection}"
                             ValidState="{Binding CatchQuantity}"
                             Keyboard="Numeric"
                             IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
-                    <tl:TLEntry Title="{rt:Translate Quantity, Group=CatchInspection}"
+                    <tl:TLEntry Title="{rt:Translate UnloadedQuantity, Group=CatchInspection}"
                             ValidState="{Binding UnloadedQuantity}"
                             Keyboard="Numeric"
                             IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}"

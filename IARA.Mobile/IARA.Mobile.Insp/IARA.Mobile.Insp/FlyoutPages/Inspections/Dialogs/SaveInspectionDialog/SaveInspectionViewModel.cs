@@ -1,8 +1,8 @@
-﻿using IARA.Mobile.Insp.ViewModels.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using IARA.Mobile.Insp.ViewModels.Models;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.ViewModels.Base;
 

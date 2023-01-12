@@ -1,10 +1,10 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Pub.Views.FlyoutPages;
 using IARA.Mobile.Shared.Menu;
 using Rg.Plugins.Popup.Services;
-using System;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;

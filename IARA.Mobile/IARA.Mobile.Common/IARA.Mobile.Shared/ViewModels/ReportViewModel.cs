@@ -1,4 +1,9 @@
-﻿using IARA.Mobile.Application;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.DTObjects.Reports;
 using IARA.Mobile.Application.Interfaces.Transactions;
@@ -8,11 +13,6 @@ using IARA.Mobile.Shared.ResourceTranslator;
 using IARA.Mobile.Shared.ViewModels.Base;
 using IARA.Mobile.Shared.ViewModels.Models;
 using IARA.Mobile.Shared.ViewModels.Models.ReportParameters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using Xamarin.CommunityToolkit.UI.Views;
@@ -204,7 +204,7 @@ namespace IARA.Mobile.Shared.ViewModels
                     new
                     {
                         id = Report.Id,
-                        parameters = parameters
+                        parameters
                     }
                 );
             }

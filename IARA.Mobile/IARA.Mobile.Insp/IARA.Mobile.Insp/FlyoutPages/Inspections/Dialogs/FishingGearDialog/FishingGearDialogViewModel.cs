@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
@@ -35,6 +36,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         public FishingGearViewModel InspectedFishingGear { get; private set; }
 
         public ValidStateMultiToggle Corresponds { get; set; }
+        public ValidStateMultiToggle HasAttachedAppliances { get; set; }
 
         public ICommand Save { get; }
 
@@ -86,6 +88,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                 InspectedFishingGear.AssignEdit(Edit.Dto.InspectedFishingGear ?? RemapFishingGear(Edit.Dto.PermittedFishingGear));
                 Corresponds.Value = Edit.CheckedValue?.ToString();
 
+                HasAttachedAppliances.Value = Edit.Dto.HasAttachedAppliances == null
+                    ? null
+                    : Edit.Dto.HasAttachedAppliances.Value
+                    ? nameof(CheckTypeEnum.Y)
+                    : nameof(CheckTypeEnum.N);
+
                 Validation.Force();
             }
 
@@ -96,7 +104,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         {
             if (!InspectedFishingGear.Marks.Any(f => f.Id == mark.Id))
             {
-                MarkViewModel newMark =new MarkViewModel
+                MarkViewModel newMark = new MarkViewModel
                 {
                     Id = mark.Id,
                     AddedByInspector = mark.Status.Value.Code == nameof(FishingGearMarkStatus.MARKED),
@@ -139,6 +147,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                 Dto = new InspectedFishingGearDto
                 {
                     CheckInspectedMatchingRegisteredGear = checkValue,
+                    HasAttachedAppliances = HasAttachedAppliances.Value == null ? null : new bool?(HasAttachedAppliances.Value == nameof(CheckTypeEnum.Y)),
                     InspectedFishingGear = checkValue == InspectedFishingGearEnum.N || checkValue == InspectedFishingGearEnum.I
                         ? (FishingGearDto)InspectedFishingGear
                         : null,

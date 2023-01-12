@@ -1,11 +1,11 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Pub.Application.DTObjects.ScientificFishing.LocalDb;
 using IARA.Mobile.Pub.ViewModels.Base;
 using IARA.Mobile.Pub.ViewModels.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Xamarin.CommunityToolkit.ObjectModel;
 
 namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.ScientificFishing

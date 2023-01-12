@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Application.DTObjects.Common;
+﻿using System.Collections.Generic;
+using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Domain.Enums;
-using System.Collections.Generic;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
 

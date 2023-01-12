@@ -1,5 +1,5 @@
-﻿using IARA.Mobile.Pub.Domain.Models;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using IARA.Mobile.Pub.Domain.Models;
 
 namespace IARA.Mobile.Pub.Application.Interfaces.Utilities
 {

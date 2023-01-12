@@ -1,5 +1,5 @@
-﻿using IARA.Mobile.Pub.ViewModels.Base;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using IARA.Mobile.Pub.ViewModels.Base;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.ViewModels.Models;
 

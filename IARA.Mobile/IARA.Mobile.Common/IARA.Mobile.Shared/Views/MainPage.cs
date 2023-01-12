@@ -1,13 +1,13 @@
-﻿using IARA.Mobile.Application;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Shared.Popups;
 using IARA.Mobile.Shared.ResourceTranslator;
 using IARA.Mobile.Shared.ViewModels.Base;
 using IARA.Mobile.Shared.ViewModels.Intrerfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Extensions;
 using Xamarin.Essentials;
@@ -145,6 +145,5 @@ namespace IARA.Mobile.Shared.Views
                 return Browser.OpenAsync($"https://apps.apple.com/us/app/%D0%B8%D0%B0%D1%80%D0%B0-%D0%BB%D1%8E%D0%B1%D0%B8%D1%82%D0%B5%D0%BB%D1%81%D0%BA%D0%B8-%D1%80%D0%B8%D0%B1%D0%BE%D0%BB%D0%BE%D0%B2/id1594577744");
             }
         }
-
     }
 }

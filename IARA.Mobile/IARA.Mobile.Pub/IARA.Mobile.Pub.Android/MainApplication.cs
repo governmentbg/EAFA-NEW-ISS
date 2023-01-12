@@ -1,8 +1,8 @@
-﻿using Android.App;
+﻿using System;
+using Android.App;
 using Android.OS;
 using Android.Runtime;
 using Plugin.FirebasePushNotification;
-using System;
 
 namespace IARA.Mobile.Pub.Droid
 {

@@ -1,10 +1,10 @@
-﻿using IARA.Mobile.Application.Extensions;
-using IARA.Mobile.Application.Interfaces.Utilities;
-using MimeTypes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using IARA.Mobile.Application.Extensions;
+using IARA.Mobile.Application.Interfaces.Utilities;
+using MimeTypes;
 using Windows.Networking.BackgroundTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;

@@ -1,5 +1,5 @@
-﻿using IARA.Mobile.Domain.Enums;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using IARA.Mobile.Domain.Enums;
 using TechnoLogica.Xamarin.ViewModels.Base;
 
 namespace IARA.Mobile.Shared.ViewModels.Base

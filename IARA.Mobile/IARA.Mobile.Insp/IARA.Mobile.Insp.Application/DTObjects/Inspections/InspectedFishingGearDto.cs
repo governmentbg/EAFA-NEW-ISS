@@ -6,6 +6,7 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
     {
         public FishingGearDto PermittedFishingGear { get; set; }
         public FishingGearDto InspectedFishingGear { get; set; }
+        public bool? HasAttachedAppliances { get; set; }
         public InspectedFishingGearEnum? CheckInspectedMatchingRegisteredGear { get; set; }
     }
 }

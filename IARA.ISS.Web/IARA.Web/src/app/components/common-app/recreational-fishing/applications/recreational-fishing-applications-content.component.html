@@ -135,7 +135,7 @@
             <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
                 <ng-template let-row="row" ngx-datatable-cell-template>
                     <div *ngIf="!isDashboardMode" fxLayout="row wrap" fxLayoutAlign="end center">
-                        <ng-container *ngIf="row.data.isActive">
+                        <ng-container *ngIf="row.data.isActive && (row.data.createdByUserId === currentUserId || row.data.isOnlineTicket)">
                             <ng-container *ngTemplateOutlet="applicationActions; context: { value: { row: row.data } }"></ng-container>
                         </ng-container>
                         <tl-icon-button icon="visibility"

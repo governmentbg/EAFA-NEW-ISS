@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, ContentChild, ContentChildren, EventEmitter, Input, QueryList, ViewChild, ViewChildren } from '@angular/core';
+﻿import { AfterViewInit, Component, ContentChild, ContentChildren, EventEmitter, HostListener, Input, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { AbstractControl, ControlContainer, FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { faFilter, faRedo } from '@fortawesome/free-solid-svg-icons';
@@ -80,6 +80,13 @@ export class SearchPanelComponent implements AfterViewInit {
         });
     }
 
+    @HostListener('keyup', ['$event'])
+    public onKeyUp(event: KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            this.searchClicked();
+        }
+    }
+
     private clearAdvancedSearchFields(): void {
         for (const key of Object.keys(this._advancedSearchFormGroup.controls)) {
             this._advancedSearchFormGroup.get(key)?.reset('', { emitEvent: false });
@@ -138,8 +145,8 @@ export class SearchPanelComponent implements AfterViewInit {
         this.closeExpansionPanel();
     }
 
-    public searchClicked(event: Event): void {
-        event.stopPropagation();
+    public searchClicked(event?: Event): void {
+        event?.stopPropagation();
 
         if (this.searchTextControl.touched && this.searchTextControl.value && this.searchTextControl.value?.length > 0) {
             this.appliedFilters = [];

@@ -1,9 +1,9 @@
-﻿using IARA.Mobile.Application.Interfaces.Utilities;
-using IdentityModel.OidcClient;
-using IdentityModel.OidcClient.Results;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using IARA.Mobile.Application.Interfaces.Utilities;
+using IdentityModel.OidcClient;
+using IdentityModel.OidcClient.Results;
 
 namespace IARA.Mobile.Shared.Utilities
 {
@@ -74,7 +74,7 @@ namespace IARA.Mobile.Shared.Utilities
         {
             DateTime accessTokenExpiration = _authTokenProvider.AccessTokenExpiration;
             DateTime now = DateTime.UtcNow;
-            Debug.Write($"Access Token Expiration: {accessTokenExpiration.ToString("MM/dd/yyyy HH:mm:ss")}, Current UTC:{now}");
+            Debug.Write($"Access Token Expiration: {accessTokenExpiration:MM/dd/yyyy HH:mm:ss}, Current UTC:{now}");
             return accessTokenExpiration != DateTime.MinValue &&
                         accessTokenExpiration.AddSeconds(-30) < now &&
                             !string.IsNullOrEmpty(_authTokenProvider.RefreshToken);
@@ -86,8 +86,9 @@ namespace IARA.Mobile.Shared.Utilities
             _translator.LoadOfflineResources();
             _authTokenProvider.Clear();
             if (navigateToLogin)
+            {
                 _commonNavigator.ToLogin();
-
+            }
         }
     }
 }

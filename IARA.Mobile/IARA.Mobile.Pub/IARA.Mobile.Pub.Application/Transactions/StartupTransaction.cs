@@ -1,4 +1,8 @@
-﻿using IARA.Mobile.Application;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Exceptions;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.DTObjects.Translations;
@@ -19,10 +23,6 @@ using IARA.Mobile.Pub.Application.Interfaces.Utilities;
 using IARA.Mobile.Pub.Application.Transactions.Base;
 using IARA.Mobile.Pub.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Pub.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace IARA.Mobile.Pub.Application.Transactions
 {

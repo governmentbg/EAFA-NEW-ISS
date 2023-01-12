@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Pub.Application.DTObjects.News;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using IARA.Mobile.Pub.Application.DTObjects.News;
 
 namespace IARA.Mobile.Pub.Application.Interfaces.Transactions
 {

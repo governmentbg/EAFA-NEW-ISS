@@ -1,13 +1,14 @@
-﻿using IARA.Mobile.Application;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Users;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
+using IARA.Mobile.Insp.Application.Interfaces.Utilities;
 using IARA.Mobile.Insp.Base;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Enums;
@@ -21,15 +22,17 @@ namespace IARA.Mobile.Insp.FlyoutPages.LoginPage
         private readonly IStartupTransaction _startupTransaction;
         private readonly IAuthenticationProvider _authenticationProvider;
         private readonly IBackButton _backButton;
+        private readonly ISettings _settings;
         private bool _noInternet;
         private bool _noServerConnection;
         private bool _browserClosed;
 
-        public LoginViewModel(IAuthenticationProvider authenticationProvider, IStartupTransaction startupTransaction, IBackButton backButton)
+        public LoginViewModel(IAuthenticationProvider authenticationProvider, IStartupTransaction startupTransaction, IBackButton backButton, ISettings settings)
         {
             _startupTransaction = startupTransaction;
             _authenticationProvider = authenticationProvider;
             _backButton = backButton;
+            _settings = settings;
 
             Retry = CommandBuilder.CreateFrom(OnRetry);
         }
@@ -109,6 +112,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.LoginPage
             if (successfullyLoggedIn)
             {
                 UserAuthDto userAuth = await _startupTransaction.GetUserAuthInfo();
+
                 if (userAuth == null)
                 {
                     return;

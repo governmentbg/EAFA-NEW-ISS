@@ -10,7 +10,7 @@ namespace IARA.Mobile.Domain.Models
         /// <summary>
         /// Default and only value of the <see cref="Unit"/> type.
         /// </summary>
-        public static readonly Unit Value = new Unit();
+        public static readonly Unit Value = new();
 
         /// <summary>
         /// Compares the current object with another object of the same type.

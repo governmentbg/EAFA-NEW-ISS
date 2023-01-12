@@ -118,26 +118,18 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
             set => SetProperty(ref _hasInvalidData, value);
         }
 
-        public bool IsActive
-        {
-            get => TicketMetadata.Id != 0 &&
+        public bool IsActive => TicketMetadata.Id != 0 &&
                     TicketMetadata.Action == TicketAction.View &&
                    (TicketMetadata.PaymentStatus == PaymentStatusEnum.PaidOK
                    || TicketMetadata.PaymentStatus == PaymentStatusEnum.NotNeeded)
-                   && (TicketMetadata.ApplicationStatusCode != ApplicationStatuses.CORR_BY_USR_NEEDED
-                   && TicketMetadata.ApplicationStatusCode != ApplicationStatuses.FILL_BY_APPL);
-        }
+                   && TicketMetadata.ApplicationStatusCode != ApplicationStatuses.CORR_BY_USR_NEEDED
+                   && TicketMetadata.ApplicationStatusCode != ApplicationStatuses.FILL_BY_APPL;
 
-        public string OnSaveButtonLabel
-        {
-            //Ако билетът е върнат за корекции или е от безплатните -> "Завърши", иначе -> "Към плащане"
-            get => (TicketMetadata.Action == TicketAction.Update ||
+        public string OnSaveButtonLabel => (TicketMetadata.Action == TicketAction.Update ||
                 TicketMetadata.TypeCode == nameof(TicketTypeEnum.UNDER14) ||
                 TicketMetadata.TypeCode == nameof(TicketTypeEnum.DISABILITY)) ?
                 TranslateExtension.Translator[nameof(GroupResourceEnum.TicketPerson) + "/Complete"] :
                  TranslateExtension.Translator[nameof(GroupResourceEnum.TicketPerson) + "/ProceedToPayment"];
-
-        }
         public TLObservableCollection<Under14SubTicketViewModel> ChildrenTickets { get; set; }
         public ICommand UploadPhotoCommand { get; }
         public ICommand OnSaveCommand { get; set; }
@@ -384,8 +376,6 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
                         await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/SaveFailed"], Color.Red);
                     }
                 }
-
-
             }
             finally
             {
@@ -493,7 +483,6 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
                     person.Gender.Value = person.Genders.Find(f => f.Value == apiPerson.GenderId.Value);
                 }
             }
-
 
             AddressRegistrationApiDto permanentAddress = apiPersonAddresses?.Find(f => f.AddressType == AddressType.PERMANENT);
 

@@ -1,18 +1,16 @@
-﻿using IARA.Mobile.Application;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Application;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
-using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Pub.Application.DTObjects.AddressNomenclatures.LocalDb;
 using IARA.Mobile.Pub.Application.DTObjects.News;
 using IARA.Mobile.Pub.ViewModels.Base;
 using IARA.Mobile.Pub.ViewModels.FlyoutPages.News;
 using IARA.Mobile.Pub.Views.FlyoutPages.News;
 using IARA.Mobile.Shared.Menu;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
@@ -158,6 +156,5 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
             News.Clear();
             await OnLoadHistory();
         }
-
     }
 }

@@ -1,7 +1,7 @@
-﻿using IdentityModel.OidcClient.Browser;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using IdentityModel.OidcClient.Browser;
 using Windows.Security.Authentication.Web;
 
 namespace IARA.Mobile.Insp.UWP

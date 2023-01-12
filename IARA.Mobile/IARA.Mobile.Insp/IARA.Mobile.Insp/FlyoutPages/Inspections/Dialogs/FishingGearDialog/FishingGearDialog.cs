@@ -64,6 +64,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                             Buttons = InspectionTogglesHelper.YesNoUnavailableMultiToggles,
                             IsEnabled = dialogType != ViewActivityType.Review,
                         }.BindTranslation(TLMultiToggleView.TextProperty, "CorrespondsToRegistered", nameof(GroupResourceEnum.FishingGear)),
+                        new TLMultiToggleView
+                        {
+                            ValidState = ViewModel.HasAttachedAppliances,
+                            Buttons = InspectionTogglesHelper.YesNoMultiToggles,
+                            IsEnabled = dialogType != ViewActivityType.Review,
+                        }.BindTranslation(TLMultiToggleView.TextProperty, "HasAttachedAppliances", nameof(GroupResourceEnum.FishingGear)),
                         new FishingGearView(ViewModel.InspectedFishingGear)
                             .BindTranslation(SectionView.TextProperty, "InspectedFishingGear", nameof(GroupResourceEnum.FishingGear))
                             .Bind(SectionView.IsVisibleProperty, "Value", converter: App.GetResource<IValueConverter>("Equal"), converterParameter: nameof(CheckTypeEnum.N), source: ViewModel.Corresponds),

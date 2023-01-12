@@ -1,10 +1,10 @@
-﻿using IARA.Mobile.Application.Interfaces.Transactions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using IARA.Mobile.Application.Interfaces.Transactions;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Pub.Application.Interfaces.Database;
 using IARA.Mobile.Pub.Application.Transactions.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace IARA.Mobile.Pub.Application.Transactions
 {

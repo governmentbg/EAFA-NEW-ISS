@@ -1,4 +1,9 @@
-﻿using IARA.Mobile.Application.Interfaces.Utilities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Pub.Application.DTObjects.FishingTickets.LocalDb;
 using IARA.Mobile.Pub.Domain.Enums;
@@ -7,11 +12,6 @@ using IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket;
 using IARA.Mobile.Pub.Views.FlyoutPages;
 using IARA.Mobile.Pub.Views.FlyoutPages.FishingTicket;
 using IARA.Mobile.Shared.Menu;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -148,7 +148,6 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
 
             return Task.CompletedTask;
         }
-
 
         private Task GoToTicketPage(TicketTariffViewModel ticketTariff)
         {

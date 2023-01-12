@@ -1,8 +1,8 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System.Collections.Generic;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Shared.ResourceTranslator;
 using IARA.Mobile.Shared.ViewModels.Base;
 using IARA.Mobile.Shared.ViewModels.Intrerfaces;
-using System.Collections.Generic;
 using TechnoLogica.Xamarin.Controls;
 using Xamarin.Forms;
 

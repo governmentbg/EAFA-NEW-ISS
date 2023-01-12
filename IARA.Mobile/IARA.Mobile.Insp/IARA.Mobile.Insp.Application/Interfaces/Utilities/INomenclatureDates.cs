@@ -1,5 +1,5 @@
-﻿using IARA.Mobile.Insp.Domain.Enums;
-using System;
+﻿using System;
+using IARA.Mobile.Insp.Domain.Enums;
 
 namespace IARA.Mobile.Insp.Application.Interfaces.Utilities
 {

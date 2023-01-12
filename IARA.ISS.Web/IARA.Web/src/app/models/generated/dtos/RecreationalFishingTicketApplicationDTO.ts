@@ -15,6 +15,12 @@ export class RecreationalFishingTicketApplicationDTO {
     @StrictlyTyped(Number)
     public applicationId?: number;
 
+    @StrictlyTyped(Number)
+    public createdByUserId?: number;
+
+    @StrictlyTyped(Boolean)
+    public isOnlineTicket?: boolean;
+
     @StrictlyTyped(String)
     public ticketNum?: string;
 

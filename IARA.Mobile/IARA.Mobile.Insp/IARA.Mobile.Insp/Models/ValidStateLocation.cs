@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Application.DTObjects.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using IARA.Mobile.Application.DTObjects.Common;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
 using Xamarin.Forms.Maps;

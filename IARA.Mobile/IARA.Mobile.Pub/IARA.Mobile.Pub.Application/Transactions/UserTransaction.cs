@@ -1,4 +1,5 @@
-﻿using IARA.Mobile.Application.DTObjects.Common;
+﻿using System.Threading.Tasks;
+using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Application.DTObjects.Users;
 using IARA.Mobile.Application.Extensions;
 using IARA.Mobile.Domain.Enums;
@@ -6,7 +7,6 @@ using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Pub.Application.DTObjects.User.API;
 using IARA.Mobile.Pub.Application.Interfaces.Transactions;
 using IARA.Mobile.Pub.Application.Transactions.Base;
-using System.Threading.Tasks;
 
 namespace IARA.Mobile.Pub.Application.Transactions
 {

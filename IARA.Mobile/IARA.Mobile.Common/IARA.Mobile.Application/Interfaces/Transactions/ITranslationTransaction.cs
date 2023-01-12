@@ -1,5 +1,5 @@
-﻿using IARA.Mobile.Domain.Enums;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using IARA.Mobile.Domain.Enums;
 
 namespace IARA.Mobile.Application.Interfaces.Transactions
 {

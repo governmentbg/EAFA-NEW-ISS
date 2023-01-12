@@ -1,10 +1,10 @@
-﻿using Foundation;
-using IARA.Mobile.Pub.Application.Interfaces.Utilities;
-using IARA.Mobile.Pub.Domain.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Foundation;
+using IARA.Mobile.Pub.Application.Interfaces.Utilities;
+using IARA.Mobile.Pub.Domain.Models;
 using UIKit;
 using UserNotifications;
 

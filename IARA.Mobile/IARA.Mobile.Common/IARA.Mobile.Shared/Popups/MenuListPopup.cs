@@ -1,7 +1,7 @@
-﻿using Rg.Plugins.Popup.Pages;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Rg.Plugins.Popup.Pages;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
 

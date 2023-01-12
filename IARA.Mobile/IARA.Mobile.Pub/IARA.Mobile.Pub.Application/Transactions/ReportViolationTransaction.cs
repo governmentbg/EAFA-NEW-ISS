@@ -1,8 +1,8 @@
-﻿using IARA.Mobile.Domain.Models;
+﻿using System.Threading.Tasks;
+using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Pub.Application.DTObjects.ReportViolations;
 using IARA.Mobile.Pub.Application.Interfaces.Transactions;
 using IARA.Mobile.Pub.Application.Transactions.Base;
-using System.Threading.Tasks;
 
 namespace IARA.Mobile.Pub.Application.Transactions
 {

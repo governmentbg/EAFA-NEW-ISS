@@ -1,8 +1,8 @@
-﻿using Android.App;
+﻿using System;
+using System.Threading.Tasks;
+using Android.App;
 using Android.Content;
 using IARA.Mobile.Application.Interfaces.Utilities;
-using System;
-using System.Threading.Tasks;
 using Xamarin.Essentials;
 
 namespace IARA.Mobile.Insp.Droid.Extensions

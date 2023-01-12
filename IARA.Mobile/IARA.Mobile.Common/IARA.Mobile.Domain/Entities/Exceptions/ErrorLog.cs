@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using System;
+using IARA.Mobile.Domain.Enums;
 using SQLite;
-using System;
 
 namespace IARA.Mobile.Domain.Entities.Exceptions
 {

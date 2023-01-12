@@ -1,12 +1,12 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Pub.ViewModels.Base;
 using IARA.Mobile.Pub.Views.FlyoutPages.Payments;
 using Rg.Plugins.Popup.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -92,15 +92,16 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments
 
         private OnlinePaymentViewModel BuildPaymentModel(string paymentCode)
         {
-            OnlinePaymentViewModel onlinePayment = new OnlinePaymentViewModel();
-            onlinePayment.PaymentOkUrl = _urlProvider.BuildUrl(environment: "PAYMENT_OK").TrimEnd(new char[] { '/' });
-            onlinePayment.PaymentCanceledUrl = _urlProvider.BuildUrl(environment: "PAYMENT_CANCELED").TrimEnd(new char[] { '/' });
-            onlinePayment.PaymentInitialUrl = _urlProvider.GetEnvironmentBaseUrl() + "/online-payment";
-            onlinePayment.ApplicationId = ApplicationId;
-            onlinePayment.Token = _tokenProvider.Token;
-            onlinePayment.PaymentCode = paymentCode;
+            OnlinePaymentViewModel onlinePayment = new OnlinePaymentViewModel
+            {
+                PaymentOkUrl = _urlProvider.BuildUrl(environment: "PAYMENT_OK").TrimEnd(new char[] { '/' }),
+                PaymentCanceledUrl = _urlProvider.BuildUrl(environment: "PAYMENT_CANCELED").TrimEnd(new char[] { '/' }),
+                PaymentInitialUrl = _urlProvider.GetEnvironmentBaseUrl() + "/online-payment",
+                ApplicationId = ApplicationId,
+                Token = _tokenProvider.Token,
+                PaymentCode = paymentCode
+            };
             return onlinePayment;
         }
-
     }
 }

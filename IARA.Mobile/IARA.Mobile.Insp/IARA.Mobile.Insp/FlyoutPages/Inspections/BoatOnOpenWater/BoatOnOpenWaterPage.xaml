@@ -19,8 +19,9 @@
         <converters:HasDescriptionConverter x:Key="HasDescription" />
         <converters:HasFishingConverter x:Key="HasFishing" />
     </ContentPage.Resources>
-    <lc:TLForwardSections ExpandAll="{Binding ExpandAll}">
-        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}" Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
+    <lc:TLForwardSections x:Name="forwardSections">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
+                Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
             <StackLayout Padding="10">
                 <lc:InspectionGeneralInfoView BindingContext="{Binding InspectionGeneralInfo}" />
                 <lc:PatrolVehiclesView BindingContext="{Binding PatrolVehicles}" />
@@ -39,7 +40,8 @@
                 Text="{rt:Translate ShipData, Group=BoatOnOpenWater}"
                 IsExpanded="False">
             <StackLayout Padding="10">
-                <lc:InspectedShipDataView ShipInRegisterLabel="{rt:Translate InspectedShipInRegister, Group=BoatOnOpenWater}" BindingContext="{Binding ObservedVessel}" />
+                <lc:InspectedShipDataView ShipInRegisterLabel="{rt:Translate InspectedShipInRegister, Group=BoatOnOpenWater}"
+                        BindingContext="{Binding ObservedVessel}" />
                 <tl:TLFlex GrowUnit="200">
                     <tl:TLEntry Title="{rt:Translate Course, Group=BoatOnOpenWater}"
                             ValidState="{Binding Course}"
@@ -81,8 +83,10 @@
                         IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}">
                     <tl:TLEntry.IsVisible>
                         <MultiBinding Converter="{StaticResource All}">
-                            <Binding Path="FishingObservedVesselActivity.Value.Items" Converter="{StaticResource HasDescription}" />
-                            <Binding Path="ObservedVesselActivity.Value.Items" Converter="{StaticResource HasFishing}" />
+                            <Binding Path="FishingObservedVesselActivity.Value.Items"
+                                    Converter="{StaticResource HasDescription}" />
+                            <Binding Path="ObservedVesselActivity.Value.Items"
+                                    Converter="{StaticResource HasFishing}" />
                         </MultiBinding>
                     </tl:TLEntry.IsVisible>
                 </tl:TLEntry>

@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Application.DTObjects.Profile.API;
+﻿using System.Threading.Tasks;
+using IARA.Mobile.Application.DTObjects.Profile.API;
 using IARA.Mobile.Domain.Models;
-using System.Threading.Tasks;
 
 namespace IARA.Mobile.Pub.Application.Interfaces.Transactions
 {

@@ -9,10 +9,14 @@ namespace IARA.Mobile.Pub.Converters
         public override bool ConvertTo(TLObservableCollection<RoleApiDto> roles)
         {
             if (roles == null || roles.Count == 0)
+            {
                 return false;
+            }
 
             if (roles.Count == 1)
+            {
                 return roles[0].Id != -1; //Публичен потребител id = -1
+            }
 
             return true;
         }
