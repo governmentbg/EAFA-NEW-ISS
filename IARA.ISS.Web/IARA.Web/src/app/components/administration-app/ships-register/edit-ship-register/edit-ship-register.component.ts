@@ -393,11 +393,13 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
         if (event.isTemporary === true) {
             const ship: ShipRegisterEditDTO = this.temporaryShipsCache.get(event.shipId!)!;
             this.shipControl.setValue(ship);
+            this.setTitle();
         }
         else {
             const ship: ShipRegisterEditDTO | undefined = this.shipsCache.get(event.shipId!);
             if (ship !== undefined) {
                 this.shipControl.setValue(ship);
+                this.setTitle();
             }
             else {
                 this.shipControl.setValue(event.shipId);

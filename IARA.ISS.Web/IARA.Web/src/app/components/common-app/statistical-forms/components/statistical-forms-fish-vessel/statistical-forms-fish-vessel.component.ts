@@ -490,13 +490,13 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         }
         else if (this.model instanceof StatisticalFormFishVesselApplicationEditDTO) {
             this.fillFormApplication(this.model);
-        }
-        else if (this.model instanceof StatisticalFormFishVesselEditDTO) {
-            this.fillFormRegister(this.model);
 
             if (this.showRegiXData) {
                 this.fillFormRegiX(this.model);
             }
+        }
+        else if (this.model instanceof StatisticalFormFishVesselEditDTO) {
+            this.fillFormRegister(this.model);
         }
 
         if (this.readOnly || this.viewMode) {
@@ -607,7 +607,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
 
     private fillFormRegister(model: StatisticalFormFishVesselEditDTO) {
         this.form.get('submittedForControl')!.setValue(model.submittedFor);
-        this.form.get('formNumControl')!.setValue(model.formNum);
         this.form.get('yearControl')!.setValue(new Date(model.year!, 0, 1));
         this.form.get('shipNameControl')!.setValue(ShipsUtils.get(this.ships, model.shipId!));
         this.form.get('shipYearsControl')!.setValue(model.shipYears);
@@ -747,7 +746,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
 
     private fillModelRegister(model: StatisticalFormFishVesselEditDTO) {
         model.submittedFor = this.form.get('submittedForControl')!.value;
-        model.formNum = this.form.get('formNumControl')!.value;
         model.shipId = this.form.get('shipNameControl')!.value?.value;
         model.shipPrice = this.form.get('shipPriceControl')!.value;
         model.shipYears = this.form.get('shipYearsControl')!.value;
@@ -810,7 +808,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
             this.form = new FormGroup({
                 submittedForControl: new FormControl(),
                 filesControl: new FormControl(),
-                formNumControl: new FormControl({ value: null, disabled: true }),
                 shipNameControl: new FormControl(null, [Validators.required, this.shipValidator()]),
                 yearControl: new FormControl(null, Validators.required),
                 shipYearsControl: new FormControl({ value: null, disabled: true }),

@@ -290,14 +290,12 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
         const rightButtons: IActionInfo[] = [];
 
         if (aquaculture?.id !== undefined) {
-            const readonly: boolean = !this.canEditRecords || aquaculture.status === AquacultureStatusEnum.Canceled;
-
             data = new DialogParamsModel({
                 id: aquaculture.id,
                 isApplication: false,
                 isReadonly: false,
                 service: this.service,
-                viewMode: viewMode || readonly
+                viewMode: viewMode
             });
 
             auditButton = {
@@ -331,13 +329,13 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
             rightButtons.push({
                 id: 'print',
                 color: 'accent',
-                translateValue: viewMode || readonly
+                translateValue: viewMode
                     ? 'aquacultures.print'
                     : 'aquacultures.save-and-print',
                 isVisibleInViewMode: true
             });
 
-            this.openEditDialog(data, title, auditButton, rightButtons, viewMode || readonly);
+            this.openEditDialog(data, title, auditButton, rightButtons, viewMode);
         }
         else {
             title = this.translate.getValue('aquacultures.add-aquaculture-dialog-title');

@@ -114,15 +114,13 @@
 
     AssociationsTicketsRead = 'AssociationsTicketsRead',
     AssociationsTicketsAddRecords = 'AssociationsTicketsAddRecords',
-
-    AssociationsTicketApplicationsRead = 'AssociationsTicketApplicationsRead',
-    AssociationsTicketApplicationsEditRecords = 'AssociationsTicketApplicationsEditRecords',
-    AssociationsTicketApplicationsDeleteRecords = 'AssociationsTicketApplicationsDeleteRecords',
-    AssociationsTicketApplicationsRestoreRecords = 'AssociationsTicketApplicationsRestoreRecords',
-    AssociationsTicketApplicationsCancel = 'AssociationsTicketApplicationsCancel',
-    AssociationsTicketApplicationsInspectAndCorrectRegiXData = 'AssociationsTicketApplicationsInspectAndCorrectRegiXData',
-    AssociationsTicketApplicationsProcessPaymentData = 'AssociationsTicketApplicationsProcessPaymentData',
-    AssociationsTicketApplicationsCheckDataRegularity = 'AssociationsTicketApplicationsCheckDataRegularity',
+    AssociationsTicketsEditRecords = 'AssociationsTicketsEditRecords',
+    AssociationsTicketsDeleteRecords = 'AssociationsTicketsDeleteRecords',
+    AssociationsTicketsRestoreRecords = 'AssociationsTicketsRestoreRecords',
+    AssociationsTicketsCancel = 'AssociationsTicketsCancel',
+    AssociationsTicketsInspectAndCorrectRegiXData = 'AssociationsTicketsInspectAndCorrectRegiXData',
+    AssociationsTicketsProcessPaymentData = 'AssociationsTicketsProcessPaymentData',
+    AssociationsTicketsCheckDataRegularity = 'AssociationsTicketsCheckDataRegularity',
 
     // Persons report
     PersonsReportRead = 'PersonsReportRead',
@@ -156,19 +154,20 @@
     TranslationRestoreRecords = 'TranslationRestoreRecords',
 
     // Ticket applications
+    TicketsPublicRead = 'TicketsPublicRead',
+    TicketsPublicAddRecords = 'TicketsPublicAddRecords',
+    TicketsPublicEditRecords = 'TicketsPublicEditRecords',
+
+    TicketsReadAll = 'TicketsReadAll',
     TicketsRead = 'TicketsRead',
     TicketsAddRecords = 'TicketsAddRecords',
     TicketsEditRecords = 'TicketsEditRecords',
-
-    TicketsApplicationsReadAll = 'TicketsApplicationsReadAll',
-    TicketApplicationsRead = 'TicketApplicationsRead',
-    TicketApplicationsEditRecords = 'TicketApplicationsEditRecords',
-    TicketApplicationsDeleteRecords = 'TicketApplicationsDeleteRecords',
-    TicketApplicationsRestoreRecords = 'TicketApplicationsRestoreRecords',
-    TicketApplicationsProcessPaymentData = 'TicketApplicationsProcessPaymentData',
-    TicketApplicationsCancelRecord = 'TicketApplicationsCancelRecord',
-    TicketApplicationsInspectAndCorrectRegiXData = 'TicketApplicationsInspectAndCorrectRegiXData',
-    TicketApplicationsCheckDataRegularity = 'TicketApplicationsCheckDataRegularity',
+    TicketsDeleteRecords = 'TicketsDeleteRecords',
+    TicketsRestoreRecords = 'TicketsRestoreRecords',
+    TicketsCancelRecord = 'TicketsCancelRecord',
+    TicketsInspectAndCorrectRegiXData = 'TicketsInspectAndCorrectRegiXData',
+    TicketsProcessPaymentData = 'TicketsProcessPaymentData',
+    TicketsCheckDataRegularity = 'TicketsCheckDataRegularity',
 
     // Buyers and First Sale Centers
     BuyersReadAll = 'BuyersReadAll',

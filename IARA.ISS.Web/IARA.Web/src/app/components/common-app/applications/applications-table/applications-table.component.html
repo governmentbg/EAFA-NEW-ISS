@@ -771,6 +771,12 @@
             </ng-container>
             <ng-container *ngSwitchCase="applicationStatusEnum.EXT_CHK_STARTED">
                 <ng-container *ngIf="pageType === 'ApplicationPage'">
+                    <tl-icon-button icon="fa-spinner"
+                                    iconClass="accent-color"
+                                    tooltipText="{{ 'applications-register.wait-external-checks-to-finish' | tlTranslate }}"
+                                    [size]="faIconSize"
+                                    (buttonClicked)="openWaitExternalChecksToFinishDialog(value.row)">
+                    </tl-icon-button>
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canReAssignApplicationRecords"
                                     icon="ic-account-switch"
                                     iconClass="accent-color"

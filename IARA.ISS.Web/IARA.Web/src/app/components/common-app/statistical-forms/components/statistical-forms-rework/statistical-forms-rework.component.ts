@@ -446,7 +446,6 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
             this.form = new FormGroup({
                 submittedForControl: new FormControl(),
                 yearControl: new FormControl(),
-                formNumControl: new FormControl({ value: null, disabled: true }),
                 vetRegistrationNumControl: new FormControl(null),
                 licenceNumControl: new FormControl(null),
                 licenceDateControl: new FormControl(null),
@@ -604,7 +603,6 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
     private fillFormRegister(model: StatisticalFormReworkEditDTO): void {
         this.form.get('submittedForControl')!.setValue(model.submittedFor);
         this.form.get('yearControl')!.setValue(new Date(model.year!, 0, 1));
-        this.form.get('formNumControl')!.setValue(model.formNum);
         this.form.get('vetRegistrationNumControl')!.setValue(model.vetRegistrationNum);
         this.form.get('licenceNumControl')!.setValue(model.licenceNum);
         this.form.get('licenceDateControl')!.setValue(model.licenceDate);
@@ -712,7 +710,6 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
     private fillModelRegister(model: StatisticalFormReworkEditDTO): void {
         model.submittedFor = this.form.get('submittedForControl')!.value;
         model.year = (this.form.get('yearControl')!.value as Date)!.getFullYear();
-        model.formNum = this.form.get('formNumControl')!.value;
         model.vetRegistrationNum = this.form.get('vetRegistrationNumControl')!.value;
         model.licenceNum = this.form.get('licenceNumControl')!.value;
         model.licenceDate = this.form.get('licenceDateControl')!.value;

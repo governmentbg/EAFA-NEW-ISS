@@ -4,11 +4,6 @@
         <!-- Административни филтри -->
         <div *ngIf="!isPublicApp" [formGroup]="form">
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
-                <tl-input fxFlex="25"
-                          formControlName="registryNumberControl"
-                          label="{{ 'statistical-forms.registry-number' | tlTranslate }}"
-                          tooltipResourceName="statistical-forms.registry-number-helper">
-                </tl-input>
                 <tl-autocomplete fxFlex="25"
                                  label="{{ 'statistical-forms.process-user' | tlTranslate }}"
                                  formControlName="processUserControl"
@@ -27,15 +22,14 @@
                                label="{{ 'statistical-forms.valid' | tlTranslate }}"
                                tooltipResourceName="statistical-forms.valid-helper">
                 </tl-date-range>
-            </div>
-            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
                 <tl-autocomplete fxFlex="25"
                                  label="{{ 'statistical-forms.submission-user' | tlTranslate }}"
                                  formControlName="submissionUserControl"
                                  [options]="submissionUsers"
                                  tooltipResourceName="statistical-forms.submission-user-helper">
                 </tl-autocomplete>
-
+            </div>
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
                 <tl-input fxFlex="25"
                           label="{{ 'statistical-forms.form-object' | tlTranslate }}"
                           formControlName="formObjectControl"
@@ -44,17 +38,13 @@
 
                 <div fxFlex="25"></div>
                 <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
             </div>
         </div>
 
         <!-- Публични филтри -->
         <div *ngIf="isPublicApp" [formGroup]="form">
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
-                <tl-input fxFlex="25"
-                          formControlName="registryNumberControl"
-                          label="{{ 'statistical-forms.registry-number' | tlTranslate }}"
-                          tooltipResourceName="statistical-forms.registry-number-helper">
-                </tl-input>
                 <tl-select fxFlex="25"
                            label="{{ 'statistical-forms.form-type' | tlTranslate }}"
                            formControlName="formTypesControl"
@@ -68,6 +58,7 @@
                                tooltipResourceName="statistical-forms.valid-helper">
                 </tl-date-range>
                 <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
             </div>
         </div>
     </search-panel>
@@ -77,10 +68,6 @@
         <tl-data-table [showAddButton]="!isPublicApp"
                        [showInactiveRecords]="!isPublicApp && (canRestoreAquaFarmRecords || canRestoreReworkRecords || canRestoreFishVesselRecords)"
                        (addButtonClicked)="addEditForm(undefined, undefined, false)">
-            <data-column propertyName="registryNumber"
-                         [flexRate]="0.15"
-                         columnName="{{ 'statistical-forms.registry-number' | tlTranslate }}">
-            </data-column>
             <data-column *ngIf="!isPublicApp"
                          propertyName="processUser"
                          [flexRate]="0.2"

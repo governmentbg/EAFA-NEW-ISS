@@ -1,5 +1,6 @@
 ﻿import { Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
@@ -34,6 +35,7 @@ import { OverlappingLogBooksDialogParamsModel } from '@app/shared/components/ove
 import { OverlappingLogBooksComponent } from '@app/shared/components/overlapping-log-books/overlapping-log-books.component';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
+import { RequestProperties } from '@app/shared/services/request-properties';
 
 
 @Component({
@@ -80,6 +82,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
     private readonly translate: FuseTranslationLoaderService;
     private readonly nomenclaturesService: CommonNomenclatures;
     private readonly overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
+    private readonly snackbar: MatSnackBar;
     private service: ILogBookService | undefined;
 
     @ViewChild(ValidityCheckerGroupDirective)
@@ -88,11 +91,13 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
     public constructor(
         nomenclaturesService: CommonNomenclatures,
         translate: FuseTranslationLoaderService,
-        overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>
+        overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>,
+        snackbar: MatSnackBar
     ) {
         this.nomenclaturesService = nomenclaturesService;
         this.translate = translate;
         this.overlappingLogBooksDialog = overlappingLogBooksDialog;
+        this.snackbar = snackbar;
 
         this.pagesAndDeclarationsForLastPermitLicenseLabel = this.translate.getValue('catches-and-sales.log-book-pages-and-declarations-for-last-permit-license-panel');
         this.declarationsOfOriginInPermitLicenseLabel = this.translate.getValue('catches-and-sales.log-book-declarations-of-origin-in-permit-license-panel');
@@ -427,6 +432,9 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                     ) {
                         this.handleInvalidLogBookLicensePagesRangeError(error.messages[0], dialogClose);
                     }
+                    else if (error?.code === ErrorCode.MoreThanOneActiveOnlineLogBook) {
+                        this.handleMoreThanOneActiveOnlineLogBookError();
+                    }
                 }
             });
         }
@@ -442,9 +450,20 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                     ) {
                         this.handleInvalidLogBookLicensePagesRangeError(error.messages[0], dialogClose);
                     }
+                    else if (error?.code === ErrorCode.MoreThanOneActiveOnlineLogBook) {
+                        this.handleMoreThanOneActiveOnlineLogBookError();
+                    }
                 }
             });
         }
+    }
+
+    private handleMoreThanOneActiveOnlineLogBookError(): void {
+        const errorMsg: string = this.translate.getValue('catches-and-sales.more-than-one-active-online-log-book-present-error');
+        this.snackbar.open(errorMsg, undefined, {
+            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+        });
     }
 
     private handleInvalidLogBookLicensePagesRangeError(logBookNumber: string, dialogClose: DialogCloseCallback): void {

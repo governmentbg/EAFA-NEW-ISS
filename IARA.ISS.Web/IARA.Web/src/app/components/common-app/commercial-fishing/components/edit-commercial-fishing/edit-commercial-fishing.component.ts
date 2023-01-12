@@ -2217,6 +2217,11 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     if (permitId !== null && permitId !== undefined) {
                         this.form.get('permitLicensePermitControl')!.setValue(this.permits.find(x => x.value === permitId));
                     }
+                    else {
+                        if (this.permits.filter(x => x.isActive).length === 1) { // Ако има само едно разрешително възможно за избор, направо го избираме
+                            this.form.get('permitLicensePermitControl')!.setValue(this.permits.filter(x => x.isActive)[0]);
+                        }
+                    }
                 }
             }
         });

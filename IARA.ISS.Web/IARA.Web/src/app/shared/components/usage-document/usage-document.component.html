@@ -47,6 +47,7 @@
 						[isPerson]="false"
 						[isIdReadOnly]="isIdReadOnly"
 						[expectedResults]="expectedResults?.lessorLegal"
+						(downloadDataBtnClicked)="downloadedConcessionerLegalData($event)"
 						checkboxLabel="{{ 'usage-document.has-bulgarian-address-registration' | tlTranslate }}">
 			</regix-data>
 
@@ -79,6 +80,7 @@
 						[isIdReadOnly]="isIdReadOnly"
 						[hideDocument]="true"
 						[expectedResults]="expectedResults?.lessorPerson"
+						(downloadDataBtnClicked)="downloadedPersonData($event)"
 						checkboxLabel="{{ 'usage-document.has-bulgarian-address-registration' | tlTranslate }}">
 			</regix-data>
 
@@ -89,6 +91,7 @@
 						[isPerson]="false"
 						[isIdReadOnly]="isIdReadOnly"
 						[expectedResults]="expectedResults?.lessorLegal"
+						(downloadDataBtnClicked)="downloadedLegalData($event)"
 						checkboxLabel="{{ 'usage-document.has-bulgarian-address-registration' | tlTranslate }}">
 			</regix-data>
 

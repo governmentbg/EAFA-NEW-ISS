@@ -42,7 +42,7 @@
                 </tl-autocomplete>
             </div>
 
-            <!-- Получател на заявлението, ЕГН/ЕИК на получател -->
+            <!-- Получател на заявлението, ЕГН/ЕИК на получател, Назначено на -->
             <div *ngIf="pageType === 'FileInPage'; else isConcreteRegister"
                  fxLayout="row"
                  fxLayoutGap="1em"
@@ -64,11 +64,12 @@
                            label="{{ 'applications-register.assigned-applications' | tlTranslate }}"
                            tooltipResourceName="applications-register.assigned-applications-helper">
                 </tl-select>
-                <tl-input fxFlex="25"
-                          formControlName="assignedToControl"
-                          label="{{ 'applications-register.application-assigned-user' | tlTranslate }}"
-                          tooltipResourceName="applications-register.application-assigned-user-helper">
-                </tl-input>
+                <tl-autocomplete fxFlex="25"
+                                formControlName="assignedToControl"
+                                label="{{ 'applications-register.application-assigned-user' | tlTranslate }}"
+                                tooltipResourceName="applications-register.application-assigned-user-helper"
+                                [options]="users">
+                </tl-autocomplete>
             </div>
 
             <ng-template #isConcreteRegister>
@@ -83,7 +84,12 @@
                               label="{{ 'applications-register.application-submitted-for-egn-lnc' | tlTranslate }}"
                               tooltipResourceName="applications-register.application-submitted-for-egn-lnc-helper">
                     </tl-input>
-                    <div fxFlex="33"><!-- Подравняване --></div>
+                    <tl-autocomplete fxFlex="33"
+                                     formControlName="assignedToControl"
+                                     label="{{ 'applications-register.application-assigned-user' | tlTranslate }}"
+                                     tooltipResourceName="applications-register.application-assigned-user-helper"
+                                     [options]="users">
+                    </tl-autocomplete>
                 </div>
             </ng-template>
         </div>

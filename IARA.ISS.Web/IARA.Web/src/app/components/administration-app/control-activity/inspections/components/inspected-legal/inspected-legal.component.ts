@@ -8,6 +8,7 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { InspectionUtils } from '@app/shared/utils/inspection.utils';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 
 @Component({
     selector: 'inspected-legal',
@@ -63,6 +64,10 @@ export class InspectedLegalComponent extends CustomFormControl<InspectionSubject
         else {
             this.form.get('countryControl')!.setValue(this.countries.find(f => f.code === CommonUtils.COUNTRIES_BG));
         }
+    }
+
+    public downloadedLegalData(legal: LegalFullDataDTO): void {
+        this.form.get('legalControl')!.setValue(legal.legal);
     }
 
     protected buildForm(): AbstractControl {

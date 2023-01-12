@@ -275,7 +275,6 @@ export class StatisticalFormsContentComponent implements AfterViewInit {
             freeTextSearch: filters.searchText,
             showInactiveRecords: filters.showInactiveRecords,
 
-            registryNumber: filters.getValue('registryNumberControl'),
             formTypeIds: filters.getValue('formTypesControl'),
             submissionDateFrom: filters.getValue<DateRangeData>('submissionDateControl')?.start,
             submissionDateTo: filters.getValue<DateRangeData>('submissionDateControl')?.end,
@@ -293,7 +292,6 @@ export class StatisticalFormsContentComponent implements AfterViewInit {
     private buildForm(): void {
         if (this.isPublicApp) {
             this.form = new FormGroup({
-                registryNumberControl: new FormControl(),
                 formTypesControl: new FormControl(),
                 submissionDateControl: new FormControl(),
                 formObjectControl: new FormControl()
@@ -301,7 +299,6 @@ export class StatisticalFormsContentComponent implements AfterViewInit {
         }
         else {
             this.form = new FormGroup({
-                registryNumberControl: new FormControl(),
                 processUserControl: new FormControl(),
                 formTypesControl: new FormControl(),
                 submissionDateControl: new FormControl(),

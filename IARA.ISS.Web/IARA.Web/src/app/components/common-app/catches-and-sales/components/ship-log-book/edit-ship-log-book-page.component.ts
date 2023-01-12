@@ -90,6 +90,8 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
     public isEditing: boolean = false;
     public isAdd: boolean = false;
 
+    public allCatchIsTransboardedValue: boolean = false;
+
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
 
@@ -470,7 +472,8 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
         const data: OriginDeclarationDialogParamsModel = new OriginDeclarationDialogParamsModel({
             model: declarationOfOriginCatchRecord,
             service: this.service,
-            viewMode: viewMode
+            viewMode: viewMode,
+            isAllCatchTransboarded: this.allCatchIsTransboardedValue
         });
 
         if (viewMode === true) {
@@ -736,12 +739,17 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             allCatchIsTransboardedControl: new FormControl(false),
 
             filesControl: new FormControl()
-        }, [this.originDeclarationFishesValidator(),
-        this.delcarationOfOriginCatchRecordQuantitiesValidator(),
-        this.originDeclarationCatchRecordFishesDatesValidator()]);
+        }, [
+            this.originDeclarationFishesValidator(),
+            this.delcarationOfOriginCatchRecordQuantitiesValidator(),
+            this.originDeclarationCatchRecordFishesDatesValidator(),
+            this.allOriginDeclarationFishTransboardedIfMarkedValidator()
+        ]);
 
         this.form.get('allCatchIsTransboardedControl')!.valueChanges.subscribe({
             next: (value: boolean | undefined) => {
+                this.allCatchIsTransboardedValue = value ?? false;
+
                 if (value) {
                     this.form.get('unloadDateTimeControl')!.clearValidators();
                     this.form.get('unloadPortControl')!.clearValidators();
@@ -889,7 +897,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                     const lastUsedPageNum: number = Number(error!.messages[0]);
                     const diff: number = Number(error!.messages[1]);
                     const pageToAdd: string = this.model.pageNumber!;
-                    
+
                     // confirmation message
 
                     let message: string = '';
@@ -934,7 +942,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                             if (this.hasMissingPagesRangePermission) {
                                 this.addShipLogBookPage(dialogClose); // start add method again
                             }
-                        }  
+                        }
                     });
                 }
             }
@@ -1139,6 +1147,27 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             }
 
             return null;
+        }
+    }
+
+    private allOriginDeclarationFishTransboardedIfMarkedValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === null || form === undefined) {
+                return null;
+            }
+
+            if (!this.allCatchIsTransboardedValue) {
+                return null;
+            }
+            else {
+                const originDeclarationFishes: OriginDeclarationFishDTO[] = (this.declarationOfOriginCatchRecordsTable.rows as OriginDeclarationFishDTO[]) ?? [];
+                if (originDeclarationFishes.some(x => x.transboradDateTime === null || x.transboradDateTime === undefined)) { // Ако има улов, който няма данни за трансбордиране
+                    return { 'noTransboardDataForTransboardedCatch': true };
+                }
+                else {
+                    return null;
+                }
+            }
         }
     }
 

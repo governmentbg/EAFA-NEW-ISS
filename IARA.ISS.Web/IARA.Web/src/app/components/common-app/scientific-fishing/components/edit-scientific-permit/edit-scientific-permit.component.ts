@@ -58,6 +58,8 @@ import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTy
 import { ScientificFishingReasonNomenclatureDTO } from '@app/models/generated/dtos/ScientificFishingReasonNomenclatureDTO';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 
 @Component({
     selector: 'edit-scientific-permit',
@@ -654,6 +656,14 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
             }
         }
         return undefined;
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('requesterRegixDataControl')!.setValue(person.person);
+    }
+
+    public downloadedLegalData(legal: LegalFullDataDTO): void {
+        this.form.get('receiverRegixDataControl')!.setValue(legal.legal);
     }
 
     // form handlers

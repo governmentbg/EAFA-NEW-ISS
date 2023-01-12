@@ -19,6 +19,7 @@ import { AreaTypes } from '@app/shared/enums/area-type.enum';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { RequestService } from '@app/shared/services/request.service';
 import { CommonUtils } from '@app/shared/utils/common.utils';
+import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -168,6 +169,12 @@ export class DashboardService implements IDashboardService {
             }
             return entries;
         }));
+    }
+
+    public getUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        return this.requestService.get(this.area, this.controller, 'GetUsersNomenclature', {
+            responseTypeCtr: PrintUserNomenclatureDTO
+        });
     }
 
     private callGetAllApplications(request: GridRequestModel<ApplicationsRegisterFilters>, serviceMethod: string): Observable<GridResultModel<ApplicationRegisterDTO>> {

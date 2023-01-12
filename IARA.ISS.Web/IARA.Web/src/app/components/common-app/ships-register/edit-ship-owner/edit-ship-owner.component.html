@@ -44,6 +44,7 @@
                     [isIdReadOnly]="isEditing"
                     [hideDocument]="true"
                     [expectedResults]="expectedResults.regixPersonData"
+                    (downloadDataBtnClicked)="downloadedPersonData($event)"
                     checkboxLabel="{{ 'ships-register.has-bulgarian-address-registration' | tlTranslate }}">
         </regix-data>
 
@@ -51,7 +52,8 @@
                     formControlName="personControl"
                     [isPerson]="true"
                     [isForeigner]="true"
-                    [hideDocument]="true">
+                    [hideDocument]="true"
+                    (downloadDataBtnClicked)="downloadedPersonData($event)">
         </regix-data>
     </div>
 
@@ -61,6 +63,7 @@
                 [showCustodianOfProperty]="false"
                 [isIdReadOnly]="isEditing"
                 [expectedResults]="expectedResults.regixLegalData"
+                (downloadDataBtnClicked)="downloadedLegalData($event)"
                 checkboxLabel="{{ 'ships-regster.has-bulgarian-address-registration' | tlTranslate }}">
     </regix-data>
 

@@ -47,6 +47,7 @@
                     [hideDocument]="true"
                     [middleNameRequired]="true"
                     [expectedResults]="expectedResults?.person"
+                    (downloadDataBtnClicked)="downloadedPersonData($event)"
                     checkboxLabel="{{ 'fishing-capacity.has-bulgarian-address-registration' | tlTranslate }}">
         </regix-data>
         <address-registration formControlName="addressControl"
@@ -62,6 +63,7 @@
                     [isPerson]="false"
                     [isIdReadOnly]="isEgnLncReadOnly"
                     [expectedResults]="expectedResults?.legal"
+                    (downloadDataBtnClicked)="downloadedLegalData($event)"
                     checkboxLabel="{{ 'fishing-capacity.has-bulgarian-address-registration' | tlTranslate }}">
         </regix-data>
         <address-registration formControlName="addressControl"

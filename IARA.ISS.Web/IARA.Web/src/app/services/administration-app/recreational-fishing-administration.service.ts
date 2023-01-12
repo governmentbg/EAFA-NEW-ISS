@@ -13,7 +13,6 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { RecreationalFishingTicketApplicationDTO } from '@app/models/generated/dtos/RecreationalFishingTicketApplicationDTO';
 import { RecreationalFishingTicketBaseRegixDataDTO } from '@app/models/generated/dtos/RecreationalFishingTicketBaseRegixDataDTO';
 import { RecreationalFishingTicketDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDTO';
-import { RecreationalFishingTicketHolderDTO } from '@app/models/generated/dtos/RecreationalFishingTicketHolderDTO';
 import { RecreationalFishingTicketPriceDTO } from '@app/models/generated/dtos/RecreationalFishingTicketPriceDTO';
 import { RecreationalFishingTicketsDTO } from '@app/models/generated/dtos/RecreationalFishingTicketsDTO';
 import { RecreationalFishingTicketValidationDTO } from '@app/models/generated/dtos/RecreationalFishingTicketValidationDTO';
@@ -154,17 +153,6 @@ export class RecreationalFishingAdministrationService extends ApplicationsRegist
             httpParams: params,
             responseType: 'text',
             properties: RequestProperties.NO_SPINNER
-        });
-    }
-
-    public getPersonData(egnLnc: EgnLncDTO): Observable<RecreationalFishingTicketHolderDTO | undefined> {
-        const params = new HttpParams()
-            .append('egnLnc', egnLnc.egnLnc!)
-            .append('idType', egnLnc.identifierType!.toString());
-
-        return this.requestService.get(this.area, this.controller, 'GetPersonData', {
-            httpParams: params,
-            responseTypeCtr: RecreationalFishingTicketHolderDTO
         });
     }
 

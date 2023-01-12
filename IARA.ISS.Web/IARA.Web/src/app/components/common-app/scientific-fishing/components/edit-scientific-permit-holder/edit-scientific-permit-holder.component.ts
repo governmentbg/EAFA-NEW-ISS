@@ -15,6 +15,7 @@ import { AddressRegistrationDTO } from '@app/models/generated/dtos/AddressRegist
 import { FileInfoDTO } from '@app/models/generated/dtos/FileInfoDTO';
 import { Notifier } from '@app/shared/directives/notifier/notifier.class';
 import { EditScientificPermitHolderDialogParams } from '../../models/edit-scientific-permit-holder-dialog-params';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 
 @Component({
     selector: 'edit-scientific-permit-holder',
@@ -105,6 +106,17 @@ export class EditScientificPermitHolderComponent implements OnInit, AfterViewIni
         if (this.readOnly) {
             this.form.disable();
         }
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('regixDataControl')!.setValue(person.person);
+
+        if (person.addresses && person.addresses.length !== 0) {
+            this.form.get('noAddressProvidedControl')!.setValue(false);
+            this.form.get('addressControl')!.setValue(person.addresses[0]);
+        }
+
+        this.form.get('photoControl')!.setValue(person.photo);
     }
 
     private buildForm(): void {

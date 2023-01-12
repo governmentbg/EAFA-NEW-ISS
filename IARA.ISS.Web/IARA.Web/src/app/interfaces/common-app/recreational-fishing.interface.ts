@@ -12,7 +12,6 @@ import { RecreationalFishingTicketValidToCalculationParamsDTO } from '@app/model
 import { RecreationalFishingTicketApplicationFilters } from '@app/models/generated/filters/RecreationalFishingTicketApplicationFilters';
 import { RecreationalFishingTicketDeclarationParametersDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDeclarationParametersDTO';
 import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
-import { RecreationalFishingTicketHolderDTO } from '@app/models/generated/dtos/RecreationalFishingTicketHolderDTO';
 import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dtos/RecreationalFishingAddTicketsResultDTO';
 import { RecreationalFishingTicketDuplicateDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDuplicateDTO';
 import { IBaseAuditService } from '../base-audit.interface';
@@ -40,7 +39,6 @@ export interface IRecreationalFishingService extends IBaseAuditService {
     downloadFishingTicket(ticketId: number): Observable<boolean>;
     downloadTicketDeclaration(parameters: RecreationalFishingTicketDeclarationParametersDTO): Observable<boolean>;
 
-    getPersonData(egnLnc: EgnLncDTO, associationId: number | undefined): Observable<RecreationalFishingTicketHolderDTO | undefined>;
     getPersonPhoto(egnLnc: EgnLncDTO, associationId: number | undefined): Observable<string>;
     getPhoto(fileId: number): Observable<string>;
 

@@ -669,7 +669,6 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                 submittedForControl: new FormControl(),
                 aquacultureFacilityControl: new FormControl(null, Validators.required),
                 yearControl: new FormControl(null, Validators.required),
-                formNumControl: new FormControl({ value: null, disabled: true }),
                 breedingMaterialDeathRateControl: new FormControl(null, TLValidators.number(0, 100)),
                 consumationFishDeathRateControl: new FormControl(null, TLValidators.number(0, 100)),
                 broodstockDeathRateControl: new FormControl(null, TLValidators.number(0, 100)),
@@ -701,13 +700,13 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         }
         else if (this.model instanceof StatisticalFormAquaFarmApplicationEditDTO) {
             this.fillFormApplication(this.model);
-        }
-        else if (this.model instanceof StatisticalFormAquaFarmEditDTO) {
-            this.fillFormRegister(this.model);
 
             if (this.showRegiXData) {
                 this.fillFormRegiX(this.model);
             }
+        }
+        else if (this.model instanceof StatisticalFormAquaFarmEditDTO) {
+            this.fillFormRegister(this.model);
         }
 
         if (this.isReadonly || this.viewMode) {
@@ -797,7 +796,6 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         this.form.get('submittedForControl')!.setValue(model.submittedFor);
         this.form.get('aquacultureFacilityControl')!.setValue(this.aquacultures.find(x => x.value === model.aquacultureFacilityId));
         this.form.get('yearControl')!.setValue(new Date(model.year!, 0, 1));
-        this.form.get('formNumControl')!.setValue(model.formNum);
         this.form.get('breedingMaterialDeathRateControl')!.setValue(model.breedingMaterialDeathRate);
         this.form.get('consumationFishDeathRateControl')!.setValue(model.consumationFishDeathRate);
         this.form.get('broodstockDeathRateControl')!.setValue(model.broodstockDeathRate);
@@ -934,7 +932,6 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         model.submittedFor = this.form.get('submittedForControl')!.value;
         model.aquacultureFacilityId = this.form.get('aquacultureFacilityControl')!.value!.value;
         model.year = (this.form.get('yearControl')!.value as Date)!.getFullYear();
-        model.formNum = this.form.get('formNumControl')!.value;
         model.breedingMaterialDeathRate = this.form.get('breedingMaterialDeathRateControl')!.value;
         model.consumationFishDeathRate = this.form.get('consumationFishDeathRateControl')!.value;
         model.broodstockDeathRate = this.form.get('broodstockDeathRateControl')!.value;

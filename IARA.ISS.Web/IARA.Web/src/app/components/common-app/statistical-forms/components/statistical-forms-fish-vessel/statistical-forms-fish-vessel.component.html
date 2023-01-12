@@ -48,12 +48,12 @@
                         [validityChecker]="form">
         <div fxLayout="column">
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
-                <tl-input *ngIf="isRegisterEntry"
-                          fxFlex="25"
-                          formControlName="formNumControl"
-                          tooltipResourceName="statistical-forms.fish-vessel-form-num-helper"
-                          label="{{ 'statistical-forms.fish-vessel-form-num' | tlTranslate }}">
-                </tl-input>
+                <tl-date-year fxFlex="25"
+                              formControlName="yearControl"
+                              tooltipResourceName="statistical-forms.fish-vessel-year-helper"
+                              label="{{ 'statistical-forms.fish-vessel-year' | tlTranslate }}"
+                              [max]="currentDate">
+                </tl-date-year>
                 <tl-autocomplete fxFlex="50"
                                  formControlName="shipNameControl"
                                  tooltipResourceName="statistical-forms.ship-name-helper"
@@ -62,12 +62,7 @@
                                  [templateOptions]="true"
                                  label="{{ 'statistical-forms.ship-name' | tlTranslate }}">
                 </tl-autocomplete>
-                <tl-date-year fxFlex="25"
-                              formControlName="yearControl"
-                              tooltipResourceName="statistical-forms.fish-vessel-year-helper"
-                              label="{{ 'statistical-forms.fish-vessel-year' | tlTranslate }}"
-                              [max]="currentDate">
-                </tl-date-year>
+                <div fxFlex="25"></div>
             </div>
         </div>
     </tl-expansion-panel>

@@ -51,6 +51,7 @@
                         [isPerson]="true"
                         [isIdReadOnly]="isEditing"
                         [expectedResults]="expectedResultPerson"
+                        (downloadDataBtnClicked)="downloadedPersonData($event)"
                         checkboxLabel="{{ 'scientific-fishing.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
         </tl-card-content>

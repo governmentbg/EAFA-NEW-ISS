@@ -49,6 +49,11 @@
     background-color: green !important;
 }
 
+.snack-bar-warn-color {
+    background-color: orange !important;
+    color: black !important;
+}
+
 // -----------------------------------------------------------------------------------------------------
 // @ spinner material dialog
 // -----------------------------------------------------------------------------------------------------
@@ -493,14 +498,9 @@ quill-editor.min-h-20 div.ql-container {
 // ----------------------------------------------
 // For egn-lnc-input
 // ----------------------------------------------
-egn-lnc-input {
-    tl-icon-button {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
-
-        button.mat-icon-button {
-            width: fit-content;
-        }
+.regix-data-search-button {
+    button {
+        font-size: 1.3em;
+        margin-bottom: 0.5em;
     }
 }

@@ -8,6 +8,7 @@
                 [isIdReadOnly]="isEditing"
                 [hideDocument]="true"
                 [isEmailRequired]="true"
-                [expectedResults]="expectedResults.person">
+                [expectedResults]="expectedResults.person"
+                (downloadDataBtnClicked)="downloadedPersonData($event)">
     </regix-data>
 </div>

@@ -20,6 +20,7 @@
                         [isIdReadOnly]="isEditingSubmittedBy"
                         [expectedResults]="expectedResults.submittedByRegixData"
                         [middleNameRequired]="true"
+                        (downloadDataBtnClicked)="downloadedPersonData($event)"
                         checkboxLabel="{{'qualified-fishers-page.has-bg-address' | tlTranslate}}">
             </regix-data>
 
@@ -64,6 +65,7 @@
                         [expectedResults]="expectedResults.submittedForRegixData"
                         [isForeigner]="isThirdCountryFisherman"
                         [middleNameRequired]="true"
+                        (downloadDataBtnClicked)="downloadedSubmittedForPersonData($event)"
                         checkboxLabel="{{'qualified-fishers-page.has-bg-address' | tlTranslate}}">
             </regix-data>
 

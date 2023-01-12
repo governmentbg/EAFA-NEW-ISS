@@ -31,7 +31,7 @@ import { ShipsUtils } from '@app/shared/utils/ships.utils';
 })
 export class EditOriginDeclarationComponent implements OnInit, IDialogComponent {
     public form!: FormGroup;
-    public viewMode!: boolean;
+    private viewMode!: boolean;
     public model!: OriginDeclarationFishDTO;
     public service!: ICatchesAndSalesService;
 
@@ -41,6 +41,8 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
     public allPorts: NomenclatureDTO<number>[] = [];
     public ports: NomenclatureDTO<number>[] = [];
     public ships: ShipNomenclatureDTO[] = [];
+
+    public isAllCatchMarkedAsTransboarded: boolean = false;
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -88,6 +90,7 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
     public setData(data: OriginDeclarationDialogParamsModel, buttons: DialogWrapperData): void {
         this.viewMode = data.viewMode;
         this.service = data.service;
+        this.isAllCatchMarkedAsTransboarded = data.isAllCatchTransboarded;
 
         if (data.model === null || data.model === undefined) {
             this.model = new OriginDeclarationFishDTO({ isActive: true });
@@ -197,6 +200,10 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
         }
 
         if (this.model.transboradDateTime !== null && this.model.transboradDateTime !== undefined) {
+            this.form.get('isTransboardedControl')!.setValue(true);
+        }
+
+        if (this.isAllCatchMarkedAsTransboarded) { // Щом целият улов е трансбордиран, трябва да се попълнят задължителни данни за трансбордирането на рибата
             this.form.get('isTransboardedControl')!.setValue(true);
         }
 

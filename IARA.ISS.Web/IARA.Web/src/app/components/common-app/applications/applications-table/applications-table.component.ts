@@ -92,6 +92,7 @@ import { EditLegalAssociationComponent } from '@app/components/common-app/legal-
 import { RecreationalFishingAssociationService } from '@app/services/administration-app/recreational-fishing-association.service';
 import { RecreationalFishingAssociationPublicService } from '@app/services/public-app/recreational-fishing-association-public.service';
 import { AssignApplicationByUserComponent } from '../components/assign-application-by-user/assign-application-by-user.component';
+import { WaitExternalChecksToFinishComponent } from '../components/wait-external-checks-to-finish/wait-external-checks-to-finish.component';
 
 const DIALOG_WIDTH: string = '1600px';
 export type ApplicationTablePageType = 'FileInPage' | 'DashboardPage' | 'ApplicationPage' | 'PublicPage';
@@ -120,6 +121,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
     public showInactiveRecords: boolean = false;
 
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
+    public readonly faIconSize: number = CommonUtils.FA_ICON_SIZE;
     public readonly applicationSourceTypeEnum: typeof ApplicationHierarchyTypesEnum = ApplicationHierarchyTypesEnum;
     public readonly applicationStatusEnum: typeof ApplicationStatusesEnum = ApplicationStatusesEnum;
     public readonly applicationPaymentStatusEnum: typeof PaymentStatusesEnum = PaymentStatusesEnum;
@@ -136,6 +138,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
     private readonly chooseApplicationTypeDialog: TLMatDialog<ChooseApplicationTypeComponent>;
     private readonly uploadFileDialog: TLMatDialog<UploadFileDialogComponent>;
     private readonly onlinePaymentDialog: TLMatDialog<OnlinePaymentDataComponent>;
+    private readonly waitExternalChecksDialog: TLMatDialog<WaitExternalChecksToFinishComponent>;
     private readonly matDialog: MatDialog;
     private readonly injector: Injector;
 
@@ -169,6 +172,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
         chooseApplicationTypeDialog: TLMatDialog<ChooseApplicationTypeComponent>,
         uploadFileDialog: TLMatDialog<UploadFileDialogComponent>,
         onlinePaymentDialog: TLMatDialog<OnlinePaymentDataComponent>,
+        waitExternalChecksDialog: TLMatDialog<WaitExternalChecksToFinishComponent>,
         matDialog: MatDialog,
         injector: Injector,
         tlTranslatePipe: TLTranslatePipe,
@@ -187,6 +191,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
         this.onlinePaymentDialog = onlinePaymentDialog;
         this.chooseApplicationTypeDialog = chooseApplicationTypeDialog;
         this.uploadFileDialog = uploadFileDialog;
+        this.waitExternalChecksDialog = waitExternalChecksDialog;
         this.matDialog = matDialog;
         this.injector = injector;
         this.tlTranslatePipe = tlTranslatePipe;
@@ -424,6 +429,26 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
 
     public closeEnterEventisNumberDialogBtnClicked(closeFn: HeaderCloseFunction): void {
         closeFn();
+    }
+
+    public openWaitExternalChecksToFinishDialog(application: ApplicationRegisterDTO): void {
+        const dialog = this.waitExternalChecksDialog.openWithTwoButtons({
+            TCtor: WaitExternalChecksToFinishComponent,
+            title: this.translationService.getValue('applications-register.wait-external-checks-to-finish-dialog-title'),
+            translteService: this.translationService,
+            viewMode: true,
+            closeBtn: {
+                id: 'close',
+                color: 'accent',
+                translateValue: this.translationService.getValue('applications-register.wait-external-checks-close-btn')
+            }
+        }, '600px');
+
+        dialog.subscribe({
+            next: () => {
+                this.onAddedOrEditted.emit(application.id);
+            }
+        });
     }
 
     public assignApplicationViaUserId(application: ApplicationRegisterDTO): void {

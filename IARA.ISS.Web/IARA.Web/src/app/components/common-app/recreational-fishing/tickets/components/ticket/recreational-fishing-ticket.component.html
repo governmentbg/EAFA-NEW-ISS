@@ -106,7 +106,6 @@
                             [dateOfBirthRequiredForLncAndForId]="dateOfBirthRequiredTicketTypes.includes(type.code!)"
                             [expectedResults]="regixChecksData?.person"
                             [showGender]="type.code === 'ELDER'"
-                            [showSearchButton]="(isAssociation || !isPersonal) && !isDialog"
                             (downloadDataBtnClicked)="downloadPersonalData($event, false)"
                             checkboxLabel="{{ 'recreational-fishing.has-bulgarian-address-registration' | tlTranslate }}">
                 </regix-data>
@@ -148,7 +147,6 @@
                         [isIdReadOnly]="!isEgnEditable || isRenewal"
                         [allDocumentFieldsRequired]="true"
                         [expectedResults]="regixChecksData?.representativePerson"
-                        [showSearchButton]="(isAssociation || !isPersonal) && !isDialog"
                         (downloadDataBtnClicked)="downloadPersonalData($event, true)"
                         checkboxLabel="{{ 'recreational-fishing.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>

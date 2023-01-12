@@ -377,7 +377,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             translteService: this.translationService,
             disableDialogClose: true,
             viewMode: true
-        }, '1200px');
+        }, '1500px');
     }
 
     public addLogBookPage(logBook: LogBookRegisterDTO): void {
@@ -436,7 +436,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             },
             componentData: data,
             disableDialogClose: !viewMode
-        }, '1450px').subscribe({
+        }, '1500px').subscribe({
             next: (result: ShipLogBookPageEditDTO | undefined) => {
                 if (result !== undefined) {
                     this.gridManager.refreshData();
@@ -516,7 +516,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             },
             componentData: data,
             disableDialogClose: !viewMode
-        }, '1300px').subscribe({
+        }, '1500px').subscribe({
             next: (result: AquacultureLogBookPageEditDTO | undefined) => {
                 if (result !== undefined) {
                     this.gridManager.refreshData();

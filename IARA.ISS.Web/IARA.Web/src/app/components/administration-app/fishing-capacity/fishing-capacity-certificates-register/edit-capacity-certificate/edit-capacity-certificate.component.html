@@ -55,6 +55,7 @@
                                 [isIdReadOnly]="isIdReadOnly"
                                 [middleNameRequired]="true"
                                 [hideDocument]="true"
+                                (downloadDataBtnClicked)="downloadedPersonData($event)"
                                 checkboxLabel="{{ 'fishing-capacity.has-bulgarian-address-registration' | tlTranslate }}">
                     </regix-data>
                     <address-registration formControlName="addressesControl"
@@ -68,6 +69,7 @@
                     <regix-data formControlName="holderControl"
                                 [isPerson]="false"
                                 [isIdReadOnly]="isIdReadOnly"
+                                (downloadDataBtnClicked)="downloadedLegalData($event)"
                                 checkboxLabel="{{ 'fishing-capacity.has-bulgarian-address-registration' | tlTranslate }}">
                     </regix-data>
                     <address-registration formControlName="addressesControl"

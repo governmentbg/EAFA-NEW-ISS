@@ -56,11 +56,12 @@
                                    label="{{ 'applications-register.assigned-applications' | tlTranslate }}"
                                    tooltipResourceName="applications-register.assigned-applications-helper">
                         </tl-select>
-                        <tl-input fxFlex="33"
-                                  formControlName="assignedToControl"
-                                  label="{{ 'applications-register.application-assigned-user' | tlTranslate }}"
-                                  tooltipResourceName="applications-register.application-assigned-user-helper">
-                        </tl-input>
+                        <tl-autocomplete fxFlex="33"
+                                         formControlName="assignedToControl"
+                                         label="{{ 'applications-register.application-assigned-user' | tlTranslate }}"
+                                         tooltipResourceName="applications-register.application-assigned-user-helper"
+                                         [options]="users">
+                        </tl-autocomplete>
                     </div>
                 </div>
             </search-panel>
@@ -83,11 +84,11 @@
         <tl-expansion-panel title="{{ 'dashboard.reference-label' | tlTranslate }}"
                             tooltipResourceName="dashboard.reference-label-helper">
             <div class="cards" fxLayout="row wrap" fxLayoutGap="1em" fxLayoutAlign="start center">
-                <dashboard-card [data]="type" 
-                                fxFlex="24" 
-                                fxFlex.lg="32" 
-                                fxFlex.lt-lg="46" 
-                                fxFlex.lt-md="100" 
+                <dashboard-card [data]="type"
+                                fxFlex="24"
+                                fxFlex.lg="32"
+                                fxFlex.lt-lg="46"
+                                fxFlex.lt-md="100"
                                 *ngFor="let type of typesCountReports">
                 </dashboard-card>
             </div>
@@ -118,11 +119,11 @@
         <tl-expansion-panel title="{{ 'dashboard.ticket-reference-label' | tlTranslate }}"
                             tooltipResourceName="dashboard.ticket-reference-label-helper">
             <div class="cards" fxLayout="row wrap" fxLayoutGap="1em" fxLayoutAlign="start center">
-                <dashboard-card [data]="type" 
-                                fxFlex="24" 
-                                fxFlex.lg="32" 
-                                fxFlex.lt-lg="46" 
-                                fxFlex.lt-md="100" 
+                <dashboard-card [data]="type"
+                                fxFlex="24"
+                                fxFlex.lg="32"
+                                fxFlex.lt-lg="46"
+                                fxFlex.lt-md="100"
                                 *ngFor="let type of ticketTypesCountReports">
                 </dashboard-card>
             </div>

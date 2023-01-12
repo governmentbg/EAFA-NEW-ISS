@@ -137,18 +137,6 @@ export class RecreationalFishingPublicService extends BaseAuditService implement
         });
     }
 
-    public getPersonData(egnLnc: EgnLncDTO, associationId: number): Observable<RecreationalFishingTicketHolderDTO | undefined> {
-        const params = new HttpParams()
-            .append('egnLnc', egnLnc.egnLnc!)
-            .append('idType', egnLnc.identifierType!.toString())
-            .append('associationId', associationId.toString());
-
-        return this.requestService.get(this.area, this.controller, 'GetPersonData', {
-            httpParams: params,
-            responseTypeCtr: RecreationalFishingTicketHolderDTO
-        });
-    }
-
     public getPersonPhoto(egnLnc: EgnLncDTO, associationId: number): Observable<string> {
         const params = new HttpParams()
             .append('egnLnc', egnLnc.egnLnc!)

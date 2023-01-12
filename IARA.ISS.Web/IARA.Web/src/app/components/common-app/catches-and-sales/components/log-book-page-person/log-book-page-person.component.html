@@ -23,6 +23,7 @@
                         [isForeigner]="isForeigner"
                         [showOnlyBasicData]="showOnlyBasicData"
                         [readonly]="readonly"
+                        (downloadDataBtnClicked)="downloadedPersonData($event)"
                         checkboxLabel="{{ 'catches-and-sales.log-book-page-person-has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
             <address-registration *ngIf="!showOnlyBasicData"
@@ -43,6 +44,7 @@
                         [isIdReadOnly]="isIdReadOnly"
                         [showOnlyBasicData]="showOnlyBasicData"
                         [readonly]="readonly"
+                        (downloadDataBtnClicked)="downloadedLegalData($event)"
                         checkboxLabel="{{ 'catches-and-sales.log-book-page-person-has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
             <address-registration *ngIf="!showOnlyBasicData"

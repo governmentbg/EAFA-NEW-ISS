@@ -1,6 +1,5 @@
-﻿<div [formGroup]="form" fxLayout="row" fxLayoutAlign="space-between center">
-    <tl-input [fxFlex]="showSearchButton && !isDisabled ? 90 : 100"
-              formControlName="valueControl"
+﻿<div [formGroup]="form" style="width: 100%;">
+    <tl-input formControlName="valueControl"
               [label]="label"
               [readonly]="readonly"
               [multilineError]="multilineError"
@@ -18,13 +17,4 @@
                    [options]="valueTypes">
         </tl-select>
     </tl-input>
-
-    <tl-icon-button *ngIf="showSearchButton && !isDisabled"
-                    fxFlex="10"
-                    class="search-button"
-                    icon="fa-search-icon"
-                    (buttonClicked)="searchBtnClicked()"
-                    iconClass="accent-color"
-                    tooltipText="{{ 'regix-data.search' | tlTranslate }}">
-    </tl-icon-button>
 </div>

@@ -14,21 +14,33 @@
 
         <div fxLayout="row wrap"
              fxLayoutAlign="space-between center">
-            <egn-lnc-input fxFlex="24"
-                           fxFlex.md="49"
-                           fxFlex.lt-md="100"
-                           formControlName="idNumberControl"
-                           [isIdentityRequired]="isIdentityRequired"
-                           [readonly]="isIdReadOnly || readonly"
-                           [isForeigner]="isForeigner"
-                           [includeForeigner]="includeForeigner"
-                           [expectedResult]="expectedRegixResults?.egnLnc?.egnLnc"
-                           [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"
-                           [showSearchButton]="showSearchButton"
-                           [emitEgnPnfErrors]="true"
-                           (searchButtonClicked)="downloadBtnClicked($event)"
-                           (focusout)="egnLncFocusOut()">
-            </egn-lnc-input>
+            <div fxFlex="24"
+                 fxFlex.md="49"
+                 fxFlex.lt-md="100"
+                 fxLayout="row"
+                 fxLayoutAlign="space-between center">
+                <egn-lnc-input fxFlex="90"
+                               formControlName="idNumberControl"
+                               [isIdentityRequired]="isIdentityRequired"
+                               [readonly]="isIdReadOnly || readonly"
+                               [isForeigner]="isForeigner"
+                               [includeForeigner]="includeForeigner"
+                               [expectedResult]="expectedRegixResults?.egnLnc?.egnLnc"
+                               [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"
+                               [emitEgnPnfErrors]="true"
+                               (keydown.enter)="onIdNumberEnterDown()">
+                </egn-lnc-input>
+
+                <tl-icon-button *ngIf="showSearchButton && !isDisabled && !hideSearchButton"
+                                fxFlex="10"
+                                class="regix-data-search-button"
+                                icon="fa-search-icon"
+                                [disabled]="isIdReadOnly || readonly"
+                                (buttonClicked)="searchBtnClicked()"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'regix-data.search' | tlTranslate }}">
+                </tl-icon-button>
+            </div>
             <tl-input fxFlex="24"
                       fxFlex.md="49"
                       fxFlex.lt-md="100"
@@ -148,14 +160,28 @@
         <div *ngIf="!showOnlyBasicData"
              fxLayout="row wrap"
              fxLayoutAlign="space-between center">
-            <tl-input fxFlex="24"
-                      fxFlex.md="49"
-                      fxFlex.lt-md="100"
-                      formControlName="idNumberControl"
-                      [readonly]="isIdReadOnly || readonly"
-                      label="{{ 'regix-data.eik' | tlTranslate }}"
-                      [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
-            </tl-input>
+            <div fxFlex="24"
+                 fxFlex.md="49"
+                 fxFlex.lt-md="100"
+                 fxLayout="row"
+                 fxLayoutAlign="space-between center">
+                <tl-input fxFlex
+                          formControlName="idNumberControl"
+                          [readonly]="isIdReadOnly || readonly"
+                          label="{{ 'regix-data.eik' | tlTranslate }}"
+                          (keydown.enter)="onIdNumberEnterDown()"
+                          [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                </tl-input>
+
+                <tl-icon-button *ngIf="showSearchButton && !isDisabled && !hideSearchButton"
+                                class="regix-data-search-button"
+                                icon="fa-search-icon"
+                                [disabled]="isIdReadOnly || readonly"
+                                (buttonClicked)="searchBtnClicked()"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'regix-data.search' | tlTranslate }}">
+                </tl-icon-button>
+            </div>
             <tl-input fxFlex="24"
                       fxFlex.md="49"
                       fxFlex.lt-md="100"
@@ -184,14 +210,28 @@
         <div *ngIf="showOnlyBasicData"
              fxLayout="row wrap"
              fxLayoutAlign="space-between center">
-            <tl-input fxFlex="24"
-                      fxFlex.md="49"
-                      fxFlex.lt-md="100"
-                      formControlName="idNumberControl"
-                      [readonly]="isIdReadOnly || readonly"
-                      label="{{ 'regix-data.eik' | tlTranslate }}"
-                      [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
-            </tl-input>
+            <div fxFlex="24"
+                 fxFlex.md="49"
+                 fxFlex.lt-md="100"
+                 fxLayout="row"
+                 fxLayoutAlign="space-between center">
+                <tl-input fxFlex
+                          formControlName="idNumberControl"
+                          [readonly]="isIdReadOnly || readonly"
+                          label="{{ 'regix-data.eik' | tlTranslate }}"
+                          (keydown.enter)="onIdNumberEnterDown()"
+                          [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                </tl-input>
+
+                <tl-icon-button *ngIf="showSearchButton && !isDisabled && !hideSearchButton"
+                                class="regix-data-search-button"
+                                icon="fa-search-icon"
+                                [disabled]="isIdReadOnly || readonly"
+                                (buttonClicked)="searchBtnClicked()"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'regix-data.search' | tlTranslate }}">
+                </tl-icon-button>
+            </div>
             <tl-input fxFlex="24"
                       fxFlex.md="49"
                       fxFlex.lt-md="100"
@@ -218,17 +258,32 @@
                 <tl-card-content>
                     <div fxLayout="row wrap"
                          fxLayoutAlign="space-between center">
-                        <egn-lnc-input fxFlex="24"
-                                       fxFlex.md="49"
-                                       fxFlex.lt-md="100"
-                                       formControlName="custodianEgnControl"
-                                       [readonly]="isIdReadOnly || readonly"
-                                       [isForeigner]="isForeigner"
-                                       [includeForeigner]="includeForeigner"
-                                       [emitEgnPnfErrors]="true"
-                                       [expectedResult]="expectedRegixResults?.custodianOfProperty?.egnLnc?.egnLnc"
-                                       [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
-                        </egn-lnc-input>
+                        <div fxFlex="24"
+                             fxFlex.md="49"
+                             fxFlex.lt-md="100"
+                             fxLayout="row"
+                             fxLayoutAlign="space-between center">
+                            <egn-lnc-input fxFlex="90"
+                                           formControlName="custodianEgnControl"
+                                           [readonly]="isIdReadOnly || readonly"
+                                           [isForeigner]="isForeigner"
+                                           [includeForeigner]="includeForeigner"
+                                           [emitEgnPnfErrors]="true"
+                                           [expectedResult]="expectedRegixResults?.custodianOfProperty?.egnLnc?.egnLnc"
+                                           [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"
+                                           (keydown.enter)="onCustodianEgnEnterDown()">
+                            </egn-lnc-input>
+
+                            <tl-icon-button *ngIf="showSearchButton && !isDisabled && !hideSearchButton"
+                                            fxFlex="10"
+                                            class="regix-data-search-button"
+                                            icon="fa-search-icon"
+                                            [disabled]="isIdReadOnly || readonly || form.controls.custodianCheckboxControl.value"
+                                            (buttonClicked)="custodianSearchBtnClicked()"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'regix-data.search' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
                         <tl-input fxFlex="24"
                                   fxFlex.md="49"
                                   fxFlex.lt-md="100"

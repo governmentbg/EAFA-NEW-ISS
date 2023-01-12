@@ -48,19 +48,13 @@
                         tooltipResourceName="statistical-forms.rework-basic-information-title-helper"
                         [validityChecker]="form">
         <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="1em">
-            <tl-input *ngIf="isRegisterEntry"
-                      fxFlex="33"
-                      formControlName="formNumControl"
-                      tooltipResourceName="statistical-forms.rework-form-num-helper"
-                      label="{{ 'statistical-forms.rework-form-num' | tlTranslate }}">
-            </tl-input>
             <tl-date-year fxFlex="33"
                           formControlName="yearControl"
                           tooltipResourceName="statistical-forms.rework-year-helper"
                           label="{{ 'statistical-forms.rework-year' | tlTranslate }}"
                           [max]="currentDate">
             </tl-date-year>
-            <div fxFlex="33" *ngIf="!isRegisterEntry"></div>
+            <div fxFlex="33"></div>
             <div fxFlex="33"></div>
         </div>
 

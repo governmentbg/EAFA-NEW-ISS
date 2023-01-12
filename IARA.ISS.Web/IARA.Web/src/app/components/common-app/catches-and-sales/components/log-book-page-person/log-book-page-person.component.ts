@@ -9,6 +9,8 @@ import { LogBookPagePersonTypesEnum } from '@app/enums/log-book-page-person-type
 import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
 import { ICatchesAndSalesService } from '@app/interfaces/common-app/catches-and-sales.interface';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 
 
 @Component({
@@ -196,6 +198,16 @@ export class LogBookPagePersonComponent implements OnInit, AfterViewInit, DoChec
             }
         });
         return Object.keys(errors).length > 0 ? errors : null;
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('personControl')!.setValue(person.person);
+        this.form.get('addressesControl')?.setValue(person.addresses);
+    }
+
+    public downloadedLegalData(legal: LegalFullDataDTO): void {
+        this.form.get('legalControl')!.setValue(legal.legal);
+        this.form.get('addressesControl')?.setValue(legal.addresses);
     }
 
     private fillForm(): void {

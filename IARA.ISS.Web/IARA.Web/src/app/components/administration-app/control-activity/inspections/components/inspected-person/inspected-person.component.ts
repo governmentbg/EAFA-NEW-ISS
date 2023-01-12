@@ -9,6 +9,7 @@ import { RegixPersonDataDTO } from '@app/models/generated/dtos/RegixPersonDataDT
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { InspectionUtils } from '@app/shared/utils/inspection.utils';
 import { InspectedPersonTypeEnum } from '@app/enums/inspected-person-type.enum';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 
 @Component({
     selector: 'inspected-person',
@@ -67,6 +68,10 @@ export class InspectedPersonComponent extends CustomFormControl<InspectionSubjec
         else {
             this.form.get('countryControl')!.setValue(this.countries.find(f => f.code === CommonUtils.COUNTRIES_BG));
         }
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('personControl')!.setValue(person.person);
     }
 
     protected buildForm(): AbstractControl {

@@ -38,16 +38,10 @@ export class EgnLncInputComponent extends CustomFormControl<EgnLncDTO | undefine
     public expectedResult: string | undefined;
 
     @Input()
-    public showSearchButton: boolean = false;
-
-    @Input()
     public emitEgnPnfErrors: boolean = false;
 
     @Input()
     public isIdentityRequired: boolean = true;
-
-    @Output()
-    public searchButtonClicked: EventEmitter<EgnLncDTO> = new EventEmitter<EgnLncDTO>();
 
     @Output()
     public focusout: EventEmitter<void> = new EventEmitter<void>();
@@ -261,12 +255,6 @@ export class EgnLncInputComponent extends CustomFormControl<EgnLncDTO | undefine
         }
     }
 
-    public searchBtnClicked(): void {
-        if (this.isIdNumberValidExceptEgn()) {
-            this.searchButtonClicked.emit(this.getValue());
-        }
-    }
-
     protected buildForm(): AbstractControl {
         return new FormGroup({
             valueControl: new FormControl(),
@@ -296,18 +284,6 @@ export class EgnLncInputComponent extends CustomFormControl<EgnLncDTO | undefine
         }
 
         return result;
-    }
-
-    private isIdNumberValidExceptEgn(): boolean {
-        const errors: ValidationErrors | null = this.form.get('valueControl')!.errors;
-        if (errors === null) {
-            return true;
-        }
-
-        if (errors['egn'] && Object.keys(errors).length === 1) {
-            return true;
-        }
-        return false;
     }
 
     private setForeignerFieldAndValidators(): void {

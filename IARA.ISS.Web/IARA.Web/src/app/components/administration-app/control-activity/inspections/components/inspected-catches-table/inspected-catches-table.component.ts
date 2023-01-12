@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Self, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, Self, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { FillDef, MapOptions, SimplePolygonStyleDef, StrokeDef, TLMapViewerComponent } from '@tl/tl-angular-map';
 
@@ -36,7 +36,7 @@ function groupBy(array: any[], f: any): any[][] {
     styleUrls: ['./inspected-catches-table.component.scss'],
     templateUrl: './inspected-catches-table.component.html',
 })
-export class InspectedCatchesTableComponent extends CustomFormControl<InspectionCatchMeasureDTO[]> implements OnInit {
+export class InspectedCatchesTableComponent extends CustomFormControl<InspectionCatchMeasureDTO[]> implements OnInit, OnChanges {
     public catchesFormGroup!: FormGroup;
 
     @Input()
@@ -78,6 +78,9 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     @Input()
     public fishSex: NomenclatureDTO<number>[] = [];
 
+    @Input()
+    public requiresFish: boolean = true;
+
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
 
@@ -117,6 +120,14 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
         this.mapOptions.showGridLayer = true;
         this.mapOptions.gridLayerStyle = this.createCustomGridLayerStyle();
         this.mapOptions.selectGridLayerStyle = this.createCustomSelectGridLayerStyle();
+    }
+
+    public ngOnChanges(changes: SimpleChanges): void {
+        if ('requiresFish' in changes) {
+            if (!this.requiresFish) {
+                this.control.setValidators(this.catchesValidator());
+            }
+        }
     }
 
     public ngOnInit(): void {
