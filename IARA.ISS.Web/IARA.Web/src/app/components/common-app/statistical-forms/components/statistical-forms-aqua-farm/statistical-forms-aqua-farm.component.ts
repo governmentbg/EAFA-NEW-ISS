@@ -51,6 +51,7 @@ import { StatisticalFormsPublicService } from '@app/services/public-app/statisti
 import { StatisticalFormTypesEnum } from '@app/enums/statistical-form-types.enum';
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 
 type YesNo = 'yes' | 'no';
 
@@ -334,6 +335,12 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
             this.form.controls.aquacultureFacilityControl.valueChanges.subscribe({
                 next: (value: NomenclatureDTO<number> | string | undefined) => {
                     if (value !== undefined && value !== null && typeof value !== 'string') {
+                        const year: number | undefined = (this.form.get('yearControl')!.value as Date)?.getFullYear();
+                        
+                        if (this.chosenAquacultureFacilityId !== value!.value) {
+                            this.checkIfStatFormAlreadyExists(value!.value, year);
+                        }
+
                         this.service.getStatisticalFormAquaculture(value.value!).subscribe({
                             next: (aquaculture: StatisticalFormAquacultureDTO) => {
                                 if (this.chosenAquacultureFacilityId !== aquaculture.aquacultureId) {
@@ -392,6 +399,16 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                 next: (value: ApplicationSubmittedForDTO | undefined) => {
                     if (value?.submittedByRole !== undefined) {
                         this.showBasicInfo = true;
+                    }
+                }
+            });
+
+            this.form.controls.yearControl!.valueChanges.subscribe({
+                next: (value: Date | undefined) => {
+                    if (value !== undefined && value !== null) {
+                        const aquacultureId: number | undefined = this.form.get('aquacultureFacilityControl')!.value?.value;
+                        this.checkIfStatFormAlreadyExists(aquacultureId, value.getFullYear());
+                        this.form.get('aquacultureFacilityControl')!.updateValueAndValidity({ onlySelf: true });
                     }
                 }
             });
@@ -633,6 +650,15 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         }
 
         return result;
+    }
+
+    public aquacultureFacilityErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+        if (controlName === 'aquacultureFacilityControl') {
+            if (errorCode === 'statFormExists'  && error === true) {
+                return new TLError({ type: 'error', text: this.translate.getValue('statistical-forms.aqua-farm-stat-form-exist-error') });
+            }
+        }
+        return undefined;
     }
 
     private buildForm(): void {
@@ -1370,5 +1396,20 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         const womenWithPay: number = stat.map(x => x.womenWithPay!).reduce((sum, a) => sum + a, 0);
 
         return menWithPay !== 0 || womenWithPay !== 0;
+    }
+
+    private checkIfStatFormAlreadyExists(aquacultureId: number | undefined, year: number | undefined): void {
+        if (year !== undefined && year !== null) {
+            if (aquacultureId !== undefined && aquacultureId !== null) {
+                this.service.aquaFarmStatFormAlreadyExists(aquacultureId, year, this.formId).subscribe({
+                    next: (yes: boolean) => {
+                        if (yes) {
+                            this.form.get('aquacultureFacilityControl')!.setErrors({ statFormExists: true });
+                            this.form.get('aquacultureFacilityControl')!.markAsTouched();
+                        }
+                    }
+                });
+            }
+        }
     }
 }

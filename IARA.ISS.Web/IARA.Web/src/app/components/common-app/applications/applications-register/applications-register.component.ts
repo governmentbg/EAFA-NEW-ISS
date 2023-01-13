@@ -140,10 +140,20 @@ export class ApplicationsRegisterComponent<T extends IDialogComponent> implement
         });
 
         if (!this.isPublicApp) {
+            // check for filter by access code
+
             const accessCode: string | undefined = window.history.state?.accessCode;
 
             if (!CommonUtils.isNullOrEmpty(accessCode)) {
                 this.grid.advancedFilters = new ApplicationsRegisterFilters({ accessCode: accessCode });
+            }
+
+            // check for filter by application id
+
+            const applicationId: number | undefined = Number(window.history.state?.applicationId);
+
+            if (!CommonUtils.isNumberNullOrNaN(applicationId)) {
+                this.grid.advancedFilters = new ApplicationsRegisterFilters({ applicationId: applicationId });
             }
         }
 

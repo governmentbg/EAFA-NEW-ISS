@@ -37,6 +37,7 @@ import { EditScientificPermitComponent } from './components/edit-scientific-perm
 import { EditScientificFishingOutingDialogParams } from './models/edit-scientific-fishing-outing-dialog-params.model';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { ScientificFishingReasonNomenclatureDTO } from '@app/models/generated/dtos/ScientificFishingReasonNomenclatureDTO';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'scientific-fishing-content',
@@ -68,6 +69,7 @@ export class ScientificFishingContent implements OnInit, AfterViewInit {
     public readonly canDeleteRecords: boolean;
     public readonly canRestoreRecords: boolean;
     public readonly canAddOutings: boolean;
+    public readonly canReadApplications: boolean;
 
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
@@ -82,6 +84,7 @@ export class ScientificFishingContent implements OnInit, AfterViewInit {
     private readonly outingDialog: TLMatDialog<EditScientificFishingOutingComponent>;
     private readonly chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
     private readonly deliveryDialog: TLMatDialog<RegisterDeliveryComponent>;
+    private readonly router: Router;
 
     public constructor(
         translationService: FuseTranslationLoaderService,
@@ -90,7 +93,8 @@ export class ScientificFishingContent implements OnInit, AfterViewInit {
         outingDialog: TLMatDialog<EditScientificFishingOutingComponent>,
         chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>,
         deliveryDialog: TLMatDialog<RegisterDeliveryComponent>,
-        permissions: PermissionsService
+        permissions: PermissionsService,
+        router: Router
     ) {
         this.translationService = translationService;
         this.confirmDialog = confirmDialog;
@@ -98,12 +102,16 @@ export class ScientificFishingContent implements OnInit, AfterViewInit {
         this.outingDialog = outingDialog;
         this.chooseApplicationDialog = chooseApplicationDialog;
         this.deliveryDialog = deliveryDialog;
+        this.router = router;
 
         this.canAddRecords = !this.isPublicApp && permissions.has(PermissionsEnum.ScientificFishingAddRecords);
         this.canEditRecords = !this.isPublicApp && permissions.has(PermissionsEnum.ScientificFishingEditRecords);
         this.canDeleteRecords = !this.isPublicApp && permissions.has(PermissionsEnum.ScientificFishingDeleteRecords);
         this.canRestoreRecords = !this.isPublicApp && permissions.has(PermissionsEnum.ScientificFishingRestoreRecords);
         this.canAddOutings = permissions.has(PermissionsEnum.ScientificFishingAddOutings);
+
+
+        this.canReadApplications = permissions.has(PermissionsEnum.ScientificFishingApplicationsRead) || permissions.has(PermissionsEnum.ScientificFishingApplicationsReadAll);
 
         this.buildForm();
     }
@@ -373,6 +381,12 @@ export class ScientificFishingContent implements OnInit, AfterViewInit {
                 }
             }
         });
+    }
+
+    public gotToApplication(permit: ScientificFishingPermitDTO): void {
+        if (this.canReadApplications) {
+            this.router.navigate(['scientific-fishing-applications'], { state: { applicationId: permit.applicationId } });
+        }
     }
 
     private openPermitDialog(

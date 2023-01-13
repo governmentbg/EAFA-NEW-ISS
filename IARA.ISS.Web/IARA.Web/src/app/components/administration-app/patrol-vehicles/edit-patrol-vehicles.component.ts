@@ -28,6 +28,8 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
     public patrolVehicleTypes: NomenclatureDTO<number>[] = [];
     public vesselTypes: NomenclatureDTO<number>[] = [];
     public institutions: NomenclatureDTO<number>[] = [];
+    public vehicleTypeEnum: typeof PatrolVehiclesTypeEnum = PatrolVehiclesTypeEnum;
+    public vehicleType: PatrolVehiclesTypeEnum | undefined;
 
     private service: PatrolVehiclesService;
     private translate: FuseTranslationLoaderService;
@@ -76,17 +78,26 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
     public ngAfterViewInit(): void{
         this.editVehicleForm.get('patrolVehicleTypeIdControl')!.valueChanges.subscribe({
             next: (type: NomenclatureDTO<number> | undefined) => {
+                this.editVehicleForm.get('registerNumControl')!.clearValidators();
                 this.editVehicleForm.get('cfrControl')!.clearValidators();
                 this.editVehicleForm.get('cfrControl')!.setValidators(TLValidators.cfr);
 
                 if (type !== undefined && type !== null) {
-                    const vehicleType = PatrolVehiclesTypeEnum[type.code as keyof typeof PatrolVehiclesTypeEnum];
+                    this.vehicleType = PatrolVehiclesTypeEnum[type.code as keyof typeof PatrolVehiclesTypeEnum];
 
-                    if (vehicleType === PatrolVehiclesTypeEnum.Ship) {
+                    if (this.vehicleType === PatrolVehiclesTypeEnum.Ship || this.vehicleType === PatrolVehiclesTypeEnum.Boat) {
                         this.editVehicleForm.get('cfrControl')!.setValidators([Validators.required, TLValidators.cfr]);
                     }
+                    else {
+                        this.editVehicleForm.get('registerNumControl')!.setValidators(Validators.required);
+                    }
+                }
+                else {
+                    this.vehicleType = undefined;
                 }
 
+                this.editVehicleForm.get('registerNumControl')!.markAsPending({ emitEvent: false });
+                this.editVehicleForm.get('registerNumControl')!.updateValueAndValidity({ emitEvent: false });
                 this.editVehicleForm.get('cfrControl')!.markAsPending({ emitEvent: false });
                 this.editVehicleForm.get('cfrControl')!.updateValueAndValidity({ emitEvent: false });
             }
@@ -149,6 +160,7 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
             patrolVehicleTypeIdControl: new FormControl(null, Validators.required),
             externalMarkControl: new FormControl(null, Validators.maxLength(50)),
             cfrControl: new FormControl(null, TLValidators.cfr),
+            registerNumControl: new FormControl(null),
             uviControl: new FormControl(null, [TLValidators.exactLength(7), TLValidators.number(0)]),
             ircsCallSignControl: new FormControl(null, Validators.maxLength(7)),
             mmsiControl: new FormControl(null, [TLValidators.exactLength(9), TLValidators.number(0)]),
@@ -168,11 +180,16 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
         const patrolVehicleType = NomenclatureStore.instance.getNomenclatureItem(NomenclatureTypes.PatrolVehicleTypes, this.model.patrolVehicleTypeId!);
         this.editVehicleForm.controls.patrolVehicleTypeIdControl.setValue(patrolVehicleType);
 
-        this.editVehicleForm.get('externalMarkControl')!.setValue(this.model.externalMark);
-        this.editVehicleForm.get('cfrControl')!.setValue(this.model.cfr);
-        this.editVehicleForm.get('uviControl')!.setValue(this.model.uvi);
-        this.editVehicleForm.get('ircsCallSignControl')!.setValue(this.model.ircscallSign);
-        this.editVehicleForm.get('mmsiControl')!.setValue(this.model.mmsi);
+        if (this.vehicleType === PatrolVehiclesTypeEnum.Ship || this.vehicleType === PatrolVehiclesTypeEnum.Boat) {
+            this.editVehicleForm.get('externalMarkControl')!.setValue(this.model.externalMark);
+            this.editVehicleForm.get('cfrControl')!.setValue(this.model.cfr);
+            this.editVehicleForm.get('uviControl')!.setValue(this.model.uvi);
+            this.editVehicleForm.get('ircsCallSignControl')!.setValue(this.model.ircscallSign);
+            this.editVehicleForm.get('mmsiControl')!.setValue(this.model.mmsi);
+        }
+        else {
+            this.editVehicleForm.get('registerNumControl')!.setValue(this.model.cfr);
+        }
 
         if (this.model.vesselTypeId !== null && this.model.vesselTypeId !== undefined) {
             const vesselTypeType = NomenclatureStore.instance.getNomenclatureItem(NomenclatureTypes.VesselTypes, this.model.vesselTypeId!);
@@ -194,12 +211,18 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
         this.model.institutionId = NomenclatureStore.getValue(this.editVehicleForm.controls.institutionIdControl.value);
         this.model.patrolVehicleTypeId = NomenclatureStore.getValue(this.editVehicleForm.controls.patrolVehicleTypeIdControl.value);
         this.model.externalMark = this.editVehicleForm.get('externalMarkControl')!.value;
-        this.model.cfr = this.editVehicleForm.get('cfrControl')!.value;
         this.model.uvi = this.editVehicleForm.get('uviControl')!.value;
         this.model.ircscallSign = this.editVehicleForm.get('ircsCallSignControl')!.value;
         this.model.mmsi = this.editVehicleForm.get('mmsiControl')!.value;
         this.model.vesselTypeId = NomenclatureStore.getValue(this.editVehicleForm.controls.vesselTypeIdControl.value);
         this.model.flagCountryId = NomenclatureStore.getValue(this.editVehicleForm.controls.flagCountryIdControl.value);
+
+        if (this.vehicleType === PatrolVehiclesTypeEnum.Ship || this.vehicleType === PatrolVehiclesTypeEnum.Boat) {
+            this.model.cfr = this.editVehicleForm.get('cfrControl')!.value;
+        }
+        else {
+            this.model.cfr = this.editVehicleForm.get('registerNumControl')!.value;
+        }
     }
 
 }

@@ -180,7 +180,7 @@ namespace IARA.Mobile.Insp.Controls
         {
             Entry entry = new Entry
             {
-                WidthRequest = maxLength * 8.8,
+                WidthRequest = maxLength * (Device.RuntimePlatform == Device.Android ? 12.5 : 8.8),
                 MaxLength = maxLength,
                 FontSize = 16,
                 Keyboard = Keyboard.Numeric,

@@ -78,6 +78,11 @@
                                             || (row.data.pageCode === pageCodes.IncreaseFishCap || row.data.pageCode === pageCodes.ReduceFishCap && canViewCapacityApplications)"
                                          fxLayout="row wrap"
                                          fxLayoutAlign="end center">
+                                        <tl-icon-button icon="search"
+                                                        (buttonClicked)="gotToApplication(row.data)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'fishing-capacity.go-to-history-application' | tlTranslate }}">
+                                        </tl-icon-button>
                                         <tl-icon-button icon="visibility"
                                                         iconClass="accent-color"
                                                         tooltipText="{{ 'fishing-capacity.view-history-application' | tlTranslate }}"

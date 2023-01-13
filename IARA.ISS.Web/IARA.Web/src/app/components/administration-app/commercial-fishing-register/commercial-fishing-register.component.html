@@ -232,6 +232,12 @@
                                     <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
                                         <ng-template let-row="row" ngx-datatable-cell-template>
                                             <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                                <tl-icon-button *ngIf="canReadPermitLicenseApplications && (shipId === null || shipId === undefined)"
+                                                                icon="search"
+                                                                (buttonClicked)="gotToPermitLicenseApplication(row.data)"
+                                                                iconClass="accent-color"
+                                                                tooltipText="{{ 'commercial-fishing.go-to-permit-license-application' | tlTranslate }}">
+                                                </tl-icon-button>
                                                 <tl-icon-button *ngIf="row.data.isActive && (shipId === null || shipId === undefined)"
                                                                 icon="ic-fluent-document-briefcase-24-regular"
                                                                 iconClass="accent-color"
@@ -316,6 +322,12 @@
                 <data-template-column [flexRate]="0.5" [cellClass]="'justify-center'">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button *ngIf="canReadPermitApplications && (shipId === null || shipId === undefined)"
+                                            icon="search"
+                                            (buttonClicked)="gotToPermitApplication(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'commercial-fishing.go-to-permit-application' | tlTranslate }}">
+                            </tl-icon-button>
                             <tl-icon-button *ngIf="row.data.isActive && (shipId === null || shipId === undefined)"
                                             icon="ic-fluent-document-briefcase-24-regular"
                                             iconClass="accent-color"

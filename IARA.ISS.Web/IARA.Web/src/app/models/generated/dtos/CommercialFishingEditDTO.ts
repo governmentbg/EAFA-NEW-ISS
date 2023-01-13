@@ -5,11 +5,11 @@ import { SuspensionDataDTO } from './SuspensionDataDTO';
 import { ApplicationSubmittedForDTO } from './ApplicationSubmittedForDTO';
 import { HolderGroundForUseDTO } from './HolderGroundForUseDTO';
 import { EgnLncDTO } from './EgnLncDTO';
+import { FileInfoDTO } from './FileInfoDTO';
 import { QuotaAquaticOrganismDTO } from './QuotaAquaticOrganismDTO';
 import { FishingGearDTO } from './FishingGearDTO';
 import { CommercialFishingLogBookEditDTO } from './CommercialFishingLogBookEditDTO';
 import { DuplicatesEntryDTO } from './DuplicatesEntryDTO';
-import { FileInfoDTO } from './FileInfoDTO';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { CommercialFishingTypesEnum } from '@app/enums/commercial-fishing-types.enum';
 
@@ -89,6 +89,9 @@ export class CommercialFishingEditDTO {
 
     @StrictlyTyped(Boolean)
     public qualifiedFisherSameAsSubmittedFor?: boolean;
+
+    @StrictlyTyped(FileInfoDTO)
+    public qualifiedFisherPhoto?: FileInfoDTO;
 
     @StrictlyTyped(Number)
     public waterTypeId?: number;

@@ -53,6 +53,12 @@
                 <data-template-column [flexRate]="0.2" [headerClass]="'justify-center'">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row" fxLayoutAlign="end center">
+                            <tl-icon-button *ngIf="canReadApplications"
+                                            icon="search"
+                                            (buttonClicked)="gotToApplication(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'legal-entities-page.go-to-application-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
                             <tl-icon-button icon="visibility"
                                             iconClass="accent-color"
                                             (buttonClicked)="editLegalEntity(row, true)"

@@ -258,70 +258,100 @@
                         [validityChecker]="form"
                         [validityCheckerExtraCondition]="hasCaptainNotQualifiedFisherError !== true">
         <div fxLayout="column">
-            <div *ngIf="isApplication || loadRegisterFromApplication; else registerQualifiedFisher" fxLayout="row wrap" fxLayoutAlign="space-between center">
-                <tl-checkbox fxFlex="100"
-                             tooltipResourceName="qualified-fisher-same-as-submitted-for-helper"
-                             formControlName="qualifiedFisherSameAsSubmittedForControl"
-                             [label]="qualifiedFisherSameAsSubmittedForLabel">
-                </tl-checkbox>
-                <egn-lnc-input fxFlex="24"
-                               fxFlex.md="49"
-                               fxFlex.lt-md="100"
-                               formControlName="qualifiedFisherIdNumberControl"
-                               [readonly]="isEditing"
-                               [isForeigner]="isThirdCountryPermit"
-                               [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
-                </egn-lnc-input>
-                <tl-input fxFlex="24"
-                          fxFlex.md="49"
-                          fxFlex.lt-md="100"
-                          formControlName="qualifiedFisherFirstNameControl"
-                          label="{{ 'regix-data.first-name' | tlTranslate }}"
-                          tooltipResourceName="regix-data.first-name-helper"
-                          [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
-                </tl-input>
-                <tl-input fxFlex="24"
-                          fxFlex.md="49"
-                          fxFlex.lt-md="100"
-                          formControlName="qualifiedFisherMiddleNameControl"
-                          label="{{ 'regix-data.middle-name' | tlTranslate }}"
-                          tooltipResourceName="regix-data.middle-name-helper"
-                          [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
-                </tl-input>
-                <tl-input fxFlex="24"
-                          fxFlex.md="49"
-                          fxFlex.lt-md="100"
-                          formControlName="qualifiedFisherLastNameControl"
-                          label="{{ 'regix-data.last-name' | tlTranslate }}"
-                          tooltipResourceName="regix-data.last-name-helper"
-                          [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
-                </tl-input>
+            <div *ngIf="isApplication || loadRegisterFromApplication; else registerQualifiedFisher"
+                 fxLayout="column"
+                 fxLayoutAlign="start stretch">
+                <div fxLayout="row"
+                     fxLayoutAlign="start start"
+                     fxLayoutGap="2em">
+                    <div fxLayout="column" fxFlex="80">
+                        <div fxLayout="row wrap">
+                            <tl-checkbox fxFlex="100"
+                                         tooltipResourceName="qualified-fisher-same-as-submitted-for-helper"
+                                         formControlName="qualifiedFisherSameAsSubmittedForControl"
+                                         [label]="qualifiedFisherSameAsSubmittedForLabel">
+                            </tl-checkbox>
+                            <egn-lnc-input fxFlex="32"
+                                           fxFlex.md="50"
+                                           fxFlex.lt-md="100"
+                                           formControlName="qualifiedFisherIdNumberControl"
+                                           [readonly]="isEditing"
+                                           [isForeigner]="isThirdCountryPermit"
+                                           [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                            </egn-lnc-input>
+                        </div>
+
+                        <div fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                            <tl-input fxFlex="32"
+                                      fxFlex.md="49"
+                                      fxFlex.lt-md="100"
+                                      formControlName="qualifiedFisherFirstNameControl"
+                                      label="{{ 'regix-data.first-name' | tlTranslate }}"
+                                      tooltipResourceName="regix-data.first-name-helper"
+                                      [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                            </tl-input>
+                            <tl-input fxFlex="32"
+                                      fxFlex.md="49"
+                                      fxFlex.lt-md="100"
+                                      formControlName="qualifiedFisherMiddleNameControl"
+                                      label="{{ 'regix-data.middle-name' | tlTranslate }}"
+                                      tooltipResourceName="regix-data.middle-name-helper"
+                                      [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                            </tl-input>
+                            <tl-input fxFlex="32"
+                                      fxFlex.md="49"
+                                      fxFlex.lt-md="100"
+                                      formControlName="qualifiedFisherLastNameControl"
+                                      label="{{ 'regix-data.last-name' | tlTranslate }}"
+                                      tooltipResourceName="regix-data.last-name-helper"
+                                      [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                            </tl-input>
+                        </div>
+                    </div>
+
+                    <div *ngIf="isPermitLicense" fxLayout="column">
+                        <tl-picture-uploader formControlName="qualifiedFisherPhotoControl"
+                                             [requestMethod]="photoRequestMethod"
+                                             [options]="{ validations: { isRequired: true } }">
+                        </tl-picture-uploader>
+                    </div>
+
+                </div>
             </div>
+
             <mat-error fxLayout="row" fxFlexFill *ngIf="hasCaptainNotQualifiedFisherError">
                 {{ 'commercial-fishing.has-captain-not-qualified-fisher-error' | tlTranslate }} *
             </mat-error>
         </div>
         <ng-template #registerQualifiedFisher>
-            <div fxLayout="row wrap" fxLayoutAlign="start center">
-                <tl-checkbox fxFlex="100"
-                             tooltipResourceName="qualified-fisher-same-as-submitted-for-helper"
-                             formControlName="qualifiedFisherSameAsSubmittedForControl"
-                             [label]="qualifiedFisherSameAsSubmittedForLabel">
-                </tl-checkbox>
-                <tl-autocomplete fxFlex="70"
-                                 formControlName="qualifiedFisherControl"
-                                 label="{{ 'commercial-fishing.qualified-fisher' | tlTranslate }}"
-                                 tooltipResourceName="commercial-fishing.qualified-fisher-helper"
-                                 [options]="qualifiedFishers"
-                                 [templateOptions]="true">
-                </tl-autocomplete>
-                <div fxLayout="row" fxFlex="100" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="2em">
+                <div fxFlex fxLayout="row wrap" fxLayoutAlign="start center">
+                    <tl-checkbox fxFlex="100"
+                                 tooltipResourceName="qualified-fisher-same-as-submitted-for-helper"
+                                 formControlName="qualifiedFisherSameAsSubmittedForControl"
+                                 [label]="qualifiedFisherSameAsSubmittedForLabel">
+                    </tl-checkbox>
+                    <tl-autocomplete fxFlex="100"
+                                     formControlName="qualifiedFisherControl"
+                                     label="{{ 'commercial-fishing.qualified-fisher' | tlTranslate }}"
+                                     tooltipResourceName="commercial-fishing.qualified-fisher-helper"
+                                     [options]="qualifiedFishers"
+                                     [templateOptions]="true">
+                    </tl-autocomplete>
                     <tl-input fxFlex="25"
                               formControlName="qualifiedFisherRegistrationNumberControl"
                               label="{{ 'commercial-fishing.qualified-fisher-registration-number' | tlTranslate }}"
                               tooltipResourceName="commercial-fishing.qualified-fisher-registration-number-helper"
                               [readonly]="true">
                     </tl-input>
+                </div>
+
+                <div *ngIf="isPermitLicense" fxLayout="row">
+                    <tl-picture-uploader fxFlex="100"
+                                         formControlName="qualifiedFisherPhotoControl"
+                                         [requestMethod]="photoRequestMethod"
+                                         [options]="{ validations: { isRequired: true } }">
+                    </tl-picture-uploader>
                 </div>
             </div>
         </ng-template>

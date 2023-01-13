@@ -23,6 +23,7 @@ import { ChooseApplicationComponent } from '../../common-app/applications/compon
 import { ChooseApplicationDialogParams } from '../../common-app/applications/components/choose-application/models/choose-application-dialog-params.model';
 import { EditLegalEntityComponent } from '../../common-app/legals/edit-legal-entity/edit-legal-entity.component';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'legal-entities',
@@ -32,10 +33,11 @@ export class LegalEntitiesComponent implements AfterViewInit {
     public translate: FuseTranslationLoaderService;
     public formGroup!: FormGroup;
 
-    public canAddRecords!: boolean;
-    public canEditRecords!: boolean;
-    public canDeleteRecords!: boolean;
-    public canRestoreRecords!: boolean;
+    public readonly canAddRecords: boolean;
+    public readonly canEditRecords: boolean;
+    public readonly canDeleteRecords: boolean;
+    public readonly canRestoreRecords: boolean;
+    public readonly canReadApplications: boolean;
 
     public legalStatusEnum: typeof UserLegalStatusEnum = UserLegalStatusEnum;
 
@@ -45,29 +47,35 @@ export class LegalEntitiesComponent implements AfterViewInit {
     @ViewChild(SearchPanelComponent)
     private searchpanel!: SearchPanelComponent;
 
-    private permissions: PermissionsService;
     private gridManager!: DataTableManager<LegalEntityDTO, LegalEntitiesFilters>;
-    private editDialog: TLMatDialog<EditLegalEntityComponent>;
-    private chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
-    private service!: LegalEntitiesAdministrationService;
+
+    private readonly permissions: PermissionsService;
+    private readonly editDialog: TLMatDialog<EditLegalEntityComponent>;
+    private readonly chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
+    private readonly service!: LegalEntitiesAdministrationService;
+    private readonly router: Router;
 
     public constructor(
         translate: FuseTranslationLoaderService,
         permissions: PermissionsService,
         service: LegalEntitiesAdministrationService,
         editDialog: TLMatDialog<EditLegalEntityComponent>,
-        chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>
+        chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>,
+        router: Router
     ) {
         this.translate = translate;
         this.permissions = permissions;
         this.editDialog = editDialog;
         this.chooseApplicationDialog = chooseApplicationDialog;
         this.service = service;
+        this.router = router;
 
         this.canAddRecords = this.permissions.has(PermissionsEnum.LegalEntitiesAddRecords);
         this.canEditRecords = this.permissions.has(PermissionsEnum.LegalEntitiesEditRecords);
         this.canDeleteRecords = this.permissions.has(PermissionsEnum.LegalEntitiesDeleteRecords);
         this.canRestoreRecords = this.permissions.has(PermissionsEnum.LegalEntitiesRestoreRecords);
+
+        this.canReadApplications = permissions.has(PermissionsEnum.LegalEntitiesApplicationsRead) || permissions.has(PermissionsEnum.LegalEntitiesApplicationsReadAll);
 
         this.buildForm();
     }
@@ -141,6 +149,12 @@ export class LegalEntitiesComponent implements AfterViewInit {
             : this.translate.getValue('legal-entities-page.edit-legal-entity-dialog-title');
 
         this.openEditDialog(data, title, auditBtn);
+    }
+
+    public gotToApplication(legal: LegalEntityDTO): void {
+        if (this.canReadApplications) {
+            this.router.navigate(['legal-entities-applications'], { state: { applicationId: legal.applicationId } });
+        }
     }
 
     private openEditDialog(data: DialogParamsModel, title: string, auditButton?: IHeaderAuditButton): void {

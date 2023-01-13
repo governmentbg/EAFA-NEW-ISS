@@ -200,10 +200,10 @@
 
     <data-template-column [flexRate]="0.7">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            <div fxLayout="row" fxLayoutAlign="end center">
-                <div *ngIf="pageType !== 'DashboardPage' && row.data.isActive" fxLayout="row">
+            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                <ng-container *ngIf="pageType !== 'DashboardPage' && row.data.isActive">
                     <ng-container *ngTemplateOutlet="applicationActions; context: { value: { row: row.data } }"></ng-container>
-                </div>
+                </ng-container>
                 <tl-icon-button *ngIf="pageType !== 'DashboardPage'
                                        && (row.data.sourceCode === applicationSourceTypeEnum.Online
                                            || row.data.statusCode !== applicationStatusEnum.ADM_ACT_COMPLETION)"

@@ -99,6 +99,8 @@ import { PaymentDataDTO } from '@app/models/generated/dtos/PaymentDataDTO';
 import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
 import { PaymentStatusesEnum } from '@app/enums/payment-statuses.enum';
 import { SimpleAuditMethod } from '../log-books/log-books.component';
+import { TLPictureRequestMethod } from '../../../../../shared/components/tl-picture-uploader/tl-picture-uploader.component';
+import { FileInfoDTO } from '../../../../../models/generated/dtos/FileInfoDTO';
 
 type AquaticOrganismsToAddType = NomenclatureDTO<number> | NomenclatureDTO<number>[] | string | undefined | null;
 type SaveApplicationDraftFnType = ((applicationId: number, model: IApplicationRegister, dialogClose: HeaderCloseFunction) => void) | undefined;
@@ -197,6 +199,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
     public getLogBookAuditMethod!: SimpleAuditMethod;
 
+    public photoRequestMethod?: TLPictureRequestMethod;
+
     /**
      * Cast of service property - needed for <log-books> component for the register for administration app - permit licenses only
      * */
@@ -228,6 +232,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     private modelLoadedFromPermit: boolean = false;
     private shipFilters!: CommercialFishingShipFilters;
     private ignoreLogBookConflicts: boolean = false;
+    private isAddingRegister: boolean = false;
 
     private readonly editCommercialFishingPermitLicenseDialog: TLMatDialog<EditCommercialFishingComponent>;
     private readonly editSuspensionDialog: TLMatDialog<EditSuspensionComponent>;
@@ -374,7 +379,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         dialogClose();
     }
 
-    public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
+    public async dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): Promise<void> {
         let applicationAction: boolean = false;
 
         if (actionInfo.id === 'copy-data-from-old-permit-license') {
@@ -400,6 +405,16 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             ) {
                 this.model = this.fillModel();
                 CommonUtils.sanitizeModelStrings(this.model);
+
+                if (this.model instanceof CommercialFishingApplicationEditDTO) {
+                    if (actionInfo.id === 'save-draft-content' && (this.model.id === undefined || this.model.id === null)) {
+                        if (this.model.qualifiedFisherPhoto && this.model.qualifiedFisherPhoto.file) {
+                            const photo: string = await CommonUtils.getFileAsBase64(this.model.qualifiedFisherPhoto.file);
+                            this.model.qualifiedFisherPhotoBase64 = photo;
+                            this.model.qualifiedFisherPhoto = undefined;
+                        }
+                    }
+                }
 
                 applicationAction = ApplicationUtils.applicationDialogButtonClicked(new ApplicationDialogData({
                     action: actionInfo,
@@ -1002,6 +1017,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 else { // извличане на данни за създаване на регистров запис от заявление
                     this.isEditing = false;
                     this.isEditingSubmittedBy = false;
+                    this.isAddingRegister = true;
 
                     this.service.getApplicationDataForRegister(this.applicationId, this.pageCode).subscribe({
                         next: (commercialFishingRegister: CommercialFishingEditDTO) => {
@@ -1674,6 +1690,15 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         if (!this.showOnlyRegiXData) {
             this.fillFormBasicInfo();
             this.fillFormQualifiedFisherData();
+
+            if (this.isPermitLicense) {
+                if (this.isAddingRegister) {
+                    this.photoRequestMethod = this.service.getPermitLicenseFisherPhotoFromApplication.bind(this.service, this.model.applicationId!);
+                }
+                else if (this.model?.id) {
+                    this.photoRequestMethod = this.service.getPermitLicenseFisherPhoto.bind(this.service, this.model.id!);
+                }
+            }
         }
 
         if (!this.isApplication && !this.showOnlyRegiXData) {
@@ -1832,6 +1857,20 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     this.form.get('qualifiedFisherControl')!.setValue(qualifiedFisher);
                     this.form.get('qualifiedFisherRegistrationNumberControl')!.setValue(qualifiedFisher.registrationNumber);
                 }
+            }
+        }
+
+        if (this.isPermitLicense) {
+            if (this.model instanceof CommercialFishingApplicationEditDTO) {
+                if (this.model.qualifiedFisherPhotoBase64 && this.model.qualifiedFisherPhotoBase64.length > 0) {
+                    this.form.get('qualifiedFisherPhotoControl')!.setValue(this.model.qualifiedFisherPhotoBase64);
+                }
+                else {
+                    this.form.get('qualifiedFisherPhotoControl')!.setValue(this.model.qualifiedFisherPhoto);
+                }
+            }
+            else if (this.model instanceof CommercialFishingEditDTO) {
+                this.form.get('qualifiedFisherPhotoControl')!.setValue(this.model.qualifiedFisherPhoto);
             }
         }
     }
@@ -2031,6 +2070,10 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     private addQualifiedFisherControls(): void {
         this.form.addControl('qualifiedFisherSameAsSubmittedForControl', new FormControl(false));
 
+        if (this.isPermitLicense) {
+            this.form.addControl('qualifiedFisherPhotoControl', new FormControl(null, Validators.required));
+        }
+
         if (this.isApplication || this.loadRegisterFromApplication) {
             this.form.addControl('qualifiedFisherIdNumberControl', new FormControl(undefined, Validators.required));
             this.form.addControl('qualifiedFisherFirstNameControl', new FormControl(undefined, Validators.required));
@@ -2174,6 +2217,10 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     private fillQualifiedFisherData(model: CommercialFishingEditDTO | CommercialFishingApplicationEditDTO | CommercialFishingRegixDataDTO): void {
         if (model instanceof CommercialFishingEditDTO) {
             model.qualifiedFisherId = this.form.get('qualifiedFisherControl')!.value.value;
+
+            if (this.isPermitLicense) {
+                model.qualifiedFisherPhoto = this.form.get('qualifiedFisherPhotoControl')!.value;
+            }
         }
         else if (model instanceof CommercialFishingApplicationEditDTO) {
             model.qualifiedFisherSameAsSubmittedFor = this.form.get('qualifiedFisherSameAsSubmittedForControl')!.value;
@@ -2182,6 +2229,22 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             model.qualifiedFisherFirstName = this.form.get('qualifiedFisherFirstNameControl')!.value;
             model.qualifiedFisherMiddleName = this.form.get('qualifiedFisherMiddleNameControl')!.value;
             model.qualifiedFisherLastName = this.form.get('qualifiedFisherLastNameControl')!.value;
+
+            if (this.isPermitLicense) {
+                const photo: FileInfoDTO | string | null = this.form.get('qualifiedFisherPhotoControl')!.value;
+                if (photo !== undefined && photo !== null) {
+                    if (typeof photo === 'string') {
+                        model.qualifiedFisherPhotoBase64 = photo;
+                    }
+                    else {
+                        model.qualifiedFisherPhoto = photo;
+                    }
+                }
+                else {
+                    model.qualifiedFisherPhotoBase64 = undefined;
+                    model.qualifiedFisherPhoto = undefined;
+                }
+            }
         }
     }
 

@@ -10,6 +10,9 @@ export class LegalEntityDTO {
     @StrictlyTyped(Number)
     public id?: number;
 
+    @StrictlyTyped(Number)
+    public applicationId?: number;
+
     @StrictlyTyped(String)
     public name?: string;
 

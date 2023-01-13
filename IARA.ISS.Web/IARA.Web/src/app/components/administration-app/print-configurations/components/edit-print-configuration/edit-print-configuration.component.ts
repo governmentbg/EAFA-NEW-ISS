@@ -19,6 +19,7 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 
 @Component({
     selector: 'edit-print-configuration',
@@ -100,8 +101,8 @@ export class EditPrintConfigurationComponent implements OnInit, IDialogComponent
                     if (result !== undefined && result !== null && result > 0) {
                         this.confirmDialog.open({ 
                             title: this.translate.getValue('print-configurations.update-print-configuration-dialog-title'),
-                            message: `${this.translate.getValue('print-configurations.update-print-configuration-dialog-message-user')} ${result} 
-                                      ${this.translate.getValue('print-configurations.update-print-configuration-dialog-message-count')}`,
+                            message: `${this.translate.getValue('print-configurations.update-print-configuration-dialog-message-user')}` + ` ${result}`
+                                + ` ${this.translate.getValue('print-configurations.update-print-configuration-dialog-message-count')}`,
                             okBtnLabel: this.translate.getValue('print-configurations.update-print-configuration-dialog-ok-btn-label'),
                             cancelBtnLabel: this.translate.getValue('print-configurations.update-print-configuration-dialog-cancel-btn-label')
                         }).subscribe((ok: boolean) => {
@@ -183,7 +184,6 @@ export class EditPrintConfigurationComponent implements OnInit, IDialogComponent
             }
         });
 
-
         return subscription;
     }
 
@@ -193,7 +193,8 @@ export class EditPrintConfigurationComponent implements OnInit, IDialogComponent
             territoryUnitControl: new FormControl(),
             signUserControl: new FormControl(undefined, Validators.required),
             substituteUserControl: new FormControl(undefined),
-            substituteReasonControl: new FormControl(undefined, Validators.maxLength(1000))
+            substituteReasonControl: new FormControl(undefined, Validators.maxLength(1000)),
+            substitutionPeriodControl: new FormControl()
         }, this.uniquePrintConfigurationValidator());
 
         this.form.get('applicationTypeControl')!.valueChanges.subscribe({
@@ -224,6 +225,7 @@ export class EditPrintConfigurationComponent implements OnInit, IDialogComponent
             this.form.get('signUserControl')!.setValue(this.signUsers.find(x => x.value === this.model.signUserId));
             this.form.get('substituteUserControl')!.setValue(this.substituteUsers.find(x => x.value === this.model.substituteUserId));
             this.form.get('substituteReasonControl')!.setValue(this.model.substituteReason);
+            this.form.get('substitutionPeriodControl')!.setValue(new DateRangeData({ start: this.model.substituteStartDate, end: this.model.substituteEndDate }));
         });
     }
 
@@ -232,7 +234,9 @@ export class EditPrintConfigurationComponent implements OnInit, IDialogComponent
         this.model.territoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
         this.model.signUserId = this.form.get('signUserControl')!.value?.value;
         this.model.substituteUserId = this.form.get('substituteUserControl')!.value?.value;
-        this.model.substituteReason = this.form.get('substituteReasonControl')!.value;
+        this.model.substituteReason = this.form.get('substituteReasonControl')!.value; 
+        this.model.substituteStartDate = (this.form.get('substitutionPeriodControl')!.value as DateRangeData)?.start;
+        this.model.substituteEndDate = (this.form.get('substitutionPeriodControl')!.value as DateRangeData)?.end;
 
         return this.model;
     }
@@ -265,6 +269,7 @@ export class EditPrintConfigurationComponent implements OnInit, IDialogComponent
         else {
             this.form.get('substituteReasonControl')!.setValidators([Validators.maxLength(1000)]);
             this.form.get('substituteReasonControl')!.reset();
+            this.form.get('substitutionPeriodControl')!.reset();
         }
 
         this.form.get('substituteReasonControl')!.markAsPending();

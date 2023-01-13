@@ -11,6 +11,9 @@ export class ShipRegisterDTO {
     @StrictlyTyped(Number)
     public id?: number;
 
+    @StrictlyTyped(Number)
+    public applicationId?: number;
+
     @StrictlyTyped(String)
     public cfr?: string;
 

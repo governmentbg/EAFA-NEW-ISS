@@ -39,6 +39,7 @@ import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { EditLogBookComponent } from '@app/components/common-app/commercial-fishing/components/edit-log-book/edit-log-book.component';
 import { LogBookEditDTO } from '@app/models/generated/dtos/LogBookEditDTO';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'buyers-register',
@@ -61,6 +62,8 @@ export class BuyersComponent implements OnInit, AfterViewInit {
 
     public readonly hasReadAllPermission: boolean;
 
+    public readonly canReadApplications: boolean;
+
     public readonly canReadLogBooks: boolean;
     public readonly canAddLogBooks: boolean;
     public readonly canEditLogBooks: boolean;
@@ -77,6 +80,7 @@ export class BuyersComponent implements OnInit, AfterViewInit {
     private readonly commonNomenclatureService: CommonNomenclatures;
     private readonly snackbar: MatSnackBar;
     private readonly logBookDialog: TLMatDialog<EditLogBookComponent>;
+    private readonly router: Router;
 
     private gridManager!: DataTableManager<BuyerDTO, BuyersFilters>;
 
@@ -95,7 +99,8 @@ export class BuyersComponent implements OnInit, AfterViewInit {
         commonNomenclatureService: CommonNomenclatures,
         chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>,
         snackbar: MatSnackBar,
-        logBookDialog: TLMatDialog<EditLogBookComponent>
+        logBookDialog: TLMatDialog<EditLogBookComponent>,
+        router: Router
     ) {
         this.service = service;
         this.editDialog = editDialog;
@@ -106,12 +111,15 @@ export class BuyersComponent implements OnInit, AfterViewInit {
         this.chooseApplicationDialog = chooseApplicationDialog;
         this.snackbar = snackbar;
         this.logBookDialog = logBookDialog;
+        this.router = router;
 
         this.canAddRecords = permissions.has(PermissionsEnum.BuyersAddRecords);
         this.canEditRecords = permissions.has(PermissionsEnum.BuyersEditRecords);
         this.canDeleteRecords = permissions.has(PermissionsEnum.BuyersDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.BuyersRestoreRecords);
         this.hasReadAllPermission = permissions.has(PermissionsEnum.BuyersApplicationsReadAll);
+
+        this.canReadApplications = permissions.has(PermissionsEnum.BuyersApplicationsRead) || permissions.has(PermissionsEnum.BuyersApplicationsReadAll);
 
         this.canReadLogBooks = permissions.has(PermissionsEnum.BuyerLogBookRead);
         this.canAddLogBooks = permissions.has(PermissionsEnum.BuyerLogBookAdd);
@@ -448,6 +456,44 @@ export class BuyersComponent implements OnInit, AfterViewInit {
         });
     }
 
+    public deleteEntry(entry: BuyerDTO): void {
+        this.confirmDialog.open({
+            title: this.translationService.getValue('buyers-and-sales-centers.delete-buyer'),
+            message: this.translationService.getValue('buyers-and-sales-centers.confirm-delete-message'),
+            okBtnLabel: this.translationService.getValue('buyers-and-sales-centers.delete')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok && entry?.id) {
+                    this.service.delete(entry.id!).subscribe({
+                        next: () => {
+                            this.gridManager.refreshData();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public restoreEntry(entry: BuyerDTO): void {
+        this.confirmDialog.open().subscribe({
+            next: (ok: boolean) => {
+                if (ok && entry?.id) {
+                    this.service.restore(entry.id!).subscribe({
+                        next: () => {
+                            this.gridManager.refreshData();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public gotToApplication(buyer: BuyerDTO): void {
+        if (this.canReadApplications) {
+            this.router.navigate(['sales-centers-applications'], { state: { applicationId: buyer.applicationId } });
+        }
+    }
+
     private openLogBookDialog(title: string, data: EditLogBookDialogParamsModel, headerAuditBtn: IHeaderAuditButton | undefined, viewMode: boolean): void {
         const dialog = this.logBookDialog.openWithTwoButtons({
             title: title,
@@ -501,46 +547,6 @@ export class BuyersComponent implements OnInit, AfterViewInit {
         });
     }
 
-    public deleteEntry(entry: BuyerDTO): void {
-        this.confirmDialog.open({
-            title: this.translationService.getValue('buyers-and-sales-centers.delete-buyer'),
-            message: this.translationService.getValue('buyers-and-sales-centers.confirm-delete-message'),
-            okBtnLabel: this.translationService.getValue('buyers-and-sales-centers.delete')
-        }).subscribe({
-            next: (ok: boolean) => {
-                if (ok && entry?.id) {
-                    this.service.delete(entry.id!).subscribe({
-                        next: () => {
-                            this.gridManager.refreshData();
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    public restoreEntry(entry: BuyerDTO): void {
-        this.confirmDialog.open().subscribe({
-            next: (ok: boolean) => {
-                if (ok && entry?.id) {
-                    this.service.restore(entry.id!).subscribe({
-                        next: () => {
-                            this.gridManager.refreshData();
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    private closeDialogBtnClicked(closeFn: HeaderCloseFunction): void {
-        closeFn();
-    }
-
-    private closeApplicationChooseDialogBtnClicked(closeFn: HeaderCloseFunction): void {
-        closeFn();
-    }
-
     private mapFilters(filters: FilterEventArgs): BuyersFilters {
         return new BuyersFilters({
             freeTextSearch: filters.searchText,
@@ -562,5 +568,13 @@ export class BuyersComponent implements OnInit, AfterViewInit {
             territoryUnitId: this.hasReadAllPermission ? filters.getValue('territoryUnitControl') : undefined,
             statusIds: filters.getValue('buyerSatusesControl')
         });
+    }
+
+    private closeDialogBtnClicked(closeFn: HeaderCloseFunction): void {
+        closeFn();
+    }
+
+    private closeApplicationChooseDialogBtnClicked(closeFn: HeaderCloseFunction): void {
+        closeFn();
     }
 }

@@ -18,8 +18,6 @@ import { PoundNetNomenclatureDTO } from '@app/models/generated/dtos/PoundNetNome
 import { QualifiedFisherNomenclatureDTO } from '@app/models/generated/dtos/QualifiedFisherNomenclatureDTO';
 import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
 import { PermitLicenseTariffCalculationParameters } from '@app/components/common-app/commercial-fishing/models/permit-license-tariff-calculation-parameters.model';
-import { RangeOverlappingLogBooksDTO } from '@app/models/generated/dtos/RangeOverlappingLogBooksDTO';
-import { OverlappingLogBooksParameters } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-parameters.model';
 
 export interface ICommercialFishingService extends IApplicationsActionsService {
     getAllPermits(request: GridRequestModel<CommercialFishingRegisterFilters>): Observable<GridResultModel<CommercialFishingPermitRegisterDTO>>;
@@ -34,6 +32,9 @@ export interface ICommercialFishingService extends IApplicationsActionsService {
 
     downloadRegister(id: number, pageCode: PageCodeEnum): Observable<boolean>;
     downloadFile(fileId: number, fileName: string): Observable<boolean>;
+
+    getPermitLicenseFisherPhoto(id: number): Observable<string>;
+    getPermitLicenseFisherPhotoFromApplication(applicationId: number): Observable<string>;
 
     deletePermit(id: number, pageCode: PageCodeEnum): Observable<void>;
     undoDeletePermit(id: number, pageCode: PageCodeEnum): Observable<void>;

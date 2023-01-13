@@ -349,6 +349,25 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                 this.fishingGears = this.fishingGears.slice();
             }
         });
+
+        this.form!.get('shipNameControl')!.valueChanges.subscribe({
+            next: (value: NomenclatureDTO<number> | string | undefined) => {
+                if (value !== undefined && value !== null && typeof value !== 'string') {
+                    const year: number | undefined = (this.form.get('yearControl')!.value as Date)?.getFullYear();
+                    this.checkIfStatFormAlreadyExists(value!.value, year);
+                }
+            }
+        });
+
+        this.form.controls.yearControl!.valueChanges.subscribe({
+            next: (value: Date | undefined) => {
+                if (value !== undefined && value !== null) {
+                    const shipId: number | undefined = this.form.get('shipNameControl')!.value?.value;
+                    this.checkIfStatFormAlreadyExists(shipId, value.getFullYear());
+                    this.form.get('shipNameControl')!.updateValueAndValidity({ onlySelf: true });
+                }
+            }
+        });
     }
 
     public setData(data: DialogParamsModel, buttons: DialogWrapperData): void {
@@ -432,6 +451,12 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
             if (errorCode === 'shipNoFishingCapacity' && error === true) {
                 return new TLError({
                     text: this.translate.getValue('statistical-forms.ship-no-fishing-capacity-error'),
+                    type: 'error'
+                });
+            }
+            else if (errorCode === 'statFormExists' && error === true) {
+                return new TLError({
+                    text: this.translate.getValue('statistical-forms.fish-vessel-stat-form-exist-error'),
                     type: 'error'
                 });
             }
@@ -854,7 +879,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                             next: (ship: StatisticalFormShipDTO) => {
                                 this.statFormShip.set(ship.shipId!, ship);
 
-                                const year: number | undefined = this.form.get('yearControl')?.value?.getFullYear();
+                                const year: number | undefined = this.getYear();
                                 if (year !== undefined && year !== null) {
                                     this.updateGearsCacheAndSetGears(ship.shipId!, year);
                                 }
@@ -863,7 +888,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                         });
                     }
                     else {
-                        const year: number | undefined = this.form.get('yearControl')?.value?.getFullYear();
+                        const year: number | undefined = this.getYear();
                         if (year !== undefined && year !== null) {
                             this.updateGearsCacheAndSetGears(ship.shipId!, year);
                         }
@@ -895,6 +920,13 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                 this.form.get('financialInfoArray')!.updateValueAndValidity({ emitEvent: false });
             }
         });
+    }
+
+    private getYear(): number | undefined {
+        if (this.form.get('yearControl')!.valid) {
+            return this.form.get('yearControl')!.value?.getFullYear();
+        }
+        return undefined;
     }
 
     private updateGearsCacheAndSetGears(shipId: number, year: number): void {
@@ -1102,5 +1134,21 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
 
             return null;
         };
+    }
+
+
+    private checkIfStatFormAlreadyExists(shipId: number | undefined, year: number | undefined): void {
+        if (year !== undefined && year !== null) {
+            if (shipId !== undefined && shipId !== null) {
+                this.service.vesselStatFormAlreadyExists(shipId, year, this.id).subscribe({
+                    next: (yes: boolean) => {
+                        if (yes) {
+                            this.form.get('shipNameControl')!.setErrors({ statFormExists: true });
+                            this.form.get('shipNameControl')!.markAsTouched();
+                        }
+                    }
+                });
+            }
+        }
     }
 }

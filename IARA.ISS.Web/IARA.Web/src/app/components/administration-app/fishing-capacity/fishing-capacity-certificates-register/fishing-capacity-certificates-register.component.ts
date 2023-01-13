@@ -50,6 +50,7 @@ import { RegisterDeliveryComponent } from '@app/shared/components/register-deliv
 import { IDeliveryService } from '@app/interfaces/common-app/delivery.interface';
 import { DeliveryAdministrationService } from '@app/services/administration-app/delivery-administration.service';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
+import { Router } from '@angular/router';
 
 type ThreeState = 'yes' | 'no' | 'both';
 
@@ -104,6 +105,7 @@ export class FishingCapacityCertificatesRegisterComponent implements AfterViewIn
     private navigatingToCertificate: boolean = false;
 
     private readonly loader: FormControlDataLoader;
+    private readonly router: Router;
 
     public constructor(
         service: FishingCapacityAdministrationService,
@@ -121,7 +123,8 @@ export class FishingCapacityCertificatesRegisterComponent implements AfterViewIn
         reduceFishCapDialog: TLMatDialog<ReduceFishingCapacityComponent>,
         transferFishCapDialog: TLMatDialog<TransferFishingCapacityComponent>,
         certDupDialog: TLMatDialog<CapacityCertificateDuplicateComponent>,
-        deliveryDialog: TLMatDialog<RegisterDeliveryComponent>
+        deliveryDialog: TLMatDialog<RegisterDeliveryComponent>,
+        router: Router
     ) {
         this.service = service;
         this.shipsService = shipsService;
@@ -131,6 +134,7 @@ export class FishingCapacityCertificatesRegisterComponent implements AfterViewIn
         this.confirmDialog = confirmDialog;
         this.editDialog = editDialog;
         this.translate = translate;
+        this.router = router;
 
         this.regVesselDialog = regVesselDialog;
         this.deregVesselDialog = deregVesselDialog;
@@ -144,8 +148,8 @@ export class FishingCapacityCertificatesRegisterComponent implements AfterViewIn
         this.canDeleteRecords = permissions.has(PermissionsEnum.FishingCapacityCertificatesDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.FishingCapacityCertificatesRestoreRecords);
 
-        this.canViewShipApplications = permissions.has(PermissionsEnum.ShipsRegisterApplicationsRead);
-        this.canViewCapacityApplications = permissions.has(PermissionsEnum.FishingCapacityApplicationsRead);
+        this.canViewShipApplications = permissions.has(PermissionsEnum.ShipsRegisterApplicationsRead) || permissions.has(PermissionsEnum.ShipsRegisterApplicationReadAll);
+        this.canViewCapacityApplications = permissions.has(PermissionsEnum.FishingCapacityApplicationsRead) || permissions.has(PermissionsEnum.FishingCapacityApplicationsReadAll);
 
         this.isCertificateActiveOptions = [
             new NomenclatureDTO<ThreeState>({
@@ -462,6 +466,27 @@ export class FishingCapacityCertificatesRegisterComponent implements AfterViewIn
                 }
             }
         });
+    }
+
+    public gotToApplication(appl: CapacityCertificateHistoryApplDTO): void {
+        switch (appl.pageCode) {
+            case PageCodeEnum.RegVessel:
+            case PageCodeEnum.DeregShip: {
+                if (this.canViewShipApplications) {
+                    this.router.navigate(['fishing-vessels-applications'], { state: { applicationId: appl.applicationId } });
+                }
+            } break;
+            case PageCodeEnum.IncreaseFishCap:
+            case PageCodeEnum.ReduceFishCap:
+            case PageCodeEnum.TransferFishCap:
+            case PageCodeEnum.CapacityCertDup: {
+                if (this.canViewCapacityApplications) {
+                    this.router.navigate(['fishing-capacity-applications'], { state: { applicationId: appl.applicationId } });
+                }
+            } break;
+        }
+
+        
     }
 
     private closeDeliveryDataDialogBtnClicked(closeFn: HeaderCloseFunction): void {

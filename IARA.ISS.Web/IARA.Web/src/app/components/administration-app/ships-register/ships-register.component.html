@@ -242,6 +242,12 @@
                 <data-template-column [flexRate]="0.5" [cellClass]="'justify-center'">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button *ngIf="canReadApplications && row.data.applicationId !== undefined &&  row.data.applicationId !== null"
+                                            icon="search"
+                                            (buttonClicked)="gotToApplication(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'ships-register.go-to-application' | tlTranslate }}">
+                            </tl-icon-button>
                             <tl-icon-button icon="visibility"
                                             (buttonClicked)="editShip(row.data, true)"
                                             iconClass="accent-color"

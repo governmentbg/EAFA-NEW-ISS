@@ -28,6 +28,7 @@ import { StatisticalFormsReworkComponent } from './components/statistical-forms-
 import { StatisticalFormsFishVesselComponent } from './components/statistical-forms-fish-vessel/statistical-forms-fish-vessel.component';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { CommonUtils } from '@app/shared/utils/common.utils';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'statistical-forms-content',
@@ -49,16 +50,19 @@ export class StatisticalFormsContentComponent implements AfterViewInit {
     public readonly canEditAquaFarmRecords: boolean;
     public readonly canDeleteAquaFarmRecords: boolean;
     public readonly canRestoreAquaFarmRecords: boolean;
+    public readonly canReadAquaFarmApplications: boolean;
 
     public readonly canAddReworkRecords: boolean;
     public readonly canEditReworkRecords: boolean;
     public readonly canDeleteReworkRecords: boolean;
     public readonly canRestoreReworkRecords: boolean;
+    public readonly canReadReworkApplications: boolean;
 
     public readonly canAddFishVesselRecords: boolean;
     public readonly canEditFishVesselRecords: boolean;
     public readonly canDeleteFishVesselRecords: boolean;
     public readonly canRestoreFishVesselRecords: boolean;
+    public readonly canReadFishVesselApplications: boolean;
 
     public formTypes: NomenclatureDTO<StatisticalFormTypesEnum>[];
     public processUsers: NomenclatureDTO<number>[];
@@ -74,11 +78,12 @@ export class StatisticalFormsContentComponent implements AfterViewInit {
 
     private grid!: DataTableManager<StatisticalFormDTO, StatisticalFormsFilters>;
 
-    private confirmDialog: TLConfirmDialog;
-    private aquaFarmEditDialog: TLMatDialog<StatisticalFormsAquaFarmComponent>;
-    private reworkEditDialog: TLMatDialog<StatisticalFormsReworkComponent>;
-    private fishVesselEditDialog: TLMatDialog<StatisticalFormsFishVesselComponent>;
-    private chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
+    private readonly confirmDialog: TLConfirmDialog;
+    private readonly aquaFarmEditDialog: TLMatDialog<StatisticalFormsAquaFarmComponent>;
+    private readonly reworkEditDialog: TLMatDialog<StatisticalFormsReworkComponent>;
+    private readonly fishVesselEditDialog: TLMatDialog<StatisticalFormsFishVesselComponent>;
+    private readonly chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
+    private readonly router: Router;
 
     public constructor(
         commonNomenclaturesService: CommonNomenclatures,
@@ -88,7 +93,8 @@ export class StatisticalFormsContentComponent implements AfterViewInit {
         reworkEditDialog: TLMatDialog<StatisticalFormsReworkComponent>,
         fishVesselEditDialog: TLMatDialog<StatisticalFormsFishVesselComponent>,
         chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>,
-        permissions: PermissionsService
+        permissions: PermissionsService,
+        router: Router
     ) {
         this.commonNomenclaturesService = commonNomenclaturesService;
         this.translate = translate;
@@ -97,21 +103,28 @@ export class StatisticalFormsContentComponent implements AfterViewInit {
         this.reworkEditDialog = reworkEditDialog;
         this.fishVesselEditDialog = fishVesselEditDialog;
         this.chooseApplicationDialog = chooseApplicationDialog;
+        this.router = router;
 
         this.canAddAquaFarmRecords = permissions.has(PermissionsEnum.StatisticalFormsAquaFarmAddRecords);
         this.canEditAquaFarmRecords = permissions.has(PermissionsEnum.StatisticalFormsAquaFarmEditRecords);
         this.canDeleteAquaFarmRecords = permissions.has(PermissionsEnum.StatisticalFormsAquaFarmDeleteRecords);
         this.canRestoreAquaFarmRecords = permissions.has(PermissionsEnum.StatisticalFormsAquaFarmRestoreRecords);
+        this.canReadAquaFarmApplications = permissions.has(PermissionsEnum.StatisticalFormsAquaFarmApplicationsRead)
+            || permissions.has(PermissionsEnum.StatisticalFormsAquaFarmApplicationsReadAll);
 
         this.canAddReworkRecords = permissions.has(PermissionsEnum.StatisticalFormsReworkAddRecords);
         this.canEditReworkRecords = permissions.has(PermissionsEnum.StatisticalFormsReworkEditRecords);
         this.canDeleteReworkRecords = permissions.has(PermissionsEnum.StatisticalFormsReworkDeleteRecords);
         this.canRestoreReworkRecords = permissions.has(PermissionsEnum.StatisticalFormsReworkRestoreRecords);
+        this.canReadReworkApplications = permissions.has(PermissionsEnum.StatisticalFormsReworkApplicationsRead)
+            || permissions.has(PermissionsEnum.StatisticalFormsReworkApplicationsReadAll);
 
         this.canAddFishVesselRecords = permissions.has(PermissionsEnum.StatisticalFormsFishVesselAddRecords);
         this.canEditFishVesselRecords = permissions.has(PermissionsEnum.StatisticalFormsFishVesselEditRecords);
         this.canDeleteFishVesselRecords = permissions.has(PermissionsEnum.StatisticalFormsFishVesselDeleteRecords);
         this.canRestoreFishVesselRecords = permissions.has(PermissionsEnum.StatisticalFormsFishVesselRestoreRecords);
+        this.canReadFishVesselApplications = permissions.has(PermissionsEnum.StatisticalFormsFishVesselsApplicationsRead)
+            || permissions.has(PermissionsEnum.StatisticalFormsFishVesselsApplicationsReadAll);
 
         this.formTypes = [
             new NomenclatureDTO<StatisticalFormTypesEnum>({
@@ -268,6 +281,27 @@ export class StatisticalFormsContentComponent implements AfterViewInit {
                 }
             }
         });
+    }
+
+    public gotToApplication(statisticalForm: StatisticalFormDTO): void {
+        switch (statisticalForm.formType) {
+            case StatisticalFormTypesEnum.AquaFarm: {
+                if (this.canReadAquaFarmApplications) {
+                    this.router.navigate(['statistical-forms-applications'], { state: { applicationId: statisticalForm.applicationId } });
+                }
+            } break;
+            case StatisticalFormTypesEnum.Rework: {
+                if (this.canReadReworkApplications) {
+                    this.router.navigate(['statistical-forms-applications'], { state: { applicationId: statisticalForm.applicationId } });
+                }
+            } break;
+            case StatisticalFormTypesEnum.FishVessel: {
+                if (this.canReadFishVesselApplications) {
+                    this.router.navigate(['statistical-forms-applications'], { state: { applicationId: statisticalForm.applicationId } });
+                }
+            } break;
+        }
+        
     }
 
     private mapFilters(filters: FilterEventArgs): StatisticalFormsFilters {

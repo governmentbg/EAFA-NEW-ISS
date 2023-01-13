@@ -28,6 +28,7 @@ import { IApplicationsService } from '@app/interfaces/administration-app/applica
 import { ApplicationsAdministrationService } from '@app/services/administration-app/applications-administration.service';
 import { PermissionsService } from '@app/shared/services/permissions.service';
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'fishing-capacity-register',
@@ -51,14 +52,16 @@ export class FishingCapacityRegisterComponent implements AfterViewInit {
 
     private grid!: DataTableManager<ShipFishingCapacityDTO, FishingCapacityFilters>;
 
-    private service: IFishingCapacityService;
-    private shipsService: IShipsRegisterService;
-    private applicationsService: IApplicationsService;
+    private readonly service: IFishingCapacityService;
+    private readonly shipsService: IShipsRegisterService;
+    private readonly applicationsService: IApplicationsService;
 
-    private regVesselDialog: TLMatDialog<EditShipComponent>;
-    private deregVesselDialog: TLMatDialog<ShipDeregistrationComponent>;
-    private increaseFishCapDialog: TLMatDialog<IncreaseFishingCapacityComponent>;
-    private reduceFishCapDialog: TLMatDialog<ReduceFishingCapacityComponent>;
+    private readonly regVesselDialog: TLMatDialog<EditShipComponent>;
+    private readonly deregVesselDialog: TLMatDialog<ShipDeregistrationComponent>;
+    private readonly increaseFishCapDialog: TLMatDialog<IncreaseFishingCapacityComponent>;
+    private readonly reduceFishCapDialog: TLMatDialog<ReduceFishingCapacityComponent>;
+
+    private readonly router: Router;
 
     public constructor(
         service: FishingCapacityAdministrationService,
@@ -69,7 +72,8 @@ export class FishingCapacityRegisterComponent implements AfterViewInit {
         deregVesselDialog: TLMatDialog<ShipDeregistrationComponent>,
         increaseFishCapDialog: TLMatDialog<IncreaseFishingCapacityComponent>,
         reduceFishCapDialog: TLMatDialog<ReduceFishingCapacityComponent>,
-        permissions: PermissionsService
+        permissions: PermissionsService,
+        router: Router
     ) {
         this.service = service;
         this.shipsService = shipsService;
@@ -80,9 +84,10 @@ export class FishingCapacityRegisterComponent implements AfterViewInit {
         this.deregVesselDialog = deregVesselDialog;
         this.increaseFishCapDialog = increaseFishCapDialog;
         this.reduceFishCapDialog = reduceFishCapDialog;
+        this.router = router;
 
-        this.canViewShipApplications = permissions.has(PermissionsEnum.ShipsRegisterApplicationsRead);
-        this.canViewCapacityApplications = permissions.has(PermissionsEnum.FishingCapacityApplicationsRead);
+        this.canViewShipApplications = permissions.has(PermissionsEnum.ShipsRegisterApplicationsRead) || permissions.has(PermissionsEnum.ShipsRegisterApplicationReadAll);
+        this.canViewCapacityApplications = permissions.has(PermissionsEnum.FishingCapacityApplicationsRead) || permissions.has(PermissionsEnum.FishingCapacityApplicationsReadAll);
 
         this.buildForm();
     }
@@ -177,6 +182,24 @@ export class FishingCapacityRegisterComponent implements AfterViewInit {
         }, '1400px');
 
         dialog.subscribe();
+    }
+
+    public gotToApplication(history: ShipFishingCapacityHistoryDTO): void {
+        switch (history.pageCode) {
+            case PageCodeEnum.RegVessel:
+            case PageCodeEnum.DeregShip: {
+                if (this.canViewShipApplications) {
+                    this.router.navigate(['fishing-vessels-applications'], { state: { applicationId: history.applicationId } });
+                }
+            } break;
+            case PageCodeEnum.IncreaseFishCap:
+            case PageCodeEnum.ReduceFishCap: {
+                if (this.canViewCapacityApplications) {
+                    this.router.navigate(['fishing-capacity-applications'], { state: { applicationId: history.applicationId } });
+                }
+            } break;
+        }
+        
     }
 
     private closeEditDialogBtnClicked(closeFn: HeaderCloseFunction): void {

@@ -109,6 +109,20 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
         throw new Error('This method should not be called from the public app.');
     }
 
+    public getPermitLicenseFisherPhoto(id: number): Observable<string> {
+        const params = new HttpParams().append('permitLicenseId', id.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetPermitLicenseFisherPhoto', {
+            httpParams: params,
+            responseType: 'text',
+            properties: RequestProperties.NO_SPINNER
+        });
+    }
+
+    public getPermitLicenseFisherPhotoFromApplication(applicationId: number): Observable<string> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
     public deletePermit(id: number, pageCode: PageCodeEnum): Observable<void> {
         throw new Error('This method should not be called from the public app.');
     }

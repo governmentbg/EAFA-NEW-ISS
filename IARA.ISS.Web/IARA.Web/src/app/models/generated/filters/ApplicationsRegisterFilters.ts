@@ -14,6 +14,7 @@ export class ApplicationsRegisterFilters extends BaseRequestModel {
     }
 
     
+    public applicationId: number | undefined;
     public accessCode: string | undefined;
     public eventisNum: string | undefined;
     public applicationTypeId: number | undefined;

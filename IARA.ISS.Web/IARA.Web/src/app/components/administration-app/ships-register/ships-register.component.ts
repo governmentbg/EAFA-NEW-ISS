@@ -65,6 +65,7 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
     public readonly canAddRecords: boolean;
     public readonly canAddThirdPartyShipRecords: boolean;
     public readonly canEditRecords: boolean;
+    public readonly canReadApplications: boolean;
 
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
@@ -72,12 +73,13 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
     @ViewChild(SearchPanelComponent)
     private searchpanel!: SearchPanelComponent;
 
-    private service: ShipsRegisterAdministrationService;
-    private nomenclatures: CommonNomenclatures;
     private grid!: DataTableManager<ShipRegisterDTO, ShipsRegisterFilters>;
-    private editDialog: TLMatDialog<EditShipComponent>;
-    private chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
-    private router: Router;
+
+    private readonly service: ShipsRegisterAdministrationService;
+    private readonly nomenclatures: CommonNomenclatures;
+    private readonly editDialog: TLMatDialog<EditShipComponent>;
+    private readonly chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
+    private readonly router: Router;
 
     public constructor(
         translate: FuseTranslationLoaderService,
@@ -98,6 +100,8 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
         this.canAddRecords = permissions.has(PermissionsEnum.ShipsRegisterAddRecords);
         this.canAddThirdPartyShipRecords = true;
         this.canEditRecords = permissions.has(PermissionsEnum.ShipsRegisterEditRecords);
+
+        this.canReadApplications = permissions.has(PermissionsEnum.ShipsRegisterApplicationsRead) || permissions.has(PermissionsEnum.ShipsRegisterApplicationReadAll);
 
         this.buildForm();
     }
@@ -344,6 +348,12 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
                 isThirdPartyShip: ship.isThirdPartyShip
             }
         });
+    }
+
+    public gotToApplication(ship: ShipRegisterDTO): void {
+        if (this.canReadApplications) {
+            this.router.navigate(['fishing-vessels-applications'], { state: { applicationId: ship.applicationId } });
+        }
     }
 
     private buildForm(): void {

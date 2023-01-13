@@ -106,7 +106,7 @@
 
                                 <!-- Преглед на заявлението -->
                                 <div fxFlex="5" fxLayout="row" fxLayoutAlign="center center">
-                                    <tl-icon-button *ngIf="
+                                    <ng-container *ngIf="
                                                     (canViewShipApplications
                                                         && (row.data.history.createdFromApplication.pageCode === pageCodes.RegVessel
                                                             || row.data.history.createdFromApplication.pageCode === pageCodes.DeregShip))
@@ -114,13 +114,18 @@
                                                         && (row.data.history.createdFromApplication.pageCode === pageCodes.IncreaseFishCap
                                                             || row.data.history.createdFromApplication.pageCode === pageCodes.ReduceFishCap
                                                             || row.data.history.createdFromApplication.pageCode === pageCodes.TransferFishCap
-                                                            || row.data.history.createdFromApplication.pageCode === pageCodes.CapacityCertDup))"
-                                                    icon="visibility"
-                                                    iconClass="accent-color"
-                                                    tooltipText="{{ 'fishing-capacity.table-detail-issue-from-application-view-application' | tlTranslate }}"
-                                                    (buttonClicked)="viewCreatedFromApplication(row.data.history.createdFromApplication)">
-                                    </tl-icon-button>
-
+                                                            || row.data.history.createdFromApplication.pageCode === pageCodes.CapacityCertDup))">
+                                        <tl-icon-button icon="search"
+                                                        (buttonClicked)="gotToApplication(row.data.history.createdFromApplication)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'fishing-capacity.table-detail-used-in-application-go-to-application' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button icon="visibility"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'fishing-capacity.table-detail-issue-from-application-view-application' | tlTranslate }}"
+                                                        (buttonClicked)="viewCreatedFromApplication(row.data.history.createdFromApplication)">
+                                        </tl-icon-button>
+                                    </ng-container>
                                     <tl-icon-button *ngIf="row.data.history.createdFromApplication.pageCode === pageCodes.CapacityCertDup"
                                                     icon="fa-external-link-alt"
                                                     class="external-link-to-certificate-button"
@@ -182,7 +187,7 @@
 
                                 <!-- Преглед на заявлението -->
                                 <div fxFlex="5" fxLayout="row" fxLayoutAlign="center center">
-                                    <tl-icon-button *ngIf="
+                                    <ng-container *ngIf="
                                                     (canViewShipApplications
                                                         && (row.data.history.usedInApplication.pageCode === pageCodes.RegVessel
                                                             || row.data.history.usedInApplication.pageCode === pageCodes.DeregShip))
@@ -190,13 +195,18 @@
                                                         && (row.data.history.usedInApplication.pageCode === pageCodes.IncreaseFishCap
                                                             || row.data.history.usedInApplication.pageCode === pageCodes.ReduceFishCap
                                                             || row.data.history.usedInApplication.pageCode === pageCodes.TransferFishCap
-                                                            || row.data.history.usedInApplication.pageCode === pageCodes.CapacityCertDup))"
-                                                    icon="visibility"
-                                                    iconClass="accent-color"
-                                                    tooltipText="{{ 'fishing-capacity.table-detail-used-in-application-view-application' | tlTranslate }}"
-                                                    (buttonClicked)="viewCreatedFromApplication(row.data.history.usedInApplication)">
-                                    </tl-icon-button>
-
+                                                            || row.data.history.usedInApplication.pageCode === pageCodes.CapacityCertDup))">
+                                        <tl-icon-button icon="search"
+                                                        (buttonClicked)="gotToApplication(row.data.history.usedInApplication)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'fishing-capacity.table-detail-used-in-application-go-to-application' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button icon="visibility"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'fishing-capacity.table-detail-used-in-application-view-application' | tlTranslate }}"
+                                                        (buttonClicked)="viewCreatedFromApplication(row.data.history.usedInApplication)">
+                                        </tl-icon-button>
+                                    </ng-container>
                                     <tl-icon-button *ngIf="row.data.history.usedInApplication.pageCode === pageCodes.CapacityCertDup"
                                                     icon="fa-external-link-alt"
                                                     class="external-link-to-certificate-button"
