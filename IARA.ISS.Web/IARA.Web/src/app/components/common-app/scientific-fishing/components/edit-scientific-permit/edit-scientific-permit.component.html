@@ -17,7 +17,8 @@
                     [isPerson]="true"
                     [isIdReadOnly]="isEditing || isPublicApp"
                     [hideDocument]="true"
-                    [expectedResults]="expectedResults.requester">
+                    [expectedResults]="expectedResults.requester"
+                    (downloadDataBtnClicked)="downloadedPersonData($event)">
         </regix-data>
     </tl-expansion-panel>
 
@@ -55,6 +56,7 @@
                     [showCustodianOfProperty]="false"
                     [isIdReadOnly]="isEditing"
                     [expectedResults]="expectedResults.receiver"
+                    (downloadDataBtnClicked)="downloadedLegalData($event)"
                     checkboxLabel="{{ 'scientific-fishing.has-bulgarian-address-registration' | tlTranslate }}">
         </regix-data>
     </tl-expansion-panel>
@@ -153,6 +155,7 @@
                     [isPerson]="false"
                     [showCustodianOfProperty]="false"
                     [isIdReadOnly]="isEditing"
+                    (downloadDataBtnClicked)="downloadedLegalData($event)"
                     checkboxLabel="{{ 'scientific-fishing.has-bulgarian-address-registration' | tlTranslate }}">
         </regix-data>
     </tl-expansion-panel>

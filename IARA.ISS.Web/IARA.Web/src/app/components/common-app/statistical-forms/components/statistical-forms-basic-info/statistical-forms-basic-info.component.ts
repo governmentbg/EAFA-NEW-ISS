@@ -8,6 +8,7 @@ import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loade
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { StatisticalFormBasicInfoDTO } from '@app/models/generated/dtos/StatisticalFormBasicInfoDTO';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 
 @Component({
     selector: 'statistical-forms-basic-info',
@@ -52,6 +53,10 @@ export class StatisticalFormsBasicInfoComponent extends CustomFormControl<Statis
             this.form.get('submissionPersonWorkPositionControl')!.setValue(value.submissionPersonWorkPosition);
 
         }
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('submissionPersonControl')!.setValue(person.person);
     }
 
     protected buildForm(): AbstractControl {

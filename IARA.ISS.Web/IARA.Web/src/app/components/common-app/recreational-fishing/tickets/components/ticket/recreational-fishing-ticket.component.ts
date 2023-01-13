@@ -36,8 +36,6 @@ import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { RecreationalFishingTicketsDTO } from '@app/models/generated/dtos/RecreationalFishingTicketsDTO';
 import { FileTypeEnum } from '@app/enums/file-types.enum';
-import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
-import { IdentifierTypeEnum } from '@app/enums/identifier-type.enum';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dtos/RecreationalFishingAddTicketsResultDTO';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
@@ -47,6 +45,7 @@ import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/inter
 import { Notifier } from '@app/shared/directives/notifier/notifier.class';
 import { ApplicationRegiXCheckDTO } from '@app/models/generated/dtos/ApplicationRegiXCheckDTO';
 import { TicketPeriodEnum } from '@app/enums/ticket-period.enum';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 import { IssueDuplicateTicketComponent } from '../../../applications/components/issue-duplicate-ticket/issue-duplicate-ticket.component';
 import { IssueDuplicateTicketDialogParams } from '../../../applications/models/issue-duplicate-ticket-dialog-params.model';
 
@@ -96,9 +95,6 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
 
     private buttons: DialogWrapperData | undefined;
 
-    private lastCheckedEgnLnc: EgnLncDTO | null = null;
-    private lastCheckedEgnLncRepresentative: EgnLncDTO | null = null;
-
     private periods: NomenclatureDTO<number>[] = [];
 
     private translate: FuseTranslationLoaderService;
@@ -108,8 +104,6 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
     private issueDuplicateDialog: TLMatDialog<IssueDuplicateTicketComponent>
 
     private systemProperties!: SystemPropertiesDTO;
-    private downloadedTicketHolderData: Map<string, RecreationalFishingTicketHolderDTO[]> = new Map<string, RecreationalFishingTicketHolderDTO[]>();
-    private downloadedTickerHolderEgnLncData: Map<string, IdentifierTypeEnum[]> = new Map<string, IdentifierTypeEnum[]>();
 
     public constructor(
         @Optional() @Self() ngControl: NgControl,
@@ -484,42 +478,18 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
         return undefined;
     }
 
-    public downloadPersonalData(egnLnc: EgnLncDTO, representative: boolean): void {
+    public downloadPersonalData(person: PersonFullDataDTO, representative: boolean): void {
         if (!this.isPersonal) {
-            const datas: RecreationalFishingTicketHolderDTO[] = this.downloadedTicketHolderData.get(egnLnc.egnLnc!) ?? [];
-            const data: RecreationalFishingTicketHolderDTO | undefined = datas.find(x => x.person?.egnLnc!.identifierType === egnLnc.identifierType);
-
-            if (data !== undefined) {
-                this.setTicketHolderData(data, representative, undefined);
+            let associationId: number | undefined;
+            if (this.isAssociation) {
+                associationId = (this.service as RecreationalFishingPublicService).currentUserChosenAssociation!.value!;
             }
-            else {
-                const oldEgnLncIdTypes: IdentifierTypeEnum[] = this.downloadedTickerHolderEgnLncData.get(egnLnc.egnLnc!) ?? [];
-                if (oldEgnLncIdTypes.includes(egnLnc.identifierType!)) {
-                    this.setTicketHolderData(null, representative, undefined);
-                }
-                else {
-                    let associationId: number | undefined;
-                    if (this.isAssociation) {
-                        associationId = (this.service as RecreationalFishingPublicService).currentUserChosenAssociation!.value!;
-                    }
 
-                    this.service.getPersonData(egnLnc, associationId).subscribe({
-                        next: (data: RecreationalFishingTicketHolderDTO | undefined) => {
-                            if (data !== undefined && data !== null) {
-                                const oldData: RecreationalFishingTicketHolderDTO[] = this.downloadedTicketHolderData.get(egnLnc.egnLnc!) ?? [];
-                                this.downloadedTicketHolderData.set(egnLnc.egnLnc!, [...oldData, data]);
-
-                                this.setTicketHolderData(data, representative, associationId);
-                                this.downloadedTickerHolderEgnLncData.set(egnLnc.egnLnc!, [...oldEgnLncIdTypes, egnLnc.identifierType!]);
-                            }
-                            else {
-                                this.setTicketHolderData(null, representative, associationId);
-                                this.downloadedTickerHolderEgnLncData.set(egnLnc.egnLnc!, [...oldEgnLncIdTypes, egnLnc.identifierType!]);
-                            }
-                        }
-                    });
-                }
-            }
+            this.setTicketHolderData(new RecreationalFishingTicketHolderDTO({
+                person: person.person,
+                addresses: person.addresses,
+                photo: person.photo
+            }), representative, associationId);
         }
     }
 

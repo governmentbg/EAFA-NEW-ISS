@@ -80,7 +80,7 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
         }
 
         this.numPrefix = `${this.handleNumber(codes[0])}-${this.handleNumber(codes[1])}-`;
-        this.form.get('reportNumberControl')!.setValue(codes[2]);
+        this.form.get('reportNumberControl')!.setValue(this.handleUserNumber(codes[2]));
     }
 
     protected buildForm(): AbstractControl {
@@ -122,6 +122,16 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
     }
 
     private handleNumber(num: string): string {
+        if (!num) {
+            return num;
+        }
+
+        return num.length > 3
+            ? num.substring(0, 3)
+            : num.padEnd(3, '0');
+    }
+
+    private handleUserNumber(num: string): string {
         if (!num) {
             return num;
         }

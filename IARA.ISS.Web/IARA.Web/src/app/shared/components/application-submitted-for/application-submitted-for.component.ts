@@ -13,6 +13,8 @@ import { NotifyingCustomFormControl } from '@app/shared/utils/notifying-custom-f
 import { CustodianOfPropertyDTO } from '@app/models/generated/dtos/CustodianOfPropertyDTO';
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 
 @Component({
     selector: 'application-submitted-for',
@@ -162,6 +164,16 @@ export class ApplicationSubmittedForComponent extends NotifyingCustomFormControl
                 this.form.reset();
             }
         });
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('personControl')!.setValue(person.person);
+        this.form.get('personAddressesControl')?.setValue(person.addresses);
+    }
+
+    public downloadedLegalData(legal: LegalFullDataDTO): void {
+        this.form.get('legalControl')?.setValue(legal.legal);
+        this.form.get('legalAddressesControl')?.setValue(legal.addresses);
     }
 
     protected buildForm(): AbstractControl {

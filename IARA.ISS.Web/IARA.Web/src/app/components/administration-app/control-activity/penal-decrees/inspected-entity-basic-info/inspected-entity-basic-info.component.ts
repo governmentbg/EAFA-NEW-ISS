@@ -6,6 +6,8 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { AddressTypesEnum } from '@app/enums/address-types.enum';
 import { RegixLegalDataDTO } from '@app/models/generated/dtos/RegixLegalDataDTO';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 
 @Component({
     selector: 'inspected-entity-basic-info',
@@ -142,6 +144,14 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
                 });
             }
         }
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('personControl')!.setValue(person.person);
+    }
+
+    public downloadedLegalData(legal: LegalFullDataDTO): void {
+        this.form.get('legalControl')!.setValue(legal.legal);
     }
 
     protected getValue(): AuanInspectedEntityDTO {

@@ -1,6 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
 
 import { IFishingCapacityService } from '@app/interfaces/common-app/fishing-capacity.interface';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
@@ -12,9 +11,9 @@ import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { AddressTypesEnum } from '@app/enums/address-types.enum';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
-import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
-import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 
 @Component({
     selector: 'edit-capacity-certificate',
@@ -104,6 +103,16 @@ export class EditCapacityCertificateComponent implements OnInit, IDialogComponen
     public setData(data: DialogParamsModel, wrapperData: DialogWrapperData): void {
         this.id = data?.id;
         this.readOnly = data?.isReadonly ?? false;
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('holderControl')!.setValue(person.person);
+        this.form.get('addressesControl')!.setValue(person.addresses);
+    }
+
+    public downloadedLegalData(legal: LegalFullDataDTO): void {
+        this.form.get('holderControl')!.setValue(legal.legal);
+        this.form.get('addressesControl')!.setValue(legal.addresses);
     }
 
     private buildForm(): void {

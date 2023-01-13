@@ -1,5 +1,5 @@
 ﻿import { Component, EventEmitter, Input, OnChanges, OnInit, Optional, Output, Self, SimpleChanges, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, NgControl, ValidationErrors, Validator } from '@angular/forms';
+import { AbstractControl, FormControl, NgControl, ValidationErrors, Validator, ValidatorFn } from '@angular/forms';
 import { forkJoin, Observable, Subscription } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -112,8 +112,11 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     public logBooks: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[] = [];
     public logBookStatuses: NomenclatureDTO<number>[] = [];
     public logBookTypes: NomenclatureDTO<number>[] = [];
+
     public hasLogBooksForRenewal: boolean = false;
     public hasNotTouchedRenewals: boolean = false; // needed only for Ship log books
+    public activeLogBookError: boolean = false;
+    public activeLogBookWarning: boolean = false;
 
     @ViewChild('logBooksTable')
     private logBooksTable!: TLDataTableComponent;
@@ -199,7 +202,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     }
 
     public buildForm(): AbstractControl {
-        return new FormControl();
+        return new FormControl(undefined, [this.oneActiveLogBookPerTypeValidator()]);
     }
 
     public writeValue(value: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[]): void {
@@ -247,7 +250,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     }
 
     public validate(control: AbstractControl): ValidationErrors | null {
-        const errors: ValidationErrors = {};
+        const errors: ValidationErrors = this.control.errors ?? {};
 
         if (this.hasLogBooksForRenewal && this.logBookGroup === LogBookGroupsEnum.Ship) {
             this.checkLogBooksForRenewal();
@@ -339,6 +342,9 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                                                 const logBook: CommercialFishingLogBookEditDTO = results.find(x => x.logbookNumber === logBookNumber)!;
                                                 this.handleInvalidLogBookLicensePagesRangeError(logBook, false, logBook, error.messages[0], results);
                                             }
+                                            else if (error?.code === ErrorCode.MoreThanOneActiveOnlineLogBook) {
+                                                this.handleMoreThanOneActiveOnlineLogBookError();
+                                            }
                                         }
                                     });
                                 }
@@ -400,7 +406,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                             logBook.transportationPagesAndDeclarations = this.logBooksCacheService.getShipTransportationLogBookPages(logBook.logBookId!, this.permitLicenseId!);
                         } break;
                     }
-                    
+
                     if (logBook.transportationPagesAndDeclarations !== null && logBook.transportationPagesAndDeclarations !== undefined) {
                         hasCachedData = true;
                     }
@@ -416,57 +422,67 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
 
             if (!hasCachedData) { // Ако не са кеширани все още данните за този дневник, вземаме ги от сървъра и ги кешираме
                 if (logBook instanceof CommercialFishingLogBookEditDTO) {
-                    this.service!.getLogBookPagesAndDeclarations(logBook.logBookId!, this.permitLicenseId!, logBookType).subscribe({
-                        next: (pages: ShipLogBookPageRegisterDTO[] | AdmissionLogBookPageRegisterDTO[] | TransportationLogBookPageRegisterDTO[]) => {
-                            if (pages !== null && pages !== undefined && pages.length > 0) {
-                                if (pages[0] instanceof ShipLogBookPageRegisterDTO) {
-                                    logBook.shipPagesAndDeclarations = pages as ShipLogBookPageRegisterDTO[];
-                                    this.logBooksCacheService.cacheShipLogBookPages(logBook.logBookId!, this.permitLicenseId!, logBook.shipPagesAndDeclarations.slice());
+                    if (logBook.logBookId !== null && logBook.logBookId !== undefined) {
+                        this.service!.getLogBookPagesAndDeclarations(logBook.logBookId, this.permitLicenseId!, logBookType).subscribe({
+                            next: (pages: ShipLogBookPageRegisterDTO[] | AdmissionLogBookPageRegisterDTO[] | TransportationLogBookPageRegisterDTO[]) => {
+                                if (pages !== null && pages !== undefined && pages.length > 0) {
+                                    if (pages[0] instanceof ShipLogBookPageRegisterDTO) {
+                                        logBook.shipPagesAndDeclarations = pages as ShipLogBookPageRegisterDTO[];
+                                        this.logBooksCacheService.cacheShipLogBookPages(logBook.logBookId!, this.permitLicenseId!, logBook.shipPagesAndDeclarations.slice());
+                                    }
+                                    else if (pages[0] instanceof AdmissionLogBookPageRegisterDTO) {
+                                        logBook.admissionPagesAndDeclarations = pages as AdmissionLogBookPageRegisterDTO[];
+                                        this.logBooksCacheService.cacheShipAdmissionLogBookPages(logBook.logBookId!, this.permitLicenseId!, logBook.admissionPagesAndDeclarations.slice());
+                                    }
+                                    else if (pages[0] instanceof TransportationLogBookPageRegisterDTO) {
+                                        logBook.transportationPagesAndDeclarations = pages as TransportationLogBookPageRegisterDTO[];
+                                        this.logBooksCacheService.cacheShipTransportationLogBookPages(logBook.logBookId!, this.permitLicenseId!, logBook.transportationPagesAndDeclarations.slice());
+                                    }
                                 }
-                                else if (pages[0] instanceof AdmissionLogBookPageRegisterDTO) {
-                                    logBook.admissionPagesAndDeclarations = pages as AdmissionLogBookPageRegisterDTO[];
-                                    this.logBooksCacheService.cacheShipAdmissionLogBookPages(logBook.logBookId!, this.permitLicenseId!, logBook.admissionPagesAndDeclarations.slice());
-                                }
-                                else if (pages[0] instanceof TransportationLogBookPageRegisterDTO) {
-                                    logBook.transportationPagesAndDeclarations = pages as TransportationLogBookPageRegisterDTO[];
-                                    this.logBooksCacheService.cacheShipTransportationLogBookPages(logBook.logBookId!, this.permitLicenseId!, logBook.transportationPagesAndDeclarations.slice());
-                                }
-                            }
 
-                            this.handleOpenLogBookDialog(logBook, viewMode);
-                        }
-                    });
+                                this.handleOpenLogBookDialog(logBook, viewMode);
+                            }
+                        });
+                    }
+                    else {
+                        this.handleOpenLogBookDialog(logBook, viewMode);
+                    }
                 }
                 else {
-                    this.service!.getLogBookPages(logBook.logBookId!, logBookType).subscribe({
-                        next: (
-                            pages: AdmissionLogBookPageRegisterDTO[]
-                                | TransportationLogBookPageRegisterDTO[]
-                                | FirstSaleLogBookPageRegisterDTO[]
-                                | AquacultureLogBookPageRegisterDTO[]
-                        ) => {
-                            if (pages !== null && pages !== undefined && pages.length > 0) {
-                                if (pages[0] instanceof AdmissionLogBookPageRegisterDTO) {
-                                    logBook.admissionPagesAndDeclarations = pages;
-                                    this.logBooksCacheService.cacheAdmissionLogBookPages(logBook.logBookId!, logBook.admissionPagesAndDeclarations.slice());
+                    if (logBook.logBookId !== null && logBook.logBookId !== undefined) {
+                        this.service!.getLogBookPages(logBook.logBookId!, logBookType).subscribe({
+                            next: (
+                                pages: AdmissionLogBookPageRegisterDTO[]
+                                    | TransportationLogBookPageRegisterDTO[]
+                                    | FirstSaleLogBookPageRegisterDTO[]
+                                    | AquacultureLogBookPageRegisterDTO[]
+                            ) => {
+                                if (pages !== null && pages !== undefined && pages.length > 0) {
+                                    if (pages[0] instanceof AdmissionLogBookPageRegisterDTO) {
+                                        logBook.admissionPagesAndDeclarations = pages;
+                                        this.logBooksCacheService.cacheAdmissionLogBookPages(logBook.logBookId!, logBook.admissionPagesAndDeclarations.slice());
+                                    }
+                                    else if (pages[0] instanceof TransportationLogBookPageRegisterDTO) {
+                                        logBook.transportationPagesAndDeclarations = pages;
+                                        this.logBooksCacheService.cacheTransportationLogBookPages(logBook.logBookId!, logBook.transportationPagesAndDeclarations.slice());
+                                    }
+                                    else if (pages[0] instanceof FirstSaleLogBookPageRegisterDTO) {
+                                        logBook.firstSalePages = pages;
+                                        this.logBooksCacheService.cacheFirstSaleLogBookPages(logBook.logBookId!, logBook.firstSalePages.slice());
+                                    }
+                                    else if (pages[0] instanceof AquacultureLogBookPageRegisterDTO) {
+                                        logBook.aquaculturePages = pages;
+                                        this.logBooksCacheService.cacheAquacultureLogBookPages(logBook.logBookId!, logBook.aquaculturePages.slice());
+                                    }
                                 }
-                                else if (pages[0] instanceof TransportationLogBookPageRegisterDTO) {
-                                    logBook.transportationPagesAndDeclarations = pages;
-                                    this.logBooksCacheService.cacheTransportationLogBookPages(logBook.logBookId!, logBook.transportationPagesAndDeclarations.slice());
-                                }
-                                else if (pages[0] instanceof FirstSaleLogBookPageRegisterDTO) {
-                                    logBook.firstSalePages = pages;
-                                    this.logBooksCacheService.cacheFirstSaleLogBookPages(logBook.logBookId!, logBook.firstSalePages.slice());
-                                }
-                                else if (pages[0] instanceof AquacultureLogBookPageRegisterDTO) {
-                                    logBook.aquaculturePages = pages;
-                                    this.logBooksCacheService.cacheAquacultureLogBookPages(logBook.logBookId!, logBook.aquaculturePages.slice());
-                                }
-                            }
 
-                            this.handleOpenLogBookDialog(logBook, viewMode);
-                        }
-                    });
+                                this.handleOpenLogBookDialog(logBook, viewMode);
+                            }
+                        });
+                    }
+                    else {
+                        this.handleOpenLogBookDialog(logBook, viewMode);
+                    }
                 }
             }
             else {
@@ -483,6 +499,8 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
 
         this.checkLogBooksForRenewal();
         this.checkLocalLogBookRanges();
+
+        this.checkActiveLogBooks();
 
         if (this.ngControl) {
             this.control.updateValueAndValidity();
@@ -503,6 +521,8 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                 if (ok) {
                     if (this.ngControl) {
                         this.handleDeleteLogBook(row);
+
+                        this.checkActiveLogBooks();
 
                         this.control.updateValueAndValidity();
                         this.control.markAsTouched();
@@ -536,6 +556,8 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                 if (ok) {
                     if (this.ngControl) {
                         this.handleUndoDeleteLogBook(row);
+
+                        this.checkActiveLogBooks();
 
                         this.control.updateValueAndValidity();
                         this.control.markAsTouched();
@@ -607,7 +629,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
             translteService: this.translate,
             disableDialogClose: true,
             viewMode: this.isReadonly || viewMode
-        }, '1400px');
+        }, '1500px');
 
         dialog.subscribe((result: LogBookEditDTO | CommercialFishingLogBookEditDTO | null | undefined) => {
             if (result !== null && result !== undefined) {
@@ -619,9 +641,10 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                 else {
                     isEdit = false;
                 }
-
                 if (this.ngControl) {
                     this.handleAddOrEditLogBook(logBook, result);
+
+                    this.checkActiveLogBooks();
 
                     this.control.updateValueAndValidity();
                     this.control.markAsTouched();
@@ -632,6 +655,39 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                 }
             }
         });
+    }
+
+    private checkActiveLogBooks(): void {
+        const groupedLogBooks = CommonUtils.groupByKey(this.logBooks, 'logBookTypeId');
+
+        const newStatusIds: number[] = this.logBookStatuses.filter(x => x.isActive && LogBookStatusesEnum[x.code as keyof typeof LogBookStatusesEnum] === LogBookStatusesEnum.New).map(x => x.value!);
+        const renewedStatusId: number[] = this.logBookStatuses.filter(x => x.isActive && LogBookStatusesEnum[x.code as keyof typeof LogBookStatusesEnum] === LogBookStatusesEnum.Renewed).map(x => x.value!);
+
+        this.activeLogBookError = false;
+        this.activeLogBookWarning = false;
+
+        for (const logBookType of Object.keys(groupedLogBooks)) {
+            const activeLogBooks = (groupedLogBooks[logBookType] as CommercialFishingLogBookEditDTO[] | LogBookEditDTO[]).filter(x => x.isActive && (newStatusIds.some(y => y === x.statusId) || renewedStatusId.some(y => y === x.statusId)));
+
+            const hasOtherActiveLogBooks: boolean = activeLogBooks.length > 1;
+
+            if (hasOtherActiveLogBooks) {
+                if (activeLogBooks[0].isOnline) { // при онлайн дневник това е грешка
+                    this.activeLogBookError = true;
+                }
+                else { // при хартиен дневник е само warning
+                    this.activeLogBookWarning = true;
+                }
+            }
+        }
+
+        if (!this.ngControl && this.activeLogBookWarning) { // Ако не сме в режим с custom form control, няма как да покажем грешка на потребителя, освен ако не отворим snackbar
+            const msg: string = this.translate.getValue('catches-and-sales.more-than-one-active-log-book-present-warn');
+            this.snackbar.open(msg, undefined, {
+                duration: 10000, // 10 seconds
+                panelClass: 'snack-bar-warn-color'
+            });
+        }
     }
 
     private handleAddLogBooksFromOldPermitLicenses(results: CommercialFishingLogBookEditDTO[]): void {
@@ -843,9 +899,17 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                     }
                     else {
                         this.saveLogBook(logBook, isEdit, model, this.permitLicenseId!, ignoreLogBookConflicts);
-                    }   
+                    }
                 }
             }
+        });
+    }
+
+    private handleMoreThanOneActiveOnlineLogBookError(): void {
+        const errorMsg: string = this.translate.getValue('catches-and-sales.more-than-one-active-online-log-book-present-error');
+        this.snackbar.open(errorMsg, undefined, {
+            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
         });
     }
 
@@ -876,6 +940,9 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
             this.service!.addLogBook(model, registerId, ignoreLogBookConflicts).subscribe({
                 next: () => {
                     this.handleAddOrEditLogBook(logBook, model);
+
+                    this.checkActiveLogBooks();
+
                     this.onActionEnded.emit('add');
                 },
                 error: (errorResponse: HttpErrorResponse) => {
@@ -885,6 +952,9 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                     ) {
                         this.handleInvalidLogBookLicensePagesRangeError(logBook, isEdit, model, error.messages[0], undefined);
                     }
+                    else if (error?.code === ErrorCode.MoreThanOneActiveOnlineLogBook) {
+                        this.handleMoreThanOneActiveOnlineLogBookError();
+                    }
                 }
             });
         }
@@ -892,5 +962,19 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
 
     private closeEditLogBookDialogBtnClicked(closeFn: HeaderCloseFunction): void {
         closeFn();
+    }
+
+    private oneActiveLogBookPerTypeValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === null || control === undefined) {
+                return null;
+            }
+
+            if (this.activeLogBookError) {
+                return { 'moreThanOneActiveLogBookPerType': true };
+            }
+
+            return null;
+        }
     }
 }

@@ -127,8 +127,8 @@ export class Navigation {
             icon: 'fa-vest',
             isPublic: false,
             permissions: [
-                PermissionsEnum.AssociationsTicketsAddRecords,
-                PermissionsEnum.AssociationsTicketApplicationsRead
+                PermissionsEnum.AssociationsTicketsRead,
+                PermissionsEnum.AssociationsTicketsAddRecords
             ],
             children: [
                 {
@@ -149,7 +149,7 @@ export class Navigation {
                     type: 'item',
                     icon: 'fa-handpoint-up',
                     url: '/association_issued_tickets',
-                    permissions: [PermissionsEnum.AssociationsTicketApplicationsRead],
+                    permissions: [PermissionsEnum.AssociationsTicketsRead],
                     component: RecreationalFishingAssociationApplicationsComponent,
                     isPublic: false
                 }

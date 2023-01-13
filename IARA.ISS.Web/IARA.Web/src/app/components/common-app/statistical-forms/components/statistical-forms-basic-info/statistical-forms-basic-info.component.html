@@ -19,7 +19,8 @@
         <tl-card-content>
             <regix-data formControlName="submissionPersonControl"
                         [isPerson]="true"
-                        [hideDocument]="true">
+                        [hideDocument]="true"
+                        (downloadDataBtnClicked)="downloadedPersonData($event)">
             </regix-data>
             <div fxLayout="row" fxLayoutGap="1em">
                 <tl-input fxFlex="25"

@@ -54,5 +54,6 @@ export enum ErrorCode {
     InvalidPermitNumber = 35,
     PrintConfigurationAlreadyExists = 36,
     LogBookPageAlreadySubmittedOtherLogBook = 37,
-    MaxNumberMissingPagesExceeded = 38
+    MaxNumberMissingPagesExceeded = 38,
+    MoreThanOneActiveOnlineLogBook = 39
 }

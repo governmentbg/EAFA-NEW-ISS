@@ -11,6 +11,8 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { InspectionUtils } from '@app/shared/utils/inspection.utils';
 import { RegixLegalDataDTO } from '@app/models/generated/dtos/RegixLegalDataDTO';
 import { InspectedPersonTypeEnum } from '@app/enums/inspected-person-type.enum';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 
 @Component({
     selector: 'inspected-subject',
@@ -116,6 +118,14 @@ export class InspectedSubjectComponent extends CustomFormControl<InspectionSubje
         else {
             this.form.get('countryControl')!.setValue(this.countries.find(f => f.code === CommonUtils.COUNTRIES_BG));
         }
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('personControl')!.setValue(person.person);
+    }
+
+    public downloadedLegalData(legal: LegalFullDataDTO): void {
+        this.form.get('legalControl')!.setValue(legal.legal);
     }
 
     protected buildForm(): AbstractControl {

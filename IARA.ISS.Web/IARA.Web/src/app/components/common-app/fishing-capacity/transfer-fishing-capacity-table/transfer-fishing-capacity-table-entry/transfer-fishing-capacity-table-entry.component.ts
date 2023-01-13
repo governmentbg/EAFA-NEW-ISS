@@ -14,6 +14,8 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 import { TransferFishingCapacityTableEntryParams } from '../models/transfer-fishing-capacity-table-entry-params.model';
 
 type HolderType = 'Person' | 'Legal';
@@ -143,6 +145,19 @@ export class TransferFishingCapacityTableEntryComponent implements OnInit, IDial
 
         if (this.remainingPower !== undefined && this.remainingPower !== null) {
             this.form.get('powerControl')!.setValue(this.remainingPower.toFixed(2));
+        }
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('regixDataControl')!.setValue(person.person);
+        this.form.get('addressControl')!.setValue(person.addresses);
+    }
+
+    public downloadedLegalData(legal: LegalFullDataDTO): void {
+        this.form.get('regixDataControl')!.setValue(legal.legal);
+
+        if (legal.addresses && legal.addresses.length !== 0) {
+            this.form.get('addressControl')!.setValue(legal.addresses.find(x => x.addressType === this.companyHeadquartersType));
         }
     }
 

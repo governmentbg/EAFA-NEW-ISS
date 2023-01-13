@@ -1,0 +1,9 @@
+﻿<div class="dialog-padding">
+    <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+        <div *ngIf="showSpinner" fxLayoutAlign="center center">
+            <spinner diameter="50"></spinner>
+        </div>
+        <span>{{ message }}</span>
+        <mat-hint>* {{ warnMessage }}</mat-hint>
+    </div>
+</div>

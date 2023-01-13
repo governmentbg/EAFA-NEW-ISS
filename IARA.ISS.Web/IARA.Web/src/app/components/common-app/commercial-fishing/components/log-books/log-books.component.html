@@ -133,4 +133,10 @@
     <mat-error *ngIf="control.touched && control.errors?.hasOverlappingRanges">
         * {{ 'catches-and-sales.log-books-has-overlapping-ranges-error' | tlTranslate }}
     </mat-error>
+    <mat-error *ngIf="activeLogBookWarning" class="warn-orange-color">
+        * {{ 'catches-and-sales.more-than-one-active-log-book-present-warn' | tlTranslate }}
+    </mat-error>
+    <mat-error *ngIf="activeLogBookError">
+        * {{ 'catches-and-sales.more-than-one-active-online-log-book-present-error' | tlTranslate }}
+    </mat-error>
 </div>

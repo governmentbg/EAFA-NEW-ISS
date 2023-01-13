@@ -366,6 +366,7 @@
                             [isIdReadOnly]="isEditing"
                             [expectedResults]="expectedResults.organizer"
                             [hideDocument]="true"
+                            (downloadDataBtnClicked)="downloadedOrganizerPersonData($event)"
                             checkboxLabel="{{ 'buyers-and-sales-centers.has-bulgarian-address-registration' | tlTranslate }}">
                 </regix-data>
             </div>
@@ -394,6 +395,7 @@
                             [isIdReadOnly]="isEditing"
                             [disableOnlyBasicData]="isAgentSameAsSubmittedForCustodian"
                             [hideDocument]="true"
+                            (downloadDataBtnClicked)="downloadedAgentPersonData($event)"
                             checkboxLabel="{{ 'buyers-and-sales-centers.has-bulgarian-address-registration' | tlTranslate }}">
                 </regix-data>
             </div>
@@ -605,9 +607,9 @@
     <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData"
                         title="{{ 'buyers-and-sales-centers.payment-information-panel' | tlTranslate }}"
                         [validityChecker]="editForm">
-        <payment-information fxFlex="100" 
+        <payment-information fxFlex="100"
                              formControlName="applicationPaymentInformationControl"
-                             [hideBasicInfo]="hideBasicPaymentInfo" 
+                             [hideBasicInfo]="hideBasicPaymentInfo"
                              [isOnlineApplication]="isOnlineApplication">
         </payment-information>
     </tl-expansion-panel>

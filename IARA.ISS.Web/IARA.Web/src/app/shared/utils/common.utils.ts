@@ -7,6 +7,7 @@ import { DateUtils } from './date.utils';
 export class CommonUtils {
 
     public static readonly IC_ICON_SIZE: number = 20;
+    public static readonly FA_ICON_SIZE: number = 1.4;
 
     public static readonly COUNTRIES_BG: string = 'BGR';
     public static readonly INSTITUTIONS_IARA: string = 'ИАРА';

@@ -6,6 +6,7 @@ import { ValidityCheckerDirective } from '@app/shared/directives/validity-checke
 import { NotifyingCustomFormControl } from '@app/shared/utils/notifying-custom-form-control';
 import { NotifierDirective } from '@app/shared/directives/notifier/notifier.directive';
 import { Notifier } from '@app/shared/directives/notifier/notifier.class';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 
 @Component({
     selector: 'application-submitted-by',
@@ -57,6 +58,11 @@ export class ApplicationSubmittedByComponent extends NotifyingCustomFormControl<
                 this.form.reset();
             }
         });
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('personControl')!.setValue(person.person);
+        this.form.get('addressesControl')?.setValue(person.addresses);
     }
 
     protected buildForm(): AbstractControl {

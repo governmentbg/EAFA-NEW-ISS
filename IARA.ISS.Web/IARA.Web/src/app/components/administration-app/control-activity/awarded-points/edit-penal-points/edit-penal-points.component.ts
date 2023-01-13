@@ -30,6 +30,7 @@ import { PenalPointsOrderDTO } from '@app/models/generated/dtos/PenalPointsOrder
 import { PermitNomenclatureDTO } from '@app/models/generated/dtos/PermitNomenclatureDTO';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 
 @Component({
     selector: 'edit-penal-points',
@@ -361,6 +362,10 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
                 }
             }
         })
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('personControl')!.setValue(person.person);
     }
 
     private closeEditComplaintDialogBtnClicked(closeeFn: HeaderCloseFunction): void {

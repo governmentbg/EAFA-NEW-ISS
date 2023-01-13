@@ -15,6 +15,8 @@ import { SubmittedByRolesEnum } from '@app/enums/submitted-by-roles.enum';
 import { ApplicationSubmittedForDTO } from '@app/models/generated/dtos/ApplicationSubmittedForDTO';
 import { EditShipOwnerDialogParams } from '../models/edit-ship-owner-dialog-params.model';
 import { EditShipOwnerDialogResult } from '../models/edit-ship-owner-dialog-result.model';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 
 type OwnerType = 'Person' | 'Legal';
 
@@ -165,6 +167,16 @@ export class EditShipOwnerComponent implements IDialogComponent, AfterViewInit {
             this.form.get('legalControl')!.setValue(this.submittedFor.legal);
             this.form.get('legalAddressesControl')!.setValue(this.submittedFor.addresses);
         }
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('personControl')!.setValue(person.person);
+        this.form.get('personAddressesControl')!.setValue(person.addresses);
+    }
+
+    public downloadedLegalData(legal: LegalFullDataDTO): void {
+        this.form.get('legalControl')!.setValue(legal.legal);
+        this.form.get('legalAddressesControl')!.setValue(legal.addresses);
     }
 
     private buildForm(): void {

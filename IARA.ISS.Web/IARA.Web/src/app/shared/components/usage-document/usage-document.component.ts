@@ -23,6 +23,8 @@ import { Notifier } from '@app/shared/directives/notifier/notifier.class';
 import { NotifierDirective } from '@app/shared/directives/notifier/notifier.directive';
 import { DateRangeData } from '../input-controls/tl-date-range/tl-date-range.component';
 import { DateRangeIndefiniteData } from '../date-range-indefinite/date-range-indefinite.component';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 
 type LessorType = 'Person' | 'Legal';
 
@@ -195,6 +197,21 @@ export class UsageDocumentComponent
 
     public cancelBtnClicked(action: IActionInfo, dialogClose: DialogCloseCallback): void {
         dialogClose();
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('personControl')!.setValue(person.person);
+        this.form.get('personAddressesControl')!.setValue(person.addresses);
+    }
+
+    public downloadedLegalData(legal: LegalFullDataDTO): void {
+        this.form.get('legalControl')!.setValue(legal.legal);
+        this.form.get('legalAddressesControl')!.setValue(legal.addresses);
+    }
+
+    public downloadedConcessionerLegalData(legal: LegalFullDataDTO): void {
+        this.form.get('concessionerControl')!.setValue(legal.legal);
+        this.form.get('concessionerAddressesControl')!.setValue(legal.addresses);
     }
 
     protected buildForm(): AbstractControl {

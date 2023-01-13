@@ -143,7 +143,7 @@ export class AquacultureFacilitiesApplicationsComponent {
             next: (model: AquacultureFacilityEditDTO) => {
                 data.model = model;
                 data.model.applicationId = application.id;
-                this.openAquacultureEditDialog(data, title).subscribe((result: any) => {
+                this.openAquacultureEditDialog(data, title, true).subscribe((result: any) => {
                     saveOrEditDone.next(result);
                     saveOrEditDone.complete();
                 });
@@ -174,7 +174,7 @@ export class AquacultureFacilitiesApplicationsComponent {
             next: (model: AquacultureFacilityEditDTO) => {
                 data.model = model;
                 data.model.applicationId = application.id;
-                this.openAquacultureEditDialog(data, title).subscribe((result: any) => {
+                this.openAquacultureEditDialog(data, title, false).subscribe((result: any) => {
                     saveOrEditDone.next(result);
                     saveOrEditDone.complete();
                 });
@@ -188,7 +188,7 @@ export class AquacultureFacilitiesApplicationsComponent {
         return saveOrEditDone;
     }
 
-    private openAquacultureEditDialog(data: EditAquacultureFacilityDialogParams, title: string): Observable<any> {
+    private openAquacultureEditDialog(data: EditAquacultureFacilityDialogParams, title: string, complete: boolean): Observable<any> {
         const auditBtn: IHeaderAuditButton = {
             id: data.model!.id!,
             getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
@@ -221,11 +221,13 @@ export class AquacultureFacilitiesApplicationsComponent {
             headerCancelButton: {
                 cancelBtnClicked: this.closeAquacultureEditBtnClicked.bind(this)
             },
-            saveBtn: {
-                id: 'save',
-                color: 'accent',
-                translateValue: this.translate.getValue('aquacultures.complete-application')
-            },
+            saveBtn: complete
+                ? {
+                    id: 'save',
+                    color: 'accent',
+                    translateValue: this.translate.getValue('aquacultures.complete-application')
+                }
+                : undefined,
             cancelBtn: {
                 id: 'cancel',
                 color: 'primary',

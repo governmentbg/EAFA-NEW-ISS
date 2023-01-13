@@ -114,7 +114,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
     public readonly cacheService: CommercialFishingRegisterCacheService;
 
     @ViewChild(SearchPanelComponent)
-    private searchpanel!: SearchPanelComponent;
+    private searchpanel: SearchPanelComponent | undefined;
 
     @ViewChild(TLDataTableComponent)
     private datatable!: IRemoteTLDatatableComponent;
@@ -313,12 +313,14 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             filtersMapper: this.mapFilters.bind(this)
         });
 
-        this.searchpanel.filtersChanged.subscribe({
-            next: () => {
-                this.cacheService.clearPermitLicenseLogBooksCache(); // clear all cache
-            }
-        });
-
+        if (this.searchpanel !== null && this.searchpanel !== undefined) {
+            this.searchpanel.filtersChanged.subscribe({
+                next: () => {
+                    this.cacheService.clearPermitLicenseLogBooksCache(); // clear all cache
+                }
+            });
+        }
+        
         const isPerson: boolean | undefined = window.history.state?.isPerson;
         let legalId: number | undefined;
         let personId: number | undefined;

@@ -8,6 +8,7 @@ import { TicketTypesCountReportDTO } from "@app/models/generated/dtos/TicketType
 import { TypesCountReportDTO } from "@app/models/generated/dtos/TypesCountReportDTO";
 import { ApplicationsRegisterFilters } from "@app/models/generated/filters/ApplicationsRegisterFilters";
 import { RecreationalFishingTicketApplicationFilters } from "@app/models/generated/filters/RecreationalFishingTicketApplicationFilters";
+import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
 
 export interface IDashboardService {
     getAllApplicationsByUserId(request: GridRequestModel<ApplicationsRegisterFilters>): Observable<GridResultModel<ApplicationRegisterDTO>>;
@@ -16,4 +17,5 @@ export interface IDashboardService {
     getStatusCountReportData(shouldFilterByCurrentUser: boolean, isTickets: boolean): Observable<StatusCountReportDataDTO>;
     getTypesCountReport(shouldFilterByCurrentUser: boolean): Observable<TypesCountReportDTO[]>;
     getTicketTypesCountReport(): Observable<TicketTypesCountReportDTO[]>;
+    getUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]>;
 }

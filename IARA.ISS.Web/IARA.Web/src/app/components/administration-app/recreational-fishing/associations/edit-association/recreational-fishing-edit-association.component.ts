@@ -19,6 +19,7 @@ import { AssociationAnnulmentResult } from '../models/association-annulment-resu
 import { AssociationEditDialogParams } from '../models/association-edit-dialog-params.model';
 import { EikUtils } from '@app/shared/utils/eik.utils';
 import { IRecreationalFishingAssociationService } from '@app/interfaces/common-app/recreational-fishing-association.interface';
+import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 
 @Component({
     selector: 'recreational-fishing-edit-association',
@@ -122,6 +123,11 @@ export class RecreationalFishingEditAssociationComponent implements OnInit, IDia
         this.id = data?.id;
         this.isAdding = data?.adding ?? false;
         this.readOnly = data?.readonly ?? false;
+    }
+
+    public downloadedLegalData(legal: LegalFullDataDTO): void {
+        this.form.get('legalRegixDataControl')!.setValue(legal.legal);
+        this.form.get('legalAddressesControl')!.setValue(legal.addresses);
     }
 
     private buildForm(): void {

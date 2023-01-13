@@ -1,6 +1,6 @@
 ﻿import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import {
     ApexAxisChartSeries,
     ApexChart,
@@ -37,6 +37,8 @@ import { RecreationalFishingAdministrationService } from '@app/services/administ
 import { TicketTypesCountReportDTO } from '@app/models/generated/dtos/TicketTypesCountReportDTO';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
+import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
 
 export type ChartOptions = {
     series: ApexAxisChartSeries;
@@ -68,6 +70,7 @@ export class DashboardComponent<T extends IDialogComponent> implements AfterView
     public types!: NomenclatureDTO<number>[];
     public sources!: NomenclatureDTO<number>[];
     public showOnlyAssignedOptions!: NomenclatureDTO<ThreeState>[];
+    public users: PrintUserNomenclatureDTO[] = [];
 
     public recreationalFishingService: IRecreationalFishingService;
 
@@ -98,6 +101,8 @@ export class DashboardComponent<T extends IDialogComponent> implements AfterView
     @ViewChild(SearchPanelComponent)
     private searchpanel!: SearchPanelComponent;
 
+    private readonly loader: FormControlDataLoader;
+
     public constructor(translate: FuseTranslationLoaderService,
         service: DashboardService,
         applicationRegisterService: ApplicationsProcessingService,
@@ -111,7 +116,7 @@ export class DashboardComponent<T extends IDialogComponent> implements AfterView
         this.recreationalFishingService = recreationalFishingAdministrationService;
 
         this.hasApplicationsProcessingPermission = this.permissionsService.has(PermissionsEnum.ApplicationsRead);
-        this.hasTicketsReadPermission = this.permissionsService.has(PermissionsEnum.TicketApplicationsRead);
+        this.hasTicketsReadPermission = this.permissionsService.hasAny(PermissionsEnum.TicketsReadAll, PermissionsEnum.TicketsRead);
 
         this.hasAnyApplicationsReadPermission = this.permissionsService.has(PermissionsEnum.QualifiedFishersApplicationsRead)
             || this.permissionsService.has(PermissionsEnum.ScientificFishingApplicationsRead)
@@ -133,6 +138,8 @@ export class DashboardComponent<T extends IDialogComponent> implements AfterView
         }
 
         this.applicationProcessingHasPermissions = new Map<PageCodeEnum, ApplicationProcessingHasPermissions>();
+
+        this.loader = new FormControlDataLoader(this.getNomenclatures.bind(this));
 
         this.buildForm();
     }
@@ -156,6 +163,8 @@ export class DashboardComponent<T extends IDialogComponent> implements AfterView
                     this.sources = sources;
                 }
             });
+
+            this.loader.load();
 
             this.showOnlyAssignedOptions = [
                 new NomenclatureDTO<ThreeState>({
@@ -309,8 +318,19 @@ export class DashboardComponent<T extends IDialogComponent> implements AfterView
                     break;
             }
         }
-        result.assignedTo = filters.getValue('assignedToControl');
+        result.assignedToUserId = filters.getValue('assignedToControl');
 
         return result;
+    }
+
+    /// Nomenclatures
+
+    private getNomenclatures(): Subscription {
+        return this.service.getUsersNomenclature().subscribe({
+            next: (results: PrintUserNomenclatureDTO[]) => {
+                this.users = results;
+                this.loader.complete();
+            }
+        });
     }
 }

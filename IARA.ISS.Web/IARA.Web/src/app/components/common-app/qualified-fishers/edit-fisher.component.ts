@@ -25,7 +25,6 @@ import { ApplicantRelationToRecipientDTO } from '@app/models/generated/dtos/Appl
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { IQualifiedFishersService } from '@app/interfaces/administration-app/qualified-fishers.interface';
 import { ApplicationRegiXCheckDTO } from '@app/models/generated/dtos/ApplicationRegiXCheckDTO';
-import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
 import { MaritimeEducationFishermanDialogParamsModel } from './models/maritime-education-fisherman-dialog-params.model';
 import { IdentifierTypeEnum } from '@app/enums/identifier-type.enum';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
@@ -39,8 +38,7 @@ import { Notifier } from '@app/shared/directives/notifier/notifier.class';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { SubmittedByRolesEnum } from '@app/enums/submitted-by-roles.enum';
 import { DuplicatesEntryDTO } from '@app/models/generated/dtos/DuplicatesEntryDTO';
-import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
-import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 
 @Component({
     selector: 'edit-fisher-component',
@@ -382,6 +380,16 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
         }
 
         return result;
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.editForm.get('submittedByRegixDataControl')!.setValue(person.person);
+        this.editForm.get('submittedByAddressDataControl')!.setValue(person.addresses);
+    }
+
+    public downloadedSubmittedForPersonData(person: PersonFullDataDTO): void {
+        this.editForm.get('submittedForRegixDataControl')!.setValue(person.person);
+        this.editForm.get('submittedForAddressDataControl')!.setValue(person.addresses);
     }
 
     private saveQualifiedFisherRecord(dialogClose: DialogCloseCallback, fromSaveAsDraft: boolean = false): Observable<boolean> {

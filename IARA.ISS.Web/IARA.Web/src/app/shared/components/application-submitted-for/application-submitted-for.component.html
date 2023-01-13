@@ -27,6 +27,7 @@
                         [middleNameRequired]="middleNameRequired"
                         [showOnlyBasicData]="showOnlyBasicData"
                         [expectedResults]="expectedResults?.person"
+                        (downloadDataBtnClicked)="downloadedPersonData($event)"
                         checkboxLabel="{{ 'application-submitted-for.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
 
@@ -41,6 +42,7 @@
                         [isIdReadOnly]="isIdReadOnly"
                         [showOnlyBasicData]="showOnlyBasicData"
                         [expectedResults]="expectedResults?.legal"
+                        (downloadDataBtnClicked)="downloadedLegalData($event)"
                         checkboxLabel="{{ 'application-submitted-for.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
 

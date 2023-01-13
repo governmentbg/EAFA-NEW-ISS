@@ -134,6 +134,7 @@
                                     [isPerson]="true"
                                     [hideDocument]="true"
                                     [isIdReadOnly]="viewMode"
+                                    (downloadDataBtnClicked)="downloadedPersonData($event)"
                                     checkboxLabel="{{ 'penal-points.has-bulgarian-address-registration' | tlTranslate }}">
                         </regix-data>
                     </tl-card-content>

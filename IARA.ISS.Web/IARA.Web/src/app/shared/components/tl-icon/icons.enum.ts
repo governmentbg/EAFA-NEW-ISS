@@ -93,7 +93,8 @@
     faEnvelopeOpen,
     faClipboardList,
     faFileExport,
-    faSignature
+    faSignature,
+    faSpinner
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faAddressBook as faAddressBookRegular } from '@fortawesome/free-regular-svg-icons';
@@ -283,6 +284,7 @@ export class AppIcons {
         'fa-clipboard-list': faClipboardList,
         'fa-file-export': faFileExport,
         'fa-signature': faSignature,
+        'fa-spinner': faSpinner
     };
 
     public static get FaIconsDictionary(): Map<string, any> {

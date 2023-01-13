@@ -11,6 +11,7 @@
                         [showOnlyBasicData]="showOnlyBasicData"
                         [middleNameRequired]="middleNameRequired"
                         [expectedResults]="expectedResults?.person"
+                        (downloadDataBtnClicked)="downloadedPersonData($event)"
                         checkboxLabel="{{ 'application-submitted-by.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
 

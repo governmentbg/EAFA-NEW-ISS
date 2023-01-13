@@ -40,6 +40,8 @@ import { LegalEntitiesPublicService } from '@app/services/public-app/legal-entit
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { FileTypeEnum } from '@app/enums/file-types.enum';
 import { Notifier } from '@app/shared/directives/notifier/notifier.class';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 
 @Component({
     selector: 'edit-legal-entity',
@@ -460,6 +462,16 @@ export class EditLegalEntityComponent implements OnInit, IDialogComponent {
         }
 
         return result;
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('requesterControl')!.setValue(person.person);
+        this.form.get('requesterAddressesControl')!.setValue(person.addresses);
+    }
+
+    public downloadedLegalData(legal: LegalFullDataDTO): void {
+        this.form.get('legalControl')!.setValue(legal.legal);
+        this.form.get('addressesControl')!.setValue(legal.addresses);
     }
 
     private buildForm(): void {

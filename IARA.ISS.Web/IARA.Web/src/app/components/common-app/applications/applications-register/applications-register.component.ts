@@ -1,6 +1,7 @@
 ﻿import { IApplicationsRegisterService } from '@app/interfaces/administration-app/applications-register.interface';
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
@@ -19,7 +20,8 @@ import { DataTableManager } from '@app/shared/utils/data-table.manager';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { ApplicationsTableComponent, ApplicationTablePageType } from '../applications-table/applications-table.component';
 import { ApplicationProcessingHasPermissions } from '../models/application-processing-has-permissions.model';
-
+import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
+import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
 
 type ThreeState = 'yes' | 'no' | 'both';
 
@@ -42,6 +44,7 @@ export class ApplicationsRegisterComponent<T extends IDialogComponent> implement
     public types!: NomenclatureDTO<number>[];
     public sources!: NomenclatureDTO<number>[];
     public showOnlyAssignedOptions!: NomenclatureDTO<ThreeState>[];
+    public users: PrintUserNomenclatureDTO[] = [];
 
     public applicationProcessingHasPermissions: Map<PageCodeEnum, ApplicationProcessingHasPermissions> = new Map<PageCodeEnum, ApplicationProcessingHasPermissions>();
 
@@ -53,12 +56,15 @@ export class ApplicationsRegisterComponent<T extends IDialogComponent> implement
 
     private permissions: PermissionsService;
     private grid!: DataTableManager<ApplicationRegisterDTO, ApplicationsRegisterFilters>;
+    private readonly loader: FormControlDataLoader;
 
     public constructor(translate: FuseTranslationLoaderService, permissions: PermissionsService) {
         this.translate = translate;
         this.permissions = permissions;
 
         this.buildForm();
+
+        this.loader = new FormControlDataLoader(this.getNomenclatures.bind(this));
     }
 
     public ngOnInit(): void {
@@ -83,6 +89,8 @@ export class ApplicationsRegisterComponent<T extends IDialogComponent> implement
 
             this.applicationProcessingHasPermissions.set(map[0], applicationProcessingHasPermission);
         }
+
+        this.loader.load();
 
         this.service.getApplicationStatuses().subscribe({
             next: (statuses: NomenclatureDTO<number>[]) => {
@@ -190,7 +198,8 @@ export class ApplicationsRegisterComponent<T extends IDialogComponent> implement
             dateTo: filters.getValue<DateRangeData>('applicationDateRangeControl')?.end,
             submittedFor: filters.getValue('submittedForControl'),
             submittedForEgnLnc: filters.getValue('submittedForEgnLncControl'),
-            applicationSourceId: filters.getValue('applicationSourceControl')
+            applicationSourceId: filters.getValue('applicationSourceControl'),
+            assignedToUserId: filters.getValue('assignedToControl')
         });
 
         if (this.pageType === 'FileInPage') {
@@ -208,10 +217,19 @@ export class ApplicationsRegisterComponent<T extends IDialogComponent> implement
                         break;
                 }
             }
-
-            result.assignedTo = filters.getValue('assignedToControl');
         }
 
         return result;
+    }
+
+    /// Nomenclatures
+
+    private getNomenclatures(): Subscription {
+        return this.service.getUsersNomenclature().subscribe({
+            next: (results: PrintUserNomenclatureDTO[]) => {
+                this.users = results;
+                this.loader.complete();
+            }
+        });
     }
 }

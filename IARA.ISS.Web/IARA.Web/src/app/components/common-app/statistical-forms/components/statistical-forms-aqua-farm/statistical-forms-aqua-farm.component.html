@@ -45,12 +45,12 @@
                             tooltipResourceName="statistical-forms.aqua-farm-basic-information-title-helper"
                             [validityChecker]="form">
             <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-                <tl-input *ngIf="isRegisterEntry"
-                          fxFlex="25"
-                          formControlName="formNumControl"
-                          tooltipResourceName="statistical-forms.aqua-farm-form-num-helper"
-                          label="{{ 'statistical-forms.aqua-farm-form-num' | tlTranslate }}">
-                </tl-input>
+                <tl-date-year fxFlex="25"
+                              formControlName="yearControl"
+                              tooltipResourceName="statistical-forms.aqua-farm-year-helper"
+                              [max]="today"
+                              label="{{ 'statistical-forms.aqua-farm-year' | tlTranslate }}">
+                </tl-date-year>
                 <tl-autocomplete fxFlex="75"
                                  label="{{ 'statistical-forms.aqua-farm-aquaculture-facilities' | tlTranslate }}"
                                  formControlName="aquacultureFacilityControl"
@@ -58,15 +58,6 @@
                                  [options]="aquacultures"
                                  [filterFn]="aquaculturesFilterFn.bind(this)">
                 </tl-autocomplete>
-                <div *ngIf="!isRegisterEntry" fxFlex="25"></div>
-            </div>
-            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-                <tl-date-year fxFlex="25"
-                              formControlName="yearControl"
-                              tooltipResourceName="statistical-forms.aqua-farm-year-helper"
-                              [max]="today"
-                              label="{{ 'statistical-forms.aqua-farm-year' | tlTranslate }}">
-                </tl-date-year>
             </div>
         </tl-expansion-panel>
     </application-submitted-for>

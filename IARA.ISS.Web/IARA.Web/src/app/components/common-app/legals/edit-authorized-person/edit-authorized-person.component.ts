@@ -18,6 +18,7 @@ import { CommandTypes } from '@app/shared/components/data-table/enums/command-ty
 import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
 import { EditAuthorizedPersonDialogParams } from '../models/edit-authorized-person-dialog-params.model';
 import { EditAuthorizedPersonDialogResult } from '../models/edit-authorized-person-dialog-result.model';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 
 @Component({
     selector: 'edit-authorized-person',
@@ -199,6 +200,10 @@ export class EditAuthorizedPersonComponent implements OnInit, AfterViewInit, IDi
             }
         }
         return undefined;
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('personControl')!.setValue(person.person);
     }
 
     private buildForm(): void {

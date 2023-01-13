@@ -9,6 +9,7 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { FishingAssociationPersonDTO } from '@app/models/generated/dtos/FishingAssociationPersonDTO';
 import { EditLegalAssociationPersonDialogParams } from '../models/edit-legal-association-person-dialog-params.model';
 import { EditLegalAssociationPersonResult } from '../models/edit-legal-association-person-result.model';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 
 @Component({
     selector: 'edit-legal-association-person',
@@ -90,6 +91,10 @@ export class EditLegalAssociationPersonComponent implements AfterViewInit, IDial
 
     public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         dialogClose();
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('personControl')!.setValue(person.person);
     }
 
     private buildForm(): void {

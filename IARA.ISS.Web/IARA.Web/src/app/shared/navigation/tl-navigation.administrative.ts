@@ -420,7 +420,7 @@ export class Navigation {
                     type: 'item',
                     icon: 'fa-handpoint-up',
                     url: '/ticket_applications',
-                    permissions: [PermissionsEnum.TicketsApplicationsReadAll, PermissionsEnum.TicketApplicationsRead],
+                    permissions: [PermissionsEnum.TicketsReadAll, PermissionsEnum.TicketsRead],
                     component: RecreationalFishingApplicationsComponent,
                     isPublic: false
                 },

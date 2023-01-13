@@ -1,4 +1,8 @@
-﻿<div [formGroup]="form" fxLayout="column" fxLayoutGap="1em" fxFlexFill fxLayoutAlign="space-between stretch">
+﻿<div [formGroup]="form"
+     fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch">
 
     <tl-checkbox formControlName="personRegisteredControl"
                  [label]="label">
@@ -11,19 +15,36 @@
     </tl-autocomplete>
 
     <ng-container *ngIf="!isFromRegister">
-        <div fxLayout="column" fxLayoutGap="1em">
-            <regix-data formControlName="personControl"
+        <div fxLayout="column"
+             fxLayoutGap="1em">
+            <tl-checkbox formControlName="isLegalControl"
+                         label="{{ 'inspections.buyer-is-legal' | tlTranslate }}"></tl-checkbox>
+            <regix-data *ngIf="!isLegal"
+                        formControlName="personControl"
                         [isPerson]="true"
                         [isIdReadOnly]="false"
                         [isForeigner]="false"
                         [includeForeigner]="true"
                         [showOnlyBasicData]="true"
+                        (downloadDataBtnClicked)="downloadedPersonData($event)"
+                        checkboxLabel="{{ 'catches-and-sales.log-book-page-person-has-bulgarian-address-registration' | tlTranslate }}">
+            </regix-data>
+            <regix-data *ngIf="isLegal"
+                        formControlName="legalControl"
+                        [isPerson]="false"
+                        [isIdReadOnly]="false"
+                        [isForeigner]="false"
+                        [includeForeigner]="true"
+                        [showOnlyBasicData]="true"
+                        (downloadDataBtnClicked)="downloadedLegalData($event)"
                         checkboxLabel="{{ 'catches-and-sales.log-book-page-person-has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
         </div>
     </ng-container>
 
-    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+    <div fxLayout="row"
+         fxLayoutGap="1em"
+         fxLayoutAlign="start center">
         <tl-input fxFlex="50"
                   formControlName="addressControl"
                   label="{{ 'inspections.address' | tlTranslate }}">

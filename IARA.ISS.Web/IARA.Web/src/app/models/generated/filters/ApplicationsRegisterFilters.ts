@@ -24,7 +24,7 @@ export class ApplicationsRegisterFilters extends BaseRequestModel {
     public submittedForEgnLnc: string | undefined;
     public applicationSourceId: number | undefined;
     public showAssignedApplications: boolean | undefined;
-    public assignedTo: string | undefined;
+    public assignedToUserId: number | undefined;
     public showOnlyNotFinished: boolean | undefined;
     public territoryUnitId: number | undefined;
 }

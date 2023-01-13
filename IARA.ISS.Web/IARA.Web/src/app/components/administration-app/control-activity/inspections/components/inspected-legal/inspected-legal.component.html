@@ -13,6 +13,7 @@
                         [isForeigner]="true"
                         [isIdReadOnly]="false"
                         [showOnlyBasicData]="true"
+                        (downloadDataBtnClicked)="downloadedLegalData($event)"
                         checkboxLabel="{{ 'catches-and-sales.log-book-page-person-has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
 

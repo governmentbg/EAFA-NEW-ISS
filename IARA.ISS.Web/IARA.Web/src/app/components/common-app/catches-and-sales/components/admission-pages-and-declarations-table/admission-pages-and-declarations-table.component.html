@@ -13,7 +13,7 @@
                           [cellClass]="'justify-center'"
                           columnName="{{ 'catches-and-sales.admission-page' | tlTranslate }}">
         <ng-template let-row="row" ngx-datatable-cell-template>
-            <span>{{ row.data.pageNumber }}</span>
+            <span class="multi-line break-all-words">{{ row.data.pageNumber }}</span>
         </ng-template>
     </data-template-column>
 

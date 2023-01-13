@@ -10,6 +10,7 @@
             <regix-data formControlName="legalRegixDataControl"
                         [isPerson]="false"
                         [isIdReadOnly]="isEditing"
+                        (downloadDataBtnClicked)="downloadedLegalData($event)"
                         checkboxLabel="{{ 'recreational-fishing.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
 

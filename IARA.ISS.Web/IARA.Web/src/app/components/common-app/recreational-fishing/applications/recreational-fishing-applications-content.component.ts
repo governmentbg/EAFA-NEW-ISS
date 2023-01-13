@@ -379,21 +379,21 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
     private setupPermissions(): void {
         if (this.isAssociation) {
             this.canAddRecords = this.permissions.has(PermissionsEnum.AssociationsTicketsAddRecords);
-            this.canEditRecords = this.permissions.has(PermissionsEnum.AssociationsTicketApplicationsEditRecords);
-            this.canDeleteRecords = this.permissions.has(PermissionsEnum.AssociationsTicketApplicationsDeleteRecords);
-            this.canRestoreRecords = this.permissions.has(PermissionsEnum.AssociationsTicketApplicationsRestoreRecords);
-            this.canProcessPaymentData = this.permissions.has(PermissionsEnum.AssociationsTicketApplicationsProcessPaymentData);
-            this.canCancelRecords = this.permissions.has(PermissionsEnum.AssociationsTicketApplicationsCancel);
-            this.canInspectAndCorrectRecords = this.permissions.has(PermissionsEnum.AssociationsTicketApplicationsInspectAndCorrectRegiXData);
+            this.canEditRecords = this.permissions.has(PermissionsEnum.AssociationsTicketsEditRecords);
+            this.canDeleteRecords = this.permissions.has(PermissionsEnum.AssociationsTicketsDeleteRecords);
+            this.canRestoreRecords = this.permissions.has(PermissionsEnum.AssociationsTicketsRestoreRecords);
+            this.canProcessPaymentData = this.permissions.has(PermissionsEnum.AssociationsTicketsProcessPaymentData);
+            this.canCancelRecords = this.permissions.has(PermissionsEnum.AssociationsTicketsCancel);
+            this.canInspectAndCorrectRecords = this.permissions.has(PermissionsEnum.AssociationsTicketsInspectAndCorrectRegiXData);
         }
         else {
             this.canAddRecords = this.permissions.has(PermissionsEnum.TicketsAddRecords);
-            this.canEditRecords = this.permissions.has(PermissionsEnum.TicketApplicationsEditRecords);
-            this.canDeleteRecords = this.permissions.has(PermissionsEnum.TicketApplicationsDeleteRecords);
-            this.canRestoreRecords = this.permissions.has(PermissionsEnum.TicketApplicationsRestoreRecords);
-            this.canProcessPaymentData = this.permissions.has(PermissionsEnum.TicketApplicationsProcessPaymentData);
-            this.canCancelRecords = this.permissions.has(PermissionsEnum.TicketApplicationsCancelRecord);
-            this.canInspectAndCorrectRecords = this.permissions.has(PermissionsEnum.TicketApplicationsInspectAndCorrectRegiXData);
+            this.canEditRecords = this.permissions.has(PermissionsEnum.TicketsEditRecords);
+            this.canDeleteRecords = this.permissions.has(PermissionsEnum.TicketsDeleteRecords);
+            this.canRestoreRecords = this.permissions.has(PermissionsEnum.TicketsRestoreRecords);
+            this.canProcessPaymentData = this.permissions.has(PermissionsEnum.TicketsProcessPaymentData);
+            this.canCancelRecords = this.permissions.has(PermissionsEnum.TicketsCancelRecord);
+            this.canInspectAndCorrectRecords = this.permissions.has(PermissionsEnum.TicketsInspectAndCorrectRegiXData);
         }
     }
 

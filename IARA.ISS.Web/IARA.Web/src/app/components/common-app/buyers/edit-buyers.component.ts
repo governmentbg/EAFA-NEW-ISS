@@ -58,6 +58,7 @@ import { CommercialFishingAdministrationService } from '@app/services/administra
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { DuplicatesEntryDTO } from '@app/models/generated/dtos/DuplicatesEntryDTO';
 import { AddressTypesEnum } from '@app/enums/address-types.enum';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 
 enum AgentSameAsTypesEnum {
     SubmittedByPerson,
@@ -983,6 +984,14 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
         }
 
         return result;
+    }
+
+    public downloadedOrganizerPersonData(person: PersonFullDataDTO): void {
+        this.editForm.get('organizerControl')!.setValue(person.person);
+    }
+
+    public downloadedAgentPersonData(person: PersonFullDataDTO): void {
+        this.editForm.get('agentControl')!.setValue(person.person);
     }
 
     private markAllAsTouched(): void {

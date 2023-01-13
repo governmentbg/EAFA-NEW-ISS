@@ -44,6 +44,8 @@ import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
 import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 
 @Component({
     selector: 'edit-legal-association',
@@ -483,6 +485,16 @@ export class EditLegalAssociationComponent implements OnInit, IDialogComponent {
         }
 
         return result;
+    }
+
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('submittedByControl')!.setValue(person.person);
+        this.form.get('submittedByAddressesControl')!.setValue(person.addresses);
+    }
+
+    public downloadedLegalData(legal: LegalFullDataDTO): void {
+        this.form.get('submittedForControl')!.setValue(legal.legal);
+        this.form.get('submittedForAddressesControl')!.setValue(legal.addresses);
     }
 
     private buildForm(): void {

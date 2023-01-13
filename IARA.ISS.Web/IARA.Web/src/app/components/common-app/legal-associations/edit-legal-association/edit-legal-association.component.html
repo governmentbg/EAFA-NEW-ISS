@@ -16,6 +16,7 @@
                         [isPerson]="true"
                         [isIdReadOnly]="isEditing || isPublicApp"
                         [expectedResults]="expectedResults.submittedBy"
+                        (downloadDataBtnClicked)="downloadedPersonData($event)"
                         checkboxLabel="{{ 'legal-association.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
 
@@ -40,6 +41,7 @@
                         [showCustodianOfProperty]="false"
                         [isIdReadOnly]="isEditing"
                         [expectedResults]="expectedResults.submittedFor"
+                        (downloadDataBtnClicked)="downloadedLegalData($event)"
                         checkboxLabel="{{ 'legal-association.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
 

@@ -10,6 +10,9 @@ import { InspectionUtils } from '@app/shared/utils/inspection.utils';
 import { RegixLegalDataDTO } from '@app/models/generated/dtos/RegixLegalDataDTO';
 import { InspectedPersonTypeEnum } from '@app/enums/inspected-person-type.enum';
 import { InspectedBuyerNomenclatureDTO } from '@app/models/generated/dtos/InspectedBuyerNomenclatureDTO';
+import { RegixPersonDataDTO } from '@app/models/generated/dtos/RegixPersonDataDTO';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 
 @Component({
     selector: 'inspected-buyer',
@@ -33,6 +36,7 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
     public buyers: InspectedBuyerNomenclatureDTO[] = [];
 
     public isFromRegister: boolean = true;
+    public isLegal: boolean = true;
 
     private readonly translate: FuseTranslationLoaderService;
 
@@ -60,7 +64,10 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
     public writeValue(value: InspectionSubjectPersonnelDTO | undefined): void {
         if (value !== undefined && value !== null) {
             this.isFromRegister = value.isRegistered === true;
+            this.isLegal = value.isLegal === true;
+
             this.form.get('personRegisteredControl')!.setValue(this.isFromRegister);
+            this.form.get('isLegalControl')!.setValue(this.isLegal);
 
             if (value.isRegistered === true) {
                 this.form.get('buyerControl')!.setValue(new InspectedBuyerNomenclatureDTO({
@@ -82,11 +89,22 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
                     countryId: value?.citizenshipId,
                 }));
             }
-            else if (value.isLegal === true) {
+            else if (this.isLegal) {
                 this.form.get('legalControl')!.setValue(
                     new RegixLegalDataDTO({
                         eik: value.eik,
                         name: value.firstName,
+                    })
+                );
+            }
+            else {
+                this.form.get('personControl')!.setValue(
+                    new RegixPersonDataDTO({
+                        firstName: value.firstName,
+                        egnLnc: value.egnLnc,
+                        middleName: value.middleName,
+                        lastName: value.lastName,
+                        citizenshipCountryId: value.citizenshipId,
                     })
                 );
             }
@@ -101,11 +119,21 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
         }
     }
 
+    public downloadedPersonData(person: PersonFullDataDTO): void {
+        this.form.get('personControl')?.setValue(person.person);
+    }
+
+    public downloadedLegalData(legal: LegalFullDataDTO): void {
+        this.form.get('legalControl')?.setValue(legal.legal);
+    }
+
     protected buildForm(): AbstractControl {
         const form = new FormGroup({
             personRegisteredControl: new FormControl(true),
+            isLegalControl: new FormControl(true),
             buyerControl: new FormControl(undefined, Validators.required),
             legalControl: new FormControl(),
+            personControl: new FormControl(),
             addressControl: new FormControl({ value: undefined, disabled: true }),
             countryControl: new FormControl({ value: undefined, disabled: true }),
         });
@@ -118,6 +146,12 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
             next: this.onBuyerControlChanged.bind(this)
         });
 
+        form.get('isLegalControl')!.valueChanges.subscribe({
+            next: (value) => {
+                this.isLegal = value;
+            }
+        })
+
         return form;
     }
 
@@ -125,21 +159,43 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
         const subject: InspectedBuyerNomenclatureDTO | undefined = this.form.get('buyerControl')!.value;
 
         if (!this.isFromRegister) {
-            const legal: RegixLegalDataDTO = this.form.get('legalControl')!.value;
+            if (this.isLegal) {
+                const legal: RegixLegalDataDTO = this.form.get('legalControl')!.value;
 
-            if (legal === null || legal === undefined) {
-                return undefined;
+                if (legal === null || legal === undefined) {
+                    return undefined;
+                }
+
+                return new InspectionSubjectPersonnelDTO({
+                    isRegistered: false,
+                    address: this.form.get('addressControl')!.value,
+                    citizenshipId: this.form.get('countryControl')!.value?.value,
+                    isLegal: true,
+                    eik: legal.eik,
+                    firstName: legal.name,
+                    type: InspectedPersonTypeEnum.RegBuyer,
+                });
             }
+            else {
+                const person: RegixPersonDataDTO = this.form.get('personControl')!.value;
 
-            return new InspectionSubjectPersonnelDTO({
-                isRegistered: false,
-                address: this.form.get('addressControl')!.value,
-                citizenshipId: this.form.get('countryControl')!.value?.value,
-                isLegal: true,
-                eik: legal.eik,
-                firstName: legal.name,
-                type: InspectedPersonTypeEnum.RegBuyer,
-            });
+                if (person === null || person === undefined) {
+                    return undefined;
+                }
+
+                return new InspectionSubjectPersonnelDTO({
+                    isRegistered: false,
+                    address: this.form.get('addressControl')!.value,
+                    citizenshipId: this.form.get('countryControl')!.value?.value,
+                    isLegal: false,
+                    egnLnc: person.egnLnc,
+                    firstName: person.firstName,
+                    middleName: person.middleName,
+                    lastName: person.lastName,
+                    type: InspectedPersonTypeEnum.RegBuyer,
+                });
+
+            }
         }
         else if (subject !== null && subject !== undefined) {
             return new InspectionSubjectPersonnelDTO({

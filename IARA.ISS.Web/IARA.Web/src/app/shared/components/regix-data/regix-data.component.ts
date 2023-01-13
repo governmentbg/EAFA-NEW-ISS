@@ -24,6 +24,10 @@ import { DocumentTypeEnum } from '@app/enums/document-type.enum';
 import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 import { NotifyingCustomFormControl } from '@app/shared/utils/notifying-custom-form-control';
 import { NotifierDirective } from '@app/shared/directives/notifier/notifier.directive';
+import { PersonLegalExtractorService } from '@app/services/common-app/person-legal-extractor.service';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
+import { IS_PUBLIC_APP } from '../../modules/application.modules';
 
 export class RegixDateOfBirthProperties {
     public min?: Date;
@@ -85,6 +89,9 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
     public disableOnlyBasicData: boolean = false;
 
     @Input()
+    public hideSearchButton: boolean = false;
+
+    @Input()
     public expectedResults: RegixPersonDataDTO | RegixLegalDataDTO | undefined;
 
     @Input()
@@ -92,9 +99,6 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
 
     @Input()
     public dateOfBirthRequiredForLncAndForId: boolean = false;
-
-    @Input()
-    public showSearchButton: boolean = false;
 
     @Input()
     public readonly: boolean = false;
@@ -106,12 +110,11 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
     public isIdentityRequired: boolean = true;
 
     @Output()
-    public downloadDataBtnClicked: EventEmitter<EgnLncDTO> = new EventEmitter<EgnLncDTO>();
-
-    @Output()
-    public egnLncFocusedOut: EventEmitter<EgnLncDTO> = new EventEmitter<EgnLncDTO>();
+    public downloadDataBtnClicked: EventEmitter<PersonFullDataDTO | LegalFullDataDTO> = new EventEmitter<PersonFullDataDTO | LegalFullDataDTO>();
 
     public readonly today: Date = new Date();
+
+    public showSearchButton: boolean;
 
     public expectedRegixResults: RegixPersonDataDTO | RegixLegalDataDTO | undefined;
 
@@ -121,24 +124,30 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
 
     private nomenService: CommonNomenclatures;
     private translate: FuseTranslationLoaderService;
+    private personLegalExtractor: PersonLegalExtractorService;
 
     private dateOfBirthProps: RegixDateOfBirthProperties = new RegixDateOfBirthProperties();
 
     private id: number | undefined;
 
     private readonly loader: FormControlDataLoader;
+    private readonly cache = new Map<string, PersonFullDataDTO | LegalFullDataDTO | null>();
     private readonly BULGARIA_CODE: string = 'BGR';
 
     public constructor(
         @Self() ngControl: NgControl,
         nomenService: CommonNomenclatures,
         translate: FuseTranslationLoaderService,
+        personLegalExtractor: PersonLegalExtractorService,
         @Optional() @Self() validityChecker: ValidityCheckerDirective,
         @Optional() @Self() notifier: NotifierDirective
     ) {
         super(ngControl, true, validityChecker, notifier);
         this.nomenService = nomenService;
         this.translate = translate;
+        this.personLegalExtractor = personLegalExtractor;
+
+        this.showSearchButton = !IS_PUBLIC_APP;
 
         this.loader = new FormControlDataLoader(this.getNomenclatures.bind(this));
     }
@@ -374,13 +383,69 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
         return Object.keys(errors).length === 0 ? null : errors;
     }
 
-    public downloadBtnClicked(egnLnc: EgnLncDTO): void {
-        this.downloadDataBtnClicked.emit(egnLnc);
+    public searchBtnClicked(): void {
+        const identifier: EgnLncDTO | string = this.form.get('idNumberControl')!.value;
+
+        if (typeof identifier === 'string') {
+            const cached: PersonFullDataDTO | LegalFullDataDTO | null | undefined = this.cache.get(identifier);
+
+            if (cached !== undefined) {
+                if (cached !== null) {
+                    this.downloadDataBtnClicked.emit(cached);
+                }
+            }
+            else {
+                this.personLegalExtractor.tryGetLegal(identifier).subscribe({
+                    next: (legal: LegalFullDataDTO | undefined) => {
+                        if (legal) {
+                            this.downloadDataBtnClicked.emit(legal);
+                            this.cache.set(identifier, legal);
+                        }
+                        else {
+                            this.cache.set(identifier, null);
+                        }
+                    }
+                });
+            }
+        }
+        else {
+            const cached: PersonFullDataDTO | LegalFullDataDTO | null | undefined = this.cache.get(`${identifier.identifierType}|${identifier.egnLnc}`);
+
+            if (cached !== undefined) {
+                if (cached !== null) {
+                    this.downloadDataBtnClicked.emit(cached);
+                }
+            }
+            else {
+                this.personLegalExtractor.tryGetPerson(identifier.identifierType!, identifier.egnLnc!).subscribe({
+                    next: (person: PersonFullDataDTO | undefined) => {
+                        if (person) {
+                            this.downloadDataBtnClicked.emit(person);
+                            this.cache.set(`${identifier.identifierType}|${identifier.egnLnc}`, person);
+                        }
+                        else {
+                            this.cache.set(`${identifier.identifierType}|${identifier.egnLnc}`, null);
+                        }
+                    }
+                });
+            }
+        }
     }
 
-    public egnLncFocusOut(): void {
-        if (this.form.get('idNumberControl')!.valid) {
-            this.egnLncFocusedOut.emit(this.form.get('idNumberControl')!.value);
+    public custodianSearchBtnClicked(): void {
+        const identifier: EgnLncDTO = this.form.get('custodianEgnControl')!.value;
+
+        if (identifier && identifier.egnLnc && identifier.egnLnc.length !== 0) {
+            this.personLegalExtractor.tryGetPerson(identifier.identifierType!, identifier.egnLnc).subscribe({
+                next: (person: PersonFullDataDTO | undefined) => {
+                    if (person) {
+                        this.form.get('custodianEgnControl')!.setValue(person.person!.egnLnc);
+                        this.form.get('custodianFirstNameControl')!.setValue(person.person!.firstName);
+                        this.form.get('custodianMiddleNameControl')!.setValue(person.person!.middleName);
+                        this.form.get('custodianLastNameControl')!.setValue(person.person!.lastName);
+                    }
+                }
+            });
         }
     }
 
@@ -418,6 +483,14 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
             return this.dateOfBirthProps.getControlErrorLabelText(controlName, errorValue, errorCode);
         }
         return undefined;
+    }
+
+    public onIdNumberEnterDown(): void {
+        this.searchBtnClicked();
+    }
+
+    public onCustodianEgnEnterDown(): void {
+        this.custodianSearchBtnClicked();
     }
 
     protected buildForm(): AbstractControl {

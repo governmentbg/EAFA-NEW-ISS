@@ -17,6 +17,7 @@ import { FileInApplicationStepperComponent } from './applications/components/fil
 import { PaymentInformationComponent } from './applications/components/payment-information/payment-information.component';
 import { PrintConfigurationsDialogComponent } from './applications/components/print-configurations-dialog/print-configurations-dialog.component';
 import { UploadFileDialogComponent } from './applications/components/upload-file-dialog/upload-file-dialog.component';
+import { WaitExternalChecksToFinishComponent } from './applications/components/wait-external-checks-to-finish/wait-external-checks-to-finish.component';
 import { AquacultureChangeOfCircumstancesComponent } from './aquaculture-facilities/aquaculture-change-of-circumstances/aquaculture-change-of-circumstances.component';
 import { AquacultureDeregistrationComponent } from './aquaculture-facilities/aquaculture-deregistration/aquaculture-deregistration.component';
 import { EditAquacultureFacilityComponent } from './aquaculture-facilities/edit-aquaculture-facility/edit-aquaculture-facility.component';
@@ -205,7 +206,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         EditLegalAssociationPersonComponent,
         ChooseLogBookForRenewalComponent,
         PrintConfigurationsDialogComponent,
-        AssignApplicationByUserComponent
+        AssignApplicationByUserComponent,
+        WaitExternalChecksToFinishComponent
     ],
     imports: [
         TLCommonModule,
@@ -310,7 +312,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         EditLegalAssociationPersonComponent,
         ChooseLogBookForRenewalComponent,
         PrintConfigurationsDialogComponent,
-        AssignApplicationByUserComponent
+        AssignApplicationByUserComponent,
+        WaitExternalChecksToFinishComponent
     ],
     providers: [CurrencyPipe, TLDateDifferencePipe, DatePipe]
 })

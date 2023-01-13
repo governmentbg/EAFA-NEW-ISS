@@ -43,12 +43,13 @@
                 </tl-input>
             </div>
             <div fxFlex="100" fxLayout="column" fxLayoutGap="1em">
-                <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
-                    <tl-checkbox fxFlex="100"
-                                 formControlName="isTransboardedControl"
+                <div fxFlex="100" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                    <tl-checkbox formControlName="isTransboardedControl"
                                  label="{{ 'catches-and-sales.ship-page-origin-declaration-is-fish-transboarded' | tlTranslate }}"
-                                 tooltipResourceName="catches-and-sales.ship-page-origin-declaration-is-fish-transboarded-helper">
+                                 tooltipResourceName="catches-and-sales.ship-page-origin-declaration-is-fish-transboarded-helper"
+                                 [readonly]="isAllCatchMarkedAsTransboarded">
                     </tl-checkbox>
+                    <mat-hint fxFlex *ngIf="isAllCatchMarkedAsTransboarded">* {{ 'catches-and-sales.ship-page-origin-declaration-all-catch-marked-as-transboarded-hint' | tlTranslate }}</mat-hint>
                 </div>
                 <div *ngIf="form.controls.isTransboardedControl.value"
                      fxFlex="100"

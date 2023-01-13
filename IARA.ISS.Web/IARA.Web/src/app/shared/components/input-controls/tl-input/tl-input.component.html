@@ -6,9 +6,9 @@
          [matTooltipDisabled]="disableTooltip"
          [matTooltipShowDelay]="TOOLTIP_SHOW_DELAY_MS"
          [matTooltipPosition]="TOOLTIP_POSITION"
-         style="display: inline-flex">
+         style="display:inline-flex;width:100%">
         <span *ngIf="prefixText"
-              style="white-space: nowrap">{{prefixText}}</span>
+              [ngStyle]="{ 'white-space': 'nowrap', 'color': ngControl.control.disabled ? 'rgba(0, 0, 0, 0.38)' : undefined }">{{prefixText}}</span>
         <input matInput
                [type]="type"
                [formControl]="ngControl.control"
@@ -30,7 +30,8 @@
     </ng-template>
     <div matSuffix
          fxLayout="row"
-         fxLayoutAlign="end center">
+         fxLayoutAlign="end center"
+         fxFlex>
         <ng-content></ng-content>
         <tl-help [tooltipResource]="tooltipResourceName"></tl-help>
     </div>

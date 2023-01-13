@@ -16,6 +16,7 @@
                         [hideDocument]="true"
                         [isIdReadOnly]="isIdReadOnly"
                         [middleNameRequired]="true"
+                        (downloadDataBtnClicked)="downloadedPersonData($event)"
                         checkboxLabel="{{ 'auan-register.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
 
@@ -46,6 +47,7 @@
                         [isPerson]="false"
                         [showCustodianOfProperty]="false"
                         [isIdReadOnly]="isIdReadOnly"
+                        (downloadDataBtnClicked)="downloadedLegalData($event)"
                         checkboxLabel="{{ 'auan-regster.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
 

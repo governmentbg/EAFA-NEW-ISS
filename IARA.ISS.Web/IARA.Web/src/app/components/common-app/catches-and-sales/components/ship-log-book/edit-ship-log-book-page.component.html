@@ -149,8 +149,8 @@
                         tooltipResourceName="catches-and-sales.ship-page-catch-records-and-unloading-panel-helper"
                         [validityChecker]="form"
                         [validityCheckerExtraCondition]="form.errors?.hasInvalidCatchRecordDates !== true 
-                                                      && form.errors?.invalidOriginDeclarationCatchRecords !== true
-                                                      && form.errors?.quantityDifferences">
+                                                         && form.errors?.invalidOriginDeclarationCatchRecords !== true
+                                                         && form.errors?.noTransboardDataForTransboardedCatch !== true">
         <div fxFlex="column" fxLayoutGap="1em" fxFlexFill>
             <!-- Улов -->
             <tl-card tooltipResourceName="catches-and-sales.ship-page-catch-records-panel-helper"
@@ -266,7 +266,7 @@
                      validityChecker
                      [validityCheckerExtraCondition]="form.errors?.hasInvalidCatchRecordDates !== true 
                                                       && form.errors?.invalidOriginDeclarationCatchRecords !== true
-                                                      && form.errors?.quantityDifferences">
+                                                      && form.errors?.noTransboardDataForTransboardedCatch !== true">
                 <tl-card-title>{{ 'catches-and-sales.ship-page-declaration-of-origin-panel' | tlTranslate }}</tl-card-title>
                 <tl-card-content>
                     <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
@@ -374,6 +374,9 @@
                                     ({{ 'catches-and-sales.ship-page-quantities-can-have-max-10-percent-difference' | tlTranslate }}%)
                                 </mat-hint>
                             </div>
+                        </mat-error>
+                        <mat-error *ngIf="form.touched && form.errors?.noTransboardDataForTransboardedCatch">
+                            * {{ 'catches-and-sales.ship-page-no-transboard-data-for-transboarded-catch-error' | tlTranslate }}
                         </mat-error>
                     </div>
                 </tl-card-content>
