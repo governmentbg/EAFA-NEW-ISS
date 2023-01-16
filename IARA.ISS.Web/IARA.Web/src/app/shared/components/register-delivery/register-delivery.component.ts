@@ -170,6 +170,14 @@ export class RegisterDeliveryComponent implements IDialogComponent, OnInit {
                 }
             }
         });
+
+        this.form.get('deliveryDateControl')!.valueChanges.subscribe({
+            next: () => {
+                setTimeout(() => { // за да се смени реално стойността на deliveryDateControl и след това чак да се построи съобщението за валидация
+                    this.form.get('sentDateControl')!.markAsTouched();
+                });
+            }
+        });
     }
 
     private fillForm(): void {

@@ -112,7 +112,7 @@ export class EditWaterCatchComponent implements OnInit, IDialogComponent {
     protected fillModel(): void {
         this.model.fishId = this.form.get('typeControl')!.value?.value;
         this.model.catchQuantity = Number(this.form.get('quantityControl')!.value);
-        this.model.isTaken = this.form.get('takenControl')!.value;
+        this.model.isTaken = this.form.get('takenControl')!.value ?? false;
         this.model.action = this.form.get('storedControl')!.value?.value;
         this.model.storageLocation = this.form.get('storageControl')!.value;
     }

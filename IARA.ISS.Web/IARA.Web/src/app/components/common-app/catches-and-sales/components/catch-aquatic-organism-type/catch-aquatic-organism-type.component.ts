@@ -397,7 +397,7 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
 
     private thirdCountryCatchZoneControlValueChanged(value: string | undefined): void {
         const isContinentalCatchControlValue: boolean | undefined = this.form.get('isContinentalCatchControl')!.value;
-
+            
         if (value !== null && value !== undefined && value !== '') {
             this.form.get('catchQuadrantControl')!.clearValidators();
             this.form.get('catchQuadrantControl')!.markAsPending();
@@ -412,6 +412,10 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
                 this.form.get('catchQuadrantControl')!.markAsPending();
                 this.form.get('catchQuadrantControl')!.updateValueAndValidity({ emitEvent: false });
             }
+        }
+
+        if (this.isDisabled) {
+            this.form.get('catchQuadrantControl')!.disable();
         }
     }
 
@@ -432,6 +436,10 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
                 this.form.get('catchQuadrantControl')!.markAsPending();
                 this.form.get('catchQuadrantControl')!.updateValueAndValidity({ emitEvent: false });
             }
+        }
+
+        if (this.isDisabled) {
+            this.form.get('catchQuadrantControl')!.disable();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿import { AbstractControl, ValidationErrors, Validator, ValidatorFn } from '@angular/forms';
-import { TLTranslatePipe } from '../../pipes/tl-translate.pipe';
+import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
+import { DateUtils } from '@app/shared/utils/date.utils';
 import { GetControlErrorLabelTextCallback } from './base-tl-control';
 import { ITranslateService } from './interfaces/translate-service.interface';
 import { TLError } from './models/tl-error.model';
@@ -160,6 +161,16 @@ export class TLUtils {
             case 'exactLength': {
                 if (error !== null && error !== undefined) {
                     message = `${validationTranslation}: ${error}`;
+                }
+            } break;
+            case 'matDatepickerMax': {
+                if (error.max !== null && error.max !== undefined) {
+                    message = `${validationTranslation}: ${DateUtils.ToDisplayDateString(error.max as Date)}`;
+                }
+            } break;
+            case 'matDatepickerMin': {
+                if (error.min !== null && error.min !== undefined) {
+                    message = `${validationTranslation}: ${DateUtils.ToDisplayDateString(error.min as Date)}`;
                 }
             } break;
             default: {

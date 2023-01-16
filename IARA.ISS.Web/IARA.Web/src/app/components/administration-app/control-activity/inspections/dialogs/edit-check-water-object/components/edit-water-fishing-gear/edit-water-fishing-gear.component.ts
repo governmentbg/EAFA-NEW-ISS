@@ -81,8 +81,8 @@ export class EditWaterFishingGearComponent implements OnInit, IDialogComponent {
 
     protected fillModel(): void {
         this.model = this.form.get('fishingGearControl')!.value as WaterInspectionFishingGearDTO;
-        this.model.isTaken = this.form.get('takenControl')!.value;
-        this.model.isStored = this.form.get('storedControl')!.value;
+        this.model.isTaken = this.form.get('takenControl')!.value ?? false;
+        this.model.isStored = this.form.get('storedControl')!.value ?? false;
         this.model.storageLocation = this.form.get('storageControl')!.value;
     }
 }
