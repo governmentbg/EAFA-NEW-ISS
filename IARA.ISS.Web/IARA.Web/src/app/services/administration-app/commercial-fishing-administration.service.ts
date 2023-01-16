@@ -328,6 +328,26 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         });
     }
 
+    public getPermitLicenseFisherPhoto(id: number): Observable<string> {
+        const params = new HttpParams().append('permitLicenseId', id.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetPermitLicenseFisherPhoto', {
+            httpParams: params,
+            responseType: 'text',
+            properties: RequestProperties.NO_SPINNER
+        });
+    }
+
+    public getPermitLicenseFisherPhotoFromApplication(applicationId: number): Observable<string> {
+        const params = new HttpParams().append('applicationId', applicationId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetPermitLicenseFisherPhotoFromApplication', {
+            httpParams: params,
+            responseType: 'text',
+            properties: RequestProperties.NO_SPINNER
+        });
+    }
+
     public deletePermit(id: number, pageCode: PageCodeEnum): Observable<void> {
         const params = new HttpParams().append('id', id.toString());
         let serviceMethod: string = '';

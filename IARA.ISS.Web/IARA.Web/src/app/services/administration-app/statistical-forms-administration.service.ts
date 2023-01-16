@@ -387,4 +387,32 @@ export class StatisticalFormsAdministrationService extends ApplicationsRegisterA
             return result;
         }));
     }
+
+    public vesselStatFormAlreadyExists(shipId: number, year: number, formId: number | undefined): Observable<boolean> {
+        let params = new HttpParams()
+            .append('shipId', shipId.toString())
+            .append('year', year.toString());
+
+        if (formId !== undefined && formId !== null) {
+            params = params.append('formId', formId.toString());
+        }
+
+        return this.requestService.get(this.area, this.controller, 'VesselStatFormAlreadyExists', {
+            httpParams: params
+        });
+    }
+
+    public aquaFarmStatFormAlreadyExists(aquacultureId: number, year: number, formId: number | undefined): Observable<boolean> {
+        let params = new HttpParams()
+            .append('aquacultureId', aquacultureId.toString())
+            .append('year', year.toString());
+
+        if (formId !== undefined && formId !== null) {
+            params = params.append('formId', formId.toString());
+        }
+
+        return this.requestService.get(this.area, this.controller, 'AquaFarmStatFormAlreadyExists', {
+            httpParams: params
+        });
+    }
 }

@@ -58,6 +58,7 @@ import { ChooseLogBookForRenewalDialogParams } from '@app/components/common-app/
 import { LogBookForRenewalDTO } from '@app/models/generated/dtos/LogBookForRenewalDTO';
 import { OnActionEndedType, SimpleAuditMethod } from '@app/components/common-app/commercial-fishing/components/log-books/log-books.component';
 import { CommercialFishingRegisterCacheService } from './services/commercial-fishing-register-cache.service';
+import { Router } from '@angular/router';
 
 type ThreeState = 'yes' | 'no' | 'both';
 
@@ -92,6 +93,9 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
     public readonly canEditPermitRecords: boolean;
     public readonly canRestorePermitRecords: boolean;
     public readonly canDeletePermitRecords: boolean;
+
+    public readonly canReadPermitApplications: boolean;
+    public readonly canReadPermitLicenseApplications: boolean;
 
     public readonly canReadPermitLicenseRecords: boolean;
     public readonly canAddPermitLicenseRecords: boolean;
@@ -129,6 +133,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
     private readonly deliveryDialog: TLMatDialog<RegisterDeliveryComponent>;
     private readonly snackbar: MatSnackBar;
     private readonly chooseLogBookForRenewalDialog: TLMatDialog<ChooseLogBookForRenewalComponent>;
+    private readonly router: Router;
     private gridManager!: DataTableManager<CommercialFishingPermitRegisterDTO, CommercialFishingRegisterFilters>;
 
     public constructor(
@@ -144,7 +149,8 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         logBookDialog: TLMatDialog<EditLogBookComponent>,
         snackbar: MatSnackBar,
         chooseLogBookForRenewalDialog: TLMatDialog<ChooseLogBookForRenewalComponent>,
-        cacheService: CommercialFishingRegisterCacheService
+        cacheService: CommercialFishingRegisterCacheService,
+        router: Router
     ) {
         this.translationService = translationService;
         this.confirmDialog = confirmDialog;
@@ -158,6 +164,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         this.snackbar = snackbar;
         this.chooseLogBookForRenewalDialog = chooseLogBookForRenewalDialog;
         this.cacheService = cacheService;
+        this.router = router;
 
         this.getLogBookAuditMethod = this.service.getLogBookAudit.bind(this.service);
 
@@ -166,6 +173,9 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         this.canEditPermitRecords = permissions.has(PermissionsEnum.CommercialFishingPermitRegisterEditRecords);
         this.canDeletePermitRecords = permissions.hasAny(PermissionsEnum.CommercialFishingPermitRegisterDeleteRecords);
         this.canRestorePermitRecords = permissions.has(PermissionsEnum.CommercialFishingPermitRegisterRestoreRecords);
+
+        this.canReadPermitApplications = permissions.has(PermissionsEnum.CommercialFishingPermitApplicationsRead) || permissions.has(PermissionsEnum.CommercialFishingPermitApplicationsReadAll);
+        this.canReadPermitLicenseApplications = permissions.has(PermissionsEnum.CommercialFishingPermitLicenseApplicationsRead) || permissions.has(PermissionsEnum.CommercialFishingPermitLicenseApplicationsReadAll);
 
         this.canReadPermitLicenseRecords = permissions.has(PermissionsEnum.CommercialFishingPermitLicenseRegisterRead);
         this.canAddPermitLicenseRecords = permissions.has(PermissionsEnum.CommercialFishingPermitLicenseRegisterAddRecords);
@@ -593,6 +603,18 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
     public onLogBookActionEnded(actionType: OnActionEndedType): void {
         this.gridManager.refreshData(); // refresh grid
         this.cacheService.clearPermitLicenseLogBooksCache(); // clear all cache
+    }
+
+    public gotToPermitApplication(permit: CommercialFishingPermitRegisterDTO): void {
+        if (this.canReadPermitApplications) {
+            this.router.navigate(['commercial-fishing-applications'], { state: { applicationId: permit.applicationId } });
+        }
+    }
+
+    public gotToPermitLicenseApplication(permitLicense: CommercialFishingPermitLicenseRegisterDTO): void {
+        if (this.canReadPermitApplications) {
+            this.router.navigate(['commercial-fishing-applications'], { state: { applicationId: permitLicense.applicationId } });
+        }
     }
 
     private openPermitDialog(data: DialogParamsModel, title: string, auditButton: IHeaderAuditButton | undefined, viewMode: boolean, isSuspended: boolean): void {

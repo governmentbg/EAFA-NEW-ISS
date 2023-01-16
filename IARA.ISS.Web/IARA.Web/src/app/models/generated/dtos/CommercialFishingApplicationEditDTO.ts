@@ -5,12 +5,12 @@ import { BaseRegixChecksDTO } from './BaseRegixChecksDTO';
 import { ApplicationSubmittedByDTO } from './ApplicationSubmittedByDTO';
 import { ApplicationSubmittedForDTO } from './ApplicationSubmittedForDTO';
 import { EgnLncDTO } from './EgnLncDTO';
+import { FileInfoDTO } from './FileInfoDTO';
 import { HolderGroundForUseDTO } from './HolderGroundForUseDTO';
 import { QuotaAquaticOrganismDTO } from './QuotaAquaticOrganismDTO';
 import { FishingGearDTO } from './FishingGearDTO';
 import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformationDTO';
 import { ApplicationBaseDeliveryDTO } from './ApplicationBaseDeliveryDTO';
-import { FileInfoDTO } from './FileInfoDTO';
 import { CommercialFishingRegixDataDTO } from './CommercialFishingRegixDataDTO';
 import { PageCodeEnum } from '@app/enums/page-code.enum'; 
 
@@ -72,6 +72,12 @@ export class CommercialFishingApplicationEditDTO extends BaseRegixChecksDTO {
 
     @StrictlyTyped(String)
     public qualifiedFisherLastName?: string;
+
+    @StrictlyTyped(FileInfoDTO)
+    public qualifiedFisherPhoto?: FileInfoDTO;
+
+    @StrictlyTyped(String)
+    public qualifiedFisherPhotoBase64?: string;
 
     @StrictlyTyped(Number)
     public shipId?: number;

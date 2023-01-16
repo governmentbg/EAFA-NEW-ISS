@@ -109,7 +109,7 @@
       <Version>4.3.4</Version>
     </PackageReference>
     <PackageReference Include="TechnoLogica.Xamarin">
-      <Version>3.4.38977</Version>
+      <Version>3.4.47046</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.CommunityToolkit">
       <Version>2.0.5</Version>

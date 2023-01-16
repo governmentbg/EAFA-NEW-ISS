@@ -49,6 +49,7 @@ import { LogBookRegisterDTO } from '@app/models/generated/dtos/LogBookRegisterDT
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { EditLogBookComponent } from '@app/components/common-app/commercial-fishing/components/edit-log-book/edit-log-book.component';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'aquaculture-facilities',
@@ -78,6 +79,8 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
     public readonly canCancelAquacultures: boolean;
     public readonly hasReadAllPermission: boolean;
 
+    public readonly canReadApplications: boolean;
+
     public readonly logBooksPerPage: number = 10;
     public readonly canReadLogBooks: boolean;
     public readonly canEditLogBooks: boolean;
@@ -102,6 +105,7 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
     private readonly confirmDialog: TLConfirmDialog;
     private readonly snackbar: MatSnackBar;
     private readonly logBookDialog: TLMatDialog<EditLogBookComponent>;
+    private readonly router: Router;
 
     public constructor(
         translate: FuseTranslationLoaderService,
@@ -114,7 +118,8 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
         confirmDialog: TLConfirmDialog,
         permissions: PermissionsService,
         snackbar: MatSnackBar,
-        logBookDialog: TLMatDialog<EditLogBookComponent>
+        logBookDialog: TLMatDialog<EditLogBookComponent>,
+        router: Router
     ) {
         this.translate = translate;
         this.service = service;
@@ -126,12 +131,15 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
         this.confirmDialog = confirmDialog;
         this.snackbar = snackbar;
         this.logBookDialog = logBookDialog;
+        this.router = router;
 
         this.canEditRecords = permissions.has(PermissionsEnum.AquacultureFacilitiesEditRecords);
         this.canDeleteRecords = permissions.has(PermissionsEnum.AquacultureFacilitiesDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.AquacultureFacilitiesRestoreRecords);
         this.canCancelAquacultures = permissions.has(PermissionsEnum.AquacultureFacilitiesCancel);
         this.hasReadAllPermission = permissions.has(PermissionsEnum.AquacultureFacilitiesReadAll);
+
+        this.canReadApplications = permissions.has(PermissionsEnum.AquacultureFacilitiesApplicationsRead) || permissions.has(PermissionsEnum.AquacultureFacilitiesApplicationsReadAll);
 
         this.canReadLogBooks = permissions.has(PermissionsEnum.AquacultureLogBook1Read);
         this.canAddLogBooks = permissions.has(PermissionsEnum.AquacultureLogBookAdd);
@@ -517,7 +525,7 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
         });
     }
 
-    public restoreLogBook(logBookRegister: LogBookRegisterDTO, aquaculture: AquacultureFacilityDTO,): void {
+    public restoreLogBook(logBookRegister: LogBookRegisterDTO, aquaculture: AquacultureFacilityDTO): void {
         this.confirmDialog.open().subscribe({
             next: (ok: boolean) => {
                 if (ok) {
@@ -529,6 +537,12 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
                 }
             }
         });
+    }
+
+    public gotToApplication(aquaculture: AquacultureFacilityDTO): void {
+        if (this.canReadApplications) {
+            this.router.navigate(['aquaculture-farms-applications'], { state: { applicationId: aquaculture.applicationId } });
+        }
     }
 
     private openLogBookDialog(title: string, data: EditLogBookDialogParamsModel, headerAuditBtn: IHeaderAuditButton | undefined, viewMode: boolean): void {

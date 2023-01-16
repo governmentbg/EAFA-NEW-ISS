@@ -182,6 +182,12 @@
             <data-template-column [flexRate]="0.6" [cellClass]="'justify-center'">
                 <ng-template let-row="row" ngx-datatable-cell-template>
                     <div fxLayout="row wrap" fxLayoutAlign="end center">
+                        <tl-icon-button *ngIf="canReadApplications"
+                                        icon="search"
+                                        (buttonClicked)="gotToApplication(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'scientific-fishing.go-to-application' | tlTranslate }}">
+                        </tl-icon-button>
                         <tl-icon-button *ngIf="row.data.permitStatus === permitStatus.Approved
                                                && !isPublicApp
                                                && (row.data.deliveryId !== null && row.data.deliveryId !== undefined)"

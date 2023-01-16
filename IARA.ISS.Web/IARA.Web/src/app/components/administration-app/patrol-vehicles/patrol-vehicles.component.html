@@ -13,6 +13,25 @@
                                  label="{{ 'patrol-vehicles.institution' | tlTranslate }}"
                                  tooltipResourceName="patrol-vehicles.institution-helper">
                 </tl-autocomplete>
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="patrolVehicleTypeIdControl"
+                                 [options]="patrolVehicleTypes"
+                                 label="{{ 'patrol-vehicles.patrol-vehicle-type' | tlTranslate }}"
+                                 tooltipResourceName="patrol-vehicles.patrol-vehicle-type-helper">
+                </tl-autocomplete>
+            </div>
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-autocomplete fxFlex="33"
+                                 formControlName="flagCountryIdControl"
+                                 [options]="flagCountries"
+                                 label="{{ 'patrol-vehicles.flag-country' | tlTranslate }}"
+                                 tooltipResourceName="patrol-vehicles.flag-country-helper">
+                </tl-autocomplete>
+                <tl-input fxFlex="33"
+                          formControlName="cfrControl"
+                          label="{{ 'patrol-vehicles.cfr-reg-num' | tlTranslate }}"
+                          tooltipResourceName="patrol-vehicles.cfr-helper">
+                </tl-input>
                 <tl-input fxFlex="33"
                           formControlName="externalMarkControl"
                           label="{{ 'patrol-vehicles.external-mark' | tlTranslate }}"
@@ -20,23 +39,16 @@
                 </tl-input>
             </div>
             <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
-                <tl-input fxFlex="33"
-                          formControlName="cfrControl"
-                          label="{{ 'patrol-vehicles.cfr' | tlTranslate }}"
-                          tooltipResourceName="patrol-vehicles.cfr-helper">
-                </tl-input>
-                <tl-input fxFlex="33"
+                <tl-input fxFlex="25"
                           formControlName="uviControl"
                           label="{{ 'patrol-vehicles.uvi' | tlTranslate }}"
                           tooltipResourceName="patrol-vehicles.uvi-helper">
                 </tl-input>
-                <tl-input fxFlex="33"
+                <tl-input fxFlex="25"
                           formControlName="ircsCallSignControl"
                           label="{{ 'patrol-vehicles.ircs-call-sign' | tlTranslate }}"
                           tooltipResourceName="patrol-vehicles.ircs-call-sign-helper">
                 </tl-input>
-            </div>
-            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
                 <tl-input fxFlex="25"
                           formControlName="mmsiControl"
                           label="{{ 'patrol-vehicles.mmsi' | tlTranslate }}"
@@ -47,18 +59,6 @@
                                  [options]="vesselTypes"
                                  label="{{ 'patrol-vehicles.vessel-type' | tlTranslate }}"
                                  tooltipResourceName="patrol-vehicles.vessel-type-helper">
-                </tl-autocomplete>
-                <tl-autocomplete fxFlex="25"
-                                 formControlName="patrolVehicleTypeIdControl"
-                                 [options]="patrolVehicleTypes"
-                                 label="{{ 'patrol-vehicles.patrol-vehicle-type' | tlTranslate }}"
-                                 tooltipResourceName="patrol-vehicles.patrol-vehicle-type-helper">
-                </tl-autocomplete>
-                <tl-autocomplete fxFlex="25"
-                                 formControlName="flagCountryIdControl"
-                                 [options]="flagCountries"
-                                 label="{{ 'patrol-vehicles.flag-country' | tlTranslate }}"
-                                 tooltipResourceName="patrol-vehicles.flag-country-helper">
                 </tl-autocomplete>
             </div>
         </div>
@@ -75,13 +75,21 @@
                              [flexRate]="0.5"
                              columnName="{{ 'patrol-vehicles.institution' | tlTranslate }}">
                 </data-column>
-                <data-column propertyName="externalMark"
+                <data-column propertyName="patrolVehicleType"
                              [flexRate]="0.3"
-                             columnName="{{ 'patrol-vehicles.external-mark' | tlTranslate }}">
+                             columnName="{{ 'patrol-vehicles.patrol-vehicle-type' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="flagCountry"
+                             [flexRate]="0.3"
+                             columnName="{{ 'patrol-vehicles.flag-country' | tlTranslate }}">
                 </data-column>
                 <data-column propertyName="cfr"
                              [flexRate]="0.3"
-                             columnName="{{ 'patrol-vehicles.cfr' | tlTranslate }}">
+                             columnName="{{ 'patrol-vehicles.cfr-reg-num' | tlTranslate }}">
+                </data-column>
+                <data-column propertyName="externalMark"
+                             [flexRate]="0.3"
+                             columnName="{{ 'patrol-vehicles.external-mark' | tlTranslate }}">
                 </data-column>
                 <data-column propertyName="uvi"
                              [flexRate]="0.3"
@@ -98,14 +106,6 @@
                 <data-column propertyName="vesselType"
                              [flexRate]="0.4"
                              columnName="{{ 'patrol-vehicles.vessel-type' | tlTranslate }}">
-                </data-column>
-                <data-column propertyName="patrolVehicleType"
-                             [flexRate]="0.3"
-                             columnName="{{ 'patrol-vehicles.patrol-vehicle-type' | tlTranslate }}">
-                </data-column>
-                <data-column propertyName="flagCountry"
-                             [flexRate]="0.3"
-                             columnName="{{ 'patrol-vehicles.flag-country' | tlTranslate }}">
                 </data-column>
                 <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
                     <ng-template let-row="row" ngx-datatable-cell-template>

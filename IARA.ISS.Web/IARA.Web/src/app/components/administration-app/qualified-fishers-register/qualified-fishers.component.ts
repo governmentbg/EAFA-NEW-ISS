@@ -34,6 +34,7 @@ import { ChooseApplicationComponent } from '@app/components/common-app/applicati
 import { ChooseApplicationDialogParams } from '@app/components/common-app/applications/components/choose-application/models/choose-application-dialog-params.model';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { ApplicationForChoiceDTO } from '@app/models/generated/dtos/ApplicationForChoiceDTO';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'qualified-fishers-register',
@@ -50,19 +51,22 @@ export class QualifiedFishersComponent extends BasePageComponent implements Afte
     public readonly canRestoreRecords: boolean;
     public readonly canAddDiplomaFishermanRecords: boolean;
 
+    public readonly canReadApplications: boolean;
+
     @ViewChild(TLDataTableComponent)
     private datatable!: IRemoteTLDatatableComponent;
 
     @ViewChild(SearchPanelComponent)
     private searchpanel!: SearchPanelComponent;
 
-    private service: QualifiedFishersService;
+    private readonly service: QualifiedFishersService;
     private gridManager!: DataTableManager<QualifiedFisherDTO, QualifiedFishersFilters>;
-    private confirmDialog: TLConfirmDialog;
-    private editDialog: TLMatDialog<EditFisherComponent>;
-    private deliveryService!: IDeliveryService;
-    private deliveryDialog: TLMatDialog<RegisterDeliveryComponent>;
-    private chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
+    private readonly confirmDialog: TLConfirmDialog;
+    private readonly editDialog: TLMatDialog<EditFisherComponent>;
+    private readonly deliveryService!: IDeliveryService;
+    private readonly deliveryDialog: TLMatDialog<RegisterDeliveryComponent>;
+    private readonly chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
+    private readonly router: Router;
 
     public constructor(
         translationService: FuseTranslationLoaderService,
@@ -73,7 +77,8 @@ export class QualifiedFishersComponent extends BasePageComponent implements Afte
         messageService: MessageService,
         deliveryService: DeliveryAdministrationService,
         deliveryDialog: TLMatDialog<RegisterDeliveryComponent>,
-        chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>
+        chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>,
+        router: Router
     ) {
         super(messageService);
 
@@ -83,6 +88,8 @@ export class QualifiedFishersComponent extends BasePageComponent implements Afte
         this.canRestoreRecords = permissions.has(PermissionsEnum.QualifiedFishersRestoreRecords);
         this.canAddDiplomaFishermanRecords = permissions.has(PermissionsEnum.QualifiedFishersAddDiplomaFishermanRecords);
 
+        this.canReadApplications = permissions.has(PermissionsEnum.QualifiedFishersApplicationsRead) || permissions.has(PermissionsEnum.QualifiedFishersApplicationsReadAll);
+
         this.translationService = translationService;
         this.service = service;
         this.editDialog = editDialog;
@@ -90,6 +97,7 @@ export class QualifiedFishersComponent extends BasePageComponent implements Afte
         this.deliveryService = deliveryService;
         this.deliveryDialog = deliveryDialog;
         this.chooseApplicationDialog = chooseApplicationDialog;
+        this.router = router;
 
         this.filterFormGroup = new FormGroup({
             nameControl: new FormControl(),
@@ -367,6 +375,12 @@ export class QualifiedFishersComponent extends BasePageComponent implements Afte
                     this.gridManager.undoDeleteRecord(entry);
                 }
             });
+        }
+    }
+
+    public gotToApplication(entry: QualifiedFisherDTO): void {
+        if (this.canReadApplications) {
+            this.router.navigate(['qualified-fishers-applications'], { state: { applicationId: entry.applicationId } });
         }
     }
 

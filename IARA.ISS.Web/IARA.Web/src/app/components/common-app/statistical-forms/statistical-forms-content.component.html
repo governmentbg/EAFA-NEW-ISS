@@ -94,6 +94,12 @@
                 <ng-template let-row="row" ngx-datatable-cell-template>
                     <!--Аквакултурни стопанства-->
                     <div *ngIf="row.data.formType === statisticalFormTypesEnum.AquaFarm" fxLayout="row" fxLayoutAlign="end center">
+                        <tl-icon-button *ngIf="canReadAquaFarmApplications"
+                                        icon="search"
+                                        (buttonClicked)="gotToApplication(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'statistical-forms.go-to-application-aqua-farm' | tlTranslate }}">
+                        </tl-icon-button>
                         <tl-icon-button icon="visibility"
                                         (buttonClicked)="addEditForm(row.data, row.data.formType, true)"
                                         iconClass="accent-color"
@@ -121,6 +127,12 @@
 
                     <!--Преработка-->
                     <div *ngIf="row.data.formType === statisticalFormTypesEnum.Rework" fxLayout="row" fxLayoutAlign="end center">
+                        <tl-icon-button *ngIf="canReadReworkApplications"
+                                        icon="search"
+                                        (buttonClicked)="gotToApplication(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'statistical-forms.go-to-application-rework' | tlTranslate }}">
+                        </tl-icon-button>
                         <tl-icon-button icon="visibility"
                                         (buttonClicked)="addEditForm(row.data, row.data.formType, true)"
                                         iconClass="accent-color"
@@ -148,6 +160,12 @@
 
                     <!--Риболовни кораби-->
                     <div *ngIf="row.data.formType === statisticalFormTypesEnum.FishVessel" fxLayout="row" fxLayoutAlign="end center">
+                        <tl-icon-button *ngIf="canReadFishVesselApplications"
+                                        icon="search"
+                                        (buttonClicked)="gotToApplication(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'statistical-forms.go-to-application-fish-vessel' | tlTranslate }}">
+                        </tl-icon-button>
                         <tl-icon-button icon="visibility"
                                         (buttonClicked)="addEditForm(row.data, row.data.formType, true)"
                                         iconClass="accent-color"

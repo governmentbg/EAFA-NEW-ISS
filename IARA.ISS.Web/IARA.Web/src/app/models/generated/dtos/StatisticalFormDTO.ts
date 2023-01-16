@@ -11,6 +11,9 @@ export class StatisticalFormDTO {
     @StrictlyTyped(Number)
     public id?: number;
 
+    @StrictlyTyped(Number)
+    public applicationId?: number;
+
     @StrictlyTyped(String)
     public registryNumber?: string;
 

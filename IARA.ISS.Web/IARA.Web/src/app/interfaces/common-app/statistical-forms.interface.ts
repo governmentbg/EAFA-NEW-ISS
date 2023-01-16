@@ -39,4 +39,7 @@ export interface IStatisticalFormsService extends IApplicationsActionsService, I
     getFuelTypes(): Observable<NomenclatureDTO<number>[]>;
     getReworkProductTypes(): Observable<NomenclatureDTO<number>[]>;
     getAllAquacultureNomenclatures(): Observable<StatisticalFormAquacultureNomenclatureDTO[]>;
+
+    vesselStatFormAlreadyExists(shipId: number, year: number, formId: number | undefined): Observable<boolean>;
+    aquaFarmStatFormAlreadyExists(aquacultureId: number, year: number, formId: number | undefined): Observable<boolean>;
 }

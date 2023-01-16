@@ -2,7 +2,7 @@
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using IARA.Mobile.Insp.Controls.ViewModels;
+using IARA.Mobile.Insp.Models;
 
 namespace IARA.Mobile.Insp.Attributes
 {
@@ -12,13 +12,12 @@ namespace IARA.Mobile.Insp.Attributes
         public override bool IsValid(object value)
         {
             return !((ICollection)value)
-                .Cast<CatchInspectionViewModel>()
+                .Cast<DeclarationCatchModel>()
                 .GroupBy(f => new
                 {
-                    FishId = f.FishType.Value?.Id,
-                    TypeId = f.FishType.Value?.Id,
-                    ZoneId = f.CatchArea.Value?.Id,
-                    TurbotSizeId = f.TurbotSizeGroup.Value?.Id,
+                    FishId = f.Dto.FishTypeId,
+                    TypeId = f.Dto.CatchTypeId,
+                    ZoneId = f.Dto.CatchZoneId,
                 })
                 .Any(f => f.Count() > 1);
         }

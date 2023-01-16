@@ -6,11 +6,13 @@
                     <tl-autocomplete fxFlex="50"
                                      formControlName="applicationTypeControl"
                                      label="{{ 'print-configurations.application-type' | tlTranslate }}"
+                                     tooltipResourceName="print-configurations.application-type-helper"
                                      [options]="applicationTypes">
                     </tl-autocomplete>
                     <tl-autocomplete fxFlex="50"
                                      formControlName="territoryUnitControl"
                                      label="{{ 'print-configurations.territory-unit' | tlTranslate }}"
+                                     tooltipResourceName="print-configurations.territory-unit-helper"
                                      [options]="territoryUnits">
                     </tl-autocomplete>
                 </div>
@@ -20,21 +22,29 @@
             </div>
         </div>
         <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-            <tl-autocomplete fxFlex="50"
+            <tl-autocomplete fxFlex="33"
                              formControlName="signUserControl"
                              label="{{ 'print-configurations.sign-user' | tlTranslate }}"
+                             tooltipResourceName="print-configurations.sign-user-helper"
                              [options]="signUsers">
             </tl-autocomplete>
-            <tl-autocomplete fxFlex="50"
+            <tl-autocomplete fxFlex="33"
                              formControlName="substituteUserControl"
                              label="{{ 'print-configurations.substitute-user' | tlTranslate }}"
+                             tooltipResourceName="print-configurations.substitute-user-helper"
                              [options]="substituteUsers">
             </tl-autocomplete>
+            <tl-date-range fxFlex="33"
+                           formControlName="substitutionPeriodControl"
+                           label="{{ 'print-configurations.substitute-date-range' | tlTranslate }}"
+                           tooltipResourceName="print-configurations.substitute-date-range-helper">
+            </tl-date-range>
         </div>
         <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
             <tl-textarea fxFlex="100"
                          formControlName="substituteReasonControl"
                          label="{{ 'print-configurations.substitute-reason' | tlTranslate }}"
+                         tooltipResourceName="print-configurations.substitute-reason-helper"
                          [minRows]="3"
                          [maxRows]="5">
             </tl-textarea>

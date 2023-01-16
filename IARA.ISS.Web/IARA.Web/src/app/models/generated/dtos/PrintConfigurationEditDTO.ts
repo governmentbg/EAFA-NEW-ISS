@@ -27,4 +27,10 @@ export class PrintConfigurationEditDTO {
 
     @StrictlyTyped(Boolean)
     public shouldUpdateAllEntries?: boolean;
+
+    @StrictlyTyped(Date)
+    public substituteStartDate?: Date;
+
+    @StrictlyTyped(Date)
+    public substituteEndDate?: Date;
 }

@@ -36,7 +36,7 @@ namespace IARA.Mobile.Insp.Infrastructure
             builder.AddUrl(Environments.DEVELOPMENT_PUBLIC, "https://iara.technologica.com/public-api/");
             builder.AddExternalUrl(Environments.DEVELOPMENT_PUBLIC, "IARA_IDENTITY", "https://iara.technologica.com/identity");
 
-            builder.AddUrl(Environments.DEVELOPMENT_INTERNAL, "http://172.31.12.168/api/");
+            builder.AddUrl(Environments.DEVELOPMENT_INTERNAL, "https://172.31.12.168/api/");
             builder.AddExternalUrl(Environments.DEVELOPMENT_INTERNAL, "IARA_IDENTITY", "https://172.31.12.168/identity");
 
             builder.AddUrl(Environments.DEVELOPMENT_LOCAL, "http://localhost:5000/api/");

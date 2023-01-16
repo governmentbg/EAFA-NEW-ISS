@@ -16,7 +16,7 @@ namespace IARA.Mobile.Insp.Attributes
                 .GroupBy(f => new
                 {
                     FishId = f.FishType.Value?.Id,
-                    TypeId = f.FishType.Value?.Id,
+                    TypeId = f.CatchType.Value?.Id,
                     ZoneId = f.CatchArea.Value?.Id,
                     TurbotSizeId = f.TurbotSizeGroup.Value?.Id,
                 })

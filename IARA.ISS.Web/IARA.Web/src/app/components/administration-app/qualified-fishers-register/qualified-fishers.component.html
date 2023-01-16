@@ -76,6 +76,12 @@
                 <data-template-column [cellClass]="'justify-center min-w-50'" [flexRate]="1">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row" fxLayoutAlign="end center">
+                            <tl-icon-button *ngIf="canReadApplications && row.data.applicationId !== null && row.data.applicationId !== undefined"
+                                            icon="search"
+                                            (buttonClicked)="gotToApplication(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'qualified-fishers-page.go-to-application' | tlTranslate }}">
+                            </tl-icon-button>
                             <tl-icon-button *ngIf="row.data.isActive"
                                             icon="ic-fluent-document-briefcase-24-regular"
                                             iconClass="accent-color"
