@@ -16,7 +16,7 @@
                      formControlName="sentDateControl"
                      label="{{ 'register-delivery.sent-date' | tlTranslate }}"
                      tooltipResourceName="register-delivery.sent-date-helper"
-                     [max]="currentDate">
+                     [max]="form.get('deliveryDateControl')!.value">
             </tl-date>
         </div>
         <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">

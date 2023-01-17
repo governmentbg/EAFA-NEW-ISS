@@ -141,7 +141,9 @@
         'novaluesindropdown': 'no values in the dropdown list',
         'default': 'field is invalid',
         'passwordcomplexity': 'Password must contain minimum of 8 symbols. \nPassword must contain atleast one digit. \nPassword must contain atleast one special character: $ @ ! % * ? &.',
-        'requiredfile': 'this file is required'
+        'requiredfile': 'this file is required',
+        'matDatepickerMax': 'field has max date',
+        'matDatepickerMin': 'field has min date'
     },
     'service': {
         'an-error-occurred-in-the-app': 'An error occurred in the application.',
