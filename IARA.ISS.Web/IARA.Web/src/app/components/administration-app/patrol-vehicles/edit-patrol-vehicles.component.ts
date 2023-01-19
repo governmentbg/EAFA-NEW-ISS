@@ -61,7 +61,7 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
         this.vesselTypes = nomenclatures[1];
         this.flagCountries = nomenclatures[2];
         this.institutions = nomenclatures[3];
-        
+
         if (this.vehicleId === undefined) {
             this.model = new PatrolVehiclesEditDTO();
         }
@@ -75,7 +75,7 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
         }
     }
 
-    public ngAfterViewInit(): void{
+    public ngAfterViewInit(): void {
         this.editVehicleForm.get('patrolVehicleTypeIdControl')!.valueChanges.subscribe({
             next: (type: NomenclatureDTO<number> | undefined) => {
                 this.editVehicleForm.get('registerNumControl')!.clearValidators();
@@ -88,13 +88,18 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
                         this.editVehicleForm.get('cfrControl')!.setValidators([Validators.required, TLValidators.cfr]);
                     }
                     else {
+                        this.editVehicleForm.get('externalMarkControl')!.reset();
+                        this.editVehicleForm.get('ircsCallSignControl')!.reset();
+                        this.editVehicleForm.get('vesselTypeIdControl')!.reset();
+                        this.editVehicleForm.get('uviControl')!.reset();
+                        this.editVehicleForm.get('mmsiControl')!.reset();
+
                         this.editVehicleForm.get('registerNumControl')!.setValidators(Validators.required);
                     }
                 }
                 else {
                     this.vehicleType = undefined;
                 }
-
                 this.editVehicleForm.get('registerNumControl')!.markAsPending({ emitEvent: false });
                 this.editVehicleForm.get('registerNumControl')!.updateValueAndValidity({ emitEvent: false });
                 this.editVehicleForm.get('cfrControl')!.markAsPending({ emitEvent: false });
@@ -210,8 +215,8 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
         this.model.institutionId = NomenclatureStore.getValue(this.editVehicleForm.controls.institutionIdControl.value);
         this.model.patrolVehicleTypeId = NomenclatureStore.getValue(this.editVehicleForm.controls.patrolVehicleTypeIdControl.value);
         this.model.externalMark = this.editVehicleForm.get('externalMarkControl')!.value;
-        this.model.uvi = this.editVehicleForm.get('uviControl')!.value;
         this.model.ircscallSign = this.editVehicleForm.get('ircsCallSignControl')!.value;
+        this.model.uvi = this.editVehicleForm.get('uviControl')!.value;
         this.model.mmsi = this.editVehicleForm.get('mmsiControl')!.value;
         this.model.vesselTypeId = NomenclatureStore.getValue(this.editVehicleForm.controls.vesselTypeIdControl.value);
         this.model.flagCountryId = NomenclatureStore.getValue(this.editVehicleForm.controls.flagCountryIdControl.value);
@@ -223,5 +228,4 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
             this.model.cfr = this.editVehicleForm.get('registerNumControl')!.value;
         }
     }
-
 }
