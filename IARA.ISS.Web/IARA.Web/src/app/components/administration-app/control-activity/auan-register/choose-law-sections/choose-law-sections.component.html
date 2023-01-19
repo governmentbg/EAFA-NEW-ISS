@@ -5,12 +5,14 @@
     <div fxFlex="100" fxLayoutGap="1em">
         <tl-input fxFlex="25"
                   [formControl]="articleControl"
-                  label="{{ 'auan-register.edit-law-article' | tlTranslate }}">
+                  label="{{ 'auan-register.edit-law-article' | tlTranslate }}"
+                  tooltipResourceName="auan-register.edit-law-article-helper">
         </tl-input>
 
         <tl-input fxFlex="75"
                   [formControl]="textControl"
-                  label="{{ 'auan-register.edit-law-text' | tlTranslate }}">
+                  label="{{ 'auan-register.edit-law-text' | tlTranslate }}"
+                  tooltipResourceName="auan-register.edit-law-text-helper">
         </tl-input>
     </div>
 

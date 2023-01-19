@@ -80,7 +80,6 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
             next: (type: NomenclatureDTO<number> | undefined) => {
                 this.editVehicleForm.get('registerNumControl')!.clearValidators();
                 this.editVehicleForm.get('cfrControl')!.clearValidators();
-                this.editVehicleForm.get('cfrControl')!.setValidators(TLValidators.cfr);
 
                 if (type !== undefined && type !== null) {
                     this.vehicleType = PatrolVehiclesTypeEnum[type.code as keyof typeof PatrolVehiclesTypeEnum];
