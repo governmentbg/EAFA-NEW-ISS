@@ -128,7 +128,7 @@ export class PatrolVehiclesComponent implements AfterViewInit, OnInit {
                         next: () => {
                             this.gridManager.deleteRecord(vehicle);
                         }
-                    })
+                    });
                 }
             }
         });
@@ -142,10 +142,10 @@ export class PatrolVehiclesComponent implements AfterViewInit, OnInit {
                         next: () => {
                             this.gridManager.undoDeleteRecord(vehicle);
                         }
-                    })
+                    });
                 }
             }
-        })
+        });
     }
 
     public createEditPatrolVehicle(vehicle?: PatrolVehiclesDTO, viewMode?: boolean): void {

@@ -65,7 +65,9 @@
     </search-panel>
     <tl-card tooltipResourceName="patrol-vehicles.patrol-vehicles-helper">
         <tl-card-content>
-            <tl-data-table (addButtonClicked)="createEditPatrolVehicle(undefined, false)"
+            <tl-data-table [showAddButton]="canAddRecords"
+                           [showInactiveRecords]="canRestoreRecords"
+                           (addButtonClicked)="createEditPatrolVehicle(undefined, false)"
                            (activeRecordChanged)="createEditPatrolVehicle($event, !$event.isActive)">
                 <data-column propertyName="name"
                              [flexRate]="0.4"
@@ -109,26 +111,25 @@
                 </data-column>
                 <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
                     <ng-template let-row="row" ngx-datatable-cell-template>
-                        <div fxLayout="row" fxLayoutAlign="end center">
-                            <tl-icon-button *ngIf="row.isActive"
-                                            icon="visibility"
+                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button icon="visibility"
                                             (buttonClicked)="createEditPatrolVehicle(row.data, true)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'patrol-vehicles.view' | tlTranslate }}">
                             </tl-icon-button>
-                            <tl-icon-button *ngIf="row.isActive"
+                            <tl-icon-button *ngIf="row.data.isActive && canEditRecords"
                                             icon="edit"
                                             (buttonClicked)="createEditPatrolVehicle(row.data, false)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'patrol-vehicles.edit' | tlTranslate }}">
                             </tl-icon-button>
-                            <tl-icon-button *ngIf="row.isActive"
+                            <tl-icon-button *ngIf="row.data.isActive && canDeleteRecords"
                                             icon="delete"
                                             (buttonClicked)="deletePatrolVehicle(row.data)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'patrol-vehicles.delete' | tlTranslate }}">
                             </tl-icon-button>
-                            <tl-icon-button *ngIf="!row.isActive"
+                            <tl-icon-button *ngIf="!row.data.isActive && canRestoreRecords"
                                             icon="restore"
                                             (buttonClicked)="restorePatrolVehicle(row.data)"
                                             iconClass="accent-color"
