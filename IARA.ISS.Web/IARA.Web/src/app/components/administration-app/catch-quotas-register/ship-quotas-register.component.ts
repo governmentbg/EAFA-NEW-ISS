@@ -156,6 +156,7 @@ export class ShipQuotasComponent extends BasePageComponent implements OnInit, Af
                 cancelBtnClicked: this.closeDialogBtnClicked.bind(this)
             },
             componentData: data,
+            viewMode: readOnly, 
             translteService: this.translationService
         }, '85em');
 

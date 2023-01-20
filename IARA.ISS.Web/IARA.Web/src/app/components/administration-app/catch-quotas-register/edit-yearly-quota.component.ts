@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
@@ -21,6 +21,7 @@ import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/er
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 
 @Component({
     selector: 'edit-yearly-quota-component',
@@ -43,6 +44,10 @@ export class EditYearlyQuotaComponent implements OnInit, IDialogComponent {
     public readonly pageCode: PageCodeEnum = PageCodeEnum.CatchQuota;
 
     public service: YearlyQuotasService;
+
+    @ViewChild(ValidityCheckerGroupDirective)
+    private validityCheckerGroup!: ValidityCheckerGroupDirective;
+
     private readonly commonNomenclatureService: CommonNomenclatures;
     private readonly snackbar: MatSnackBar;
 
@@ -73,19 +78,16 @@ export class EditYearlyQuotaComponent implements OnInit, IDialogComponent {
         this.fishes = nomenclatures[0];
         this.ports = nomenclatures[1];
 
-        this.editForm.get('quotaChangeBasisControl')!.clearValidators();
-
         if (this.id === null || this.id === undefined) {
             this.model = new YearlyQuotaEditDTO();
+            this.editForm.get('quotaChangeBasisControl')!.clearValidators();
+            this.editForm.get('quotaChangeBasisControl')!.updateValueAndValidity({ emitEvent: false });
         }
         else {
             this.service.get(this.id).subscribe(result => {
                 this.model = result;
                 this.fillForm();
             });
-            
-            this.editForm.get('quotaChangeBasisControl')!.setValidators([Validators.required, Validators.maxLength(1000)]);
-            this.editForm.get('quotaChangeBasisControl')!.updateValueAndValidity({ emitEvent: false });
         }
     }
 
@@ -95,6 +97,7 @@ export class EditYearlyQuotaComponent implements OnInit, IDialogComponent {
         }
 
         this.editForm.markAllAsTouched();
+        this.validityCheckerGroup.validate();
 
         if (this.editForm.valid) {
             this.fillModel();
@@ -135,6 +138,10 @@ export class EditYearlyQuotaComponent implements OnInit, IDialogComponent {
         if (data !== undefined && data !== null) {
             this.id = data.id;
             this.isReadOnly = data.isReadonly ?? false;
+
+            if (this.isReadOnly) {
+                this.editForm.disable();
+            }
         }
     }
 
@@ -146,10 +153,6 @@ export class EditYearlyQuotaComponent implements OnInit, IDialogComponent {
 
         if (this.model.year !== null && this.model.year !== undefined) {
             this.editForm.get('yearControl')!.setValue(new Date(this.model.year, 0, 1));
-        }
-
-        if (this.isReadOnly) {
-            this.editForm.disable();
         }
     }
 
@@ -168,7 +171,7 @@ export class EditYearlyQuotaComponent implements OnInit, IDialogComponent {
             fishesControl: new FormControl(null, Validators.required),
             quotaSizeControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
             filesControl: new FormControl(null),
-            quotaChangeBasisControl: new FormControl(null),
+            quotaChangeBasisControl: new FormControl(null, [Validators.required, Validators.maxLength(1000)]),
             portsControl: new FormControl(null)
         });
     }
@@ -195,6 +198,7 @@ export class EditYearlyQuotaComponent implements OnInit, IDialogComponent {
 
         if (response.error?.code === ErrorCode.AlreadySubmitted) {
             this.quotaAlreadyExistsErrors = true;
+            this.validityCheckerGroup.validate();
         }
     }
 }
