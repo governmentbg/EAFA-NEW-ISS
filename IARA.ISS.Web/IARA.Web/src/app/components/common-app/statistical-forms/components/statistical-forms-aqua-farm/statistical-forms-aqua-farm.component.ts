@@ -336,7 +336,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                 next: (value: NomenclatureDTO<number> | string | undefined) => {
                     if (value !== undefined && value !== null && typeof value !== 'string') {
                         const year: number | undefined = (this.form.get('yearControl')!.value as Date)?.getFullYear();
-                        
+
                         if (this.chosenAquacultureFacilityId !== value!.value) {
                             this.checkIfStatFormAlreadyExists(value!.value, year);
                         }
@@ -654,11 +654,63 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
 
     public aquacultureFacilityErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'aquacultureFacilityControl') {
-            if (errorCode === 'statFormExists'  && error === true) {
+            if (errorCode === 'statFormExists' && error === true) {
                 return new TLError({ type: 'error', text: this.translate.getValue('statistical-forms.aqua-farm-stat-form-exist-error') });
             }
         }
         return undefined;
+    }
+
+    public producedFishActiveRecordChanged(): void {
+        if (this.installationTypes.length === 1 && !this.producedFishOrganismGroup.get('installationTypeIdControlHidden')!.value) {
+            this.producedFishOrganismGroup.get('installationTypeIdControlHidden')!.setValue(this.installationTypes[0]);
+        }
+
+        if (this.fishTypes.length === 1 && !this.producedFishOrganismGroup.get('fishTypeIdControlHidden')!.value) {
+            this.producedFishOrganismGroup.get('fishTypeIdControlHidden')!.setValue(this.fishTypes[0]);
+        }
+    }
+
+    public soldFishActiveRecordChanged(): void {
+        if (this.installationTypes.length === 1 && !this.soldFishOrganismGroup.get('installationTypeIdControlHidden')!.value) {
+            this.soldFishOrganismGroup.get('installationTypeIdControlHidden')!.setValue(this.installationTypes[0]);
+        }
+
+        if (this.fishTypes.length === 1 && !this.soldFishOrganismGroup.get('fishTypeIdControlHidden')!.value) {
+            this.soldFishOrganismGroup.get('fishTypeIdControlHidden')!.setValue(this.fishTypes[0]);
+        }
+    }
+
+    public unrealizedFishActiveRecordChanged(): void {
+        if (this.installationTypes.length === 1 && !this.unrealizedFishOrganismGroup.get('installationTypeIdControlHidden')!.value) {
+            this.unrealizedFishOrganismGroup.get('installationTypeIdControlHidden')!.setValue(this.installationTypes[0]);
+        }
+
+        if (this.fishTypes.length === 1 && !this.unrealizedFishOrganismGroup.get('fishTypeIdControlHidden')!.value) {
+            this.unrealizedFishOrganismGroup.get('fishTypeIdControlHidden')!.setValue(this.fishTypes[0]);
+        }
+    }
+
+    public broodstockActiveRecordChanged(): void {
+        if (this.installationTypes.length === 1 && !this.broodstockGroup.get('installationTypeIdControlHidden')!.value) {
+            this.broodstockGroup.get('installationTypeIdControlHidden')!.setValue(this.installationTypes[0]);
+        }
+
+        if (this.fishTypes.length === 1 && !this.broodstockGroup.get('fishTypeIdControlHidden')!.value) {
+            this.broodstockGroup.get('fishTypeIdControlHidden')!.setValue(this.fishTypes[0]);
+        }
+    }
+
+    public installationsSystemFullActiveRecordChanged(): void {
+        if (this.installationTypes.length === 1 && !this.installationSystemFullGroup.get('installationTypeIdControlHidden')!.value) {
+            this.installationSystemFullGroup.get('installationTypeIdControlHidden')!.setValue(this.installationTypes[0]);
+        }
+    }
+
+    public installationsSystemNotFullActiveRecordChanged(): void {
+        if (this.installationTypes.length === 1 && !this.installationSystemNotFullGroup.get('installationTypeIdControlHidden')!.value) {
+            this.installationSystemNotFullGroup.get('installationTypeIdControlHidden')!.setValue(this.installationTypes[0]);
+        }
     }
 
     private buildForm(): void {

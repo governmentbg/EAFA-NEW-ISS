@@ -74,7 +74,8 @@
                        [isRemote]="false"
                        [isSoftDeletable]="true"
                        [showInactiveRecords]="false"
-                       [showAddButton]="!viewMode && !isReadonly">
+                       [showAddButton]="!viewMode && !isReadonly"
+                       (activeRecordChanged)="producedFishActiveRecordChanged()">
             <data-column [flexRate]="0.1"
                          propertyName="installationTypeId"
                          [formGroup]="producedFishOrganismGroup"
@@ -148,7 +149,8 @@
                        [isRemote]="false"
                        [isSoftDeletable]="true"
                        [showInactiveRecords]="false"
-                       [showAddButton]="!viewMode && !isReadonly">
+                       [showAddButton]="!viewMode && !isReadonly"
+                       (activeRecordChanged)="soldFishActiveRecordChanged()">
             <data-column [flexRate]="0.1"
                          propertyName="installationTypeId"
                          [formGroup]="soldFishOrganismGroup"
@@ -222,7 +224,8 @@
                        [isRemote]="false"
                        [isSoftDeletable]="true"
                        [showInactiveRecords]="false"
-                       [showAddButton]="!viewMode && !isReadonly">
+                       [showAddButton]="!viewMode && !isReadonly"
+                       (activeRecordChanged)="unrealizedFishActiveRecordChanged()">
             <data-column [flexRate]="0.1"
                          propertyName="installationTypeId"
                          [formGroup]="unrealizedFishOrganismGroup"
@@ -290,7 +293,8 @@
                        [isRemote]="false"
                        [isSoftDeletable]="true"
                        [showInactiveRecords]="false"
-                       [showAddButton]="!viewMode && !isReadonly">
+                       [showAddButton]="!viewMode && !isReadonly"
+                       (activeRecordChanged)="broodstockActiveRecordChanged()">
             <data-column [flexRate]="0.1"
                          propertyName="installationTypeId"
                          [formGroup]="broodstockGroup"
@@ -426,7 +430,8 @@
                        [isSoftDeletable]="true"
                        [showInactiveRecords]="false"
                        [rows]="installationsSystemFull"
-                       [showAddButton]="!viewMode && !isReadonly">
+                       [showAddButton]="!viewMode && !isReadonly"
+                       (activeRecordChanged)="installationsSystemFullActiveRecordChanged()">
             <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-full-installation' | tlTranslate }}"
                          propertyName="installationTypeId"
                          [formGroup]="installationSystemFullGroup"
@@ -451,7 +456,8 @@
                        [isSoftDeletable]="true"
                        [showInactiveRecords]="false"
                        [rows]="installationsSystemNotFull"
-                       [showAddButton]="!viewMode && !isReadonly">
+                       [showAddButton]="!viewMode && !isReadonly"
+                       (activeRecordChanged)="installationsSystemNotFullActiveRecordChanged()">
             <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-not-full-installation' | tlTranslate }}"
                          propertyName="installationTypeId"
                          [formGroup]="installationSystemNotFullGroup"

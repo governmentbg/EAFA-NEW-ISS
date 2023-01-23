@@ -333,7 +333,8 @@ export class QualifiedFishersComponent extends BasePageComponent implements Afte
                 isPublicApp: false,
                 service: this.deliveryService,
                 pageCode: entry.pageCode,
-                registerId: entry.id
+                registerId: entry.id,
+                viewMode: !this.canEditRecords
             }),
             headerCancelButton: {
                 cancelBtnClicked: this.closeDeliveryDataDialogBtnClicked.bind(this)

@@ -193,59 +193,58 @@
                                      [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
                     </tl-autocomplete>
                 </div>
-                <ng-container *ngIf="isPermitLicense || pageCode === pageCodes.PoundnetCommFish">
-                    <div fxLayout="row" fxFlex="100">
-                        <tl-radio-button-group fxFlex="100"
-                                               tooltipResourceName="holder-ship-relation-helper"
-                                               formControlName="holderShipRelationControl"
-                                               [options]="holderShipRelations">
-                        </tl-radio-button-group>
-                    </div>
-                    <tl-card *ngIf="form.controls.holderShipRelationControl!.value?.value === false"
-                             tooltipResourceName="commercial-fishing.ship-grounds-for-use-data-card-helper"
-                             [validityChecker]="form">
-                        <tl-card-title>{{ 'commercial-fishing.ship-grounds-for-use-data-card' | tlTranslate }}</tl-card-title>
-                        <tl-card-content fxFlexFill fxLayout="column">
-                            <ground-for-use fxFlex="100"
-                                            formControlName="shipGroundForUseControl"
-                                            [groundForUseTypes]="groundForUseTypes">
-                            </ground-for-use>
-                        </tl-card-content>
-                    </tl-card>
-                    <div *ngIf="isApplication && isPermitLicense"
-                         fxLayout="column"
-                         fxFlex="100">
-                        <ng-container *ngIf="!isPublicApp">
-                            <div fxLayout="row" fxFlex="100" fxLayoutAlign="start start">
-                                <tl-autocomplete fxFlex="70"
-                                                 formControlName="permitLicensePermitControl"
-                                                 label="{{ 'commercial-fishing.permit-license-permit' | tlTranslate }}"
-                                                 tooltipResourceName="commercial-fishing.permit-license-permit-helper"
-                                                 [options]="permits"
-                                                 [readonly]="noShipSelected"
-                                                 [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
-                                </tl-autocomplete>
-                                <tl-popover-button *ngIf="noShipSelected"
-                                                   iconType="MAT_ICON"
-                                                   iconClass="accent-color"
-                                                   icon="info"
-                                                   style="vertical-align:text-bottom">
-                                    <pre style="font-family: inherit !important; max-width: 500px !important;">{{ 'commercial-fishing.permit-is-readonly-info' | tlTranslate }}</pre>
-                                </tl-popover-button>
-                            </div>
-                        </ng-container>
-                        <div *ngIf="isPublicApp" fxFlexFill fxLayout="column">
-                            <div fxFlex="100" fxLayout="row">
-                                <tl-input fxFlex="70"
-                                          formControlName="permitLicensePermitNumberControl"
-                                          label="{{ 'commercial-fishing.permit-license-permit-number' | tlTranslate }}"
-                                          tooltipResourceName="commercial-fishing.permit-license-permit-number-helper">
-                                </tl-input>
-                            </div>
-                            <mat-error *ngIf="hasInvalidPermitRegistrationNumber">{{ 'commercial-fishing.invalid-permit-registration-number' | tlTranslate }} *</mat-error>
+                <div fxLayout="row" fxFlex="100">
+                    <tl-radio-button-group fxFlex="100"
+                                           tooltipResourceName="holder-ship-relation-helper"
+                                           formControlName="holderShipRelationControl"
+                                           [options]="holderShipRelations">
+                    </tl-radio-button-group>
+                </div>
+                <!-- Освнование за ползване на кораб -->
+                <tl-card *ngIf="form.controls.holderShipRelationControl!.value?.value === false"
+                         tooltipResourceName="commercial-fishing.ship-grounds-for-use-data-card-helper"
+                         [validityChecker]="form">
+                    <tl-card-title>{{ 'commercial-fishing.ship-grounds-for-use-data-card' | tlTranslate }}</tl-card-title>
+                    <tl-card-content fxFlexFill fxLayout="column">
+                        <ground-for-use fxFlex="100"
+                                        formControlName="shipGroundForUseControl"
+                                        [groundForUseTypes]="groundForUseTypes">
+                        </ground-for-use>
+                    </tl-card-content>
+                </tl-card>
+                <div *ngIf="isApplication && isPermitLicense"
+                     fxLayout="column"
+                     fxFlex="100">
+                    <ng-container *ngIf="!isPublicApp">
+                        <div fxLayout="row" fxFlex="100" fxLayoutAlign="start start">
+                            <tl-autocomplete fxFlex="70"
+                                             formControlName="permitLicensePermitControl"
+                                             label="{{ 'commercial-fishing.permit-license-permit' | tlTranslate }}"
+                                             tooltipResourceName="commercial-fishing.permit-license-permit-helper"
+                                             [options]="permits"
+                                             [readonly]="noShipSelected"
+                                             [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                            </tl-autocomplete>
+                            <tl-popover-button *ngIf="noShipSelected"
+                                               iconType="MAT_ICON"
+                                               iconClass="accent-color"
+                                               icon="info"
+                                               style="vertical-align:text-bottom">
+                                <pre style="font-family: inherit !important; max-width: 500px !important;">{{ 'commercial-fishing.permit-is-readonly-info' | tlTranslate }}</pre>
+                            </tl-popover-button>
                         </div>
+                    </ng-container>
+                    <div *ngIf="isPublicApp" fxFlexFill fxLayout="column">
+                        <div fxFlex="100" fxLayout="row">
+                            <tl-input fxFlex="70"
+                                      formControlName="permitLicensePermitNumberControl"
+                                      label="{{ 'commercial-fishing.permit-license-permit-number' | tlTranslate }}"
+                                      tooltipResourceName="commercial-fishing.permit-license-permit-number-helper">
+                            </tl-input>
+                        </div>
+                        <mat-error *ngIf="hasInvalidPermitRegistrationNumber">{{ 'commercial-fishing.invalid-permit-registration-number' | tlTranslate }} *</mat-error>
                     </div>
-                </ng-container>
+                </div>
             </div>
         </tl-expansion-panel>
     </application-submitted-for>

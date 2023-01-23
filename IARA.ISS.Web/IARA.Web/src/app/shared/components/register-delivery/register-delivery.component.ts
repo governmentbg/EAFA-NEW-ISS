@@ -105,6 +105,10 @@ export class RegisterDeliveryComponent implements IDialogComponent, OnInit {
             this.rightSideButtons = buttons.rightSideActions;
         }
 
+        if (data.viewMode) {
+            this.form.disable();
+        }
+
         this.isDialog = true;
     }
 

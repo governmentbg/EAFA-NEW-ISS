@@ -7,6 +7,7 @@ export class RegisterDeliveryDialogParams {
     public service!: IDeliveryService;
     public pageCode!: PageCodeEnum;
     public registerId!: number;
+    public viewMode: boolean = false;
 
     public constructor(obj?: Partial<RegisterDeliveryDialogParams>) {
         Object.assign(this, obj);

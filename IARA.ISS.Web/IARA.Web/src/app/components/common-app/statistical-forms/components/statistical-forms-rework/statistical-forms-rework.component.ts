@@ -404,6 +404,12 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         return result;
     }
 
+    public rawMaterialsActiveRecordChanged(): void {
+        if (this.fishTypes.length === 1 && !this.rawMaterialGroup.get('fishTypeIdControlHidden')!.value) {
+            this.rawMaterialGroup.get('fishTypeIdControlHidden')!.setValue(this.fishTypes[0]);
+        }
+    }
+
     private buildForm(): void {
         if (this.showOnlyRegiXData) {
             this.form = new FormGroup({

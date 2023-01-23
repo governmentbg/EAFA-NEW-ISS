@@ -99,8 +99,8 @@ import { PaymentDataDTO } from '@app/models/generated/dtos/PaymentDataDTO';
 import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
 import { PaymentStatusesEnum } from '@app/enums/payment-statuses.enum';
 import { SimpleAuditMethod } from '../log-books/log-books.component';
-import { TLPictureRequestMethod } from '../../../../../shared/components/tl-picture-uploader/tl-picture-uploader.component';
-import { FileInfoDTO } from '../../../../../models/generated/dtos/FileInfoDTO';
+import { TLPictureRequestMethod } from '@app/shared/components/tl-picture-uploader/tl-picture-uploader.component';
+import { FileInfoDTO } from '@app/models/generated/dtos/FileInfoDTO';
 
 type AquaticOrganismsToAddType = NomenclatureDTO<number> | NomenclatureDTO<number>[] | string | undefined | null;
 type SaveApplicationDraftFnType = ((applicationId: number, model: IApplicationRegister, dialogClose: HeaderCloseFunction) => void) | undefined;
@@ -1399,7 +1399,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                         permitLicenseModel.paymentInformation.totalPaidPrice = paymentData.totalPaidPrice;
                         permitLicenseModel.paymentInformation.lastUpdateDate = new Date();
                         permitLicenseModel.paymentInformation.paymentStatus = paymentStatuses.find(x => x.code === PaymentStatusesEnum[PaymentStatusesEnum.PaidOK])!.code; // би трябвало това да е статусът, защото е офлайн плащане и щом сме стигнали до тази стъпка, то е успешно
-                        
+
                         this.openPermitLicenseDialog(permitLicenseModel);
                     }
 
@@ -1781,14 +1781,17 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 }
             }
 
-            if (this.isPermitLicense || this.pageCode === PageCodeEnum.PoundnetCommFish) {
-                const isHolderShipOwner: boolean = this.model.isHolderShipOwner ?? true;
-                const holderShipRelation: NomenclatureDTO<boolean> = this.holderShipRelations.find(x => x.value === isHolderShipOwner)!;
-                this.form.get('holderShipRelationControl')!.setValue(holderShipRelation);
+            const isHolderShipOwner: boolean = this.model.isHolderShipOwner ?? true;
+            const holderShipRelation: NomenclatureDTO<boolean> = this.holderShipRelations.find(x => x.value === isHolderShipOwner)!;
+            this.form.get('holderShipRelationControl')!.setValue(holderShipRelation);
 
-                if (holderShipRelation.value === false && this.model.shipGroundForUse !== null && this.model.shipGroundForUse !== undefined) {
-                    this.form.get('shipGroundForUseControl')!.setValue(this.model.shipGroundForUse);
-                }
+            if (holderShipRelation.value === false) {
+                const model: CommercialFishingEditDTO | CommercialFishingApplicationEditDTO = this.model;
+                this.form.get('shipGroundForUseControl')!.setValue(model.shipGroundForUse);
+
+                setTimeout(() => { // setTimeout needed in order to wait for the grounds-for-use component to load in UI (after previous IF)
+                    this.form.get('shipGroundForUseControl')!.updateValueAndValidity();
+                });
             }
 
             if (this.pageCode === PageCodeEnum.PoundnetCommFish || this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
@@ -1986,10 +1989,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             }
         }
 
-        if (this.isPermitLicense || this.pageCode === PageCodeEnum.PoundnetCommFish) {
-            this.form.addControl('holderShipRelationControl', new FormControl(undefined, Validators.required));
-            this.form.addControl('shipGroundForUseControl', new FormControl(undefined));
-        }
+        this.form.addControl('holderShipRelationControl', new FormControl(undefined, Validators.required));
+        this.form.addControl('shipGroundForUseControl', new FormControl(undefined));
 
         if (this.pageCode === PageCodeEnum.PoundnetCommFish || this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
             this.form.addControl('poundNetControl', new FormControl(undefined, Validators.required));
@@ -2159,15 +2160,12 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 }
             }
 
-            if (this.isPermitLicense || this.pageCode === PageCodeEnum.PoundnetCommFish) {
-                model.isHolderShipOwner = (this.form.get('holderShipRelationControl')!.value as NomenclatureDTO<boolean>)?.value;
-
-                if (model.isHolderShipOwner === false) {
-                    model.shipGroundForUse = this.form.get('shipGroundForUseControl')!.value;
-                }
-                else {
-                    model.shipGroundForUse = undefined;
-                }
+            model.isHolderShipOwner = (this.form.get('holderShipRelationControl')!.value as NomenclatureDTO<boolean>)?.value;
+            if (model.isHolderShipOwner === false) {
+                model.shipGroundForUse = this.form.get('shipGroundForUseControl')!.value;
+            }
+            else {
+                model.shipGroundForUse = undefined;
             }
 
             if (this.pageCode === PageCodeEnum.PoundnetCommFish || this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
@@ -2599,9 +2597,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 }
             }
 
-            if (this.isPermitLicense || this.pageCode === PageCodeEnum.PoundnetCommFish) {
-                observables.push(NomenclatureStore.instance.getNomenclature<number>(NomenclatureTypes.GroundForUseTypes, this.service.getHolderGroundForUseTypes.bind(this.service), false));
-            }
+            observables.push(NomenclatureStore.instance.getNomenclature<number>(NomenclatureTypes.GroundForUseTypes, this.service.getHolderGroundForUseTypes.bind(this.service), false));
 
             if (this.pageCode === PageCodeEnum.PoundnetCommFish || this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
                 observables.push(this.getPoundNetsNomenclature()); //poundNets
@@ -2645,9 +2641,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                             }
                         }
 
-                        if (this.isPermitLicense || this.pageCode === PageCodeEnum.PoundnetCommFish) {
-                            this.groundForUseTypes = nomenclatures[index++];
-                        }
+                        this.groundForUseTypes = nomenclatures[index++];
 
                         if (this.pageCode === PageCodeEnum.PoundnetCommFish || this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
                             const poundNets = nomenclatures[index++];

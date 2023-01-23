@@ -173,7 +173,8 @@
                        [rows]="rawMaterials"
                        [isRemote]="false"
                        [showInactiveRecords]="false"
-                       [showAddButton]="!viewMode && !isReadonly">
+                       [showAddButton]="!viewMode && !isReadonly"
+                       (activeRecordChanged)="rawMaterialsActiveRecordChanged()">
             <data-column [flexRate]="0.25"
                          propertyName="fishTypeId"
                          [formGroup]="rawMaterialGroup"

@@ -134,7 +134,8 @@
                            [isRemote]="false"
                            [isSoftDeletable]="true"
                            [showInactiveRecords]="false"
-                           [showAddButton]="!viewMode && !readOnly">
+                           [showAddButton]="!viewMode && !readOnly"
+                           (activeRecordChanged)="seaDaysActiveRecordChanged()">
                 <data-column columnName="{{ 'statistical-forms.fishing-gear' | tlTranslate }}"
                              propertyName="fishingGearId"
                              [formGroup]="seaDaysForm"
