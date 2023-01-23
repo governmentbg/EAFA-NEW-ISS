@@ -74,6 +74,9 @@ export class ShipRegisterEditDTO {
     public hasERS?: boolean;
 
     @StrictlyTyped(Boolean)
+    public hasERSException?: boolean;
+
+    @StrictlyTyped(Boolean)
     public hasVMS?: boolean;
 
     @StrictlyTyped(Number)

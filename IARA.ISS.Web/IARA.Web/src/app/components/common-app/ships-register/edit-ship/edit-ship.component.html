@@ -109,11 +109,18 @@
                              tooltipResourceName="ships-register.ais-helper"
                              label="{{ 'ships-register.ais' | tlTranslate }}">
                 </tl-checkbox>
-                <tl-checkbox fxFlex="20"
-                             formControlName="ersControl"
-                             tooltipResourceName="ships-register.ers-helper"
-                             label="{{ 'ships-register.ers' | tlTranslate }}">
-                </tl-checkbox>
+                <div fxFlex="20" fxLayout="column" fxLayoutAlign="start start">
+                    <tl-checkbox formControlName="ersControl"
+                                 tooltipResourceName="ships-register.ers-helper"
+                                 label="{{ 'ships-register.ers' | tlTranslate }}">
+                    </tl-checkbox>
+
+                    <tl-checkbox *ngIf="(!isApplication && !isDialog) || isAddingRegisterEntry || isThirdPartyShip"
+                                 formControlName="hasERSExceptionControl"
+                                 tooltipResourceName="ships-register.ers-exception-helper"
+                                 label="{{ 'ships-register.ers-exception' | tlTranslate }}">
+                    </tl-checkbox>
+                </div>
                 <tl-checkbox fxFlex="20"
                              formControlName="vmsControl"
                              tooltipResourceName="ships-register.vms-helper"
@@ -917,8 +924,8 @@
     <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData"
                         title="{{ 'ships-register.payment-information' | tlTranslate }}"
                         tooltipResourceName="ships-register.payment-information-helper">
-        <payment-information formControlName="applicationPaymentInformationControl" 
-                             [hideBasicInfo]="hideBasicPaymentInfo" 
+        <payment-information formControlName="applicationPaymentInformationControl"
+                             [hideBasicInfo]="hideBasicPaymentInfo"
                              [isOnlineApplication]="isOnlineApplication">
         </payment-information>
     </tl-expansion-panel>

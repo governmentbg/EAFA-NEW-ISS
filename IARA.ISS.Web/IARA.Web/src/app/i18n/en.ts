@@ -1923,6 +1923,7 @@
         'forbidden-reason': 'Reason for prohibition',
         'ais': 'AIS',
         'ers': 'ERS',
+        'ers-exception': 'ERS exception',
         'vms-monitoring-system': 'VMS monitoring system',
 
         'ship-users': 'Users',

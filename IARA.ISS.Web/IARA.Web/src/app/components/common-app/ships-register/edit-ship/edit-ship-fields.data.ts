@@ -34,7 +34,7 @@ export const ENABLE_FIELD_CONTROLS = new Map<ShipEventTypeEnum, string[]>([
     [
         ShipEventTypeEnum.MOD, [
             'shipNameControl', 'vesselTypeControl', 'externalMarkControl', 'regDateControl',
-            'ircsCallSignControl', 'mmsiControl', 'uviControl', 'aisControl', 'ersControl', 'vmsControl', 'regNumberControl',
+            'ircsCallSignControl', 'mmsiControl', 'uviControl', 'aisControl', 'ersControl', 'hasERSExceptionControl', 'vmsControl', 'regNumberControl',
             'exploitationStartDateControl', 'buildYearControl', 'buildPlaceControl', 'publicAidCodeControl', 'portControl',
             'totalLengthControl', 'totalWidthControl', 'grossTonnageControl', 'netTonnageControl', 'otherTonnageControl',
             'mainEnginePowerControl', 'auxiliaryEnginePowerControl', 'mainEngineModelControl', 'mainFishingGearControl',
