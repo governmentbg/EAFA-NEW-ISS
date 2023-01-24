@@ -518,7 +518,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         this.openPermitDialog(data, title, auditButton, viewMode ?? false, permit.isSuspended!);
     }
 
-    public openDeliveryDialog(register: CommercialFishingPermitRegisterDTO | CommercialFishingPermitLicenseRegisterDTO): void {
+    public openDeliveryDialog(register: CommercialFishingPermitRegisterDTO | CommercialFishingPermitLicenseRegisterDTO, viewMode: boolean = false): void {
         let auditButton: IHeaderAuditButton | undefined;
 
         if (register.deliveryId !== null && register.deliveryId !== undefined) {
@@ -538,7 +538,8 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
                 isPublicApp: false,
                 service: this.deliveryService,
                 pageCode: register.pageCode,
-                registerId: register.id
+                registerId: register.id,
+                viewMode: viewMode
             }),
             headerCancelButton: {
                 cancelBtnClicked: this.closeDeliveryDataDialogBtnClicked.bind(this)

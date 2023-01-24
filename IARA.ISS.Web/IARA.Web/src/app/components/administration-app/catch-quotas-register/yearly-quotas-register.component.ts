@@ -143,6 +143,7 @@ export class YearlyQuotasComponent extends BasePageComponent implements AfterVie
                 cancelBtnClicked: this.closeDialogBtnClicked.bind(this)
             },
             componentData: data,
+            viewMode: readOnly,
             translteService: this.translationService
         }, '85em');
 

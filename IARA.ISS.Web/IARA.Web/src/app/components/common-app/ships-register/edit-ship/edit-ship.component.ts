@@ -959,6 +959,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
         form.addControl('vmsControl', new FormControl(false));
         form.addControl('regNumberControl', new FormControl(null));
 
+        form.addControl('hasERSExceptionControl', new FormControl(false));
         form.addControl('forbiddenForRSRControl', new FormControl(false));
         form.addControl('forbiddenReasonControl', new FormControl(null));
         form.addControl('forbiddenStartDateControl', new FormControl(this.today));
@@ -1240,6 +1241,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
         }
 
         if (this.model instanceof ShipRegisterEditDTO) {
+            this.form.get('hasERSExceptionControl')!.setValue(this.model.hasERSException);
             this.form.get('forbiddenForRSRControl')!.setValue(this.model.isForbiddenForRSR, { emitEvent: false });
 
             if (this.model.isForbiddenForRSR === true) {
@@ -1518,6 +1520,8 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
         }
 
         if (model instanceof ShipRegisterEditDTO) {
+            model.hasERSException = this.form.get('hasERSExceptionControl')!.value;
+
             model.isForbiddenForRSR = this.form.get('forbiddenForRSRControl')!.value;
             if (model.isForbiddenForRSR) {
                 model.forbiddenReason = this.form.get('forbiddenReasonControl')!.value;

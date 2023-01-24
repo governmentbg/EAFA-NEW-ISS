@@ -343,7 +343,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         this.seaDaysForm?.get('fishingGearIdControl')?.valueChanges.subscribe({
             next: () => {
                 this.fishingGears = [...this.allFishingGears];
-                const currentIds: number[] = this.seaDaysTable.rows.map(x => x.fishingGearId);
+                const currentIds: number[] = this.seaDaysTable.rows.filter(x => x.isActive ?? true).map(x => x.fishingGearId);
 
                 this.fishingGears = this.fishingGears.filter(x => !currentIds.includes(x.value!));
                 this.fishingGears = this.fishingGears.slice();
@@ -462,6 +462,12 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
             }
         }
         return undefined;
+    }
+
+    public seaDaysActiveRecordChanged(): void {
+        if (this.fishingGears.length === 1 && !this.seaDaysForm.get('fishingGearIdControlHidden')!.value) {
+            this.seaDaysForm.get('fishingGearIdControlHidden')!.setValue(this.fishingGears[0]);
+        }
     }
 
     private saveFishVesselForm(dialogClose: DialogCloseCallback, saveAsDraft: boolean = false): Observable<boolean> {
@@ -1136,18 +1142,19 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         };
     }
 
-
     private checkIfStatFormAlreadyExists(shipId: number | undefined, year: number | undefined): void {
-        if (year !== undefined && year !== null) {
-            if (shipId !== undefined && shipId !== null) {
-                this.service.vesselStatFormAlreadyExists(shipId, year, this.id).subscribe({
-                    next: (yes: boolean) => {
-                        if (yes) {
-                            this.form.get('shipNameControl')!.setErrors({ statFormExists: true });
-                            this.form.get('shipNameControl')!.markAsTouched();
+        if (!this.isRegisterEntry) {
+            if (year !== undefined && year !== null) {
+                if (shipId !== undefined && shipId !== null) {
+                    this.service.vesselStatFormAlreadyExists(shipId, year, this.id).subscribe({
+                        next: (yes: boolean) => {
+                            if (yes) {
+                                this.form.get('shipNameControl')!.setErrors({ statFormExists: true });
+                                this.form.get('shipNameControl')!.markAsTouched();
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         }
     }

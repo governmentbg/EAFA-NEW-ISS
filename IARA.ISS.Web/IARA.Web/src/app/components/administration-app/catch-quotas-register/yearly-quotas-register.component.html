@@ -108,7 +108,7 @@
                                         iconClass="accent-color"
                                         tooltipText="{{ 'catch-quotas.restore-entry-tooltip' | tlTranslate }}">
                         </tl-icon-button>
-                        <tl-icon-button *ngIf="row.isActive"
+                        <tl-icon-button *ngIf="row.isActive && canEditRecords"
                                         icon="fa-external-link-alt"
                                         (buttonClicked)="transferQuota(row)"
                                         iconClass="accent-color"

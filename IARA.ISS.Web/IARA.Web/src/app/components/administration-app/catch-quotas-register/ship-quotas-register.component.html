@@ -139,11 +139,13 @@
                                         tooltipText="{{ 'catch-quotas.delete-entry-tooltip' | tlTranslate }}">
                         </tl-icon-button>
                         <tl-icon-button *ngIf="!row.isActive && canRestoreRecords"
-                                        icon="restore" (buttonClicked)="restoreEntry(row)"
+                                        icon="restore" 
+                                        (buttonClicked)="restoreEntry(row)"
                                         iconClass="accent-color"
                                         tooltipText="{{ 'catch-quotas.restore-entry-tooltip' | tlTranslate }}">
                         </tl-icon-button>
-                        <tl-icon-button *ngIf="row.isActive" icon="fa-external-link-alt"
+                        <tl-icon-button *ngIf="row.isActive && canEditRecords" 
+                                        icon="fa-external-link-alt"
                                         (buttonClicked)="transferQuota(row)"
                                         iconClass="accent-color"
                                         tooltipText="{{ 'catch-quotas.transfer-quota-tooltip' | tlTranslate }}">

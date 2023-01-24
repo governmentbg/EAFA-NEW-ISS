@@ -1,12 +1,15 @@
 ﻿<div fxLayout="column"
      fxLayoutGap="1em"
      fxFlexFill
+     validityCheckerGroup
      fxLayoutAlign="space-between stretch"
      [formGroup]="editForm"
      class="dialog-padding">
     <!-- Обща информация -->
     <tl-expansion-panel title="{{'catch-quotas.quota-data' | tlTranslate}}"
-                        tooltipResourceName="catch-quotas.quota-data-helper">
+                        tooltipResourceName="catch-quotas.quota-data-helper"
+                        [validityChecker]="editForm"
+                        [validityCheckerExtraCondition]="quotaAlreadyExistsErrors === true">
         <div fxLayout="row" fxLayoutGap="1em">
             <tl-date-year fxFlex="30"
                           formControlName="yearControl"
@@ -41,7 +44,8 @@
 
     <!-- Разрешени пристанища за разтоварване -->
     <tl-expansion-panel title="{{ 'catch-quotas.catch-quota-unload-ports' | tlTranslate }}"
-                        tooltipResourceName="catch-quotas.catch-quota-unload-ports-helper">
+                        tooltipResourceName="catch-quotas.catch-quota-unload-ports-helper"
+                        [validityChecker]="editForm">
         <div fxLayout="row" fxFlex="100" fxLayoutGap="1em">
             <simple-select-table formControlName="portsControl"
                                  [allRows]="ports"
@@ -54,7 +58,8 @@
 
     <!-- Файлове -->
     <tl-expansion-panel title="{{ 'catch-quotas.files' | tlTranslate }}"
-                        tooltipResourceName="catch-quotas.files-helper">
+                        tooltipResourceName="catch-quotas.files-helper"
+                        [validityChecker]="editForm">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">

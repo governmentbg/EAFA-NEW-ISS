@@ -265,7 +265,7 @@
                              fxLayoutAlign="space-between center">
                             <egn-lnc-input fxFlex="90"
                                            formControlName="custodianEgnControl"
-                                           [readonly]="isIdReadOnly || readonly"
+                                           [readonly]="readonly"
                                            [isForeigner]="isForeigner"
                                            [includeForeigner]="includeForeigner"
                                            [emitEgnPnfErrors]="true"
@@ -278,7 +278,7 @@
                                             fxFlex="10"
                                             class="regix-data-search-button"
                                             icon="fa-search-icon"
-                                            [disabled]="isIdReadOnly || readonly || form.controls.custodianCheckboxControl.value"
+                                            [disabled]="readonly || form.controls.custodianCheckboxControl.value"
                                             (buttonClicked)="custodianSearchBtnClicked()"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'regix-data.search' | tlTranslate }}">

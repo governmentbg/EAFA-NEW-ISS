@@ -243,7 +243,7 @@
                                                                 iconClass="accent-color"
                                                                 [size]="icIconSize"
                                                                 tooltipText="{{ 'commercial-fishing.permit-license-delivery-data' | tlTranslate }}"
-                                                                (buttonClicked)="openDeliveryDialog(row.data)">
+                                                                (buttonClicked)="openDeliveryDialog(row.data, !canEditPermitLicenseRecords)">
                                                 </tl-icon-button>
                                                 <tl-icon-button *ngIf="canReadPermitLicenseRecords || hasPermitLicenseReadAllPermission"
                                                                 icon="visibility"
@@ -333,7 +333,7 @@
                                             iconClass="accent-color"
                                             [size]="icIconSize"
                                             tooltipText="{{ 'commercial-fishing.delivery-data' | tlTranslate }}"
-                                            (buttonClicked)="openDeliveryDialog(row.data)">
+                                            (buttonClicked)="openDeliveryDialog(row.data, !canEditPermitRecords)">
                             </tl-icon-button>
                             <tl-icon-button *ngIf="canReadPermitRecords || hasPermitsReadAllPermission"
                                             icon="visibility"

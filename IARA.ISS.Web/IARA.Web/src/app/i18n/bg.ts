@@ -1934,6 +1934,7 @@
         'forbidden-reason': 'Причина за забраната',
         'ais': 'AIS',
         'ers': 'ERS',
+        'ers-exception': 'ERS изключение',
         'vms-monitoring-system': 'Система за наблюдение VMS',
 
         'ship-users': 'Ползватели',

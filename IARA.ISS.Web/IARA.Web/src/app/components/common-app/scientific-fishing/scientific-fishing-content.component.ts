@@ -315,7 +315,8 @@ export class ScientificFishingContent implements OnInit, AfterViewInit {
                 isPublicApp: this.isPublicApp,
                 service: this.deliveryService,
                 pageCode: PageCodeEnum.SciFi,
-                registerId: permit.id
+                registerId: permit.id,
+                viewMode: !this.canEditRecords
             }),
             headerCancelButton: {
                 cancelBtnClicked: this.closeDeliveryDataDialogBtnClicked.bind(this)
