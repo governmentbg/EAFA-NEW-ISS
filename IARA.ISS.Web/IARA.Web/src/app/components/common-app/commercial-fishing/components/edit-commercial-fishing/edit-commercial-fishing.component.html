@@ -270,14 +270,29 @@
                                          formControlName="qualifiedFisherSameAsSubmittedForControl"
                                          [label]="qualifiedFisherSameAsSubmittedForLabel">
                             </tl-checkbox>
-                            <egn-lnc-input fxFlex="32"
-                                           fxFlex.md="50"
-                                           fxFlex.lt-md="100"
-                                           formControlName="qualifiedFisherIdNumberControl"
-                                           [readonly]="isEditing"
-                                           [isForeigner]="isThirdCountryPermit"
-                                           [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
-                            </egn-lnc-input>
+                            <div fxFlex="32"
+                                 fxFlex.md="50"
+                                 fxFlex.lt-md="100"
+                                 fxLayout="row"
+                                 fxLayoutAlign="space-between center">
+                                <egn-lnc-input [fxFlex]="isPublicApp ? 100 : 90"
+                                               formControlName="qualifiedFisherIdNumberControl"
+                                               [readonly]="isEditing"
+                                               [isForeigner]="isThirdCountryPermit"
+                                               [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"
+                                               (keydown.enter)="onQualifiedFisherIdNumberEnterDown()">
+                                </egn-lnc-input>
+
+                                <tl-icon-button *ngIf="!isPublicApp"
+                                                fxFlex="10"
+                                                class="regix-data-search-button"
+                                                icon="fa-search-icon"
+                                                [disabled]="isEditing"
+                                                (buttonClicked)="qualifiedFisherSearchBtnClicked()"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'regix-data.search' | tlTranslate }}">
+                                </tl-icon-button>
+                            </div>
                         </div>
 
                         <div fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="1em">
@@ -308,7 +323,7 @@
                         </div>
                     </div>
 
-                    <div *ngIf="isPermitLicense" fxLayout="column">
+                    <div fxLayout="column">
                         <tl-picture-uploader formControlName="qualifiedFisherPhotoControl"
                                              [requestMethod]="photoRequestMethod"
                                              [options]="{ validations: { isRequired: true } }">
@@ -345,7 +360,7 @@
                     </tl-input>
                 </div>
 
-                <div *ngIf="isPermitLicense" fxLayout="row">
+                <div fxLayout="row">
                     <tl-picture-uploader fxFlex="100"
                                          formControlName="qualifiedFisherPhotoControl"
                                          [requestMethod]="photoRequestMethod"

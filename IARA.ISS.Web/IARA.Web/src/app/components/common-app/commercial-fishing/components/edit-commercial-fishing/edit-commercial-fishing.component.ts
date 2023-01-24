@@ -1,6 +1,6 @@
 ﻿import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { forkJoin, observable, Observable, Subject, Subscription } from 'rxjs';
+import { forkJoin, Observable, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -60,7 +60,6 @@ import { LogBookGroupsEnum } from '@app/enums/log-book-groups.enum';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { PermitNomenclatureDTO } from '@app/models/generated/dtos/PermitNomenclatureDTO';
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
-import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { ChoosePermitLicenseForRenewalComponent } from '../choose-permit-license-for-renewal/choose-permit-license-for-renewal.component';
 import { ChoosePermitLicenseForRenewalDialogParams } from '../choose-permit-license-for-renewal/models/choose-permit-license-for-renewal-dialog-params.model';
 import { WaterTypesEnum } from '@app/enums/water-types.enum';
@@ -101,6 +100,9 @@ import { PaymentStatusesEnum } from '@app/enums/payment-statuses.enum';
 import { SimpleAuditMethod } from '../log-books/log-books.component';
 import { TLPictureRequestMethod } from '@app/shared/components/tl-picture-uploader/tl-picture-uploader.component';
 import { FileInfoDTO } from '@app/models/generated/dtos/FileInfoDTO';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
+import { PersonLegalExtractorService } from '@app/services/common-app/person-legal-extractor.service';
 
 type AquaticOrganismsToAddType = NomenclatureDTO<number> | NomenclatureDTO<number>[] | string | undefined | null;
 type SaveApplicationDraftFnType = ((applicationId: number, model: IApplicationRegister, dialogClose: HeaderCloseFunction) => void) | undefined;
@@ -234,6 +236,9 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     private ignoreLogBookConflicts: boolean = false;
     private isAddingRegister: boolean = false;
 
+    private readonly personLegalExtractor: PersonLegalExtractorService;
+    private readonly fisherCache: Map<string, PersonFullDataDTO | null> = new Map<string, PersonFullDataDTO | null>();
+
     private readonly editCommercialFishingPermitLicenseDialog: TLMatDialog<EditCommercialFishingComponent>;
     private readonly editSuspensionDialog: TLMatDialog<EditSuspensionComponent>;
     private readonly choosePermitLicenseForRenewalDialog: TLMatDialog<ChoosePermitLicenseForRenewalComponent>;
@@ -255,7 +260,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         choosePermitToCopyFromDialog: TLMatDialog<ChoosePermitToCopyFromComponent>,
         overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>,
         snackbar: MatSnackBar,
-        paymentDataDialog: TLMatDialog<PaymentDataComponent>
+        paymentDataDialog: TLMatDialog<PaymentDataComponent>,
+        personLegalExtractor: PersonLegalExtractorService,
     ) {
         this.translationService = translate;
         this.systemParametersService = systemParametersService;
@@ -268,6 +274,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         this.overlappingLogBooksDialog = overlappingLogBooksDialog;
         this.snackbar = snackbar;
         this.paymentDataDialog = paymentDataDialog;
+        this.personLegalExtractor = personLegalExtractor;
 
         this.expectedResults = new CommercialFishingRegixDataDTO({
             submittedBy: new ApplicationSubmittedByRegixDataDTO({ addresses: [], person: new RegixPersonDataDTO() }),
@@ -711,6 +718,43 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         }
 
         return result;
+    }
+
+    public onQualifiedFisherIdNumberEnterDown(): void {
+        this.qualifiedFisherSearchBtnClicked();
+    }
+
+    public qualifiedFisherSearchBtnClicked(): void {
+        if (!this.isPublicApp) {
+            const identifier: EgnLncDTO = this.form.get('qualifiedFisherIdNumberControl')!.value;
+            const cached: PersonFullDataDTO | null | undefined = this.fisherCache.get(`${identifier.identifierType}|${identifier.egnLnc}`);
+
+            if (cached !== undefined) {
+                if (cached !== null) {
+                    this.form.get('qualifiedFisherIdNumberControl')!.setValue(cached.person!.egnLnc);
+                    this.form.get('qualifiedFisherFirstNameControl')!.setValue(cached.person!.firstName);
+                    this.form.get('qualifiedFisherMiddleNameControl')!.setValue(cached.person!.middleName);
+                    this.form.get('qualifiedFisherLastNameControl')!.setValue(cached.person!.lastName);
+                }
+            }
+            else {
+                this.personLegalExtractor.tryGetPerson(identifier.identifierType!, identifier.egnLnc!).subscribe({
+                    next: (person: PersonFullDataDTO | undefined) => {
+                        if (person) {
+                            this.form.get('qualifiedFisherIdNumberControl')!.setValue(person.person!.egnLnc);
+                            this.form.get('qualifiedFisherFirstNameControl')!.setValue(person.person!.firstName);
+                            this.form.get('qualifiedFisherMiddleNameControl')!.setValue(person.person!.middleName);
+                            this.form.get('qualifiedFisherLastNameControl')!.setValue(person.person!.lastName);
+
+                            this.fisherCache.set(`${identifier.identifierType}|${identifier.egnLnc}`, person);
+                        }
+                        else {
+                            this.fisherCache.set(`${identifier.identifierType}|${identifier.egnLnc}`, null);
+                        }
+                    }
+                });
+            }
+        }
     }
 
     private async loadData(): Promise<void> {
@@ -1699,6 +1743,14 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     this.photoRequestMethod = this.service.getPermitLicenseFisherPhoto.bind(this.service, this.model.id!);
                 }
             }
+            else {
+                if (this.isAddingRegister) {
+                    this.photoRequestMethod = this.service.getPermitFisherPhotoFromApplication.bind(this.service, this.model.applicationId!);
+                }
+                else if (this.model?.id) {
+                    this.photoRequestMethod = this.service.getPermitFisherPhoto.bind(this.service, this.model.id!);
+                }
+            }
         }
 
         if (!this.isApplication && !this.showOnlyRegiXData) {
@@ -1863,18 +1915,16 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             }
         }
 
-        if (this.isPermitLicense) {
-            if (this.model instanceof CommercialFishingApplicationEditDTO) {
-                if (this.model.qualifiedFisherPhotoBase64 && this.model.qualifiedFisherPhotoBase64.length > 0) {
-                    this.form.get('qualifiedFisherPhotoControl')!.setValue(this.model.qualifiedFisherPhotoBase64);
-                }
-                else {
-                    this.form.get('qualifiedFisherPhotoControl')!.setValue(this.model.qualifiedFisherPhoto);
-                }
+        if (this.model instanceof CommercialFishingApplicationEditDTO) {
+            if (this.model.qualifiedFisherPhotoBase64 && this.model.qualifiedFisherPhotoBase64.length > 0) {
+                this.form.get('qualifiedFisherPhotoControl')!.setValue(this.model.qualifiedFisherPhotoBase64);
             }
-            else if (this.model instanceof CommercialFishingEditDTO) {
+            else {
                 this.form.get('qualifiedFisherPhotoControl')!.setValue(this.model.qualifiedFisherPhoto);
             }
+        }
+        else if (this.model instanceof CommercialFishingEditDTO) {
+            this.form.get('qualifiedFisherPhotoControl')!.setValue(this.model.qualifiedFisherPhoto);
         }
     }
 
@@ -2070,10 +2120,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
     private addQualifiedFisherControls(): void {
         this.form.addControl('qualifiedFisherSameAsSubmittedForControl', new FormControl(false));
-
-        if (this.isPermitLicense) {
-            this.form.addControl('qualifiedFisherPhotoControl', new FormControl(null, Validators.required));
-        }
+        this.form.addControl('qualifiedFisherPhotoControl', new FormControl(null, Validators.required));
 
         if (this.isApplication || this.loadRegisterFromApplication) {
             this.form.addControl('qualifiedFisherIdNumberControl', new FormControl(undefined, Validators.required));
@@ -2215,10 +2262,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     private fillQualifiedFisherData(model: CommercialFishingEditDTO | CommercialFishingApplicationEditDTO | CommercialFishingRegixDataDTO): void {
         if (model instanceof CommercialFishingEditDTO) {
             model.qualifiedFisherId = this.form.get('qualifiedFisherControl')!.value.value;
-
-            if (this.isPermitLicense) {
-                model.qualifiedFisherPhoto = this.form.get('qualifiedFisherPhotoControl')!.value;
-            }
+            model.qualifiedFisherPhoto = this.form.get('qualifiedFisherPhotoControl')!.value;
         }
         else if (model instanceof CommercialFishingApplicationEditDTO) {
             model.qualifiedFisherSameAsSubmittedFor = this.form.get('qualifiedFisherSameAsSubmittedForControl')!.value;
@@ -2228,20 +2272,18 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             model.qualifiedFisherMiddleName = this.form.get('qualifiedFisherMiddleNameControl')!.value;
             model.qualifiedFisherLastName = this.form.get('qualifiedFisherLastNameControl')!.value;
 
-            if (this.isPermitLicense) {
-                const photo: FileInfoDTO | string | null = this.form.get('qualifiedFisherPhotoControl')!.value;
-                if (photo !== undefined && photo !== null) {
-                    if (typeof photo === 'string') {
-                        model.qualifiedFisherPhotoBase64 = photo;
-                    }
-                    else {
-                        model.qualifiedFisherPhoto = photo;
-                    }
+            const photo: FileInfoDTO | string | null = this.form.get('qualifiedFisherPhotoControl')!.value;
+            if (photo !== undefined && photo !== null) {
+                if (typeof photo === 'string') {
+                    model.qualifiedFisherPhotoBase64 = photo;
                 }
                 else {
-                    model.qualifiedFisherPhotoBase64 = undefined;
-                    model.qualifiedFisherPhoto = undefined;
+                    model.qualifiedFisherPhoto = photo;
                 }
+            }
+            else {
+                model.qualifiedFisherPhotoBase64 = undefined;
+                model.qualifiedFisherPhoto = undefined;
             }
         }
     }

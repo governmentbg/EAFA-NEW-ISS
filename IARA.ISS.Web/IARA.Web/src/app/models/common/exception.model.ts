@@ -55,5 +55,7 @@ export enum ErrorCode {
     PrintConfigurationAlreadyExists = 36,
     LogBookPageAlreadySubmittedOtherLogBook = 37,
     MaxNumberMissingPagesExceeded = 38,
-    MoreThanOneActiveOnlineLogBook = 39
+    MoreThanOneActiveOnlineLogBook = 39,
+    CannotDeletePermitWithLicense = 40,
+    CannotDeleteLicenseWithLogBooks = 41
 }

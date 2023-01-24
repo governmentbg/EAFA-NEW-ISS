@@ -4,6 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
@@ -58,7 +59,6 @@ import { ChooseLogBookForRenewalDialogParams } from '@app/components/common-app/
 import { LogBookForRenewalDTO } from '@app/models/generated/dtos/LogBookForRenewalDTO';
 import { OnActionEndedType, SimpleAuditMethod } from '@app/components/common-app/commercial-fishing/components/log-books/log-books.component';
 import { CommercialFishingRegisterCacheService } from './services/commercial-fishing-register-cache.service';
-import { Router } from '@angular/router';
 
 type ThreeState = 'yes' | 'no' | 'both';
 
@@ -579,6 +579,22 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
                         next: () => {
                             this.gridManager.refreshData();
                             this.cacheService.clearPermitLicenseLogBooksCache(); // clear all cache
+                        },
+                        error: (errorResponse: HttpErrorResponse) => {
+                            if ((errorResponse.error as ErrorModel)?.code === ErrorCode.CannotDeletePermitWithLicense) {
+                                const message: string = this.translationService.getValue('commercial-fishing.cannot-delete-permit-error');
+                                this.snackbar.open(message, undefined, {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
+                            }
+                            else if ((errorResponse.error as ErrorModel)?.code === ErrorCode.CannotDeleteLicenseWithLogBooks) {
+                                const message: string = this.translationService.getValue('commercial-fishing.cannot-delete-permit-license-error');
+                                this.snackbar.open(message, undefined, {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
+                            }
                         }
                     });
                 }

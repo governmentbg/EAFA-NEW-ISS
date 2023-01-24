@@ -562,18 +562,27 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
             this.form.get('isOwnerEmployeeControl')!.setValue(undefined);
         }
 
-        let id: number = 0;
+        const statTypes: StatisticalFormNumStatDTO[] = [];
+
         for (const group of (model.numStatGroups ?? []).filter(x => this.employeeGroupTypes.includes(x.groupType!))) {
-            const ids: number[] = [];
-
             for (const statType of group.numericStatTypes ?? []) {
-                ids.push(id++);
-
-                this.employeeStatsLabels.push(statType.name!);
-                this.employeeStatsFormArray.push(new FormControl(statType.statValue, [Validators.required, TLValidators.number(0)]));
+                statTypes.push(statType);
             }
+        }
 
-            this.employeeStatsGroups.set(group.id!, ids);
+        let idx: number = 0;
+        for (const statType of statTypes.sort((lhs, rhs) => lhs.orderNum! - rhs.orderNum!)) {
+            this.employeeStatsLabels.push(statType.name!);
+            this.employeeStatsFormArray.push(new FormControl(statType.statValue, [Validators.required, TLValidators.number(0)]));
+
+            const group: number[] | undefined = this.employeeStatsGroups.get(statType.groupId!);
+            if (group === undefined) {
+                this.employeeStatsGroups.set(statType.groupId!, [idx]);
+            }
+            else {
+                this.employeeStatsGroups.set(statType.groupId!, [...group, idx]);
+            }
+            ++idx;
         }
 
         for (const group of (model.numStatGroups ?? []).filter(x => !this.employeeGroupTypes.includes(x.groupType!))) {
@@ -625,18 +634,27 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
             this.form.get('isOwnerEmployeeControl')!.setValue(this.ownerEmployeeOptions.find(x => x.value === 'no'));
         }
 
-        let id: number = 0;
+        const statTypes: StatisticalFormNumStatDTO[] = [];
+
         for (const group of (model.numStatGroups ?? []).filter(x => this.employeeGroupTypes.includes(x.groupType!))) {
-            const ids: number[] = [];
-
             for (const statType of group.numericStatTypes ?? []) {
-                ids.push(id++);
-
-                this.employeeStatsLabels.push(statType.name!);
-                this.employeeStatsFormArray.push(new FormControl(statType.statValue, [Validators.required, TLValidators.number(0)]));
+                statTypes.push(statType);
             }
+        }
 
-            this.employeeStatsGroups.set(group.id!, ids);
+        let idx: number = 0;
+        for (const statType of statTypes.sort((lhs, rhs) => lhs.orderNum! - rhs.orderNum!)) {
+            this.employeeStatsLabels.push(statType.name!);
+            this.employeeStatsFormArray.push(new FormControl(statType.statValue, [Validators.required, TLValidators.number(0)]));
+
+            const group: number[] | undefined = this.employeeStatsGroups.get(statType.groupId!);
+            if (group === undefined) {
+                this.employeeStatsGroups.set(statType.groupId!, [idx]);
+            }
+            else {
+                this.employeeStatsGroups.set(statType.groupId!, [...group, idx]);
+            }
+            ++idx;
         }
 
         for (const group of (model.numStatGroups ?? []).filter(x => !this.employeeGroupTypes.includes(x.groupType!))) {
@@ -769,7 +787,11 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
             if (idx !== undefined) {
                 result.push(group);
 
-                const values: number[] = statTypes.slice(idx[0], idx[0] + idx.length);
+                let values: number[] = [];
+                for (const i of idx) {
+                    values.push(statTypes[i]);
+                }
+
                 for (let i = 0; i < group.numericStatTypes!.length; ++i) {
                     group.numericStatTypes![i].statValue = values[i];
                 }
