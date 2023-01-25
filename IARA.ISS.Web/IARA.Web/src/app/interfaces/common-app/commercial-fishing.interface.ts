@@ -35,6 +35,8 @@ export interface ICommercialFishingService extends IApplicationsActionsService {
 
     getPermitLicenseFisherPhoto(id: number): Observable<string>;
     getPermitLicenseFisherPhotoFromApplication(applicationId: number): Observable<string>;
+    getPermitFisherPhoto(id: number): Observable<string>;
+    getPermitFisherPhotoFromApplication(applicationId: number): Observable<string>;
 
     deletePermit(id: number, pageCode: PageCodeEnum): Observable<void>;
     undoDeletePermit(id: number, pageCode: PageCodeEnum): Observable<void>;

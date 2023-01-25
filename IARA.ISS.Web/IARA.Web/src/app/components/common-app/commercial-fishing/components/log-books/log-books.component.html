@@ -98,18 +98,26 @@
                                     iconClass="accent-color"
                                     tooltipText="{{ 'catches-and-sales.edit-log-book' | tlTranslate }}">
                     </tl-icon-button>
-                    <tl-icon-button *ngIf="((!row.data.shipPagesAndDeclarations || row.data.shipPagesAndDeclarations.length === 0)
-                                             && (!row.data.transportationPagesAndDeclarations || row.data.transportationPagesAndDeclarations.length === 0)
-                                             && (!row.data.admissionPagesAndDeclarations || row.data.admissionPagesAndDeclarations.length === 0)
-                                             && (!row.data.firstSalePages || row.data.firstSalePages.length === 0) && (!row.data.aquaculturePages || row.data.aquaculturePages.length === 0))
-                                            && !row.data.hasRelatedPages
-                                            && !row.data.isForRenewal
+                    <tl-icon-button *ngIf="!row.data.isForRenewal
                                             && row.data.isActive
                                             && !isReadonly"
                                     icon="delete"
-                                    (buttonClicked)="deleteLogBook(row)"
                                     iconClass="accent-color"
-                                    tooltipText="{{ 'catches-and-sales.delete-log-book' | tlTranslate }}">
+                                    (buttonClicked)="deleteLogBook(row)"
+                                    [disabled]="((row.data.shipPagesAndDeclarations && row.data.shipPagesAndDeclarations.length === 0)
+                                                 || (row.data.transportationPagesAndDeclarations && row.data.transportationPagesAndDeclarations.length === 0)
+                                                 || (row.data.admissionPagesAndDeclarations && row.data.admissionPagesAndDeclarations.length === 0)
+                                                 || (row.data.firstSalePages && row.data.firstSalePages.length === 0) 
+                                                 || (row.data.aquaculturePages && row.data.aquaculturePages.length === 0))
+                                                 || row.data.hasRelatedPages"
+                                    [tooltipText]="((row.data.shipPagesAndDeclarations && row.data.shipPagesAndDeclarations.length === 0)
+                                                     || (row.data.transportationPagesAndDeclarations && row.data.transportationPagesAndDeclarations.length === 0)
+                                                     || (row.data.admissionPagesAndDeclarations && row.data.admissionPagesAndDeclarations.length === 0)
+                                                     || (row.data.firstSalePages && row.data.firstSalePages.length === 0) 
+                                                     || (row.data.aquaculturePages && row.data.aquaculturePages.length === 0))
+                                                     || row.data.hasRelatedPages 
+                                                    ? deleteDisabledTooltipText 
+                                                    : deleteTooltipText">
                     </tl-icon-button>
                     <tl-icon-button *ngIf="row.data.isForRenewal && row.data.isActive && !isReadonly"
                                     icon="remove"

@@ -118,6 +118,9 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     public activeLogBookError: boolean = false;
     public activeLogBookWarning: boolean = false;
 
+    public deleteTooltipText: string = '';
+    public deleteDisabledTooltipText: string = '';
+
     @ViewChild('logBooksTable')
     private logBooksTable!: TLDataTableComponent;
 
@@ -154,6 +157,9 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
         this.logBooksCacheService = logBooksCacheService;
 
         this.loader = new FormControlDataLoader(this.getNomenclatures.bind(this));
+
+        this.deleteTooltipText = this.translate.getValue('catches-and-sales.delete-log-book');
+        this.deleteDisabledTooltipText = this.translate.getValue('catches-and-sales.cannot-delete-log-book-with-pages');
     }
 
     public ngOnInit(): void {
