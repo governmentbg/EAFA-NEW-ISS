@@ -73,7 +73,7 @@ export class ApplicantRelationToRecipientComponent extends CustomFormControl<App
 
         return new ApplicantRelationToRecipientDTO({
             role: roleCode,
-            letterOfAttorney: this.form.get('letterOfAttorneyControl')?.value ?? undefined
+            letterOfAttorney: this.hasLetterOfAttorney ? this.form.get('letterOfAttorneyControl')?.value : undefined
         });
     }
 

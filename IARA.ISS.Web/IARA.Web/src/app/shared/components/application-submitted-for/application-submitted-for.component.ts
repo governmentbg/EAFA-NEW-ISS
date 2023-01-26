@@ -213,6 +213,10 @@ export class ApplicationSubmittedForComponent extends NotifyingCustomFormControl
                     result.addresses = this.form.get('legalAddressesControl')!.value ?? undefined;
                 }
             }
+
+            if (this.showOnlyBasicData) {
+                result.addresses = undefined;
+            }
         }
 
         return result;

@@ -1,5 +1,5 @@
 ﻿import { Component, EventEmitter, Input, OnInit, Output, Self, ViewChild } from '@angular/core';
-import { AbstractControl, FormGroup, NgControl } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { GridRow } from '@app/shared/components/data-table/models/row.model';
@@ -211,7 +211,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
     }
 
     protected buildForm(): AbstractControl {
-        return new FormGroup({});
+        return new FormControl(undefined, this.inspectorsValidator());
     }
 
     protected getValue(): InspectorDuringInspectionDTO[] {
@@ -247,5 +247,16 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
                 this.headInspectorChanged.emit([inspector.territoryCode!, inspector.cardNum!, value!.num]);
             }
         })
+    }
+
+    private inspectorsValidator(): ValidatorFn {
+        return (): ValidationErrors | null => {
+            if (this.inspectors !== undefined && this.inspectors !== null) {
+                if (this.inspectors.find((f, i) => this.inspectors.find((s, i2) => i !== i2 && s.inspectorId === f.inspectorId))) {
+                    return { 'inspectorsMatch': true };
+                }
+            }
+            return null;
+        };
     }
 }

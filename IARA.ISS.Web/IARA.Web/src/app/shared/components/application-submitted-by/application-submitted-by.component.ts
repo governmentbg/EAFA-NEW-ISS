@@ -34,7 +34,7 @@ export class ApplicationSubmittedByComponent extends NotifyingCustomFormControl<
     @Input()
     public expectedResults!: ApplicationSubmittedByDTO;
 
-    public notifierGroup: Notifier = new Notifier();
+    public notifierGroup: Notifier = new Notifier(); 
 
     public constructor(
         @Self() ngControl: NgControl,
@@ -73,9 +73,15 @@ export class ApplicationSubmittedByComponent extends NotifyingCustomFormControl<
     }
 
     protected getValue(): ApplicationSubmittedByDTO {
-        return new ApplicationSubmittedByDTO({
+        const result: ApplicationSubmittedByDTO = new ApplicationSubmittedByDTO({
             person: this.form.get('personControl')!.value ?? undefined,
             addresses: this.form.get('addressesControl')!.value ?? undefined
         });
+
+        if (this.showOnlyBasicData) {
+            result.addresses = undefined;
+        }
+
+        return result;
     }
 }
