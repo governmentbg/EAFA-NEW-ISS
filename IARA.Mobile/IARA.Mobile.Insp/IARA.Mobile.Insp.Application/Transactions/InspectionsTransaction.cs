@@ -917,7 +917,10 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
         public async Task<bool> SignInspection(int inspectionId, List<FileModel> files)
         {
-            HttpResult result = await RestClient.PostAsFormDataAsync("Inspections/Sign", files, new { inspectionId });
+            HttpResult result = await RestClient.PostAsFormDataAsync("Inspections/Sign", new InspectionSignDto
+            {
+                Files = files
+            }, new { inspectionId });
 
             return result.IsSuccessful;
         }

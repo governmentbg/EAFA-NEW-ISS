@@ -2540,6 +2540,7 @@
         'user-not-inspector-msg': 'You must be added to the list of inspectors (Administration -> Inspectors), in order to begin an inspection.',
         'okay': 'Okay',
         'catches-match': 'There are identical catches',
+        'inspectors-match': 'There are identical inspectors',
         'permits': 'Permits on ship',
         'permit-type': 'Permit type',
         'permit-valid-range': 'Valid range',
@@ -4852,7 +4853,7 @@
         'aqua-farm-information-employee-stats-helper': 'If the field is not applicable, a 0 (zero) must be entered',
         'aqua-farm-count-error': 'The sum of the values by ​columns ​does not match the sum from the previous table',
         'aqua-farm-costs-error': 'The value in the field of staff costs cannot be zero when there are men or women with pay.',
-        'aqua-farm-stat-form-exist-error': 'Statistical form already exists.', 
+        'aqua-farm-stat-form-exist-error': 'Statistical form already exists.',
 
         //Rework
         'rework-requester': 'Sender',
@@ -4989,7 +4990,7 @@
         'vessel-information-employee-stats-helper': 'If the field is not applicable, a 0 (zero) must be entered',
         'fish-vessel-count-error': 'The sum of the values by ​columns ​does not match the sum from the previous table',
         'fish-vessel-costs-error': 'The value in the field of staff costs cannot be zero when there are men or women with pay.',
-        'fish-vessel-stat-form-exist-error': 'Statistical form already exists.', 
+        'fish-vessel-stat-form-exist-error': 'Statistical form already exists.',
 
         'ship-no-fishing-capacity-error': 'The vessel is not from the Black Sea fleet'
     },
