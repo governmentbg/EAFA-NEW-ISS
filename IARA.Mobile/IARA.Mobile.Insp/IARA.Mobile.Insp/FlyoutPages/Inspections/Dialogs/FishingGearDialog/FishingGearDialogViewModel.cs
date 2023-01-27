@@ -119,6 +119,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
 
         private Task OnSave()
         {
+            Validation.Force();
+
+            if (!Validation.IsValid)
+            {
+                return Task.CompletedTask;
+            }
+
             InspectedFishingGearEnum? checkValue = Enum.TryParse(Corresponds.Value, out InspectedFishingGearEnum checkType)
                 ? new InspectedFishingGearEnum?(checkType)
                 : null;

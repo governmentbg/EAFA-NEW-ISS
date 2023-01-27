@@ -24,6 +24,8 @@ namespace IARA.Mobile.Insp.Models
         {
             AddPage = CommandBuilder.CreateFrom<string>(OnAddPage);
 
+            Pages = new List<LogBookPageDto>();
+
             this.AddValidation();
 
             AddedByInspectorState.IsValid = true;

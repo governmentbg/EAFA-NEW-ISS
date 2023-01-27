@@ -187,6 +187,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public quotaAquaticOrganismsForm: FormGroup | undefined; // need only for CatchQuotaSpecies Permit License
     public quotaAquaticOrganisms: QuotaAquaticOrganismDTO[] = []; // need only for CatchQuotaSpecies Permit License
     public suspensions: SuspensionDataDTO[] = []; // needed only when RecordType == Register
+    public allPermits: PermitNomenclatureDTO[] = [] //needed only when RecordType == Application && PageCode is PermitLicense/Quota/PoundNetLicense
     public permits: PermitNomenclatureDTO[] = []; // needed only when RecordType == Application && PageCode is PermitLicense/Quota/PoundNetLicense
 
     public submittedForLabel: string = '';
@@ -389,7 +390,10 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public async dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): Promise<void> {
         let applicationAction: boolean = false;
 
-        if (actionInfo.id === 'copy-data-from-old-permit-license') {
+        if (actionInfo.id === 'suspend') {
+            this.addEditSuspension(undefined, false, dialogClose);
+        }
+        else if (actionInfo.id === 'copy-data-from-old-permit-license') {
             this.copyDataFromOldPermitLicenseBtnClicked();
         }
         else if (actionInfo.id === 'copy-data-from-permit') {
@@ -449,8 +453,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                             return this.saveBtnClicked(actionInfo, dialogClose); break;
                         case 'save-and-start-permit-license':
                             return this.saveAndStartPermitLicenseBtnClicked(actionInfo, dialogClose); break;
-                        case 'suspend':
-                            this.addEditSuspension(); break;
+                        default:
+                            throw new Error(`Unknown action identifier in commercial fishing component: ${actionInfo.id}`);
                     }
                 }
             }
@@ -460,15 +464,17 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         }
     }
 
-    public addEditSuspension(suspension?: SuspensionDataDTO, viewMode: boolean = false): void {
+    public addEditSuspension(suspension?: SuspensionDataDTO, viewMode: boolean = false, dialogClose?: DialogCloseCallback): void {
         let data: SuspnesionDataDialogParams;
         let headerAuditBtn: IHeaderAuditButton | undefined;
         let headerTitle: string = '';
 
-        if (suspension !== undefined) {
+        if (suspension !== null && suspension !== undefined) { // edit
             data = new SuspnesionDataDialogParams({
                 model: suspension!,
                 isPermit: !this.isPermitLicense,
+                recordId: this.id,
+                pageCode: this.pageCode,
                 viewMode: viewMode || this.isReadonly,
                 service: this.service
             });
@@ -506,11 +512,14 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 headerTitle = this.translationService.getValue('commercial-fishing.edit-suspension-dialog-title');
             }
         }
-        else {
+        else { // add
             data = new SuspnesionDataDialogParams({
                 viewMode: viewMode || this.isReadonly,
                 isPermit: !this.isPermitLicense,
-                service: this.service
+                recordId: this.id,
+                pageCode: this.pageCode,
+                service: this.service,
+                postOnAdd: true
             });
 
             headerTitle = this.translationService.getValue('commercial-fishing.add-suspension-dialog-title');
@@ -532,16 +541,22 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             next: (result: SuspensionDataDTO | undefined) => {
                 if (result !== null && result !== undefined) {
                     this.hasShipEventExistsOnSameDateError = false;
+                    let isAdd: boolean = false;
 
-                    if (suspension !== null && suspension !== undefined) {
+                    if (suspension !== null && suspension !== undefined) { // edit
                         suspension = result;
                     }
                     else {
                         this.suspensions.push(result);
+                        isAdd = true;
                     }
 
                     this.suspensions = this.suspensions.slice();
                     this.form.updateValueAndValidity({ onlySelf: true });
+
+                    if (isAdd && dialogClose !== null && dialogClose !== undefined) { // при добавяне на ново прекратяване, трябва да е запазено към базата и затваряме диалога
+                        dialogClose(this.model.id);
+                    }
                 }
             }
         });
@@ -778,6 +793,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                             this.getShipPermitsNomenclature(ship.value!);
                         }
                         else {
+                            this.allPermits = [];
                             this.permits = [];
                             this.form.get('permitLicensePermitControl')!.reset();
                             this.form.get('permitLicensePermitControl')!.updateValueAndValidity();
@@ -1977,7 +1993,10 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
             this.form.get('waterTypeControl')!.valueChanges.subscribe({
                 next: (waterType: NomenclatureDTO<number> | undefined) => {
-                    if (this.isPermitLicense) { // filter aquatic organisms and recalculate tariffs
+                    if (this.isPermitLicense) { // filter aquatic organisms, filter permits and recalculate tariffs
+
+                        this.filterPermitsByWaterTypeAndSelectIfOne();
+
                         if (waterType !== null && waterType !== undefined) {
                             const waterTypeCode: WaterTypesEnum = WaterTypesEnum[waterType.code as keyof typeof WaterTypesEnum];
                             this.fileterAquaticOrganismTypesByWaterType(waterTypeCode);
@@ -2313,21 +2332,41 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     private getShipPermitsNomenclature(shipId: number): void {
         this.service.getPermitNomenclatures(shipId, this.pageCode === PageCodeEnum.PoundnetCommFishLic).subscribe({
             next: (values: PermitNomenclatureDTO[]) => {
-                this.permits = values;
+                this.allPermits = values;
 
-                if (this.model instanceof CommercialFishingApplicationEditDTO) {
-                    const permitId: number | undefined = this.model.permitLicensePermitId;
-                    if (permitId !== null && permitId !== undefined) {
-                        this.form.get('permitLicensePermitControl')!.setValue(this.permits.find(x => x.value === permitId));
-                    }
-                    else {
-                        if (this.permits.filter(x => x.isActive).length === 1) { // Ако има само едно разрешително възможно за избор, направо го избираме
-                            this.form.get('permitLicensePermitControl')!.setValue(this.permits.filter(x => x.isActive)[0]);
-                        }
-                    }
-                }
+                this.filterPermitsByWaterTypeAndSelectIfOne();
             }
         });
+    }
+
+    private filterPermitsByWaterTypeAndSelectIfOne(): void {
+        const waterType: NomenclatureDTO<number> | undefined = this.form.get('waterTypeControl')!.value;
+
+        if (waterType !== null && waterType !== undefined) { // should filter permits
+            switch (waterType.code) {
+                case WaterTypesEnum[WaterTypesEnum.BLACK_SEA]:
+                case WaterTypesEnum[WaterTypesEnum.DANUBE]: {
+                    this.permits = this.allPermits.filter(x => x.waterTypeId === waterType.value);
+                } break;
+            }
+        }
+        else {
+            this.permits = this.allPermits.slice();
+        }
+
+        if (this.model instanceof CommercialFishingApplicationEditDTO) {
+            const permitId: number | undefined = this.model.permitLicensePermitId;
+            this.form.get('permitLicensePermitControl')!.setValue(undefined);
+
+            if (permitId !== null && permitId !== undefined) {
+                this.form.get('permitLicensePermitControl')!.setValue(this.permits.find(x => x.value === permitId));
+            }
+            else {
+                if (this.permits.filter(x => x.isActive).length === 1) { // Ако има само едно разрешително възможно за избор, направо го избираме
+                    this.form.get('permitLicensePermitControl')!.setValue(this.permits.filter(x => x.isActive)[0]);
+                }
+            }
+        }
     }
 
     private createAndFilterPoundNets(poundNets: PoundNetNomenclatureDTO[]): void {
@@ -3080,7 +3119,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 if (ShipsUtils.hasBlackSeaPermitAppl(ship)) {
                     return { 'shipHasBlackSeaPermit': true };
                 }
-                else {
+                else if (!ShipsUtils.hasBlackSeaPermit(ship)) {
                     return { 'shipHasNoBlackSeaPermit': true };
                 }
             }
@@ -3092,7 +3131,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 if (ShipsUtils.hasDanubePermitAppl(ship)) {
                     return { 'shipHasDanubePermit': true };
                 }
-                else {
+                else if (!ShipsUtils.hasDanubePermit(ship)) {
                     return { 'shipHasNoDanubePermit': true };
                 }
             }

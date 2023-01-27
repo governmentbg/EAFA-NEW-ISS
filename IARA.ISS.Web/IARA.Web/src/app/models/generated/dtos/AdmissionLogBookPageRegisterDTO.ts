@@ -18,7 +18,7 @@ export class AdmissionLogBookPageRegisterDTO {
     public pageNumber?: number;
 
     @StrictlyTyped(Boolean)
-    public isLogBookFinished?: boolean;
+    public isLogBookFinishedOrSuspended?: boolean;
 
     @StrictlyTyped(String)
     public acceptedPersonNames?: string;

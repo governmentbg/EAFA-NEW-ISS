@@ -50,7 +50,7 @@
                              columnName="{{ 'legal-entities-page.active-users-count' | tlTranslate }}">
                 </data-column>
 
-                <data-template-column [flexRate]="0.2" [headerClass]="'justify-center'">
+                <data-template-column [flexRate]="0.2" [headerClass]="'multi-line justify-center'">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row" fxLayoutAlign="end center">
                             <tl-icon-button *ngIf="canReadApplications"

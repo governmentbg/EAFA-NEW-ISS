@@ -295,13 +295,23 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             next: (rows: LogBookRegisterDTO[] | undefined) => {
                 if (rows !== null && rows !== undefined && rows.length > 0) {
                     setTimeout(() => {
-                        const buttons = this.getMainTableButtons();
-                        for (const button of buttons) {
-                            const row = rows!.find(x => x.id!.toString() === button.getAttribute('data-logbook-id'));
+                        const iconButtons = this.getMainTableButtons();
+                        for (const iconButton of iconButtons) {
+                            const row = rows!.find(x => x.id!.toString() === iconButton.getAttribute('data-logbook-id'));
 
                             if (row !== null && row !== undefined) {
-                                if (row.isShipForbiddenForPages || row.isLogBookFinished || row.isLogBookSuspended) {
+                                if (iconButton.getAttribute('no-enable') === 'true' && (row.isShipForbiddenForPages || row.isLogBookFinished || row.isLogBookSuspended)) {
+                                    const button = iconButton.getElementsByTagName('button')[0];
+
                                     button.disabled = true;
+                                    button.style.opacity = '0.26';
+                                }
+                                else {
+                                    const button = iconButton.getElementsByTagName('button')[0];
+
+                                    button.disabled = false;
+                                    button.style.opacity = '1';
+                                    button.style.cursor = 'pointer';
                                 }
                             }
                         }
@@ -1032,7 +1042,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         return result;
     }
 
-    private getMainTableButtons(): HTMLButtonElement[] {
+    private getMainTableButtons(): Element[] {
         return Array.from(document.querySelectorAll('[data-logbook-id]'));
     }
 

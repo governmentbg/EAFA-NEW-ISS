@@ -18,6 +18,7 @@ import { PoundNetNomenclatureDTO } from '@app/models/generated/dtos/PoundNetNome
 import { QualifiedFisherNomenclatureDTO } from '@app/models/generated/dtos/QualifiedFisherNomenclatureDTO';
 import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
 import { PermitLicenseTariffCalculationParameters } from '@app/components/common-app/commercial-fishing/models/permit-license-tariff-calculation-parameters.model';
+import { SuspensionDataDTO } from '@app/models/generated/dtos/SuspensionDataDTO';
 
 export interface ICommercialFishingService extends IApplicationsActionsService {
     getAllPermits(request: GridRequestModel<CommercialFishingRegisterFilters>): Observable<GridResultModel<CommercialFishingPermitRegisterDTO>>;
@@ -37,6 +38,8 @@ export interface ICommercialFishingService extends IApplicationsActionsService {
     getPermitLicenseFisherPhotoFromApplication(applicationId: number): Observable<string>;
     getPermitFisherPhoto(id: number): Observable<string>;
     getPermitFisherPhotoFromApplication(applicationId: number): Observable<string>;
+
+    addSuspension(suspension: SuspensionDataDTO, id: number, pageCode: PageCodeEnum): Observable<void>;
 
     deletePermit(id: number, pageCode: PageCodeEnum): Observable<void>;
     undoDeletePermit(id: number, pageCode: PageCodeEnum): Observable<void>;

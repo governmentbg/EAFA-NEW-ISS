@@ -31,7 +31,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public InspectionPageViewModel Inspection { get; }
 
-        public ValidStateValidatableTable<WaterFishingGearModel> FishingGears { get; set; }
+        public ValidStateTable<WaterFishingGearModel> FishingGears { get; set; }
 
         public ICommand Review { get; }
         public ICommand Add { get; }
@@ -62,7 +62,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 fishingGear.Marks = result.Marks;
                 fishingGear.Type = result.Type;
                 fishingGear.Dto = result.Dto;
-                fishingGear.AllChanged();
+
+                FishingGears.Value.Replace(fishingGear, result);
             }
         }
 

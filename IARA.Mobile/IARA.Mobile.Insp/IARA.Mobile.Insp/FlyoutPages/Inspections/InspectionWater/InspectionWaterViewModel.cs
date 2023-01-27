@@ -173,24 +173,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
 
                 if (Edit.Vessels?.Count > 0)
                 {
-                    foreach (WaterInspectionVesselDto vessel in Edit.Vessels)
-                    {
-                        Vessels.Vessels.Value.Add(new WaterVesselModel
-                        {
-                            Dto = vessel,
-                        });
-                    }
+                    Vessels.Vessels.Value.AddRange(Edit.Vessels);
                 }
 
                 if (Edit.Engines?.Count > 0)
                 {
-                    foreach (WaterInspectionEngineDto engine in Edit.Engines)
-                    {
-                        Engines.Engines.Value.Add(new EngineModel
-                        {
-                            Dto = engine,
-                        });
-                    }
+                    Engines.Engines.Value.AddRange(Edit.Engines);
                 }
 
                 if (Edit.Catches?.Count > 0)

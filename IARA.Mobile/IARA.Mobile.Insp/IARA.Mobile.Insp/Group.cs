@@ -19,6 +19,7 @@
         public const string DOCUMENT = "DOCUMENT";
         public const string ACCEPT_AGREEMENT = "AcceptAgreement";
         public const string IS_REQUIRED = "IsRequired";
+        public const string IS_TRANSHIPMENT_ALLOWED = "IsTranshipmentAllowed";
         public const string IS_WATER_VEHICLE = nameof(IS_WATER_VEHICLE);
     }
 }

@@ -7,7 +7,6 @@ using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
-using IARA.Mobile.Insp.Models;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Base;
@@ -15,7 +14,7 @@ using TechnoLogica.Xamarin.ViewModels.Models;
 
 namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.EngineDialog
 {
-    public class EngineDialogViewModel : TLBaseDialogViewModel<EngineModel>
+    public class EngineDialogViewModel : TLBaseDialogViewModel<WaterInspectionEngineDto>
     {
         private bool _isTaken;
         private bool _isStored;
@@ -31,7 +30,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.EngineDialog
 
         public EnginesViewModel Engines { get; set; }
 
-        public EngineModel Edit { get; set; }
+        public WaterInspectionEngineDto Edit { get; set; }
 
         public ViewActivityType DialogType { get; set; }
 
@@ -76,15 +75,15 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.EngineDialog
         {
             if (Edit != null)
             {
-                Id = Edit.Dto.Id;
-                IsStored = Edit.Dto.IsStored;
-                IsTaken = Edit.Dto.IsTaken;
-                Model.AssignFrom(Edit.Dto.Model);
-                Power.AssignFrom(Edit.Dto.Power);
-                Type.AssignFrom(Edit.Dto.Type);
-                TotalCount.AssignFrom(Edit.Dto.TotalCount);
-                Location.AssignFrom(Edit.Dto.StorageLocation);
-                EngineDescription.AssignFrom(Edit.Dto.EngineDescription);
+                Id = Edit.Id;
+                IsStored = Edit.IsStored;
+                IsTaken = Edit.IsTaken;
+                Model.AssignFrom(Edit.Model);
+                Power.AssignFrom(Edit.Power);
+                Type.AssignFrom(Edit.Type);
+                TotalCount.AssignFrom(Edit.TotalCount);
+                Location.AssignFrom(Edit.StorageLocation);
+                EngineDescription.AssignFrom(Edit.EngineDescription);
 
                 if (DialogType == ViewActivityType.Edit)
                 {
@@ -97,9 +96,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.EngineDialog
 
         private Task OnSave()
         {
-            return HideDialog(new EngineModel
+            Validation.Force();
+
+            if (Validation.IsValid)
             {
-                Dto = new WaterInspectionEngineDto
+                return HideDialog(new WaterInspectionEngineDto
                 {
                     Id = Id,
                     IsStored = IsStored,
@@ -110,8 +111,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.EngineDialog
                     TotalCount = ParseHelper.ParseInteger(TotalCount),
                     Type = Type,
                     EngineDescription = EngineDescription,
-                }
-            });
+                });
+            }
+
+            return Task.CompletedTask;
         }
     }
 }

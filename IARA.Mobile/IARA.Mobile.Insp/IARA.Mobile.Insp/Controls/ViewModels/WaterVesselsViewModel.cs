@@ -21,31 +21,31 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         {
             Inspection = inspection;
 
-            Review = CommandBuilder.CreateFrom<WaterVesselModel>(OnReview);
+            Review = CommandBuilder.CreateFrom<WaterInspectionVesselDto>(OnReview);
             Add = CommandBuilder.CreateFrom(OnAdd);
-            Edit = CommandBuilder.CreateFrom<WaterVesselModel>(OnEdit);
-            Remove = CommandBuilder.CreateFrom<WaterVesselModel>(OnRemove);
+            Edit = CommandBuilder.CreateFrom<WaterInspectionVesselDto>(OnEdit);
+            Remove = CommandBuilder.CreateFrom<WaterInspectionVesselDto>(OnRemove);
 
             this.AddValidation();
         }
 
         public InspectionPageViewModel Inspection { get; }
 
-        public ValidStateValidatableTable<WaterVesselModel> Vessels { get; set; }
+        public ValidStateTable<WaterInspectionVesselDto> Vessels { get; set; }
 
         public ICommand Review { get; }
         public ICommand Add { get; }
         public ICommand Edit { get; }
         public ICommand Remove { get; }
 
-        private Task OnReview(WaterVesselModel model)
+        private Task OnReview(WaterInspectionVesselDto model)
         {
             return TLDialogHelper.ShowDialog(new WaterVesselDialog(this, Inspection, ViewActivityType.Review, model));
         }
 
         private async Task OnAdd()
         {
-            WaterVesselModel result = await TLDialogHelper.ShowDialog(new WaterVesselDialog(this, Inspection, ViewActivityType.Add));
+            WaterInspectionVesselDto result = await TLDialogHelper.ShowDialog(new WaterVesselDialog(this, Inspection, ViewActivityType.Add));
 
             if (result != null)
             {
@@ -53,18 +53,17 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             }
         }
 
-        private async Task OnEdit(WaterVesselModel vessel)
+        private async Task OnEdit(WaterInspectionVesselDto vessel)
         {
-            WaterVesselModel result = await TLDialogHelper.ShowDialog(new WaterVesselDialog(this, Inspection, ViewActivityType.Edit, vessel));
+            WaterInspectionVesselDto result = await TLDialogHelper.ShowDialog(new WaterVesselDialog(this, Inspection, ViewActivityType.Edit, vessel));
 
             if (result != null)
             {
-                vessel.Dto = result.Dto;
-                vessel.AllChanged();
+                Vessels.Value.Replace(vessel, result);
             }
         }
 
-        private async Task OnRemove(WaterVesselModel vessel)
+        private async Task OnRemove(WaterInspectionVesselDto vessel)
         {
             bool result = await App.Current.MainPage.DisplayAlert(null,
                 TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/DeleteMessage"],
@@ -82,7 +81,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         {
             return viewModel == null
                 ? new List<WaterInspectionVesselDto>()
-                : viewModel.Vessels.Select(f => f.Dto).ToList();
+                : viewModel.Vessels.ToList();
         }
     }
 }

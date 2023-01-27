@@ -176,6 +176,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.InspectorDialog
 
         private Task OnSave()
         {
+            Validation.Force();
+
+            if (!Validation.IsValid)
+            {
+                return Task.CompletedTask;
+            }
+
             InspectorDuringInspectionDto inspector;
 
             if (IsRegistered)

@@ -44,6 +44,12 @@
                         <div *ngIf="!showEnacmentDate" fxFlex="50"></div>
                     </div>
                 </div>
+                <mat-error *ngIf="form.errors?.suspensionValidToExists && isPermit">
+                    * {{ 'commercial-fishing.permit-suspension-valid-to-already-exists' | tlTranslate }}
+                </mat-error>
+                <mat-error *ngIf="form.errors?.suspensionValidToExists && !isPermit">
+                    * {{ 'commercial-fishing.permit-license-suspension-valid-to-already-exists' | tlTranslate }}
+                </mat-error>
             </div>
         </tl-card-content>
     </tl-card>

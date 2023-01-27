@@ -2956,6 +2956,8 @@
         'suspension-valid-from': 'Валидно от',
         'suspension-valid-to': 'Валидно до',
         'suspension-enactment-date': 'Дата на влизане в сила',
+        'permit-suspension-valid-to-already-exists': 'Вече съществува прекратяване за това разрешително до избраната дата',
+        'permit-license-suspension-valid-to-already-exists': 'Вече съществува прекратяване за това удостоверение до избраната дата',
         'suspension-order-number': 'Номер на заповед',
         'suspension-client-number': 'Номер на заявление',
         'suspension-valid-from-to': 'Валидност От-До',

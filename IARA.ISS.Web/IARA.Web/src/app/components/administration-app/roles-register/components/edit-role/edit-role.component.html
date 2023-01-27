@@ -76,7 +76,7 @@
                     </ng-template>
                 </ngx-datatable-column>
 
-                <ngx-datatable-column name="{{ 'roles-register.permission-read-all' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'justify-center'" [sortable]="false">
+                <ngx-datatable-column name="{{ 'roles-register.permission-read-all' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'multi-line justify-center'" [sortable]="false">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <tl-checkbox *ngIf="row.readAllPermission"
                                      [formControl]="form.controls.permissionsGroup.controls[row.readAllPermission.displayName]">
@@ -84,7 +84,7 @@
                     </ng-template>
                 </ngx-datatable-column>
 
-                <ngx-datatable-column name="{{ 'roles-register.permission-read' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'justify-center'" [sortable]="false">
+                <ngx-datatable-column name="{{ 'roles-register.permission-read' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'multi-line justify-center'" [sortable]="false">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <tl-checkbox *ngIf="row.readPermission"
                                      [formControl]="form.controls.permissionsGroup.controls[row.readPermission.displayName]">
@@ -92,7 +92,7 @@
                     </ng-template>
                 </ngx-datatable-column>
 
-                <ngx-datatable-column name="{{ 'roles-register.permission-add' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'justify-center'" [sortable]="false">
+                <ngx-datatable-column name="{{ 'roles-register.permission-add' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'multi-line justify-center'" [sortable]="false">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <tl-checkbox *ngIf="row.addPermission"
                                      [formControl]="form.controls.permissionsGroup.controls[row.addPermission.displayName]">
@@ -100,7 +100,7 @@
                     </ng-template>
                 </ngx-datatable-column>
 
-                <ngx-datatable-column name="{{ 'roles-register.permission-edit' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'justify-center'" [sortable]="false">
+                <ngx-datatable-column name="{{ 'roles-register.permission-edit' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'multi-line justify-center'" [sortable]="false">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <tl-checkbox *ngIf="row.editPermission"
                                      [formControl]="form.controls.permissionsGroup.controls[row.editPermission.displayName]">
@@ -108,7 +108,7 @@
                     </ng-template>
                 </ngx-datatable-column>
 
-                <ngx-datatable-column name="{{ 'roles-register.permission-delete' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'justify-center'" [sortable]="false">
+                <ngx-datatable-column name="{{ 'roles-register.permission-delete' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'multi-line justify-center'" [sortable]="false">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <tl-checkbox *ngIf="row.deletePermission"
                                      [formControl]="form.controls.permissionsGroup.controls[row.deletePermission.displayName]">
@@ -116,7 +116,7 @@
                     </ng-template>
                 </ngx-datatable-column>
 
-                <ngx-datatable-column name="{{ 'roles-register.permission-restore' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'justify-center'" [sortable]="false">
+                <ngx-datatable-column name="{{ 'roles-register.permission-restore' | tlTranslate }}" [flexGrow]="0.15" [headerClass]="'multi-line justify-center'" [sortable]="false">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <tl-checkbox *ngIf="row.restorePermission"
                                      [formControl]="form.controls.permissionsGroup.controls[row.restorePermission.displayName]">

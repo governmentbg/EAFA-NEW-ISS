@@ -187,6 +187,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.PatrolVehicleDialog
 
         private Task OnSave()
         {
+            Validation.Force();
+
+            if (!Validation.IsValid)
+            {
+                return Task.CompletedTask;
+            }
+
             VesselDuringInspectionDto patrolVehicle;
 
             if (IsRegistered)

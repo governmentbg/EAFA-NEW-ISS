@@ -241,35 +241,40 @@
                                             icon="visibility"
                                             (buttonClicked)="viewLogBook(row.data)"
                                             iconClass="accent-color"
-                                            tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}">
+                                            tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}"
+                                            [attr.data-logbook-id]="row.data.id">
                             </tl-icon-button>
 
                             <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.FirstSale && canReadFirstSaleLogBookRecords"
                                             icon="visibility"
                                             (buttonClicked)="viewLogBook(row.data)"
                                             iconClass="accent-color"
-                                            tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}">
+                                            tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}"
+                                            [attr.data-logbook-id]="row.data.id">
                             </tl-icon-button>
 
                             <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Admission &&  canReadAdmissionLogBookRecords"
                                             icon="visibility"
                                             (buttonClicked)="viewLogBook(row.data)"
                                             iconClass="accent-color"
-                                            tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}">
+                                            tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}"
+                                            [attr.data-logbook-id]="row.data.id">
                             </tl-icon-button>
 
                             <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Transportation && canReadTransportationLogBookRecords"
                                             icon="visibility"
                                             (buttonClicked)="viewLogBook(row.data)"
                                             iconClass="accent-color"
-                                            tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}">
+                                            tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}"
+                                            [attr.data-logbook-id]="row.data.id">
                             </tl-icon-button>
 
                             <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Aquaculture && canReadAquacultureLogBookRecords"
                                             icon="visibility"
                                             (buttonClicked)="viewLogBook(row.data)"
                                             iconClass="accent-color"
-                                            tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}">
+                                            tooltipText="{{ 'catches-and-sales.view-log-book' | tlTranslate }}"
+                                            [attr.data-logbook-id]="row.data.id">
                             </tl-icon-button>
 
                             <ng-container *ngIf="!row.data.isOnline">
@@ -278,6 +283,7 @@
                                                 (buttonClicked)="addLogBookPage(row.data)"
                                                 iconClass="accent-color"
                                                 size="1.5"
+                                                [attr.no-enable]="true"
                                                 [attr.data-logbook-id]="row.data.id"
                                                 [tooltipText]="row.data.isShipForbiddenForPages 
                                                                 ? shipForbiddenForPagesTooltip 
@@ -294,6 +300,7 @@
                                                 (buttonClicked)="addLogBookPage(row.data)"
                                                 iconClass="accent-color"
                                                 size="1.5"
+                                                [attr.no-enable]="true"
                                                 [attr.data-logbook-id]="row.data.id"
                                                 [tooltipText]="row.data.isLogBookFinished
                                                                 ? logBookFishinedTooltip
@@ -306,6 +313,7 @@
                                                 (buttonClicked)="addLogBookPage(row.data)"
                                                 iconClass="accent-color"
                                                 size="1.5"
+                                                [attr.no-enable]="true"
                                                 [attr.data-logbook-id]="row.data.id"
                                                 [tooltipText]="row.data.isLogBookFinished
                                                                 ? logBookFishinedTooltip
@@ -318,6 +326,7 @@
                                                 (buttonClicked)="addLogBookPage(row.data)"
                                                 iconClass="accent-color"
                                                 size="1.5"
+                                                [attr.no-enable]="true"
                                                 [attr.data-logbook-id]="row.data.id"
                                                 [tooltipText]="row.data.isLogBookFinished
                                                                 ? logBookFishinedTooltip
@@ -330,6 +339,7 @@
                                                 (buttonClicked)="addLogBookPage(row.data)"
                                                 iconClass="accent-color"
                                                 size="1.5"
+                                                [attr.no-enable]="true"
                                                 [attr.data-logbook-id]="row.data.id"
                                                 [tooltipText]="row.data.isLogBookFinished
                                                                 ? logBookFishinedTooltip

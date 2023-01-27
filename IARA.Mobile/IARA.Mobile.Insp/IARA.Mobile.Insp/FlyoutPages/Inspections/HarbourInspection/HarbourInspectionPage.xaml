@@ -40,10 +40,12 @@
                         Text="{rt:Translate HasTranshipment, Group=HarbourInspection}" />
                 <lc:InspectedShipDataView BindingContext="{Binding TransshippedShip}"
                         ShipInRegisterLabel="{rt:Translate TranshipmentShipInRegister, Group=HarbourInspection}"
-                        IsVisible="{Binding BindingContext.HasTranshipment, Source={Reference page}}" />
+                        IsVisible="{Binding BindingContext.HasTranshipment, Source={Reference page}}"
+                        IsEnabled="{Binding BindingContext.HasTranshipment, Source={Reference page}}" />
                 <lc:CatchInspectionsView Title="{rt:Translate TransshippedCatches, Group=HarbourInspection}"
                         BindingContext="{Binding TransshippedCatches}"
-                        IsVisible="{Binding BindingContext.HasTranshipment, Source={Reference page}}" />
+                        IsVisible="{Binding BindingContext.HasTranshipment, Source={Reference page}}"
+                        IsEnabled="{Binding BindingContext.HasTranshipment, Source={Reference page}}" />
                 <tl:TLEditor Title="{rt:Translate ObservationsOrViolations, Group=GeneralInfo}"
                         ValidState="{Binding TransshipmentObservation}"
                         IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}"

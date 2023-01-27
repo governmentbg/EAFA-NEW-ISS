@@ -28,7 +28,7 @@
   <ItemGroup>
     <PackageReference Include="IdentityModel.OidcClient" Version="5.2.1" />
     <PackageReference Include="Rg.Plugins.Popup" Version="2.1.0" />
-    <PackageReference Include="TechnoLogica.Xamarin" Version="3.4.38977" />
+    <PackageReference Include="TechnoLogica.Xamarin" Version="3.4.47446" />
     <PackageReference Include="Xamarin.CommunityToolkit" Version="2.0.5" />
     <PackageReference Include="Xamarin.Controls.SignaturePad.Forms" Version="3.0.0" />
     <PackageReference Include="Xamarin.Essentials" Version="1.7.4" />

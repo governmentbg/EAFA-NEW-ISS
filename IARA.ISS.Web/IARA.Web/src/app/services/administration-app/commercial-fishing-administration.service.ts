@@ -45,11 +45,13 @@ import { TransportationLogBookPageRegisterDTO } from '@app/models/generated/dtos
 import { AquacultureLogBookPageRegisterDTO } from '@app/models/generated/dtos/AquacultureLogBookPageRegisterDTO';
 import { ShipLogBookPageRegisterDTO } from '@app/models/generated/dtos/ShipLogBookPageRegisterDTO';
 import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
+import { SuspensionDataDTO } from '@app/models/generated/dtos/SuspensionDataDTO';
+import { ISuspensionService } from '@app/interfaces/common-app/suspension.interface';
 
 @Injectable({
     providedIn: 'root'
 })
-export class CommercialFishingAdministrationService extends ApplicationsRegisterAdministrativeBaseService implements ICommercialFishingService, ILogBookService {
+export class CommercialFishingAdministrationService extends ApplicationsRegisterAdministrativeBaseService implements ICommercialFishingService, ILogBookService, ISuspensionService {
     protected controller: string = 'CommercialFishingAdministration';
 
     private readonly translate: FuseTranslationLoaderService;
@@ -126,6 +128,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'GetPermitLicense';
                 break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
         }
 
         return this.requestService.get<CommercialFishingEditDTO>(this.area, this.controller, serviceMethod, {
@@ -172,6 +176,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'GetPermitLicenseRegisterByApplicationId';
                 break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode!]}`);
         }
 
         return this.requestService.get(this.area, this.controller, serviceMethod, {
@@ -200,6 +206,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
                     params = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
                 }
                 break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
         }
 
         return this.requestService.post(this.area, this.controller, serviceMethod, permit, {
@@ -232,6 +240,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
                     params = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
                 }
                 break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
         }
 
         const registerDto: RegisterDTO<CommercialFishingEditDTO> = new RegisterDTO<CommercialFishingEditDTO>({
@@ -258,6 +268,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.CatchQuataSpecies:
                 methodName = 'DownloadPermitLicenseRegister';
                 break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
         }
 
         const params = new HttpParams().append('registerId', id.toString());
@@ -284,6 +296,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
                     params = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
                 }
                 break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
         }
 
         return this.requestService.post(this.area, this.controller, serviceMethod, permit, {
@@ -316,6 +330,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
                     params = new HttpParams().append('ignoreLogBookConflicts', ignoreLogBookConflicts.toString());
                 }
                 break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
         }
 
         const register: RegisterDTO<CommercialFishingEditDTO> = new RegisterDTO<CommercialFishingEditDTO>({
@@ -368,6 +384,32 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         });
     }
 
+    public addSuspension(suspension: SuspensionDataDTO, id: number, pageCode: PageCodeEnum): Observable<void> {
+        let params: HttpParams = new HttpParams();
+        let serviceMethod: string = '';
+
+        switch (pageCode) {
+            case PageCodeEnum.CommFish:
+            case PageCodeEnum.PoundnetCommFish:
+            case PageCodeEnum.RightToFishThirdCountry: {
+                serviceMethod = 'AddPermitSuspension';
+                params = params.append('permitId', id.toString());
+            } break;
+            case PageCodeEnum.RightToFishResource:
+            case PageCodeEnum.PoundnetCommFishLic:
+            case PageCodeEnum.CatchQuataSpecies: {
+                serviceMethod = 'AddPermitLicenseSuspension';
+                params = params.append('permitLicenseId', id.toString());
+            } break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
+        }
+
+        return this.requestService.post(this.area, this.controller, serviceMethod, suspension, {
+            httpParams: params
+        });
+    }
+
     public deletePermit(id: number, pageCode: PageCodeEnum): Observable<void> {
         const params = new HttpParams().append('id', id.toString());
         let serviceMethod: string = '';
@@ -383,6 +425,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'DeletePermitLicense';
                 break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
         }
 
         return this.requestService.delete(this.area, this.controller, serviceMethod, { httpParams: params });
@@ -403,6 +447,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'UndoDeletePermitLicense';
                 break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
         }
 
         return this.requestService.patch(this.area, this.controller, serviceMethod, null, { httpParams: params });
@@ -617,6 +663,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'GetPermitLicenseApplication';
                 break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
         }
 
         return this.requestService.get(this.area, this.controller, serviceMethod, {
@@ -667,6 +715,9 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.PoundnetCommFishLic:
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'GetPermitLicenseRegixData';
+                break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
         }
 
         return this.requestService.get(this.area, this.controller, serviceMethod, {
@@ -690,6 +741,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'GetPermitLicenseApplicationDataForRegister';
                 break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
         }
 
         return this.requestService.get(this.area, this.controller, serviceMethod, {
@@ -718,6 +771,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'AddPermitLicenseApplication';
                 break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
         }
 
         return this.requestService.post(this.area, this.controller, serviceMethod, application, {
@@ -747,6 +802,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'EditPermitLicenseApplication';
                 break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
         }
 
         return this.requestService.post(this.area, this.controller, serviceMethod, application, {
@@ -758,7 +815,7 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
     public editApplicationDataAndStartRegixChecks(model: IApplicationRegister): Observable<void> {
         let serviceMethod: string = '';
 
-        switch (model.pageCode) {
+        switch (model.pageCode!) {
             case PageCodeEnum.CommFish:
             case PageCodeEnum.PoundnetCommFish:
             case PageCodeEnum.RightToFishThirdCountry:
@@ -769,6 +826,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'EditPermitLicenseApplicationAndStartRegixChecks';
                 break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[model.pageCode!]}`);
         }
 
         return this.requestService.post(this.area, this.controller, serviceMethod, model, {
@@ -849,10 +908,10 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
                 const captain: string = this.translate.getValue('commercial-fishing.permit-nomenclature-captain');
 
                 if (permit.displayName !== null && permit.displayName !== undefined && permit.displayName!.length > 0) {
-                    permit.displayName += ` | ${shipOwnerNamesResource}: ${permit.shipOwnerName} | ${captain}: ${permit.captainName}`;
+                    permit.displayName += ` | ${permit.waterTypeName} | ${shipOwnerNamesResource}: ${permit.shipOwnerName} | ${captain}: ${permit.captainName}`;
                 }
                 else {
-                    permit.displayName = `${shipOwnerNamesResource}: ${permit.shipOwnerName} | ${captain}: ${permit.captainName}`;
+                    permit.displayName = `${permit.waterTypeName} | ${shipOwnerNamesResource}: ${permit.shipOwnerName} | ${captain}: ${permit.captainName}`;
                 }
             }
 

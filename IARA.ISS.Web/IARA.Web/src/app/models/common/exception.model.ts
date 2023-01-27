@@ -57,5 +57,7 @@ export enum ErrorCode {
     MaxNumberMissingPagesExceeded = 38,
     MoreThanOneActiveOnlineLogBook = 39,
     CannotDeletePermitWithLicense = 40,
-    CannotDeleteLicenseWithLogBooks = 41
+    CannotDeleteLicenseWithLogBooks = 41,
+    PermitSuspensionValidToExists = 42,
+    PermitLicenseSuspensionValidToExists = 43
 }

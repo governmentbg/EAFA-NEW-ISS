@@ -35,4 +35,10 @@ export class PermitNomenclatureDTO extends NomenclatureDTO<number> {
 
     @StrictlyTyped(Number)
     public captainId?: number;
+
+    @StrictlyTyped(Number)
+    public waterTypeId?: number;
+
+    @StrictlyTyped(String)
+    public waterTypeName?: string;
 }

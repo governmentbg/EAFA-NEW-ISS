@@ -1,6 +1,7 @@
 ﻿import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
@@ -13,9 +14,11 @@ import { SuspensionTypeNomenclatureDTO } from '@app/models/generated/dtos/Suspen
 import { SuspensionReasonNomenclatureDTO } from '@app/models/generated/dtos/SuspensionReasonNomenclatureDTO';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
-import { ICommercialFishingService } from '@app/interfaces/common-app/commercial-fishing.interface';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { CommercialFishingSuspensionTypesEnum } from '@app/enums/commercial-fishing-suspension-types.enum';
+import { ISuspensionService } from '@app/interfaces/common-app/suspension.interface';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 
 
 @Component({
@@ -36,12 +39,19 @@ export class EditSuspensionComponent implements OnInit, AfterViewInit, IDialogCo
     public suspensionNumberLabel: string = '';
 
     private model!: SuspensionDataDTO;
-    private service!: ICommercialFishingService;
+    private service!: ISuspensionService;
     private translate: FuseTranslationLoaderService;
+
+    private postOnAdd: boolean = false;
+    private pageCode!: PageCodeEnum;
+    private recordId!: number;
+    private hasSuspensionValidToExistsError: boolean = false;
 
     public constructor(translate: FuseTranslationLoaderService) {
         this.translate = translate;
+
         this.suspensionNumberLabel = this.translate.getValue('commercial-fishing.suspension-order-number');
+
         this.buildForm();
     }
 
@@ -146,6 +156,9 @@ export class EditSuspensionComponent implements OnInit, AfterViewInit, IDialogCo
         this.readOnly = data.viewMode;
         this.isPermit = data.isPermit;
         this.service = data.service;
+        this.postOnAdd = data.postOnAdd;
+        this.pageCode = data.pageCode;
+        this.recordId = data.recordId;
 
         if (data.model === null || data.model === undefined) {
             this.model = new SuspensionDataDTO({ isActive: true });
@@ -153,9 +166,11 @@ export class EditSuspensionComponent implements OnInit, AfterViewInit, IDialogCo
         }
         else {
             this.isAdd = false;
+
             if (this.readOnly) {
                 this.form.disable();
             }
+
             this.model = data.model;
             this.fillForm();
         }
@@ -166,13 +181,33 @@ export class EditSuspensionComponent implements OnInit, AfterViewInit, IDialogCo
             dialogClose(this.model);
             return;
         }
-        
+
         this.form.markAllAsTouched();
 
         if (this.form.valid) {
             this.fillModel();
             CommonUtils.sanitizeModelStrings(this.model);
-            dialogClose(this.model);
+
+            if (this.isAdd && this.postOnAdd) { // should save data in db
+                this.service.addSuspension(this.model, this.recordId, this.pageCode).subscribe({
+                    next: () => {
+                        dialogClose(this.model);
+                    },
+                    error: (errorResponse: HttpErrorResponse) => {
+                        if ((errorResponse.error as ErrorModel)?.code === ErrorCode.PermitSuspensionValidToExists) {
+                            this.hasSuspensionValidToExistsError = true;
+                            this.form.updateValueAndValidity({ emitEvent: false });
+                        }
+                        else if ((errorResponse.error as ErrorModel)?.code === ErrorCode.PermitLicenseSuspensionValidToExists) {
+                            this.hasSuspensionValidToExistsError = true;
+                            this.form.updateValueAndValidity({ emitEvent: false });
+                        }
+                    }
+                });
+            }
+            else { // the saving is left for the outher dialog
+                dialogClose(this.model);
+            }
         }
     }
 
@@ -193,6 +228,20 @@ export class EditSuspensionComponent implements OnInit, AfterViewInit, IDialogCo
             suspensionDateRangeControl: new FormControl(undefined, Validators.required),
             orderNumberControl: new FormControl(undefined, Validators.required),
             enactmentDateControl: new FormControl(undefined, Validators.required)
+        }, this.uniqueValidToValidator());
+
+        this.form.get('suspensionTypeControl')!.valueChanges.subscribe({
+            next: () => {
+                this.hasSuspensionValidToExistsError = false;
+                this.form.updateValueAndValidity({ emitEvent: false });
+            }
+        });
+
+        this.form.get('suspensionDateRangeControl')!.valueChanges.subscribe({
+            next: () => {
+                this.hasSuspensionValidToExistsError = false;
+                this.form.updateValueAndValidity({ emitEvent: false });
+            }
         });
     }
 
@@ -215,7 +264,22 @@ export class EditSuspensionComponent implements OnInit, AfterViewInit, IDialogCo
 
         this.model.validFrom = (this.form.get('suspensionDateRangeControl')!.value as DateRangeData)?.start;
         this.model.validTo = (this.form.get('suspensionDateRangeControl')!.value as DateRangeData)?.end;
+
         this.model.orderNumber = this.form.get('orderNumberControl')!.value;
         this.model.enactmentDate = this.form.get('enactmentDateControl')!.value;
+    }
+
+    private uniqueValidToValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === null || form === undefined) {
+                return null;
+            }
+
+            if (this.hasSuspensionValidToExistsError) {
+                return { 'suspensionValidToExists': true };
+            }
+
+            return null;
+        }
     }
 }

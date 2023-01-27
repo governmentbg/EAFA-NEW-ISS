@@ -131,6 +131,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialo
 
         private Task OnSave()
         {
+            Validation.Force();
+
+            if (!Validation.IsValid)
+            {
+                return Task.CompletedTask;
+            }
+
             return HideDialog(new WaterFishingGearModel
             {
                 Type = FishingGearType.Value,

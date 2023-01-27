@@ -68,6 +68,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ShipPickerDialog
 
         private Task OnPick()
         {
+            Validation.Force();
+
+            if (!Validation.IsValid)
+            {
+                return Task.CompletedTask;
+            }
+
             return HideDialog((Ship.GetShortName(), Ship));
         }
 

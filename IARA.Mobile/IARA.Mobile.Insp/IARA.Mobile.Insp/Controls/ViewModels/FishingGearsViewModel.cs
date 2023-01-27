@@ -36,7 +36,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public InspectionPageViewModel Inspection { get; }
         public bool HasPingers { get; }
 
-        public ValidStateValidatableTable<FishingGearModel> FishingGears { get; set; }
+        public ValidStateTable<FishingGearModel> FishingGears { get; set; }
 
         public List<FishingGearModel> AllFishingGears { get; set; }
 
@@ -118,7 +118,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 fishingGear.Count = result.Count;
                 fishingGear.NetEyeSize = result.NetEyeSize;
                 fishingGear.Dto = result.Dto;
-                fishingGear.AllChanged();
+
+                FishingGears.Value.Replace(fishingGear, result);
             }
         }
 

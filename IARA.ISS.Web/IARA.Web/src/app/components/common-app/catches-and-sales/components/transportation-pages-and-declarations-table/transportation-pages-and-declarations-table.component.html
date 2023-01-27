@@ -6,7 +6,7 @@
                [recordsPerPage]="recordsPerPage"
                (activeRecordChanged)="editTransportationLogBookPage($event, !$event.isActive 
                                                                              || $event.status === logBookPageStatusesEnum.Canceled
-                                                                             || $event.isLogBookFinished
+                                                                             || $event.isLogBookFinishedOrSuspended
                                                                              || !canEditTransportationLogBookRecords)">
     <data-template-column propertyName="PageNumber"
                           [flexRate]="0.2"
@@ -60,7 +60,7 @@
     <data-template-column *ngIf="showActionButtons" [flexRate]="0.2" [cellClass]="'justify-center'">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <div fxLayout="row wrap" fxLayoutAlign="end center">
-                <tl-icon-button *ngIf="!row.data.isLogBookFinished 
+                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended 
                                        && canCancelTransportationLogBookRecords 
                                        && row.data.status !== logBookPageStatusesEnum.Canceled
                                        && !row.data.consistsOriginProducts"
@@ -78,7 +78,7 @@
                                 tooltipText="{{ 'catches-and-sales.view-transportation-log-book-page' | tlTranslate }}">
                 </tl-icon-button>
 
-                <tl-icon-button *ngIf="!row.data.isLogBookFinished && canEditTransportationLogBookRecords && row.data.status !== logBookPageStatusesEnum.Canceled"
+                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended && canEditTransportationLogBookRecords && row.data.status !== logBookPageStatusesEnum.Canceled"
                                 icon="edit"
                                 (buttonClicked)="editTransportationLogBookPage(row.data, false)"
                                 iconClass="accent-color"

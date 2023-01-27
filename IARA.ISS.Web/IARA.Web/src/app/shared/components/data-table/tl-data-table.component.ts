@@ -275,73 +275,79 @@ export class TLDataTableComponent extends BaseTLDatatableComponent implements IT
     }
 
     private enableTableButtons(table: HTMLElement): void {
-        const buttons: HTMLButtonElement[] = Array.from(table.getElementsByTagName('button'));
+        setTimeout(() => {
+            let iconButtons: Element[] = Array.from(table.getElementsByTagName('tl-icon-button'));
+            
+            iconButtons = iconButtons.filter(x => x.getAttribute('no-enable') === null);
 
-        for (const button of buttons) {
-            button.disabled = false;
-            button.style.opacity = '1';
-            button.style.cursor = 'pointer';
-        }
-    }
+            for (const iconButton of iconButtons) {
+                const button = iconButton.getElementsByTagName('button')[0];
+
+                button.disabled = false;
+                button.style.opacity = '1';
+                button.style.cursor = 'pointer';
+            }
+        });
+}
 
     private enablePaginator(table: HTMLElement): void {
-        const paginator: HTMLElement | null = table.getElementsByTagName('datatable-pager').item(0) as HTMLElement;
+    const paginator: HTMLElement | null = table.getElementsByTagName('datatable-pager').item(0) as HTMLElement;
 
-        if (paginator) {
-            const links: HTMLAnchorElement[] = Array.from(paginator.getElementsByTagName('a'));
+if (paginator) {
+    const links: HTMLAnchorElement[] = Array.from(paginator.getElementsByTagName('a'));
 
-            for (const link of links) {
-                link.style.pointerEvents = 'initial';
+    for (const link of links) {
+        link.style.pointerEvents = 'initial';
 
-                const parent: HTMLElement | null = link.parentElement;
-                if (parent) {
-                    if (parent.className.includes('disabled')) {
-                        parent.style.cursor = 'not-allowed';
-                    }
-                    else {
-                        parent.style.cursor = 'pointer';
-                    }
-                }
+        const parent: HTMLElement | null = link.parentElement;
+        if (parent) {
+            if (parent.className.includes('disabled')) {
+                parent.style.cursor = 'not-allowed';
             }
-        }
-    }
-
-    private enableShowInactiveToggle(): void {
-        const header: HTMLElement | null = document.getElementsByClassName('tl-datatable-header').item(0) as HTMLElement;
-
-        if (header) {
-            const toggle: HTMLElement | null = header.getElementsByClassName('mat-slide-toggle').item(0) as HTMLElement;
-
-            if (toggle) {
-                toggle.style.opacity = '1';
-                toggle.style.cursor = 'pointer';
-
-                const input: HTMLInputElement | null = toggle.getElementsByTagName('input').item(0) as HTMLInputElement;
-                if (input) {
-                    input.disabled = false;
-
-                    const label: HTMLLabelElement | null = input.parentElement?.parentElement as HTMLLabelElement;
-                    if (label) {
-                        label.style.pointerEvents = 'initial';
-                        label.style.cursor = 'pointer';
-                    }
-                }
-            }
-        }
-    }
-
-    private enableExpandRowButtons(table: HTMLElement): void {
-        const links: HTMLAnchorElement[] = Array.from(table.getElementsByTagName('a'))
-            .filter((anchor: HTMLAnchorElement) => anchor.className.includes('datatable-icon'));
-
-        for (const link of links) {
-            link.style.pointerEvents = 'initial';
-            link.style.opacity = '1';
-
-            const parent: HTMLElement | null = link.parentElement?.parentElement as HTMLElement;
-            if (parent) {
+            else {
                 parent.style.cursor = 'pointer';
             }
         }
     }
+}
+    }
+
+    private enableShowInactiveToggle(): void {
+    const header: HTMLElement | null = document.getElementsByClassName('tl-datatable-header').item(0) as HTMLElement;
+
+if (header) {
+    const toggle: HTMLElement | null = header.getElementsByClassName('mat-slide-toggle').item(0) as HTMLElement;
+
+    if (toggle) {
+        toggle.style.opacity = '1';
+        toggle.style.cursor = 'pointer';
+
+        const input: HTMLInputElement | null = toggle.getElementsByTagName('input').item(0) as HTMLInputElement;
+        if (input) {
+            input.disabled = false;
+
+            const label: HTMLLabelElement | null = input.parentElement?.parentElement as HTMLLabelElement;
+            if (label) {
+                label.style.pointerEvents = 'initial';
+                label.style.cursor = 'pointer';
+            }
+        }
+    }
+}
+    }
+
+    private enableExpandRowButtons(table: HTMLElement): void {
+    const links: HTMLAnchorElement[] = Array.from(table.getElementsByTagName('a'))
+        .filter((anchor: HTMLAnchorElement) => anchor.className.includes('datatable-icon'));
+
+    for(const link of links) {
+        link.style.pointerEvents = 'initial';
+        link.style.opacity = '1';
+
+        const parent: HTMLElement | null = link.parentElement?.parentElement as HTMLElement;
+        if (parent) {
+            parent.style.cursor = 'pointer';
+        }
+    }
+}
 }

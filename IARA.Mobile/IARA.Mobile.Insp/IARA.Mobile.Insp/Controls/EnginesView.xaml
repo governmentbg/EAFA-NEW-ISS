@@ -4,7 +4,7 @@
         xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
         xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
         xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
-        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Application.DTObjects.Inspections;assembly=IARA.Mobile.Insp.Application"
         xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
         x:Class="IARA.Mobile.Insp.Controls.EnginesView"
         x:DataType="vm:EnginesViewModel"
@@ -12,27 +12,31 @@
         Title="{rt:Translate Title, Group=Engine}"
         ValidState="{Binding Engines}">
     <tl:TLResponsiveTable.TableColumns>
-        <tl:TLTableColumn Text="{rt:Translate Model, Group=Engine}" Width="*" />
-        <tl:TLTableColumn Text="{rt:Translate Power, Group=Engine}" Width="*" />
-        <tl:TLTableColumn Text="{rt:Translate TotalCount, Group=Engine}" Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate Model, Group=Engine}"
+                Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate Power, Group=Engine}"
+                Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate TotalCount, Group=Engine}"
+                Width="*" />
         <tl:TLTableColumn Width="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource ReviewDialogToWidth}, ConverterParameter=140, Source={Reference view}}" />
     </tl:TLResponsiveTable.TableColumns>
     <tl:TLResponsiveTable.DefaultItemTemplate>
         <DataTemplate>
-            <tl:TLTableRow x:DataType="m:EngineModel">
-                <Label Text="{Binding Dto.Model}"
+            <tl:TLTableRow x:DataType="m:WaterInspectionEngineDto">
+                <Label Text="{Binding Model}"
                         LineBreakMode="WordWrap"
                         VerticalOptions="Center"
                         IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
-                <Label Text="{Binding Dto.Power}"
+                <Label Text="{Binding Power}"
                         LineBreakMode="WordWrap"
                         VerticalOptions="Center"
                         IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
-                <Label Text="{Binding Dto.TotalCount}"
+                <Label Text="{Binding TotalCount}"
                         LineBreakMode="WordWrap"
                         VerticalOptions="Center"
                         IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
-                <StackLayout Orientation="Horizontal" VerticalOptions="Start">
+                <StackLayout Orientation="Horizontal"
+                        VerticalOptions="Start">
                     <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Eye}, Size=20, Color=White}"
                             Padding="10"
                             Command="{Binding BindingContext.Review, Source={Reference view}}"
@@ -41,15 +45,7 @@
                             Padding="10"
                             Command="{Binding BindingContext.Edit, Source={Reference view}}"
                             CommandParameter="{Binding}"
-                            IsVisible="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}">
-                        <ImageButton.Triggers>
-                            <DataTrigger TargetType="ImageButton"
-                                    Binding="{Binding Validity.IsValid}"
-                                    Value="False">
-                                <Setter Property="BackgroundColor" Value="{StaticResource ErrorColor}" />
-                            </DataTrigger>
-                        </ImageButton.Triggers>
-                    </ImageButton>
+                            IsVisible="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                     <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
                             Padding="10"
                             Command="{Binding BindingContext.Remove, Source={Reference view}}"
@@ -60,7 +56,8 @@
         </DataTemplate>
     </tl:TLResponsiveTable.DefaultItemTemplate>
     <tl:TLResponsivleTableChild TableLayout="Table" />
-    <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="800" />
+    <tl:TLResponsivleTableChild TableLayout="Sections"
+            QueryWidth="800" />
     <tl:TLResponsiveTable.FooterView>
         <Button Text="{rt:Translate AddEngine, Group=Engine}"
                 Command="{Binding Add}"
@@ -69,6 +66,7 @@
                 IsVisible="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
     </tl:TLResponsiveTable.FooterView>
     <tl:TLResponsiveTable.EmptyView>
-        <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
+        <Label Text="{rt:Translate NoInformation, Group=Common}"
+                Margin="20,10" />
     </tl:TLResponsiveTable.EmptyView>
 </tl:TLResponsiveTable>
