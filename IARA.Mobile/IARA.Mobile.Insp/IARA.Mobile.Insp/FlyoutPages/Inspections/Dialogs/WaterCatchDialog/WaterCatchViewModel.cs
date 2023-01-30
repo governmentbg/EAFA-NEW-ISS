@@ -139,6 +139,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterCatchDialog
 
         private Task OnSave()
         {
+            Validation.Force();
+
+            if (!Validation.IsValid)
+            {
+                return Task.CompletedTask;
+            }
+
             return HideDialog(new WaterCatchModel
             {
                 FishName = Fish.Value.DisplayValue,

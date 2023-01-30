@@ -28,11 +28,13 @@ import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
 import { OverlappingLogBooksParameters } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-parameters.model';
 import { RangeOverlappingLogBooksDTO } from '@app/models/generated/dtos/RangeOverlappingLogBooksDTO';
 import { CatchesAndSalesCommonService } from '@app/services/common-app/catches-and-sales-common.service';
+import { SuspensionDataDTO } from '@app/models/generated/dtos/SuspensionDataDTO';
+import { ISuspensionService } from '@app/interfaces/common-app/suspension.interface';
 
 @Injectable({
     providedIn: 'root'
 })
-export class CommercialFishingPublicService extends ApplicationsRegisterPublicBaseService implements ICommercialFishingService {
+export class CommercialFishingPublicService extends ApplicationsRegisterPublicBaseService implements ICommercialFishingService, ISuspensionService {
     protected controller: string = 'CommercialFishingPublic';
 
     private readonly catchesAndSalesCommonService: CatchesAndSalesCommonService;
@@ -134,6 +136,10 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
     }
 
     public getPermitFisherPhotoFromApplication(applicationId: number): Observable<string> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
+    public addSuspension(suspension: SuspensionDataDTO, id: number, pageCode: PageCodeEnum): Observable<void> {
         throw new Error('This method should not be called from the public app.');
     }
 

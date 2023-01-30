@@ -6,7 +6,7 @@
                [recordsPerPage]="recordsPerPage"
                (activeRecordChanged)="activeRecordChangedEvent($event, !$event.isActive 
                                                                         || $event.status === logBookPageStatusesEnum.Canceled
-                                                                        || $event.isLogBookFinished
+                                                                        || $event.isLogBookFinishedOrSuspended
                                                                         || !_pagesPermissions.canEditShipLogBookRecords)">
     <row-detail>
         <ng-template let-row="row" ngx-datatable-row-detail-template>
@@ -57,7 +57,7 @@
                                                 tooltipText="{{ 'catches-and-sales.view-admission-log-book-page' | tlTranslate }}">
                                 </tl-icon-button>
 
-                                <tl-icon-button *ngIf="!row.data.isLogBookFinished && _pagesPermissions.canEditAdmissionLogBookRecords"
+                                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended && _pagesPermissions.canEditAdmissionLogBookRecords"
                                                 icon="edit"
                                                 (buttonClicked)="editAdmissionLogBookPage(admissionDeclaration, false)"
                                                 iconClass="accent-color"
@@ -120,7 +120,7 @@
                                                 tooltipText="{{ 'catches-and-sales.view-transportation-log-book-page' | tlTranslate }}">
                                 </tl-icon-button>
 
-                                <tl-icon-button *ngIf="!row.data.isLogBookFinished && _pagesPermissions.canEditTransportationLogBookRecords"
+                                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended && _pagesPermissions.canEditTransportationLogBookRecords"
                                                 icon="edit"
                                                 (buttonClicked)="editTransportationLogBookPage(transportationDocument, false)"
                                                 iconClass="accent-color"
@@ -178,7 +178,7 @@
                                                 tooltipText="{{ 'catches-and-sales.view-first-sale-log-book-page' | tlTranslate }}">
                                 </tl-icon-button>
 
-                                <tl-icon-button *ngIf="!row.data.isLogBookFinished && _pagesPermissions.canEditFirstSaleLogBookRecords"
+                                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended && _pagesPermissions.canEditFirstSaleLogBookRecords"
                                                 icon="edit"
                                                 (buttonClicked)="editFirstSaleLogBookPage(firstSaleDocument, false)"
                                                 iconClass="accent-color"
@@ -256,7 +256,7 @@
     <data-template-column *ngIf="showActionButtons" [flexRate]="0.3" [cellClass]="'justify-center'">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <div fxLayout="row wrap" fxLayoutAlign="end center">
-                <tl-icon-button *ngIf="!row.data.isLogBookFinished
+                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended
                                        && _pagesPermissions.canCancelShipLogBookRecords
                                        && row.data.status !== logBookPageStatusesEnum.Canceled
                                        && row.data.transportationDocuments?.length === 0
@@ -269,7 +269,7 @@
                                 tooltipText="{{ 'catches-and-sales.anull-ship-log-book-page' | tlTranslate }}">
                 </tl-icon-button>
 
-                <button *ngIf="!row.data.isLogBookFinished
+                <button *ngIf="!row.data.isLogBookFinishedOrSuspended
                                && row.data.status !== logBookPageStatusesEnum.Canceled
                                && row.data.status !== logBookPageStatusesEnum.Missing
                                && row.data.hasOriginDeclaration
@@ -305,7 +305,7 @@
                                 tooltipText="{{ 'catches-and-sales.view-ship-log-book-page' | tlTranslate }}">
                 </tl-icon-button>
 
-                <tl-icon-button *ngIf="!row.data.isLogBookFinished
+                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended
                                        && _pagesPermissions.canEditShipLogBookRecords
                                        && row.data.status !== logBookPageStatusesEnum.Canceled"
                                 icon="edit"

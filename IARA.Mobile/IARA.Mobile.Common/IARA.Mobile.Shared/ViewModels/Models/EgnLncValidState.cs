@@ -30,7 +30,7 @@ namespace IARA.Mobile.Shared.ViewModels.Models
 
         public static implicit operator EgnLncDto(EgnLncValidState state)
         {
-            if (string.IsNullOrEmpty(state.Value))
+            if (string.IsNullOrEmpty(state?.Value))
             {
                 return null;
             }

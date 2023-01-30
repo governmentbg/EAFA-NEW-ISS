@@ -380,30 +380,37 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
 
         private Task OnSave()
         {
-            return HideDialog(new DeclarationCatchModel
+            Validation.Force();
+
+            if (Validation.IsValid)
             {
-                Type = FishType.Value?.DisplayValue,
-                CatchType = CatchType.Value?.DisplayValue,
-                CatchZone = CatchZone.Value?.Name,
-                Presentation = Presentation.Value?.Name,
-                Dto = new InspectedDeclarationCatchDto
+                return HideDialog(new DeclarationCatchModel
                 {
-                    Id = Edit?.Dto.Id,
-                    CatchQuantity = ParseHelper.ParseDecimal(CatchQuantity.Value),
-                    CatchCount = ParseHelper.ParseInteger(CatchCount.Value),
-                    CatchTypeId = CatchType.Value,
-                    CatchZoneId = CatchZone.Value,
-                    FishTypeId = FishType.Value,
-                    PresentationId = Presentation.Value,
-                    UnloadedQuantity = ParseHelper.ParseDecimal(UnloadedQuantity.Value),
-                    AquacultureId = Aquaculture.Value?.Id,
-                    OriginShip = InspectedShip,
-                    LogBookType = ParseHelper.ParseEnum<DeclarationLogBookType>(DeclarationType.Value?.Code),
-                    LogBookPageId = LogBookPage.Value?.Id,
-                    UnregisteredPageNum = LogBookPageNum.Value,
-                    UnregisteredPageDate = LogBookPageDate.Value,
-                }
-            });
+                    Type = FishType.Value?.DisplayValue,
+                    CatchType = CatchType.Value?.DisplayValue,
+                    CatchZone = CatchZone.Value?.Name,
+                    Presentation = Presentation.Value?.Name,
+                    Dto = new InspectedDeclarationCatchDto
+                    {
+                        Id = Edit?.Dto.Id,
+                        CatchQuantity = ParseHelper.ParseDecimal(CatchQuantity.Value),
+                        CatchCount = ParseHelper.ParseInteger(CatchCount.Value),
+                        CatchTypeId = CatchType.Value,
+                        CatchZoneId = CatchZone.Value,
+                        FishTypeId = FishType.Value,
+                        PresentationId = Presentation.Value,
+                        UnloadedQuantity = ParseHelper.ParseDecimal(UnloadedQuantity.Value),
+                        AquacultureId = Aquaculture.Value?.Id,
+                        OriginShip = InspectedShip,
+                        LogBookType = ParseHelper.ParseEnum<DeclarationLogBookType>(DeclarationType.Value?.Code),
+                        LogBookPageId = LogBookPage.Value?.Id,
+                        UnregisteredPageNum = LogBookPageNum.Value,
+                        UnregisteredPageDate = LogBookPageDate.Value,
+                    }
+                });
+            }
+
+            return Task.CompletedTask;
         }
     }
 }

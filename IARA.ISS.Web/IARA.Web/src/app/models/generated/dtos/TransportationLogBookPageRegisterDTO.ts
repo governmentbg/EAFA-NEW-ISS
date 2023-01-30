@@ -18,7 +18,7 @@ export class TransportationLogBookPageRegisterDTO {
     public pageNumber?: number;
 
     @StrictlyTyped(Boolean)
-    public isLogBookFinished?: boolean;
+    public isLogBookFinishedOrSuspended?: boolean;
 
     @StrictlyTyped(String)
     public vehicleNumber?: string;

@@ -11,6 +11,7 @@ using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Models;
 using TechnoLogica.Xamarin.Commands;
+using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
 using Xamarin.Forms;
 
@@ -42,6 +43,8 @@ namespace IARA.Mobile.Insp.Helpers
             fishingShip.ShipData.ShipSelected = CommandBuilder.CreateFrom(
                 async (ShipSelectNomenclatureDto ship) =>
                 {
+                    await TLLoadingHelper.ShowFullLoadingScreen();
+
                     INomenclatureTransaction nomTransaction = DependencyService.Resolve<INomenclatureTransaction>();
                     int uid = ship.Uid;
 
@@ -51,6 +54,7 @@ namespace IARA.Mobile.Insp.Helpers
 
                         if (chosenShip == null)
                         {
+                            await TLLoadingHelper.HideFullLoadingScreen();
                             return;
                         }
 
@@ -252,6 +256,8 @@ namespace IARA.Mobile.Insp.Helpers
                     fishingShip.ShipCaptain.People = shipUsers
                         .FindAll(f => f.Type == InspectedPersonType.CaptFshmn);
                     fishingShip.ShipCaptain.InRegister.Value = fishingShip.ShipCaptain.People.Count > 0;
+
+                    await TLLoadingHelper.HideFullLoadingScreen();
                 }
             );
         }

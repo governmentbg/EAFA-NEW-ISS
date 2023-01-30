@@ -21,7 +21,7 @@ export class ShipLogBookPageRegisterDTO {
     public pageNumber?: string;
 
     @StrictlyTyped(Boolean)
-    public isLogBookFinished?: boolean;
+    public isLogBookFinishedOrSuspended?: boolean;
 
     @StrictlyTyped(Date)
     public outingStartDate?: Date;

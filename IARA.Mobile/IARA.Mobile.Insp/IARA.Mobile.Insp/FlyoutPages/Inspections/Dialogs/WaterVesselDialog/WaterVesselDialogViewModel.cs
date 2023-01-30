@@ -10,7 +10,6 @@ using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
-using IARA.Mobile.Insp.Models;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Base;
@@ -19,7 +18,7 @@ using Xamarin.Forms;
 
 namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterVesselDialog
 {
-    public class WaterVesselDialogViewModel : TLBaseDialogViewModel<WaterVesselModel>
+    public class WaterVesselDialogViewModel : TLBaseDialogViewModel<WaterInspectionVesselDto>
     {
         private List<SelectNomenclatureDto> _vesselTypes;
         private bool _isTaken;
@@ -36,7 +35,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterVesselDialog
 
         public WaterVesselsViewModel Vessels { get; set; }
 
-        public WaterVesselModel Edit { get; set; }
+        public WaterInspectionVesselDto Edit { get; set; }
 
         public ViewActivityType DialogType { get; set; }
 
@@ -89,16 +88,16 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterVesselDialog
 
             if (Edit != null)
             {
-                Id = Edit.Dto.Id;
-                IsStored = Edit.Dto.IsStored;
-                IsTaken = Edit.Dto.IsTaken;
-                Type.AssignFrom(Edit.Dto.VesselTypeId, VesselTypes);
-                Number.AssignFrom(Edit.Dto.Number);
-                Color.AssignFrom(Edit.Dto.Color);
-                Length.AssignFrom(Edit.Dto.Length);
-                Width.AssignFrom(Edit.Dto.Width);
-                TotalCount.AssignFrom(Edit.Dto.TotalCount);
-                Location.AssignFrom(Edit.Dto.StorageLocation);
+                Id = Edit.Id;
+                IsStored = Edit.IsStored;
+                IsTaken = Edit.IsTaken;
+                Type.AssignFrom(Edit.VesselTypeId, VesselTypes);
+                Number.AssignFrom(Edit.Number);
+                Color.AssignFrom(Edit.Color);
+                Length.AssignFrom(Edit.Length);
+                Width.AssignFrom(Edit.Width);
+                TotalCount.AssignFrom(Edit.TotalCount);
+                Location.AssignFrom(Edit.StorageLocation);
 
                 if (DialogType == ViewActivityType.Edit)
                 {
@@ -111,21 +110,25 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterVesselDialog
 
         private Task OnSave()
         {
-            return HideDialog(new WaterVesselModel
+            Validation.Force();
+
+            if (!Validation.IsValid)
             {
-                Dto = new WaterInspectionVesselDto
-                {
-                    Id = Id,
-                    VesselTypeId = Type.Value,
-                    IsTaken = IsTaken,
-                    IsStored = IsStored,
-                    Number = Number,
-                    Color = Color,
-                    Length = ParseHelper.ParseDecimal(Length),
-                    Width = ParseHelper.ParseDecimal(Width),
-                    StorageLocation = Location,
-                    TotalCount = ParseHelper.ParseInteger(TotalCount),
-                }
+                return Task.CompletedTask;
+            }
+
+            return HideDialog(new WaterInspectionVesselDto
+            {
+                Id = Id,
+                VesselTypeId = Type.Value,
+                IsTaken = IsTaken,
+                IsStored = IsStored,
+                Number = Number,
+                Color = Color,
+                Length = ParseHelper.ParseDecimal(Length),
+                Width = ParseHelper.ParseDecimal(Width),
+                StorageLocation = Location,
+                TotalCount = ParseHelper.ParseInteger(TotalCount),
             });
         }
     }

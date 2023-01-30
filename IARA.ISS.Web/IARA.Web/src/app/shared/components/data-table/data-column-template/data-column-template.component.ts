@@ -13,7 +13,7 @@ export class TLDataColumnTemplateComponent extends BaseDataColumn implements Aft
     public cellClass: string = '';
 
     @Input()
-    public headerClass: string = '';
+    public headerClass: string = 'multi-line';
 
     @ContentChild(TemplateRef)
     public ngContentTest: any;

@@ -31,7 +31,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public InspectionPageViewModel Inspection { get; }
 
-        public ValidStateValidatableTable<WaterCatchModel> CatchMeasures { get; set; }
+        public ValidStateTable<WaterCatchModel> CatchMeasures { get; set; }
 
         public ICommand Review { get; }
         public ICommand Add { get; }
@@ -61,7 +61,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             {
                 catchMeasure.FishName = result.FishName;
                 catchMeasure.Dto = result.Dto;
-                catchMeasure.AllChanged();
+                CatchMeasures.Value.Replace(catchMeasure, result);
             }
         }
 

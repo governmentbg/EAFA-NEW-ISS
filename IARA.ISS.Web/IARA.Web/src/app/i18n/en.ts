@@ -2864,6 +2864,8 @@
         'suspension-valid-from': 'Valid from',
         'suspension-valid-to': 'Valid to',
         'suspension-enactment-date': 'Enactment date',
+        'permit-suspension-valid-to-already-exists': 'There is already a suspension for this permit for the same period',
+        'permit-license-suspension-valid-to-already-exists': 'There is already a suspension for this permit license for the same period',
         'suspension-order-number': 'Order number',
         'suspension-client-number': 'Client application number',
         'suspension-valid-from-to': 'Valid from-to',

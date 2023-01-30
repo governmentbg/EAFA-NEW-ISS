@@ -60,6 +60,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                     InspectionGeneralInfo,
                     InspectionHarbour,
                     InspectedShip,
+                    ShipChecks,
+                    ShipCatches,
+                    ShipFishingGears,
                     TransshippedShip,
                     TransshippedCatches,
                     InspectionFiles,
@@ -68,7 +71,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                 }
             );
 
-            TransshippedShip.Ship.Groups.Add(Group.IS_REQUIRED);
+            TransshippedShip.Validation.GlobalGroups = new List<string> { Group.IS_REQUIRED };
+            TransshippedCatches.Validation.GlobalGroups = new List<string> { Group.IS_REQUIRED };
 
             TransshipmentObservation.Category = InspectionObservationCategory.Transshipment;
         }
@@ -298,6 +302,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                 InspectionFiles,
                 (inspectionIdentifier, files) =>
                 {
+                    VesselDuringInspectionDto rransshippedShip = TransshippedShip;
+
                     InspectionTransboardingDto dto = new InspectionTransboardingDto
                     {
                         Id = Edit?.Id ?? 0,
@@ -337,10 +343,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                                 .Concat((List<InspectionCheckDto>)ShipChecks)
                                 .ToList(),
                         },
-                        SendingShipInspection = new InspectionTransboardingShipDto
+                        SendingShipInspection = rransshippedShip != null ? new InspectionTransboardingShipDto
                         {
-                            InspectedShip = TransshippedShip,
-                        },
+                            InspectedShip = rransshippedShip,
+                        } : null,
                         TransboardedCatchMeasures = TransshippedCatches,
                         FishingGears = ShipFishingGears.FishingGears,
                         IsOfflineOnly = IsLocal,

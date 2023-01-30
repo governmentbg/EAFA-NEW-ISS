@@ -61,15 +61,7 @@
                             Padding="10"
                             Command="{Binding BindingContext.Edit, Source={Reference view}}"
                             CommandParameter="{Binding}"
-                            IsVisible="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}">
-                        <ImageButton.Triggers>
-                            <DataTrigger TargetType="ImageButton"
-                                    Binding="{Binding Validity.IsValid}"
-                                    Value="False">
-                                <Setter Property="BackgroundColor" Value="{StaticResource ErrorColor}" />
-                            </DataTrigger>
-                        </ImageButton.Triggers>
-                    </ImageButton>
+                            IsVisible="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                     <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
                             Padding="10"
                             Command="{Binding BindingContext.Remove, Source={Reference view}}"

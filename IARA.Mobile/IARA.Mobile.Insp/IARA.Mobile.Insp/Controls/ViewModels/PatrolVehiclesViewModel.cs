@@ -37,7 +37,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public InspectionPageViewModel Inspection { get; }
 
         [ListMinLength(1)]
-        public ValidStateValidatableTable<PatrolVehicleModel> InspectorVehicles { get; set; }
+        public ValidStateTable<PatrolVehicleModel> InspectorVehicles { get; set; }
 
         public ICommand Review { get; }
         public ICommand Add { get; }
@@ -85,8 +85,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             if (result != null && result.Dto != null)
             {
-                model.Dto = result.Dto;
-                model.AllChanged();
+                InspectorVehicles.Value.Replace(model, result);
             }
         }
 

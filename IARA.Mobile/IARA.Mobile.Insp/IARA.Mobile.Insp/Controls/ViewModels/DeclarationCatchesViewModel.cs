@@ -39,7 +39,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         [DuplicateCatches]
         [ListMinLength(1)]
-        public ValidStateValidatableTable<DeclarationCatchModel> Catches { get; set; }
+        public ValidStateTable<DeclarationCatchModel> Catches { get; set; }
 
         public ICommand Review { get; }
         public ICommand Add { get; }
@@ -91,8 +91,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             if (result != null && result.Dto != null)
             {
-                model.Dto = result.Dto;
-                model.AllChanged();
+                Catches.Value.Replace(model, result);
             }
         }
 

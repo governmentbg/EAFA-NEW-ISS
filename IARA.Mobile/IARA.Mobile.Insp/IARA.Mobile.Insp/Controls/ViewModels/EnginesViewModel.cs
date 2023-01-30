@@ -7,7 +7,6 @@ using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.EngineDialog;
-using IARA.Mobile.Insp.Models;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -21,31 +20,31 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         {
             Inspection = inspection;
 
-            Review = CommandBuilder.CreateFrom<EngineModel>(OnReview);
+            Review = CommandBuilder.CreateFrom<WaterInspectionEngineDto>(OnReview);
             Add = CommandBuilder.CreateFrom(OnAdd);
-            Edit = CommandBuilder.CreateFrom<EngineModel>(OnEdit);
-            Remove = CommandBuilder.CreateFrom<EngineModel>(OnRemove);
+            Edit = CommandBuilder.CreateFrom<WaterInspectionEngineDto>(OnEdit);
+            Remove = CommandBuilder.CreateFrom<WaterInspectionEngineDto>(OnRemove);
 
             this.AddValidation();
         }
 
         public InspectionPageViewModel Inspection { get; }
 
-        public ValidStateValidatableTable<EngineModel> Engines { get; set; }
+        public ValidStateTable<WaterInspectionEngineDto> Engines { get; set; }
 
         public ICommand Review { get; }
         public ICommand Add { get; }
         public ICommand Edit { get; }
         public ICommand Remove { get; }
 
-        private Task OnReview(EngineModel model)
+        private Task OnReview(WaterInspectionEngineDto model)
         {
             return TLDialogHelper.ShowDialog(new EngineDialog(this, Inspection, ViewActivityType.Review, model));
         }
 
         private async Task OnAdd()
         {
-            EngineModel result = await TLDialogHelper.ShowDialog(new EngineDialog(this, Inspection, ViewActivityType.Add));
+            WaterInspectionEngineDto result = await TLDialogHelper.ShowDialog(new EngineDialog(this, Inspection, ViewActivityType.Add));
 
             if (result != null)
             {
@@ -53,18 +52,17 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             }
         }
 
-        private async Task OnEdit(EngineModel engine)
+        private async Task OnEdit(WaterInspectionEngineDto engine)
         {
-            EngineModel result = await TLDialogHelper.ShowDialog(new EngineDialog(this, Inspection, ViewActivityType.Edit, engine));
+            WaterInspectionEngineDto result = await TLDialogHelper.ShowDialog(new EngineDialog(this, Inspection, ViewActivityType.Edit, engine));
 
             if (result != null)
             {
-                engine.Dto = result.Dto;
-                engine.AllChanged();
+                Engines.Value.Replace(engine, result);
             }
         }
 
-        private async Task OnRemove(EngineModel engine)
+        private async Task OnRemove(WaterInspectionEngineDto engine)
         {
             bool result = await App.Current.MainPage.DisplayAlert(null,
                 TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/DeleteMessage"],
@@ -82,7 +80,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         {
             return viewModel == null
                 ? new List<WaterInspectionEngineDto>()
-                : viewModel.Engines.Select(f => f.Dto).ToList();
+                : viewModel.Engines.ToList();
         }
     }
 }

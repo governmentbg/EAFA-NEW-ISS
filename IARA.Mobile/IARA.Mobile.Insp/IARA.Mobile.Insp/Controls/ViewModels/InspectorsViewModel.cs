@@ -41,7 +41,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public InspectionGeneralInfoViewModel GeneralInfo { get; }
 
         [ListMinLength(1)]
-        public ValidStateValidatableTable<InspectorModel> Inspectors { get; set; }
+        public ValidStateTable<InspectorModel> Inspectors { get; set; }
 
         public bool HasRecentInspectors
         {
@@ -185,7 +185,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 model.HasIdentified = result.HasIdentified;
                 model.Institution = result.Institution;
                 model.Dto = result.Dto;
-                model.AllChanged();
+
+                Inspectors.Value.Replace(model, result);
 
                 if (!Inspectors.Any(f => f.IsInCharge))
                 {
