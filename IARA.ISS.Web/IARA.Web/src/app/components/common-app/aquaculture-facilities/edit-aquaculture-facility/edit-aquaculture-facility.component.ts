@@ -77,6 +77,10 @@ import { CancellationHistoryEntryDTO } from '@app/models/generated/dtos/Cancella
 import { CommercialFishingAdministrationService } from '@app/services/administration-app/commercial-fishing-administration.service';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { FishNomenclatureDTO } from '@app/models/generated/dtos/FishNomenclatureDTO';
+import { StatisticalFormDataDTO } from '@app/models/generated/dtos/StatisticalFormDataDTO';
+import { StatisticalFormsAquaFarmComponent } from '../../statistical-forms/components/statistical-forms-aqua-farm/statistical-forms-aqua-farm.component';
+import { StatisticalFormsAdministrationService } from '@app/services/administration-app/statistical-forms-administration.service';
+import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 
 class AquaticOrganismTableModel {
     public aquaticOrganismId: number;
@@ -132,6 +136,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     public waterLawCertificates: AquacultureWaterLawCertificateDTO[] = [];
     public ovosCertificates: CommonDocumentDTO[] = [];
     public babhCertificates: CommonDocumentDTO[] = [];
+    public statisticalForms: StatisticalFormDataDTO[] = [];
 
     public canAddRecords: boolean = false;
     public canEditRecords: boolean = false;
@@ -161,6 +166,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     public hasNoEDeliveryRegistrationError: boolean = false;
     public showHatcheryEquipment: boolean = false;
     public hideBasicPaymentInfo: boolean = false;
+    public hasStatisticalFormReadPermission: boolean = false;
 
     public aquaticOrganismsTouched: boolean = false;
     public installationsTouched: boolean = false;
@@ -206,6 +212,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     private nomenclatures!: CommonNomenclatures;
     private permissions: PermissionsService;
     private commercialFishingService: CommercialFishingAdministrationService;
+    private statisticalFormsService: StatisticalFormsAdministrationService;
 
     private allStatuses: NomenclatureDTO<number>[] = [];
 
@@ -215,6 +222,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     private readonly editWaterLawCertificateDialog: TLMatDialog<EditAquacultureWaterLawCertificateComponent>;
     private readonly editOvosCertificateDialog: TLMatDialog<CommonDocumentComponent>;
     private readonly editBabhCertificateDialog: TLMatDialog<CommonDocumentComponent>;
+    private readonly editStatisticalFormAquaFarmDialog: TLMatDialog<StatisticalFormsAquaFarmComponent>;
     private readonly cancelDialog: TLMatDialog<CancellationHistoryDialogComponent>;
 
     private model!: AquacultureFacilityEditDTO | AquacultureApplicationEditDTO | AquacultureRegixDataDTO;
@@ -234,6 +242,8 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         editWaterLawCertificateDialog: TLMatDialog<EditAquacultureWaterLawCertificateComponent>,
         editOvosCertificateDialog: TLMatDialog<CommonDocumentComponent>,
         editBabhCertificateDialog: TLMatDialog<CommonDocumentComponent>,
+        editStatisticalFormAquaFarmDialog: TLMatDialog<StatisticalFormsAquaFarmComponent>,
+        statisticalFormsService: StatisticalFormsAdministrationService,
         cancelDialog: TLMatDialog<CancellationHistoryDialogComponent>
     ) {
         this.translate = translate;
@@ -245,10 +255,14 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         this.editWaterLawCertificateDialog = editWaterLawCertificateDialog;
         this.editOvosCertificateDialog = editOvosCertificateDialog;
         this.editBabhCertificateDialog = editBabhCertificateDialog;
+        this.editStatisticalFormAquaFarmDialog = editStatisticalFormAquaFarmDialog;
         this.cancelDialog = cancelDialog;
         this.commercialFishingService = commercialFishingService;
+        this.statisticalFormsService = statisticalFormsService;
 
         this.isPublicApp = IS_PUBLIC_APP;
+
+        this.hasStatisticalFormReadPermission = permissions.hasAny(PermissionsEnum.StatisticalFormsAquaFarmReadAll, PermissionsEnum.StatisticalFormsAquaFarmRead);
 
         this.expectedResults = new AquacultureRegixDataDTO({
             submittedBy: new ApplicationSubmittedByRegixDataDTO({
@@ -1104,6 +1118,26 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         });
     }
 
+    public viewStatisticalFormAquaFarm(form: StatisticalFormDataDTO): void {
+        this.editStatisticalFormAquaFarmDialog.openWithTwoButtons({
+            title: this.translate.getValue('aquacultures.statistical-forms-view-form-dialog-title'),
+            TCtor: StatisticalFormsAquaFarmComponent,
+            translteService: this.translate,
+            headerCancelButton: {
+                cancelBtnClicked: this.closeStatisticalFormDialogBtnClicked.bind(this)
+            },
+            componentData: new DialogParamsModel({
+                id: form.id,
+                isApplication: false,
+                isReadonly: true,
+                viewMode: true,
+                service: this.statisticalFormsService
+            }),
+            viewMode: true,
+            disableDialogClose: false
+        }, '1400px').subscribe();
+    }
+
     public fileTypeFilterFn(options: PermittedFileTypeDTO[]): PermittedFileTypeDTO[] {
         const pdfs: FileTypeEnum[] = [FileTypeEnum.SIGNEDAPPL, FileTypeEnum.APPLICATION_PDF];
 
@@ -1133,6 +1167,10 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     }
 
     private closeEditBabhCertificateDialogBtnClicked(closeFn: HeaderCloseFunction): void {
+        closeFn();
+    }
+
+    private closeStatisticalFormDialogBtnClicked(closeFn: HeaderCloseFunction): void {
         closeFn();
     }
 
@@ -1679,6 +1717,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
             this.waterLawCertificates = model.waterLawCertificates ?? [];
             this.ovosCertificates = model.ovosCertificates ?? [];
             this.babhCertificates = model.babhCertificates ?? [];
+            this.statisticalForms = model.statisticalForms ?? [];
 
             this.normalizeInstallations();
         });

@@ -58,6 +58,12 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     public isReadonly: boolean = false;
 
     @Input()
+    public disableAddButtons: boolean = false;
+
+    @Input()
+    public disabledAddBtnTooltipText: string | undefined;
+
+    @Input()
     public logBooksPerPages: number = 5;
 
     @Input()
@@ -86,6 +92,12 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
      * */
     @Input()
     public service: ILogBookService | undefined;
+
+    /**
+     * When there is NO ngControl
+     * */
+    @Input()
+    public postOnSave: boolean = false;
 
     /**
      * Needed only when there is NO ngControl
@@ -595,7 +607,10 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                 ownerType: this.ownerType,
                 pagesRangeError: logBook.hasError ?? false,
                 isOnline: this.isOnline,
-                isForPermitLicense: this.isForPermitLicense
+                isForPermitLicense: this.isForPermitLicense,
+                service: this.service,
+                postOnSave: this.postOnSave,
+                registerId: this.isForPermitLicense ? this.permitLicenseId : undefined
             });
 
             if (logBook.logBookId !== undefined && logBook.logBookId !== null && this.getLogBookSimpleAuditMethod !== null && this.getLogBookSimpleAuditMethod !== undefined) {
@@ -618,7 +633,10 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                 logBookGroup: this.logBookGroup,
                 isOnline: this.isOnline,
                 ownerType: this.ownerType,
-                isForPermitLicense: this.isForPermitLicense
+                isForPermitLicense: this.isForPermitLicense,
+                service: this.service,
+                postOnSave: this.postOnSave,
+                registerId: this.isForPermitLicense ? this.permitLicenseId : undefined
             });
 
             title = this.translate.getValue('catches-and-sales.add-log-book-dialog-title');
@@ -647,9 +665,10 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                 else {
                     isEdit = false;
                 }
-                if (this.ngControl) {
-                    this.handleAddOrEditLogBook(logBook, result);
 
+                this.handleAddOrEditLogBook(logBook, result);
+
+                if (this.ngControl) {
                     this.checkActiveLogBooks();
 
                     this.control.updateValueAndValidity();
@@ -657,7 +676,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                     this.onChanged(this.getValue());
                 }
                 else {
-                    this.saveLogBook(logBook, isEdit, result, this.permitLicenseId!, false);
+                    this.onActionEnded.emit('edit');
                 }
             }
         });

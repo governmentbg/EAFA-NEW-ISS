@@ -38,6 +38,7 @@ import { ShipRegisterReduceCapacityDTO } from '@app/models/generated/dtos/ShipRe
 import { ExcelExporterRequestModel } from '@app/shared/components/data-table/models/excel-exporter-request-model.model';
 import { ShipRegisterLogBookPagesFilters } from '@app/models/generated/filters/ShipRegisterLogBookPagesFilters';
 import { ShipRegisterLogBookPageDTO } from '@app/models/generated/dtos/ShipRegisterLogBookPageDTO';
+import { StatisticalFormDataDTO } from '@app/models/generated/dtos/StatisticalFormDataDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -264,6 +265,15 @@ export class ShipsRegisterAdministrationService extends ApplicationsRegisterAdmi
         return this.requestService.post(this.area, this.controller, 'GetShipLogBookPages', request, {
             properties: RequestProperties.NO_SPINNER,
             responseTypeCtr: GridResultModel
+        });
+    }
+
+    public getShipStatisticalForms(shipUId: number): Observable<StatisticalFormDataDTO[]> {
+        const params = new HttpParams().append('shipUId', shipUId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetShipStatisticalForms', {
+            httpParams: params,
+            responseTypeCtr: StatisticalFormDataDTO
         });
     }
 

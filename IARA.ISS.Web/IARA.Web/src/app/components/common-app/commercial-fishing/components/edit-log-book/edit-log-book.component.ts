@@ -83,7 +83,9 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
     private readonly nomenclaturesService: CommonNomenclatures;
     private readonly overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
     private readonly snackbar: MatSnackBar;
+
     private service: ILogBookService | undefined;
+    private postOnSave: boolean = false;
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -114,9 +116,9 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
         ).toPromise();
 
         this.allLogBookStatuses = this.deepCopyLogBookStatuses(logBookStatusesNomenclature);
-
+        
         if ((this.logBookId !== null && this.logBookId !== undefined) || (this.logBookPermitLicenseId !== null && this.logBookPermitLicenseId !== undefined)) {
-            if (this.service !== null && this.service !== undefined) {
+            if ((this.model === null || this.model === undefined) && this.service !== null && this.service !== undefined) {
                 switch (this.logBookGroup) {
                     case LogBookGroupsEnum.Ship: {
                         this.model = await this.service.getPermitLicenseLogBook(this.logBookPermitLicenseId!).toPromise();
@@ -144,12 +146,10 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
 
         switch (this.logBookGroup) {
             case LogBookGroupsEnum.Ship: {
-                this.model.ownerType = this.ownerType;
                 const permittedLogBookTypes: LogBookTypesEnum[] = [LogBookTypesEnum.Ship, LogBookTypesEnum.Admission, LogBookTypesEnum.Transportation];
                 this.logBookTypes = this.logBookTypes.filter(x => permittedLogBookTypes.some(y => y === LogBookTypesEnum[x.code as keyof typeof LogBookTypesEnum]));
             } break;
             case LogBookGroupsEnum.Aquaculture: {
-                this.model.ownerType = undefined;
                 this.logBookTypes = this.logBookTypes.filter(x => LogBookTypesEnum[x.code as keyof typeof LogBookTypesEnum] === LogBookTypesEnum.Aquaculture);
             } break;
             case LogBookGroupsEnum.DeclarationsAndDocuments: {
@@ -158,7 +158,6 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                     LogBookTypesEnum.Admission,
                     LogBookTypesEnum.Transportation
                 ];
-                this.model.ownerType = LogBookPagePersonTypesEnum.RegisteredBuyer; // защото от интерфейсът ще се добавят дневници само за регистрирани купувачи/ЦПП
                 this.logBookTypes = this.logBookTypes.filter(x => permittedLogBookTypes.some(y => y === LogBookTypesEnum[x.code as keyof typeof LogBookTypesEnum]) === true);
             } break;
         }
@@ -271,6 +270,12 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             }
         });
 
+        if (this.isAdd) {
+            if (this.logBookTypes.length === 1) { // Ако има само един тип дневници за добавяне, направо избираме този тип
+                this.form.get('typeControl')!.setValue(this.logBookTypes[0]);
+            }
+        }
+
         if (!this.readOnly) {
             this.form.get('finishDateControl')!.valueChanges.subscribe({
                 next: (value: Date | undefined) => {
@@ -335,64 +340,41 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
         this.logBookId = data.logBookId;
         this.logBookPermitLicenseId = data.logBookPermitLicenseId;
         this.service = data.service;
+        this.postOnSave = data.postOnSave;
 
         this.buildForm();
 
-        if (this.service === null || this.service === undefined) {
-            if (data.model === null || data.model === undefined) {
-                this.isAdd = true;
+        if ((data.model === null || data.model === undefined) && (this.logBookId === null || this.logBookId === undefined)) {
+            this.isAdd = true;
 
-                if (this.logBookGroup === LogBookGroupsEnum.Ship) {
-                    this.model = new CommercialFishingLogBookEditDTO({
-                        isActive: true,
-                        permitLicenseIsActive: true,
-                        isOnline: false
-                    });
-                }
-                else {
-                    this.model = new LogBookEditDTO({
-                        isActive: true,
-                        logBookIsActive: true,
-                        isOnline: false
-                    });
-                }
+            if (this.logBookGroup === LogBookGroupsEnum.Ship) {
+                this.model = new CommercialFishingLogBookEditDTO({
+                    isActive: true,
+                    permitLicenseIsActive: true,
+                    isOnline: this.isOnline
+                });
             }
             else {
-                this.isAdd = false;
-
-                if (this.readOnly) {
-                    this.form.disable();
-                }
-
-                this.model = data.model;
-
-                if (this.model instanceof CommercialFishingLogBookEditDTO) {
-                    this.isForRenewal = this.model.isForRenewal ?? false;
-                }
+                this.model = new LogBookEditDTO({
+                    isActive: true,
+                    logBookIsActive: true,
+                    isOnline: this.isOnline
+                });
             }
         }
         else {
+            this.isAdd = false;
+
             if (this.readOnly) {
                 this.form.disable();
             }
 
-            if (this.logBookId === null || this.logBookId === undefined) {
-                this.isAdd = true;
+            if (data.model !== null && data.model !== undefined) {
+                this.model = data.model;
+            }
 
-                if (this.logBookGroup === LogBookGroupsEnum.Ship) {
-                    this.model = new CommercialFishingLogBookEditDTO({
-                        isActive: true,
-                        permitLicenseIsActive: true,
-                        isOnline: this.isOnline
-                    });
-                }
-                else {
-                    this.model = new LogBookEditDTO({
-                        isActive: true,
-                        logBookIsActive: true,
-                        isOnline: this.isOnline
-                    });
-                }
+            if (this.model instanceof CommercialFishingLogBookEditDTO) {
+                this.isForRenewal = this.model.isForRenewal ?? false;
             }
         }
     }
@@ -410,7 +392,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             this.fillModel();
             CommonUtils.sanitizeModelStrings(this.model);
 
-            if (this.service !== null && this.service !== undefined) { // should save in DB before closing the dialog
+            if (this.postOnSave && this.service !== null && this.service !== undefined) { // should save in DB before closing the dialog
                 this.saveLogBook(dialogClose);
             }
             else {
@@ -475,7 +457,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                 new OverlappingLogBooksParameters({
                     logBookId: this.model.logBookId,
                     typeId: this.model.logBookTypeId,
-                    OwnerType: this.model.ownerType,
+                    OwnerType: this.ownerType,
                     startPage: this.model.permitLicenseStartPageNumber,
                     endPage: this.model.permitLicenseEndPageNumber
                 })
@@ -486,7 +468,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                 new OverlappingLogBooksParameters({
                     logBookId: this.model.logBookId,
                     typeId: this.model.logBookTypeId,
-                    OwnerType: this.model.ownerType,
+                    OwnerType: this.ownerType,
                     startPage: this.model.startPageNumber,
                     endPage: this.model.endPageNumber
                 })
@@ -549,10 +531,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             notesControl: new FormControl(undefined, Validators.maxLength(4000))
         }, [EditLogBookComponent.endPageGreaterThanStartPageValidator]);
 
-        if (this.logBookGroup === LogBookGroupsEnum.Ship
-            || this.ownerType === LogBookPagePersonTypesEnum.Person
-            || this.ownerType === LogBookPagePersonTypesEnum.LegalPerson
-        ) {
+        if (this.logBookGroup === LogBookGroupsEnum.Ship) {
             this.form.addControl('isOnlineControl', new FormControl({ value: false, disabled: true }));
 
             this.form.addControl('permitLicenseStartPageNumberControl', new FormControl());
@@ -621,10 +600,21 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
 
     private fillModel(): void {
         this.model.logBookTypeId = this.form.get('typeControl')!.value?.value;
-        const logBookTypeCode: string = this.logBookTypes.find(x => x.value === this.model.logBookTypeId)!.code!;
 
-        if (logBookTypeCode === LogBookTypesEnum[LogBookTypesEnum.Ship]) {
-            this.model.ownerType = undefined;
+        switch (this.logBookGroup) {
+            case LogBookGroupsEnum.Ship: {
+                const logBookTypeCode: string = this.logBookTypes.find(x => x.value === this.model.logBookTypeId)!.code!;
+
+                if (logBookTypeCode !== LogBookTypesEnum[LogBookTypesEnum.Ship]) { // щом не е риболовен дневник, то е за нерегистриран купувач
+                    this.model.ownerType = this.ownerType;
+                }
+            } break;
+            case LogBookGroupsEnum.Aquaculture: { // няма нужда от owner type
+                this.model.ownerType = undefined;
+            } break;
+            case LogBookGroupsEnum.DeclarationsAndDocuments: {
+                this.model.ownerType = LogBookPagePersonTypesEnum.RegisteredBuyer; // защото от интерфейсът ще се добавят дневници само за регистрирани купувачи/ЦПП
+            } break;
         }
 
         this.model.statusId = this.form.get('statusControl')!.value?.value;

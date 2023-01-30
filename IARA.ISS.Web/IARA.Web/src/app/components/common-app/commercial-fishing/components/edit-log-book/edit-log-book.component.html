@@ -67,10 +67,10 @@
                               && ownerType !== logBookPagePersonTypesEnum.Person
                               && ownerType !== logBookPagePersonTypesEnum.LegalPerson
                               && pagesRangeError">
-                {{ 'catches-and-sales.log-book-pages-range-invalid' | tlTranslate }}*
+                * {{ 'catches-and-sales.log-book-pages-range-invalid' | tlTranslate }}
             </mat-error>
             <mat-error *ngIf="form.errors?.endPageGreaterThanStartPage">
-                {{ 'catches-and-sales.log-book-end-page-greater-than-start-page' | tlTranslate }}*
+                * {{ 'catches-and-sales.log-book-end-page-greater-than-start-page' | tlTranslate }}
             </mat-error>
             <div fxLayout="row" fxFlex="100">
                 <tl-textarea fxFlex="100"
@@ -123,10 +123,10 @@
                     <div fxFlex="33"></div>
                 </div>
                 <mat-error *ngIf="pagesRangeError">
-                    {{ 'catches-and-sales.log-book-pages-range-invalid' | tlTranslate }}*
+                    * {{ 'catches-and-sales.log-book-pages-range-invalid' | tlTranslate }}
                 </mat-error>
                 <mat-error *ngIf="form.errors?.permitLicensePageRangeInvalid">
-                    {{ 'catches-and-sales.log-book-permit-license-page-range-invalid' | tlTranslate }}*
+                    * {{ 'catches-and-sales.log-book-permit-license-page-range-invalid' | tlTranslate }}
                 </mat-error>
             </div>
         </tl-card-content>

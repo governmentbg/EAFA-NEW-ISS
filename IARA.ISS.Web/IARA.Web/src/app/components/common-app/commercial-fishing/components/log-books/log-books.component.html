@@ -4,6 +4,8 @@
                    [isRemote]="false"
                    [isSoftDeletable]="true"
                    [showAddButton]="!isReadonly"
+                   [disableAddButton]="disableAddButtons"
+                   [addButtonTooltipText]="disableAddButtons ? disabledAddBtnTooltipText : undefined"
                    [showInactiveRecords]="showInactivePagesAndDocuments"
                    [recordsPerPage]="logBooksPerPages"
                    (addButtonClicked)="addEditLogBook()"
@@ -15,12 +17,15 @@
              datatable-add-buttons 
              fxLayout="row" 
              fxLayoutGap="1em">
-            <button mat-raised-button color="accent"
-                    (click)="addLogBookFromOldPermitLicense()"
-                    style="margin-left:auto;">
-                <tl-icon icon="fa-plus-circle" class="white"></tl-icon>
-                {{ 'catches-and-sales.add-log-book-from-old-permit-license' | tlTranslate }}
-            </button>
+            <div [matTooltip]="disableAddButtons ? disabledAddBtnTooltipText : undefined" matTooltipShowDelay="300">
+                <button mat-raised-button color="accent"
+                        (click)="addLogBookFromOldPermitLicense()"
+                        [disabled]="disableAddButtons"
+                        style="margin-left:auto;">
+                    <tl-icon icon="fa-plus-circle" class="white"></tl-icon>
+                    {{ 'catches-and-sales.add-log-book-from-old-permit-license' | tlTranslate }}
+                </button>
+            </div>
         </div>
         <data-column [flexRate]="0.3"
                      propertyName="logbookNumber"

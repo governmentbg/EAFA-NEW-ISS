@@ -158,6 +158,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public noShipSelected: boolean = true; // Needed only for permit licenses
     public isOnlineApplication: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
+    public isSuspended: boolean = false;
 
     public submittedByRole: SubmittedByRolesEnum | undefined;
     public readonly submittedByRoles: typeof SubmittedByRolesEnum = SubmittedByRolesEnum;
@@ -170,6 +171,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public aquaticOrganismTypesControl: FormControl = new FormControl();
 
     public readonly logBookGroup: LogBookGroupsEnum = LogBookGroupsEnum.Ship;
+    public readonly disabledAddBtnTooltipText: string;
     public permitLicenseRegisterId: number | undefined;
 
     public ships: ShipNomenclatureDTO[] = [];
@@ -283,6 +285,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         });
 
         this.isPublicApp = IS_PUBLIC_APP;
+
+        this.disabledAddBtnTooltipText = this.translationService.getValue('commercial-fishing.cannot-add-log-books-to-suspended-permit-license');
 
         this.holderShipRelations = [
             new NomenclatureDTO<boolean>({
@@ -554,6 +558,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     this.suspensions = this.suspensions.slice();
                     this.form.updateValueAndValidity({ onlySelf: true });
 
+                    this.updateIsSuspendedFlag();
+
                     if (isAdd && dialogClose !== null && dialogClose !== undefined) { // при добавяне на ново прекратяване, трябва да е запазено към базата и затваряме диалога
                         dialogClose(this.model.id);
                     }
@@ -573,6 +579,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     this.suspensionsTable.softDelete(suspension);
                     this.hasShipEventExistsOnSameDateError = false;
                     this.form.updateValueAndValidity({ onlySelf: true });
+                    this.updateIsSuspendedFlag();
                 }
             }
         });
@@ -585,6 +592,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     this.suspensionsTable.softUndoDelete(suspension);
                     this.hasShipEventExistsOnSameDateError = false;
                     this.form.updateValueAndValidity({ onlySelf: true });
+                    this.updateIsSuspendedFlag();
                 }
             }
         });
@@ -1968,6 +1976,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
                     if (modelSuspensions !== null && modelSuspensions !== undefined) {
                         this.suspensions = modelSuspensions;
+                        this.updateIsSuspendedFlag();
                     }
                 });
 
@@ -3189,6 +3198,23 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         }
     }
 
+    private updateIsSuspendedFlag(): void {
+        if (this.suspensions !== null && this.suspensions !== undefined) {
+            const now: Date = new Date();
+
+            this.isSuspended = this.suspensions.some(x =>
+                x.isActive
+                && ((x.enactmentDate !== null && x.enactmentDate !== undefined && x.enactmentDate <= now)
+                    || (x.validFrom !== null && x.validFrom !== undefined && x.validFrom <= now))
+                && ((x.validTo !== null && x.validTo !== undefined && x.validTo > now)
+                    || x.validTo === null
+                    || x.validTo === undefined)
+            );
+        }
+        else {
+            this.isSuspended = false;
+        }
+    }
 
     private permitRegisterForPermitLicenseValidator(): ValidatorFn {
         return (form: AbstractControl): ValidationErrors | null => {
