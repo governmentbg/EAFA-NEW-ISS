@@ -8,7 +8,6 @@ using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Attributes;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Helpers;
-using IARA.Mobile.Shared.Attributes;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -59,11 +58,11 @@ namespace IARA.Mobile.Insp.Models
         [MaxLength(20)]
         public ValidState Number { get; set; }
 
-        [RequiredIfBooleanEquals(nameof(AddedByInspectorState), true, ErrorMessageResourceName = "Required")]
+        [RequiredPageSelect(true, ErrorMessageResourceName = "Required")]
         [TLRange(1, long.MaxValue)]
         public ValidState PageText { get; set; }
 
-        [RequiredIfBooleanEquals(nameof(AddedByInspectorState), false, ErrorMessageResourceName = "Required")]
+        [RequiredPageSelect(false, ErrorMessageResourceName = "Required")]
         [SelectLessThanOrEqualToInt(nameof(EndPage), nameof(LogBookPageDto.PageNum), ErrorMessageResourceName = "LessThanOrEqualTo")]
         public ValidStateSelect<LogBookPageDto> PageSelect { get; set; }
 
