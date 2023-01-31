@@ -35,7 +35,6 @@ import { TLValidators } from '@app/shared/utils/tl-validators';
 import { FishingCapacityFreedActionsRegixDataDTO } from '@app/models/generated/dtos/FishingCapacityFreedActionsRegixDataDTO';
 import { NewCertificateData } from '../acquired-fishing-capacity/acquired-fishing-capacity.component';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
-import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
 import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';

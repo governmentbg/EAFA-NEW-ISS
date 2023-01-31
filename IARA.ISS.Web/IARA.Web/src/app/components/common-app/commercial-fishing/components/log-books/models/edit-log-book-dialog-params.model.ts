@@ -44,6 +44,8 @@ export class EditLogBookDialogParamsModel {
 
     public isForPermitLicense: boolean = false;
 
+    public postOnSave: boolean = false;
+
     public constructor(obj?: Partial<EditLogBookDialogParamsModel>) {
         Object.assign(this, obj);
     }

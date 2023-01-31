@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, Self, ViewChild } from '@angular/core';
+﻿import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, Self, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, Validators } from '@angular/forms';
 import { forkJoin, Subscription } from 'rxjs';
 
@@ -22,6 +22,7 @@ import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-c
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { CatchTypeCodesEnum } from '@app/enums/catch-type-codes.enum';
 import { CatchSizeCodesEnum } from '@app/enums/catch-size-codes.enum';
+import { WaterTypesEnum } from '@app/enums/water-types.enum';
 
 const DEFAULT_CATCH_TYPE_CODE = CatchTypeCodesEnum.TAKEN_ONBOARD;
 const DEFAULT_CATCH_SIZE_CODE = CatchSizeCodesEnum.LSC;
@@ -31,7 +32,7 @@ const DEFAULT_CATCH_SIZE_CODE = CatchSizeCodesEnum.LSC;
     templateUrl: './catch-aquatic-organism-type.component.html',
     styleUrls: ['./catch-aquatic-organism-type.component.scss']
 })
-export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRecordFishDTO> implements OnInit, AfterViewInit {
+export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRecordFishDTO> implements OnInit, AfterViewInit, OnChanges {
     @Input()
     public service!: ICatchesAndSalesService;
 
@@ -52,6 +53,9 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
 
     @Input()
     public catchTypes: NomenclatureDTO<number>[] = [];
+
+    @Input()
+    public waterType!: WaterTypesEnum;
 
     @Output()
     public deletePanelBtnClicked: EventEmitter<void> = new EventEmitter<void>();
@@ -99,7 +103,7 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
 
         this.form.get('isContinentalCatchControl')!.valueChanges.subscribe({
             next: (value: boolean | undefined) => {
-                this.isContinentalCatchControlValueChanged(value);
+                this.setCatchQuadrantControlValidators();
             }
         });
 
@@ -125,6 +129,12 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
                 this.setExpansionPanelTitle(value);
             }
         });
+    }
+
+    public ngOnChanges(changes: SimpleChanges): void {
+        if ('waterType' in changes) {
+            this.setCatchQuadrantControlValidators();
+        }
     }
 
     public ngAfterViewInit(): void {
@@ -419,24 +429,20 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
         }
     }
 
-    private isContinentalCatchControlValueChanged(value: boolean | undefined): void {
-        const thirdCountryCatchZoneControlValue: string | undefined = this.form.get('thirdCountryCatchZoneControl')!.value;
+    private setCatchQuadrantControlValidators(): void {
+        const isContinentalCatch: boolean = this.form.get('isContinentalCatchControl')!.value;
+        const thirdCountryCatchZone: string | undefined = this.form.get('thirdCountryCatchZoneControl')!.value;
+        const isDanubeWaterType: boolean = this.waterType === WaterTypesEnum.DANUBE;
 
-        if (value === true) {
+        if (isContinentalCatch || (thirdCountryCatchZone !== null && thirdCountryCatchZone !== undefined) || isDanubeWaterType) {
             this.form.get('catchQuadrantControl')!.clearValidators();
-            this.form.get('catchQuadrantControl')!.markAsPending();
-            this.form.get('catchQuadrantControl')!.updateValueAndValidity({ emitEvent: false });
         }
         else {
-            if (thirdCountryCatchZoneControlValue === null
-                || thirdCountryCatchZoneControlValue === undefined
-                || thirdCountryCatchZoneControlValue === ''
-            ) {
-                this.form.get('catchQuadrantControl')!.setValidators([Validators.required]);
-                this.form.get('catchQuadrantControl')!.markAsPending();
-                this.form.get('catchQuadrantControl')!.updateValueAndValidity({ emitEvent: false });
-            }
+            this.form.get('catchQuadrantControl')!.setValidators([Validators.required]);
         }
+
+        this.form.get('catchQuadrantControl')!.markAsPending();
+        this.form.get('catchQuadrantControl')!.updateValueAndValidity({ emitEvent: false });
 
         if (this.isDisabled) {
             this.form.get('catchQuadrantControl')!.disable();

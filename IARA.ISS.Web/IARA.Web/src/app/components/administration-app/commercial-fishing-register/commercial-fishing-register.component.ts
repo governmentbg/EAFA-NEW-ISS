@@ -77,6 +77,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
     public translationService: FuseTranslationLoaderService;
     public formGroup!: FormGroup;
     public logBooksPerPage: number = 5;
+
     public permitTypes: NomenclatureDTO<number>[] = [];
     public permitLicenseTypes: NomenclatureDTO<number>[] = [];
     public fishingGearTypes: FishingGearNomenclatureDTO[] = [];
@@ -86,6 +87,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
     public permitLicenseIsSuspendedOptions: NomenclatureDTO<ThreeState>[] = [];
     public permitLicenseIsExpiredOptions: NomenclatureDTO<ThreeState>[] = [];
 
+    public readonly disabledLogBookAddButtonsTooltipText: string;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
     public readonly canReadPermitRecords: boolean;
@@ -167,6 +169,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         this.router = router;
 
         this.getLogBookAuditMethod = this.service.getLogBookAudit.bind(this.service);
+        this.disabledLogBookAddButtonsTooltipText = this.translationService.getValue('commercial-fishing.cannot-add-log-books-to-suspended-permit-license');
 
         this.canReadPermitRecords = permissions.has(PermissionsEnum.CommercialFishingPermitRegisterRead);
         this.canAddPermitRecords = permissions.has(PermissionsEnum.CommercialFishingPermitRegisterAddRecords);

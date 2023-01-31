@@ -460,7 +460,8 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
             isOnline: false,
             isForPermitLicense: false,
             registerId: aquacultureFacility.id,
-            service: this.service as AquacultureFacilitiesAdministrationService
+            service: this.service as AquacultureFacilitiesAdministrationService,
+            postOnSave: true
         });
 
         this.openLogBookDialog(title, data, undefined, false);
@@ -484,7 +485,8 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
             logBookGroup: LogBookGroupsEnum.Aquaculture,
             ownerType: logBook.ownerType,
             pagesRangeError: false,
-            isOnline: logBook.isOnline!
+            isOnline: logBook.isOnline!,
+            postOnSave: true
         });
 
         const headerAuditBtn: IHeaderAuditButton = {

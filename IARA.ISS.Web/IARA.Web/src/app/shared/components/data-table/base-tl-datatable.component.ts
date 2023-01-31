@@ -40,6 +40,8 @@ export class BaseTLDatatableComponent {
         this._addButtonLabel = '';
         this._addButtonIcon = 'fa-plus-circle';
         this._showAddButton = true;
+        this._disableAddButton = false;
+        this._addButtonTooltipText = undefined;
         this._totalRecordsCount = 0;
         this.counter = 0;
         this.inlineEditingService = inlineEditingService;
@@ -74,6 +76,8 @@ export class BaseTLDatatableComponent {
     public _addButtonLabel: string;
     public _addButtonIcon: string;
     public _showAddButton: boolean;
+    public _disableAddButton: boolean;
+    public _addButtonTooltipText: string | undefined;
     public _totalRecordsCount: number;
     public _rowDetail!: TLRowDetailComponent;
     public _groupHeader!: TLGroupHeaderComponent;
@@ -213,6 +217,14 @@ export class BaseTLDatatableComponent {
 
     @Input() public set showAddButton(value: boolean) {
         this._showAddButton = value;
+    }
+
+    @Input() public set disableAddButton(value: boolean) {
+        this._disableAddButton = value;
+    }
+
+    @Input() public set addButtonTooltipText(value: string | undefined) {
+        this._addButtonTooltipText = value;
     }
 
     @Input() public set isSoftDeletable(value: boolean) {

@@ -186,6 +186,9 @@
                                                                [service]="service"
                                                                [permitLicenseLogBookCacheService]="cacheService"
                                                                [showInactivePagesAndDocuments]="true"
+                                                               [postOnSave]="true"
+                                                               [disableAddButtons]="row.data.isSuspended"
+                                                               [disabledAddBtnTooltipText]="disabledLogBookAddButtonsTooltipText"
                                                                (onActionEnded)="onLogBookActionEnded($event)">
                                                     </log-books>
                                                 </tl-card-content>

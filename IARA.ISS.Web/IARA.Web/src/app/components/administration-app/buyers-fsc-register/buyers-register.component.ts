@@ -376,7 +376,8 @@ export class BuyersComponent implements OnInit, AfterViewInit {
             isOnline: false,
             isForPermitLicense: false,
             registerId: buyer.id,
-            service: this.service
+            service: this.service,
+            postOnSave: true
         });
 
         this.openLogBookDialog(title, data, undefined, false);
@@ -400,7 +401,8 @@ export class BuyersComponent implements OnInit, AfterViewInit {
             logBookGroup: LogBookGroupsEnum.DeclarationsAndDocuments,
             ownerType: logBook.ownerType,
             pagesRangeError: false,
-            isOnline: logBook.isOnline!
+            isOnline: logBook.isOnline!,
+            postOnSave: true
         });
 
         const headerAuditBtn: IHeaderAuditButton = {

@@ -607,7 +607,9 @@
                        [isForPermitLicense]="true"
                        [permitLicenseId]="permitLicenseRegisterId"
                        [service]="administrationService"
-                       [showInactivePagesAndDocuments]="!isPublicApp">
+                       [showInactivePagesAndDocuments]="!isPublicApp"
+                       [disableAddButtons]="isSuspended"
+                       [disabledAddBtnTooltipText]="disabledAddBtnTooltipText">
             </log-books>
         </div>
     </tl-expansion-panel>

@@ -12,13 +12,15 @@
         <div fxFlex="75" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">
             <ng-content select="[datatable-add-buttons]"></ng-content>
 
-            <button *ngIf="_showAddButton"
-                    mat-raised-button color="accent"
-                    (click)="addButtonClick()"
-                    style="margin-left:auto;">
-                <tl-icon [icon]="_addButtonIcon" class="warn-color"></tl-icon>
-                {{ _addButtonLabel }}
-            </button>
+            <div *ngIf="_showAddButton" [matTooltip]="_addButtonTooltipText" matTooltipShowDelay="300">
+                <button mat-raised-button color="accent"
+                        (click)="addButtonClick()"
+                        [disabled]="_disableAddButton"
+                        style="margin-left:auto;">
+                    <tl-icon [icon]="_addButtonIcon" class="warn-color"></tl-icon>
+                    {{ _addButtonLabel }}
+                </button>
+            </div>
 
             <button *ngIf="hasExcelExport"
                     mat-raised-button 

@@ -225,6 +225,43 @@
                               [shipId]="shipId">
                 </penal-points>
             </mat-tab>
+
+            <!-- Статистически формуляри -->
+            <mat-tab label="{{ 'ships-register.statistical-forms' | tlTranslate }}"
+                     [disabled]="disableTabs">
+                <tl-card>
+                    <tl-card-content>
+                        <tl-data-table fxFlexFill
+                                       [rows]="statisticalForms"
+                                       [isRemote]="false"
+                                       [showAddButton]="false"
+                                       [showInactiveRecords]="false">
+                            <data-column [flexRate]="0.2"
+                                         propertyName="year"
+                                         columnName="{{ 'ships-register.ship-stat-form-year' | tlTranslate }}">
+                            </data-column>
+
+                            <data-column [flexRate]="0.2"
+                                         dataType="date"
+                                         propertyName="submissionDate"
+                                         columnName="{{ 'ships-register.ship-stat-form-submission-date' | tlTranslate }}">
+                            </data-column>
+
+                            <data-template-column *ngIf="hasStatisticalFormReadPermission" [flexRate]="0.1" [cellClass]="'justify-center'">
+                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                        <tl-icon-button icon="visibility"
+                                                        (buttonClicked)="viewStatisticalFormFishVessel(row.data)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'ships-register.ship-stat-form-view-form' | tlTranslate }}">
+                                        </tl-icon-button>
+                                    </div>
+                                </ng-template>
+                            </data-template-column>
+                        </tl-data-table>
+                    </tl-card-content>
+                </tl-card>
+            </mat-tab>
         </mat-tab-group>
     </div>
 
@@ -233,11 +270,31 @@
          [class.expanded-events-panel]="isEventsPanelExpanded"
          [class.collapsed-events-panel]="!isEventsPanelExpanded"
          (transitionend)="onEventsPanelToggled($event)">
-        <tl-icon-button [icon]="isEventsPanelExpanded ? 'arrow_forward_ios' : 'arrow_back_ios'"
-                        (buttonClicked)="toggleEventsPanel()"
-                        iconClass="primary-color"
-                        tooltipText="{{ (isEventsPanelExpanded ? 'ships-register.collapse-events-panel' : 'ships-register.expand-events-panel') | tlTranslate }}">
-        </tl-icon-button>
+        <div *ngIf="isEventsPanelExpanded" fxLayout="row" fxLayoutAlign="space-between center">
+            <tl-icon-button icon="arrow_forward_ios"
+                            (buttonClicked)="toggleEventsPanel()"
+                            iconClass="primary-color"
+                            tooltipText="{{ 'ships-register.collapse-events-panel' | tlTranslate }}">
+            </tl-icon-button>
+
+            <tl-audit [auditInfo]="auditInfo"
+                      (openAudit)="auditBtnClicked()"
+                      (openDetailedAudit)="detailedAuditBtnClicked()">
+            </tl-audit>
+        </div>
+
+        <div *ngIf="!isEventsPanelExpanded">
+            <tl-icon-button icon="arrow_back_ios"
+                            (buttonClicked)="toggleEventsPanel()"
+                            iconClass="primary-color"
+                            tooltipText="{{ 'ships-register.expand-events-panel' | tlTranslate }}">
+            </tl-icon-button>
+
+            <tl-audit [auditInfo]="auditInfo"
+                      (openAudit)="auditBtnClicked()"
+                      (openDetailedAudit)="detailedAuditBtnClicked()">
+            </tl-audit>
+        </div>
 
         <div *ngIf="isEventsPanelOpen" fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="1em">
             <div *ngIf="!viewMode" fxLayout="column" fxLayoutAlign="start end" class="event-save-btn-container">
@@ -301,8 +358,8 @@
             </div>
 
             <!-- Event history table -->
-            <div class="events-panel-table" 
-                 fxLayout="column" 
+            <div class="events-panel-table"
+                 fxLayout="column"
                  fxLayoutAlign="start stretch">
                 <tl-slide-toggle class="show-edits-toggle"
                                  [formControl]="showEditsControl"
@@ -417,7 +474,7 @@
     </div>
 
     <!-- Increase capacity application panel -->
-    <div *ngIf="isIncreaseCapacityApplication" 
+    <div *ngIf="isIncreaseCapacityApplication"
          tlResizable="top"
          (tlResizableChanged)="onCocPanelResized($event)"
          class="change-of-circumstances-panel"
@@ -442,10 +499,10 @@
     </div>
 
     <!-- Reduce capacity application panel -->
-    <div *ngIf="isReduceCapacityApplication" 
+    <div *ngIf="isReduceCapacityApplication"
          tlResizable="top"
          (tlResizableChanged)="onCocPanelResized($event)"
-         class="change-of-circumstances-panel" 
+         class="change-of-circumstances-panel"
          [style.width.px]="mainPanelWidthPx">
         <h2><b>{{ 'ships-register.reduce-capacity-application-parameters' | tlTranslate }}</b></h2>
         <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start start" fxFill>

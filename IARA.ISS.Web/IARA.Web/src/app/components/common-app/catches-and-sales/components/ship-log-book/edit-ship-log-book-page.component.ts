@@ -791,7 +791,15 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             shipId: this.model.shipId,
             shipName: this.model.shipName,
             logBookPermitLicenseId: this.model.logBookPermitLicenseId,
+
             permitLicenseName: this.model.permitLicenseName,
+            permitLicenseWaterType: this.model.permitLicenseWaterType,
+            permitLicenseWaterTypeName: this.model.permitLicenseWaterTypeName,
+            permitLicenseId: this.model.permitLicenseId,
+            permitLicenseNumber: this.model.permitLicenseNumber,
+
+            status: this.model.status,
+            statusCode: this.model.statusCode,
 
             fishingGearRegisterId: selectedFishingGear.value,
             fishingGearCount: this.form.get('fishingGearCountControl')!.value,

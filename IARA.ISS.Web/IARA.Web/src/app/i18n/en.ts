@@ -1825,7 +1825,7 @@
         'filters-has-food-law-licence': 'Food law licence',
         'filters-is-in-ship-association': 'Association',
         'filters-cancelled': 'In fleet/not in fleet',
-        'filters-forbidden': 'Prohibited for permit',
+        'filters-forbidden': 'Prohibited for permit', 
 
         'third-party-ship-yes': 'Only third party ships',
         'third-party-ship-no': 'Only non third party ships',
@@ -2025,6 +2025,7 @@
         'given-points': 'Given points',
         'ship-quotas': 'Quotas',
         'inspections': 'Inspections',
+        'statistical-forms': 'Statistical forms',
 
         'ship-quota-view': 'View quota',
         'ship-quota': 'Quota',
@@ -2050,6 +2051,11 @@
         'ship-declarations-port-of-unloading': 'Port of unloading',
         'ship-declarations-view-declaration': 'View declaration',
         'ship-declarations-view-declaration-dialog-title': 'View logbook page',
+
+        'ship-stat-form-year': 'Year',
+        'ship-stat-form-submission-date': 'Submission date',
+        'ship-stat-form-view-form': 'View statistical form',
+        'ship-stat-form-view-form-dialog-title': 'View statistical form',
 
         'choose-event-type': 'Choose event type',
         'show-only-events': 'Show edit events',
@@ -2789,6 +2795,7 @@
         'permit-license-territory-unit': 'Permit License territory unit',
         'permit-is-suspended': 'Suspended',
         'permit-license-is-suspended': 'Suspended',
+        'cannot-add-log-books-to-suspended-permit-license': 'Cannot add log books to a suspended permit license',
 
         'go-to-permit-application': 'Go to application',
         'go-to-permit-license-application': 'Go to application',
@@ -4257,6 +4264,12 @@
         'hatchery-equipment-type': 'Type',
         'hatchery-equipment-count': 'Count',
         'hatchery-equipment-volume': 'Volume (cubic meters)',
+
+        'statistical-forms': 'Statistical forms',
+        'statistical-forms-year': 'Year',
+        'statistical-forms-submission-date': 'Submission date',
+        'statistical-forms-view-form': 'View statistical form',
+        'statistical-forms-view-form-dialog-title': 'View statistical form',
 
         'usage-document-table-type': 'Document type',
         'usage-document-table-num': 'Document no.',

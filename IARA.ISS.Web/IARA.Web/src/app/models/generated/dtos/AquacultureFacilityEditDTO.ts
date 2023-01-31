@@ -8,6 +8,7 @@ import { AquacultureHatcheryEquipmentDTO } from './AquacultureHatcheryEquipmentD
 import { UsageDocumentDTO } from './UsageDocumentDTO';
 import { AquacultureWaterLawCertificateDTO } from './AquacultureWaterLawCertificateDTO';
 import { CommonDocumentDTO } from './CommonDocumentDTO';
+import { StatisticalFormDataDTO } from './StatisticalFormDataDTO';
 import { CancellationHistoryEntryDTO } from './CancellationHistoryEntryDTO';
 import { FileInfoDTO } from './FileInfoDTO';
 import { AquacultureStatusEnum } from '@app/enums/aquaculture-status.enum';
@@ -106,6 +107,9 @@ export class AquacultureFacilityEditDTO {
 
     @StrictlyTyped(CommonDocumentDTO)
     public babhCertificates?: CommonDocumentDTO[];
+
+    @StrictlyTyped(StatisticalFormDataDTO)
+    public statisticalForms?: StatisticalFormDataDTO[];
 
     @StrictlyTyped(String)
     public comments?: string;

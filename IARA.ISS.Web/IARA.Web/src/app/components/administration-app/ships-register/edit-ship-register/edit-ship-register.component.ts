@@ -48,6 +48,12 @@ import { ShipRegisterLogBookPagesFilters } from '@app/models/generated/filters/S
 import { EditShipLogBookPageComponent } from '@app/components/common-app/catches-and-sales/components/ship-log-book/edit-ship-log-book-page.component';
 import { EditShipLogBookPageDialogParams } from '@app/components/common-app/catches-and-sales/components/ship-log-book/models/edit-ship-log-book-page-dialog-params.model';
 import { MenuService } from '@app/shared/services/menu.service';
+import { StatisticalFormDataDTO } from '@app/models/generated/dtos/StatisticalFormDataDTO';
+import { IStatisticalFormsService } from '@app/interfaces/common-app/statistical-forms.interface';
+import { StatisticalFormsAdministrationService } from '@app/services/administration-app/statistical-forms-administration.service';
+import { StatisticalFormsFishVesselComponent } from '@app/components/common-app/statistical-forms/components/statistical-forms-fish-vessel/statistical-forms-fish-vessel.component';
+import { DialogParamsModel } from '@app/models/common/dialog-params.model';
+import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 
 const SHIP_DATA_TAB_INDEX: number = 0;
 const FISHING_GEARS_TAB_INDEX: number = 1;
@@ -56,6 +62,7 @@ const DECLARATIONS_TAB_INDEX: number = 3;
 const QUOTAS_TAB_INDEX: number = 4;
 const INSPECTIONS_TAB_INDEX: number = 5;
 const GIVEN_POINTS_TAB_INDEX: number = 6;
+const STAT_FORMS_TAB_INDEX: number = 7;
 
 @Component({
     selector: 'edit-ship-register',
@@ -81,6 +88,8 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
     public shipControl: FormControl = new FormControl();
     public shipId: number | undefined;
 
+    public auditInfo: SimpleAuditDTO | undefined;
+
     public commercialFishingService: CommercialFishingAdministrationService;
     public fishingGearsControl: FormControl = new FormControl();
     public fishingGears: FishingGearDTO[] | undefined;
@@ -95,6 +104,8 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
     public shipQuotaForm!: FormGroup;
     public shipQuotaHistory: ShipRegisterQuotaHistoryDTO[] = [];
     public shipQuotaCatchHistory: ShipRegisterCatchHistoryDTO[] = [];
+
+    public statisticalForms: StatisticalFormDataDTO[] | undefined;
 
     public showEditsControl: FormControl = new FormControl();
     public eventTypeControl: FormControl = new FormControl(null, this.eventTypeValidator());
@@ -119,6 +130,7 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
     public disableTabs: boolean = true;
 
     public hasCatchesAndSalesReadPermission: boolean = false;
+    public hasStatisticalFormReadPermission: boolean = false;
 
     @ViewChild('logbookPagesTable')
     private logbookPagesTable!: TLDataTableComponent;
@@ -133,12 +145,15 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
     private logbookPageEditDialog: TLMatDialog<EditShipLogBookPageComponent>;
     private initialDeclarationsLoaded: boolean = false;
 
+    private statisticalFormEditDialog: TLMatDialog<StatisticalFormsFishVesselComponent>;
+
     private translate: FuseTranslationLoaderService;
     private router: Router;
     private confirmDialog: TLConfirmDialog;
     private snackbar: MatSnackBar;
     private menuService: MenuService;
     private catchesAndSalesService: ICatchesAndSalesService;
+    private statisticalFormsService: IStatisticalFormsService;
 
     private shipsCache: Map<number, ShipRegisterEditDTO> = new Map<number, ShipRegisterEditDTO>();
     private temporaryShipsCache: Map<number, ShipRegisterEditDTO> = new Map<number, ShipRegisterEditDTO>();
@@ -157,7 +172,9 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
         confirmDialog: TLConfirmDialog,
         snackbar: MatSnackBar,
         logbookPageEditDialog: TLMatDialog<EditShipLogBookPageComponent>,
+        statisticalFormEditDialog: TLMatDialog<StatisticalFormsFishVesselComponent>,
         catchesAndSalesService: CatchesAndSalesAdministrationService,
+        statisticalFormsService: StatisticalFormsAdministrationService,
         permissions: PermissionsService,
         messageService: MessageService,
         menuService: MenuService,
@@ -174,9 +191,12 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
         this.snackbar = snackbar;
         this.menuService = menuService;
         this.logbookPageEditDialog = logbookPageEditDialog;
+        this.statisticalFormEditDialog = statisticalFormEditDialog;
         this.catchesAndSalesService = catchesAndSalesService;
+        this.statisticalFormsService = statisticalFormsService;
 
         this.hasCatchesAndSalesReadPermission = permissions.hasAny(PermissionsEnum.FishLogBookPageReadAll, PermissionsEnum.FishLogBookPageRead);
+        this.hasStatisticalFormReadPermission = permissions.hasAny(PermissionsEnum.StatisticalFormsFishVesselReadAll, PermissionsEnum.StatisticalFormsFishVesselRead);
 
         this.host = host.nativeElement as HTMLElement;
 
@@ -672,6 +692,15 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
                 });
             }
         }
+        else if (index === STAT_FORMS_TAB_INDEX) {
+            if (this.statisticalForms === undefined) {
+                this.service.getShipStatisticalForms(this.model.shipUID!).subscribe({
+                    next: (result: StatisticalFormDataDTO[]) => {
+                        this.statisticalForms = result;
+                    }
+                });
+            }
+        }
     }
 
     public viewShipLogBookPage(page: ShipRegisterLogBookPageDTO): void {
@@ -695,6 +724,47 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
             viewMode: true,
             disableDialogClose: false
         }, '1450px').subscribe();
+    }
+
+    public viewStatisticalFormFishVessel(form: StatisticalFormDataDTO): void {
+        this.statisticalFormEditDialog.openWithTwoButtons({
+            title: this.translate.getValue('ships-register.ship-stat-form-view-form-dialog-title'),
+            TCtor: StatisticalFormsFishVesselComponent,
+            translteService: this.translate,
+            headerCancelButton: {
+                cancelBtnClicked: this.closeViewStatisticalFormDialog.bind(this)
+            },
+            componentData: new DialogParamsModel({
+                id: form.id,
+                isApplication: false,
+                isReadonly: true,
+                viewMode: true,
+                service: this.statisticalFormsService
+            }),
+            viewMode: true,
+            disableDialogClose: false
+        }, '1400px').subscribe();
+    }
+
+    public auditBtnClicked(): void {
+        if (this.model?.id !== undefined && this.model?.id !== null) {
+            this.service.getSimpleAudit(this.model.id).subscribe({
+                next: (audit: SimpleAuditDTO) => {
+                    this.auditInfo = audit;
+                }
+            });
+        }
+    }
+
+    public detailedAuditBtnClicked(): void {
+        if (this.model?.id !== undefined && this.model?.id !== null) {
+            this.router.navigateByUrl('/system-log', {
+                state: {
+                    tableId: this.model.id.toString(),
+                    tableName: 'ShipRegister'
+                }
+            });
+        }
     }
 
     private calculateContainerHeightPx(): void {
@@ -733,6 +803,10 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
     }
 
     private closeViewShipLogBookPageDialog(closeFn: HeaderCloseFunction): void {
+        closeFn();
+    }
+
+    private closeViewStatisticalFormDialog(closeFn: HeaderCloseFunction): void {
         closeFn();
     }
 

@@ -2036,6 +2036,7 @@
         'given-points': 'Присъдени точки',
         'ship-quotas': 'Квоти',
         'inspections': 'Проверки',
+        'statistical-forms': 'Статистически формуляри',
 
         'ship-quota-view': 'Преглед на квота',
         'ship-quota': 'Квота',
@@ -2061,6 +2062,11 @@
         'ship-declarations-port-of-unloading': 'Пристанище на разтоварване',
         'ship-declarations-view-declaration': 'Преглед на декларация',
         'ship-declarations-view-declaration-dialog-title': 'Преглед на страница от риболовен дневник',
+
+        'ship-stat-form-year': 'Година',
+        'ship-stat-form-submission-date': 'Дата на подаване',
+        'ship-stat-form-view-form': 'Преглед на статистически формуляр',
+        'ship-stat-form-view-form-dialog-title': 'Преглед на информационно-статистически формуляр за риболовни кораби',
 
         'choose-event-type': 'Избери вид събитие',
         'show-edit-events': 'Покажи и редакции',
@@ -2877,6 +2883,7 @@
         'permit-license-territory-unit': 'Териториално звено на удостоверение',
         'permit-is-suspended': 'Прекратено',
         'permit-license-is-suspended': 'Прекратено',
+        'cannot-add-log-books-to-suspended-permit-license': 'Не можете да добавяте дневници към прекратено удостоверение',
 
         'go-to-permit-application': 'Навигиране към заявление',
         'go-to-permit-license-application': 'Навигиране към заявление',
@@ -4369,6 +4376,12 @@
         'hatchery-equipment-type': 'Вид',
         'hatchery-equipment-count': 'Брой',
         'hatchery-equipment-volume': 'Обем (куб. м.)',
+
+        'statistical-forms': 'Статистически формуляри',
+        'statistical-forms-year': 'Година',
+        'statistical-forms-submission-date': 'Дата на подаване',
+        'statistical-forms-view-form': 'Преглед на статистически формуляр',
+        'statistical-forms-view-form-dialog-title': 'Преглед на информационно-статистически формуляр за аквакултурни стопанства',
 
         'usage-document-table-type': 'Вид документ',
         'usage-document-table-num': '№ на документа',
