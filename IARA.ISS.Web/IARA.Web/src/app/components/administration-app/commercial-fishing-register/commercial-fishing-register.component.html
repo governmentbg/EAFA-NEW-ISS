@@ -5,8 +5,8 @@
                 <tl-select *ngIf="canReadPermitRecords"
                            fxFlex="25"
                            formControlName="permitTypeControl"
-                           label="{{ 'commercial-fishing.permit-type' | tlTranslate }}"
-                           tooltipResourceName="commercial-fishing.permit-type-helper"
+                           label="{{ 'commercial-fishing.permit-type-filter' | tlTranslate }}"
+                           tooltipResourceName="commercial-fishing.permit-type-filter-helper"
                            [options]="permitTypes">
                 </tl-select>
                 <tl-select *ngIf="canReadPermitLicenseRecords || hasPermitLicenseReadAllPermission"
@@ -17,11 +17,17 @@
                            [options]="permitLicenseTypes">
                 </tl-select>
                 <tl-input fxFlex="25"
-                          formControlName="numberControl"
-                          label="{{ 'commercial-fishing.number' | tlTranslate }}"
-                          tooltipResourceName="commercial-fishing.number-helper">
+                          formControlName="permitNumberControl"
+                          label="{{ 'commercial-fishing.permit-number' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.permit-number-helper">
                 </tl-input>
-                <div fxFlex="25"></div>
+                <tl-input *ngIf="canReadPermitLicenseRecords || hasPermitLicenseReadAllPermission"
+                          fxFlex="25"
+                          formControlName="permitLicenseNumberControl"
+                          label="{{ 'commercial-fishing.permit-license-number' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.permit-license-number-helper">
+                </tl-input>
+                <div *ngIf="!canReadPermitLicenseRecords && !hasPermitLicenseReadAllPermission" fxFlex="25"></div>
                 <div *ngIf="!canReadPermitLicenseRecords && !hasPermitLicenseReadAllPermission" fxFlex="25"></div>
                 <div *ngIf="!canReadPermitRecords" fxFlex="25"></div>
             </div>
@@ -114,16 +120,34 @@
                           label="{{ 'commercial-fishing.pound-net-number' | tlTranslate }}"
                           tooltipResourceName="commercial-fishing.pound-net-number-helper">
                 </tl-input>
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+            </div>
+            <div fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                 <tl-input fxFlex="25"
-                          formControlName="submittedForNameControl"
-                          label="{{ 'commercial-fishing.submitted-for-names' | tlTranslate }}"
-                          tooltipResourceName="commercial-fishing.submitted-for-names-helper">
+                          formControlName="permitSubmittedForNameControl"
+                          label="{{ 'commercial-fishing.permit-submitted-for-names-filter' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.permit-submitted-for-names-filter-helper">
                 </tl-input>
                 <tl-input fxFlex="25"
-                          formControlName="submittedForIdentifierControl"
-                          label="{{ 'commercial-fishing.submitted-for-identifier' | tlTranslate }}"
-                          tooltipResourceName="commercial-fishing.submitted-for-identifier-helper">
+                          formControlName="permitSubmittedForIdentifierControl"
+                          label="{{ 'commercial-fishing.permit-submitted-for-identifier' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.permit-submitted-for-identifier-helper">
                 </tl-input>
+                <tl-input *ngIf="canReadPermitLicenseRecords || hasPermitLicenseReadAllPermission"
+                          fxFlex="25"
+                          formControlName="permitLicenseSubmittedForNameControl"
+                          label="{{ 'commercial-fishing.permit-license-submitted-for-names' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.permit-license-submitted-for-names-helper">
+                </tl-input>
+                <tl-input *ngIf="canReadPermitLicenseRecords || hasPermitLicenseReadAllPermission"
+                          fxFlex="25"
+                          formControlName="permitLicenseSubmittedForIdentifierControl"
+                          label="{{ 'commercial-fishing.permit-license-submitted-for-identifier' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.permit-license-submitted-for-identifier-helper">
+                </tl-input>
+                <div *ngIf="!canReadPermitLicenseRecords && !hasPermitLicenseReadAllPermission"></div>
+                <div *ngIf="!canReadPermitLicenseRecords && !hasPermitLicenseReadAllPermission"></div>
             </div>
             <div fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                 <tl-autocomplete fxFlex="25"

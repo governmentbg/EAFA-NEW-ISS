@@ -34,7 +34,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
             Finish = CommandBuilder.CreateFrom(OnFinish);
 
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
-            PatrolVehicles = new PatrolVehiclesViewModel(this, false);
+            PatrolVehicles = new PatrolVehiclesViewModel(this, null);
             FishingGears = new WaterFishingGearsViewModel(this);
             Vessels = new WaterVesselsViewModel(this);
             Engines = new EnginesViewModel(this);

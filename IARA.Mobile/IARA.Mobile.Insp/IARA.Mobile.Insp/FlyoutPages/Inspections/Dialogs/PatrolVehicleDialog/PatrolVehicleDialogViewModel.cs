@@ -38,7 +38,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.PatrolVehicleDialog
             {
                 { Group.REGISTERED, () => IsRegistered },
                 { Group.NOT_REGISTERED, () => !IsRegistered },
-                { Group.IS_WATER_VEHICLE, () => IsWaterVehicle },
+                { Group.IS_WATER_VEHICLE, () => IsWaterVehicle == null || IsWaterVehicle == true },
             });
 
             IsRegistered.Value = true;
@@ -49,7 +49,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.PatrolVehicleDialog
                         .FindAll(f => !PatrolVehicles.InspectorVehicles.Any(s => s.Dto?.Id == f.Id));
         }
 
-        public bool IsWaterVehicle { get; set; }
+        public bool? IsWaterVehicle { get; set; }
 
         public InspectionPageViewModel Inspection { get; set; }
 

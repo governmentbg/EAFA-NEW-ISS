@@ -10,7 +10,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.PatrolVehicleDialog
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class PatrolVehicleDialog : TLBaseDialog<PatrolVehicleDialogViewModel, PatrolVehicleModel>
     {
-        public PatrolVehicleDialog(PatrolVehiclesViewModel patrolVehicles, bool isWaterVehicle, InspectionPageViewModel inspection, ViewActivityType dialogType, PatrolVehicleModel dto = null)
+        public PatrolVehicleDialog(PatrolVehiclesViewModel patrolVehicles, bool? isWaterVehicle, InspectionPageViewModel inspection, ViewActivityType dialogType, PatrolVehicleModel dto = null)
         {
             ViewModel.IsWaterVehicle = isWaterVehicle;
             ViewModel.DialogType = dialogType;

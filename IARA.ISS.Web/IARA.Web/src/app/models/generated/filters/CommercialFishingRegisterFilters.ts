@@ -16,7 +16,8 @@ export class CommercialFishingRegisterFilters extends BaseRequestModel {
     
     public permitTypeId: number | undefined;
     public permitLicenseTypeId: number | undefined;
-    public number: string | undefined;
+    public permitNumber: string | undefined;
+    public permitLicenseNumber: string | undefined;
     public permitIssuedOnStartDate: Date | undefined;
     public permitIssuedOnEndDate: Date | undefined;
     public permitLicenseIssuedOnStartDate: Date | undefined;
@@ -31,8 +32,10 @@ export class CommercialFishingRegisterFilters extends BaseRequestModel {
     public fishingGearTypeId: number | undefined;
     public fishingGearMarkNumber: string | undefined;
     public fishingGearPingerNumber: string | undefined;
-    public submittedForName: string | undefined;
-    public submittedForIdentifier: string | undefined;
+    public permitSubmittedForName: string | undefined;
+    public permitLicenseSubmittedForName: string | undefined;
+    public permitSubmittedForIdentifier: string | undefined;
+    public permitLicenseSubmittedForIdentifier: string | undefined;
     public logbookNumber: string | undefined;
     public permitTerritoryUnitId: number | undefined;
     public permitIsSuspended: boolean | undefined;

@@ -26,7 +26,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 
         List<ObservationToolNomenclatureDto> GetObservationTools();
 
-        List<SelectNomenclatureDto> GetPatrolVehicleTypes(bool isWaterVehicle);
+        List<SelectNomenclatureDto> GetPatrolVehicleTypes(bool? isWaterVehicle);
 
         List<SelectNomenclatureDto> GetPopulatedAreas(int municipalityId);
 
@@ -52,7 +52,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 
         List<SelectNomenclatureDto> GetFishingGears();
 
-        List<SelectNomenclatureDto> GetPatrolVehicles(bool isWaterVehicle, int page, int count, string search = null);
+        List<SelectNomenclatureDto> GetPatrolVehicles(bool? isWaterVehicle, int page, int count, string search = null);
 
         VesselDuringInspectionDto GetPatrolVehicle(int id);
 

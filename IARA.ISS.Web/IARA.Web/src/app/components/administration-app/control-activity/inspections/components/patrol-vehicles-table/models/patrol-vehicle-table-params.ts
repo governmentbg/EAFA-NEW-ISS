@@ -1,7 +1,7 @@
 ﻿import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
 
 export class PatrolVehicleTableParams {
-    public isWaterVehicle: boolean = false;
+    public isWaterVehicle: boolean | undefined = false;
     public readOnly: boolean = false;
     public isEdit: boolean = false;
     public model: VesselDuringInspectionDTO | undefined;

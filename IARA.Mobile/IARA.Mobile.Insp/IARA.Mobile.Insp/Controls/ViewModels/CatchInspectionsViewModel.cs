@@ -61,7 +61,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public bool ShowFishSex { get; }
 
         [DuplicateMarketCatches(ErrorMessageResourceName = "DuplicateCatches")]
-        [ListMinLength(1)]
         public ValidStateValidatableTable<CatchInspectionViewModel> Catches { get; set; }
 
         public List<SelectNomenclatureDto> FishTypes
