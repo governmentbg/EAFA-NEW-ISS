@@ -26,7 +26,7 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
     public form!: FormGroup;
 
     public isFromRegister: boolean = true;
-    public isWaterVehicle: boolean = true;
+    public isWaterVehicle: boolean | undefined = true;
     public hasCoordinates: boolean = true;
 
     public patrolVehicles: NomenclatureDTO<number>[] = [];
@@ -70,14 +70,25 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
             this.service.getPatrolVehicles(this.isWaterVehicle)
         ).toPromise();
 
+        let types: PatrolVehicleTypeEnum[] = [];
+
+        if (this.isWaterVehicle == undefined) {
+            types = [PatrolVehicleTypeEnum.Marine, PatrolVehicleTypeEnum.Ground];
+        }
+        else if (this.isWaterVehicle === true) {
+            types = [PatrolVehicleTypeEnum.Marine];
+        }
+        else {
+            types = [PatrolVehicleTypeEnum.Ground];
+        }
+
+        types = [...types, PatrolVehicleTypeEnum.Air, PatrolVehicleTypeEnum.Other];
+
         const type: PatrolVehicleTypeEnum = this.isWaterVehicle ? PatrolVehicleTypeEnum.Marine : PatrolVehicleTypeEnum.Ground;
 
         this.countries = nomenclatureTables[0];
         this.institutions = nomenclatureTables[1];
-        this.patrolVehicleTypes = nomenclatureTables[2].filter(f => f.vehicleType === type
-            || f.vehicleType === PatrolVehicleTypeEnum.Air
-            || f.vehicleType === PatrolVehicleTypeEnum.Other
-        );
+        this.patrolVehicleTypes = nomenclatureTables[2].filter(f => types.includes(f.vehicleType!));
         this.unfilteredPatrolVehicles = nomenclatureTables[3];
         this.patrolVehicles = nomenclatureTables[3].filter(f => !this.excludeIds.includes(f.value!));;
 

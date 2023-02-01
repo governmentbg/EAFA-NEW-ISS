@@ -143,20 +143,31 @@ namespace IARA.Mobile.Insp.Application.Transactions
             }
         }
 
-        public List<SelectNomenclatureDto> GetPatrolVehicleTypes(bool isWaterVehicle)
+        public List<SelectNomenclatureDto> GetPatrolVehicleTypes(bool? isWaterVehicle)
         {
-            PatrolVehicleType type = isWaterVehicle ? PatrolVehicleType.Marine : PatrolVehicleType.Ground;
+            IEnumerable<PatrolVehicleType> types = null;
+
+            if (isWaterVehicle == null)
+            {
+                types = new List<PatrolVehicleType> { PatrolVehicleType.Marine, PatrolVehicleType.Ground };
+            }
+            else if (isWaterVehicle.Value)
+            {
+                types = new List<PatrolVehicleType> { PatrolVehicleType.Marine };
+            }
+            else
+            {
+                types = new List<PatrolVehicleType> { PatrolVehicleType.Ground };
+            }
+
+            types = types.Concat(new List<PatrolVehicleType> { PatrolVehicleType.Air, PatrolVehicleType.Other }).ToList();
 
             using (IAppDbContext context = ContextBuilder.CreateContext())
             {
                 return (
                     from pvt in context.NPatrolVehicleTypes
                     where pvt.IsActive
-                        && (
-                            pvt.VehicleType == type
-                            || pvt.VehicleType == PatrolVehicleType.Air
-                            || pvt.VehicleType == PatrolVehicleType.Other
-                        )
+                        && types.Contains(pvt.VehicleType)
                     orderby pvt.Id
                     select new SelectNomenclatureDto
                     {
@@ -342,9 +353,25 @@ namespace IARA.Mobile.Insp.Application.Transactions
             return GetNomenclatureDtos<NFishingGear>();
         }
 
-        public List<SelectNomenclatureDto> GetPatrolVehicles(bool isWaterVehicle, int page, int count, string search = null)
+        public List<SelectNomenclatureDto> GetPatrolVehicles(bool? isWaterVehicle, int page, int count, string search = null)
         {
-            PatrolVehicleType type = isWaterVehicle ? PatrolVehicleType.Marine : PatrolVehicleType.Ground;
+            IEnumerable<PatrolVehicleType> types = null;
+
+            if (isWaterVehicle == null)
+            {
+                types = new List<PatrolVehicleType> { PatrolVehicleType.Marine, PatrolVehicleType.Ground };
+            }
+            else if (isWaterVehicle.Value)
+            {
+                types = new List<PatrolVehicleType> { PatrolVehicleType.Marine };
+            }
+            else
+            {
+                types = new List<PatrolVehicleType> { PatrolVehicleType.Ground };
+            }
+
+            types = types.Concat(new List<PatrolVehicleType> { PatrolVehicleType.Air, PatrolVehicleType.Other }).ToList();
+
             search = search?.ToLower();
 
             using (IAppDbContext context = ContextBuilder.CreateContext())
@@ -356,11 +383,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         || patrolVehicle.NormalizedName.Contains(search)
                         || patrolVehicle.NormalizedExternalMark.Contains(search)
                         || patrolVehicle.RegistrationNumber.Contains(search)
-                        ) && (
-                            patrolVehicle.VehicleType == type
-                            || patrolVehicle.VehicleType == PatrolVehicleType.Air
-                            || patrolVehicle.VehicleType == PatrolVehicleType.Other
-                        )
+                        ) && types.Contains(patrolVehicle.VehicleType)
                     orderby patrolVehicle.Id
                     select new SelectNomenclatureDto
                     {

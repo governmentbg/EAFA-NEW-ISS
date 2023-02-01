@@ -19,7 +19,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class PatrolVehiclesViewModel : ViewModel
     {
-        public PatrolVehiclesViewModel(InspectionPageViewModel inspection, bool isWaterVehicle)
+        public PatrolVehiclesViewModel(InspectionPageViewModel inspection, bool? isWaterVehicle)
         {
             Inspection = inspection;
             IsWaterVehicle = isWaterVehicle;
@@ -32,7 +32,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             this.AddValidation();
         }
 
-        public bool IsWaterVehicle { get; }
+        public bool? IsWaterVehicle { get; }
 
         public InspectionPageViewModel Inspection { get; }
 

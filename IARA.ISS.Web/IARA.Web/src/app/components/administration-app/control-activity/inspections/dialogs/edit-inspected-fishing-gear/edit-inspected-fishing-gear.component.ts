@@ -160,9 +160,21 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
         if (this.model.DTO.hasAttachedAppliances !== null && this.model.DTO.hasAttachedAppliances !== undefined) {
             this.form.get('appliancesOptionsControl')!.setValue(
                 new InspectionCheckDTO({
-                    checkValue: this.model.DTO.hasAttachedAppliances
-                        ? InspectionToggleTypesEnum.Y
-                        : InspectionToggleTypesEnum.N
+                    checkValue: InspectionToggleTypesEnum.R
+                })
+            );
+        }
+        else if (this.model.DTO.hasAttachedAppliances) {
+            this.form.get('appliancesOptionsControl')!.setValue(
+                new InspectionCheckDTO({
+                    checkValue: InspectionToggleTypesEnum.Y
+                })
+            );
+        }
+        else {
+            this.form.get('appliancesOptionsControl')!.setValue(
+                new InspectionCheckDTO({
+                    checkValue: InspectionToggleTypesEnum.N
                 })
             );
         }
@@ -185,7 +197,17 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
             : undefined;
         this.model.DTO.checkInspectedMatchingRegisteredGear = this.mapToFishingGearEnum();
 
-        this.model.DTO.hasAttachedAppliances = this.form.get('appliancesOptionsControl')!.value?.checkValue === InspectionToggleTypesEnum.Y;
+        const appliancesOptions: InspectionToggleTypesEnum = this.form.get('appliancesOptionsControl')!.value?.checkValue;
+
+        if (appliancesOptions == null || appliancesOptions === InspectionToggleTypesEnum.R) {
+            this.model.DTO.hasAttachedAppliances = undefined;
+        }
+        else if (appliancesOptions === InspectionToggleTypesEnum.Y) {
+            this.model.DTO.hasAttachedAppliances = true;
+        }
+        else {
+            this.model.DTO.hasAttachedAppliances = false;
+        }
 
         if (this.model.DTO.inspectedFishingGear !== null && this.model.DTO.inspectedFishingGear !== undefined) {
             if (this.model.DTO.inspectedFishingGear.marks !== null && this.model.DTO.inspectedFishingGear.marks !== undefined) {

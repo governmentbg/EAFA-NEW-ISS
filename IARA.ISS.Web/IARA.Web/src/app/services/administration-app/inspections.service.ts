@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { InspectionTypesEnum } from '@app/enums/inspection-types.enum';
 import { GridRequestModel } from '@app/models/common/grid-request.model';
 import { GridResultModel } from '@app/models/common/grid-result.model';
-import { AuanRegisterDTO } from '@app/models/generated/dtos/AuanRegisterDTO';
 import { DeclarationLogBookPageDTO } from '@app/models/generated/dtos/DeclarationLogBookPageMobileDTO';
 import { FileInfoDTO } from '@app/models/generated/dtos/FileInfoDTO';
 import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
@@ -24,7 +23,6 @@ import { AreaTypes } from '@app/shared/enums/area-type.enum';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { RequestService } from '@app/shared/services/request.service';
 import { Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
 import { DeclarationLogBookTypeEnum } from '../../enums/declaration-log-book-type.enum';
 import { BaseAuditService } from '../common-app/base-audit.service';
 
@@ -64,8 +62,12 @@ export class InspectionsService extends BaseAuditService {
         });
     }
 
-    public getPatrolVehicles(isWaterVehicle: boolean): Observable<NomenclatureDTO<number>[]> {
-        const params = new HttpParams().append('isWaterVehicle', isWaterVehicle.toString());
+    public getPatrolVehicles(isWaterVehicle: boolean | undefined): Observable<NomenclatureDTO<number>[]> {
+        let params = new HttpParams();
+
+        if (isWaterVehicle != undefined) {
+            params = params.append('isWaterVehicle', isWaterVehicle.toString());
+        }
 
         return this.requestService.get(this.area, this.controller, 'GetPatrolVehicles', {
             httpParams: params,

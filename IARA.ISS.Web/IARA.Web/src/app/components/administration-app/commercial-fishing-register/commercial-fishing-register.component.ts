@@ -1,4 +1,5 @@
-﻿import { IRemoteTLDatatableComponent } from '@app/shared/components/data-table/interfaces/tl-remote-datatable.interface';
+﻿
+import { IRemoteTLDatatableComponent } from '@app/shared/components/data-table/interfaces/tl-remote-datatable.interface';
 import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -695,7 +696,8 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         this.formGroup = new FormGroup({
             permitTypeControl: new FormControl(),
             permitLicenseTypeControl: new FormControl(),
-            numberControl: new FormControl(),
+            permitNumberControl: new FormControl(),
+            permitLicenseNumberControl: new FormControl(),
             permitIssuedDateRangeControl: new FormControl(),
             permitLicenseIssuedDateRangeControl: new FormControl(),
             shipNameControl: new FormControl(),
@@ -707,8 +709,10 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             fishingGearTypeControl: new FormControl(),
             fishingGearMarkNumberControl: new FormControl(),
             fishingGearPingerNumberControl: new FormControl(),
-            submittedForNameControl: new FormControl(),
-            submittedForIdentifierControl: new FormControl(),
+            permitSubmittedForNameControl: new FormControl(),
+            permitLicenseSubmittedForNameControl: new FormControl(),
+            permitSubmittedForIdentifierControl: new FormControl(),
+            permitLicenseSubmittedForIdentifierControl: new FormControl(),
             logBookNumberControl: new FormControl(),
             permitTerritoryUnitControl: new FormControl(),
             permitLicenseTerritoryUnitControl: new FormControl(),
@@ -726,7 +730,8 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
 
             permitTypeId: filters.getValue('permitTypeControl'),
             permitLicenseTypeId: filters.getValue('permitLicenseTypeControl'),
-            number: filters.getValue('numberControl'),
+            permitNumber: filters.getValue('permitNumberControl'),
+            permitLicenseNumber: filters.getValue('permitLicenseNumberControl'),
             permitIssuedOnStartDate: filters.getValue<DateRangeData>('permitIssuedDateRangeControl')?.start,
             permitIssuedOnEndDate: filters.getValue<DateRangeData>('permitIssuedDateRangeControl')?.end,
             permitLicenseIssuedOnStartDate: filters.getValue<DateRangeData>('permitLicenseIssuedDateRangeControl')?.start,
@@ -740,8 +745,10 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             fishingGearTypeId: filters.getValue('fishingGearTypeControl'),
             fishingGearMarkNumber: filters.getValue('fishingGearMarkNumberControl'),
             fishingGearPingerNumber: filters.getValue('fishingGearPingerNumberControl'),
-            submittedForName: filters.getValue('submittedForNameControl'),
-            submittedForIdentifier: filters.getValue('submittedForIdentifierControl'),
+            permitSubmittedForName: filters.getValue('permitSubmittedForNameControl'),
+            permitLicenseSubmittedForName: filters.getValue('permitLicenseSubmittedForNameControl'),
+            permitSubmittedForIdentifier: filters.getValue('permitSubmittedForIdentifierControl'),
+            permitLicenseSubmittedForIdentifier: filters.getValue('permitLicenseSubmittedForIdentifierControl'),
             logbookNumber: filters.getValue('logBookNumberControl'),
             permitTerritoryUnitId: this.hasPermitsReadAllPermission ? filters.getValue('permitTerritoryUnitControl') : undefined,
             permitLicenseTerritoryUnitId: this.hasPermitLicenseReadAllPermission ? filters.getValue('permitLicenseTerritoryUnitControl') : undefined

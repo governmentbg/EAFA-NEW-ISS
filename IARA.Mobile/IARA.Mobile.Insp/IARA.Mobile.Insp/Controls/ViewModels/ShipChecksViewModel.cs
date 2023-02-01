@@ -13,6 +13,7 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
 using TechnoLogica.Xamarin.Helpers;
+using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
 
 namespace IARA.Mobile.Insp.Controls.ViewModels
@@ -33,7 +34,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             PermitLicenses = new PermitLicensesViewModel(inspection);
             LogBooks = new LogBooksViewModel(inspection);
 
-            this.AddValidation();
+            this.AddValidation(others: new IValidatableViewModel[]
+            {
+                Permits,
+                PermitLicenses,
+                LogBooks
+            });
 
             ObservationsOrViolations.Category = InspectionObservationCategory.Check;
         }

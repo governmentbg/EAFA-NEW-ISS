@@ -21,7 +21,7 @@ export class PatrolVehiclesTableComponent extends CustomFormControl<VesselDuring
     public patrolVehicles: VesselDuringInspectionDTO[] = [];
 
     @Input()
-    public isWaterVehicle!: boolean;
+    public isWaterVehicle?: boolean;
 
     @Input()
     public hasCoordinates: boolean = true;

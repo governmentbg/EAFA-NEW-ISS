@@ -28,8 +28,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             bool showUnloadedQuantity = false,
             bool showOriginShip = false,
             bool showAverageSize = false,
-            bool showFishSex = false,
-            bool requiresFish = true
+            bool showFishSex = false
         )
         {
             Inspection = inspection;
@@ -44,11 +43,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             RemoveCatch = CommandBuilder.CreateFrom<CatchInspectionViewModel>(OnRemoveCatch);
 
             this.AddValidation();
-
-            if (!requiresFish)
-            {
-                Catches.Validations.RemoveAt(Catches.Validations.FindIndex(f => f.Name == "ListMinLength"));
-            }
         }
 
         public InspectionPageViewModel Inspection { get; }
@@ -61,7 +55,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public bool ShowFishSex { get; }
 
         [DuplicateMarketCatches(ErrorMessageResourceName = "DuplicateCatches")]
-        [ListMinLength(1)]
         public ValidStateValidatableTable<CatchInspectionViewModel> Catches { get; set; }
 
         public List<SelectNomenclatureDto> FishTypes
