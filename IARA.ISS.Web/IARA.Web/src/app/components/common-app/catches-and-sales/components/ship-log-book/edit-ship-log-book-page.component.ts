@@ -644,7 +644,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
     private fillForm(): void {
         this.form.get('pageNumberControl')!.setValue(this.model.pageNumber);
         this.form.get('fillDateControl')!.setValue(this.model.fillDate);
-        this.form.get('iaraAcceptanceDateTimeControl')!.setValue(this.model.iaraAcceptanceDateTime);
+        //this.form.get('iaraAcceptanceDateTimeControl')!.setValue(this.model.iaraAcceptanceDateTime);
 
         if (this.isEditing) {
             this.form.get('statusControl')!.setValue(this.model.status);
@@ -719,7 +719,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
         this.form = new FormGroup({
             pageNumberControl: new FormControl(undefined, Validators.required),
             fillDateControl: new FormControl(undefined, Validators.required),
-            iaraAcceptanceDateTimeControl: new FormControl(),
+            //iaraAcceptanceDateTimeControl: new FormControl(),
             statusControl: new FormControl(),
 
             shipControl: new FormControl(undefined, Validators.required),
@@ -777,7 +777,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
 
     private fillModel(): ShipLogBookPageEditDTO {
         const selectedFishingGear: FishingGearRegisterNomenclatureDTO = this.form.get('fishingGearRegisterControl')!.value;
-        const iaraAcceptanceDateTime: Moment | undefined = this.form.get('iaraAcceptanceDateTimeControl')!.value as Moment;
+        //const iaraAcceptanceDateTime: Moment | undefined = this.form.get('iaraAcceptanceDateTimeControl')!.value as Moment;
 
         const model: ShipLogBookPageEditDTO = new ShipLogBookPageEditDTO({
             id: this.model.id,
@@ -786,7 +786,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             fillDate: this.form.get('fillDateControl')!.value,
             originDeclarationId: this.model.originDeclarationId,
 
-            iaraAcceptanceDateTime: iaraAcceptanceDateTime?.toDate(),
+            //iaraAcceptanceDateTime: iaraAcceptanceDateTime?.toDate(),
 
             shipId: this.model.shipId,
             shipName: this.model.shipName,

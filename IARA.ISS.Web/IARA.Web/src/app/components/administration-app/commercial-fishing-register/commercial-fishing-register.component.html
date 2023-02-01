@@ -5,8 +5,8 @@
                 <tl-select *ngIf="canReadPermitRecords"
                            fxFlex="25"
                            formControlName="permitTypeControl"
-                           label="{{ 'commercial-fishing.permit-type-filter' | tlTranslate }}"
-                           tooltipResourceName="commercial-fishing.permit-type-filter-helper"
+                           label="{{ 'commercial-fishing.permit-type' | tlTranslate }}"
+                           tooltipResourceName="commercial-fishing.permit-type-helper"
                            [options]="permitTypes">
                 </tl-select>
                 <tl-select *ngIf="canReadPermitLicenseRecords || hasPermitLicenseReadAllPermission"
@@ -18,8 +18,8 @@
                 </tl-select>
                 <tl-input fxFlex="25"
                           formControlName="permitNumberControl"
-                          label="{{ 'commercial-fishing.permit-number' | tlTranslate }}"
-                          tooltipResourceName="commercial-fishing.permit-number-helper">
+                          label="{{ 'commercial-fishing.permit-number-filter' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.permit-number-filter-helper">
                 </tl-input>
                 <tl-input *ngIf="canReadPermitLicenseRecords || hasPermitLicenseReadAllPermission"
                           fxFlex="25"

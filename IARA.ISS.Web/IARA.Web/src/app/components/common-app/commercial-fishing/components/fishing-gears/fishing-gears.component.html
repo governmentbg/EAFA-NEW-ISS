@@ -15,10 +15,19 @@
                      propertyName="count"
                      columnName="{{ 'fishing-gears.count' | tlTranslate }}">
         </data-column>
-        <data-column [flexRate]="0.4"
-                     propertyName="marksNumbers"
-                     columnName="{{ 'fishing-gears.marks-numbers' | tlTranslate }}">
-        </data-column>
+        <data-template-column [flexRate]="0.4" columnName="{{ 'fishing-gears.marks-numbers' | tlTranslate }}">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                <div fxLayout="row" 
+                     fxLayoutAlign="space-between center" 
+                     [matTooltip]="row.data.marksNumbers"
+                     matTooltipClass="tooltip-no-truncate"
+                     matTooltipShowDelay="500">
+                    <span class="text-ellipsis">
+                        {{ row.data.marksNumbers }}
+                    </span>
+                </div>
+            </ng-template>
+        </data-template-column>
         <data-column [flexRate]="0.2"
                      propertyName="length"
                      columnName="{{ 'fishing-gears.length' | tlTranslate }}">
