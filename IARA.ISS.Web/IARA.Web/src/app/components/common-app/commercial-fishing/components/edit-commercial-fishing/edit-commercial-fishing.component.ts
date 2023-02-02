@@ -224,6 +224,10 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
 
     private id!: number;
+    /**
+     * Set only when renewal of permit license
+     * */
+    private renewalPermitLicenseId: number | undefined;
     private applicationId: number | undefined;
     private applicationsService: IApplicationsService | undefined;
     private service!: ICommercialFishingService;
@@ -1341,6 +1345,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 if (chosenPermitLicenseId !== null && chosenPermitLicenseId !== undefined) {
                     this.service.getPermitLicenseData(chosenPermitLicenseId).subscribe({
                         next: (result: CommercialFishingApplicationEditDTO) => {
+                            this.renewalPermitLicenseId = chosenPermitLicenseId;
                             this.setResultToApplicationModelData(result);
                         }
                     });
@@ -1765,6 +1770,9 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 }
                 else if (this.model?.id) {
                     this.photoRequestMethod = this.service.getPermitLicenseFisherPhoto.bind(this.service, this.model.id!);
+                }
+                else if (this.renewalPermitLicenseId !== null && this.renewalPermitLicenseId !== undefined) { // В режим на преиздаване на УСР от старо УСР
+                    this.photoRequestMethod = this.service.getPermitLicenseFisherPhoto.bind(this.service, this.renewalPermitLicenseId);
                 }
             }
             else {

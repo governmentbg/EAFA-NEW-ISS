@@ -504,3 +504,11 @@ quill-editor.min-h-20 div.ql-container {
         margin-bottom: 0.5em;
     }
 }
+
+// ----------------------------------------------
+// Makes tooltip text visible, no ellipsis
+// ----------------------------------------------
+.tooltip-no-truncate {
+    word-break: break-all !important;
+    white-space: normal !important;
+}
