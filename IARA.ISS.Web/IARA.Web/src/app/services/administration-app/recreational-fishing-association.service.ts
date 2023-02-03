@@ -188,6 +188,10 @@ export class RecreationalFishingAssociationService extends BaseAuditService impl
         });
     }
 
+    public confirmNoErrorsAndFillAdmAct(id: number, pageCode?: PageCodeEnum): Observable<void> {
+        throw new Error('Method should not be called for recreational fishing tickets.');
+    }
+
     public downloadFile(fileId: number, fileName: string): Observable<boolean> {
         const params = new HttpParams().append('id', fileId.toString());
         return this.requestService.download(this.area, this.controller, 'DownloadFile', fileName, { httpParams: params });

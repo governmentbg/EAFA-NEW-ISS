@@ -167,4 +167,8 @@ export class ApplicationsProcessingService extends BaseAuditService implements I
     public downloadFile(fileId: number, fileName: string): Observable<boolean> {
         throw new Error('Method should not be called from ApplicationsProcessing service');
     }
+
+    public confirmNoErrorsAndFillAdmAct(id: number, pageCode?: PageCodeEnum): Observable<void> {
+        throw new Error('Method should not be called from ApplicationsProcessing service');
+    }
 }

@@ -7,13 +7,14 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { PaymentDataDTO } from '@app/models/generated/dtos/PaymentDataDTO';
 import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
 import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO';
+import { AddApplicationResultDTO } from '@app/models/generated/dtos/AddApplicationResultDTO';
 
 export interface IApplicationsService {
     getApplicationTypes(): Observable<NomenclatureDTO<number>[]>;
     getApplicationTypesForChoice(): Observable<ApplicationTypeDTO[]>;
     getApplicationChangeHistoryContent(applicationChangeHistoryId: number): Observable<ApplicationContentDTO>;
     getApplicationPaymentSummary(applicationId: number): Observable<PaymentSummaryDTO>;
-    addApplication(applicationTypeId: number): Observable<{ item1: number, item2: string }>;
+    addApplication(applicationTypeId: number): Observable<AddApplicationResultDTO>;
     enterEventisNumber(applicationId: number, eventisNumber: string): Observable<void>;
     saveDraftContent<T>(applicationId: number, model: T): Observable<void>;
     applicationAnnulment(applicationId: number, reason: string): Observable<void>;

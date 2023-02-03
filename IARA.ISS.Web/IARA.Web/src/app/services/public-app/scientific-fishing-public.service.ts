@@ -25,6 +25,7 @@ import { SciFiPrintTypesEnum } from '@app/enums/sci-fi-print-types.enum';
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { ScientificFishingReasonNomenclatureDTO } from '@app/models/generated/dtos/ScientificFishingReasonNomenclatureDTO';
 import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -172,6 +173,10 @@ export class ScientificFishingPublicService extends BaseAuditService implements 
     }
 
     public editApplicationDataAndStartRegixChecks(model: IApplicationRegister): Observable<void> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
+    public confirmNoErrorsAndFillAdmAct(id: number, pageCode?: PageCodeEnum): Observable<void> {
         throw new Error('This method should not be called from the public app.');
     }
 }

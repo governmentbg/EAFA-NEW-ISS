@@ -21,6 +21,7 @@ import { ApplicationUtils } from '@app/shared/utils/application.utils';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO';
 import { BaseAuditService } from '../common-app/base-audit.service';
+import { AddApplicationResultDTO } from '@app/models/generated/dtos/AddApplicationResultDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -81,7 +82,7 @@ export class ApplicationsAdministrationService extends BaseAuditService implemen
         });
     }
 
-    public addApplication(applicationTypeId: number): Observable<{ item1: number, item2: string }> {
+    public addApplication(applicationTypeId: number): Observable<AddApplicationResultDTO> {
         return this.requestService.post(this.area, this.controller, 'AddApplication', applicationTypeId);
     }
 

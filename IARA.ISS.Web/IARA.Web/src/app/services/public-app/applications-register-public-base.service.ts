@@ -62,4 +62,8 @@ export abstract class ApplicationsRegisterPublicBaseService extends BaseAuditSer
     public editApplicationDataAndStartRegixChecks(model: IApplicationRegister, pageCode?: PageCodeEnum): Observable<void> {
         throw new Error('This method should not be called from the public app.');
     }
+
+    public confirmNoErrorsAndFillAdmAct(id: number, pageCode?: PageCodeEnum): Observable<void> {
+        throw new Error('This method should not be called from the public app.');
+    }
 }

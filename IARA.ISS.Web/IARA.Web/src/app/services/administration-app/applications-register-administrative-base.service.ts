@@ -103,6 +103,10 @@ export abstract class ApplicationsRegisterAdministrativeBaseService extends Base
         });
     }
 
+    public confirmNoErrorsAndFillAdmAct(id: number, pageCode?: PageCodeEnum): Observable<void> {
+        throw new Error(`Method not implemented for the choseen type of application (application id: ${id})`);
+    }
+
     public downloadFile(fileId: number, fileName: string): Observable<boolean> {
         const params = new HttpParams().append('id', fileId.toString());
         return this.requestService.download(this.area, this.controller, 'DownloadFile', fileName, { httpParams: params });

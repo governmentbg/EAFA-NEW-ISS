@@ -22,6 +22,7 @@ import { Observable } from 'rxjs';
 import { Environment } from '@env/environment';
 import { BaseAuditService } from '../common-app/base-audit.service';
 import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO';
+import { AddApplicationResultDTO } from '@app/models/generated/dtos/AddApplicationResultDTO';
 
 
 @Injectable({
@@ -89,7 +90,7 @@ export class ApplicationsPublicService extends BaseAuditService implements IAppl
         });
     }
 
-    public addApplication(applicationTypeId: number): Observable<{ item1: number, item2: string }> {
+    public addApplication(applicationTypeId: number): Observable<AddApplicationResultDTO> {
         const params = new HttpParams().append('applicationTypeId', applicationTypeId.toString());
 
         return this.requestService.post(this.area, this.controller, 'AddApplication', null, {

@@ -1314,6 +1314,7 @@
         'only-save-application': 'Save',
         'save-and-start-regix-check': 'Initiate RegiX check',
         'confirm-data-correctness': 'Confirm data correctness',
+        'confirm-data-correctness-and-add-adm-act': 'Confirm data correctness and add administrative act',
         'confirm-readiness-for-admin-act': 'Confirm readiness for administrative act',
         'confirm-need-for-corrections': 'Return for corrections',
         'save-draft-content': 'Save draft',
