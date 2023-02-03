@@ -340,23 +340,45 @@ export class StatisticalFormsAdministrationService extends ApplicationsRegisterA
     }
 
     public editApplicationDataAndStartRegixChecks(model: IApplicationRegister): Observable<void> {
-        if (model.pageCode === PageCodeEnum.AquaFarmReg) {
+        if (model.pageCode === PageCodeEnum.StatFormAquaFarm) {
             return this.requestService.post(this.area, this.controller, 'EditStatisticalFormAquaFarmApplicationRegixData', model, {
                 properties: new RequestProperties({ asFormData: true })
             });
         }
-        else if (model.pageCode === PageCodeEnum.AquaFarmChange) {
+        else if (model.pageCode === PageCodeEnum.StatFormRework) {
             return this.requestService.post(this.area, this.controller, 'EditStatisticalFormReworkApplicationRegixData', model, {
                 properties: new RequestProperties({ asFormData: true })
             });
         }
-        else if (model.pageCode === PageCodeEnum.AquaFarmDereg) {
+        else if (model.pageCode === PageCodeEnum.StatFormFishVessel) {
             return this.requestService.post(this.area, this.controller, 'EditStatisticalFormFishVesselApplicationRegixData', model, {
                 properties: new RequestProperties({ asFormData: true })
             });
         }
 
         throw new Error('Invalid page code for editApplicationDataAndStartRegixChecks: ' + PageCodeEnum[model.pageCode!]);
+    }
+
+    public confirmNoErrorsAndFillAdmAct(id: number, pageCode?: PageCodeEnum): Observable<void> {
+        const params: HttpParams = new HttpParams().append('applicationId', id.toString());
+        let serviceMethod: string = '';
+
+        switch (pageCode) {
+            case PageCodeEnum.StatFormAquaFarm:
+                serviceMethod = 'ConfirmNoErrorsAquaFarmAndFillAdmAct';
+                break;
+            case PageCodeEnum.StatFormFishVessel:
+                serviceMethod = 'ConfirmNoErrorsFishVesselAndFillAdmAct';
+                break;
+            case PageCodeEnum.StatFormRework:
+                serviceMethod = 'ConfirmNoErrorsReworkAndFillAdmAct';
+                break;
+            default: throw new Error(`Invalid page code (${pageCode}) for confirm no error and fill adm act for statistical form`);
+        }
+
+        return this.requestService.post(this.area, this.controller, serviceMethod, undefined, {
+            httpParams: params
+        });
     }
 
     //Nomenclatures

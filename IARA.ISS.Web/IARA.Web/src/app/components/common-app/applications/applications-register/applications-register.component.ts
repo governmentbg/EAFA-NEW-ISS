@@ -84,7 +84,8 @@ export class ApplicationsRegisterComponent<T extends IDialogComponent> implement
                 canViewAdministrativeActRecords: this.permissions.has(map[1].readAdministrativeActPermission ?? ''),
                 canDownloadOnlineApplications: this.permissions.has(map[1].downloadOnlineApplicationsPermission ?? ''),
                 canUploadOnlineApplications: this.permissions.has(map[1].uploadOnlineApplicationsPermission ?? ''),
-                canReAssignApplicationRecords: this.permissions.has(map[1].canReAssignApplicationsPermission ?? '')
+                canReAssignApplicationRecords: this.permissions.has(map[1].canReAssignApplicationsPermission ?? ''),
+                canInspectCorrectAndAddAdmAct: this.permissions.has(map[1].canInspectCorrectAndAddAdmActPermission ?? '')
             });
 
             this.applicationProcessingHasPermissions.set(map[0], applicationProcessingHasPermission);

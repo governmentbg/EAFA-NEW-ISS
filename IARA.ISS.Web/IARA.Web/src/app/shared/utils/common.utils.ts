@@ -50,21 +50,29 @@ export class CommonUtils {
     }
 
     public static sanitizeModelStrings<T>(model: any, trim: boolean = true): T {
-        if ((model !== null && model !== undefined && typeof model === 'object')) {
-            const keys = Object.keys(model);
-            
-            for (const property of keys) {
-                if (model[property] !== null && model[property] !== undefined && Array.isArray(model[property])) {
-                    for (const item of model[property]) {
-                        this.sanitizeModelStrings(item, trim);
+        if (model !== null && model !== undefined) {
+            if (model instanceof String || model instanceof Number || model instanceof Boolean || model instanceof Date) {
+                model = CommonUtils.sanitizeSimpleModelStings(model, trim);
+            }
+            else if (typeof model === 'object') {
+                const keys = Object.keys(model);
+
+                for (const property of keys) {
+                    if (model[property] !== null && model[property] !== undefined && Array.isArray(model[property])) {
+                        for (const item of model[property]) {
+                            this.sanitizeModelStrings(item, trim);
+                        }
+                    }
+                    else if (model[property] !== null && model[property] !== undefined && typeof model[property] === 'object') {
+                        model[property] = this.sanitizeModelStrings(model[property], trim);
+                    }
+                    else {
+                        model[property] = CommonUtils.sanitizeSimpleModelStings(model[property], trim);
                     }
                 }
-                else if (model[property] !== null && model[property] !== undefined && typeof model[property] === 'object') {
-                    model[property] = this.sanitizeModelStrings(model[property], trim);
-                }
-                else {
-                    model[property] = CommonUtils.sanitizeSimpleModelStings(model[property], trim);
-                }
+            }
+            else {
+                model = CommonUtils.sanitizeSimpleModelStings(model, trim);
             }
         }
         else {
@@ -78,7 +86,7 @@ export class CommonUtils {
         if (item === '') {
             item = null;
         }
-        else if (trim && typeof item === 'string') {
+        else if (trim && (typeof item === 'string' || item instanceof String)) {
             item = (item as string)?.trim();
         }
         else if (item instanceof Date) {

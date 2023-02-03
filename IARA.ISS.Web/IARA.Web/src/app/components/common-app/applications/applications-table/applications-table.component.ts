@@ -93,6 +93,7 @@ import { RecreationalFishingAssociationService } from '@app/services/administrat
 import { RecreationalFishingAssociationPublicService } from '@app/services/public-app/recreational-fishing-association-public.service';
 import { AssignApplicationByUserComponent } from '../components/assign-application-by-user/assign-application-by-user.component';
 import { WaitExternalChecksToFinishComponent } from '../components/wait-external-checks-to-finish/wait-external-checks-to-finish.component';
+import { AddApplicationResultDTO } from '@app/models/generated/dtos/AddApplicationResultDTO';
 
 const DIALOG_WIDTH: string = '1600px';
 export type ApplicationTablePageType = 'FileInPage' | 'DashboardPage' | 'ApplicationPage' | 'PublicPage';
@@ -257,7 +258,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
             dialog.subscribe((saveData: AssignedApplicationInfoDTO) => {
                 if (saveData !== null && saveData !== undefined) {
                     const status: ApplicationStatusesEnum = ApplicationStatusesEnum[saveData.statusCode as keyof typeof ApplicationStatusesEnum];
-                    this.initiateOpenEditDialog(saveData.id!, status, undefined, saveData.pageCode!, false);
+                    this.initiateOpenEditDialog(saveData.id!, status, undefined, saveData.hierarchyType, saveData.pageCode!, false);
                 }
             });
         }
@@ -283,13 +284,11 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
             }).subscribe((selectedApplicationType: ApplicationTypeDTO | undefined) => {
                 if (selectedApplicationType !== undefined) {
                     this.applicationsService.addApplication(selectedApplicationType.value!).subscribe(
-                        (applicationIdentification: {
-                            item1: number, // applicationId
-                            item2: string // accessCode
-                        }) => {
-                            this.initiateOpenEditDialog(applicationIdentification.item1,
+                        (applicationIdentification: AddApplicationResultDTO) => {
+                            this.initiateOpenEditDialog(applicationIdentification.applicationId!,
                                 ApplicationStatusesEnum.INITIAL,
                                 undefined,
+                                applicationIdentification.applicationHierarchyType,
                                 selectedApplicationType.pageCode!,
                                 false);
                         });
@@ -315,12 +314,20 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
     }
 
     public openApplicationInViewMode(application: ApplicationRegisterDTO): void {
-        this.initiateOpenEditDialog(application.id!, application.statusCode as ApplicationStatusesEnum, application.prevStatusCode, application.pageCode!, true);
+        this.initiateOpenEditDialog(application.id!, application.statusCode as ApplicationStatusesEnum, application.prevStatusCode, application.sourceCode, application.pageCode!, true);
     }
 
-    public openApplicationHistoryDraftInViewMode(applicationChangeHistory: ApplicationsChangeHistoryDTO): void {
+    public openApplicationHistoryDraftInViewMode(applicationChangeHistory: ApplicationsChangeHistoryDTO, applHierType: ApplicationHierarchyTypesEnum): void {
         const application: ApplicationRegisterDTO = (this.datatable.rows as ApplicationRegisterDTO[]).find(x => x.id === applicationChangeHistory.applicationId)!;
-        this.initiateOpenEditDialog(applicationChangeHistory.id as number, undefined, application.prevStatusCode, application.pageCode!, true, true);
+        this.initiateOpenEditDialog(
+            applicationChangeHistory.id!,
+            undefined,
+            application.prevStatusCode,
+            applHierType,
+            application.pageCode!,
+            true,
+            true
+        );
     }
 
     public openRegisterInViewMode(application: ApplicationRegisterDTO): void {
@@ -483,7 +490,14 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
     }
 
     public editActionClicked(application: ApplicationRegisterDTO): void {
-        this.initiateOpenEditDialog(application.id!, application.statusCode as ApplicationStatusesEnum, application.prevStatusCode, application.pageCode!, false);
+        this.initiateOpenEditDialog(
+            application.id!,
+            application.statusCode as ApplicationStatusesEnum,
+            application.prevStatusCode,
+            application.sourceCode,
+            application.pageCode!,
+            false
+        );
     }
 
     public cancellationActionClicked(application: ApplicationRegisterDTO): void {
@@ -519,6 +533,18 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
         this.applicationsService.confirmNoErrorsForApplication(applicationId).subscribe(() => {
             dialogClose();
             this.onAddedOrEditted.emit(applicationId);
+        });
+    }
+
+    public confirmNoErrorsForApplicationAndFillAdmActActionClicked(applicationId: number, dialogClose: DialogCloseCallback): void {
+        const pageCode: PageCodeEnum = (this.datatable.rows as ApplicationRegisterDTO[]).find(x => x.id === applicationId)!.pageCode!;
+
+        this.service.confirmNoErrorsAndFillAdmAct(applicationId, pageCode).subscribe({
+            next: () => {
+                dialogClose();
+                
+                this.onAddedOrEditted.emit(applicationId);
+            }
         });
     }
 
@@ -637,7 +663,14 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
     }
 
     public checkDataRegularityActionClicked(application: ApplicationRegisterDTO): void {
-        this.initiateOpenEditDialog(application.id!, application.statusCode as ApplicationStatusesEnum, application.prevStatusCode, application.pageCode!, false);
+        this.initiateOpenEditDialog(
+            application.id!,
+            application.statusCode!,
+            application.prevStatusCode,
+            application.sourceCode,
+            application.pageCode!,
+            false
+        );
     }
 
     public confirmDataIrregularityActionClicked(applicationId: number, dialogClose: DialogCloseCallback): void {
@@ -773,6 +806,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
         applicationId: number,
         applicationStatus: ApplicationStatusesEnum | undefined,
         prevApplicationStatus: ApplicationStatusesEnum | undefined,
+        applHierType: ApplicationHierarchyTypesEnum | undefined,
         pageCode: PageCodeEnum,
         viewMode: boolean = false,
         isApplicationHistoryMode = false
@@ -781,11 +815,27 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
             this.applicationsService.initiateApplicationCorrections(applicationId).subscribe((newStatus: ApplicationStatusesEnum) => {
                 applicationStatus = newStatus;
                 this.onAddedOrEditted.emit(applicationId);
-                this.openEditDialog(applicationId, applicationStatus, prevApplicationStatus, pageCode, viewMode, isApplicationHistoryMode);
+                this.openEditDialog(
+                    applicationId,
+                    applicationStatus,
+                    prevApplicationStatus,
+                    applHierType,
+                    pageCode,
+                    viewMode,
+                    isApplicationHistoryMode
+                );
             });
         }
         else {
-            this.openEditDialog(applicationId, applicationStatus, prevApplicationStatus, pageCode, viewMode, isApplicationHistoryMode);
+            this.openEditDialog(
+                applicationId,
+                applicationStatus,
+                prevApplicationStatus,
+                applHierType,
+                pageCode,
+                viewMode,
+                isApplicationHistoryMode
+            );
         }
     }
 
@@ -799,6 +849,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
         applicationId: number,
         applicationStatus: ApplicationStatusesEnum | undefined,
         prevApplicationStatus: ApplicationStatusesEnum | undefined,
+        applHierType: ApplicationHierarchyTypesEnum | undefined,
         pageCode: PageCodeEnum,
         viewMode: boolean = false,
         isApplicationHistoryMode: boolean = false
@@ -857,27 +908,54 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
                     }
                 } break;
                 case ApplicationStatusesEnum.INSP_CORR_FROM_EMP: {
-                    showOnlyRegiXData = true;
-                    rightButtons.push({
-                        id: 'save-and-start-regix-check',
-                        color: 'primary',
-                        translateValue: 'applications-register.save-and-start-regix-check',
-                        buttonData: { callbackFn: this.saveApplicationAndStartRegixChecksActionClicked.bind(this) },
-                        icon: { id: 'ic-fluent-doc-sync-24-regular', size: this.icIconSize },
-                        disabled: true
-                    }, {
-                        id: 'more-corrections-needed',
-                        color: 'warn',
-                        translateValue: 'applications-register.send-for-further-corrections',
-                        buttonData: { callbackFn: this.sendApplicationForUserCorrectionsActionClicked.bind(this) },
-                        icon: { id: 'ic-fluent-doc-person-20-regular', size: this.icIconSize }
-                    }, {
-                        id: 'no-corrections-needed',
-                        color: 'accent',
-                        translateValue: 'applications-register.confirm-data-correctness',
-                        buttonData: { callbackFn: this.confirmNoErrorsForApplicationActionClicked.bind(this) },
-                        icon: { id: 'ic-fluent-doc-checkmark-24-regular', size: this.icIconSize }
-                    });
+                    switch (applHierType) {
+                        case ApplicationHierarchyTypesEnum.PaperShortProcess: {
+                            showOnlyRegiXData = true;
+                            rightButtons.push({
+                                id: 'save-and-start-regix-check',
+                                color: 'primary',
+                                translateValue: 'applications-register.save-and-start-regix-check',
+                                buttonData: { callbackFn: this.saveApplicationAndStartRegixChecksActionClicked.bind(this) },
+                                icon: { id: 'ic-fluent-doc-sync-24-regular', size: this.icIconSize },
+                                disabled: true
+                            }, {
+                                id: 'more-corrections-needed',
+                                color: 'warn',
+                                translateValue: 'applications-register.send-for-further-corrections',
+                                buttonData: { callbackFn: this.sendApplicationForUserCorrectionsActionClicked.bind(this) },
+                                icon: { id: 'ic-fluent-doc-person-20-regular', size: this.icIconSize }
+                            }, {
+                                id: 'no-corrections-needed',
+                                color: 'accent',
+                                translateValue: 'applications-register.confirm-data-correctness-and-add-adm-act',
+                                buttonData: { callbackFn: this.confirmNoErrorsForApplicationAndFillAdmActActionClicked.bind(this) },
+                                icon: { id: 'ic-fluent-doc-checkmark-24-regular', size: this.icIconSize }
+                            });
+                        } break;
+                        default: {
+                            showOnlyRegiXData = true;
+                            rightButtons.push({
+                                id: 'save-and-start-regix-check',
+                                color: 'primary',
+                                translateValue: 'applications-register.save-and-start-regix-check',
+                                buttonData: { callbackFn: this.saveApplicationAndStartRegixChecksActionClicked.bind(this) },
+                                icon: { id: 'ic-fluent-doc-sync-24-regular', size: this.icIconSize },
+                                disabled: true
+                            }, {
+                                id: 'more-corrections-needed',
+                                color: 'warn',
+                                translateValue: 'applications-register.send-for-further-corrections',
+                                buttonData: { callbackFn: this.sendApplicationForUserCorrectionsActionClicked.bind(this) },
+                                icon: { id: 'ic-fluent-doc-person-20-regular', size: this.icIconSize }
+                            }, {
+                                id: 'no-corrections-needed',
+                                color: 'accent',
+                                translateValue: 'applications-register.confirm-data-correctness',
+                                buttonData: { callbackFn: this.confirmNoErrorsForApplicationActionClicked.bind(this) },
+                                icon: { id: 'ic-fluent-doc-checkmark-24-regular', size: this.icIconSize }
+                            });
+                        } break;
+                    }
                 } break;
                 case ApplicationStatusesEnum.WAIT_REG_CHKS_ISS_GROUNDS: {
                     isReadOnly = true;

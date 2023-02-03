@@ -12,6 +12,7 @@ import { FileInApplicationDialogParams } from './models/file-in-application-step
 import { ApplicationTypeDTO } from '@app/models/generated/dtos/ApplicationTypeDTO';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { IGroupedOptions } from '@app/shared/components/input-controls/tl-autocomplete/interfaces/grouped-options.interface';
+import { AddApplicationResultDTO } from '@app/models/generated/dtos/AddApplicationResultDTO';
 
 @Component({
     selector: 'file-in-application-stepper',
@@ -96,9 +97,9 @@ export class FileInApplicationStepperComponent implements IDialogComponent {
         if (this.componentMode === 'AddAndFileIn' && stepperSelectionEvent.previouslySelectedIndex === 0 && stepperSelectionEvent.selectedIndex === 1) {
             const applicationType: ApplicationTypeDTO = this.createApplicationFormGroup.controls.applicationType.value;
 
-            this.service.addApplication(applicationType.value!).subscribe((applicationIdentification: { item1: number, item2: string }) => {
-                this.applicationId = applicationIdentification.item1;
-                this.accessCodeFormGroup.controls.accessCode.setValue(applicationIdentification.item2);
+            this.service.addApplication(applicationType.value!).subscribe((applicationIdentification: AddApplicationResultDTO) => {
+                this.applicationId = applicationIdentification.applicationId;
+                this.accessCodeFormGroup.controls.accessCode.setValue(applicationIdentification.accessCode);
             });
         }
     }

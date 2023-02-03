@@ -294,36 +294,38 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
     }
 
     public ngAfterViewInit(): void {
-        this.productGroup?.get('productTypeIdControl')?.valueChanges.subscribe({
-            next: () => {
-                this.productTypes = [...this.allProductTypes];
-                const currentIds: number[] = this.productTable.rows.map(x => x.productTypeId);
+        if (!this.showOnlyRegiXData) {
+            this.productGroup?.get('productTypeIdControl')?.valueChanges.subscribe({
+                next: () => {
+                    this.productTypes = [...this.allProductTypes];
+                    const currentIds: number[] = this.productTable.rows.map(x => x.productTypeId);
 
-                this.productTypes = this.productTypes.filter(x => !currentIds.includes(x.value!));
-                this.productTypes = this.productTypes.slice();
-            }
-        });
-
-        this.rawMaterialGroup?.get('fishTypeIdControlHidden')?.valueChanges.subscribe({
-            next: () => {
-                this.validateRows();
-
-                if (this.rawMaterialGroup?.get('fishTypeIdControlHidden')!.value !== undefined && this.rawMaterialsMap.size !== 0) {
-                    const origins: StatisticalFormRawMaterialOriginEnum[] | undefined = this.rawMaterialsMap
-                        .get(this.rawMaterialGroup?.get('fishTypeIdControlHidden')!.value.value)
-                        ?.filter(x => x.isActive)
-                        ?.map(x => x.origin);
-
-                    this.rawMaterialOrigin = this.rawMaterialOrigin.filter(x => !origins?.includes(x.value!));
+                    this.productTypes = this.productTypes.filter(x => !currentIds.includes(x.value!));
+                    this.productTypes = this.productTypes.slice();
                 }
-            }
-        });
+            });
 
-        this.rawMaterialGroup.get('originControlHidden')?.valueChanges.subscribe({
-            next: () => {
-                this.validateRows();
-            }
-        });
+            this.rawMaterialGroup?.get('fishTypeIdControlHidden')?.valueChanges.subscribe({
+                next: () => {
+                    this.validateRows();
+
+                    if (this.rawMaterialGroup?.get('fishTypeIdControlHidden')!.value !== undefined && this.rawMaterialsMap.size !== 0) {
+                        const origins: StatisticalFormRawMaterialOriginEnum[] | undefined = this.rawMaterialsMap
+                            .get(this.rawMaterialGroup?.get('fishTypeIdControlHidden')!.value.value)
+                            ?.filter(x => x.isActive)
+                            ?.map(x => x.origin);
+
+                        this.rawMaterialOrigin = this.rawMaterialOrigin.filter(x => !origins?.includes(x.value!));
+                    }
+                }
+            });
+
+            this.rawMaterialGroup.get('originControlHidden')?.valueChanges.subscribe({
+                next: () => {
+                    this.validateRows();
+                }
+            });
+        }
     }
 
     public setData(data: EditStatisticalFormReworkDialogParams, buttons: DialogWrapperData): void {

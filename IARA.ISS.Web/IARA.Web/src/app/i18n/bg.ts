@@ -1314,6 +1314,7 @@
         'only-save-application': 'Запази',
         'save-and-start-regix-check': 'Изпълни проверки в RegiX',
         'confirm-data-correctness': 'Потвърди коректност на данните',
+        'confirm-data-correctness-and-add-adm-act': 'Потвърди коректност и добави административен акт',
         'confirm-readiness-for-admin-act': 'Потвърди готовност за административен акт',
         'confirm-need-for-corrections': 'Върни за корекции',
         'save-draft-content': 'Запази чернова',

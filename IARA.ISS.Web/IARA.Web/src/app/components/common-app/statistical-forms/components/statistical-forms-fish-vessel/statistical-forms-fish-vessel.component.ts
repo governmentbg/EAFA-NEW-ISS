@@ -340,34 +340,36 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
     }
 
     public ngAfterViewInit(): void {
-        this.seaDaysForm?.get('fishingGearIdControl')?.valueChanges.subscribe({
-            next: () => {
-                this.fishingGears = [...this.allFishingGears];
-                const currentIds: number[] = this.seaDaysTable.rows.filter(x => x.isActive ?? true).map(x => x.fishingGearId);
+        if (!this.showOnlyRegiXData) {
+            this.seaDaysForm?.get('fishingGearIdControl')?.valueChanges.subscribe({
+                next: () => {
+                    this.fishingGears = [...this.allFishingGears];
+                    const currentIds: number[] = this.seaDaysTable.rows.filter(x => x.isActive ?? true).map(x => x.fishingGearId);
 
-                this.fishingGears = this.fishingGears.filter(x => !currentIds.includes(x.value!));
-                this.fishingGears = this.fishingGears.slice();
-            }
-        });
-
-        this.form!.get('shipNameControl')!.valueChanges.subscribe({
-            next: (value: NomenclatureDTO<number> | string | undefined) => {
-                if (value !== undefined && value !== null && typeof value !== 'string') {
-                    const year: number | undefined = (this.form.get('yearControl')!.value as Date)?.getFullYear();
-                    this.checkIfStatFormAlreadyExists(value!.value, year);
+                    this.fishingGears = this.fishingGears.filter(x => !currentIds.includes(x.value!));
+                    this.fishingGears = this.fishingGears.slice();
                 }
-            }
-        });
+            });
 
-        this.form.controls.yearControl!.valueChanges.subscribe({
-            next: (value: Date | undefined) => {
-                if (value !== undefined && value !== null) {
-                    const shipId: number | undefined = this.form.get('shipNameControl')!.value?.value;
-                    this.checkIfStatFormAlreadyExists(shipId, value.getFullYear());
-                    this.form.get('shipNameControl')!.updateValueAndValidity({ onlySelf: true });
+            this.form!.get('shipNameControl')!.valueChanges.subscribe({
+                next: (value: NomenclatureDTO<number> | string | undefined) => {
+                    if (value !== undefined && value !== null && typeof value !== 'string') {
+                        const year: number | undefined = (this.form.get('yearControl')!.value as Date)?.getFullYear();
+                        this.checkIfStatFormAlreadyExists(value!.value, year);
+                    }
                 }
-            }
-        });
+            });
+
+            this.form.get('yearControl')!.valueChanges.subscribe({
+                next: (value: Date | undefined) => {
+                    if (value !== undefined && value !== null) {
+                        const shipId: number | undefined = this.form.get('shipNameControl')!.value?.value;
+                        this.checkIfStatFormAlreadyExists(shipId, value.getFullYear());
+                        this.form.get('shipNameControl')!.updateValueAndValidity({ onlySelf: true });
+                    }
+                }
+            });
+        }
     }
 
     public setData(data: DialogParamsModel, buttons: DialogWrapperData): void {

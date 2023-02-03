@@ -13,6 +13,7 @@ import { RecreationalFishingAssociationPublicService } from '@app/services/publi
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
 import { EditLegalAssociationComponent } from '@app/components/common-app/legal-associations/edit-legal-association/edit-legal-association.component';
+import { AddApplicationResultDTO } from '@app/models/generated/dtos/AddApplicationResultDTO';
 
 @Component({
     selector: 'association-picker',
@@ -77,8 +78,8 @@ export class AssociationPickerComponent implements OnInit {
 
     public submitApplication(): void {
         this.applicationsService.addApplication(this.associationApplicationTypeId).subscribe({
-            next: (data: { item1: number, item2: string }) => {
-                this.openAssociationApplicationDialog(data.item1);
+            next: (data: AddApplicationResultDTO) => {
+                this.openAssociationApplicationDialog(data.applicationId!);
             }
         });
     }

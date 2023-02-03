@@ -147,4 +147,8 @@ export class SubmittedApplicationsProcessingService extends BaseAuditService imp
     public downloadFile(fileId: number, fileName: string): Observable<boolean> {
         throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
     }
+
+    public confirmNoErrorsAndFillAdmAct(id: number, pageCode?: PageCodeEnum): Observable<void> {
+        throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
+    }
 }

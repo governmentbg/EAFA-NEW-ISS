@@ -165,6 +165,10 @@ export class RecreationalFishingAssociationPublicService extends BaseAuditServic
         throw new Error('This method should not be called from the public app.');
     }
 
+    public confirmNoErrorsAndFillAdmAct(id: number, pageCode?: PageCodeEnum): Observable<void> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
     public getUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
         throw new Error('This method should not be called from the public app.');
     }
