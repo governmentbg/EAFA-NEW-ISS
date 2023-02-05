@@ -1,5 +1,6 @@
 ﻿import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { QualifiedFishersFilters } from '@app/models/generated/filters/QualifiedFishersFilters';
@@ -34,7 +35,7 @@ import { ChooseApplicationComponent } from '@app/components/common-app/applicati
 import { ChooseApplicationDialogParams } from '@app/components/common-app/applications/components/choose-application/models/choose-application-dialog-params.model';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { ApplicationForChoiceDTO } from '@app/models/generated/dtos/ApplicationForChoiceDTO';
-import { Router } from '@angular/router';
+import { QualifiedFisherStatusesEnum } from '@app/enums/qualified-fisher-statuses.enum';
 
 @Component({
     selector: 'qualified-fishers-register',
@@ -53,14 +54,17 @@ export class QualifiedFishersComponent extends BasePageComponent implements Afte
 
     public readonly canReadApplications: boolean;
 
+    public readonly qualifiedFisherStatusesEnum: typeof QualifiedFisherStatusesEnum = QualifiedFisherStatusesEnum;
+
     @ViewChild(TLDataTableComponent)
     private datatable!: IRemoteTLDatatableComponent;
 
     @ViewChild(SearchPanelComponent)
     private searchpanel!: SearchPanelComponent;
 
-    private readonly service: QualifiedFishersService;
     private gridManager!: DataTableManager<QualifiedFisherDTO, QualifiedFishersFilters>;
+
+    private readonly service: QualifiedFishersService;
     private readonly confirmDialog: TLConfirmDialog;
     private readonly editDialog: TLMatDialog<EditFisherComponent>;
     private readonly deliveryService!: IDeliveryService;

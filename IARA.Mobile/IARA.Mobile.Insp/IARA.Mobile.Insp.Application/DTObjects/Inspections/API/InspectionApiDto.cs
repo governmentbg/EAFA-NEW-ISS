@@ -13,6 +13,7 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections.API
         public string Inspectors { get; set; }
         public string InspectionSubjects { get; set; }
         public DateTime LastUpdateDate { get; set; }
+        public bool CreatedByCurrentUser { get; set; } = true;
         public bool IsActive { get; set; }
     }
 }

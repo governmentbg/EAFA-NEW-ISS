@@ -69,7 +69,7 @@
                         checkboxLabel="{{'qualified-fishers-page.has-bg-address' | tlTranslate}}">
             </regix-data>
 
-            <mat-error *ngIf="(showSubmittedFor || isWithMaritimeEducation) 
+            <mat-error *ngIf="(showSubmittedFor || isWithMaritimeEducation)
                               && editForm.touched && editForm.errors?.personIsAlreadyQualifiedFisher === true">
                 * {{ 'qualified-fishers-page.person-is-alread-qualified-fisher' | tlTranslate }}
             </mat-error>
@@ -92,16 +92,37 @@
                         [validityChecker]="editForm">
         <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
             <div *ngIf="!modeApplication" fxLayout="row" fxLayoutGap="1em">
-                <tl-input fxFlex="50"
+                <tl-input fxFlex="33"
                           formControlName="registrationNumberControl"
                           tooltipResourceName="qualified-fishers-page.registration-number-helper"
                           label="{{ 'qualified-fishers-page.registration-number' | tlTranslate }}">
                 </tl-input>
-                <tl-date fxFlex="50"
+                <tl-date fxFlex="33"
                          formControlName="registrationDateControl"
                          tooltipResourceName="qualified-fishers-page.registration-date-helper"
                          label="{{ 'qualified-fishers-page.registration-date' | tlTranslate }}">
                 </tl-date>
+                <div fxFlex="33" fxLayoutAlign="start center" fxLayoutGap="0.3em">
+                    <ng-container [ngSwitch]="editForm.get('statusControl').value?.value">
+                        <tl-icon *ngSwitchCase="qualifiedFisherStatusesEnum.Registered"
+                                 fxFlex
+                                 icon="done_outline"
+                                 iconClass="accent-color">
+                        </tl-icon>
+                        <tl-icon *ngSwitchCase="qualifiedFisherStatusesEnum.NoPassedExam"
+                                 fxFlex
+                                 icon="highlight_off"
+                                 iconClass="error-color">
+                        </tl-icon>
+                    </ng-container>
+                    <tl-select fxFlex="grow"
+                               formControlName="statusControl"
+                               tooltipResourceName="qualified-fishers-page.status-helper"
+                               label="{{ 'qualified-fishers-page.status' | tlTranslate }}"
+                               [readonly]="true"
+                               [options]="statuses">
+                    </tl-select>
+                </div>
             </div>
             <tl-card fxFlex="100"
                      [tooltipResourceName]="!isWithMaritimeEducation ? 'qualified-fishers-page.exam-information-card-helper' : 'qualified-fishers-page.diploma-information-card-helper'"
@@ -178,8 +199,8 @@
                         title="{{ 'qualified-fishers-page.payment-information-panel' | tlTranslate }}"
                         tooltipResourceName="qualified-fishers-page.payment-information-panel-helper"
                         [validityChecker]="editForm">
-        <payment-information formControlName="applicationPaymentInformationControl" 
-                             [hideBasicInfo]="hideBasicPaymentInfo" 
+        <payment-information formControlName="applicationPaymentInformationControl"
+                             [hideBasicInfo]="hideBasicPaymentInfo"
                              [isOnlineApplication]="isOnlineApplication">
         </payment-information>
     </tl-expansion-panel>

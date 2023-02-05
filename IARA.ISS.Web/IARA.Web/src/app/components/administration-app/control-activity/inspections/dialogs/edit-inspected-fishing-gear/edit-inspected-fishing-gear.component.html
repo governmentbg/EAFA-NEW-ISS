@@ -5,38 +5,43 @@
      [formGroup]="form"
      class="dialog-padding">
     <div *ngIf="isRegistered"
-         fxLayout="row"
+         fxLayout="column"
          fxLayoutGap="1em"
          fxLayoutAlign="start stretch">
-        <div fxFlex="50"
-             fxLayout="column"
+        <div fxLayout="row"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
-            <tl-expansion-panel title="{{ 'inspections.registered-fishing-gear' | tlTranslate }}"
+            <div fxFlex="50"
+                 fxLayout="column"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start stretch">
+                <tl-expansion-panel title="{{ 'inspections.registered-fishing-gear' | tlTranslate }}"
+                                    [validityChecker]="form">
+                    <edit-fishing-gear formControlName="permittedGearControl"
+                                       [canSelectMarks]="!readOnly"
+                                       (selectedMark)="onMarkSelected($event)">
+                    </edit-fishing-gear>
+                </tl-expansion-panel>
+            </div>
+            <tl-expansion-panel *ngIf="canEditInspectedGear"
+                                fxFlex="50"
+                                title="{{ 'inspections.inspected-fishing-gear' | tlTranslate }}"
                                 [validityChecker]="form">
-                <edit-fishing-gear formControlName="permittedGearControl"
-                                   [canSelectMarks]="!readOnly"
-                                   (selectedMark)="onMarkSelected($event)">
+                <edit-fishing-gear formControlName="inspectedGearControl"
+                                   [isInspected]="true"
+                                   [listenToService]="true">
                 </edit-fishing-gear>
             </tl-expansion-panel>
-            <inspection-toggle formControlName="optionsControl"
-                               [options]="options"
-                               [toggle]="toggle">
-            </inspection-toggle>
-            <inspection-toggle *ngIf="hasAttachedAppliances"
-                               formControlName="appliancesOptionsControl"
-                               [options]="options"
-                               [toggle]="appliancesToggle">
-            </inspection-toggle>
         </div>
-        <tl-expansion-panel *ngIf="canEditInspectedGear"
-                            fxFlex="50"
-                            title="{{ 'inspections.inspected-fishing-gear' | tlTranslate }}"
-                            [validityChecker]="form">
-            <edit-fishing-gear formControlName="inspectedGearControl"
-                               [isInspected]="true">
-            </edit-fishing-gear>
-        </tl-expansion-panel>
+        <inspection-toggle formControlName="optionsControl"
+                           [options]="options"
+                           [toggle]="toggle">
+        </inspection-toggle>
+        <inspection-toggle *ngIf="hasAttachedAppliances"
+                           formControlName="appliancesOptionsControl"
+                           [options]="options"
+                           [toggle]="appliancesToggle">
+        </inspection-toggle>
     </div>
     <div *ngIf="!isRegistered"
          fxLayout="column"

@@ -184,14 +184,14 @@
                                             tooltipText="{{ 'inspections.sign-inspection' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.data.isActive && canDeleteRecords && (shipId === null || shipId === undefined) && isInspector"
+                            <tl-icon-button *ngIf="row.data.isActive && row.data.createdByCurrentUser && canDeleteRecords && (shipId === null || shipId === undefined) && isInspector"
                                             icon="delete"
                                             (buttonClicked)="deleteEntry(row.data)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'inspections.delete' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="!row.data.isActive && canRestoreRecords && (shipId === null || shipId === undefined) && isInspector"
+                            <tl-icon-button *ngIf="!row.data.isActive && row.data.createdByCurrentUser && canRestoreRecords && (shipId === null || shipId === undefined) && isInspector"
                                             icon="restore"
                                             (buttonClicked)="restoreEntry(row.data)"
                                             iconClass="accent-color"

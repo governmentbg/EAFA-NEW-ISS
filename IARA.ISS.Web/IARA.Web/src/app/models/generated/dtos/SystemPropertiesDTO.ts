@@ -27,4 +27,10 @@ export class SystemPropertiesDTO {
 
     @StrictlyTyped(String)
     public fishingAssociationRoleCode?: string;
+
+    @StrictlyTyped(String)
+    public fishingGearMarkPrefix?: string;
+
+    @StrictlyTyped(Date)
+    public fishingGearMarkPrefixApplyDate?: Date;
 }

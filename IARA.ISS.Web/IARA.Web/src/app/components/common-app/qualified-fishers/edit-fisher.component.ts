@@ -39,6 +39,7 @@ import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTy
 import { SubmittedByRolesEnum } from '@app/enums/submitted-by-roles.enum';
 import { DuplicatesEntryDTO } from '@app/models/generated/dtos/DuplicatesEntryDTO';
 import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { QualifiedFisherStatusesEnum } from '@app/enums/qualified-fisher-statuses.enum';
 
 @Component({
     selector: 'edit-fisher-component',
@@ -75,6 +76,9 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
     public duplicates: DuplicatesEntryDTO[] = [];
 
     public territoryUnits: NomenclatureDTO<number>[] = [];
+    public statuses: NomenclatureDTO<QualifiedFisherStatusesEnum>[] = [];
+
+    public readonly qualifiedFisherStatusesEnum: typeof QualifiedFisherStatusesEnum = QualifiedFisherStatusesEnum;
 
     private applicationsService: IApplicationsService | undefined;
     private id: number | undefined;
@@ -104,6 +108,19 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
             submittedForRegixData: new RegixPersonDataDTO(),
             submittedForAddresses: new Array<AddressRegistrationDTO>()
         });
+
+        this.statuses = [
+            new NomenclatureDTO<QualifiedFisherStatusesEnum>({
+                value: QualifiedFisherStatusesEnum.Registered,
+                displayName: this.translationService.getValue('qualified-fishers-page.qualified-fisher-registered'),
+                isActive: true
+            }),
+            new NomenclatureDTO<QualifiedFisherStatusesEnum>({
+                value: QualifiedFisherStatusesEnum.NoPassedExam,
+                displayName: this.translationService.getValue('qualified-fishers-page.qualified-fisher-has-no-passed-exam'),
+                isActive: true
+            })
+        ];
     }
 
     public setData(data: DialogParamsModel | MaritimeEducationFishermanDialogParamsModel, buttons: DialogWrapperData): void {
@@ -301,6 +318,7 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
             this.editForm.get('hasPassedExamControl')!.valueChanges.subscribe({
                 next: () => {
                     this.setPassedExamControlsValidators();
+                    this.changeQualifiedFisherStatus();
                 }
             });
         }
@@ -474,6 +492,7 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
         if (this.modeApplication === false) {
             this.editForm.addControl('registrationNumberControl', new FormControl({ value: null, disabled: true }));
             this.editForm.addControl('registrationDateControl', new FormControl());
+            this.editForm.addControl('statusControl', new FormControl());
             this.editForm.addControl('examDateControl', new FormControl());
             this.editForm.addControl('protocolNumberControl', new FormControl(undefined, [Validators.maxLength(50)]));
             this.editForm.addControl('hasPassedExamControl', new FormControl(false));
@@ -561,7 +580,7 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
             if (this.hasDelivery) {
                 this.editForm.get('deliveryDataControl')!.setValue(this.model.deliveryData);
             }
-            
+
             if (this.isPaid === true) {
                 this.editForm.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
             }
@@ -570,6 +589,9 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
         if (this.model instanceof QualifiedFisherEditDTO) {
             this.editForm.controls.registrationNumberControl.setValue(this.model.registrationNum);
             this.editForm.controls.registrationDateControl.setValue(this.model.registrationDate);
+
+            const status: NomenclatureDTO<QualifiedFisherStatusesEnum> = this.statuses.find(x => x.value === (this.model as QualifiedFisherEditDTO).status)!;
+            this.editForm.controls.statusControl.setValue(status);
 
             this.duplicates = this.model.duplicateEntries ?? [];
         }
@@ -763,6 +785,21 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
         if (this.modeReadOnly || this.modeViewOnly) {
             this.editForm.get('registrationDateControl')!.disable({ emitEvent: false });
         }
+    }
+
+    private changeQualifiedFisherStatus(): void {
+        const hasPassedExam: boolean = this.editForm.get('hasPassedExamControl')!.value ?? false;
+
+        let status: NomenclatureDTO<QualifiedFisherStatusesEnum>;
+
+        if (hasPassedExam) {
+            status = this.statuses.find(x => x.value === QualifiedFisherStatusesEnum.Registered)!;
+        }
+        else {
+            status = this.statuses.find(x => x.value === QualifiedFisherStatusesEnum.NoPassedExam)!;
+        }
+
+        this.editForm.get('statusControl')!.setValue(status);
     }
 
     private handleErrorResponse(errorResponse: HttpErrorResponse): void {

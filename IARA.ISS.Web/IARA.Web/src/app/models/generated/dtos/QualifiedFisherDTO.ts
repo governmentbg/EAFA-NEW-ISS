@@ -2,6 +2,7 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { QualifiedFisherStatusesEnum } from '@app/enums/qualified-fisher-statuses.enum';
 
 export class QualifiedFisherDTO { 
     public constructor(obj?: Partial<QualifiedFisherDTO>) {
@@ -28,6 +29,9 @@ export class QualifiedFisherDTO {
 
     @StrictlyTyped(Boolean)
     public isWithMaritimeEducation?: boolean;
+
+    @StrictlyTyped(Number)
+    public status?: QualifiedFisherStatusesEnum;
 
     @StrictlyTyped(String)
     public diplomaOrExamLabel?: string;

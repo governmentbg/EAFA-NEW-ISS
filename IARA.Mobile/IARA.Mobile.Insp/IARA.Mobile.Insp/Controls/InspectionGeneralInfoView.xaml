@@ -11,6 +11,7 @@
     <tl:TLFlex GrowUnit="200">
         <tl:TLEntry Title="{rt:Translate DocumentNumber, Group=GeneralInfo}"
                 ValidState="{Binding ReportNr}"
+                Keyboard="Numeric"
                 IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}">
             <StackLayout Orientation="Horizontal"
                     Spacing="0">

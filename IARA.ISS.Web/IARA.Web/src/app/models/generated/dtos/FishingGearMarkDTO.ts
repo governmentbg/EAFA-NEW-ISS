@@ -20,6 +20,9 @@ export class FishingGearMarkDTO {
     @StrictlyTyped(Number)
     public statusId?: number;
 
+    @StrictlyTyped(Date)
+    public createdOn?: Date;
+
     @StrictlyTyped(Number)
     public selectedStatus?: FishingGearMarkStatusesEnum;
 }

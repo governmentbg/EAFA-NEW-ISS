@@ -1,4 +1,4 @@
-﻿import { Component, Input, OnChanges, OnInit, Self, SimpleChanges } from '@angular/core';
+﻿import { Component, ElementRef, Input, OnChanges, OnInit, Self, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
@@ -116,15 +116,18 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
     public permitIds: number[] = [];
 
     private readonly service: InspectionsService;
+    private readonly element: ElementRef<HTMLElement>;
 
     public constructor(@Self() ngControl: NgControl,
         @Self() validityChecker: ValidityCheckerDirective,
+        @Self() element: ElementRef<HTMLElement>,
         service: InspectionsService,
         translate: FuseTranslationLoaderService
     ) {
         super(ngControl, true, validityChecker);
 
         this.service = service;
+        this.element = element;
 
         this.shipLabel = translate.getValue('inspections.ship-data');
         this.checksLabel = translate.getValue('inspections.ship-inspection');
@@ -257,6 +260,8 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
         if (ship === null || ship === undefined) {
             return;
         }
+
+        this.element.nativeElement.focus();
 
         const result = await forkJoin([
             this.service.getShipPermits(ship.shipId!),

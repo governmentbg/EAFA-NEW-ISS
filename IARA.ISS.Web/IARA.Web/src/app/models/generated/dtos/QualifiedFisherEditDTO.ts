@@ -5,6 +5,7 @@ import { RegixPersonDataDTO } from './RegixPersonDataDTO';
 import { AddressRegistrationDTO } from './AddressRegistrationDTO';
 import { DuplicatesEntryDTO } from './DuplicatesEntryDTO';
 import { FileInfoDTO } from './FileInfoDTO';
+import { QualifiedFisherStatusesEnum } from '@app/enums/qualified-fisher-statuses.enum';
 
 export class QualifiedFisherEditDTO { 
     public constructor(obj?: Partial<QualifiedFisherEditDTO>) {
@@ -31,6 +32,9 @@ export class QualifiedFisherEditDTO {
 
     @StrictlyTyped(Boolean)
     public isWithMaritimeEducation?: boolean;
+
+    @StrictlyTyped(Number)
+    public status?: QualifiedFisherStatusesEnum;
 
     @StrictlyTyped(Boolean)
     public hasExam?: boolean;
