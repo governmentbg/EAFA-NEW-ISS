@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Helpers;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
 
@@ -11,6 +12,8 @@ namespace IARA.Mobile.Insp.Models
         public PermitModel()
         {
             this.AddValidation();
+
+            Number.AddFakeValidation();
         }
 
         public bool AddedByInspector { get; set; }

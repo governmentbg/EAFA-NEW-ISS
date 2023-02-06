@@ -253,6 +253,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             InspectionSubjects = string.Join(", ", dto.InspectionSubjects.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries).Distinct()),
                             Inspectors = dto.Inspectors,
                             LastUpdatedDate = dto.LastUpdateDate,
+                            CreatedByCurrentUser = dto.CreatedByCurrentUser,
                         };
                     }
 
@@ -491,6 +492,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                     ? PersonnelToString(dto.Personnel)
                                     : string.Empty,
                                 LastUpdatedDate = DateTime.Now,
+                                CreatedByCurrentUser = true,
                             });
                         }
                     }
@@ -590,6 +592,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                 ? PersonnelToString(dto.Personnel)
                                 : string.Empty,
                             LastUpdatedDate = DateTime.MinValue,
+                            CreatedByCurrentUser = true,
                         });
                     }
                 }
@@ -1036,6 +1039,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         InspectionState = insp.InspectionState,
                         InspectionSubjects = insp.InspectionSubjects,
                         Inspectors = insp.Inspectors,
+                        CreatedByCurrentUser = insp.CreatedByCurrentUser,
                     }
                 ).Skip((page - 1) * pageSize).Take(pageSize).ToList();
             }

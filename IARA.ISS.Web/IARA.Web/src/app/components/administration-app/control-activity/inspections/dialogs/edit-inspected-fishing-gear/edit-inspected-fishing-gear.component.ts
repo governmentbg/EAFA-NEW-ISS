@@ -18,6 +18,7 @@ import { InspectedFishingGearTableModel } from '../../components/inspected-fishi
 import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 import { FishingGearMarkDTO } from '@app/models/generated/dtos/FishingGearMarkDTO';
 import { FishingGearPingerDTO } from '@app/models/generated/dtos/FishingGearPingerDTO';
+import { FishingGearManipulationService } from '@app/components/common-app/commercial-fishing/components/fishing-gears/services/fishing-gear-manipulation.service';
 
 @Component({
     selector: 'edit-inspected-fishing-gear',
@@ -41,9 +42,11 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
     private readOnly: boolean = false;
 
     private readonly translate: FuseTranslationLoaderService;
+    private readonly gearManipulationService: FishingGearManipulationService;
 
-    public constructor(translate: FuseTranslationLoaderService) {
+    public constructor(translate: FuseTranslationLoaderService, gearManipulationService: FishingGearManipulationService) {
         this.translate = translate;
+        this.gearManipulationService = gearManipulationService;
 
         this.options = InspectionUtils.getToggleMatchesOptions(translate);
 
@@ -111,11 +114,7 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
     }
 
     public onMarkSelected(mark: FishingGearMarkDTO): void {
-        const value: FishingGearDTO = this.form.get('inspectedGearControl')!.value;
-
-        if (value && !value.marks!.includes(mark)) {
-            value.marks = [...value.marks!, mark];
-        }
+        this.gearManipulationService.markAdded.emit(mark);
     }
 
     protected buildForm(): void {

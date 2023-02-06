@@ -66,6 +66,34 @@
                 <data-column columnName="{{ 'qualified-fishers-page.name' | tlTranslate }}"
                              propertyName="name">
                 </data-column>
+                <data-template-column columnName="{{ 'qualified-fishers-page.status' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div [ngSwitch]="row.status">
+                            <div *ngSwitchCase="qualifiedFisherStatusesEnum.Registered"
+                                 fxLayout="row"
+                                 fxLayoutAlign="start center"
+                                 fxLayoutGap="1em">
+                                <tl-icon icon="done_outline"
+                                         iconClass="accent-color">
+                                </tl-icon>
+                                <div class="multi-line">
+                                    {{ 'qualified-fishers-page.qualified-fisher-registered' | tlTranslate }}
+                                </div>
+                            </div>
+                            <div *ngSwitchCase="qualifiedFisherStatusesEnum.NoPassedExam"
+                                 fxLayout="row"
+                                 fxLayoutAlign="start center"
+                                 fxLayoutGap="1em">
+                                <tl-icon icon="highlight_off"
+                                         iconClass="error-color">
+                                </tl-icon>
+                                <div class="multi-line">
+                                    {{ 'qualified-fishers-page.qualified-fisher-has-no-passed-exam' | tlTranslate }}
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </data-template-column>
                 <data-column columnName="{{ 'qualified-fishers-page.diploma' | tlTranslate }} / {{'qualified-fishers-page.certificate' | tlTranslate}}"
                              propertyName="diplomaOrExamLabel">
                 </data-column>

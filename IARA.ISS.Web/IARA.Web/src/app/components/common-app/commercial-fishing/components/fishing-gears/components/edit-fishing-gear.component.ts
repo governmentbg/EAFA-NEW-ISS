@@ -32,8 +32,7 @@ import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog
 import { GenerateMarksComponent } from './generate-marks/generate-marks.component';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { MarksRangeData } from '../models/marks-range.model';
-
-const MARK_NUMBERS_RANGE_WARNING_DIFFERENCE = 100;
+import { FishingGearManipulationService } from '../services/fishing-gear-manipulation.service';
 
 @Component({
     selector: 'edit-fishing-gear',
@@ -60,6 +59,9 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
     @Input()
     public pingersPerPage: number = 5;
+
+    @Input()
+    public listenToService: boolean = false;
 
     @Output()
     public selectedMark = new EventEmitter<FishingGearMarkDTO>();
@@ -91,13 +93,15 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     private readonly confirmationDialog: TLConfirmDialog;
     private readonly translateService: FuseTranslationLoaderService;
     private readonly generateMarksDialog: TLMatDialog<GenerateMarksComponent>;
+    private readonly gearManipulationService: FishingGearManipulationService;
 
     public constructor(
         @Self() @Optional() ngControl: NgControl,
         commonNomenclatures: CommonNomenclatures,
         confirmationDialog: TLConfirmDialog,
         translateService: FuseTranslationLoaderService,
-        generateMarksDialog: TLMatDialog<GenerateMarksComponent>
+        generateMarksDialog: TLMatDialog<GenerateMarksComponent>,
+        gearManipulationService: FishingGearManipulationService
     ) {
         super(ngControl);
 
@@ -105,6 +109,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         this.confirmationDialog = confirmationDialog;
         this.translateService = translateService;
         this.generateMarksDialog = generateMarksDialog;
+        this.gearManipulationService = gearManipulationService;
 
         this.loader = new FormControlDataLoader(this.getNomenclatures.bind(this));
     }
@@ -122,6 +127,16 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
             this.fillForm();
         });
+
+        if (this.listenToService) {
+            this.gearManipulationService.markAdded.subscribe({
+                next: (mark: FishingGearMarkDTO) => {
+                    if (!this.marks.includes(mark)) {
+                        this.marks.push(mark);
+                    }
+                }
+            })
+        }
     }
 
     public setData(data: EditFishingGearDialogParamsModel, buttons: DialogWrapperData): void {
@@ -372,8 +387,8 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         this.form.get('descriptionControl')!.setValue(this.model.description);
         this.form.get('hasPingersControl')!.setValue(this.model.hasPingers);
 
-        this.marks = this.model.marks?.slice() ?? [];
-        this.pingers = this.model.pingers?.slice() ?? [];
+        this.marks = this.copyMarks(this.model.marks?.slice() ?? []);
+        this.pingers = this.copyPingers(this.model.pingers?.slice() ?? []);
     }
 
     private fillModel(): void {
@@ -437,6 +452,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
                     number: row.number,
                     statusId: row.statusId,
                     selectedStatus: FishingGearMarkStatusesEnum[this.markStatuses.find(x => x.value === row.statusId)!.code as keyof typeof FishingGearMarkStatusesEnum],
+                    createdOn: row.createdOn,
                     isActive: row.isActive ?? true
                 });
             });
@@ -574,5 +590,27 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
                 return { 'noPingers': true };
             }
         }
+    }
+
+    private copyMarks(marks: FishingGearMarkDTO[]): FishingGearMarkDTO[] {
+        const copiedMarks: FishingGearMarkDTO[] = [];
+
+        for (const mark of marks) {
+            const markObject: object = JSON.parse(JSON.stringify(mark));
+            copiedMarks.push(new FishingGearMarkDTO(markObject));
+        }
+
+        return copiedMarks;
+    }
+
+    private copyPingers(pingers: FishingGearPingerDTO[]): FishingGearPingerDTO[] {
+        const copiedPingers: FishingGearPingerDTO[] = [];
+
+        for (const pinger of pingers) {
+            const pingerObject: object = JSON.parse(JSON.stringify(pinger));
+            copiedPingers.push(new FishingGearPingerDTO(pingerObject));
+        }
+
+        return copiedPingers;
     }
 }

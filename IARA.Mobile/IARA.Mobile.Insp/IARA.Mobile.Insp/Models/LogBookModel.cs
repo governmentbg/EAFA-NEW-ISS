@@ -30,6 +30,8 @@ namespace IARA.Mobile.Insp.Models
             AddedByInspectorState.IsValid = true;
             EndPage.IsValid = true;
 
+            Number.AddFakeValidation();
+            PageText.AddFakeValidation();
             AddedByInspectorState.AddFakeValidation();
             EndPage.AddFakeValidation();
 

@@ -5,7 +5,7 @@ import { AuanRegisterDTO } from './AuanRegisterDTO';
 import { InspectionTypesEnum } from '@app/enums/inspection-types.enum';
 import { InspectionStatesEnum } from '@app/enums/inspection-states.enum';
 
-export class InspectionDTO { 
+export class InspectionDTO {
     public constructor(obj?: Partial<InspectionDTO>) {
         Object.assign(this, obj);
     }
@@ -42,6 +42,9 @@ export class InspectionDTO {
 
     @StrictlyTyped(AuanRegisterDTO)
     public auaNs?: AuanRegisterDTO[];
+
+    @StrictlyTyped(Boolean)
+    public createdByCurrentUser?: boolean;
 
     @StrictlyTyped(Boolean)
     public isActive?: boolean;

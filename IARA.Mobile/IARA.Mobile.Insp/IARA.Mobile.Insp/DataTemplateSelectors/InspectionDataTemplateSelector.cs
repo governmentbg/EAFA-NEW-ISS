@@ -30,7 +30,7 @@ namespace IARA.Mobile.Insp.DataTemplateSelectors
 
             if (item.SubmitType == SubmitType.Finish)
             {
-                if (item.InspectionState == InspectionState.Submitted)
+                if (item.InspectionState == InspectionState.Submitted && item.CreatedByCurrentUser)
                 {
                     buttonsStack.Children.Add(new ImageButton
                     {
@@ -61,7 +61,7 @@ namespace IARA.Mobile.Insp.DataTemplateSelectors
                     CommandParameter = item,
                 });
             }
-            else
+            else if (item.CreatedByCurrentUser)
             {
                 buttonsStack.Children.Add(new ImageButton
                 {
@@ -76,6 +76,7 @@ namespace IARA.Mobile.Insp.DataTemplateSelectors
                     Command = bindingContext.OpenInspection,
                     CommandParameter = item,
                 });
+
                 buttonsStack.Children.Add(new ImageButton
                 {
                     Source = new FontImageSource
