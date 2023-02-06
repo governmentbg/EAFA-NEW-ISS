@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Base;
@@ -20,8 +21,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
 
         public bool AddedByInspector { get; set; }
 
+        public DateTime? CreatedOn { get; set; }
+
         [Required]
         [MaxLength(50)]
+        [TLRange(0, 1_000_000_000)]
         public ValidState Number { get; set; }
 
         [Required]
@@ -39,6 +43,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                         ? status
                         : FishingGearMarkStatus.MARKED,
                     StatusId = viewModel.Status.Value.Id,
+                    CreatedOn = viewModel.CreatedOn,
                 };
             }
 

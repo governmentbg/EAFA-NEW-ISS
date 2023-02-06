@@ -183,21 +183,23 @@ export class ReportDefinitionComponent implements OnInit {
     }
 
     public auditBtnClicked(): void {
-        if (this.auditBtn !== undefined) {
-            this.auditBtn.getAuditRecordData(this.auditBtn.id).subscribe(result => {
-                this.auditInfo = result;
+        if (this.report.id !== undefined && this.report.id !== null) {
+            this.reportService.getReportAudit(this.report.id).subscribe({
+                next: (result: SimpleAuditDTO) => {
+                    this.auditInfo = result;
+                }
             });
         }
     }
 
     public detailedAuditClicked(): void {
-        const systemLogId: number | undefined = this.report.id;
-        const systemLogTableName: string | undefined = 'Report';
-
-        if (systemLogId !== undefined &&
-            !CommonUtils.isNumberNullOrNaN(systemLogId) &&
-            !CommonUtils.isNullOrUndefined(systemLogTableName)) {
-            this.router.navigateByUrl('/system-log', { state: { tableId: systemLogId!.toString(), tableName: systemLogTableName } });
+        if (this.report.id !== undefined && this.report.id !== null) {
+            this.router.navigateByUrl('/system-log', {
+                state: {
+                    tableId: this.report.id.toString(),
+                    tableName: 'Report'
+                }
+            });
         }
     }
 

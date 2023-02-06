@@ -760,6 +760,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             Id = fishingGearMark.Id,
                             Number = fishingGearMark.Number,
                             StatusId = fishingGearMark.StatusId,
+                            CreatedOn = fishingGearMark.CreatedOn,
                             SelectedStatus = Enum.TryParse(status.Code, out FishingGearMarkStatus markStatus)
                                 ? markStatus
                                 : FishingGearMarkStatus.MARKED,
@@ -846,6 +847,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             Id = fishingGearMark.Id,
                             Number = fishingGearMark.Number,
                             StatusId = fishingGearMark.StatusId,
+                            CreatedOn = fishingGearMark.CreatedOn,
                             SelectedStatus = Enum.TryParse(status.Code, out FishingGearMarkStatus markStatus)
                                 ? markStatus
                                 : FishingGearMarkStatus.MARKED,

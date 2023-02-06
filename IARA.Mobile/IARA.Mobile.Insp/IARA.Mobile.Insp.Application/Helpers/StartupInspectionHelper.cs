@@ -450,6 +450,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     Id = f.Id,
                     FishingGearId = f.FishingGearId,
                     Number = f.Number,
+                    CreatedOn = f.CreatedOn,
                     StatusId = f.StatusId,
                 },
                 f => f.Id
@@ -668,6 +669,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     Id = f.Id,
                     FishingGearId = f.FishingGearId,
                     Number = f.Number,
+                    CreatedOn = f.CreatedOn,
                     StatusId = f.StatusId,
                 },
                 f => f.Id

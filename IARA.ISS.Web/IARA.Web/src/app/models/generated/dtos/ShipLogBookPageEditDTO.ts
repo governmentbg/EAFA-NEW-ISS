@@ -99,6 +99,9 @@ export class ShipLogBookPageEditDTO {
     @StrictlyTyped(OriginDeclarationFishDTO)
     public originDeclarationFishes?: OriginDeclarationFishDTO[];
 
+    @StrictlyTyped(Boolean)
+    public hasNoUnloadedCatch?: boolean;
+
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
 }
