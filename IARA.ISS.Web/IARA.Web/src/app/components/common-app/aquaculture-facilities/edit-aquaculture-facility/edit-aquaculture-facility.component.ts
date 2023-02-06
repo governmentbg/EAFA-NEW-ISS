@@ -81,6 +81,7 @@ import { StatisticalFormDataDTO } from '@app/models/generated/dtos/StatisticalFo
 import { StatisticalFormsAquaFarmComponent } from '../../statistical-forms/components/statistical-forms-aqua-farm/statistical-forms-aqua-farm.component';
 import { StatisticalFormsAdministrationService } from '@app/services/administration-app/statistical-forms-administration.service';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
+import { SubmittedByRolesEnum } from '@app/enums/submitted-by-roles.enum';
 
 class AquaticOrganismTableModel {
     public aquaticOrganismId: number;
@@ -167,6 +168,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     public showHatcheryEquipment: boolean = false;
     public hideBasicPaymentInfo: boolean = false;
     public hasStatisticalFormReadPermission: boolean = false;
+    public hideRelation: boolean = true;
 
     public aquaticOrganismsTouched: boolean = false;
     public installationsTouched: boolean = false;
@@ -1673,6 +1675,25 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     }
 
     private fillFormRegister(model: AquacultureFacilityEditDTO): void {
+        if (model.submittedFor) {
+            switch (model.submittedFor.submittedByRole) {
+                case SubmittedByRolesEnum.Personal:
+                case SubmittedByRolesEnum.PersonalRepresentative:
+                    this.hideRelation = false;
+                    break;
+                case SubmittedByRolesEnum.LegalOwner:
+                case SubmittedByRolesEnum.LegalRepresentative:
+                    this.hideRelation = true;
+                    break;
+                default:
+                    this.hideRelation = false;
+                    break;
+            }
+        }
+        else {
+            this.hideRelation = false;
+        }
+
         this.form.get('submittedForControl')!.setValue(model.submittedFor);
         this.form.get('regNumControl')!.setValue(model.regNum);
         this.form.get('urorNumControl')!.setValue(model.urorNum);

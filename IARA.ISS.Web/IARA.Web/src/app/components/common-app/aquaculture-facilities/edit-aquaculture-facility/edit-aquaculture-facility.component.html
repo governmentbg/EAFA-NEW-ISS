@@ -29,7 +29,7 @@
                                    submittedForLabel="{{ 'aquacultures.receiver' | tlTranslate }}"
                                    [pageCode]="pageCode"
                                    [hideRelation]="showOnlyRegiXData"
-                                   [isIdReadOnly]="isEditing"
+                                   [isIdReadOnly]="isEditing && !isChangeOfCircumstancesApplication"
                                    [hideDocument]="true"
                                    [showPersonal]="!isApplication"
                                    [submittedByControl]="form.controls.submittedByControl"
@@ -249,8 +249,10 @@
                                    formControlName="submittedForControl"
                                    validityChecker
                                    submittedForLabel="{{ 'aquacultures.receiver-legal' | tlTranslate }}"
-                                   [hideRelation]="true"
-                                   [isIdReadOnly]="isEditing"
+                                   relationLabel="{{ 'aquacultures.requester-role' | tlTranslate }}"
+                                   [pageCode]="pageCode"
+                                   [hideRelation]="hideRelation"
+                                   [isIdReadOnly]="isEditing && !isChangeOfCircumstancesApplication && hideRelation"
                                    [hideDocument]="true"
                                    [showPersonal]="!isApplication">
         </application-submitted-for>
