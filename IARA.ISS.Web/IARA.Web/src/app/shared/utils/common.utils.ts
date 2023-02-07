@@ -92,10 +92,10 @@ export class CommonUtils {
         else if (item instanceof Date) {
             const date: Date = item as Date;
             if (date.getTime() < DateUtils.MIN_DATE.getTime()) {
-                item = null;
+                item = DateUtils.MIN_DATE;
             }
             else if (date.getTime() > DateUtils.MAX_DATE.getTime()) {
-                item = null;
+                item = DateUtils.MAX_DATE;
             }
         }
 

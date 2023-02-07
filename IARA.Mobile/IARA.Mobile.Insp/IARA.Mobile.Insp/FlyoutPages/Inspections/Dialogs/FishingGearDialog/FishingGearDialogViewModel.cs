@@ -112,6 +112,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
 
                 newMark.Status.Value = mark.Status.Value;
                 newMark.Number.Value = mark.Number.Value;
+                newMark.CreatedOn = mark.CreatedOn;
 
                 InspectedFishingGear.Marks.Value.Add(newMark);
             }

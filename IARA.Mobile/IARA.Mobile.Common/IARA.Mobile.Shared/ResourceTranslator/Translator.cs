@@ -125,7 +125,7 @@ namespace IARA.Mobile.Shared.ResourceTranslator
 
             if (!Enum.TryParse(split[0], out GroupResourceEnum group))
             {
-                return string.Empty;
+                return groupResource;
             }
 
             return GetValue(group, split[1]);
@@ -135,12 +135,12 @@ namespace IARA.Mobile.Shared.ResourceTranslator
         {
             if (!resources.TryGetValue(group, out IReadOnlyDictionary<string, string> groupResources))
             {
-                return string.Empty;
+                return $"{group}/{resource}";
             }
 
             if (!groupResources.TryGetValue(resource, out string result))
             {
-                return string.Empty;
+                return $"{group}/{resource}";
             }
 
             return result;

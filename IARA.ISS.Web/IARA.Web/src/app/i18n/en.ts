@@ -124,7 +124,11 @@
         'paginator-per-page': 'per page',
         'paginator-next-page': 'Next page',
         'paginator-prev-page': 'Previous page',
-        'export': 'Export'
+        'export': 'Export',
+        'yes': 'Yes',
+        'no': 'No',
+        'not-applicable': 'Not applicable',
+        'date': 'Date'
     },
     'validation': {
         'min': 'field has minimum value',
@@ -176,7 +180,6 @@
         'succ-edit-print-configuration': 'Successfully updated print configuration',
         'succ-delete-print-configuration': 'Successfully deleted print configuration',
         'succ-restore-print-configuration': 'Successfully restored print configuration'
-
     },
     'navigation': {
         'applications': 'Applications',
@@ -266,7 +269,8 @@
         'flux-vms-requests': 'FLUX/VMS requests',
         'report-execution': 'Report execution',
         'application-regix-checks': 'RegiX requests',
-        'catches-and-sales-public': 'Catches and sales'
+        'catches-and-sales-public': 'Catches and sales',
+        'print-configurations': 'Print configurations'
     },
     'user-registration': {
         'profile-registration-title': 'Profile registration',
@@ -723,9 +727,13 @@
         'role': 'Permission',
         'valid-from': 'Valid from',
         'valid-to': 'Valid to',
-        'at-least-one-role-needed': 'At least one permission is needed'
+        'at-least-one-role-needed': 'At least one permission is needed',
+        'are-you-sure-you-want-to-delete': 'Are you sure you want to delete this legal entity?',
+
+        'go-to-application-tooltip': 'Go to application'
+
     },
-     'legal-association': {
+    'legal-association': {
         'association-register-title': 'Fishing association registration',
         'add-association-dialog-title': 'Fishing association registration',
         'view-association-dialog-title': 'View fishing association registration',
@@ -751,7 +759,7 @@
         'view-person-tooltip': 'View',
         'edit-person-tooltip': 'Edit',
         'delete-person-tooltip': 'Delete',
-         'restore-person-tooltip': 'Restore',
+        'restore-person-tooltip': 'Restore',
         'email-not-entered-for': 'No email entered for',
         'at-least-one-person-needed': 'At least one user is needed',
         'user-already-exists-with-egn': 'A user already exists with EGN/PNF',
@@ -1493,7 +1501,13 @@
         'all-districts': 'All districts',
         'wrong-password': 'Wrong password',
         'passwords-must-match': 'Passwords must match',
-        'password-is-required': 'Password is required'
+        'password-is-required': 'Password is required',
+        'has-bulgarian-address-registration': 'Has bulgarian address registration',
+        'document-type': 'Document type',
+        'document-number': 'Document No.',
+        'document-issue-date': 'Issued on',
+        'document-issuer': 'Issued by',
+        'citizenship': 'Citizenship'
     },
     'buyers-and-sales-centers': {
         'delete-buyer': 'Delete buyer/FSC',
@@ -1829,7 +1843,7 @@
         'filters-has-food-law-licence': 'Food law licence',
         'filters-is-in-ship-association': 'Association',
         'filters-cancelled': 'In fleet/not in fleet',
-        'filters-forbidden': 'Prohibited for permit', 
+        'filters-forbidden': 'Prohibited for permit',
 
         'third-party-ship-yes': 'Only third party ships',
         'third-party-ship-no': 'Only non third party ships',
@@ -1913,7 +1927,7 @@
         'basic-information': 'Basic information',
         'name': 'Name',
         'external-mark': 'External mark',
-        'registration-num': 'Ship registration number',
+        'registration-number': 'Ship registration number',
         'registration-date': 'Date of registration',
         'ircs-call-sign': 'IRCS call sign',
         'flag': 'Flag',
@@ -2062,7 +2076,7 @@
         'ship-stat-form-view-form-dialog-title': 'View statistical form',
 
         'choose-event-type': 'Choose event type',
-        'show-only-events': 'Show edit events',
+        'show-edit-events': 'Show Edits as well',
         'save-event': 'Save',
         'cancel-changes-application': 'Cancel',
         'do-application-change': 'Add event',
@@ -3127,7 +3141,10 @@
         'last-run-duration-sec': 'Last run duration',
         'report-type': 'Report type',
         'report-icon-search': 'Search',
-        'report-group': 'Report group'
+        'report-group': 'Report group',
+        'parameters-table-parameter-name': 'Parameter name',
+        'parameters-table-parameter-code': 'Parameter code',
+        'dialog-parameter-code': 'Parameter code'
     },
     'report-parameter-definition': {
         'definition.filter-date-from': 'Active from',
@@ -3164,7 +3181,10 @@
 
         'dialog-parameter-restore-title': 'Restore deleted parameter',
         'dialog-parameter-restore-message': 'Are you sure that you want to restore this deleted parameter?',
-        'dialog-parameter-restore-button': 'Restore'
+        'dialog-parameter-restore-button': 'Restore',
+
+        'filter-date-from': 'Active from',
+        'filter-date-to': 'to'
     },
     'report-view': {
         'reports-title': 'Reports',
@@ -3824,11 +3844,14 @@
         'ship-page-origin-declaration-unload-data-time': 'Unloading date and time',
         'ship-page-origin-declaration-unloading-port': 'Unloading port',
         'ship-page-origin-declaration-comments': 'Notes',
+        'ship-page-no-catch-unloaded-toggle': 'No catch unloaded',
         'ship-page-files-panel': 'Files',
         'ship-page-catch-quantity-for': 'Catch quantity for ',
         'ship-page-differs-by': 'differs by',
         'ship-page-quantities-can-have-max-10-percent-difference': 'Catch quantites and the quantities in the origin declataion can deffer by a maximum of 10',
         'ship-page-no-transboard-data-for-transboarded-catch-error': 'Cannot have rows with no transboarding data, when the whole catch is marked as transboarded',
+        'ship-page-must-have-origin-declaration-fishes-error': 'When there is catch on board there must be an origin declaration fish information for unloading. You can start that with the "Generate from catch" button above',
+        'ship-page-must-not-have-origin-declaration-fishes-error': 'You cannot have unloaded catch when it is checked that there is no unloading for this trip',
         'ship-page-catch-records-and-unloading-panel': 'Catch and unloading information',
         'ship-page-invalid-declaration-of-origin-catch-records-dates': 'There is an unloaded aquatic organism from another trip with catch date and time that are greater than the current unloading date and time',
         'add-ship-log-book-page-wizard-dialog-title': 'Add ship logbook page',
@@ -4692,7 +4715,11 @@
 
         'edit-auan-confiscated-appliances': 'Confiscated appliances',
 
-        'edit-auan-files': 'Files'
+        'edit-auan-files': 'Files',
+
+        'edit-auan-witness': 'Witness',
+
+        'edit-auan-confiscated-appliances-table': 'Confiscated appliances'
     },
     'cross-check-results': {
         'check-code': 'Code',
@@ -4778,7 +4805,7 @@
         'aqua-farm-form-num': 'Number',
         'aqua-farm-aquaculture-facilities': 'Aquaculture facilities',
         'aqua-farm-year': 'Year',
-        'aqua-farm-death-title': 'дeath rate',
+        'aqua-farm-death-title': 'Death rate',
         'aqua-farm-breeding-material-death-rate': 'Breeding material (%)',
         'aqua-farm-consumation-fish-death-rate': 'Consumation fish (%)',
         'aqua-farm-broodstock-death-rate': 'Broodstock (%)',
@@ -5258,7 +5285,13 @@
 
         'edit-decree-appliance': 'Seized appliances',
 
-        'edit-decree-files': 'Files'
+        'edit-decree-files': 'Files',
+        'table-status': 'Status',
+
+        'view-status': 'View status',
+        'edit-status': 'Edit status',
+        'delete-status': 'Delete status',
+        'restore-status': 'Restore status'
     },
     'catch-quotas': {
         'ship': 'Ship',
@@ -5314,7 +5347,8 @@
         'ship-quota-already-exists-error': 'This ship catch quota already exists',
 
         'ship-excel-filename': 'Quota distribution',
-        'yearly-excel-filename': 'Annual quotas'
+        'yearly-excel-filename': 'Annual quotas',
+        'view-entry-tooltip': 'View quota'
     },
     'flux-vms-requests': {
         'common': 'Common',
@@ -5544,7 +5578,11 @@
         'edit-penal-points-comments': 'Comments',
         'edit-comments': 'Comments',
 
-        'edit-points-files': 'Files'
+        'edit-points-files': 'Files',
+
+        'add-penal-points-complaint-dialog-title': 'Add penal points complaint',
+        'edit-penal-points-complaint-dialog-title': 'Edit penal points complaint',
+        'view-penal-points-complaint-dialog-title': 'View penal points complaint'
     },
     'cancellation-history-dialog': {
         'cancel-reason': 'Reason',

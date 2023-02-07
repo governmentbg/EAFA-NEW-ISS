@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Input;
@@ -136,6 +137,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                     {
                         Id = mark.Id,
                         AddedByInspector = mark.SelectedStatus == FishingGearMarkStatus.MARKED,
+                        CreatedOn = mark.CreatedOn,
                     };
                     markViewModel.Number.Value = mark.Number;
                     markViewModel.Status.Value = _allMarkStatuses.Find(f => f.Id == mark.StatusId);
@@ -149,7 +151,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                 {
                     PingerViewModel pingerViewModel = new PingerViewModel
                     {
-                        Id = pinger.Id
+                        Id = pinger.Id,
                     };
                     pingerViewModel.Number.Value = pinger.Number;
                     pingerViewModel.Status.Value = PingerStatuses.Find(f => f.Id == pinger.StatusId);
@@ -162,7 +164,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         {
             MarkViewModel mark = new MarkViewModel
             {
-                AddedByInspector = true
+                AddedByInspector = true,
+                CreatedOn = DateTime.Now,
             };
             mark.Status.Value = _inspectedMarkStatus;
             Marks.Value.Add(mark);

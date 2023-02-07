@@ -150,10 +150,13 @@
                         [validityChecker]="form"
                         [validityCheckerExtraCondition]="form.errors?.hasInvalidCatchRecordDates !== true 
                                                          && form.errors?.invalidOriginDeclarationCatchRecords !== true
-                                                         && form.errors?.noTransboardDataForTransboardedCatch !== true">
-        <div fxFlex="column" fxLayoutGap="1em" fxFlexFill>
+                                                         && form.errors?.noTransboardDataForTransboardedCatch !== true
+                                                         && form.errors?.originDeclarationFishesRequired !== true
+                                                         && form.errors?.originDeclarationFishesNotNeeded !== true">
+        <div fxLayout="column" fxLayoutGap="1em">
             <!-- Улов -->
-            <tl-card tooltipResourceName="catches-and-sales.ship-page-catch-records-panel-helper"
+            <tl-card fxLayout="row"
+                     tooltipResourceName="catches-and-sales.ship-page-catch-records-panel-helper"
                      validityChecker>
                 <tl-card-title>{{ 'catches-and-sales.ship-page-catch-records-panel' | tlTranslate }}</tl-card-title>
                 <tl-card-content>
@@ -262,121 +265,139 @@
                 </tl-card-content>
             </tl-card>
             <!-- Декларация за произход -->
-            <tl-card tooltipResourceName="catches-and-sales.ship-page-declaration-of-origin-panel-helper"
+            <tl-card fxLayout="row"
+                     tooltipResourceName="catches-and-sales.ship-page-declaration-of-origin-panel-helper"
                      validityChecker
                      [validityCheckerExtraCondition]="form.errors?.hasInvalidCatchRecordDates !== true 
                                                       && form.errors?.invalidOriginDeclarationCatchRecords !== true
-                                                      && form.errors?.noTransboardDataForTransboardedCatch !== true">
+                                                      && form.errors?.noTransboardDataForTransboardedCatch !== true
+                                                      && form.errors?.originDeclarationFishesRequired !== true
+                                                      && form.errors?.originDeclarationFishesNotNeeded !== true">
                 <tl-card-title>{{ 'catches-and-sales.ship-page-declaration-of-origin-panel' | tlTranslate }}</tl-card-title>
-                <tl-card-content>
-                    <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
-                        <tl-data-table fxFlexFill
-                                       #declarationOfOriginCatchRecordsTable
-                                       [rows]="declarationOfOriginCatchRecords"
-                                       [isRemote]="false"
-                                       [isSoftDeletable]="true"
-                                       [showInactiveRecords]="false"
-                                       [showAddButton]="!viewMode"
-                                       addButtonLabel="{{ 'catches-and-sales.ship-page-declaration-of-origin-generate-catch-data' | tlTranslate }}"
-                                       (addButtonClicked)="generateOriginDeclarationFromCatchRecordFishes()"
-                                       (activeRecordChanged)="editDeclarationOfOriginCatchRecord($event, !$event.isActive || viewMode)">
-                            <div *ngIf="!viewMode" datatable-add-buttons fxLayout="row" fxLayoutGap="1em">
-                                <button mat-raised-button
-                                        color="primary"
-                                        (click)="addCatchFromPreviousTrip()">
-                                    <tl-icon icon="fa-plus-circle"></tl-icon>
-                                    {{ 'catches-and-sales.ship-page-declaration-of-origin-catch-record-add-from-external-catch' | tlTranslate }}
-                                </button>
-                            </div>
-                            <data-column propertyName="catchZone"
-                                         columnName="{{ 'catches-and-sales.ship-page-declaration-of-origin-catch-record-catch-zone' | tlTranslate }}"
-                                         [flexRate]="0.2">
-                            </data-column>
-                            <data-column propertyName="catchQuadrantId"
-                                         dataType="nomenclature"
-                                         columnName="{{ 'catches-and-sales.ship-page-declaration-of-origin-catch-record-quadrant' | tlTranslate }}"
-                                         [flexRate]="0.2"
-                                         [options]="catchZones">
-                            </data-column>
-                            <data-column propertyName="fishId"
-                                         dataType="nomenclature"
-                                         columnName="{{ 'catches-and-sales.ship-page-origin-declaration-aquatic-organism-type' | tlTranslate }}"
-                                         [flexRate]="0.4"
-                                         [options]="aquaticOrganisms">
-                            </data-column>
-                            <data-column propertyName="quantityKg"
-                                         [flexRate]="0.2"
-                                         columnName="{{ 'catches-and-sales.ship-page-origin-declaration-quantity-kg' | tlTranslate }}">
-                            </data-column>
-                            <data-column propertyName="catchFishStateId"
-                                         dataType="nomenclature"
-                                         columnName="{{ 'catches-and-sales.ship-page-origin-declaration-catch-state' | tlTranslate }}"
-                                         [flexRate]="0.4"
-                                         [options]="catchStates">
-                            </data-column>
-                            <data-column propertyName="catchFishPresentationId"
-                                         dataType="nomenclature"
-                                         columnName="{{ 'catches-and-sales.ship-page-origin-declaration-catch-presentation' | tlTranslate }}"
-                                         [flexRate]="0.4"
-                                         [options]="catchPresentations">
-                            </data-column>
-                            <data-template-column [flexRate]="0.35" [cellClass]="'justify-center'">
-                                <ng-template let-row="row" ngx-datatable-cell-template>
-                                    <div fxLayout="row wrap" fxLayoutAlign="end center">
-                                        <tl-icon *ngIf="!row.data.isValid"
-                                                 icon="ic-exclamation"
-                                                 iconClass="error-color"
-                                                 [size]="icIconSize"
-                                                 tooltipText="{{ 'catches-and-sales.ship-page-invalid-declaration-of-origin-catch-record' | tlTranslate }}">
-                                        </tl-icon>
-                                        <tl-icon-button icon="visibility"
-                                                        (buttonClicked)="editDeclarationOfOriginCatchRecord(row.data, true)"
-                                                        iconClass="accent-color"
-                                                        tooltipText="{{ 'catches-and-sales.ship-page-view-declaration-of-origin-catch-record' | tlTranslate }}">
-                                        </tl-icon-button>
-                                        <tl-icon-button *ngIf="row.data.isActive && !viewMode"
-                                                        icon="edit"
-                                                        (buttonClicked)="editDeclarationOfOriginCatchRecord(row.data, false)"
-                                                        iconClass="accent-color"
-                                                        tooltipText="{{ 'catches-and-sales.ship-page-edit-declaration-of-origin-catch-record' | tlTranslate }}">
-                                        </tl-icon-button>
-                                        <tl-icon-button *ngIf="row.data.isActive && !viewMode"
-                                                        icon="ic-copy"
-                                                        (buttonClicked)="copyDeclarationOfOriginCatchRecord(row.data)"
-                                                        iconClass="accent-color"
-                                                        tooltipText="{{ 'catches-and-sales.ship-page-copy-declaration-of-origin-catch-record' | tlTranslate }}"
-                                                        [size]="icIconSize">
-                                        </tl-icon-button>
-                                        <tl-icon-button *ngIf="row.data.isActive && !viewMode"
-                                                        icon="remove"
-                                                        (buttonClicked)="removeOriginDeclarationFish(row.data)"
-                                                        iconClass="accent-color"
-                                                        tooltipText="{{ 'catches-and-sales.remove-ship-page-remove-origin-declaration-catch-record' | tlTranslate }}">
-                                        </tl-icon-button>
-                                    </div>
-                                </ng-template>
-                            </data-template-column>
-                        </tl-data-table>
-                        <mat-error *ngIf="form.touched && form.errors?.hasInvalidCatchRecordDates">
-                            * {{ 'catches-and-sales.ship-page-invalid-declaration-of-origin-catch-records-dates' | tlTranslate }}
+                <tl-card-content fxLayout="column">
+                    <div fxLayout="column" fxLayoutGap="1em">
+                        <div fxLayout="column" fxLayoutGap="1em">
+                            <tl-data-table fxFlexFill
+                                           #declarationOfOriginCatchRecordsTable
+                                           [rows]="declarationOfOriginCatchRecords"
+                                           [isRemote]="false"
+                                           [isSoftDeletable]="true"
+                                           [showInactiveRecords]="false"
+                                           [showAddButton]="!viewMode"
+                                           addButtonLabel="{{ 'catches-and-sales.ship-page-declaration-of-origin-generate-catch-data' | tlTranslate }}"
+                                           (addButtonClicked)="generateOriginDeclarationFromCatchRecordFishes()"
+                                           (activeRecordChanged)="editDeclarationOfOriginCatchRecord($event, !$event.isActive || viewMode)">
+                                <div *ngIf="!viewMode" datatable-add-buttons fxLayout="row" fxLayoutGap="1em">
+                                    <button mat-raised-button
+                                            color="primary"
+                                            (click)="addCatchFromPreviousTrip()">
+                                        <tl-icon icon="fa-plus-circle"></tl-icon>
+                                        {{ 'catches-and-sales.ship-page-declaration-of-origin-catch-record-add-from-external-catch' | tlTranslate }}
+                                    </button>
+                                </div>
+                                <data-column propertyName="catchZone"
+                                             columnName="{{ 'catches-and-sales.ship-page-declaration-of-origin-catch-record-catch-zone' | tlTranslate }}"
+                                             [flexRate]="0.2">
+                                </data-column>
+                                <data-column propertyName="catchQuadrantId"
+                                             dataType="nomenclature"
+                                             columnName="{{ 'catches-and-sales.ship-page-declaration-of-origin-catch-record-quadrant' | tlTranslate }}"
+                                             [flexRate]="0.2"
+                                             [options]="catchZones">
+                                </data-column>
+                                <data-column propertyName="fishId"
+                                             dataType="nomenclature"
+                                             columnName="{{ 'catches-and-sales.ship-page-origin-declaration-aquatic-organism-type' | tlTranslate }}"
+                                             [flexRate]="0.4"
+                                             [options]="aquaticOrganisms">
+                                </data-column>
+                                <data-column propertyName="quantityKg"
+                                             [flexRate]="0.2"
+                                             columnName="{{ 'catches-and-sales.ship-page-origin-declaration-quantity-kg' | tlTranslate }}">
+                                </data-column>
+                                <data-column propertyName="catchFishStateId"
+                                             dataType="nomenclature"
+                                             columnName="{{ 'catches-and-sales.ship-page-origin-declaration-catch-state' | tlTranslate }}"
+                                             [flexRate]="0.4"
+                                             [options]="catchStates">
+                                </data-column>
+                                <data-column propertyName="catchFishPresentationId"
+                                             dataType="nomenclature"
+                                             columnName="{{ 'catches-and-sales.ship-page-origin-declaration-catch-presentation' | tlTranslate }}"
+                                             [flexRate]="0.4"
+                                             [options]="catchPresentations">
+                                </data-column>
+                                <data-template-column [flexRate]="0.35" [cellClass]="'justify-center'">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                            <tl-icon *ngIf="!row.data.isValid"
+                                                     icon="ic-exclamation"
+                                                     iconClass="error-color"
+                                                     [size]="icIconSize"
+                                                     tooltipText="{{ 'catches-and-sales.ship-page-invalid-declaration-of-origin-catch-record' | tlTranslate }}">
+                                            </tl-icon>
+                                            <tl-icon-button icon="visibility"
+                                                            (buttonClicked)="editDeclarationOfOriginCatchRecord(row.data, true)"
+                                                            iconClass="accent-color"
+                                                            tooltipText="{{ 'catches-and-sales.ship-page-view-declaration-of-origin-catch-record' | tlTranslate }}">
+                                            </tl-icon-button>
+                                            <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                                            icon="edit"
+                                                            (buttonClicked)="editDeclarationOfOriginCatchRecord(row.data, false)"
+                                                            iconClass="accent-color"
+                                                            tooltipText="{{ 'catches-and-sales.ship-page-edit-declaration-of-origin-catch-record' | tlTranslate }}">
+                                            </tl-icon-button>
+                                            <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                                            icon="ic-copy"
+                                                            (buttonClicked)="copyDeclarationOfOriginCatchRecord(row.data)"
+                                                            iconClass="accent-color"
+                                                            tooltipText="{{ 'catches-and-sales.ship-page-copy-declaration-of-origin-catch-record' | tlTranslate }}"
+                                                            [size]="icIconSize">
+                                            </tl-icon-button>
+                                            <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                                            icon="remove"
+                                                            (buttonClicked)="removeOriginDeclarationFish(row.data)"
+                                                            iconClass="accent-color"
+                                                            tooltipText="{{ 'catches-and-sales.remove-ship-page-remove-origin-declaration-catch-record' | tlTranslate }}">
+                                            </tl-icon-button>
+                                        </div>
+                                    </ng-template>
+                                </data-template-column>
+                            </tl-data-table>
+                            <mat-error *ngIf="form.touched && form.errors?.hasInvalidCatchRecordDates">
+                                * {{ 'catches-and-sales.ship-page-invalid-declaration-of-origin-catch-records-dates' | tlTranslate }}
+                            </mat-error>
+                            <mat-error *ngIf="form.errors?.invalidOriginDeclarationCatchRecords">
+                                * {{ 'catches-and-sales.ship-page-invalid-declaration-of-origin-catch-records' | tlTranslate }}
+                            </mat-error>
+                            <mat-error class="warn-orange-color" *ngIf="form.errors?.quantityDifferences">
+                                <div fxLayout="row" fxFlexFill *ngFor="let fishQuantity of form.errors?.quantityDifferences | keyvalue">
+                                    <span fxLayot="row" fxFlex="100">
+                                        * {{ 'catches-and-sales.ship-page-catch-quantity-for' | tlTranslate }} {{ fishQuantity.key | nomenclatureDisplay: aquaticOrganisms }} {{ 'catches-and-sales.ship-page-differs-by' | tlTranslate }} {{ fishQuantity.value | number: '1.2-2' }}%
+                                    </span>
+                                </div>
+                                <div fxLayout="row" fxFlexFill>
+                                    <mat-hint fxLayout="row" fxFlex="100">
+                                        ({{ 'catches-and-sales.ship-page-quantities-can-have-max-10-percent-difference' | tlTranslate }}%)
+                                    </mat-hint>
+                                </div>
+                            </mat-error>
+                            <mat-error *ngIf="form.touched && form.errors?.noTransboardDataForTransboardedCatch">
+                                * {{ 'catches-and-sales.ship-page-no-transboard-data-for-transboarded-catch-error' | tlTranslate }}
+                            </mat-error>
+                        </div>
+                        <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                            <tl-slide-toggle fxFlex="25"
+                                             formControlName="noCatchUnloadedControl"
+                                             label="{{ 'catches-and-sales.ship-page-no-catch-unloaded-toggle' | tlTranslate }}">
+                            </tl-slide-toggle>
+                            <div fxFlex="75"></div>
+                        </div>
+                        <mat-error *ngIf="form.touched && form.errors?.originDeclarationFishesRequired">
+                            * {{ 'catches-and-sales.ship-page-must-have-origin-declaration-fishes-error' | tlTranslate }}
                         </mat-error>
-                        <mat-error *ngIf="form.errors?.invalidOriginDeclarationCatchRecords">
-                            * {{ 'catches-and-sales.ship-page-invalid-declaration-of-origin-catch-records' | tlTranslate }}
-                        </mat-error>
-                        <mat-error class="warn-orange-color" *ngIf="form.errors?.quantityDifferences">
-                            <div fxLayout="row" fxFlexFill *ngFor="let fishQuantity of form.errors?.quantityDifferences | keyvalue">
-                                <span fxLayot="row" fxFlex="100">
-                                    * {{ 'catches-and-sales.ship-page-catch-quantity-for' | tlTranslate }} {{ fishQuantity.key | nomenclatureDisplay: aquaticOrganisms }} {{ 'catches-and-sales.ship-page-differs-by' | tlTranslate }} {{ fishQuantity.value | number: '1.2-2' }}%
-                                </span>
-                            </div>
-                            <div fxLayout="row" fxFlexFill>
-                                <mat-hint fxLayout="row" fxFlex="100">
-                                    ({{ 'catches-and-sales.ship-page-quantities-can-have-max-10-percent-difference' | tlTranslate }}%)
-                                </mat-hint>
-                            </div>
-                        </mat-error>
-                        <mat-error *ngIf="form.touched && form.errors?.noTransboardDataForTransboardedCatch">
-                            * {{ 'catches-and-sales.ship-page-no-transboard-data-for-transboarded-catch-error' | tlTranslate }}
+                        <mat-error *ngIf="form.touched && form.errors?.originDeclarationFishesNotNeeded">
+                            * {{ 'catches-and-sales.ship-page-must-not-have-origin-declaration-fishes-error' | tlTranslate }}
                         </mat-error>
                     </div>
                 </tl-card-content>

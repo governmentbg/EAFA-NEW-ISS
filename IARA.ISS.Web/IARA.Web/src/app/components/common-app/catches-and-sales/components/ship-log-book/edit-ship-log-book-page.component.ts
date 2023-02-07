@@ -200,6 +200,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                         this.showHooksCountField = true;
                         this.form.get('fishingGearHookCountControl')!.setValidators([Validators.required, TLValidators.number(0)]);
                         this.form.get('fishingGearHookCountControl')!.markAsPending();
+
                         this.form.get('fishingGearHookCountControl')!.setValue(value.hooksCount);
 
                         if (this.viewMode) {
@@ -406,9 +407,17 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
 
                     this.catchRecords = this.catchRecords.slice();
                     this.form.updateValueAndValidity({ emitEvent: false });
+
+                    if (row.data.catchRecordFishes !== null && row.data.catchRecordFishes !== undefined) { // Ако има улов, да се махне от декларация за разтоварване, ако го има там
+                        this.removeCatchFromOriginDeclarationIfPresent(row.data.catchRecordFishes);
+                    }
                 }
             }
         });
+    }
+
+    private removeCatchFromOriginDeclarationIfPresent(catchRecordFishes: CatchRecordFishDTO[]): void {
+        // TODO ???
     }
 
     public undoDeleteCatchRecord(row: GridRow<CatchRecordDTO>): void {
@@ -463,7 +472,8 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
         this.declarationOfOriginCatchRecords = [...this.declarationOfOriginCatchRecords, ...this.getOriginDeclarationCatchRecords(fishesFlattened)];
         this.selectedCatchesFromPreviousTrips = [];
 
-        this.form.updateValueAndValidity({ emitEvent: false });
+        this.form.markAsTouched();
+        this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
     }
 
     public editDeclarationOfOriginCatchRecord(declarationOfOriginCatchRecord: OriginDeclarationFishDTO, viewMode: boolean = false): void {
@@ -504,6 +514,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                 if (result !== undefined) {
                     declarationOfOriginCatchRecord = result;
                     this.declarationOfOriginCatchRecords = this.declarationOfOriginCatchRecords.slice();
+                    this.form.markAsTouched();
                     this.form.updateValueAndValidity({ emitEvent: false });
                 }
             }
@@ -566,6 +577,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                 if (result !== undefined) {
                     this.declarationOfOriginCatchRecords.push(result);
                     this.declarationOfOriginCatchRecords = this.declarationOfOriginCatchRecords.slice();
+                    this.form.markAsTouched();
                     this.form.updateValueAndValidity({ emitEvent: false });
                 }
             }
@@ -665,6 +677,9 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             }
 
             if (this.model.fishingGearHookCount !== null && this.model.fishingGearHookCount !== undefined) {
+                this.form.get('fishingGearHookCountControl')!.setValue(this.model.fishingGearHookCount);
+            }
+            else {
                 this.form.get('fishingGearHookCountControl')!.setValue(fishingGearRegister.hooksCount);
             }
         }
@@ -698,6 +713,8 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
         else if (this.id !== null && this.id !== undefined && this.model.statusCode === LogBookPageStatusesEnum.Submitted) {
             this.form.get('allCatchIsTransboardedControl')!.setValue(true);
         }
+
+        this.form.get('noCatchUnloadedControl')!.setValue(this.model.hasNoUnloadedCatch ?? false);
 
         this.form.get('unloadDateTimeControl')!.setValue(moment(this.model.unloadDateTime));
 
@@ -736,14 +753,17 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             daysAtSeaCountControl: new FormControl(undefined, Validators.required),
             unloadDateTimeControl: new FormControl(undefined, Validators.required),
             unloadPortControl: new FormControl(undefined, Validators.required),
+
             allCatchIsTransboardedControl: new FormControl(false),
+            noCatchUnloadedControl: new FormControl(false),
 
             filesControl: new FormControl()
         }, [
             this.originDeclarationFishesValidator(),
             this.delcarationOfOriginCatchRecordQuantitiesValidator(),
             this.originDeclarationCatchRecordFishesDatesValidator(),
-            this.allOriginDeclarationFishTransboardedIfMarkedValidator()
+            this.allOriginDeclarationFishTransboardedIfMarkedValidator(),
+            this.requiredOriginDeclarationIfCatchOnBoard()
         ]);
 
         this.form.get('allCatchIsTransboardedControl')!.valueChanges.subscribe({
@@ -765,6 +785,12 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                 if (this.viewMode) {
                     this.form.get('unloadPortControl')!.disable();
                 }
+            }
+        });
+
+        this.form.get('noCatchUnloadedControl')!.valueChanges.subscribe({
+            next: () => {
+                this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
             }
         });
 
@@ -810,7 +836,9 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             arrivalPortId: this.form.get('arrivalPortControl')!.value?.value,
             unloadDateTime: (this.form.get('unloadDateTimeControl')!.value as Moment)?.toDate(),
             unloadPortId: this.form.get('unloadPortControl')!.value?.value,
+
             allCatchIsTransboarded: this.form.get('allCatchIsTransboardedControl')!.value,
+            hasNoUnloadedCatch: this.form.get('noCatchUnloadedControl')!.value ?? false,
 
             files: this.form.get('filesControl')!.value
         });
@@ -1033,6 +1061,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
     private copyCatchRecord(originalCatchRecord: CatchRecordDTO): CatchRecordDTO {
         const catchRecord: CatchRecordDTO = new CatchRecordDTO(originalCatchRecord);
         catchRecord.catchRecordFishes = [];
+
         for (const record of originalCatchRecord.catchRecordFishes ?? []) {
             catchRecord.catchRecordFishes.push(new CatchRecordFishDTO(record));
         }
@@ -1176,6 +1205,60 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                     return null;
                 }
             }
+        }
+    }
+
+    private requiredOriginDeclarationIfCatchOnBoard(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === null || form === undefined) {
+                return null;
+            }
+
+            const noCatchUnloaded: boolean = form.get('noCatchUnloadedControl')!.value ?? false;
+
+            if (noCatchUnloaded === true) {
+                const hasUnloadedFishesInfo: boolean =
+                    this.declarationOfOriginCatchRecords !== null
+                    && this.declarationOfOriginCatchRecords !== undefined
+                    && this.declarationOfOriginCatchRecords.some(x => x.isActive);
+
+                if (hasUnloadedFishesInfo === true) {
+                    return { 'originDeclarationFishesNotNeeded': true };
+                }
+                else {
+                    return null;
+                }
+            }
+
+            if (this.catchRecords === null || this.catchRecords === undefined) {
+                return null;
+            }
+
+            const tripHasCatchFishes: boolean = this.catchRecords.some(x =>
+                x.isActive
+                && x.catchRecordFishes !== null
+                && x.catchRecordFishes !== undefined
+                && x.catchRecordFishes.some(x => x.isActive)
+            );
+
+            if (tripHasCatchFishes === true) {
+                const hasUnloadedFishesInfo: boolean =
+                    this.declarationOfOriginCatchRecords !== null
+                    && this.declarationOfOriginCatchRecords !== undefined
+                    && this.declarationOfOriginCatchRecords.some(x => x.isActive);
+
+                if (hasUnloadedFishesInfo === true) {
+                    return null;
+                }
+                else {
+                    return { 'originDeclarationFishesRequired': true };
+                }
+            }
+            else {
+                return null;
+            }
+
+            return null;
         }
     }
 
