@@ -663,8 +663,8 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         }
 
         if (response.error?.code === ErrorCode.NoEDeliveryRegistration) {
-            this.form.get('isEDeliveryRequestedControl')!.setErrors({ 'hasNoEDeliveryRegistrationError': true });
-            this.form.get('isEDeliveryRequestedControl')!.markAsTouched();
+            this.form.get('deliveryTypeControl')!.setErrors({ 'hasNoEDeliveryRegistrationError': true });
+            this.form.get('deliveryTypeControl')!.markAsTouched();
             this.validityCheckerGroup.validate();
         }
 

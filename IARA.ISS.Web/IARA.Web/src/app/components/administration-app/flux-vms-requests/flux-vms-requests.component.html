@@ -132,11 +132,18 @@
 
                     <data-template-column [flexRate]="0.2">
                         <ng-template ngx-datatable-cell-template let-row="row">
-                            <tl-icon-button icon="visibility"
-                                            (buttonClicked)="openDialog(row.data)"
-                                            iconClass="accent-color"
-                                            tooltipText="{{ 'flux-vms-requests.view-request' | tlTranslate }}">
-                            </tl-icon-button>
+                            <div fxLayout="row" fxLayoutAlign="space-between center">
+                                <tl-icon-button icon="visibility"
+                                                (buttonClicked)="openDialog(row.data)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'flux-vms-requests.view-request' | tlTranslate }}">
+                                </tl-icon-button>
+                                <tl-icon-button icon="send"
+                                                (buttonClicked)="replayRequest(row.data)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'flux-vms-requests.view-request' | tlTranslate }}">
+                                </tl-icon-button>
+                            </div>
                         </ng-template>
                     </data-template-column>
                 </tl-data-table>

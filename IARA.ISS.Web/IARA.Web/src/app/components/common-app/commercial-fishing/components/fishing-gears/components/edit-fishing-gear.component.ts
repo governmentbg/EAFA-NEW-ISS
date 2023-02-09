@@ -33,6 +33,7 @@ import { GenerateMarksComponent } from './generate-marks/generate-marks.componen
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { MarksRangeData } from '../models/marks-range.model';
 import { FishingGearManipulationService } from '../services/fishing-gear-manipulation.service';
+import { FishingGearUtils } from '@app/components/common-app/commercial-fishing/utils/fishing-gear.utils';
 
 @Component({
     selector: 'edit-fishing-gear',
@@ -123,7 +124,14 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             }
             else if (this.pageCode === PageCodeEnum.CatchQuataSpecies) {
                 this.fishingGearTypes = this.fishingGearTypes.filter(x => x.type === FishingGearParameterTypesEnum.Quota).slice();
+                this.fishingGearTypes = this.fishingGearTypes.filter(x => x.type !== FishingGearParameterTypesEnum.PoundNet).slice();
             }
+            else {
+                this.fishingGearTypes = this.fishingGearTypes.filter(x => x.type !== FishingGearParameterTypesEnum.PoundNet).slice();
+            }
+
+            const fishingGearTypeCode: string | undefined = this.fishingGearTypes.find(x => x.value === this.model.typeId)?.code;
+            this.setFieldsValidators(fishingGearTypeCode);
 
             this.fillForm();
         });
@@ -190,6 +198,9 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         }
 
         this.loader.load(() => {
+            const fishingGearTypeCode: string | undefined = this.fishingGearTypes.find(x => x.value === this.model.typeId)?.code;
+            this.setFieldsValidators(fishingGearTypeCode);
+
             this.fillForm();
         });
     }
@@ -292,9 +303,9 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         const form = new FormGroup({
             typeControl: new FormControl(undefined, Validators.required),
             countControl: new FormControl(undefined, TLValidators.number(0)),
-            netEyeSizeControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
+            netEyeSizeControl: new FormControl(undefined, TLValidators.number(0)),
             descriptionControl: new FormControl(undefined, Validators.maxLength(4000)),
-            hooksContControl: new FormControl(undefined, TLValidators.number(0)),
+            hooksCountControl: new FormControl(undefined, TLValidators.number(0)),
             lengthControl: new FormControl(undefined, TLValidators.number(0)),
             heightControl: new FormControl(undefined, TLValidators.number(0)),
             towelLengthControl: new FormControl(undefined, TLValidators.number(0)),
@@ -343,12 +354,26 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         });
 
         form.get('typeControl')!.valueChanges.subscribe({
-            next: (value: NomenclatureDTO<number> | string | undefined) => {
+            next: (value: FishingGearNomenclatureDTO | string | undefined) => {
                 if (value instanceof NomenclatureDTO) {
                     this.setCountAndQuotaGearLength(value);
+                    this.setFieldsValidators(value.code);
+
+                    if (value.hasHooks) {
+                        this.form.get('hooksCountControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+                        this.form.get('hooksCountControl')!.markAsPending();
+                    }
+                    else {
+                        this.form.get('hooksCountControl')!.setValidators(TLValidators.number(0));
+                        this.form.get('hooksCountControl')!.markAsPending();
+                    }
                 }
                 else {
                     this.selectedGearTypeIsPoundNet = false;
+                    this.setFieldsValidators(undefined);
+
+                    this.form.get('hooksCountControl')!.setValidators(TLValidators.number(0));
+                    this.form.get('hooksCountControl')!.markAsPending();
                 }
             }
         });
@@ -367,7 +392,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
             if (type.code !== FishingGearTypesEnum[FishingGearTypesEnum.DLN]) {
                 this.form.get('countControl')!.setValue(this.model.count);
-                this.form.get('hooksContControl')!.setValue(this.model.hookCount);
+                this.form.get('hooksCountControl')!.setValue(this.model.hookCount);
                 this.form.get('lengthControl')!.setValue(this.model.length);
                 this.form.get('heightControl')!.setValue(this.model.height);
                 this.form.get('cordThicknessControl')!.setValue(this.model.cordThickness);
@@ -403,7 +428,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
         if (type.code !== FishingGearTypesEnum[FishingGearTypesEnum.DLN]) {
             this.model.count = this.form.get('countControl')!.value ?? 0;
-            this.model.hookCount = this.form.get('hooksContControl')!.value;
+            this.model.hookCount = this.form.get('hooksCountControl')!.value;
             this.model.length = this.form.get('lengthControl')!.value;
             this.model.height = this.form.get('heightControl')!.value;
             this.model.cordThickness = this.form.get('cordThicknessControl')!.value;
@@ -489,7 +514,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         else {
             this.form.get('countControl')!.reset();
             this.form.get('countControl')!.setValidators(TLValidators.number(0));
-            this.form.get('countControl')!.updateValueAndValidity();
+            this.form.get('countControl')!.markAsPending();
         }
 
         if (this.pageCode === PageCodeEnum.CatchQuataSpecies) {
@@ -527,6 +552,128 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         });
 
         return subscription;
+    }
+
+    private setFieldsValidators(fishingGearCode: string | undefined): void {
+        if (fishingGearCode !== null && fishingGearCode !== undefined) {
+            if (FishingGearUtils.fishingGearCodesWithRequiredMeshSize.some(x => x === fishingGearCode)) { // трябва да има задължителен размер на око
+                this.form.get('netEyeSizeControl')!.setValidators(Validators.required);
+                this.form.get('netEyeSizeControl')!.markAsPending();
+            }
+            else {
+                this.form.get('netEyeSizeControl')!.clearValidators();
+                this.form.get('netEyeSizeControl')!.markAsPending();
+            }
+
+            if (FishingGearUtils.fishingGearCodesWithRequiredGearDimension.some(x => x === fishingGearCode)) { // трябва да има задължително Length/Width
+                this.form.get('lengthControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+                this.form.get('lengthControl')!.markAsPending();
+            }
+            else {
+                this.form.get('lengthControl')!.setValidators(TLValidators.number(0));
+                this.form.get('lengthControl')!.markAsPending();
+            }
+
+            if (FishingGearUtils.fishingGearCodesWithRequiredHeight.some(x => x === fishingGearCode)) { // трябва да има задължително Height
+                this.form.get('heightControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+                this.form.get('heightControl')!.markAsPending();
+            }
+            else {
+                this.form.get('heightControl')!.setValidators(TLValidators.number(0));
+                this.form.get('heightControl')!.markAsPending();
+            }
+
+            if (FishingGearUtils.fishingGearCodesWithRequiredNetLength.some(x => x === fishingGearCode)) { // трябва да има задължително Nominal Net Length
+                this.form.get('netNominalLengthControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+                this.form.get('netNominalLengthControl')!.markAsPending();
+            }
+            else {
+                this.form.get('netNominalLengthControl')!.setValidators(TLValidators.number(0));
+                this.form.get('netNominalLengthControl')!.markAsPending();
+            }
+
+            //if (FishingGearUtils.fishingGearCodesWithRequiredNumberDimension.some(x => x === fishingGearCode)) { // трябва да има задължително брой (number dimension)
+            //    this.form.get('hooksCountControl')!.setValidators([Validators.required, TLValidators.number(0)]); // TODO make this count for everything ??? with helper message?
+            //    this.form.get('hooksCountControl')!.markAsPending();
+            //}
+            //else {
+            //    this.form.get('hooksCountControl')!.setValidators(TLValidators.number(0));
+            //    this.form.get('hooksCountControl')!.markAsPending();
+            //}
+
+            if (FishingGearUtils.fishingGearCodesWithRequiredNumberOfLines.some(x => x === fishingGearCode)) { // трябва да има задължително Line Count
+                this.form.get('lineCountControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+                this.form.get('lineCountControl')!.markAsPending();
+            }
+            else {
+                this.form.get('lineCountControl')!.setValidators(TLValidators.number(0));
+                this.form.get('lineCountControl')!.markAsPending();
+            }
+
+            if (FishingGearUtils.fishingGearCodesWithRequiredNumberOfNets.some(x => x === fishingGearCode)) { // трябва да има задължително Nets In Fleet
+                this.form.get('netsInFleetCountControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+                this.form.get('netsInFleetCountControl')!.markAsPending();
+            }
+            else {
+                this.form.get('netsInFleetCountControl')!.setValidators(TLValidators.number(0));
+                this.form.get('netsInFleetCountControl')!.markAsPending();
+            }
+
+            if (FishingGearUtils.fishingGearCodesWithRequiredTrawlModel.some(x => x === fishingGearCode)) { // трябва да има задължително Trawl Model
+                this.form.get('trawlModelControl')!.setValidators([Validators.required, Validators.maxLength(5000)]);
+                this.form.get('trawlModelControl')!.markAsPending();
+            }
+            else {
+                this.form.get('trawlModelControl')!.setValidators(Validators.maxLength(5000));
+                this.form.get('trawlModelControl')!.markAsPending();
+            }
+
+            if (FishingGearUtils.fishingGearCodesWithOptionalGearDimension.some(x => x === fishingGearCode)) { // трябва да има Lenght (perimeter of opening) or Trawl Model
+                if (this.showPingersTable) {
+                    this.form.setValidators([this.atLeastOnePingerValidator(), this.gearWithOptionalGearDimension()]);
+                }
+                else {
+                    this.form.setValidators(this.gearWithOptionalGearDimension());
+                }
+            }
+            else {
+                if (this.showPingersTable) {
+                    this.form.setValidators(this.atLeastOnePingerValidator());
+                }
+                else {
+                    this.form.clearValidators();
+                }
+            }
+        }
+        else {
+            this.form.get('netEyeSizeControl')!.clearValidators();
+            this.form.get('netEyeSizeControl')!.markAsPending();
+
+            this.form.get('lengthControl')!.setValidators(TLValidators.number(0));
+            this.form.get('lengthControl')!.markAsPending();
+
+            this.form.get('heightControl')!.setValidators(TLValidators.number(0));
+            this.form.get('heightControl')!.markAsPending();
+
+            this.form.get('netNominalLengthControl')!.setValidators(TLValidators.number(0));
+            this.form.get('netNominalLengthControl')!.markAsPending();
+
+            //    this.form.get('hooksCountControl')!.setValidators(TLValidators.number(0));
+            //    this.form.get('hooksCountControl')!.markAsPending();
+
+            this.form.get('lineCountControl')!.setValidators(TLValidators.number(0));
+            this.form.get('lineCountControl')!.markAsPending();
+
+            this.form.get('netsInFleetCountControl')!.setValidators(TLValidators.number(0));
+            this.form.get('netsInFleetCountControl')!.markAsPending();
+
+            this.form.get('trawlModelControl')!.setValidators(Validators.maxLength(5000));
+            this.form.get('trawlModelControl')!.markAsPending();
+        }
+
+        if (this.isDisabled) {
+            this.form.disable();
+        }
     }
 
     private uniqueMarkNumberValidator(): ValidatorFn {
@@ -589,6 +736,36 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             else {
                 return { 'noPingers': true };
             }
+        }
+    }
+
+    private gearWithOptionalGearDimension(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === null || form === undefined) {
+                return null;
+            }
+
+            const gearTypeCode: string | undefined = form.get('typeControl')!.value?.code;
+
+            if (FishingGearUtils.fishingGearCodesWithOptionalGearDimension.some(x => x === gearTypeCode)) {
+                let lengthOrWidthValue: string | undefined = form.get('lengthControl')!.value;
+
+                if (lengthOrWidthValue === '' || lengthOrWidthValue === null) {
+                    lengthOrWidthValue = undefined;
+                }
+
+                const lengthOrWidth: number | undefined = Number(lengthOrWidthValue);
+                const trawlModel: string | undefined = form.get('trawlModelControl')!.value;
+
+                if (CommonUtils.isNumberNullOrNaN(lengthOrWidth) && CommonUtils.isNullOrEmpty(trawlModel)) {
+                    return { 'lengthOrTrawlModelIsRequired' : true };
+                }
+                else {
+                    return null;
+                }
+            }
+
+            return null;
         }
     }
 

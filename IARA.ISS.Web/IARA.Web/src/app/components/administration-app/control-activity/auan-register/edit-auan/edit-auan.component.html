@@ -179,7 +179,7 @@
     <!-- Начин на връчване -->
     <tl-expansion-panel title="{{ 'auan-register.edit-auan-delivery' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="form.controls.isEDeliveryRequestedControl.errors?.hasNoEDeliveryRegistrationError !== true"
+                        [validityCheckerExtraCondition]="form.controls.deliveryTypeControl.errors?.hasNoEDeliveryRegistrationError !== true"
                         tooltipResourceName="auan-register.edit-auan-delivery-helper">
         <div fxLayout="column" fxLayoutGap="1em">
             <div fxLayout="column" fxLayoutGap="1em">
@@ -194,7 +194,7 @@
                              tooltipResourceName="auan-register.edit-auan-e-delivery-requested-helper">
                 </tl-checkbox>
 
-                <mat-error *ngIf="form.controls.isEDeliveryRequestedControl.errors?.hasNoEDeliveryRegistrationError === true">
+                <mat-error *ngIf="form.controls.deliveryTypeControl.errors?.hasNoEDeliveryRegistrationError === true">
                     * {{ 'auan-register.has-no-e-delivery-registration-error' | tlTranslate }}
                 </mat-error>
             </div>

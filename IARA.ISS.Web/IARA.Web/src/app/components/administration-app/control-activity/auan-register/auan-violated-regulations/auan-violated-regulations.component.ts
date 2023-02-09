@@ -78,26 +78,26 @@ export class AuanViolatedRegulationsComponent extends CustomFormControl<AuanViol
     }
 
     public violatedRegulationsRecordChanged(event: RecordChangedEventArgs<AuanViolatedRegulationDTO>): void {
-        this.violatedRegulations = this.violatedRegulationsTable.rows.map(x => new AuanViolatedRegulationDTO({
-            id: x.id,
-            article: x.article,
-            paragraph: x.paragraph,
-            section: x.section,
-            letter: x.letter,
-            lawSectionId: x.lawSectionId,
-            lawText: x.lawText,
-            comments: x.comments,
-            isActive: x.isActive ?? true
-        }));
+        this.violatedRegulations = this.violatedRegulationsTable.rows;
 
-        this.onChanged(this.violatedRegulations);
+        this.onChanged(this.getValue());
+        this.control.updateValueAndValidity();
     }
 
-    public openLawSectionsDialog(regulation: AuanViolatedRegulationDTO): void {
+    public onEditRecord(row: GridRow<AuanViolatedRegulationDTO>): void {
+        if (row !== undefined && row !== null) {
+            this.violatedRegulationsForm.get('lawTextControl')!.setValue(row.data.lawText);
+        }
+        else {
+            this.violatedRegulationsForm.get('lawTextControl')!.reset();
+        }
+    }
+
+    public openLawSectionsDialog(row: GridRow<AuanViolatedRegulationDTO>): void {
         let auditButton: IHeaderAuditButton | undefined;
         const title: string = this.translate.getValue('auan-register.choose-law-section-dialog-title');
         const data: ChooseLawSectionDialogParams = new ChooseLawSectionDialogParams({
-            id: regulation.lawSectionId
+            id: row.data?.lawSectionId
         });
 
         const dialog = this.chooseLawSectionDialog.openWithTwoButtons({
@@ -124,21 +124,35 @@ export class AuanViolatedRegulationsComponent extends CustomFormControl<AuanViol
 
         dialog.subscribe((entry: AuanLawSectionDTO) => {
             if (entry !== undefined && entry !== null) {
-                regulation.article = entry.article;
-                regulation.letter = entry.letter;
-                regulation.paragraph = entry.paragraph;
-                regulation.section = entry.section;
-                regulation.lawSectionId = entry.id;
-                regulation.lawText = entry.lawText;
+                this.violatedRegulationsForm.get('articleControl')!.setValue(entry.article);
+                this.violatedRegulationsForm.get('letterControl')!.setValue(entry.letter);
+                this.violatedRegulationsForm.get('paragraphControl')!.setValue(entry.paragraph);
+                this.violatedRegulationsForm.get('sectionControl')!.setValue(entry.section);
 
-                this.violatedRegulations = this.violatedRegulations.slice();
+                row.data.lawSectionId = entry.id;
+                row.data.lawText = entry.lawText;
+                this.violatedRegulationsForm.get('lawTextControl')!.setValue(row.data.lawText);
+            }
+            else {
+                row.data.lawSectionId = undefined;
+                row.data.lawText = undefined;
+                this.violatedRegulationsForm.get('lawTextControl')!.reset();
             }
         });
     }
 
     protected getValue(): AuanViolatedRegulationDTO[] {
-        this.violatedRegulations = this.violatedRegulationsTable.rows;
-        return this.violatedRegulations;
+        return this.violatedRegulations.map(x => new AuanViolatedRegulationDTO({
+            id: x.id,
+            article: x.article,
+            paragraph: x.paragraph,
+            section: x.section,
+            letter: x.letter,
+            lawSectionId: x.lawSectionId ?? undefined,
+            lawText: x.lawText ?? undefined,
+            comments: x.comments,
+            isActive: x.isActive ?? true
+        }));;
     }
 
     protected buildForm(): AbstractControl {
@@ -147,7 +161,8 @@ export class AuanViolatedRegulationsComponent extends CustomFormControl<AuanViol
             paragraphControl: new FormControl(null, Validators.maxLength(10)),
             sectionControl: new FormControl(null, Validators.maxLength(10)),
             letterControl: new FormControl(null, Validators.maxLength(10)),
-            commentsControl: new FormControl(null, Validators.maxLength(4000))
+            commentsControl: new FormControl(null, Validators.maxLength(4000)),
+            lawTextControl: new FormControl(null)
         });
 
         return new FormControl(null);

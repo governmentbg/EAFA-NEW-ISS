@@ -21,6 +21,8 @@ import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interf
 import { ChooseLawSectionDialogParams } from '../../auan-register/models/choose-law-section-dialog-params.model';
 import { AuanLawSectionDTO } from '@app/models/generated/dtos/AuanLawSectionDTO';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
+import { GridRow } from '@app/shared/components/data-table/models/row.model';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 
 @Component({
     selector: 'decree-sized-fish',
@@ -32,7 +34,7 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
     @Input() public isAppliance: boolean = false;
 
     @Input() public isAuan: boolean = false;
-    
+
     public seizedFishForm!: FormGroup;
     public seizedFish: AuanConfiscatedFishDTO[] = [];
     public translate: FuseTranslationLoaderService;
@@ -45,7 +47,6 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
     public appliances: NomenclatureDTO<number>[] = [];
     public turbotSizeGroups: NomenclatureDTO<number>[] = [];
     public seizedFishFormTouched: boolean = false;
-    public lawSectionError: boolean = false;
 
     @ViewChild('seizedFishTable')
     private seizedFishTable!: TLDataTableComponent;
@@ -111,7 +112,7 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
                 next: (event: RecordChangedEventArgs<AuanConfiscatedFishDTO>) => {
                     if (!this.isAppliance) {
                         this.seizedFishFormTouched = true;
-                        this.seizedFishForm.updateValueAndValidity({ onlySelf: true });
+                        this.seizedFishForm.get('fishTypeIdControl')!.updateValueAndValidity({ onlySelf: true });
                     }
                 }
             });
@@ -120,14 +121,14 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
                 next: (event: RecordChangedEventArgs<AuanConfiscatedFishDTO>) => {
                     if (!this.isAppliance) {
                         this.seizedFishFormTouched = true;
-                        this.seizedFishForm.updateValueAndValidity({ onlySelf: true });
+                        this.seizedFishForm.get('fishTypeIdControl')!.updateValueAndValidity({ onlySelf: true });
                     }
                 }
             });
         }
 
-        this.seizedFishForm.get('applianceIdControl')!.updateValueAndValidity({ emitEvent: false });
         this.seizedFishForm.get('fishTypeIdControl')!.updateValueAndValidity({ emitEvent: false });
+        this.seizedFishForm.get('applianceIdControl')!.updateValueAndValidity({ emitEvent: false });
         this.seizedFishForm.get('countControl')!.updateValueAndValidity({ emitEvent: false });
     }
 
@@ -155,44 +156,31 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
     }
 
     public validate(control: AbstractControl): ValidationErrors | null {
-        const errors: ValidationErrors = {};
-        this.lawSectionError = false;
-        
-        if (this.isAuan && this.seizedFish.length > 0) {
-            if (this.seizedFish.some(x => x.lawSectionId === undefined || x.lawSectionId === null)) {
-                this.lawSectionError = true;
-                errors['lawSectionError'] = true;
-            }
-        }
-
+        const errors: ValidationErrors = control.errors ?? {};
         return Object.keys(errors).length > 0 ? errors : null;
     }
 
     public seizedFishRecordChanged(event: RecordChangedEventArgs<AuanConfiscatedFishDTO>): void {
-        this.seizedFish = this.seizedFishTable.rows.map(x => new AuanConfiscatedFishDTO({
-            id: x.id,
-            fishTypeId: x.fishTypeId,
-            confiscationActionId: x.confiscationActionId,
-            territoryUnitId: x.territoryUnitId,
-            turbotSizeGroupId: x.turbotSizeGroupId,
-            applianceId: x.applianceId,
-            weight: x.weight,
-            length: x.length,
-            count: x.count,
-            comments: x.comments,
-            lawSectionId: x.lawSectionId,
-            lawText: x.lawText, 
-            isActive: x.isActive ?? true
-        }));
+        this.seizedFish = this.seizedFishTable.rows;
 
-        this.onChanged(this.seizedFish);
+        this.onChanged(this.getValue());
+        this.control.updateValueAndValidity({ emitEvent: false });
     }
 
-    public openLawSectionsDialog(fish: AuanConfiscatedFishDTO): void {
+    public onEditRecord(row: GridRow<AuanConfiscatedFishDTO>): void {
+        if (row !== undefined && row !== null) {
+            this.seizedFishForm.get('lawTextControl')!.setValue(row.data.lawText);
+        }
+        else {
+            this.seizedFishForm.get('lawTextControl')!.reset();
+        }
+    }
+
+    public openLawSectionsDialog(row: GridRow<AuanConfiscatedFishDTO>): void {
         let auditButton: IHeaderAuditButton | undefined;
         const title: string = this.translate.getValue('penal-decrees.choose-law-section-dialog-title');
         const data: ChooseLawSectionDialogParams = new ChooseLawSectionDialogParams({
-            id: fish.lawSectionId
+            id: row.data?.lawSectionId
         });
 
         const dialog = this.chooseLawSectionDialog.openWithTwoButtons({
@@ -219,25 +207,53 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
 
         dialog.subscribe((entry: AuanLawSectionDTO) => {
             if (entry !== undefined && entry !== null) {
-                const idx: number = this.seizedFish.findIndex(x => x === fish);
-                this.seizedFish[idx].lawSectionId = entry.id;
-                this.seizedFish[idx].lawText = entry.lawText;
-
-                this.seizedFish = this.seizedFish.slice();
+                row.data.lawSectionId = entry.id;
+                row.data.lawText = entry.lawText;
+                this.seizedFishForm.get('lawTextControl')!.setValue(row.data.lawText);
+            }
+            else {
+                row.data.lawSectionId = undefined;
+                row.data.lawText = undefined;
+                this.seizedFishForm.get('lawTextControl')!.reset();
             }
 
             this.onChanged(this.seizedFish);
+            this.seizedFishForm.get('lawTextControl')!.updateValueAndValidity({ onlySelf: true });
         });
     }
 
+    public getControlErrorLabelText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
+        if (errorValue === true) {
+            if (controlName === 'fishTypeIdControl') {
+                if (errorCode === 'fishCountValidationError') {
+                    return new TLError({ text: this.translate.getValue('penal-decrees.fish-count-validation'), type: 'error' });
+                }
+            }
+        }
+        return undefined;
+    }
+
     protected getValue(): AuanConfiscatedFishDTO[] {
-        this.seizedFish = this.seizedFishTable.rows;
-        return this.seizedFish;
+        return this.seizedFish.map(x => new AuanConfiscatedFishDTO({
+            id: x.id,
+            fishTypeId: x.fishTypeId,
+            confiscationActionId: x.confiscationActionId,
+            territoryUnitId: x.territoryUnitId,
+            turbotSizeGroupId: x.turbotSizeGroupId,
+            applianceId: x.applianceId,
+            weight: x.weight,
+            length: x.length,
+            count: x.count,
+            comments: x.comments,
+            lawSectionId: x.lawSectionId ?? undefined,
+            lawText: x.lawText ?? undefined,
+            isActive: x.isActive ?? true
+        }));
     }
 
     protected buildForm(): AbstractControl {
         this.seizedFishForm = new FormGroup({
-            fishTypeIdControl: new FormControl(null, Validators.required),
+            fishTypeIdControl: new FormControl(null, [Validators.required, this.fishCountValidator()]),
             weightControl: new FormControl(null, TLValidators.number(0)),
             lengthControl: new FormControl(null, TLValidators.number(0)),
             countControl: new FormControl(null, [Validators.required, TLValidators.number(1)]),
@@ -245,23 +261,33 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
             applianceIdControl: new FormControl(null, Validators.required),
             turbotSizeGroupIdControl: new FormControl(null),
             commentsControl: new FormControl(null, Validators.maxLength(2000)),
-            territoryUnitIdControl: new FormControl(null)
-        }, this.fishCountValidator());
+            territoryUnitIdControl: new FormControl(null),
+            lawTextControl: new FormControl(null, this.lawSectionValidator())
+        });
 
         return new FormControl(null);
     }
 
     private fishCountValidator(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
-            const group: FormGroup = control as FormGroup;
-
             if (this.seizedFishTable !== undefined && this.seizedFishTable !== null && !this.viewMode) {
-                const count: number | undefined = group.get('countControl')!.value;
-                const weight: number | undefined = group.get('weightControl')!.value;
-                
-                if ((count === undefined || count === null) && (weight === undefined || weight === null)) {
+                const count: number | undefined = this.seizedFishForm.get('countControl')!.value ?? undefined;
+                const weight: number | undefined = this.seizedFishForm.get('weightControl')!.value ?? undefined;
+
+                if ((count === undefined || count === null || Number(count) === 0) && (weight === undefined || weight === null || Number(weight) === 0)) {
                     return { 'fishCountValidationError': true };
                 }
+            }
+            return null;
+        }
+    }
+
+    private lawSectionValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            const lawText: string | undefined = control.value;
+
+            if ((lawText === undefined || lawText === null) && this.isAuan) {
+                return { 'lawSectionError': true };
             }
             return null;
         }

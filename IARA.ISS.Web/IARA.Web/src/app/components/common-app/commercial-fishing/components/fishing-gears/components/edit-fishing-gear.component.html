@@ -41,7 +41,7 @@
                      fxLayoutAlign="space-between center"
                      fxLayoutGap="1em">
                     <tl-input fxFlex="100"
-                              formControlName="hooksContControl"
+                              formControlName="hooksCountControl"
                               label="{{ 'fishing-gears.hooks-count' | tlTranslate }}"
                               tooltipResourceName="fishing-gears.hooks-count-helper">
                     </tl-input>
@@ -119,6 +119,9 @@
                               tooltipResourceName="fishing-gears.trawl-model-helper">
                     </tl-input>
                 </div>
+                <mat-error *ngIf="form.touched && form.errors?.lengthOrTrawlModelIsRequired">
+                    * {{ 'fishing-gears.length-or-trawl-model-is-required-for-selected-type-of-gear-error' | tlTranslate }}
+                </mat-error>
             </ng-container>
             <div fxFlex="100"
                  fxLayout="row"

@@ -39,14 +39,7 @@ export class CommonNomenclatures {
     }
 
     public getCountries(): Observable<NomenclatureDTO<number>[]> {
-        return this.requestService.get<NomenclatureDTO<number>[]>(this.area, this.controller, 'GetCountries', { responseTypeCtr: NomenclatureDTO })
-            .pipe(map((countries: NomenclatureDTO<number>[]) => {
-                for (const country of countries) {
-                    country.displayName = `${country.code} - ${country.displayName}`;
-                }
-
-                return countries;
-            }));;
+        return this.requestService.get<NomenclatureDTO<number>[]>(this.area, this.controller, 'GetCountries', { responseTypeCtr: NomenclatureDTO });
     }
 
     public getMunicipalities(): Observable<MunicipalityNomenclatureExtendedDTO[]> {

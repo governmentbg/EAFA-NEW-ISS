@@ -7,13 +7,15 @@
                    [inlineEditing]="true"
                    [showAddButton]="!viewMode"
                    [rows]="seizedFish"
-                   (recordChanged)="seizedFishRecordChanged($event)">
+                   (recordChanged)="seizedFishRecordChanged($event)"
+                   (activeRecordChanged)="onEditRecord($event)">
         <data-column *ngIf="isAppliance === false"
                      [flexRate]="0.5"
                      [formGroup]="seizedFishForm"
                      propertyName="fishTypeId"
                      dataType="nomenclature"
                      [options]="fishTypes"
+                     [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"
                      columnName="{{ 'penal-decrees.edit-sized-fish-type' | tlTranslate }}">
         </data-column>
 
@@ -78,30 +80,48 @@
                      columnName="{{ 'penal-decrees.edit-sized-fish-comments' | tlTranslate }}">
         </data-column>
 
-        <data-template-column *ngIf="isAuan" [flexRate]="0.4" columnName="{{ 'auan-register.edit-violated-law-section' | tlTranslate }}">
-            <ng-template let-row="row" ngx-datatable-cell-template>
+        <data-template-column *ngIf="isAuan" [flexRate]="0.5" columnName="{{ 'auan-register.edit-violated-law-section' | tlTranslate }}">
+            <ng-template let-row="row" ngx-datatable-cell-template [formGroup]="seizedFishForm">
                 <div fxLayout="row" fxLayoutAlign="space-between center">
-                    <span class="text-ellipsis">
+                    <span *ngIf="!row.editMode" class="text-ellipsis">
                         {{ row.data.lawText }}
                     </span>
 
-                    <div *ngIf="!viewMode && !row.editMode && row.data.isActive">
-                        <tl-icon-button *ngIf="row.data.lawSectionId === null || row.data.lawSectionId === undefined"
-                                        icon="fa-plus-circle"
-                                        iconClass="accent-color"
-                                        size="1.5"
-                                        (buttonClicked)="openLawSectionsDialog(row.data)"
-                                        tooltipText="{{ 'penal-decrees.add-law-section' | tlTranslate }}">
-                        </tl-icon-button>
+                    <tl-input *ngIf="row.editMode === true"
+                              fxFlex="80"
+                              formControlName="lawTextControl"
+                              [readonly]="true">
+                    </tl-input>
+                    <tl-icon-button *ngIf="row.editMode === true
+                                           && (row.data.lawSectionId === null || row.data.lawSectionId === undefined)
+                                           && !(seizedFishForm.controls.lawTextControl.touched 
+                                           && seizedFishForm.controls.lawTextControl.errors?.lawSectionError)"
+                                    icon="fa-plus-circle"
+                                    iconClass="accent-color"
+                                    size="1.5"
+                                    (buttonClicked)="openLawSectionsDialog(row)"
+                                    tooltipText="{{ 'auan-register.add-law-section' | tlTranslate }}">
+                    </tl-icon-button>
 
-                        <tl-icon-button *ngIf="row.data.lawSectionId !== null && row.data.lawSectionId !== undefined"
-                                        icon="fa-file-signature"
-                                        iconClass="accent-color"
-                                        size="1.5"
-                                        (buttonClicked)="openLawSectionsDialog(row.data)"
-                                        tooltipText="{{ row.data.lawText }}">
-                        </tl-icon-button>
-                    </div>
+                    <tl-icon-button *ngIf="row.editMode === true
+                                           && (row.data.lawSectionId === null || row.data.lawSectionId === undefined)
+                                           && (seizedFishForm.controls.lawTextControl.touched 
+                                           && seizedFishForm.controls.lawTextControl.errors?.lawSectionError === true)"
+                                    icon="fa-plus-circle"
+                                    iconClass="error-color"
+                                    size="1.5"
+                                    (buttonClicked)="openLawSectionsDialog(row)"
+                                    tooltipText="{{ 'auan-register.add-law-section' | tlTranslate }}">
+                    </tl-icon-button>
+
+                    <tl-icon-button *ngIf="row.data.lawSectionId !== null && row.data.lawSectionId !== undefined"
+                                    icon="fa-file-signature"
+                                    iconClass="accent-color"
+                                    size="1.5"
+                                    (buttonClicked)="openLawSectionsDialog(row)"
+                                    [disabled]="!row.editMode"
+                                    tooltipText="{{ row.data.lawText }}">
+                    </tl-icon-button>
                 </div>
             </ng-template>
         </data-template-column>
@@ -110,16 +130,4 @@
                             [flexRate]="0.2">
         </data-column-inline>
     </tl-data-table>
-
-    <mat-error *ngIf="seizedFishFormTouched && seizedFishForm.errors?.fishCountValidationError === true">
-        * {{ 'penal-decrees.fish-count-validation' | tlTranslate }}
-    </mat-error>
-
-    <mat-error *ngIf="lawSectionError && !isAppliance">
-        * {{ 'penal-decrees.law-sections-fish-validation' | tlTranslate }}
-    </mat-error>
-
-    <mat-error *ngIf="lawSectionError && isAppliance">
-        * {{ 'penal-decrees.law-sections-applicance-validation' | tlTranslate }}
-    </mat-error>
 </div>

@@ -186,8 +186,8 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             aquaticOrganismTypeControl: new FormControl(undefined, Validators.required),
             catchLocationControl: new FormControl(undefined, [Validators.maxLength(500)]),
 
-            minimumSizeControl: new FormControl(),
-            averageUnitWeightKgControl: new FormControl(),
+            minimumSizeControl: new FormControl(undefined, [TLValidators.number(0)]),
+            averageUnitWeightKgControl: new FormControl(undefined, [TLValidators.number(0)]),
 
             presentationControl: new FormControl(undefined, Validators.required),
             sizeCategoryControl: new FormControl(),
@@ -326,9 +326,9 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             this.form.get('averageUnitWeightKgControl')!.markAsPending();
         }
         else {
-            this.form.get('unitCountControl')!.setValidators(null);
+            this.form.get('unitCountControl')!.setValidators(TLValidators.number(0));
             this.form.get('turbotSizeGroupControl')!.setValidators(null);
-            this.form.get('averageUnitWeightKgControl')!.setValidators(null);
+            this.form.get('averageUnitWeightKgControl')!.setValidators(TLValidators.number(0));
         }
     }
 }

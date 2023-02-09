@@ -19,6 +19,7 @@ import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { FluxResponseStatuses } from '@app/enums/flux-response-statuses.enum';
 import { FluxFvmsDomainsEnum } from '../../../enums/flux-fvms-domains.enum';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 
 @Component({
     selector: 'flux-vms-requests',
@@ -42,14 +43,18 @@ export class FluxVmsRequestsComponent implements OnInit, AfterViewInit {
     private gridManager!: DataTableManager<FLUXVMSRequestDTO, FLUXVMSRequestFilters>
     private service: FluxVmsRequestsService;
     private viewDialog: TLMatDialog<ViewFluxVmsRequestsComponent>;
+    private confirmDialog: TLConfirmDialog;
+
 
     public constructor(
         translate: FuseTranslationLoaderService,
         service: FluxVmsRequestsService,
-        viewDialog: TLMatDialog<ViewFluxVmsRequestsComponent>
+        viewDialog: TLMatDialog<ViewFluxVmsRequestsComponent>,
+        confirmDialog: TLConfirmDialog
     ) {
         this.translate = translate;
         this.service = service;
+        this.confirmDialog = confirmDialog;
         this.viewDialog = viewDialog;
 
         this.buildForm();
@@ -100,6 +105,18 @@ export class FluxVmsRequestsComponent implements OnInit, AfterViewInit {
             componentData: new DialogParamsModel({ id: request.id }),
             translteService: this.translate,
             viewMode: true
+        });
+    }
+
+    public replayRequest(request: FLUXVMSRequestDTO): void {
+
+        this.confirmDialog.open().toPromise().then(result => {
+            if (result) {
+                const webServiceNameParts: string[] = request.webServiceName?.split('/') ?? [];
+
+                this.service.replayRequest(request.id as number, FluxFvmsDomainsEnum[webServiceNameParts[0] as keyof typeof FluxFvmsDomainsEnum], webServiceNameParts[1])
+                    .subscribe();
+            }
         });
     }
 

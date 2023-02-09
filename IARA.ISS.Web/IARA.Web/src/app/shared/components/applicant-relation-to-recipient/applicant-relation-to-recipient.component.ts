@@ -1,6 +1,6 @@
-﻿import { Component, Input, OnInit, Self } from '@angular/core';
+﻿import { Component, Input, OnChanges, OnInit, Self, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
@@ -17,7 +17,7 @@ import { CustomFormControl } from '@app/shared/utils/custom-form-control';
     selector: 'applicant-relation-to-recipient',
     templateUrl: './applicant-relation-to-recipient.component.html'
 })
-export class ApplicantRelationToRecipientComponent extends CustomFormControl<ApplicantRelationToRecipientDTO> implements OnInit {
+export class ApplicantRelationToRecipientComponent extends CustomFormControl<ApplicantRelationToRecipientDTO> implements OnInit, OnChanges {
     @Input()
     public pageCode!: PageCodeEnum;
 
@@ -28,14 +28,30 @@ export class ApplicantRelationToRecipientComponent extends CustomFormControl<App
     private nomenclatures: CommonNomenclatures;
 
     private readonly loader: FormControlDataLoader;
+    private readonly hasPageCodeSubject: BehaviorSubject<boolean>;
+
+    private hasPageCodeSubscription: Subscription | undefined;
 
     public constructor(@Self() ngControl: NgControl, nomenclatures: CommonNomenclatures) {
         super(ngControl);
         this.nomenclatures = nomenclatures;
 
+        this.hasPageCodeSubject = new BehaviorSubject<boolean>(false);
+
         this.setRoleControlSubscriber();
 
         this.loader = new FormControlDataLoader(this.getSubmittedByRoles.bind(this));
+    }
+
+    public ngOnChanges(changes: SimpleChanges): void {
+        if ('pageCode' in changes) {
+            if (this.pageCode !== null && this.pageCode !== undefined) {
+                this.hasPageCodeSubject.next(true);
+            }
+            else {
+                this.hasPageCodeSubject.next(false);
+            }
+        }
     }
 
     public ngOnInit(): void {
@@ -109,20 +125,17 @@ export class ApplicantRelationToRecipientComponent extends CustomFormControl<App
                     this.submittedByRoles = this.allSubmittedByRoles.slice();
                 }
 
-                this.loader.complete();
-                this.filterSubmittedByRoles();
+                this.hasPageCodeSubscription?.unsubscribe();
+
+                this.hasPageCodeSubscription = this.hasPageCodeSubject.subscribe({
+                    next: (hasPageCode: boolean) => {
+                        if (hasPageCode) {
+                            this.submittedByRoles = this.allSubmittedByRoles.filter(x => x.applicationPageCode === this.pageCode);
+                            this.loader.complete();
+                        }
+                    }
+                });
             }
         });
-    }
-
-    private filterSubmittedByRoles(): void {
-        if (this.pageCode !== null && this.pageCode !== undefined) {
-            const currentRole: NomenclatureDTO<number> | undefined = this.form.get('roleControl')?.value;
-
-            this.submittedByRoles = this.allSubmittedByRoles.filter(x => x.applicationPageCode === this.pageCode);
-            if (currentRole !== undefined && currentRole !== null) {
-                this.form.get('roleControl')?.setValue(this.submittedByRoles.find(x => x.value === currentRole.value));
-            }
-        }
     }
 }
