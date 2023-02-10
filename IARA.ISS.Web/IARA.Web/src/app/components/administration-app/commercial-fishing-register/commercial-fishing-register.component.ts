@@ -517,6 +517,22 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
                 }
             }
                 break;
+            case CommercialFishingTypesEnum.oldInternalPermit: {
+                if (viewMode) {
+                    title = this.translationService.getValue('commercial-fishing.view-old-internal-permit-dialog-title');
+                }
+                else {
+                    title = this.translationService.getValue('commercial-fishing.edit-old-internal-permit-dialog-title');
+                }
+            } break;
+            case CommercialFishingTypesEnum.oldSpecialPermit: {
+                if (viewMode) {
+                    title = this.translationService.getValue('commercial-fishing.view-old-special-permit-dialog-title');
+                }
+                else {
+                    title = this.translationService.getValue('commercial-fishing.edit-old-special-permit-dialog-title');
+                }
+            } break;
         }
 
         this.openPermitDialog(data, title, auditButton, viewMode ?? false, permit.isSuspended!);

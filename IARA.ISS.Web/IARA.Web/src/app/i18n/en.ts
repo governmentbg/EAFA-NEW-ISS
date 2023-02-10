@@ -2774,6 +2774,12 @@
         'view-3rd-country-permit-application-regix-data-dialog-title': 'View RegiX data from commercial fishing permit application for 3rd country ships',
         'view-3rd-country-permit-appl-and-confirm-regularity-title': 'View and confirm regularity of application data',
 
+        'view-old-internal-permit-dialog-title': 'View inner water objects permit (from old system)',
+        'edit-old-internal-permit-dialog-title': 'Edit inner water objects permit (from old system)',
+
+        'view-old-special-permit-dialog-title': 'View special objects permit (from old system)',
+        'edit-old-special-permit-dialog-title': 'Edit special objects permit (from old system)',
+
         'save-and-start-permit-license': 'Submit and start permit license',
 
         'document-type': 'Document kind',
@@ -2922,7 +2928,7 @@
         'ship': 'Fishing vessel',
         'ship-has-no-active-fish-quota-error': 'The chosen fishing vessel has no fish quota for the current year',
         'ship-is-destroyed-or-deregistered-error': 'The ship is destroyed or deregistered',
-        'ship-is-forbidden-for-permit-liceses-error': 'The ship is forbidden for new permit licenses',
+        'ship-is-forbidden-for-permits-and-liceses-error': 'The ship is forbidden for new permit licenses',
         'ship-has-black-sea-permit-error': 'The chosen fishing vessel already has a valid commercial fishing permit in the Black sea',
         'ship-has-danube-permit-error': 'The chosen fishing vessel already has a valid commercial fishing permit in the Danube river',
         'ship-has-no-black-sea-permit-error': 'The chosen fishing vessel does not have a valid commercial fishing permit in the Black sea yet',
@@ -3074,6 +3080,7 @@
         'net-nominal-length': 'Total length',
         'nets-in-fleet-count': 'Number of nets in the fleet',
         'trawl-model': 'Trawl model',
+        'length-or-trawl-model-is-required-for-selected-type-of-gear-error': 'For the chosen gear type perimeter of opening (in the length field) or model of trawl must be provided',
 
         'gear-has-duplicated-mark-number': 'Mark numbers must not be duplicated',
         'gear-has-duplicated-pinger-number': 'Pinger numbers must not be duplicated',
@@ -5379,6 +5386,7 @@
         'incoming': 'Incoming',
         'view-request': 'View',
         'request-dialog-title': 'View FLUX/VMS communication',
+        'flux-replay-success': 'Message successfully enqueued for sending',
 
         'flap-filters-ship-register': 'Vessel from the registry',
         'flap-filters-ship-identifier': 'Vessel identification',

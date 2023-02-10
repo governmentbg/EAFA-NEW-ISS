@@ -17,9 +17,6 @@ export class AuanLawSectionDTO extends AuanViolatedRegulationDTO {
     @StrictlyTyped(Number)
     public lawId?: number;
 
-    @StrictlyTyped(String)
-    public lawText?: string;
-
     @StrictlyTyped(Boolean)
     public isChecked?: boolean;
 }

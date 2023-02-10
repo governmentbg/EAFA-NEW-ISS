@@ -2848,6 +2848,12 @@
         'view-3rd-country-permit-application-regix-data-dialog-title': 'Преглед на RegiX данни от заявление за извършване на стопански риболов за кораби от трети страни',
         'view-3rd-country-permit-appl-and-confirm-regularity-title': 'Преглед на заявление и потвърждение редовността на данните',
 
+        'view-old-internal-permit-dialog-title': 'Преглед на разрешително за Вътрешни водни обекти (от старата система)',
+        'edit-old-internal-permit-dialog-title': 'Редакция на разрешително за Вътрешни водни обекти (от старата система)',
+
+        'view-old-special-permit-dialog-title': 'Преглед на разрешително за Специални обекти (от старата система)',
+        'edit-old-special-permit-dialog-title': 'Редакция на разрешително за Специални обекти (от старата система)',
+
         'save-and-start-permit-license': 'Подай и започни удостоверение',
 
         'document-type': 'Вид на документа',
@@ -3001,7 +3007,7 @@
         'ship': 'Риболовен кораб',
         'ship-has-no-active-fish-quota-error': 'Избраният кораб няма въведена квота за текущата година',
         'ship-is-destroyed-or-deregistered-error': 'Избраният кораб е унищожен или дерегистриран',
-        'ship-is-forbidden-for-permit-liceses-error': 'Избраният кораб е забранен за издаване на нови удостоверения',
+        'ship-is-forbidden-for-permits-and-liceses-error': 'Избраният кораб е забранен за издаване на нови разрешителни и удостоверения',
         'ship-has-black-sea-permit-error': 'Избраният кораб вече има валидно разрешително за стопански риболов в Черно море',
         'ship-has-danube-permit-error': 'Избраният кораб вече има валидно разрешително за стопански риболов в р. Дунав',
         'ship-has-no-black-sea-permit-error': 'Избраният кораб все още няма валидно разрешително за стопански риболов в Черно море',
@@ -3121,7 +3127,7 @@
         'type': 'Вид',
         'count': 'Брой',
         'marks-numbers': 'Номера на марки',
-        'length': 'Метраж',
+        'length': 'Дължина',
         'net-eye-size': 'Размер на окото',
         'description': 'Описание',
         'view-fishing-gear': 'Преглед на уред',
@@ -3155,6 +3161,7 @@
         'net-nominal-length': 'Обща дължина',
         'nets-in-fleet-count': 'Брой мрежи във флота',
         'trawl-model': 'Модел на трал (ако е приложимо)',
+        'length-or-trawl-model-is-required-for-selected-type-of-gear-error': 'За избрания тип уред трябва да се попълни периметър на отваряне (в поле за дължина) или модел на трал',
 
         'gear-has-duplicated-mark-number': 'Не може да имате марки с повтарящи се номера',
         'gear-has-duplicated-pinger-number': 'Не може да имате пингъри с повтаращи се номера',
@@ -4994,7 +5001,7 @@
         'aqua-farm-information-employee-stats-helper': 'Ако полето не е приложимо, трябва да бъде въведена 0 (нула)',
         'aqua-farm-count-error': 'Сумите на бройките по колони не съвпада със сумите от предходната таблица',
         'aqua-farm-costs-error': 'Стойността в поле разходи за персонал не може да бъде нула, когато има мъже или жени със заплащане.',
-        'aqua-farm-stat-form-exist-error': 'Вече съществува статистически формуляр за това аквакултурно стопанство за избраната година.', 
+        'aqua-farm-stat-form-exist-error': 'Вече съществува статистически формуляр за това аквакултурно стопанство за избраната година.',
 
         //Rework
         'rework-requester': 'Подател',
@@ -5134,7 +5141,7 @@
         'vessel-information-employee-stats-helper': 'Ако полето не е приложимо, трябва да бъде въведена 0 (нула)',
         'fish-vessel-count-error': 'Сумите на бройките по колони не съвпада със сумите от предходната таблица',
         'fish-vessel-costs-error': 'Стойността в поле разходи за персонал не може да бъде нула, когато има мъже или жени със заплащане.',
-        'fish-vessel-stat-form-exist-error': 'Вече съществува статистически формуляр за този риболовен кораб за избраната година.', 
+        'fish-vessel-stat-form-exist-error': 'Вече съществува статистически формуляр за този риболовен кораб за избраната година.',
 
         'ship-no-fishing-capacity-error': 'Корабът не е от черноморския флот'
     },
@@ -5416,6 +5423,7 @@
         'incoming': 'Входяща',
         'view-request': 'Преглед',
         'request-dialog-title': 'Преглед на комуникация с FLUX/СНРК',
+        'flux-replay-success': 'Успешно повторно закачане на съобщение на опашка за обработка',
 
         'flap-filters-ship-register': 'Кораб от регистъра',
         'flap-filters-ship-identifier': 'Идентификатор на кораб',
@@ -5787,7 +5795,7 @@
 
         'update-print-configuration-dialog-title': 'Запазване на настройки за принтиране',
         'update-print-configuration-dialog-message-user': 'Този подписващ служител вече участва в',
-        'update-print-configuration-dialog-message-count':'на брой други записи. Желаете ли да обновите данните за заместващ служител в тях?',
+        'update-print-configuration-dialog-message-count': 'на брой други записи. Желаете ли да обновите данните за заместващ служител в тях?',
         'update-print-configuration-dialog-ok-btn-label': 'Да',
         'update-print-configuration-dialog-cancel-btn-label': 'Не',
 

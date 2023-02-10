@@ -565,6 +565,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     this.updateIsSuspendedFlag();
 
                     if (isAdd && dialogClose !== null && dialogClose !== undefined) { // при добавяне на ново прекратяване, трябва да е запазено към базата и затваряме диалога
+                        NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
                         dialogClose(this.model.id);
                     }
                 }
@@ -680,9 +681,9 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 if (errorValue === true) {
                     return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-is-destroyed-or-deregistered-error'), type: 'error' });
                 } break;
-            case 'shipIsForbinnedForLicenses':
+            case 'shipIsForbinnedForPermitsAndLicenses':
                 if (errorValue === true) {
-                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-is-forbidden-for-permit-liceses-error'), type: 'error' });
+                    return new TLError({ text: this.translationService.getValue('commercial-fishing.ship-is-forbidden-for-permits-and-liceses-error'), type: 'error' });
                 } break;
             case 'shipHasNoActiveFishQuota':
                 if (errorValue === true) {
@@ -2784,6 +2785,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         else if (this.pageCode === PageCodeEnum.CommFish) {
             filters.isThirdCountryShip = false;
             filters.isDestroyedOrDeregistered = false;
+            filters.isForbiddenForLicenses = false;
 
             if (this.isApplication || this.id === null || this.id === undefined) {
                 if (selectedWaterType === null || selectedWaterType === undefined) {
@@ -2850,6 +2852,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         }
         else if (this.pageCode === PageCodeEnum.PoundnetCommFish) {
             filters.isThirdCountryShip = false;
+            filters.isForbiddenForLicenses = false;
 
             if (this.isApplication) {
                 filters.isDestroyedOrDeregistered = false;
@@ -2870,6 +2873,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         }
         else if (this.pageCode === PageCodeEnum.RightToFishThirdCountry) {
             filters.isThirdCountryShip = true;
+            filters.isForbiddenForLicenses = false;
 
             if (this.isApplication || this.id === null || this.id === undefined) {
                 if (selectedWaterType === null || selectedWaterType === undefined) {
@@ -3079,7 +3083,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 && this.shipFilters.isForbiddenForLicenses !== undefined
                 && ShipsUtils.isForbiddenForPermits(ship) !== this.shipFilters.isForbiddenForLicenses
             ) {
-                return { 'shipIsForbinnedForLicenses': true };
+                return { 'shipIsForbinnedForPermitsAndLicenses': true };
             }
 
             if (this.shipFilters.hasActiveFishQuota !== null
