@@ -52,6 +52,9 @@ export class ApplicationSubmittedForComponent extends NotifyingCustomFormControl
     public disabledLegal: boolean = false;
 
     @Input()
+    public disabledPerson: boolean = false;
+
+    @Input()
     public showCustodianOfProperty: boolean = true;
 
     @Input()
@@ -87,10 +90,15 @@ export class ApplicationSubmittedForComponent extends NotifyingCustomFormControl
         if (this.disabledLegal) {
             this.form.get('legalControl')!.disable();
         }
+
+        if (this.disabledPerson) {
+            this.form.get('personControl')!.disable();
+        }
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
         const disabledLegal: SimpleChange | undefined = changes['disabledLegal'];
+        const disabledPerson: SimpleChange | undefined = changes['disabledPerson'];
         const submittedByControl: SimpleChange | undefined = changes['submittedByControl'];
 
         if (disabledLegal !== null && disabledLegal !== undefined) {
@@ -99,6 +107,15 @@ export class ApplicationSubmittedForComponent extends NotifyingCustomFormControl
             }
             else {
                 this.form.get('legalControl')!.disable();
+            }
+        }
+
+        if (disabledPerson !== null && disabledPerson !== undefined) {
+            if (this.disabledPerson) {
+                this.form.get('personControl')!.disable();
+            }
+            else {
+                this.form.get('personControl')!.disable();
             }
         }
 

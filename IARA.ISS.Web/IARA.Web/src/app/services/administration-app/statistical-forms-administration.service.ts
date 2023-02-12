@@ -102,24 +102,6 @@ export class StatisticalFormsAdministrationService extends ApplicationsRegisterA
         });
     }
 
-    public addStatisticalFormAquaFarm(form: StatisticalFormAquaFarmEditDTO): Observable<number> {
-        return this.requestService.post(this.area, this.controller, 'AddStatisticalFormAquaFarm', form, {
-            properties: new RequestProperties({ asFormData: true })
-        });
-    }
-
-    public addStatisticalFormRework(form: StatisticalFormReworkEditDTO): Observable<number> {
-        return this.requestService.post(this.area, this.controller, 'AddStatisticalFormRework', form, {
-            properties: new RequestProperties({ asFormData: true })
-        });
-    }
-
-    public addStatisticalFormFishVessel(form: StatisticalFormFishVesselEditDTO): Observable<number> {
-        return this.requestService.post(this.area, this.controller, 'AddStatisticalFormFishVessel', form, {
-            properties: new RequestProperties({ asFormData: true })
-        });
-    }
-
     public editStatisticalFormAquaFarm(form: StatisticalFormAquaFarmEditDTO): Observable<void> {
         return this.requestService.post(this.area, this.controller, 'EditStatisticalFormAquaFarm', form, {
             properties: new RequestProperties({ asFormData: true })

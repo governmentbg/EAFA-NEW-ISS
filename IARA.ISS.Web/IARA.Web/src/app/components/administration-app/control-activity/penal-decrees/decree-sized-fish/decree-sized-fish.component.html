@@ -92,6 +92,7 @@
                               formControlName="lawTextControl"
                               [readonly]="true">
                     </tl-input>
+
                     <tl-icon-button *ngIf="row.editMode === true
                                            && (row.data.lawSectionId === null || row.data.lawSectionId === undefined)
                                            && !(seizedFishForm.controls.lawTextControl.touched 

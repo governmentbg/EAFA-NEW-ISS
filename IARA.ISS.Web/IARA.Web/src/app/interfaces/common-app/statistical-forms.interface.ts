@@ -19,10 +19,6 @@ export interface IStatisticalFormsService extends IApplicationsActionsService, I
     getStatisticalFormRework(id: number): Observable<StatisticalFormReworkEditDTO>;
     getStatisticalFormFishVessel(id: number): Observable<StatisticalFormFishVesselEditDTO>;
 
-    addStatisticalFormAquaFarm(form: StatisticalFormAquaFarmEditDTO): Observable<number>;
-    addStatisticalFormRework(form: StatisticalFormReworkEditDTO): Observable<number>;
-    addStatisticalFormFishVessel(form: StatisticalFormFishVesselEditDTO): Observable<number>;
-
     editStatisticalFormAquaFarm(form: StatisticalFormAquaFarmEditDTO): Observable<void>;
     editStatisticalFormRework(form: StatisticalFormReworkEditDTO): Observable<void>;
     editStatisticalFormFishVessel(form: StatisticalFormFishVesselEditDTO): Observable<void>;
