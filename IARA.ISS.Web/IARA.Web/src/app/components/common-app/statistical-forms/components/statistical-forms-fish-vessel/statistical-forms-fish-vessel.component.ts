@@ -501,7 +501,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                 return this.service.editStatisticalFormFishVessel(this.model);
             }
             else {
-                return this.service.addStatisticalFormFishVessel(this.model);
+                return this.service.confirmNoErrorsAndFillAdmAct(this.model.applicationId!, this.pageCode);
             }
         }
         else {

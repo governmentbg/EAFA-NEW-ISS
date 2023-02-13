@@ -34,16 +34,18 @@
                                [pageCode]="pageCode"
                                [isIdReadOnly]="isEditing"
                                [showOnlyBasicData]="true"
-                               [showPersonal]="!isApplication"
+                               [showPersonal]="!isApplication || isPerson"
                                [submittedByControl]="form.controls.submittedByControl"
                                [expectedResults]="expectedResults.submittedFor"
                                [disabledLegal]="true"
+                               [disabledPerson]="true"
                                [hideRelation]="showOnlyRegiXData || !isApplication">
         <!-- Основна информация -->
         <tl-expansion-panel *ngIf="!showOnlyRegiXData && showBasicInfo" middle
                             title=" {{ 'statistical-forms.aqua-farm-basic-information-title' | tlTranslate }}"
                             tooltipResourceName="statistical-forms.aqua-farm-basic-information-title-helper"
-                            [validityChecker]="form">
+                            [validityChecker]="form"
+                            [validityCheckerExtraCondition]="form.controls.aquacultureFacilityControl.errors?.statFormExists !== true">
             <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
                 <tl-date-year fxFlex="25"
                               formControlName="yearControl"
@@ -67,219 +69,243 @@
     <tl-expansion-panel *ngIf="!showOnlyRegiXData"
                         title="{{ 'statistical-forms.aqua-farm-produced-fish-organism-title' | tlTranslate }}"
                         tooltipResourceName="statistical-forms.aqua-farm-produced-fish-organism-title-helper"
-                        [validityChecker]="form">
-        <tl-data-table fxFlexFill
-                       #producedFishOrganismTable
-                       [rows]="producedFishOrganisms"
-                       [isRemote]="false"
-                       [isSoftDeletable]="true"
-                       [showInactiveRecords]="false"
-                       [showAddButton]="!viewMode && !isReadonly"
-                       (activeRecordChanged)="producedFishActiveRecordChanged()">
-            <data-column [flexRate]="0.1"
-                         propertyName="installationTypeId"
-                         [formGroup]="producedFishOrganismGroup"
-                         [options]="installationTypes"
-                         [displayOptions]="allInstallationTypes"
-                         dataType="nomenclature"
-                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-installation-type' | tlTranslate }}">
-            </data-column>
-            <data-column [flexRate]="0.1"
-                         propertyName="fishTypeId"
-                         [formGroup]="producedFishOrganismGroup"
-                         [options]="fishTypes"
-                         [displayOptions]="allFishTypes"
-                         dataType="nomenclature"
-                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-fish-type' | tlTranslate }}">
-            </data-column>
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.producedFishError !== true">
+        <div fxLayout="column"
+             fxLayoutGap="1em">
+            <tl-data-table fxFlexFill
+                           #producedFishOrganismTable
+                           [rows]="producedFishOrganisms"
+                           [isRemote]="false"
+                           [isSoftDeletable]="true"
+                           [showInactiveRecords]="false"
+                           [showAddButton]="!viewMode && !isReadonly"
+                           (activeRecordChanged)="producedFishActiveRecordChanged()">
+                <data-column [flexRate]="0.1"
+                             propertyName="installationTypeId"
+                             [formGroup]="producedFishOrganismGroup"
+                             [options]="installationTypes"
+                             [displayOptions]="allInstallationTypes"
+                             dataType="nomenclature"
+                             columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-installation-type' | tlTranslate }}">
+                </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="fishTypeId"
+                             [formGroup]="producedFishOrganismGroup"
+                             [options]="fishTypes"
+                             [displayOptions]="allFishTypes"
+                             dataType="nomenclature"
+                             columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-fish-type' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="fishLarvaeCount"
-                         [formGroup]="producedFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-fish-larvae-count' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="fishLarvaeCount"
+                             [formGroup]="producedFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-fish-larvae-count' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="oneStripBreedingMaterialCount"
-                         [formGroup]="producedFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-one-strip-breeding-material-count' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="oneStripBreedingMaterialCount"
+                             [formGroup]="producedFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-one-strip-breeding-material-count' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="oneStripBreedingMaterialWeight"
-                         [formGroup]="producedFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-one-strip-breeding-material-weight' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="oneStripBreedingMaterialWeight"
+                             [formGroup]="producedFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-one-strip-breeding-material-weight' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="oneYearBreedingMaterialCount"
-                         [formGroup]="producedFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-one-year-breeding-material-count' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="oneYearBreedingMaterialCount"
+                             [formGroup]="producedFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-one-year-breeding-material-count' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="oneYearBreedingMaterialWeight"
-                         [formGroup]="producedFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-one-year-breeding-material-weight' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="oneYearBreedingMaterialWeight"
+                             [formGroup]="producedFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-one-year-breeding-material-weight' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="forConsumption"
-                         [formGroup]="producedFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-for-consumption' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="forConsumption"
+                             [formGroup]="producedFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-for-consumption' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="caviarForConsumption"
-                         [formGroup]="producedFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-caviar-for-consumption' | tlTranslate }}">
-            </data-column>
-            <data-column-inline [flexRate]="0.1" *ngIf="!isReadonly"></data-column-inline>
-        </tl-data-table>
+                <data-column [flexRate]="0.1"
+                             propertyName="caviarForConsumption"
+                             [formGroup]="producedFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-produced-fish-organism-caviar-for-consumption' | tlTranslate }}">
+                </data-column>
+                <data-column-inline [flexRate]="0.1" *ngIf="!isReadonly"></data-column-inline>
+            </tl-data-table>
+
+            <mat-error *ngIf="form.errors?.producedFishError === true">
+                * {{ 'statistical-forms.aqua-farm-fish-organism-error' | tlTranslate }}
+            </mat-error>
+        </div>
     </tl-expansion-panel>
 
     <!-- Продадени количества риба и други водни организми -->
     <tl-expansion-panel *ngIf="!showOnlyRegiXData"
                         title="{{ 'statistical-forms.aqua-farm-sold-fish-organism-title' | tlTranslate }}"
                         tooltipResourceName="statistical-forms.aqua-farm-sold-fish-organism-title-helper"
-                        [validityChecker]="form">
-        <tl-data-table fxFlexFill
-                       #soldFishOrganismTable
-                       [rows]="soldFishOrganisms"
-                       [isRemote]="false"
-                       [isSoftDeletable]="true"
-                       [showInactiveRecords]="false"
-                       [showAddButton]="!viewMode && !isReadonly"
-                       (activeRecordChanged)="soldFishActiveRecordChanged()">
-            <data-column [flexRate]="0.1"
-                         propertyName="installationTypeId"
-                         [formGroup]="soldFishOrganismGroup"
-                         [options]="installationTypes"
-                         [displayOptions]="allInstallationTypes"
-                         dataType="nomenclature"
-                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-installation-type' | tlTranslate }}">
-            </data-column>
-            <data-column [flexRate]="0.1"
-                         propertyName="fishTypeId"
-                         [formGroup]="soldFishOrganismGroup"
-                         [options]="fishTypes"
-                         [displayOptions]="allFishTypes"
-                         dataType="nomenclature"
-                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-fish-type' | tlTranslate }}">
-            </data-column>
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.soldFishError !== true">
+        <div fxLayout="column"
+             fxLayoutGap="1em">
+            <tl-data-table fxFlexFill
+                           #soldFishOrganismTable
+                           [rows]="soldFishOrganisms"
+                           [isRemote]="false"
+                           [isSoftDeletable]="true"
+                           [showInactiveRecords]="false"
+                           [showAddButton]="!viewMode && !isReadonly"
+                           (activeRecordChanged)="soldFishActiveRecordChanged()">
+                <data-column [flexRate]="0.1"
+                             propertyName="installationTypeId"
+                             [formGroup]="soldFishOrganismGroup"
+                             [options]="installationTypes"
+                             [displayOptions]="allInstallationTypes"
+                             dataType="nomenclature"
+                             columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-installation-type' | tlTranslate }}">
+                </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="fishTypeId"
+                             [formGroup]="soldFishOrganismGroup"
+                             [options]="fishTypes"
+                             [displayOptions]="allFishTypes"
+                             dataType="nomenclature"
+                             columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-fish-type' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="fishLarvaeCount"
-                         [formGroup]="soldFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-fish-larvae-count' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="fishLarvaeCount"
+                             [formGroup]="soldFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-fish-larvae-count' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="oneStripBreedingMaterialCount"
-                         [formGroup]="soldFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-one-strip-breeding-material-count' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="oneStripBreedingMaterialCount"
+                             [formGroup]="soldFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-one-strip-breeding-material-count' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="oneStripBreedingMaterialWeight"
-                         [formGroup]="soldFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-one-strip-breeding-material-weight' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="oneStripBreedingMaterialWeight"
+                             [formGroup]="soldFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-one-strip-breeding-material-weight' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="oneYearBreedingMaterialCount"
-                         [formGroup]="soldFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-one-year-breeding-material-count' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="oneYearBreedingMaterialCount"
+                             [formGroup]="soldFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-one-year-breeding-material-count' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="oneYearBreedingMaterialWeight"
-                         [formGroup]="soldFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-one-year-breeding-material-weight' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="oneYearBreedingMaterialWeight"
+                             [formGroup]="soldFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-one-year-breeding-material-weight' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="forConsumption"
-                         [formGroup]="soldFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-for-consumption' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="forConsumption"
+                             [formGroup]="soldFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-for-consumption' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="caviarForConsumption"
-                         [formGroup]="soldFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-caviar-for-consumption' | tlTranslate }}">
-            </data-column>
-            <data-column-inline [flexRate]="0.1" *ngIf="!isReadonly"></data-column-inline>
-        </tl-data-table>
+                <data-column [flexRate]="0.1"
+                             propertyName="caviarForConsumption"
+                             [formGroup]="soldFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-caviar-for-consumption' | tlTranslate }}">
+                </data-column>
+                <data-column-inline [flexRate]="0.1" *ngIf="!isReadonly"></data-column-inline>
+            </tl-data-table>
+
+            <mat-error *ngIf="form.errors?.soldFishError === true">
+                * {{ 'statistical-forms.aqua-farm-fish-organism-error' | tlTranslate }}
+            </mat-error>
+        </div>
     </tl-expansion-panel>
 
     <!-- Нереализирани количества и незавършено производство на риба и други водни организми -->
     <tl-expansion-panel *ngIf="!showOnlyRegiXData"
                         title="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-title' | tlTranslate }}"
                         tooltipResourceName="statistical-forms.aqua-farm-unrealized-fish-organism-title-helper"
-                        [validityChecker]="form">
-        <tl-data-table fxFlexFill
-                       #unrealizedFishOrganismTable
-                       [rows]="unrealizedFishOrganisms"
-                       [isRemote]="false"
-                       [isSoftDeletable]="true"
-                       [showInactiveRecords]="false"
-                       [showAddButton]="!viewMode && !isReadonly"
-                       (activeRecordChanged)="unrealizedFishActiveRecordChanged()">
-            <data-column [flexRate]="0.1"
-                         propertyName="installationTypeId"
-                         [formGroup]="unrealizedFishOrganismGroup"
-                         [options]="installationTypes"
-                         [displayOptions]="allInstallationTypes"
-                         dataType="nomenclature"
-                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-installation-type' | tlTranslate }}">
-            </data-column>
-            <data-column [flexRate]="0.1"
-                         propertyName="fishTypeId"
-                         [formGroup]="unrealizedFishOrganismGroup"
-                         [options]="fishTypes"
-                         [displayOptions]="allFishTypes"
-                         dataType="nomenclature"
-                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-fish-type' | tlTranslate }}">
-            </data-column>
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.unrealizedFishError !== true">
+        <div fxLayout="column"
+             fxLayoutGap="1em">
+            <tl-data-table fxFlexFill
+                           #unrealizedFishOrganismTable
+                           [rows]="unrealizedFishOrganisms"
+                           [isRemote]="false"
+                           [isSoftDeletable]="true"
+                           [showInactiveRecords]="false"
+                           [showAddButton]="!viewMode && !isReadonly"
+                           (activeRecordChanged)="unrealizedFishActiveRecordChanged()">
+                <data-column [flexRate]="0.1"
+                             propertyName="installationTypeId"
+                             [formGroup]="unrealizedFishOrganismGroup"
+                             [options]="installationTypes"
+                             [displayOptions]="allInstallationTypes"
+                             dataType="nomenclature"
+                             columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-installation-type' | tlTranslate }}">
+                </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="fishTypeId"
+                             [formGroup]="unrealizedFishOrganismGroup"
+                             [options]="fishTypes"
+                             [displayOptions]="allFishTypes"
+                             dataType="nomenclature"
+                             columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-fish-type' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="oneStripBreedingMaterialCount"
-                         [formGroup]="unrealizedFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-one-strip-breeding-material-count' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="oneStripBreedingMaterialCount"
+                             [formGroup]="unrealizedFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-one-strip-breeding-material-count' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="oneStripBreedingMaterialWeight"
-                         [formGroup]="unrealizedFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-one-strip-breeding-material-weight' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="oneStripBreedingMaterialWeight"
+                             [formGroup]="unrealizedFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-one-strip-breeding-material-weight' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="oneYearBreedingMaterialCount"
-                         [formGroup]="unrealizedFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-one-year-breeding-material-count' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="oneYearBreedingMaterialCount"
+                             [formGroup]="unrealizedFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-one-year-breeding-material-count' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="oneYearBreedingMaterialWeight"
-                         [formGroup]="unrealizedFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-one-year-breeding-material-weight' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="oneYearBreedingMaterialWeight"
+                             [formGroup]="unrealizedFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-one-year-breeding-material-weight' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="forConsumption"
-                         [formGroup]="unrealizedFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-for-consumption' | tlTranslate }}">
-            </data-column>
+                <data-column [flexRate]="0.1"
+                             propertyName="forConsumption"
+                             [formGroup]="unrealizedFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-for-consumption' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.1"
-                         propertyName="caviarForConsumption"
-                         [formGroup]="unrealizedFishOrganismGroup"
-                         columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-caviar-for-consumption' | tlTranslate }}">
-            </data-column>
-            <data-column-inline [flexRate]="0.1" *ngIf="!isReadonly"></data-column-inline>
-        </tl-data-table>
+                <data-column [flexRate]="0.1"
+                             propertyName="caviarForConsumption"
+                             [formGroup]="unrealizedFishOrganismGroup"
+                             columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-caviar-for-consumption' | tlTranslate }}">
+                </data-column>
+                <data-column-inline [flexRate]="0.1" *ngIf="!isReadonly"></data-column-inline>
+            </tl-data-table>
+
+            <mat-error *ngIf="form.errors?.unrealizedFishError === true">
+                * {{ 'statistical-forms.aqua-farm-fish-organism-error' | tlTranslate }}
+            </mat-error>
+        </div>
     </tl-expansion-panel>
 
     <!-- Маточно стадо /разплодници/ -->

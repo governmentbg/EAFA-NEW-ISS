@@ -245,9 +245,9 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
             length: x.length,
             count: x.count,
             comments: x.comments,
+            isActive: x.isActive ?? true,
             lawSectionId: x.lawSectionId ?? undefined,
             lawText: x.lawText ?? undefined,
-            isActive: x.isActive ?? true
         }));
     }
 

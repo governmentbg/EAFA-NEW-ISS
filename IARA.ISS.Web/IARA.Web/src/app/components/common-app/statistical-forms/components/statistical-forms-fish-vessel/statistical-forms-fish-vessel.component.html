@@ -45,7 +45,8 @@
     <tl-expansion-panel *ngIf="!showOnlyRegiXData"
                         title="{{ 'statistical-forms.fish-vessel-basic-information-title' | tlTranslate }}"
                         tooltipResourceName="statistical-forms.fish-vessel-basic-information-title-helper"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.controls.aquacultureFacilityControl.errors?.statFormExists !== true">
         <div fxLayout="column">
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
                 <tl-date-year fxFlex="25"
@@ -127,7 +128,7 @@
                         title="{{ 'statistical-forms.sea-days-title' | tlTranslate }}"
                         tooltipResourceName="statistical-forms.sea-days-title-helper"
                         [validityChecker]="form">
-        <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+        <div fxFlexFill fxLayout="column" fxLayoutGap="1em"> 
             <tl-data-table fxFlexFill
                            #seaDaysTable
                            [rows]="seaDays"

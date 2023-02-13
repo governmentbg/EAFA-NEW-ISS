@@ -24,5 +24,8 @@ export class StatisticalFormAquacultureNomenclatureDTO extends NomenclatureDTO<n
     public eik?: string;
 
     @StrictlyTyped(String)
-    public legalName?: string;
+    public egnLnc?: string;
+
+    @StrictlyTyped(String)
+    public owner?: string;
 }

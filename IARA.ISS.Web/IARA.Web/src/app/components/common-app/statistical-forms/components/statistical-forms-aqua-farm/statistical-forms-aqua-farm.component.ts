@@ -52,6 +52,9 @@ import { StatisticalFormTypesEnum } from '@app/enums/statistical-form-types.enum
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { SubmittedByRolesEnum } from '@app/enums/submitted-by-roles.enum';
+import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
+import { AquaFarmFishOrganismReportTypeEnum } from '@app/enums/aqua-farm-fish-organism-report-type.enum';
 
 type YesNo = 'yes' | 'no';
 
@@ -89,6 +92,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
     public emptyUnrealizedFishOrganism: boolean = true;
     public emptyBroodstock: boolean = true;
     public showBasicInfo: boolean = false;
+    public isPerson: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
 
     public readonly pageCode: PageCodeEnum = PageCodeEnum.StatFormAquaFarm;
@@ -369,19 +373,47 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                                     this.isSystemFull = false;
                                 }
 
-                                this.form.controls.submittedForControl.setValue(new ApplicationSubmittedForDTO({
-                                    legal: new RegixLegalDataDTO({
-                                        eik: aquaculture.eik,
-                                        name: aquaculture.legalName
-                                    }),
-                                    addresses: this.form.controls.submittedForControl.value?.addresses,
-                                    submittedByLetterOfAttorney: this.form.controls.submittedForControl.value?.submittedByLetterOfAttorney,
-                                    submittedByRole: this.form.controls.submittedForControl.value?.submittedByRole
-                                }));
+                                if (aquaculture.isPerson) {
+                                    this.isPerson = true;
+                                    this.showBasicInfo = true;
+
+                                    this.form.controls.submittedForControl.setValue(new ApplicationSubmittedForDTO({
+                                        person: new RegixPersonDataDTO({
+                                            egnLnc: new EgnLncDTO({
+                                                egnLnc: aquaculture.personEgnLnc,
+                                                identifierType: aquaculture.personIdentifierType
+                                            }),
+                                            firstName: aquaculture.personFirstName,
+                                            middleName: aquaculture.personMiddleName,
+                                            lastName: aquaculture.personLastName
+                                        }),
+                                        addresses: this.form.controls.submittedForControl.value?.addresses,
+                                        submittedByLetterOfAttorney: this.form.controls.submittedForControl.value?.submittedByLetterOfAttorney,
+                                        submittedByRole: SubmittedByRolesEnum.Personal
+                                    }));
+                                }
+                                else {
+                                    this.isPerson = false;
+
+                                    this.form.controls.submittedForControl.setValue(new ApplicationSubmittedForDTO({
+                                        legal: new RegixLegalDataDTO({
+                                            eik: aquaculture.eik,
+                                            name: aquaculture.legalName
+                                        }),
+                                        addresses: this.form.controls.submittedForControl.value?.addresses,
+                                        submittedByLetterOfAttorney: this.form.controls.submittedForControl.value?.submittedByLetterOfAttorney,
+                                        submittedByRole: this.form.controls.submittedForControl.value?.submittedByRole
+                                    }));
+                                }
                             }
                         });
                     }
                     else {
+                        if (this.isPerson) {
+                            this.form.controls.submittedForControl.reset();
+                            this.showBasicInfo = false;
+                        }
+
                         this.form.controls.submittedForControl.setValue(new ApplicationSubmittedForDTO({
                             legal: new RegixLegalDataDTO({
                                 eik: undefined,
@@ -395,13 +427,15 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                 }
             });
 
-            this.form.controls.submittedForControl!.valueChanges.subscribe({
-                next: (value: ApplicationSubmittedForDTO | undefined) => {
-                    if (value?.submittedByRole !== undefined) {
-                        this.showBasicInfo = true;
+            if (!this.isPerson) {
+                this.form.controls.submittedForControl!.valueChanges.subscribe({
+                    next: (value: ApplicationSubmittedForDTO | undefined) => {
+                        if (value?.submittedByRole !== undefined) {
+                            this.showBasicInfo = true;
+                        }
                     }
-                }
-            });
+                });
+            }
 
             this.form.controls.yearControl!.valueChanges.subscribe({
                 next: (value: Date | undefined) => {
@@ -430,69 +464,6 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
 
                     this.installationTypes = this.installationTypes.filter(x => !currentIds.includes(x.value!));
                     this.installationTypes = this.installationTypes.slice();
-                }
-            });
-
-            this.producedFishOrganismGroup?.get('installationTypeIdControlHidden')?.valueChanges.subscribe({
-                next: () => {
-                    this.validateRows(this.producedFishOrganismTable);
-
-                    if (this.producedFishOrganismGroup?.get('installationTypeIdControlHidden')!.value !== undefined && this.tableMap.size !== 0) {
-                        const fishIds: number[] | undefined = this.tableMap
-                            .get(this.producedFishOrganismGroup?.get('installationTypeIdControlHidden')!.value.value)
-                            ?.filter(x => x.isActive)
-                            ?.map(x => x.id);
-
-                        this.fishTypes = this.fishTypes.filter(x => !fishIds?.includes(x.value!));
-                    }
-                }
-            });
-
-            this.producedFishOrganismGroup.get('fishTypeIdControlHidden')?.valueChanges.subscribe({
-                next: () => {
-                    this.validateRows(this.producedFishOrganismTable);
-                }
-            });
-
-            this.soldFishOrganismGroup?.get('installationTypeIdControlHidden')?.valueChanges.subscribe({
-                next: () => {
-                    this.validateRows(this.soldFishOrganismTable);
-
-                    if (this.soldFishOrganismGroup?.get('installationTypeIdControlHidden')!.value !== undefined && this.tableMap.size !== 0) {
-                        const fishIds: number[] | undefined = this.tableMap
-                            .get(this.soldFishOrganismGroup?.get('installationTypeIdControlHidden')!.value.value)
-                            ?.filter(x => x.isActive)
-                            ?.map(x => x.id);
-
-                        this.fishTypes = this.fishTypes.filter(x => !fishIds?.includes(x.value!));
-                    }
-                }
-            });
-
-            this.soldFishOrganismGroup.get('fishTypeIdControlHidden')?.valueChanges.subscribe({
-                next: () => {
-                    this.validateRows(this.soldFishOrganismTable);
-                }
-            });
-
-            this.unrealizedFishOrganismGroup?.get('installationTypeIdControlHidden')?.valueChanges.subscribe({
-                next: () => {
-                    this.validateRows(this.unrealizedFishOrganismTable);
-
-                    if (this.unrealizedFishOrganismGroup?.get('installationTypeIdControlHidden')!.value !== undefined && this.tableMap.size !== 0) {
-                        const fishIds: number[] | undefined = this.tableMap
-                            .get(this.unrealizedFishOrganismGroup?.get('installationTypeIdControlHidden')!.value.value)
-                            ?.filter(x => x.isActive)
-                            ?.map(x => x.id);
-
-                        this.fishTypes = this.fishTypes.filter(x => !fishIds?.includes(x.value!));
-                    }
-                }
-            });
-
-            this.unrealizedFishOrganismGroup.get('fishTypeIdControlHidden')?.valueChanges.subscribe({
-                next: () => {
-                    this.validateRows(this.unrealizedFishOrganismTable);
                 }
             });
 
@@ -526,11 +497,14 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                     if (event.Command === CommandTypes.Delete && this.producedFishOrganismTable.rows.length === 1) {
                         this.emptyProducedFishOrganism = true;
                     }
+
+                    this.form.updateValueAndValidity({ onlySelf: true });
                 }
             });
 
             this.soldFishOrganismTable.recordChanged.subscribe({
                 next: (event: RecordChangedEventArgs<StatisticalFormAquaFarmFishOrganismDTO>) => {
+
                     if (event.Command !== CommandTypes.Edit) {
                         this.emptySoldFishOrganism = this.soldFishOrganismTable.rows.length === 0;
                     }
@@ -538,6 +512,8 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                     if (event.Command === CommandTypes.Delete && this.soldFishOrganismTable.rows.length === 1) {
                         this.emptySoldFishOrganism = true;
                     }
+
+                    this.form.updateValueAndValidity({ onlySelf: true });
                 }
             });
 
@@ -550,6 +526,8 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                     if (event.Command === CommandTypes.Delete && this.unrealizedFishOrganismTable.rows.length === 1) {
                         this.emptyUnrealizedFishOrganism = true;
                     }
+
+                    this.form.updateValueAndValidity({ onlySelf: true });
                 }
             });
 
@@ -738,7 +716,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                 employeeStatsArray: new FormArray([]),
                 financialInfoArray: new FormArray([], this.costsValidator()),
                 rawMaterialControl: new FormControl()
-            });
+            }, this.baseFormValidators());
 
             this.initTableFormGroups();
         }
@@ -757,7 +735,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                 employeeStatsArray: new FormArray([]),
                 financialInfoArray: new FormArray([], [Validators.required, this.costsValidator()]),
                 rawMaterialControl: new FormControl()
-            });
+            }, this.baseFormValidators());
 
             this.initTableFormGroups();
         }
@@ -1099,7 +1077,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
 
     private saveAquaFarmForm(dialogClose: DialogCloseCallback, saveAsDraft: boolean = false): Observable<boolean> {
         const saveOrEditDone: Subject<boolean> = new Subject<boolean>();
-
+        
         this.saveOrEdit(saveAsDraft).subscribe({
             next: (id: number | void) => {
                 if (typeof id === 'number' && id !== undefined) {
@@ -1121,12 +1099,12 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
     private saveOrEdit(saveAsDraft: boolean): Observable<number | void> {
         this.fillModel();
         CommonUtils.sanitizeModelStrings(this.model);
-
+        
         if (this.model instanceof StatisticalFormAquaFarmEditDTO) {
             if (this.formId !== undefined) {
                 return this.service.editStatisticalFormAquaFarm(this.model);
             }
-            return this.service.addStatisticalFormAquaFarm(this.model);
+            return this.service.confirmNoErrorsAndFillAdmAct(this.model.applicationId!, this.pageCode);
         }
         else {
             if (this.model.id !== undefined && this.model.id !== null) {
@@ -1463,5 +1441,90 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                 });
             }
         }
+    }
+
+    private baseFormValidators(): ValidatorFn[] {
+        return [
+            this.producedFishValidator(), this.soldFishValidator(), this.unrealizedFishValidator()
+        ];
+    }
+
+    private producedFishValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            const isInvalid: boolean  = this.fishOrganismInvalid(this.producedFishOrganismTable);
+
+            if (isInvalid) {
+                return { 'producedFishError': true };
+            }
+
+            return null;
+        }
+    }
+
+    private soldFishValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            const isInvalid: boolean = this.fishOrganismInvalid(this.soldFishOrganismTable);
+
+            if (isInvalid) {
+                return { 'soldFishError': true };
+            }
+
+            return null;
+        }
+    }
+
+    private unrealizedFishValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            const isInvalid: boolean = this.fishOrganismInvalid(this.unrealizedFishOrganismTable);
+
+            if (isInvalid) {
+                return { 'unrealizedFishError': true };
+            }
+
+            return null;
+        }
+    }
+
+    private fishOrganismInvalid(table: TLDataTableComponent) {
+        if (table !== undefined && table !== null) {
+            const rows = table.rows;
+
+            for (const row of rows) {
+                const invalidRows = table.rows.filter(x => {
+                    if (x.isActive !== false
+                        && x.installationTypeId === row.installationTypeId
+                        && x.fishTypeId === row.fishTypeId
+                    ) {
+                        if (row.oneStripBreedingMaterialWeight !== undefined && row.oneStripBreedingMaterialWeight !== null
+                            && x.oneStripBreedingMaterialWeight !== undefined && x.oneStripBreedingMaterialWeight !== null
+                            && row.oneStripBreedingMaterialWeight === x.oneStripBreedingMaterialWeight
+                        ) {
+                            return true;
+                        }
+
+                        if ((row.oneStripBreedingMaterialWeight == undefined
+                                || row.oneStripBreedingMaterialWeight === null
+                                || Number(row.oneStripBreedingMaterialWeight) === 0)
+                            && (x.oneStripBreedingMaterialWeight === undefined
+                                || x.oneStripBreedingMaterialWeight === null
+                                || Number(x.oneStripBreedingMaterialWeight) === 0)
+                        ) {
+                            return true;
+                        }
+
+                        return false;
+                    }
+
+                    return false;
+                });
+
+                if (invalidRows.length > 1) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        return false;
     }
 }

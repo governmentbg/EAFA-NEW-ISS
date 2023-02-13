@@ -4912,6 +4912,8 @@
         'aqua-farm-costs-error': 'The value in the field of staff costs cannot be zero when there are men or women with pay.',
         'aqua-farm-stat-form-exist-error': 'Statistical form already exists.',
 
+        'aqua-farm-fish-organism-error': 'The combination of fish type and breading material weight is already added for this installation.',
+
         //Rework
         'rework-requester': 'Sender',
         'rework-requester-position': 'Sender position',

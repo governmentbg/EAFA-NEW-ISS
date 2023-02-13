@@ -103,18 +103,6 @@ export class StatisticalFormsPublicService extends ApplicationsRegisterPublicBas
         });
     }
 
-    public addStatisticalFormAquaFarm(form: StatisticalFormAquaFarmEditDTO): Observable<number> {
-        throw new Error('This method should not be called from the public app.');
-    }
-
-    public addStatisticalFormRework(form: StatisticalFormReworkEditDTO): Observable<number> {
-        throw new Error('This method should not be called from the public app.');
-    }
-
-    public addStatisticalFormFishVessel(form: StatisticalFormFishVesselEditDTO): Observable<number> {
-        throw new Error('This method should not be called from the public app.');
-    }
-
     public editStatisticalFormAquaFarm(form: StatisticalFormAquaFarmEditDTO): Observable<void> {
         throw new Error('This method should not be called from the public app.');
     }
