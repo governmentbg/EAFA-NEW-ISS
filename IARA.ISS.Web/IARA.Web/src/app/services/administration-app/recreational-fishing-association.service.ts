@@ -188,7 +188,7 @@ export class RecreationalFishingAssociationService extends BaseAuditService impl
         });
     }
 
-    public confirmNoErrorsAndFillAdmAct(id: number, pageCode?: PageCodeEnum): Observable<void> {
+    public confirmNoErrorsAndFillAdmAct(id: number, model: FishingAssociationEditDTO, pageCode?: PageCodeEnum): Observable<void> {
         throw new Error('Method should not be called for recreational fishing tickets.');
     }
 

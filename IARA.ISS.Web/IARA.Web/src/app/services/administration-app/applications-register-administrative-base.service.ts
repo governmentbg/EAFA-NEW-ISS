@@ -103,7 +103,7 @@ export abstract class ApplicationsRegisterAdministrativeBaseService extends Base
         });
     }
 
-    public confirmNoErrorsAndFillAdmAct(id: number, pageCode?: PageCodeEnum): Observable<void> {
+    public confirmNoErrorsAndFillAdmAct(id: number, model: any, pageCode?: PageCodeEnum): Observable<void> {
         throw new Error(`Method not implemented for the choseen type of application (application id: ${id})`);
     }
 

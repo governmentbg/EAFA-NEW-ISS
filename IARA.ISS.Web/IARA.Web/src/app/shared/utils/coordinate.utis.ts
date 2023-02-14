@@ -1,6 +1,10 @@
 ﻿export class CoordinateUtils {
 
     public static ConvertFromDMS(dms: string): number {
+        if (!dms) {
+            return 0;
+        }
+
         const array: string[] = dms.split(' ');
         return CoordinateUtils.ConvertToDecimal(Number.parseInt(array[0]), Number.parseInt(array[1]), Number.parseInt(array[2]));
     }

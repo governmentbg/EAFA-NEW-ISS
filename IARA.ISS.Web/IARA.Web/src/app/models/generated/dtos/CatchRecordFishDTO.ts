@@ -21,6 +21,12 @@ export class CatchRecordFishDTO {
     public quantityKg?: number;
 
     @StrictlyTyped(Number)
+    public unloadedQuantityKg?: number;
+
+    @StrictlyTyped(Number)
+    public unloadedInOtherTripQuantityKg?: number;
+
+    @StrictlyTyped(Number)
     public catchTypeId?: number;
 
     @StrictlyTyped(Number)

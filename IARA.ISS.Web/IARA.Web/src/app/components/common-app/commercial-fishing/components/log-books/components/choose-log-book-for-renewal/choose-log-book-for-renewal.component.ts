@@ -170,7 +170,10 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
         this.service.getLogBooksForRenewal(this.permitLicenseId, showFinished).subscribe({
             next: (results: LogBookForRenewalDTO[]) => {
                 this.allLogBooks = results;
-                this.logBooks = this.allLogBooks.slice();
+
+                setTimeout(() => {
+                    this.logBooks = this.allLogBooks.slice();
+                });
             }
         });
     }

@@ -539,7 +539,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
     public confirmNoErrorsForApplicationAndFillAdmActActionClicked(applicationId: number, dialogClose: DialogCloseCallback): void {
         const pageCode: PageCodeEnum = (this.datatable.rows as ApplicationRegisterDTO[]).find(x => x.id === applicationId)!.pageCode!;
 
-        this.service.confirmNoErrorsAndFillAdmAct(applicationId, pageCode).subscribe({
+        this.service.confirmNoErrorsAndFillAdmAct(applicationId, undefined, pageCode).subscribe({
             next: () => {
                 dialogClose();
                 

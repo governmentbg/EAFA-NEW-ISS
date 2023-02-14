@@ -501,7 +501,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                 return this.service.editStatisticalFormFishVessel(this.model);
             }
             else {
-                return this.service.confirmNoErrorsAndFillAdmAct(this.model.applicationId!, this.pageCode);
+                return this.service.confirmNoErrorsAndFillAdmAct(this.model.applicationId!, this.model, this.pageCode);
             }
         }
         else {
@@ -861,7 +861,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
 
             this.seaDaysForm = new FormGroup({
                 fishingGearIdControl: new FormControl(null, Validators.required),
-                daysControl: new FormControl(null, [Validators.required, TLValidators.number(0)])
+                daysControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 0)])
             });
         }
 

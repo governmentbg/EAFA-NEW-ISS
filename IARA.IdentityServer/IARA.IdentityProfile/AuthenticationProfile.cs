@@ -2,7 +2,6 @@
 using IARA.Common.ConfigModels;
 using IARA.Common.Utils;
 using IARA.DataAccess.Abstractions;
-using IARA.Logging.Abstractions.Interfaces;
 using IARA.Security;
 using IARA.Security.AuthContext;
 using IARA.Security.Services;
@@ -11,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TechnoLogica.Authentication.Common;
 using TL.Dependency.Injection;
+using TL.Logging.Abstractions.Interfaces;
 
 namespace IARA.IdentityProfile
 {
@@ -25,7 +25,6 @@ namespace IARA.IdentityProfile
             });
 
             services.AddScoped<IUsersDbContext, AuthDbContext>();
-            services.AddScoped<ILoggingDbContext, AuthDbContext>();
 
             services.AddSingleton(EmailClientSettings.ReadSettings(configuration));
 
@@ -49,7 +48,7 @@ namespace IARA.IdentityProfile
 
             services.AddSingleton<SecurityEmailSender>();
             services.AddSingleton(LoggingSettings.ReadSettings(configuration));
-            services.AddLocalLogging();
+            services.AddLocalLogging(configuration);
             //services.AddEmailQueueSender();
         }
     }

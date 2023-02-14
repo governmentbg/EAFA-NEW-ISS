@@ -146,7 +146,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.CatchRecords
                 Description.Value = info.Description;
                 Location = info.Location == null
                     ? null
-                    : new Position?(new Position(info.Location.Latitude, info.Location.Longitude));
+                    : new Position?(new Position(DMSType.Parse(info.Location.DMSLatitude).ToDecimal(), DMSType.Parse(info.Location.DMSLongitude).ToDecimal()));
                 Ticket.Value = info.Ticket;
                 TicketChosen = true;
 
@@ -463,8 +463,8 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.CatchRecords
                 Location = Location.HasValue
                     ? new LocationDto
                     {
-                        Latitude = Location.Value.Latitude,
-                        Longitude = Location.Value.Longitude
+                        DMSLatitude = DMSType.FromDouble(Location.Value.Latitude).ToString(),
+                        DMSLongitude = DMSType.FromDouble(Location.Value.Longitude).ToString()
                     } : null,
                 TicketId = Ticket.Value.Id,
                 Files = files

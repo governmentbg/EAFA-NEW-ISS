@@ -844,7 +844,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
             if (this.formId !== undefined) {
                 return this.service.editStatisticalFormRework(this.model);
             }
-            return this.service.confirmNoErrorsAndFillAdmAct(this.model.applicationId!, this.pageCode);;
+            return this.service.confirmNoErrorsAndFillAdmAct(this.model.applicationId!, this.model, this.pageCode);
         }
         else {
             if (this.model.id !== undefined && this.model.id !== null) {

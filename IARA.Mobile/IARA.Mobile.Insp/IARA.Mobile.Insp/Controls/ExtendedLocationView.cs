@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.LocationMapDialog;
 using IARA.Mobile.Shared.Popups;
@@ -16,10 +18,10 @@ using Xamarin.Forms.Maps;
 
 namespace IARA.Mobile.Insp.Controls
 {
-    public class ExtendedLocationView : TLValidatableView<Position?>
+    public class ExtendedLocationView : TLValidatableView<LocationDto>
     {
         public static readonly BindableProperty LocationProperty =
-            BindableProperty.Create(nameof(Location), typeof(Position?), typeof(ExtendedLocationView), null, BindingMode.TwoWay,
+            BindableProperty.Create(nameof(Location), typeof(LocationDto), typeof(ExtendedLocationView), null, BindingMode.TwoWay,
                 propertyChanged: OnLocationPropertyChanged);
 
         public static readonly BindableProperty TitleProperty =
@@ -100,7 +102,7 @@ namespace IARA.Mobile.Insp.Controls
 
             _header = new LocationHeaderView
             {
-                Command = CommandBuilder.CreateFrom<Position>(OnHeaderLocationChanged),
+                Command = CommandBuilder.CreateFrom<LocationDto>(OnHeaderLocationChanged),
                 OptionsCommand = CommandBuilder.CreateFrom<MenuResult>(OnMenuChosen),
             }.Bind(LocationHeaderView.IsPickingProperty, IsPickingProperty.PropertyName, source: this);
 
@@ -178,9 +180,9 @@ namespace IARA.Mobile.Insp.Controls
             set => SetValue(TitleFontSizeProperty, value);
         }
 
-        public Position? Location
+        public LocationDto Location
         {
-            get => (Position?)GetValue(LocationProperty);
+            get => (LocationDto)GetValue(LocationProperty);
             set => SetValue(LocationProperty, value);
         }
 
@@ -214,8 +216,12 @@ namespace IARA.Mobile.Insp.Controls
 
             if (result != null)
             {
-                Location = result.Position;
-                ValueUpdated(result.Position);
+                Location = new LocationDto
+                {
+                    DMSLatitude = DMSType.FromDouble(result.Position.Latitude).ToString(),
+                    DMSLongitude = DMSType.FromDouble(result.Position.Longitude).ToString(),
+                };
+                ValueUpdated(Location);
             }
         }
 
@@ -230,14 +236,16 @@ namespace IARA.Mobile.Insp.Controls
                 return;
             }
 
-            Position location = new Position(geolocation.Latitude, geolocation.Longitude);
-
             IsPicking = false;
-            Location = location;
-            ValueUpdated(location);
+            Location = new LocationDto
+            {
+                DMSLatitude = DMSType.FromDouble(geolocation.Latitude).ToString(),
+                DMSLongitude = DMSType.FromDouble(geolocation.Longitude).ToString(),
+            };
+            ValueUpdated(Location);
         }
 
-        private void LayoutMap(Position location)
+        private void LayoutMap(LocationDto location)
         {
             if (!_changedFromEntry)
             {
@@ -248,22 +256,24 @@ namespace IARA.Mobile.Insp.Controls
                 _changedFromEntry = false;
             }
 
+            Position pos = new Position(DMSType.Parse(location.DMSLatitude).ToDecimal(), DMSType.Parse(location.DMSLongitude).ToDecimal());
+
             if (_map != null)
             {
                 _map.Pins.Clear();
 
                 _map.Pins.Add(new Pin
                 {
-                    Position = location,
+                    Position = pos,
                     Label = string.Empty,
                 }.BindTranslation(Pin.LabelProperty, "ChosenLocation", nameof(GroupResourceEnum.Common)));
 
-                _map.MoveToRegion(MapSpan.FromCenterAndRadius(location, Distance.FromKilometers(.5)));
+                _map.MoveToRegion(MapSpan.FromCenterAndRadius(pos, Distance.FromKilometers(.5)));
 
                 return;
             }
 
-            _map = new Xamarin.Forms.Maps.Map(MapSpan.FromCenterAndRadius(location, Distance.FromKilometers(.5)))
+            _map = new Xamarin.Forms.Maps.Map(MapSpan.FromCenterAndRadius(pos, Distance.FromKilometers(.5)))
             {
                 Margin = new Thickness(2, 0),
                 HasScrollEnabled = false,
@@ -271,7 +281,7 @@ namespace IARA.Mobile.Insp.Controls
                 {
                     new Pin
                     {
-                        Position = location,
+                        Position = pos,
                         Label = string.Empty,
                     }.BindTranslation(Pin.LabelProperty, "ChosenLocation", nameof(GroupResourceEnum.Common))
                 }
@@ -316,7 +326,7 @@ namespace IARA.Mobile.Insp.Controls
             }
         }
 
-        private void OnHeaderLocationChanged(Position location)
+        private void OnHeaderLocationChanged(LocationDto location)
         {
             _changedFromEntry = true;
             Location = location;
@@ -329,7 +339,7 @@ namespace IARA.Mobile.Insp.Controls
                 return;
             }
 
-            if (newValue is Position position)
+            if (newValue is LocationDto position)
             {
                 locationView.LayoutMap(position);
             }

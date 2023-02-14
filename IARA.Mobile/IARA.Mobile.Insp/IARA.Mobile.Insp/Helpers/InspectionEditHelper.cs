@@ -85,11 +85,11 @@ namespace IARA.Mobile.Insp.Helpers
             }
         }
 
-        public static void AssignFrom(this IValidState<Position?> validState, LocationDto value)
+        public static void AssignFrom(this IValidState<LocationDto> validState, LocationDto value)
         {
             if (value != null)
             {
-                validState.Value = new Position(value.Latitude, value.Longitude);
+                validState.Value = value;
             }
         }
 

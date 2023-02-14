@@ -1,6 +1,6 @@
 ﻿import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, Self, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, Validators } from '@angular/forms';
-import { forkJoin, Subscription } from 'rxjs';
+import { BehaviorSubject, forkJoin, Subscription } from 'rxjs';
 
 import { FillDef, MapOptions, SimplePolygonStyleDef, StrokeDef, TLMapViewerComponent } from '@tl/tl-angular-map';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
@@ -23,6 +23,7 @@ import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { CatchTypeCodesEnum } from '@app/enums/catch-type-codes.enum';
 import { CatchSizeCodesEnum } from '@app/enums/catch-size-codes.enum';
 import { WaterTypesEnum } from '@app/enums/water-types.enum';
+import { ShipLogBookPageDataService } from '../ship-log-book/services/ship-log-book-page-data.service';
 
 const DEFAULT_CATCH_TYPE_CODE = CatchTypeCodesEnum.TAKEN_ONBOARD;
 const DEFAULT_CATCH_SIZE_CODE = CatchSizeCodesEnum.LSC;
@@ -35,6 +36,9 @@ const DEFAULT_CATCH_SIZE_CODE = CatchSizeCodesEnum.LSC;
 export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRecordFishDTO> implements OnInit, AfterViewInit, OnChanges {
     @Input()
     public service!: ICatchesAndSalesService;
+
+    @Input()
+    public shipLogBookPageDataService!: ShipLogBookPageDataService;
 
     @Input()
     public aquaticOrganisms: NomenclatureDTO<number>[] = [];
@@ -76,10 +80,14 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
     @ViewChild(TLPopoverComponent)
     private mapPopover!: TLPopoverComponent;
 
-    private translationService: FuseTranslationLoaderService;
     private model: CatchRecordFishDTO | undefined;
 
     private temporarySelectedGridSector: CatchZoneNomenclatureDTO | undefined;
+
+    private readonly translationService: FuseTranslationLoaderService;
+    private readonly hasShipLogBookPageDataServiceSubject: BehaviorSubject<boolean>;
+
+    private hasShipLogBookPageDataServiceSubscription: Subscription | undefined;
 
     public constructor(
         @Self() ngControl: NgControl,
@@ -88,6 +96,8 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
         super(ngControl, false);
 
         this.translationService = translate;
+        this.hasShipLogBookPageDataServiceSubject = new BehaviorSubject<boolean>(false);
+
         this.defaultExpansionPanelTitle = this.translationService.getValue('catches-and-sales.ship-page-catch-single-catch-title');
 
         this.mapOptions = new MapOptions();
@@ -135,6 +145,15 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
         if ('waterType' in changes) {
             this.setCatchQuadrantControlValidators();
         }
+
+        if ('shipLogBookPageDataService' in changes) {
+            if (this.shipLogBookPageDataService !== null && this.shipLogBookPageDataService !== undefined) {
+                this.hasShipLogBookPageDataServiceSubject.next(true);
+            }
+            else {
+                this.hasShipLogBookPageDataServiceSubject.next(false);
+            }
+        }
     }
 
     public ngAfterViewInit(): void {
@@ -152,7 +171,20 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
             this.fillForm();
         }
         else {
-            this.form.reset(new CatchRecordFishDTO({ isActive: true }));
+            this.hasShipLogBookPageDataServiceSubscription?.unsubscribe();
+
+            this.hasShipLogBookPageDataServiceSubscription = this.hasShipLogBookPageDataServiceSubject.subscribe({
+                next: (hasShipLogBookPageDataService: boolean) => {
+                    if (hasShipLogBookPageDataService) {
+                        this.form.reset(new CatchRecordFishDTO({
+                            id: this.shipLogBookPageDataService.nextNewCatchRecordId,
+                            isActive: true,
+                            unloadedQuantityKg: 0,
+                            unloadedInOtherTripQuantityKg: 0
+                        }));
+                    }
+                }
+            });
         }
 
         setTimeout(() => {
@@ -283,7 +315,12 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
 
     protected getValue(): CatchRecordFishDTO {
         if (this.model === undefined || this.model === null) {
-            this.model = new CatchRecordFishDTO({ isActive: true });
+            this.model = new CatchRecordFishDTO({
+                id: this.shipLogBookPageDataService.nextNewCatchRecordId,
+                isActive: true,
+                unloadedQuantityKg: 0,
+                unloadedInOtherTripQuantityKg: 0
+            });
         }
 
         this.model.fishId = this.form.get('aquaticOrganismControl')!.value?.value;

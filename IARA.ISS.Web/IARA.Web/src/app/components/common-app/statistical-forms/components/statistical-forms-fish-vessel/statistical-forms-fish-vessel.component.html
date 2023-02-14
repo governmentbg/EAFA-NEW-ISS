@@ -46,7 +46,7 @@
                         title="{{ 'statistical-forms.fish-vessel-basic-information-title' | tlTranslate }}"
                         tooltipResourceName="statistical-forms.fish-vessel-basic-information-title-helper"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="form.controls.aquacultureFacilityControl.errors?.statFormExists !== true">
+                        [validityCheckerExtraCondition]="form.controls.shipNameControl.errors?.statFormExists !== true">
         <div fxLayout="column">
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
                 <tl-date-year fxFlex="25"

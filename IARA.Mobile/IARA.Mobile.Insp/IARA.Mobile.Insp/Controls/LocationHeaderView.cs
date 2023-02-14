@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Input;
+using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Shared.Popups;
@@ -58,7 +59,7 @@ namespace IARA.Mobile.Insp.Controls
 
             for (int i = 0; i < 4; i++)
             {
-                int maxLength = i == 3 ? 14 : 2;
+                int maxLength = i == 3 ? 5 : 2;
 
                 _longEntries[i] = CreateEntry(maxLength);
                 _latEntries[i] = CreateEntry(maxLength);
@@ -156,10 +157,10 @@ namespace IARA.Mobile.Insp.Controls
             set => SetValue(CommandProperty, value);
         }
 
-        public void UpdateLocation(Position location)
+        public void UpdateLocation(LocationDto location)
         {
-            DMSType dmsLong = DMSType.FromDouble(location.Longitude);
-            DMSType dmsLat = DMSType.FromDouble(location.Latitude);
+            DMSType dmsLong = DMSType.Parse(location.DMSLongitude);
+            DMSType dmsLat = DMSType.Parse(location.DMSLatitude);
 
             _isFromUpdate = true;
 
@@ -276,7 +277,11 @@ namespace IARA.Mobile.Insp.Controls
                             _longEntries[x].Unfocus();
                         }
 
-                        Command?.ExecuteCommand(new Position(latitude, longitude));
+                        Command?.ExecuteCommand(new LocationDto
+                        {
+                            DMSLatitude = DMSType.FromDouble(latitude).ToString(),
+                            DMSLongitude = DMSType.FromDouble(longitude).ToString(),
+                        });
                     });
                 }
             });

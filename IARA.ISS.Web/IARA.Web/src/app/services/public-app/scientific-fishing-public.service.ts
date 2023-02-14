@@ -176,7 +176,7 @@ export class ScientificFishingPublicService extends BaseAuditService implements 
         throw new Error('This method should not be called from the public app.');
     }
 
-    public confirmNoErrorsAndFillAdmAct(id: number, pageCode?: PageCodeEnum): Observable<void> {
+    public confirmNoErrorsAndFillAdmAct(id: number, model: ScientificFishingPermitEditDTO, pageCode?: PageCodeEnum): Observable<void> {
         throw new Error('This method should not be called from the public app.');
     }
 }

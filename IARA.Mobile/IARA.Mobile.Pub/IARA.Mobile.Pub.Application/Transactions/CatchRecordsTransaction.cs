@@ -61,8 +61,8 @@ namespace IARA.Mobile.Pub.Application.Transactions
                             Id = f.Id,
                             CatchDate = f.CatchDate,
                             Description = f.Description,
-                            Latitude = f.Location?.Latitude,
-                            Longitude = f.Location?.Longitude,
+                            Latitude = DMSType.Parse(f.Location?.DMSLatitude)?.ToDecimal(),
+                            Longitude = DMSType.Parse(f.Location?.DMSLongitude)?.ToDecimal(),
                             TicketId = f.TicketId,
                             WaterArea = f.WaterArea,
                             TotalCount = catchRecordFishes.Sum(s => s.Count),
@@ -114,8 +114,8 @@ namespace IARA.Mobile.Pub.Application.Transactions
                         },
                         Location = !catchRecord.Latitude.HasValue ? null : new LocationDto
                         {
-                            Latitude = catchRecord.Latitude.Value,
-                            Longitude = catchRecord.Longitude.Value
+                            DMSLatitude = DMSType.FromDouble(catchRecord.Latitude.Value).ToString(),
+                            DMSLongitude = DMSType.FromDouble(catchRecord.Longitude.Value).ToString()
                         }
                     }
                 ).FirstOrDefault();
@@ -170,8 +170,8 @@ namespace IARA.Mobile.Pub.Application.Transactions
             {
                 CatchDate = dto.CatchDate.Value,
                 Description = dto.Description,
-                Latitude = dto.Location?.Latitude,
-                Longitude = dto.Location?.Longitude,
+                Latitude = DMSType.Parse(dto.Location?.DMSLatitude)?.ToDecimal(),
+                Longitude = DMSType.Parse(dto.Location?.DMSLongitude)?.ToDecimal(),
                 TicketId = dto.TicketId.Value,
                 TotalCount = dto.Fishes.Sum(f => f.Count),
                 TotalQuantity = dto.Fishes.Sum(f => f.Quantity),
@@ -244,8 +244,8 @@ namespace IARA.Mobile.Pub.Application.Transactions
                 {
                     entity.CatchDate = dto.CatchDate.Value;
                     entity.Description = dto.Description;
-                    entity.Latitude = dto.Location?.Latitude;
-                    entity.Longitude = dto.Location?.Longitude;
+                    entity.Latitude = DMSType.Parse(dto.Location?.DMSLatitude)?.ToDecimal();
+                    entity.Longitude = DMSType.Parse(dto.Location?.DMSLatitude)?.ToDecimal();
                     entity.TicketId = dto.TicketId.Value;
                     entity.TotalCount = dto.Fishes.Sum(f => f.Count);
                     entity.TotalQuantity = dto.Fishes.Sum(f => f.Quantity);
@@ -379,8 +379,8 @@ namespace IARA.Mobile.Pub.Application.Transactions
                         WaterArea = entity.WaterArea,
                         Location = entity.Longitude.HasValue ? new LocationDto
                         {
-                            Latitude = entity.Longitude.Value,
-                            Longitude = entity.Longitude.Value,
+                            DMSLatitude = DMSType.FromDouble(entity.Longitude.Value).ToString(),
+                            DMSLongitude = DMSType.FromDouble(entity.Longitude.Value).ToString(),
                         } : null,
                         Fishes = (
                             from fish in context.CatchRecordFishes

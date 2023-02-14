@@ -205,10 +205,7 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
         this.model.location = this.form.get('mapViewerControl')!.value;
 
         if (this.model.location) {
-            const long = CoordinateUtils.ConvertToDisplayDMS(this.model.location.longitude!);
-            const lat = CoordinateUtils.ConvertToDisplayDMS(this.model.location.latitude!);
-
-            this.model.locationText = long + ' ' + lat;
+            this.model.locationText = this.model.location.dmsLongitude! + ' ' + this.model.location.dmsLatitude!;
         }
     }
 

@@ -318,16 +318,28 @@
                                 <data-column propertyName="catchFishStateId"
                                              dataType="nomenclature"
                                              columnName="{{ 'catches-and-sales.ship-page-origin-declaration-catch-state' | tlTranslate }}"
-                                             [flexRate]="0.4"
+                                             [flexRate]="declarationOfOriginHasCatchFromPreviousTrip ? 0.3 : 0.4"
                                              [options]="catchStates">
                                 </data-column>
                                 <data-column propertyName="catchFishPresentationId"
                                              dataType="nomenclature"
                                              columnName="{{ 'catches-and-sales.ship-page-origin-declaration-catch-presentation' | tlTranslate }}"
-                                             [flexRate]="0.4"
+                                             [flexRate]="declarationOfOriginHasCatchFromPreviousTrip ? 0.3 : 0.4"
                                              [options]="catchPresentations">
                                 </data-column>
-                                <data-template-column [flexRate]="0.35" [cellClass]="'justify-center'">
+                                <!-- Има проблем с визуализирането на label-а, понеже се ъпдейтва в последствие (след set на флага..) -->
+                                <!--<data-template-column [flexRate]="declarationOfOriginHasCatchFromPreviousTrip ? 0.2 : 0"
+                                                      [columnName]="ogirinDeclarationHasCatchFromPreviousTripLabel"
+                                                      propertyName="fromPreviousTrip">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        <div *ngIf="row.data.fromPreviousTrip" fxFlex="row" fxLayoutAlign="center center">
+                                            <tl-icon icon="done_outline"
+                                                     iconClass="accent-color">
+                                            </tl-icon>
+                                        </div>
+                                    </ng-template>
+                                </data-template-column>-->
+                                <data-template-column [isSortable]="false" [flexRate]="0.35" [cellClass]="'justify-center'">
                                     <ng-template let-row="row" ngx-datatable-cell-template>
                                         <div fxLayout="row wrap" fxLayoutAlign="end center">
                                             <tl-icon *ngIf="!row.data.isValid"

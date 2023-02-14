@@ -93,7 +93,7 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
         this.isAllCatchMarkedAsTransboarded = data.isAllCatchTransboarded;
 
         if (data.model === null || data.model === undefined) {
-            this.model = new OriginDeclarationFishDTO({ isActive: true });
+            this.model = new OriginDeclarationFishDTO({ fromPreviousTrip: false, isActive: true });
         }
         else {
             if (this.viewMode === true) {
