@@ -3,6 +3,7 @@
 export class PreviousTripsCatchRecordsDialogParams {
     public shipId!: number;
     public service!: ICatchesAndSalesService;
+    public currentPageId: number | undefined;
 
     public constructor(obj?: Partial<PreviousTripsCatchRecordsDialogParams>) {
         Object.assign(this, obj);

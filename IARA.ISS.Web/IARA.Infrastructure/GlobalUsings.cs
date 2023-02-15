@@ -1,0 +1,11 @@
+﻿global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using IARA.Common;
+global using IARA.Common.Enums;
+global using IARA.Common.Utils;
+global using IARA.DataAccess;
+global using IARA.DomainModels.DTOModels;
+global using IARA.EntityModels.Entities;
+global using IARA.Interfaces;
+global using TL.Logging.Abstractions.Interfaces.EntityModels;

@@ -7,9 +7,9 @@ export class LocationDTO {
         Object.assign(this, obj);
     }
 
-    @StrictlyTyped(Number)
-    public longitude?: number;
+    @StrictlyTyped(String)
+    public dmsLongitude?: string;
 
-    @StrictlyTyped(Number)
-    public latitude?: number;
+    @StrictlyTyped(String)
+    public dmsLatitude?: string;
 }

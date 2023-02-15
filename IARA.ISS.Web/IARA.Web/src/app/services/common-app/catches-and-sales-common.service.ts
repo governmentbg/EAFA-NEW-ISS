@@ -293,8 +293,13 @@ export class CatchesAndSalesCommonService {
         }));
     }
 
-    public getPreviousTripsOnBoardCatchRecords(area: AreaTypes, controller: string, shipId: number): Observable<OnBoardCatchRecordFishDTO[]> {
-        const params: HttpParams = new HttpParams().append('shipId', shipId.toString());
+    public getPreviousTripsOnBoardCatchRecords(area: AreaTypes, controller: string, shipId: number, currentPageId?: number): Observable<OnBoardCatchRecordFishDTO[]> {
+        let params: HttpParams = new HttpParams().append('shipId', shipId.toString());
+
+        if (currentPageId !== null && currentPageId !== undefined) {
+            params = params.append('currentPageId', currentPageId.toString());
+        }
+
         return this.http.get(area, controller, 'GetPreviousTripsOnBoardCatchRecords', {
             httpParams: params,
             responseTypeCtr: OnBoardCatchRecordFishDTO

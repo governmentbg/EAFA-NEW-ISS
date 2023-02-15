@@ -1,24 +1,17 @@
-﻿using IARA.Logging;
-using IARA.Logging.Abstractions.Interfaces;
-using IARA.Logging.TeamsLogging;
+﻿using IARA.EntityModels.Entities;
+using IARA.Security.AuthContext;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using TL.Logging;
 
 namespace IARA.IdentityProfile
 {
     internal static class DInjectionExtensions
     {
-        public static void AddLocalLogging(this IServiceCollection services)
+        public static void AddLocalLogging(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<ILoggerProvider, DatabaseLoggingProvider>();
-            services.AddSingleton<IUserActionsAuditLogger, UserActionsAuditLogger>();
-            services.AddSingleton<IDatabaseLoggerProvider, DatabaseLoggingProvider>();
-            services.AddSingleton<ITeamsLogger, TeamsLogger>();
-            services.AddSingleton<IExtendedLogger, DatabaseLogger>();
-            services.AddSingleton<ILogger, DatabaseLogger>();
-            services.AddSingleton(typeof(ILogger<>), typeof(DatabaseLogger<>));
-            services.AddSingleton(typeof(IExtendedLogger<>), typeof(DatabaseLogger<>));
-            services.AddSingleton(typeof(IExtendedLogger<>), typeof(DatabaseLogger<>));
+            services.AddCustomErrorLogging<ErrorLog, AuthDbContext>(configuration);
+            services.AddComplexAuditLogging<AuditLog, NauditLogTable, string, AuthDbContext>();
         }
     }
 }

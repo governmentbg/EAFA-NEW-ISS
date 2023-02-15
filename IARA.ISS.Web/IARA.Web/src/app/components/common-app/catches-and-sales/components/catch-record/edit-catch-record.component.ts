@@ -20,6 +20,7 @@ import { WaterTypesEnum } from '@app/enums/water-types.enum';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { CatchRecordFishDTO } from '@app/models/generated/dtos/CatchRecordFishDTO';
+import { ShipLogBookPageDataService } from '../ship-log-book/services/ship-log-book-page-data.service';
 
 
 @Component({
@@ -31,17 +32,23 @@ export class EditCatchRecordComponent implements AfterViewInit, IDialogComponent
     public viewMode!: boolean;
     public model!: CatchRecordDTO;
     public service!: ICatchesAndSalesService;
+    public shipLogBookPageDataService!: ShipLogBookPageDataService;
     public waterType!: WaterTypesEnum;
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
 
-    private dateDifferencePipe: TLDateDifferencePipe;
-    private translationService: FuseTranslationLoaderService;
-    private datePipe: DatePipe;
     private isAdd: boolean = false;
 
-    public constructor(dateDifferencePipe: TLDateDifferencePipe, translationService: FuseTranslationLoaderService, datePipe: DatePipe) {
+    private readonly dateDifferencePipe: TLDateDifferencePipe;
+    private readonly translationService: FuseTranslationLoaderService;
+    private readonly datePipe: DatePipe;
+    
+    public constructor(
+        dateDifferencePipe: TLDateDifferencePipe,
+        translationService: FuseTranslationLoaderService,
+        datePipe: DatePipe
+    ) {
         this.dateDifferencePipe = dateDifferencePipe;
         this.translationService = translationService;
         this.datePipe = datePipe;
@@ -87,7 +94,14 @@ export class EditCatchRecordComponent implements AfterViewInit, IDialogComponent
         });
 
         if (this.isAdd) {
-            this.form.get('aquaticOrganismTypesControl')!.setValue([new CatchRecordFishDTO({ isActive: true })]);
+            this.form.get('aquaticOrganismTypesControl')!.setValue([
+                new CatchRecordFishDTO({
+                    id: this.shipLogBookPageDataService.nextNewCatchRecordId,
+                    isActive: true,
+                    unloadedQuantityKg: 0,
+                    unloadedInOtherTripQuantityKg: 0
+                })
+            ]);
         }
         else {
             this.fillForm();
@@ -98,6 +112,7 @@ export class EditCatchRecordComponent implements AfterViewInit, IDialogComponent
         this.viewMode = data.viewMode;
         this.service = data.service;
         this.waterType = data.waterType;
+        this.shipLogBookPageDataService = data.shipLogBookPageDataService;
 
         if (data.model === null || data.model === undefined) {
             this.isAdd = true;

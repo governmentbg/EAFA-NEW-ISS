@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Input;
 using IARA.Mobile.Application.DTObjects.Common;
+using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Helpers;
@@ -57,12 +58,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         private void OnLocationChosen()
         {
-            if (!Location.Value.HasValue)
+            if (Location.Value == null)
             {
                 return;
             }
 
-            Position location = Location.Value.Value;
+            Position location = new Position(DMSType.Parse(Location.Value.DMSLatitude).ToDecimal(), DMSType.Parse(Location.Value.DMSLongitude).ToDecimal());
             PointF point = new PointF(Convert.ToSingle(location.Longitude), Convert.ToSingle(location.Latitude));
 
             foreach (CatchZoneNomenclatureDto quadrant in Quadrants)

@@ -30,6 +30,7 @@ export class PreviousTripsCatchRecordsComponent implements OnInit, IDialogCompon
     private service!: ICatchesAndSalesService;
     private commonNomenclaturesService: CommonNomenclatures;
     private shipId!: number;
+    private currentPageId: number | undefined;
 
     public constructor(commonNomenclaturesService: CommonNomenclatures) {
         this.commonNomenclaturesService = commonNomenclaturesService;
@@ -48,7 +49,7 @@ export class PreviousTripsCatchRecordsComponent implements OnInit, IDialogCompon
         this.catchSizes = nomenclatures[2];
         this.catchQuadrants = nomenclatures[3];
 
-        this.service.getPreviousTripOnBoardCatchRecords(this.shipId).subscribe({
+        this.service.getPreviousTripOnBoardCatchRecords(this.shipId, this.currentPageId).subscribe({
             next: (results: OnBoardCatchRecordFishDTO[]) => {
                 this.catchRecordFishes = results;
             }
@@ -58,6 +59,7 @@ export class PreviousTripsCatchRecordsComponent implements OnInit, IDialogCompon
     public setData(data: PreviousTripsCatchRecordsDialogParams, wrapperData: DialogWrapperData): void {
         this.service = data.service;
         this.shipId = data.shipId;
+        this.currentPageId = data.currentPageId;
     }
 
     public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {

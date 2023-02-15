@@ -63,11 +63,8 @@ export class InspectionMapViewerComponent extends CustomFormControl<LocationDTO 
 
     public writeValue(value: LocationDTO | undefined): void {
         if (value !== undefined && value !== null) {
-            const longStr: string = CoordinateUtils.ConvertToDMS(value.longitude!);
-            const latStr: string = CoordinateUtils.ConvertToDMS(value.latitude!);
-
-            this.form.get('longitudeControl')!.setValue(longStr);
-            this.form.get('latitudeControl')!.setValue(latStr);
+            this.form.get('longitudeControl')!.setValue(value.dmsLongitude!);
+            this.form.get('latitudeControl')!.setValue(value.dmsLatitude!);
         }
     }
 
@@ -97,8 +94,8 @@ export class InspectionMapViewerComponent extends CustomFormControl<LocationDTO 
         }
 
         return new LocationDTO({
-            latitude: CoordinateUtils.ConvertFromDMS(lat),
-            longitude: CoordinateUtils.ConvertFromDMS(long)
+            dmsLatitude: lat,
+            dmsLongitude: long
         });
     }
 

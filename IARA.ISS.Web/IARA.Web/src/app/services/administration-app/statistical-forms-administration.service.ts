@@ -341,7 +341,11 @@ export class StatisticalFormsAdministrationService extends ApplicationsRegisterA
         throw new Error('Invalid page code for editApplicationDataAndStartRegixChecks: ' + PageCodeEnum[model.pageCode!]);
     }
 
-    public confirmNoErrorsAndFillAdmAct(id: number, pageCode?: PageCodeEnum): Observable<void> {
+    public confirmNoErrorsAndFillAdmAct(
+        id: number,
+        model: StatisticalFormAquaFarmEditDTO | StatisticalFormReworkEditDTO | StatisticalFormFishVesselEditDTO,
+        pageCode?: PageCodeEnum
+    ): Observable<void> {
         const params: HttpParams = new HttpParams().append('applicationId', id.toString());
         let serviceMethod: string = '';
 
@@ -358,7 +362,7 @@ export class StatisticalFormsAdministrationService extends ApplicationsRegisterA
             default: throw new Error(`Invalid page code (${pageCode}) for confirm no error and fill adm act for statistical form`);
         }
 
-        return this.requestService.post(this.area, this.controller, serviceMethod, undefined, {
+        return this.requestService.post(this.area, this.controller, serviceMethod, model, {
             httpParams: params
         });
     }

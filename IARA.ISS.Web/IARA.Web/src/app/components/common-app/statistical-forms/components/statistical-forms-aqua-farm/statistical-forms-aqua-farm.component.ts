@@ -1104,7 +1104,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
             if (this.formId !== undefined) {
                 return this.service.editStatisticalFormAquaFarm(this.model);
             }
-            return this.service.confirmNoErrorsAndFillAdmAct(this.model.applicationId!, this.pageCode);
+            return this.service.confirmNoErrorsAndFillAdmAct(this.model.applicationId!, this.model, this.pageCode);
         }
         else {
             if (this.model.id !== undefined && this.model.id !== null) {
@@ -1143,9 +1143,12 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         const result: StatisticalFormAquaFarmFishOrganismDTO[] = [];
 
         for (const organism of organisms) {
-            if (result.findIndex(x => x.installationTypeId === organism.installationTypeId && x.fishTypeId === organism.fishTypeId) === -1) {
-                const original = organisms.filter(x => x.installationTypeId === organism.installationTypeId && x.fishTypeId === organism.fishTypeId);
-
+            if (result.findIndex(x => x.installationTypeId === organism.installationTypeId && x.fishTypeId === organism.fishTypeId
+                && x.oneStripBreedingMaterialWeight === organism.oneStripBreedingMaterialWeight) === -1
+            ) {
+                const original = organisms.filter(x => x.installationTypeId === organism.installationTypeId && x.fishTypeId === organism.fishTypeId
+                                 && x.oneStripBreedingMaterialWeight === organism.oneStripBreedingMaterialWeight);
+                
                 if (original.length === 1) {
                     result.push(organism);
                 }
@@ -1252,16 +1255,16 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
     private initTableFormGroups(): void {
         this.medicineGroup = new FormGroup({
             medicineTypeControl: new FormControl(null, Validators.required),
-            gramsControl: new FormControl(null, [Validators.required, TLValidators.number(0)])
+            gramsControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 0)])
         });
 
         this.producedFishOrganismGroup = new FormGroup({
             installationTypeIdControl: new FormControl(null, Validators.required),
             fishTypeIdControl: new FormControl(null, Validators.required),
-            fishLarvaeCountControl: new FormControl(null, TLValidators.number(0)),
-            oneStripBreedingMaterialCountControl: new FormControl(null, TLValidators.number(0)),
+            fishLarvaeCountControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
+            oneStripBreedingMaterialCountControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
             oneStripBreedingMaterialWeightControl: new FormControl(null, TLValidators.number(0)),
-            oneYearBreedingMaterialCountControl: new FormControl(null, TLValidators.number(0)),
+            oneYearBreedingMaterialCountControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
             oneYearBreedingMaterialWeightControl: new FormControl(null, TLValidators.number(0)),
             forConsumptionControl: new FormControl(null, TLValidators.number(0)),
             caviarForConsumptionControl: new FormControl(null, TLValidators.number(0))
@@ -1270,10 +1273,10 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         this.soldFishOrganismGroup = new FormGroup({
             installationTypeIdControl: new FormControl(null, Validators.required),
             fishTypeIdControl: new FormControl(null, Validators.required),
-            fishLarvaeCountControl: new FormControl(null, TLValidators.number(0)),
-            oneStripBreedingMaterialCountControl: new FormControl(null, TLValidators.number(0)),
+            fishLarvaeCountControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
+            oneStripBreedingMaterialCountControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
             oneStripBreedingMaterialWeightControl: new FormControl(null, TLValidators.number(0)),
-            oneYearBreedingMaterialCountControl: new FormControl(null, TLValidators.number(0)),
+            oneYearBreedingMaterialCountControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
             oneYearBreedingMaterialWeightControl: new FormControl(null, TLValidators.number(0)),
             forConsumptionControl: new FormControl(null, TLValidators.number(0)),
             caviarForConsumptionControl: new FormControl(null, TLValidators.number(0))
@@ -1282,9 +1285,9 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         this.unrealizedFishOrganismGroup = new FormGroup({
             installationTypeIdControl: new FormControl(null, Validators.required),
             fishTypeIdControl: new FormControl(null, Validators.required),
-            oneStripBreedingMaterialCountControl: new FormControl(null, TLValidators.number(0)),
+            oneStripBreedingMaterialCountControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
             oneStripBreedingMaterialWeightControl: new FormControl(null, TLValidators.number(0)),
-            oneYearBreedingMaterialCountControl: new FormControl(null, TLValidators.number(0)),
+            oneYearBreedingMaterialCountControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
             oneYearBreedingMaterialWeightControl: new FormControl(null, TLValidators.number(0)),
             forConsumptionControl: new FormControl(null, TLValidators.number(0)),
             caviarForConsumptionControl: new FormControl(null, TLValidators.number(0))
@@ -1293,12 +1296,12 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         this.broodstockGroup = new FormGroup({
             installationTypeIdControl: new FormControl(null, Validators.required),
             fishTypeIdControl: new FormControl(null, Validators.required),
-            maleCountControl: new FormControl(null, TLValidators.number(0)),
+            maleCountControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
             maleWeightControl: new FormControl(null, TLValidators.number(0)),
-            maleAgeControl: new FormControl(null, TLValidators.number(0)),
-            femaleCountControl: new FormControl(null, TLValidators.number(0)),
+            maleAgeControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
+            femaleCountControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
             femaleWeightControl: new FormControl(null, TLValidators.number(0)),
-            femaleAgeControl: new FormControl(null, TLValidators.number(0))
+            femaleAgeControl: new FormControl(null, TLValidators.number(0, undefined, 0))
         });
 
         this.installationSystemFullGroup = new FormGroup({

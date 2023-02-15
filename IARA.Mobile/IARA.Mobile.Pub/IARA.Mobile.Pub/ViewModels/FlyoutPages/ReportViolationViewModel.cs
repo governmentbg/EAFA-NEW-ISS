@@ -7,6 +7,7 @@ using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Pub.Application.DTObjects.ReportViolations;
 using IARA.Mobile.Pub.ViewModels.Base;
 using IARA.Mobile.Pub.Views.FlyoutPages;
@@ -89,8 +90,8 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
                 SignalType = SignalType.Value,
                 Location = Location.HasValue ? new LocationDto
                 {
-                    Latitude = Location.Value.Latitude,
-                    Longitude = Location.Value.Longitude
+                    DMSLatitude = DMSType.FromDouble(Location.Value.Latitude).ToString(),
+                    DMSLongitude = DMSType.FromDouble(Location.Value.Longitude).ToString()
                 } : null
             });
             await TLLoadingHelper.HideFullLoadingScreen();

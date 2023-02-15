@@ -148,7 +148,7 @@ export class SubmittedApplicationsProcessingService extends BaseAuditService imp
         throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
     }
 
-    public confirmNoErrorsAndFillAdmAct(id: number, pageCode?: PageCodeEnum): Observable<void> {
+    public confirmNoErrorsAndFillAdmAct(id: number, model: any, pageCode?: PageCodeEnum): Observable<void> {
         throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
     }
 }

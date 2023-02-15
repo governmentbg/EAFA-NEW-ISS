@@ -65,6 +65,9 @@ export class OriginDeclarationFishDTO {
     public comments?: string;
 
     @StrictlyTyped(Boolean)
+    public fromPreviousTrip?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isActive?: boolean;
 
     @StrictlyTyped(Boolean)

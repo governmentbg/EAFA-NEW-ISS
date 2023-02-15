@@ -16,7 +16,7 @@ import { CatchZoneNomenclatureDTO } from '@app/models/generated/dtos/CatchZoneNo
 import { WaterTypesEnum } from '@app/enums/water-types.enum';
 import { FishNomenclatureDTO } from '@app/models/generated/dtos/FishNomenclatureDTO';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
-
+import { ShipLogBookPageDataService } from '../ship-log-book/services/ship-log-book-page-data.service';
 
 @Component({
     selector: 'catch-aquatic-organism-types-array',
@@ -25,6 +25,9 @@ import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 export class CatchAquaticOrganismTypesArrayComponent extends CustomFormControl<CatchRecordFishDTO[]> implements OnInit {
     @Input()
     public service!: ICatchesAndSalesService;
+
+    @Input()
+    public shipLogBookPageDataService!: ShipLogBookPageDataService;
 
     @Input()
     public waterType!: WaterTypesEnum;
@@ -37,7 +40,7 @@ export class CatchAquaticOrganismTypesArrayComponent extends CustomFormControl<C
     public fishSizes: NomenclatureDTO<number>[] = [];
     public catchTypes: NomenclatureDTO<number>[] = [];
 
-    private translationService: FuseTranslationLoaderService;
+    private readonly translationService: FuseTranslationLoaderService;
     private readonly loader!: FormControlDataLoader;
 
     private commonNomenclaturesService: CommonNomenclatures;
@@ -72,7 +75,10 @@ export class CatchAquaticOrganismTypesArrayComponent extends CustomFormControl<C
 
     public addCatchAquaticOrganismTypeControl(): void {
         const catchAquaticOrganismType: CatchRecordFishDTO = new CatchRecordFishDTO({
-            isActive: true
+            id: this.shipLogBookPageDataService.nextNewCatchRecordId,
+            isActive: true,
+            unloadedQuantityKg: 0,
+            unloadedInOtherTripQuantityKg: 0
         });
 
         const control: FormControl = new FormControl(catchAquaticOrganismType);

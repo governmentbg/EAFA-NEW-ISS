@@ -20,5 +20,5 @@ export interface IApplicationsActionsService {
     assignApplicationViaAccessCode(accessCode: string): Observable<AssignedApplicationInfoDTO>;
     assignApplicationViaUserId(applicationId: number, userId: number): Observable<AssignedApplicationInfoDTO>;
     editApplicationDataAndStartRegixChecks(model: IApplicationRegister): Observable<void>;
-    confirmNoErrorsAndFillAdmAct(id: number, pageCode?: PageCodeEnum): Observable<void>;
+    confirmNoErrorsAndFillAdmAct(id: number, model?: any, pageCode?: PageCodeEnum): Observable<void>;
 }

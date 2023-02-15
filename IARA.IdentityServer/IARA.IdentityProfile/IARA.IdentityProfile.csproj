@@ -19,15 +19,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.7" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" />
     <PackageReference Include="TechnoLogica.Authentication.Common" Version="1.0.39" />
     <PackageReference Include="TL.Dependecy.Injection" Version="22.297.44704" />
+    <PackageReference Include="TL.Logging" Version="23.45.48090" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\IARA.ISS.Web-DEV\IARA.Common\IARA.Common.csproj" />
-    <ProjectReference Include="..\..\IARA.ISS.Web-DEV\IARA.Logging.Abstractions\IARA.Logging.Abstractions.csproj" />
-    <ProjectReference Include="..\..\IARA.ISS.Web-DEV\IARA.Logging\IARA.Logging.csproj" />
     <ProjectReference Include="..\..\IARA.ISS.Web-DEV\IARA.Security\IARA.Security.csproj" />
   </ItemGroup>
 

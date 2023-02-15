@@ -3931,6 +3931,7 @@
         'ship-page-origin-declaration-aquatic-organism-type': 'Вид воден организъм',
         'ship-page-origin-declaration-catch-state': 'Състояние',
         'ship-page-origin-declaration-catch-presentation': 'Представяне',
+        'ship-page-origin-declaration-has-catch-from-previous-trip': 'Улов от предишен рейс',
         'ship-page-origin-declaration-is-processed-on-board': 'Преработена на борда на кораба',
         'ship-page-origin-declaration-quantity-kg': 'Количество',
         'ship-page-origin-declaration-unloaded-processed-quantity-kg': 'Разтоварен преработен улов',
