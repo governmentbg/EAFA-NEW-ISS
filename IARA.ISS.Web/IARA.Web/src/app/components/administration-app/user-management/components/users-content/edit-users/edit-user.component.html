@@ -110,7 +110,7 @@
                              [formGroup]="userRoleForm"
                              [options]="roles"
                              dataType="nomenclature"
-                             [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                             [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </data-column>
                 <data-column columnName="{{ 'users-page.valid-from' | tlTranslate }}"
                              propertyName="accessValidFrom"

@@ -247,5 +247,7 @@
      * */
     Delivery,
 
+    FVMS,
+
     migrate
 }

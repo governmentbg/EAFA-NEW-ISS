@@ -28,7 +28,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             bool showUnloadedQuantity = false,
             bool showOriginShip = false,
             bool showAverageSize = false,
-            bool showFishSex = false
+            bool showFishSex = false,
+            bool showType = true
         )
         {
             Inspection = inspection;
@@ -38,6 +39,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             ShowOriginShip = showOriginShip;
             ShowAverageSize = showAverageSize;
             ShowFishSex = showFishSex;
+            ShowType = showType;
 
             AddCatch = CommandBuilder.CreateFrom(OnAddCatch);
             RemoveCatch = CommandBuilder.CreateFrom<CatchInspectionViewModel>(OnRemoveCatch);
@@ -53,6 +55,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public bool ShowOriginShip { get; }
         public bool ShowAverageSize { get; }
         public bool ShowFishSex { get; }
+        public bool ShowType { get; }
 
         [DuplicateMarketCatches(ErrorMessageResourceName = "DuplicateCatches")]
         public ValidStateValidatableTable<CatchInspectionViewModel> Catches { get; set; }

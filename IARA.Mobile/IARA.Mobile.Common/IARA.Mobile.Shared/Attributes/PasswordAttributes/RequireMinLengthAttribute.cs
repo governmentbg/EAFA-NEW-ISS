@@ -4,7 +4,7 @@
     {
         public int MinLength { get; }
         public RequireMinLengthAttribute(int minLength)
-            : base(@".{" + minLength + ",}")
+            : base(".{" + minLength + ",}")
         {
             MinLength = minLength;
         }

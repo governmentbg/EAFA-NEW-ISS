@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application.DTObjects.Common.API;
+﻿using IARA.Mobile.Application.DTObjects.Common.API;
 using IARA.Mobile.Application.DTObjects.Profile.API;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
@@ -12,12 +6,19 @@ using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API;
 using IARA.Mobile.Pub.Application.Interfaces.Utilities;
 using IARA.Mobile.Pub.Domain.Enums;
+using IARA.Mobile.Pub.Utilities;
 using IARA.Mobile.Pub.ViewModels.Base;
 using IARA.Mobile.Pub.ViewModels.Controls.PersonView;
 using IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments;
 using IARA.Mobile.Pub.Views.FlyoutPages;
 using IARA.Mobile.Pub.Views.FlyoutPages.Payments;
 using IARA.Mobile.Shared.Menu;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
@@ -324,10 +325,11 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
                             List<ItemViewModel> items = new List<ItemViewModel>();
                             foreach (FishingTicketRequestDto item in tickets)
                             {
+                                string code = FishingTicketsTransaction.GetTicketTypeCodeById(item.TypeId);
                                 items.Add(new ItemViewModel
                                 {
                                     Name = GetPersonFullName(item.Person),
-                                    Description = FishingTicketsTransaction.GetTicketTypeNameById(item.TypeId),
+                                    Description = NomenclatureTranslator.MapTicketTypeTranslation(code),
                                     Price = item.Price,
                                 });
                             }

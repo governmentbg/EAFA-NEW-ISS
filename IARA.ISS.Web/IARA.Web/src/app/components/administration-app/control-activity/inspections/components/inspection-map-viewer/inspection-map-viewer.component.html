@@ -15,10 +15,17 @@
                                 formControlName="longitudeControl"
                                 label="{{ 'inspections.longitude' | tlTranslate }}">
                 </tl-coordinates>
+
+                <tl-icon-button [icon]="selectIcon"
+                                (buttonClicked)="toggleMapSelection()">
+                </tl-icon-button>
             </div>
 
-            <div style="height:300px; max-height:400px">
-                <tl-map-viewer [mapOptions]="mapOptions"></tl-map-viewer>
+            <div [class]="'map ' + (selectIcon !== 'pin_drop' ? 'map-shadow' : '')"
+                 style="height:300px; max-height:400px">
+                <tl-map-viewer [mapOptions]="mapOptions"
+                               (clickPointMapCoordinatesEvent)="onMapClicked($event)">
+                </tl-map-viewer>
             </div>
         </div>
     </tl-card-content>

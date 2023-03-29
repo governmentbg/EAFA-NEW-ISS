@@ -74,6 +74,9 @@ export class ShipPagesAndDeclarationsTableComponent {
     public onAnnulShipLogBookPage: EventEmitter<ShipLogBookPageRegisterDTO> = new EventEmitter<ShipLogBookPageRegisterDTO>();
 
     @Output()
+    public onRestoreAnnulledShipLogBookPage: EventEmitter<ShipLogBookPageRegisterDTO> = new EventEmitter<ShipLogBookPageRegisterDTO>();
+
+    @Output()
     public onEditShipLogBookPage: EventEmitter<ShipLogBookPageRegisterDTO> = new EventEmitter<ShipLogBookPageRegisterDTO>();
 
     @Output()
@@ -131,6 +134,10 @@ export class ShipPagesAndDeclarationsTableComponent {
 
     public onAnnulShipLogBookPageBtnClicked(shipPage: ShipLogBookPageRegisterDTO): void {
         this.onAnnulShipLogBookPage.emit(shipPage);
+    }
+
+    public onRestoreAnnulledShipLogBookPageBtnClicked(shipPage: ShipLogBookPageRegisterDTO): void {
+        this.onRestoreAnnulledShipLogBookPage.emit(shipPage);
     }
 
     public editShipLogBookPage(page: ShipLogBookPageRegisterDTO, viewMode: boolean): void {

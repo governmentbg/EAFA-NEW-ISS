@@ -462,6 +462,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             localInspection.HasJsonContent = true;
                             localInspection.IsLocal = false;
                             localInspection.LastUpdatedDate = DateTime.Now;
+                            localInspection.CreatedByCurrentUser = true;
 
                             context.Inspections.Update(localInspection);
                         }
@@ -556,6 +557,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         localInspection.JsonContent = JsonSerializer.Serialize(dto, typeof(TDto));
                         localInspection.HasJsonContent = true;
                         localInspection.LastUpdatedDate = DateTime.Now;
+                        localInspection.CreatedByCurrentUser = true;
 
                         context.Inspections.Update(localInspection);
                     }
@@ -758,7 +760,11 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         Dto = new FishingGearMarkDto
                         {
                             Id = fishingGearMark.Id,
-                            Number = fishingGearMark.Number,
+                            FullNumber = new PrefixInputDto
+                            {
+                                InputValue = fishingGearMark.Number,
+                                Prefix = fishingGearMark.Prefix,
+                            },
                             StatusId = fishingGearMark.StatusId,
                             CreatedOn = fishingGearMark.CreatedOn,
                             SelectedStatus = Enum.TryParse(status.Code, out FishingGearMarkStatus markStatus)
@@ -845,7 +851,11 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         Dto = new FishingGearMarkDto
                         {
                             Id = fishingGearMark.Id,
-                            Number = fishingGearMark.Number,
+                            FullNumber = new PrefixInputDto
+                            {
+                                InputValue = fishingGearMark.Number,
+                                Prefix = fishingGearMark.Prefix,
+                            },
                             StatusId = fishingGearMark.StatusId,
                             CreatedOn = fishingGearMark.CreatedOn,
                             SelectedStatus = Enum.TryParse(status.Code, out FishingGearMarkStatus markStatus)

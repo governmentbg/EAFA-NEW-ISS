@@ -263,10 +263,19 @@
                                        && row.data.firstSaleDocuments?.length === 0
                                        && row.data.admissionDeclarations?.length === 0"
                                 icon="ic-cancel"
-                                [size]="icIconSize"
-                                (buttonClicked)="onAnnulShipLogBookPageBtnClicked(row.data)"
                                 iconClass="accent-color"
-                                tooltipText="{{ 'catches-and-sales.anull-ship-log-book-page' | tlTranslate }}">
+                                tooltipText="{{ 'catches-and-sales.anull-ship-log-book-page' | tlTranslate }}"
+                                [size]="icIconSize"
+                                (buttonClicked)="onAnnulShipLogBookPageBtnClicked(row.data)">
+                </tl-icon-button>
+
+                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended
+                                       && row.data.status === logBookPageStatusesEnum.Canceled
+                                       && _pagesPermissions.canCancelShipLogBookRecords"
+                                icon="restore"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'catches-and-sales.restore-annulled-ship-log-book-page' | tlTranslate }}"
+                                (buttonClicked)="onRestoreAnnulledShipLogBookPageBtnClicked(row.data)">
                 </tl-icon-button>
 
                 <button *ngIf="!row.data.isLogBookFinishedOrSuspended
@@ -276,8 +285,8 @@
                                && showDocumentActionButtons"
                         mat-icon-button
                         color="accent"
-                        [matMenuTriggerFor]="menu"
-                        matTooltip="{{ 'catches-and-sales.document-attachment' | tlTranslate }}">
+                        matTooltip="{{ 'catches-and-sales.document-attachment' | tlTranslate }}"
+                        [matMenuTriggerFor]="menu">
                     <tl-icon icon="fa-plus-circle" size="1.5" iconColor="accent"></tl-icon>
                 </button>
                 <mat-menu #menu="matMenu">
@@ -300,18 +309,18 @@
 
                 <tl-icon-button *ngIf="row.data.status !== logBookPageStatusesEnum.Missing"
                                 icon="visibility"
-                                (buttonClicked)="editShipLogBookPage(row.data, true)"
                                 iconClass="accent-color"
-                                tooltipText="{{ 'catches-and-sales.view-ship-log-book-page' | tlTranslate }}">
+                                tooltipText="{{ 'catches-and-sales.view-ship-log-book-page' | tlTranslate }}"
+                                (buttonClicked)="editShipLogBookPage(row.data, true)">
                 </tl-icon-button>
 
                 <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended
                                        && _pagesPermissions.canEditShipLogBookRecords
                                        && row.data.status !== logBookPageStatusesEnum.Canceled"
                                 icon="edit"
-                                (buttonClicked)="editShipLogBookPage(row.data, false)"
                                 iconClass="accent-color"
-                                tooltipText="{{ 'catches-and-sales.edit-ship-log-book-page' | tlTranslate }}">
+                                tooltipText="{{ 'catches-and-sales.edit-ship-log-book-page' | tlTranslate }}"
+                                (buttonClicked)="editShipLogBookPage(row.data, false)">
                 </tl-icon-button>
             </div>
         </ng-template>

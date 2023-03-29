@@ -159,7 +159,10 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
             NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false
         ).subscribe({
             next: (fishes: FishNomenclatureDTO[]) => {
-                this.quotaFishes = fishes.filter(x => x.quotaId !== undefined && x.quotaId !== null);
+                this.quotaFishes = fishes.filter(x =>
+                    x.quotas !== undefined
+                    && x.quotas !== null
+                    && x.quotas.filter(x => x.isActive).length !== 0);
             }
         });
 

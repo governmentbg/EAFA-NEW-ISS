@@ -24,7 +24,7 @@
                                  formControlName="aquaticOrganismControl"
                                  label="{{ 'catches-and-sales.ship-page-catch-record-fish' | tlTranslate }}"
                                  tooltipResourceName="catches-and-sales.ship-page-catch-record-fish-helper"
-                                 [options]="aquaticOrganisms">
+                                 [groupedOptions]="aquaticOrganisms">
                 </tl-autocomplete>
                 <tl-input fxFlex="15"
                           formControlName="quantityKgControl"
@@ -44,14 +44,19 @@
                                  tooltipResourceName="catches-and-sales.ship-page-catch-record-catch-type-helper">
                 </tl-autocomplete>
             </div>
-            <div *ngIf="showStrugeonControls || showTurbotControls" 
-                 fxFlex="100" 
-                 fxLayout="row" 
+            <div fxFlex="100" fxLayout="row" *ngIf="aquaticOrganismNotInPermitLicenseWarning">
+                <mat-error class="warn-orange-color">
+                    * {{ 'catches-and-sales.ship-page-catch-record-fish-not-in-permit-license-warn' | tlTranslate }}
+                </mat-error>
+            </div>
+            <div *ngIf="showStrugeonControls || showTurbotControls"
+                 fxFlex="100"
+                 fxLayout="row"
                  fxLayoutAlign="space-between center"
                  fxLayoutGap="1em">
                 <div *ngIf="showStrugeonControls"
-                     [fxFlex]="showTurbotControls ? 50 : 100" 
-                     fxLayout="row" 
+                     [fxFlex]="showTurbotControls ? 50 : 100"
+                     fxLayout="row"
                      fxLayoutAlign="space-between center"
                      fxLayoutGap="1em">
                     <tl-select fxFlex="25"
@@ -126,7 +131,7 @@
                         </tl-popover-button>
                     </div>
                 </div>
-                <tl-input fxFlex="20"
+                <tl-input fxFlex="15"
                           formControlName="catchZoneControl"
                           label="{{ 'catches-and-sales.ship-page-catch-record-catch-zone' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.ship-page-catch-record-catch-zone-helper"
@@ -137,7 +142,7 @@
                           label="{{ 'catches-and-sales.ship-page-catch-record-third-country-catch-zone' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.ship-page-catch-record-third-country-catch-zone-helper">
                 </tl-input>
-                <tl-checkbox fxFlex="20"
+                <tl-checkbox fxFlex="30"
                              formControlName="isContinentalCatchControl"
                              label="{{ 'catches-and-sales.ship-page-catch-record-is-continental-catch' | tlTranslate }}"
                              tooltipResourceName="catches-and-sales.ship-page-catch-record-is-continental-catch-helper">

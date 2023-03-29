@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using IARA.Mobile.Application;
+﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.Extensions;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
@@ -15,6 +10,11 @@ using IARA.Mobile.Pub.Application.Interfaces.Utilities;
 using IARA.Mobile.Pub.Application.Transactions.Base;
 using IARA.Mobile.Pub.Domain.Entities.FishingTicket;
 using IARA.Mobile.Pub.Domain.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace IARA.Mobile.Pub.Application.Transactions
 {
@@ -46,12 +46,12 @@ namespace IARA.Mobile.Pub.Application.Transactions
             }
         }
 
-        public string GetTicketTypeNameById(int id)
+        public string GetTicketTypeCodeById(int id)
         {
             using (IAppDbContext context = ContextBuilder.CreateContext())
             {
                 return context.NTicketTypes
-                    .Where(x => x.Id == id && x.IsActive).Select(x => x.Name).First();
+                    .Where(x => x.Id == id && x.IsActive).Select(x => x.Code).First();
             }
         }
 
@@ -124,6 +124,22 @@ namespace IARA.Mobile.Pub.Application.Transactions
                 {
                     return result.Where(x => x.Code != nameof(TicketTypeEnum.UNDER14)).ToList();
                 }
+            }
+        }
+
+        public List<TicketTypeDto> GetTicketTypes()
+        {
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+                return context.NTicketTypes
+                    .Where(x => x.IsActive)
+                    .OrderBy(x => x.OrderNo)
+                    .Select(x => new TicketTypeDto
+                    {
+                        Id = x.Id,
+                        Code = x.Code,
+                        Name = x.Name
+                    }).ToList();
             }
         }
 

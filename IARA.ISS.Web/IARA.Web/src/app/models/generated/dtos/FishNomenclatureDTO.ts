@@ -2,7 +2,7 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { NomenclatureDTO } from './GenericNomenclatureDTO';
-import { QuotaSpiciesPortDTO } from './QuotaSpiciesPortDTO';
+import { FishQuotaDTO } from './FishQuotaDTO';
 import { FishFamilyTypesEnum } from '@app/enums/fish-family-types.enum'; 
 
 export class FishNomenclatureDTO extends NomenclatureDTO<number> {
@@ -16,17 +16,8 @@ export class FishNomenclatureDTO extends NomenclatureDTO<number> {
         }
     }
   
-    @StrictlyTyped(Number)
-    public quotaId?: number;
-
-    @StrictlyTyped(Date)
-    public quotaPeriodFrom?: Date;
-
-    @StrictlyTyped(Date)
-    public quotaPeriodTo?: Date;
-
-    @StrictlyTyped(QuotaSpiciesPortDTO)
-    public quotaSpiciesPermittedPortIds?: QuotaSpiciesPortDTO[];
+    @StrictlyTyped(FishQuotaDTO)
+    public quotas?: FishQuotaDTO[];
 
     @StrictlyTyped(Number)
     public familyType?: FishFamilyTypesEnum;

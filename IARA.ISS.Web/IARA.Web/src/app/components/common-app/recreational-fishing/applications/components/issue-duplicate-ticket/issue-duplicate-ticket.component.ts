@@ -20,6 +20,7 @@ import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO'
 import { TariffCodesEnum } from '@app/enums/tariff-codes.enum';
 import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
 import { IssueDuplicateTicketDialogParams } from '../../models/issue-duplicate-ticket-dialog-params.model';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'issue-duplicate-ticket',
@@ -33,6 +34,8 @@ export class IssueDuplicateTicketComponent implements OnInit, AfterViewInit, IDi
 
     public paymentSummary!: PaymentSummaryDTO;
     public ticketNumApproved: boolean = true;
+
+    public getControlErrorLabelTextForTicketNumberMethod: GetControlErrorLabelTextCallback  = this.getControlErrorLabelTextForTicketNumber.bind(this);
 
     @ViewChild('stepper')
     private stepper!: MatStepper;
@@ -149,7 +152,7 @@ export class IssueDuplicateTicketComponent implements OnInit, AfterViewInit, IDi
         }
     }
 
-    public getControlErrorLabelTextForTicketNumber(controlName: string, error: Record<string, unknown>, errorCode: string): TLError | undefined {
+    public getControlErrorLabelTextForTicketNumber(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         if (errorCode === 'alreadyInUse') {
             return new TLError({
                 text: this.translate.getValue('recreational-fishing.ticket-number-already-in-use'),

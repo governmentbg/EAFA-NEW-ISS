@@ -7,7 +7,7 @@ import { throttleTime } from 'rxjs/operators';
 })
 export class TLDebounceClickDirective implements OnInit, OnDestroy {
     @Input()
-    public debounceTime: number = 500;
+    public debounceTime: number = 700;
 
     @Output()
     public tlDebounceClick: EventEmitter<Event> = new EventEmitter<Event>();

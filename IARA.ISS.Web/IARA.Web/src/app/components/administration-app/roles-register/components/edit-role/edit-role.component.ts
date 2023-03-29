@@ -18,6 +18,7 @@ import { TLError } from '@app/shared/components/input-controls/models/tl-error.m
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { IRolesRegisterService } from '@app/interfaces/administration-app/roles-register.interface';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 type TreeStatus = 'collapsed' | 'expanded' | 'disabled';
 
@@ -44,6 +45,8 @@ export class EditRoleComponent implements OnInit, AfterViewInit, IDialogComponen
 
     public permissionGroups: PermissionGroupTreeDTO[] = [];
     public allPermissionGroups: PermissionGroupTreeDTO[] = [];
+
+    public getDatesOverlappingErrorTextMethod: GetControlErrorLabelTextCallback = this.getDatesOverlappingErrorText.bind(this);
 
     @ViewChild('usersTable')
     private readonly usersTable!: TLDataTableComponent;
@@ -184,7 +187,7 @@ export class EditRoleComponent implements OnInit, AfterViewInit, IDialogComponen
         this.permissionGroups = [...this.permissionGroups];
     }
 
-    public getDatesOverlappingErrorText(controlName: string, error: Record<string, unknown>, errorCode: string): TLError | undefined {
+    public getDatesOverlappingErrorText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'userIdControl') {
             if (errorCode === 'datesOverlap') {
                 return new TLError({

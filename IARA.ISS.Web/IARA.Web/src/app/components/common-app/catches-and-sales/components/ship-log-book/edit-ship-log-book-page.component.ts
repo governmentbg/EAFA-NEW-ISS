@@ -1,6 +1,6 @@
-﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Moment } from 'moment';
@@ -54,6 +54,13 @@ import { OnBoardCatchRecordFishDTO } from '@app/models/generated/dtos/OnBoardCat
 import { CatchZoneNomenclatureDTO } from '@app/models/generated/dtos/CatchZoneNomenclatureDTO';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { ShipLogBookPageDataService } from './services/ship-log-book-page-data.service';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { SystemParametersService } from '@app/services/common-app/system-parameters.service';
+import { LockShipLogBookPeriodsModel } from './models/lock-ship-log-book-periods.model';
+import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
+import { CatchesAndSalesUtils } from '@app/components/common-app/catches-and-sales/utils/catches-and-sales.utils';
+import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
+import { AuthService } from '@app/shared/services/auth.service';
 
 const PERCENT_TOLERANCE: number = 10;
 const QUALITY_DIFF_VALIDATOR_NAME: string = 'quantityDifferences';
@@ -65,7 +72,7 @@ export const DEFAULT_CATCH_STATE_CODE: FishCatchStateCodesEnum = FishCatchStateC
     templateUrl: './edit-ship-log-book-page.component.html',
     providers: [ShipLogBookPageDataService]
 })
-export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDialogComponent {
+export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     public readonly today: Date = new Date();
     public readonly pageCode: PageCodeEnum = PageCodeEnum.ShipLogBookPage;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
@@ -98,6 +105,8 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
 
     public allCatchIsTransboardedValue: boolean = false;
 
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
+
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
 
@@ -113,6 +122,10 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
     private selectedCatchesFromPreviousTrips: OnBoardCatchRecordFishDTO[] = [];
     private hasMissingPagesRangePermission: boolean = false;
 
+    private lockShipLogBookPeriods!: LockShipLogBookPeriodsModel;
+    private logBookPageEditExceptions: LogBookPageEditExceptionDTO[] = [];
+    private currentUserId: number;
+
     private readonly editCatchRecordDialog: TLMatDialog<EditCatchRecordComponent>;
     private readonly editDeclarationOfOriginDialog: TLMatDialog<EditOriginDeclarationComponent>;
     private readonly previousTripCatchRecordsDialog: TLMatDialog<PreviousTripsCatchRecordsComponent>;
@@ -122,6 +135,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
     private readonly dateDifferencePipe: TLDateDifferencePipe;
     private readonly datePipe: DatePipe;
     private readonly shipLogBookPageDataService: ShipLogBookPageDataService;
+    private readonly systemParametersService: SystemParametersService;
 
     public constructor(
         translate: FuseTranslationLoaderService,
@@ -133,7 +147,9 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
         snackbar: MatSnackBar,
         dateDifferencePipe: TLDateDifferencePipe,
         datePipe: DatePipe,
-        shipLogBookPageDataService: ShipLogBookPageDataService
+        shipLogBookPageDataService: ShipLogBookPageDataService,
+        systemParametersService: SystemParametersService,
+        authService: AuthService
     ) {
         this.translationService = translate;
         this.commonNomenclaturesService = commonNomenclaturesService;
@@ -141,38 +157,55 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
         this.dateDifferencePipe = dateDifferencePipe;
         this.datePipe = datePipe;
         this.shipLogBookPageDataService = shipLogBookPageDataService;
+        this.systemParametersService = systemParametersService;
 
         this.editCatchRecordDialog = editCatchRecordDialog;
         this.editDeclarationOfOriginDialog = editDeclarationOfOriginDialog;
         this.confirmDialog = confirmDialog;
         this.previousTripCatchRecordsDialog = previousTripCatchRecordsDialog;
+
+        this.currentUserId = authService.userRegistrationInfo!.id!;
     }
 
     public async ngOnInit(): Promise<void> {
-        const nomenclatures: (NomenclatureDTO<number> | ShipNomenclatureDTO | FishingGearRegisterNomenclatureDTO | FishNomenclatureDTO)[][] = await forkJoin(
+        const subscriptions: Observable<(NomenclatureDTO<number> | ShipNomenclatureDTO | FishingGearRegisterNomenclatureDTO | FishNomenclatureDTO)[] | LogBookPageEditExceptionDTO[]>[] = [
             NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Ships, this.commonNomenclaturesService.getShips.bind(this.commonNomenclaturesService), false
-            ),
+                NomenclatureTypes.Ships, this.commonNomenclaturesService.getShips.bind(this.commonNomenclaturesService), false),
             NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Ports, this.commonNomenclaturesService.getPorts.bind(this.commonNomenclaturesService), false
-            ),
+                NomenclatureTypes.Ports, this.commonNomenclaturesService.getPorts.bind(this.commonNomenclaturesService), false),
             NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Fishes, this.commonNomenclaturesService.getFishTypes.bind(this.commonNomenclaturesService), false
-            ),
+                NomenclatureTypes.Fishes, this.commonNomenclaturesService.getFishTypes.bind(this.commonNomenclaturesService), false),
             NomenclatureStore.instance.getNomenclature<number>(
                 NomenclatureTypes.CatchStates, this.service.getCatchStates.bind(this.service), false),
             NomenclatureStore.instance.getNomenclature<number>(
                 NomenclatureTypes.CatchPresentations, this.commonNomenclaturesService.getCatchPresentations.bind(this.commonNomenclaturesService), false),
             NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CatchZones, this.commonNomenclaturesService.getCatchZones.bind(this.commonNomenclaturesService), false)
-        ).toPromise();
+                NomenclatureTypes.CatchZones, this.commonNomenclaturesService.getCatchZones.bind(this.commonNomenclaturesService), false),
+        ];
+
+        if (!this.viewMode) {
+            subscriptions.push(this.service.getLogBookPageEditExceptions());
+        }
+        const nomenclatures = await forkJoin(subscriptions).toPromise();
 
         this.ships = nomenclatures[0] as ShipNomenclatureDTO[];
-        this.ports = nomenclatures[1];
+        this.ports = nomenclatures[1] as NomenclatureDTO<number>[];
         this.aquaticOrganisms = nomenclatures[2] as FishNomenclatureDTO[];
         this.catchStates = nomenclatures[3] as NomenclatureDTO<number>[];
         this.catchPresentations = nomenclatures[4] as NomenclatureDTO<number>[];
         this.catchZones = nomenclatures[5] as CatchZoneNomenclatureDTO[];
+
+        if (!this.viewMode) {
+            this.logBookPageEditExceptions = nomenclatures[6] as LogBookPageEditExceptionDTO[];
+        }
+
+        const systemParameters: SystemPropertiesDTO = await this.systemParametersService.systemParameters();
+
+        this.lockShipLogBookPeriods = new LockShipLogBookPeriodsModel({
+            lockShipUnder10MLogBookAfterDays: systemParameters.lockShipUnder10MLogBookAfterDays,
+            lockShip10M12MLogBookAfterHours: systemParameters.lockShip10M12MLogBookAfterHours,
+            lockShipOver12MLogBookAfterHours: systemParameters.lockShipOver12MLogBookAfterHours
+        });
 
         if (this.id !== null && this.id !== undefined) {
             this.isAdd = false;
@@ -194,99 +227,6 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             this.fishingGearsRegister = await this.service.getFishingGearsRegister(this.model.permitLicenseId!).toPromise();
             this.fillForm();
         }
-    }
-
-    public ngAfterViewInit(): void {
-        this.form.get('fishingGearRegisterControl')!.valueChanges.subscribe({
-            next: (value: FishingGearRegisterNomenclatureDTO | string | undefined) => {
-                if (value instanceof FishingGearRegisterNomenclatureDTO) {
-                    const fishingGearsCount: number | undefined = this.form.get('fishingGearCountControl')!.value;
-                    if (fishingGearsCount === null || fishingGearsCount === undefined) {
-                        this.form.get('fishingGearCountControl')!.setValue(value.gearCount);
-                    }
-
-                    if (value.hasHooks === true) {
-                        this.showHooksCountField = true;
-                        this.form.get('fishingGearHookCountControl')!.setValidators([Validators.required, TLValidators.number(0)]);
-                        this.form.get('fishingGearHookCountControl')!.markAsPending();
-
-                        this.form.get('fishingGearHookCountControl')!.setValue(value.hooksCount);
-
-                        if (this.viewMode) {
-                            this.form.get('fishingGearHookCountControl')!.disable();
-                        }
-                    }
-                    else {
-                        this.showHooksCountField = false;
-                        this.form.get('fishingGearHookCountControl')!.clearValidators();
-                        this.form.get('fishingGearHookCountControl')!.reset();
-                    }
-
-                    if (value.isForMutualFishing === true) {
-                        this.showPartnerShipField = true;
-                        this.form.get('partnerShipControl')!.setValidators(Validators.required);
-                        this.form.get('partnerShipControl')!.markAsPending();
-
-                        if (this.viewMode) {
-                            this.form.get('partnerShipControl')!.disable();
-                        }
-                    }
-                    else {
-                        this.showPartnerShipField = false;
-                        this.form.get('partnerShipControl')!.clearValidators();
-                    }
-                }
-                else {
-                    if (value === null || value === undefined) {
-                        this.form.get('fishingGearCountControl')!.reset();
-                        this.form.get('fishingGearHookCountControl')!.reset();
-                    }
-
-                    this.showHooksCountField = false;
-                    this.showPartnerShipField = false;
-                }
-            }
-        });
-
-        this.form.get('fishTripStartDateTimeControl')!.valueChanges.subscribe({
-            next: (startDate: Moment | null | undefined) => {
-                if (startDate !== null && startDate !== undefined) {
-                    const endDate: Moment | null | undefined = this.form.get('fishTripEndDateTimeControl')!.value;
-                    if (endDate !== null && endDate !== undefined) {
-                        const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate.toDate(), endDate.toDate());
-                        const daysAtSeaValue: string = this.getDaysAtSeaValue(difference);
-
-                        this.form.get('daysAtSeaCountControl')!.setValue(daysAtSeaValue);
-                    }
-                    else {
-                        this.form.get('daysAtSeaCountControl')!.setValue(undefined);
-                    }
-                }
-                else {
-                    this.form.get('daysAtSeaCountControl')!.setValue(undefined);
-                }
-            }
-        });
-
-        this.form.get('fishTripEndDateTimeControl')!.valueChanges.subscribe({
-            next: (endDate: Moment | null | undefined) => {
-                if (endDate !== null && endDate !== undefined) {
-                    const startDate: Moment | null | undefined = this.form.get('fishTripStartDateTimeControl')!.value;
-                    if (startDate !== null && startDate !== undefined) {
-                        const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate.toDate(), endDate.toDate());
-                        const daysAtSeaValue: string = this.getDaysAtSeaValue(difference);
-
-                        this.form.get('daysAtSeaCountControl')!.setValue(daysAtSeaValue);
-                    }
-                    else {
-                        this.form.get('daysAtSeaCountControl')!.setValue(undefined);
-                    }
-                }
-                else {
-                    this.form.get('daysAtSeaCountControl')!.setValue(undefined);
-                }
-            }
-        });
     }
 
     public setData(data: EditShipLogBookPageDialogParams, buttons: DialogWrapperData): void {
@@ -322,6 +262,9 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                 this.service.editShipLogBookPage(this.model).subscribe({
                     next: () => {
                         dialogClose(this.model);
+                    },
+                    error: (response: HttpErrorResponse) => {
+                        this.addOrEditShipLogBookPageErrorResponseHandler(response);
                     }
                 });
             }
@@ -344,8 +287,20 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             service: this.service,
             viewMode: viewMode,
             waterType: this.model.permitLicenseWaterType!,
+            permitLicenseAquaticOrganismTypeIds: this.model.permitLicenseAquaticOrganismTypeIds ?? [],
             shipLogBookPageDataService: this.shipLogBookPageDataService
         });
+
+        const tripStartDate: Moment | null | undefined = this.form.get('fishTripStartDateTimeControl')!.value;
+        const tripEndDate: Moment | null | undefined = this.form.get('fishTripEndDateTimeControl')!.value;
+
+        if (tripStartDate !== null && tripStartDate !== undefined) {
+            data.tripStartDateTime = tripStartDate.toDate();
+        }
+
+        if (tripEndDate !== null && tripEndDate !== undefined) {
+            data.tripEndDateTime = tripEndDate.toDate();
+        }
 
         if (catchRecord === undefined) {
             title = this.translationService.getValue('catches-and-sales.add-ship-page-catch-record');
@@ -396,7 +351,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
 
                     this.removeInactiveCatchRecordFishesFromOriginDeclaration(); // Да премахнем улов, ако има нужда, от декларацията за произход - ако има изтрит улов от риболовната операция
 
-                    this.form.updateValueAndValidity({ emitEvent: false });
+                    this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
                 }
             }
         });
@@ -419,7 +374,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                     }
 
                     this.catchRecords = this.catchRecords.slice();
-                    this.form.updateValueAndValidity({ emitEvent: false });
+                    this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
 
                     if (row.data.catchRecordFishes !== null && row.data.catchRecordFishes !== undefined) { // Ако има улов, да се махне от декларация за разтоварване, ако го има там
                         this.removeInactiveCatchRecordFishesFromOriginDeclaration();
@@ -436,7 +391,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                     this.catchRecordsTable.softUndoDelete(row);
                     this.catchRecords = this.catchRecordsTable.rows;
                     this.catchRecords = this.catchRecords.slice();
-                    this.form.updateValueAndValidity({ emitEvent: false });
+                    this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
                 }
             }
         });
@@ -533,7 +488,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                     this.recalculateUnloadedQuantities();
 
                     this.form.markAsTouched();
-                    this.form.updateValueAndValidity({ emitEvent: false });
+                    this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
                 }
             }
         });
@@ -569,7 +524,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
         this.setDeclarationOfOriginHasCatchFromPreviousTripFlag();
         this.declarationOfOriginCatchRecords = this.declarationOfOriginCatchRecords.slice();
 
-        this.form.updateValueAndValidity({ emitEvent: false });
+        this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
     }
 
     public copyDeclarationOfOriginCatchRecord(declarationOfOriginCatchRecord: OriginDeclarationFishDTO): void {
@@ -600,7 +555,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                     this.declarationOfOriginCatchRecords.push(result);
                     this.declarationOfOriginCatchRecords = this.declarationOfOriginCatchRecords.slice();
                     this.form.markAsTouched();
-                    this.form.updateValueAndValidity({ emitEvent: false });
+                    this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
                 }
             }
         });
@@ -628,7 +583,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             this.updateCatchRecordFishesUnloadedQuantityKg(declarationOfOriginCatchRecord.catchRecordFishId, declarationOfOriginCatchRecord.quantityKg!);
         }
 
-        this.form.updateValueAndValidity({ emitEvent: false });
+        this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
     }
 
     private updateCatchRecordFishesUnloadedQuantityKg(catchRecordFishId: number, quantityToRemoveFromUnloadedKg: number): void {
@@ -663,7 +618,9 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                 if (this.form.get('fishTripEndDateTimeControl')!.value !== null && this.form.get('fishTripEndDateTimeControl')!.value !== undefined) {
                     const maxDate: Date = (this.form.get('fishTripEndDateTimeControl')!.value as Moment).toDate();
                     const dateString: string = this.datePipe.transform(maxDate, 'dd.MM.YYYY HH:mm') ?? "";
-                    return new TLError({ text: `${this.translationService.getValue('validation.max')}: ${dateString}` });
+                    let messageText: string = this.translationService.getValue('validation.max');
+                    messageText = messageText[0].toUpperCase() + messageText.substr(1);
+                    return new TLError({ text: `${messageText}: ${dateString}` });
                 }
             }
         }
@@ -678,10 +635,16 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             }
             else if (errorCode === 'matDatetimePickerMin') {
                 if (this.form.get('fishTripStartDateTimeControl')!.value !== null && this.form.get('fishTripStartDateTimeControl')!.value !== undefined) {
-                    const maxDate: Date = (this.form.get('fishTripStartDateTimeControl')!.value as Moment).toDate();
-                    const dateString: string = this.datePipe.transform(maxDate, 'dd.MM.YYYY HH:mm') ?? "";
-                    return new TLError({ text: `${this.translationService.getValue('validation.min')}: ${dateString}` });
+                    const minDate: Date = (this.form.get('fishTripStartDateTimeControl')!.value as Moment).toDate();
+                    const dateString: string = this.datePipe.transform(minDate, 'dd.MM.YYYY HH:mm') ?? "";
+                    let messageText: string = this.translationService.getValue('validation.min');
+                    messageText = messageText[0].toUpperCase() + messageText.substr(1);
+                    return new TLError({ text: `${messageText}: ${dateString}` });
                 }
+            }
+            else if (errorCode === 'logBookPageDateLocked') {
+                const messageText: string = this.translationService.getValue('catches-and-sales.ship-page-date-cannot-be-chosen-error');
+                return new TLError({ text: messageText });
             }
         }
         else if (controlName === 'unloadDateTimeControl') {
@@ -695,10 +658,14 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             }
             else if (errorCode === 'matDatetimePickerMin') {
                 if (this.form.get('fishTripEndDateTimeControl')!.value !== null && this.form.get('fishTripEndDateTimeControl')!.value !== undefined) {
-                    const maxDate: Date = (this.form.get('fishTripEndDateTimeControl')!.value as Moment).toDate();
-                    const dateString: string = this.datePipe.transform(maxDate, 'dd.MM.YYYY HH:mm') ?? "";
+                    const minDate: Date = (this.form.get('fishTripEndDateTimeControl')!.value as Moment).toDate();
+                    const dateString: string = this.datePipe.transform(minDate, 'dd.MM.YYYY HH:mm') ?? "";
                     return new TLError({ text: `${this.translationService.getValue('validation.min')}: ${dateString}` });
                 }
+            }
+            else if (errorCode === 'logBookPageDateLocked') {
+                const messageText: string = this.translationService.getValue('catches-and-sales.ship-page-date-cannot-be-chosen-error');
+                return new TLError({ text: messageText });
             }
         }
 
@@ -762,9 +729,8 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             const unloadPort: NomenclatureDTO<number> = this.ports.find(x => x.value === this.model.unloadPortId)!;
             this.form.get('unloadPortControl')!.setValue(unloadPort);
         }
-        else if (this.id !== null && this.id !== undefined && this.model.statusCode === LogBookPageStatusesEnum.Submitted) {
-            this.form.get('allCatchIsTransboardedControl')!.setValue(true);
-        }
+
+        this.form.get('allCatchIsTransboardedControl')!.setValue(this.model.allCatchIsTransboarded ?? false);
 
         this.form.get('noCatchUnloadedControl')!.setValue(this.model.hasNoUnloadedCatch ?? false);
 
@@ -794,7 +760,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             this.declarationOfOriginCatchRecords = this.declarationOfOriginCatchRecords.slice();
         });
 
-        this.form.updateValueAndValidity({ emitEvent: false });
+        this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
     }
 
     private buildForm(): void {
@@ -811,12 +777,12 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             fishingGearHookCountControl: new FormControl(undefined),
             partnerShipControl: new FormControl(),
 
-            fishTripStartDateTimeControl: new FormControl(undefined, Validators.required),
+            fishTripStartDateTimeControl: new FormControl(), // the validators are set right after the form is instantiated
             departurePortControl: new FormControl(undefined, Validators.required),
-            fishTripEndDateTimeControl: new FormControl(undefined, Validators.required),
+            fishTripEndDateTimeControl: new FormControl(), // the validators are set right after the form is instantiated
             arrivalPortControl: new FormControl(undefined, Validators.required),
             daysAtSeaCountControl: new FormControl(undefined, Validators.required),
-            unloadDateTimeControl: new FormControl(undefined, Validators.required),
+            unloadDateTimeControl: new FormControl(), // the validators are set right after the form is instantiated
             unloadPortControl: new FormControl(undefined, Validators.required),
 
             allCatchIsTransboardedControl: new FormControl(false),
@@ -831,37 +797,54 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             this.requiredOriginDeclarationIfCatchOnBoard()
         ]);
 
+        // set validators
+
+        this.setFishTripStartDateTimeControlValidators();
+        this.setFishTripEndDateTimeControlInitialValidators();
+        this.setUnloadDateTimeControlValidators();
+
+        // value changes
+
+        this.form.get('fishingGearRegisterControl')!.valueChanges.subscribe({
+            next: (value: FishingGearRegisterNomenclatureDTO | string | undefined) => {
+                this.onFishingGearRegisterChanged(value);
+            }
+        });
+
+        this.form.get('fishTripStartDateTimeControl')!.valueChanges.subscribe({
+            next: (startDate: Moment | null | undefined) => {
+                this.onFishTripStartDateTimeChanged(startDate);
+            }
+        });
+
+        this.form.get('departurePortControl')!.valueChanges.subscribe({
+            next: (departurePort: NomenclatureDTO<number> | string | null | undefined) => {
+                this.onDeparturePortChanged(departurePort);
+            }
+        });
+
+        this.form.get('fishTripEndDateTimeControl')!.valueChanges.subscribe({
+            next: (endDate: Moment | null | undefined) => {
+                this.onFishTripEndDateTimeChanged(endDate);
+            }
+        });
+
         this.form.get('allCatchIsTransboardedControl')!.valueChanges.subscribe({
             next: (value: boolean | undefined) => {
                 this.allCatchIsTransboardedValue = value ?? false;
-
-                if (value) {
-                    this.form.get('unloadDateTimeControl')!.clearValidators();
-                    this.form.get('unloadPortControl')!.clearValidators();
-                }
-                else {
-                    this.form.get('unloadDateTimeControl')!.setValidators(Validators.required);
-                    this.form.get('unloadPortControl')!.setValidators(Validators.required);
-                }
-
-                this.form.get('unloadDateTimeControl')!.markAsPending({ emitEvent: false });
-                this.form.get('unloadPortControl')!.markAsPending({ emitEvent: false });
-
-                if (this.viewMode) {
-                    this.form.get('unloadPortControl')!.disable();
-                }
+                this.changeUnloadingControlsValidators(this.allCatchIsTransboardedValue);
             }
         });
 
         this.form.get('noCatchUnloadedControl')!.valueChanges.subscribe({
-            next: () => {
-                this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+            next: (value: boolean) => {
+                this.onNoCatchUnloadedChanged(value);
             }
         });
 
         this.form.get('unloadDateTimeControl')!.valueChanges.subscribe({
             next: (value: Moment | undefined) => {
-                this.form.updateValueAndValidity({ emitEvent: false });
+                this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
             }
         });
     }
@@ -874,6 +857,7 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             id: this.model.id,
             pageNumber: this.form.get('pageNumberControl')!.value,
             logBookId: this.model.logBookId,
+            logBookTypeId: this.model.logBookTypeId,
             fillDate: this.form.get('fillDateControl')!.value,
             originDeclarationId: this.model.originDeclarationId,
 
@@ -957,97 +941,167 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
                 dialogClose(this.model);
             },
             error: (response: HttpErrorResponse) => {
-                const error: ErrorModel | undefined = response.error;
-
-                if (error?.code === ErrorCode.PageNumberNotInLogbook) {
-                    this.snackbar.open(this.translationService.getValue('catches-and-sales.ship-log-book-page-not-in-range-error'), undefined, {
-                        duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                        panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                    });
-                }
-                else if (error?.code === ErrorCode.PageNumberNotInLogBookLicense) {
-                    this.snackbar.open(
-                        this.translationService.getValue('catches-and-sales.ship-log-book-page-not-in-log-book-license-range-error'),
-                        undefined,
-                        {
-                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                        });
-                }
-                else if (error?.code === ErrorCode.LogBookPageAlreadySubmitted) {
-                    this.snackbar.open(this.translationService.getValue('catches-and-sales.ship-log-book-page-already-submitted-error'), undefined, {
-                        duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                        panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                    });
-                }
-                else if (error?.code === ErrorCode.LogBookPageAlreadySubmittedOtherLogBook) {
-                    const message: string = this.translationService.getValue('catches-and-sales.ship-log-book-page-already-submitted-other-logbook-error');
-                    this.snackbar.open(
-                        `${message}: ${error.messages[0]}`,
-                        undefined,
-                        {
-                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                        });
-                }
-                else if (error?.code === ErrorCode.MaxNumberMissingPagesExceeded) {
-                    if (error!.messages === null || error!.messages === undefined || error!.messages.length < 2) {
-                        throw new Error('In MaxNumberMissingPagesExceeded exception at least the last used page number and a number saying the difference should be passed in the messages property.');
-                    }
-
-                    const lastUsedPageNum: number = Number(error!.messages[0]);
-                    const diff: number = Number(error!.messages[1]);
-                    const pageToAdd: string = this.model.pageNumber!;
-
-                    // confirmation message
-
-                    let message: string = '';
-
-                    if (lastUsedPageNum === 0) { // няма добавени страници все още към този дневник
-                        const currentStartPage: number = Number(error!.messages[2]);
-
-                        const msg1: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-no-pages-first-message');
-                        const msg2: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-second-message');
-                        const msg3: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-third-message');
-                        const msg4: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-forth-message');
-                        const msg5: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-fifth-message');
-                        const msg6: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-sixth-message');
-
-                        message = `${msg1} ${currentStartPage} ${msg2} ${pageToAdd} ${msg3} ${diff} ${msg4}.\n\n${msg5} ${diff} ${msg6}.`;
-                    }
-                    else {
-                        const msg1: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-first-message');
-                        const msg2: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-second-message');
-                        const msg3: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-third-message');
-                        const msg4: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-forth-message');
-                        const msg5: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-fifth-message');
-                        const msg6: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-sixth-message');
-
-                        message = `${msg1} ${lastUsedPageNum} ${msg2} ${pageToAdd} ${msg3} ${diff} ${msg4}.\n\n${msg5} ${diff} ${msg6}.`;
-                    }
-
-                    // button label
-
-                    const btnMsg1: string = this.translationService.getValue('catches-and-sales.ship-log-book-page-permit-generate-missing-pages-first-part');
-                    const btnMsg2: string = this.translationService.getValue('catches-and-sales.ship-log-book-page-permit-generate-missing-pages-second-part');
-
-                    this.confirmDialog.open({
-                        title: this.translationService.getValue('catches-and-sales.ship-log-book-page-generate-missing-pages-permission-dialog-title'),
-                        message: message,
-                        okBtnLabel: `${btnMsg1} ${diff} ${btnMsg2}`,
-                        okBtnColor: 'warn'
-                    }).subscribe({
-                        next: (ok: boolean | undefined) => {
-                            this.hasMissingPagesRangePermission = ok ?? false;
-
-                            if (this.hasMissingPagesRangePermission) {
-                                this.addShipLogBookPage(dialogClose); // start add method again
-                            }
-                        }
-                    });
-                }
+                this.addOrEditShipLogBookPageErrorResponseHandler(response, dialogClose);
             }
         });
+    }
+
+    private addOrEditShipLogBookPageErrorResponseHandler(response: HttpErrorResponse, dialogClose?: DialogCloseCallback): void {
+        const error: ErrorModel | undefined = response.error;
+
+        if (error?.code === ErrorCode.PageNumberNotInLogbook) {
+            this.snackbar.open(this.translationService.getValue('catches-and-sales.ship-log-book-page-not-in-range-error'), undefined, {
+                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+            });
+        }
+        else if (error?.code === ErrorCode.PageNumberNotInLogBookLicense) {
+            this.snackbar.open(
+                this.translationService.getValue('catches-and-sales.ship-log-book-page-not-in-log-book-license-range-error'),
+                undefined,
+                {
+                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                });
+        }
+        else if (error?.code === ErrorCode.LogBookPageAlreadySubmitted) {
+            this.snackbar.open(this.translationService.getValue('catches-and-sales.ship-log-book-page-already-submitted-error'), undefined, {
+                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+            });
+        }
+        else if (error?.code === ErrorCode.LogBookPageAlreadySubmittedOtherLogBook) {
+            const message: string = this.translationService.getValue('catches-and-sales.ship-log-book-page-already-submitted-other-logbook-error');
+            this.snackbar.open(
+                `${message}: ${error.messages[0]}`,
+                undefined,
+                {
+                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                });
+        }
+        else if (error?.code === ErrorCode.MaxNumberMissingPagesExceeded) {
+            if (error!.messages === null || error!.messages === undefined || error!.messages.length < 2) {
+                throw new Error('In MaxNumberMissingPagesExceeded exception at least the last used page number and a number saying the difference should be passed in the messages property.');
+            }
+
+            const lastUsedPageNum: number = Number(error!.messages[0]);
+            const diff: number = Number(error!.messages[1]);
+            const pageToAdd: string = this.model.pageNumber!;
+
+            // confirmation message
+
+            let message: string = '';
+
+            if (lastUsedPageNum === 0) { // няма добавени страници все още към този дневник
+                const currentStartPage: number = Number(error!.messages[2]);
+
+                const msg1: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-no-pages-first-message');
+                const msg2: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-second-message');
+                const msg3: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-third-message');
+                const msg4: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-forth-message');
+                const msg5: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-fifth-message');
+                const msg6: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-sixth-message');
+
+                message = `${msg1} ${currentStartPage} ${msg2} ${pageToAdd} ${msg3} ${diff} ${msg4}.\n\n${msg5} ${diff} ${msg6}.`;
+            }
+            else {
+                const msg1: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-first-message');
+                const msg2: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-second-message');
+                const msg3: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-third-message');
+                const msg4: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-forth-message');
+                const msg5: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-fifth-message');
+                const msg6: string = this.translationService.getValue('catches-and-sales.transportation-page-generate-missing-pages-permission-sixth-message');
+
+                message = `${msg1} ${lastUsedPageNum} ${msg2} ${pageToAdd} ${msg3} ${diff} ${msg4}.\n\n${msg5} ${diff} ${msg6}.`;
+            }
+
+            // button label
+
+            const btnMsg1: string = this.translationService.getValue('catches-and-sales.ship-log-book-page-permit-generate-missing-pages-first-part');
+            const btnMsg2: string = this.translationService.getValue('catches-and-sales.ship-log-book-page-permit-generate-missing-pages-second-part');
+
+            this.confirmDialog.open({
+                title: this.translationService.getValue('catches-and-sales.ship-log-book-page-generate-missing-pages-permission-dialog-title'),
+                message: message,
+                okBtnLabel: `${btnMsg1} ${diff} ${btnMsg2}`,
+                okBtnColor: 'warn'
+            }).subscribe({
+                next: (ok: boolean | undefined) => {
+                    this.hasMissingPagesRangePermission = ok ?? false;
+
+                    if (this.hasMissingPagesRangePermission) {
+                        this.addShipLogBookPage(dialogClose!); // start add method again
+                    }
+                }
+            });
+        }
+        else if (error?.code === ErrorCode.CannotAddEditPageForShipUnder10M) {
+            let msg: string = '';
+            const hasNoUnloadedCatch: boolean = this.form.get('noCatchUnloadedControl')!.value ?? false;
+
+            if (hasNoUnloadedCatch) {
+                const msg1: string = this.translationService.getValue('catches-and-sales.ship-page-cannot-add-for-chosen-trip-end-date');
+                const msg2: string = this.translationService.getValue('catches-and-sales.ship-page-days-have-past-from-previous-month');
+                const msg3: string = this.translationService.getValue('catches-and-sales.ship-page-to-add-page-after-locked-period-contanct-admin');
+                msg = `${msg1} ${this.lockShipLogBookPeriods.lockShipUnder10MLogBookAfterDays} ${msg2}. ${msg3}.`;
+            }
+            else {
+                const msg1: string = this.translationService.getValue('catches-and-sales.ship-page-cannot-add-for-chosen-unloading-date');
+                const msg2: string = this.translationService.getValue('catches-and-sales.ship-page-days-have-past-from-previous-month');
+                const msg3: string = this.translationService.getValue('catches-and-sales.ship-page-to-add-page-after-locked-period-contanct-admin');
+                msg = `${msg1} ${this.lockShipLogBookPeriods.lockShipUnder10MLogBookAfterDays} ${msg2}. ${msg3}.`;
+            }
+
+            this.snackbar.open(msg, undefined, {
+                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+            });
+        }
+        else if (error?.code === ErrorCode.CannotAddEditPageForShip10M12M) {
+            let msg: string = '';
+            const hasNoUnloadedCatch: boolean = this.form.get('noCatchUnloadedControl')!.value ?? false;
+
+            if (hasNoUnloadedCatch) {
+                const msg1: string = this.translationService.getValue('catches-and-sales.ship-page-cannot-add-for-chosen-trip-end-date');
+                const msg2: string = this.translationService.getValue('catches-and-sales.ship-page-hours-have-past-from-trip-end-date');
+                const msg3: string = this.translationService.getValue('catches-and-sales.ship-page-to-add-page-after-locked-period-contanct-admin');
+                msg = `${msg1} ${this.lockShipLogBookPeriods.lockShip10M12MLogBookAfterHours} ${msg2}. ${msg3}.`;
+            }
+            else {
+                const msg1: string = this.translationService.getValue('catches-and-sales.ship-page-cannot-add-for-chosen-unloading-date');
+                const msg2: string = this.translationService.getValue('catches-and-sales.ship-page-hours-have-past-from-unloading');
+                const msg3: string = this.translationService.getValue('catches-and-sales.ship-page-to-add-page-after-locked-period-contanct-admin');
+                msg = `${msg1} ${this.lockShipLogBookPeriods.lockShip10M12MLogBookAfterHours} ${msg2}. ${msg3}.`;
+            }
+
+            this.snackbar.open(msg, undefined, {
+                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+            });
+        }
+        else if (error?.code === ErrorCode.CannotAddEditPageForShipOver12M) {
+            let msg: string = '';
+            const hasNoUnloadedCatch: boolean = this.form.get('noCatchUnloadedControl')!.value ?? false;
+
+            if (hasNoUnloadedCatch) {
+                const msg1: string = this.translationService.getValue('catches-and-sales.ship-page-cannot-add-for-chosen-trip-end-date');
+                const msg2: string = this.translationService.getValue('catches-and-sales.ship-page-hours-have-past-from-trip-end-date');
+                const msg3: string = this.translationService.getValue('catches-and-sales.ship-page-to-add-page-after-locked-period-contanct-admin');
+                msg = `${msg1} ${this.lockShipLogBookPeriods.lockShipOver12MLogBookAfterHours} ${msg2}. ${msg3}.`;
+            }
+            else {
+                const msg1: string = this.translationService.getValue('catches-and-sales.ship-page-cannot-add-for-chosen-unloading-date');
+                const msg2: string = this.translationService.getValue('catches-and-sales.ship-page-hours-have-past-from-unloading');
+                const msg3: string = this.translationService.getValue('catches-and-sales.ship-page-to-add-page-after-locked-period-contanct-admin');
+                msg = `${msg1} ${this.lockShipLogBookPeriods.lockShipOver12MLogBookAfterHours} ${msg2}. ${msg3}.`;
+            }
+
+            this.snackbar.open(msg, undefined, {
+                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+            });
+        }
     }
 
     private getOriginDeclarationCatchRecords(catchRecordFishes: CatchRecordFishDTO[]): OriginDeclarationFishDTO[] {
@@ -1187,6 +1241,214 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
 
     private setDeclarationOfOriginHasCatchFromPreviousTripFlag(): void {
         this.declarationOfOriginHasCatchFromPreviousTrip = this.declarationOfOriginCatchRecords.some(x => x.fromPreviousTrip);
+    }
+
+    private onFishingGearRegisterChanged(value: FishingGearRegisterNomenclatureDTO | string | undefined): void {
+        if (value instanceof FishingGearRegisterNomenclatureDTO) {
+            const fishingGearsCount: number | undefined = this.form.get('fishingGearCountControl')!.value;
+            if (fishingGearsCount === null || fishingGearsCount === undefined) {
+                this.form.get('fishingGearCountControl')!.setValue(value.gearCount);
+            }
+
+            if (value.hasHooks === true) {
+                this.showHooksCountField = true;
+                this.form.get('fishingGearHookCountControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+                this.form.get('fishingGearHookCountControl')!.markAsPending();
+
+                this.form.get('fishingGearHookCountControl')!.setValue(value.hooksCount);
+
+                if (this.viewMode) {
+                    this.form.get('fishingGearHookCountControl')!.disable();
+                }
+            }
+            else {
+                this.showHooksCountField = false;
+                this.form.get('fishingGearHookCountControl')!.clearValidators();
+                this.form.get('fishingGearHookCountControl')!.reset();
+            }
+
+            if (value.isForMutualFishing === true) {
+                this.showPartnerShipField = true;
+                this.form.get('partnerShipControl')!.setValidators(Validators.required);
+                this.form.get('partnerShipControl')!.markAsPending();
+                this.form.get('partnerShipControl')!.updateValueAndValidity({ emitEvent: false });
+
+                if (this.viewMode) {
+                    this.form.get('partnerShipControl')!.disable();
+                }
+            }
+            else {
+                this.showPartnerShipField = false;
+                this.form.get('partnerShipControl')!.clearValidators();
+            }
+        }
+        else {
+            if (value === null || value === undefined) {
+                this.form.get('fishingGearCountControl')!.reset();
+                this.form.get('fishingGearHookCountControl')!.reset();
+            }
+
+            this.showHooksCountField = false;
+            this.showPartnerShipField = false;
+        }
+    }
+
+    private onFishTripStartDateTimeChanged(startDate: Moment | null | undefined): void {
+        if (startDate !== null && startDate !== undefined) {
+            const endDate: Moment | null | undefined = this.form.get('fishTripEndDateTimeControl')!.value;
+            if (endDate !== null && endDate !== undefined) {
+                const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate.toDate(), endDate.toDate());
+                const daysAtSeaValue: string = this.getDaysAtSeaValue(difference);
+
+                this.form.get('daysAtSeaCountControl')!.setValue(daysAtSeaValue);
+            }
+            else {
+                this.form.get('daysAtSeaCountControl')!.setValue(undefined);
+                this.form.get('fishTripEndDateTimeControl')!.setValue(startDate);
+            }
+
+            const unloadingDateTime: Moment | null | undefined = this.form.get('unloadDateTimeControl')!.value;
+            const hasNoCatch: boolean = this.form.get('noCatchUnloadedControl')!.value ?? false;
+            if (!hasNoCatch && (unloadingDateTime === null || unloadingDateTime === undefined)) {
+                this.form.get('unloadDateTimeControl')!.setValue(startDate);
+            }
+        }
+        else {
+            this.form.get('daysAtSeaCountControl')!.setValue(undefined);
+        }
+
+        this.form.get('fishTripEndDateTimeControl')!.updateValueAndValidity({ emitEvent: false });
+    }
+
+    private onDeparturePortChanged(departurePort: NomenclatureDTO<number> | string | null | undefined): void {
+        if (departurePort !== null && departurePort !== undefined && departurePort instanceof NomenclatureDTO) {
+            const arrivalPort: NomenclatureDTO<number> | string | null | undefined = this.form.get('arrivalPortControl')!.value;
+            if (arrivalPort === null || arrivalPort === undefined || typeof arrivalPort === 'string') {
+                this.form.get('arrivalPortControl')!.setValue(departurePort);
+            }
+
+            const noUnloading: boolean = this.form.get('noCatchUnloadedControl')!.value ?? false;
+            if (!noUnloading) {
+                const unloadingPort: NomenclatureDTO<number> | string | null | undefined = this.form.get('unloadPortControl')!.value;
+
+                if (unloadingPort === null || unloadingPort === undefined || typeof unloadingPort === 'string') {
+                    this.form.get('unloadPortControl')!.setValue(departurePort);
+                }
+            }
+        }
+    }
+
+    private onFishTripEndDateTimeChanged(endDate: Moment | null | undefined): void {
+        if (endDate !== null && endDate !== undefined) {
+            const startDate: Moment | null | undefined = this.form.get('fishTripStartDateTimeControl')!.value;
+            if (startDate !== null && startDate !== undefined) {
+                const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate.toDate(), endDate.toDate());
+                const daysAtSeaValue: string = this.getDaysAtSeaValue(difference);
+
+                this.form.get('daysAtSeaCountControl')!.setValue(daysAtSeaValue);
+            }
+            else {
+                this.form.get('daysAtSeaCountControl')!.setValue(undefined);
+            }
+        }
+        else {
+            this.form.get('daysAtSeaCountControl')!.setValue(undefined);
+        }
+
+        this.form.get('fishTripStartDateTimeControl')!.updateValueAndValidity({ emitEvent: false });
+        this.form.get('unloadDateTimeControl')!.updateValueAndValidity({ emitEvent: false });
+    }
+
+    private onNoCatchUnloadedChanged(value: boolean): void {
+        this.changeUnloadingControlsValidators(value ?? false);
+        this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+
+        if (value) { // без разтоварване
+            const validators = this.form.get('fishTripEndDateTimeControl')!.validator;
+            if (validators !== null && validators !== undefined) {
+                this.form.get('fishTripEndDateTimeControl')!.setValidators([validators, this.checkDateValidityVsLockPeriodsValidator()]);
+            }
+            else {
+                this.form.get('fishTripEndDateTimeControl')!.setValidators(this.checkDateValidityVsLockPeriodsValidator());
+            }
+
+            this.form.get('fishTripEndDateTimeControl')!.updateValueAndValidity({ emitEvent: false });
+        }
+        else { // има разтоварване
+            this.setFishTripEndDateTimeControlInitialValidators();
+        }
+    }
+
+    private setFishTripEndDateTimeControlInitialValidators(): void {
+        this.form.get('fishTripEndDateTimeControl')!.setValidators([
+            Validators.required,
+            TLValidators.minDate(this.form.get('fishTripStartDateTimeControl')!)
+        ]);
+
+        this.form.get('fishTripEndDateTimeControl')!.markAsPending({ emitEvent: false });
+        this.form.get('fishTripEndDateTimeControl')!.updateValueAndValidity({ emitEvent: false });
+    }
+
+    private setFishTripStartDateTimeControlValidators(): void {
+        this.form.get('fishTripStartDateTimeControl')!.setValidators([
+            Validators.required,
+            TLValidators.maxDate(this.form.get('fishTripEndDateTimeControl')!)
+        ]);
+
+        this.form.get('fishTripStartDateTimeControl')!.markAsPending({ emitEvent: false });
+        this.form.get('fishTripStartDateTimeControl')!.updateValueAndValidity({ emitEvent: false });
+    }
+
+    private setUnloadDateTimeControlValidators(): void {
+        this.form.get('unloadDateTimeControl')!.setValidators([
+            Validators.required,
+            TLValidators.minDate(this.form.get('fishTripEndDateTimeControl')!),
+            this.checkDateValidityVsLockPeriodsValidator()
+        ]);
+
+        this.form.get('unloadDateTimeControl')!.markAsPending({ emitEvent: false });
+        this.form.get('unloadDateTimeControl')!.updateValueAndValidity({ emitEvent: false });
+
+        const unloadDateTime: Moment | null | undefined = this.form.get('unloadDateTimeControl')!.value;
+        if (unloadDateTime !== null && unloadDateTime !== undefined && unloadDateTime.isValid() === false) {
+            this.form.get('unloadDateTimeControl')!.setValue(undefined);
+        }
+    }
+
+    private changeUnloadingControlsValidators(noUnloading: boolean): void {
+        if (noUnloading === true) {
+            this.form.get('unloadDateTimeControl')!.setValidators([
+                TLValidators.minDate(this.form.get('fishTripEndDateTimeControl')!),
+            ]);
+            this.form.get('unloadPortControl')!.clearValidators();
+
+            this.form.get('unloadDateTimeControl')!.setValue(undefined);
+            this.form.get('unloadPortControl')!.setValue(undefined);
+        }
+        else {
+            this.form.get('unloadDateTimeControl')!.setValidators([
+                Validators.required,
+                TLValidators.minDate(this.form.get('fishTripEndDateTimeControl')!),
+                this.checkDateValidityVsLockPeriodsValidator()
+            ]);
+            this.form.get('unloadPortControl')!.setValidators(Validators.required);
+        }
+
+        this.form.get('unloadDateTimeControl')!.markAsPending({ emitEvent: false });
+        this.form.get('unloadPortControl')!.markAsPending({ emitEvent: false });
+
+        this.form.get('unloadDateTimeControl')!.updateValueAndValidity({ emitEvent: false });
+        this.form.get('unloadPortControl')!.updateValueAndValidity({ emitEvent: false });
+
+        const unloadDateTime: Moment | null | undefined = this.form.get('unloadDateTimeControl')!.value;
+        if (unloadDateTime !== null && unloadDateTime !== undefined && unloadDateTime.isValid() === false) {
+            this.form.get('unloadDateTimeControl')!.setValue(undefined);
+        }
+
+        if (this.viewMode) {
+            this.form.get('unloadDateTimeControl')!.disable();
+            this.form.get('unloadPortControl')!.disable();
+        }
     }
 
     private delcarationOfOriginCatchRecordQuantitiesValidator(): ValidatorFn {
@@ -1376,6 +1638,86 @@ export class EditShipLogBookPageComponent implements OnInit, AfterViewInit, IDia
             }
             else {
                 return null;
+            }
+
+            return null;
+        }
+    }
+
+    private checkDateValidityVsLockPeriodsValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === null || control === undefined) {
+                return null;
+            }
+
+            if (this.form === null || this.form === undefined) {
+                return null;
+            }
+
+            if (control.value === null || control.value === undefined) {
+                return null;
+            }
+
+            const date: Date = (control.value as Moment).toDate();
+            const now: Date = new Date();
+
+            if (this.model === null || this.model === undefined) {
+                return null;
+            }
+
+            const logBookId: number = this.model.logBookId!;
+            const logBookTypeId: number = this.model.logBookTypeId!;
+
+            if (CatchesAndSalesUtils.checkIfPageDateIsUnlocked(this.logBookPageEditExceptions, this.currentUserId, logBookTypeId, logBookId, date, now)) { // този дневник го има в изключение за избраната дата за потребител и/или тип дневник, и/или дневник
+                return null;
+            }
+
+            const difference: DateDifference | undefined = DateUtils.getDateDifference(date, now);
+
+            if (difference === null || difference === undefined) {
+                return null;
+            }
+
+            if (difference.minutes === 0 && difference.hours === 0 && difference.days === 0) {
+                return null;
+            }
+
+            const ship = ShipsUtils.get(this.ships, this.model.shipId!);
+
+            if (ship.totalLength! < 10) { // При кораби под 10 метра
+                if (CatchesAndSalesUtils.pageHasLogBookPageDateLockedViaDaysAfterMonth(date, now, this.lockShipLogBookPeriods.lockShipUnder10MLogBookAfterDays)) {
+                    return {
+                        logBookPageDateLocked: {
+                            shipLength: ship.totalLength!,
+                            lockedPeriod: this.lockShipLogBookPeriods.lockShipUnder10MLogBookAfterDays,
+                            periodType: 'days-after-month'
+                        }
+                    };
+                }
+            }
+            else if (ship.totalLength! >= 10 && ship.totalLength! <= 12) { // При кораби от 10 до 12 метра
+                const hoursDifference: number = CatchesAndSalesUtils.convertDateDifferenceToHours(difference);
+                if (hoursDifference > this.lockShipLogBookPeriods.lockShip10M12MLogBookAfterHours) {
+                    return {
+                        logBookPageDateLocked: {
+                            shipLength: ship.totalLength!,
+                            lockedPeriod: this.lockShipLogBookPeriods.lockShip10M12MLogBookAfterHours,
+                            periodType: 'hours'
+                        }
+                    }
+                }
+            }
+            else if (ship.totalLength! > 12) { // При кораби над 12 метра
+                const hoursDifference: number = CatchesAndSalesUtils.convertDateDifferenceToHours(difference);
+                if (hoursDifference > this.lockShipLogBookPeriods.lockShipOver12MLogBookAfterHours) {
+                    return {
+                        logBookPageDateLocked: {
+                            shipLength: ship.totalLength!,
+                            lockedPeriod: this.lockShipLogBookPeriods.lockShipOver12MLogBookAfterHours,
+                            periodType: 'hours'
+                        }
+                    };
+                }
             }
 
             return null;

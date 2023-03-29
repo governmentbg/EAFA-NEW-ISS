@@ -40,12 +40,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
             {
                 IsEnabled = false,
             };
-            Representative = new PersonViewModel(this, InspectedPersonType.ReprsPers);
+            Representative = new PersonViewModel(this, InspectedPersonType.ReprsPers, false);
             Catches = new CatchInspectionsViewModel(this,
                 showCatchArea: false,
                 showAllowedDeviation: false,
                 showAverageSize: true,
-                showFishSex: true
+                showFishSex: true,
+                showType: false
             );
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);

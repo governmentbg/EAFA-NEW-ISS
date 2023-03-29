@@ -198,7 +198,7 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
                             next: () => {
                                 this.service.downloadPenalDecree(this.penalDecreeId!).subscribe({
                                     next: () => {
-                                        dialogClose();
+                                        dialogClose(this.model);
                                     }
                                 });
                             },
@@ -214,7 +214,7 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
 
                                 this.service.downloadPenalDecree(id).subscribe({
                                     next: () => {
-                                        dialogClose();
+                                        dialogClose(this.model);
                                     }
                                 });
                             },

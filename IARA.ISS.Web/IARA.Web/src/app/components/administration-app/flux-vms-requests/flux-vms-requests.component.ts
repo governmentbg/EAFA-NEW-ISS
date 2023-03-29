@@ -1,7 +1,6 @@
 ﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { IRemoteTLDatatableComponent } from '@app/shared/components/data-table/interfaces/tl-remote-datatable.interface';
 import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
@@ -13,12 +12,11 @@ import { FluxVmsRequestsService } from '@app/services/administration-app/flux-vm
 import { FilterEventArgs } from '@app/shared/components/data-table/models/filter-event-args.model';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
 import { ViewFluxVmsRequestsComponent } from './view-flux-vms-requests.component';
-import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { FluxResponseStatuses } from '@app/enums/flux-response-statuses.enum';
-import { FluxFvmsDomainsEnum } from '../../../enums/flux-fvms-domains.enum';
+import { FluxFvmsDomainsEnum } from '@app/enums/flux-fvms-domains.enum';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 
 @Component({
@@ -129,11 +127,15 @@ export class FluxVmsRequestsComponent implements OnInit, AfterViewInit {
     private buildForm(): void {
         this.form = new FormGroup({
             webServiceNameControl: new FormControl(),
-            requestDateTimeControl: new FormControl(),
-            responseDateTimeControl: new FormControl(),
+            requestDateTimeFromControl: new FormControl(),
+            requestDateTimeToControl: new FormControl(),
+            responseDateTimeFromControl: new FormControl(),
+            responseDateTimeToControl: new FormControl(),
             requestUuidControl: new FormControl(),
             responseUuidControl: new FormControl(),
             responseStatusControl: new FormControl(),
+            requestContentControl: new FormControl(),
+            responseContentControl: new FormControl(),
             domainNameControl: new FormControl()
         });
     }
@@ -144,13 +146,15 @@ export class FluxVmsRequestsComponent implements OnInit, AfterViewInit {
             showInactiveRecords: filters.showInactiveRecords,
 
             webServiceName: filters.getValue('webServiceNameControl'),
-            requestDateFrom: filters.getValue<DateRangeData>('requestDateTimeControl')?.start,
-            requestDateTo: filters.getValue<DateRangeData>('requestDateTimeControl')?.end,
-            responseDateFrom: filters.getValue<DateRangeData>('responseDateTimeControl')?.start,
-            responseDateTo: filters.getValue<DateRangeData>('responseDateTimeControl')?.end,
+            requestDateFrom: filters.getValue('requestDateTimeFromControl'),
+            requestDateTo: filters.getValue('requestDateTimeToControl'),
+            responseDateFrom: filters.getValue('responseDateTimeFromControl'),
+            responseDateTo: filters.getValue('responseDateTimeToControl'),
             requestUUID: filters.getValue('requestUuidControl'),
             responseUUID: filters.getValue('responseUuidControl'),
             responseStatuses: filters.getValue('responseStatusControl'),
+            requestContent: filters.getValue('requestContentControl'),
+            responseContent: filters.getValue('responseContentControl'),
             domainNames: filters.getValue('domainNameControl')
         });
 

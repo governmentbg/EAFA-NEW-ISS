@@ -178,6 +178,8 @@ import { EditDecreeResolutionComponent } from './control-activity/penal-decrees/
 import { ChooseLawSectionsComponent } from './control-activity/auan-register/choose-law-sections/choose-law-sections.component';
 import { PrintConfigurationsComponent } from './print-configurations/print-configurations.component';
 import { EditPrintConfigurationComponent } from './print-configurations/components/edit-print-configuration/edit-print-configuration.component';
+import { LogBookPageEditExceptionsComponent } from './catches-and-sales/log-book-page-edit-exceptions/log-book-page-edit-exceptions.component';
+import { EditLogBookPageEditExceptionComponent } from './catches-and-sales/log-book-page-edit-exceptions/components/edit-log-book-page-edit-exception.component';
 
 @NgModule({
     declarations: [
@@ -348,7 +350,9 @@ import { EditPrintConfigurationComponent } from './print-configurations/componen
         EditDecreeResolutionComponent,
         ChooseLawSectionsComponent,
         PrintConfigurationsComponent,
-        EditPrintConfigurationComponent
+        EditPrintConfigurationComponent,
+        LogBookPageEditExceptionsComponent,
+        EditLogBookPageEditExceptionComponent
     ],
     imports: [
         TLCommonModule,
@@ -523,7 +527,9 @@ import { EditPrintConfigurationComponent } from './print-configurations/componen
         EditDecreeResolutionComponent,
         ChooseLawSectionsComponent,
         PrintConfigurationsComponent,
-        EditPrintConfigurationComponent
+        EditPrintConfigurationComponent,
+        LogBookPageEditExceptionsComponent,
+        EditLogBookPageEditExceptionComponent
     ]
 })
 export class IARAApplicationModule {

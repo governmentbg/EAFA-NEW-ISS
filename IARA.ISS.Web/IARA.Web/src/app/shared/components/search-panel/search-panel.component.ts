@@ -1,7 +1,9 @@
-﻿import { AfterViewInit, Component, ContentChild, ContentChildren, EventEmitter, HostListener, Input, QueryList, ViewChild, ViewChildren } from '@angular/core';
+﻿import { DatePipe } from '@angular/common';
+import { AfterViewInit, Component, ContentChild, ContentChildren, EventEmitter, HostListener, Input, QueryList, ViewChild } from '@angular/core';
 import { AbstractControl, ControlContainer, FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { faFilter, faRedo } from '@fortawesome/free-solid-svg-icons';
+import moment from 'moment';
 import { TLDateAdapter } from '../../utils/date.adapter';
 import { FilterEventArgs } from '../data-table/models/filter-event-args.model';
 import { DateRangeData } from '../input-controls/tl-date-range/tl-date-range.component';
@@ -52,9 +54,14 @@ export class SearchPanelComponent implements AfterViewInit {
     public appliedFilters: MatChipFilterModel[];
 
     private dateAdapter: TLDateAdapter;
+    private datePipe: DatePipe;
 
-    public constructor(dateAdapter: TLDateAdapter) {
+    public constructor(
+        dateAdapter: TLDateAdapter,
+        datePipe: DatePipe
+    ) {
         this.dateAdapter = dateAdapter;
+        this.datePipe = datePipe;
 
         // Instantiate objects and set default values
         this.searchString = '';
@@ -251,6 +258,10 @@ export class SearchPanelComponent implements AfterViewInit {
                             if (filterValue instanceof Date) {
                                 this.appliedFilters.push(new MatChipFilterModel(filterValue, DateUtils.ToDateString(filterValue as Date), controlObject));
                             }
+                            else if ((filterValue as any) instanceof moment) { //MatDateTimePicker
+                                const dateTime: string = this.datePipe.transform(filterValue, 'dd.MM.yyyy HH:mm')!;
+                                this.appliedFilters.push(new MatChipFilterModel(filterValue, dateTime, controlObject));
+                            }
                             else {
                                 this.appliedFilters.push(new MatChipFilterModel(filterValue, filterValue.toString(), controlObject));
                             }
@@ -313,7 +324,7 @@ export class SearchPanelComponent implements AfterViewInit {
     }
 
     private isSimpleType(value: unknown): boolean {
-        return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' || value instanceof Date;
+        return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' || value instanceof Date || (value as any) instanceof moment;
     }
 
     private closeExpansionPanel(): void {

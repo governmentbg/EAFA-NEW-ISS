@@ -122,6 +122,9 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
     public countries: NomenclatureDTO<number>[] = [];
     public genders: NomenclatureDTO<number>[] = [];
 
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
+    public getControlErrorLabelTextDateOfBirthMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelTextDateOfBirth.bind(this);
+
     private nomenService: CommonNomenclatures;
     private translate: FuseTranslationLoaderService;
     private personLegalExtractor: PersonLegalExtractorService;
@@ -473,7 +476,7 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
         return undefined;
     }
 
-    public getControlErrorLabelTextDateOfBirth(controlName: string, errorValue: Record<string, unknown>, errorCode: string): TLError | undefined {
+    public getControlErrorLabelTextDateOfBirth(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
         const result: TLError | undefined = CommonUtils.getControlErrorLabelTextForRegixExpectedValueValidator(controlName, errorValue, errorCode);
         if (result !== undefined) {
             return result;

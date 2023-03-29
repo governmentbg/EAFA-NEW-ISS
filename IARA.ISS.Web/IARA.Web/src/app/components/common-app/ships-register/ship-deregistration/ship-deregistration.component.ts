@@ -44,6 +44,7 @@ import { TLError } from '@app/shared/components/input-controls/models/tl-error.m
 import { IFishingCapacityService } from '@app/interfaces/common-app/fishing-capacity.interface';
 import { FishingCapacityAdministrationService } from '@app/services/administration-app/fishing-capacity-administration.service';
 import { FishingCapacityPublicService } from '@app/services/public-app/fishing-capacity-public.service';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'ship-deregistration',
@@ -81,6 +82,8 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
     public maxTonnage: number = 0;
     public maxPower: number = 0;
     public newCertificateData: NewCertificateData | undefined;
+
+    public shipControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.shipControlErrorLabelText.bind(this);
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -319,7 +322,7 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
         return result;
     }
 
-    public shipControlErrorLabelTest(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+    public shipControlErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'shipControl') {
             if (errorCode === 'shipDestroyedOrDeregistered' && error === true) {
                 return new TLError({

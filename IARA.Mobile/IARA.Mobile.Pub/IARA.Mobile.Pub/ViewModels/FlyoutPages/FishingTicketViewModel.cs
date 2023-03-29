@@ -1,17 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using AutoMapper.Internal;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Pub.Application.DTObjects.FishingTickets.LocalDb;
 using IARA.Mobile.Pub.Domain.Enums;
+using IARA.Mobile.Pub.Utilities;
 using IARA.Mobile.Pub.ViewModels.Base;
 using IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket;
 using IARA.Mobile.Pub.Views.FlyoutPages;
 using IARA.Mobile.Pub.Views.FlyoutPages.FishingTicket;
 using IARA.Mobile.Shared.Menu;
+using IARA.Mobile.Shared.ResourceTranslator;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -61,8 +65,21 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
         public override async Task Initialize(object sender)
         {
             List<TicketTypeDto> ticketTypes = await FishingTicketsTransaction.GetAllowedTicketTypes();
+            ticketTypes.ForAll(x => x.MapTicketTypeTranslation());
             TicketTypes.AddRange(ticketTypes);
             TicketPeriods = FishingTicketsTransaction.GetTicketPeriods();
+            TicketPeriods.ForAll(x => x.MapTicketPeriodTranslation());
+            Translator.Current.PropertyChanged += OnTranslatorPropertyChanged;
+        }
+
+        private void OnTranslatorPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            TicketTypes.ForAll(x => x.MapTicketTypeTranslation());
+            TicketTypes.ReplaceRange(TicketTypes.ToList());
+            TicketPeriods.ForAll(x => x.MapTicketPeriodTranslation());
+            TicketTariffsByType?.ForAll(x => { x.PeriodName = NomenclatureTranslator.MapTicketPeriodTranslation(x.PeriodCode); });
+            TicketTariffsByType?.ReplaceRange(TicketTariffsByType.ToList());
+            SelectedTicketType?.MapTicketTypeTranslation();
         }
 
         public override void OnAppearing()

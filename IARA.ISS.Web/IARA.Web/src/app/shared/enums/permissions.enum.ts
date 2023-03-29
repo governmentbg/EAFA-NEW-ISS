@@ -300,6 +300,18 @@
     PermitLicenseLogBookDelete = 'PermitLicenseLogBookDelete',
     PermitLicenseLogBookRestore = 'PermitLicenseLogBookRestore',
 
+    PermitSuspensionRead = 'PermitSuspensionRead',
+    PermitSuspensionAdd = 'PermitSuspensionAdd',
+    PermitSuspensionEdit = 'PermitSuspensionEdit',
+    PermitSuspensionDelete = 'PermitSuspensionDelete',
+    PermitSuspensionRestore = 'PermitSuspensionRestore',
+
+    PermitLicenseSuspensionRead = 'PermitLicenseSuspensionRead',
+    PermitLicenseSuspensionAdd = 'PermitLicenseSuspensionAdd',
+    PermitLicenseSuspensionEdit = 'PermitLicenseSuspensionEdit',
+    PermitLicenseSuspensionDelete = 'PermitLicenseSuspensionDelete',
+    PermitLicenseSuspensionRestore = 'PermitLicenseSuspensionRestore',
+
     // Report Definition
     ReportRead = 'ReportRead',
     ReportAddRecords = 'ReportAddRecords',
@@ -446,6 +458,14 @@
     AquacultureLogBookPageEdit = 'AquacultureLogBookPageEdit',
     AquacultureLogBookPageCancel = 'AquacultureLogBookPageCancel',
 
+    // Log book page edit exceptions
+
+    LogBookPageEditExceptionsRead = 'LogBookPageEditExceptionsRead',
+    LogBookPageEditExceptionsAddRecords = 'LogBookPageEditExceptionsAddRecords',
+    LogBookPageEditExceptionsEditRecords = 'LogBookPageEditExceptionsEditRecords',
+    LogBookPageEditExceptionsDeleteRecords = 'LogBookPageEditExceptionsDeleteRecords',
+    LogBookPageEditExceptionsRestoreRecords = 'LogBookPageEditExceptionsRestoreRecords',
+
     // AUANs
     AuanRegisterReadAll = 'AuanRegisterReadAll',
     AuanRegisterRead = 'AuanRegisterRead',
@@ -519,6 +539,12 @@
     PenalDecreesEditRecords = 'PenalDecreesEditRecords',
     PenalDecreesDeleteRecords = 'PenalDecreesDeleteRecords',
     PenalDecreesRestoreRecords = 'PenalDecreesRestoreRecords',
+
+    PenalDecreeStatusesRead = 'PenalDecreeStatusesRead',
+    PenalDecreeStatusesAddRecords = 'PenalDecreeStatusesAddRecords',
+    PenalDecreeStatusesEditRecords = 'PenalDecreeStatusesEditRecords',
+    PenalDecreeStatusesDeleteRecords = 'PenalDecreeStatusesDeleteRecords',
+    PenalDecreeStatusesRestoreRecords = 'PenalDecreeStatusesRestoreRecords',
 
     //Application RegiX checks
     ApplicationRegiXChecksRead = 'ApplicationRegiXChecksRead',

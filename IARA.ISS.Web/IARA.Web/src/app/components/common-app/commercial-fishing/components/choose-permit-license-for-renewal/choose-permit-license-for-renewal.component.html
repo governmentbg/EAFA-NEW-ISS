@@ -16,6 +16,12 @@
                                  [options]="ships">
                 </tl-autocomplete>
             </div>
+            <div *ngIf="!isPublicApp" fxLayout="row" fxFlex="100">
+                <tl-slide-toggle fxFlex="50"
+                                 formControlName="showPastPermitsControl"
+                                 label="{{ 'choose-permit-license-for-renewal.show-past-permits' | tlTranslate }}">
+                </tl-slide-toggle>
+            </div>
             <div fxLayout="row" fxFlex="100" fxLayoutAlign="start start">
                 <tl-autocomplete *ngIf="!isPublicApp"
                                  fxFlex="70"

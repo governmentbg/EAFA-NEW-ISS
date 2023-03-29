@@ -1,5 +1,5 @@
-﻿import { AfterViewInit, Component, DoCheck, Input, OnInit, Self, ViewChild } from '@angular/core';
-import { AbstractControl, ControlValueAccessor, FormControl, FormGroup, NgControl, ValidationErrors, Validator, Validators } from '@angular/forms';
+﻿import { AfterViewInit, Component, Input, OnInit, Optional, Self, ViewChild } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
@@ -8,16 +8,16 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { LogBookPagePersonTypesEnum } from '@app/enums/log-book-page-person-types.enum';
 import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
 import { ICatchesAndSalesService } from '@app/interfaces/common-app/catches-and-sales.interface';
-import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
-
+import { CustomFormControl } from '@app/shared/utils/custom-form-control';
+import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 
 @Component({
     selector: 'log-book-page-person',
     templateUrl: './log-book-page-person.component.html'
 })
-export class LogBookPagePersonComponent implements OnInit, AfterViewInit, DoCheck, ControlValueAccessor, Validator {
+export class LogBookPagePersonComponent extends CustomFormControl<LogBookPagePersonDTO | undefined> implements OnInit, AfterViewInit {
     @Input()
     public readonly: boolean = false;
 
@@ -35,31 +35,21 @@ export class LogBookPagePersonComponent implements OnInit, AfterViewInit, DoChec
 
     public readonly logBookPagePersonTypesEnum: typeof LogBookPagePersonTypesEnum = LogBookPagePersonTypesEnum;
 
-    public form!: FormGroup;
-    public model!: LogBookPagePersonDTO;
+    public model!: LogBookPagePersonDTO | undefined;
 
     public personTypes: NomenclatureDTO<number>[] = [];
     public registeredBuyers: NomenclatureDTO<number>[] = [];
 
-    @ViewChild(ValidityCheckerGroupDirective)
-    private validityCheckerGroup!: ValidityCheckerGroupDirective;
-
     private translationService: FuseTranslationLoaderService;
-
-    private ngControl: NgControl;
-    private onChanged: (value: LogBookPagePersonDTO) => void = (value: LogBookPagePersonDTO) => { return; };
-    private onTouched: (value: LogBookPagePersonDTO) => void = (value: LogBookPagePersonDTO) => { return; };
-
-    private isDisabled: boolean = false;
 
     private readonly loader: FormControlDataLoader;
 
     public constructor(
         @Self() ngControl: NgControl,
+        @Self() @Optional() validityChecker: ValidityCheckerDirective,
         translate: FuseTranslationLoaderService
     ) {
-        this.ngControl = ngControl;
-        this.ngControl.valueAccessor = this;
+        super(ngControl, true, validityChecker);
 
         this.translationService = translate;
 
@@ -82,22 +72,17 @@ export class LogBookPagePersonComponent implements OnInit, AfterViewInit, DoChec
                 isActive: true
             })
         ];
-
-        this.buildForm();
     }
 
     public ngOnInit(): void {
-        if (this.ngControl.control) {
-            this.ngControl.control.validator = this.validate.bind(this);
-        }
-
+        this.initCustomFormControl();
         this.loader.load();
     }
 
     public ngAfterViewInit(): void {
         this.form.valueChanges.subscribe({
             next: () => {
-                const value: LogBookPagePersonDTO = this.getValue();
+                const value: LogBookPagePersonDTO | undefined = this.getValue();
                 this.onChanged(value);
             }
         });
@@ -150,14 +135,7 @@ export class LogBookPagePersonComponent implements OnInit, AfterViewInit, DoChec
         });
     }
 
-    public ngDoCheck(): void {
-        if (this.ngControl?.control?.touched) {
-            this.validate(this.ngControl.control!);
-            this.validityCheckerGroup.validate();
-        }
-    }
-
-    public writeValue(value: LogBookPagePersonDTO): void {
+    public writeValue(value: LogBookPagePersonDTO | undefined): void {
         this.model = value;
 
         this.loader.load(() => {
@@ -171,33 +149,47 @@ export class LogBookPagePersonComponent implements OnInit, AfterViewInit, DoChec
         });
     }
 
-    public registerOnChange(fn: (value: LogBookPagePersonDTO) => void): void {
-        this.onChanged = fn;
-    }
+    protected getValue(): LogBookPagePersonDTO | undefined {
+        const personType = this.form.get('personTypeControl')!.value?.value;
 
-    public registerOnTouched(fn: (value: LogBookPagePersonDTO) => void): void {
-        this.onTouched = fn;
-    }
+        if (personType !== null && personType !== undefined) {
+            const model: LogBookPagePersonDTO = new LogBookPagePersonDTO({
+                personType: personType
+            });
 
-    public setDisabledState(isDisabled: boolean): void {
-        this.isDisabled = isDisabled;
-        if (isDisabled) {
-            this.form.disable();
+            switch (model.personType) {
+                case LogBookPagePersonTypesEnum.RegisteredBuyer: {
+                    model.buyerId = this.form.get('registeredBuyerControl')!.value?.value;
+                } break;
+                case LogBookPagePersonTypesEnum.Person: {
+                    model.person = this.form.get('personControl')!.value;
+                    if (!this.showOnlyBasicData) {
+                        model.addresses = this.form.get('addressesControl')!.value;
+                    }
+                } break;
+                case LogBookPagePersonTypesEnum.LegalPerson: {
+                    model.personLegal = this.form.get('legalControl')!.value;
+                    if (!this.showOnlyBasicData) {
+                        model.addresses = this.form.get('addressesControl')!.value;
+                    }
+                } break;
+            }
+            return model;
+
         }
         else {
-            this.form.enable();
+            return undefined;
         }
     }
 
-    public validate(control: AbstractControl): ValidationErrors | null {
-        const errors: ValidationErrors = {};
-        Object.keys(this.form.controls).forEach((key: string) => {
-            const controlErrors: ValidationErrors | null = this.form.controls[key].errors;
-            if (controlErrors !== null) {
-                errors[key] = controlErrors;
-            }
+    protected buildForm(): AbstractControl {
+        return new FormGroup({
+            personTypeControl: new FormControl(undefined, Validators.required),
+            personControl: new FormControl(),
+            addressesControl: new FormControl(),
+            legalControl: new FormControl(),
+            registeredBuyerControl: new FormControl()
         });
-        return Object.keys(errors).length > 0 ? errors : null;
     }
 
     public downloadedPersonData(person: PersonFullDataDTO): void {
@@ -211,14 +203,14 @@ export class LogBookPagePersonComponent implements OnInit, AfterViewInit, DoChec
     }
 
     private fillForm(): void {
-        if (this.model.personType !== null && this.model.personType !== undefined) {
-            const personTypeNomenclature: NomenclatureDTO<LogBookPagePersonTypesEnum> = this.personTypes.find(x => x.value === this.model.personType)!;
+        if (this.model !== null && this.model !== undefined && this.model.personType !== null && this.model.personType !== undefined) {
+            const personTypeNomenclature: NomenclatureDTO<LogBookPagePersonTypesEnum> = this.personTypes.find(x => x.value === this.model!.personType)!;
             this.form.get('personTypeControl')!.setValue(personTypeNomenclature);
 
             switch (this.model.personType) {
                 case LogBookPagePersonTypesEnum.RegisteredBuyer: {
                     if (this.model.buyerId !== null && this.model.buyerId !== undefined) {
-                        const buyer: NomenclatureDTO<number> = this.registeredBuyers.find(x => x.value === this.model.buyerId)!;
+                        const buyer: NomenclatureDTO<number> = this.registeredBuyers.find(x => x.value === this.model!.buyerId)!;
                         this.form.get('registeredBuyerControl')!.setValue(buyer);
                     }
                 } break;
@@ -237,43 +229,6 @@ export class LogBookPagePersonComponent implements OnInit, AfterViewInit, DoChec
                 default: throw new Error(`Unknown log book page person type: ${this.model.personType!.toString()}`);
             }
         }
-    }
-
-    private buildForm(): void {
-        this.form = new FormGroup({
-            personTypeControl: new FormControl(undefined, Validators.required),
-            personControl: new FormControl(),
-            addressesControl: new FormControl(),
-            legalControl: new FormControl(),
-            registeredBuyerControl: new FormControl()
-        });
-    }
-
-    private getValue(): LogBookPagePersonDTO {
-        const model: LogBookPagePersonDTO = new LogBookPagePersonDTO();
-        model.personType = this.form.get('personTypeControl')!.value?.value;
-
-        if (model.personType !== null && model.personType !== undefined) {
-            switch (model.personType) {
-                case LogBookPagePersonTypesEnum.RegisteredBuyer: {
-                    model.buyerId = this.form.get('registeredBuyerControl')!.value?.value;
-                } break;
-                case LogBookPagePersonTypesEnum.Person: {
-                    model.person = this.form.get('personControl')!.value;
-                    if (!this.showOnlyBasicData) {
-                        model.addresses = this.form.get('addressesControl')!.value;
-                    }
-                } break;
-                case LogBookPagePersonTypesEnum.LegalPerson: {
-                    model.personLegal = this.form.get('legalControl')!.value;
-                    if (!this.showOnlyBasicData) {
-                        model.addresses = this.form.get('addressesControl')!.value;
-                    }
-                } break;
-            }
-        }
-
-        return model;
     }
 
     private getNomenclatures(): Subscription {

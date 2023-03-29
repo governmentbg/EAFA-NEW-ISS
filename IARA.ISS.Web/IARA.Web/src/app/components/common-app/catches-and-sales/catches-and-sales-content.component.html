@@ -135,6 +135,7 @@
                                                                    (onEditFirstSaleLogBookPage)="editFirstSaleLogBookPage($event, false)"
                                                                    (onViewFirstSaleLogBookPage)="editFirstSaleLogBookPage($event, true)"
                                                                    (onAnnulShipLogBookPage)="onAnnulShipLogBookPageBtnClicked($event)"
+                                                                   (onRestoreAnnulledShipLogBookPage)="onRestoreAnnulledShipLogBookPageBtnClicked($event)"
                                                                    (onEditShipLogBookPage)="editShipLogBookPage($event, false)"
                                                                    (onViewShipLogBookPage)="editShipLogBookPage($event, true)"
                                                                    (onAddAdmissionDeclaration)="onAddAdmissionDeclarationBtnClicked($event)"
@@ -152,7 +153,8 @@
                                                                         (onActiveRecordChanged)="editAdmissionLogBookPage($event.page, $event.viewMode)"
                                                                         (onEditAdmissionLogBookPage)="editAdmissionLogBookPage($event, false)"
                                                                         (onViewAdmissionLogBookPage)="editAdmissionLogBookPage($event, true)"
-                                                                        (onAnnulAdmissionLogBookPage)="onAnnulAdmissionLogBookPageBtnClicked($event)">
+                                                                        (onAnnulAdmissionLogBookPage)="onAnnulAdmissionLogBookPageBtnClicked($event)"
+                                                                        (onRestoreAnnulledAdmissionLogBookPage)="onRestoreAnnulledAdmissionLogBookPageBtnClicked($event)">
                                 </admission-pages-and-declarations-table>
 
                                 <!-- Страници от Дневници за превоз -->
@@ -165,7 +167,8 @@
                                                                              (onActiveRecordChanged)="editTransportationLogBookPage($event.page, $event.viewMode)"
                                                                              (onEditTransportationLogBookPage)="editTransportationLogBookPage($event, false)"
                                                                              (onViewTransportationLogBookPage)="editTransportationLogBookPage($event, true)"
-                                                                             (onAnnulTransportationLogBookPage)="onAnnulTransportationLogBookPageBtnClicked($event)">
+                                                                             (onAnnulTransportationLogBookPage)="onAnnulTransportationLogBookPageBtnClicked($event)"
+                                                                             (onRestoreAnnulledTransportationLogBookPage)="onRestoreAnnulledTransportationLogBookPageBtnClicked($event)">
                                 </transportation-pages-and-declarations-table>
 
                                 <!-- Страници от Дневници за първа продажба -->
@@ -178,7 +181,8 @@
                                                         (onActiveRecordChanged)="editFirstSaleLogBookPage($event.page, $event.viewMode)"
                                                         (onEditFirstSaleLogBookPage)="editFirstSaleLogBookPage($event, false)"
                                                         (onViewFirstSaleLogBookPage)="editFirstSaleLogBookPage($event, true)"
-                                                        (onAnnulFirstSaleLogBookPage)="onAnnulFirstSaleLogBookPageBtnClicked($event)">
+                                                        (onAnnulFirstSaleLogBookPage)="onAnnulFirstSaleLogBookPageBtnClicked($event)"
+                                                        (onRestoreAnnulledFirstSaleLogBookPage)="onRestoreAnnulledFirstSaleLogBookPageBtnClicked($event)">
                                 </first-sale-pages-table>
 
                                 <!-- Страници от Дневници за аквакултурно стопанство -->
@@ -191,7 +195,8 @@
                                                          (onActiveRecordChanged)="editAquacultureLogBookPage($event.page, $event.viewMode)"
                                                          (onEditAquacultureLogBookPage)="editAquacultureLogBookPage($event, false)"
                                                          (onViewAquacultureLogBookPage)="editAquacultureLogBookPage($event, true)"
-                                                         (onAnnulAquacultureLogBookPage)="onAnnulAquacultureLogBookPageBtnClicked($event)">
+                                                         (onAnnulAquacultureLogBookPage)="onAnnulAquacultureLogBookPageBtnClicked($event)"
+                                                         (onRestoreAnnulledAquacultureLogBookPage)="onRestoreAnnulledAquacultureLogBookPageBtnClicked($event)">
                                 </aquaculture-pages-table>
                             </tl-card-content>
                         </tl-card>

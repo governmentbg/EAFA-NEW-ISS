@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using IARA.Mobile.Domain.Models;
+﻿using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API;
 using IARA.Mobile.Pub.Application.DTObjects.FishingTickets.LocalDb;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace IARA.Mobile.Pub.Application.Interfaces.Transactions
 {
@@ -13,7 +13,7 @@ namespace IARA.Mobile.Pub.Application.Interfaces.Transactions
 
         int GetTicketTypeIdByCode(string typeCode);
 
-        string GetTicketTypeNameById(int id);
+        string GetTicketTypeCodeById(int id);
 
         Task<List<TicketTypeDto>> GetAllowedTicketTypes();
 
@@ -52,5 +52,7 @@ namespace IARA.Mobile.Pub.Application.Interfaces.Transactions
         List<FishingTicketDto> GetLocalStoredExpiredTickets();
 
         List<FishingTicketDto> GetLocalStoredTickets();
+
+        List<TicketTypeDto> GetTicketTypes();
     }
 }

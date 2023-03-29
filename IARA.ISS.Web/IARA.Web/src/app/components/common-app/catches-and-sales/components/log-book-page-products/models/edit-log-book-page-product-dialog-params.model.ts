@@ -6,6 +6,7 @@ export class EditLogBookPageProductDialogParamsModel {
     public model: LogBookPageProductDTO | undefined;
     public service!: ICatchesAndSalesService;
     public viewMode: boolean = true;
+    public hasPrice: boolean = true;
     public logBookType!: LogBookTypesEnum;
 
     public constructor(obj?: Partial<EditLogBookPageProductDialogParamsModel>) {

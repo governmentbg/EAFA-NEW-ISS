@@ -156,7 +156,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
             next: (userInfo: UserAuthDTO | null) => {
                 if (userInfo !== null) {
                     if (userInfo.id) {
-                        this.showUserTickets = IS_PUBLIC_APP && this.permissions.has(PermissionsEnum.TicketsRead);
+                        this.showUserTickets = IS_PUBLIC_APP && this.permissions.has(PermissionsEnum.TicketsPublicRead);
 
                         this.authService.getUserPhoto(userInfo.id).subscribe((photo: string) => {
                             if (photo) {

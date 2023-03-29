@@ -187,7 +187,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
                 GlobalVariables.IsAddingInspection = true;
             }
 
-            ViewActivityType viewActivity = dto.SubmitType == SubmitType.Finish || dto.CreatedByCurrentUser
+            ViewActivityType viewActivity = dto.SubmitType == SubmitType.Finish || !dto.CreatedByCurrentUser
                 ? ViewActivityType.Review
                 : ViewActivityType.Edit;
 
@@ -281,18 +281,22 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
             List<SelectNomenclatureDto> fileTypes = DependencyService.Resolve<INomenclatureTransaction>().GetFileTypes();
 
             List<SignatureSaveModel> signatures = new List<SignatureSaveModel>(2)
+            {
+                new SignatureSaveModel
                 {
-                    new SignatureSaveModel
-                    {
-                        Caption = TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectorSignature"],
-                        FileTypeId = fileTypes.Find(f => f.Code == Constants.InspectorSignature).Id
-                    },
-                    new SignatureSaveModel
-                    {
-                        Caption = TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectedPersonSignature"],
-                        FileTypeId = fileTypes.Find(f => f.Code == Constants.InspectedPersonSignature).Id
-                    }
-                };
+                    Caption = TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectorSignature"],
+                    FileTypeId = fileTypes.Find(f => f.Code == Constants.InspectorSignature).Id
+                },
+            };
+
+            if (dto.Type != InspectionType.OFS)
+            {
+                signatures.Add(new SignatureSaveModel
+                {
+                    Caption = TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectedPersonSignature"],
+                    FileTypeId = fileTypes.Find(f => f.Code == Constants.InspectedPersonSignature).Id
+                });
+            }
 
             bool finish = await TLDialogHelper.ShowDialog(new SaveInspectionView(signatures));
 

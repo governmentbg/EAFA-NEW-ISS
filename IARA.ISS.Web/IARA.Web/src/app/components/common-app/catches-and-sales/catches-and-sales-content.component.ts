@@ -61,6 +61,7 @@ import { AddShipPageDocumentWizardComponent } from './components/add-ship-page-d
 import { AddShipPageDocumentDialogParamsModel } from './models/add-ship-page-document-dialog-params.model';
 import { LogBookPageDocumentTypesEnum } from './enums/log-book-page-document-types.enum';
 import { PagesPermissions } from './components/ship-pages-and-declarations-table/models/pages-permissions.model';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 
 const PAGE_NUMBER_CONTROL_NAME: string = 'pageNumberControl';
 type ThreeState = 'yes' | 'no' | 'both';
@@ -130,17 +131,18 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
 
     private gridManager!: DataTableManager<LogBookRegisterDTO, CatchesAndSalesAdministrationFilters | CatchesAndSalesPublicFilters>;
 
-    private nomenclatures: CommonNomenclatures;
-    private addShipLogBookPageWizardDialog: TLMatDialog<AddShipPageWizardComponent>;
-    private editShipLogBookPageDialog: TLMatDialog<EditShipLogBookPageComponent>;
-    private addLogBookPageWizardDialog: TLMatDialog<AddLogBookPageWizardComponent>;
-    private editFirstSaleLogBookPageDialog: TLMatDialog<EditFirstSaleLogBookPageComponent>;
-    private editAdmissionLogBookPageDialog: TLMatDialog<EditAdmissionLogBookPageComponent>;
-    private editTransportationLogBookPageDialog: TLMatDialog<EditTransportationLogBookPageComponent>;
-    private editAquacultureLogBookPageDialog: TLMatDialog<EditAquacultureLogBookPageComponent>;
-    private cancellationDialog: TLMatDialog<JustifiedCancellationComponent>;
-    private viewLogBookDialog: TLMatDialog<EditLogBookComponent>;
-    private addShipPageDocumentWizardDialog: TLMatDialog<AddShipPageDocumentWizardComponent>;
+    private readonly nomenclatures: CommonNomenclatures;
+    private readonly addShipLogBookPageWizardDialog: TLMatDialog<AddShipPageWizardComponent>;
+    private readonly editShipLogBookPageDialog: TLMatDialog<EditShipLogBookPageComponent>;
+    private readonly addLogBookPageWizardDialog: TLMatDialog<AddLogBookPageWizardComponent>;
+    private readonly editFirstSaleLogBookPageDialog: TLMatDialog<EditFirstSaleLogBookPageComponent>;
+    private readonly editAdmissionLogBookPageDialog: TLMatDialog<EditAdmissionLogBookPageComponent>;
+    private readonly editTransportationLogBookPageDialog: TLMatDialog<EditTransportationLogBookPageComponent>;
+    private readonly editAquacultureLogBookPageDialog: TLMatDialog<EditAquacultureLogBookPageComponent>;
+    private readonly cancellationDialog: TLMatDialog<JustifiedCancellationComponent>;
+    private readonly viewLogBookDialog: TLMatDialog<EditLogBookComponent>;
+    private readonly addShipPageDocumentWizardDialog: TLMatDialog<AddShipPageDocumentWizardComponent>;
+    private readonly confirmationDialog: TLConfirmDialog;
 
     public constructor(
         translationService: FuseTranslationLoaderService,
@@ -155,7 +157,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         editAquacultureLogBookPageDialog: TLMatDialog<EditAquacultureLogBookPageComponent>,
         cancellationDialog: TLMatDialog<JustifiedCancellationComponent>,
         viewLogBookDialog: TLMatDialog<EditLogBookComponent>,
-        addShipPageDocumentWizardDialog: TLMatDialog<AddShipPageDocumentWizardComponent>
+        addShipPageDocumentWizardDialog: TLMatDialog<AddShipPageDocumentWizardComponent>,
+        confirmationDialog: TLConfirmDialog
     ) {
         this.translationService = translationService;
         this.nomenclatures = nomenclatures;
@@ -170,6 +173,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.cancellationDialog = cancellationDialog;
         this.viewLogBookDialog = viewLogBookDialog;
         this.addShipPageDocumentWizardDialog = addShipPageDocumentWizardDialog;
+        this.confirmationDialog = confirmationDialog;
 
         this.canReadShipLogBookRecords = permissions.has(PermissionsEnum.FishLogBookRead) || permissions.has(PermissionsEnum.FishLogBookPageReadAll);
         this.canAddShipLogBookRecords = permissions.has(PermissionsEnum.FishLogBookPageAdd);
@@ -338,10 +342,20 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
                 logBookGroup = LogBookGroupsEnum.DeclarationsAndDocuments;
             } break;
             case LogBookTypesEnum.Admission: {
-                logBookGroup = LogBookGroupsEnum.DeclarationsAndDocuments;
+                if (logBookRegister.ownerType === LogBookPagePersonTypesEnum.RegisteredBuyer) {
+                    logBookGroup = LogBookGroupsEnum.DeclarationsAndDocuments;
+                }
+                else {
+                    logBookGroup = LogBookGroupsEnum.Ship;
+                }
             } break;
             case LogBookTypesEnum.Transportation: {
-                logBookGroup = LogBookGroupsEnum.DeclarationsAndDocuments;
+                if (logBookRegister.ownerType === LogBookPagePersonTypesEnum.RegisteredBuyer) {
+                    logBookGroup = LogBookGroupsEnum.DeclarationsAndDocuments;
+                }
+                else {
+                    logBookGroup = LogBookGroupsEnum.Ship;
+                }
             } break;
             case LogBookTypesEnum.Aquaculture: {
                 logBookGroup = LogBookGroupsEnum.Aquaculture;
@@ -457,7 +471,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
 
     public editAdmissionLogBookPage(logBookPage: AdmissionLogBookPageRegisterDTO, viewMode: boolean = false): void {
         if (logBookPage.status === LogBookPageStatusesEnum.Missing) {
-            this.openAddLogBookPageWizard(LogBookTypesEnum.Admission, logBookPage.logBookId!, logBookPage.pageNumber);
+            this.openAddLogBookPageWizard(LogBookTypesEnum.Admission, logBookPage.logBookTypeId!, logBookPage.logBookId!, logBookPage.pageNumber);
         }
         else {
             this.openEditAdmissionLogBookPageDialog(logBookPage, viewMode);
@@ -466,11 +480,13 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
 
     public editTransportationLogBookPage(logBookPage: TransportationLogBookPageRegisterDTO, viewMode: boolean = false): void {
         if (logBookPage.status === LogBookPageStatusesEnum.Missing) {
-            this.openAddLogBookPageWizard(LogBookTypesEnum.Transportation, logBookPage.logBookId!, logBookPage.pageNumber);
+            this.openAddLogBookPageWizard(LogBookTypesEnum.Transportation, logBookPage.logBookTypeId!, logBookPage.logBookId!, logBookPage.pageNumber);
         }
         else {
             const data: CatchesAndSalesDialogParamsModel = new CatchesAndSalesDialogParamsModel({
                 id: logBookPage.id,
+                logBookId: logBookPage.logBookId,
+                logBookTypeId: logBookPage.logBookTypeId,
                 pageNumber: logBookPage.pageNumber,
                 pageStatus: logBookPage.status,
                 service: this.service,
@@ -483,7 +499,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
 
     public editFirstSaleLogBookPage(logBookPage: FirstSaleLogBookPageRegisterDTO, viewMode: boolean = false): void {
         if (logBookPage.status === LogBookPageStatusesEnum.Missing) {
-            this.openAddLogBookPageWizard(LogBookTypesEnum.FirstSale, logBookPage.logBookId!, logBookPage.pageNumber);
+            this.openAddLogBookPageWizard(LogBookTypesEnum.FirstSale, logBookPage.logBookTypeId!, logBookPage.logBookId!, logBookPage.pageNumber);
         }
         else {
             this.openEditFirstSaleLogBookPageDialog(logBookPage, viewMode);
@@ -495,6 +511,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         let headerAuditBtn: IHeaderAuditButton | undefined;
         const data: CatchesAndSalesDialogParamsModel = new CatchesAndSalesDialogParamsModel({
             id: logBookPage.id,
+            logBookId: logBookPage.logBookId,
+            logBookTypeId: logBookPage.logBookTypeId,
             service: this.service,
             viewMode: viewMode
         });
@@ -544,7 +562,29 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             reason: logBookPage.cancellationReason
         });
 
-        this.openJustifiedCancellationReasonDialog(title, model, reasonControlLabel, viewMode);
+        this.openJustifiedCancellationReasonDialog(title, model, LogBookTypesEnum.Ship, reasonControlLabel, viewMode);
+    }
+
+    public onRestoreAnnulledShipLogBookPageBtnClicked(logBookPage: ShipLogBookPageRegisterDTO): void {
+        const messageTranslate: string = this.translationService.getValue('catches-and-sales.ship-page-restore-annulled-page-confirm-dialog-message');
+        const messageText: string = `${messageTranslate}: ${logBookPage.pageNumber}`;
+
+        this.confirmationDialog.open({
+            title: this.translationService.getValue('catches-and-sales.ship-page-restore-annulled-page-confirm-dialog-title'),
+            message: messageText,
+            cancelBtnLabel: this.translationService.getValue('catches-and-sales.ship-page-restore-annulled-page-confirm-dialog-cancel'),
+            okBtnLabel: this.translationService.getValue('catches-and-sales.ship-page-restore-annulled-page-confirm-dialog-ok')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.restoreAnnulledShipLogBookPage(logBookPage.id!).subscribe({
+                        next: () => {
+                            this.gridManager.refreshData();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     public onAnnulAdmissionLogBookPageBtnClicked(logBookPage: AdmissionLogBookPageRegisterDTO, viewMode: boolean = false): void {
@@ -556,7 +596,29 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             reason: logBookPage.cancellationReason
         });
 
-        this.openJustifiedCancellationReasonDialog(title, model, reasonControlLabel, viewMode);
+        this.openJustifiedCancellationReasonDialog(title, model, LogBookTypesEnum.Admission, reasonControlLabel, viewMode);
+    }
+
+    public onRestoreAnnulledAdmissionLogBookPageBtnClicked(logBookPage: AdmissionLogBookPageRegisterDTO): void {
+        const messageTranslate: string = this.translationService.getValue('catches-and-sales.admission-page-restore-annulled-page-confirm-dialog-message');
+        const messageText: string = `${messageTranslate}: ${logBookPage.pageNumber}`;
+
+        this.confirmationDialog.open({
+            title: this.translationService.getValue('catches-and-sales.admission-page-restore-annulled-page-confirm-dialog-title'),
+            message: messageText,
+            cancelBtnLabel: this.translationService.getValue('catches-and-sales.admission-page-restore-annulled-page-confirm-dialog-cancel'),
+            okBtnLabel: this.translationService.getValue('catches-and-sales.admission-page-restore-annulled-page-confirm-dialog-ok')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.restoreAnnulledAdmissionLogBookPage(logBookPage.id!).subscribe({
+                        next: () => {
+                            this.gridManager.refreshData();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     public onAnnulTransportationLogBookPageBtnClicked(logBookPage: TransportationLogBookPageRegisterDTO, viewMode: boolean = false): void {
@@ -568,7 +630,29 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             reason: logBookPage.cancellationReason
         });
 
-        this.openJustifiedCancellationReasonDialog(title, model, reasonControlLabel, viewMode);
+        this.openJustifiedCancellationReasonDialog(title, model, LogBookTypesEnum.Transportation, reasonControlLabel, viewMode);
+    }
+
+    public onRestoreAnnulledTransportationLogBookPageBtnClicked(logBookPage: TransportationLogBookPageRegisterDTO): void {
+        const messageTranslate: string = this.translationService.getValue('catches-and-sales.transportation-page-restore-annulled-page-confirm-dialog-message');
+        const messageText: string = `${messageTranslate}: ${logBookPage.pageNumber}`;
+
+        this.confirmationDialog.open({
+            title: this.translationService.getValue('catches-and-sales.transportation-page-restore-annulled-page-confirm-dialog-title'),
+            message: messageText,
+            cancelBtnLabel: this.translationService.getValue('catches-and-sales.transportation-page-restore-annulled-page-confirm-dialog-cancel'),
+            okBtnLabel: this.translationService.getValue('catches-and-sales.transportation-page-restore-annulled-page-confirm-dialog-ok')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.restoreAnnulledTransportationLogBookPage(logBookPage.id!).subscribe({
+                        next: () => {
+                            this.gridManager.refreshData();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     public onAnnulFirstSaleLogBookPageBtnClicked(logBookPage: FirstSaleLogBookPageRegisterDTO, viewMode: boolean = false): void {
@@ -580,7 +664,29 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             reason: logBookPage.cancellationReason
         });
 
-        this.openJustifiedCancellationReasonDialog(title, model, reasonControlLabel, viewMode);
+        this.openJustifiedCancellationReasonDialog(title, model, LogBookTypesEnum.FirstSale, reasonControlLabel, viewMode);
+    }
+
+    public onRestoreAnnulledFirstSaleLogBookPageBtnClicked(logBookPage: FirstSaleLogBookPageRegisterDTO): void {
+        const messageTranslate: string = this.translationService.getValue('catches-and-sales.first-sale-page-restore-annulled-page-confirm-dialog-message');
+        const messageText: string = `${messageTranslate}: ${logBookPage.pageNumber}`;
+
+        this.confirmationDialog.open({
+            title: this.translationService.getValue('catches-and-sales.first-sale-page-restore-annulled-page-confirm-dialog-title'),
+            message: messageText,
+            cancelBtnLabel: this.translationService.getValue('catches-and-sales.first-sale-page-restore-annulled-page-confirm-dialog-cancel'),
+            okBtnLabel: this.translationService.getValue('catches-and-sales.first-sale-page-restore-annulled-page-confirm-dialog-ok')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.restoreAnnulledFirstSaleLogBookPage(logBookPage.id!).subscribe({
+                        next: () => {
+                            this.gridManager.refreshData();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     public onAnnulAquacultureLogBookPageBtnClicked(logBookPage: AquacultureLogBookPageRegisterDTO, viewMode: boolean = false): void {
@@ -592,17 +698,46 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             reason: logBookPage.cancellationReason
         });
 
-        this.openJustifiedCancellationReasonDialog(title, model, reasonControlLabel, viewMode);
+        this.openJustifiedCancellationReasonDialog(title, model, LogBookTypesEnum.Aquaculture, reasonControlLabel, viewMode);
+    }
+
+    public onRestoreAnnulledAquacultureLogBookPageBtnClicked(logBookPage: AquacultureLogBookPageRegisterDTO): void {
+        const messageTranslate: string = this.translationService.getValue('catches-and-sales.aquaculture-page-restore-annulled-page-confirm-dialog-message');
+        const messageText: string = `${messageTranslate}: ${logBookPage.pageNumber}`;
+
+        this.confirmationDialog.open({
+            title: this.translationService.getValue('catches-and-sales.aquaculture-page-restore-annulled-page-confirm-dialog-title'),
+            message: messageText,
+            cancelBtnLabel: this.translationService.getValue('catches-and-sales.aquaculture-page-restore-annulled-page-confirm-dialog-cancel'),
+            okBtnLabel: this.translationService.getValue('catches-and-sales.aquaculture-page-restore-annulled-page-confirm-dialog-ok')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.restoreAnnulledAquacultureLogBookPage(logBookPage.id!).subscribe({
+                        next: () => {
+                            this.gridManager.refreshData();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     public onAddAdmissionDeclarationBtnClicked(shipLogBookPage: ShipLogBookPageRegisterDTO): void {
         const title: string = this.translationService.getValue('catches-and-sales.add-ship-admission-document-title');
-        this.openAddShipPageDocumentWizardDialog(shipLogBookPage.id!, title, LogBookPageDocumentTypesEnum.AdmissionDocument);
+        this.openAddShipPageDocumentWizardDialog(
+            shipLogBookPage.id!,
+            title,
+            LogBookPageDocumentTypesEnum.AdmissionDocument
+        );
     }
 
     public onAddTransportationDocumentBtnClicked(shipLogBookPage: ShipLogBookPageRegisterDTO): void {
         const title: string = this.translationService.getValue('catches-and-sales.add-ship-transportation-document-title');
-        this.openAddShipPageDocumentWizardDialog(shipLogBookPage.id!, title, LogBookPageDocumentTypesEnum.TransportationDocument);
+        this.openAddShipPageDocumentWizardDialog(
+            shipLogBookPage.id!,
+            title,
+            LogBookPageDocumentTypesEnum.TransportationDocument);
     }
 
     public onAddFirstSaleDocumentBtnClicked(shipLogBookPage: ShipLogBookPageRegisterDTO): void {
@@ -687,10 +822,10 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             selectedPageNumber = undefined;
         }
 
-        this.openAddLogBookPageWizard(logBook.typeCode!, logBook.id!, selectedPageNumber);
+        this.openAddLogBookPageWizard(logBook.typeCode!, logBook.typeId!, logBook.id!, selectedPageNumber);
     }
 
-    private openAddLogBookPageWizard(logBookType: LogBookTypesEnum, logBookId: number, pageNumber: number | undefined): void {
+    private openAddLogBookPageWizard(logBookType: LogBookTypesEnum, logBookTypeId: number, logBookId: number, pageNumber: number | undefined): void {
         let title: string = '';
         switch (logBookType) {
             case LogBookTypesEnum.FirstSale: {
@@ -726,6 +861,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
                 service: this.service,
                 logBookType: logBookType,
                 logBookId: logBookId,
+                logBookTypeId: logBookTypeId,
                 pageNumber: pageNumber,
                 pageStatus: pageNumber !== undefined && pageNumber !== null ? LogBookPageStatusesEnum.Missing : undefined
             }),
@@ -756,6 +892,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             },
             componentData: new CatchesAndSalesDialogParamsModel({
                 logBookId: aquacultureLogBook.id,
+                logBookTypeId: aquacultureLogBook.typeId,
                 service: this.service,
                 pageNumber: selectedPageNumber,
                 viewMode: false
@@ -818,6 +955,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         let headerAuditBtn: IHeaderAuditButton | undefined;
         const data: CatchesAndSalesDialogParamsModel = new CatchesAndSalesDialogParamsModel({
             id: logBookPage.id,
+            logBookId: logBookPage.logBookId,
+            logBookTypeId: logBookPage.logBookTypeId,
             pageNumber: logBookPage.pageNumber,
             pageStatus: logBookPage.status,
             service: this.service,
@@ -865,6 +1004,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         let headerAuditBtn: IHeaderAuditButton | undefined;
         const data: CatchesAndSalesDialogParamsModel = new CatchesAndSalesDialogParamsModel({
             id: logBookPage.id,
+            logBookId: logBookPage.logBookId,
+            logBookTypeId: logBookPage.logBookTypeId,
             pageNumber: logBookPage.pageNumber,
             pageStatus: logBookPage.status,
             service: this.service,
@@ -910,6 +1051,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     private openJustifiedCancellationReasonDialog(
         title: string,
         model: LogBookPageCancellationReasonDTO | undefined,
+        logBookType: LogBookTypesEnum,
         reasonControlLabel: string | undefined,
         viewMode: boolean = false
     ): void {
@@ -923,6 +1065,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             },
             componentData: new JustifiedCancellationDialogParams({
                 model: model,
+                logBookType: logBookType,
                 reasonControlLabel: reasonControlLabel,
                 cancellationServiceMethod: this.service.annulLogBookPage.bind(this.service)
             })

@@ -69,14 +69,19 @@
             <decree-auan-basic-info formControlName="auanControl"
                                     [isAdding]="isThirdParty">
             </decree-auan-basic-info>
+        </div>
+    </tl-expansion-panel>
 
-            <div fxLayout="row" fxLayoutGap="1em">
-                <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
-                    <tl-textarea formControlName="constatationCommentsControl"
-                                 tooltipResourceName="penal-decree.edit-auan-constatation-comments-helper"
-                                 label="{{ 'penal-decrees.edit-auan-constatation-comments' | tlTranslate }}">
-                    </tl-textarea>
-                </div>
+    <!-- Установих, че -->
+    <tl-expansion-panel title="{{ 'penal-decrees.edit-constatation-comments' | tlTranslate }}"
+                        tooltipResourceName="penal-decrees.edit-constatation-comments-helper"
+                        [validityChecker]="form">
+        <div fxLayout="row" fxLayoutGap="1em">
+            <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
+                <tl-textarea formControlName="constatationCommentsControl"
+                             tooltipResourceName="penal-decree.edit-auan-constatation-comments-helper"
+                             label="{{ 'penal-decrees.edit-auan-constatation-comments' | tlTranslate }}">
+                </tl-textarea>
             </div>
         </div>
     </tl-expansion-panel>
@@ -174,18 +179,6 @@
                 </tl-card>
             </div>
         </div>
-    </tl-expansion-panel>
-
-    <!-- Статус на споразумението -->
-    <tl-expansion-panel *ngIf="!isAdding" title="{{ 'penal-decrees.edit-agreement-status' | tlTranslate }}"
-                        tooltipResourceName="penal-decrees.edit-agreement-status-helper"
-                        [validityChecker]="form">
-        <decree-statuses-table fxFlex="100"
-                               formControlName="statusesControl"
-                               [viewMode]="viewMode"
-                               [service]="service"
-                               [decreeType]="decreeType">
-        </decree-statuses-table>
     </tl-expansion-panel>
 
     <!-- Файлове -->

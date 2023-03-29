@@ -27,6 +27,7 @@ export class EditCrossCheckComponent implements OnInit, IDialogComponent, AfterV
     public hasError: boolean = true;
 
     public autoExecFrequencyCodes: NomenclatureDTO<CrossChecksAutoExecFrequencyEnum>[];
+    public sources: NomenclatureDTO<number>[] = [];
     public levels: NomenclatureDTO<number>[];
     public groupsNames: NomenclatureDTO<number>[] = [];
 
@@ -97,15 +98,17 @@ export class EditCrossCheckComponent implements OnInit, IDialogComponent, AfterV
     }
 
     public async ngOnInit(): Promise<void> {
-        const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin(
+        const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin([
             this.service.getAllReportGroups(),
             this.commonNomenclaturesService.getUserNames(),
-            this.service.getActiveRoles()
-        ).toPromise();
+            this.service.getActiveRoles(),
+            this.commonNomenclaturesService.getCheckSources()
+        ]).toPromise();
 
         this.groupsNames = nomenclatures[0];
         this.users = nomenclatures[1];
         this.roles = nomenclatures[2];
+        this.sources = nomenclatures[3];
 
         if (this.crossCheckId === undefined) {
             this.model = new CrossCheckEditDTO();
@@ -200,14 +203,13 @@ export class EditCrossCheckComponent implements OnInit, IDialogComponent, AfterV
             dataSourceCheckControl: new FormControl(null, Validators.maxLength(500)),
             dataFieldsCheckControl: new FormControl(null, Validators.maxLength(1000)),
             purposeControl: new FormControl(null, Validators.maxLength(1000)),
+            sourceControl: new FormControl(null, Validators.required),
             hasAutomaticExecutionControl: new FormControl(null, Validators.required),
             checkTableNameControl: new FormControl(null, [Validators.required, Validators.maxLength(255)]),
             rolesControl: new FormControl(),
             usersControl: new FormControl(),
             queryControl: new FormControl()
         });
-
-
     }
 
     private fillForm(): void {
@@ -220,6 +222,7 @@ export class EditCrossCheckComponent implements OnInit, IDialogComponent, AfterV
         this.form.get('dataSourceCheckControl')!.setValue(this.model.checkSource);
         this.form.get('dataFieldsCheckControl')!.setValue(this.model.checkSourceColumns);
         this.form.get('purposeControl')!.setValue(this.model.purpose);
+        this.form.get('sourceControl')!.setValue(this.sources.find(x => x.value === this.model.sourceId));
         this.form.get('hasAutomaticExecutionControl')!.setValue(this.autoExecFrequencyCodes.find(x => x.value === this.model.autoExecFrequency));
         this.form.get('checkTableNameControl')!.setValue(this.model.checkTableName);
         this.form.get('rolesControl')!.setValue(this.model.roles);
@@ -236,6 +239,7 @@ export class EditCrossCheckComponent implements OnInit, IDialogComponent, AfterV
         this.model.checkSource = this.form.get('dataSourceCheckControl')!.value;
         this.model.checkSourceColumns = this.form.get('dataFieldsCheckControl')!.value;
         this.model.purpose = this.form.get('purposeControl')!.value;
+        this.model.sourceId = this.form.get('sourceControl')!.value!.value;
         this.model.autoExecFrequency = this.form.get('hasAutomaticExecutionControl')!.value.value;
         this.model.checkTableName = this.form.get('checkTableNameControl')!.value;
         this.model.reportSQL = 'Report sql';

@@ -44,7 +44,7 @@
                           tooltipResourceName="ships-register.iama-number-cfr-helper"
                           label="{{ isRegisterEntry || isAddingRegisterEntry ? ('ships-register.cfr' | tlTranslate) : ('ships-register.iama-number' | tlTranslate) }}"
                           (focusout)="onCfrFocusout()"
-                          [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-input>
                 <tl-input fxFlex="20"
                           formControlName="shipNameControl"
@@ -204,20 +204,20 @@
                           formControlName="cfrControl"
                           tooltipResourceName="ships-register.iama-number-cfr-helper"
                           label="{{ addingRegisterEntry ? ('ships-register.cfr' | tlTranslate) : ('ships-register.iama-number' | tlTranslate) }}"
-                          [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-input>
                 <tl-input fxFlex="20"
                           formControlName="shipNameControl"
                           tooltipResourceName="ships-register.name-helper"
                           label="{{ 'ships-register.name' | tlTranslate }}"
-                          [getControlErrorLabelText]="getControlErrorLabelText">
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-input>
                 <tl-autocomplete fxFlex="20"
                                  formControlName="vesselTypeControl"
                                  tooltipResourceName="ships-register.vessel-type-per-mssk-helper"
                                  label="{{ 'ships-register.vessel-type-per-mssk' | tlTranslate }}"
                                  [options]="vesselTypes"
-                                 [getControlErrorLabelText]="getControlErrorLabelText">
+                                 [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-autocomplete>
             </div>
         </ng-template>
@@ -479,19 +479,19 @@
                                   formControlName="regLicenceNumControl"
                                   tooltipResourceName="ships-register.registration-licence-number-helper"
                                   label="{{ 'ships-register.registration-licence-number' | tlTranslate }}"
-                                  [getControlErrorLabelText]="getControlErrorLabelText">
+                                  [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                         </tl-input>
                         <tl-input fxFlex="16"
                                   formControlName="regLicencePublishVolumeControl"
                                   tooltipResourceName="ships-register.registration-licence-publish-volume-helper"
                                   label="{{ 'ships-register.registration-licence-publish-volume' | tlTranslate }}"
-                                  [getControlErrorLabelText]="getControlErrorLabelText">
+                                  [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                         </tl-input>
                         <tl-input fxFlex="16"
                                   formControlName="regLicencePublishPageControl"
                                   tooltipResourceName="ships-register.registration-licence-publish-page-helper"
                                   label="{{ 'ships-register.registration-licence-publish-page' | tlTranslate }}"
-                                  [getControlErrorLabelText]="getControlErrorLabelText">
+                                  [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                         </tl-input>
                     </div>
                 </tl-card-content>
@@ -665,25 +665,25 @@
                           formControlName="totalLengthControl"
                           tooltipResourceName="ships-register.total-length-loa-helper"
                           label="{{ 'ships-register.total-length-loa' | tlTranslate }}"
-                          [getControlErrorLabelText]="getControlErrorLabelText">
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-input>
                 <tl-input fxFlex="25"
                           formControlName="totalWidthControl"
                           tooltipResourceName="ships-register.total-width-helper"
                           label="{{ 'ships-register.total-width' | tlTranslate }}"
-                          [getControlErrorLabelText]="getControlErrorLabelText">
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-input>
                 <tl-input fxFlex="25"
                           formControlName="grossTonnageControl"
                           tooltipResourceName="ships-register.gross-tonnage-helper"
                           label="{{ 'ships-register.gross-tonnage' | tlTranslate }}"
-                          [getControlErrorLabelText]="getControlErrorLabelText">
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-input>
                 <tl-input fxFlex="25"
                           formControlName="netTonnageControl"
                           tooltipResourceName="ships-register.net-tonnage-helper"
                           label="{{ 'ships-register.net-tonnage' | tlTranslate }}"
-                          [getControlErrorLabelText]="getControlErrorLabelText">
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-input>
             </div>
 
@@ -692,19 +692,19 @@
                           formControlName="boardHeightControl"
                           tooltipResourceName="ships-register.board-height-helper"
                           label="{{ 'ships-register.board-height' | tlTranslate }}"
-                          [getControlErrorLabelText]="getControlErrorLabelText">
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-input>
                 <tl-input fxFlex="25"
                           formControlName="draughtControl"
                           tooltipResourceName="ships-register.ship-draught-helper"
                           label="{{ 'ships-register.ship-draught' | tlTranslate }}"
-                          [getControlErrorLabelText]="getControlErrorLabelText">
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-input>
                 <tl-input fxFlex="25"
                           formControlName="lengthBetweenPerpendicularsControl"
                           tooltipResourceName="ships-register.length-between-perpendiculars-helper"
                           label="{{ 'ships-register.length-between-perpendiculars' | tlTranslate }}"
-                          [getControlErrorLabelText]="getControlErrorLabelText">
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-input>
                 <tl-autocomplete fxFlex="25"
                                  formControlName="fuelTypeControl"

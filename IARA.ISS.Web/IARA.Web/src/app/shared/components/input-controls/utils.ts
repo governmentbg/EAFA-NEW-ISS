@@ -173,6 +173,16 @@ export class TLUtils {
                     message = `${validationTranslation}: ${DateUtils.ToDisplayDateString(error.min as Date)}`;
                 }
             } break;
+            case 'mindate': {
+                if (error.min !== null && error.min !== undefined) {
+                    message = `${validationTranslation}: ${DateUtils.ToDisplayDateTime(error.min as Date)}`;
+                }
+            } break;
+            case 'maxdate': {
+                if (error.max !== null && error.max !== undefined) {
+                    message = `${validationTranslation}: ${DateUtils.ToDisplayDateTime(error.max as Date)}`;
+                }
+            } break;
             default: {
                 message = tlTranslatePipe.transform('validation.default', 'cap');
             } break;

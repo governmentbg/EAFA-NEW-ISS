@@ -58,6 +58,7 @@ import { FluxVmsRequestsComponent } from '@app/components/administration-app/flu
 import { ApplicationRegixChecksComponent } from '@app/components/administration-app/applications-regix-checks/application-regix-checks.component';
 import { PenalPointsComponent } from '@app/components/administration-app/control-activity/awarded-points/penal-points.component';
 import { PrintConfigurationsComponent } from '@app/components/administration-app/print-configurations/print-configurations.component';
+import { LogBookPageEditExceptionsComponent } from '@app/components/administration-app/catches-and-sales/log-book-page-edit-exceptions/log-book-page-edit-exceptions.component';
 
 export class Navigation {
     public static getMenu(isPublic: boolean): ITLNavigation[] {
@@ -373,6 +374,52 @@ export class Navigation {
             }]
         },
         {
+            id: 'catches_and_sales_collapsible',
+            title: 'Catches and sales',
+            translate: 'navigation.catches-and-sales-collapsible',
+            type: 'collapsable',
+            icon: 'fa-money-bill-alt',
+            isPublic: false,
+            permissions: [
+                PermissionsEnum.LogBookPageEditExceptionsRead
+            ],
+            children: [
+                {
+                    id: 'catches_and_sales',
+                    title: 'Catches and sales',
+                    translate: 'navigation.catches-and-sales',
+                    type: 'item',
+                    icon: 'fa-money-bill-alt',
+                    url: '/log-books-and-declarations',
+                    isPublic: false,
+                    component: CatchesAndSalesComponent,
+                    permissions: [
+                        PermissionsEnum.FishLogBooksReadAll,
+                        PermissionsEnum.FishLogBookRead,
+                        PermissionsEnum.FirstSaleLogBooksReadAll,
+                        PermissionsEnum.FirstSaleLogBookRead,
+                        PermissionsEnum.AdmissionLogBooksReadAll,
+                        PermissionsEnum.AdmissionLogBookRead,
+                        PermissionsEnum.TransportationLogBooksReadAll,
+                        PermissionsEnum.TransportationLogBookRead,
+                        PermissionsEnum.AquacultureLogBooksReadAll,
+                        PermissionsEnum.AquacultureLogBookRead
+                    ]
+                },
+                {
+                    id: 'log_book_page_edit_exceptions',
+                    title: 'Log book page edit exceptions',
+                    translate: 'navigation.log-book-page-edit-exceptions',
+                    type: 'item',
+                    icon: 'fa-bolt',
+                    url: '/log-book-page-edit-exceptions',
+                    isPublic: false,
+                    component: LogBookPageEditExceptionsComponent,
+                    permissions: [PermissionsEnum.LogBookPageEditExceptionsRead]
+                }
+            ]
+        },
+        {
             id: 'catches_and_sales',
             title: 'Catches and sales',
             translate: 'navigation.catches-and-sales',
@@ -381,6 +428,7 @@ export class Navigation {
             url: '/log-books-and-declarations',
             isPublic: false,
             component: CatchesAndSalesComponent,
+            exceptPermissions: [PermissionsEnum.LogBookPageEditExceptionsRead],
             permissions: [
                 PermissionsEnum.FishLogBooksReadAll,
                 PermissionsEnum.FishLogBookRead,
@@ -576,6 +624,7 @@ export class Navigation {
             type: 'collapsable',
             icon: 'fa-th-list',
             isPublic: false,
+            permissions: [PermissionsEnum.ReportParameterRead],
             children: [
                 {
                     id: 'report_execution',
@@ -589,6 +638,17 @@ export class Navigation {
                     isPublic: false
                 },
                 {
+                    id: 'report_parameter_definition',
+                    title: 'Report parameter definition',
+                    translate: 'navigation.report-parameter-definition',
+                    type: 'item',
+                    icon: 'fa-th-list',
+                    url: '/report_parameter_definition',
+                    permissions: [PermissionsEnum.ReportParameterRead],
+                    component: ReportParameterDefinitionComponent,
+                    isPublic: false
+                },
+                {
                     id: 'report_definition',
                     title: 'Report definition',
                     translate: 'navigation.report-definition',
@@ -599,19 +659,20 @@ export class Navigation {
                     component: ReportDefinitionComponent,
                     isPublic: false,
                     hideInMenu: true
-                },
-                {
-                    id: 'report_parameter_definition',
-                    title: 'Report parameter definition',
-                    translate: 'navigation.report-parameter-definition',
-                    type: 'item',
-                    icon: 'fa-th-list',
-                    url: '/report_parameter_definition',
-                    permissions: [PermissionsEnum.ReportParameterRead],
-                    component: ReportParameterDefinitionComponent,
-                    isPublic: false
                 }
             ]
+        },
+        {
+            id: 'report_execute',
+            title: 'Report execute',
+            translate: 'navigation.reports',
+            type: 'item',
+            icon: 'fa-book',
+            url: '/reports',
+            component: ReportViewComponent,
+            permissions: [PermissionsEnum.ReportRead],
+            exceptPermissions: [PermissionsEnum.ReportParameterRead],
+            isPublic: false
         },
         {
             id: 'cross_checks',

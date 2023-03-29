@@ -39,7 +39,8 @@
                                 [hasMap]="false"
                                 [ships]="ships"
                                 [vesselTypes]="vesselTypes"
-                                [countries]="countries">
+                                [countries]="countries"
+                                (shipSelected)="onShipChanged($event)">
                 </inspected-ship>
                 <inspected-ship-subject formControlName="shipOwnerControl"
                                         [subjects]="owners"

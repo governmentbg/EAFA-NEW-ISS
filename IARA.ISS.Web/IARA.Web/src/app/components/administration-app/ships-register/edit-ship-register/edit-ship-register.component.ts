@@ -54,6 +54,8 @@ import { StatisticalFormsAdministrationService } from '@app/services/administrat
 import { StatisticalFormsFishVesselComponent } from '@app/components/common-app/statistical-forms/components/statistical-forms-fish-vessel/statistical-forms-fish-vessel.component';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { EditShipComponent } from '@app/components/common-app/ships-register/edit-ship/edit-ship.component';
 
 const SHIP_DATA_TAB_INDEX: number = 0;
 const FISHING_GEARS_TAB_INDEX: number = 1;
@@ -131,6 +133,11 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
 
     public hasCatchesAndSalesReadPermission: boolean = false;
     public hasStatisticalFormReadPermission: boolean = false;
+
+    public getEventTypeErrorTextMethod: GetControlErrorLabelTextCallback = this.getEventTypeErrorText.bind(this);
+
+    @ViewChild('shipRef')
+    private editShipRef!: EditShipComponent;
 
     @ViewChild('logbookPagesTable')
     private logbookPagesTable!: TLDataTableComponent;
@@ -458,6 +465,7 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
 
                 if (event !== undefined && event !== null && event.value !== undefined && event.value !== null) {
                     this.shipControl.markAllAsTouched();
+                    this.editShipRef.runValidityChecker();
 
                     if (this.shipControl.valid) {
                         this.model.eventType = ShipEventTypeEnum[event.code as keyof typeof ShipEventTypeEnum];
@@ -467,24 +475,34 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
                                 this.model.isNoApplicationDeregistration = !this.isApplication();
                             }
 
-                            if (this.isThirdPartyShip) {
-                                this.service.editThirdPartyShip(this.model).subscribe({
-                                    next: () => {
-                                        this.shipSavedHandler();
-                                        NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
-                                    }
-                                });
+                            if (this.model.isNoApplicationDeregistration && this.allEvents[0].usrRsr === true) {
+                                this.confirmDialog.open({
+                                    title: this.translate.getValue('ships-register.deregistering-ship-with-rsr'),
+                                    message: this.translate.getValue('ships-register.deregistering-ship-with-rsr-message'),
+                                    okBtnLabel: this.translate.getValue('ships-register.deregistering-ship-with-rsr-ok-btn-label'),
+                                    hasCancelButton: false
+                                }).subscribe();
                             }
                             else {
-                                this.service.editShip(this.model).subscribe({
-                                    next: () => {
-                                        this.shipSavedHandler();
-                                        NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
-                                    }
-                                });
-                            }
+                                if (this.isThirdPartyShip) {
+                                    this.service.editThirdPartyShip(this.model).subscribe({
+                                        next: () => {
+                                            this.shipSavedHandler();
+                                            NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
+                                        }
+                                    });
+                                }
+                                else {
+                                    this.service.editShip(this.model).subscribe({
+                                        next: () => {
+                                            this.shipSavedHandler();
+                                            NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
+                                        }
+                                    });
+                                }
 
-                            this.showEditsControl.setValue(this.model.eventType === ShipEventTypeEnum.EDIT);
+                                this.showEditsControl.setValue(this.model.eventType === ShipEventTypeEnum.EDIT);
+                            }
                         }
                         else {
                             this.allEvents.unshift(new ShipRegisterEventDTO({
@@ -577,16 +595,26 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
                             });
                         }
                         else if (this.isDeregistrationApplication) {
-                            const ships: ShipRegisterDeregistrationDTO = new ShipRegisterDeregistrationDTO({
-                                ships: events,
-                                applicationId: this.applicationId
-                            });
+                            if (this.allEvents[0].usrRsr === true) {
+                                this.confirmDialog.open({
+                                    title: this.translate.getValue('ships-register.deregistering-ship-with-rsr'),
+                                    message: this.translate.getValue('ships-register.deregistering-ship-with-rsr-message'),
+                                    okBtnLabel: this.translate.getValue('ships-register.deregistering-ship-with-rsr-ok-btn-label'),
+                                    hasCancelButton: false
+                                }).subscribe();
+                            }
+                            else {
+                                const ships: ShipRegisterDeregistrationDTO = new ShipRegisterDeregistrationDTO({
+                                    ships: events,
+                                    applicationId: this.applicationId
+                                });
 
-                            this.service.completeShipDeregistrationApplication(ships).subscribe({
-                                next: () => {
-                                    this.router.navigateByUrl('/fishing-vessels');
-                                }
-                            });
+                                this.service.completeShipDeregistrationApplication(ships).subscribe({
+                                    next: () => {
+                                        this.router.navigateByUrl('/fishing-vessels');
+                                    }
+                                });
+                            }
                         }
                         else if (this.isIncreaseCapacityApplication) {
                             const ships: ShipRegisterIncreaseCapacityDTO = new ShipRegisterIncreaseCapacityDTO({
@@ -889,16 +917,19 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
         }
         // при заявление за промяна в обстоятелствата не може да се отпише кораб
         else if (this.isChangeOfCircumstancesApplication) {
+            unapplicableTypes.push(ShipEventTypeEnum[ShipEventTypeEnum.EDIT]);
             unapplicableTypes.push(ShipEventTypeEnum[ShipEventTypeEnum.DES]);
             unapplicableTypes.push(ShipEventTypeEnum[ShipEventTypeEnum.RET]);
             unapplicableTypes.push(ShipEventTypeEnum[ShipEventTypeEnum.EXP]);
         }
         // при заявление за отписване не може да се правят модификации, а само събития за отписване
         else if (this.isDeregistrationApplication) {
+            unapplicableTypes.push(ShipEventTypeEnum[ShipEventTypeEnum.EDIT]);
             unapplicableTypes.push(ShipEventTypeEnum[ShipEventTypeEnum.MOD]);
         }
         // при заявления за увеличаване/намаляване на капацитет не може да се отпише кораб
         else if (this.isIncreaseCapacityApplication || this.isReduceCapacityApplication) {
+            unapplicableTypes.push(ShipEventTypeEnum[ShipEventTypeEnum.EDIT]);
             unapplicableTypes.push(ShipEventTypeEnum[ShipEventTypeEnum.EXP]);
             unapplicableTypes.push(ShipEventTypeEnum[ShipEventTypeEnum.RET]);
             unapplicableTypes.push(ShipEventTypeEnum[ShipEventTypeEnum.DES]);

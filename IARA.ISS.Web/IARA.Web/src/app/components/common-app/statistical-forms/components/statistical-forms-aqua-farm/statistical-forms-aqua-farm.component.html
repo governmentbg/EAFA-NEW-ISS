@@ -58,8 +58,8 @@
                                  formControlName="aquacultureFacilityControl"
                                  tooltipResourceName="statistical-forms.aqua-farm-aquaculture-facilities-helper"
                                  [options]="aquacultures"
-                                 [filterFn]="aquaculturesFilterFn.bind(this)"
-                                 [getControlErrorLabelText]="aquacultureFacilityErrorLabelText.bind(this)">
+                                 [filterFn]="aquaculturesFilterFnRef"
+                                 [getControlErrorLabelText]="aquacultureFacilityErrorLabelTextMethod">
                 </tl-autocomplete>
             </div>
         </tl-expansion-panel>

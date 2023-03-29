@@ -27,22 +27,52 @@
 
             <div fxLayout="row" fxLayoutGap="1ем" fxLayoutAlign="space-between center">
                 <tl-input fxFlex="33"
+                          formControlName="requestContentControl"
+                          label="{{ 'application-regix-checks.filters-request-content' | tlTranslate }}"
+                          tooltipResourceName="application-regix-checks.filters-request-content-helper">
+                </tl-input>
+
+                <tl-date-time fxFlex="33"
+                              formControlName="requestDateTimeFromControl"
+                              label="{{ 'application-regix-checks.filters-request-date-time-from' | tlTranslate }}"
+                              tooltipResourceName="application-regix-checks.filters-request-date-time-from-helper">
+                </tl-date-time>
+
+                <tl-date-time fxFlex="33"
+                              formControlName="requestDateTimeToControl"
+                              label="{{ 'application-regix-checks.filters-request-date-time-to' | tlTranslate }}"
+                              tooltipResourceName="application-regix-checks.filters-request-date-time-to-helper">
+                </tl-date-time>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1ем" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="33"
+                          formControlName="responseContentControl"
+                          label="{{ 'application-regix-checks.filters-response-content' | tlTranslate }}"
+                          tooltipResourceName="application-regix-checks.filters-response-content-helper">
+                </tl-input>
+
+                <tl-date-time fxFlex="33"
+                              formControlName="responseDateTimeFromControl"
+                              label="{{ 'application-regix-checks.filters-response-date-time-from' | tlTranslate }}"
+                              tooltipResourceName="application-regix-checks.filters-response-date-time-from-helper">
+                </tl-date-time>
+
+                <tl-date-time fxFlex="33"
+                              formControlName="responseDateTimeToControl"
+                              label="{{ 'application-regix-checks.filters-response-date-time-to' | tlTranslate }}"
+                              tooltipResourceName="application-regix-checks.filters-response-date-time-to-helper">
+                </tl-date-time>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1ем" fxLayoutAlign="space-between center">
+                <tl-input fxFlex="33"
                           formControlName="webServiceNameControl"
                           label="{{ 'application-regix-checks.filters-web-service-name' | tlTranslate }}"
                           tooltipResourceName="application-regix-checks.filters-web-service-name-helper">
                 </tl-input>
 
-                <tl-date-range fxFlex="33"
-                               formControlName="requestDateTimeControl"
-                               label="{{ 'application-regix-checks.filters-request-date-time' | tlTranslate }}"
-                               tooltipResourceName="application-regix-checks.filters-request-date-time-helper">
-                </tl-date-range>
-
-                <tl-date-range fxFlex="33"
-                               formControlName="responseDateTimeControl"
-                               label="{{ 'application-regix-checks.filters-response-date-time' | tlTranslate }}"
-                               tooltipResourceName="application-regix-checks.filters-response-date-time-helper">
-                </tl-date-range>
+                <div fxFlex="66"></div>
             </div>
         </div>
     </search-panel>

@@ -37,7 +37,7 @@ export class RecreationalFishingMyTicketsComponent implements OnInit {
         this.service = service;
         this.router = router;
 
-        this.canBuyTickets = permissions.has(PermissionsEnum.TicketsAddRecords);
+        this.canBuyTickets = permissions.has(PermissionsEnum.TicketsPublicAddRecords);
     }
 
     public ngOnInit(): void {

@@ -40,6 +40,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
     public sizeCategories: NomenclatureDTO<number>[] = [];
 
     public readOnly: boolean = false;
+    public hasPrice: boolean = true;
     public showTurbotControls: boolean = false;
     public showFishCategoryControl: boolean = false;
     public isAquaculturePage: boolean = false;
@@ -56,8 +57,6 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
     public constructor(translate: FuseTranslationLoaderService, nomenclatures: CommonNomenclatures, currencyPipe: CurrencyPipe) {
         this.nomenclatures = nomenclatures;
         this.currencyPipe = currencyPipe;
-
-        this.buildForm();
     }
 
     public async ngOnInit(): Promise<void> {
@@ -89,7 +88,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             this.form.get('sizeCategoryControl')!.setValidators(Validators.required);
             this.form.get('sizeCategoryControl')!.markAsPending({ emitEvent: false });
             this.form.get('sizeCategoryControl')!.updateValueAndValidity({ emitEvent: false });
-            
+
             const defaultSizeCategory: NomenclatureDTO<number> | undefined = this.sizeCategories.find(x => x.code === DEFAULT_SIZE_CATEGORY_CODE);
             this.form.get('sizeCategoryControl')!.setValue(defaultSizeCategory);
 
@@ -115,21 +114,23 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
     }
 
     public ngAfterViewInit(): void {
-        this.form.get('quantityKgControl')!.valueChanges.subscribe({
-            next: (quantityKg: number | undefined) => {
-                const unitPrice: number | undefined = this.form.get('unitPriceControl')!.value;
-                const formattedTotalPrice: string | null = LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, quantityKg, unitPrice);
-                this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);
-            }
-        });
+        if (this.hasPrice) {
+            this.form.get('quantityKgControl')!.valueChanges.subscribe({
+                next: (quantityKg: number | undefined) => {
+                    const unitPrice: number | undefined = this.form.get('unitPriceControl')!.value;
+                    const formattedTotalPrice: string | null = LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, quantityKg, unitPrice);
+                    this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);
+                }
+            });
 
-        this.form.get('unitPriceControl')!.valueChanges.subscribe({
-            next: (unitPrice: number | undefined) => {
-                const quantityKg: number | undefined = this.form.get('quantityKgControl')!.value;
-                const formattedTotalPrice: string | null = LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, quantityKg, unitPrice);
-                this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);
-            }
-        });
+            this.form.get('unitPriceControl')!.valueChanges.subscribe({
+                next: (unitPrice: number | undefined) => {
+                    const quantityKg: number | undefined = this.form.get('quantityKgControl')!.value;
+                    const formattedTotalPrice: string | null = LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, quantityKg, unitPrice);
+                    this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);
+                }
+            });
+        }
 
         this.form.get('aquaticOrganismTypeControl')!.valueChanges.subscribe({
             next: (aquaticOrganism: FishNomenclatureDTO | undefined) => {
@@ -143,6 +144,9 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
         this.readOnly = data.viewMode;
         this.service = data.service;
         this.logBookType = data.logBookType;
+        this.hasPrice = data.hasPrice;
+
+        this.buildForm();
 
         if (data.model === null || data.model === undefined) {
             this.model = new LogBookPageProductDTO({ isActive: true, logBookType: this.logBookType });
@@ -196,12 +200,15 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             purposeControl: new FormControl(undefined, Validators.required),
 
             quantityKgControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
-            unitPriceControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
-            totalPriceControl: new FormControl(),
 
             turbotSizeGroupControl: new FormControl(),
             unitCountControl: new FormControl()
         });
+
+        if (this.hasPrice) {
+            this.form.addControl('unitPriceControl', new FormControl(undefined, [Validators.required, TLValidators.number(0)]));
+            this.form.addControl('totalPriceControl', new FormControl());
+        }
     }
 
     private fillForm(): void {
@@ -248,14 +255,17 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
 
         this.form.get('quantityKgControl')!.setValue(this.model.quantityKg);
 
-        this.form.get('unitPriceControl')!.setValue(this.model.unitPrice);
-        const formattedTotalPrice: string | null = LogBookPageProductUtils.formatTotalProductPrice(
-            this.currencyPipe,
-            this.model.quantityKg,
-            this.model.unitPrice
-        );
+        if (this.hasPrice) {
+            this.form.get('unitPriceControl')!.setValue(this.model.unitPrice);
+            const formattedTotalPrice: string | null = LogBookPageProductUtils.formatTotalProductPrice(
+                this.currencyPipe,
+                this.model.quantityKg,
+                this.model.unitPrice
+            );
 
-        this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);
+            this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);
+        }
+
         this.form.get('unitCountControl')!.setValue(this.model.unitCount);
 
         if (this.model.turbotSizeGroupId !== null && this.model.turbotSizeGroupId !== undefined) {
@@ -269,8 +279,11 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
         this.model.productPresentationId = this.form.get('presentationControl')!.value.value;
         this.model.productPurposeId = this.form.get('purposeControl')!.value.value;
         this.model.quantityKg = this.form.get('quantityKgControl')!.value;
-        this.model.unitPrice = this.form.get('unitPriceControl')!.value;
-        this.model.totalPrice = this.form.get('totalPriceControl')!.value;
+
+        if (this.hasPrice) {
+            this.model.unitPrice = this.form.get('unitPriceControl')!.value;
+            this.model.totalPrice = this.form.get('totalPriceControl')!.value;
+        }
 
         if (this.logBookType !== LogBookTypesEnum.Aquaculture) {
             this.model.catchLocation = this.form.get('catchLocationControl')!.value;

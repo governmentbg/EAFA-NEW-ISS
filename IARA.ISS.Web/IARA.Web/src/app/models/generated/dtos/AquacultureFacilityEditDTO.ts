@@ -30,8 +30,8 @@ export class AquacultureFacilityEditDTO {
     @StrictlyTyped(Boolean)
     public isOnlineApplication?: boolean;
 
-    @StrictlyTyped(Number)
-    public regNum?: number;
+    @StrictlyTyped(String)
+    public regNum?: string;
 
     @StrictlyTyped(String)
     public urorNum?: string;

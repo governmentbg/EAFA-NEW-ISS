@@ -52,6 +52,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
     public readonly logBookTypesEnum: typeof LogBookTypesEnum = LogBookTypesEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
+    public hasPrice: boolean = false;
     public isTouched: boolean = false;
 
     public fishTypes: FishNomenclatureDTO[] = [];
@@ -101,6 +102,8 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
     public ngOnInit(): void {
         this.initCustomFormControl();
         this.loader.load();
+
+        this.hasPrice = this.logBookType === LogBookTypesEnum.Aquaculture || this.logBookType === LogBookTypesEnum.FirstSale;
     }
 
     public ngAfterViewInit(): void {
@@ -114,12 +117,14 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
     public writeValue(value: LogBookPageProductDTO[]): void {
         if (value !== null && value !== undefined) {
             this.loader.load(() => {
-                for (const product of value) {
-                    product.totalPrice = LogBookPageProductUtils.formatTotalProductPrice(
-                        this.currencyPipe,
-                        product.quantityKg,
-                        product.unitPrice
-                    ) ?? undefined;
+                if (this.hasPrice) {
+                    for (const product of value) {
+                        product.totalPrice = LogBookPageProductUtils.formatTotalProductPrice(
+                            this.currencyPipe,
+                            product.quantityKg,
+                            product.unitPrice
+                        ) ?? undefined;
+                    }
                 }
 
                 setTimeout(() => {
@@ -164,7 +169,8 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
                 model: product,
                 viewMode: this.isReadonly || viewMode,
                 service: this.service,
-                logBookType: this.logBookType
+                logBookType: this.logBookType,
+                hasPrice: this.hasPrice
             });
 
             if (product.id !== null && product.id !== undefined) {
@@ -186,7 +192,8 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
             data = new EditLogBookPageProductDialogParamsModel({
                 service: this.service,
                 logBookType: this.logBookType,
-                viewMode: false
+                viewMode: false,
+                hasPrice: this.hasPrice
             });
 
             title = this.translate.getValue('catches-and-sales.page-product-add-product-dialog-title');
@@ -236,7 +243,8 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
             model: productCopy,
             viewMode: this.isReadonly,
             service: this.service,
-            logBookType: this.logBookType
+            logBookType: this.logBookType,
+            hasPrice: this.hasPrice
         });
 
         this.openLogBookPageProductDialog(productCopy, title, undefined, data, false)

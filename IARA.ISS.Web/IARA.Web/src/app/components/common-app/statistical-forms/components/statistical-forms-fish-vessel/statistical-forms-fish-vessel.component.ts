@@ -47,6 +47,7 @@ import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTy
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 type YesNo = 'yes' | 'no';
 
@@ -101,6 +102,8 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public statFormShip: Map<number, StatisticalFormShipDTO> = new Map<number, StatisticalFormShipDTO>();
 
+    public showShipForm: boolean = false;
+
     public workHours!: number;
     public freeLabor!: number;
 
@@ -108,6 +111,8 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
     public employeeAge: StatisticalFormEmployeeInfoDTO[] = [];
     public employeesEducation: StatisticalFormEmployeeInfoDTO[] = [];
     public employeesNationality: StatisticalFormEmployeeInfoDTO[] = [];
+
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
     @ViewChild('seaDaysTable')
     private seaDaysTable!: TLDataTableComponent;
@@ -123,9 +128,10 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
     private applicationId: number | undefined;
     private isApplicationHistoryMode: boolean = false;
     private dialogRightSideActions: IActionInfo[] | undefined;
-    private nomenclatures!: CommonNomenclatures;
+    private lastSelectedShip: ShipNomenclatureDTO | undefined = undefined;
 
     private applicationsService: IApplicationsService | undefined;
+    private readonly nomenclatures: CommonNomenclatures;
 
     private get employeeStatsFormArray(): FormArray {
         return this.form?.get('employeeStatsArray') as FormArray;
@@ -205,12 +211,12 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
 
     public async ngOnInit(): Promise<void> {
         if (!this.showOnlyRegiXData) {
-            const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin(
+            const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin([
                 NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false),
                 NomenclatureStore.instance.getNomenclature(NomenclatureTypes.GrossTonnageIntervals, this.service.getGrossTonnageIntervals.bind(this.service), false),
                 NomenclatureStore.instance.getNomenclature(NomenclatureTypes.ShipLengthIntervals, this.service.getVesselLengthIntervals.bind(this.service), false),
                 NomenclatureStore.instance.getNomenclature(NomenclatureTypes.FuelTypes, this.service.getFuelTypes.bind(this.service), false)
-            ).toPromise();
+            ]).toPromise();
 
             this.ships = nomenclatures[0];
             this.grossTonnageIntervals = nomenclatures[1];
@@ -448,7 +454,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         return result;
     }
 
-    public shipControlErrorLabelTest(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+    public getControlErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'shipNameControl') {
             if (errorCode === 'shipNoFishingCapacity' && error === true) {
                 return new TLError({
@@ -576,7 +582,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         }
 
         this.form.get('shipPriceControl')!.setValue(model.shipPrice);
-        this.form.get('shipEnginePowerControl')!.setValue(model.shipEnginePower);
+        this.form.get('fuelConsumptionControl')!.setValue(model.fuelConsumption);
 
         if (model.isFishingMainActivity === true) {
             this.form.get('isFishingMainActivityControl')!.setValue(this.fishingMainActivityOptions.find(x => x.value === 'yes'));
@@ -646,9 +652,13 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         this.form.get('shipPriceControl')!.setValue(model.shipPrice);
         this.form.get('shipLengthControl')!.setValue(model.shipLengthId);
         this.form.get('shipTonnageControl')!.setValue(model.shipTonnageId);
-        this.form.get('hasEngineControl')!.setValue(model.hasEngine);
-        this.form.get('fuelTypeControl')!.setValue(model.fuelTypeId);
-        this.form.get('shipEnginePowerControl')!.setValue(model.shipEnginePower);
+
+        this.form.get('hasEngineControl')!.setValue(model.hasEngine ?? false);
+
+        if ((model.hasEngine ?? false) === true) {
+            this.form.get('fuelTypeControl')!.setValue(model.fuelTypeId);
+            this.form.get('fuelConsumptionControl')!.setValue(model.fuelConsumption);
+        }
 
         if (model.isFishingMainActivity === true) {
             this.form.get('isFishingMainActivityControl')!.setValue(this.fishingMainActivityOptions.find(x => x.value === 'yes'));
@@ -746,9 +756,16 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         model.shipYears = this.form.get('shipYearsControl')!.value;
         model.shipLengthId = this.form.get('shipLengthControl')!.value?.value;
         model.shipTonnageId = this.form.get('shipTonnageControl')!.value?.value;
-        model.hasEngine = true;
-        model.fuelTypeId = this.form.get('fuelTypeControl')!.value?.value;
-        model.shipEnginePower = this.form.get('shipEnginePowerControl')!.value;
+        model.hasEngine = this.hasEngine ?? false;
+
+        if (model.hasEngine === true) {
+            model.fuelTypeId = this.form.get('fuelTypeControl')!.value?.value;
+            model.fuelConsumption = this.form.get('fuelConsumptionControl')!.value;
+        }
+        else {
+            model.fuelTypeId = undefined;
+            model.fuelConsumption = undefined;
+        }
 
         const isFishingMainActivity: NomenclatureDTO<YesNo> | undefined = this.form.get('isFishingMainActivityControl')!.value;
         if (isFishingMainActivity !== null && isFishingMainActivity !== undefined) {
@@ -784,9 +801,17 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         model.shipYears = this.form.get('shipYearsControl')!.value;
         model.shipLengthId = this.form.get('shipLengthControl')!.value?.value;
         model.shipTonnageId = this.form.get('shipTonnageControl')!.value?.value;
-        model.hasEngine = true;
-        model.fuelTypeId = this.form.get('fuelTypeControl')!.value?.value;
-        model.shipEnginePower = this.form.get('shipEnginePowerControl')!.value;
+        model.hasEngine = this.hasEngine ?? false;
+
+        if (model.hasEngine === true) {
+            model.fuelTypeId = this.form.get('fuelTypeControl')!.value?.value;
+            model.fuelConsumption = this.form.get('fuelConsumptionControl')!.value;
+        }
+        else {
+            model.fuelTypeId = undefined;
+            model.fuelConsumption = undefined;
+        }
+       
         model.isFishingMainActivity = this.form.get('isFishingMainActivityControl')!.value.value === 'yes';
         model.isShipHolderPartOfCrew = this.form.get('shipHolderPartOfCrewControl')!.value.value === 'yes';
 
@@ -811,20 +836,20 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         else if (this.isApplication || this.isApplicationHistoryMode) {
             this.form = new FormGroup({
                 submittedByControl: new FormControl(),
-                submittedByWorkPositionControl: new FormControl(null, [Validators.required, Validators.maxLength(200)]),
+                submittedByWorkPositionControl: new FormControl(undefined, [Validators.required, Validators.maxLength(200)]),
                 submittedForControl: new FormControl(),
                 filesControl: new FormControl(),
-                shipNameControl: new FormControl(null, [Validators.required, this.shipValidator()]),
-                yearControl: new FormControl(null, Validators.required),
-                shipYearsControl: new FormControl({ value: null, disabled: true }),
-                shipPriceControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
-                shipLengthControl: new FormControl({ value: null, disabled: true }),
-                shipTonnageControl: new FormControl({ value: null, disabled: true }),
-                hasEngineControl: new FormControl({ value: null, disabled: true }),
-                fuelTypeControl: new FormControl({ value: null, disabled: true }),
-                shipEnginePowerControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
-                isFishingMainActivityControl: new FormControl(null, Validators.required),
-                shipHolderPartOfCrewControl: new FormControl(null, Validators.required),
+                shipNameControl: new FormControl(undefined, [Validators.required, this.shipValidator()]),
+                yearControl: new FormControl(undefined, Validators.required),
+                shipYearsControl: new FormControl({ value: undefined, disabled: true }),
+                shipPriceControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
+                shipLengthControl: new FormControl({ value: undefined, disabled: true }),
+                shipTonnageControl: new FormControl({ value: undefined, disabled: true }),
+                hasEngineControl: new FormControl({ value: undefined, disabled: true }),
+                fuelTypeControl: new FormControl({ value: undefined, disabled: true }),
+                fuelConsumptionControl: new FormControl(),
+                isFishingMainActivityControl: new FormControl(undefined, Validators.required),
+                shipHolderPartOfCrewControl: new FormControl(undefined, Validators.required),
                 shipHolderPositionControl: new FormControl(),
                 employeeInfoArray: new FormArray([], this.payColumnCountValidator()),
                 employeeStatsArray: new FormArray([]),
@@ -833,25 +858,25 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
             });
 
             this.seaDaysForm = new FormGroup({
-                fishingGearIdControl: new FormControl(null, Validators.required),
-                daysControl: new FormControl(null, [Validators.required, TLValidators.number(0)])
+                fishingGearIdControl: new FormControl(undefined, Validators.required),
+                daysControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)])
             });
         }
         else {
             this.form = new FormGroup({
                 submittedForControl: new FormControl(),
                 filesControl: new FormControl(),
-                shipNameControl: new FormControl(null, [Validators.required, this.shipValidator()]),
-                yearControl: new FormControl(null, Validators.required),
-                shipYearsControl: new FormControl({ value: null, disabled: true }),
-                shipPriceControl: new FormControl(null, Validators.required),
-                shipLengthControl: new FormControl({ value: null, disabled: true }),
-                shipTonnageControl: new FormControl({ value: null, disabled: true }),
-                hasEngineControl: new FormControl({ value: null, disabled: true }),
-                fuelTypeControl: new FormControl({ value: null, disabled: true }),
-                shipEnginePowerControl: new FormControl(null, Validators.required),
-                isFishingMainActivityControl: new FormControl(null, Validators.required),
-                shipHolderPartOfCrewControl: new FormControl(null, Validators.required),
+                shipNameControl: new FormControl(undefined, [Validators.required, this.shipValidator()]),
+                yearControl: new FormControl(undefined, Validators.required),
+                shipYearsControl: new FormControl({ value: undefined, disabled: true }),
+                shipPriceControl: new FormControl(undefined, Validators.required),
+                shipLengthControl: new FormControl({ value: undefined, disabled: true }),
+                shipTonnageControl: new FormControl({ value: undefined, disabled: true }),
+                hasEngineControl: new FormControl({ value: undefined, disabled: true }),
+                fuelTypeControl: new FormControl({ value: undefined, disabled: true }),
+                fuelConsumptionControl: new FormControl(),
+                isFishingMainActivityControl: new FormControl(undefined, Validators.required),
+                shipHolderPartOfCrewControl: new FormControl(undefined, Validators.required),
                 shipHolderPositionControl: new FormControl(),
                 employeeInfoArray: new FormArray([], this.payColumnCountValidator()),
                 employeeStatsArray: new FormArray([]),
@@ -867,7 +892,24 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
 
         this.form.get('hasEngineControl')?.valueChanges.subscribe({
             next: (checked: boolean) => {
-                this.hasEngine = checked;
+                this.hasEngine = checked ?? false;
+
+                if (this.hasEngine) { // set field validators
+                    this.form.get('fuelTypeControl')!.setValidators(Validators.required);
+                    this.form.get('fuelConsumptionControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+
+                    this.form.get('fuelTypeControl')!.markAsPending();
+                    this.form.get('fuelConsumptionControl')!.markAsPending();
+                }
+                else { // clear some validators
+                    this.form.get('fuelTypeControl')!.clearValidators();
+                    this.form.get('fuelConsumptionControl')!.setValidators(TLValidators.number(0));
+                }
+
+                if (this.viewMode || this.readOnly) {
+                    this.form.get('fuelTypeControl')!.disable();
+                    this.form.get('fuelConsumptionControl')!.disable();
+                }
             }
         });
 
@@ -879,7 +921,15 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
 
         this.form.get('shipNameControl')?.valueChanges.subscribe({
             next: (value: NomenclatureDTO<number> | undefined) => {
+                
+
                 if (value !== undefined && value !== null && value instanceof NomenclatureDTO) {
+                    if (this.lastSelectedShip !== null && this.lastSelectedShip !== undefined && this.lastSelectedShip.value !== value.value) {
+                        this.form.get('shipPriceControl')!.setValue(undefined);
+                        this.form.get('fuelConsumptionControl')!.setValue(undefined);
+                    }
+
+                    this.lastSelectedShip = value;
                     const ship: StatisticalFormShipDTO | undefined = this.statFormShip.get(value.value!);
 
                     if (ship === undefined || ship === null) {
@@ -891,7 +941,9 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                                 if (year !== undefined && year !== null) {
                                     this.updateGearsCacheAndSetGears(ship.shipId!, year);
                                 }
+
                                 this.fillShipForm(ship);
+                                this.showShipForm = true;
                             }
                         });
                     }
@@ -900,12 +952,20 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                         if (year !== undefined && year !== null) {
                             this.updateGearsCacheAndSetGears(ship.shipId!, year);
                         }
+
                         this.fillShipForm(ship);
+                        this.showShipForm = true;
                     }
                 }
+                else {
+                    if (this.lastSelectedShip !== null && this.lastSelectedShip !== undefined) {
+                        this.form.get('shipPriceControl')!.setValue(undefined);
+                        this.form.get('fuelConsumptionControl')!.setValue(undefined);
+                    }
 
-                this.form.get('shipPriceControl')!.setValue(undefined);
-                this.form.get('shipEnginePowerControl')!.setValue(undefined);
+                    this.lastSelectedShip = undefined;
+                    this.showShipForm = false;
+                }
             }
         });
 

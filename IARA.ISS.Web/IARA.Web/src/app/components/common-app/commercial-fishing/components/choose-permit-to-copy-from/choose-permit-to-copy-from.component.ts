@@ -37,14 +37,15 @@ export class ChoosePermitToCopyFromComponent implements OnInit, IDialogComponent
         this.isPublicApp = IS_PUBLIC_APP;
 
         this.formGroup = new FormGroup({
-            shipControl: new FormControl(null, Validators.required),
+            shipControl: new FormControl(undefined, Validators.required),
         });
 
         if (this.isPublicApp) {
-            this.formGroup.addControl('permitRegistrationNumberControl', new FormControl(null, Validators.required));
+            this.formGroup.addControl('permitRegistrationNumberControl', new FormControl(undefined, Validators.required));
         }
         else {
-            this.formGroup.addControl('permitControl', new FormControl(null, Validators.required));
+            this.formGroup.addControl('permitControl', new FormControl(undefined, Validators.required));
+            this.formGroup.addControl('showPastPermitsControl', new FormControl());
         }
     }
 
@@ -52,23 +53,25 @@ export class ChoosePermitToCopyFromComponent implements OnInit, IDialogComponent
         if (!this.isPublicApp) {
             this.formGroup.get('shipControl')!.valueChanges.subscribe({
                 next: (ship: ShipNomenclatureDTO | undefined | string) => {
+                    this.resetPermitsData();
+
                     if (ship !== null && ship !== undefined && ship instanceof NomenclatureDTO) {
-                        this.service.getPermitNomenclatures(ship.value!, this.pageCode === PageCodeEnum.PoundnetCommFishLic).subscribe({
-                            next: (values: PermitNomenclatureDTO[]) => {
-                                this.permits = values;
-                                this.noShipSelected = false;
-                                if (this.permitId !== null && this.permitId !== undefined) {
-                                    const permit: PermitNomenclatureDTO = this.permits.find(x => x.value === this.permitId)!;
-                                    this.formGroup.get('permitControl')!.setValue(permit);
-                                }
-                            }
-                        });
+                        const showPastPermits: boolean = this.formGroup.get('showPastPermitsControl')!.value ?? false;
+                        this.getShipPermitsNomenclature(ship, showPastPermits);
                     }
-                    else {
-                        this.permits = [];
-                        this.permitId = undefined;
-                        this.formGroup.get('permitControl')!.setValue(this.permitId);
+                    else {    
                         this.noShipSelected = true;
+                    }
+                }
+            });
+
+            this.formGroup.get('showPastPermitsControl')!.valueChanges.subscribe({
+                next: (value: boolean) => {
+                    const selectedShip: ShipNomenclatureDTO | string | undefined = this.formGroup.get('shipControl')!.value;
+
+                    if (selectedShip !== null && selectedShip !== undefined && selectedShip instanceof NomenclatureDTO) {
+                        this.resetPermitsData();
+                        this.getShipPermitsNomenclature(selectedShip, value);
                     }
                 }
             });
@@ -128,4 +131,24 @@ export class ChoosePermitToCopyFromComponent implements OnInit, IDialogComponent
     public cancelBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         dialogClose();
     }
+
+    private getShipPermitsNomenclature(ship: ShipNomenclatureDTO, showPastPermits: boolean): void {
+        this.service.getPermitNomenclatures(ship.value!, showPastPermits, this.pageCode === PageCodeEnum.PoundnetCommFishLic).subscribe({
+            next: (values: PermitNomenclatureDTO[]) => {
+                this.permits = values;
+                this.noShipSelected = false;
+                if (this.permitId !== null && this.permitId !== undefined) {
+                    const permit: PermitNomenclatureDTO = this.permits.find(x => x.value === this.permitId)!;
+                    this.formGroup.get('permitControl')!.setValue(permit);
+                }
+            }
+        });
+    }
+
+    private resetPermitsData(): void {
+        this.permits = [];
+        this.permitId = undefined;
+        this.formGroup.get('permitControl')!.setValue(this.permitId);
+    }
+
 }

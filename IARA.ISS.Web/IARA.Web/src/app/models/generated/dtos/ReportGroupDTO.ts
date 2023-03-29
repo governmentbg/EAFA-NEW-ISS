@@ -18,4 +18,7 @@ export class ReportGroupDTO {
 
     @StrictlyTyped(String)
     public groupType?: string;
+
+    @StrictlyTyped(Number)
+    public orderNum?: number;
 }

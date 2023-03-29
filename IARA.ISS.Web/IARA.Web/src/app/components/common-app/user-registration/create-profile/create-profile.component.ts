@@ -3,6 +3,9 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { LoginTypesEnum } from '@app/enums/login-types.enum';
 import { ErrorCode, ErrorModel, ErrorType } from '@app/models/common/exception.model';
 import { UserAuthDTO } from '@app/models/generated/dtos/UserAuthDTO';
@@ -16,8 +19,7 @@ import { TLValidators } from '@app/shared/utils/tl-validators';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'create-profile',
@@ -33,6 +35,8 @@ export class CreateProfileComponent implements OnInit, OnDestroy {
     public readonly termsAndConditionsPageUrl: string[] = ['/terms-and-conditions'];
     public invalidEgnLnchServerMessage: string = '';
     public invalidEmailServerMessage: string = '';
+
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
     private unsubscribeAll: Subject<unknown>;
     private fuseConfigService: FuseConfigService;
@@ -194,7 +198,7 @@ export class CreateProfileComponent implements OnInit, OnDestroy {
         }
     }
 
-    public getControlErrorLabelText(controlName: string, error: Record<string, unknown>, errorCode: string): TLError | undefined {
+    public getControlErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         switch (controlName) {
             case 'password':
             case 'passwordConfirmation': {

@@ -17,6 +17,9 @@ export class FirstSaleLogBookPageEditDTO {
     public logBookId?: number;
 
     @StrictlyTyped(Number)
+    public logBookTypeId?: number;
+
+    @StrictlyTyped(Number)
     public pageNumber?: number;
 
     @StrictlyTyped(String)
@@ -27,6 +30,9 @@ export class FirstSaleLogBookPageEditDTO {
 
     @StrictlyTyped(CommonLogBookPageDataDTO)
     public commonData?: CommonLogBookPageDataDTO;
+
+    @StrictlyTyped(Boolean)
+    public hasAbove200KAnnualTurnover?: boolean;
 
     @StrictlyTyped(Date)
     public saleDate?: Date;

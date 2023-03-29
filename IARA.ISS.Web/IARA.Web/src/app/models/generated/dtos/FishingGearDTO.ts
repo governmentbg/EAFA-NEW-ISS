@@ -13,6 +13,9 @@ export class FishingGearDTO {
     public id?: number;
 
     @StrictlyTyped(Number)
+    public registerApplicationId?: number;
+
+    @StrictlyTyped(Number)
     public typeId?: number;
 
     @StrictlyTyped(String)

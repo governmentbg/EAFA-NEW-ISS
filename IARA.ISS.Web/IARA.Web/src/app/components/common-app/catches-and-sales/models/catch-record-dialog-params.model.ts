@@ -8,7 +8,10 @@ export class CatchRecordDialogParamsModel {
     public viewMode!: boolean;
     public service!: ICatchesAndSalesService;
     public waterType!: WaterTypesEnum;
+    public permitLicenseAquaticOrganismTypeIds!: number[];
     public shipLogBookPageDataService!: ShipLogBookPageDataService;
+    public tripStartDateTime: Date | undefined;
+    public tripEndDateTime: Date | undefined;
 
     public constructor(obj?: Partial<CatchRecordDialogParamsModel>) {
         Object.assign(this, obj);

@@ -6,5 +6,6 @@
     NUMBER = 'number',
     NOMENCLATURE = 'nomenclature',
     CALCULATED = 'calculated',
-    COORDINATES = 'coordinates'
+    COORDINATES = 'coordinates',
+    PREFIXSTRING = 'prefixstring'
 }

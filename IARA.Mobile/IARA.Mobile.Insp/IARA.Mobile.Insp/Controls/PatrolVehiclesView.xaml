@@ -27,6 +27,8 @@
                 Width="150" />
         <tl:TLTableColumn Text="{rt:Translate Institution, Group=GeneralInfo}"
                 Width="150" />
+        <tl:TLTableColumn Text="{rt:Translate GPSCoordinates, Group=PatrolVehicle}"
+                Width="150" />
         <tl:TLTableColumn Width="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource ReviewDialogToWidth}, ConverterParameter=140, Source={Reference view}}" />
     </tl:TLResponsiveTable.TableColumns>
     <tl:TLResponsiveTable.DefaultItemTemplate>
@@ -48,6 +50,9 @@
                         LineBreakMode="WordWrap"
                         VerticalOptions="Center" />
                 <Label Text="{Binding Institution}"
+                        LineBreakMode="WordWrap"
+                        VerticalOptions="Center" />
+                <Label Text="{Binding Dto.LocationText}"
                         LineBreakMode="WordWrap"
                         VerticalOptions="Center" />
                 <StackLayout Orientation="Horizontal"

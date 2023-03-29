@@ -19,6 +19,7 @@ import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 import { FishingGearMarkDTO } from '@app/models/generated/dtos/FishingGearMarkDTO';
 import { FishingGearPingerDTO } from '@app/models/generated/dtos/FishingGearPingerDTO';
 import { FishingGearManipulationService } from '@app/components/common-app/commercial-fishing/components/fishing-gears/services/fishing-gear-manipulation.service';
+import { PrefixInputDTO } from '@app/models/generated/dtos/PrefixInputDTO';
 
 @Component({
     selector: 'edit-inspected-fishing-gear',
@@ -308,7 +309,11 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
             marks: dto.marks?.map(f => new FishingGearMarkDTO({
                 id: f.id,
                 isActive: f.isActive,
-                number: f.number,
+                createdOn: f.createdOn,
+                fullNumber: new PrefixInputDTO({
+                    prefix: f.fullNumber?.prefix,
+                    inputValue: f.fullNumber?.inputValue
+                }),
                 selectedStatus: f.selectedStatus,
                 statusId: f.statusId
             })),

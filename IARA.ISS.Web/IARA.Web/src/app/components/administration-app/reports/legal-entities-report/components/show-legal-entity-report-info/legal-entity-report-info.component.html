@@ -52,4 +52,10 @@
                                  [addressType]="addressTypes.COURT_REGISTRATION"
                                  label="{{ 'legal-entities-report-page.court-registration-address' | tlTranslate }}">
     </single-address-registration>
+
+    <!-- Седалище/адрес на управление -->
+    <single-address-registration formControlName="companyHeadquartersAddressControl"
+                                 [addressType]="addressTypes.COMPANY_HEADQUARTERS"
+                                 label="{{ 'legal-entities-report-page.company-headquarters-address' | tlTranslate }}">
+    </single-address-registration>
 </div>

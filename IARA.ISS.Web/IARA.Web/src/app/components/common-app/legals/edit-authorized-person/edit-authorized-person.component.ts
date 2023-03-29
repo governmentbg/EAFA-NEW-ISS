@@ -19,6 +19,7 @@ import { RecordChangedEventArgs } from '@app/shared/components/data-table/models
 import { EditAuthorizedPersonDialogParams } from '../models/edit-authorized-person-dialog-params.model';
 import { EditAuthorizedPersonDialogResult } from '../models/edit-authorized-person-dialog-result.model';
 import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'edit-authorized-person',
@@ -41,6 +42,8 @@ export class EditAuthorizedPersonComponent implements OnInit, AfterViewInit, IDi
     public rolesTouched: boolean = false;
 
     public personRoles: RoleDTO[] = [];
+
+    public getDatesOverlappingErrorTextMethod: GetControlErrorLabelTextCallback = this.getDatesOverlappingErrorText.bind(this);
 
     private isTouched: boolean = false;
 
@@ -190,7 +193,7 @@ export class EditAuthorizedPersonComponent implements OnInit, AfterViewInit, IDi
         dialogClose();
     }
 
-    public getDatesOverlappingErrorText(controlName: string, error: Record<string, unknown>, errorCode: string): TLError | undefined {
+    public getDatesOverlappingErrorText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'idControl') {
             if (errorCode === 'datesOverlap') {
                 return new TLError({

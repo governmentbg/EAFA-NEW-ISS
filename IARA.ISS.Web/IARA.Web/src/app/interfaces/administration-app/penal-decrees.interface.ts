@@ -11,13 +11,14 @@ import { IBaseAuditService } from '@app/interfaces/base-audit.interface';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { AuanConfiscationActionsNomenclatureDTO } from '@app/models/generated/dtos/AuanConfiscationActionsNomenclatureDTO';
 import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/InspDeliveryTypesNomenclatureDTO';
+import { PenalDecreeStatusEditDTO } from '@app/models/generated/dtos/PenalDecreeStatusEditDTO';
 
 export interface IPenalDecreesService extends IBaseAuditService {
     getAllPenalDecrees(request: GridRequestModel<PenalDecreesFilters>): Observable<GridResultModel<PenalDecreeDTO>>;
 
     getPenalDecree(id: number): Observable<PenalDecreeEditDTO>;
-    addPenalDecree(auan: PenalDecreeEditDTO): Observable<number>;
-    editPenalDecree(auan: PenalDecreeEditDTO): Observable<void>;
+    addPenalDecree(decree: PenalDecreeEditDTO): Observable<number>;
+    editPenalDecree(decree: PenalDecreeEditDTO): Observable<void>;
     deletePenalDecree(id: number): Observable<void>;
     undoDeletePenalDecree(id: number): Observable<void>;
     downloadPenalDecree(decreeId: number): Observable<boolean>;
@@ -40,4 +41,9 @@ export interface IPenalDecreesService extends IBaseAuditService {
     getTurbotSizeGroups(): Observable<NomenclatureDTO<number>[]>;
     getInspectorUsernames(): Observable<NomenclatureDTO<number>[]>;
     getPenalDecreeStatusAudit(id: number): Observable<SimpleAuditDTO>;
+
+    addPenalDecreeStatus(status: PenalDecreeStatusEditDTO): Observable<number>;
+    editPenalDecreeStatus(status: PenalDecreeStatusEditDTO): Observable<void>;
+    deletePenalDecreeStatus(id: number): Observable<void>;
+    undoDeletePenalDecreeStatus(id: number): Observable<void>;
 }

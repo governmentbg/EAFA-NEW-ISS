@@ -192,7 +192,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
 
                                 this.service.downloadPenalDecree(this.penalDecreeId!).subscribe({
                                     next: () => {
-                                        dialogClose();
+                                        dialogClose(this.model);
                                     }
                                 });
                             }
@@ -205,7 +205,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
 
                                 this.service.downloadPenalDecree(id).subscribe({
                                     next: () => {
-                                        dialogClose();
+                                        dialogClose(this.model);
                                     }
                                 });
                             }
@@ -235,8 +235,6 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
             seizedFishControl: new FormControl(null),
             seizedApplianceControl: new FormControl(null),
 
-            statusesControl: new FormControl(null),
-
             filesControl: new FormControl(null)
         }, this.violatedRegulationsValidator());
     }
@@ -256,10 +254,6 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         this.form.get('violatedRegulationsControl')!.setValue(this.model.decreeViolatedRegulations);
 
         this.form.get('filesControl')!.setValue(this.model.files);
-
-        if (this.model.statuses !== undefined && this.model.statuses !== null) {
-            this.form.get('statusesControl')!.setValue(this.model.statuses);
-        }
 
         if (this.model.seizedFish !== undefined && this.model.seizedFish !== null) {
             this.form.get('seizedFishControl')!.setValue(this.model.seizedFish);
@@ -290,8 +284,6 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         this.model.fineAmount = this.form.get('fineControl')!.value;
         this.model.comments = this.form.get('commentsControl')!.value;
         this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
-
-        this.model.statuses = this.form.get('statusesControl')!.value;
 
         this.model.seizedFish = this.form.get('seizedFishControl')!.value;
         this.model.seizedFishingGear = this.form.get('seizedFishingGearControl')!.value;

@@ -54,7 +54,7 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
         if (value !== undefined && value !== null) {
             const logBooks = value.map(f => {
 
-                if (!f.checkValue) {
+                if (f.checkValue === null || f.checkValue === undefined) {
                     f.checkValue = InspectionToggleTypesEnum.X;
                 }
 

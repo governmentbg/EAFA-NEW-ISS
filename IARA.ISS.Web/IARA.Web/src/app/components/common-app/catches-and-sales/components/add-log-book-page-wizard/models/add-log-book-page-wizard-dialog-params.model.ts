@@ -6,6 +6,7 @@ export class AddLogBookPageDialogParams {
     public logBookType!: LogBookTypesEnum;
     public service!: ICatchesAndSalesService;
     public logBookId!: number;
+    public logBookTypeId!: number;
     public pageNumber: number | undefined;
     public pageStatus: LogBookPageStatusesEnum | undefined;
 

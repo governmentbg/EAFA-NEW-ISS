@@ -32,6 +32,8 @@ import { ErrorModel } from '@app/models/common/exception.model';
 import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
+import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'recreational-fishing-tickets-content',
@@ -90,6 +92,8 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
 
     public paidTicketApplicationId: number | undefined;
 
+    public getControlErrorLabelTextForTicketNumberMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelTextForTicketNumber.bind(this);
+
     public get ticketsArray(): FormArray {
         return this.ticketsGroup.get('ticketsArray') as FormArray;
     }
@@ -113,6 +117,9 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
 
     @ViewChild('viewAndConfirmStep')
     private viewAndConfirmStep!: CdkStep;
+
+    @ViewChild('paymentStep')
+    private paymentStep: CdkStep | undefined;
 
     private ticketPeriods!: NomenclatureDTO<number>[];
     private ticketPrices: [number, number, number][] = []; // array of tuples [periodId, typeId, price]
@@ -362,7 +369,20 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
             ++firstIdx;
         }
 
-        if (this.showPaymentStep === true && step.selectedIndex === this.stepper.steps.length - 1) {
+        if (this.showPaymentStep === true && step.selectedStep === this.paymentStep) {
+            const payment: PaymentDataDTO | undefined = this.paymentDataControl.value;
+            if (payment) {
+                payment.totalPaidPrice = this.totalPrice;
+
+                this.paymentDataControl.setValue(payment);
+            }
+            else {
+                this.paymentDataControl.setValue(new PaymentDataDTO({
+                    paymentType: PaymentTypesEnum.CASH,
+                    paymentDateTime: this.currentDate,
+                    totalPaidPrice: this.totalPrice
+                }));
+            }
             return;
         }
 
@@ -396,7 +416,12 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     }
 
     public onStepAnimationDone(): void {
-        if (!this.isPublicApp || this.isAssociation) {
+        if (this.stepper.selected === this.viewAndConfirmStep) {
+            if (this.ticketsGroup.invalid && !this.ticketsGroup.disabled) {
+                this.stepper.previous();
+            }
+        }
+        else if (!this.isPublicApp || this.isAssociation) {
             const ticketNumsStep: number = this.showValidityStep ? 2 : 1;
 
             if (this.stepper.selectedIndex === ticketNumsStep + 1 && this.ticketNumsArray.invalid) {
@@ -409,7 +434,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
         }
     }
 
-    public getControlErrorLabelTextForTicketNumber(controlName: string, error: Record<string, unknown>, errorCode: string): TLError | undefined {
+    public getControlErrorLabelTextForTicketNumber(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         if (errorCode === 'alreadyInUse') {
             return new TLError({
                 text: this.translate.getValue('recreational-fishing.ticket-number-already-in-use'),

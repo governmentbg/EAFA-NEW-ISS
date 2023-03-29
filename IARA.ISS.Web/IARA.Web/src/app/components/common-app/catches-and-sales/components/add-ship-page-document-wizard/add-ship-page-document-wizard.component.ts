@@ -33,7 +33,8 @@ import { BasicLogBookPageDocumentParameters } from './models/basic-log-book-page
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { LogBookNomenclatureDTO } from '@app/models/generated/dtos/LogBookNomenclatureDTO';
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { RequestProperties } from '@app/shared/services/request-properties';
 
 @Component({
     selector: 'add-ship-page-document-wizard',
@@ -59,14 +60,15 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
 
     public service!: ICatchesAndSalesService;
 
-    private translationService: FuseTranslationLoaderService;
     private shipLogBookPageId!: number;
     private logBookPageDocumentData: BasicLogBookPageDocumentDataDTO | undefined;
-
     private dialogRef: MatDialogRef<DialogWrapperComponent<IDialogComponent>> | undefined;
-    private firstSaleLogBookPageDialog: TLMatDialog<EditFirstSaleLogBookPageComponent>;
-    private admissionLogBookPageDialog: TLMatDialog<EditAdmissionLogBookPageComponent>;
-    private transportationLogBookPageDialog: TLMatDialog<EditTransportationLogBookPageComponent>;
+
+    private readonly translationService: FuseTranslationLoaderService;
+    private readonly firstSaleLogBookPageDialog: TLMatDialog<EditFirstSaleLogBookPageComponent>;
+    private readonly admissionLogBookPageDialog: TLMatDialog<EditAdmissionLogBookPageComponent>;
+    private readonly transportationLogBookPageDialog: TLMatDialog<EditTransportationLogBookPageComponent>;
+    private readonly snackbar: MatSnackBar;
 
     @ViewChild('stepper')
     private stepper!: MatStepper;
@@ -75,12 +77,14 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
         translate: FuseTranslationLoaderService,
         firstSaleLogBookPageDialog: TLMatDialog<EditFirstSaleLogBookPageComponent>,
         admissionLogBookPageDialog: TLMatDialog<EditAdmissionLogBookPageComponent>,
-        transportationLogBookPageDialog: TLMatDialog<EditTransportationLogBookPageComponent>
+        transportationLogBookPageDialog: TLMatDialog<EditTransportationLogBookPageComponent>,
+        snackbar: MatSnackBar
     ) {
         this.translationService = translate;
         this.firstSaleLogBookPageDialog = firstSaleLogBookPageDialog;
         this.admissionLogBookPageDialog = admissionLogBookPageDialog;
         this.transportationLogBookPageDialog = transportationLogBookPageDialog;
+        this.snackbar = snackbar;
 
         this.logBookOwnerTypes = [
             new NomenclatureDTO({
@@ -163,6 +167,17 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
                         if (this.possibleLogBooks.length === 1) {
                             this.confirmLogBookAndOwnerFormGroup.get('possibleLogBookControl')!.setValue(this.possibleLogBooks[0]);
                         }
+                    },
+                    error: (errorResponse: HttpErrorResponse) => {
+                        if ((errorResponse.error as ErrorModel)?.code === ErrorCode.LogBookNotFound) {
+                            const message: string = this.translationService.getValue('catches-and-sales.log-book-page-person-cannot-find-log-book-error');
+                            this.snackbar.open(message, undefined, {
+                                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                            });
+
+                            this.stepper.previous();
+                        }
                     }
                 });
             }
@@ -199,6 +214,15 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
                         else if (error?.code === ErrorCode.LogBookPageAlreadySubmittedOtherLogBook) {
                             this.confirmLogBookAndOwnerFormGroup.setErrors({ 'pageNumberAlreadySubmittedOtherLogBook': true });
                             this.pageAlreadySubmittedOtherLogbook = error.messages[0];
+                            this.stepper.previous();
+                        }
+                        else if (error?.code === ErrorCode.LogBookNotFound) {
+                            const message: string = this.translationService.getValue('catches-and-sales.log-book-page-person-cannot-find-log-book-error');
+                            this.snackbar.open(message, undefined, {
+                                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                            });
+
                             this.stepper.previous();
                         }
                     }
@@ -259,6 +283,8 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
     }
 
     private openAddFirstSaleLogBookPageDialog(): void {
+        const logBook: LogBookNomenclatureDTO = this.confirmLogBookAndOwnerFormGroup.get('possibleLogBookControl')!.value;
+
         this.firstSaleLogBookPageDialog.openWithTwoButtons({
             title: this.translationService.getValue('catches-and-sales.add-first-sale-log-book-page-dialog-title'),
             TCtor: EditFirstSaleLogBookPageComponent,
@@ -269,6 +295,8 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
             },
             componentData: new CatchesAndSalesDialogParamsModel({
                 shipPageDocumentData: this.logBookPageDocumentData,
+                logBookId: logBook.value!,
+                logBookTypeId: logBook.logBookTypeId!,
                 service: this.service,
                 viewMode: false
             }),
@@ -283,6 +311,8 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
     }
 
     private openAddAdmissionLogBookPageDialog(): void {
+        const logBook: LogBookNomenclatureDTO = this.confirmLogBookAndOwnerFormGroup.get('possibleLogBookControl')!.value;
+
         this.admissionLogBookPageDialog.openWithTwoButtons({
             title: this.translationService.getValue('catches-and-sales.add-admission-log-book-page-dialog-title'),
             TCtor: EditAdmissionLogBookPageComponent,
@@ -294,6 +324,8 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
             componentData: new CatchesAndSalesDialogParamsModel({
                 shipPageDocumentData: this.logBookPageDocumentData,
                 service: this.service,
+                logBookId: logBook.value!,
+                logBookTypeId: logBook.logBookTypeId!,
                 logBookPermitLicenseId: this.confirmLogBookAndOwnerFormGroup.get('possibleLogBookControl')!.value?.logBookPermitLicenseId,
                 viewMode: false
             }),
@@ -308,6 +340,8 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
     }
 
     private openTransportationLogBookPageDialog(): void {
+        const logBook: LogBookNomenclatureDTO = this.confirmLogBookAndOwnerFormGroup.get('possibleLogBookControl')!.value;
+
         this.transportationLogBookPageDialog.openWithTwoButtons({
             title: this.translationService.getValue('catches-and-sales.add-transportation-log-book-page-dialog-title'),
             TCtor: EditTransportationLogBookPageComponent,
@@ -319,6 +353,8 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
             componentData: new CatchesAndSalesDialogParamsModel({
                 shipPageDocumentData: this.logBookPageDocumentData,
                 service: this.service,
+                logBookId: logBook.value!,
+                logBookTypeId: logBook.logBookTypeId!,
                 logBookPermitLicenseId: this.confirmLogBookAndOwnerFormGroup.get('possibleLogBookControl')!.value?.logBookPermitLicenseId,
                 viewMode: false
             }),

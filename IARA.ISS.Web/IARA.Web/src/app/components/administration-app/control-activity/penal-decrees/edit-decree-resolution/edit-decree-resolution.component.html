@@ -52,25 +52,30 @@
                           tooltipResourceName="penal-decree.edit-issuer-position-helper">
                 </tl-input>
             </div>
+        </div>
+    </tl-expansion-panel>
 
-            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
-                <tl-autocomplete fxFlex="25"
-                                 formControlName="courtControl"
-                                 [options]="courts"
-                                 label="{{ 'penal-decrees.edit-court' | tlTranslate }}"
-                                 tooltipResourceName="penal-decree.edit-court-helper">
-                </tl-autocomplete>
+    <!-- Подлежи на обжалване пред -->
+    <tl-expansion-panel title="{{ 'penal-decrees.edit-appeal-data' | tlTranslate }}"
+                        tooltipResourceName="penal-decree.edit-appeal-data-helper"
+                        [validityChecker]="form">
+        <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+            <tl-autocomplete fxFlex="25"
+                             formControlName="courtControl"
+                             [options]="courts"
+                             label="{{ 'penal-decrees.edit-court' | tlTranslate }}"
+                             tooltipResourceName="penal-decree.edit-court-helper">
+            </tl-autocomplete>
 
 
-                <tl-autocomplete fxFlex="25"
-                                 formControlName="sectorControl"
-                                 [options]="sectors"
-                                 label="{{ 'penal-decrees.edit-sector' | tlTranslate }}"
-                                 tooltipResourceName="penal-decree.edit-sector-helper">
-                </tl-autocomplete>
+            <tl-autocomplete fxFlex="25"
+                             formControlName="sectorControl"
+                             [options]="sectors"
+                             label="{{ 'penal-decrees.edit-sector' | tlTranslate }}"
+                             tooltipResourceName="penal-decree.edit-sector-helper">
+            </tl-autocomplete>
 
-                <div fxFlex="50"></div>
-            </div>
+            <div fxFlex="50"></div>
         </div>
     </tl-expansion-panel>
 
@@ -87,14 +92,19 @@
             <decree-auan-basic-info formControlName="auanControl"
                                     [isAdding]="isThirdParty">
             </decree-auan-basic-info>
+        </div>
+    </tl-expansion-panel>
 
-            <div fxLayout="row" fxLayoutGap="1em">
-                <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
-                    <tl-textarea formControlName="constatationCommentsControl"
-                                 tooltipResourceName="penal-decree.edit-auan-constatation-comments-helper"
-                                 label="{{ 'penal-decrees.edit-auan-constatation-comments' | tlTranslate }}">
-                    </tl-textarea>
-                </div>
+    <!-- Установих, че -->
+    <tl-expansion-panel title="{{ 'penal-decrees.edit-constatation-comments' | tlTranslate }}"
+                        tooltipResourceName="penal-decrees.edit-constatation-comments-helper"
+                        [validityChecker]="form">
+        <div fxLayout="row" fxLayoutGap="1em">
+            <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
+                <tl-textarea formControlName="constatationCommentsControl"
+                             tooltipResourceName="penal-decree.edit-auan-constatation-comments-helper"
+                             label="{{ 'penal-decrees.edit-auan-constatation-comments' | tlTranslate }}">
+                </tl-textarea>
             </div>
         </div>
     </tl-expansion-panel>
@@ -208,7 +218,6 @@
             </div>
         </div>
     </tl-expansion-panel>
-
 
     <!-- Връчване -->
     <tl-expansion-panel title="{{ 'penal-decrees.edit-decree-delivery-data' | tlTranslate }}"

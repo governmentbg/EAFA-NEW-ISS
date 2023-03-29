@@ -17,9 +17,9 @@
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.1" />
     <PackageReference Include="Plugin.TechnoLogica.XamImage" Version="1.1.33881" />
     <PackageReference Include="Rg.Plugins.Popup" Version="2.1.0" />
-    <PackageReference Include="TechnoLogica.Xamarin" Version="3.4.47446" />
+    <PackageReference Include="TechnoLogica.Xamarin" Version="3.4.48492" />
     <PackageReference Include="Xamarin.CommunityToolkit" Version="2.0.5" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.7.4" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.5" />
     <PackageReference Include="Xamarin.FFImageLoading.Forms" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Transformations" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2545" />

@@ -23,7 +23,7 @@ export class TranslationUtils {
     public static async getTranslationsFromLoader(translationLoader: TranslateLoader, language: string): Promise<Translation | undefined> {
         const translation = await translationLoader.getTranslation(language).toPromise();
         if (translation != undefined) {
-            return new Translation(language, translation);
+            return new Translation(language, translation, true);
         } else {
             return undefined;
         }

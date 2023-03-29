@@ -177,7 +177,8 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
                     this.form.get('deliverySentDateControl')!.setValue(delivery.sentDate);
                     this.form.get('deliverySentControl')!.setValue(delivery.referenceNum);
                 }
-                else {
+
+                if (this.confirmationType === InspDeliveryConfirmationTypesEnum.RefusalDecree) {
                     this.form.get('witnessesControl')!.setValue(delivery.refusalWitnesses);
                 }
             }

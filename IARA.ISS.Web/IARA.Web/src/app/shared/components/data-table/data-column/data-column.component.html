@@ -32,19 +32,22 @@
                 <ng-container *ngIf="_dataType=='coordinates'">
                     {{ (complexProperty ? value(row.data) : row.data[propertyName]) | tlCoordinates }}
                 </ng-container>
+                <ng-container *ngIf="_dataType=='prefixstring'">
+                    {{ (complexProperty ? value(row.data) : row.data[propertyName]) | tlPrefixInputDisplay  }}
+                </ng-container>
             </ng-container>
             <ng-container *ngIf="_isEditable && row.editMode" [formGroup]="_formGroup">
                 <ng-container *ngIf="_dataType=='string' || dataType=='number'">
-                    <tl-input [formControlName]="_formControlName" [getControlErrorLabelText]="getControlErrorLabelText"></tl-input>
+                    <tl-input [formControlName]="_formControlName" [getControlErrorLabelText]="_getControlErrorLabelTextMethod"></tl-input>
                 </ng-container>
                 <ng-container *ngIf="_dataType=='date'">
-                    <tl-date [formControlName]="_formControlName" [min]="minValue" [max]="maxValue" [getControlErrorLabelText]="getControlErrorLabelText"></tl-date>
+                    <tl-date [formControlName]="_formControlName" [min]="minValue" [max]="maxValue" [getControlErrorLabelText]="_getControlErrorLabelTextMethod"></tl-date>
                 </ng-container>
                 <ng-container *ngIf="_dataType=='datetime'">
                     {{ (complexProperty ? value(row.data) : row.data[propertyName]) | date: 'dd.MM.yyyy HH:mm'}}
                 </ng-container>
                 <ng-container *ngIf="_dataType=='boolean'">
-                    <tl-checkbox [formControlName]="_formControlName" [getControlErrorLabelText]="getControlErrorLabelText"></tl-checkbox>
+                    <tl-checkbox [formControlName]="_formControlName" [getControlErrorLabelText]="_getControlErrorLabelTextMethod"></tl-checkbox>
                 </ng-container>
                 <ng-container *ngIf="_dataType=='nomenclature'">
                     <tl-autocomplete [formControlName]="_hiddenFormControlName"
@@ -52,14 +55,20 @@
                                      [templateOptions]="_templateOptions"
                                      [codeInTemplateOptions]="_codeInTemplateOptions"
                                      [hasSelectedValueFromDropdownValidator]="_hasSelectedValueFromDropdownValidator"
-                                     [getControlErrorLabelText]="_getControlErrorLabelText.bind(this)">
+                                     [getControlErrorLabelText]="_getControlErrorLabelTextMethod">
                     </tl-autocomplete>
                 </ng-container>
                 <ng-container *ngIf="_dataType=='calculated'">
-                    <tl-input [formControlName]="_formControlName" [readonly]="true" [getControlErrorLabelText]="getControlErrorLabelText"></tl-input>
+                    <tl-input [formControlName]="_formControlName" [readonly]="true" [getControlErrorLabelText]="_getControlErrorLabelTextMethod"></tl-input>
                 </ng-container>
                 <ng-container *ngIf="_dataType=='coordinates'">
-                    <tl-coordinates [formControlName]="_formControlName" [getControlErrorLabelText]="getControlErrorLabelText"></tl-coordinates>
+                    <tl-coordinates [formControlName]="_formControlName" [getControlErrorLabelText]="_getControlErrorLabelTextMethod"></tl-coordinates>
+                </ng-container>
+                <ng-container *ngIf="_dataType=='prefixstring'">
+                    <tl-prefix-input [formControlName]="_formControlName" 
+                                     [getControlErrorLabelText]="_getControlErrorLabelTextMethod"
+                                     [validators]="prefixControlValidators">
+                    </tl-prefix-input>
                 </ng-container>
             </ng-container>
         </ng-container>

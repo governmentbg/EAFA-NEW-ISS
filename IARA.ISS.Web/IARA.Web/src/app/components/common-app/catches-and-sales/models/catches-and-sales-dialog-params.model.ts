@@ -6,6 +6,7 @@ import { BasicLogBookPageDocumentDataDTO } from '@app/models/generated/dtos/Basi
 export class CatchesAndSalesDialogParamsModel {
     public id: number | undefined;
     public logBookId!: number;
+    public logBookTypeId!: number;
     public viewMode!: boolean;
     public service!: ICatchesAndSalesService;
     /** Needed only for first sale, admission and transportation log book pages */

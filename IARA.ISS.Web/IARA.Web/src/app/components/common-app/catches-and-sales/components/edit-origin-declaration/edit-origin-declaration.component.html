@@ -61,7 +61,7 @@
                                       label="{{ 'catches-and-sales.ship-page-origin-declaration-transboard-data-time' | tlTranslate }}  ({{ 'common.date-time-control-format-hint' | tlTranslate }})"
                                       tooltipResourceName="catches-and-sales.ship-page-origin-declaration-transboard-data-time-helper"
                                       [disabled]="viewMode"
-                                      [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                                      [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                         </tl-date-time>
                         <tl-autocomplete fxFlex="32"
                                          formControlName="transboardTargetPortControl"

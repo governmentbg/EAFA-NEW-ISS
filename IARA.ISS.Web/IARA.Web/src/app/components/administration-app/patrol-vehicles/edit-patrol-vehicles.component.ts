@@ -16,6 +16,7 @@ import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { PatrolVehiclesTypeEnum } from '@app/enums/patrol-vehicles-type.enum';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'edit-patrol-vehicles',
@@ -30,6 +31,8 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
     public institutions: NomenclatureDTO<number>[] = [];
     public vehicleTypeEnum: typeof PatrolVehiclesTypeEnum = PatrolVehiclesTypeEnum;
     public vehicleType: PatrolVehiclesTypeEnum | undefined;
+
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
     private service: PatrolVehiclesService;
     private translate: FuseTranslationLoaderService;

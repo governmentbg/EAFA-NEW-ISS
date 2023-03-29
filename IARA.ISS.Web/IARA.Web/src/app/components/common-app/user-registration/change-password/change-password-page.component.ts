@@ -9,6 +9,7 @@ import { TLValidators } from "@app/shared/utils/tl-validators";
 import { fuseAnimations } from "@fuse/animations";
 import { FuseConfigService } from "@fuse/services/config.service";
 import { FuseTranslationLoaderService } from "@fuse/services/translation-loader.service";
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 
 @Component({
@@ -20,6 +21,8 @@ import { FuseTranslationLoaderService } from "@fuse/services/translation-loader.
 })
 export class ChangePasswordPageComponent implements OnInit {
     public changePasswordForm!: FormGroup;
+
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
     private router: Router;
     private translationService: FuseTranslationLoaderService;
@@ -101,7 +104,7 @@ export class ChangePasswordPageComponent implements OnInit {
         }
     }
 
-    public getControlErrorLabelText(controlName: string, error: Record<string, unknown>, errorCode: string): TLError | undefined {
+    public getControlErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         switch (controlName) {
             case 'password':
             case 'passwordConfirmation': {

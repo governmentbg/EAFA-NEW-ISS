@@ -279,7 +279,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
                 saveBtn: {
                     id: 'save',
                     color: 'accent',
-                    translateValue: 'common.save'
+                    translateValue: 'applications-register.start-submit-application'
                 }
             }).subscribe((selectedApplicationType: ApplicationTypeDTO | undefined) => {
                 if (selectedApplicationType !== undefined) {

@@ -62,6 +62,7 @@ export class LegalEntityReportInfoComponent implements OnInit, IDialogComponent 
             postalCodeControl: new FormControl(),
             correspondenceAddressControl: new FormControl(),
             courtRegistrationAddressControl: new FormControl(),
+            companyHeadquartersAddressControl: new FormControl()
         });
 
         this.form.disable();
@@ -75,5 +76,6 @@ export class LegalEntityReportInfoComponent implements OnInit, IDialogComponent 
         this.form.controls.postalCodeControl.setValue(this.model.postalCode);
         this.form.controls.correspondenceAddressControl.setValue(this.model.correspondenceAddress);
         this.form.controls.courtRegistrationAddressControl.setValue(this.model.courtRegistrationAddress);
+        this.form.controls.companyHeadquartersAddressControl.setValue(this.model.companyHeadquartersAddress);
     }
 }

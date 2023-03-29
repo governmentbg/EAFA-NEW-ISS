@@ -19,6 +19,7 @@
                                     [validityChecker]="form">
                     <edit-fishing-gear formControlName="permittedGearControl"
                                        [canSelectMarks]="!readOnly"
+                                       [filterTypes]="false"
                                        (selectedMark)="onMarkSelected($event)">
                     </edit-fishing-gear>
                 </tl-expansion-panel>
@@ -29,6 +30,7 @@
                                 [validityChecker]="form">
                 <edit-fishing-gear formControlName="inspectedGearControl"
                                    [isInspected]="true"
+                                   [filterTypes]="false"
                                    [listenToService]="true">
                 </edit-fishing-gear>
             </tl-expansion-panel>

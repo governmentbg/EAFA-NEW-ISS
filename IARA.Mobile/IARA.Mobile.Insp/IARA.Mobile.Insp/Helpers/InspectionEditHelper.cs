@@ -12,7 +12,6 @@ using IARA.Mobile.Shared.ViewModels.Models;
 using TechnoLogica.Xamarin.ResourceTranslator;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
-using Xamarin.Forms.Maps;
 
 namespace IARA.Mobile.Insp.Helpers
 {
@@ -123,6 +122,33 @@ namespace IARA.Mobile.Insp.Helpers
                     validState.Value = find.Text;
                 }
             }
+        }
+
+        public static string BuildCoordinates(LocationDto location)
+        {
+            if (location == null)
+            {
+                return string.Empty;
+            }
+
+            return $"{BuildCoordinates(location.DMSLatitude)} {BuildCoordinates(location.DMSLongitude)}";
+        }
+
+        public static string BuildCoordinates(string dms)
+        {
+            if (string.IsNullOrEmpty(dms))
+            {
+                return dms;
+            }
+
+            string[] split = dms.Split(' ');
+
+            if (split.Length != 3)
+            {
+                return dms;
+            }
+
+            return $"{split[0]}° {split[1]}' {split[2]}''";
         }
 
         public static string BuildAddress(this InspectionSubjectAddressDto address)

@@ -197,7 +197,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
                             next: () => {
                                 this.service.downloadPenalDecree(this.penalDecreeId!).subscribe({
                                     next: () => {
-                                        dialogClose();
+                                        dialogClose(this.model);
                                     }
                                 });
                             },
@@ -213,7 +213,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
 
                                 this.service.downloadPenalDecree(id).subscribe({
                                     next: () => {
-                                        dialogClose();
+                                        dialogClose(this.model);
                                     }
                                 });
                             },
@@ -252,8 +252,6 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
 
             auanViolatedRegulationsControl: new FormControl(null),
             violatedRegulationsControl: new FormControl(null),
-
-            statusesControl: new FormControl(null),
 
             filesControl: new FormControl(null)
         }, this.violatedRegulationsValidator());
@@ -294,10 +292,6 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
             this.form.get('deliveryControl')!.setValue(this.model.deliveryData);
         }
 
-        if (this.model.statuses !== undefined && this.model.statuses !== null) {
-            this.form.get('statusesControl')!.setValue(this.model.statuses);
-        }
-
         if (this.viewMode) {
             this.form.disable();
         }
@@ -327,8 +321,6 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
 
         this.model.auanViolatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
         this.model.decreeViolatedRegulations = this.form.get('violatedRegulationsControl')!.value;
-
-        this.model.statuses = this.form.get('statusesControl')!.value;
         
         if (this.isThirdParty) {
             this.model.auanData = this.form.get('auanControl')!.value;

@@ -65,8 +65,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
         if (permitIds !== null && permitIds !== undefined) {
             if (this.allFishingGears.length > 0) {
                 this.fishingGears = this.allFishingGears
-                    .filter(f => f.DTO.permittedFishingGear === null
-                        || f.DTO.permittedFishingGear === undefined
+                    .filter(f => f.DTO.permittedFishingGear === null || f.DTO.permittedFishingGear === undefined
                         || this.permitIds.includes(f.DTO.permittedFishingGear.permitId!));
             }
         }
@@ -85,13 +84,13 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
     }
 
     public writeValue(value: InspectedFishingGearDTO[]): void {
-        if (value !== undefined && value !== null) {
+        if (value !== undefined && value !== null && value.length > 0) {
             const fishingGears = value.map(f => {
                 const fishingGear: FishingGearDTO = (f.inspectedFishingGear ?? f.permittedFishingGear)!;
 
                 let checkName: string | undefined = undefined;
 
-                if (!f.checkInspectedMatchingRegisteredGear) {
+                if (f.checkInspectedMatchingRegisteredGear === null || f.checkInspectedMatchingRegisteredGear === undefined) {
                     // There is a bug with TypeScript that requires us to cast this to any
                     f.checkInspectedMatchingRegisteredGear = InspectedFishingGearEnum.R as any;
                 }
@@ -124,8 +123,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
             setTimeout(() => {
                 this.allFishingGears = fishingGears;
                 this.fishingGears = fishingGears
-                    .filter(f => f.DTO.permittedFishingGear === null
-                        || f.DTO.permittedFishingGear === undefined
+                    .filter(f => f.DTO.permittedFishingGear === null || f.DTO.permittedFishingGear === undefined
                         || this.permitIds.includes(f.DTO.permittedFishingGear.permitId!));
             });
         }

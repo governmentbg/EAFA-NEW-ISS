@@ -36,7 +36,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
         public BoatOnOpenWaterViewModel()
         {
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
-            PatrolVehicles = new PatrolVehiclesViewModel(this, true);
+            PatrolVehicles = new PatrolVehiclesViewModel(this, null);
             ObservedVessel = new InspectedShipDataViewModel(this)
             {
                 ShipSelected = CommandBuilder.CreateFrom<ShipSelectNomenclatureDto>(OnShipSelected)

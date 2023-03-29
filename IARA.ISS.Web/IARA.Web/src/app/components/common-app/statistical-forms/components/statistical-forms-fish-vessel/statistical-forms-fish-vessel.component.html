@@ -59,7 +59,7 @@
                                  formControlName="shipNameControl"
                                  tooltipResourceName="statistical-forms.ship-name-helper"
                                  [options]="ships"
-                                 [getControlErrorLabelText]="shipControlErrorLabelTest.bind(this)"
+                                 [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                                  [templateOptions]="true"
                                  label="{{ 'statistical-forms.ship-name' | tlTranslate }}">
                 </tl-autocomplete>
@@ -69,7 +69,7 @@
     </tl-expansion-panel>
 
     <!--Данни за кораба-->
-    <tl-expansion-panel *ngIf="!showOnlyRegiXData && form.controls.shipNameControl.valid && form.controls.shipNameControl.value"
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData && showShipForm"
                         title="{{ 'statistical-forms.ship-information-title' | tlTranslate }}"
                         tooltipResourceName="statistical-forms.ship-information-title-helper"
                         [validityChecker]="form">
@@ -115,9 +115,9 @@
                            label="{{ 'statistical-forms.ship-fuel-type' | tlTranslate }}">
                 </tl-select>
                 <tl-input fxFlex="50"
-                          formControlName="shipEnginePowerControl"
-                          tooltipResourceName="statistical-forms.ship-engine-power-helper"
-                          label="{{ 'statistical-forms.ship-engine-power' | tlTranslate }}">
+                          formControlName="fuelConsumptionControl"
+                          tooltipResourceName="statistical-forms.fuel-consumption-helper"
+                          label="{{ 'statistical-forms.fuel-consumption' | tlTranslate }}">
                 </tl-input>
             </div>
         </div>

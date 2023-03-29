@@ -39,6 +39,7 @@ import { Notifier } from '@app/shared/directives/notifier/notifier.class';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'ship-change-of-circumstances',
@@ -68,6 +69,8 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
     public hasNoEDeliveryRegistrationError: boolean = false;
     public hideBasicPaymentInfo: boolean = false;
     public service!: IShipsRegisterService;
+
+    public shipControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.shipControlErrorLabelText.bind(this);
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -272,7 +275,7 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
         return result;
     }
 
-    public shipControlErrorLabelTest(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+    public shipControlErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'shipControl') {
             if (errorCode === 'shipDestroyedOrDeregistered' && error === true) {
                 return new TLError({

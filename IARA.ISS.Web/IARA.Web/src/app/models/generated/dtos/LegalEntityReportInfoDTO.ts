@@ -1,8 +1,9 @@
 ﻿
+
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { AddressRegistrationDTO } from './AddressRegistrationDTO';
 
-export class LegalEntityReportInfoDTO {
+export class LegalEntityReportInfoDTO { 
     public constructor(obj?: Partial<LegalEntityReportInfoDTO>) {
         Object.assign(this, obj);
     }
@@ -30,4 +31,7 @@ export class LegalEntityReportInfoDTO {
 
     @StrictlyTyped(AddressRegistrationDTO)
     public courtRegistrationAddress?: AddressRegistrationDTO;
+
+    @StrictlyTyped(AddressRegistrationDTO)
+    public companyHeadquartersAddress?: AddressRegistrationDTO;
 }

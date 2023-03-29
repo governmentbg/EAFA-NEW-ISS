@@ -14,6 +14,7 @@ import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/er
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'change-password',
@@ -27,6 +28,8 @@ export class ChangePasswordComponent implements IDialogComponent {
     public passwordConfirmationIcon: string = 'fa-eye';
     public wrongPasswordServerMessage: string = '';
     public readonly useMultilineErrors = true;
+
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
     private userPasswordModel: UserPasswordDTO = new UserPasswordDTO();
     private service!: IMyProfileService;
@@ -113,7 +116,7 @@ export class ChangePasswordComponent implements IDialogComponent {
         }
     }
 
-    public getControlErrorLabelText(controlName: string, error: Record<string, unknown>, errorCode: string): TLError | undefined {
+    public getControlErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         switch (controlName) {
             case 'oldPassword': {
                 switch (errorCode) {

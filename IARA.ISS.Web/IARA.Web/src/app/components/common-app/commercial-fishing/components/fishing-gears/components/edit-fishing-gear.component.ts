@@ -1,4 +1,4 @@
-﻿import { Component, EventEmitter, Input, OnInit, Optional, Output, Self, ViewChild } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnDestroy, OnInit, Optional, Output, Self, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { forkJoin, Subscription } from 'rxjs';
 
@@ -34,17 +34,21 @@ import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/inter
 import { MarksRangeData } from '../models/marks-range.model';
 import { FishingGearManipulationService } from '../services/fishing-gear-manipulation.service';
 import { FishingGearUtils } from '@app/components/common-app/commercial-fishing/utils/fishing-gear.utils';
+import { PrefixInputDTO } from '@app/models/generated/dtos/PrefixInputDTO';
 
 @Component({
     selector: 'edit-fishing-gear',
     templateUrl: './edit-fishing-gear.component.html'
 })
-export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO | undefined> implements OnInit, IDialogComponent {
+export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO | undefined> implements OnInit, IDialogComponent, OnDestroy {
     public fishingGearTypes: FishingGearNomenclatureDTO[] = [];
     public fishingGearTypesEnum: typeof FishingGearTypesEnum = FishingGearTypesEnum;
 
     @Input()
     public isInspected: boolean = false;
+
+    @Input()
+    public filterTypes: boolean = true;
 
     @Input()
     public hasMarks: boolean = true;
@@ -66,6 +70,8 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
     @Output()
     public selectedMark = new EventEmitter<FishingGearMarkDTO>();
+
+    public readonly markNumberValidators: ValidatorFn[] = [Validators.required, TLValidators.number(0)];
 
     public marksForm!: FormGroup;
     public pingersForm!: FormGroup;
@@ -90,11 +96,14 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     private pageCode: PageCodeEnum | undefined;
     private model!: FishingGearDTO;
 
+    private gearManipulationServiceSub: Subscription | undefined;
+
     private readonly loader: FormControlDataLoader;
     private readonly confirmationDialog: TLConfirmDialog;
     private readonly translateService: FuseTranslationLoaderService;
     private readonly generateMarksDialog: TLMatDialog<GenerateMarksComponent>;
     private readonly gearManipulationService: FishingGearManipulationService;
+
 
     public constructor(
         @Self() @Optional() ngControl: NgControl,
@@ -119,31 +128,44 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         this.initCustomFormControl();
 
         this.loader.load(() => {
-            if (this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
-                this.fishingGearTypes = this.fishingGearTypes.filter(x => x.type === FishingGearParameterTypesEnum.PoundNet).slice();
-            }
-            else if (this.pageCode === PageCodeEnum.CatchQuataSpecies) {
-                this.fishingGearTypes = this.fishingGearTypes.filter(x => x.type === FishingGearParameterTypesEnum.Quota).slice();
-                this.fishingGearTypes = this.fishingGearTypes.filter(x => x.type !== FishingGearParameterTypesEnum.PoundNet).slice();
-            }
-            else {
-                this.fishingGearTypes = this.fishingGearTypes.filter(x => x.type !== FishingGearParameterTypesEnum.PoundNet).slice();
+            if (this.filterTypes) {
+                if (this.pageCode === PageCodeEnum.PoundnetCommFishLic) {
+                    this.fishingGearTypes = this.fishingGearTypes.filter(x => x.type === FishingGearParameterTypesEnum.PoundNet).slice();
+                }
+                else if (this.pageCode === PageCodeEnum.CatchQuataSpecies) {
+                    this.fishingGearTypes = this.fishingGearTypes.filter(x => x.type === FishingGearParameterTypesEnum.Quota).slice();
+                    this.fishingGearTypes = this.fishingGearTypes.filter(x => x.type !== FishingGearParameterTypesEnum.PoundNet).slice();
+                }
+                else {
+                    this.fishingGearTypes = this.fishingGearTypes.filter(x => x.type !== FishingGearParameterTypesEnum.PoundNet).slice();
+                }
             }
 
-            const fishingGearTypeCode: string | undefined = this.fishingGearTypes.find(x => x.value === this.model.typeId)?.code;
-            this.setFieldsValidators(fishingGearTypeCode);
-
-            this.fillForm();
+            if (!this.ngControl) {
+                this.fillForm(this.model);
+            }
         });
 
         if (this.listenToService) {
-            this.gearManipulationService.markAdded.subscribe({
-                next: (mark: FishingGearMarkDTO) => {
-                    if (!this.marks.includes(mark)) {
-                        this.marks.push(mark);
-                    }
-                }
-            })
+            this.gearManipulationServiceSub = this.gearManipulationService.markAdded.subscribe(this.transferMark.bind(this));
+        }
+    }
+
+    public ngOnDestroy(): void {
+        this.gearManipulationServiceSub?.unsubscribe();
+    }
+
+    private transferMark(mark: FishingGearMarkDTO): void {
+        if (!this.marks.some(x => x.id === mark.id)) {
+            const copiedMark: FishingGearMarkDTO = new FishingGearMarkDTO(mark);
+            copiedMark.fullNumber = new PrefixInputDTO({
+                prefix: mark.fullNumber?.prefix,
+                inputValue: mark.fullNumber?.inputValue
+            });
+
+            this.marks.push(copiedMark);
+
+            this.marks = this.marks.slice();
         }
     }
 
@@ -158,6 +180,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             if (this.isDisabled) {
                 this.form.disable();
             }
+
             this.model = data.model;
         }
     }
@@ -174,8 +197,9 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             this.pingersForm.updateValueAndValidity({ emitEvent: false });
 
             if (this.isFormValid()) {
-                this.fillModel();
+                this.fillModel(false);
                 CommonUtils.sanitizeModelStrings(this.model);
+
                 dialogClose(this.model);
             }
         }
@@ -189,6 +213,10 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         dialogClose();
     }
 
+    public onMoveMarkToInspected(mark: FishingGearMarkDTO): void {
+        this.selectedMark.emit(mark);
+    }
+
     public writeValue(value: FishingGearDTO | undefined): void {
         if (value === null || value === undefined) {
             this.model = new FishingGearDTO({ isActive: true });
@@ -198,32 +226,8 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         }
 
         this.loader.load(() => {
-            const fishingGearTypeCode: string | undefined = this.fishingGearTypes.find(x => x.value === this.model.typeId)?.code;
-            this.setFieldsValidators(fishingGearTypeCode);
-
-            this.fillForm();
+            this.fillForm(this.model);
         });
-    }
-
-    public onEditMark(row: GridRow<FishingGearMarkDTO> | undefined): void {
-        if (this.isInspected && (!(row !== null && row !== undefined) || row.data.statusId === this.markedStatus.value)) {
-            this.marksForm!.get('statusIdControl')!.setValue(this.markedStatus.value);
-            this.marksForm!.get('statusIdControlHidden')!.disable();
-        }
-        else {
-            if (row === null || row === undefined) {
-                const newMarkStatus: NomenclatureDTO<number> | undefined = this.markStatuses.find(x => x.code === FishingGearMarkStatusesEnum[FishingGearMarkStatusesEnum.NEW] && x.isActive);
-                if (newMarkStatus !== null && newMarkStatus !== undefined) {
-                    setTimeout(() => {
-                        this.marksForm!.get('statusIdControl')!.setValue(newMarkStatus.value);
-                        this.marksForm!.get('statusIdControlHidden')!.disable();
-                    });
-                }
-            }
-            else {
-                this.marksForm!.get('statusIdControlHidden')!.enable();
-            }
-        }
     }
 
     public openGenerateMarksDialog(): void {
@@ -256,8 +260,12 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
             this.marks.push(new FishingGearMarkDTO({
                 selectedStatus: FishingGearMarkStatusesEnum.NEW,
+                createdOn: new Date(),
                 statusId: status.value,
-                number: num.toString(),
+                fullNumber: new PrefixInputDTO({
+                    prefix: undefined,
+                    inputValue: num.toString()
+                }),
                 isActive: true
             }));
         }
@@ -266,14 +274,12 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         this.marksForm.updateValueAndValidity({ emitEvent: false });
     }
 
-    public onEditedMark(): void {
-        if (this.isInspected) {
-            this.onChanged(this.getValue());
-        }
-        else {
-            this.marksForm!.updateValueAndValidity({ emitEvent: false });
-            this.pingersForm!.updateValueAndValidity({ emitEvent: false });
-        }
+    public onMarkActiveRecordChanged(row: GridRow<FishingGearMarkDTO> | undefined): void {
+        this.onEditMark(row);
+    }
+
+    public onMarkRecordChanged(row: any): void {
+        this.onEditedMark(row);
     }
 
     public onEditedPinger(): void {
@@ -295,8 +301,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             }
         }
 
-        this.fillModel();
-        return this.model;
+        return this.fillModel(true);
     }
 
     protected buildForm(): AbstractControl {
@@ -327,7 +332,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         });
 
         this.marksForm = new FormGroup({
-            numberControl: new FormControl(undefined, [Validators.required, TLValidators.number(0, undefined, 0)]),
+            fullNumberControl: new FormControl(undefined, [Validators.required, TLValidators.number(0, undefined, 0)]),
             statusIdControl: new FormControl(undefined, Validators.required)
         });
 
@@ -356,6 +361,13 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         form.get('typeControl')!.valueChanges.subscribe({
             next: (value: FishingGearNomenclatureDTO | string | undefined) => {
                 if (value instanceof NomenclatureDTO) {
+                    if (value.code === FishingGearTypesEnum[FishingGearTypesEnum.DLN]) {
+                        this.selectedGearTypeIsPoundNet = true;
+                    }
+                    else {
+                        this.selectedGearTypeIsPoundNet = false;
+                    }
+
                     this.setCountAndQuotaGearLength(value);
                     this.setFieldsValidators(value.code);
 
@@ -381,86 +393,101 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         return form;
     }
 
-    private fillForm(): void {
-        if (this.model.typeId !== null && this.model.typeId !== undefined) {
-            const type: NomenclatureDTO<number> = this.fishingGearTypes.find(x => x.value === this.model.typeId)!;
-            this.form.get('typeControl')!.setValue(type, { emitEvent: false });
+    private fillForm(model: FishingGearDTO): void {
+        if (model.typeId !== null && model.typeId !== undefined) {
+            const type: NomenclatureDTO<number> = this.fishingGearTypes.find(x => x.value === model.typeId)!;
+            this.form.get('typeControl')!.setValue(type);
 
             if (type instanceof NomenclatureDTO) {
                 this.setCountAndQuotaGearLength(type);
             }
 
-            if (type.code !== FishingGearTypesEnum[FishingGearTypesEnum.DLN]) {
-                this.form.get('countControl')!.setValue(this.model.count);
-                this.form.get('hooksCountControl')!.setValue(this.model.hookCount);
-                this.form.get('lengthControl')!.setValue(this.model.length);
-                this.form.get('heightControl')!.setValue(this.model.height);
-                this.form.get('cordThicknessControl')!.setValue(this.model.cordThickness);
-                this.form.get('lineCountControl')!.setValue(this.model.lineCount);
-                this.form.get('netNominalLengthControl')!.setValue(this.model.netNominalLength);
-                this.form.get('netsInFleetCountControl')!.setValue(this.model.netsInFleetCount);
-                this.form.get('trawlModelControl')!.setValue(this.model.trawlModel);
+            if (type?.code !== FishingGearTypesEnum[FishingGearTypesEnum.DLN]) {
+                this.form.get('countControl')!.setValue(model.count);
+                this.form.get('hooksCountControl')!.setValue(model.hookCount);
+                this.form.get('lengthControl')!.setValue(model.length);
+                this.form.get('heightControl')!.setValue(model.height);
+                this.form.get('cordThicknessControl')!.setValue(model.cordThickness);
+                this.form.get('lineCountControl')!.setValue(model.lineCount);
+                this.form.get('netNominalLengthControl')!.setValue(model.netNominalLength);
+                this.form.get('netsInFleetCountControl')!.setValue(model.netsInFleetCount);
+                this.form.get('trawlModelControl')!.setValue(model.trawlModel);
             }
             else {
-                this.form.get('towelLengthControl')!.setValue(this.model.towelLength);
-                this.form.get('houseLengthControl')!.setValue(this.model.houseLength);
-                this.form.get('houseWidthControl')!.setValue(this.model.houseWidth);
+                this.form.get('towelLengthControl')!.setValue(model.towelLength);
+                this.form.get('houseLengthControl')!.setValue(model.houseLength);
+                this.form.get('houseWidthControl')!.setValue(model.houseWidth);
             }
         }
 
-        this.form.get('netEyeSizeControl')!.setValue(this.model.netEyeSize);
-        this.form.get('descriptionControl')!.setValue(this.model.description);
-        this.form.get('hasPingersControl')!.setValue(this.model.hasPingers);
+        this.form.get('netEyeSizeControl')!.setValue(model.netEyeSize);
+        this.form.get('descriptionControl')!.setValue(model.description);
+        this.form.get('hasPingersControl')!.setValue(model.hasPingers);
 
-        this.marks = this.copyMarks(this.model.marks?.slice() ?? []);
-        this.pingers = this.copyPingers(this.model.pingers?.slice() ?? []);
+        this.marks = this.copyMarks(model.marks?.slice() ?? []);
+        this.pingers = this.copyPingers(model.pingers?.slice() ?? []);
     }
 
-    private fillModel(): void {
-        const type: NomenclatureDTO<number> = this.form.get('typeControl')!.value;
+    private fillModel(returnNewObject: boolean): FishingGearDTO {
+        let result: FishingGearDTO;
 
-        this.model.typeId = type.value;
-        this.model.type = type.displayName;
-
-        this.model.netEyeSize = this.form.get('netEyeSizeControl')!.value;
-        this.model.description = this.form.get('descriptionControl')!.value;
-        this.model.hasPingers = this.form.get('hasPingersControl')!.value;
-
-        if (type.code !== FishingGearTypesEnum[FishingGearTypesEnum.DLN]) {
-            this.model.count = this.form.get('countControl')!.value ?? 0;
-            this.model.hookCount = this.form.get('hooksCountControl')!.value;
-            this.model.length = this.form.get('lengthControl')!.value;
-            this.model.height = this.form.get('heightControl')!.value;
-            this.model.cordThickness = this.form.get('cordThicknessControl')!.value;
-            this.model.lineCount = this.form.get('lineCountControl')!.value;
-            this.model.netNominalLength = this.form.get('netNominalLengthControl')!.value;
-            this.model.netsInFleetCount = this.form.get('netsInFleetCountControl')!.value;
-            this.model.trawlModel = this.form.get('trawlModelControl')!.value;
+        if (returnNewObject) {
+            result = new FishingGearDTO();
         }
         else {
-            this.model.towelLength = this.form.get('towelLengthControl')!.value;
-            this.model.houseLength = this.form.get('houseLengthControl')!.value;
-            this.model.houseWidth = this.form.get('houseWidthControl')!.value;
+            result = this.model;
+        }
+
+        result.id = this.model.id;
+        result.netEyeSize = this.form.get('netEyeSizeControl')!.value;
+        result.description = this.form.get('descriptionControl')!.value;
+        result.hasPingers = this.form.get('hasPingersControl')!.value;
+        result.permitId = this.model.permitId;
+        result.isActive = this.model.isActive;
+
+        const type: NomenclatureDTO<number> = this.form.get('typeControl')!.value;
+
+        result.typeId = type?.value;
+        result.type = type?.displayName;
+
+
+        if (type?.code !== FishingGearTypesEnum[FishingGearTypesEnum.DLN]) {
+            result.count = this.form.get('countControl')!.value ?? 0;
+            result.hookCount = this.form.get('hooksCountControl')!.value;
+            result.length = this.form.get('lengthControl')!.value;
+            result.height = this.form.get('heightControl')!.value;
+            result.cordThickness = this.form.get('cordThicknessControl')!.value;
+            result.lineCount = this.form.get('lineCountControl')!.value;
+            result.netNominalLength = this.form.get('netNominalLengthControl')!.value;
+            result.netsInFleetCount = this.form.get('netsInFleetCountControl')!.value;
+            result.trawlModel = this.form.get('trawlModelControl')!.value;
+        }
+        else {
+            result.towelLength = this.form.get('towelLengthControl')!.value;
+            result.houseLength = this.form.get('houseLengthControl')!.value;
+            result.houseWidth = this.form.get('houseWidthControl')!.value;
         }
 
         if (this.marksTable !== null && this.marksTable !== undefined && (!this.isInspected || this.marksTable.rows.length > 0)) {
-            this.model.marks = this.getMarksFromTable();
+            result.marks = this.getMarksFromTable();
         }
 
-        this.model.marksNumbers = '';
-        if (this.model.marks !== null && this.model.marks !== undefined && this.model.marks.length > 0) {
-            for (const mark of this.model.marks.filter(x => x.isActive)) {
-                if (mark.number !== null && mark.number !== undefined) {
-                    this.model.marksNumbers = this.model.marksNumbers?.concat(`${mark.number};`) ?? '';
+        result.marksNumbers = '';
+        if (result.marks !== null && result.marks !== undefined && result.marks.length > 0) {
+            for (const mark of result.marks.filter(x => x.isActive)) {
+                if (mark.fullNumber?.inputValue !== null && mark.fullNumber?.inputValue !== undefined) {
+                    result.marksNumbers = result.marksNumbers?.concat(`${mark.fullNumber.prefix ?? ''}${mark.fullNumber.inputValue};`) ?? '';
                 }
             }
         }
 
         if (this.form.get('hasPingersControl')!.value === true) {
             if (this.pingersTable !== null && this.pingersTable !== undefined) {
-                this.model.pingers = this.getPingersFromTable();
+                result.pingers = this.getPingersFromTable();
             }
         }
+
+        return result;
     }
 
     private isFormValid(): boolean {
@@ -469,15 +496,49 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             && this.pingersForm?.errors?.duplicatedPinger == undefined;
     }
 
+    private onEditMark(row: GridRow<FishingGearMarkDTO> | undefined): void {
+        if (this.isInspected && (!(row !== null && row !== undefined) || row.data.statusId === this.markedStatus.value)) {
+            setTimeout(() => {
+                this.marksForm!.get('statusIdControl')!.setValue(this.markedStatus.value);
+                this.marksForm!.get('statusIdControlHidden')!.disable();
+            });
+        }
+        else {
+            if (row === null || row === undefined) {
+                const newMarkStatus: NomenclatureDTO<number> | undefined = this.markStatuses.find(x => x.code === FishingGearMarkStatusesEnum[FishingGearMarkStatusesEnum.NEW] && x.isActive);
+                if (newMarkStatus !== null && newMarkStatus !== undefined) {
+                    setTimeout(() => {
+                        this.marksForm!.get('statusIdControl')!.setValue(newMarkStatus.value);
+                    });
+                }
+            }
+            else {
+                this.marksForm!.get('statusIdControlHidden')!.enable();
+            }
+        }
+    }
+
+    private onEditedMark(row: any): void {
+        this.marks = this.getMarksFromTable();
+
+        if (this.isInspected) {
+            this.onChanged(this.getValue());
+        }
+        else {
+            this.marksForm!.updateValueAndValidity({ emitEvent: false });
+            this.pingersForm!.updateValueAndValidity({ emitEvent: false });
+        }
+    }
+
     private getMarksFromTable(): FishingGearMarkDTO[] {
         if (this.marksTable !== null && this.marksTable !== undefined && this.marksTable.rows !== null && this.marksTable.rows !== undefined) {
             return this.marksTable.rows.map((row: FishingGearMarkDTO) => {
                 return new FishingGearMarkDTO({
                     id: row.id,
-                    number: row.number,
+                    fullNumber: new PrefixInputDTO(row.fullNumber),
                     statusId: row.statusId,
                     selectedStatus: FishingGearMarkStatusesEnum[this.markStatuses.find(x => x.value === row.statusId)!.code as keyof typeof FishingGearMarkStatusesEnum],
-                    createdOn: row.createdOn,
+                    createdOn: row.createdOn ?? new Date(),
                     isActive: row.isActive ?? true
                 });
             });
@@ -672,7 +733,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         }
 
         if (this.isDisabled) {
-            this.form.disable();
+            this.form.disable({ emitEvent: false });
         }
     }
 
@@ -682,14 +743,14 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
                 return null;
             }
 
-            const markNum: string = form.get('numberControl')!.value;
+            const markNum: PrefixInputDTO | undefined = form.get('fullNumberControl')!.value;
             const marks: FishingGearMarkDTO[] = this.getMarksFromTable();
 
             if (markNum !== null
                 && markNum !== undefined
                 && marks !== null
                 && marks !== undefined
-                && marks!.filter(x => x.isActive && x.number === markNum).length > 1
+                && marks!.filter(x => x.isActive && x.fullNumber?.prefix == markNum.prefix && x.fullNumber?.inputValue === markNum.inputValue).length > 1
             ) {
                 return { 'duplicatedMark': true };
             }
@@ -758,7 +819,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
                 const trawlModel: string | undefined = form.get('trawlModelControl')!.value;
 
                 if (CommonUtils.isNumberNullOrNaN(lengthOrWidth) && CommonUtils.isNullOrEmpty(trawlModel)) {
-                    return { 'lengthOrTrawlModelIsRequired' : true };
+                    return { 'lengthOrTrawlModelIsRequired': true };
                 }
                 else {
                     return null;
@@ -773,8 +834,10 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         const copiedMarks: FishingGearMarkDTO[] = [];
 
         for (const mark of marks) {
-            const markObject: object = JSON.parse(JSON.stringify(mark));
-            copiedMarks.push(new FishingGearMarkDTO(markObject));
+            const markObject: FishingGearMarkDTO = new FishingGearMarkDTO(mark);
+            markObject.fullNumber = new PrefixInputDTO(mark.fullNumber);
+
+            copiedMarks.push(markObject);
         }
 
         return copiedMarks;

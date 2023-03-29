@@ -21,6 +21,8 @@ export class FLUXVMSRequestFilters extends BaseRequestModel {
     public responseDateTo: Date | undefined;
     public requestUUID: string | undefined;
     public responseUUID: string | undefined;
+    public requestContent: string | undefined;
+    public responseContent: string | undefined;
     public responseStatuses: string[] | undefined;
     public domainNames: string[] | undefined;
 }

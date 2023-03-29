@@ -1,16 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Domain.Enums;
+﻿using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API;
 using IARA.Mobile.Pub.Domain.Enums;
+using IARA.Mobile.Pub.Utilities;
 using IARA.Mobile.Pub.ViewModels.Base;
 using IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket;
 using IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments;
 using IARA.Mobile.Pub.Views.FlyoutPages.FishingTicket;
 using IARA.Mobile.Pub.Views.FlyoutPages.Payments;
 using IARA.Mobile.Shared.Menu;
+using IARA.Mobile.Shared.ResourceTranslator;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -73,6 +77,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
         {
             _lastOpenedState = nameof(Tickets);
             await GetStateTickets(_lastOpenedState);
+            Translator.Current.PropertyChanged += OnTranslatorPropertyChanged;
         }
 
         private async Task GetStateTickets(string lastOpenedState, bool local = false)
@@ -97,8 +102,11 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
                 tickets = FishingTicketsTransaction.GetLocalStoredExpiredTickets();
             }
 
+
             if (tickets != null && tickets.Count > 0)
             {
+                NomenclatureTranslator.UpdateTicketTranslation(tickets, FishingTicketsTransaction);
+
                 if (lastOpenedState == nameof(Tickets))
                 {
                     Tickets.ReplaceRange(tickets);
@@ -118,7 +126,14 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
             IsBusy = false;
             SelectedState = _lastOpenedState;
         }
+        private void OnTranslatorPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (Tickets.Count > 0)
+                Tickets.ReplaceRange(NomenclatureTranslator.UpdateTicketTranslation(Tickets.ToList(), FishingTicketsTransaction));
 
+            if (ExpiredTickets.Count > 0)
+                ExpiredTickets.ReplaceRange(NomenclatureTranslator.UpdateTicketTranslation(Tickets.ToList(), FishingTicketsTransaction));
+        }
         private async Task OnStateChanged()
         {
             if (_lastOpenedState != SelectedState)//Prevent firing event twice(xamarin bug)

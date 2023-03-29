@@ -84,8 +84,6 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
 
         types = [...types, PatrolVehicleTypeEnum.Air, PatrolVehicleTypeEnum.Other];
 
-        const type: PatrolVehicleTypeEnum = this.isWaterVehicle ? PatrolVehicleTypeEnum.Marine : PatrolVehicleTypeEnum.Ground;
-
         this.countries = nomenclatureTables[0];
         this.institutions = nomenclatureTables[1];
         this.patrolVehicleTypes = nomenclatureTables[2].filter(f => types.includes(f.vehicleType!));
@@ -205,7 +203,7 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
         this.model.location = this.form.get('mapViewerControl')!.value;
 
         if (this.model.location) {
-            this.model.locationText = this.model.location.dmsLongitude! + ' ' + this.model.location.dmsLatitude!;
+            this.model.locationText = CoordinateUtils.FormatDMS(this.model.location.dmsLatitude!) + ' ' + CoordinateUtils.FormatDMS(this.model.location.dmsLongitude!);
         }
     }
 

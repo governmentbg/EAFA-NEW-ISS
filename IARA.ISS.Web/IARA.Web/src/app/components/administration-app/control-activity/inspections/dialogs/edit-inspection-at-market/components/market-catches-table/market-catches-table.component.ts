@@ -38,6 +38,9 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
     public hasCatchType: boolean = true;
 
     @Input()
+    public hasUnloadedQuantity: boolean = true;
+
+    @Input()
     public fishes: NomenclatureDTO<number>[] = [];
 
     @Input()
@@ -99,6 +102,7 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
                 presentations: this.presentations,
                 types: this.types,
                 hasCatchType: this.hasCatchType,
+                hasUnloadedQuantity: this.hasUnloadedQuantity,
             });
 
             if (readOnly) {

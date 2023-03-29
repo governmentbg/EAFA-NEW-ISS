@@ -32,11 +32,12 @@
                           tooltipResourceName="flux-vms-requests.request-uuid-helper">
                 </tl-input>
 
-                <tl-date fxFlex="50"
-                         formControlName="requestDateTimeControl"
-                         label="{{ 'flux-vms-requests.request-date-time' | tlTranslate }}"
-                         tooltipResourceName="flux-vms-requests.request-date-time-helper">
-                </tl-date>
+                <tl-date-time fxFlex="50"
+                              [disabled]="true"
+                              formControlName="requestDateTimeControl"
+                              label="{{ 'flux-vms-requests.request-date-time' | tlTranslate }}"
+                              tooltipResourceName="flux-vms-requests.request-date-time-helper">
+                </tl-date-time>
             </div>
 
             <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
@@ -46,11 +47,12 @@
                           tooltipResourceName="flux-vms-requests.response-uuid-helper">
                 </tl-input>
 
-                <tl-date fxFlex="50"
-                         formControlName="responseDateTimeControl"
-                         label="{{ 'flux-vms-requests.response-date-time' | tlTranslate }}"
-                         tooltipResourceName="flux-vms-requests.response-date-time-helper">
-                </tl-date>
+                <tl-date-time fxFlex="50"
+                              [disabled]="true"
+                              formControlName="responseDateTimeControl"
+                              label="{{ 'flux-vms-requests.response-date-time' | tlTranslate }}"
+                              tooltipResourceName="flux-vms-requests.response-date-time-helper">
+                </tl-date-time>
             </div>
 
             <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">

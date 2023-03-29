@@ -13,7 +13,7 @@ import { AuthService } from "@app/shared/services/auth.service";
 import { RequestProperties } from "@app/shared/services/request-properties";
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
-
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'merge-profiles',
@@ -26,6 +26,8 @@ export class MergeProfilesComponent {
     public readonly appearance: string = 'outline';
     public mergeProfilesForm!: FormGroup;
     public enteredIncorrectLoginData: boolean = false;
+
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
     private model: UserRegistrationDTO;
     private isInternalUser: boolean;

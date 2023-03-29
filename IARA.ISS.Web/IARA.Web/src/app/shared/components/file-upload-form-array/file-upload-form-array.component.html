@@ -1,10 +1,10 @@
 ﻿<div fxLayout="column">
     <div *ngIf="!isDisabled && !hideAddButton" fxLayout="row" fxLayoutAlign="end center">
-        <tl-icon-button type="MAT_ICON"
-                        icon="add"
-                        iconClass="accent-color"
-                        (buttonClicked)="addFileUploadControl()">
-        </tl-icon-button>
+        <button mat-raised-button
+                color="accent"
+                (click)="addFileUploadControl()">
+            {{ 'common.add-file' | tlTranslate: 'cap' }}
+        </button>
     </div>
     <div fxFlex="100" fxLayout="column">
         <div *ngFor="let fileUpload of form.controls; let i = index"

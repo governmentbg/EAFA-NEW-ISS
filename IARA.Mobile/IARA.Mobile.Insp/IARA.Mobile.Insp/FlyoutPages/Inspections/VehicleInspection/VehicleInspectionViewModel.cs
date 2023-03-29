@@ -29,9 +29,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
         private List<SelectNomenclatureDto> _countries;
         private List<SelectNomenclatureDto> _institutions;
         private InspectionTransportVehicleDto _edit;
+        private bool _ownerIsDriver;
+        private bool _hasBuyer;
 
         public VehicleInspectionViewModel()
         {
+            _hasBuyer = true;
+
             SaveDraft = CommandBuilder.CreateFrom(OnSaveDraft);
             Finish = CommandBuilder.CreateFrom(OnFinish);
 
@@ -54,7 +58,14 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
                 InspectionFiles,
                 AdditionalInfo,
                 Signatures,
+            }, groups: new Dictionary<string, System.Func<bool>>
+            {
+                { "OwnerIsDriverCheck", () => !OwnerIsDriver },
+                { "HasBuyerCheck", () => HasBuyer }
             });
+
+            Owner.Validation.GlobalGroups = new List<string> { "OwnerIsDriverCheck" };
+            Buyer.Validation.GlobalGroups = new List<string> { "HasBuyerCheck" };
 
             IsSealed.Value = true;
         }
@@ -118,6 +129,16 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
         [MaxLength(4000)]
         public ValidState TransportDestination { get; set; }
 
+        public bool OwnerIsDriver
+        {
+            get => _ownerIsDriver;
+            set => SetProperty(ref _ownerIsDriver, value);
+        }
+        public bool HasBuyer
+        {
+            get => _hasBuyer;
+            set => SetProperty(ref _hasBuyer, value);
+        }
         public List<SelectNomenclatureDto> VehicleTypes
         {
             get => _vehicleTypes;
@@ -274,7 +295,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
                         VehicleTypeId = VehicleType.Value,
                         Personnel = new InspectionSubjectPersonnelDto[]
                         {
-                            Owner,
+                            ModifiedOwner(),
                             Driver,
                             Buyer,
                         }.Where(f => f != null).ToList(),
@@ -292,6 +313,20 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
                     return InspectionsTransaction.HandleInspection(dto, submitType);
                 }
             );
+        }
+
+        private InspectionSubjectPersonnelDto ModifiedOwner()
+        {
+            if (OwnerIsDriver)
+            {
+                InspectionSubjectPersonnelDto owner = Driver;
+                owner.Type = InspectedPersonType.OwnerPers;
+                return owner;
+            }
+            else
+            {
+                return Owner;
+            }
         }
     }
 }

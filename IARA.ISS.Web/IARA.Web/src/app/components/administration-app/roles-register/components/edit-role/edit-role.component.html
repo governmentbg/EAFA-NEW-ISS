@@ -151,7 +151,7 @@
                          [formGroup]="usersForm"
                          [options]="users"
                          dataType="nomenclature"
-                         [getControlErrorLabelText]="getDatesOverlappingErrorText.bind(this)"
+                         [getControlErrorLabelText]="getDatesOverlappingErrorTextMethod"
                          columnName="{{ 'roles-register.user' | tlTranslate }}">
             </data-column>
 

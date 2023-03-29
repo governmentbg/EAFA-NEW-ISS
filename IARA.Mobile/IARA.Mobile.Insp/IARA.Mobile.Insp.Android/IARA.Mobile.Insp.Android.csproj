@@ -109,7 +109,7 @@
       <Version>4.3.4</Version>
     </PackageReference>
     <PackageReference Include="TechnoLogica.Xamarin">
-      <Version>3.4.47446</Version>
+      <Version>3.4.48492</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.CommunityToolkit">
       <Version>2.0.5</Version>
@@ -124,7 +124,7 @@
       <Version>2.4.11.982</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2545" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.7.4" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.5" />
     <PackageReference Include="Xamarin.Forms.Maps">
       <Version>5.0.0.2545</Version>
     </PackageReference>

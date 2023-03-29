@@ -55,13 +55,14 @@ import { ChoosePermitLicenseForRenewalComponent } from './commercial-fishing/com
 import { ChoosePermitToCopyFromComponent } from './commercial-fishing/components/choose-permit-to-copy-from/choose-permit-to-copy-from.component';
 import { EditCommercialFishingComponent } from './commercial-fishing/components/edit-commercial-fishing/edit-commercial-fishing.component';
 import { EditLogBookComponent } from './commercial-fishing/components/edit-log-book/edit-log-book.component';
-import { EditSuspensionComponent } from './commercial-fishing/components/edit-suspension/edit-suspension.component';
 import { EditFishingGearComponent } from './commercial-fishing/components/fishing-gears/components/edit-fishing-gear.component';
 import { GenerateMarksComponent } from './commercial-fishing/components/fishing-gears/components/generate-marks/generate-marks.component';
 import { FishingGearsComponent } from './commercial-fishing/components/fishing-gears/fishing-gears.component';
 import { GroudForUseComponent } from './commercial-fishing/components/ground-for-use/ground-for-use.component';
 import { ChooseLogBookForRenewalComponent } from './commercial-fishing/components/log-books/components/choose-log-book-for-renewal/choose-log-book-for-renewal.component';
 import { LogBooksComponent } from './commercial-fishing/components/log-books/log-books.component';
+import { EditSuspensionComponent } from './commercial-fishing/components/suspensions/components/edit-suspension/edit-suspension.component';
+import { SuspensionsComponent } from './commercial-fishing/components/suspensions/suspensions.component';
 import { DuplicateEntriesTableComponent } from './duplicates/duplicate-entires-table/duplicate-entries-table.component';
 import { DuplicatesApplicationComponent } from './duplicates/duplicates-application.component';
 import { AcquiredFishingCapacityComponent } from './fishing-capacity/acquired-fishing-capacity/acquired-fishing-capacity.component';
@@ -207,7 +208,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         ChooseLogBookForRenewalComponent,
         PrintConfigurationsDialogComponent,
         AssignApplicationByUserComponent,
-        WaitExternalChecksToFinishComponent
+        WaitExternalChecksToFinishComponent,
+        SuspensionsComponent
     ],
     imports: [
         TLCommonModule,
@@ -313,7 +315,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         ChooseLogBookForRenewalComponent,
         PrintConfigurationsDialogComponent,
         AssignApplicationByUserComponent,
-        WaitExternalChecksToFinishComponent
+        WaitExternalChecksToFinishComponent,
+        SuspensionsComponent
     ],
     providers: [CurrencyPipe, TLDateDifferencePipe, DatePipe]
 })

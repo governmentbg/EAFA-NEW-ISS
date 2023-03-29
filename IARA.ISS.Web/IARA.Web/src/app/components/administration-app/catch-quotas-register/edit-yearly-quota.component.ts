@@ -106,6 +106,7 @@ export class EditYearlyQuotaComponent implements OnInit, IDialogComponent {
             if (this.isEditing) {
                 this.service.edit(this.model).subscribe({
                     next: () => {
+                        NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ports);
                         dialogClose(this.model);
                     }
                 });
@@ -116,6 +117,8 @@ export class EditYearlyQuotaComponent implements OnInit, IDialogComponent {
                         this.quotaAlreadyExistsErrors = false;
 
                         this.model.id = id;
+
+                        NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ports);
                         dialogClose(this.model);
                     },
                     error: (response: HttpErrorResponse) => {

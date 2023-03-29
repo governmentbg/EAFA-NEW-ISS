@@ -23,6 +23,7 @@
                          formControlName="saleDateControl"
                          label="{{ 'catches-and-sales.first-sale-sale-date' | tlTranslate }}"
                          tooltipResourceName="catches-and-sales.first-sale-sale-date-helper"
+                         [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                          [max]="currentDate">
                 </tl-date>
                 <tl-input *ngIf="!isAdd"
@@ -50,6 +51,14 @@
                          tooltipResourceName="catches-and-sales.first-sale-sale-contract-date-helper"
                          [max]="currentDate">
                 </tl-date>
+            </div>
+            <div *ngIf="form.touched && form.get('saleDateControl')?.errors?.logBookPageDateLocked" fxFlex="100" fxLayout="row">
+                <mat-error *ngIf="form.get('saleDateControl').errors.logBookPageDateLocked.hasAboveLimitAnnualTurnOver">
+                    * {{ 'catches-and-sales.first-sale-cannot-add-page-turnover-above-limit-error' | tlTranslate }} {{ form.get('saleDateControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.first-sale-hours-after-sale' | tlTranslate }}. {{ 'catches-and-sales.first-sale-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                </mat-error>
+                <mat-error *ngIf="!form.get('saleDateControl').errors.logBookPageDateLocked.hasAboveLimitAnnualTurnOver">
+                    * {{ 'catches-and-sales.first-sale-cannot-add-page-turnover-below-limit-error' | tlTranslate }} {{ form.get('saleDateControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.first-sale-hours-after-sale' | tlTranslate }}. {{ 'catches-and-sales.first-sale-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                </mat-error>
             </div>
         </tl-card-content>
     </tl-card>

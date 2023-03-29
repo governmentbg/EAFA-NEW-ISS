@@ -31,7 +31,7 @@ import { IReportService } from '@app/interfaces/administration-app/report.interf
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
-
+import { TLValidators } from '@app/shared/utils/tl-validators';
 
 @Component({
     selector: 'report-definition',
@@ -80,13 +80,15 @@ export class ReportDefinitionComponent implements OnInit {
     private allUsers!: NomenclatureDTO<number>[];
     private allRoles!: NomenclatureDTO<number>[];
 
-    public constructor(router: Router,
+    public constructor(
+        router: Router,
         translateService: FuseTranslationLoaderService,
         commonNomenclaturesService: CommonNomenclatures,
         reportDefinitionService: ReportAdministrationService,
         editDialog: TLMatDialog<EditReportDefinitionComponent>,
         confirmDialog: TLConfirmDialog,
-        snackbar: MatSnackBar) {
+        snackbar: MatSnackBar
+    ) {
         this.router = router;
         this.translateService = translateService;
         this.commonNomenclaturesService = commonNomenclaturesService;
@@ -109,19 +111,16 @@ export class ReportDefinitionComponent implements OnInit {
 
         this.formGroup = new FormGroup({
             generalInformationGroup: new FormGroup({
-                titleControl: new FormControl(null, Validators.compose([
-                    Validators.required, Validators.maxLength(500)
-                ])),
-                codeControl: new FormControl(null, Validators.compose([
-                    Validators.required, Validators.maxLength(200)
-                ])),
+                titleControl: new FormControl(null, [Validators.required, Validators.maxLength(500)]),
+                codeControl: new FormControl(null, [Validators.required, Validators.maxLength(200)]),
                 descriptionControl: new FormControl(null, Validators.maxLength(1000)),
                 lastRunUserControl: new FormControl({ value: null, disabled: true }),
                 lastRunDateTimeControl: new FormControl({ value: null, disabled: true }),
                 lastRunDurationSecControl: new FormControl({ value: null, disabled: true }),
                 reportTypeControl: new FormControl(null, Validators.required),
                 reportGroupControl: new FormControl(null, Validators.required),
-                iconNameControl: this.iconNameControl,
+                orderNumControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
+                iconNameControl: this.iconNameControl
             }),
             accessManagementGroup: new FormGroup({
                 selectedRolesControl: new FormControl(),
@@ -361,6 +360,7 @@ export class ReportDefinitionComponent implements OnInit {
         (this.formGroup.controls.generalInformationGroup as FormGroup).controls.lastRunDurationSecControl.setValue(report.lastRunDurationSec);
         (this.formGroup.controls.generalInformationGroup as FormGroup).controls.iconNameControl.setValue(report.iconName);
         (this.formGroup.controls.generalInformationGroup as FormGroup).controls.reportTypeControl.setValue(report.reportType);
+        (this.formGroup.controls.generalInformationGroup as FormGroup).controls.orderNumControl.setValue(report.orderNum);
 
         this.formGroup.controls.queryControl.setValue(report.reportSQL);
         (this.formGroup.controls.accessManagementGroup as FormGroup).controls.selectedUsersControl.setValue(report.users);
@@ -372,6 +372,7 @@ export class ReportDefinitionComponent implements OnInit {
         this.report.name = (formGroup.controls.generalInformationGroup as FormGroup).controls.titleControl.value;
         this.report.description = (formGroup.controls.generalInformationGroup as FormGroup).controls.descriptionControl.value;
         this.report.code = (formGroup.controls.generalInformationGroup as FormGroup).controls.codeControl.value;
+        this.report.orderNum = (formGroup.controls.generalInformationGroup as FormGroup).controls.orderNumControl.value;
         this.report.reportSQL = formGroup.controls.queryControl.value;
 
         this.report.iconName = (formGroup.controls.generalInformationGroup as FormGroup).controls.iconNameControl.value;

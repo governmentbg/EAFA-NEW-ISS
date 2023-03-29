@@ -30,29 +30,59 @@
                     </div>
 
                     <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-                        <tl-input fxFlex="25"
+                        <tl-input fxFlex="33"
+                                  formControlName="requestContentControl"
+                                  label="{{ 'flux-vms-requests.filters-request-content' | tlTranslate }}"
+                                  tooltipResourceName="flux-fms-requests.filters-request-content-helper">
+                        </tl-input>
+
+                        <tl-date-time fxFlex="33"
+                                      formControlName="requestDateTimeFromControl"
+                                      label="{{ 'flux-vms-requests.filters-request-date-time-from' | tlTranslate }}"
+                                      tooltipResourceName="flux-vms-requests.filters-request-date-time-from-helper">
+                        </tl-date-time>
+
+                        <tl-date-time fxFlex="33"
+                                      formControlName="requestDateTimeToControl"
+                                      label="{{ 'flux-vms-requests.filters-request-date-time-to' | tlTranslate }}"
+                                      tooltipResourceName="flux-vms-requests.filters-request-date-time-to-helper">
+                        </tl-date-time>
+                    </div>
+
+                    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                        <tl-input fxFlex="33"
+                                  formControlName="responseContentControl"
+                                  label="{{ 'flux-vms-requests.filters-response-content' | tlTranslate }}"
+                                  tooltipResourceName="flux-fms-requests.filters-response-content-helper">
+                        </tl-input>
+
+                        <tl-date-time fxFlex="33"
+                                      formControlName="responseDateTimeFromControl"
+                                      label="{{ 'flux-vms-requests.filters-response-date-time-from' | tlTranslate }}"
+                                      tooltipResourceName="flux-vms-requests.filters-response-date-time-from-helper">
+                        </tl-date-time>
+
+                        <tl-date-time fxFlex="33"
+                                      formControlName="responseDateTimeToControl"
+                                      label="{{ 'flux-vms-requests.filters-response-date-time-to' | tlTranslate }}"
+                                      tooltipResourceName="flux-vms-requests.filters-response-date-time-to-helper">
+                        </tl-date-time>
+                    </div>
+
+                    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                        <tl-input fxFlex="33"
                                   formControlName="requestUuidControl"
                                   label="{{ 'flux-vms-requests.filters-request-uuid' | tlTranslate }}"
                                   tooltipResourceName="flux-fms-requests.filters-request-uuid-helper">
                         </tl-input>
 
-                        <tl-date-range fxFlex="25"
-                                       formControlName="requestDateTimeControl"
-                                       label="{{ 'flux-vms-requests.filters-request-date-time' | tlTranslate }}"
-                                       tooltipResourceName="flux-vms-requests.filters-request-date-time-helper">
-                        </tl-date-range>
-
-                        <tl-input fxFlex="25"
+                        <tl-input fxFlex="33"
                                   formControlName="responseUuidControl"
                                   label="{{ 'flux-vms-requests.filters-response-uuid' | tlTranslate }}"
                                   tooltipResourceName="flux-fms-requests.filters-response-uuid-helper">
                         </tl-input>
 
-                        <tl-date-range fxFlex="25"
-                                       formControlName="responseDateTimeControl"
-                                       label="{{ 'flux-vms-requests.filters-response-date-time' | tlTranslate }}"
-                                       tooltipResourceName="flux-vms-requests.filters-response-date-time-helper">
-                        </tl-date-range>
+                        <div fxFlex="33"></div>
                     </div>
                 </div>
             </search-panel>
@@ -141,7 +171,7 @@
                                 <tl-icon-button icon="send"
                                                 (buttonClicked)="replayRequest(row.data)"
                                                 iconClass="accent-color"
-                                                tooltipText="{{ 'flux-vms-requests.view-request' | tlTranslate }}">
+                                                tooltipText="{{ 'flux-vms-requests.resend' | tlTranslate }}">
                                 </tl-icon-button>
                             </div>
                         </ng-template>

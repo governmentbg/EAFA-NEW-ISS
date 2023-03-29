@@ -32,6 +32,7 @@ import { LogBookPageDocumentTypesEnum } from '../../enums/log-book-page-document
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { PossibleLogBooksForPageDTO } from '@app/models/generated/dtos/PossibleLogBooksForPageDTO';
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'add-log-book-page-wizard',
@@ -45,6 +46,7 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
 
     public logBookType!: LogBookTypesEnum;
     public logBookId!: number;
+    public logBookTypeId!: number;
 
     public selectedDocumentType: LogBookTypesEnum | undefined;
 
@@ -62,6 +64,8 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
     public hasPageAlreadySubmittedError: boolean = false;
     public hasPageAlreadySubmittedOtherLogBookError: boolean = false;
     public pageAlreadySubmittedOtherLogBook: string = '';
+
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
     private translationService: FuseTranslationLoaderService;
     private dialogRef: MatDialogRef<DialogWrapperComponent<IDialogComponent>> | undefined;
@@ -197,6 +201,7 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
         this.logBookType = data.logBookType;
         this.service = data.service;
         this.logBookId = data.logBookId;
+        this.logBookTypeId = data.logBookTypeId;
         this.pageNumber = data.pageNumber;
         this.pageStatus = data.pageStatus;
 
@@ -410,6 +415,7 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
             },
             componentData: new CatchesAndSalesDialogParamsModel({
                 logBookId: this.logBookId,
+                logBookTypeId: this.logBookTypeId,
                 service: this.service,
                 pageNumber: Number(this.preliminaryDataFormGroup.get('pageNumberControl')!.value),
                 pageStatus: this.pageStatus,
@@ -437,6 +443,7 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
             },
             componentData: new CatchesAndSalesDialogParamsModel({
                 logBookId: this.logBookId,
+                logBookTypeId: this.logBookTypeId,
                 service: this.service,
                 pageNumber: Number(this.preliminaryDataFormGroup.get('pageNumberControl')!.value),
                 pageStatus: this.pageStatus,
@@ -465,6 +472,7 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
             },
             componentData: new CatchesAndSalesDialogParamsModel({
                 logBookId: this.logBookId,
+                logBookTypeId: this.logBookTypeId,
                 service: this.service,
                 pageNumber: Number(this.preliminaryDataFormGroup.get('pageNumberControl')!.value),
                 pageStatus: this.pageStatus,

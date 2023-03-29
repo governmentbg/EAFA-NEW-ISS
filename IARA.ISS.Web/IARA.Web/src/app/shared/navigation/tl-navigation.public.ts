@@ -77,7 +77,7 @@ export class Navigation {
             type: 'item',
             icon: 'fa-ticket-alt',
             url: '/recreational-fishing',
-            permissions: [PermissionsEnum.TicketsRead],
+            permissions: [PermissionsEnum.TicketsPublicRead],
             component: RecreationalFishingTicketsComponent,
             isPublic: false
         },
@@ -88,7 +88,7 @@ export class Navigation {
             type: 'item',
             icon: 'fa-ticket-alt',
             url: '/recreational-fishing/purchase-ticket',
-            permissions: [PermissionsEnum.TicketsAddRecords],
+            permissions: [PermissionsEnum.TicketsPublicAddRecords],
             component: RecreationalFishingTicketsComponent,
             hideInMenu: true,
             isPublic: false

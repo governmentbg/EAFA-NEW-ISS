@@ -28,6 +28,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         [TLRange(0, 1_000_000_000)]
         public ValidState Number { get; set; }
 
+        public string Prefix { get; set; }
+
         [Required]
         public ValidStateSelect<SelectNomenclatureDto> Status { get; set; }
 
@@ -38,7 +40,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                 return new FishingGearMarkDto
                 {
                     Id = viewModel.Id,
-                    Number = viewModel.Number,
+                    FullNumber = new PrefixInputDto
+                    {
+                        Prefix = viewModel.Prefix,
+                        InputValue = viewModel.Number
+                    },
                     SelectedStatus = Enum.TryParse(viewModel.Status.Value.Code, out FishingGearMarkStatus status)
                         ? status
                         : FishingGearMarkStatus.MARKED,

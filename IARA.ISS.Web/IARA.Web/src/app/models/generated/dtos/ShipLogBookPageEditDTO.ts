@@ -43,7 +43,13 @@ export class ShipLogBookPageEditDTO {
     public permitLicenseWaterTypeName?: string;
 
     @StrictlyTyped(Number)
+    public permitLicenseAquaticOrganismTypeIds?: number[];
+
+    @StrictlyTyped(Number)
     public logBookId?: number;
+
+    @StrictlyTyped(Number)
+    public logBookTypeId?: number;
 
     @StrictlyTyped(Date)
     public fillDate?: Date;

@@ -14,6 +14,7 @@ import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
+import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 
 @Component({
     selector: 'payment-information',
@@ -39,6 +40,7 @@ export class PaymentInformationComponent extends CustomFormControl<ApplicationPa
     private readonly currencyPipe: CurrencyPipe;
     private readonly nomenclatures: CommonNomenclatures;
     private readonly loader: FormControlDataLoader;
+    private readonly isPublicApp!: boolean;
 
     public constructor(
         @Optional() @Self() ngControl: NgControl,
@@ -50,11 +52,17 @@ export class PaymentInformationComponent extends CustomFormControl<ApplicationPa
 
         this.currencyPipe = currencyPipe;
         this.nomenclatures = nomenclatures;
+        this.isPublicApp = IS_PUBLIC_APP;
 
         this.loader = new FormControlDataLoader(this.getPaymentTypes.bind(this));
     }
 
     public ngOnInit(): void {
+        if (this.isPublicApp !== true) {
+            this.form.setValidators([TLValidators.sameTotalPriceAndPaidPriceValidator()]);
+            this.form.updateValueAndValidity({ emitEvent: false });
+        }
+
         this.initCustomFormControl();
 
         this.form.get('totalPaidPriceControl')!.valueChanges.subscribe({
@@ -82,7 +90,7 @@ export class PaymentInformationComponent extends CustomFormControl<ApplicationPa
         if (this.form.errors !== null) {
             for (const key of Object.keys(this.form.errors)) {
                 if (key !== 'totalPriceNotEqualToPaid') {
-                    errors[key] = this.form.errors[key]; 
+                    errors[key] = this.form.errors[key];
                 }
             }
         }
@@ -115,15 +123,13 @@ export class PaymentInformationComponent extends CustomFormControl<ApplicationPa
     protected buildForm(): AbstractControl {
         return new FormGroup({
             paymentSummaryControl: new FormControl(),
-            paymentTypeControl: new FormControl(undefined, Validators.required),
-            paymentDateControl: new FormControl(undefined, Validators.required),
+            paymentTypeControl: new FormControl(undefined),
+            paymentDateControl: new FormControl(undefined),
             totalPaidPriceControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
             paymentStatusControl: new FormControl(),
             referenceNumberControl: new FormControl(undefined, Validators.maxLength(50)),
             lastUpdateDateControl: new FormControl()
-        }, [
-            TLValidators.sameTotalPriceAndPaidPriceValidator()
-        ]);
+        });
     }
 
     private setModelData(value: ApplicationPaymentInformationDTO | undefined): void {
@@ -136,19 +142,18 @@ export class PaymentInformationComponent extends CustomFormControl<ApplicationPa
     }
 
     private mapModelToForm(model: ApplicationPaymentInformationDTO): void {
-        this.id = model.id;
-
-        this.form.get('paymentSummaryControl')!.setValue(model.paymentSummary);
-
         this.loader.load(() => {
+            this.id = model.id;
+
+            this.form.get('paymentSummaryControl')!.setValue(model.paymentSummary);
             this.form.get('paymentTypeControl')!.setValue(this.paymentTypes.find(x => x.code === model.paymentType));
             this.form.get('paymentStatusControl')!.setValue(this.paymentStatuses.find(x => x.code === model.paymentStatus));
-        });
 
-        this.form.get('paymentDateControl')!.setValue(model.paymentDate);
-        this.form.get('totalPaidPriceControl')!.setValue(model.totalPaidPrice);
-        this.form.get('referenceNumberControl')!.setValue(model.referenceNumber);
-        this.form.get('lastUpdateDateControl')!.setValue(model.lastUpdateDate);
+            this.form.get('paymentDateControl')!.setValue(model.paymentDate);
+            this.form.get('totalPaidPriceControl')!.setValue(model.totalPaidPrice);
+            this.form.get('referenceNumberControl')!.setValue(model.referenceNumber);
+            this.form.get('lastUpdateDateControl')!.setValue(model.lastUpdateDate);
+        });
     }
 
     private getPaymentTypes(): Subscription {
