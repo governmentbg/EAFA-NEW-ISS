@@ -1,4 +1,4 @@
-﻿import { Component, EventEmitter, Input, OnChanges, OnInit, Optional, Output, Self, SimpleChanges } from '@angular/core';
+﻿import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Optional, Output, Self, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
 
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
@@ -43,14 +43,17 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
     private readOnly: boolean = false;
 
     private readonly service: InspectionsService;
+    private readonly element: ElementRef<HTMLElement>;
 
     public constructor(
         @Optional() @Self() ngControl: NgControl,
+        @Self() element: ElementRef<HTMLElement>,
         service: InspectionsService
     ) {
         super(ngControl);
 
         this.service = service;
+        this.element = element;
 
         this.onMarkAsTouched.subscribe({
             next: () => {
@@ -151,8 +154,13 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
             this.form.get('shipMapControl')!.setValue(value.location);
 
             if (this.isFromRegister) {
-                this.selectedShip = value;
-                this.form.get('shipControl')!.setValue(this.ships.find(f => f.value === value.shipId), { emitEvent: false });
+                this.selectedShip = new VesselDuringInspectionDTO(value);
+                const ship = this.ships.find(f => f.value === this.selectedShip!.shipId);
+                setTimeout(() => {
+                    // Кода стига до тук преди angular да построи своя UI,
+                    // карайки [options]="ship" да не се е случило и стойността да не се покаже.
+                    this.form.get('shipControl')!.setValue(ship, { emitEvent: false });
+                });
             }
 
             this.form.get('flagControl')!.setValue(this.countries.find(f => f.value === value.flagCountryId));
@@ -291,9 +299,11 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
     }
 
     private async onShipChanged(value: InspectionShipNomenclatureDTO): Promise<void> {
-        if (value === null || value === undefined || value.value === null || value.value === undefined) {
+        if (typeof value === 'string' || value === null || value === undefined || value.value === null || value.value === undefined || value.value === this.selectedShip?.shipId) {
             return;
         }
+
+        this.element.nativeElement.focus();
 
         this.selectedShip = await this.service.getShip(value.value!).toPromise();
 

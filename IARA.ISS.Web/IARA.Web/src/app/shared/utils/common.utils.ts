@@ -1,5 +1,5 @@
 ﻿import { AbstractControl, ValidatorFn } from '@angular/forms';
-import { isArray, isObject, isString } from 'util';
+import { isObject } from 'util';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { TLError } from '../components/input-controls/models/tl-error.model';
 import { DateUtils } from './date.utils';
@@ -126,7 +126,7 @@ export class CommonUtils {
             return true;
         }
 
-        if (isString(obj) && (obj as string).length === 0) {
+        if (typeof obj === 'string' && (obj as string).length === 0) {
             return true;
         }
 
@@ -150,7 +150,7 @@ export class CommonUtils {
             }
         }
 
-        if (isArray(obj) && (obj as []).length === 0) {
+        if (Array.isArray(obj) && (obj as []).length === 0) {
             return true;
         }
 

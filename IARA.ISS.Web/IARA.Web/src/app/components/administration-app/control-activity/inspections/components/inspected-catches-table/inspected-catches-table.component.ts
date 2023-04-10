@@ -61,6 +61,9 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     public hasTurbotSizeGroups: boolean = true;
 
     @Input()
+    public hasCatchType: boolean = true;
+
+    @Input()
     public ships: NomenclatureDTO<number>[] = [];
 
     @Input()
@@ -126,6 +129,15 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
         if ('requiresFish' in changes) {
             if (!this.requiresFish) {
                 this.control.setValidators(this.catchesValidator());
+            }
+        }
+
+        if ('hasCatchType' in changes) {
+            if (this.hasCatchType) {
+                this.catchesFormGroup.controls.catchInspectionTypeIdControl.enable();
+            }
+            else {
+                this.catchesFormGroup.controls.catchInspectionTypeIdControl.disable();
             }
         }
     }

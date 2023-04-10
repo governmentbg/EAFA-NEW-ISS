@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
+import { Moment } from 'moment';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { OriginDeclarationDialogParamsModel } from '../../models/origin-declaration-dialog-params.model';
@@ -23,6 +24,8 @@ import { FishCatchStateCodesEnum } from '@app/enums/fish-catch-state-codes.enum'
 import { DEFAULT_CATCH_STATE_CODE, DEFAULT_PRESENTATION_CODE } from '../ship-log-book/edit-ship-log-book-page.component';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
+import { FishQuotaDTO } from '@app/models/generated/dtos/FishQuotaDTO';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 
 @Component({
@@ -43,6 +46,8 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
     public ships: ShipNomenclatureDTO[] = [];
 
     public isAllCatchMarkedAsTransboarded: boolean = false;
+
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -147,17 +152,19 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
             const aquaticOrganism: FishNomenclatureDTO = this.aquaticOrganismTypes.find(x => x.value === this.model.fishId)!;
             this.form.get('aquaticOrganismTypeControl')!.setValue(aquaticOrganism);
 
-            if (aquaticOrganism.quotaId !== null
-                && aquaticOrganism.quotaId !== undefined
-                && aquaticOrganism.quotaSpiciesPermittedPortIds !== null
-                && aquaticOrganism.quotaSpiciesPermittedPortIds !== undefined
-            ) { // the fish is part of a quota so the ports must be filtered
-                this.ports = this.allPorts.filter(x => aquaticOrganism.quotaSpiciesPermittedPortIds!.some(y => y.portId === x.value));
 
-                for (const port of this.ports) {
-                    port.isActive = aquaticOrganism.quotaSpiciesPermittedPortIds.find(x => x.portId === port.value)!.isActive;
-                }
-            }
+
+            //if (aquaticOrganism.quotaId !== null
+            //    && aquaticOrganism.quotaId !== undefined
+            //    && aquaticOrganism.quotaSpiciesPermittedPortIds !== null
+            //    && aquaticOrganism.quotaSpiciesPermittedPortIds !== undefined
+            //) { // the fish is part of a quota so the ports must be filtered
+            //    this.ports = this.allPorts.filter(x => aquaticOrganism.quotaSpiciesPermittedPortIds!.some(y => y.portId === x.value));
+
+            //    for (const port of this.ports) {
+            //        port.isActive = aquaticOrganism.quotaSpiciesPermittedPortIds.find(x => x.portId === port.value)!.isActive;
+            //    }
+            //}
         }
 
         if (this.model.catchFishStateId !== null && this.model.catchFishStateId !== undefined) {
@@ -240,6 +247,33 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
 
                 if (this.viewMode) {
                     this.form.disable();
+                }
+            }
+        });
+
+        this.form.get('transboardDateTimeControl')!.valueChanges.subscribe({
+            next: (date: Moment | undefined) => {
+                if (date !== undefined && date !== null) {
+                    const fish: FishNomenclatureDTO | undefined = this.form.get('aquaticOrganismTypeControl')!.value;
+
+                    if (fish && fish.quotas && fish.quotas.length !== 0) {
+                        const quotas: FishQuotaDTO[] = fish.quotas
+                            .filter(x => x.periodFrom!.getTime() <= date.toDate().getTime() && x.periodTo!.getTime() > date.toDate().getTime());
+
+                        if (quotas.length === 1) {
+                            const quotaPortIds: number[] = (quotas[0].permittedPorts ?? []).map(x => x.portId!);
+                            this.ports = this.allPorts.filter(x => quotaPortIds.includes(x.value!));
+                        }
+                        else {
+                            this.ports = this.allPorts.slice();
+                        }
+                    }
+                    else {
+                        this.ports = this.allPorts.slice();
+                    }
+                }
+                else {
+                    this.ports = this.allPorts.slice();
                 }
             }
         });

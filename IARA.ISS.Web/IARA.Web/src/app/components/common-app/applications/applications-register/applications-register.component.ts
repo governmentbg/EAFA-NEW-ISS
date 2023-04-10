@@ -91,7 +91,9 @@ export class ApplicationsRegisterComponent<T extends IDialogComponent> implement
             this.applicationProcessingHasPermissions.set(map[0], applicationProcessingHasPermission);
         }
 
-        this.loader.load();
+        if (this.pageType !== 'PublicPage') {
+            this.loader.load(); // load users nomenclature for administrative app
+        }
 
         this.service.getApplicationStatuses().subscribe({
             next: (statuses: NomenclatureDTO<number>[]) => {

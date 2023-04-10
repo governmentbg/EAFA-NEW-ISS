@@ -149,8 +149,8 @@
                            [isSoftDeletable]="true"
                            [rows]="marks"
                            [recordsPerPage]="marksPerPage"
-                           (activeRecordChanged)="onEditMark($event)"
-                           (recordChanged)="onEditedMark()">
+                           (activeRecordChanged)="onMarkActiveRecordChanged($event)"
+                           (recordChanged)="onMarkRecordChanged($event)">
                 <div *ngIf="!isInspected && !isDisabled" datatable-add-buttons fxLayout="row" fxLayoutGap="1em">
                     <button mat-raised-button
                             color="accent"
@@ -160,15 +160,16 @@
                     </button>
                 </div>
                 <data-column columnName="{{ 'fishing-gears.mark-number' | tlTranslate }}"
-                             propertyName="number"
+                             propertyName="fullNumber"
+                             dataType="prefixstring"
                              [formGroup]="marksForm"
-                             dataType="string">
+                             [prefixControlValidators]="markNumberValidators">
                 </data-column>
                 <data-column columnName="{{ 'fishing-gears.mark-status' | tlTranslate }}"
                              propertyName="statusId"
+                             dataType="nomenclature"
                              [formGroup]="marksForm"
-                             [options]="markStatuses"
-                             dataType="nomenclature">
+                             [options]="markStatuses">
                 </data-column>
                 <data-template-column [flexRate]="0.3"
                                       *ngIf="canSelectMarks">
@@ -178,7 +179,7 @@
                              fxLayoutAlign="end center">
                             <tl-icon-button icon="trending_flat"
                                             tooltipText="{{ 'inspections.move-mark-to-inspected' | tlTranslate }}"
-                                            (buttonClicked)="selectedMark.emit(row.data)">
+                                            (buttonClicked)="onMoveMarkToInspected(row.data)">
                             </tl-icon-button>
                         </div>
                     </ng-template>

@@ -60,10 +60,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterVesselDialog
         [MaxLength(50)]
         public ValidState Color { get; set; }
 
-        [TLRange(1, 10000)]
+        [TLRange(1, 10000, true)]
         public ValidState Length { get; set; }
 
-        [TLRange(1, 10000)]
+        [TLRange(1, 10000, true)]
         public ValidState Width { get; set; }
 
         [MaxLength(50)]

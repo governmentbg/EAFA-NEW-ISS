@@ -50,11 +50,13 @@
                      propertyName="quantityKg"
                      columnName="{{ 'catches-and-sales.page-product-quantity-kg' | tlTranslate }}">
         </data-column>
-        <data-column [flexRate]="0.2"
+        <data-column *ngIf="hasPrice"
+                     [flexRate]="0.2"
                      propertyName="unitPrice"
                      columnName="{{ 'catches-and-sales.page-product-unit-price' | tlTranslate }}">
         </data-column>
-        <data-column [flexRate]="0.2"
+        <data-column *ngIf="hasPrice"
+                     [flexRate]="0.2"
                      propertyName="totalPrice"
                      columnName="{{ 'catches-and-sales.page-product-total-price' | tlTranslate }}">
         </data-column>

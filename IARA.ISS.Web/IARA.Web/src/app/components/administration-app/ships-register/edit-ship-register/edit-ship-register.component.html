@@ -9,7 +9,8 @@
             <!-- Данни за кораба -->
             <mat-tab label="{{ 'ships-register.ship-data' | tlTranslate }}"
                      [disabled]="disableTabs">
-                <edit-ship [formControl]="shipControl"
+                <edit-ship #shipRef
+                           [formControl]="shipControl"
                            [service]="service"
                            [isReadonly]="true"
                            [viewMode]="viewMode"
@@ -302,7 +303,7 @@
                                  [formControl]="eventTypeControl"
                                  [groupedOptions]="eventTypes"
                                  [showHint]="selectedEventHistoryNo !== allEvents.length"
-                                 [getControlErrorLabelText]="getEventTypeErrorText.bind(this)"
+                                 [getControlErrorLabelText]="getEventTypeErrorTextMethod"
                                  tooltipResourceName="ships-register.add-event-helper"
                                  hint="{{ 'ships-register.selected-event-history-cannot-edit' | tlTranslate }}"
                                  label="{{ 'ships-register.choose-event-type' | tlTranslate }}">

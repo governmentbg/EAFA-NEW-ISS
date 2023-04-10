@@ -23,6 +23,7 @@ import { AuanLawSectionDTO } from '@app/models/generated/dtos/AuanLawSectionDTO'
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { GridRow } from '@app/shared/components/data-table/models/row.model';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'decree-sized-fish',
@@ -47,6 +48,8 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
     public appliances: NomenclatureDTO<number>[] = [];
     public turbotSizeGroups: NomenclatureDTO<number>[] = [];
     public seizedFishFormTouched: boolean = false;
+
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
     @ViewChild('seizedFishTable')
     private seizedFishTable!: TLDataTableComponent;

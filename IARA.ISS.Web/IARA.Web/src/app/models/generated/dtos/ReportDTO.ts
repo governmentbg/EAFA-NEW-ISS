@@ -36,6 +36,9 @@ export class ReportDTO {
     @StrictlyTyped(Number)
     public lastRunDurationSec?: number;
 
+    @StrictlyTyped(Number)
+    public orderNum?: number;
+
     @StrictlyTyped(ReportParameterDTO)
     public parameters?: ReportParameterDTO[];
 

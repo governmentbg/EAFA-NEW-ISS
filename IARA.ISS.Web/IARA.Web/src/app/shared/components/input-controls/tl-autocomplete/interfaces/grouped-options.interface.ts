@@ -2,5 +2,6 @@
 
 export interface IGroupedOptions<T> {
     name: string;
+    code?: string | undefined;
     options: NomenclatureDTO<T>[] | string[];
 }

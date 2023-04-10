@@ -26,7 +26,7 @@
                                [isForeigner]="isForeigner"
                                [includeForeigner]="includeForeigner"
                                [expectedResult]="expectedRegixResults?.egnLnc?.egnLnc"
-                               [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"
+                               [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                                [emitEgnPnfErrors]="true"
                                (keydown.enter)="onIdNumberEnterDown()">
                 </egn-lnc-input>
@@ -46,7 +46,7 @@
                       fxFlex.lt-md="100"
                       formControlName="firstNameControl"
                       label="{{ 'regix-data.first-name' | tlTranslate }}"
-                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                       [readonly]="readonly">
             </tl-input>
             <tl-input fxFlex="24"
@@ -54,7 +54,7 @@
                       fxFlex.lt-md="100"
                       formControlName="middleNameControl"
                       label="{{ 'regix-data.middle-name' | tlTranslate }}"
-                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                       [readonly]="readonly">
             </tl-input>
             <tl-input fxFlex="24"
@@ -62,7 +62,7 @@
                       fxFlex.lt-md="100"
                       formControlName="lastNameControl"
                       label="{{ 'regix-data.last-name' | tlTranslate }}"
-                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                       [readonly]="readonly">
             </tl-input>
         </div>
@@ -76,7 +76,7 @@
                        formControlName="documentTypeControl"
                        [options]="documentTypes"
                        label="{{ 'regix-data.document-type' | tlTranslate }}"
-                       [getControlErrorLabelText]="getControlErrorLabelText"
+                       [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                        [readonly]="readonly">
             </tl-select>
             <tl-input fxFlex="24"
@@ -84,7 +84,7 @@
                       fxFlex.lt-md="100"
                       formControlName="documentNumControl"
                       label="{{ 'regix-data.document-number' | tlTranslate }}"
-                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                       [readonly]="readonly">
             </tl-input>
             <tl-date fxFlex="24"
@@ -93,7 +93,7 @@
                      formControlName="documentIssueDateControl"
                      label="{{ 'regix-data.document-issue-date' | tlTranslate }}"
                      [max]="today"
-                     [getControlErrorLabelText]="getControlErrorLabelText"
+                     [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                      [readonly]="readonly">
             </tl-date>
             <tl-input fxFlex="24"
@@ -101,7 +101,7 @@
                       fxFlex.lt-md="100"
                       formControlName="documentIssuerControl"
                       label="{{ 'regix-data.document-issuer' | tlTranslate }}"
-                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                       [readonly]="readonly">
             </tl-input>
         </div>
@@ -114,7 +114,7 @@
                       fxFlex.lt-md="100"
                       formControlName="emailControl"
                       label="{{ 'regix-data.email' | tlTranslate }}"
-                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                       [readonly]="readonly">
             </tl-input>
             <tl-select *ngIf="showGender"
@@ -132,7 +132,7 @@
                              formControlName="citizenshipControl"
                              [options]="countries"
                              label="{{ 'regix-data.citizenship' | tlTranslate }}"
-                             [getControlErrorLabelText]="getControlErrorLabelText"
+                             [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                              [readonly]="readonly">
             </tl-autocomplete>
             <tl-date fxFlex="24"
@@ -142,7 +142,7 @@
                      [min]="dateOfBirthProps.min"
                      [max]="dateOfBirthProps.max !== undefined && dateOfBirthProps.max !== null ? dateOfBirthProps.max : today"
                      label="{{ 'regix-data.date-of-birth' | tlTranslate }}"
-                     [getControlErrorLabelText]="getControlErrorLabelTextDateOfBirth.bind(this)"
+                     [getControlErrorLabelText]="getControlErrorLabelTextDateOfBirthMethod"
                      [readonly]="readonly">
             </tl-date>
             <tl-input fxFlex="24"
@@ -150,7 +150,7 @@
                       fxFlex.lt-md="100"
                       formControlName="phoneControl"
                       label="{{ 'regix-data.phone' | tlTranslate }}"
-                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                       [readonly]="readonly">
             </tl-input>
         </div>
@@ -170,7 +170,7 @@
                           [readonly]="isIdReadOnly || readonly"
                           label="{{ 'regix-data.eik' | tlTranslate }}"
                           (keydown.enter)="onIdNumberEnterDown()"
-                          [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-input>
 
                 <tl-icon-button *ngIf="showSearchButton && !isDisabled && !hideSearchButton"
@@ -187,7 +187,7 @@
                       fxFlex.lt-md="100"
                       formControlName="companyNameControl"
                       label="{{ 'regix-data.company-name' | tlTranslate }}"
-                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                       [readonly]="readonly">
             </tl-input>
             <tl-input fxFlex="24"
@@ -195,7 +195,7 @@
                       fxFlex.lt-md="100"
                       formControlName="phoneControl"
                       label="{{ 'regix-data.phone' | tlTranslate }}"
-                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                       [readonly]="readonly">
             </tl-input>
             <tl-input fxFlex="24"
@@ -203,7 +203,7 @@
                       fxFlex.lt-md="100"
                       formControlName="emailControl"
                       label="{{ 'regix-data.email' | tlTranslate }}"
-                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                       [readonly]="readonly">
             </tl-input>
         </div>
@@ -220,7 +220,7 @@
                           [readonly]="isIdReadOnly || readonly"
                           label="{{ 'regix-data.eik' | tlTranslate }}"
                           (keydown.enter)="onIdNumberEnterDown()"
-                          [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-input>
 
                 <tl-icon-button *ngIf="showSearchButton && !isDisabled && !hideSearchButton"
@@ -237,7 +237,7 @@
                       fxFlex.lt-md="100"
                       formControlName="companyNameControl"
                       label="{{ 'regix-data.company-name' | tlTranslate }}"
-                      [getControlErrorLabelText]="getControlErrorLabelText"
+                      [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                       [readonly]="readonly">
             </tl-input>
             <div fxFlex="48"
@@ -270,7 +270,7 @@
                                            [includeForeigner]="includeForeigner"
                                            [emitEgnPnfErrors]="true"
                                            [expectedResult]="expectedRegixResults?.custodianOfProperty?.egnLnc?.egnLnc"
-                                           [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"
+                                           [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                                            (keydown.enter)="onCustodianEgnEnterDown()">
                             </egn-lnc-input>
 
@@ -289,7 +289,7 @@
                                   fxFlex.lt-md="100"
                                   formControlName="custodianFirstNameControl"
                                   label="{{ 'regix-data.custodian-first-name' | tlTranslate }}"
-                                  [getControlErrorLabelText]="getControlErrorLabelText"
+                                  [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                                   [readonly]="readonly">
                         </tl-input>
                         <tl-input fxFlex="24"
@@ -297,7 +297,7 @@
                                   fxFlex.lt-md="100"
                                   formControlName="custodianMiddleNameControl"
                                   label="{{ 'regix-data.custodian-middle-name' | tlTranslate }}"
-                                  [getControlErrorLabelText]="getControlErrorLabelText"
+                                  [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                                   [readonly]="readonly">
                         </tl-input>
                         <tl-input fxFlex="24"
@@ -305,7 +305,7 @@
                                   fxFlex.lt-md="100"
                                   formControlName="custodianLastNameControl"
                                   label="{{ 'regix-data.custodian-last-name' | tlTranslate }}"
-                                  [getControlErrorLabelText]="getControlErrorLabelText"
+                                  [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                                   [readonly]="readonly">
                         </tl-input>
                     </div>

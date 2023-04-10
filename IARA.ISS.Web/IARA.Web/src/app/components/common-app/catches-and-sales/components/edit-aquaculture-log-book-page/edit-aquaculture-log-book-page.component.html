@@ -20,6 +20,7 @@
                          formControlName="fillDateControl"
                          label="{{ 'catches-and-sales.aquaculture-page-fill-date' | tlTranslate }}"
                          tooltipResourceName="catches-and-sales.aquaculture-page-fill-date-helper"
+                         [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                          [max]="currentDate">
                 </tl-date>
                 <tl-date-time [fxFlex]="isAdd ? 33 : 25"
@@ -46,6 +47,11 @@
                           tooltipResourceName="catches-and-sales.aquaculture-page-aquaculture-facility-helper"
                           [readonly]="true">
                 </tl-input>
+            </div>
+            <div *ngIf="form.touched && form.get('fillDateControl')?.errors?.logBookPageDateLocked" fxFlex="100" fxLayout="row">
+                <mat-error>
+                    * {{ 'catches-and-sales.aquaculture-page-cannot-add-page-for-chosen-locked-fill-date-error' | tlTranslate }} {{ form.get('fillDateControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.aquaculture-page-because-days-have-past-since-pervious-month' | tlTranslate }}. {{ 'catches-and-sales.aquaculture-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                </mat-error>
             </div>
         </div>
     </tl-expansion-panel>

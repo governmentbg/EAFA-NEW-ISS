@@ -384,6 +384,32 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         });
     }
 
+    public getSuspensions(recordId: number, pageCode: PageCodeEnum): Observable<SuspensionDataDTO[]> {
+        let serviceMethod: string = '';
+
+        switch (pageCode) {
+            case PageCodeEnum.CommFish:
+            case PageCodeEnum.PoundnetCommFish:
+            case PageCodeEnum.RightToFishThirdCountry: {
+                serviceMethod = 'GetPermitSuspensions';
+            } break;
+            case PageCodeEnum.RightToFishResource:
+            case PageCodeEnum.PoundnetCommFishLic:
+            case PageCodeEnum.CatchQuataSpecies: {
+                serviceMethod = 'GetPermitLicenseSuspensions';
+            } break;
+            default:
+                throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
+        }
+
+        const params: HttpParams = new HttpParams().append('id', recordId.toString());
+
+        return this.requestService.get(this.area, this.controller, serviceMethod, {
+            httpParams: params,
+            responseTypeCtr: SuspensionDataDTO
+        });
+    }
+
     public addSuspension(suspension: SuspensionDataDTO, id: number, pageCode: PageCodeEnum): Observable<void> {
         let params: HttpParams = new HttpParams();
         let serviceMethod: string = '';
@@ -407,6 +433,36 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
 
         return this.requestService.post(this.area, this.controller, serviceMethod, suspension, {
             httpParams: params
+        });
+    }
+
+    public addEditSuspensions(recordId: number, suspensions: SuspensionDataDTO[], pageCode: PageCodeEnum): Observable<void> {
+        let serviceMethod: string = '';
+        let successMessage: string = '';
+        let params: HttpParams = new HttpParams();
+
+        switch (pageCode) {
+            case PageCodeEnum.CommFish:
+            case PageCodeEnum.PoundnetCommFish:
+            case PageCodeEnum.RightToFishThirdCountry: {
+                serviceMethod = 'AddEditPermitSuspensions';
+                successMessage = 'succ-change-permit-suspensions';
+                params = params.append('permitId', recordId.toString());
+            } break;
+            case PageCodeEnum.RightToFishResource:
+            case PageCodeEnum.PoundnetCommFishLic:
+            case PageCodeEnum.CatchQuataSpecies: {
+                serviceMethod = 'AddEditPermitLicenseSuspensions';
+                successMessage = 'succ-change-permit-license-suspensions';
+                params = params.append('permitLicenseId', recordId.toString());
+            } break;
+            default:
+                throw new Error(`Invalid pageCode for commercial fishing add or edit suspensions: ${PageCodeEnum[pageCode]}`);
+        }
+
+        return this.requestService.post(this.area, this.controller, serviceMethod, suspensions, {
+            httpParams: params,
+            successMessage: successMessage
         });
     }
 
@@ -478,10 +534,13 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         throw new Error('Method getPermitLicenseLogBook should be called instead.');
     }
 
-    public getLogBookPagesAndDeclarations(logBookId: number, permitLicenseId: number, logBookType: LogBookTypesEnum): Observable<ShipLogBookPageRegisterDTO[] | AdmissionLogBookPageRegisterDTO[] | TransportationLogBookPageRegisterDTO[]> {
-        const params: HttpParams = new HttpParams()
-            .append('logBookId', logBookId.toString())
-            .append('permitLicenseId', permitLicenseId.toString());
+    public getLogBookPagesAndDeclarations(logBookId: number, permitLicenseId: number | undefined, logBookType: LogBookTypesEnum): Observable<ShipLogBookPageRegisterDTO[] | AdmissionLogBookPageRegisterDTO[] | TransportationLogBookPageRegisterDTO[]> {
+        let params: HttpParams = new HttpParams()
+            .append('logBookId', logBookId.toString());
+
+        if (permitLicenseId !== null && permitLicenseId !== undefined) {
+            params = params.append('permitLicenseId', permitLicenseId.toString());
+        }
 
         let responseTypeCtr: (new (...args: any[]) => any) | undefined = undefined;
         let requestMethod: string | undefined = undefined;
@@ -884,10 +943,6 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         });
     }
 
-    public getPorts(): Observable<NomenclatureDTO<number>[]> {
-        return this.requestService.get(this.area, this.controller, 'GetPorts', { responseTypeCtr: NomenclatureDTO });
-    }
-
     public getSuspensionTypes(): Observable<SuspensionTypeNomenclatureDTO[]> {
         return this.requestService.get(this.area, this.controller, 'GetSuspensionTypes', { responseTypeCtr: SuspensionTypeNomenclatureDTO });
     }
@@ -896,8 +951,11 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         return this.requestService.get(this.area, this.controller, 'GetSuspensionReasons', { responseTypeCtr: SuspensionReasonNomenclatureDTO });
     }
 
-    public getPermitNomenclatures(shipId: number, onlyPoundNet: boolean): Observable<PermitNomenclatureDTO[]> {
-        const params = new HttpParams().append('shipId', shipId.toString()).append('onlyPoundNet', onlyPoundNet.toString());
+    public getPermitNomenclatures(shipId: number, showPastPermits: boolean, onlyPoundNet: boolean): Observable<PermitNomenclatureDTO[]> {
+        const params = new HttpParams()
+            .append('shipId', shipId.toString())
+            .append('showPastPermits', showPastPermits.toString())
+            .append('onlyPoundNet', onlyPoundNet.toString());
 
         return this.requestService.get<PermitNomenclatureDTO[]>(this.area, this.controller, 'GetShipPermits', {
             httpParams: params,

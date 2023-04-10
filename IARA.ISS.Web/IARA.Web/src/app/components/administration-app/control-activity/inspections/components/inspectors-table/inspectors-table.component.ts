@@ -252,7 +252,9 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
     private inspectorsValidator(): ValidatorFn {
         return (): ValidationErrors | null => {
             if (this.inspectors !== undefined && this.inspectors !== null) {
-                if (this.inspectors.find((f, i) => this.inspectors.find((s, i2) => i !== i2 && s.inspectorId === f.inspectorId))) {
+                const registeredInspectors = this.inspectors.filter(f => f.inspectorId != null);
+
+                if (registeredInspectors.find((f, i) => registeredInspectors.find((s, i2) => i !== i2 && s.inspectorId === f.inspectorId))) {
                     return { 'inspectorsMatch': true };
                 }
             }

@@ -1,18 +1,18 @@
-﻿import { Component, Input, Optional, Self } from '@angular/core';
+﻿import { Component, Input, OnChanges, Optional, Self, SimpleChanges } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
 import { BaseTLControl } from '../base-tl-control';
+import { FloatLabelType, MatFormFieldAppearance } from '@angular/material/form-field';
 
-type MatFormFieldAppearance = 'legacy' | 'standard' | 'fill' | 'outline';
-type HTMLInputTypes = 'button' | 'checkbox' | 'color' | 'date' | 'datetime-local' | 'email' | 'file' | 'hidden' | 'image'
+export type HTMLInputTypes = 'button' | 'checkbox' | 'color' | 'date' | 'datetime-local' | 'email' | 'file' | 'hidden' | 'image'
     | 'month' | 'number' | 'password' | 'radio' | 'range' | 'reset' | 'search' | 'submit' | 'tel' | 'text' | 'time' | 'url' | 'week';
 
 @Component({
     selector: 'tl-input',
     templateUrl: './tl-input.component.html',
 })
-export class TLInputComponent extends BaseTLControl {
+export class TLInputComponent extends BaseTLControl implements OnChanges {
 
     @Input()
     public prefixText?: string;
@@ -24,9 +24,38 @@ export class TLInputComponent extends BaseTLControl {
     public type: HTMLInputTypes = 'text';
 
     @Input()
+    public floatLabel: FloatLabelType = 'auto';
+
+    @Input()
     public value: string | undefined;
 
-    constructor(@Self() @Optional() ngControl: NgControl, fuseTranslationService: FuseTranslationLoaderService, tlTranslatePipe: TLTranslatePipe) {
+    private lastFloatLabel: FloatLabelType = 'auto';
+
+    public constructor(
+        @Self() @Optional() ngControl: NgControl,
+        fuseTranslationService: FuseTranslationLoaderService,
+        tlTranslatePipe: TLTranslatePipe
+    ) {
         super(ngControl, fuseTranslationService, tlTranslatePipe);
+    }
+
+    public ngOnChanges(changes: SimpleChanges): void {
+        if ('floatLabel' in changes) {
+            this.lastFloatLabel = this.floatLabel;
+            this.setFloatLabel();
+        }
+
+        if ('prefixText' in changes) {
+            this.setFloatLabel();
+        }
+    }
+
+    private setFloatLabel(): void {
+        if (this.prefixText) {
+            this.floatLabel = 'always';
+        }
+        else {
+            this.floatLabel = this.lastFloatLabel;
+        }
     }
 }

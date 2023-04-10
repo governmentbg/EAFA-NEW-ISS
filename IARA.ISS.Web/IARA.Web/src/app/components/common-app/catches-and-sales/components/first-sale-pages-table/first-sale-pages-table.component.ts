@@ -50,6 +50,9 @@ export class FirstSalePagesTableComponent {
     @Output()
     public onAnnulFirstSaleLogBookPage: EventEmitter<FirstSaleLogBookPageRegisterDTO> = new EventEmitter<FirstSaleLogBookPageRegisterDTO>();
 
+    @Output()
+    public onRestoreAnnulledFirstSaleLogBookPage: EventEmitter<FirstSaleLogBookPageRegisterDTO> = new EventEmitter<FirstSaleLogBookPageRegisterDTO>();
+
     public readonly logBookPageStatusesEnum: typeof LogBookPageStatusesEnum = LogBookPageStatusesEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
@@ -73,5 +76,9 @@ export class FirstSalePagesTableComponent {
 
     public onAnnulFirstSaleLogBookPageBtnClicked(document: FirstSaleLogBookPageRegisterDTO): void {
         this.onAnnulFirstSaleLogBookPage.emit(document);
+    }
+
+    public onRestoreAnnulledFirstSaleLogBookPageBtnClicked(document: FirstSaleLogBookPageRegisterDTO): void {
+        this.onRestoreAnnulledFirstSaleLogBookPage.emit(document);
     }
 }

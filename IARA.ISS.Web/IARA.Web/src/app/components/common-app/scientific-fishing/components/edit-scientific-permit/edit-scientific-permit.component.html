@@ -323,7 +323,7 @@
                 <tl-autocomplete fxFlex="50"
                                  formControlName="existingShipNameControl"
                                  [options]="ships"
-                                 [getControlErrorLabelText]="shipControlErrorLabelTest.bind(this)"
+                                 [getControlErrorLabelText]="shipControlErrorLabelTextMethod"
                                  tooltipResourceName="scientific-fishing.ships-in-register-helper"
                                  label="{{ 'scientific-fishing.ships-in-register' | tlTranslate }}">
                 </tl-autocomplete>
@@ -464,7 +464,7 @@
                 <tl-date fxFlex="33"
                          formControlName="coordinationDateControl"
                          [max]="currentDate"
-                         [getControlErrorLabelText]="getCoordinationDateErrorText.bind(this)"
+                         [getControlErrorLabelText]="getCoordinationDateErrorTextMethod"
                          tooltipResourceName="scientific-fishing.coordination-date-helper"
                          label="{{ 'scientific-fishing.coordination-date' | tlTranslate }}">
                 </tl-date>

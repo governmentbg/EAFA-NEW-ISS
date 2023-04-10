@@ -31,6 +31,8 @@ import { LogBookPageProductDTO } from '@app/models/generated/dtos/LogBookPagePro
 import { LogBookPageDocumentTypesEnum } from '@app/components/common-app/catches-and-sales/enums/log-book-page-document-types.enum';
 import { LogBookNomenclatureDTO } from '@app/models/generated/dtos/LogBookNomenclatureDTO';
 import { OnBoardCatchRecordFishDTO } from '@app/models/generated/dtos/OnBoardCatchRecordFishDTO';
+import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
+import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
 
 
 @Injectable({
@@ -131,12 +133,20 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
         return this.commonService.editShipLogBookPage(this.area, this.controller, model);
     }
 
+    public restoreAnnulledShipLogBookPage(logBookPageId: number): Observable<void> {
+        throw new Error("Should not call this method from the public catch and sales service.");
+    }
+
     public addFirstSaleLogBookPage(model: FirstSaleLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
         return this.commonService.addFirstSaleLogBookPage(this.area, this.controller, model, hasMissingPagesRangePermission);
     }
 
     public editFirstSaleLogBookPage(model: FirstSaleLogBookPageEditDTO): Observable<void> {
         return this.commonService.editFirstSaleLogBookPage(this.area, this.controller, model);
+    }
+
+    public restoreAnnulledFirstSaleLogBookPage(logBookPageId: number): Observable<void> {
+        throw new Error("Should not call this method from the public catch and sales service.");
     }
 
     public addAdmissionLogBookPage(model: AdmissionLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
@@ -147,12 +157,20 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
         return this.commonService.editAdmissionLogBookPage(this.area, this.controller, model);
     }
 
+    public restoreAnnulledAdmissionLogBookPage(logBookPageId: number): Observable<void> {
+        throw new Error("Should not call this method from the public catch and sales service.");
+    }
+
     public addTransportationLogBookPage(model: TransportationLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
         return this.commonService.addTransportationLogBookPage(this.area, this.controller, model, hasMissingPagesRangePermission);
     }
 
     public editTransportationLogBookPage(model: TransportationLogBookPageEditDTO): Observable<void> {
         return this.commonService.editTransportationLogBookPage(this.area, this.controller, model);
+    }
+
+    public restoreAnnulledTransportationLogBookPage(logBookPageId: number): Observable<void> {
+        throw new Error("Should not call this method from the public catch and sales service.");
     }
 
     public addAquacultureLogBookPage(model: AquacultureLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
@@ -163,8 +181,12 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
         return this.commonService.editAquacultureLogBookPage(this.area, this.controller, model);
     }
 
-    public annulLogBookPage(reasonData: LogBookPageCancellationReasonDTO): Observable<void> {
-        return this.commonService.annulLogBookPage(this.area, this.controller, reasonData);
+    public restoreAnnulledAquacultureLogBookPage(logBookPageId: number): Observable<void> {
+        throw new Error("Should not call this method from the public catch and sales service.");
+    }
+
+    public annulLogBookPage(reasonData: LogBookPageCancellationReasonDTO, logBookType: LogBookTypesEnum): Observable<void> {
+        return this.commonService.annulLogBookPage(this.area, this.controller, reasonData, logBookType);
     }
 
     public downloadFile(fileId: number, fileName: string): Observable<boolean> {
@@ -218,6 +240,10 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
 
     public getFishingGearsRegister(permitLicenseId: number): Observable<FishingGearRegisterNomenclatureDTO[]> {
         return this.commonService.getFishingGearsRegister(this.area, this.controller, permitLicenseId);
+    }
+
+    public getLogBookPageEditExceptions(): Observable<LogBookPageEditExceptionDTO[]> {
+        return this.commonService.getLogBookPageEditExceptions(this.area, this.controller);
     }
 
     // Simple audit

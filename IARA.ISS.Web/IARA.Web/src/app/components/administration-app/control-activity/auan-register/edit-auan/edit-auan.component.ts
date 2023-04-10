@@ -33,6 +33,7 @@ import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/Ins
 import { InspDeliveryTypeGroupsEnum } from '@app/enums/insp-delivery-type-groups.enum';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'edit-auan',
@@ -73,6 +74,8 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
     public isInspector: boolean = false;
     public isFromThirdPartyInspection: boolean = false;
     public violatedRegulationsTouched: boolean = false;
+
+    public auanNumErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.auanNumErrorLabelText.bind(this);
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -343,7 +346,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                             next: () => {
                                 this.service.downloadAuan(this.auanId!).subscribe({
                                     next: () => {
-                                        dialogClose();
+                                        dialogClose(this.model);
                                     }
                                 });
                             },
@@ -359,7 +362,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
                                 this.service.downloadAuan(id).subscribe({
                                     next: () => {
-                                        dialogClose();
+                                        dialogClose(this.model);
                                     }
                                 });
                             },

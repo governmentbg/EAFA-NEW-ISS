@@ -66,7 +66,7 @@
                     <tl-input fxFlex="30"
                               [formControl]="ticketNumControl"
                               [label]="ticketNumsLabels[i]"
-                              [getControlErrorLabelText]="getControlErrorLabelTextForTicketNumber.bind(this)"
+                              [getControlErrorLabelText]="getControlErrorLabelTextForTicketNumberMethod"
                               [tooltipResourceName]="isAssociation ? 'recreational-fishing.issue-ticket-num-not-association-helper' : 'recreational-fishing.issue-ticket-num-helper'">
                     </tl-input>
                 </div>
@@ -139,17 +139,18 @@
     </div>
 
     <!-- Преглед и потвърждение -->
-    <mat-step *ngIf="(ticketsGroup.valid || ticketsGroup.disabled)
-              && (ticketPeriodGroup.valid || ticketPeriodGroup.disabled || !showValidityStep)
-              && (tickets.length !== 0 || childTickets.length !== 0)
-              && (((ticketNumsArray.valid || ticketNumsArray.disabled) && ticketNumsApproved) || (isPublicApp && !isAssociation))"
+    <mat-step *ngIf="(tickets.length !== 0 || childTickets.length !== 0)
+                 && (ticketPeriodGroup.valid || ticketPeriodGroup.disabled || !showValidityStep)
+                 && (((ticketNumsArray.valid || ticketNumsArray.disabled) && ticketNumsApproved) || (isPublicApp && !isAssociation))"
               #viewAndConfirmStep>
         <ng-template matStepLabel>
             {{ 'recreational-fishing.view-and-confirm' | tlTranslate }}
         </ng-template>
 
-        <div fxLayout="column" fxLayoutGap="1em">
-            <div *ngIf="stepper.selected === viewAndConfirmStep" fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="1em">
+        <div *ngIf="(ticketsGroup.valid || ticketsGroup.disabled)"
+             fxLayout="column"
+             fxLayoutGap="1em">
+            <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="1em">
                 <recreational-fishing-ticket-summary *ngFor="let ticket of tickets; index as i"
                                                      [service]="service"
                                                      [type]="ticketsTypes[i]"
@@ -220,7 +221,7 @@
     </mat-step>
 
     <!-- Плащане -->
-    <mat-step *ngIf="showPaymentStep">
+    <mat-step *ngIf="showPaymentStep" #paymentStep>
         <ng-template matStepLabel>
             {{ 'recreational-fishing.payment' | tlTranslate  }} – {{ totalPrice | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}
         </ng-template>

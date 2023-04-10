@@ -9,6 +9,7 @@ import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/ac
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { LogBookPageCancellationReasonDTO } from '@app/models/generated/dtos/LogBookPageCancellationReasonDTO';
+import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 
 
 @Component({
@@ -21,8 +22,10 @@ export class JustifiedCancellationComponent implements IDialogComponent {
     public tooltipResourceName: string;
 
     private model!: LogBookPageCancellationReasonDTO;
-    private translationService: FuseTranslationLoaderService;
+    private logBookType!: LogBookTypesEnum;
     private cancellationServiceMethod!: JustifiedCancellationMethod;
+
+    private readonly translationService: FuseTranslationLoaderService;
 
     public constructor(
         translate: FuseTranslationLoaderService
@@ -36,6 +39,7 @@ export class JustifiedCancellationComponent implements IDialogComponent {
 
     public setData(data: JustifiedCancellationDialogParams, wrapperData: DialogWrapperData): void {
         this.cancellationServiceMethod = data.cancellationServiceMethod;
+        this.logBookType = data.logBookType;
 
         if (!CommonUtils.isNullOrEmpty(data.reasonControlLabel)) {
             this.reasonControlLabel = data.reasonControlLabel!;
@@ -59,7 +63,7 @@ export class JustifiedCancellationComponent implements IDialogComponent {
         if (this.reasonControl.valid) {
             this.model.reason = this.reasonControl.value!;
 
-            this.cancellationServiceMethod(this.model).subscribe({
+            this.cancellationServiceMethod(this.model, this.logBookType).subscribe({
                 next: () => {
                     dialogClose(this.model);
                 }

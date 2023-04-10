@@ -49,6 +49,9 @@ export class CrossCheckEditDTO {
     public purpose?: string;
 
     @StrictlyTyped(Number)
+    public sourceId?: number;
+
+    @StrictlyTyped(Number)
     public autoExecFrequency?: CrossChecksAutoExecFrequencyEnum;
 
     @StrictlyTyped(NomenclatureDTO)

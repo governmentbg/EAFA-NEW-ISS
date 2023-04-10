@@ -76,7 +76,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                         Type = fishingGearTypes.Find(f => f.Id == mainFishingGear.TypeId) ?? fishingGearTypes[0],
                         Marks = mainFishingGear.Marks == null
                             ? string.Empty
-                            : string.Join(", ", mainFishingGear.Marks.Select(f => f.Number).Where(f => !string.IsNullOrEmpty(f))),
+                            : string.Join(", ", mainFishingGear.Marks.Select(f => f.FullNumber?.ToString()).Where(f => !string.IsNullOrEmpty(f))),
                         Dto = fishingGear,
                     };
 

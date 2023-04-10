@@ -181,6 +181,7 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
         else {
             this.model = new ShipLogBookPageEditDTO({
                 logBookId: data[0].logBookId,
+                logBookTypeId: data[0].logBookTypeId,
                 fillDate: data[0].fillDate,
                 shipId: data[0].shipId,
                 shipName: data[0].shipName,

@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { PenalDecreeStatusEditDTO } from './PenalDecreeStatusEditDTO';
 import { PenalDecreeTypeEnum } from '@app/enums/penal-decree-type.enum';
 
 export class PenalDecreeDTO { 
@@ -34,6 +35,9 @@ export class PenalDecreeDTO {
 
     @StrictlyTyped(String)
     public status?: string;
+
+    @StrictlyTyped(PenalDecreeStatusEditDTO)
+    public statuses?: PenalDecreeStatusEditDTO[];
 
     @StrictlyTyped(Boolean)
     public isActive?: boolean;

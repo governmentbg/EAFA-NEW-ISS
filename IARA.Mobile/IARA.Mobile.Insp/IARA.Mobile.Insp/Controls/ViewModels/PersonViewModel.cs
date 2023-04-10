@@ -18,12 +18,17 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
     {
         private List<SelectNomenclatureDto> _nationalities;
 
-        public PersonViewModel(InspectionPageViewModel inspection, InspectedPersonType personType)
+        public PersonViewModel(InspectionPageViewModel inspection, InspectedPersonType personType, bool requiresEgn = true)
         {
             Inspection = inspection;
             PersonType = personType;
 
             this.AddValidation();
+
+            if (!requiresEgn)
+            {
+                EGN.Validations.RemoveAt(EGN.Validations.FindIndex(f => f.Name == nameof(RequiredAttribute)));
+            }
         }
 
         public int? Id { get; set; }

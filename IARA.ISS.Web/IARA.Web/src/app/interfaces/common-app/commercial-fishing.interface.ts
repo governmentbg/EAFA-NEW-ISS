@@ -19,8 +19,9 @@ import { QualifiedFisherNomenclatureDTO } from '@app/models/generated/dtos/Quali
 import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
 import { PermitLicenseTariffCalculationParameters } from '@app/components/common-app/commercial-fishing/models/permit-license-tariff-calculation-parameters.model';
 import { SuspensionDataDTO } from '@app/models/generated/dtos/SuspensionDataDTO';
+import { ISuspensionService } from './suspension.interface';
 
-export interface ICommercialFishingService extends IApplicationsActionsService {
+export interface ICommercialFishingService extends IApplicationsActionsService, ISuspensionService {
     getAllPermits(request: GridRequestModel<CommercialFishingRegisterFilters>): Observable<GridResultModel<CommercialFishingPermitRegisterDTO>>;
 
     getRecord(id: number, pageCode: PageCodeEnum): Observable<CommercialFishingEditDTO>;
@@ -62,10 +63,9 @@ export interface ICommercialFishingService extends IApplicationsActionsService {
     getFishingGearPingerStatuses(): Observable<NomenclatureDTO<number>[]>;
     getHolderGroundForUseTypes(): Observable<NomenclatureDTO<number>[]>;
     getPoundNets(): Observable<PoundNetNomenclatureDTO[]>;
-    getPorts(): Observable<NomenclatureDTO<number>[]>;
     getSuspensionTypes(): Observable<SuspensionTypeNomenclatureDTO[]>;
     getSuspensionReasons(): Observable<SuspensionReasonNomenclatureDTO[]>;
-    getPermitNomenclatures(shipId: number, onlyPoundNet: boolean): Observable<PermitNomenclatureDTO[]>;
+    getPermitNomenclatures(shipId: number, showPastPermits: boolean, onlyPoundNet: boolean): Observable<PermitNomenclatureDTO[]>;
     calculatePermitLicenseAppliedTariffs(tariffCalculationParameters: PermitLicenseTariffCalculationParameters): Observable<PaymentTariffDTO[]>;
 
     getSimpleAudit(id: number): Observable<SimpleAuditDTO>;

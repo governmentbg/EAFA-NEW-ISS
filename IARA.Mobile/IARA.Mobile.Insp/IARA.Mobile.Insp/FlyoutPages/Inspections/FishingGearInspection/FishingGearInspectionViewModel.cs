@@ -227,6 +227,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
 
                 CheckReason.AssignFrom(Edit.CheckReasonId, CheckReasons);
                 RecheckReason.AssignFrom(Edit.RecheckReasonId, RecheckReasons);
+                OtherRecheckReason.AssignFrom(Edit.OtherRecheckReason);
 
                 LastHarbour.OnEdit(Edit.Port);
 
@@ -428,8 +429,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             {
                 Count = f.Count,
                 NetEyeSize = f.NetEyeSize,
-                Marks = string.Join(", ", f.Marks.Select(s => s.Number)),
+                Marks = string.Join(", ", f.Marks.Select(s => s.FullNumber?.ToString())),
                 Type = fishingGearTypes.Find(s => s.Id == f.TypeId) ?? fishingGearTypes[0],
+                CheckedValue = InspectedFishingGearEnum.R,
                 Dto = new InspectedFishingGearDto
                 {
                     PermittedFishingGear = f

@@ -348,4 +348,8 @@ export class CommonNomenclatures {
     public getRemarkReasons(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetRemarkReasons', { responseTypeCtr: NomenclatureDTO });
     }
+
+    public getCheckSources(): Observable<NomenclatureDTO<number>[]> {
+        return this.requestService.get(this.area, this.controller, 'GetCheckSources', { responseTypeCtr: NomenclatureDTO });
+    }
 }

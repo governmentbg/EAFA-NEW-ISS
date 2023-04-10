@@ -5,8 +5,7 @@
                    [isSoftDeletable]="true"
                    [showAddButton]="!isReadonly && !isDisabled"
                    [showInactiveRecords]="true"
-                   (addButtonClicked)="addEditFishingGear()"
-                   (activeRecordChanged)="addEditFishingGear($event, !$event.isActive)">
+                   (addButtonClicked)="addEditFishingGear()">
         <data-column [flexRate]="0.4"
                      propertyName="type"
                      columnName="{{ 'fishing-gears.type' | tlTranslate }}">

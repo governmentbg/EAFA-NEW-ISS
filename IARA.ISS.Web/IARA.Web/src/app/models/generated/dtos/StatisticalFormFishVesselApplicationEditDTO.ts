@@ -67,7 +67,7 @@ export class StatisticalFormFishVesselApplicationEditDTO extends BaseRegixChecks
     public fuelTypeId?: number;
 
     @StrictlyTyped(Number)
-    public shipEnginePower?: number;
+    public fuelConsumption?: number;
 
     @StrictlyTyped(Number)
     public freeLaborAmount?: number;

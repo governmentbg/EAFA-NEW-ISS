@@ -19,7 +19,7 @@ export interface ILogBookService {
     getLogBook(logBookId: number): Observable<LogBookEditDTO>;
     getPermitLicenseLogBook(logBookPermitLicenseId: number): Observable<CommercialFishingLogBookEditDTO>;
 
-    getLogBookPagesAndDeclarations(logBookId: number, permitLicenseId: number, logBookType: LogBookTypesEnum): Observable<ShipLogBookPageRegisterDTO[] | AdmissionLogBookPageRegisterDTO[] | TransportationLogBookPageRegisterDTO[]>;
+    getLogBookPagesAndDeclarations(logBookId: number, permitLicenseId: number | undefined, logBookType: LogBookTypesEnum): Observable<ShipLogBookPageRegisterDTO[] | AdmissionLogBookPageRegisterDTO[] | TransportationLogBookPageRegisterDTO[]>;
     getLogBookPages(logBookId: number, logBookType: LogBookTypesEnum): Observable<FirstSaleLogBookPageRegisterDTO[]
         | AdmissionLogBookPageRegisterDTO[]
         | TransportationLogBookPageRegisterDTO[]

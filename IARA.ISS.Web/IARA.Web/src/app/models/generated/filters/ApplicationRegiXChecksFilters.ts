@@ -21,5 +21,7 @@ export class ApplicationRegiXChecksFilters extends BaseRequestModel {
     public requestDateTo: Date | undefined;
     public responseDateFrom: Date | undefined;
     public responseDateTo: Date | undefined;
+    public requestContent: string | undefined;
+    public responseContent: string | undefined;
     public errorLevels: string[] | undefined;
 }

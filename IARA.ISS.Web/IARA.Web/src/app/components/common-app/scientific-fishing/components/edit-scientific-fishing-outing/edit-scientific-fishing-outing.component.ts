@@ -19,6 +19,7 @@ import { TLValidators } from '@app/shared/utils/tl-validators';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { FishNomenclatureDTO } from '@app/models/generated/dtos/FishNomenclatureDTO';
 import { EditScientificFishingOutingDialogParams } from '../../models/edit-scientific-fishing-outing-dialog-params.model';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'edit-scientific-fishing-outing',
@@ -41,6 +42,8 @@ export class EditScientificFishingOutingComponent implements OnInit, AfterViewIn
     public showNoCatchesError: boolean = false;
 
     public readonly canRestoreRecords: boolean;
+
+    public getTotalCountErrorTextMethod: GetControlErrorLabelTextCallback = this.getTotalCountErrorText.bind(this);
 
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
@@ -184,7 +187,7 @@ export class EditScientificFishingOutingComponent implements OnInit, AfterViewIn
         return result.toString();
     }
 
-    public getTotalCountErrorText(controlName: string, error: Record<string, unknown>, errorCode: string): TLError | undefined {
+    public getTotalCountErrorText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'totalKeptCountControl') {
             if (errorCode === 'totalkeptgreaterthancaught') {
                 return new TLError({

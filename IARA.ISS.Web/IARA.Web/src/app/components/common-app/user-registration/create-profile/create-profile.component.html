@@ -37,12 +37,14 @@
                                        [readonly]="isEgnLnchReadonly"
                                        formControlName="egnControl"
                                        appearance="outline"
-                                       [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"></egn-lnc-input>
+                                       [getControlErrorLabelText]="getControlErrorLabelTextMethod">
+                        </egn-lnc-input>
                         <tl-input gdArea="emailArea"
                                   appearance="outline"
                                   formControlName="email"
                                   label="{{ 'user-registration.email' | tlTranslate }}"
-                                  [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"></tl-input>
+                                  [getControlErrorLabelText]="getControlErrorLabelTextMethod">
+                        </tl-input>
                     </div>
                 </tl-expansion-panel>
                 <tl-expansion-panel title="{{ 'user-registration.login-with-email-and-password-title' | tlTranslate }}">
@@ -61,13 +63,15 @@
                                   [multilineError]="useMultilineErrors"
                                   formControlName="password"
                                   label="{{ 'user-registration.password' | tlTranslate }}"
-                                  [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"></tl-input>
+                                  [getControlErrorLabelText]="getControlErrorLabelTextMethod">
+                        </tl-input>
                         <tl-input gdArea="passwordConfirmArea"
                                   appearance="outline"
                                   type="password"
                                   formControlName="passwordConfirmation"
                                   label="{{ 'user-registration.password-confirmation' | tlTranslate }}"
-                                  [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"></tl-input>
+                                  [getControlErrorLabelText]="getControlErrorLabelTextMethod">
+                        </tl-input>
                     </div>
                 </tl-expansion-panel>
             </mat-accordion>

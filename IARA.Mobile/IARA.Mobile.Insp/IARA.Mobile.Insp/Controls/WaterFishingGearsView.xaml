@@ -14,8 +14,6 @@
     <tl:TLResponsiveTable.TableColumns>
         <tl:TLTableColumn Text="{rt:Translate Type, Group=WaterFishingGear}"
                 Width="*" />
-        <tl:TLTableColumn Text="{rt:Translate Marks, Group=WaterFishingGear}"
-                Width="*" />
         <tl:TLTableColumn Text="{rt:Translate Count, Group=WaterFishingGear}"
                 Width="*" />
         <tl:TLTableColumn Text="{rt:Translate NetEyeSize, Group=WaterFishingGear}"
@@ -26,10 +24,6 @@
         <DataTemplate>
             <tl:TLTableRow x:DataType="m:WaterFishingGearModel">
                 <Label Text="{Binding Type.Name}"
-                        LineBreakMode="WordWrap"
-                        VerticalOptions="Center"
-                        IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
-                <Label Text="{Binding Marks}"
                         LineBreakMode="WordWrap"
                         VerticalOptions="Center"
                         IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />

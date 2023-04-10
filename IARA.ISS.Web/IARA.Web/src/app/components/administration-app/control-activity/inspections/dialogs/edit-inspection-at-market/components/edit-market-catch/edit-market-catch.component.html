@@ -17,7 +17,8 @@
                             [hasMap]="false"
                             [ships]="ships"
                             [vesselTypes]="vesselTypes"
-                            [countries]="countries">
+                            [countries]="countries"
+                            (shipSelected)="pullDeclarations($event)">
             </inspected-ship>
             <div *ngIf="permitTypeSelected === declarationLogBookTypeEnum.AquacultureLogBook"
                  fxLayout="column"
@@ -83,7 +84,8 @@
                       type="number"
                       label="{{ 'inspections.market-catch-quantity' | tlTranslate }}">
             </tl-input>
-            <tl-input fxFlex="33"
+            <tl-input *ngIf="hasUnloadedQuantity"
+                      fxFlex="33"
                       formControlName="unloadedQuantityControl"
                       type="number"
                       label="{{ 'inspections.market-catch-unloaded-quantity' | tlTranslate }}">

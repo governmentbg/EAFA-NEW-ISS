@@ -11,11 +11,13 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 
 @Component({
     selector: 'inspection-map-viewer',
-    templateUrl: './inspection-map-viewer.component.html'
+    templateUrl: './inspection-map-viewer.component.html',
+    styleUrls: ['./inspection-map-viewer.component.scss']
 })
 export class InspectionMapViewerComponent extends CustomFormControl<LocationDTO | undefined> implements OnInit, OnChanges {
 
     public mapOptions: MapOptions | undefined;
+    public selectIcon: string;
 
     @Input()
     public isRequired: boolean = true;
@@ -28,6 +30,7 @@ export class InspectionMapViewerComponent extends CustomFormControl<LocationDTO 
     public constructor(@Self() ngControl: NgControl) {
         super(ngControl);
 
+        this.selectIcon = 'pin_drop';
         this.mapOptions = new MapOptions();
         this.mapOptions.showGridLayer = false;
         this.mapOptions.gridLayerStyle = this.createCustomGridLayerStyle();
@@ -66,6 +69,30 @@ export class InspectionMapViewerComponent extends CustomFormControl<LocationDTO 
             this.form.get('longitudeControl')!.setValue(value.dmsLongitude!);
             this.form.get('latitudeControl')!.setValue(value.dmsLatitude!);
         }
+    }
+
+    public toggleMapSelection(): void {
+        if (this.selectIcon === 'pin_drop') {
+            this.selectIcon = 'edit_location';
+            this.mapViewer.startClickMapTool();
+        }
+        else {
+            this.selectIcon = 'pin_drop';
+            this.mapViewer.stopClickMapTool();
+        }
+    }
+
+    public onMapClicked(coordinateNums: number[]): void {
+        if (this.isDisabled) {
+            return;
+        }
+
+        const pin: PinDef = new PinDef(coordinateNums, 'assets/map-icons/map-pin-red.png', undefined);
+        this.mapViewer.clearPins();
+        this.mapViewer.addPinsToMap([pin]);
+
+        this.form.get('longitudeControl')!.setValue(CoordinateUtils.ConvertToDMS(coordinateNums[0]));
+        this.form.get('latitudeControl')!.setValue(CoordinateUtils.ConvertToDMS(coordinateNums[1]));
     }
 
     protected buildForm(): AbstractControl {

@@ -17,8 +17,14 @@ export class CatchRecordDTO {
     @StrictlyTyped(Number)
     public depth?: number;
 
+    @StrictlyTyped(Boolean)
+    public hasGearEntry?: boolean;
+
     @StrictlyTyped(Date)
     public gearEntryTime?: Date;
+
+    @StrictlyTyped(Boolean)
+    public hasGearExit?: boolean;
 
     @StrictlyTyped(Date)
     public gearExitTime?: Date;

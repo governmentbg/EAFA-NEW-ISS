@@ -60,6 +60,9 @@ import { ChooseLogBookForRenewalDialogParams } from '@app/components/common-app/
 import { LogBookForRenewalDTO } from '@app/models/generated/dtos/LogBookForRenewalDTO';
 import { OnActionEndedType, SimpleAuditMethod } from '@app/components/common-app/commercial-fishing/components/log-books/log-books.component';
 import { CommercialFishingRegisterCacheService } from './services/commercial-fishing-register-cache.service';
+import { SuspensionsComponent } from '@app/components/common-app/commercial-fishing/components/suspensions/suspensions.component';
+import { SuspensionsDialogParams } from '@app/components/common-app/commercial-fishing/components/suspensions/models/suspensions-dialog-params.model';
+import { SuspensionDataDTO } from '@app/models/generated/dtos/SuspensionDataDTO';
 
 type ThreeState = 'yes' | 'no' | 'both';
 
@@ -115,6 +118,18 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
     public readonly canDeleteLogBooks: boolean;
     public readonly canRestoreLogBooks: boolean;
 
+    public readonly canReadPermitSuspensionsRecords: boolean;
+    private readonly canAddPermitSuspensionsRecords: boolean;
+    private readonly canEditPermitSuspensionsRecords: boolean;
+    private readonly canDeletePermitSuspensionsRecords: boolean;
+    private readonly canRestorePermitSuspensionsRecords: boolean;
+
+    public readonly canReadPermitLicenseSuspensionsRecords: boolean;
+    private readonly canAddPermitLicenseSuspensionsRecords: boolean;
+    private readonly canEditPermitLicenseSuspensionsRecords: boolean;
+    private readonly canDeletePermitLicenseSuspensionsRecords: boolean;
+    private readonly canRestorePermitLicenseSuspensionsRecords: boolean;
+
     public readonly getLogBookAuditMethod!: SimpleAuditMethod;
     public readonly logBookGroup: LogBookGroupsEnum = LogBookGroupsEnum.Ship;
     public readonly logBookPagePersonTypesEnum: typeof LogBookPagePersonTypesEnum = LogBookPagePersonTypesEnum;
@@ -136,7 +151,9 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
     private readonly deliveryDialog: TLMatDialog<RegisterDeliveryComponent>;
     private readonly snackbar: MatSnackBar;
     private readonly chooseLogBookForRenewalDialog: TLMatDialog<ChooseLogBookForRenewalComponent>;
+    private readonly suspensionsDialog: TLMatDialog<SuspensionsComponent>;
     private readonly router: Router;
+
     private gridManager!: DataTableManager<CommercialFishingPermitRegisterDTO, CommercialFishingRegisterFilters>;
 
     public constructor(
@@ -153,7 +170,8 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         snackbar: MatSnackBar,
         chooseLogBookForRenewalDialog: TLMatDialog<ChooseLogBookForRenewalComponent>,
         cacheService: CommercialFishingRegisterCacheService,
-        router: Router
+        router: Router,
+        suspensionsDialog: TLMatDialog<SuspensionsComponent>
     ) {
         this.translationService = translationService;
         this.confirmDialog = confirmDialog;
@@ -168,6 +186,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         this.chooseLogBookForRenewalDialog = chooseLogBookForRenewalDialog;
         this.cacheService = cacheService;
         this.router = router;
+        this.suspensionsDialog = suspensionsDialog;
 
         this.getLogBookAuditMethod = this.service.getLogBookAudit.bind(this.service);
         this.disabledLogBookAddButtonsTooltipText = this.translationService.getValue('commercial-fishing.cannot-add-log-books-to-suspended-permit-license');
@@ -195,6 +214,18 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         this.canEditLogBooks = permissions.has(PermissionsEnum.PermitLicenseLogBookEdit);
         this.canDeleteLogBooks = permissions.has(PermissionsEnum.PermitLicenseLogBookDelete);
         this.canRestoreLogBooks = permissions.has(PermissionsEnum.PermitLicenseLogBookRestore);
+
+        this.canReadPermitSuspensionsRecords = permissions.has(PermissionsEnum.PermitSuspensionRead);
+        this.canAddPermitSuspensionsRecords = permissions.has(PermissionsEnum.PermitSuspensionAdd);
+        this.canEditPermitSuspensionsRecords = permissions.has(PermissionsEnum.PermitSuspensionEdit);
+        this.canDeletePermitSuspensionsRecords = permissions.has(PermissionsEnum.PermitSuspensionDelete);
+        this.canRestorePermitSuspensionsRecords = permissions.has(PermissionsEnum.PermitSuspensionRestore);
+
+        this.canReadPermitLicenseSuspensionsRecords = permissions.has(PermissionsEnum.PermitLicenseSuspensionRead);
+        this.canAddPermitLicenseSuspensionsRecords = permissions.has(PermissionsEnum.PermitLicenseSuspensionAdd);
+        this.canEditPermitLicenseSuspensionsRecords = permissions.has(PermissionsEnum.PermitLicenseSuspensionEdit);
+        this.canDeletePermitLicenseSuspensionsRecords = permissions.has(PermissionsEnum.PermitLicenseSuspensionDelete);
+        this.canRestorePermitLicenseSuspensionsRecords = permissions.has(PermissionsEnum.PermitLicenseSuspensionRestore);
 
         this.buildForm();
     }
@@ -334,7 +365,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
                 }
             });
         }
-        
+
         const isPerson: boolean | undefined = window.history.state?.isPerson;
         let legalId: number | undefined;
         let personId: number | undefined;
@@ -393,6 +424,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             }
         }).subscribe((dialogData: { selectedApplication: ApplicationForChoiceDTO }) => {
             if (dialogData !== null && dialogData !== undefined) {
+                let isPermit!: boolean;
                 data = new DialogParamsModel({
                     id: undefined,
                     pageCode: dialogData.selectedApplication.pageCode,
@@ -407,20 +439,40 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
                 });
 
                 switch (dialogData.selectedApplication.pageCode) {
-                    case PageCodeEnum.CommFish: title = this.translationService.getValue('commercial-fishing.add-permit-dialog-title');
+                    case PageCodeEnum.CommFish: {
+                        title = this.translationService.getValue('commercial-fishing.add-permit-dialog-title');
+                        isPermit = true;
+                    }
                         break;
-                    case PageCodeEnum.PoundnetCommFish: title = this.translationService.getValue('commercial-fishing.add-poundnet-permit-dialog-title');
+                    case PageCodeEnum.PoundnetCommFish: {
+                        title = this.translationService.getValue('commercial-fishing.add-poundnet-permit-dialog-title');
+                        isPermit = true;
+                    }
                         break;
-                    case PageCodeEnum.RightToFishThirdCountry: title = this.translationService.getValue('commercial-fishing.add-3rd-country-permit-dialog-title');
+                    case PageCodeEnum.RightToFishThirdCountry: {
+                        title = this.translationService.getValue('commercial-fishing.add-3rd-country-permit-dialog-title');
+                        isPermit = true;
+                    }
                         break;
-                    case PageCodeEnum.RightToFishResource: title = this.translationService.getValue('commercial-fishing.add-permit-license-dialog-title');
+                    case PageCodeEnum.RightToFishResource: {
+                        title = this.translationService.getValue('commercial-fishing.add-permit-license-dialog-title');
+                        isPermit = false;
+                    }
                         break;
-                    case PageCodeEnum.PoundnetCommFishLic: title = this.translationService.getValue('commercial-fishing.add-poundnet-permit-license-dialog-title');
+                    case PageCodeEnum.PoundnetCommFishLic: {
+                        title = this.translationService.getValue('commercial-fishing.add-poundnet-permit-license-dialog-title');
+                        isPermit = false;
+                    }
                         break;
-                    case PageCodeEnum.CatchQuataSpecies: title = this.translationService.getValue('commercial-fishing.add-quata-species-permit-license-dialog-title');
+                    case PageCodeEnum.CatchQuataSpecies: {
+                        title = this.translationService.getValue('commercial-fishing.add-quata-species-permit-license-dialog-title');
+                        isPermit = false;
+                    }
+                        break;
+                    default: throw new Error(`Unknown page code for creating commercial fishing permit/license: ${PageCodeEnum[dialogData.selectedApplication.pageCode!]}`);
                 }
 
-                this.openPermitDialog(data, title, auditButton, false, false);
+                this.openPermitDialog(isPermit, true, data, title, auditButton, false, false);
             }
         });
     }
@@ -429,6 +481,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         let title: string = '';
         let tableName: string = '';
         let simpleAuditMethod: ((id: number) => Observable<SimpleAuditDTO>) | undefined = undefined;
+        let isPermit!: boolean;
 
         const data: DialogParamsModel = new DialogParamsModel({
             id: permit.id,
@@ -448,10 +501,12 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             || permit.typeCode === CommercialFishingTypesEnum.ThirdCountryPermit) {
 
             tableName = 'PermitRegister';
+            isPermit = true;
             simpleAuditMethod = this.service.getSimpleAudit.bind(this.service);
         }
         else {
             tableName = 'PermitLicensesRegister';
+            isPermit = false;
             simpleAuditMethod = this.service.getPermitLicenseSimpleAudit.bind(this.service);
         }
 
@@ -535,7 +590,86 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             } break;
         }
 
-        this.openPermitDialog(data, title, auditButton, viewMode ?? false, permit.isSuspended!);
+        this.openPermitDialog(isPermit, false, data, title, auditButton, viewMode ?? false, permit.isSuspended!);
+    }
+
+    public openPermitSuspensions(permit: CommercialFishingPermitRegisterDTO): void {
+        const viewMode: boolean =
+            this.canReadPermitSuspensionsRecords
+            && !(this.canAddPermitSuspensionsRecords
+                || this.canEditPermitSuspensionsRecords
+                || this.canDeletePermitSuspensionsRecords
+                || this.canRestorePermitSuspensionsRecords);
+
+        let title: string = '';
+        if (viewMode) {
+            const msg: string = this.translationService.getValue('commercial-fishing.view-permit-suspension-history-dialog-title');
+            title = `${msg}: ${permit.registrationNumber}`;
+        }
+        else {
+            const msg: string = this.translationService.getValue('commercial-fishing.change-permit-suspension-history-dialog-title');
+            title = `${msg}: ${permit.registrationNumber}`;
+        }
+
+        const data: SuspensionsDialogParams = new SuspensionsDialogParams({
+            isPermitLicense: false,
+            pageCode: permit.pageCode,
+            recordId: permit.id,
+            service: this.service,
+            viewMode: viewMode,
+            postOnAdd: false
+        });
+
+        this.openSuspensionsDialog(title, data, viewMode);
+    }
+
+    public openPermitLicenseSuspensions(permitLicense: CommercialFishingPermitLicenseRegisterDTO): void {
+        const viewMode: boolean =
+            this.canReadPermitLicenseSuspensionsRecords
+            && !(this.canAddPermitLicenseSuspensionsRecords
+                || this.canEditPermitLicenseSuspensionsRecords
+                || this.canDeletePermitLicenseSuspensionsRecords
+                || this.canRestorePermitLicenseSuspensionsRecords);
+
+        let title: string = '';
+        if (viewMode) {
+            const msg: string = this.translationService.getValue('commercial-fishing.view-permit-license-suspension-history-dialog-title');
+            title = `${msg}: ${permitLicense.registrationNumber}`;
+        }
+        else {
+            const msg: string = this.translationService.getValue('commercial-fishing.change-permit-license-suspension-history-dialog-title');
+            title = `${msg}: ${permitLicense.registrationNumber}`;
+        }
+
+        const data: SuspensionsDialogParams = new SuspensionsDialogParams({
+            isPermitLicense: true,
+            pageCode: permitLicense.pageCode,
+            recordId: permitLicense.id,
+            service: this.service,
+            viewMode: viewMode,
+            postOnAdd: false
+        });
+
+        this.openSuspensionsDialog(title, data, viewMode);
+    }
+
+    private openSuspensionsDialog(title: string, data: SuspensionsDialogParams, viewMode: boolean): void {
+        this.suspensionsDialog.openWithTwoButtons({
+            TCtor: SuspensionsComponent,
+            title: title,
+            translteService: this.translationService,
+            componentData: data,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            viewMode: viewMode
+        }).subscribe({
+            next: (result: SuspensionDataDTO[] | undefined) => {
+                if (result !== null && result !== undefined) {
+                    this.gridManager.refreshData();
+                }
+            }
+        });
     }
 
     public openDeliveryDialog(register: CommercialFishingPermitRegisterDTO | CommercialFishingPermitLicenseRegisterDTO, viewMode: boolean = false): void {
@@ -654,16 +788,19 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         }
     }
 
-    private openPermitDialog(data: DialogParamsModel, title: string, auditButton: IHeaderAuditButton | undefined, viewMode: boolean, isSuspended: boolean): void {
+    private openPermitDialog(isPermit: boolean, isAdd: boolean, data: DialogParamsModel, title: string, auditButton: IHeaderAuditButton | undefined, viewMode: boolean, isSuspended: boolean): void {
         const rightButtons: IActionInfo[] = [];
         const leftButtons: IActionInfo[] = [];
 
-        if (!viewMode) {
-            leftButtons.push({
-                id: 'suspend',
-                color: 'warn',
-                translateValue: this.translationService.getValue('commercial-fishing.suspend-btn-label')
-            });
+        if (!viewMode && !isAdd) {
+            if ((isPermit && this.canAddPermitSuspensionsRecords)
+                || (!isPermit && this.canAddPermitLicenseSuspensionsRecords)) {
+                leftButtons.push({
+                    id: 'suspend',
+                    color: 'warn',
+                    translateValue: this.translationService.getValue('commercial-fishing.suspend-btn-label')
+                });
+            }
         }
 
         rightButtons.push({

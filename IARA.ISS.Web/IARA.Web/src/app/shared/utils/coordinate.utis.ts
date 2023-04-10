@@ -28,4 +28,18 @@
 
         return `${degrees}° ${minutes}' ${seconds}''`;
     }
+
+    public static FormatDMS(dms: string): string {
+        if (!dms) {
+            return dms;
+        }
+
+        const split = dms.split(' ');
+
+        if (split.length !== 3) {
+            return dms;
+        }
+
+        return `${split[0]}° ${split[1]}' ${split[2]}''`;
+    }
 }

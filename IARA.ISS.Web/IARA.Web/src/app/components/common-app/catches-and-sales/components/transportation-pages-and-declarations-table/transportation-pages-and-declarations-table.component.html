@@ -60,8 +60,8 @@
     <data-template-column *ngIf="showActionButtons" [flexRate]="0.2" [cellClass]="'justify-center'">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <div fxLayout="row wrap" fxLayoutAlign="end center">
-                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended 
-                                       && canCancelTransportationLogBookRecords 
+                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended
+                                       && canCancelTransportationLogBookRecords
                                        && row.data.status !== logBookPageStatusesEnum.Canceled
                                        && !row.data.consistsOriginProducts"
                                 icon="ic-cancel"
@@ -69,6 +69,15 @@
                                 (buttonClicked)="onAnnulTransportationLogBookPageBtnClicked(row.data)"
                                 iconClass="accent-color"
                                 tooltipText="{{ 'catches-and-sales.anull-transportation-log-book-page' | tlTranslate }}">
+                </tl-icon-button>
+
+                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended
+                                       && row.data.status === logBookPageStatusesEnum.Canceled
+                                       && canCancelTransportationLogBookRecords"
+                                icon="restore"
+                                iconClass="accent-color"
+                                tooltipText="{{ 'catches-and-sales.restore-annulled-transportation-log-book-page' | tlTranslate }}"
+                                (buttonClicked)="onRestoreAnnulledTransportationLogBookPageBtnClicked(row.data)">
                 </tl-icon-button>
 
                 <tl-icon-button *ngIf="row.data.status !== logBookPageStatusesEnum.Missing"

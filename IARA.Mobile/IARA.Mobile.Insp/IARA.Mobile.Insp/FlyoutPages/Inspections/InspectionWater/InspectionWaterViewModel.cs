@@ -165,7 +165,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
                             Type = fishingGearTypes.Find(f => f.Id == fishingGear.TypeId) ?? fishingGearTypes[0],
                             Marks = fishingGear.Marks == null
                                 ? string.Empty
-                                : string.Join(", ", fishingGear.Marks.Select(f => f.Number).Where(f => !string.IsNullOrEmpty(f))),
+                                : string.Join(", ", fishingGear.Marks.Select(f => f.FullNumber?.ToString()).Where(f => !string.IsNullOrEmpty(f))),
                             Dto = fishingGear,
                         });
                     }

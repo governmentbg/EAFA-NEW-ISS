@@ -11,6 +11,7 @@ import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatur
 import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
+import { PrefixInputDTO } from '@app/models/generated/dtos/PrefixInputDTO';
 
 @Component({
     selector: 'fishing-gear-simple',
@@ -159,10 +160,15 @@ export class FishingGearSimpleComponent implements OnInit, AfterViewInit, DoChec
             marks: this.marksTable.rows.map(x => {
                 return new FishingGearMarkDTO({
                     statusId: x.statusId,
-                    number: x.number
+                    fullNumber: new PrefixInputDTO({
+                        prefix: x.fullNumber?.prefix,
+                        inputValue: x.fullNumber?.inputValue
+                    }),
+                    isActive: x.isActive
                 });
             }),
             marksNumbers: this.marksTable.rows.map(x => x.number).join(', '),
+            isActive: this.gear?.isActive ?? true
         });
 
         if (this.gear !== undefined && this.gear !== null) {
@@ -172,17 +178,17 @@ export class FishingGearSimpleComponent implements OnInit, AfterViewInit, DoChec
                 && newGear.length === this.gear.length
                 && newGear.height === this.gear.height
                 && newGear.description === this.gear.description) {
-                const toRemove = this.gear.marks?.filter(x => !newGear.marks?.some(y => y.number === x.number && y.statusId === x.statusId));
+                const toRemove = this.gear.marks?.filter(x => !newGear.marks?.some(y => y.fullNumber?.prefix === x.fullNumber?.prefix && y.fullNumber?.inputValue === x.fullNumber?.inputValue && y.statusId === x.statusId));
                 if (toRemove !== undefined) {
                     this.gear.marks = this.gear.marks?.filter(x => !toRemove?.some(y => y === x));
                 }
 
-                const toAdd = newGear.marks?.filter(x => !this.gear!.marks?.some(y => y.number === x.number && y.statusId === x.statusId));
+                const toAdd = newGear.marks?.filter(x => !this.gear!.marks?.some(y => y.fullNumber?.prefix === x.fullNumber?.prefix && y.fullNumber?.inputValue === x.fullNumber?.inputValue && y.statusId === x.statusId));
                 if (toAdd !== undefined) {
                     this.gear.marks = this.gear.marks?.concat(toAdd);
                 }
 
-                this.gear.marksNumbers = this.gear.marks?.map(x => x.number).join(', ');
+                this.gear.marksNumbers = this.gear.marks?.map(x => `${x.fullNumber?.prefix ?? ''}${x.fullNumber?.inputValue}`).join(', ');
 
                 return this.gear;
             }

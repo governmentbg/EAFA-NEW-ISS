@@ -44,25 +44,25 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterCatchDialog
                 new SelectNomenclatureDto
                 {
                     Id = 1,
-                    Code = nameof(TakenStoredEnum.Stored),
+                    Code = nameof(CatchActionEnum.Stored),
                     Name = TranslateExtension.Translator[nameof(GroupResourceEnum.WaterCatch) + "/Stored"],
                 },
                 new SelectNomenclatureDto
                 {
                     Id = 2,
-                    Code = nameof(TakenStoredEnum.Stored),
+                    Code = nameof(CatchActionEnum.Returned),
                     Name = TranslateExtension.Translator[nameof(GroupResourceEnum.WaterCatch) + "/Returned"],
                 },
                 new SelectNomenclatureDto
                 {
                     Id = 3,
-                    Code = nameof(TakenStoredEnum.Stored),
+                    Code = nameof(CatchActionEnum.Donated),
                     Name = TranslateExtension.Translator[nameof(GroupResourceEnum.WaterCatch) + "/Donated"],
                 },
                 new SelectNomenclatureDto
                 {
                     Id = 4,
-                    Code = nameof(TakenStoredEnum.Stored),
+                    Code = nameof(CatchActionEnum.Destroyed),
                     Name = TranslateExtension.Translator[nameof(GroupResourceEnum.WaterCatch) + "/Destroyed"],
                 },
             };

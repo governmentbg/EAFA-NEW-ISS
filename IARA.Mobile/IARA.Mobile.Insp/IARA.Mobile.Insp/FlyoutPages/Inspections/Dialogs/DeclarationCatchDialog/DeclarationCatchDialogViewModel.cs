@@ -16,6 +16,7 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
 using IARA.Mobile.Insp.ViewModels.Models;
+using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -58,6 +59,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
         public InspectedShipDataViewModel InspectedShip { get; set; }
 
         [Required]
+        [ValidGroup("IsAquaculture")]
         public ValidStateInfiniteSelect<SelectNomenclatureDto> Aquaculture { get; set; }
 
         [Required]
@@ -71,9 +73,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
 
         [Required]
         [TLRange(1, 10000, true)]
+        [ValidGroup("IsNNN")]
         public ValidState CatchQuantity { get; set; }
 
-        [Required]
         [TLRange(1, 10000, true)]
         public ValidState UnloadedQuantity { get; set; }
 
@@ -81,6 +83,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
         public ValidStateSelect<SelectNomenclatureDto> Presentation { get; set; }
 
         [Required]
+        [ValidGroup("IsNNN")]
         public ValidStateSelect<CatchZoneNomenclatureDto> CatchZone { get; set; }
 
         public ValidStateSelect<SelectNomenclatureDto> DeclarationType { get; set; }
@@ -152,7 +155,20 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
             this.AddValidation(others: new IValidatableViewModel[]
             {
                 InspectedShip,
+            }, groups: new Dictionary<string, Func<bool>>
+            {
+                { "IsAquaculture", () => SubjectType == DeclarationLogBookType.AquacultureLogBook },
+                {
+                    "IsShip",
+                    () => SubjectType == DeclarationLogBookType.ShipLogBook
+                        || SubjectType == DeclarationLogBookType.FirstSaleLogBook
+                        || SubjectType == DeclarationLogBookType.TransportationLogBook
+                        || SubjectType == DeclarationLogBookType.AdmissionLogBook
+                },
+                { "IsNNN", () => SubjectType == DeclarationLogBookType.NNN }
             });
+
+            InspectedShip.Validation.GlobalGroups = new List<string> { "IsShip" };
 
             if (!HasCatchType)
             {

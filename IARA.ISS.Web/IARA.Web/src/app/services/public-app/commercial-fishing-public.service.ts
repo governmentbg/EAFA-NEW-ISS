@@ -139,7 +139,17 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
         throw new Error('This method should not be called from the public app.');
     }
 
+    // suspensions
+
+    public getSuspensions(recordId: number, pageCode: PageCodeEnum): Observable<SuspensionDataDTO[]> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
     public addSuspension(suspension: SuspensionDataDTO, id: number, pageCode: PageCodeEnum): Observable<void> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
+    public addEditSuspensions(recordId: number, suspensions: SuspensionDataDTO[], pageCode: PageCodeEnum): Observable<void> {
         throw new Error('This method should not be called from the public app.');
     }
 
@@ -339,10 +349,6 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
         });
     }
 
-    public getPorts(): Observable<NomenclatureDTO<number>[]> {
-        return this.requestService.get(this.area, this.controller, 'GetPorts', { responseTypeCtr: NomenclatureDTO });
-    }
-
     public getSuspensionTypes(): Observable<SuspensionTypeNomenclatureDTO[]> {
         return this.requestService.get(this.area, this.controller, 'GetSuspensionTypes', { responseTypeCtr: SuspensionTypeNomenclatureDTO });
     }
@@ -351,7 +357,7 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
         return this.requestService.get(this.area, this.controller, 'GetSuspensionReasons', { responseTypeCtr: SuspensionReasonNomenclatureDTO });
     }
 
-    public getPermitNomenclatures(shipId: number, onlyPoundNet: boolean): Observable<PermitNomenclatureDTO[]> {
+    public getPermitNomenclatures(shipId: number, showPastPermits: boolean, onlyPoundNet: boolean): Observable<PermitNomenclatureDTO[]> {
         throw new Error('This method should not be called from the public app');
     }
 }

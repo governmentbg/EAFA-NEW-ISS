@@ -333,13 +333,15 @@ export class DataTableInlineEditingService {
         if (dataColumn._formGroup != undefined) {
             const formControl: FormControl | undefined = dataColumn._formGroup.get(dataColumn._formControlName) as FormControl;
             if (formControl != undefined) {
-                if (formControl.disabled) {
-                    formControl.setValue(record.data[dataColumn.propertyName]);
-                    formControl.disable({ emitEvent: false });
-                }
-                else {
-                    formControl.setValue(record.data[dataColumn.propertyName]);
-                }
+                setTimeout(() => {
+                    if (formControl.disabled) {
+                        formControl.setValue(record.data[dataColumn.propertyName]);
+                        formControl.disable({ emitEvent: false });
+                    }
+                    else {
+                        formControl.setValue(record.data[dataColumn.propertyName]);
+                    }
+                });
             }
         }
     }

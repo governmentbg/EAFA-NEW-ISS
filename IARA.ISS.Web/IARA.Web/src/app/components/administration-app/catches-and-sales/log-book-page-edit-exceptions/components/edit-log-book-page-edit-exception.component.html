@@ -1,0 +1,59 @@
+﻿<div class="dialog-padding">
+    <div fxLayout="column"
+         fxLayoutGap="1em"
+         fxFlexFill
+         fxLayoutAlign="space-between stretch"
+         validityCheckerGroup
+         [formGroup]="form">
+        <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-date-time fxFlex="50"
+                          formControlName="exceptionActiveFromControl"
+                          label="{{ 'log-book-page-edit-exceptions.exception-active-from' | tlTranslate }}"
+                          tooltipResourceName="log-book-page-edit-exceptions.exception-active-from-helper"
+                          [disabled]="viewMode">
+            </tl-date-time>
+            <tl-date-time fxFlex="50"
+                          formControlName="exceptionActiveToControl"
+                          label="{{ 'log-book-page-edit-exceptions.exception-active-to' | tlTranslate }}"
+                          tooltipResourceName="log-book-page-edit-exceptions.exception-active-to-helper"
+                          [disabled]="viewMode">
+            </tl-date-time>
+        </div>
+        <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-autocomplete fxFlex="100"
+                             formControlName="userControl"
+                             label="{{ 'log-book-page-edit-exceptions.user' | tlTranslate }}"
+                             tooltipResourceName="log-book-page-edit-exceptions.user-helper"
+                             [groupedOptions]="users">
+            </tl-autocomplete>
+        </div>
+        <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-autocomplete fxFlex="100"
+                             formControlName="logBookTypeControl"
+                             label="{{ 'log-book-page-edit-exceptions.log-book-type' | tlTranslate }}"
+                             tooltipResourceName="log-book-page-edit-exceptions.log-book-type-helper"
+                             [options]="logBookTypes">
+            </tl-autocomplete>
+        </div>
+        <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-autocomplete fxFlex="100"
+                             formControlName="logBookControl"
+                             label="{{ 'log-book-page-edit-exceptions.log-book' | tlTranslate }}"
+                             tooltipResourceName="log-book-page-edit-exceptions.log-book-helper"
+                             [options]="activeLogBooks">
+            </tl-autocomplete>
+        </div>
+        <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-date fxFlex="50"
+                     formControlName="editPageFromControl"
+                     label="{{ 'log-book-page-edit-exceptions.edit-page-from' | tlTranslate }}"
+                     tooltipResourceName="log-book-page-edit-exceptions.edit-page-from-helper">
+            </tl-date>
+            <tl-date fxFlex="50"
+                     formControlName="editPageToControl"
+                     label="{{ 'log-book-page-edit-exceptions.edit-page-to' | tlTranslate }}"
+                     tooltipResourceName="log-book-page-edit-exceptions.edit-page-to-helper">
+            </tl-date>
+        </div>
+    </div>
+</div>

@@ -18,6 +18,7 @@ import { PaymentDataInfo } from './models/payment-data-info.model';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO';
 import { TLValidators } from '@app/shared/utils/tl-validators';
+import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 
 @Component({
     selector: 'payment-data',
@@ -47,15 +48,22 @@ export class PaymentDataComponent extends CustomFormControl<PaymentDataDTO> impl
 
     private readonly nomenclatures: CommonNomenclatures;
     private readonly loader: FormControlDataLoader;
+    private readonly isPublicApp!: boolean;
 
     public constructor(@Optional() @Self() ngControl: NgControl, nomenclatures: CommonNomenclatures) {
         super(ngControl);
         this.nomenclatures = nomenclatures;
+        this.isPublicApp = IS_PUBLIC_APP;
 
         this.loader = new FormControlDataLoader(this.getPaymentTypes.bind(this));
     }
 
     public ngOnInit(): void {
+        if (this.isPublicApp !== true) {
+            this.form.setValidators([TLValidators.sameTotalPriceAndPaidPriceValidator()]);
+            this.form.updateValueAndValidity({ emitEvent: false });
+        }
+
         this.initCustomFormControl();
 
         this.form.get('totalPaidPriceControl')!.valueChanges.subscribe({
@@ -175,9 +183,7 @@ export class PaymentDataComponent extends CustomFormControl<PaymentDataDTO> impl
             paymentRefControl: new FormControl(undefined, Validators.maxLength(50)),
             totalPaidPriceControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
             paymentDateControl: new FormControl(undefined, Validators.required)
-        }, [
-            TLValidators.sameTotalPriceAndPaidPriceValidator()
-        ]);
+        });
     }
 
     protected getValue(): PaymentDataDTO {

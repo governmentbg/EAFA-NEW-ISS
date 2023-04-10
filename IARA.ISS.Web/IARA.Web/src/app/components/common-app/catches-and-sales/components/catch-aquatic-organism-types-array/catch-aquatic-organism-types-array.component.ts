@@ -1,4 +1,4 @@
-﻿import { Component, Input, OnInit, Self } from '@angular/core';
+﻿import { Component, Input, OnChanges, OnInit, Self, SimpleChanges } from '@angular/core';
 import { AbstractControl, ControlValueAccessor, FormArray, FormControl, NgControl, ValidationErrors, Validator } from '@angular/forms';
 import { forkJoin, Observable, Subscription } from 'rxjs';
 
@@ -17,12 +17,14 @@ import { WaterTypesEnum } from '@app/enums/water-types.enum';
 import { FishNomenclatureDTO } from '@app/models/generated/dtos/FishNomenclatureDTO';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { ShipLogBookPageDataService } from '../ship-log-book/services/ship-log-book-page-data.service';
+import { IGroupedOptions } from '@app/shared/components/input-controls/tl-autocomplete/interfaces/grouped-options.interface';
+import { AquaticOrganismCollectionTypesEnum } from './enums/aquatic-organism-collection-types.enum';
 
 @Component({
     selector: 'catch-aquatic-organism-types-array',
     templateUrl: './catch-aquatic-organism-types-array.component.html'
 })
-export class CatchAquaticOrganismTypesArrayComponent extends CustomFormControl<CatchRecordFishDTO[]> implements OnInit {
+export class CatchAquaticOrganismTypesArrayComponent extends CustomFormControl<CatchRecordFishDTO[]> implements OnInit, OnChanges {
     @Input()
     public service!: ICatchesAndSalesService;
 
@@ -32,16 +34,25 @@ export class CatchAquaticOrganismTypesArrayComponent extends CustomFormControl<C
     @Input()
     public waterType!: WaterTypesEnum;
 
+    @Input()
+    public permitLicenseAquaticOrganismTypeIds!: number[];
+
+    @Input()
+    public disallowAddCatches: boolean = false;
+
     public isDisabled: boolean = false;
-    public aquaticOrganisms: FishNomenclatureDTO[] = [];
+    public aquaticOrganisms: IGroupedOptions<number>[] = [];
     public sturgeonGenders: NomenclatureDTO<SturgeonGendersEnum>[] = [];
     public turbotSizeGroups: NomenclatureDTO<number>[] = [];
     public catchQuadrants: CatchZoneNomenclatureDTO[] = [];
     public fishSizes: NomenclatureDTO<number>[] = [];
     public catchTypes: NomenclatureDTO<number>[] = [];
 
+    public readonly addCatchDisabledTooltip: string;
+
     private readonly translationService: FuseTranslationLoaderService;
     private readonly loader!: FormControlDataLoader;
+    private notGroupedAquaticOrganisms: FishNomenclatureDTO[] = [];
 
     private commonNomenclaturesService: CommonNomenclatures;
 
@@ -55,7 +66,21 @@ export class CatchAquaticOrganismTypesArrayComponent extends CustomFormControl<C
         this.translationService = translate;
         this.commonNomenclaturesService = commonNomenclaturesService;
 
+        this.addCatchDisabledTooltip = this.translationService.getValue('catches-and-sales.ship-page-catch-add-catch-forbidden-tooltip');
+
         this.loader = new FormControlDataLoader(this.getNomenclatures.bind(this));
+    }
+
+    public ngOnChanges(changes: SimpleChanges): void {
+        if ('permitLicenseAquaticOrganismTypeIds' in changes) {
+            if (this.permitLicenseAquaticOrganismTypeIds === null || this.permitLicenseAquaticOrganismTypeIds === undefined) {
+                this.permitLicenseAquaticOrganismTypeIds = [];
+            }
+
+            this.loader.load(() => {
+                this.filterAquaticOrganismTypes();
+            });
+        }
     }
 
     public ngOnInit(): void {
@@ -160,23 +185,62 @@ export class CatchAquaticOrganismTypesArrayComponent extends CustomFormControl<C
 
         const subscription: Subscription = forkJoin(observables).subscribe({
             next: (nomenclatures: FishNomenclatureDTO[][] | NomenclatureDTO<number>[][]) => {
-                this.aquaticOrganisms = nomenclatures[0] as FishNomenclatureDTO[];
+                this.aquaticOrganisms = [
+                    {
+                        name: '',
+                        options: nomenclatures[0] as FishNomenclatureDTO[]
+                    }
+                ];
+                this.notGroupedAquaticOrganisms = this.aquaticOrganisms[0].options.slice() as FishNomenclatureDTO[];
+
                 this.turbotSizeGroups = nomenclatures[1];
                 this.catchQuadrants = nomenclatures[2];
                 this.fishSizes = nomenclatures[3];
                 this.catchTypes = nomenclatures[4];
 
                 if (this.waterType === WaterTypesEnum.BLACK_SEA) {
-                    this.aquaticOrganisms = this.aquaticOrganisms.filter(x => x.isBlackSea === true);
+                    this.notGroupedAquaticOrganisms = this.notGroupedAquaticOrganisms.filter(x => x.isBlackSea === true);
+
+                    for (const aquaticOrganism of this.aquaticOrganisms) {
+                        aquaticOrganism.options = (aquaticOrganism.options as FishNomenclatureDTO[]).filter(x => x.isBlackSea === true);
+                    }
                 }
                 else if (this.waterType === WaterTypesEnum.DANUBE) {
-                    this.aquaticOrganisms = this.aquaticOrganisms.filter(x => x.isDanube === true);
+                    this.notGroupedAquaticOrganisms = this.notGroupedAquaticOrganisms.filter(x => x.isDanube === true);
+
+                    for (const aquaticOrganism of this.aquaticOrganisms) {
+                        aquaticOrganism.options = (aquaticOrganism.options as FishNomenclatureDTO[]).filter(x => x.isDanube === true);
+                    }
                 }
+
+                this.filterAquaticOrganismTypes();
 
                 this.loader.complete();
             }
         });
 
         return subscription;
+    }
+
+    private filterAquaticOrganismTypes(): void {
+        const newAquaticOrganisms: IGroupedOptions<number>[] = [
+            {
+                name: this.translationService.getValue('catches-and-sales.ship-page-catch-fishes-in-permit-license'),
+                code: AquaticOrganismCollectionTypesEnum.FishesInPermitLicense,
+                options: this.notGroupedAquaticOrganisms.filter(x => this.permitLicenseAquaticOrganismTypeIds.includes(x.value!))
+            },
+            {
+                name: this.translationService.getValue('catches-and-sales.ship-page-catch-fishes-not-in-permit-license'),
+                code: AquaticOrganismCollectionTypesEnum.FishesNotInPermitLicense,
+                options: this.notGroupedAquaticOrganisms.filter(x => !this.permitLicenseAquaticOrganismTypeIds.includes(x.value!))
+            }
+        ];
+
+        if (newAquaticOrganisms[0].options.length === 0) { // В случай че няма водни организми към удостоверението, правим другата група без име, за да не се виждат групи
+            newAquaticOrganisms.splice(0, 1);
+            newAquaticOrganisms[0].name = '';
+        }
+
+        this.aquaticOrganisms = newAquaticOrganisms;
     }
 }

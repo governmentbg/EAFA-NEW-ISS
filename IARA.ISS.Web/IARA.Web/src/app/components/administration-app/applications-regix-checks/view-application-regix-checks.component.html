@@ -32,17 +32,19 @@
             </div>
 
             <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-                <tl-date fxFlex="20"
-                         formControlName="requestDateTimeControl"
-                         label="{{ 'application-regix-checks.request-date-time' | tlTranslate }}"
-                         tooltipResourceName="application-regix-checks.request-date-time-helper">
-                </tl-date>
+                <tl-date-time fxFlex="20"
+                              [disabled]="true"
+                              formControlName="requestDateTimeControl"
+                              label="{{ 'application-regix-checks.request-date-time' | tlTranslate }}"
+                              tooltipResourceName="application-regix-checks.request-date-time-helper">
+                </tl-date-time>
 
-                <tl-date fxFlex="20"
-                         formControlName="responseDateTimeControl"
-                         label="{{ 'application-regix-checks.response-date-time' | tlTranslate }}"
-                         tooltipResourceName="application-regix-checks.response-date-time-helper">
-                </tl-date>
+                <tl-date-time fxFlex="20"
+                              [disabled]="true"
+                              formControlName="responseDateTimeControl"
+                              label="{{ 'application-regix-checks.response-date-time' | tlTranslate }}"
+                              tooltipResourceName="application-regix-checks.response-date-time-helper">
+                </tl-date-time>
 
                 <tl-input fxFlex="20"
                           formControlName="responseStatusControl"

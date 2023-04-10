@@ -1,6 +1,6 @@
-﻿<div fxLayout="column" fxFlexFill fxLayoutGap="1em">
+﻿<div fxLayout="column" fxFlexFill>
     <tl-card>
-        <tl-card-content [formGroup]="groupPropertiesGroup">
+        <tl-card-content [formGroup]="form" fxLayoutGap="1em">
             <tl-input label="{{ 'report-view.dialog-group-name' | tlTranslate }}"
                       formControlName="nameControl"
                       tooltipResourceName="report-view.dialog-group-name-helper">
@@ -10,6 +10,10 @@
                        [options]="groupTypes"
                        tooltipResourceName="report-view.dialog-group-type-helper">
             </tl-select>
+            <tl-input label="{{ 'report-view.dialog-group-order-num' | tlTranslate }}"
+                      formControlName="orderNumControl"
+                      tooltipResourceName="report-view.dialog-group-order-num-helper">
+            </tl-input>
             <tl-textarea label="{{ 'report-view.dialog-group-description' | tlTranslate }}"
                          formControlName="descriptionControl"
                          tooltipResourceName="report-view.dialog-group-description-helper">

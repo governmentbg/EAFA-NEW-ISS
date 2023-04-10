@@ -1,6 +1,6 @@
 ﻿import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { IPenalDecreesService } from '@app/interfaces/administration-app/penal-decrees.interface';
 import { GridRequestModel } from '@app/models/common/grid-request.model';
@@ -17,10 +17,13 @@ import { BaseAuditService } from '@app/services/common-app/base-audit.service';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { AuanConfiscationActionsNomenclatureDTO } from '@app/models/generated/dtos/AuanConfiscationActionsNomenclatureDTO';
 import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/InspDeliveryTypesNomenclatureDTO';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { PenalDecreeStatusTypesEnum } from '@app/enums/penal-decree-status-types.enum';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { DateUtils } from '@app/shared/utils/date.utils';
+import { PermissionsService } from '@app/shared/services/permissions.service';
+import { PenalDecreeStatusEditDTO } from '@app/models/generated/dtos/PenalDecreeStatusEditDTO';
+import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -29,74 +32,70 @@ export class PenalDecreesService extends BaseAuditService implements IPenalDecre
     protected controller: string = 'PenalDecrees';
 
     private readonly translate: FuseTranslationLoaderService;
+    private readonly permissions: PermissionsService;
 
     public constructor(
         requestService: RequestService,
-        translate: FuseTranslationLoaderService
+        translate: FuseTranslationLoaderService,
+        permissions: PermissionsService
     ) {
         super(requestService, AreaTypes.Administrative);
 
         this.translate = translate;
+        this.permissions = permissions;
     }
 
     public getAllPenalDecrees(request: GridRequestModel<PenalDecreesFilters>): Observable<GridResultModel<PenalDecreeDTO>> {
-        return this.requestService.post(this.area, this.controller, 'GetAllPenalDecrees', request, {
+        type Result = GridResultModel<PenalDecreeDTO>;
+        type Body = GridRequestModel<PenalDecreesFilters>;
+
+        return this.requestService.post<Result, Body>(this.area, this.controller, 'GetAllPenalDecrees', request, {
             properties: RequestProperties.NO_SPINNER,
             responseTypeCtr: GridResultModel
-        });
+        }).pipe(switchMap((entries: Result) => {
+            const decreeIds: number[] = entries.records.map((decree: PenalDecreeDTO) => {
+                return decree.id!;
+            });
+           
+            if (decreeIds.length === 0) {
+                return of(entries);
+            }
+
+            if (this.permissions.has(PermissionsEnum.PenalDecreeStatusesRead)) { 
+                return this.getPenalDecreeStatusesForTableHelper(this.controller, decreeIds).pipe(map((statuses: PenalDecreeStatusEditDTO[]) => {
+                    for (const status of statuses) {
+                        const found = entries.records.find((entry: PenalDecreeDTO) => {
+                            return entry.id === status.penalDecreeId;
+                        });
+
+                        if (found !== undefined) {
+                            this.getStatusDetails(status);
+
+                            if (found.statuses !== undefined && found.statuses !== null) {
+                                found.statuses.push(new PenalDecreeStatusEditDTO(status));
+                            }
+                            else {
+                                found.statuses = [status];
+                            }
+                        }
+                    }
+                    
+                    return entries;
+                }));
+            }
+            else {
+                return of(entries);
+            }
+        }));
     }
 
     public getPenalDecree(id: number): Observable<PenalDecreeEditDTO> {
-        type Result = PenalDecreeEditDTO;
         const params = new HttpParams().append('id', id.toString());
 
-        return this.requestService.get<Result>(this.area, this.controller, 'GetPenalDecree', {
+        return this.requestService.get(this.area, this.controller, 'GetPenalDecree', {
             httpParams: params,
             responseTypeCtr: PenalDecreeEditDTO
-        }).pipe(map((decree: Result) => {
-            const from: string = this.translate.getValue('common.from');
-            const instanceAppealDate: string = this.translate.getValue('penal-decrees.status-details-instance-appeal-date');
-            const decisionDate: string = this.translate.getValue('penal-decrees.status-details-decision-date');
-            const enactmentDate: string = this.translate.getValue('penal-decrees.status-details-enactment-date');
-            const dateOfWithdraw: string = this.translate.getValue('penal-decrees.status-details-withdraw-date');
-            const dateOfChange: string = this.translate.getValue('penal-decrees.status-details-change-date');
-            const compulsory: string = this.translate.getValue('penal-decrees.status-details-compulsory');
-            const partiallyPaid: string = this.translate.getValue('penal-decrees.status-details-partially-paid');
-
-            for (const status of decree.statuses ?? []) {
-                switch (status.statusType) {
-                    case PenalDecreeStatusTypesEnum.FirstInstAppealed:
-                    case PenalDecreeStatusTypesEnum.SecondInstAppealed:
-                        status.details = `${instanceAppealDate}: ${DateUtils.ToDisplayDateString(status.appealDate!)} ${from} ${status.courtName}`;
-                        break;
-                    case PenalDecreeStatusTypesEnum.FirstInstDecision:
-                        status.details = `${decisionDate}: ${DateUtils.ToDisplayDateString(status.complaintDueDate!)} ${from} ${status.courtName}`;
-                        break;
-                    case PenalDecreeStatusTypesEnum.SecondInstDecision:
-                        status.details = `${from} ${status.courtName}`;
-                        break;
-                    case PenalDecreeStatusTypesEnum.PartiallyChanged:
-                        status.details = `${dateOfChange}: ${DateUtils.ToDisplayDateString(status.enactmentDate!)} ${from} ${status.courtName}`;
-                        break;
-                    case PenalDecreeStatusTypesEnum.PartiallyPaid:
-                        status.details = `${partiallyPaid}: ${status.paidAmount}`;
-                        break;
-                    case PenalDecreeStatusTypesEnum.Valid:
-                        status.details = `${enactmentDate}: ${DateUtils.ToDisplayDateString(status.enactmentDate!)}`;
-                        break;
-                    case PenalDecreeStatusTypesEnum.Withdrawn:
-                        status.details = `${dateOfWithdraw}: ${DateUtils.ToDisplayDateString(status.enactmentDate!)} ${from} ${status.penalAuthorityName}`;
-                        break;
-                    case PenalDecreeStatusTypesEnum.Compulsory:
-                        status.details = `${compulsory} ${status.confiscationInstitution}`;
-                        break;
-                    default:
-                        status.details = undefined;
-                }
-            }
-
-            return decree;
-        }));
+        });
     }
 
     public addPenalDecree(decree: PenalDecreeEditDTO): Observable<number> {
@@ -140,6 +139,30 @@ export class PenalDecreesService extends BaseAuditService implements IPenalDecre
         return this.requestService.download(this.area, this.controller, 'DownloadFile', fileName, { httpParams: params });
     }
 
+    //Statuses
+    public addPenalDecreeStatus(status: PenalDecreeStatusEditDTO): Observable<number> {
+        return this.requestService.post(this.area, this.controller, 'AddPenalDecreeStatus', status, {
+            properties: new RequestProperties({ asFormData: true, rethrowException: true, showException: true })
+        });
+    }
+
+    public editPenalDecreeStatus(status: PenalDecreeStatusEditDTO): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'EditPenalDecreeStatus', status, {
+            properties: new RequestProperties({ asFormData: true, rethrowException: true, showException: true })
+        });
+    }
+
+    public deletePenalDecreeStatus(id: number): Observable<void> {
+        const params = new HttpParams().append('id', id.toString());
+        return this.requestService.delete(this.area, this.controller, 'DeletePenalDecreeStatus', { httpParams: params });
+    }
+
+    public undoDeletePenalDecreeStatus(id: number): Observable<void> {
+        const params = new HttpParams().append('id', id.toString());
+        return this.requestService.patch(this.area, this.controller, 'UndoDeletePenalDecreeStatus', null, { httpParams: params });
+    }
+
+    //Nomenclatures
     public getAllAuans(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetAllAuans', { responseTypeCtr: NomenclatureDTO });
     }
@@ -203,5 +226,53 @@ export class PenalDecreesService extends BaseAuditService implements IPenalDecre
             httpParams: params,
             responseTypeCtr: SimpleAuditDTO
         });
+    }
+
+    //Helpers
+    private getPenalDecreeStatusesForTableHelper(controller: string, decreeIds: number[]): Observable<PenalDecreeStatusEditDTO[]> {
+        return this.requestService.post(this.area, controller, 'GetPenalDecreeStatuses', decreeIds, {
+            responseTypeCtr: PenalDecreeStatusEditDTO
+        });
+    }
+
+    private getStatusDetails(status: PenalDecreeStatusEditDTO): void {
+        const from: string = this.translate.getValue('common.from');
+        const instanceAppealDate: string = this.translate.getValue('penal-decrees.status-details-instance-appeal-date');
+        const decisionDate: string = this.translate.getValue('penal-decrees.status-details-decision-date');
+        const enactmentDate: string = this.translate.getValue('penal-decrees.status-details-enactment-date');
+        const dateOfWithdraw: string = this.translate.getValue('penal-decrees.status-details-withdraw-date');
+        const dateOfChange: string = this.translate.getValue('penal-decrees.status-details-change-date');
+        const compulsory: string = this.translate.getValue('penal-decrees.status-details-compulsory');
+        const partiallyPaid: string = this.translate.getValue('penal-decrees.status-details-partially-paid');
+
+        switch (status.statusType) {
+            case PenalDecreeStatusTypesEnum.FirstInstAppealed:
+            case PenalDecreeStatusTypesEnum.SecondInstAppealed:
+                status.details = `${instanceAppealDate}: ${DateUtils.ToDisplayDateString(status.appealDate!)} ${from} ${status.courtName}`;
+                break;
+            case PenalDecreeStatusTypesEnum.FirstInstDecision:
+                status.details = `${decisionDate}: ${DateUtils.ToDisplayDateString(status.complaintDueDate!)} ${from} ${status.courtName}`;
+                break;
+            case PenalDecreeStatusTypesEnum.SecondInstDecision:
+                status.details = `${from} ${status.courtName}`;
+                break;
+            case PenalDecreeStatusTypesEnum.PartiallyChanged:
+                status.details = `${dateOfChange}: ${DateUtils.ToDisplayDateString(status.enactmentDate!)} ${from} ${status.courtName}`;
+                break;
+            case PenalDecreeStatusTypesEnum.PartiallyPaid:
+                status.details = `${partiallyPaid}: ${status.paidAmount}`;
+                break;
+            case PenalDecreeStatusTypesEnum.Valid:
+                status.details = `${enactmentDate}: ${DateUtils.ToDisplayDateString(status.enactmentDate!)}`;
+                break;
+            case PenalDecreeStatusTypesEnum.Withdrawn:
+                status.details = `${dateOfWithdraw}: ${DateUtils.ToDisplayDateString(status.enactmentDate!)} ${from} ${status.penalAuthorityName}`;
+                break;
+            case PenalDecreeStatusTypesEnum.Compulsory:
+                status.details = `${compulsory} ${status.confiscationInstitution}`;
+                break;
+            default:
+                status.details = undefined;
+        }
     }
 }

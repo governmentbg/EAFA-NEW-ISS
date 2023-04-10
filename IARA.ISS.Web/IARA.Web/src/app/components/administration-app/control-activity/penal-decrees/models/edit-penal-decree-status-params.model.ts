@@ -7,16 +7,19 @@ export class EditPenalDecreeStatusDialogParams {
     public model: PenalDecreeStatusDTO | undefined;
     public viewMode: boolean = false;
     public decreeType: PenalDecreeTypeEnum;
+    public penalDecreeId!: number;
 
     public constructor(
         service: IPenalDecreesService,
         model: PenalDecreeStatusDTO | undefined,
         decreeType: PenalDecreeTypeEnum,
-        viewMode: boolean = false
+        viewMode: boolean = false,
+        penalDecreeId: number
     ) {
         this.service = service;
         this.model = model;
         this.viewMode = viewMode;
         this.decreeType = decreeType;
+        this.penalDecreeId = penalDecreeId;
     }
 }

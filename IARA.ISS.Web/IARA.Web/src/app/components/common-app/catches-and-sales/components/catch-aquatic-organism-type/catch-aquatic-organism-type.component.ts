@@ -24,6 +24,8 @@ import { CatchTypeCodesEnum } from '@app/enums/catch-type-codes.enum';
 import { CatchSizeCodesEnum } from '@app/enums/catch-size-codes.enum';
 import { WaterTypesEnum } from '@app/enums/water-types.enum';
 import { ShipLogBookPageDataService } from '../ship-log-book/services/ship-log-book-page-data.service';
+import { IGroupedOptions } from '@app/shared/components/input-controls/tl-autocomplete/interfaces/grouped-options.interface';
+import { AquaticOrganismCollectionTypesEnum } from '../catch-aquatic-organism-types-array/enums/aquatic-organism-collection-types.enum';
 
 const DEFAULT_CATCH_TYPE_CODE = CatchTypeCodesEnum.TAKEN_ONBOARD;
 const DEFAULT_CATCH_SIZE_CODE = CatchSizeCodesEnum.LSC;
@@ -41,7 +43,7 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
     public shipLogBookPageDataService!: ShipLogBookPageDataService;
 
     @Input()
-    public aquaticOrganisms: NomenclatureDTO<number>[] = [];
+    public aquaticOrganisms: IGroupedOptions<number>[] = [];
 
     @Input()
     public sturgeonGenders: NomenclatureDTO<SturgeonGendersEnum>[] = [];
@@ -70,6 +72,8 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
 
     public showTurbotControls: boolean = false;
     public showStrugeonControls: boolean = false;
+
+    public aquaticOrganismNotInPermitLicenseWarning: boolean = false;
 
     public isMapPopoverOpened: boolean = false;
     public mapOptions: MapOptions | undefined;
@@ -158,8 +162,15 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
 
     public ngAfterViewInit(): void {
         this.form.get('aquaticOrganismControl')!.valueChanges.subscribe({
-            next: (value: FishNomenclatureDTO | undefined) => {
-                this.setTurbotAndSturgeonFlagsAndValidators(value);
+            next: (value: FishNomenclatureDTO | undefined | string) => {
+                this.validateSelectedAquaticOrganism();
+
+                if (value === null || value === undefined || value instanceof NomenclatureDTO) {
+                    this.setTurbotAndSturgeonFlagsAndValidators(value);
+                }
+                else {
+                    this.setTurbotAndSturgeonFlagsAndValidators(undefined);
+                }
             }
         });
     }
@@ -240,9 +251,13 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
     private fillForm(): void {
         if (this.model !== undefined && this.model !== null) {
             if (this.model.fishId !== null && this.model.fishId !== undefined) {
-                const aquaticOrganism: FishNomenclatureDTO = this.aquaticOrganisms.find(x => x.value === this.model!.fishId)!;
+                const aquaticOrganismGroup = this.aquaticOrganisms.find(x => (x.options as FishNomenclatureDTO[]).some(x => x.value === this.model!.fishId))!;
+                const aquaticOrganism: FishNomenclatureDTO = (aquaticOrganismGroup.options as FishNomenclatureDTO[]).find(x => x.value === this.model!.fishId)!;
+
                 this.model.fishName = aquaticOrganism.displayName;
+
                 this.form.get('aquaticOrganismControl')!.setValue(aquaticOrganism);
+                this.validateSelectedAquaticOrganism();
                 this.setTurbotAndSturgeonFlagsAndValidators(aquaticOrganism);
             }
             else {
@@ -444,7 +459,7 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
 
     private thirdCountryCatchZoneControlValueChanged(value: string | undefined): void {
         const isContinentalCatchControlValue: boolean | undefined = this.form.get('isContinentalCatchControl')!.value;
-            
+
         if (value !== null && value !== undefined && value !== '') {
             this.form.get('catchQuadrantControl')!.clearValidators();
             this.form.get('catchQuadrantControl')!.markAsPending();
@@ -483,6 +498,25 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
 
         if (this.isDisabled) {
             this.form.get('catchQuadrantControl')!.disable();
+        }
+    }
+
+    private validateSelectedAquaticOrganism(): void {
+        const selectedFish: FishNomenclatureDTO | undefined | string = this.form.get('aquaticOrganismControl')!.value;
+
+        if (selectedFish === null || selectedFish === undefined || typeof selectedFish === 'string') {
+            this.aquaticOrganismNotInPermitLicenseWarning = false;
+        }
+        else if (selectedFish instanceof NomenclatureDTO) {
+            const fishGrouping = this.aquaticOrganisms.find(x => (x.options as FishNomenclatureDTO[]).some(y => y.value === selectedFish.value))!;
+            switch (fishGrouping.code) {
+                case AquaticOrganismCollectionTypesEnum.FishesInPermitLicense: {
+                    this.aquaticOrganismNotInPermitLicenseWarning = false;
+                } break;
+                case AquaticOrganismCollectionTypesEnum.FishesNotInPermitLicense: {
+                    this.aquaticOrganismNotInPermitLicenseWarning = true;
+                } break;
+            }
         }
     }
 }

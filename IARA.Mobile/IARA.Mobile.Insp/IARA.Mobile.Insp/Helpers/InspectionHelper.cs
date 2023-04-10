@@ -183,7 +183,7 @@ namespace IARA.Mobile.Insp.Helpers
                             {
                                 Count = f.Count,
                                 NetEyeSize = f.NetEyeSize,
-                                Marks = string.Join(", ", f.Marks.Select(s => s.Number)),
+                                Marks = string.Join(", ", f.Marks.Select(s => s.FullNumber?.ToString())),
                                 Type = fishingGearTypes.Find(s => s.Id == f.TypeId) ?? fishingGearTypes[0],
                                 CheckedValue = InspectedFishingGearEnum.R,
                                 Dto = new InspectedFishingGearDto

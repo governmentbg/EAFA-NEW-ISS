@@ -1,5 +1,6 @@
 ﻿<mat-form-field style="width: 100%;"
-                [appearance]="appearance">
+                [appearance]="appearance"
+                [floatLabel]="floatLabel">
     <mat-label>{{ label }}</mat-label>
     <div *ngIf="ngControl?.control !== null && ngControl?.control !== undefined; else inputWithoutFormControl"
          [matTooltip]="label"

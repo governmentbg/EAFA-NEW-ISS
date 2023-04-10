@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { PrefixInputDTO } from './PrefixInputDTO';
 import { FishingGearMarkStatusesEnum } from '@app/enums/fishing-gear-mark-statuses.enum';
 
 export class FishingGearMarkDTO { 
@@ -11,8 +12,8 @@ export class FishingGearMarkDTO {
     @StrictlyTyped(Number)
     public id?: number;
 
-    @StrictlyTyped(String)
-    public number?: string;
+    @StrictlyTyped(PrefixInputDTO)
+    public fullNumber?: PrefixInputDTO;
 
     @StrictlyTyped(Boolean)
     public isActive?: boolean;

@@ -133,9 +133,25 @@
                            (activeRecordChanged)="addEditPenalDecree($event, !$event.isActive || !canEditRecords)">
                 <row-detail>
                     <ng-template let-row="row" ngx-datatable-row-detail-template>
-                        <penal-points fxFlexFill
-                                      [penalDecreeId]="row.data.id">
-                        </penal-points>
+                        <div fxLayout="column" fxLayoutGap ="1em">
+                            <decree-statuses-table *ngIf="(auanId === null || auanId === undefined) && canReadStatusRecords"
+                                                   fxFlexFill
+                                                   [rows]="row.data.statuses"
+                                                   [showAddButton]="canAddStatusRecords"
+                                                   [canEditPenalDecreeStatuses]="canEditStatusRecords"
+                                                   [canDeletePenalDecreeStatuses]="canDeleteStatusRecords"
+                                                   [canRestorePenalDecreeStatuses]="canRestoreStatusRecords"
+                                                   (onEditPenalDecreeStatus)="addEditStatus($event, false, row.data)"
+                                                   (onViewPenalDecreeStatus)="addEditStatus($event, true, row.data)"
+                                                   (onDeletePenalDecreeStatus)="deleteStatus($event)"
+                                                   (onRestorePenalDecreeStatus)="undoDeleteStatus($event)"
+                                                   (onActiveRecordChanged)="addEditStatus($event, $event.viewMode, row.data)">
+                            </decree-statuses-table>
+
+                            <penal-points fxFlexFill
+                                          [penalDecreeId]="row.data.id">
+                            </penal-points>
+                        </div>
                     </ng-template>
                 </row-detail>
 

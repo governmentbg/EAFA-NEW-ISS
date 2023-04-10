@@ -16,7 +16,7 @@ import { Environment } from '@env/environment';
 import { FuseProgressBarModule, FuseSidebarModule, FuseThemeOptionsModule } from '@fuse/components';
 import { FuseSharedModule } from '@fuse/fuse-shared.module';
 import { FuseModule } from '@fuse/fuse.module';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { AuthModule } from 'angular-auth-oidc-client';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { IConfiguration } from '../environments/environment.interface';
@@ -132,11 +132,11 @@ export function initializeApplication(translationLoad: FuseTranslationLoaderServ
                 });
             });
 
-        loadTranslationResources(translationLoad, localStorageService);
+        await loadTranslationResources(translationLoad, localStorageService);
     };
 }
 
-export async function loadTranslationResources(translationLoad: FuseTranslationLoaderService, localStorageService: LocalStorageService) {
+export async function loadTranslationResources(translationLoad: FuseTranslationLoaderService, localStorageService: LocalStorageService): Promise<void> {
     let language: string;
     if (localStorageService.hasItem('lang')) {
         language = localStorageService.get('lang');
@@ -149,11 +149,12 @@ export async function loadTranslationResources(translationLoad: FuseTranslationL
     const backupTranslation = TranslationUtils.getLocalTranslations(language);
     translationLoad.loadTranslations(backupTranslation);
 
-    //let translationLoader: TranslateLoader = TranslationUtils.getWebTranslationLoader();
-    //let translation = await TranslationUtils.getTranslationsFromLoader(translationLoader, language);
+    let translationLoader: TranslateLoader = TranslationUtils.getWebTranslationLoader();
+    let translation = await TranslationUtils.getTranslationsFromLoader(translationLoader, language);
 
-    //if (translation != undefined)
-    //    translationLoad.loadTranslations(backupTranslation, translation);
+    if (translation !== null && translation !== undefined) {
+        translationLoad.loadTranslations(translation);
+    }
 }
 
 @NgModule({

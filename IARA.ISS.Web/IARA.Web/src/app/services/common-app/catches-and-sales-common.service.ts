@@ -42,6 +42,8 @@ import { LogBookNomenclatureDTO } from '@app/models/generated/dtos/LogBookNomenc
 import { LogBookPagePersonTypesEnum } from '@app/enums/log-book-page-person-types.enum';
 import { CatchRecordFishDTO } from '@app/models/generated/dtos/CatchRecordFishDTO';
 import { OnBoardCatchRecordFishDTO } from '@app/models/generated/dtos/OnBoardCatchRecordFishDTO';
+import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
+import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
 
 type FiltersUnion = CatchesAndSalesAdministrationFilters | CatchesAndSalesPublicFilters;
 
@@ -446,6 +448,10 @@ export class CatchesAndSalesCommonService {
         });
     }
 
+    public restoreAnnulledShipLogBookPage(logBookPageId: number): Observable<void> {
+        throw new Error("Should not call this method from the common catch and sales service.");
+    }
+
     public addFirstSaleLogBookPage(area: AreaTypes, controller: string, model: FirstSaleLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
         const params: HttpParams = new HttpParams().append('hasMissingPagesRangePermission', hasMissingPagesRangePermission.toString());
 
@@ -461,6 +467,10 @@ export class CatchesAndSalesCommonService {
             properties: new RequestProperties({ asFormData: true }),
             successMessage: 'succ-edit-first-sale-log-book-page'
         });
+    }
+
+    public restoreAnnulledFirstSaleLogBookPage(logBookPageId: number): Observable<void> {
+        throw new Error("Should not call this method from the common catch and sales service.");
     }
 
     public addAdmissionLogBookPage(area: AreaTypes, controller: string, model: AdmissionLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
@@ -480,6 +490,10 @@ export class CatchesAndSalesCommonService {
         });
     }
 
+    public restoreAnnulledAdmissionLogBookPage(logBookPageId: number): Observable<void> {
+        throw new Error("Should not call this method from the common catch and sales service.");
+    }
+
     public addTransportationLogBookPage(area: AreaTypes, controller: string, model: TransportationLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
         const params: HttpParams = new HttpParams().append('hasMissingPagesRangePermission', hasMissingPagesRangePermission.toString());
 
@@ -495,6 +509,10 @@ export class CatchesAndSalesCommonService {
             properties: new RequestProperties({ asFormData: true }),
             successMessage: 'succ-edit-transportation-log-book-page'
         });
+    }
+
+    public restoreAnnulledTransportationLogBookPage(logBookPageId: number): Observable<void> {
+        throw new Error("Should not call this method from the common catch and sales service.");
     }
 
     public addAquacultureLogBookPage(area: AreaTypes, controller: string, model: AquacultureLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
@@ -514,8 +532,33 @@ export class CatchesAndSalesCommonService {
         });
     }
 
-    public annulLogBookPage(area: AreaTypes, controller: string, reasonData: LogBookPageCancellationReasonDTO): Observable<void> {
-        return this.http.post(area, controller, 'AnnulLogBookPage', reasonData, {
+    public restoreAnnulledAquacultureLogBookPage(logBookPageId: number): Observable<void> {
+        throw new Error("Should not call this method from the common catch and sales service.");
+    }
+
+    public annulLogBookPage(area: AreaTypes, controller: string, reasonData: LogBookPageCancellationReasonDTO, logBookType: LogBookTypesEnum): Observable<void> {
+        let serviceName: string = '';
+
+        switch (logBookType) {
+            case LogBookTypesEnum.Ship:
+                serviceName = 'AnnulShipLogBookPage';
+                break;
+            case LogBookTypesEnum.FirstSale:
+                serviceName = 'AnnulFirstSaleLogBookPage';
+                break;
+            case LogBookTypesEnum.Admission:
+                serviceName = 'AnnulAdmissionLogBookPage';
+                break;
+            case LogBookTypesEnum.Transportation:
+                serviceName = 'AnnulTransportationLogBookPage';
+                break;
+            case LogBookTypesEnum.Aquaculture:
+                serviceName = 'AnnulAquacultureLogBookPage';
+                break;
+            default: throw new Error(`Unknown log book type enum: ${LogBookTypesEnum[logBookType]}`);
+        }
+
+        return this.http.post(area, controller, serviceName, reasonData, {
             successMessage: 'succ-log-book-page-annulment'
         });
     }
@@ -526,6 +569,7 @@ export class CatchesAndSalesCommonService {
     }
 
     // Nomenclatures
+
     public getLogBookTypes(area: AreaTypes, controller: string): Observable<NomenclatureDTO<number>[]> {
         return this.http.get(area, controller, 'GetLogBookTypes', {
             responseTypeCtr: NomenclatureDTO
@@ -625,6 +669,12 @@ export class CatchesAndSalesCommonService {
 
             return fishingGearsRegister;
         }));
+    }
+
+    public getLogBookPageEditExceptions(area: AreaTypes, controller: string): Observable<LogBookPageEditExceptionDTO[]> {
+        return this.http.get(area, controller, 'GetLogBookPageEditExceptions', {
+            responseTypeCtr: LogBookPageEditExceptionDTO
+        });
     }
 
     // Helpers

@@ -49,8 +49,6 @@ export class EditShipOwnerComponent implements IDialogComponent, AfterViewInit {
             regixPersonData: new RegixPersonDataDTO(),
             regixLegalData: new RegixLegalDataDTO()
         });
-
-        this.buildForm();
     }
 
     public ngAfterViewInit(): void {
@@ -80,6 +78,8 @@ export class EditShipOwnerComponent implements IDialogComponent, AfterViewInit {
         this.isEditing = data.isEgnLncReadOnly;
         this.isThirdPartyShip = data.isThirdPartyShip;
         this.submittedFor = data.submittedFor;
+
+        this.buildForm();
 
         if (data.expectedResults) {
             this.expectedResults = data.expectedResults;

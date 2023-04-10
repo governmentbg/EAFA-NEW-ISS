@@ -16,7 +16,7 @@
                                   formControlName="pageNumberControl"
                                   label="{{ 'catches-and-sales.add-log-book-page-wizard-page-number-to-add' | tlTranslate }}"
                                   tooltipResourceName="catches-and-sales.add-log-book-page-wizard-page-number-to-add-helper"
-                                  [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                                  [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                         </tl-input>
                     </div>
                     <ng-container *ngIf="logBookType === logBookTypesEnum.Transportation">

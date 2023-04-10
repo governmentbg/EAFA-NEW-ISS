@@ -33,6 +33,9 @@ import { PenalDecreeTypeEnum } from '@app/enums/penal-decree-type.enum';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { RangeInputData } from '@app/shared/components/input-controls/tl-range-input/range-input.component';
 import { EditDecreeResolutionComponent } from './edit-decree-resolution/edit-decree-resolution.component';
+import { PenalDecreeStatusDTO } from '@app/models/generated/dtos/PenalDecreeStatusDTO';
+import { EditPenalDecreeStatusDialogParams } from './models/edit-penal-decree-status-params.model';
+import { EditPenalDecreeStatusComponent } from './edit-penal-decree-status/edit-penal-decree-status.component';
 
 @Component({
     selector: 'penal-decrees',
@@ -58,6 +61,13 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
     public readonly canEditRecords: boolean;
     public readonly canDeleteRecords: boolean;
     public readonly canRestoreRecords: boolean;
+
+    public readonly canReadStatusRecords: boolean;
+    public readonly canAddStatusRecords: boolean;
+    public readonly canEditStatusRecords: boolean;
+    public readonly canDeleteStatusRecords: boolean;
+    public readonly canRestoreStatusRecords: boolean;
+
     public readonly penalDecreeTypeEnum: typeof PenalDecreeTypeEnum = PenalDecreeTypeEnum;
 
     @ViewChild(TLDataTableComponent)
@@ -71,10 +81,11 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
     private readonly service: IPenalDecreesService;
     private readonly nomenclatures: CommonNomenclatures;
     private readonly confirmDialog: TLConfirmDialog;
-    private penalDecreeDialog: TLMatDialog<EditPenalDecreeComponent>;
-    private agreementDialog: TLMatDialog<EditDecreeAgreementComponent>;
-    private warningDialog: TLMatDialog<EditDecreeWarningComponent>;
-    private resolutionDialog: TLMatDialog<EditDecreeResolutionComponent>;
+    private readonly penalDecreeDialog: TLMatDialog<EditPenalDecreeComponent>;
+    private readonly agreementDialog: TLMatDialog<EditDecreeAgreementComponent>;
+    private readonly warningDialog: TLMatDialog<EditDecreeWarningComponent>;
+    private readonly resolutionDialog: TLMatDialog<EditDecreeResolutionComponent>;
+    private readonly editStatusDialog: TLMatDialog<EditPenalDecreeStatusComponent>;
     private readonly auanPickerDialog: TLMatDialog<EditPenalDecreeAuanPickerComponent>;
     private readonly auanService: IAuanRegisterService;
 
@@ -87,6 +98,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         agreementDialog: TLMatDialog<EditDecreeAgreementComponent>,
         warningDialog: TLMatDialog<EditDecreeWarningComponent>,
         resolutionDialog: TLMatDialog<EditDecreeResolutionComponent>,
+        editStatusDialog: TLMatDialog<EditPenalDecreeStatusComponent>,
         auanPickerDialog: TLMatDialog<EditPenalDecreeAuanPickerComponent>,
         permissions: PermissionsService,
         auanService: AuanRegisterService
@@ -99,6 +111,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         this.agreementDialog = agreementDialog;
         this.warningDialog = warningDialog;
         this.resolutionDialog = resolutionDialog;
+        this.editStatusDialog = editStatusDialog;
         this.auanPickerDialog = auanPickerDialog;
         this.auanService = auanService;
 
@@ -106,6 +119,12 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         this.canEditRecords = permissions.has(PermissionsEnum.PenalDecreesEditRecords);
         this.canDeleteRecords = permissions.has(PermissionsEnum.PenalDecreesDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.PenalDecreesRestoreRecords);
+
+        this.canReadStatusRecords = permissions.has(PermissionsEnum.PenalDecreeStatusesRead);
+        this.canAddStatusRecords = permissions.has(PermissionsEnum.PenalDecreeStatusesAddRecords);
+        this.canEditStatusRecords = permissions.has(PermissionsEnum.PenalDecreeStatusesEditRecords);
+        this.canDeleteStatusRecords = permissions.has(PermissionsEnum.PenalDecreeStatusesDeleteRecords);
+        this.canRestoreStatusRecords = permissions.has(PermissionsEnum.PenalDecreeStatusesRestoreRecords);
 
         this.buildForm();
 
@@ -186,7 +205,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             requestServiceMethod: this.service.getAllPenalDecrees.bind(this.service),
             filtersMapper: this.mapFilters.bind(this)
         });
-        
+
         this.grid.advancedFilters = new PenalDecreesFilters({
             auanId: this.auanId ?? undefined
         });
@@ -309,6 +328,139 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                 }
             }
         });
+    }
+
+    public addEditStatus(status: PenalDecreeStatusDTO | undefined, viewMode: boolean = false, decree: PenalDecreeDTO): void {
+        const readOnly: boolean = viewMode === true;
+
+        let data: EditPenalDecreeStatusDialogParams | undefined;
+        let auditBtn: IHeaderAuditButton | undefined;
+        let title: string;
+        
+        if (status !== undefined) {
+            data = new EditPenalDecreeStatusDialogParams(this.service, status, decree.decreeType!, viewMode, decree.id!);
+
+            if (status.id !== undefined) {
+                auditBtn = {
+                    id: status.id,
+                    getAuditRecordData: this.service.getPenalDecreeStatusAudit.bind(this.service),
+                    tableName: 'PenalDecreeStatus'
+                }
+            }
+
+            switch (decree.decreeType) {
+                case PenalDecreeTypeEnum.PenalDecree:
+                    if (readOnly) {
+                        title = this.translate.getValue('penal-decrees.view-penal-decree-status-dialog-title');
+                    }
+                    else {
+                        title = this.translate.getValue('penal-decrees.edit-penal-decree-status-dialog-title');
+                    }
+                    break;
+                case PenalDecreeTypeEnum.Agreement:
+                    if (readOnly) {
+                        title = this.translate.getValue('penal-decrees.view-agreement-status-dialog-title');
+                    }
+                    else {
+                        title = this.translate.getValue('penal-decrees.edit-agreement-status-dialog-title');
+                    }
+                    break;
+                case PenalDecreeTypeEnum.Warning:
+                    if (readOnly) {
+                        title = this.translate.getValue('penal-decrees.view-warning-status-dialog-title');
+                    }
+                    else {
+                        title = this.translate.getValue('penal-decrees.edit-warning-status-dialog-title');
+                    }
+                    break;
+                case PenalDecreeTypeEnum.Resolution:
+                    if (readOnly) {
+                        title = this.translate.getValue('penal-decrees.view-resolution-status-dialog-title');
+                    }
+                    else {
+                        title = this.translate.getValue('penal-decrees.edit-resolution-status-dialog-title');
+                    }
+                    break;
+                default:
+                    title = '';
+            }
+        }
+        else {
+            data = new EditPenalDecreeStatusDialogParams(this.service, undefined, decree.decreeType!, false, decree.id!);
+
+            switch (decree.decreeType) {
+                case PenalDecreeTypeEnum.PenalDecree:
+                    title = this.translate.getValue('penal-decrees.add-penal-decree-status-dialog-title');
+                    break;
+                case PenalDecreeTypeEnum.Agreement:
+                    title = this.translate.getValue('penal-decrees.add-agreement-status-dialog-title');
+                    break;
+                case PenalDecreeTypeEnum.Warning:
+                    title = this.translate.getValue('penal-decrees.add-warning-status-dialog-title');
+                    break;
+                case PenalDecreeTypeEnum.Resolution:
+                    title = this.translate.getValue('penal-decrees.add-resolution-status-dialog-title');
+                    break;
+                default:
+                    title = '';
+            }
+        }
+
+        const dialog = this.editStatusDialog.openWithTwoButtons({
+            title: title,
+            TCtor: EditPenalDecreeStatusComponent,
+            headerAuditButton: auditBtn,
+            headerCancelButton: {
+                cancelBtnClicked: this.closeEditStatusDialogBtnClicked.bind(this)
+            },
+            componentData: data,
+            translteService: this.translate,
+            viewMode: viewMode
+        }, '1200px');
+
+        dialog.subscribe({
+            next: (result: PenalDecreeStatusDTO | undefined) => {
+                if (result !== undefined && result !== null) {
+                    this.grid.refreshData();
+                }
+            }
+        });
+    }
+
+    public deleteStatus(status: PenalDecreeStatusDTO): void {
+        this.confirmDialog.open({
+            title: this.translate.getValue('penal-decrees.delete-status-dialog-title'),
+            message: this.translate.getValue('penal-decrees.delete-status-dialog-message'),
+            okBtnLabel: this.translate.getValue('penal-decrees.delete-status-dialog-ok-btn-label')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.deletePenalDecreeStatus(status.id!).subscribe({
+                        next: () => {
+                            this.grid.refreshData();
+                        }
+                    });
+                }
+            }
+        })
+    }
+
+    public undoDeleteStatus(status: PenalDecreeStatusDTO): void {
+        this.confirmDialog.open().subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.undoDeletePenalDecreeStatus(status.id!).subscribe({
+                        next: () => {
+                            this.grid.refreshData();
+                        }
+                    });
+                }
+            }
+        })
+    }
+
+    private closeEditStatusDialogBtnClicked(closeFn: HeaderCloseFunction): void {
+        closeFn();
     }
 
     private buildForm(): void {

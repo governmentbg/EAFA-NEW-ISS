@@ -60,6 +60,7 @@ import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'edit-scientific-permit',
@@ -108,6 +109,9 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
     public isEditing: boolean = false;
     public isRegisterEntry: boolean = false;
     public isPublicApp: boolean;
+
+    public shipControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.shipControlErrorLabelText.bind(this);
+    public getCoordinationDateErrorTextMethod: GetControlErrorLabelTextCallback = this.getCoordinationDateErrorText.bind(this);
 
     @ViewChild('holdersTable')
     private holdersTable!: TLDataTableComponent;
@@ -428,7 +432,7 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
         }
     }
 
-    public getCoordinationDateErrorText(controlName: string, error: Record<string, unknown>, errorCode: string): TLError | undefined {
+    public getCoordinationDateErrorText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'coordinationDateControl') {
             if (errorCode === 'coordinationdatelessthanrequestdate') {
                 return new TLError({
@@ -646,7 +650,7 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
         return result;
     }
 
-    public shipControlErrorLabelTest(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+    public shipControlErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'existingShipNameControl') {
             if (errorCode === 'shipDestroyedOrDeregistered' && error === true) {
                 return new TLError({

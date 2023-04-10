@@ -33,7 +33,8 @@ export class MainNavigation {
                             data: {
                                 translate: item.translate,
                                 permissions: {
-                                    only: item.permissions
+                                    only: item.permissions,
+                                    except: item.exceptPermissions
                                 }
                             }
                         });
@@ -45,7 +46,8 @@ export class MainNavigation {
                             data: {
                                 translate: item.translate,
                                 permissions: {
-                                    only: item.permissions
+                                    only: item.permissions,
+                                    except: item.exceptPermissions
                                 }
                             }
                         });
@@ -66,7 +68,8 @@ export class MainNavigation {
             navigation = [];
             for (const item of menu) {
 
-                if ((!isAuthenticated && item.isPublic) || (isAuthenticated && await MainNavigation.hasPermissions(item.permissions, ngxPermissionsService))) {
+                if ((!isAuthenticated && item.isPublic)
+                    || (isAuthenticated && await MainNavigation.hasPermissions(item.permissions, ngxPermissionsService) && (!item.exceptPermissions || !(await MainNavigation.hasPermissions(item.exceptPermissions, ngxPermissionsService))))) {
 
                     let iconTypeCode: 'IC_ICON' | 'FA_ICON' | 'MAT_ICON';
                     if (item.icon?.startsWith('ic-')) {

@@ -15,6 +15,9 @@ export class AquacultureLogBookPageRegisterDTO {
     public logBookId?: number;
 
     @StrictlyTyped(Number)
+    public logBookTypeId?: number;
+
+    @StrictlyTyped(Number)
     public pageNumber?: number;
 
     @StrictlyTyped(Boolean)

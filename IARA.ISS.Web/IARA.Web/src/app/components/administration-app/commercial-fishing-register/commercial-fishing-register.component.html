@@ -248,7 +248,8 @@
                                         <ng-template let-row="row" ngx-datatable-cell-template>
                                             <div fxLayout="row" fxFlex="100" fxLayoutAlign="start center" fxLayoutGap="1em">
                                                 <div *ngIf="row.data.isSuspended" fxLayoutAlign="center center" fzFlex="nogrow">
-                                                    <tl-icon icon="highlight_off" iconClass="error-color"></tl-icon>
+                                                    <tl-icon icon="ic-calendar-cancel-16-filled" iconClass="error-color" [size]="icIconSize">
+                                                    </tl-icon>
                                                 </div>
                                                 <div fxFlex>
                                                     {{ row.data.suspensionsInformation }}
@@ -259,6 +260,13 @@
                                     <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
                                         <ng-template let-row="row" ngx-datatable-cell-template>
                                             <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                                <tl-icon-button *ngIf="row.data.isActive && (shipId === null || shipId === undefined) && canReadPermitLicenseSuspensionsRecords"
+                                                                tooltipText="{{ 'commercial-fishing.open-permit-license-suspensions' | tlTranslate }}"
+                                                                icon="ic-calendar-cancel-16-filled"
+                                                                iconClass="accent-color"
+                                                                [size]="icIconSize"
+                                                                (buttonClicked)="openPermitLicenseSuspensions(row.data)">
+                                                </tl-icon-button>
                                                 <tl-icon-button *ngIf="canReadPermitLicenseApplications && (shipId === null || shipId === undefined)"
                                                                 icon="search"
                                                                 (buttonClicked)="gotToPermitLicenseApplication(row.data)"
@@ -338,7 +346,8 @@
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row" fxFlex="100" fxLayoutAlign="start center" fxLayoutGap="1em">
                             <div *ngIf="row.data.isSuspended" fxLayoutAlign="center center" fxFlex="nogrow">
-                                <tl-icon icon="highlight_off" iconClass="error-color"></tl-icon>
+                                <tl-icon icon="ic-calendar-cancel-16-filled" iconClass="error-color" [size]="icIconSize">
+                                </tl-icon>
                             </div>
                             <div fxFlex>
                                 {{ row.data.suspensionsInformation }}
@@ -349,6 +358,13 @@
                 <data-template-column [flexRate]="0.5" [cellClass]="'justify-center'">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button *ngIf="row.data.isActive && (shipId === null || shipId === undefined) && canReadPermitSuspensionsRecords"
+                                            tooltipText="{{ 'commercial-fishing.open-permit-suspensions' | tlTranslate }}"
+                                            icon="ic-calendar-cancel-16-filled"
+                                            iconClass="accent-color"
+                                            [size]="icIconSize"
+                                            (buttonClicked)="openPermitSuspensions(row.data)">
+                            </tl-icon-button>
                             <tl-icon-button *ngIf="canReadPermitApplications && (shipId === null || shipId === undefined)"
                                             icon="search"
                                             (buttonClicked)="gotToPermitApplication(row.data)"
@@ -356,10 +372,10 @@
                                             tooltipText="{{ 'commercial-fishing.go-to-permit-application' | tlTranslate }}">
                             </tl-icon-button>
                             <tl-icon-button *ngIf="row.data.isActive && (shipId === null || shipId === undefined)"
+                                            tooltipText="{{ 'commercial-fishing.delivery-data' | tlTranslate }}"
                                             icon="ic-fluent-document-briefcase-24-regular"
                                             iconClass="accent-color"
                                             [size]="icIconSize"
-                                            tooltipText="{{ 'commercial-fishing.delivery-data' | tlTranslate }}"
                                             (buttonClicked)="openDeliveryDialog(row.data, !canEditPermitRecords)">
                             </tl-icon-button>
                             <tl-icon-button *ngIf="canReadPermitRecords || hasPermitsReadAllPermission"

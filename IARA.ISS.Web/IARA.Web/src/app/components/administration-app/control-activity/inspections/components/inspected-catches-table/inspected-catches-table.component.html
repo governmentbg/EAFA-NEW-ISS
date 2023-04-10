@@ -16,7 +16,8 @@
                      dataType="nomenclature"
                      columnName="{{ 'inspections.catch-fish' | tlTranslate }}">
         </data-column>
-        <data-column [flexRate]="0.2"
+        <data-column *ngIf="hasCatchType === true"
+                     [flexRate]="0.2"
                      propertyName="catchInspectionTypeId"
                      [formGroup]="catchesFormGroup"
                      [options]="types"

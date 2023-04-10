@@ -139,17 +139,21 @@
                           label="{{ 'catches-and-sales.page-product-quantity-kg' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.page-product-quantity-kg-helper">
                 </tl-input>
-                <tl-input fxFlex="33"
+                <tl-input *ngIf="hasPrice"
+                          fxFlex="33"
                           formControlName="unitPriceControl"
                           label="{{ 'catches-and-sales.page-product-unit-price' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.page-product-unit-price-helper">
                 </tl-input>
-                <tl-input fxFlex="33"
+                <tl-input *ngIf="hasPrice"
+                          fxFlex="33"
                           formControlName="totalPriceControl"
                           label="{{ 'catches-and-sales.page-product-total-price' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.page-product-total-price-helper"
                           [readonly]="true">
                 </tl-input>
+                <div *ngIf="!hasPrice" fxFlex="33"></div>
+                <div *ngIf="!hasPrice" fxFlex="33"></div>
             </div>
         </tl-card-content>
     </tl-card>

@@ -41,6 +41,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     public mapOptions: MapOptions;
 
     public hasCatchType: boolean = true;
+    public hasUnloadedQuantity: boolean = true;
     public isMapPopoverOpened: boolean = false;
     public readOnly: boolean = false;
     public aquacultureRegistered: boolean = true;
@@ -161,11 +162,16 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         this.fishes = data.fishes;
         this.types = data.types;
         this.catchZones = data.catchZones;
+        this.hasUnloadedQuantity = data.hasUnloadedQuantity;
         this.presentations = data.presentations;
         this.hasCatchType = data.hasCatchType;
 
         if (!data.hasCatchType) {
             this.form.get('catchTypeControl')!.disable();
+        }
+
+        if (!data.hasUnloadedQuantity) {
+            this.form.get('unloadedQuantityControl')!.disable();
         }
     }
 
@@ -288,10 +294,6 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
 
                 this.pullDeclarations();
             }
-        });
-
-        this.form.get('shipControl')!.valueChanges.subscribe({
-            next: this.pullDeclarations.bind(this)
         });
 
         this.form.get('aquacultureRegisteredControl')!.valueChanges.subscribe({

@@ -27,6 +27,7 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
     public numPrefix?: string;
 
     private numberWritten: boolean = false;
+    private skipDisabledCheck: boolean = false;
 
     private readonly service: InspectionsService;
     private readonly translate: FuseTranslationLoaderService;
@@ -50,7 +51,9 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
 
     public writeValue(value: InspectionGeneralInfoModel): void {
         if (value !== undefined && value !== null) {
+            this.skipDisabledCheck = true;
             this.onReportNumChanged(value.reportNum!.split('-'));
+            this.skipDisabledCheck = false;
             this.numberWritten = true;
 
             this.form.get('inspectionStartDateControl')!.setValue(value.startDate);
@@ -74,7 +77,7 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
     }
 
     public onReportNumChanged(codes: string[]): void {
-        if (this.numberWritten) {
+        if (this.numberWritten || (this.isDisabled && !this.skipDisabledCheck)) {
             this.numberWritten = false;
             return;
         }

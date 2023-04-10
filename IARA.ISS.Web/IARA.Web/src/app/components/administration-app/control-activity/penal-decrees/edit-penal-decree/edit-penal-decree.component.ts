@@ -22,7 +22,6 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { forkJoin } from 'rxjs';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
-import { PenalDecreeStatusDTO } from '@app/models/generated/dtos/PenalDecreeStatusDTO';
 import { PenalDecreeStatusTypesEnum } from '@app/enums/penal-decree-status-types.enum';
 import { PenalDecreeTypeEnum } from '@app/enums/penal-decree-type.enum';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
@@ -60,7 +59,6 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
     public courts: NomenclatureDTO<number>[] = [];
     public sectors: NomenclatureDTO<number>[] = [];
 
-    public statuses: PenalDecreeStatusDTO[] = [];
     public fishCompensations: PenalDecreeFishCompensationDTO[] = [];
     public violatedRegulations: AuanViolatedRegulationDTO[] = [];
 
@@ -239,7 +237,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
                             next: () => {
                                 this.service.downloadPenalDecree(this.penalDecreeId!).subscribe({
                                     next: () => {
-                                        dialogClose();
+                                        dialogClose(this.model);
                                     }
                                 });
                             },
@@ -255,7 +253,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
 
                                 this.service.downloadPenalDecree(id).subscribe({
                                     next: () => {
-                                        dialogClose();
+                                        dialogClose(this.model);
                                     }
                                 });
                             },
@@ -296,7 +294,6 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             fishCompensationViolatedRegulationsControl: new FormControl(null),
 
             deliveryControl: new FormControl(null),
-            statusesControl: new FormControl(null),
 
             filesControl: new FormControl(null)
         }, this.violatedRegulationsValidator());
@@ -353,10 +350,6 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             this.form.get('deliveryControl')!.setValue(this.model.deliveryData);
         }
 
-        if (this.model.statuses !== undefined && this.model.statuses !== null) {
-            this.form.get('statusesControl')!.setValue(this.model.statuses);
-        }
-
         this.form.get('filesControl')!.setValue(this.model.files);
 
         if (this.model.sanctionTypeIds) {
@@ -372,7 +365,6 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         }
 
         setTimeout(() => {
-            this.statuses = this.model.statuses ?? [];
             this.fishCompensations = this.model.fishCompensations ?? [];
             this.violatedRegulations = this.model.auanViolatedRegulations ?? [];
         });
@@ -399,7 +391,6 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.model.comments = this.form.get('commentsControl')!.value;
         this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
         this.model.deliveryData = this.form.get('deliveryControl')!.value;
-        this.model.statuses = this.form.get('statusesControl')!.value;
 
         this.model.files = this.form.get('filesControl')!.value;
 
@@ -464,7 +455,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
                 const count: number | undefined = this.fishCompensationForm.get('countControl')!.value;
                 const weight: number | undefined = this.fishCompensationForm.get('weightControl')!.value;
 
-                if ((count === undefined || count === null || count === 0) && (weight === undefined || weight === null || weight === 0)) {
+                if ((count === undefined || count === null || Number(count) === 0) && (weight === undefined || weight === null || Number(weight) === 0)) {
                     return { 'fishCountValidationError': true };
                 }
             }

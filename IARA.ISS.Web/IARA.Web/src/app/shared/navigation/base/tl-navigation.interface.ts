@@ -8,6 +8,7 @@
     icon?: string;
     component?: any;
     permissions?: string[];
+    exceptPermissions?: string[],
     children?: ITLNavigation[];
     canLoad?: any[] | undefined;
     canActivate?: any[] | undefined;
@@ -27,6 +28,7 @@ export class TLNavigation implements ITLNavigation {
         public icon?: string | undefined,
         public component?: any,
         public permissions?: string[] | undefined,
+        public exceptPermissions?: string[] | undefined,
         public children?: ITLNavigation[] | undefined,
         public canLoad?: any[] | undefined,
         public canActivate?: any[] | undefined,

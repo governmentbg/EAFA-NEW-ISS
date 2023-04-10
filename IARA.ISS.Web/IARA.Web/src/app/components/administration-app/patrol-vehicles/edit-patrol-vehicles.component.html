@@ -43,7 +43,7 @@
                 <tl-input *ngIf="vehicleType === vehicleTypeEnum.Boat || vehicleType === vehicleTypeEnum.Ship"
                           fxFlex="33"
                           formControlName="cfrControl"
-                          [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                           label="{{ 'patrol-vehicles.cfr' | tlTranslate }}"
                           tooltipResourceName="patrol-vehicles.cfr-helper">
                 </tl-input>

@@ -106,7 +106,15 @@
             <DataTemplate>
                 <tl:TLTableRow x:DataType="local:MarkViewModel">
                     <tl:TLEntry IsTitleVisible="False"
-                            ValidState="{Binding Number}">
+                            ValidState="{Binding Number}"
+                            Keyboard="Numeric">
+                        <StackLayout Orientation="Horizontal"
+                                Spacing="0">
+                            <Label Text="{Binding BindingContext.Prefix, Source={Reference view}}"
+                                    VerticalOptions="Center"
+                                    IsVisible="{Binding BindingContext.Prefix, Converter={StaticResource IsNotNull}, Source={Reference view}}" />
+                            <tl:TLInnerInput />
+                        </StackLayout>
                         <tl:TLEntry.IsEnabled>
                             <MultiBinding Converter="{StaticResource All}">
                                 <Binding Path="BindingContext.DialogType"

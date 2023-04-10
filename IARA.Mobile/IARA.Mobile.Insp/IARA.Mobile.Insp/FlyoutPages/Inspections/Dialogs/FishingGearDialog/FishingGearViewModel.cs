@@ -139,7 +139,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                         AddedByInspector = mark.SelectedStatus == FishingGearMarkStatus.MARKED,
                         CreatedOn = mark.CreatedOn,
                     };
-                    markViewModel.Number.Value = mark.Number;
+                    if (mark.FullNumber != null)
+                    {
+                        markViewModel.Number.Value = mark.FullNumber.InputValue;
+                        markViewModel.Prefix = mark.FullNumber.Prefix;
+                    }
                     markViewModel.Status.Value = _allMarkStatuses.Find(f => f.Id == mark.StatusId);
                     Marks.Value.Add(markViewModel);
                 }

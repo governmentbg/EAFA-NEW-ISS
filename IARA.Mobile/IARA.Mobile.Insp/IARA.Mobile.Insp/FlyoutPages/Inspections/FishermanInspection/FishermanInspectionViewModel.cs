@@ -40,7 +40,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
 
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             PatrolVehicles = new PatrolVehiclesViewModel(this, false);
-            InspectedPerson = new PersonViewModel(this, InspectedPersonType.CaptFshmn);
+            InspectedPerson = new PersonViewModel(this, InspectedPersonType.CaptFshmn, false);
             Catches = new CatchInspectionsViewModel(this, showCatchArea: false, showAllowedDeviation: false);
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
@@ -161,6 +161,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
                 InspectedPerson.OnEdit(Edit.Personnel);
                 AdditionalInfo.OnEdit(Edit);
 
+                HasTicket.Value = Edit.TicketNum != null;
+
                 InspectionToggles.AssignFrom(Edit.Checks);
 
                 Address.AssignFrom(Edit.InspectionAddress);
@@ -243,7 +245,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
                         FishermanComment = FishermanComment,
                         FishingHooksCount = ParseHelper.ParseInteger(FishingHooksCount),
                         FishingRodsCount = ParseHelper.ParseInteger(FishingRodsCount),
-                        TicketNum = TicketNumber,
+                        TicketNum = HasTicket.Value ? TicketNumber.Value : null,
                         Personnel = new InspectionSubjectPersonnelDto[]
                         {
                             InspectedPerson

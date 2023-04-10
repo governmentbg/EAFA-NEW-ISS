@@ -19,7 +19,7 @@ namespace IARA.Mobile.Insp.Domain.Entities.Inspections
         public int InspectionStateId { get; set; }
         public string ReportNr { get; set; }
         public DateTime StartDate { get; set; }
-        public bool CreatedByCurrentUser { get; set; }
+        public bool CreatedByCurrentUser { get; set; } = true;
         public string Inspectors { get; set; }
         public string InspectionSubjects { get; set; }
         public bool HasJsonContent { get; set; }

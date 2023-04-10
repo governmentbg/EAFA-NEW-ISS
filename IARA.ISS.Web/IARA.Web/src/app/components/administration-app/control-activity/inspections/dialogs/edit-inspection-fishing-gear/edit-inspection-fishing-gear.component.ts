@@ -161,10 +161,6 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             next: this.onInspectedTypeChanged.bind(this)
         });
 
-        this.form.get('shipControl')!.valueChanges.subscribe({
-            next: this.onShipChanged.bind(this)
-        });
-
         this.form.get('dalyanControl')!.valueChanges.subscribe({
             next: this.onDalyanChanged.bind(this)
         });
@@ -220,8 +216,8 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                     this.form.get('permitControl')!.setValue(this.permits.find(f => f.value === this.model.permitId), { emitEvent: false });
                     this.form.get('fishingGearsControl')!.setValue(this.model.fishingGears, { emitEvent: false });
 
-                    if (this.form.get('inspectedTypeControl')!.value) {
-                        this.selectedPermitIds = [this.form.get('inspectedTypeControl')!.value.value];
+                    if (this.form.get('permitControl')!.value) {
+                        this.selectedPermitIds = [this.form.get('permitControl')!.value.value];
                     }
                 }, 2000);
             } else if (poundNet !== null && poundNet !== undefined) {
@@ -383,7 +379,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             return;
         }
 
-        if (value !== null && value !== undefined) {
+        if (value?.value !== null && value?.value !== undefined) {
             const permits = await this.service.getPoundNetPermitLicenses(value.value!).toPromise();
 
             if (permits !== null && permits !== undefined) {

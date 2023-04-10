@@ -181,10 +181,6 @@ export class ShipsRegisterPublicService extends ApplicationsRegisterPublicBaseSe
         return this.requestService.get(this.area, this.controller, 'GetVesselTypes', { responseTypeCtr: VesselTypeNomenclatureDTO });
     }
 
-    public getPorts(): Observable<NomenclatureDTO<number>[]> {
-        return this.requestService.get(this.area, this.controller, 'GetPorts', { responseTypeCtr: NomenclatureDTO });
-    }
-
     public getHullMaterials(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetHullMaterials', { responseTypeCtr: NomenclatureDTO });
     }

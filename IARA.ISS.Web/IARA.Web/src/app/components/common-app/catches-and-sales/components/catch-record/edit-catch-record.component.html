@@ -7,28 +7,31 @@
     <tl-expansion-panel title="{{ 'catches-and-sales.ship-page-catch-record-basic-information-panel' | tlTranslate }}"
                         tooltipResourceName="catches-and-sales.ship-page-catch-record-basic-information-panel-helper"
                         [validityChecker]="form">
-        <div fxFlexFill fxLayout="column">
+        <div fxLayout="column" fxLayoutGap="1em">
             <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
                 <tl-date-time fxFlex="20"
                               formControlName="gearEntryDateTimeControl"
-                              label="{{ 'catches-and-sales.ship-page-gear-entry-time' | tlTranslate }} ({{ 'common.date-time-control-format-hint' | tlTranslate }})"
+                              label="{{ 'catches-and-sales.ship-page-gear-entry-time' | tlTranslate }} "
                               tooltipResourceName="catches-and-sales.ship-page-gear-entry-time-helper"
-                              [max]="form.controls.gearExitDateTimeControl?.value"
+                              hint="{{ 'common.date-time-control-format-hint' | tlTranslate }}"
                               [disabled]="viewMode"
-                              [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                              [getControlErrorLabelText]="getControlErrorLabelTextMethod"
+                              [showHint]="true">
                 </tl-date-time>
                 <tl-date-time fxFlex="20"
                               formControlName="gearExitDateTimeControl"
-                              label="{{ 'catches-and-sales.ship-page-gear-exit-time' | tlTranslate }} ({{ 'common.date-time-control-format-hint' | tlTranslate }})"
+                              label="{{ 'catches-and-sales.ship-page-gear-exit-time' | tlTranslate }}"
                               tooltipResourceName="catches-and-sales.ship-page-gear-exit-time-helper"
-                              [min]="form.controls.gearEntryDateTimeControl?.value"
+                              hint="{{ 'common.date-time-control-format-hint' | tlTranslate }}"
                               [disabled]="viewMode"
-                              [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                              [getControlErrorLabelText]="getControlErrorLabelTextMethod"
+                              [showHint]="true">
                 </tl-date-time>
                 <tl-input fxFlex="20"
                           formControlName="totalTimeControl"
                           label="{{ 'catches-and-sales.ship-page-total-time' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.ship-page-total-time-helper"
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                           [readonly]="true">
                 </tl-input>
                 <tl-input fxFlex="20"
@@ -42,6 +45,19 @@
                           tooltipResourceName="catches-and-sales.ship-page-catch-fishing-gear-depth-helper">
                 </tl-input>
             </div>
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-slide-toggle fxFlex="20"
+                                 formControlName="hasNoGearEntryControl"
+                                 label="{{ 'catches-and-sales.ship-page-catch-has-no-gear-entry' | tlTranslate }}">
+                </tl-slide-toggle>
+                <tl-slide-toggle fxFlex="20"
+                                 formControlName="hasNoGearExitControl"
+                                 label="{{ 'catches-and-sales.ship-page-catch-has-no-gear-exit' | tlTranslate }}">
+                </tl-slide-toggle>
+                <div fxFlex="20"></div>
+                <div fxFlex="20"></div>
+                <div fxFlex="20"></div>
+            </div>
         </div>
     </tl-expansion-panel>
     <tl-expansion-panel title="{{ 'catches-and-sales.ship-page-catch-aquatic-organisms-panel' | tlTranslate }}"
@@ -52,7 +68,9 @@
                                                 validityChecker
                                                 [service]="service"
                                                 [waterType]="waterType"
-                                                [shipLogBookPageDataService]="shipLogBookPageDataService">
+                                                [permitLicenseAquaticOrganismTypeIds]="permitLicenseAquaticOrganismTypeIds"
+                                                [shipLogBookPageDataService]="shipLogBookPageDataService"
+                                                [disallowAddCatches]="form.get('hasNoGearExitControl')!.value">
             </catch-aquatic-organism-types-array>
         </div>
     </tl-expansion-panel>

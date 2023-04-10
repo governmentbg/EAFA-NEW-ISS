@@ -20,6 +20,9 @@ export class LogBookRegisterDTO {
     @StrictlyTyped(String)
     public number?: string;
 
+    @StrictlyTyped(Number)
+    public typeId?: number;
+
     @StrictlyTyped(String)
     public type?: string;
 

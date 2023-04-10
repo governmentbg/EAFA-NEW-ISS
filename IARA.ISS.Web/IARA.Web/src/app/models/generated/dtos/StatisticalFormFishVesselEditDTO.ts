@@ -55,10 +55,7 @@ export class StatisticalFormFishVesselEditDTO {
     public fuelTypeId?: number;
 
     @StrictlyTyped(Number)
-    public shipEnginePower?: number;
-
-    @StrictlyTyped(Number)
-    public freeLaborAmount?: number;
+    public fuelConsumption?: number;
 
     @StrictlyTyped(Boolean)
     public isShipHolderPartOfCrew?: boolean;
@@ -68,9 +65,6 @@ export class StatisticalFormFishVesselEditDTO {
 
     @StrictlyTyped(Boolean)
     public isFishingMainActivity?: boolean;
-
-    @StrictlyTyped(Number)
-    public workedOutHours?: number;
 
     @StrictlyTyped(StatisticalFormsSeaDaysDTO)
     public seaDays?: StatisticalFormsSeaDaysDTO[];

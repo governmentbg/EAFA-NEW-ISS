@@ -50,6 +50,9 @@ export class AdmissionPagesAndDeclarationsTableComponent {
     @Output()
     public onAnnulAdmissionLogBookPage: EventEmitter<AdmissionLogBookPageRegisterDTO> = new EventEmitter<AdmissionLogBookPageRegisterDTO>();
 
+    @Output()
+    public onRestoreAnnulledAdmissionLogBookPage: EventEmitter<AdmissionLogBookPageRegisterDTO> = new EventEmitter<AdmissionLogBookPageRegisterDTO>();
+
     public readonly logBookPageStatusesEnum: typeof LogBookPageStatusesEnum = LogBookPageStatusesEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
@@ -73,5 +76,9 @@ export class AdmissionPagesAndDeclarationsTableComponent {
 
     public onAnnulAdmissionLogBookPageBtnClicked(document: AdmissionLogBookPageRegisterDTO): void {
         this.onAnnulAdmissionLogBookPage.emit(document);
+    }
+
+    public onRestoreAnnulledAdmissionLogBookPageBtnClicked(document: AdmissionLogBookPageRegisterDTO): void {
+        this.onRestoreAnnulledAdmissionLogBookPage.emit(document);
     }
 }

@@ -5,33 +5,41 @@
      validityCheckerGroup
      [formGroup]="form">
     <tl-card tooltipResourceName="catches-and-sales.admission-basic-information-card-helper" [validityChecker]="form">
-        <tl-card-content fxFlexFill fxLayout="column">
-            <div fxFLex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-                <tl-input fxFlex="25"
-                          formControlName="pageNumberControl"
-                          label="{{ 'catches-and-sales.admission-page-page-number' | tlTranslate }}"
-                          tooltipResourceName="catches-and-sales.admission-page-page-number-helper"
-                          [readonly]="true">
-                </tl-input>
-                <tl-date fxFlex="25"
-                         formControlName="handoverDateControl"
-                         label="{{ 'catches-and-sales.admission-page-handover-date' | tlTranslate }}"
-                         tooltipResourceName="catches-and-sales.admission-page-handover-date-helper"
-                         [max]="currentDate">
-                </tl-date>
-                <tl-input fxFlex="25"
-                          formControlName="storageLocationControl"
-                          label="{{ 'catches-and-sales.admission-page-storage-location' | tlTranslate }}"
-                          tooltipResourceName="catches-and-sales.admission-page-storage-location-helper">
-                </tl-input>
-                <tl-input *ngIf="!isAdd"
-                          fxFlex="25"
-                          formControlName="statusControl"
-                          label="{{ 'catches-and-sales.admission-page-status' | tlTranslate }}"
-                          tooltipResourceName="catches-and-sales.admission-page-status-helper"
-                          [readonly]="true">
-                </tl-input>
-                <div *ngIf="isAdd" fxFlex="25"></div>
+        <tl-card-content >
+            <div fxLayout="column" fxLayoutGap="1em">
+                <div fxFLex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-input fxFlex="25"
+                              formControlName="pageNumberControl"
+                              label="{{ 'catches-and-sales.admission-page-page-number' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.admission-page-page-number-helper"
+                              [readonly]="true">
+                    </tl-input>
+                    <tl-date fxFlex="25"
+                             formControlName="handoverDateControl"
+                             label="{{ 'catches-and-sales.admission-page-handover-date' | tlTranslate }}"
+                             tooltipResourceName="catches-and-sales.admission-page-handover-date-helper"
+                             [getControlErrorLabelText]="getControlErrorLabelTextMethod"
+                             [max]="currentDate">
+                    </tl-date>
+                    <tl-input fxFlex="25"
+                              formControlName="storageLocationControl"
+                              label="{{ 'catches-and-sales.admission-page-storage-location' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.admission-page-storage-location-helper">
+                    </tl-input>
+                    <tl-input *ngIf="!isAdd"
+                              fxFlex="25"
+                              formControlName="statusControl"
+                              label="{{ 'catches-and-sales.admission-page-status' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.admission-page-status-helper"
+                              [readonly]="true">
+                    </tl-input>
+                    <div *ngIf="isAdd" fxFlex="25"></div>
+                </div>
+                <div *ngIf="form.touched && form.get('handoverDateControl')?.errors?.logBookPageDateLocked" fxLayout="row" fxFlex="100">
+                    <mat-error>
+                        * {{ 'catches-and-sales.admission-page-cannot-add-page-after-error' | tlTranslate }} {{ form.get('handoverDateControl')?.errors?.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.admission-page-hours-after-the-admission' | tlTranslate }} {{ 'catches-and-sales.admission-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                    </mat-error>
+                </div>
             </div>
         </tl-card-content>
     </tl-card>

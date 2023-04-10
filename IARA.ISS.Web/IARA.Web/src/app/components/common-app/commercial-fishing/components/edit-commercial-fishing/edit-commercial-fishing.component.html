@@ -77,7 +77,7 @@
     </tl-expansion-panel>
 
     <!-- Прекратявания -->
-    <tl-expansion-panel *ngIf="!isApplication && suspensions.length > 0"
+    <tl-expansion-panel *ngIf="!isApplication && canReadSuspensions && form.get('suspensionsControl')?.value && form.get('suspensionsControl')?.value.length > 0"
                         title="{{ 'commercial-fishing.suspension-history-panel' | tlTranslate }}"
                         [validityChecker]="form"
                         [validityCheckerExtraCondition]="form.errors?.suspendResumeIsSecondShipEventToday === null
@@ -85,62 +85,15 @@
                         tooltipResourceName="commercial-fishing.suspension-history-panel-helper">
         <div fxFlex="100" fxLayout="column" fxLayoutGap="1em">
             <div fxFlex="100" fxLayout="row">
-                <tl-data-table fxFlexFill
-                               #suspensionsTable
-                               [rows]="suspensions"
-                               [isRemote]="false"
-                               [isSoftDeletable]="true"
-                               [showAddButton]="false"
-                               [showInactiveRecords]="true">
-                    <data-column fxFlex="0.4"
-                                 propertyName="suspensionTypeName"
-                                 columnName="{{ 'commercial-fishing.suspension-type' | tlTranslate }}">
-                    </data-column>
-                    <data-column fxFlex="0.5"
-                                 propertyName="reasonName"
-                                 columnName="{{ 'commercial-fishing.suspension-reason' | tlTranslate }}">
-                    </data-column>
-                    <data-column fxFlex="0.2"
-                                 propertyName="validFrom"
-                                 columnName="{{ 'commercial-fishing.suspension-valid-from' | tlTranslate }}"
-                                 dataType="date">
-                    </data-column>
-                    <data-column fxFlex="0.2"
-                                 propertyName="validTo"
-                                 columnName="{{ 'commercial-fishing.suspension-valid-to' | tlTranslate }}"
-                                 dataType="date">
-                    </data-column>
-                    <data-template-column [flexRate]="0.6" [cellClass]="'justify-center'">
-                        <ng-template let-row="row" ngx-datatable-cell-template>
-                            <div fxLayout="row" fxLayoutAlign="end center">
-                                <tl-icon-button *ngIf="row.data.isActive"
-                                                icon="visibility"
-                                                (buttonClicked)="addEditSuspension(row.data, true)"
-                                                iconClass="accent-color"
-                                                tooltipText="{{ 'commercial-fishing.view-suspension' | tlTranslate }}">
-                                </tl-icon-button>
-                                <tl-icon-button *ngIf="row.data.isActive && !isReadonly && !viewMode"
-                                                icon="edit"
-                                                (buttonClicked)="addEditSuspension(row.data)"
-                                                iconClass="accent-color"
-                                                tooltipText="{{ 'commercial-fishing.edit-suspension' | tlTranslate }}">
-                                </tl-icon-button>
-                                <tl-icon-button *ngIf="row.data.isActive && !isReadonly && !viewMode"
-                                                icon="delete"
-                                                (buttonClicked)="deleteSuspension(row)"
-                                                iconClass="accent-color"
-                                                tooltipText="{{ 'commercial-fishing.delete-suspension' | tlTranslate }}">
-                                </tl-icon-button>
-                                <tl-icon-button *ngIf="!row.data.isActive && !isReadonly && !viewMode"
-                                                icon="restore"
-                                                (buttonClicked)="undoDeleteSuspension(row)"
-                                                iconClass="accent-color"
-                                                tooltipText="{{ 'commercial-fishing.restore-suspension' | tlTranslate }}">
-                                </tl-icon-button>
-                            </div>
-                        </ng-template>
-                    </data-template-column>
-                </tl-data-table>
+                <suspensions fxFlex="100"
+                             formControlName="suspensionsControl"
+                             [isPermitLicense]="isPermitLicense"
+                             [postOnAdd]="false"
+                             [pageCode]="pageCode"
+                             [viewMode]="viewMode || isReadonly"
+                             [service]="service"
+                             [showAddButton]="false">
+                </suspensions>
             </div>
             <mat-error *ngIf="form.errors?.suspendResumeIsSecondShipEventToday">
                 * {{ 'commercial-fishing.suspend-resume-is-second-event-for-ship-error' | tlTranslate }}
@@ -156,6 +109,7 @@
                               label="{{ 'commercial-fishing.submitted-by-panel' | tlTranslate }}"
                               [isIdReadOnly]="isEditingSubmittedBy"
                               [isForeigner]="isThirdCountryPermit"
+                              [hideDocument]="hideSubmittedByDocument"
                               [expectedResults]="expectedResults.submittedBy">
     </application-submitted-by>
 
@@ -190,7 +144,7 @@
                                      [readonly]="!isApplication
                                                  && (pageCode !== pageCodes.PoundnetCommFishLic
                                                       || (pageCode === pageCodes.PoundnetCommFishLic && !permitLicenseIsValid))"
-                                     [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                                     [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                     </tl-autocomplete>
                 </div>
                 <div fxLayout="row" fxFlex="100">
@@ -223,7 +177,7 @@
                                              tooltipResourceName="commercial-fishing.permit-license-permit-helper"
                                              [options]="permits"
                                              [readonly]="noShipSelected"
-                                             [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                                             [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                             </tl-autocomplete>
                             <tl-popover-button *ngIf="noShipSelected"
                                                iconType="MAT_ICON"
@@ -279,7 +233,7 @@
                                                formControlName="qualifiedFisherIdNumberControl"
                                                [readonly]="isEditing"
                                                [isForeigner]="isThirdCountryPermit"
-                                               [getControlErrorLabelText]="getControlErrorLabelText.bind(this)"
+                                               [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                                                (keydown.enter)="onQualifiedFisherIdNumberEnterDown()">
                                 </egn-lnc-input>
 
@@ -302,7 +256,7 @@
                                       formControlName="qualifiedFisherFirstNameControl"
                                       label="{{ 'regix-data.first-name' | tlTranslate }}"
                                       tooltipResourceName="regix-data.first-name-helper"
-                                      [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                                      [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                             </tl-input>
                             <tl-input fxFlex="32"
                                       fxFlex.md="49"
@@ -310,7 +264,7 @@
                                       formControlName="qualifiedFisherMiddleNameControl"
                                       label="{{ 'regix-data.middle-name' | tlTranslate }}"
                                       tooltipResourceName="regix-data.middle-name-helper"
-                                      [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                                      [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                             </tl-input>
                             <tl-input fxFlex="32"
                                       fxFlex.md="49"
@@ -318,12 +272,12 @@
                                       formControlName="qualifiedFisherLastNameControl"
                                       label="{{ 'regix-data.last-name' | tlTranslate }}"
                                       tooltipResourceName="regix-data.last-name-helper"
-                                      [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                                      [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                             </tl-input>
                         </div>
                     </div>
 
-                    <div fxLayout="column">
+                    <div *ngIf="isQualifiedFisherPhotoRequired" fxLayout="column">
                         <tl-picture-uploader formControlName="qualifiedFisherPhotoControl"
                                              [requestMethod]="photoRequestMethod"
                                              [options]="{ validations: { isRequired: true } }">
@@ -360,7 +314,7 @@
                     </tl-input>
                 </div>
 
-                <div fxLayout="row">
+                <div *ngIf="isQualifiedFisherPhotoRequired" fxLayout="row">
                     <tl-picture-uploader fxFlex="100"
                                          formControlName="qualifiedFisherPhotoControl"
                                          [requestMethod]="photoRequestMethod"
@@ -384,7 +338,7 @@
                                  tooltipResourceName="commercial-fishing.pound-net-helper"
                                  [groupedOptions]="poundNets"
                                  [templateOptions]="true"
-                                 [getControlErrorLabelText]="getControlErrorLabelText.bind(this)">
+                                 [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-autocomplete>
             </div>
             <div fxLayout="row" fxFlex="100" fxLayoutGap="1em">
@@ -487,9 +441,8 @@
             </div>
             <!-- Водни организми при квотиран вид риба -->
             <div *ngIf="pageCode === pageCodes.CatchQuataSpecies" fxLayout="column" fxFlex="100" fxLayoutGap="1em">
-                <div fxFlex="100" fxLayout="column">
-                    <tl-data-table fxFlexFill
-                                   #quotaAquaticOrganismTypesTable
+                <div fxFlex="100" fxLayout="column" fxLayoutGap="1em">
+                    <tl-data-table #quotaAquaticOrganismTypesTable
                                    class="full-width-template"
                                    [rows]="quotaAquaticOrganisms"
                                    [isRemote]="false"
@@ -516,7 +469,10 @@
                         <data-column-inline [flexRate]="0.2" *ngIf="!isReadonly && !viewMode"></data-column-inline>
                     </tl-data-table>
                     <mat-error *ngIf="form.touched && form.errors?.atLeastOneQuotaOrganism">
-                        {{ 'commercial-fishing.at-least-one-quota-organism-must-be-selected' | tlTranslate }} *
+                        * {{ 'commercial-fishing.at-least-one-quota-organism-must-be-selected' | tlTranslate }}
+                    </mat-error>
+                    <mat-error *ngIf="form.touched && form.errors?.quotaPortUnique">
+                        * {{ 'commercial-fishing.unique-quota-fish-and-port-combination-error' | tlTranslate }}: ({{ form.errors!.quotaPortUnique.fishName }}, {{ form.errors!.quotaPortUnique.portName }})
                     </mat-error>
                 </div>
                 <div fxFlex="100" fxLayout="row">

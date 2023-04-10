@@ -71,6 +71,12 @@
                       tooltipResourceName="cross-check.check-table-name-helper"
                       label="{{ 'cross-check.check-table-name' | tlTranslate }}">
             </tl-input>
+            <tl-select fxFlex="50"
+                       formControlName="sourceControl"
+                       [options]="sources"
+                       tooltipResourceName="cross-check.source-helper"
+                       label="{{ 'cross-check.source' | tlTranslate }}">
+            </tl-select>
         </div>
         <div fxLayout="row">
             <tl-textarea fxFlexFill

@@ -18,7 +18,8 @@
         <tl:TLTableColumn Text="{rt:Translate FishType, Group=CatchInspection}"
                 Width="*" />
         <tl:TLTableColumn Text="{rt:Translate CatchType, Group=CatchInspection}"
-                Width="300" />
+                Width="300"
+                IsVisible="{Binding BindingContext.ShowType, Source={Reference view}}" />
         <tl:TLTableColumn Text="{rt:Translate CatchCount, Group=CatchInspection}"
                 Width="100" />
         <tl:TLTableColumn Text="{rt:Translate CatchQuantity, Group=CatchInspection}"
@@ -59,6 +60,7 @@
                         IsTitleVisible="False"
                         DisplayValue="DisplayValue"
                         DialogTitle="{rt:Translate CatchType, Group=CatchInspection}"
+                        IsVisible="{Binding BindingContext.ShowType, Source={Reference view}}"
                         IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                 <tl:TLEntry ValidState="{Binding CatchCount}"
                         IsTitleVisible="False"
@@ -124,6 +126,7 @@
                             ValidState="{Binding CatchType}"
                             DisplayValue="DisplayValue"
                             ItemsSource="{Binding BindingContext.CatchTypes, Source={Reference view}}"
+                            IsVisible="{Binding BindingContext.ShowType, Source={Reference view}}"
                             IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                     <tl:TLEntry Title="{rt:Translate CatchCount, Group=CatchInspection}"
                             ValidState="{Binding CatchCount}"

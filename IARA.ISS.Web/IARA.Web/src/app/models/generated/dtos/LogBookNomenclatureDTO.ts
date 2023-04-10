@@ -15,6 +15,9 @@ export class LogBookNomenclatureDTO extends NomenclatureDTO<number> {
         }
     }
   
+    @StrictlyTyped(Number)
+    public logBookTypeId?: number;
+
     @StrictlyTyped(String)
     public ownerName?: string;
 

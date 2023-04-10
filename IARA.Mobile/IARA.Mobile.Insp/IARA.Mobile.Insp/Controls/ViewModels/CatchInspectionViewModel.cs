@@ -29,6 +29,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             OpenShipPicker = CommandBuilder.CreateFrom(OnOpenShipPicker);
 
             this.AddValidation();
+
+            if (!catchInspections.ShowType)
+            {
+                CatchType.Validations.RemoveAt(CatchType.Validations.FindIndex(f => f.Name == nameof(RequiredAttribute)));
+            }
         }
 
         public InspectionPageViewModel Inspection { get; }

@@ -107,7 +107,6 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
         if (buyer !== null && buyer !== undefined) {
             if (buyer.hasUtility === true) {
                 this.form.get('marketNameControl')!.setValue(buyer.utilityName);
-                this.form.get('addressControl')!.setValue(InspectionUtils.buildAddress(buyer.utilityAddress, this.translate));
             }
         }
     }

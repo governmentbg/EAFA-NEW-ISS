@@ -11,6 +11,9 @@ export class ReportNodeDTO {
     public name?: string;
 
     @StrictlyTyped(String)
+    public iconCode?: string;
+
+    @StrictlyTyped(String)
     public iconName?: string;
 
     @StrictlyTyped(Number)
@@ -18,6 +21,9 @@ export class ReportNodeDTO {
 
     @StrictlyTyped(Boolean)
     public isActive?: boolean;
+
+    @StrictlyTyped(Number)
+    public orderNum?: number;
 
     @StrictlyTyped(ReportNodeDTO)
     public children?: ReportNodeDTO[];

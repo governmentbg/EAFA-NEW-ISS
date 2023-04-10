@@ -233,6 +233,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.PatrolVehicleDialog
                 };
             }
 
+            patrolVehicle.LocationText = InspectionEditHelper.BuildCoordinates(patrolVehicle.Location);
+
             return HideDialog(new PatrolVehicleModel
             {
                 Institution = Institution.Value?.Code,

@@ -441,7 +441,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
             if (!hasCachedData) { // Ако не са кеширани все още данните за този дневник, вземаме ги от сървъра и ги кешираме
                 if (logBook instanceof CommercialFishingLogBookEditDTO) {
                     if (logBook.logBookId !== null && logBook.logBookId !== undefined) {
-                        this.service!.getLogBookPagesAndDeclarations(logBook.logBookId, this.permitLicenseId!, logBookType).subscribe({
+                        this.service!.getLogBookPagesAndDeclarations(logBook.logBookId, this.permitLicenseId, logBookType).subscribe({
                             next: (pages: ShipLogBookPageRegisterDTO[] | AdmissionLogBookPageRegisterDTO[] | TransportationLogBookPageRegisterDTO[]) => {
                                 if (pages !== null && pages !== undefined && pages.length > 0) {
                                     if (pages[0] instanceof ShipLogBookPageRegisterDTO) {

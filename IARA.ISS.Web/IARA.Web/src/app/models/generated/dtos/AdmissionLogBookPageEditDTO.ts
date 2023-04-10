@@ -18,6 +18,9 @@ export class AdmissionLogBookPageEditDTO {
     public logBookId?: number;
 
     @StrictlyTyped(Number)
+    public logBookTypeId?: number;
+
+    @StrictlyTyped(Number)
     public logBookPermitLicenseId?: number;
 
     @StrictlyTyped(Number)

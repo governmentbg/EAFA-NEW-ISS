@@ -1,0 +1,66 @@
+﻿<div class="dialog-padding">
+    <div fxLayout="column" fxLayoutGap="1em">
+        <tl-data-table fxFlexFill
+                       #suspensionsTable
+                       [rows]="suspensions"
+                       [isRemote]="false"
+                       [isSoftDeletable]="true"
+                       [showAddButton]="showAddButton && canAddSuspensionRecords"
+                       [showInactiveRecords]="canRestoreSuspensionRecords"
+                       (addButtonClicked)="addEditSuspension()">
+            <data-column fxFlex="0.4"
+                         propertyName="suspensionTypeName"
+                         columnName="{{ 'suspensions.suspension-type' | tlTranslate }}">
+            </data-column>
+            <data-column fxFlex="0.5"
+                         propertyName="reasonName"
+                         columnName="{{ 'suspensions.suspension-reason' | tlTranslate }}">
+            </data-column>
+            <data-column fxFlex="0.2"
+                         propertyName="validFrom"
+                         columnName="{{ 'suspensions.suspension-valid-from' | tlTranslate }}"
+                         dataType="date">
+            </data-column>
+            <data-column fxFlex="0.2"
+                         propertyName="validTo"
+                         columnName="{{ 'suspensions.suspension-valid-to' | tlTranslate }}"
+                         dataType="date">
+            </data-column>
+            <data-template-column [flexRate]="0.6" [cellClass]="'justify-center'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div fxLayout="row" fxLayoutAlign="end center">
+                        <tl-icon-button *ngIf="row.data.isActive"
+                                        icon="visibility"
+                                        (buttonClicked)="addEditSuspension(row.data, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'suspensions.view-suspension' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && !viewMode && canEditSuspensionRecords"
+                                        icon="edit"
+                                        (buttonClicked)="addEditSuspension(row.data)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'suspensions.edit-suspension' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="row.data.isActive && !viewMode && canDeleteSuspensionRecords"
+                                        icon="delete"
+                                        (buttonClicked)="deleteSuspension(row)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'suspensions.delete-suspension' | tlTranslate }}">
+                        </tl-icon-button>
+                        <tl-icon-button *ngIf="!row.data.isActive && !viewMode && canRestoreSuspensionRecords"
+                                        icon="restore"
+                                        (buttonClicked)="undoDeleteSuspension(row)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'suspensions.restore-suspension' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
+        </tl-data-table>
+        <div *ngIf="hasShipEventExistsOnSameDateError" fxFlex="100" fxLayout="row">
+            <mat-error>
+                * {{ 'commercial-fishing.suspend-resume-is-second-event-for-ship-error' | tlTranslate }}
+            </mat-error>
+        </div>
+    </div>
+</div>

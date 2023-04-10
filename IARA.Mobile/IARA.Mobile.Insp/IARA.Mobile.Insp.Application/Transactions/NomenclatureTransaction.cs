@@ -1062,13 +1062,13 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     select new SelectNomenclatureDto
                     {
                         Id = buyer.Id,
-                        Code = person != null ? person.EgnLnc : legal.Eik,
+                        Code = person != null ? person.EgnLnc : legal?.Eik,
                         Name = person != null
                             ? (person.FirstName
                                 + (person.MiddleName != null ? (" " + person.MiddleName) : "")
                                 + " "
                                 + person.LastName)
-                            : legal.Name,
+                            : legal?.Name,
                     }
                 ).Skip(page * count).Take(count).ToList();
             }

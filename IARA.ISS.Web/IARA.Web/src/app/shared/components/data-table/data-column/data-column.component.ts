@@ -1,6 +1,6 @@
 ﻿import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { AfterViewInit, Component, forwardRef, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 import { combineLatest, Observable } from 'rxjs';
 import { GetControlErrorLabelTextCallback } from '../../input-controls/base-tl-control';
 import { BaseDataColumn } from '../base-data-column';
@@ -121,6 +121,10 @@ export class TLDataColumnComponent extends BaseDataColumn implements OnInit, Aft
 
     @Input() public minValue: unknown;
     @Input() public maxValue: unknown;
+
+    @Input() public prefixControlValidators: ValidatorFn[] | undefined;
+
+    public _getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this._getControlErrorLabelText.bind(this);
 
     public _getControlErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Threading.Tasks;
-using IARA.Mobile.Application;
+﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Users;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
@@ -23,6 +18,11 @@ using IARA.Mobile.Shared.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Plugin.FirebasePushNotification;
 using Rg.Plugins.Popup.Services;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Core;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -115,7 +115,7 @@ namespace IARA.Mobile.Pub
             CommonGlobalVariables.PullItemsCount = Device.Idiom == TargetIdiom.Phone ? 20 : 40;
             CommonGlobalVariables.DatabasePath = Path.Combine(FileSystem.AppDataDirectory, "IARA.db3");
 #if DEBUG
-            serverUrl.Environment = Environments.PRODUCTION;
+            serverUrl.Environment = Environments.DEVELOPMENT_INTERNAL;
 #elif PRODRELEASE
             serverUrl.Environment = Environments.PRODUCTION;
 #else

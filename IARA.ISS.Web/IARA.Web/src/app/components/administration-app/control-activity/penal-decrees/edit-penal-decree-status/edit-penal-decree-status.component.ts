@@ -44,6 +44,8 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
     @ViewChild('paymentScheduleTable')
     private paymentScheduleTable!: TLDataTableComponent;
 
+    private id: number | undefined;
+    private penalDecreeId: number | undefined;
     private service!: IPenalDecreesService;
     private readonly translate: FuseTranslationLoaderService;
     private isAdding!: boolean;
@@ -52,7 +54,6 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
         translate: FuseTranslationLoaderService,
     ) {
         this.translate = translate;
-
         this.buildForm();
     }
 
@@ -97,6 +98,7 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
         this.service = data.service as IPenalDecreesService;
         this.viewMode = data.viewMode;
         this.decreeType = data.decreeType;
+        this.penalDecreeId = data.penalDecreeId;
 
         if (data.model === undefined) {
             this.model = new PenalDecreeStatusEditDTO({ isActive: true });
@@ -109,6 +111,7 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
             if (data.model instanceof PenalDecreeStatusEditDTO) {
                 this.model = data.model;
                 this.isAdding = false;
+                this.id = data.model.id!;
             }
         }
     }
@@ -122,7 +125,22 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
             if (this.isFormValid()) {
                 this.fillModel();
                 CommonUtils.sanitizeModelStrings(this.model);
-                dialogClose(this.model);
+
+                if (this.id !== undefined && this.id !== null) {
+                    this.service.editPenalDecreeStatus(this.model).subscribe({
+                        next: () => {
+                            dialogClose(this.model);
+                        }
+                    });
+                }
+                else {
+                    this.service.addPenalDecreeStatus(this.model).subscribe({
+                        next: (id: number) => {
+                            this.model.id = id;
+                            dialogClose(this.model);
+                        }
+                    });
+                }
             }
         }
     }
@@ -193,6 +211,7 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
         if (this.model?.statusType !== undefined && this.model.statusType !== null) {
             this.type = this.model.statusType;
             this.form.get('statusTypeControl')!.setValue(this.statusTypes.find(x => x.code === PenalDecreeStatusTypesEnum[this.model.statusType!]));
+            this.penalDecreeId = this.model.penalDecreeId;
 
             switch (this.type) {
                 case PenalDecreeStatusTypesEnum.FirstInstAppealed:
@@ -247,6 +266,7 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
             this.model.statusType = PenalDecreeStatusTypesEnum[statusType.code as keyof typeof PenalDecreeStatusTypesEnum];
             this.model.statusName = statusType.displayName;
             this.model.dateOfChange = new Date();
+            this.model.penalDecreeId = this.penalDecreeId!;
 
             const from: string = this.translate.getValue('common.from');
             const instanceAppealDate: string = this.translate.getValue('penal-decrees.status-details-instance-appeal-date');
@@ -345,7 +365,7 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
                     return this.form.get('compulsoryGroup')!.valid;
                 case PenalDecreeStatusTypesEnum.Rescheduled:
                     this.atLeastOnePaymentScheduleError = !this.getPaymentScheduleFromTable().some(x => x.isActive !== false);
-                    return !this.atLeastOnePaymentScheduleError; 
+                    return !this.atLeastOnePaymentScheduleError;
                 case PenalDecreeStatusTypesEnum.FullyPaid:
                     return true;
                 default:

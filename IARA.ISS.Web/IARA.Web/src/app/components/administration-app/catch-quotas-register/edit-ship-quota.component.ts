@@ -92,11 +92,12 @@ export class EditShipQuotaComponent implements IDialogComponent, OnInit {
 
         if (this.editForm.valid) {
             this.fillModel();
-            NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
 
             if (this.isEditing) {
                 this.service.edit(this.model).subscribe({
                     next: () => {
+                        NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
+                        NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Fishes);
                         dialogClose(this.model);
                     }
                 });
@@ -107,6 +108,9 @@ export class EditShipQuotaComponent implements IDialogComponent, OnInit {
                         this.shipQuotaAlreadyExistsErrors = false;
 
                         this.model.id = id;
+
+                        NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ships);
+                        NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Fishes);
                         dialogClose(this.model);
                     },
                     error: (response: HttpErrorResponse) => {

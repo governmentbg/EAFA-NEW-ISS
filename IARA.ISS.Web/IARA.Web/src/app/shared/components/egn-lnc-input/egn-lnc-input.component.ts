@@ -364,25 +364,24 @@ export class EgnLncInputComponent extends CustomFormControl<EgnLncDTO | undefine
 
     private setToggleButtonsStyles(): void {
         const interval: number = setInterval(() => {
-            let toggle: HTMLElement | null = null;
-            while (toggle === null) {
-                toggle = document.getElementById(this.toggleButtonId);
+            const toggle: HTMLElement | null = document.getElementById(this.toggleButtonId);
+
+            if (toggle !== null) {
+                toggle.style.height = '2em';
+                toggle.style.alignItems = 'center';
+
+                if (this.appearance === 'outline') {
+                    toggle.style.verticalAlign = 'super';
+                }
+
+                const labels: HTMLCollectionOf<Element> = toggle.getElementsByClassName('mat-button-toggle-label-content');
+                for (let i = 0; i < labels.length; ++i) {
+                    const label: HTMLElement = labels.item(i) as HTMLElement;
+                    label.style.padding = '0 6px';
+                }
+
+                clearInterval(interval);
             }
-
-            toggle.style.height = '2em';
-            toggle.style.alignItems = 'center';
-
-            if (this.appearance === 'outline') {
-                toggle.style.verticalAlign = 'super';
-            }
-
-            const labels: HTMLCollectionOf<Element> = toggle.getElementsByClassName('mat-button-toggle-label-content');
-            for (let i = 0; i < labels.length; ++i) {
-                const label: HTMLElement = labels.item(i) as HTMLElement;
-                label.style.padding = '0 6px';
-            }
-
-            clearInterval(interval);
         });
     }
 

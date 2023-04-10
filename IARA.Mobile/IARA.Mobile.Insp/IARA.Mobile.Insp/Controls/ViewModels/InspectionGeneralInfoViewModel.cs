@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Domain.Enums;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
@@ -59,6 +60,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public void ChangeReportNum(string territoryCode, string cardNum, string nextReportNum)
         {
+            if (Inspection.ActivityType == ViewActivityType.Review)
+            {
+                return;
+            }
+
             ReportNrStart = $"{HandleNumber(territoryCode)}-{HandleNumber(cardNum)}-";
             ReportNr.Value = nextReportNum ?? "001";
         }

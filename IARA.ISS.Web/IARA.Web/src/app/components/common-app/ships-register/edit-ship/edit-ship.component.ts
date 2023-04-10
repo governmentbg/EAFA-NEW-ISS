@@ -55,7 +55,6 @@ import { FishingGearNomenclatureDTO } from '@app/models/generated/dtos/FishingGe
 import { RegixPersonDataDTO } from '@app/models/generated/dtos/RegixPersonDataDTO';
 import { RegixLegalDataDTO } from '@app/models/generated/dtos/RegixLegalDataDTO';
 import { RequestProperties } from '@app/shared/services/request-properties';
-import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
 import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { ErrorModel } from '@app/models/common/exception.model';
 import { ApplicationValidationErrorsEnum } from '@app/enums/application-validation-errors.enum';
@@ -79,6 +78,7 @@ import { FishingCapacityRemainderActionEnum } from '@app/enums/fishing-capacity-
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { DateUtils } from '@app/shared/utils/date.utils';
 import { NewCertificateData } from '../../fishing-capacity/acquired-fishing-capacity/acquired-fishing-capacity.component';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'edit-ship',
@@ -158,6 +158,8 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
     public canDeleteRecords!: boolean;
 
     public fishingCapacityService: IFishingCapacityService;
+
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
     private id: number | undefined;
     private applicationId: number | undefined;
@@ -513,6 +515,10 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                 }
             }
         }
+    }
+
+    public runValidityChecker(): void {
+        this.validityCheckerGroup!.validate();
     }
 
     public addEditShipOwner(owner?: ShipOwnerDTO | ShipOwnerRegixDataDTO, viewMode: boolean = false): void {
@@ -1649,8 +1655,11 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                     model.remainingCapacityAction!.action = FishingCapacityRemainderActionEnum.NoCertificate;
                 }
 
-                if (this.hasDelivery === true) {
+                if (this.hasDelivery === true && this.willIssueCapacityCertificates) {
                     model.deliveryData = this.form.get('deliveryDataControl')!.value;
+                }
+                else {
+                    model.deliveryData = undefined;
                 }
 
                 if (this.isPaid === true) {
@@ -1714,7 +1723,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
             observables.push(NomenclatureStore.instance.getNomenclature(NomenclatureTypes.SailAreas, this.service.getSailAreas.bind(this.service), false));
             observables.push(NomenclatureStore.instance.getNomenclature(NomenclatureTypes.PublicAidTypes, this.service.getPublicAidTypes.bind(this.service), false));
             observables.push(NomenclatureStore.instance.getNomenclature(NomenclatureTypes.FleetSegments, this.service.getPublicAidSegments.bind(this.service), false));
-            observables.push(NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Ports, this.service.getPorts.bind(this.service), false));
+            observables.push(NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Ports, this.nomenclatures.getPorts.bind(this.nomenclatures), false));
             observables.push(NomenclatureStore.instance.getNomenclature(NomenclatureTypes.FishingGear, this.nomenclatures.getFishingGear.bind(this.nomenclatures), false));
             observables.push(NomenclatureStore.instance.getNomenclature(NomenclatureTypes.HullMaterials, this.service.getHullMaterials.bind(this.service), false));
             observables.push(NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false));
@@ -1776,11 +1785,24 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
 
                 const controls: string[] | undefined = ENABLE_FIELD_CONTROLS.get(this.disableFieldsByEventType);
                 if (controls !== undefined) {
+                    if (this.disableFieldsByEventType !== ShipEventTypeEnum.EDIT) {
+                        controls.push(...(ENABLE_FIELD_CONTROLS.get(ShipEventTypeEnum.EDIT) ?? []));
+                    }
+
                     const filtered: string[] = controls.filter(x => !DETAIL_FIELDS.includes(x));
 
                     for (const control of filtered) {
                         this.form.controls[control].enable();
                     }
+
+                    if (this.disableFieldsByEventType === ShipEventTypeEnum.MOD) {
+                        const cfr: string | undefined = this.form.get('cfrControl')!.value;
+                        if (!cfr || cfr.length === 0 || TLValidators.cfr(this.form.get('cfrControl')!) !== null) {
+                            this.form.get('cfrControl')!.enable();
+                            controls.push('cfrControl');
+                        }
+                    }
+
                     this.setActiveFieldsClass(controls);
                 }
                 else {

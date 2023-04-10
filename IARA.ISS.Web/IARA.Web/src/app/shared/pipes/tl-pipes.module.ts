@@ -4,6 +4,7 @@ import { NomenclatureItemPipe } from './nomenclature-item.pipe';
 import { TLCoordinatesPipe } from './tl-coordinates.pipe';
 import { TLDateDifferencePipe } from './tl-date-difference.pipe';
 import { TLJoinPipe } from './tl-join.pipe';
+import { TLPrefixInputDisplayPipe } from './tl-prefix-input-display.pipe';
 import { TLTranslatePipe } from './tl-translate.pipe';
 
 
@@ -14,7 +15,8 @@ import { TLTranslatePipe } from './tl-translate.pipe';
         NomenclatureItemPipe,
         TLCoordinatesPipe,
         TLDateDifferencePipe,
-        TLJoinPipe
+        TLJoinPipe,
+        TLPrefixInputDisplayPipe
     ],
     imports: [],
     exports: [
@@ -23,7 +25,8 @@ import { TLTranslatePipe } from './tl-translate.pipe';
         NomenclatureItemPipe,
         TLCoordinatesPipe,
         TLDateDifferencePipe,
-        TLJoinPipe
+        TLJoinPipe,
+        TLPrefixInputDisplayPipe
     ]
 })
 export class TLPipesModule {

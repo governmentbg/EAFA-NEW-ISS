@@ -12,15 +12,21 @@ import { RequestProperties } from '@app/shared/services/request-properties';
 import { RequestService } from '@app/shared/services/request.service';
 import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dtos/RecreationalFishingAddTicketsResultDTO';
 import { RecreationalFishingTicketDuplicateDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDuplicateDTO';
+import { FuseTranslationLoaderService } from '../../../@fuse/services/translation-loader.service';
+import { TicketTypeEnum } from '../../enums/ticket-type.enum';
+import { map } from 'rxjs/operators';
+import { TicketPeriodEnum } from '../../enums/ticket-period.enum';
 
 @Injectable({
     providedIn: 'root'
 })
 export class RecreationalFishingCommonService {
     private http: RequestService;
+    private translate: FuseTranslationLoaderService;
 
-    public constructor(requestService: RequestService) {
+    public constructor(requestService: RequestService, translate: FuseTranslationLoaderService) {
         this.http = requestService;
+        this.translate = translate;
     }
 
     public addTickets(area: AreaTypes, controller: string, tickets: RecreationalFishingTicketsDTO): Observable<RecreationalFishingAddTicketsResultDTO> {
@@ -45,11 +51,46 @@ export class RecreationalFishingCommonService {
     }
 
     public getTicketPeriods(area: AreaTypes, controller: string): Observable<NomenclatureDTO<number>[]> {
-        return this.http.get(area, controller, 'GetTicketPeriods', { responseTypeCtr: NomenclatureDTO });
+        const resources: Record<string, string> = {};
+        resources[TicketPeriodEnum[TicketPeriodEnum.ANNUAL]] = 'recreational-fishing.ticket-period-annual-resource';
+        resources[TicketPeriodEnum[TicketPeriodEnum.HALFYEARLY]] = 'recreational-fishing.ticket-period-halfyearly-resource';
+        resources[TicketPeriodEnum[TicketPeriodEnum.MONTHLY]] = 'recreational-fishing.ticket-period-monthly-resource';
+        resources[TicketPeriodEnum[TicketPeriodEnum.WEEKLY]] = 'recreational-fishing.ticket-period-weekly-resource';
+        resources[TicketPeriodEnum[TicketPeriodEnum.UNTIL14]] = 'recreational-fishing.ticket-period-until14-resource';
+        resources[TicketPeriodEnum[TicketPeriodEnum.DISABILITY]] = 'recreational-fishing.ticket-period-disability-resource';
+        resources[TicketPeriodEnum[TicketPeriodEnum.NOPERIOD]] = 'recreational-fishing.ticket-period-noperiod-resource';
+
+        return this.http.get<NomenclatureDTO<number>[]>(area, controller, 'GetTicketPeriods', {
+            responseTypeCtr: NomenclatureDTO
+        }).pipe(map((ticketPeriods: NomenclatureDTO<number>[]) => {
+            for (const period of ticketPeriods) {
+                period.displayName = this.translate.getValue(resources[period.code!]);
+            }
+
+            return ticketPeriods;
+        }));
     }
 
     public getTicketTypes(area: AreaTypes, controller: string): Observable<NomenclatureDTO<number>[]> {
-        return this.http.get(area, controller, 'GetTicketTypes', { responseTypeCtr: NomenclatureDTO });
+        const resources: Record<string, string> = {};
+        resources[TicketTypeEnum[TicketTypeEnum.STANDARD]] = 'recreational-fishing.ticket-type-standard-resource';
+        resources[TicketTypeEnum[TicketTypeEnum.UNDER14]] = 'recreational-fishing.ticket-type-under14-resource';
+        resources[TicketTypeEnum[TicketTypeEnum.BETWEEN14AND18]] = 'recreational-fishing.ticket-type-between14and18-resource';
+        resources[TicketTypeEnum[TicketTypeEnum.ELDER]] = 'recreational-fishing.ticket-type-elder-resource';
+        resources[TicketTypeEnum[TicketTypeEnum.DISABILITY]] = 'recreational-fishing.ticket-type-disability-resource';
+        resources[TicketTypeEnum[TicketTypeEnum.ASSOCIATION]] = 'recreational-fishing.ticket-type-association-resource';
+        resources[TicketTypeEnum[TicketTypeEnum.BETWEEN14AND18ASSOCIATION]] = 'recreational-fishing.ticket-type-between14and18association-resource';
+        resources[TicketTypeEnum[TicketTypeEnum.ELDERASSOCIATION]] = 'recreational-fishing.ticket-type-elderassociation-resource';
+
+        return this.http.get<NomenclatureDTO<number>[]>(area, controller, 'GetTicketTypes', {
+            responseTypeCtr: NomenclatureDTO
+        }).pipe(map((ticketTypes: NomenclatureDTO<number>[]) => {
+            for (const type of ticketTypes) {
+                type.displayName = this.translate.getValue(resources[type.code!]);
+            }
+
+            return ticketTypes;
+        }));
     }
 
     public getTicketPrices(area: AreaTypes, controller: string): Observable<RecreationalFishingTicketPriceDTO[]> {

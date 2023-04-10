@@ -33,4 +33,25 @@ export class SystemPropertiesDTO {
 
     @StrictlyTyped(Date)
     public fishingGearMarkPrefixApplyDate?: Date;
+
+    @StrictlyTyped(Number)
+    public lockShipOver12MLogBookAfterHours?: number;
+
+    @StrictlyTyped(Number)
+    public lockShip10M12MLogBookAfterHours?: number;
+
+    @StrictlyTyped(Number)
+    public lockShipUnder10MLogBookAfterDays?: number;
+
+    @StrictlyTyped(Number)
+    public lockFirstSaleAbove200KLogBookAfterHours?: number;
+
+    @StrictlyTyped(Number)
+    public lockFirstSaleBelow200KLogBookAfterHours?: number;
+
+    @StrictlyTyped(Number)
+    public lockAdmissionLogBookAfterHours?: number;
+
+    @StrictlyTyped(Number)
+    public lockAquacultureLogBookAfterDays?: number;
 }

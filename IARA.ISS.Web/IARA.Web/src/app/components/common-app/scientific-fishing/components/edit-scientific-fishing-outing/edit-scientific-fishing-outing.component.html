@@ -55,7 +55,7 @@
             </data-column>
             <data-column propertyName="totalKeptCount"
                          [formGroup]="outingCatchForm"
-                         [getControlErrorLabelText]="getTotalCountErrorText.bind(this)"
+                         [getControlErrorLabelText]="getTotalCountErrorTextMethod"
                          columnName="{{ 'scientific-fishing.total-kept-fish' | tlTranslate }}">
             </data-column>
             <data-column-inline *ngIf="!readOnly"></data-column-inline>

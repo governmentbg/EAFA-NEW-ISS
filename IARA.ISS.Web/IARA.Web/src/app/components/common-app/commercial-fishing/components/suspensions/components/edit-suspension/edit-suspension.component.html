@@ -1,0 +1,56 @@
+﻿<div fxFlexFill fxLayout="column" fxLayoutGap="1em" class="dialog-padding" [formGroup]="form">
+    <tl-card>
+        <tl-card-content>
+            <div fxLayout="column" fxLayoutGap="1em">
+                <div fxLayout="row" fxFlex="100" fxLayoutAlign="start center">
+                    <tl-radio-button-group fxFlex="100"
+                                           formControlName="suspensionTypeControl"
+                                           [options]="suspensionTypes"
+                                           label="{{ 'suspensions.suspension-type' | tlTranslate }}"
+                                           tooltipResourceName="suspensions.suspension-type-helper">
+                    </tl-radio-button-group>
+                </div>
+                <div *ngIf="showAdditionalControls" fxLayout="column" fxFlex="100" fxLayoutGap="1em">
+                    <div fxLayout="row" fxFlex="100" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                        <tl-autocomplete fxFlex="50"
+                                         formControlName="suspensionReasonControl"
+                                         [options]="reasons"
+                                         label="{{ 'suspensions.suspension-reason' | tlTranslate }}"
+                                         tooltipResourceName="suspensions.suspension-reason-helper">
+                        </tl-autocomplete>
+                        <tl-input fxFlex="50"
+                                  formControlName="orderNumberControl"
+                                  [label]="suspensionNumberLabel"
+                                  tooltipResourceName="suspensions.suspension-order-number-helper">
+                        </tl-input>
+                    </div>
+                    <div fxLayout="row"
+                         fxFlex="100"
+                         fxLayoutGap="1em"
+                         fxLayoutAlign="space-between center">
+                        <tl-date-range *ngIf="showRangeControl"
+                                       fxFlex="50"
+                                       formControlName="suspensionDateRangeControl"
+                                       label="{{ 'suspensions.suspension-valid-from-to' | tlTranslate }}"
+                                       tooltipResourceName="suspensions.suspension-valid-from-to-helper">
+                        </tl-date-range>
+                        <tl-date *ngIf="showEnacmentDate"
+                                 fxFlex="50"
+                                 formControlName="enactmentDateControl"
+                                 label="{{ 'suspensions.suspension-enactment-date' | tlTranslate }}"
+                                 tooltipResourceName="suspensions.suspension-enactment-date-helper">
+                        </tl-date>
+                        <div *ngIf="!showRangeControl" fxFlex="50"></div>
+                        <div *ngIf="!showEnacmentDate" fxFlex="50"></div>
+                    </div>
+                </div>
+                <mat-error *ngIf="form.errors?.suspensionValidToExists && isPermit">
+                    * {{ 'suspensions.permit-suspension-valid-to-already-exists' | tlTranslate }}
+                </mat-error>
+                <mat-error *ngIf="form.errors?.suspensionValidToExists && !isPermit">
+                    * {{ 'suspensions.permit-license-suspension-valid-to-already-exists' | tlTranslate }}
+                </mat-error>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

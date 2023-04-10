@@ -44,6 +44,7 @@ import { FishingCapacityFreedActionsDTO } from '@app/models/generated/dtos/Fishi
 import { FishingCapacityRemainderActionEnum } from '@app/enums/fishing-capacity-remainder-action.enum';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'reduce-fishing-capacity',
@@ -79,6 +80,8 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
     public maxGrossTonnage: number = 0;
     public maxPower: number = 0;
     public newCertificateData: NewCertificateData | undefined;
+
+    public shipControlErrorLabelTextMethod: GetControlErrorLabelTextCallback  = this.shipControlErrorLabelText.bind(this);
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -284,7 +287,7 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
         return result;
     }
 
-    public shipControlErrorLabelTest(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+    public shipControlErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'shipControl') {
             if (errorCode === 'shipDestroyedOrDeregistered' && error === true) {
                 return new TLError({
@@ -441,8 +444,11 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
             this.model.reducePowerBy = this.form.get('reduceCapacityPowerControl')!.value;
             this.model.files = this.form.get('filesControl')!.value;
 
-            if (this.hasDelivery === true) {
+            if (this.hasDelivery === true && this.willIssueCapacityCertificates) {
                 this.model.deliveryData = this.form.get('deliveryDataControl')!.value;
+            }
+            else {
+                this.model.deliveryData = undefined;
             }
 
             if (this.isPaid === true) {

@@ -94,7 +94,8 @@
     faClipboardList,
     faFileExport,
     faSignature,
-    faSpinner
+    faSpinner,
+    faBolt
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faAddressBook as faAddressBookRegular } from '@fortawesome/free-regular-svg-icons';
@@ -138,6 +139,7 @@ import buildingRetailMoney20Regular from '@iconify-icons/fluent/building-retail-
 import arrowForwardDownPerson20Regular from '@iconify-icons/fluent/arrow-forward-down-person-20-regular';
 import accountSwitch from '@iconify/icons-mdi/account-switch';
 import printerPosCog from '@iconify/icons-mdi/printer-pos-cog';
+import calendarCancel16Regular from '@iconify-icons/fluent/calendar-cancel-16-regular';
 
 export class AppIcons {
     /*
@@ -182,7 +184,8 @@ export class AppIcons {
         'ic-building-retail-money-20-regular': buildingRetailMoney20Regular,
         'ic-arrow-forward-down-person-20-regular': arrowForwardDownPerson20Regular,
         'ic-account-switch': accountSwitch,
-        'ic-printer-pos-cog': printerPosCog
+        'ic-printer-pos-cog': printerPosCog,
+        'ic-calendar-cancel-16-filled': calendarCancel16Regular
     };
 
     /*
@@ -284,7 +287,8 @@ export class AppIcons {
         'fa-clipboard-list': faClipboardList,
         'fa-file-export': faFileExport,
         'fa-signature': faSignature,
-        'fa-spinner': faSpinner
+        'fa-spinner': faSpinner,
+        'fa-bolt': faBolt
     };
 
     public static get FaIconsDictionary(): Map<string, any> {

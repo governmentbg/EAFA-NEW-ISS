@@ -53,11 +53,11 @@ export class ChoosePermitLicenseForRenewalComponent implements OnInit, AfterView
         this.isPublicApp = IS_PUBLIC_APP;
 
         this.chooseShipAndPermitFormGroup = new FormGroup({
-            shipControl: new FormControl(null, Validators.required)
+            shipControl: new FormControl(undefined, Validators.required)
         });
 
         if (this.isPublicApp) {
-            this.chooseShipAndPermitFormGroup.addControl('permitRegistrationNumberControl', new FormControl(null, Validators.required));
+            this.chooseShipAndPermitFormGroup.addControl('permitRegistrationNumberControl', new FormControl(undefined, Validators.required));
             this.chooseShipAndPermitFormGroup.setValidators(this.validPermitNumber());
             this.chooseShipAndPermitFormGroup.get('permitRegistrationNumberControl')!.valueChanges.subscribe({
                 next: () => {
@@ -66,7 +66,8 @@ export class ChoosePermitLicenseForRenewalComponent implements OnInit, AfterView
             });
         }
         else {
-            this.chooseShipAndPermitFormGroup.addControl('permitControl', new FormControl(null, Validators.required));
+            this.chooseShipAndPermitFormGroup.addControl('permitControl', new FormControl(undefined, Validators.required));
+            this.chooseShipAndPermitFormGroup.addControl('showPastPermitsControl', new FormControl());
         }
     }
 
@@ -74,24 +75,26 @@ export class ChoosePermitLicenseForRenewalComponent implements OnInit, AfterView
         if (!this.isPublicApp) {
             this.chooseShipAndPermitFormGroup.get('shipControl')!.valueChanges.subscribe({
                 next: (ship: ShipNomenclatureDTO | undefined | string) => {
-                    this.clearPermitLicensesArrays();
+                    this.resetPermitsData();
+
                     if (ship !== null && ship !== undefined && ship instanceof NomenclatureDTO) {
-                        this.service.getPermitNomenclatures(ship.value!, this.pageCode === PageCodeEnum.PoundnetCommFishLic).subscribe({
-                            next: (values: PermitNomenclatureDTO[]) => {
-                                this.permits = values;
-                                this.noShipSelected = false;
-                                if (this.permitId !== null && this.permitId !== undefined) {
-                                    const permit: PermitNomenclatureDTO = this.permits.find(x => x.value === this.permitId)!;
-                                    this.chooseShipAndPermitFormGroup.get('permitControl')!.setValue(permit);
-                                }
-                            }
-                        });
+                        const showPastPermits: boolean = this.chooseShipAndPermitFormGroup.get('showPastPermitsControl')!.value ?? false;
+                        this.getShipPermitsNomenclature(ship, showPastPermits);
                     }
                     else {
-                        this.permits = [];
-                        this.permitId = undefined;
                         this.chooseShipAndPermitFormGroup.get('permitControl')!.setValue(this.permitId);
                         this.noShipSelected = true;
+                    }
+                }
+            });
+
+            this.chooseShipAndPermitFormGroup.get('showPastPermitsControl')!.valueChanges.subscribe({
+                next: (value: boolean) => {
+                    const selectedShip: ShipNomenclatureDTO | undefined | string = this.chooseShipAndPermitFormGroup.get('shipControl')!.value;
+
+                    if (selectedShip !== null && selectedShip !== undefined && selectedShip instanceof NomenclatureDTO) {
+                        this.resetPermitsData();
+                        this.getShipPermitsNomenclature(selectedShip, value);
                     }
                 }
             });
@@ -253,6 +256,26 @@ export class ChoosePermitLicenseForRenewalComponent implements OnInit, AfterView
 
             this.getPermitLicensesForRenewal();
         }
+    }
+
+    private getShipPermitsNomenclature(ship: ShipNomenclatureDTO, showPastPermits: boolean): void {
+        this.service.getPermitNomenclatures(ship.value!, showPastPermits, this.pageCode === PageCodeEnum.PoundnetCommFishLic).subscribe({
+            next: (values: PermitNomenclatureDTO[]) => {
+                this.permits = values;
+                this.noShipSelected = false;
+                if (this.permitId !== null && this.permitId !== undefined) {
+                    const permit: PermitNomenclatureDTO = this.permits.find(x => x.value === this.permitId)!;
+                    this.chooseShipAndPermitFormGroup.get('permitControl')!.setValue(permit);
+                }
+            }
+        });
+    }
+
+    private resetPermitsData(): void {
+        this.clearPermitLicensesArrays();
+        this.permits = [];
+        this.permitId = undefined;
+        this.chooseShipAndPermitFormGroup.get('permitControl')!.setValue(this.permitId);
     }
 
     private getPermitLicensesForRenewal(): void {

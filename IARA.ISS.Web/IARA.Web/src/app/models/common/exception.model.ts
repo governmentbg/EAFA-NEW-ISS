@@ -59,5 +59,12 @@ export enum ErrorCode {
     CannotDeletePermitWithLicense = 40,
     CannotDeleteLicenseWithLogBooks = 41,
     PermitSuspensionValidToExists = 42,
-    PermitLicenseSuspensionValidToExists = 43
+    PermitLicenseSuspensionValidToExists = 43,
+    CannotAddEditPageForShipUnder10M = 44,
+    CannotAddEditPageForShip10M12M = 45,
+    CannotAddEditPageForShipOver12M = 46,
+    CannotAddEditFirstSalePageAboveLimitTurnover = 47,
+    CannotAddEditFirstSalePageBelowLimitTurnover = 48,
+    CannotAddEditLockedAdmissionPage = 49,
+    CannotAddEditLockedAquaculturePage = 50
 }

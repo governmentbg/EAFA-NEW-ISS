@@ -1,6 +1,7 @@
 ﻿import { AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO';
+import { Moment } from 'moment';
 import { CommonUtils } from './common.utils';
 import { EgnUtils } from './egn.utils';
 import { EikUtils } from './eik.utils';
@@ -260,6 +261,99 @@ export class TLValidators {
             }
 
             return { passwordcomplexity: true };
+        }
+    }
+
+    public static minDate(minDateControl?: AbstractControl, minDate?: Date): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control?.value !== null && control?.value !== undefined) {
+                let minDateToCompare: Date | undefined;
+
+                if (minDateControl !== null && minDateControl !== undefined) {
+                    const minDateControlValue: Date | Moment | null | undefined = minDateControl.value;
+
+                    if (minDateControlValue !== null && minDateControlValue !== undefined) {
+                        if (minDateControlValue instanceof Date) {
+                            minDateToCompare = minDateControlValue;
+                        }
+                        else {
+                            minDateToCompare = minDateControlValue.toDate();
+                        }
+                        
+                    }
+                }
+                else if (minDate !== null && minDate !== undefined) {
+                    minDateToCompare = minDate;
+                }
+
+                let date: Date | undefined = undefined;
+
+                if (control.value instanceof Date) {
+                    date = control.value;
+                }
+                else {
+                    date = control.value.toDate();
+                }
+
+                if (minDateToCompare !== null && minDateToCompare !== undefined) {
+                    if (date !== null && date !== undefined && date.getTime() < minDateToCompare.getTime()) {
+                        return {
+                            mindate: {
+                                min: minDateToCompare,
+                                actual: date
+                            }
+                        };
+                    }
+                }
+            }
+
+            return null;
+        }
+    }
+
+    public static maxDate(maxDateControl?: AbstractControl, maxDate?: Date): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control?.value !== null && control?.value !== undefined) {
+                let maxDateToCompare: Date | undefined;
+
+                if (maxDateControl !== null && maxDateControl !== undefined) {
+                    const maxDateControlValue: Date | Moment | null | undefined = maxDateControl.value;
+
+                    if (maxDateControlValue !== null && maxDateControlValue !== undefined) {
+                        if (maxDateControlValue instanceof Date) {
+                            maxDateToCompare = maxDateControlValue;
+                        }
+                        else {
+                            maxDateToCompare = maxDateControlValue.toDate();
+                        }
+                    }
+                }
+                else if (maxDate !== null && maxDate !== undefined) {
+                    maxDateToCompare = maxDate;
+                }
+
+                let date: Date | undefined = undefined;
+
+                if (control.value instanceof Date) {
+                    date = control.value;
+                }
+                else {
+                    date = control.value.toDate();
+                }
+
+                if (maxDateToCompare !== null && maxDateToCompare !== undefined) {
+                    if (date !== null && date !== undefined && date.getTime() > maxDateToCompare.getTime()) {
+                        return {
+                            maxdate: {
+                                max: maxDateToCompare,
+                                actual: date
+                            }
+                        };
+                    }
+                }
+            }
+
+            return null;
         }
     }
 

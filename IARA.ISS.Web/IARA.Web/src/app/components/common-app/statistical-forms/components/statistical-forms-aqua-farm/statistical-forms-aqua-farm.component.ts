@@ -55,6 +55,7 @@ import { TLError } from '@app/shared/components/input-controls/models/tl-error.m
 import { SubmittedByRolesEnum } from '@app/enums/submitted-by-roles.enum';
 import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 import { AquaFarmFishOrganismReportTypeEnum } from '@app/enums/aqua-farm-fish-organism-report-type.enum';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 type YesNo = 'yes' | 'no';
 
@@ -115,6 +116,9 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
     public rawMaterialTypes: StatisticalFormNumStatDTO[] = [];
     public aquacultures: StatisticalFormAquacultureNomenclatureDTO[] = [];
     public ownerEmployeeOptions: NomenclatureDTO<YesNo>[] = [];
+
+    public aquacultureFacilityErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.aquacultureFacilityErrorLabelText.bind(this);
+    public aquaculturesFilterFnRef = this.aquaculturesFilterFn.bind(this);
 
     @ViewChild('medicineTable')
     private medicineTable!: TLDataTableComponent;
@@ -1077,7 +1081,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
 
     private saveAquaFarmForm(dialogClose: DialogCloseCallback, saveAsDraft: boolean = false): Observable<boolean> {
         const saveOrEditDone: Subject<boolean> = new Subject<boolean>();
-        
+
         this.saveOrEdit(saveAsDraft).subscribe({
             next: (id: number | void) => {
                 if (typeof id === 'number' && id !== undefined) {
@@ -1099,7 +1103,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
     private saveOrEdit(saveAsDraft: boolean): Observable<number | void> {
         this.fillModel();
         CommonUtils.sanitizeModelStrings(this.model);
-        
+
         if (this.model instanceof StatisticalFormAquaFarmEditDTO) {
             if (this.formId !== undefined) {
                 return this.service.editStatisticalFormAquaFarm(this.model);
@@ -1143,11 +1147,23 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         const result: StatisticalFormAquaFarmFishOrganismDTO[] = [];
 
         for (const organism of organisms) {
-            if (result.findIndex(x => x.installationTypeId === organism.installationTypeId && x.fishTypeId === organism.fishTypeId
-                && x.oneStripBreedingMaterialWeight === organism.oneStripBreedingMaterialWeight) === -1
+            if (result.findIndex(x => x.installationTypeId === organism.installationTypeId
+                && x.fishTypeId === organism.fishTypeId
+                && (((x.oneStripBreedingMaterialWeight === undefined || x.oneStripBreedingMaterialWeight === null)
+                    && (organism.oneStripBreedingMaterialWeight === undefined || organism.oneStripBreedingMaterialWeight === null))
+                    || Number(x.oneStripBreedingMaterialWeight) === Number(organism.oneStripBreedingMaterialWeight))
+                && (((x.oneYearBreedingMaterialWeight === undefined || x.oneYearBreedingMaterialWeight === null)
+                    && (organism.oneYearBreedingMaterialWeight === undefined || organism.oneYearBreedingMaterialWeight === null))
+                    || Number(x.oneYearBreedingMaterialWeight) === Number(organism.oneYearBreedingMaterialWeight))) === -1
             ) {
-                const original = organisms.filter(x => x.installationTypeId === organism.installationTypeId && x.fishTypeId === organism.fishTypeId
-                                 && x.oneStripBreedingMaterialWeight === organism.oneStripBreedingMaterialWeight);
+                const original = organisms.filter(x => x.installationTypeId === organism.installationTypeId
+                    && x.fishTypeId === organism.fishTypeId
+                    && (((x.oneStripBreedingMaterialWeight === undefined || x.oneStripBreedingMaterialWeight === null)
+                        && (organism.oneStripBreedingMaterialWeight === undefined || organism.oneStripBreedingMaterialWeight === null))
+                        || Number(x.oneStripBreedingMaterialWeight) === Number(organism.oneStripBreedingMaterialWeight))
+                    && (((x.oneYearBreedingMaterialWeight === undefined || x.oneYearBreedingMaterialWeight === null)
+                        && (organism.oneYearBreedingMaterialWeight === undefined || organism.oneYearBreedingMaterialWeight === null))
+                        || Number(x.oneYearBreedingMaterialWeight) === Number(organism.oneYearBreedingMaterialWeight)));
                 
                 if (original.length === 1) {
                     result.push(organism);
@@ -1454,7 +1470,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
 
     private producedFishValidator(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
-            const isInvalid: boolean  = this.fishOrganismInvalid(this.producedFishOrganismTable);
+            const isInvalid: boolean = this.fishOrganismInvalid(this.producedFishOrganismTable);
 
             if (isInvalid) {
                 return { 'producedFishError': true };
@@ -1500,19 +1516,50 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                     ) {
                         if (row.oneStripBreedingMaterialWeight !== undefined && row.oneStripBreedingMaterialWeight !== null
                             && x.oneStripBreedingMaterialWeight !== undefined && x.oneStripBreedingMaterialWeight !== null
-                            && row.oneStripBreedingMaterialWeight === x.oneStripBreedingMaterialWeight
+                            && (Number(row.oneStripBreedingMaterialWeight) === Number(x.oneStripBreedingMaterialWeight))
                         ) {
-                            return true;
+                            if (row.oneYearBreedingMaterialWeight !== undefined && row.oneYearBreedingMaterialWeight !== null
+                                && x.oneYearBreedingMaterialWeight !== undefined && x.oneYearBreedingMaterialWeight !== null
+                                && Number(row.oneYearBreedingMaterialWeight) === Number(x.oneYearBreedingMaterialWeight)) {
+                                return true;
+                            }
+
+                            if ((row.oneYearBreedingMaterialWeight == undefined
+                                || row.oneYearBreedingMaterialWeight === null
+                                || Number(row.oneYearBreedingMaterialWeight) === 0)
+                                && (x.oneYearBreedingMaterialWeight === undefined
+                                    || x.oneYearBreedingMaterialWeight === null
+                                    || Number(x.oneYearBreedingMaterialWeight) === 0)) {
+                                return true;
+                            }
+
+                            return false;
                         }
 
-                        if ((row.oneStripBreedingMaterialWeight == undefined
+                        if (((row.oneStripBreedingMaterialWeight == undefined
                                 || row.oneStripBreedingMaterialWeight === null
                                 || Number(row.oneStripBreedingMaterialWeight) === 0)
-                            && (x.oneStripBreedingMaterialWeight === undefined
-                                || x.oneStripBreedingMaterialWeight === null
-                                || Number(x.oneStripBreedingMaterialWeight) === 0)
+                                && (x.oneStripBreedingMaterialWeight === undefined
+                                    || x.oneStripBreedingMaterialWeight === null
+                                    || Number(x.oneStripBreedingMaterialWeight) === 0))
                         ) {
-                            return true;
+
+                            if (row.oneYearBreedingMaterialWeight !== undefined && row.oneYearBreedingMaterialWeight !== null
+                                && x.oneYearBreedingMaterialWeight !== undefined && x.oneYearBreedingMaterialWeight !== null
+                                && Number(row.oneYearBreedingMaterialWeight) === Number(x.oneYearBreedingMaterialWeight)) {
+                                return true;
+                            }
+
+                            if ((row.oneYearBreedingMaterialWeight == undefined
+                                || row.oneYearBreedingMaterialWeight === null
+                                || Number(row.oneYearBreedingMaterialWeight) === 0)
+                                && (x.oneYearBreedingMaterialWeight === undefined
+                                    || x.oneYearBreedingMaterialWeight === null
+                                    || Number(x.oneYearBreedingMaterialWeight) === 0)) {
+                                return true;
+                            }
+
+                            return false;
                         }
 
                         return false;

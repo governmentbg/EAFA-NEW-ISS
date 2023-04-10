@@ -50,6 +50,9 @@ export class AquaculturePagesTableComponent {
     @Output()
     public onAnnulAquacultureLogBookPage: EventEmitter<AquacultureLogBookPageRegisterDTO> = new EventEmitter<AquacultureLogBookPageRegisterDTO>();
 
+    @Output()
+    public onRestoreAnnulledAquacultureLogBookPage: EventEmitter<AquacultureLogBookPageRegisterDTO> = new EventEmitter<AquacultureLogBookPageRegisterDTO>();
+
     public readonly logBookPageStatusesEnum: typeof LogBookPageStatusesEnum = LogBookPageStatusesEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
@@ -73,5 +76,9 @@ export class AquaculturePagesTableComponent {
 
     public onAnnulAquacultureLogBookPageBtnClicked(document: AquacultureLogBookPageRegisterDTO): void {
         this.onAnnulAquacultureLogBookPage.emit(document);
+    }
+
+    public onRestoreAnnulledAquacultureLogBookPageBtnClicked(document: AquacultureLogBookPageRegisterDTO): void {
+        this.onRestoreAnnulledAquacultureLogBookPage.emit(document);
     }
 }

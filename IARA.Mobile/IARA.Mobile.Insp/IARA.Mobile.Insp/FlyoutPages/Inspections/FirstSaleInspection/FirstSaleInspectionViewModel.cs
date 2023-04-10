@@ -168,6 +168,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
                 Importer.OnEdit(Edit.Personnel);
                 AdditionalInfo.OnEdit(Edit);
 
+                HasImporter = Edit.Personnel?.Exists(f => f.Type == InspectedPersonType.Importer) == true;
+
                 InspectionToggles.AssignFrom(Edit.Checks);
 
                 SubjectName.AssignFrom(Edit.SubjectName);
@@ -246,7 +248,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
                         {
                             Owner,
                             Representative,
-                            Importer,
+                            HasImporter ? (InspectionSubjectPersonnelDto)Importer : null,
                         }.Where(f => f != null).ToList(),
                         ObservationTexts = new InspectionObservationTextDto[]
                         {

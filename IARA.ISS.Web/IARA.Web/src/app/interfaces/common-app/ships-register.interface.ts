@@ -31,7 +31,6 @@ export interface IShipsRegisterService extends IApplicationsActionsService, IBas
     getPublicAidSegments(): Observable<NomenclatureDTO<number>[]>;
     getSailAreas(): Observable<SailAreaNomenclatureDTO[]>;
     getVesselTypes(): Observable<VesselTypeNomenclatureDTO[]>;
-    getPorts(): Observable<NomenclatureDTO<number>[]>;
     getHullMaterials(): Observable<NomenclatureDTO<number>[]>;
     getFuelTypes(): Observable<NomenclatureDTO<number>[]>;
 }

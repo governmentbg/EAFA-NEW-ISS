@@ -1,6 +1,5 @@
 ﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { IRemoteTLDatatableComponent } from '@app/shared/components/data-table/interfaces/tl-remote-datatable.interface';
 import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
@@ -11,7 +10,6 @@ import { ApplicationRegiXChecksFilters } from '@app/models/generated/filters/App
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
 import { ViewApplicationRegixChecksComponent } from './view-application-regix-checks.component';
 import { FilterEventArgs } from '@app/shared/components/data-table/models/filter-event-args.model';
-import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { ApplicationRegixChecksService } from '@app/services/administration-app/application-regix-checks.service';
 import { IApplicationsRegisterService } from '@app/interfaces/administration-app/applications-register.interface';
 import { ApplicationsProcessingService } from '@app/services/administration-app/applications-processing.service';
@@ -107,8 +105,12 @@ export class ApplicationRegixChecksComponent implements OnInit, AfterViewInit {
             applicationTypeIdControl: new FormControl(),
             errorLevelControl: new FormControl(),
             webServiceNameControl: new FormControl(),
-            requestDateTimeControl: new FormControl(),
-            responseDateTimeControl: new FormControl()
+            requestDateTimeFromControl: new FormControl(),
+            requestDateTimeToControl: new FormControl(),
+            responseDateTimeFromControl: new FormControl(),
+            responseDateTimeToControl: new FormControl(),
+            requestContentControl: new FormControl(),
+            responseContentControl: new FormControl()
         });
     }
 
@@ -121,10 +123,12 @@ export class ApplicationRegixChecksComponent implements OnInit, AfterViewInit {
             applicationTypeId: filters.getValue('applicationTypeIdControl'),
             errorLevels: filters.getValue('errorLevelControl'),
             webServiceName: filters.getValue('webServiceNameControl'),
-            requestDateFrom: filters.getValue<DateRangeData>('requestDateTimeControl')?.start,
-            requestDateTo: filters.getValue<DateRangeData>('requestDateTimeControl')?.end,
-            responseDateFrom: filters.getValue<DateRangeData>('responseDateTimeControl')?.start,
-            responseDateTo: filters.getValue<DateRangeData>('responseDateTimeControl')?.end
+            requestContent: filters.getValue('requestContentControl'),
+            responseContent: filters.getValue('responseContentControl'),
+            requestDateFrom: filters.getValue('requestDateTimeFromControl'),
+            requestDateTo: filters.getValue('requestDateTimeToControl'),
+            responseDateFrom: filters.getValue('responseDateTimeFromControl'),
+            responseDateTo: filters.getValue('responseDateTimeToControl')
         });
 
         return result;

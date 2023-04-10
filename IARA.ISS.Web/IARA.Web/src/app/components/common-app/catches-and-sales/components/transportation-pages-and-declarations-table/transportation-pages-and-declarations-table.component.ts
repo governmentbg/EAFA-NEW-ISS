@@ -50,6 +50,9 @@ export class TransportationPagesAndDeclarationsTableComponent {
     @Output()
     public onAnnulTransportationLogBookPage: EventEmitter<TransportationLogBookPageRegisterDTO> = new EventEmitter<TransportationLogBookPageRegisterDTO>();
 
+    @Output()
+    public onRestoreAnnulledTransportationLogBookPage: EventEmitter<TransportationLogBookPageRegisterDTO> = new EventEmitter<TransportationLogBookPageRegisterDTO>();
+
     public readonly logBookPageStatusesEnum: typeof LogBookPageStatusesEnum = LogBookPageStatusesEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
@@ -73,5 +76,9 @@ export class TransportationPagesAndDeclarationsTableComponent {
 
     public onAnnulTransportationLogBookPageBtnClicked(document: TransportationLogBookPageRegisterDTO): void {
         this.onAnnulTransportationLogBookPage.emit(document);
+    }
+
+    public onRestoreAnnulledTransportationLogBookPageBtnClicked(document: TransportationLogBookPageRegisterDTO): void {
+        this.onRestoreAnnulledTransportationLogBookPage.emit(document);
     }
 }

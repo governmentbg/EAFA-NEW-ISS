@@ -38,6 +38,7 @@ import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { RegixPersonDataDTO } from '@app/models/generated/dtos/RegixPersonDataDTO';
 import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'edit-user',
@@ -70,6 +71,8 @@ export class EditUserComponent implements OnInit, IDialogComponent {
 
     public canRestoreRecords!: boolean;
     public isAdd: boolean = false;
+
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
     private service!: IUserManagementService;
     private rolesService: RolesService;

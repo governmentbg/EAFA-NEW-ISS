@@ -19,6 +19,9 @@ export class PenalDecreeStatusEditDTO extends PenalDecreeStatusDTO {
     @StrictlyTyped(Number)
     public statusType?: PenalDecreeStatusTypesEnum;
 
+    @StrictlyTyped(Number)
+    public penalDecreeId?: number;
+
     @StrictlyTyped(Date)
     public appealDate?: Date;
 
