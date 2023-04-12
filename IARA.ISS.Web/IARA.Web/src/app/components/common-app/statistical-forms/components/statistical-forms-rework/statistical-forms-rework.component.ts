@@ -391,7 +391,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
 
     public fileTypeFilterFn(options: PermittedFileTypeDTO[]): PermittedFileTypeDTO[] {
         const pdfs: FileTypeEnum[] = [FileTypeEnum.SIGNEDAPPL, FileTypeEnum.APPLICATION_PDF];
-        const offlineAppl: FileTypeEnum[] = [FileTypeEnum.SCANNED_FORM];
+        const offlines: FileTypeEnum[] = [FileTypeEnum.PAYEDFEE, FileTypeEnum.SCANNED_FORM];
 
         let result: PermittedFileTypeDTO[] = options;
 
@@ -400,7 +400,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         }
 
         if (this.isOnlineApplication) {
-            result = result.filter(x => !offlineAppl.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
+            result = result.filter(x => !offlines.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 
         return result;
@@ -517,6 +517,8 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
             setTimeout(() => {
                 this.regixChecks = applicationRegiXChecks;
             });
+
+            model.applicationRegiXChecks = undefined;
         }
 
         if (!this.viewMode) {

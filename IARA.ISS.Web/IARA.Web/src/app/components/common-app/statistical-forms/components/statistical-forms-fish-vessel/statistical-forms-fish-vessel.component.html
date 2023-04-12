@@ -125,30 +125,23 @@
 
     <!--Дни на море-->
     <tl-expansion-panel *ngIf="!showOnlyRegiXData"
-                        title="{{ 'statistical-forms.sea-days-title' | tlTranslate }}"
+                        [title]="seaDaysTitle"
                         tooltipResourceName="statistical-forms.sea-days-title-helper"
                         [validityChecker]="form">
         <div fxFlexFill fxLayout="column" fxLayoutGap="1em"> 
             <tl-data-table fxFlexFill
                            #seaDaysTable
-                           [rows]="seaDays"
+                           [rows]="gearSeaDays"
                            [isRemote]="false"
-                           [isSoftDeletable]="true"
+                           [isSoftDeletable]="false"
                            [showInactiveRecords]="false"
-                           [showAddButton]="!viewMode && !readOnly"
-                           (activeRecordChanged)="seaDaysActiveRecordChanged()">
+                           [showAddButton]="false">
                 <data-column columnName="{{ 'statistical-forms.fishing-gear' | tlTranslate }}"
-                             propertyName="fishingGearId"
-                             [formGroup]="seaDaysForm"
-                             [options]="fishingGears"
-                             [displayOptions]="allFishingGears"
-                             dataType="nomenclature">
+                             propertyName="fishingGearName">
                 </data-column>
                 <data-column columnName="{{ 'statistical-forms.sea-days' | tlTranslate }}"
-                             propertyName="days"
-                             [formGroup]="seaDaysForm">
+                             propertyName="days">
                 </data-column>
-                <data-column-inline [flexRate]="0.2" *ngIf="!readOnly"></data-column-inline>
             </tl-data-table>
         </div>
     </tl-expansion-panel>

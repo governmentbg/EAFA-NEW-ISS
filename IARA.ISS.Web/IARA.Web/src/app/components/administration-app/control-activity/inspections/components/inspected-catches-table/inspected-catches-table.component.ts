@@ -18,6 +18,7 @@ import { InspectedShipParams } from '../inspected-ship/models/inspected-ship-par
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
+import { CatchSizeCodesEnum } from '@app/enums/catch-size-codes.enum';
 
 function groupBy(array: any[], f: any): any[][] {
     const groups: any = {};
@@ -80,6 +81,9 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
 
     @Input()
     public fishSex: NomenclatureDTO<number>[] = [];
+
+    @Input()
+    public hasUndersizedCheck: boolean = false;
 
     @Input()
     public requiresFish: boolean = true;
@@ -159,6 +163,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
                 fishId: f.fishId,
                 fishSexId: f.fishSexId,
                 id: f.id,
+                undersized: f.undersized,
                 originShip: f.originShip,
                 storageLocation: f.storageLocation,
                 unloadedQuantity: f.unloadedQuantity,
@@ -298,18 +303,24 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
             shipControl: new FormControl(undefined),
             turbotSizeGroupIdControl: new FormControl(undefined),
             fishSexIdControl: new FormControl(undefined),
+            undersizedControl: new FormControl(false),
         });
 
         return new FormControl(undefined, [this.catchesValidator()]);
     }
 
     protected getValue(): InspectionCatchMeasureDTO[] {
+        const bms = this.types.find(f => f.code === CatchSizeCodesEnum[CatchSizeCodesEnum.BMS])?.value;
+        const lsc = this.types.find(f => f.code === CatchSizeCodesEnum[CatchSizeCodesEnum.LSC])?.value;
+
         return this.catches.map(f => new InspectionCatchMeasureDTO({
             action: f.action,
             allowedDeviation: f.allowedDeviation,
             averageSize: f.averageSize,
             catchCount: f.catchCount,
-            catchInspectionTypeId: f.catchInspectionTypeId,
+            catchInspectionTypeId: this.hasUndersizedCheck
+                ? (f.undersized === true ? bms : lsc)
+                : f.catchInspectionTypeId,
             catchQuantity: f.catchQuantity,
             catchZoneId: f.catchZoneId,
             fishId: f.fishId,

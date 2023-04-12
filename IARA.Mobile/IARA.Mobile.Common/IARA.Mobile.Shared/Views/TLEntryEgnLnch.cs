@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using IARA.Mobile.Domain.Enums;
+﻿using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Shared.Popups;
 using IARA.Mobile.Shared.ViewModels.Models;
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Controls;
 using TechnoLogica.Xamarin.Extensions;
@@ -201,6 +202,17 @@ namespace IARA.Mobile.Shared.Views
             if (ValidState is EgnLncValidState egnLncValidState)
             {
                 this.Bind(IdentifierTypeProperty, nameof(EgnLncValidState.IdentifierType), source: egnLncValidState);
+            }
+        }
+
+        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            base.OnPropertyChanged(propertyName);
+
+            if (propertyName == EGNLabelProperty.PropertyName)
+            {
+                OnPropertyChanged(TitleProperty.PropertyName);
+                OnPropertyChanged(IdentifierTypeProperty.PropertyName);
             }
         }
 

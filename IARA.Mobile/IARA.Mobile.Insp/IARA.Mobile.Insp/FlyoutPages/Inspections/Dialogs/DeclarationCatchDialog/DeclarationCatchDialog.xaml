@@ -89,6 +89,10 @@
                             DisplayValue="DisplayValue"
                             IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
                             IsVisible="{Binding HasCatchType}" />
+                    <tl:TLCheckView Text="{rt:Translate UndersizedFish, Group=DeclarationCatch}"
+                            ValidState="{Binding UndersizedFish}"
+                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                            IsVisible="{Binding HasUndersizedCheck}" />
                     <tl:TLEntry Title="{rt:Translate CatchQuantity, Group=DeclarationCatch}"
                             ValidState="{Binding CatchQuantity}"
                             Keyboard="Numeric"

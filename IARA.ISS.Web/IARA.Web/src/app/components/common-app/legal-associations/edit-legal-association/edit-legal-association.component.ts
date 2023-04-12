@@ -231,6 +231,11 @@ export class EditLegalAssociationComponent implements OnInit, IDialogComponent {
 
                             if (this.showRegiXData) {
                                 this.expectedResults = new FishingAssociationRegixDataDTO(legal.regiXDataModel);
+
+                                for (const person of this.model.persons as FishingAssociationPersonDTO[]) {
+                                    person.hasRegixDataDiscrepancy = !this.personEqualsRegixPerson(person);
+                                }
+
                                 legal.regiXDataModel = undefined;
                             }
 
@@ -477,11 +482,16 @@ export class EditLegalAssociationComponent implements OnInit, IDialogComponent {
 
     public fileTypeFilterFn(options: PermittedFileTypeDTO[]): PermittedFileTypeDTO[] {
         const pdfs: FileTypeEnum[] = [FileTypeEnum.SIGNEDAPPL, FileTypeEnum.APPLICATION_PDF];
+        const offlines: FileTypeEnum[] = [FileTypeEnum.PAYEDFEE, FileTypeEnum.SCANNED_FORM];
 
         let result: PermittedFileTypeDTO[] = options;
 
         if (this.isApplication || !this.isOnlineApplication) {
             result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
+        }
+
+        if (this.isOnlineApplication) {
+            result = result.filter(x => !offlines.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 
         return result;
@@ -574,6 +584,8 @@ export class EditLegalAssociationComponent implements OnInit, IDialogComponent {
             setTimeout(() => {
                 this.regixChecks = applicationRegixChecks;
             });
+
+            model.applicationRegiXChecks = undefined;
         }
 
         if (!this.viewMode) {

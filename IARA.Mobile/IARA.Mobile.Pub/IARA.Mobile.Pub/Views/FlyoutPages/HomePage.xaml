@@ -1,56 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <sv:MainPage xmlns="http://xamarin.com/schemas/2014/forms"
-        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-        xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
-        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
-        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
-        xmlns:dtos="clr-namespace:IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API;assembly=IARA.Mobile.Pub.Application"
-        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
-        xmlns:controls="clr-namespace:IARA.Mobile.Pub.Views.Controls"
-        xmlns:converters="clr-namespace:IARA.Mobile.Shared.Converters;assembly=IARA.Mobile.Shared"
-        xmlns:lc="clr-namespace:IARA.Mobile.Pub.Converters"
-        xmlns:ffimg="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
-        xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages"
-        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
-        xmlns:root="clr-namespace:IARA.Mobile.Pub"
-        x:Class="IARA.Mobile.Pub.Views.FlyoutPages.HomePage"
-        x:DataType="viewModels:HomeViewModel"
-        x:TypeArguments="viewModels:HomeViewModel"
-        x:Name="page"
-        PageInfo="{rt:Translate PageInfo, Group=Home}"
-        Title="{rt:Translate Title, Group=Home}"
-        BackgroundColor="{StaticResource BackgroundColor}">
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+             xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+             xmlns:dtos="clr-namespace:IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API;assembly=IARA.Mobile.Pub.Application"
+             xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+             xmlns:controls="clr-namespace:IARA.Mobile.Pub.Views.Controls"
+             xmlns:converters="clr-namespace:IARA.Mobile.Shared.Converters;assembly=IARA.Mobile.Shared"
+             xmlns:lc="clr-namespace:IARA.Mobile.Pub.Converters"
+             xmlns:ffimg="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages"
+             xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+             xmlns:root="clr-namespace:IARA.Mobile.Pub"
+             x:Class="IARA.Mobile.Pub.Views.FlyoutPages.HomePage"
+             x:DataType="viewModels:HomeViewModel"
+             x:TypeArguments="viewModels:HomeViewModel"
+             x:Name="page"
+             PageInfo="{rt:Translate PageInfo, Group=Home}"
+             Title="{rt:Translate Title, Group=Home}"
+             BackgroundColor="{StaticResource BackgroundColor}">
     <ContentPage.Resources>
         <converters:NotEqualToConverter x:Key="NotEqualTo" />
         <lc:ListContainsConverter x:Key="ListContains" />
     </ContentPage.Resources>
     <Grid>
-        <ffimg:CachedImage Aspect="AspectFill" Source="home_background" />
+        <ffimg:CachedImage Aspect="AspectFill"
+                           Source="home_background" />
         <tl:TLScrollView>
             <StackLayout>
-                <Grid xct:StateLayout.CurrentState="{Binding TicketsState}" xct:StateLayout.AnimateStateChanges="False">
+                <Grid xct:StateLayout.CurrentState="{Binding TicketsState}"
+                      xct:StateLayout.AnimateStateChanges="False">
                     <xct:StateLayout.StateViews>
                         <xct:StateView StateKey="Loading">
                             <Frame CornerRadius="5"
-                                    Padding="0"
-                                    Margin="10">
+                                   Padding="0"
+                                   Margin="10">
                                 <ActivityIndicator WidthRequest="50"
-                                        HeightRequest="50"
-                                        IsRunning="True"
-                                        Color="{StaticResource Primary}"
-                                        Margin="0,20" />
+                                                   HeightRequest="50"
+                                                   IsRunning="True"
+                                                   Color="{StaticResource Primary}"
+                                                   Margin="0,20" />
                             </Frame>
                         </xct:StateView>
                         <xct:StateView StateKey="Empty" />
                         <xct:StateView StateKey="Success">
                             <Frame IsVisible="{Binding MyTickets.Tickets.Count, Converter={StaticResource NotEqualTo}, ConverterParameter=0}"
-                                    CornerRadius="5"
-                                    Padding="0"
-                                    Margin="10">
+                                   CornerRadius="5"
+                                   Padding="0"
+                                   Margin="10">
                                 <StackLayout>
                                     <StackLayout BindableLayout.ItemsSource="{Binding MyTickets.Tickets}"
-                                            Margin="7"
-                                            BackgroundColor="White">
+                                                 Margin="7"
+                                                 BackgroundColor="White">
                                         <BindableLayout.ItemTemplate>
                                             <DataTemplate>
                                                 <ContentView x:DataType="dtos:FishingTicketDto">
@@ -60,13 +62,14 @@
                                         </BindableLayout.ItemTemplate>
                                     </StackLayout>
                                     <Label IsVisible="{Binding HasMoreTickets}"
-                                            Padding="0"
-                                            Margin="0,-10,10,10"
-                                            HorizontalTextAlignment="End"
-                                            TextDecorations="Underline"
-                                            Text="{rt:Translate CheckAllTickets, Group=FishingTicket}">
+                                           Padding="0"
+                                           Margin="0,-10,10,10"
+                                           HorizontalTextAlignment="End"
+                                           TextDecorations="Underline"
+                                           Text="{rt:Translate CheckAllTickets, Group=FishingTicket}">
                                         <Label.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Navigate}" CommandParameter="MyTicketsPage" />
+                                            <TapGestureRecognizer Command="{Binding Navigate}"
+                                                                  CommandParameter="MyTicketsPage" />
                                         </Label.GestureRecognizers>
                                     </Label>
                                 </StackLayout>
@@ -74,27 +77,28 @@
                         </xct:StateView>
                     </xct:StateLayout.StateViews>
                 </Grid>
-                <tl:TLFlex GrowUnit="125" Margin="10">
+                <tl:TLFlex GrowUnit="125"
+                           Margin="10">
                     <controls:NavigationCardView Icon="{Static h:IconFont.Ticket}"
-                            Text="{rt:Translate FishingTicketTitle, Group=Home}"
-                            NavigateCommand="{Binding Navigate}"
-                            NavigateCommandParameter="FishingTicketPage"
-                            IsVisible="{Binding Permissions, Converter={StaticResource ListContains}, ConverterParameter={Static root:ServerPermissions.TicketsRead}}" />
+                                                 Text="{rt:Translate FishingTicketTitle, Group=Home}"
+                                                 NavigateCommand="{Binding Navigate}"
+                                                 NavigateCommandParameter="FishingTicketPage"
+                                                 IsVisible="{Binding Permissions, Converter={StaticResource ListContains}, ConverterParameter={Static root:ServerPermissions.TicketsPublicRead}}" />
                     <controls:BadgedNavigationCardView Icon="{Static h:IconFont.MoneyCheck}"
-                            Text="{rt:Translate MyTickets, Group=Home}"
-                            NavigateCommand="{Binding Navigate}"
-                            NavigateCommandParameter="MyTicketsPage"
-                            BadgeText="{Binding TotalTicketsCount}"
-                            IsVisible="{Binding Permissions, Converter={StaticResource ListContains}, ConverterParameter={Static root:ServerPermissions.TicketsRead}}" />
+                                                       Text="{rt:Translate MyTickets, Group=Home}"
+                                                       NavigateCommand="{Binding Navigate}"
+                                                       NavigateCommandParameter="MyTicketsPage"
+                                                       BadgeText="{Binding TotalTicketsCount}"
+                                                       IsVisible="{Binding Permissions, Converter={StaticResource ListContains}, ConverterParameter={Static root:ServerPermissions.TicketsPublicRead}}" />
                     <controls:NavigationCardView Icon="{Static h:IconFont.Fish}"
-                            Text="{rt:Translate CaughtFishesTitle, Group=Home}"
-                            NavigateCommand="{Binding Navigate}"
-                            NavigateCommandParameter="CatchRecordsPage"
-                            IsVisible="{Binding Permissions, Converter={StaticResource ListContains}, ConverterParameter={Static root:ServerPermissions.CatchRecordsRead}}" />
+                                                 Text="{rt:Translate CaughtFishesTitle, Group=Home}"
+                                                 NavigateCommand="{Binding Navigate}"
+                                                 NavigateCommandParameter="CatchRecordsPage"
+                                                 IsVisible="{Binding Permissions, Converter={StaticResource ListContains}, ConverterParameter={Static root:ServerPermissions.CatchRecordsRead}}" />
                     <controls:NavigationCardView Icon="{Static h:IconFont.Newspaper}"
-                            Text="{rt:Translate NewsTitle, Group=Home}"
-                            NavigateCommand="{Binding Navigate}"
-                            NavigateCommandParameter="NewsPage" />
+                                                 Text="{rt:Translate NewsTitle, Group=Home}"
+                                                 NavigateCommand="{Binding Navigate}"
+                                                 NavigateCommandParameter="NewsPage" />
                 </tl:TLFlex>
             </StackLayout>
         </tl:TLScrollView>

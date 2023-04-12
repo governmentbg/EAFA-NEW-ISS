@@ -43,6 +43,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         [Required]
         public ValidStateSelect<SelectNomenclatureDto> FishType { get; set; }
 
+        public ValidStateBool UndersizedFish { get; set; }
+
         [Required]
         public ValidStateSelect<SelectNomenclatureDto> CatchType { get; set; }
 
@@ -108,6 +110,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 CatchCount = ParseHelper.ParseInteger(viewModel.CatchCount.Value),
                 OriginShip = viewModel.Ship,
                 TurbotSizeGroupId = viewModel.TurbotSizeGroup.Value,
+                Undersized = viewModel.UndersizedFish.Value,
             };
         }
     }

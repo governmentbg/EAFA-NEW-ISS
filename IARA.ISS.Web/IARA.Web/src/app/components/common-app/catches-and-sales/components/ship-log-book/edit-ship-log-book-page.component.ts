@@ -1110,7 +1110,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         const defaultCatchFishState: NomenclatureDTO<number> | undefined = this.catchStates.find(x => x.code === FishCatchStateCodesEnum[DEFAULT_CATCH_STATE_CODE] && x.isActive);
 
         for (const catchRecordFish of catchRecordFishes) {
-            const quantityForUnloading: number = (catchRecordFish.quantityKg ?? 0) - (catchRecordFish.unloadedQuantityKg ?? 0);
+            const quantityForUnloading: number = (catchRecordFish.quantityKg ?? 0) - (catchRecordFish.unloadedQuantityKg ?? 0) - (catchRecordFish.unloadedInOtherTripQuantityKg ?? 0);
             catchRecordFish.unloadedQuantityKg = quantityForUnloading;
 
             if (catchRecordFish.unloadedQuantityKg < (catchRecordFish.unloadedInOtherTripQuantityKg ?? 0)) {
@@ -1215,7 +1215,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     private getPossibleCatchRecordFishesForOriginDeclaration(): CatchRecordFishDTO[] {
         const catchRecordFishes: CatchRecordFishDTO[][] = this.catchRecords
             .map(x => (x.catchRecordFishes ?? [])
-                .filter(x => x.isActive && ((x.quantityKg ?? 0) - (x.unloadedQuantityKg ?? 0)) > 0)) as CatchRecordFishDTO[][];
+                .filter(x => x.isActive && ((x.quantityKg ?? 0) - (x.unloadedQuantityKg ?? 0) - (x.unloadedInOtherTripQuantityKg ?? 0)) > 0)) as CatchRecordFishDTO[][];
         const fishesFlattened: CatchRecordFishDTO[] = ([] as CatchRecordFishDTO[]).concat(...catchRecordFishes);
 
         return fishesFlattened;
@@ -1485,7 +1485,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
         const quantitiesMapCatchRecords: Map<number, number> = new Map<number, number>();
         for (const fishGroupId in catchRecordsGroupedByFishType) {
-            const quantity: number = catchRecordsGroupedByFishType[fishGroupId].reduce((sum, current) => sum + current.quantityKg!, 0);
+            const quantity: number = catchRecordsGroupedByFishType[fishGroupId].reduce((sum, current) => sum + (current.quantityKg! - (current.unloadedInOtherTripQuantityKg ?? 0)), 0);
             quantitiesMapCatchRecords.set(Number(fishGroupId), quantity);
         }
 

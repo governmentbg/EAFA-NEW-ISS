@@ -276,11 +276,14 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
     }
 
     public fileTypeFilterFn(options: PermittedFileTypeDTO[]): PermittedFileTypeDTO[] {
-        const pdfs: FileTypeEnum[] = [FileTypeEnum.SIGNEDAPPL, FileTypeEnum.APPLICATION_PDF];
-
         let result: PermittedFileTypeDTO[] = options;
 
-        if (!this.isOnlineApplication) {
+        if (this.isOnlineApplication) {
+            const offlines: FileTypeEnum[] = [FileTypeEnum.PAYEDFEE, FileTypeEnum.SCANNED_FORM];
+            result = result.filter(x => !offlines.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
+        }
+        else {
+            const pdfs: FileTypeEnum[] = [FileTypeEnum.SIGNEDAPPL, FileTypeEnum.APPLICATION_PDF];
             result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 
@@ -415,6 +418,8 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
             setTimeout(() => {
                 this.regixChecks = checks;
             });
+
+            this.model.applicationRegiXChecks = undefined;
         }
 
         if (!this.viewMode) {

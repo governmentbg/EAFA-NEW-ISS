@@ -2667,6 +2667,8 @@
         'invoice-data': 'Данни за фактурата',
         'no-catches': 'Трябва да бъде добаве поне един улов',
         'buyer-is-legal': 'Купувачът е юридическо лице',
+        'undersized-fish': 'Маломерен улов',
+        'owner-is-driver': 'Собственикът е шофьорът',
 
         'add-catch-ship-dialog-title': 'Добави кораб',
         'edit-catch-ship-dialog-title': 'Редактирай кораб',
@@ -5265,7 +5267,7 @@
         'ship-has-engine': 'Наличие на двигател',
         'ship-fuel-type': 'Вид гориво',
         'fuel-consumption': 'Разход на гориво (л/час)',
-        'sea-days-title': 'Дни на море',
+        'sea-days-title': 'Общо дни на море: ',
         'fishing-gear': 'Риболовен уред',
         'sea-days': 'Брой дни на море',
         'activity-title': 'Дейност',

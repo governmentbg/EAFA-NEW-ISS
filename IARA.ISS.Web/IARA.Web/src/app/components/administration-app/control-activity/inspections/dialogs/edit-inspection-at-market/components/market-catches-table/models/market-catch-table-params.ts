@@ -4,6 +4,7 @@ import { InspectedDeclarationCatchDTO } from '@app/models/generated/dtos/Inspect
 export class MarketCatchTableParams {
     public readOnly: boolean = false;
     public hasCatchType!: boolean;
+    public hasUndersizedCheck!: boolean;
     public hasUnloadedQuantity!: boolean;
     public fishes: NomenclatureDTO<number>[] = [];
     public types: NomenclatureDTO<number>[] = [];

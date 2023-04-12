@@ -79,6 +79,11 @@
                              [options]="types"
                              label="{{ 'inspections.market-catch-type' | tlTranslate }}">
             </tl-autocomplete>
+            <tl-checkbox *ngIf="hasUndersizedCheck"
+                         fxFlex="33"
+                         formControlName="undersizedControl"
+                         label="{{ 'inspections.undersized-fish' | tlTranslate }}">
+            </tl-checkbox>
             <tl-input fxFlex="33"
                       formControlName="quantityControl"
                       type="number"

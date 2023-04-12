@@ -31,7 +31,6 @@ import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/Applicatio
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { Notifier } from '@app/shared/directives/notifier/notifier.class';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
-import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
 import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
@@ -298,11 +297,16 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
 
     public fileTypeFilterFn(options: PermittedFileTypeDTO[]): PermittedFileTypeDTO[] {
         const pdfs: FileTypeEnum[] = [FileTypeEnum.SIGNEDAPPL, FileTypeEnum.APPLICATION_PDF];
+        const offlines: FileTypeEnum[] = [FileTypeEnum.PAYEDFEE, FileTypeEnum.SCANNED_FORM];
 
         let result: PermittedFileTypeDTO[] = options;
 
         if (this.isApplication || !this.isOnlineApplication) {
             result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
+        }
+
+        if (this.isOnlineApplication) {
+            result = result.filter(x => !offlines.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 
         return result;
@@ -356,6 +360,8 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
             setTimeout(() => {
                 this.regixChecks = checks;
             });
+
+            this.model.applicationRegiXChecks = undefined;
         }
 
         if (!this.viewMode) {

@@ -59,7 +59,7 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
             next: (type: NomenclatureDTO<number> | undefined) => {
                 if (type !== undefined && type !== null) {
                     this.form.get('deliveryDateControl')!.setValidators(Validators.required);
-                    this.form.get('deliveryDateControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('deliveryDateControl')!.updateValueAndValidity();
                     this.form.get('deliverySentDateControl')!.clearValidators();
 
                     this.deliveryType = InspDeliveryTypesEnum[type.code as keyof typeof InspDeliveryTypesEnum];
@@ -68,7 +68,7 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
                         this.form.get('deliverySentDateControl')?.setValidators(Validators.required);
                     }
 
-                    this.form.get('deliverySentDateControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('deliverySentDateControl')!.updateValueAndValidity();
                 }
                 else {
                     this.deliveryType = undefined;
@@ -78,22 +78,22 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
 
         this.form.get('confirmationTypeControl')!.valueChanges.subscribe({
             next: (type: NomenclatureDTO<number> | undefined) => {
+                this.form.get('witnessesControl')!.clearValidators();
+
                 if (type !== null && type !== undefined) {
                     this.confirmationType = InspDeliveryConfirmationTypesEnum[type.code as keyof typeof InspDeliveryConfirmationTypesEnum];
                     this.isDelivered = true;
 
-                    this.form.get('witnessesControl')!.clearValidators();
-
                     if (this.confirmationType === InspDeliveryConfirmationTypesEnum.RefusalDecree) {
                         this.form.get('witnessesControl')?.setValidators(Validators.required);
                     }
-
-                    this.form.get('witnessesControl')!.updateValueAndValidity({ emitEvent: false });
                 }
                 else {
                     this.confirmationType = undefined;
                     this.isDelivered = false;
                 }
+
+                this.form.get('witnessesControl')!.updateValueAndValidity();
             }
         });
     }

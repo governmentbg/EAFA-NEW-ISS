@@ -702,11 +702,16 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
 
     public fileTypeFilterFn(options: PermittedFileTypeDTO[]): PermittedFileTypeDTO[] {
         const pdfs: FileTypeEnum[] = [FileTypeEnum.SIGNEDAPPL, FileTypeEnum.APPLICATION_PDF];
+        const offlines: FileTypeEnum[] = [FileTypeEnum.PAYEDFEE, FileTypeEnum.SCANNED_FORM];
 
         let result: PermittedFileTypeDTO[] = options;
 
         if (this.isApplication || !this.isOnlineApplication) {
             result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
+        }
+
+        if (this.isOnlineApplication) {
+            result = result.filter(x => !offlines.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 
         const fleet: FleetTypeNomenclatureDTO | undefined = this.form.get('fleetTypeControl')!.value;
@@ -1180,6 +1185,8 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
             setTimeout(() => {
                 this.regixChecks = applicationRegiXChecks;
             });
+
+            model.applicationRegiXChecks = undefined;
         }
 
         if (!this.viewMode) {

@@ -669,7 +669,11 @@
         'username-already-exists-error': 'The entered username already exists in the system',
         'email-already-exists-error': 'The entered email address already exists in the system',
         'must-have-one-valid-egn-lnc-error': 'There is already a valid user with the specified EGN/PNF',
-        'dates-overlap-with-other-record': 'Dates of validity overlap with other record for this role'
+        'dates-overlap-with-other-record': 'Dates of validity overlap with other record for this role',
+        'change-user-message': 'Are you sure you want to make this user internal?',
+        'change-user-ok-btn-label': '',
+        'change-user-cancel-btn-label': 'Cancel',
+        'title': 'Title'
     },
     'legal-entities-page': {
         'legal-entity-register-title': 'legal entity access',
@@ -690,7 +694,6 @@
         'edit-legal-entity-tooltip': 'Edit',
         'delete-legal-entity-tooltip': 'Delete',
         'restore-legal-entity-tooltip': 'Restore',
-
         'legal-name': 'Organisation name',
         'registration-date': 'Date of registration',
         'registration-date-range': 'Date of registration',
@@ -1462,7 +1465,8 @@
         'permit': 'Permit register',
         'ship-owner': 'Ship owner',
         'statistical-forms': 'Statistical forms',
-        'user-legals': 'Users'
+        'user-legals': 'Users',
+        'penal-points': 'Penal points'
     },
     'translation-management': {
         'code': 'Resource code',
@@ -2316,7 +2320,8 @@
         'applications-table-label': 'Pending applications',
         'tickets-table-label': 'Pending tickets',
         'reference-label': 'Current applications waiting processing by type',
-        'ticket-reference-label': 'Current tickets waiting processing by type'
+        'ticket-reference-label': 'Current tickets waiting processing by type',
+        'dialog-news-is-published': 'Published'
     },
     'inspections': {
         'territory': 'Territory unit',
@@ -2613,6 +2618,8 @@
         'invoice-data': 'Invoice data',
         'no-catches': 'At least one catch must be added',
         'buyer-is-legal': 'Buyer is a company',
+        'undersized-fish': 'Undersized fish',
+        'owner-is-driver': 'Owner is the driver',
 
         'add-catch-ship-dialog-title': 'Add ship',
         'edit-catch-ship-dialog-title': 'Edit ship',
@@ -2753,6 +2760,26 @@
         'view-oth-dialog-title': 'Review migrated inspection',
         'edit-oth-dialog-title': 'Edit migrated inspection',
         'add-oth-dialog-title': 'Add migrated inspection',
+    },
+    'vessel': {
+        'name': 'Name',
+        'ext-mark': 'External mark',
+        'flag': 'Flag',
+        'cfr': 'CFR',
+        'imo': 'IMO',
+        'callsign': 'Call sign',
+        'type': 'Type',
+        'mmsi': 'MMSI',
+
+
+        'name-helper': '',
+        'ext-mark-helper': '',
+        'flag-helper': '',
+        'cfr-helper': '',
+        'imo-helper': '',
+        'callsign-helper': '',
+        'type-helper': '',
+        'mmsi-helper': '',
     },
     'commercial-fishing': {
         'add-permit-dialog-title': 'Add commercial fishing permit',
@@ -3151,7 +3178,16 @@
 
         'generate-marks-from-range-confirm-dialog-title': 'Confirmation for generating marks',
         'generate-marks-from-range-confirm-message': 'Are you sure that you want to generate this number of marks',
-        'generate': 'Генерирай',
+        'generate': 'Generate',
+        'height': 'Height',
+
+        'type-helper': '',
+        'count-helper': '',
+        'net-eye-size-helper': '',
+        'hooks-count-helper': '',
+        'length-helper': '',
+        'height-helper': '',
+        'description-helper': '',
     },
     'report-definition': {
         'tables-title': 'Tables',
@@ -5172,7 +5208,7 @@
         'ship-has-engine': 'Engine',
         'ship-fuel-type': 'Fuel type',
         'fuel-consumption': 'Fuel consumption',
-        'sea-days-title': 'Days in sea',
+        'sea-days-title': 'Days in sea: ',
         'fishing-gear': 'Fishing gear',
         'sea-days': 'Days in sea',
         'activity-title': 'Activity',

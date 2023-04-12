@@ -8,14 +8,14 @@ export class StatisticalFormsSeaDaysDTO {
     }
 
     @StrictlyTyped(Number)
-    public id?: number;
-
-    @StrictlyTyped(Number)
     public fishingGearId?: number;
+
+    @StrictlyTyped(String)
+    public fishingGearName?: string;
 
     @StrictlyTyped(Number)
     public days?: number;
 
-    @StrictlyTyped(Boolean)
-    public isActive?: boolean;
+    @StrictlyTyped(Number)
+    public year?: number;
 }

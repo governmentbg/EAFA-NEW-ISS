@@ -33,6 +33,9 @@ export class InspectionCatchMeasureDTO {
     @StrictlyTyped(Boolean)
     public isTaken?: boolean;
 
+    @StrictlyTyped(Boolean)
+    public undersized?: boolean;
+
     @StrictlyTyped(Number)
     public action?: CatchActionEnum;
 

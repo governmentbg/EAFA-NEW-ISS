@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application.DTObjects.Common;
+﻿using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Pub.Application.DTObjects.User.API;
@@ -11,6 +7,10 @@ using IARA.Mobile.Pub.Views.FlyoutPages;
 using IARA.Mobile.Shared.Attributes;
 using IARA.Mobile.Shared.Attributes.PasswordAttributes;
 using IARA.Mobile.Shared.ViewModels.Models;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
@@ -57,6 +57,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
         /// Използа се да установи дали потребителя влиза в системата с eAuth - всеки първоначален логин с eAuth минава през регистрация;
         /// </summary>
         public bool IsEAuthLogin { get; set; }
+
         public bool IsIdentifierDisabled { get; set; }
         public ValidStateBool IsPasswordRequired { get; set; }
 

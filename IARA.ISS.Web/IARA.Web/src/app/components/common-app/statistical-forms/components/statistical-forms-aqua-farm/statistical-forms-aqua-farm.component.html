@@ -32,16 +32,15 @@
                                relationLabel="{{ 'statistical-forms.aqua-farm-requester-role' | tlTranslate }}"
                                submittedForLabel="{{ 'statistical-forms.aqua-farm-receiver' | tlTranslate }}"
                                [pageCode]="pageCode"
-                               [isIdReadOnly]="isEditing"
+                               [isIdReadOnly]="true"
                                [showOnlyBasicData]="true"
                                [showPersonal]="!isApplication || isPerson"
                                [submittedByControl]="form.controls.submittedByControl"
                                [expectedResults]="expectedResults.submittedFor"
-                               [disabledLegal]="true"
-                               [disabledPerson]="true"
                                [hideRelation]="showOnlyRegiXData || !isApplication">
         <!-- Основна информация -->
-        <tl-expansion-panel *ngIf="!showOnlyRegiXData && showBasicInfo" middle
+        <tl-expansion-panel *ngIf="!showOnlyRegiXData && showBasicInfo" 
+                            middle
                             title=" {{ 'statistical-forms.aqua-farm-basic-information-title' | tlTranslate }}"
                             tooltipResourceName="statistical-forms.aqua-farm-basic-information-title-helper"
                             [validityChecker]="form"

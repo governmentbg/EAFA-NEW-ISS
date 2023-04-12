@@ -23,6 +23,9 @@ export class FishingCapacityFreedActionsComponent extends CustomFormControl<Free
     public showOnlyRegiXData: boolean = false;
 
     @Input()
+    public showRegiXData: boolean = false;
+
+    @Input()
     public isDraft: boolean = false;
 
     @Input()
