@@ -619,7 +619,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
 
     public fileTypeFilterFn(options: PermittedFileTypeDTO[]): PermittedFileTypeDTO[] {
         const pdfs: FileTypeEnum[] = [FileTypeEnum.SIGNEDAPPL, FileTypeEnum.APPLICATION_PDF];
-        const offlineAppl: FileTypeEnum[] = [FileTypeEnum.SCANNED_FORM];
+        const offlines: FileTypeEnum[] = [FileTypeEnum.PAYEDFEE, FileTypeEnum.SCANNED_FORM];
 
         let result: PermittedFileTypeDTO[] = options;
 
@@ -628,7 +628,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         }
 
         if (this.isOnlineApplication) {
-            result = result.filter(x => !offlineAppl.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
+            result = result.filter(x => !offlines.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 
         return result;
@@ -781,6 +781,8 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
             setTimeout(() => {
                 this.regixChecks = applicationRegiXChecks;
             });
+
+            model.applicationRegiXChecks = undefined;
         }
 
         if (!this.viewMode) {

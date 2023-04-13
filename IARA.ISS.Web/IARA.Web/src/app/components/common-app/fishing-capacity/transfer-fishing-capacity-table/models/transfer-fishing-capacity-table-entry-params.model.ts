@@ -6,6 +6,7 @@ export class TransferFishingCapacityTableEntryParams {
     public readOnly: boolean = false;
     public isEgnLncReadOnly: boolean = false;
     public showOnlyRegixData: boolean = false;
+    public showRegixData: boolean = false;
 
     public remainingTonnage: number | undefined;
     public remainingPower: number | undefined;

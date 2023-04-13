@@ -10,12 +10,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DeclarationCatchDialog : TLBaseDialog<DeclarationCatchDialogViewModel, DeclarationCatchModel>
     {
-        public DeclarationCatchDialog(DeclarationCatchesViewModel catches, InspectionPageViewModel inspection, bool hasCatchType, ViewActivityType dialogType, DeclarationCatchModel dto = null)
+        public DeclarationCatchDialog(DeclarationCatchesViewModel catches, InspectionPageViewModel inspection, bool hasCatchType, bool hasUndersizedCheck, ViewActivityType dialogType, DeclarationCatchModel dto = null)
         {
             ViewModel.DialogType = dialogType;
             ViewModel.Catches = catches;
             ViewModel.Inspection = inspection;
             ViewModel.HasCatchType = hasCatchType;
+            ViewModel.HasUndersizedCheck = hasUndersizedCheck;
             ViewModel.Edit = dto;
             ViewModel.OnInit();
 

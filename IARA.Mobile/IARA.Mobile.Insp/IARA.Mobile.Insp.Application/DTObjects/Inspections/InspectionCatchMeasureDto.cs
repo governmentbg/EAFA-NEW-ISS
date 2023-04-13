@@ -11,6 +11,7 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public decimal? CatchQuantity { get; set; }
         public decimal? AllowedDeviation { get; set; }
         public int? CatchZoneId { get; set; }
+        public bool? Undersized { get; set; }
         public bool? IsTaken { get; set; }
         public CatchActionEnum? Action { get; set; }
         public string StorageLocation { get; set; }

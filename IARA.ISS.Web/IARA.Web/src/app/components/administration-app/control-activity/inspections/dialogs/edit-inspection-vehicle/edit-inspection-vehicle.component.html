@@ -61,13 +61,17 @@
                           label="{{ 'inspections.transport-vehicle-trailer-number' | tlTranslate }}">
                 </tl-input>
             </div>
+            <tl-checkbox formControlName="ownerIsDriverControl"
+                         label="{{ 'inspections.owner-is-driver' | tlTranslate }}">
+            </tl-checkbox>
             <inspected-subject formControlName="ownerControl"
                                [countries]="countries"
                                [personType]="inspectedPersonTypeEnum.OwnerPers"
                                [legalType]="inspectedPersonTypeEnum.OwnerLegal"
                                title="{{ 'inspections.owner' | tlTranslate }}">
             </inspected-subject>
-            <inspected-person formControlName="driverControl"
+            <inspected-person *ngIf="!form.controls.ownerIsDriverControl.value"
+                              formControlName="driverControl"
                               [countries]="countries"
                               [personType]="inspectedPersonTypeEnum.Driver"
                               title="{{ 'inspections.driver' | tlTranslate }}">
@@ -83,6 +87,7 @@
              fxLayoutAlign="start stretch">
             <market-catches-table formControlName="catchesControl"
                                   [hasCatchType]="false"
+                                  [hasUndersizedCheck]="true"
                                   [hasUnloadedQuantity]="false"
                                   [fishes]="fishes"
                                   [types]="catchTypes"

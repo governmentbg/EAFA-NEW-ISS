@@ -38,6 +38,9 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
     public hasCatchType: boolean = true;
 
     @Input()
+    public hasUndersizedCheck: boolean = false;
+
+    @Input()
     public hasUnloadedQuantity: boolean = true;
 
     @Input()
@@ -103,6 +106,7 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
                 types: this.types,
                 hasCatchType: this.hasCatchType,
                 hasUnloadedQuantity: this.hasUnloadedQuantity,
+                hasUndersizedCheck: this.hasUndersizedCheck,
             });
 
             if (readOnly) {
@@ -118,7 +122,8 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
                 fishes: this.fishes,
                 presentations: this.presentations,
                 types: this.types,
-                hasCatchType: this.hasCatchType
+                hasCatchType: this.hasCatchType,
+                hasUndersizedCheck: this.hasUndersizedCheck,
             });
 
             title = this.translate.getValue('inspections.add-market-catches-dialog-title');

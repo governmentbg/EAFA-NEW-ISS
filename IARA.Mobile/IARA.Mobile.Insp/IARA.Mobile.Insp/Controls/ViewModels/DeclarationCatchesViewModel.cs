@@ -21,10 +21,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class DeclarationCatchesViewModel : ViewModel
     {
-        public DeclarationCatchesViewModel(InspectionPageViewModel inspection, bool hasCatchType = true)
+        public DeclarationCatchesViewModel(InspectionPageViewModel inspection, bool hasCatchType = true, bool hasUndersizedCheck = false)
         {
             Inspection = inspection;
             HasCatchType = hasCatchType;
+            HasUndersizedCheck = hasUndersizedCheck;
 
             Review = CommandBuilder.CreateFrom<DeclarationCatchModel>(OnReview);
             Add = CommandBuilder.CreateFrom(OnAdd);
@@ -36,6 +37,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public InspectionPageViewModel Inspection { get; }
         public bool HasCatchType { get; }
+        public bool HasUndersizedCheck { get; }
 
         [DuplicateCatches]
         [ListMinLength(1)]
@@ -72,12 +74,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         private Task OnReview(DeclarationCatchModel model)
         {
-            return TLDialogHelper.ShowDialog(new DeclarationCatchDialog(this, Inspection, HasCatchType, ViewActivityType.Review, model));
+            return TLDialogHelper.ShowDialog(new DeclarationCatchDialog(this, Inspection, HasCatchType, HasUndersizedCheck, ViewActivityType.Review, model));
         }
 
         private async Task OnAdd()
         {
-            DeclarationCatchModel result = await TLDialogHelper.ShowDialog(new DeclarationCatchDialog(this, Inspection, HasCatchType, ViewActivityType.Add));
+            DeclarationCatchModel result = await TLDialogHelper.ShowDialog(new DeclarationCatchDialog(this, Inspection, HasCatchType, HasUndersizedCheck, ViewActivityType.Add));
 
             if (result != null && result.Dto != null)
             {
@@ -87,7 +89,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         private async Task OnEdit(DeclarationCatchModel model)
         {
-            DeclarationCatchModel result = await TLDialogHelper.ShowDialog(new DeclarationCatchDialog(this, Inspection, HasCatchType, ViewActivityType.Edit, model));
+            DeclarationCatchModel result = await TLDialogHelper.ShowDialog(new DeclarationCatchDialog(this, Inspection, HasCatchType, HasUndersizedCheck, ViewActivityType.Edit, model));
 
             if (result != null && result.Dto != null)
             {

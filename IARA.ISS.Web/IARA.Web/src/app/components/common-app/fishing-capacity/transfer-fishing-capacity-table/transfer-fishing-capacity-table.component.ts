@@ -28,6 +28,9 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
     public showOnlyRegiXData: boolean = false;
 
     @Input()
+    public showRegiXData: boolean = false;
+
+    @Input()
     public isDraft: boolean = false;
 
     @Input()
@@ -83,10 +86,15 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
     public ngOnChanges(changes: SimpleChanges): void {
         const maxGrossTonnage: SimpleChange | undefined = changes['maxGrossTonnage'];
         const maxPower: SimpleChange | undefined = changes['maxPower'];
+        const expectedResults: SimpleChange | undefined = changes['expectedResults'];
 
         if (maxGrossTonnage || maxPower) {
             this.recalculateRemainingCapacity();
             this.control.updateValueAndValidity({ emitEvent: false });
+        }
+
+        if (expectedResults) {
+            this.setHasRegixDataDiscrepancy();
         }
     }
 
@@ -98,6 +106,8 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
         else {
             this.entries = [];
         }
+
+        this.setHasRegixDataDiscrepancy();
     }
 
     public addEditEntry(holder?: CapacityHolderType, viewMode?: boolean): void {
@@ -113,10 +123,16 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
                 isEgnLncReadOnly: this.isEditing,
                 readOnly: readOnly,
                 showOnlyRegixData: this.showOnlyRegiXData,
+                showRegixData: this.showRegiXData,
                 remainingPower: this.remainingPower,
                 remainingTonnage: this.remainingTonnage,
                 submittedBy: this.submittedBy,
-                expectedResults: this.expectedResults?.find(x => x.id === holder?.id) ?? new FishingCapacityHolderRegixDataDTO()
+                expectedResults: this.expectedResults
+                    ?.find(x => holder?.isHolderPerson
+                        ? (x.person?.egnLnc?.identifierType === holder.person?.egnLnc?.identifierType
+                            && x.person?.egnLnc?.egnLnc === holder.person?.egnLnc?.egnLnc)
+                        : x.legal?.eik === holder?.legal?.eik)
+                    ?? new FishingCapacityHolderRegixDataDTO()
             });
 
             if (holder.id !== undefined) {
@@ -159,6 +175,8 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
 
         dialog.subscribe((result: CapacityHolderType) => {
             if (result) {
+                result.hasRegixDataDiscrepancy = !this.holderEqualsRegixHolder(result);
+
                 if (holder !== undefined) {
                     holder = result;
                 }
@@ -292,5 +310,49 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
                 entry.egnEik = entry.legal!.eik;
             }
         }
+    }
+
+    private setHasRegixDataDiscrepancy(): void {
+        for (const holder of this.getValue()) {
+            holder.hasRegixDataDiscrepancy = !this.holderEqualsRegixHolder(holder);
+        }
+    }
+
+    private holderEqualsRegixHolder(holder: FishingCapacityHolderDTO): boolean {
+        let regixHolder: FishingCapacityHolderRegixDataDTO | undefined;
+
+        if (holder.isHolderPerson) {
+            regixHolder = this.expectedResults?.find(x => {
+                return x.person?.egnLnc?.identifierType === holder.person?.egnLnc?.identifierType
+                    && x.person?.egnLnc?.egnLnc === holder.person?.egnLnc?.egnLnc;
+            });
+
+            if (regixHolder) {
+                if (holder.person!.firstName !== regixHolder.person!.firstName
+                    || holder.person!.middleName !== regixHolder.person!.middleName
+                    || holder.person!.lastName !== regixHolder.person!.lastName
+                    || holder.person!.email != regixHolder.person!.email
+                    || holder.person!.citizenshipCountryId != regixHolder.person!.citizenshipCountryId
+                    || holder.person!.birthDate != regixHolder.person!.birthDate
+                    || holder.person!.phone !==regixHolder.person!.phone) {
+                    return false;
+                }
+            }
+        }
+        else {
+            regixHolder = this.expectedResults.find(x => {
+                return x.legal?.eik === holder.legal?.eik;
+            });
+
+            if (regixHolder) {
+                if (holder.legal!.name !== regixHolder.legal!.name
+                    || holder.legal!.phone != regixHolder.legal!.phone
+                    || holder.legal!.email != regixHolder.legal!.email) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

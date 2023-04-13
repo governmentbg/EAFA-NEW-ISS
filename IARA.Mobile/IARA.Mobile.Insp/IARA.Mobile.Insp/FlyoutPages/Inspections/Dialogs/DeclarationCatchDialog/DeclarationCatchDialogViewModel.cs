@@ -51,6 +51,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
         public DeclarationCatchModel Edit { get; set; }
         public int? ShipUid { get; set; }
         public bool HasCatchType { get; set; }
+        public bool HasUndersizedCheck { get; set; }
 
         public DeclarationCatchesViewModel Catches { get; set; }
         public InspectionPageViewModel Inspection { get; set; }
@@ -70,6 +71,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
 
         [Required]
         public ValidStateSelect<SelectNomenclatureDto> CatchType { get; set; }
+
+        public ValidStateBool UndersizedFish { get; set; }
 
         [Required]
         [TLRange(1, 10000, true)]
@@ -223,6 +226,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
                 FishType.AssignFrom(Edit.Dto.FishTypeId, FishTypes);
                 Presentation.AssignFrom(Edit.Dto.PresentationId, Presentations);
                 UnloadedQuantity.AssignFrom(Edit.Dto.UnloadedQuantity);
+                UndersizedFish.AssignFrom(Edit.Dto.Undersized);
 
                 if (Edit.Dto.OriginShip != null)
                 {
@@ -411,7 +415,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
                         Id = Edit?.Dto.Id,
                         CatchQuantity = ParseHelper.ParseDecimal(CatchQuantity.Value),
                         CatchCount = ParseHelper.ParseInteger(CatchCount.Value),
-                        CatchTypeId = CatchType.Value,
+                        CatchTypeId = HasUndersizedCheck
+                            ? (UndersizedFish ? CatchTypes.Find(f => f.Code == nameof(CatchSizeCodesEnum.BMS))?.Id : CatchTypes.Find(f => f.Code == nameof(CatchSizeCodesEnum.LSC))?.Id)
+                            : CatchType.Value,
                         CatchZoneId = CatchZone.Value,
                         FishTypeId = FishType.Value,
                         PresentationId = Presentation.Value,
@@ -422,6 +428,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
                         LogBookPageId = LogBookPage.Value?.Id,
                         UnregisteredPageNum = LogBookPageNum.Value,
                         UnregisteredPageDate = LogBookPageDate.Value,
+                        Undersized = UndersizedFish,
                     }
                 });
             }

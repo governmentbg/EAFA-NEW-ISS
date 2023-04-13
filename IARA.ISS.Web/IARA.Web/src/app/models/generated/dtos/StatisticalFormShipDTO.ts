@@ -1,6 +1,8 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { StatisticalFormShipSeaDaysDTO } from './StatisticalFormShipSeaDaysDTO';
+import { StatisticalFormsSeaDaysDTO } from './StatisticalFormsSeaDaysDTO';
 
 export class StatisticalFormShipDTO { 
     public constructor(obj?: Partial<StatisticalFormShipDTO>) {
@@ -27,4 +29,10 @@ export class StatisticalFormShipDTO {
 
     @StrictlyTyped(Number)
     public fuelConsumption?: number;
+
+    @StrictlyTyped(StatisticalFormShipSeaDaysDTO)
+    public shipSeaDays?: StatisticalFormShipSeaDaysDTO[];
+
+    @StrictlyTyped(StatisticalFormsSeaDaysDTO)
+    public fishingGearSeaDays?: StatisticalFormsSeaDaysDTO[];
 }

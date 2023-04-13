@@ -186,6 +186,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                 this.form.get('sentDateControl')!.clearValidators();
                 this.form.get('refusalDateControl')!.clearValidators();
                 this.form.get('refusalWitnessesControl')!.clearValidators();
+                this.form.get('hasObjectionControl')!.setValue(false);
 
                 if (type !== undefined && type !== null) {
                     this.deliveryType = InspDeliveryTypesEnum[type.code as keyof typeof InspDeliveryTypesEnum];
@@ -209,18 +210,19 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                             this.form.get('refusalWitnessesControl')!.setValidators(Validators.required);
                             break;
                     }
-
-                    this.form.get('deliveryTerritoryUnitControl')!.updateValueAndValidity({ emitEvent: false });
-                    this.form.get('stateServiceControl')!.updateValueAndValidity({ emitEvent: false });
-                    this.form.get('deliveryAddressControl')!.updateValueAndValidity({ emitEvent: false });
-                    this.form.get('sentDateControl')!.updateValueAndValidity({ emitEvent: false });
-                    this.form.get('refusalDateControl')!.updateValueAndValidity({ emitEvent: false });
-                    this.form.get('deliveryDateControl')!.updateValueAndValidity({ emitEvent: false });
-                    this.form.get('refusalWitnessesControl')!.updateValueAndValidity({ emitEvent: false });
                 }
                 else {
                     this.deliveryType = undefined;
                 }
+
+                this.form.get('hasObjectionControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('deliveryTerritoryUnitControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('stateServiceControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('deliveryAddressControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('sentDateControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('refusalDateControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('deliveryDateControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('refusalWitnessesControl')!.updateValueAndValidity({ emitEvent: false });
             }
         });
 
@@ -228,21 +230,19 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             next: (yes: boolean) => {
                 this.form.get('objectionDateControl')!.clearValidators();
                 this.form.get('objectionResolutionTypeControl')!.clearValidators();
+                this.form.get('objectionResolutionDateControl')!.clearValidators();
+                this.form.get('objectionResolutionNumControl')!.clearValidators();
+                this.form.get('objectionResolutionTypeControl')!.setValue(undefined);
 
                 if (yes) {
                     this.form.get('objectionDateControl')!.setValidators(Validators.required);
                     this.form.get('objectionResolutionTypeControl')!.setValidators(Validators.required);
                 }
-                else {
-                    this.form.get('objectionResolutionDateControl')!.clearValidators();
-                    this.form.get('objectionResolutionNumControl')!.clearValidators();
-
-                    this.form.get('objectionResolutionDateControl')!.updateValueAndValidity({ emitEvent: false });
-                    this.form.get('objectionResolutionNumControl')!.updateValueAndValidity({ emitEvent: false });
-                }
 
                 this.form.get('objectionDateControl')!.updateValueAndValidity({ emitEvent: false });
                 this.form.get('objectionResolutionTypeControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('objectionResolutionDateControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('objectionResolutionNumControl')!.updateValueAndValidity({ emitEvent: false });
             }
         });
 

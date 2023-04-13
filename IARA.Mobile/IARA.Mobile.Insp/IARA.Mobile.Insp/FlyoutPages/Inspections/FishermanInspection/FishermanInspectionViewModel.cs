@@ -41,7 +41,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             PatrolVehicles = new PatrolVehiclesViewModel(this, false);
             InspectedPerson = new PersonViewModel(this, InspectedPersonType.CaptFshmn, false);
-            Catches = new CatchInspectionsViewModel(this, showCatchArea: false, showAllowedDeviation: false);
+            Catches = new CatchInspectionsViewModel(this, showCatchArea: false, showAllowedDeviation: false, showUndersizedCheck: true);
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
             Signatures = new SignaturesViewModel(this);

@@ -43,8 +43,8 @@
     <WarningLevel>4</WarningLevel>
     <MtouchLink>None</MtouchLink>
     <MtouchArch>x86_64</MtouchArch>
-    <CodesignKey>Apple Development: Sasho Kalachev (MATAH54CCB)</CodesignKey>
-    <CodesignProvision>com.iara.dev profile</CodesignProvision>
+    <CodesignKey>Apple Distribution: Sasho Kalachev (M96LGRBRAQ)</CodesignKey>
+    <CodesignProvision>Prod Provisioning Profile</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,12 +55,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <MtouchArch>ARM64</MtouchArch>
-    <CodesignKey>Apple Development: Sasho Kalachev (MATAH54CCB)</CodesignKey>
+    <CodesignKey>Apple Development: Created via API (9LZ65M3J2D)</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchLink>None</MtouchLink>
     <MtouchInterpreter>-all</MtouchInterpreter>
-    <CodesignProvision>com.iara.dev profile</CodesignProvision>
+    <CodesignProvision>Dev Provisioning Profile</CodesignProvision>
     <BuildIpa>true</BuildIpa>
     <DeviceSpecificBuild>false</DeviceSpecificBuild>
     <MtouchFastDev>false</MtouchFastDev>
@@ -73,9 +73,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <MtouchArch>ARM64</MtouchArch>
-    <CodesignKey>iPhone Distribution: Sasho Kalachev (M96LGRBRAQ)</CodesignKey>
+    <CodesignKey>Apple Distribution: Sasho Kalachev (M96LGRBRAQ)</CodesignKey>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignProvision>com iara pub test provisioning profile</CodesignProvision>
+    <CodesignProvision>
+    </CodesignProvision>
     <MtouchUseLlvm>false</MtouchUseLlvm>
     <MtouchFloat32>false</MtouchFloat32>
     <MtouchEnableSGenConc>false</MtouchEnableSGenConc>
@@ -84,6 +85,8 @@
     <OptimizePNGs>true</OptimizePNGs>
     <MtouchInterpreter>-all</MtouchInterpreter>
     <MtouchLink>SdkOnly</MtouchLink>
+    <CodesignExtraArgs>
+    </CodesignExtraArgs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
     <AppExtensionDebugBundleId />
@@ -100,7 +103,7 @@
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodesignKey>iPhone Distribution: Sasho Kalachev (M96LGRBRAQ)</CodesignKey>
-    <CodesignProvision>iara pub prob provisioning profile</CodesignProvision>
+    <CodesignProvision>Prod Provisioning Profile</CodesignProvision>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ProdRelease|iPhone'">
@@ -111,8 +114,8 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
-    <CodesignKey>iPhone Distribution: Sasho Kalachev (M96LGRBRAQ)</CodesignKey>
-    <CodesignProvision>iara pub prob provisioning profile</CodesignProvision>
+    <CodesignKey>Apple Distribution: Sasho Kalachev (M96LGRBRAQ)</CodesignKey>
+    <CodesignProvision>Prod Provisioning Profile</CodesignProvision>
     <BuildIpa>true</BuildIpa>
     <IpaPackageName>com.iara.pub</IpaPackageName>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>

@@ -27,7 +27,6 @@ import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { StatisticalFormsSeaDaysDTO } from '@app/models/generated/dtos/StatisticalFormsSeaDaysDTO';
-import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
 import { StatisticalFormEmployeeInfoDTO } from '@app/models/generated/dtos/StatisticalFormEmployeeInfoDTO';
 import { StatisticalFormEmployeeInfoGroupDTO } from '@app/models/generated/dtos/StatisticalFormEmployeeInfoGroupDTO';
 import { StatisticalFormNumStatGroupDTO } from '@app/models/generated/dtos/StatisticalFormNumStatGroupDTO';
@@ -48,6 +47,7 @@ import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclature
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { StatisticalFormShipSeaDaysDTO } from '@app/models/generated/dtos/StatisticalFormShipSeaDaysDTO';
 
 type YesNo = 'yes' | 'no';
 
@@ -68,20 +68,19 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
     public expectedResults: StatisticalFormFishVesselRegixDataDTO;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
 
-    public seaDaysForm!: FormGroup;
-
     public activityPersonTypes: string[] = [];
     public fishingActivityTypes: string[] = [];
+    public seaDaysTitle: string | undefined;
 
-    public fishingGears: NomenclatureDTO<number>[] = [];
-    public allFishingGears: NomenclatureDTO<number>[] = [];
     public ships: ShipNomenclatureDTO[] = [];
     public fuelTypes: NomenclatureDTO<number>[] = [];
     public grossTonnageIntervals: NomenclatureDTO<number>[] = [];
     public shipLengthIntervals: NomenclatureDTO<number>[] = [];
     public hasEngine: boolean = false;
     public isShipHolderPartOfCrew: boolean = false;
-    public seaDays: StatisticalFormsSeaDaysDTO[] = [];
+    public allGearSeaDays: StatisticalFormsSeaDaysDTO[] = [];
+    public gearSeaDays: StatisticalFormsSeaDaysDTO[] = [];
+    public shipSeaDays: StatisticalFormShipSeaDaysDTO[] = [];
     public numericItemGroups: StatisticalFormNumStatGroupDTO[] = [];
     public employeeInfoGroups: StatisticalFormEmployeeInfoGroupDTO[] = [];
     public employeeInfo: StatisticalFormEmployeeInfoDTO[] = [];
@@ -113,9 +112,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
     public employeesNationality: StatisticalFormEmployeeInfoDTO[] = [];
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
-
-    @ViewChild('seaDaysTable')
-    private seaDaysTable!: TLDataTableComponent;
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -155,9 +151,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
     private employeeStatsLabels: string[] = [];
     private employeeInfoLabels: string[] = [];
     private financialInfoGroupNames: string[] = [];
-
-    // cache gears for ship by year
-    private shipGearsCache: Map<number, Map<number, NomenclatureDTO<number>[]>> = new Map<number, Map<number, NomenclatureDTO<number>[]>>();
 
     private readonly employeeGroupTypes: NumericStatTypeGroupsEnum[] = [NumericStatTypeGroupsEnum.FreeLabor, NumericStatTypeGroupsEnum.NumHours];
     private readonly workHoursGroupTypes: NumericStatTypeGroupsEnum[] = [NumericStatTypeGroupsEnum.WorkHours];
@@ -347,16 +340,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
 
     public ngAfterViewInit(): void {
         if (!this.showOnlyRegiXData) {
-            this.seaDaysForm?.get('fishingGearIdControl')?.valueChanges.subscribe({
-                next: () => {
-                    this.fishingGears = [...this.allFishingGears];
-                    const currentIds: number[] = this.seaDaysTable.rows.filter(x => x.isActive ?? true).map(x => x.fishingGearId);
-
-                    this.fishingGears = this.fishingGears.filter(x => !currentIds.includes(x.value!));
-                    this.fishingGears = this.fishingGears.slice();
-                }
-            });
-
             this.form!.get('shipNameControl')!.valueChanges.subscribe({
                 next: (value: NomenclatureDTO<number> | string | undefined) => {
                     if (value !== undefined && value !== null && typeof value !== 'string') {
@@ -439,7 +422,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
 
     public fileTypeFilterFn(options: PermittedFileTypeDTO[]): PermittedFileTypeDTO[] {
         const pdfs: FileTypeEnum[] = [FileTypeEnum.SIGNEDAPPL, FileTypeEnum.APPLICATION_PDF];
-        const offlineAppl: FileTypeEnum[] = [FileTypeEnum.SCANNED_FORM];
+        const offlines: FileTypeEnum[] = [FileTypeEnum.PAYEDFEE, FileTypeEnum.SCANNED_FORM];
 
         let result: PermittedFileTypeDTO[] = options;
 
@@ -448,7 +431,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         }
 
         if (this.isOnlineApplication) {
-            result = result.filter(x => !offlineAppl.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
+            result = result.filter(x => !offlines.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 
         return result;
@@ -470,12 +453,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
             }
         }
         return undefined;
-    }
-
-    public seaDaysActiveRecordChanged(): void {
-        if (this.fishingGears.length === 1 && !this.seaDaysForm.get('fishingGearIdControlHidden')!.value) {
-            this.seaDaysForm.get('fishingGearIdControlHidden')!.setValue(this.fishingGears[0]);
-        }
     }
 
     private saveFishVesselForm(dialogClose: DialogCloseCallback, saveAsDraft: boolean = false): Observable<boolean> {
@@ -551,20 +528,22 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                 this.regixChecks = applicationRegiXChecks;
             });
 
-            if (!this.viewMode) {
-                this.notifier.start();
-                this.notifier.onNotify.subscribe({
-                    next: () => {
-                        this.form.markAllAsTouched();
+            model.applicationRegiXChecks = undefined;
+        }
 
-                        if (this.showOnlyRegiXData) {
-                            ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
-                        }
+        if (!this.viewMode) {
+            this.notifier.start();
+            this.notifier.onNotify.subscribe({
+                next: () => {
+                    this.form.markAllAsTouched();
 
-                        this.notifier.stop();
+                    if (this.showOnlyRegiXData) {
+                        ApplicationUtils.enableOrDisableRegixCheckButtons(this.form, this.dialogRightSideActions);
                     }
-                });
-            }
+
+                    this.notifier.stop();
+                }
+            });
         }
     }
 
@@ -638,10 +617,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
             this.employeeInfoLabels.push(group.groupName!);
             this.employeeInfoFormArray.push(new FormControl(group.employeeTypes));
         }
-
-        setTimeout(() => {
-            this.seaDays = model.seaDays ?? [];
-        });
     }
 
     private fillFormRegister(model: StatisticalFormFishVesselEditDTO) {
@@ -715,10 +690,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
             this.employeeInfoLabels.push(group.groupName!);
             this.employeeInfoFormArray.push(new FormControl(group.employeeTypes));
         }
-
-        setTimeout(() => {
-            this.seaDays = model.seaDays ?? [];
-        });
     }
 
     private fillShipForm(ship: StatisticalFormShipDTO): void {
@@ -727,6 +698,11 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         this.form.get('shipTonnageControl')!.setValue(this.grossTonnageIntervals.find(x => x.value === ship.grossTonnageId!));
         this.form.get('hasEngineControl')!.setValue(ship.hasEngine);
         this.form.get('fuelTypeControl')!.setValue(this.fuelTypes.find(x => x.value === ship.fuelTypeId!));
+        
+        this.allGearSeaDays = ship.fishingGearSeaDays ?? [];
+        this.shipSeaDays = ship.shipSeaDays ?? [];
+
+        this.fillSeaDays();
     }
 
     private fillModel(): void {
@@ -791,7 +767,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         model.numStatGroups = [...this.getFinancialInfo(model), ...this.getEmployeeStats(model), ...this.getWorkHours(model)];
 
         model.files = this.form.get('filesControl')!.value;
-        model.seaDays = this.getSeaDaysFromTable();
     }
 
     private fillModelRegister(model: StatisticalFormFishVesselEditDTO) {
@@ -811,7 +786,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
             model.fuelTypeId = undefined;
             model.fuelConsumption = undefined;
         }
-       
+
         model.isFishingMainActivity = this.form.get('isFishingMainActivityControl')!.value.value === 'yes';
         model.isShipHolderPartOfCrew = this.form.get('shipHolderPartOfCrewControl')!.value.value === 'yes';
 
@@ -823,7 +798,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         model.numStatGroups = [...this.getFinancialInfo(model), ...this.getEmployeeStats(model), ...this.getWorkHours(model)];
 
         model.files = this.form.get('filesControl')!.value;
-        model.seaDays = this.getSeaDaysFromTable();
     }
 
     private buildForm(): void {
@@ -856,11 +830,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                 financialInfoArray: new FormArray([], this.costsValidator()),
                 workHoursArray: new FormArray([])
             });
-
-            this.seaDaysForm = new FormGroup({
-                fishingGearIdControl: new FormControl(undefined, Validators.required),
-                daysControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)])
-            });
         }
         else {
             this.form = new FormGroup({
@@ -882,11 +851,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                 employeeStatsArray: new FormArray([]),
                 financialInfoArray: new FormArray([], this.costsValidator()),
                 workHoursArray: new FormArray([])
-            });
-
-            this.seaDaysForm = new FormGroup({
-                fishingGearIdControl: new FormControl(null, Validators.required),
-                daysControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 0)])
             });
         }
 
@@ -921,7 +885,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
 
         this.form.get('shipNameControl')?.valueChanges.subscribe({
             next: (value: NomenclatureDTO<number> | undefined) => {
-                
+
 
                 if (value !== undefined && value !== null && value instanceof NomenclatureDTO) {
                     if (this.lastSelectedShip !== null && this.lastSelectedShip !== undefined && this.lastSelectedShip.value !== value.value) {
@@ -937,22 +901,12 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
                             next: (ship: StatisticalFormShipDTO) => {
                                 this.statFormShip.set(ship.shipId!, ship);
 
-                                const year: number | undefined = this.getYear();
-                                if (year !== undefined && year !== null) {
-                                    this.updateGearsCacheAndSetGears(ship.shipId!, year);
-                                }
-
                                 this.fillShipForm(ship);
                                 this.showShipForm = true;
                             }
                         });
                     }
                     else {
-                        const year: number | undefined = this.getYear();
-                        if (year !== undefined && year !== null) {
-                            this.updateGearsCacheAndSetGears(ship.shipId!, year);
-                        }
-
                         this.fillShipForm(ship);
                         this.showShipForm = true;
                     }
@@ -965,20 +919,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
 
                     this.lastSelectedShip = undefined;
                     this.showShipForm = false;
-                }
-            }
-        });
-
-        this.form.get('yearControl')?.valueChanges.subscribe({
-            next: (date: Date | undefined) => {
-                if (date !== undefined && date !== null) {
-                    const shipId: number | undefined = this.form.get('shipNameControl')?.value?.value;
-
-                    if (shipId !== undefined && shipId !== null) {
-                        const year: number = date.getFullYear();
-
-                        this.updateGearsCacheAndSetGears(shipId, year);
-                    }
                 }
             }
         });
@@ -997,37 +937,19 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         return undefined;
     }
 
-    private updateGearsCacheAndSetGears(shipId: number, year: number): void {
-        let gearsCache: Map<number, NomenclatureDTO<number>[]> | undefined = this.shipGearsCache.get(shipId);
-        if (gearsCache === undefined) {
-            gearsCache = new Map<number, NomenclatureDTO<number>[]>();
+    private fillSeaDays() {
+        const year: number | undefined = this.getYear();
 
-            this.shipGearsCache.set(shipId, gearsCache);
-        }
+        if (year !== undefined && year !== null) {
+            this.gearSeaDays = this.allGearSeaDays.filter(x => x.year === year);
+            const seaDaysTotal: number = this.shipSeaDays.find(x => x.year === year)?.days ?? 0;
 
-        const gears: NomenclatureDTO<number>[] | undefined = gearsCache.get(year);
-        if (gears !== undefined) {
-            this.allFishingGears = this.fishingGears = gears.slice();
-            this.updateSeaDaysWithNewGears();
+            this.seaDaysTitle = `${this.translate.getValue('statistical-forms.sea-days-title')} ${seaDaysTotal}`;
         }
         else {
-            this.service.getShipFishingGearsForYear(shipId, year).subscribe({
-                next: (gears: NomenclatureDTO<number>[]) => {
-                    gearsCache!.set(year, gears);
-                    this.allFishingGears = this.fishingGears = gears;
-                    this.updateSeaDaysWithNewGears();
-                }
-            });
+            this.gearSeaDays = [];
+            this.seaDaysTitle = this.translate.getValue('statistical-forms.sea-days-title');
         }
-    }
-
-    private updateSeaDaysWithNewGears(): void {
-        const seaDays: StatisticalFormsSeaDaysDTO[] = this.getSeaDaysFromTable();
-        const fishingGearIds: number[] = this.fishingGears.map(x => x.value!);
-
-        setTimeout(() => {
-            this.seaDays = seaDays.filter(x => fishingGearIds.includes(x.fishingGearId!));
-        });
     }
 
     private getEmployeeInfo(model: StatisticalFormReworkApplicationEditDTO | StatisticalFormReworkEditDTO): StatisticalFormEmployeeInfoGroupDTO[] {
@@ -1097,19 +1019,6 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
 
     private markAllAsTouched(): void {
         this.form.markAllAsTouched();
-
-        this.seaDaysForm.markAllAsTouched();
-    }
-
-    private getSeaDaysFromTable(): StatisticalFormsSeaDaysDTO[] {
-        const rows = this.seaDaysTable.rows as StatisticalFormsSeaDaysDTO[];
-
-        return rows.map(x => new StatisticalFormsSeaDaysDTO({
-            id: x.id,
-            fishingGearId: x.fishingGearId,
-            days: x.days,
-            isActive: x.isActive ?? true
-        }));
     }
 
     private payColumnCountValidator(): ValidatorFn {

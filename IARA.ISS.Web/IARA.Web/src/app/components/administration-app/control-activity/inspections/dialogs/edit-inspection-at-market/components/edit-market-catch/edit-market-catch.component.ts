@@ -21,6 +21,7 @@ import { TLValidators } from '@app/shared/utils/tl-validators';
 import { forkJoin } from 'rxjs';
 import { DeclarationLogBookPageFishDTO } from '@app/models/generated/dtos/DeclarationLogBookPageFishDTO';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { CatchSizeCodesEnum } from '@app/enums/catch-size-codes.enum';
 
 @Component({
     selector: 'edit-market-catch',
@@ -41,6 +42,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     public mapOptions: MapOptions;
 
     public hasCatchType: boolean = true;
+    public hasUndersizedCheck: boolean = false;
     public hasUnloadedQuantity: boolean = true;
     public isMapPopoverOpened: boolean = false;
     public readOnly: boolean = false;
@@ -163,6 +165,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         this.types = data.types;
         this.catchZones = data.catchZones;
         this.hasUnloadedQuantity = data.hasUnloadedQuantity;
+        this.hasUndersizedCheck = data.hasUndersizedCheck;
         this.presentations = data.presentations;
         this.hasCatchType = data.hasCatchType;
 
@@ -251,6 +254,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             declarationNumberControl: new FormControl(undefined),
             declarationDateControl: new FormControl(undefined),
             invoiceDataControl: new FormControl(undefined),
+            undersizedControl: new FormControl(false),
         });
 
         this.form.get('shipControl')!.disable();
@@ -358,6 +362,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         this.form.get('countControl')!.setValue(this.model.catchCount);
         this.form.get('quantityControl')!.setValue(this.model.catchQuantity);
         this.form.get('catchTypeControl')!.setValue(this.types.find(f => f.value === this.model.catchTypeId));
+        this.form.get('undersizedControl')!.setValue(this.model.undersized);
         this.form.get('presentationControl')!.setValue(
             this.presentations.find(f => f.value === this.model.presentationId)
             ?? this.presentations.find(f => f.code === 'WHL')
@@ -413,9 +418,18 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         const catchCount = this.form.get('countControl')!.value;
         const catchQuantity = this.form.get('quantityControl')!.value;
         const unloadedQuantity = this.form.get('unloadedQuantityControl')!.value;
+        this.model.undersized = this.form.get('undersizedControl')!.value;
+
+        if (this.hasUndersizedCheck) {
+            this.model.catchTypeId = this.model.undersized === true
+                ? this.types.find(f => f.code === CatchSizeCodesEnum[CatchSizeCodesEnum.BMS])?.value
+                : this.types.find(f => f.code === CatchSizeCodesEnum[CatchSizeCodesEnum.LSC])?.value;
+        }
+        else {
+            this.model.catchTypeId = this.form.get('catchTypeControl')!.value?.value;
+        }
 
         this.model.fishTypeId = this.form.get('typeControl')!.value?.value;
-        this.model.catchTypeId = this.form.get('catchTypeControl')!.value?.value;
         this.model.catchCount = catchCount ? Number(catchCount) : undefined;
         this.model.catchQuantity = catchQuantity ? Number(catchQuantity) : undefined;
         this.model.unloadedQuantity = unloadedQuantity ? Number(unloadedQuantity) : undefined;

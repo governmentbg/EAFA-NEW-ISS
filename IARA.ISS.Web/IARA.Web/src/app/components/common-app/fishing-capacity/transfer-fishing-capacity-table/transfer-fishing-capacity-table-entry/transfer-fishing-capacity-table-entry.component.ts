@@ -34,6 +34,7 @@ export class TransferFishingCapacityTableEntryComponent implements OnInit, IDial
 
     public isEgnLncReadOnly: boolean = false;
     public showOnlyRegiXData: boolean = false;
+    public showRegiXData: boolean = false;
 
     public expectedResults: FishingCapacityHolderRegixDataDTO;
 
@@ -86,14 +87,17 @@ export class TransferFishingCapacityTableEntryComponent implements OnInit, IDial
             this.fillForm();
         }
 
-        if (this.showOnlyRegiXData) {
-            this.form.markAllAsTouched();
+        if (this.showOnlyRegiXData || this.showRegiXData) {
+            setTimeout(() => {
+                this.form.markAllAsTouched();
+            });
         }
     }
 
     public setData(data: TransferFishingCapacityTableEntryParams, wrapperData: DialogWrapperData): void {
         this.readOnly = data.readOnly;
         this.showOnlyRegiXData = data.showOnlyRegixData;
+        this.showRegiXData = data.showRegixData;
         this.isEgnLncReadOnly = data.isEgnLncReadOnly;
 
         this.remainingPower = data.remainingPower;

@@ -124,6 +124,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
             vehicleMarkControl: new FormControl(undefined),
             vehicleModelControl: new FormControl(undefined),
             vehicleTrailerNumControl: new FormControl(undefined),
+            ownerIsDriverControl: new FormControl(false),
             ownerControl: new FormControl(undefined),
             driverControl: new FormControl(undefined),
             hasSealControl: new FormControl(true),
@@ -271,7 +272,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
                         type: InspectedPersonTypeEnum.RegBuyer,
                         address: InspectionUtils.buildAddress(buyer.address, this.translate)
                     }) : undefined,
-                this.form.get('ownerControl')!.value,
+                this.modifiedOwner(),
                 this.form.get('driverControl')!.value,
             ].filter(f => f !== null && f !== undefined),
         });
@@ -279,5 +280,32 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
 
     private onHasSealChanged(value: boolean): void {
         this.hasSeal = value;
+    }
+
+    private modifiedOwner(): InspectionSubjectPersonnelDTO {
+        if (this.form.controls.ownerIsDriverControl.value) {
+            const owner: InspectionSubjectPersonnelDTO = this.form.get('ownerControl')!.value;
+            return new InspectionSubjectPersonnelDTO({
+                address: owner.address,
+                citizenshipId: owner.citizenshipId,
+                comment: owner.comment,
+                egnLnc: owner.egnLnc,
+                eik: owner.eik,
+                entryId: owner.entryId,
+                firstName: owner.firstName,
+                hasBulgarianAddressRegistration: owner.hasBulgarianAddressRegistration,
+                id: owner.id,
+                isActive: owner.isActive,
+                isLegal: owner.isLegal,
+                isRegistered: owner.isRegistered,
+                lastName: owner.lastName,
+                middleName: owner.middleName,
+                registeredAddress: owner.registeredAddress,
+                type: InspectedPersonTypeEnum.OwnerPers
+            });
+        }
+        else {
+            return this.form.get('ownerControl')!.value;
+        }
     }
 }

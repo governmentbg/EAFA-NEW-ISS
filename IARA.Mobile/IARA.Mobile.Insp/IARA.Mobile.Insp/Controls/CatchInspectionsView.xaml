@@ -20,6 +20,9 @@
         <tl:TLTableColumn Text="{rt:Translate CatchType, Group=CatchInspection}"
                 Width="300"
                 IsVisible="{Binding BindingContext.ShowType, Source={Reference view}}" />
+        <tl:TLTableColumn Text="{rt:Translate UndersizedFish, Group=CatchInspection}"
+                Width="300"
+                IsVisible="{Binding BindingContext.ShowUndersizedCheck, Source={Reference view}}" />
         <tl:TLTableColumn Text="{rt:Translate CatchCount, Group=CatchInspection}"
                 Width="100" />
         <tl:TLTableColumn Text="{rt:Translate CatchQuantity, Group=CatchInspection}"
@@ -55,12 +58,15 @@
                         ItemsSource="{Binding BindingContext.FishTypes, Source={Reference view}}"
                         IsTitleVisible="False"
                         IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                <tl:TLCheckView ValidState="{Binding UndersizedFish}"
+                        IsVisible="{Binding BindingContext.ShowType, Source={Reference view}}"
+                        IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                 <tl:TLNativePicker ValidState="{Binding CatchType}"
                         ItemsSource="{Binding BindingContext.CatchTypes, Source={Reference view}}"
                         IsTitleVisible="False"
                         DisplayValue="DisplayValue"
                         DialogTitle="{rt:Translate CatchType, Group=CatchInspection}"
-                        IsVisible="{Binding BindingContext.ShowType, Source={Reference view}}"
+                        IsVisible="{Binding BindingContext.ShowUndersizedCheck, Source={Reference view}}"
                         IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                 <tl:TLEntry ValidState="{Binding CatchCount}"
                         IsTitleVisible="False"
@@ -121,6 +127,10 @@
                             Command="{Binding FishTypeChosen}"
                             DisplayValue="DisplayValue"
                             ItemsSource="{Binding BindingContext.FishTypes, Source={Reference view}}"
+                            IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                    <tl:TLCheckView Text="{rt:Translate UndersizedFish, Group=CatchInspection}"
+                            ValidState="{Binding UndersizedFish}"
+                            IsVisible="{Binding BindingContext.ShowUndersizedCheck, Source={Reference view}}"
                             IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                     <tl:TLNativePicker Title="{rt:Translate CatchType, Group=CatchInspection}"
                             ValidState="{Binding CatchType}"

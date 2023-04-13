@@ -14,7 +14,6 @@ import { InspectionAdditionalInfoModel } from '../../models/inspection-additiona
 import { InspectionObservationCategoryEnum } from '@app/enums/inspection-observation-category.enum';
 import { InspectionFirstSaleDTO } from '@app/models/generated/dtos/InspectionFirstSaleDTO';
 import { InspectedBuyerNomenclatureDTO } from '@app/models/generated/dtos/InspectedBuyerNomenclatureDTO';
-import { InspectionUtils } from '@app/shared/utils/inspection.utils';
 import { InspectedPersonTypeEnum } from '@app/enums/inspected-person-type.enum';
 import { InspectionCheckModel } from '../../models/inspection-check.model';
 import { CommonUtils } from '@app/shared/utils/common.utils';

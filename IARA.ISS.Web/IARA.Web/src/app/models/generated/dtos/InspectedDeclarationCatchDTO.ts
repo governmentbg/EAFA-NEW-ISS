@@ -30,6 +30,9 @@ export class InspectedDeclarationCatchDTO {
     @StrictlyTyped(Number)
     public presentationId?: number;
 
+    @StrictlyTyped(Boolean)
+    public undersized?: boolean;
+
     @StrictlyTyped(Number)
     public catchZoneId?: number;
 

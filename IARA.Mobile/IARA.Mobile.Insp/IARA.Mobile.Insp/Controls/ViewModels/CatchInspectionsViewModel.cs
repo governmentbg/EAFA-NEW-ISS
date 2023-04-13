@@ -6,6 +6,7 @@ using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Attributes;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
@@ -29,7 +30,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             bool showOriginShip = false,
             bool showAverageSize = false,
             bool showFishSex = false,
-            bool showType = true
+            bool showType = true,
+            bool showUndersizedCheck = false
         )
         {
             Inspection = inspection;
@@ -40,6 +42,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             ShowAverageSize = showAverageSize;
             ShowFishSex = showFishSex;
             ShowType = showType;
+            ShowUndersizedCheck = showUndersizedCheck;
 
             AddCatch = CommandBuilder.CreateFrom(OnAddCatch);
             RemoveCatch = CommandBuilder.CreateFrom<CatchInspectionViewModel>(OnRemoveCatch);
@@ -56,6 +59,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public bool ShowAverageSize { get; }
         public bool ShowFishSex { get; }
         public bool ShowType { get; }
+        public bool ShowUndersizedCheck { get; }
 
         [DuplicateMarketCatches(ErrorMessageResourceName = "DuplicateCatches")]
         public ValidStateValidatableTable<CatchInspectionViewModel> Catches { get; set; }
@@ -125,6 +129,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 viewModel.FishSex.AssignFrom(f.FishSexId, FishSexTypes);
                 viewModel.CatchCount.AssignFrom(f.CatchCount);
                 viewModel.TurbotSizeGroup.AssignFrom(f.TurbotSizeGroupId, TurbotSizeGroups);
+                viewModel.UndersizedFish.AssignFrom(f.Undersized);
 
                 if (f.OriginShip != null)
                 {
@@ -148,7 +153,19 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public static implicit operator List<InspectionCatchMeasureDto>(CatchInspectionsViewModel viewModel)
         {
-            return viewModel.Catches.Select(f => (InspectionCatchMeasureDto)f).ToList();
+            return viewModel.Catches.Select(f =>
+            {
+                InspectionCatchMeasureDto dto = (InspectionCatchMeasureDto)f;
+
+                if (viewModel.ShowUndersizedCheck)
+                {
+                    dto.CatchInspectionTypeId = f.UndersizedFish
+                        ? viewModel.CatchTypes.Find(s => s.Code == nameof(CatchSizeCodesEnum.BMS))?.Id
+                        : viewModel.CatchTypes.Find(s => s.Code == nameof(CatchSizeCodesEnum.LSC))?.Id;
+                }
+
+                return dto;
+            }).ToList();
         }
     }
 }

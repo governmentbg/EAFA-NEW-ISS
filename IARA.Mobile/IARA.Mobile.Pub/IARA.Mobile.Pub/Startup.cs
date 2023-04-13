@@ -260,7 +260,7 @@ namespace IARA.Mobile.Pub
             App.Current.SetMainPage(new MainNavigator(
                 new MainFlyoutPage(
                     CheckForPermission(permissions, ServerPermissions.ScientificFishingRead),
-                    CheckForPermission(permissions, ServerPermissions.TicketsRead),
+                    CheckForPermission(permissions, ServerPermissions.TicketsPublicRead),
                     CheckForPermission(permissions, ServerPermissions.CatchRecordsRead),
                     CheckForPermission(permissions, ServerPermissions.ReportRead),
                     CheckForPermission(permissions, ServerPermissions.ReportViolationSend),
