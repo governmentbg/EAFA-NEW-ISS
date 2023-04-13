@@ -26,6 +26,7 @@ import { TransferShipQuotaComponent } from './transfer-ship-quota.component';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
+import { CommonUtils } from '../../../shared/utils/common.utils';
 
 @Component({
     selector: 'ship-quotas-register',
@@ -116,6 +117,12 @@ export class ShipQuotasComponent extends BasePageComponent implements OnInit, Af
             excelRequestServiceMethod: this.service.downloadShipQuotaExcel.bind(this.service),
             excelFilename: this.translationService.getValue('catch-quotas.ship-excel-filename')
         });
+
+        const tableId: number | undefined = window.history.state?.tableId;
+
+        if (!CommonUtils.isNullOrEmpty(tableId)) {
+            this.gridManager.advancedFilters = new ShipQuotasFilters({ shipQuotaId: tableId });
+        }
 
         this._datatable.activeRecordChanged.subscribe({
             next: (element: ShipQuotaDTO) => {

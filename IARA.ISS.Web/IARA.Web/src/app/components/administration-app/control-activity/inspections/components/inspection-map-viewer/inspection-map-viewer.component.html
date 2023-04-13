@@ -16,7 +16,8 @@
                                 label="{{ 'inspections.longitude' | tlTranslate }}">
                 </tl-coordinates>
 
-                <tl-icon-button [icon]="selectIcon"
+                <tl-icon-button *ngIf="!isDisabled"
+                                [icon]="selectIcon"
                                 (buttonClicked)="toggleMapSelection()">
                 </tl-icon-button>
             </div>

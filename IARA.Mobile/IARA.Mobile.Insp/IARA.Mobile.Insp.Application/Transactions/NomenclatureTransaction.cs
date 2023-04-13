@@ -388,7 +388,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     select new SelectNomenclatureDto
                     {
                         Id = patrolVehicle.Id,
-                        Code = patrolVehicle.ExternalMark ?? patrolVehicle.RegistrationNumber,
+                        Code = patrolVehicle.ExternalMark ?? patrolVehicle.RegistrationNumber ?? patrolVehicle.CallSign,
                         Name = patrolVehicle.Name,
                     }
                 ).Skip(page * count).Take(count).ToList();

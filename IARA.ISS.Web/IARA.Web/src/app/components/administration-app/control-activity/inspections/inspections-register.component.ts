@@ -144,7 +144,10 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 next: (value) => {
                     this.isInspector = value ?? false;
                 }
-            })
+            });
+        }
+        else {
+            this.isInspector = true;
         }
     }
 

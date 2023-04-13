@@ -34,4 +34,9 @@ export class CatchesAndSalesAdministrationFilters extends BaseRequestModel {
     public filterTransportationLogBookTeritorryUnitId: boolean | undefined;
     public filterAquacultureLogBookTeritorryUnitId: boolean | undefined;
     public personId: number | undefined;
+    public shipLogBookPageId: number | undefined;
+    public firstSaleLogBookPageId: number | undefined;
+    public admissionLogBookPageId: number | undefined;
+    public transportationLogBookPageId: number | undefined;
+    public aquacultureLogBookPageId: number | undefined;
 }

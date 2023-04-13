@@ -91,7 +91,7 @@
 
         <tl-card-content fxLayout="column">
             <div fxLayout="row" fxLayout.lt-md="column">
-                <regix-data [fxFlex]="dialogData?.showOnlyRegiXData ? 100 : 75"
+                <regix-data [fxFlex]="dialogData?.showOnlyRegiXData || !personPhotoRequired ? 100 : 75"
                             fxFlex.lt-md="100"
                             fxFlexOrder="1"
                             fxFlexOrder.lt-md="2"
@@ -110,7 +110,7 @@
                             checkboxLabel="{{ 'recreational-fishing.has-bulgarian-address-registration' | tlTranslate }}">
                 </regix-data>
 
-                <tl-picture-uploader *ngIf="!dialogData?.showOnlyRegiXData"
+                <tl-picture-uploader *ngIf="!dialogData?.showOnlyRegiXData && personPhotoRequired"
                                      fxFlex="25"
                                      fxFlex.lt-md="100"
                                      fxFlexOrder="2"

@@ -6,7 +6,7 @@ namespace IARA.Mobile.Shared.Helpers
 {
     public class TLPagedCollection<T> : TLObservableCollection<T>, IPagedCollection
     {
-        private int _page;
+        private int _page = 1;
         private int _pageCount;
         private ICommand _goToPage;
 

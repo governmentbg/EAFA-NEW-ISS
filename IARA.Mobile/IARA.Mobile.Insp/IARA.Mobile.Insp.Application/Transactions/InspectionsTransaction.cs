@@ -5,6 +5,7 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using IARA.Mobile.Application;
+using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.Extensions;
 using IARA.Mobile.Domain.Enums;
@@ -54,6 +55,38 @@ namespace IARA.Mobile.Insp.Application.Transactions
             }
 
             return string.Empty;
+        }
+
+        public async Task<PersonFullDataDto> GetPersonFullData(IdentifierTypeEnum identifierType, string identifier)
+        {
+            HttpResult<PersonFullDataDto> result = await RestClient.GetAsync<PersonFullDataDto>(
+                "PersonLegalExtractor/TryGetPerson",
+                "Common",
+                new { identifierType, identifier }
+            );
+
+            if (result.IsSuccessful)
+            {
+                return result.Content;
+            }
+
+            return null;
+        }
+
+        public async Task<LegalFullDataDto> GetLegalFullData(string eik)
+        {
+            HttpResult<LegalFullDataDto> result = await RestClient.GetAsync<LegalFullDataDto>(
+                "PersonLegalExtractor/TryGetLegal",
+                "Common",
+                new { eik }
+            );
+
+            if (result.IsSuccessful)
+            {
+                return result.Content;
+            }
+
+            return null;
         }
 
         public async Task<FileResponse> GetFile(int fileId)

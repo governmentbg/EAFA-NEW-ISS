@@ -1,7 +1,7 @@
 ﻿
 
 import { BaseRequestModel } from '@app/models/common/BaseRequestModel';
-import { ScientificPermitStatusEnum } from '@app/enums/scientific-permit-status.enum';
+import { ScientificPermitStatusEnum } from '../../../enums/scientific-permit-status.enum';
 
 export class ScientificFishingFilters extends BaseRequestModel {
 
@@ -34,4 +34,5 @@ export class ScientificFishingFilters extends BaseRequestModel {
     public territoryUnitId: number | undefined;
     public personId: number | undefined;
     public legalId: number | undefined;
+    public permitId: number | undefined;
 }

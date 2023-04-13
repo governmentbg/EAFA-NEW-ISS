@@ -24,6 +24,7 @@ import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { CrossCheckResultsAssignedUserComponent } from '../cross-check-results-assigned-user/cross-check-results-assigned-user.component';
 import { CrossCheckResultsResolutionComponent } from '../cross-check-results-resolution/cross-check-results-resolution.component';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'cross-checks-results',
@@ -38,6 +39,14 @@ export class CrossChecksResultsComponent implements AfterViewInit {
     public readonly canRestoreRecords: boolean;
     public readonly canAssignRecords: boolean;
     public readonly canResolveRecords: boolean;
+
+    public readonly canReadShipLogBookPages: boolean;
+    public readonly canReadFirstSaleLogBookPages: boolean;
+    public readonly canReadTransportationLogBookPages: boolean;
+    public readonly canReadAdmissionLogBookPages: boolean;
+    public readonly canReadAquacultureLogBookPages: boolean;
+    public readonly canReadScientificFishingRegister: boolean;
+    public readonly canReadShipCatchQuotaRegister: boolean;
 
     public resolutions: NomenclatureDTO<number>[];
     public assignedUsers: NomenclatureDTO<number>[];
@@ -56,6 +65,7 @@ export class CrossChecksResultsComponent implements AfterViewInit {
     private confirmDialog: TLConfirmDialog;
     private assingedUserDialog: TLMatDialog<CrossCheckResultsAssignedUserComponent>;
     private resolutionDialog: TLMatDialog<CrossCheckResultsResolutionComponent>;
+    private router: Router;
 
     public constructor(
         commonNomenclaturesService: CommonNomenclatures,
@@ -64,7 +74,8 @@ export class CrossChecksResultsComponent implements AfterViewInit {
         confirmDialog: TLConfirmDialog,
         assingedUserDialog: TLMatDialog<CrossCheckResultsAssignedUserComponent>,
         resolutionDialog: TLMatDialog<CrossCheckResultsResolutionComponent>,
-        permissions: PermissionsService
+        permissions: PermissionsService,
+        router: Router
     ) {
         this.commonNomenclaturesService = commonNomenclaturesService;
         this.translate = translate;
@@ -72,12 +83,21 @@ export class CrossChecksResultsComponent implements AfterViewInit {
         this.confirmDialog = confirmDialog;
         this.assingedUserDialog = assingedUserDialog;
         this.resolutionDialog = resolutionDialog;
+        this.router = router;
 
         this.canReadRecords = permissions.has(PermissionsEnum.CrossCheckResultsRead);
         this.canDeleteRecords = permissions.has(PermissionsEnum.CrossCheckResultsDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.CrossCheckResultsRestoreRecords);
         this.canAssignRecords = permissions.has(PermissionsEnum.CrossCheckResultsAssign);
         this.canResolveRecords = permissions.has(PermissionsEnum.CrossCheckResultsResolve);
+
+        this.canReadShipLogBookPages = permissions.has(PermissionsEnum.FishLogBookRead) || permissions.has(PermissionsEnum.FishLogBookPageReadAll);
+        this.canReadAdmissionLogBookPages = permissions.has(PermissionsEnum.AdmissionLogBookRead) || permissions.has(PermissionsEnum.AdmissionLogBookPageReadAll);
+        this.canReadFirstSaleLogBookPages = permissions.has(PermissionsEnum.FirstSaleLogBookRead) || permissions.has(PermissionsEnum.FirstSaleLogBookPageReadAll);
+        this.canReadTransportationLogBookPages = permissions.has(PermissionsEnum.TransportationLogBookRead) || permissions.has(PermissionsEnum.TransportationLogBookPageReadAll);
+        this.canReadAquacultureLogBookPages = permissions.has(PermissionsEnum.AquacultureLogBookRead) || permissions.has(PermissionsEnum.AquacultureLogBookPageReadAll);
+        this.canReadScientificFishingRegister = permissions.has(PermissionsEnum.ScientificFishingRead) || permissions.has(PermissionsEnum.ScientificFishingReadAll);
+        this.canReadShipCatchQuotaRegister = permissions.has(PermissionsEnum.ShipQuotasRead);
 
         this.resolutions = [];
         this.assignedUsers = [];
@@ -201,6 +221,45 @@ export class CrossChecksResultsComponent implements AfterViewInit {
         });
     }
 
+    public showCrossCheckResultResource(crossCheckresult: CrossCheckResultDTO): void {
+        switch (crossCheckresult.pageCode) {
+            case 'ShipLogBookPage':
+            case 'FirstSaleLogBookPage':
+            case 'AdmissionLogBookPage':
+            case 'TransportationLogBookPage':
+            case 'AquacultureLogBookPage':
+                this.navigateByUrl('/log-books-and-declarations', crossCheckresult.tableId!, crossCheckresult.pageCode);
+                break;
+            case 'ScientificFishingPage':
+                this.navigateByUrl('/scientific-fishing', crossCheckresult.tableId!, crossCheckresult.pageCode);
+                break;
+            case 'ShipCatchQuotas':
+                this.navigateByUrl('/ship-quotas-register', crossCheckresult.tableId!, crossCheckresult.pageCode);
+                break;
+        }
+    }
+
+    public canReadRegister(pageCode: string): boolean {
+        switch (pageCode) {
+            case 'ShipLogBookPage':
+                return this.canReadShipLogBookPages;
+            case 'FirstSaleLogBookPage':
+                return this.canReadFirstSaleLogBookPages;
+            case 'AdmissionLogBookPage':
+                return this.canReadAdmissionLogBookPages;
+            case 'TransportationLogBookPage':
+                return this.canReadTransportationLogBookPages;
+            case 'AquacultureLogBookPage':
+                return this.canReadAquacultureLogBookPages;
+            case 'ScientificFishingPage':
+                return this.canReadScientificFishingRegister;
+            case 'ShipCatchQuotas':
+                return this.canReadShipCatchQuotaRegister;
+            default:
+                return false;
+        }
+    }
+
     private buildForm(): void {
         this.form = new FormGroup({
             checkCodeControl: new FormControl(),
@@ -234,5 +293,14 @@ export class CrossChecksResultsComponent implements AfterViewInit {
 
     private closeEditDialogBtnClicked(closeFn: HeaderCloseFunction): void {
         closeFn();
+    }
+
+    private navigateByUrl(url: string, id: number, pageCode: string): void {
+        this.router.navigateByUrl(url, {
+            state: {
+                tableId: id,
+                pageCode: pageCode
+            }
+        });
     }
 }

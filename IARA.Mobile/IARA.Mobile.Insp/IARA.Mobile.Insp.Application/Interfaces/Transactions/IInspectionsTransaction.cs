@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using IARA.Mobile.Application.DTObjects.Common;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
@@ -65,5 +67,9 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
         Task PostOfflineInspections();
 
         Task<List<DeclarationLogBookPageDto>> GetDeclarationLogBookPages(DeclarationLogBookType type, int shipUid);
+
+        Task<PersonFullDataDto> GetPersonFullData(IdentifierTypeEnum identifierType, string identifier);
+
+        Task<LegalFullDataDto> GetLegalFullData(string eik);
     }
 }

@@ -52,6 +52,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
         public int? ShipUid { get; set; }
         public bool HasCatchType { get; set; }
         public bool HasUndersizedCheck { get; set; }
+        public bool HasUnloadedQuantity { get; set; }
 
         public DeclarationCatchesViewModel Catches { get; set; }
         public InspectionPageViewModel Inspection { get; set; }

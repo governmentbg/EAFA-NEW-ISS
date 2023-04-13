@@ -51,7 +51,6 @@ import { AddShipWizardDialogParams } from './components/add-ship-page-wizard/mod
 import { EditShipLogBookPageDialogParams } from './components/ship-log-book/models/edit-ship-log-book-page-dialog-params.model';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { EditLogBookComponent } from '../commercial-fishing/components/edit-log-book/edit-log-book.component';
-import { SimpleAuditMethod } from '../commercial-fishing/components/log-books/log-books.component';
 import { EditLogBookDialogParamsModel } from '../commercial-fishing/components/log-books/models/edit-log-book-dialog-params.model';
 import { LogBookGroupsEnum } from '@app/enums/log-book-groups.enum';
 import { LogBookEditDTO } from '@app/models/generated/dtos/LogBookEditDTO';
@@ -290,9 +289,31 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         });
 
         const personId: number | undefined = window.history.state?.personId;
-
+        const tableId: number | undefined = window.history.state?.tableId;
+        const pageCode: string | undefined = window.history.state?.pageCode;
+        
         if (!this.isPublicApp && !CommonUtils.isNullOrEmpty(personId)) {
             this.gridManager.advancedFilters = new CatchesAndSalesAdministrationFilters({ personId: personId });
+        }
+
+        if (!CommonUtils.isNullOrEmpty(tableId) && !CommonUtils.isNullOrEmpty(pageCode)) {
+            switch (pageCode) {
+                case 'ShipLogBookPage':
+                    this.gridManager.advancedFilters = new CatchesAndSalesAdministrationFilters({ shipLogBookPageId: tableId });
+                    break;
+                case 'FirstSaleLogBookPage':
+                    this.gridManager.advancedFilters = new CatchesAndSalesAdministrationFilters({ firstSaleLogBookPageId: tableId });
+                    break;
+                case 'AdmissionLogBookPage':
+                    this.gridManager.advancedFilters = new CatchesAndSalesAdministrationFilters({ admissionLogBookPageId: tableId });
+                    break;
+                case 'TransportationLogBookPage':
+                    this.gridManager.advancedFilters = new CatchesAndSalesAdministrationFilters({ transportationLogBookPageId: tableId });
+                    break;
+                case 'AquacultureLogBookPage':
+                    this.gridManager.advancedFilters = new CatchesAndSalesAdministrationFilters({ aquacultureLogBookPageId: tableId });
+                    break;
+            }
         }
 
         this.gridManager.onRequestServiceMethodCalled.subscribe({
