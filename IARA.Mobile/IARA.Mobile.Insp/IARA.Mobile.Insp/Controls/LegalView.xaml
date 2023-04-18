@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
         xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
         xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
         xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
         x:Class="IARA.Mobile.Insp.Controls.LegalView"
         x:DataType="vm:LegalViewModel"
@@ -21,16 +22,23 @@
                 </MultiBinding>
             </tl:TLEntry.IsEnabled>
         </tl:TLEntry>
-        <tl:TLEntry Title="{rt:Translate EIK, Group=Common}"
-                ValidState="{Binding EIK}">
-            <tl:TLEntry.IsEnabled>
-                <MultiBinding Converter="{StaticResource All}">
-                    <Binding Path="Inspection.ActivityType"
-                            Converter="{StaticResource IsNotReview}" />
-                    <Binding Path="IsEnabled" />
-                </MultiBinding>
-            </tl:TLEntry.IsEnabled>
-        </tl:TLEntry>
+        <Grid ColumnDefinitions="*,Auto">
+            <tl:TLEntry Title="{rt:Translate EIK, Group=Common}"
+                    ValidState="{Binding EIK}">
+                <tl:TLEntry.IsEnabled>
+                    <MultiBinding Converter="{StaticResource All}">
+                        <Binding Path="Inspection.ActivityType"
+                                Converter="{StaticResource IsNotReview}" />
+                        <Binding Path="IsEnabled" />
+                    </MultiBinding>
+                </tl:TLEntry.IsEnabled>
+            </tl:TLEntry>
+            <ImageButton Grid.Column="1"
+                    Source="{FontImageSource Color=White, FontFamily=FA, Glyph={Static h:IconFont.MagnifyingGlass}, Size=25}"
+                    Padding="10"
+                    VerticalOptions="End"
+                    Command="{Binding SearchLegal}" />
+        </Grid>
         <tl:TLEntry tl:TLFlex.Grow="2"
                 Title="{rt:Translate Address, Group=Common}"
                 ValidState="{Binding Address}">

@@ -31,7 +31,8 @@
                 Width="150"
                 IsVisible="{Binding BindingContext.ShowUnloadedQuantity, Source={Reference view}}" />
         <tl:TLTableColumn Text="{rt:Translate TurbotSizeGroup, Group=CatchInspection}"
-                Width="150" />
+                Width="150"
+                IsVisible="{Binding BindingContext.ShowTurbotSizeGroups, Source={Reference view}}" />
         <tl:TLTableColumn Text="{rt:Translate AllowedDeviation, Group=CatchInspection}"
                 Width="150"
                 IsVisible="{Binding BindingContext.ShowAllowedDeviation, Source={Reference view}}" />
@@ -87,6 +88,7 @@
                 <tl:TLNativePicker ValidState="{Binding TurbotSizeGroup}"
                         ItemsSource="{Binding BindingContext.TurbotSizeGroups, Source={Reference view}}"
                         IsTitleVisible="False"
+                        IsVisible="{Binding BindingContext.ShowTurbotSizeGroups, Source={Reference view}}"
                         IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                 <tl:TLPicker ValidState="{Binding CatchArea}"
                         ItemsSource="{Binding BindingContext.CatchAreas, Source={Reference view}}"

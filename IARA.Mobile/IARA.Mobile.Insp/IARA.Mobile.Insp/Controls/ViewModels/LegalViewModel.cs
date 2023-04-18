@@ -1,12 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using IARA.Mobile.Application;
+using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Shared.ViewModels.Models;
+using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
 
@@ -21,6 +25,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         {
             Inspection = inspection;
             PersonType = personType;
+
+            SearchLegal = CommandBuilder.CreateFrom(OnSearchLegal);
 
             this.AddValidation();
         }
@@ -44,7 +50,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         [MaxLength(20)]
         public EgnLncValidState EIK { get; set; }
 
-        [Required]
         [MaxLength(500)]
         public ValidState Address { get; set; }
 
@@ -56,6 +61,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             get => _nationalities;
             private set => SetProperty(ref _nationalities, value);
         }
+
+        public ICommand SearchLegal { get; }
 
         public void Init(List<SelectNomenclatureDto> nationalities)
         {
@@ -81,6 +88,19 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 Address.AssignFrom(subject.Address);
                 Nationality.AssignFrom(subject.CitizenshipId, Nationalities);
                 EIK.AssignFrom(subject.Eik);
+            }
+        }
+
+        private async Task OnSearchLegal()
+        {
+            LegalFullDataDto data = await InspectionsTransaction.GetLegalFullData(EIK.Value);
+
+            if (data?.Legal != null)
+            {
+                Name.Value = data.Legal.Name;
+                EIK.Value = data.Legal.EIK;
+                Address.Value = string.Empty;
+                Nationality.Value = Nationalities.Find(f => f.Code == CommonConstants.NomenclatureBulgaria);
             }
         }
 

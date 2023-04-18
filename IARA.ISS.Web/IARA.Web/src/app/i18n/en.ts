@@ -4943,6 +4943,7 @@
         'edit-cross-check-resolution': 'Edit cross check resolution',
         'delete-cross-check-result': 'Delete cross check results',
         'restore-cross-check-result': 'Restore cross check results',
+        'show-cross-check-result-resource': 'Show cross check resource',
 
         'delete-cross-check-result-dialog-title': 'Delete crosscheck result',
         'confirm-delete-message': 'Are you sure you wish to delete this cross check result?',
@@ -5209,6 +5210,8 @@
         'ship-fuel-type': 'Fuel type',
         'fuel-consumption': 'Fuel consumption',
         'sea-days-title': 'Days in sea: ',
+        'sea-days-ship-title': 'Days at sea - ',
+        'sea-days-ship': 'for ship',
         'fishing-gear': 'Fishing gear',
         'sea-days': 'Days in sea',
         'activity-title': 'Activity',

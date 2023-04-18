@@ -74,11 +74,11 @@ export class InspectionMapViewerComponent extends CustomFormControl<LocationDTO 
     public toggleMapSelection(): void {
         if (this.selectIcon === 'pin_drop') {
             this.selectIcon = 'edit_location';
-            this.mapViewer.startClickMapTool();
+          // this.mapViewer.startClickMapTool();
         }
         else {
             this.selectIcon = 'pin_drop';
-            this.mapViewer.stopClickMapTool();
+          //  this.mapViewer.stopClickMapTool();
         }
     }
 

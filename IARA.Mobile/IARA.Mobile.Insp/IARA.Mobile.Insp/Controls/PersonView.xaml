@@ -4,6 +4,7 @@
         xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
         xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
         xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
         xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
         x:Class="IARA.Mobile.Insp.Controls.PersonView"
         x:DataType="vm:PersonViewModel"
@@ -21,8 +22,15 @@
         <tl:TLEntry Title="{rt:Translate LastName, Group=Common}"
                 ValidState="{Binding LastName}"
                 IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-        <sv:TLEntryWithType ValidState="{Binding EGN}"
-                IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+        <Grid ColumnDefinitions="*,Auto">
+            <sv:TLEntryWithType ValidState="{Binding EGN}"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+            <ImageButton Grid.Column="1"
+                    Source="{FontImageSource Color=White, FontFamily=FA, Glyph={Static h:IconFont.MagnifyingGlass}, Size=25}"
+                    Padding="10"
+                    VerticalOptions="End"
+                    Command="{Binding SearchPerson}" />
+        </Grid>
         <tl:TLEntry tl:TLFlex.Grow="2"
                 Title="{rt:Translate Address, Group=Common}"
                 ValidState="{Binding Address}"

@@ -147,6 +147,11 @@ export class ScientificFishingContent implements OnInit, AfterViewInit {
 
         const isPerson: boolean | undefined = window.history.state?.isPerson;
         const id: number | undefined = window.history.state?.id;
+        const tableId: number | undefined = window.history.state?.tableId;
+
+        if (!CommonUtils.isNullOrEmpty(tableId)) {
+            this.gridManager.advancedFilters = new ScientificFishingFilters({ permitId: tableId });
+        }
 
         if (!CommonUtils.isNullOrEmpty(id)) {
             if (isPerson) {

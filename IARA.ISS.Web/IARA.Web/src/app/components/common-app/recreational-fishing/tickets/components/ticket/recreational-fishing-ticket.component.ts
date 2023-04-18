@@ -81,6 +81,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
 
     public showFilesPanel: boolean = false;
     public personPhotoMethod: TLPictureRequestMethod | undefined;
+    public personPhotoRequired: boolean = true;
 
     public dateOfBirthProperties!: RegixDateOfBirthProperties;
     public dateOfBirthRequiredTicketTypes: string[] = [];
@@ -104,6 +105,11 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
     private issueDuplicateDialog: TLMatDialog<IssueDuplicateTicketComponent>
 
     private systemProperties!: SystemPropertiesDTO;
+
+    private readonly notRequiredPhotoPeriods: string[] = [
+        TicketPeriodEnum[TicketPeriodEnum.WEEKLY],
+        TicketPeriodEnum[TicketPeriodEnum.MONTHLY]
+    ];
 
     public constructor(
         @Optional() @Self() ngControl: NgControl,
@@ -285,6 +291,16 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             this.dateOfBirthProperties.validators = [Validators.required, this.isPersonElder()];
         }
 
+        this.personPhotoRequired = !this.notRequiredPhotoPeriods.includes(this.period.code!);
+        if (this.personPhotoRequired) {
+            this.form.get('photoControl')?.setValidators(Validators.required);
+            this.form.get('photoControl')?.updateValueAndValidity();
+        }
+        else {
+            this.form.get('photoControl')?.clearValidators();
+            this.form.get('photoControl')?.updateValueAndValidity();
+        }
+
         this.setupValidators();
     }
 
@@ -369,6 +385,16 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
         if (this.type.code === TicketTypeEnum[TicketTypeEnum.UNDER14]) {
             // always set to true because it doesn't exist in this case
             this.form.get('guaranteeTrueDataControl')?.setValue(true);
+        }
+
+        this.personPhotoRequired = !this.notRequiredPhotoPeriods.includes(this.period.code!);
+        if (this.personPhotoRequired) {
+            this.form.get('photoControl')?.setValidators(Validators.required);
+            this.form.get('photoControl')?.updateValueAndValidity();
+        }
+        else {
+            this.form.get('photoControl')?.clearValidators();
+            this.form.get('photoControl')?.updateValueAndValidity();
         }
     }
 
@@ -512,7 +538,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             ticketNumControl: new FormControl(null),
             duplicateOfTicketNumControl: new FormControl(null),
             regixDataControl: new FormControl(null, Validators.required),
-            photoControl: new FormControl(null, Validators.required),
+            photoControl: new FormControl(null),
             addressControl: new FormControl(null, Validators.required),
             representativeRegixDataControl: new FormControl(null),
             representativeAddressControl: new FormControl(null),
@@ -691,10 +717,12 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                 this.form.get('regixDataControl')!.setValue(data.person);
                 this.form.get('addressControl')!.setValue(data.addresses);
 
-                this.personPhotoMethod = this.service.getPersonPhoto.bind(this.service, data.person!.egnLnc!, associationId);
-                setTimeout(() => {
-                    this.form.get('photoControl')!.setValue(data.photo);
-                });
+                if (this.personPhotoRequired) {
+                    this.personPhotoMethod = this.service.getPersonPhoto.bind(this.service, data.person!.egnLnc!, associationId);
+                    setTimeout(() => {
+                        this.form.get('photoControl')!.setValue(data.photo);
+                    });
+                }
             }
         }
         else {
@@ -706,10 +734,12 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                 this.form.get('regixDataControl')!.setValue(null);
                 this.form.get('addressControl')!.setValue(null);
 
-                this.personPhotoMethod = undefined;
-                setTimeout(() => {
-                    this.form.get('photoControl')!.setValue(null);
-                });
+                if (this.personPhotoRequired) {
+                    this.personPhotoMethod = undefined;
+                    setTimeout(() => {
+                        this.form.get('photoControl')!.setValue(null);
+                    });
+                }
 
                 this.snackbar.open(this.translate.getValue('recreational-fishing.no-person-found-snackbar-err'), undefined, {
                     duration: RequestProperties.DEFAULT.showExceptionDurationErr,

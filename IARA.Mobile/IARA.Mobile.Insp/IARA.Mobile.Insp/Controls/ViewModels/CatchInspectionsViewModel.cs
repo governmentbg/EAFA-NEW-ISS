@@ -31,7 +31,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             bool showAverageSize = false,
             bool showFishSex = false,
             bool showType = true,
-            bool showUndersizedCheck = false
+            bool showUndersizedCheck = false,
+            bool showTurbotSizeGroups = true
         )
         {
             Inspection = inspection;
@@ -43,6 +44,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             ShowFishSex = showFishSex;
             ShowType = showType;
             ShowUndersizedCheck = showUndersizedCheck;
+            ShowTurbotSizeGroups = showTurbotSizeGroups;
 
             AddCatch = CommandBuilder.CreateFrom(OnAddCatch);
             RemoveCatch = CommandBuilder.CreateFrom<CatchInspectionViewModel>(OnRemoveCatch);
@@ -60,6 +62,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public bool ShowFishSex { get; }
         public bool ShowType { get; }
         public bool ShowUndersizedCheck { get; }
+        public bool ShowTurbotSizeGroups { get; }
 
         [DuplicateMarketCatches(ErrorMessageResourceName = "DuplicateCatches")]
         public ValidStateValidatableTable<CatchInspectionViewModel> Catches { get; set; }

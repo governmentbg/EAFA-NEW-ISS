@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using IARA.Mobile.Application;
+using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
@@ -9,6 +12,7 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Shared.Attributes;
 using IARA.Mobile.Shared.ViewModels.Models;
+using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
 
@@ -22,6 +26,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         {
             Inspection = inspection;
             PersonType = personType;
+
+            SearchPerson = CommandBuilder.CreateFrom(OnSearchPerson);
 
             this.AddValidation();
 
@@ -52,7 +58,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         [EGN(nameof(EGN))]
         public EgnLncValidState EGN { get; set; }
 
-        [Required]
         [MaxLength(500)]
         public ValidState Address { get; set; }
 
@@ -64,6 +69,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             get => _nationalities;
             private set => SetProperty(ref _nationalities, value);
         }
+
+        public ICommand SearchPerson { get; }
 
         public void Init(List<SelectNomenclatureDto> nationalities)
         {
@@ -96,6 +103,20 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 EGN.AssignFrom(subject.EgnLnc);
                 Address.AssignFrom(subject.Address);
                 Nationality.AssignFrom(subject.CitizenshipId, Nationalities);
+            }
+        }
+
+        private async Task OnSearchPerson()
+        {
+            PersonFullDataDto data = await InspectionsTransaction.GetPersonFullData(EGN.IdentifierType, EGN.Value);
+
+            if (data?.Person != null)
+            {
+                FirstName.Value = data.Person.FirstName;
+                MiddleName.Value = data.Person.MiddleName;
+                LastName.Value = data.Person.LastName;
+                Address.Value = string.Empty;
+                Nationality.AssignFrom(data.Person.CitizenshipCountryId, Nationalities);
             }
         }
 

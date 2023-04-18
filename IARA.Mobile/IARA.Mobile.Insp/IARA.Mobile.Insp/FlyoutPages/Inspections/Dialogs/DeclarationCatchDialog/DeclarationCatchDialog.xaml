@@ -100,7 +100,8 @@
                     <tl:TLEntry Title="{rt:Translate UnloadedQuantity, Group=DeclarationCatch}"
                             ValidState="{Binding UnloadedQuantity}"
                             Keyboard="Numeric"
-                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                            IsVisible="{Binding HasUnloadedQuantity}" />
                     <tl:TLPicker Title="{rt:Translate Presentation, Group=DeclarationCatch}"
                             ItemsSource="{Binding Presentations}"
                             ValidState="{Binding Presentation}"

@@ -19,4 +19,5 @@ export class ShipQuotasFilters extends BaseRequestModel {
     public fishId: number | undefined;
     public association: string | undefined;
     public cfr: string | undefined;
+    public shipQuotaId: number | undefined;
 }

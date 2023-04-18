@@ -34,7 +34,8 @@
     <tl:TLFillLayout>
         <Grid xct:StateLayout.CurrentState="{Binding IsBusy, Converter={StaticResource BoolToSuccessLayoutState}}">
             <xct:StateLayout.StateViews>
-                <xct:StateView StateKey="Loading" VerticalOptions="FillAndExpand">
+                <xct:StateView StateKey="Loading"
+                        VerticalOptions="FillAndExpand">
                     <ActivityIndicator HeightRequest="150"
                             HorizontalOptions="Center"
                             IsRunning="{Binding IsBusy}"
@@ -83,7 +84,8 @@
                                                 </CollectionView.ItemTemplate>
                                                 <CollectionView.Footer>
                                                     <ContentView Padding="0,20,100,20">
-                                                        <sv:TLPagination PagedItemsSource="{Binding Inspections}" HorizontalOptions="End" />
+                                                        <sv:TLPagination PagedItemsSource="{Binding Inspections}"
+                                                                HorizontalOptions="End" />
                                                     </ContentView>
                                                 </CollectionView.Footer>
                                             </CollectionView>
@@ -101,7 +103,8 @@
                                                 </CollectionView.ItemTemplate>
                                                 <CollectionView.Footer>
                                                     <ContentView Padding="0,20,100,20">
-                                                        <sv:TLPagination PagedItemsSource="{Binding Inspections}" HorizontalOptions="End" />
+                                                        <sv:TLPagination PagedItemsSource="{Binding Inspections}"
+                                                                HorizontalOptions="End" />
                                                     </ContentView>
                                                 </CollectionView.Footer>
                                             </CollectionView>
@@ -149,7 +152,8 @@
                                             </ListView.ItemTemplate>
                                             <ListView.Footer>
                                                 <ContentView Padding="0,20,100,20">
-                                                    <sv:TLPagination PagedItemsSource="{Binding Inspections}" HorizontalOptions="End" />
+                                                    <sv:TLPagination PagedItemsSource="{Binding Inspections}"
+                                                            HorizontalOptions="End" />
                                                 </ContentView>
                                             </ListView.Footer>
                                         </ListView>
@@ -167,7 +171,8 @@
                                             </ListView.ItemTemplate>
                                             <ListView.Footer>
                                                 <ContentView Padding="0,20,100,20">
-                                                    <sv:TLPagination PagedItemsSource="{Binding Inspections}" HorizontalOptions="End" />
+                                                    <sv:TLPagination PagedItemsSource="{Binding Inspections}"
+                                                            HorizontalOptions="End" />
                                                 </ContentView>
                                             </ListView.Footer>
                                         </ListView>

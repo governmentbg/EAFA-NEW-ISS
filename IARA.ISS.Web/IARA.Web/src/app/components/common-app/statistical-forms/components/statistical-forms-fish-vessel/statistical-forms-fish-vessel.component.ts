@@ -930,21 +930,14 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         });
     }
 
-    private getYear(): number | undefined {
-        if (this.form.get('yearControl')!.valid) {
-            return this.form.get('yearControl')!.value?.getFullYear();
-        }
-        return undefined;
-    }
-
     private fillSeaDays() {
-        const year: number | undefined = this.getYear();
+        const year: number | undefined = this.form.get('yearControl')!.value?.getFullYear();
 
         if (year !== undefined && year !== null) {
             this.gearSeaDays = this.allGearSeaDays.filter(x => x.year === year);
             const seaDaysTotal: number = this.shipSeaDays.find(x => x.year === year)?.days ?? 0;
 
-            this.seaDaysTitle = `${this.translate.getValue('statistical-forms.sea-days-title')} ${seaDaysTotal}`;
+            this.seaDaysTitle = `${this.translate.getValue('statistical-forms.sea-days-ship-title')} ${seaDaysTotal} ${this.translate.getValue('statistical-forms.sea-days-ship')}`;
         }
         else {
             this.gearSeaDays = [];

@@ -46,7 +46,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
                 showAllowedDeviation: false,
                 showAverageSize: true,
                 showFishSex: true,
-                showType: false
+                showType: false,
+                showTurbotSizeGroups: false
             );
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
