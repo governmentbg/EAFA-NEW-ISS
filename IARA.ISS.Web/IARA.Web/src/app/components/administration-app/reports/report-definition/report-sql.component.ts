@@ -1,6 +1,6 @@
-﻿import { Component, Input, OnInit, Self, ViewChild } from '@angular/core';
+﻿import { Component, Input, OnInit, Self } from '@angular/core';
 import { AbstractControl, ControlValueAccessor, FormControl, FormGroup, NgControl, ValidationErrors, Validator } from '@angular/forms';
-import { MonacoEditorModule, NgxEditorModel } from 'ngx-monaco-editor';
+import { NgxEditorModel } from 'ngx-monaco-editor';
 import { ExecutionReportInfoDTO } from '@app/models/generated/dtos/ExecutionReportInfoDTO';
 import { IReportService } from '@app/interfaces/administration-app/report.interface';
 import { forkJoin } from 'rxjs';
@@ -113,6 +113,7 @@ export class ReportSqlComponent implements OnInit, ControlValueAccessor, Validat
         this.isDisabled = isDisabled;
         if (this.isDisabled) {
             this.options.readOnly = true;
+            this.hasExecuteTable = false;
             this.formGroup.disable();
         }
         else {

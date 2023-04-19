@@ -23,12 +23,6 @@
             </div>
 
             <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
-                <tl-input fxFlex="33"
-                          formControlName="classControl"
-                          label="{{ 'error-log.class' | tlTranslate }}"
-                          tooltipResourceName="error-log.class-helper">
-                </tl-input>
-
                 <tl-select fxFlex="33"
                            label="{{ 'error-log.severity' | tlTranslate }}"
                            formControlName="severityControl"
@@ -37,7 +31,27 @@
                            tooltipResourceName="error-log.severity-helper">
                 </tl-select>
 
-                <div fxFlex="33"></div>
+                <tl-input fxFlex="33"
+                          formControlName="classControl"
+                          label="{{ 'error-log.class' | tlTranslate }}"
+                          tooltipResourceName="error-log.class-helper">
+                </tl-input>
+
+                <tl-input fxFlex="33"
+                          formControlName="methodControl"
+                          label="{{ 'error-log.method' | tlTranslate }}"
+                          tooltipResourceName="error-log.method-helper">
+                </tl-input>
+            </div>
+
+            <div fxLayoutGap="1em" fxLayout="row" fxFlexFill fxLayoutAlign="space-between center">
+                <tl-input fxFlex="33"
+                          formControlName="messageControl"
+                          label="{{ 'error-log.message' | tlTranslate }}"
+                          tooltipResourceName="error-log.message-helper">
+                </tl-input>
+
+                <div fxFlex="66"></div>
             </div>
         </div>
     </search-panel>

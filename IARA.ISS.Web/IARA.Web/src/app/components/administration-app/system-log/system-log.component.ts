@@ -1,6 +1,5 @@
-﻿import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { ISystemLogService } from '@app/interfaces/administration-app/system-log.interface';
 import { RequestStatistics } from '@app/models/common/request-statistics.model';
@@ -28,19 +27,12 @@ import { ViewSystemLogComponent } from './view-system-log.component';
     templateUrl: './system-log.component.html'
 })
 export class SystemLogComponent implements AfterViewInit, OnInit {
-
     public actionTypeCategories!: NomenclatureDTO<number>[];
     public users!: NomenclatureDTO<number>[];
     public formGroup!: FormGroup;
     public statistics: RequestStatistics[] = [];
     public tracingEnabled = false;
     public listeningForStatistics = false;
-
-    private viewDialog: TLMatDialog<ViewSystemLogComponent>;
-    private systemLogService: ISystemLogService;
-    private translateService: FuseTranslationLoaderService;
-    private commonNomenclaturesService: CommonNomenclatures;
-    private snackbar: MatSnackBar;
 
 
     @ViewChild(SearchPanelComponent)
@@ -56,24 +48,23 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
     private datatable!: IRemoteTLDatatableComponent;
     private searchpanel!: SearchPanelComponent;
     private gridManager!: DataTableManager<SystemLogDTO, SystemLogFilters>;
+    private viewDialog: TLMatDialog<ViewSystemLogComponent>;
+    private systemLogService: ISystemLogService;
+    private translateService: FuseTranslationLoaderService;
+    private commonNomenclaturesService: CommonNomenclatures;
 
-
-    public constructor(systemLogService: SystemLogService,
+    public constructor(
+        systemLogService: SystemLogService,
         translateService: FuseTranslationLoaderService,
         viewDialog: TLMatDialog<ViewSystemLogComponent>,
-        commonNomenclaturesService: CommonNomenclatures,
-        snackbar: MatSnackBar) {
+        commonNomenclaturesService: CommonNomenclatures
+    ) {
         this.systemLogService = systemLogService;
         this.translateService = translateService;
         this.viewDialog = viewDialog;
         this.commonNomenclaturesService = commonNomenclaturesService;
-        this.snackbar = snackbar;
 
-        this.formGroup = new FormGroup({
-            actionTypeControl: new FormControl(),
-            dateRangeControl: new FormControl(),
-            userControl: new FormControl()
-        });
+        this.buildForm();
     }
 
     public ngOnInit(): void {
@@ -86,15 +77,6 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
         });
     }
 
-    private successSnackbar(message: string) {
-        const config = new MatSnackBarConfig();
-        config.horizontalPosition = 'center';
-        config.verticalPosition = 'bottom';
-        config.duration = 3000;
-        config.panelClass = 'snack-bar-success-color';
-        this.snackbar.open(message, 'X', config);
-    }
-
     public openDialog(row: SystemLogDTO): void {
         this.systemLogService.get(row.id!).subscribe({
             next: (result: SystemLogViewDTO) => {
@@ -102,6 +84,7 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
                     systemLog: row,
                     systemLogView: result
                 });
+
                 if (row.id !== undefined) {
                     const headerTitle = this.translateService.getValue('system-log.dialog-title');
 
@@ -158,7 +141,25 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
         filter.registeredDateFrom = inputArgs.getValue<DateRangeData>('dateRangeControl')?.start;
         filter.registeredDateTo = inputArgs.getValue<DateRangeData>('dateRangeControl')?.end;
         filter.userId = inputArgs.getValue('userControl');
+        filter.application = inputArgs.getValue('applicationControl');
+        filter.action = inputArgs.getValue('actionControl');
+        filter.tableName = inputArgs.getValue('tableNameControl');
+        filter.oldValue = inputArgs.getValue('oldValueControl');
+        filter.newValue = inputArgs.getValue('newValueControl');
 
         return filter;
+    }
+
+    private buildForm(): void {
+        this.formGroup = new FormGroup({
+            actionTypeControl: new FormControl(),
+            dateRangeControl: new FormControl(),
+            userControl: new FormControl(),
+            applicationControl: new FormControl(),
+            actionControl: new FormControl(),
+            tableNameControl: new FormControl(),
+            oldValueControl: new FormControl(),
+            newValueControl: new FormControl()
+        });
     }
 }

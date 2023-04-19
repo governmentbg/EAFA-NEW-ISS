@@ -124,7 +124,7 @@
     </tl-expansion-panel>
 
     <!--Дни на море-->
-    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData && showShipForm"
                         [title]="seaDaysTitle"
                         tooltipResourceName="statistical-forms.sea-days-title-helper"
                         [validityChecker]="form">

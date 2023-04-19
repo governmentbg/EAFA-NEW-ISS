@@ -58,7 +58,8 @@ export class ReportViewContentComponent implements OnInit, AfterViewInit {
         translateService: FuseTranslationLoaderService,
         permissionsService: PermissionsService,
         editDialog: TLMatDialog<EditReportViewComponent>,
-        confirmationDialog: TLConfirmDialog) {
+        confirmationDialog: TLConfirmDialog
+        ) {
         this.router = router;
         this.translateService = translateService;
         this.permissionsService = permissionsService;
@@ -148,7 +149,7 @@ export class ReportViewContentComponent implements OnInit, AfterViewInit {
         this.router.navigateByUrl('/reports/report_definition', {
             state: {
                 id: id,
-                viewMode: !this.canEditReport || viewMode,
+                viewMode: (!this.canEditReport && !this.canAddReport) || viewMode,
                 isGroupId: isGroupId
             }
         });

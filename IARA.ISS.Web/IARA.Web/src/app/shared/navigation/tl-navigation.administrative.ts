@@ -655,7 +655,7 @@ export class Navigation {
                     type: 'item',
                     icon: 'fa-th-list',
                     url: '/reports/report_definition',
-                    permissions: [PermissionsEnum.ReportEditRecords],
+                    permissions: [PermissionsEnum.ReportEditRecords, PermissionsEnum.ReportAddRecords],
                     component: ReportDefinitionComponent,
                     isPublic: false,
                     hideInMenu: true
