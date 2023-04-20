@@ -3,7 +3,7 @@ import { AfterViewInit, Component, ContentChild, ContentChildren, EventEmitter, 
 import { AbstractControl, ControlContainer, FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { faFilter, faRedo } from '@fortawesome/free-solid-svg-icons';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { TLDateAdapter } from '../../utils/date.adapter';
 import { FilterEventArgs } from '../data-table/models/filter-event-args.model';
 import { DateRangeData } from '../input-controls/tl-date-range/tl-date-range.component';
@@ -240,6 +240,10 @@ export class SearchPanelComponent implements AfterViewInit {
                     if (this.isSimpleType(filterValue) || filterValue === null) {
                         if (typeof filterValue === 'string') {
                             filters.set(key, filterValue?.trim());
+                        }
+                        else if ((filterValue as any) instanceof moment) {
+                            const dateTime: Date = (filterValue as Moment).toDate();
+                            filters.set(key, dateTime);
                         }
                         else {
                             filters.set(key, filterValue);

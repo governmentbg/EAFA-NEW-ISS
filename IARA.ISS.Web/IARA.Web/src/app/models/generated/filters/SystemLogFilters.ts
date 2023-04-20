@@ -1,5 +1,6 @@
 ﻿
-import { BaseRequestModel } from '../../common/BaseRequestModel';
+
+import { BaseRequestModel } from '@app/models/common/BaseRequestModel';
 
 export class SystemLogFilters extends BaseRequestModel {
 
@@ -19,4 +20,8 @@ export class SystemLogFilters extends BaseRequestModel {
     public userId: number | undefined;
     public tableId: string | undefined;
     public tableName: string | undefined;
+    public action: string | undefined;
+    public application: string | undefined;
+    public oldValue: string | undefined;
+    public newValue: string | undefined;
 }

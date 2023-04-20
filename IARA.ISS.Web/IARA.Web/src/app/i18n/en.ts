@@ -2229,6 +2229,11 @@
         'action-type-id': 'Action type',
         'date': 'Date',
         'user-id': 'User',
+        'application': 'Application',
+        'action': 'Action',
+        'table-name': 'Object',
+        'audit-old-value': 'Audit content old value',
+        'audit-new-value': 'Audit content new value',
 
         'table-unique-number': 'Unique number',
         'table-date-time': 'Date and time',

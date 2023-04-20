@@ -162,7 +162,7 @@ export class Navigation {
             type: 'item',
             icon: 'fa-th-list',
             url: '/reports',
-            permissions: [],
+            permissions: [PermissionsEnum.ReportRead],
             component: ReportViewComponent,
             isPublic: true,
         },

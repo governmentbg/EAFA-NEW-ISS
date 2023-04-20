@@ -23,7 +23,7 @@ import { ErrorLogSeverityEnum } from '@app/enums/error-log-severity.enum';
 })
 export class ErrorLogComponent implements AfterViewInit, OnInit {
     public translationService: FuseTranslationLoaderService;
-    public errorLogFormGroup: FormGroup;
+    public errorLogFormGroup!: FormGroup;
     public usernames: NomenclatureDTO<number>[] = [];
     public severityTypes: NomenclatureDTO<ErrorLogSeverityEnum>[] = [];
 
@@ -48,13 +48,7 @@ export class ErrorLogComponent implements AfterViewInit, OnInit {
         this.commonNomenclaturesService = commonNomenclaturesService;
         this.snackBar = snackBar;
 
-        this.errorLogFormGroup = new FormGroup({
-            errorLogDateRangeControl: new FormControl(),
-            usernameControl: new FormControl(),
-            severityControl: new FormControl(),
-            classControl: new FormControl(),
-            idControl: new FormControl()
-        });
+        this.buildForm();
 
         this.severityTypes = [
             new NomenclatureDTO<ErrorLogSeverityEnum>({
@@ -140,7 +134,9 @@ export class ErrorLogComponent implements AfterViewInit, OnInit {
             errorLogDateTo: filters.getValue<DateRangeData>('errorLogDateRangeControl')?.end,
             userId: filters.getValue('usernameControl'),
             class: filters.getValue('classControl'),
-            errorLogId: filters.getValue('idControl')
+            errorLogId: filters.getValue('idControl'),
+            method: filters.getValue('methodControl'),
+            message: filters.getValue('messageControl')
         });
 
         const severityTypes: ErrorLogSeverityEnum[] | undefined = filters.getValue('severityControl');
@@ -151,5 +147,17 @@ export class ErrorLogComponent implements AfterViewInit, OnInit {
         }
 
         return result;
+    }
+
+    private buildForm(): void {
+        this.errorLogFormGroup = new FormGroup({
+            errorLogDateRangeControl: new FormControl(),
+            usernameControl: new FormControl(),
+            severityControl: new FormControl(),
+            classControl: new FormControl(),
+            idControl: new FormControl(),
+            methodControl: new FormControl(),
+            messageControl: new FormControl()
+        });
     }
 }
