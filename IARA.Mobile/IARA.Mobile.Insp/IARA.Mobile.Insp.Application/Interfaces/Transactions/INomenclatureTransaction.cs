@@ -121,5 +121,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
         ShipPersonnelDetailedDto GetAquacultureOwner(int aquacultureId);
 
         List<SelectNomenclatureDto> GetTurbotSizeGroups();
+
+        List<SelectNomenclatureDto> GetInspectionVesselTypes();
     }
 }

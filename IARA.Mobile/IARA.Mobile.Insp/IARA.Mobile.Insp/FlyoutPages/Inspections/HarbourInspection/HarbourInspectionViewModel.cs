@@ -33,7 +33,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
         public HarbourInspectionViewModel()
         {
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
-            InspectionHarbour = new InspectionHarbourViewModel(this);
+            InspectionHarbour = new InspectionHarbourViewModel(this, hasDate: false);
             InspectedShip = new FishingShipViewModel(this, canPickLocation: false);
             ShipChecks = new ShipChecksViewModel(this);
             ShipCatches = new ShipCatchesViewModel(this);
@@ -232,10 +232,20 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                             .Select(f => f.PermitLicenseId.Value)
                             .ToList()
                     );
-                    InspectedShip.OnEdit(Edit.ReceivingShipInspection);
+                    InspectedShip.OnEdit(Edit.ReceivingShipInspection, Edit.ReceivingShipInspection.LastPortVisit);
                     ShipCatches.OnEdit(Edit.ReceivingShipInspection);
                     //ShipFishingGears.Toggles.AssignFrom(Edit.ReceivingShipInspection.Checks);
-                    InspectionHarbour.OnEdit(Edit.ReceivingShipInspection.LastPortVisit);
+
+                    if (Edit.ReceivingShipInspection.InspectionPortId != null || Edit.ReceivingShipInspection.UnregisteredPortName != null)
+                    {
+                        InspectionHarbour.OnEdit(new PortVisitDto
+                        {
+                            PortId = Edit.ReceivingShipInspection.InspectionPortId,
+                            PortName = Edit.ReceivingShipInspection.UnregisteredPortName,
+                            PortCountryId = Edit.ReceivingShipInspection.UnregisteredPortCountryId,
+                        });
+                    }
+
                     CaptainComment.AssignFrom(Edit.ReceivingShipInspection.CaptainComment);
 
                     await ShipChecks.OnEdit(Edit.ReceivingShipInspection, Edit.ReceivingShipInspection.Checks);
@@ -325,7 +335,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                             InspectedShip = InspectedShip.ShipData,
                             CatchMeasures = ShipCatches.Catches,
                             Personnel = InspectedShip,
-                            LastPortVisit = InspectionHarbour,
+                            LastPortVisit = InspectedShip.LastHarbour,
+                            InspectionPortId = InspectionHarbour.Harbour.Value,
+                            UnregisteredPortCountryId = InspectionHarbour.Country.Value,
+                            UnregisteredPortName = InspectionHarbour.Name,
+                            //LastPortVisit = InspectionHarbour,
                             LogBooks = ShipChecks.LogBooks,
                             PermitLicenses = ShipChecks.PermitLicenses,
                             Permits = ShipChecks.Permits,

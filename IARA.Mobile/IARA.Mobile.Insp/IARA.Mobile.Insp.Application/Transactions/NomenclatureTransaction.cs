@@ -204,6 +204,11 @@ namespace IARA.Mobile.Insp.Application.Transactions
             return GetNomenclatureDtos<NVesselType>();
         }
 
+        public List<SelectNomenclatureDto> GetInspectionVesselTypes()
+        {
+            return GetNomenclatureDtos<NInspectionVesselType>();
+        }
+
         public List<InspectorNomenclatureDto> GetInspectors(int page, int count, string search = null)
         {
             search = search?.ToLower();

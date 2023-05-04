@@ -61,6 +61,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Database
         TLTableQuery<NInspectedPersonType> NInspectedPersonTypes { get; }
         TLTableQuery<NTransportVehicleType> NTransportVehicleTypes { get; }
         TLTableQuery<PoundNetPermitLicense> PoundNetPermitLicenses { get; }
+        TLTableQuery<NInspectionVesselType> NInspectionVesselTypes { get; }
         TLTableQuery<NFishingGearMarkStatus> NFishingGearMarkStatuses { get; }
         TLTableQuery<PoundNetFishingGearMark> PoundNetFishingGearMarks { get; }
         TLTableQuery<NFishingGearCheckReason> NFishingGearCheckReasons { get; }

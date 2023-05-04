@@ -136,7 +136,8 @@ export class ErrorLogComponent implements AfterViewInit, OnInit {
             class: filters.getValue('classControl'),
             errorLogId: filters.getValue('idControl'),
             method: filters.getValue('methodControl'),
-            message: filters.getValue('messageControl')
+            message: filters.getValue('messageControl'),
+            exceptionUid: filters.getValue('exceptionUidControl')
         });
 
         const severityTypes: ErrorLogSeverityEnum[] | undefined = filters.getValue('severityControl');
@@ -157,7 +158,8 @@ export class ErrorLogComponent implements AfterViewInit, OnInit {
             classControl: new FormControl(),
             idControl: new FormControl(),
             methodControl: new FormControl(),
-            messageControl: new FormControl()
+            messageControl: new FormControl(),
+            exceptionUidControl: new FormControl()
         });
     }
 }

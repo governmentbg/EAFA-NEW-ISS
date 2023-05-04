@@ -194,7 +194,7 @@
 
                 <data-template-column [flexRate]="0.6" [cellClass]="'justify-center'">
                     <ng-template let-row="row" ngx-datatable-cell-template>
-                        <div fxLayout="row" fxLayoutAlign="end center">
+                        <div fxLayout="row wrap" fxLayoutAlign="end center">
                             <tl-icon *ngIf="row.data.hasRegixDataDiscrepancy || (holdersTouched && row.data.hasValidationErrors)"
                                      icon="ic-exclamation"
                                      iconClass="error-color"
@@ -414,7 +414,7 @@
 
             <data-template-column [flexRate]="0.5" [cellClass]="'justify-center'">
                 <ng-template let-row="row" ngx-datatable-cell-template>
-                    <div fxLayout="row" fxLayoutAlign="end center">
+                    <div fxLayout="row wrap" fxLayoutAlign="end center">
                         <tl-icon-button icon="visibility"
                                         (buttonClicked)="addEditPermitOuting(row.data.id, true)"
                                         iconClass="accent-color"

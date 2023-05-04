@@ -12,5 +12,6 @@
         public bool IsStored { get; set; }
         public bool IsTaken { get; set; }
         public string StorageLocation { get; set; }
+        public string Description { get; set; }
     }
 }

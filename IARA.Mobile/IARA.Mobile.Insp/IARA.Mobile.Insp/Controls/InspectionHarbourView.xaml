@@ -17,7 +17,8 @@
             Text="{Binding InRegisterLabel, Source={Reference view}}"
             IsVisible="{Binding HarbourInRegister.Value, Converter={StaticResource OppositeBool}}"
             IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-    <tl:TLFlex GrowUnit="150" IsVisible="{Binding HarbourInRegister.Value, Converter={StaticResource OppositeBool}}">
+    <tl:TLFlex GrowUnit="150"
+            IsVisible="{Binding HarbourInRegister.Value, Converter={StaticResource OppositeBool}}">
         <tl:TLEntry tl:TLFlex.Grow="2"
                 Title="{rt:Translate Name, Group=Common}"
                 ValidState="{Binding Name}"
@@ -27,4 +28,8 @@
                 ItemsSource="{Binding Countries}"
                 IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
     </tl:TLFlex>
+    <tl:TLDatePicker ValidState="{Binding Date}"
+            Title="{rt:Translate PortDate, Group=Common}"
+            IsVisible="{Binding HasDate}"
+            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
 </StackLayout>

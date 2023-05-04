@@ -2219,6 +2219,7 @@
         'stack-trace-copy-failed': 'Stack trace copy failed',
         'id': 'Number',
         'filters-id': 'Error number',
+        'exception-uid': 'Exception UID',
 
         'severity-debug': 'Debug',
         'severity-error': 'Error',
@@ -2234,6 +2235,7 @@
         'table-name': 'Object',
         'audit-old-value': 'Audit content old value',
         'audit-new-value': 'Audit content new value',
+        'show-related-logs': 'Show related events',
 
         'table-unique-number': 'Unique number',
         'table-date-time': 'Date and time',
@@ -2625,6 +2627,12 @@
         'buyer-is-legal': 'Buyer is a company',
         'undersized-fish': 'Undersized fish',
         'owner-is-driver': 'Owner is the driver',
+        'vessel-description': 'Description',
+        'port-date': 'Port visit date',
+        'owner-comment': 'Owner comment',
+        'registered-permit': 'Fishing gears of an issued permit license',
+        'unregistered-permit': 'Fishing gears of an unissued permit license for year',
+        'permit-year': 'Permit license year',
 
         'add-catch-ship-dialog-title': 'Add ship',
         'edit-catch-ship-dialog-title': 'Edit ship',
@@ -3334,7 +3342,12 @@
         'dialog-group-type': 'Group type',
         'dialog-group-order-num': 'Order num',
 
-        'invalid-sql': 'Invalid SQL'
+        'invalid-sql': 'Invalid SQL',
+
+        'view-report-btn': 'View report',
+        'edit-report-btn': 'Edit report',
+        'delete-report-btn': 'Delete report',
+        'restore-report-btn': 'Restore report'
     },
     'change-of-circumstances': {
         'add-change-of-circumstances': 'Add change',

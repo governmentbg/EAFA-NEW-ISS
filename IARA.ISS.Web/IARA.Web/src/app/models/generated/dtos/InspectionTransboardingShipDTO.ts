@@ -14,6 +14,15 @@ export class InspectionTransboardingShipDTO {
         Object.assign(this, obj);
     }
 
+    @StrictlyTyped(Number)
+    public inspectionPortId?: number;
+
+    @StrictlyTyped(String)
+    public unregisteredPortName?: string;
+
+    @StrictlyTyped(Number)
+    public unregisteredPortCountryId?: number;
+
     @StrictlyTyped(String)
     public nnnShipStatus?: string;
 

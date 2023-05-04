@@ -6,6 +6,9 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
 {
     public class InspectionTransboardingShipDto : IFishingShipInspection
     {
+        public int? InspectionPortId { get; set; }
+        public string UnregisteredPortName { get; set; }
+        public int? UnregisteredPortCountryId { get; set; }
         public string NNNShipStatus { get; set; }
         public string CaptainComment { get; set; }
         public VesselDuringInspectionDto InspectedShip { get; set; }

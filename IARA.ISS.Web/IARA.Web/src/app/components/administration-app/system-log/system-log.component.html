@@ -56,7 +56,11 @@
                           tooltipResourceName="system-log.new-value-helper">
                 </tl-input>
 
-                <div fxFlex="33"></div>
+                <tl-slide-toggle fxFlex="33"
+                                 formControlName="showRelatedLogsControl"
+                                 label="{{ 'system-log.show-related-logs' | tlTranslate }}"
+                                 tooltipResourceName="system-log.show-related-logs-helper">
+                </tl-slide-toggle>
             </div>
         </div>
     </search-panel>

@@ -183,7 +183,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     pullData = PullPermits();
                     break;
                 default:
-                    throw new NotImplementedException($"{nameof(nomenclatureEnum)} doesn't have specified {nameof(NomenclatureEnum)} implemented");
+                    throw new NotImplementedException($"{nameof(nomenclatureEnum)} doesn't have specified {nameof(NomenclatureEnum)} implemented ({nomenclatureEnum})");
             }
 
             return pullData.Pull(restClient, nomenclatureDates, dateTime, contextBuilder);

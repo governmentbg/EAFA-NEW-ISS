@@ -131,23 +131,24 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
         this.gridManager.refreshData();
     }
 
-    private mapFilters(inputArgs: FilterEventArgs): SystemLogFilters {
-        const filter: SystemLogFilters = new SystemLogFilters({
-            freeTextSearch: inputArgs.searchText,
-            showInactiveRecords: inputArgs.showInactiveRecords
+    private mapFilters(filters: FilterEventArgs): SystemLogFilters {
+        const result: SystemLogFilters = new SystemLogFilters({
+            freeTextSearch: filters.searchText,
+            showInactiveRecords: filters.showInactiveRecords,
+
+            actionTypeId: filters.getValue('actionTypeControl'),
+            registeredDateFrom: filters.getValue<DateRangeData>('dateRangeControl')?.start,
+            registeredDateTo: filters.getValue<DateRangeData>('dateRangeControl')?.end,
+            userId: filters.getValue('userControl'),
+            application: filters.getValue('applicationControl'),
+            action: filters.getValue('actionControl'),
+            tableName: filters.getValue('tableNameControl'),
+            oldValue: filters.getValue('oldValueControl'),
+            newValue: filters.getValue('newValueControl'),
+            showRelatedLogs: filters.getValue('showRelatedLogsControl') ?? false
         });
 
-        filter.actionTypeId = inputArgs.getValue('actionTypeControl');
-        filter.registeredDateFrom = inputArgs.getValue<DateRangeData>('dateRangeControl')?.start;
-        filter.registeredDateTo = inputArgs.getValue<DateRangeData>('dateRangeControl')?.end;
-        filter.userId = inputArgs.getValue('userControl');
-        filter.application = inputArgs.getValue('applicationControl');
-        filter.action = inputArgs.getValue('actionControl');
-        filter.tableName = inputArgs.getValue('tableNameControl');
-        filter.oldValue = inputArgs.getValue('oldValueControl');
-        filter.newValue = inputArgs.getValue('newValueControl');
-
-        return filter;
+        return result;
     }
 
     private buildForm(): void {
@@ -159,7 +160,8 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
             actionControl: new FormControl(),
             tableNameControl: new FormControl(),
             oldValueControl: new FormControl(),
-            newValueControl: new FormControl()
+            newValueControl: new FormControl(),
+            showRelatedLogsControl: new FormControl(false)
         });
     }
 }

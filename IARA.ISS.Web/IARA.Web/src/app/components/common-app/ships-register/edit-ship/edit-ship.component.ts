@@ -11,7 +11,6 @@ import { ShipEventTypeEnum } from '@app/enums/ship-event-type.enum';
 import { ShipExportTypeEnum } from '@app/enums/ship-export-type.enum';
 import { IApplicationsService } from '@app/interfaces/administration-app/applications.interface';
 import { IShipsRegisterService } from '@app/interfaces/common-app/ships-register.interface';
-import { AddressRegistrationDTO } from '@app/models/generated/dtos/AddressRegistrationDTO';
 import { ApplicationContentDTO } from '@app/models/generated/dtos/ApplicationContentDTO';
 import { ApplicationRegiXCheckDTO } from '@app/models/generated/dtos/ApplicationRegiXCheckDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
@@ -533,7 +532,12 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                 model: owner,
                 isApplication: this.isApplication,
                 isEgnLncReadOnly: this.isEditing,
-                expectedResults: this.expectedResults.owners?.find(x => x.id === owner?.id) ?? new ShipOwnerRegixDataDTO(),
+                expectedResults: this.expectedResults.owners
+                    ?.find(x => owner?.isOwnerPerson
+                        ? (x.regixPersonData?.egnLnc?.identifierType === owner.regixPersonData?.egnLnc?.identifierType
+                            && x.regixPersonData?.egnLnc?.egnLnc === owner.regixPersonData?.egnLnc?.egnLnc)
+                        : x.regixLegalData?.eik === owner?.regixLegalData?.eik)
+                    ?? new ShipOwnerRegixDataDTO(),
                 readOnly: readOnly,
                 isDraft: this.isDraftMode(),
                 showOnlyRegiXData: this.showOnlyRegiXData,
@@ -584,6 +588,8 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
 
         dialog.subscribe((result: EditShipOwnerDialogResult) => {
             if (result && result.owner) {
+                result.owner.hasRegixDataDiscrepancy = !this.ownerEqualsRegixOwner(result.owner);
+
                 if (owner !== undefined) {
                     owner = result.owner;
                 }
@@ -868,7 +874,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                             if (this.showRegiXData) {
                                 this.expectedResults = new ShipRegisterRegixDataDTO(ship.regiXDataModel);
                                 ship.regiXDataModel = undefined;
-                                
+
                                 for (const owner of ship.owners as ShipOwnerRegixDataDTO[]) {
                                     owner.hasRegixDataDiscrepancy = !this.ownerEqualsRegixOwner(owner);
                                 }
@@ -1995,29 +2001,40 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
     }
 
     private ownerEqualsRegixOwner(owner: ShipOwnerRegixDataDTO): boolean {
-        const regixOwner: ShipOwnerRegixDataDTO | undefined = this.expectedResults.owners?.find(x => x.id === owner.id);
+        let regixOwner: ShipOwnerRegixDataDTO | undefined;
 
-        if (regixOwner !== undefined) {
-            if (owner.regixPersonData !== undefined) {
-                if (!CommonUtils.objectsEqual(owner.regixPersonData, regixOwner.regixPersonData)) {
-                    return false;
-                }
-            }
-            else if (owner.regixLegalData !== undefined) {
-                if (!CommonUtils.objectsEqual(owner.regixLegalData, regixOwner.regixLegalData)) {
-                    return false;
-                }
-            }
+        if (owner.isOwnerPerson) {
+            regixOwner = this.expectedResults.owners?.find(x => {
+                return x.regixPersonData?.egnLnc?.identifierType === owner.regixPersonData?.egnLnc?.identifierType
+                    && x.regixPersonData?.egnLnc?.egnLnc === owner.regixPersonData?.egnLnc?.egnLnc;
+            });
 
-            if (owner.addressRegistrations !== undefined) {
-                for (const address of owner.addressRegistrations) {
-                    const regixAddress: AddressRegistrationDTO | undefined = regixOwner.addressRegistrations?.find(x => x.addressType === address.addressType);
-                    if (!CommonUtils.objectsEqual(address, regixAddress)) {
-                        return false;
-                    }
+            if (regixOwner) {
+                if (owner.regixPersonData!.firstName !== regixOwner.regixPersonData!.firstName
+                    || owner.regixPersonData!.middleName !== regixOwner.regixPersonData!.middleName
+                    || owner.regixPersonData!.lastName !== regixOwner.regixPersonData!.lastName
+                    || owner.regixPersonData!.email != regixOwner.regixPersonData!.email
+                    || owner.regixPersonData!.citizenshipCountryId != regixOwner.regixPersonData!.citizenshipCountryId
+                    || owner.regixPersonData!.birthDate != regixOwner.regixPersonData!.birthDate
+                    || owner.regixPersonData!.phone != regixOwner.regixPersonData!.phone) {
+                    return false;
                 }
             }
         }
+        else {
+            regixOwner = this.expectedResults.owners?.find(x => {
+                return x.regixLegalData?.eik === owner.regixLegalData?.eik;
+            });
+
+            if (regixOwner) {
+                if (owner.regixLegalData!.name !== regixOwner.regixLegalData!.name
+                    || owner.regixLegalData!.phone != regixOwner.regixLegalData!.phone
+                    || owner.regixLegalData!.email != regixOwner.regixLegalData!.email) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 

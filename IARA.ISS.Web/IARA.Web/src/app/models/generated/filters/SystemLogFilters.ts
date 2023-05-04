@@ -24,4 +24,5 @@ export class SystemLogFilters extends BaseRequestModel {
     public application: string | undefined;
     public oldValue: string | undefined;
     public newValue: string | undefined;
+    public showRelatedLogs: boolean | undefined;
 }

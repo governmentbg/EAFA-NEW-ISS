@@ -17,7 +17,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class FishingShipViewModel : ViewModel
     {
-        public FishingShipViewModel(InspectionPageViewModel inspection, bool canPickLocation = true, bool hasLastPort = false)
+        public FishingShipViewModel(InspectionPageViewModel inspection, bool canPickLocation = true, bool hasLastPort = true)
         {
             Inspection = inspection;
             HasLastPort = hasLastPort;

@@ -51,7 +51,13 @@
                           tooltipResourceName="error-log.message-helper">
                 </tl-input>
 
-                <div fxFlex="66"></div>
+                <tl-input fxFlex="33"
+                          formControlName="exceptionUidControl"
+                          label="{{ 'error-log.exception-uid' | tlTranslate }}"
+                          tooltipResourceName="error-log.exception-uid-helper">
+                </tl-input>
+
+                <div fxFlex="33"></div>
             </div>
         </div>
     </search-panel>
@@ -106,6 +112,17 @@
                 <data-template-column [flexRate]="0.3"
                                       columnName="{{ 'error-log.exception-source' | tlTranslate }}"
                                       propertyName="exceptionSource">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="start center">
+                            <span class="break-all-words">
+                                {{ value }}
+                            </span>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+                <data-template-column propertyName="exceptionUid"
+                                      [flexRate]="0.3"
+                                      columnName="{{ 'error-log.exception-uid' | tlTranslate }}">
                     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                         <div fxLayout="row" fxLayoutAlign="start center">
                             <span class="break-all-words">

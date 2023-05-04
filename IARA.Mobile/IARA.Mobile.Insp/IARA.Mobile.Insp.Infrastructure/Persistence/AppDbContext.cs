@@ -57,6 +57,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
         public TLTableQuery<NCatchInspectionType> NCatchInspectionTypes => TLTable<NCatchInspectionType>();
         public TLTableQuery<NInspectedPersonType> NInspectedPersonTypes => TLTable<NInspectedPersonType>();
         public TLTableQuery<NTransportVehicleType> NTransportVehicleTypes => TLTable<NTransportVehicleType>();
+        public TLTableQuery<NInspectionVesselType> NInspectionVesselTypes => TLTable<NInspectionVesselType>();
         public TLTableQuery<NFishingGearMarkStatus> NFishingGearMarkStatuses => TLTable<NFishingGearMarkStatus>();
         public TLTableQuery<NFishingGearCheckReason> NFishingGearCheckReasons => TLTable<NFishingGearCheckReason>();
         public TLTableQuery<NFishingGearPingerStatus> NFishingGearPingerStatuses => TLTable<NFishingGearPingerStatus>();

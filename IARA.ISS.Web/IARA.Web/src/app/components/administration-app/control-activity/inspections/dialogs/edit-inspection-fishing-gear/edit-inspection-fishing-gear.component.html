@@ -93,10 +93,29 @@
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
-            <tl-autocomplete formControlName="permitControl"
+            <tl-radio-button-group formControlName="permitTypeControl"
+                                   direction="row"
+                                   gap="1em"
+                                   [options]="permitTypeControls">
+            </tl-radio-button-group>
+            <tl-autocomplete *ngIf="form.controls.permitTypeControl.value?.value === inspectionPermitTypeEnum.Registered"
+                             formControlName="permitControl"
                              [options]="permits"
                              label="{{ 'inspections.permit' | tlTranslate }}">
             </tl-autocomplete>
+            <div *ngIf="form.controls.permitTypeControl.value?.value === inspectionPermitTypeEnum.Unregistered"
+                 fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start center">
+                <tl-input fxFlex="50"
+                          formControlName="unregisteredPermitControl"
+                          label="{{ 'inspections.permit' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="50"
+                          formControlName="unregisteredPermitYearControl"
+                          label="{{ 'inspections.permit-year' | tlTranslate }}">
+                </tl-input>
+            </div>
             <inspected-fishing-gears-table formControlName="fishingGearsControl"
                                            [permitIds]="selectedPermitIds">
             </inspected-fishing-gears-table>
@@ -109,6 +128,10 @@
     <!-- Допълнителна информация -->
     <inspection-additional-info formControlName="additionalInfoControl"
                                 [validityChecker]="form">
+        <tl-textarea formControlName="ownerCommentControl"
+                     [minRows]="3"
+                     label="{{ 'inspections.owner-comment' | tlTranslate }}">
+        </tl-textarea>
     </inspection-additional-info>
 
     <!-- Файлове -->

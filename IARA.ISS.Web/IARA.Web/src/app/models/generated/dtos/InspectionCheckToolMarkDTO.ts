@@ -35,8 +35,17 @@ export class InspectionCheckToolMarkDTO extends InspectionEditDTO {
     @StrictlyTyped(String)
     public otherRecheckReason?: string;
 
+    @StrictlyTyped(String)
+    public ownerComment?: string;
+
     @StrictlyTyped(Number)
     public permitId?: number;
+
+    @StrictlyTyped(String)
+    public unregisteredPermitNumber?: string;
+
+    @StrictlyTyped(Number)
+    public unregisteredPermitYear?: number;
 
     @StrictlyTyped(InspectedFishingGearDTO)
     public fishingGears?: InspectedFishingGearDTO[];

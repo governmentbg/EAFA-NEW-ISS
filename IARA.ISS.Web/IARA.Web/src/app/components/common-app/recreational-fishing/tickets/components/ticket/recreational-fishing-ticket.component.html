@@ -105,7 +105,7 @@
                             [dateOfBirthProperties]="dateOfBirthProperties"
                             [dateOfBirthRequiredForLncAndForId]="dateOfBirthRequiredTicketTypes.includes(type.code!)"
                             [expectedResults]="regixChecksData?.person"
-                            [showGender]="type.code === 'ELDER'"
+                            [showGender]="type.code === 'ELDER' || type.code === 'ELDERASSOCIATION'"
                             (downloadDataBtnClicked)="downloadPersonalData($event, false)"
                             checkboxLabel="{{ 'recreational-fishing.has-bulgarian-address-registration' | tlTranslate }}">
                 </regix-data>

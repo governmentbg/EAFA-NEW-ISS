@@ -14,6 +14,7 @@
                                      [institutions]="institutions">
             </inspection-general-info>
             <inspected-port formControlName="portControl"
+                            [hasDate]="false"
                             [ports]="ports"
                             [countries]="countries">
             </inspected-port>
@@ -23,7 +24,6 @@
     <!-- Данни за риболовния кораб -->
     <inspected-ship-sections formControlName="shipSectionsControl"
                              [hasMap]="false"
-                             [hasPort]="false"
                              [hasUnloadedQuantity]="true"
                              [toggles]="toggles"
                              [associations]="associations"

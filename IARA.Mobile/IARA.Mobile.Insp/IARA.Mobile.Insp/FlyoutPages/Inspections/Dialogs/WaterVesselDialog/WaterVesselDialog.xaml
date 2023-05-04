@@ -49,6 +49,9 @@
             <tl:TLEntry Title="{rt:Translate Location, Group=WaterVessel}"
                     IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
                     ValidState="{Binding Location}" />
+            <tl:TLEditor Title="{rt:Translate Description, Group=WaterVessel}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    ValidState="{Binding Description}" />
             <Button Command="{Binding Save}"
                     IsVisible="{Binding DialogType, Converter={StaticResource IsNotReview}}"
                     Text="{rt:Translate Save, Group=Common}" />

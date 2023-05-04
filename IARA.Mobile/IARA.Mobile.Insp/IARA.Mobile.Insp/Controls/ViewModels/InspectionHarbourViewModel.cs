@@ -17,9 +17,10 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
     {
         private List<SelectNomenclatureDto> _countries;
 
-        public InspectionHarbourViewModel(InspectionPageViewModel inspection)
+        public InspectionHarbourViewModel(InspectionPageViewModel inspection, bool hasDate = true)
         {
             Inspection = inspection;
+            HasDate = hasDate;
 
             this.AddValidation(groups: new Dictionary<string, Func<bool>>
             {
@@ -34,6 +35,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         }
 
         public InspectionPageViewModel Inspection { get; }
+        public bool HasDate { get; }
 
         public ValidStateBool HarbourInRegister { get; set; }
 
@@ -49,6 +51,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         [Required]
         [ValidGroup(Group.NOT_REGISTERED)]
         public ValidStateSelect<SelectNomenclatureDto> Country { get; set; }
+
+        public ValidStateDate Date { get; set; }
 
         public List<SelectNomenclatureDto> Countries
         {
@@ -85,6 +89,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 Name.AssignFrom(portVisit.PortName);
                 HarbourInRegister.Value = false;
             }
+
+            Date.AssignFrom(portVisit.VisitDate);
         }
 
         public static implicit operator PortVisitDto(InspectionHarbourViewModel viewModel)
@@ -100,7 +106,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 {
                     PortCountryId = viewModel.Country.Value,
                     PortName = viewModel.Name,
-                    VisitDate = DateTime.Now,
+                    VisitDate = viewModel.Date,
                 };
             }
             else if (viewModel.Harbour.Value != null)
@@ -111,7 +117,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 {
                     PortId = port.Id,
                     PortName = port.Name,
-                    VisitDate = DateTime.Now,
+                    VisitDate = viewModel.Date,
                 };
             }
 
