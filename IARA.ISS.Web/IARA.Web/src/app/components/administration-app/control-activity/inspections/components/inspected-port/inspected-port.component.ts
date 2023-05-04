@@ -13,6 +13,9 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 export class InspectedPortComponent extends CustomFormControl<PortVisitDTO | undefined> implements OnInit {
 
     @Input()
+    public hasDate: boolean = true;
+
+    @Input()
     public ports: NomenclatureDTO<number>[] = [];
 
     @Input()
@@ -38,6 +41,7 @@ export class InspectedPortComponent extends CustomFormControl<PortVisitDTO | und
         if (value !== undefined && value !== null) {
             this.isFromRegister = value.portId !== undefined && value.portId !== null;
             this.form.get('portRegisteredControl')!.setValue(this.isFromRegister);
+            this.form.get('dateControl')!.setValue(value.visitDate);
 
             if (this.isFromRegister) {
                 this.form.get('portControl')!.setValue(this.ports.find(f => f.value === value.portId));
@@ -58,6 +62,7 @@ export class InspectedPortComponent extends CustomFormControl<PortVisitDTO | und
             portControl: new FormControl(undefined, Validators.required),
             nameControl: new FormControl(undefined),
             countryControl: new FormControl(undefined),
+            dateControl: new FormControl(undefined),
         });
 
         form.get('portRegisteredControl')!.valueChanges.subscribe({
@@ -74,6 +79,7 @@ export class InspectedPortComponent extends CustomFormControl<PortVisitDTO | und
             if (portControl.value !== undefined && portControl.value !== null) {
                 return new PortVisitDTO({
                     portId: portControl.value.value,
+                    visitDate: this.form.get('dateControl')!.value,
                 });
             }
         }
@@ -81,6 +87,7 @@ export class InspectedPortComponent extends CustomFormControl<PortVisitDTO | und
             return new PortVisitDTO({
                 portCountryId: this.form.get('countryControl')!.value?.value,
                 portName: this.form.get('nameControl')!.value,
+                visitDate: this.form.get('dateControl')!.value,
             });
         }
 

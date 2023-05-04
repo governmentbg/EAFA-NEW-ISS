@@ -68,6 +68,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence.Migrations
             context.CreateTable<NTranslationResource>();
             context.CreateTable<NCatchInspectionType>();
             context.CreateTable<NInspectedPersonType>();
+            context.CreateTable<NInspectionVesselType>();
             context.CreateTable<NTransportVehicleType>();
             context.CreateTable<PoundNetPermitLicense>();
             context.CreateTable<NFishingGearMarkStatus>();

@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
@@ -8,9 +8,9 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
-import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
 import { WaterInspectionVesselDTO } from '@app/models/generated/dtos/WaterInspectionVesselDTO';
 import { WaterVesselTableParams } from '../water-vessels-table/models/water-vessel-table-params';
+import { InspectionsService } from '@app/services/administration-app/inspections.service';
 
 @Component({
     selector: 'edit-water-vessel',
@@ -25,10 +25,10 @@ export class EditWaterVesselComponent implements OnInit, IDialogComponent {
 
     private readOnly: boolean = false;
 
-    private readonly nomenclatures: CommonNomenclatures;
+    private readonly service: InspectionsService;
 
-    public constructor(nomenclatures: CommonNomenclatures) {
-        this.nomenclatures = nomenclatures;
+    public constructor(service: InspectionsService) {
+        this.service = service;
 
         this.buildForm();
     }
@@ -39,7 +39,7 @@ export class EditWaterVesselComponent implements OnInit, IDialogComponent {
         }
 
         this.vesselTypes = await NomenclatureStore.instance.getNomenclature(
-            NomenclatureTypes.VesselTypes, this.nomenclatures.getVesselTypes.bind(this.nomenclatures), false
+            NomenclatureTypes.VesselTypes, this.service.getInspectionVesselTypes.bind(this.service), false
         ).toPromise();
 
         this.fillForm();
@@ -86,6 +86,7 @@ export class EditWaterVesselComponent implements OnInit, IDialogComponent {
             takenControl: new FormControl(null),
             storedControl: new FormControl(null),
             storageControl: new FormControl(null),
+            descriptionControl: new FormControl(null, Validators.maxLength(500)),
         });
     }
 
@@ -99,6 +100,7 @@ export class EditWaterVesselComponent implements OnInit, IDialogComponent {
         this.form.get('takenControl')!.setValue(this.model.isTaken);
         this.form.get('storedControl')!.setValue(this.model.isStored);
         this.form.get('storageControl')!.setValue(this.model.storageLocation);
+        this.form.get('descriptionControl')!.setValue(this.model.description);
     }
 
     protected fillModel(): void {
@@ -111,5 +113,6 @@ export class EditWaterVesselComponent implements OnInit, IDialogComponent {
         this.model.isTaken = this.form.get('takenControl')!.value ?? false;
         this.model.isStored = this.form.get('storedControl')!.value ?? false;
         this.model.storageLocation = this.form.get('storageControl')!.value;
+        this.model.description = this.form.get('descriptionControl')!.value;
     }
 }

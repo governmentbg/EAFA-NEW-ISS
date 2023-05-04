@@ -1,40 +1,45 @@
 ﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
     <search-panel [translateService]="translate">
-        <div [formGroup]="form" fxFlexFill fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-            <tl-input fxFlex="25"
-                      formControlName="nameControl"
-                      label="{{ 'cross-check.name' | tlTranslate }}"
-                      tooltipResourceName="cross-check.name-helper">
-            </tl-input>
-            <tl-input fxFlex="25"
-                      formControlName="checkedTableControl"
-                      label="{{ 'cross-check.checked-table' | tlTranslate }}"
-                      tooltipResourceName="cross-check.checked-table-helper">
-            </tl-input>
-            <tl-input fxFlex="25"
-                      formControlName="executionDataSourceControl"
-                      label="{{ 'cross-check.execution-data-source' | tlTranslate }}"
-                      tooltipResourceName="cross-check.execution-data-source-helper">
-            </tl-input>
-            <tl-input fxFlex="25"
-                      formControlName="reportGroupNameControl"
-                      label="{{ 'cross-check.group-name' | tlTranslate }}"
-                      tooltipResourceName="cross-check.group-name-helper">
-            </tl-input>
-            <tl-select fxFlex="25"
-                       label="{{ 'cross-check.level' | tlTranslate }}"
-                       formControlName="levelControl"
-                       [options]="levels"
-                       [isMultiple]="true"
-                       tooltipResourceName="cross-check.level-helper">
-            </tl-select>
-            <tl-select fxFlex="25"
-                       label="{{ 'cross-check.has-automatic-execution' | tlTranslate }}"
-                       formControlName="autoExecFrequencyCodesControl"
-                       [options]="autoExecFrequencyCodes"
-                       [isMultiple]="true"
-                       tooltipResourceName="cross-check.has-automatic-execution-helper">
-            </tl-select>
+        <div [formGroup]="form" fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="33"
+                          formControlName="nameControl"
+                          label="{{ 'cross-check.name' | tlTranslate }}"
+                          tooltipResourceName="cross-check.name-helper">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="checkedTableControl"
+                          label="{{ 'cross-check.checked-table' | tlTranslate }}"
+                          tooltipResourceName="cross-check.checked-table-helper">
+                </tl-input>
+                <tl-input fxFlex="33"
+                          formControlName="executionDataSourceControl"
+                          label="{{ 'cross-check.execution-data-source' | tlTranslate }}"
+                          tooltipResourceName="cross-check.execution-data-source-helper">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="33"
+                          formControlName="reportGroupNameControl"
+                          label="{{ 'cross-check.group-name' | tlTranslate }}"
+                          tooltipResourceName="cross-check.group-name-helper">
+                </tl-input>
+                <tl-select fxFlex="33"
+                           label="{{ 'cross-check.level' | tlTranslate }}"
+                           formControlName="levelControl"
+                           [options]="levels"
+                           [isMultiple]="true"
+                           tooltipResourceName="cross-check.level-helper">
+                </tl-select>
+                <tl-select fxFlex="33"
+                           label="{{ 'cross-check.has-automatic-execution' | tlTranslate }}"
+                           formControlName="autoExecFrequencyCodesControl"
+                           [options]="autoExecFrequencyCodes"
+                           [isMultiple]="true"
+                           tooltipResourceName="cross-check.has-automatic-execution-helper">
+                </tl-select>
+            </div>
         </div>
     </search-panel>
     <!-- Таблица -->
@@ -107,9 +112,9 @@
                     </ng-container>
                 </ng-template>
             </data-template-column>
-            <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+            <data-template-column [flexRate]="0.5" [cellClass]="'justify-center'">
                 <ng-template let-row="row" ngx-datatable-cell-template>
-                    <div fxLayout="row" fxLayoutAlign="end center">
+                    <div fxLayout="row wrap" fxLayoutAlign="end center">
                         <tl-icon-button *ngIf="row.isActive"
                                         icon="visibility"
                                         (buttonClicked)="createEditCrossCheck(row.data, true)"

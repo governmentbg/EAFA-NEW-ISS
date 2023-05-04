@@ -36,4 +36,7 @@ export class ErrorLogDTO {
 
     @StrictlyTyped(String)
     public stackTrace?: string;
+
+    @StrictlyTyped(String)
+    public exceptionUid?: string;
 }

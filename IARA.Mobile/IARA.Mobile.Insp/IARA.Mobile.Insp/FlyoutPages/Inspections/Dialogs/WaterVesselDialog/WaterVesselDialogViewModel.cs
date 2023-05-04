@@ -72,6 +72,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterVesselDialog
         [MaxLength(500)]
         public ValidState Location { get; set; }
 
+        [MaxLength(500)]
+        public ValidState Description { get; set; }
+
         public List<SelectNomenclatureDto> VesselTypes
         {
             get => _vesselTypes;
@@ -84,7 +87,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterVesselDialog
         {
             INomenclatureTransaction nomTransaction = DependencyService.Resolve<INomenclatureTransaction>();
 
-            VesselTypes = nomTransaction.GetVesselTypes();
+            VesselTypes = nomTransaction.GetInspectionVesselTypes();
 
             if (Edit != null)
             {
@@ -98,6 +101,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterVesselDialog
                 Width.AssignFrom(Edit.Width);
                 TotalCount.AssignFrom(Edit.TotalCount);
                 Location.AssignFrom(Edit.StorageLocation);
+                Description.AssignFrom(Edit.Description);
 
                 if (DialogType == ViewActivityType.Edit)
                 {
@@ -129,6 +133,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterVesselDialog
                 Width = ParseHelper.ParseDecimal(Width),
                 StorageLocation = Location,
                 TotalCount = ParseHelper.ParseInteger(TotalCount),
+                Description = Description
             });
         }
     }

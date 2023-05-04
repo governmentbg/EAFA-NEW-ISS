@@ -2,32 +2,18 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { UserNotification } from '@app/shared/notifications/models/user-notification.model';
 
-export class NotificationDTO { 
+export class NotificationDTO extends UserNotification {
     public constructor(obj?: Partial<NotificationDTO>) {
-        Object.assign(this, obj);
+        if (obj != undefined) {
+            super(obj as UserNotification);
+            Object.assign(this, obj);
+        }
+        else {
+            super();
+        }
     }
-
-    @StrictlyTyped(Number)
-    public id!: number;
-
-    @StrictlyTyped(String)
-    public icon?: string;
-
-    @StrictlyTyped(String)
-    public subtitle?: string;
-
-    @StrictlyTyped(String)
-    public text!: string;
-
-    @StrictlyTyped(Boolean)
-    public isRead!: boolean;
-
-    @StrictlyTyped(String)
-    public url?: string;
-
-    @StrictlyTyped(String)
-    public title!: string;
 
     @StrictlyTyped(Number)
     public pageCode?: PageCodeEnum;

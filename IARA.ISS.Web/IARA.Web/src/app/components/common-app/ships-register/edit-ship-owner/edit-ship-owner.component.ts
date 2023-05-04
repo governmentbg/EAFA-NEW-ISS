@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component } from '@angular/core';
+﻿import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatRadioChange } from '@angular/material/radio';
 import { AddressTypesEnum } from '@app/enums/address-types.enum';
@@ -17,6 +17,7 @@ import { EditShipOwnerDialogParams } from '../models/edit-ship-owner-dialog-para
 import { EditShipOwnerDialogResult } from '../models/edit-ship-owner-dialog-result.model';
 import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
+import { Notifier } from '@app/shared/directives/notifier/notifier.class';
 
 type OwnerType = 'Person' | 'Legal';
 
@@ -24,7 +25,7 @@ type OwnerType = 'Person' | 'Legal';
     selector: 'edit-ship-owner',
     templateUrl: './edit-ship-owner.component.html'
 })
-export class EditShipOwnerComponent implements IDialogComponent, AfterViewInit {
+export class EditShipOwnerComponent implements IDialogComponent, OnInit, AfterViewInit {
     public form!: FormGroup;
     public ownerType: OwnerType = 'Person';
 
@@ -39,6 +40,8 @@ export class EditShipOwnerComponent implements IDialogComponent, AfterViewInit {
     public isThirdPartyShip: boolean = false;
     public isEditing!: boolean;
 
+    public notifier: Notifier = new Notifier();
+
     private submittedFor!: ApplicationSubmittedForDTO;
     private isTouched: boolean = false;
     private isDraft: boolean = false;
@@ -48,6 +51,20 @@ export class EditShipOwnerComponent implements IDialogComponent, AfterViewInit {
             addressRegistrations: [],
             regixPersonData: new RegixPersonDataDTO(),
             regixLegalData: new RegixLegalDataDTO()
+        });
+    }
+
+    public ngOnInit(): void {
+        setTimeout(() => {
+            if (!this.readOnly && (this.showOnlyRegiXData || this.showRegiXData)) {
+                this.notifier.start();
+                this.notifier.onNotify.subscribe({
+                    next: () => {
+                        this.form.markAllAsTouched();
+                        this.notifier.stop();
+                    }
+                });
+            }
         });
     }
 
@@ -100,10 +117,6 @@ export class EditShipOwnerComponent implements IDialogComponent, AfterViewInit {
 
             this.model = data.model;
             this.fillForm();
-        }
-
-        if (this.showOnlyRegiXData || this.showRegiXData) {
-            this.form.markAllAsTouched();
         }
     }
 

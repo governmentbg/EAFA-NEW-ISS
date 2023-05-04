@@ -421,17 +421,6 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
                 this.stepper.previous();
             }
         }
-        else if (!this.isPublicApp || this.isAssociation) {
-            const ticketNumsStep: number = this.showValidityStep ? 2 : 1;
-
-            if (this.stepper.selectedIndex === ticketNumsStep + 1 && this.ticketNumsArray.invalid) {
-                this.stepper.previous();
-            }
-
-            if (this.stepper.selectedIndex === ticketNumsStep + 2 && this.ticketsGroup.invalid) {
-                this.stepper.previous();
-            }
-        }
     }
 
     public getControlErrorLabelTextForTicketNumber(controlName: string, error: unknown, errorCode: string): TLError | undefined {

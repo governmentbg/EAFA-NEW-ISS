@@ -32,7 +32,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
 
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             PatrolVehicles = new PatrolVehiclesViewModel(this, null);
-            InspectedShip = new FishingShipViewModel(this, hasLastPort: true);
+            InspectedShip = new FishingShipViewModel(this);
             ShipChecks = new ShipChecksViewModel(this);
             ShipCatches = new ShipCatchesViewModel(this);
             ShipFishingGears = new ShipFishingGearsViewModel(this);

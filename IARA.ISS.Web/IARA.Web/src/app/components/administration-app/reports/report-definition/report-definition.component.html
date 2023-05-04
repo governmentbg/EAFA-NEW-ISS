@@ -187,7 +187,7 @@
                 </data-column>
                 <data-template-column [flexRate]="0.3">
                     <ng-template let-row="row" ngx-datatable-cell-template>
-                        <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">
+                        <div fxLayout="row wrap" fxLayoutAlign="end center" fxLayoutGap="1em">
                             <tl-icon-button icon="visibility"
                                             (buttonClicked)="addOrEditParameter(row.data, true)"
                                             iconClass="accent-color">

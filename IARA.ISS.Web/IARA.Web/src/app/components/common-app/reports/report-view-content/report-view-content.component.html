@@ -30,8 +30,8 @@
                 </tl-input>
                 <mat-tree id="reports-tree" [dataSource]="dataSource" [treeControl]="treeControl" class="tree">
                     <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle fxLayout="column" fxLayoutGap="0.2em">
-                        <div fxFlexFill fxLayout="row" fxLayoutGap="0.2em" fxLayoutAlign="space-between start">
-                            <div id="reports-tree-text-button" fxLayout="row">
+                        <div fxFlexFill fxLayout="row" fxLayoutAlign="space-between start">
+                            <div fxFlex="75" id="reports-tree-text-button" fxLayout="row">
                                 <button matTooltip="{{ node.name }}"
                                         [matTooltipShowDelay]="500"
                                         mat-button
@@ -45,25 +45,30 @@
                                 </button>
                             </div>
                             <div *ngIf="!isPublic"
+                                 fxFlex="25"
                                  id="reports-tree-action-buttons"
-                                 fxLayout="row"
-                                 fxLayoutAlign="end center"
-                                 fxLayoutGap="0.3em">
+                                 fxLayout="row wrap"
+                                 fxLayoutGap="0.3em"
+                                 fxLayoutAlign="end center">
                                 <tl-icon-button *ngIf="node.isActive && canEditReport"
                                                 icon="visibility"
-                                                (buttonClicked)="openEditComponent(node.id, false, true)">
+                                                (buttonClicked)="openEditComponent(node.id, false, true)"
+                                                tooltipText="{{ 'report-view.view-report-btn' | tlTranslate }}">
                                 </tl-icon-button>
                                 <tl-icon-button *ngIf="node.isActive && canEditReport"
                                                 icon="edit"
-                                                (buttonClicked)="openEditComponent(node.id)">
+                                                (buttonClicked)="openEditComponent(node.id)"
+                                                tooltipText="{{ 'report-view.edit-report-btn' | tlTranslate }}">
                                 </tl-icon-button>
                                 <tl-icon-button *ngIf="node.isActive && canDeleteReport"
                                                 icon="delete"
-                                                (buttonClicked)="deleteReport(node.id)">
+                                                (buttonClicked)="deleteReport(node.id)"
+                                                tooltipText="{{ 'report-view.delete-report-btn' | tlTranslate }}">
                                 </tl-icon-button>
                                 <tl-icon-button *ngIf="!node.isActive && canRestoreReport && isGroupActive(node)"
                                                 icon="restore"
-                                                (buttonClicked)="undoDeletedReport(node.id)">
+                                                (buttonClicked)="undoDeletedReport(node.id)"
+                                                tooltipText="{{ 'report-view.restore-report-btn' | tlTranslate }}">
                                 </tl-icon-button>
                             </div>
                         </div>

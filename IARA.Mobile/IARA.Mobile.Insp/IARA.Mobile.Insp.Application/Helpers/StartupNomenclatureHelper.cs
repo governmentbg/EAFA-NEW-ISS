@@ -327,6 +327,8 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     return PullNomenclatures<NFishingGearRecheckReason>(restClient, nomenclatureDates, nomenclatureEnum, prefix + "FishingGearRecheckReasons", lastUpdated);
                 case NomenclatureEnum.PermitType:
                     return PullNomenclatures<NPermitType>(restClient, nomenclatureDates, nomenclatureEnum, prefix + "PermitTypes", lastUpdated);
+                case NomenclatureEnum.InspectionVesselType:
+                    return PullNomenclatures<NInspectionVesselType>(restClient, nomenclatureDates, nomenclatureEnum, prefix + "InspectionVesselTypes", lastUpdated);
                 case NomenclatureEnum.TurbotSizeGroup:
                     return PullNomenclatures<NTurbotSizeGroup>(restClient, nomenclatureDates, nomenclatureEnum, prefix + "TurbotSizeGroups", lastUpdated);
                 case NomenclatureEnum.Translation:
@@ -410,6 +412,8 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     return NomenclatureEnum.PermitType;
                 case "TurbotSizeGroups":
                     return NomenclatureEnum.TurbotSizeGroup;
+                case "InspectionVesselTypes":
+                    return NomenclatureEnum.InspectionVesselType;
                 case "TranslationGroups":
                 case "TranslationResources":
                     return NomenclatureEnum.Translation;

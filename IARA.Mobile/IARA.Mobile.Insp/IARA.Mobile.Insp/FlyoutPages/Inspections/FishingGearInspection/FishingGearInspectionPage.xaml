@@ -61,10 +61,15 @@
                 Text="{rt:Translate FishingGearData, Group=FishingGearInspection}"
                 IsExpanded="False">
             <StackLayout Padding="10">
+                <tl:TLRadioButtonListView IsLabelVisible="False"
+                        ItemsSource="{Binding PermitTypes}"
+                        SelectedItem="{Binding PermitType}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
                 <lc:CustomInfinitePicker Title="{rt:Translate Permit, Group=FishingGearInspection}"
                         ValidState="{Binding Permit}"
                         Command="{Binding PermitChosen}"
                         DisplayValue="DisplayValue"
+                        IsVisible="{Binding PermitType.Code, Converter={StaticResource Equal}, ConverterParameter={Static local:FishingGearInspectionViewModel.PermitRegistered}}"
                         IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}">
                     <DataTemplate>
                         <Grid x:DataType="nom:PermitNomenclatureDto"
@@ -96,12 +101,28 @@
                         </Grid>
                     </DataTemplate>
                 </lc:CustomInfinitePicker>
+                <StackLayout Orientation="Horizontal"
+                        IsVisible="{Binding PermitType.Code, Converter={StaticResource Equal}, ConverterParameter={Static local:FishingGearInspectionViewModel.PermitUnregistered}}">
+                    <tl:TLEntry HorizontalOptions="FillAndExpand"
+                            Title="{rt:Translate Permit, Group=FishingGearInspection}"
+                            ValidState="{Binding PermitNumber}"
+                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                    <tl:TLEntry HorizontalOptions="FillAndExpand"
+                            Title="{rt:Translate PermitYear, Group=FishingGearInspection}"
+                            ValidState="{Binding PermitYear}"
+                            Keyboard="Numeric"
+                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                </StackLayout>
                 <lc:FishingGearsView BindingContext="{Binding FishingGears}" />
                 <lc:TLGeneratedToggles ValidState="{Binding Toggles}"
                         IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
             </StackLayout>
         </sv:SectionView>
-        <lc:AdditionalInfoView BindingContext="{Binding AdditionalInfo}" />
+        <lc:AdditionalInfoView BindingContext="{Binding AdditionalInfo}">
+            <tl:TLEditor Title="{rt:Translate OwnerComment, Group=FishingGearInspection}"
+                    ValidState="{Binding OwnerComment}"
+                    IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+        </lc:AdditionalInfoView>
         <lc:InspectionFilesView BindingContext="{Binding InspectionFiles}" />
         <lc:SignaturesView BindingContext="{Binding Signatures}" />
         <lc:SaveButtonsLayout />

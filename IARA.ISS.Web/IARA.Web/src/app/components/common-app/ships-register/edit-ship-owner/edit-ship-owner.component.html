@@ -3,6 +3,7 @@
      fxFlexFill
      fxLayoutAlign="space-between stretch"
      [formGroup]="form"
+     [notifierGroup]="notifier"
      class="dialog-padding">
     <div *ngIf="!showOnlyRegiXData" fxLayout="row" fxLayoutAlign="space-between center">
         <div fxFlex="80" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
@@ -40,6 +41,7 @@
     <div *ngIf="ownerType === 'Person'">
         <regix-data *ngIf="!isThirdPartyShip"
                     formControlName="personControl"
+                    notifier
                     [isPerson]="true"
                     [isIdReadOnly]="isEditing"
                     [hideDocument]="true"
@@ -50,6 +52,7 @@
 
         <regix-data *ngIf="isThirdPartyShip"
                     formControlName="personControl"
+                    notifier
                     [isPerson]="true"
                     [isForeigner]="true"
                     [hideDocument]="true"
@@ -59,6 +62,7 @@
 
     <regix-data *ngIf="ownerType === 'Legal'"
                 formControlName="legalControl"
+                notifier
                 [isPerson]="false"
                 [showCustodianOfProperty]="false"
                 [isIdReadOnly]="isEditing"
@@ -69,6 +73,7 @@
 
     <address-registration *ngIf="ownerType === 'Person'"
                           formControlName="personAddressesControl"
+                          notifier
                           addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
                           secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
                           checkboxLabel="{{ 'ships-register.permanent-address-same-as-correspondence' | tlTranslate }}"
@@ -77,6 +82,7 @@
 
     <address-registration *ngIf="ownerType === 'Legal'"
                           formControlName="legalAddressesControl"
+                          notifier
                           addressLabel="{{ 'common.company-headquarters-address' | tlTranslate : 'cap' }}"
                           [addressType]="companyHeadquartersType"
                           [expectedResults]="expectedResults.addressRegistrations">

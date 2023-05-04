@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using IARA.Mobile.Application;
+using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application;
@@ -14,6 +15,7 @@ using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.Controls.ViewModels;
+using IARA.Mobile.Insp.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
@@ -32,9 +34,15 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
     {
         public const string FishingShip = nameof(FishingShip);
         public const string FishingPoundNet = nameof(FishingPoundNet);
+
+        public const string PermitRegistered = nameof(PermitRegistered);
+        public const string PermitUnregistered = nameof(PermitUnregistered);
+
         private InspectionCheckToolMarkDto _edit;
         private List<SelectNomenclatureDto> _fishingGearTypes;
+        private List<SelectNomenclatureDto> _permitTypes;
         private SelectNomenclatureDto _fishingGearType;
+        private SelectNomenclatureDto _permitType;
         private List<SelectNomenclatureDto> _checkReasons;
         private List<SelectNomenclatureDto> _recheckReasons;
 
@@ -65,6 +73,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             {
                 { FishingShip, () => FishingGearType?.Code == FishingShip },
                 { FishingPoundNet, () => FishingGearType?.Code == FishingPoundNet },
+                { PermitRegistered, () => PermitType?.Code == PermitRegistered },
+                { PermitUnregistered, () => PermitType?.Code == PermitUnregistered },
                 { Group.OTHER, () => RecheckReason.Value?.Code == CommonConstants.NomenclatureOther }
             }, others: new IValidatableViewModel[]
             {
@@ -122,7 +132,22 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
         [ValidGroup(Group.OTHER)]
         public ValidState OtherRecheckReason { get; set; }
 
+        [MaxLength(4000)]
+        public ValidState OwnerComment { get; set; }
+
+        [Required]
+        [ValidGroup(PermitRegistered)]
         public ValidStateInfiniteSelect<PermitNomenclatureDto> Permit { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        [ValidGroup(PermitUnregistered)]
+        public ValidState PermitNumber { get; set; }
+
+        [Required]
+        [TLRange(1900, 2100)]
+        [ValidGroup(PermitUnregistered)]
+        public ValidState PermitYear { get; set; }
 
         public ValidStateValidatableTable<ToggleViewModel> Toggles { get; set; }
 
@@ -141,10 +166,20 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             get => _fishingGearTypes;
             set => SetProperty(ref _fishingGearTypes, value);
         }
+        public List<SelectNomenclatureDto> PermitTypes
+        {
+            get => _permitTypes;
+            set => SetProperty(ref _permitTypes, value);
+        }
         public SelectNomenclatureDto FishingGearType
         {
             get => _fishingGearType;
             set => SetProperty(ref _fishingGearType, value);
+        }
+        public SelectNomenclatureDto PermitType
+        {
+            get => _permitType;
+            set => SetProperty(ref _permitType, value);
         }
 
         public ICommand FishingGearTypeSwitched { get; }
@@ -187,7 +222,25 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
                 }
             };
 
-            FishingGearType = FishingGearTypes.Find(f => f.Code == FishingShip);
+            FishingGearType = FishingGearTypes[0];
+
+            PermitTypes = new List<SelectNomenclatureDto>
+            {
+                new SelectNomenclatureDto
+                {
+                    Id = 1,
+                    Code = PermitRegistered,
+                    Name = TranslateExtension.Translator[nameof(GroupResourceEnum.FishingGearInspection) + "/PermitRegistered"]
+                },
+                new SelectNomenclatureDto
+                {
+                    Id = 2,
+                    Code = PermitUnregistered,
+                    Name = TranslateExtension.Translator[nameof(GroupResourceEnum.FishingGearInspection) + "/PermitUnregistered"]
+                }
+            };
+
+            PermitType = PermitTypes[0];
 
             INomenclatureTransaction nomTransaction = NomenclaturesTransaction;
 
@@ -228,8 +281,20 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
                 CheckReason.AssignFrom(Edit.CheckReasonId, CheckReasons);
                 RecheckReason.AssignFrom(Edit.RecheckReasonId, RecheckReasons);
                 OtherRecheckReason.AssignFrom(Edit.OtherRecheckReason);
+                OwnerComment.AssignFrom(Edit.OwnerComment);
 
                 LastHarbour.OnEdit(Edit.Port);
+
+                if (Edit.PermitId != null)
+                {
+                    PermitType = PermitTypes[0];
+                }
+                else
+                {
+                    PermitType = PermitTypes[1];
+                    PermitNumber.Value = Edit.UnregisteredPermitNumber;
+                    PermitYear.Value = Edit.UnregisteredPermitYear?.ToString();
+                }
 
                 if (Edit.PoundNetId != null)
                 {
@@ -477,10 +542,14 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
                         Inspectors = InspectionGeneralInfo.Inspectors,
                         IsOfflineOnly = IsLocal,
                         FishingGears = FishingGears,
-                        PermitId = Permit.Value,
+                        PermitId = PermitType?.Code == PermitRegistered ? Permit.Value : null,
                         CheckReasonId = CheckReason.Value,
                         RecheckReasonId = RecheckReason.Value,
+                        OwnerComment = OwnerComment,
                         Port = LastHarbour,
+                        PoundNetId = PoundNet.Value,
+                        UnregisteredPermitNumber = PermitNumber.Value,
+                        UnregisteredPermitYear = ParseHelper.ParseInteger(PermitYear.Value),
                         OtherRecheckReason = RecheckReason.Value?.Code == CommonConstants.NomenclatureOther
                             ? OtherRecheckReason.Value
                             : null,

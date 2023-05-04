@@ -36,4 +36,7 @@ export class WaterInspectionVesselDTO {
 
     @StrictlyTyped(String)
     public storageLocation?: string;
+
+    @StrictlyTyped(String)
+    public description?: string;
 }

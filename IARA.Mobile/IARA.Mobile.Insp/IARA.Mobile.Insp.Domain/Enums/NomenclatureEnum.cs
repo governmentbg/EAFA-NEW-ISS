@@ -55,5 +55,6 @@
         Permit,
         PermitType,
         TurbotSizeGroup,
+        InspectionVesselType,
     }
 }

@@ -565,6 +565,18 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             accessValidFromControl: new FormControl()
         });
 
+        this.userRoleForm!.get('accessValidFromControl')!.valueChanges.subscribe({
+            next: () => {
+                this.userRoleForm.get('idControl')!.updateValueAndValidity({ onlySelf: true });
+            }
+        });
+
+        this.userRoleForm!.get('accessValidToControl')!.valueChanges.subscribe({
+            next: () => {
+                this.userRoleForm.get('idControl')!.updateValueAndValidity({ onlySelf: true });
+            }
+        });
+
         // userLegalForm
 
         this.userLegalForm = new FormGroup({
@@ -614,10 +626,10 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             const min = (lhs: Date, rhs: Date) => lhs < rhs ? lhs : rhs;
 
             if (this.roleDataTable) {
-                const id: number | undefined = this.userRoleForm.get('idControl')!.value;
-                const validFrom: Date | undefined = this.userRoleForm.get('accessValidFromControl')!.value;
-                const validTo: Date | undefined = this.userRoleForm.get('accessValidToControl')!.value;
-
+                const id: number | undefined = control.value?.value;
+                const validFrom: Date | undefined = this.userRoleForm.get('accessValidFromControl')!.value ?? new Date();
+                const validTo: Date | undefined = this.userRoleForm.get('accessValidToControl')!.value ?? new Date(9999, 0, 1);
+                
                 if (id !== undefined && validFrom !== undefined && validTo !== undefined) {
                     const otherEntries: RoleDTO[] = (this.roleDataTable.rows as RoleDTO[]).filter(
                         x => x.id === id && x.isActive !== false && x.accessValidFrom !== validFrom && x.accessValidTo !== validTo

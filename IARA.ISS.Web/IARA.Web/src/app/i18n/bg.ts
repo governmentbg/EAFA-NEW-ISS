@@ -2258,6 +2258,7 @@
         'table-name': 'Обект',
         'audit-old-value': 'Съдържание - стара стойност',
         'audit-new-value': 'Съдържание - нова стойност',
+        'show-related-logs': 'Покажи свързани събития',
 
         'table-unique-number': 'Уникален номер',
         'table-date-time': 'Дата и час на събитието',
@@ -2306,6 +2307,7 @@
         'stack-trace-copy-failed': 'Настъпи грешка при копирането',
         'id': 'Номер',
         'filters-id': 'Номер на грешка',
+        'exception-uid': 'Системен идентификатор на грешката',
 
         'severity-debug': 'Debug',
         'severity-error': 'Error',
@@ -2674,6 +2676,12 @@
         'buyer-is-legal': 'Купувачът е юридическо лице',
         'undersized-fish': 'Маломерен улов',
         'owner-is-driver': 'Собственикът е шофьорът',
+        'vessel-description': 'Описание',
+        'port-date': 'Дата на престой в пристанище',
+        'owner-comment': 'Коментар на собственикът',
+        'registered-permit': 'Уреди на издадено УСР',
+        'unregistered-permit': 'Уреди на неиздадено УСР за година',
+        'permit-year': 'Година на УСР',
 
         'add-catch-ship-dialog-title': 'Добави кораб',
         'edit-catch-ship-dialog-title': 'Редактирай кораб',
@@ -3385,7 +3393,12 @@
         'dialog-group-type': 'Тип група',
         'dialog-group-order-num': 'Пореден номер',
 
-        'invalid-sql': 'Невалиден SQL'
+        'invalid-sql': 'Невалиден SQL',
+
+        'view-report-btn': 'Преглед на справка',
+        'edit-report-btn': 'Редакция на справка',
+        'delete-report-btn': 'Изтриване на справка',
+        'restore-report-btn': 'Възстановяване на справка'
     },
     'change-of-circumstances': {
         'add-change-of-circumstances': 'Добави промяна',
@@ -4977,7 +4990,7 @@
         'edit-auan-objection-resolution-num': 'Номер на резолюция',
         'edit-auan-sent-date': 'Дата на изпращане',
 
-        'edit-auan-penal-decrees': 'Свързани наказателни постановления, споразумения и предупреждения',
+        'edit-auan-penal-decrees': 'Свързани наказателни постановления, споразумения, предупреждения и резолюции',
         'edit-penal-decree-num': '№ на наказателно постановление',
         'edit-penal-decree-name': 'Тип',
         'edit-penal-decree-status': 'Статус',
@@ -5357,7 +5370,7 @@
         'delete-penal-decree-dialog-ok-btn-label': 'Изтриване',
         'print': 'Отпечатай',
         'save-print': 'Запази и отпечатай',
-        'auan-penal-decrees-title': 'Свързани наказателни постановления, споразумения и предупреждения',
+        'auan-penal-decrees-title': 'Свързани наказателни постановления, споразумения, предупреждения и резолюции',
 
         'view-agreement': 'Преглед на споразумение',
         'edit-agreement': 'Редакция на споразумение',

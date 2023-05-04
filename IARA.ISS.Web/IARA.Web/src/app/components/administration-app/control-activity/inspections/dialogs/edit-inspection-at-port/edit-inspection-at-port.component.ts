@@ -186,7 +186,14 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
                     ship: this.model.receivingShipInspection.inspectedShip,
                 }));
 
-                this.form.get('portControl')!.setValue(this.model.receivingShipInspection.lastPortVisit);
+                if (this.model.receivingShipInspection.inspectionPortId || this.model.receivingShipInspection.unregisteredPortName) {
+                    this.form.get('portControl')!.setValue(new PortVisitDTO({
+                        portId: this.model.receivingShipInspection.inspectionPortId,
+                        portName: this.model.receivingShipInspection.unregisteredPortName,
+                        portCountryId: this.model.receivingShipInspection.unregisteredPortCountryId,
+                    }));
+                }
+
                 this.form.get('captainCommentControl')!.setValue(this.model.receivingShipInspection.captainComment);
             }
 
@@ -238,7 +245,11 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
                 catchMeasures: shipSections.catches,
                 checks: shipSections.checks,
                 inspectedShip: shipSections.ship,
-                lastPortVisit: port,
+                lastPortVisit: shipSections.port,
+                inspectionPortId: port?.portId,
+                unregisteredPortCountryId: port?.portCountryId,
+                unregisteredPortName: port?.portName,
+                //lastPortVisit: port,
                 logBooks: shipSections.logBooks,
                 permitLicenses: shipSections.permitLicenses,
                 permits: shipSections.permits,

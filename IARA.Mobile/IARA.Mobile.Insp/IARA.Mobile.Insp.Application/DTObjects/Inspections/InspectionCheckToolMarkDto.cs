@@ -10,8 +10,11 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public int? CheckReasonId { get; set; }
         public int? RecheckReasonId { get; set; }
         public string OtherRecheckReason { get; set; }
+        public string OwnerComment { get; set; }
 
         public int? PermitId { get; set; }
+        public string UnregisteredPermitNumber { get; set; }
+        public int? UnregisteredPermitYear { get; set; }
         public List<InspectedFishingGearDto> FishingGears { get; set; }
     }
 }

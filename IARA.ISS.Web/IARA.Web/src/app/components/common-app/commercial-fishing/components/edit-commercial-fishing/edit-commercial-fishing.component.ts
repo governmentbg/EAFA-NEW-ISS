@@ -380,7 +380,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         }
 
         this.hideSubmittedByDocument = this.pageCode === PageCodeEnum.CatchQuataSpecies;
-        this.isQualifiedFisherPhotoRequired = this.pageCode !== PageCodeEnum.CatchQuataSpecies;
+        this.isQualifiedFisherPhotoRequired = this.pageCode !== PageCodeEnum.CatchQuataSpecies && this.pageCode !== PageCodeEnum.PoundnetCommFish;
 
         this.buildForm();
 
