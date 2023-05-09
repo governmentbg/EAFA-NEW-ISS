@@ -181,12 +181,12 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
                 isActive: true
             }),
             new NomenclatureDTO<ThreeState>({
-                value: 'no',
+                value: 'yes',
                 displayName: this.translate.getValue('ships-register.is-cancelled-yes'),
                 isActive: true
             }),
             new NomenclatureDTO<ThreeState>({
-                value: 'yes',
+                value: 'no',
                 displayName: this.translate.getValue('ships-register.is-cancelled-no'),
                 isActive: true
             })
@@ -199,12 +199,12 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
                 isActive: true
             }),
             new NomenclatureDTO<ThreeState>({
-                value: 'no',
+                value: 'yes',
                 displayName: this.translate.getValue('ships-register.is-forbidden-yes'),
                 isActive: true
             }),
             new NomenclatureDTO<ThreeState>({
-                value: 'yes',
+                value: 'no',
                 displayName: this.translate.getValue('ships-register.is-forbidden-no'),
                 isActive: true
             })

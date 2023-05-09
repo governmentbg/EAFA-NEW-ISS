@@ -20,9 +20,9 @@
 
   <ItemGroup>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" />
-    <PackageReference Include="TechnoLogica.Authentication.Common" Version="1.0.39" />
-    <PackageReference Include="TL.Dependecy.Injection" Version="22.297.44704" />
-    <PackageReference Include="TL.Logging" Version="23.45.48090" />
+    <PackageReference Include="TechnoLogica.Authentication.Common" Version="1.6.1" />
+    <PackageReference Include="TL.Dependecy.Injection" Version="23.109.49913" />
+    <PackageReference Include="TL.Logging" Version="23.117.50169" />
   </ItemGroup>
 
   <ItemGroup>

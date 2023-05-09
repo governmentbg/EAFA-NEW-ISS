@@ -21,6 +21,7 @@ import { TariffCodesEnum } from '@app/enums/tariff-codes.enum';
 import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
 import { IssueDuplicateTicketDialogParams } from '../../models/issue-duplicate-ticket-dialog-params.model';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { FileInfoDTO } from '../../../../../../models/generated/dtos/FileInfoDTO';
 
 @Component({
     selector: 'issue-duplicate-ticket',
@@ -42,6 +43,7 @@ export class IssueDuplicateTicketComponent implements OnInit, AfterViewInit, IDi
 
     private ticketId!: number;
     private associationId: number | undefined;
+    private photo: FileInfoDTO | undefined;
 
     private service!: IRecreationalFishingService;
     private translate: FuseTranslationLoaderService;
@@ -110,6 +112,7 @@ export class IssueDuplicateTicketComponent implements OnInit, AfterViewInit, IDi
         this.ticketId = data.ticketId;
         this.associationId = data.associationId;
         this.service = data.service;
+        this.photo = data.photo;
     }
 
     public saveBtnClicked(action: IActionInfo, dialogClose: DialogCloseCallback): void {
@@ -208,7 +211,8 @@ export class IssueDuplicateTicketComponent implements OnInit, AfterViewInit, IDi
             ticketNum: this.ticketNumControl.value,
             price: this.paymentSummary.totalPrice,
             paymentData: this.paymentDataControl.value,
-            createdByAssociationId: this.associationId
+            createdByAssociationId: this.associationId,
+            personPhoto: this.photo
         });
     }
 

@@ -2,6 +2,7 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { PaymentDataDTO } from './PaymentDataDTO';
+import { FileInfoDTO } from './FileInfoDTO';
 
 export class RecreationalFishingTicketDuplicateDTO { 
     public constructor(obj?: Partial<RecreationalFishingTicketDuplicateDTO>) {
@@ -22,4 +23,7 @@ export class RecreationalFishingTicketDuplicateDTO {
 
     @StrictlyTyped(Number)
     public createdByAssociationId?: number;
+
+    @StrictlyTyped(FileInfoDTO)
+    public personPhoto?: FileInfoDTO;
 }

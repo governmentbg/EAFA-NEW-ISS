@@ -2,6 +2,7 @@
 using IARA.Common.ConfigModels;
 using IARA.Common.Utils;
 using IARA.DataAccess.Abstractions;
+using IARA.IdentityProfile.IdentityProfiles;
 using IARA.Security;
 using IARA.Security.AuthContext;
 using IARA.Security.Services;

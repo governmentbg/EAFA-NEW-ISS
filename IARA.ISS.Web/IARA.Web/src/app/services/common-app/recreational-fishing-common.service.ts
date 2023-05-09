@@ -37,7 +37,9 @@ export class RecreationalFishingCommonService {
     }
 
     public addTicketDuplicate(area: AreaTypes, controller: string, data: RecreationalFishingTicketDuplicateDTO): Observable<number> {
-        return this.http.post(area, controller, 'AddTicketDuplicate', data);
+        return this.http.post(area, controller, 'AddTicketDuplicate', data, {
+            properties: new RequestProperties({ asFormData: true }),
+        });
     }
 
     public editTicket(area: AreaTypes, controller: string, ticket: RecreationalFishingTicketDTO): Observable<void> {
