@@ -95,8 +95,9 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
     public pageCode!: PageCodeEnum;
 
     private buttons: DialogWrapperData | undefined;
-
     private periods: NomenclatureDTO<number>[] = [];
+
+    private duplicateNewPhoto: boolean = false;
 
     private translate: FuseTranslationLoaderService;
     private nomenclatures: CommonNomenclatures;
@@ -407,13 +408,19 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             });
         }
         else if (action.id === 'issue-duplicate') {
-            this.openIssueDuplicateDialog().subscribe({
-                next: (success: boolean) => {
-                    if (success === true) {
-                        dialogClose(true);
+            if (this.personPhotoRequired && this.form.get('photoControl')!.value) {
+                this.openIssueDuplicateDialog().subscribe({
+                    next: (success: boolean) => {
+                        if (success === true) {
+                            dialogClose(true);
+                        }
                     }
-                }
-            });
+                });
+            }
+            else {
+                this.form.get('photoControl')!.enable();
+                this.duplicateNewPhoto = true;
+            }
         }
         else if (this.dialogData!.viewMode) {
             dialogClose(undefined);
@@ -781,6 +788,10 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
 
         if (this.isAssociation) {
             data.associationId = (this.service as RecreationalFishingPublicService).currentUserChosenAssociation!.value!;
+        }
+
+        if (this.duplicateNewPhoto) {
+            data.photo = this.form.get('photoControl')!.value;
         }
 
         return this.issueDuplicateDialog.openWithTwoButtons({

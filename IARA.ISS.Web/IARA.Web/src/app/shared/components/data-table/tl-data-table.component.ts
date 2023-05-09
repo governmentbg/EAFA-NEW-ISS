@@ -19,6 +19,7 @@ import { GridRow } from './models/row.model';
 export class TLDataTableComponent extends BaseTLDatatableComponent implements ITLDatatableComponent, AfterContentChecked, AfterViewInit, OnDestroy {
     @Input() public disableDblClickEdit: boolean = false;
     @Input() public hasError: boolean = false;
+    @Input() public insertFront: boolean = true;
 
     @Output() public activeRecordChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public recordChanged: EventEmitter<RecordChangedEventArgs<any>> = new EventEmitter<RecordChangedEventArgs<any>>();
@@ -89,7 +90,7 @@ export class TLDataTableComponent extends BaseTLDatatableComponent implements IT
 
     public addButtonClick(): void {
         if (this._inlineEditing) {
-            this.inlineEditingService.addNewRow();
+            this.inlineEditingService.addNewRow(this.insertFront);
         }
 
         this.addButtonClicked.emit();

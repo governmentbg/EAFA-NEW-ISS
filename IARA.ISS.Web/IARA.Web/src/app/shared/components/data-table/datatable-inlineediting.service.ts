@@ -69,7 +69,7 @@ export class DataTableInlineEditingService {
         }
     }
 
-    public addNewRow(): void {
+    public addNewRow(front: boolean = true): void {
         if (!this.showInactive && (this._activeRecord === undefined || (!this._activeRecord.editMode && !this._activeRecord.isNewRecord))) {
             const dataRow: any = {};
             this.currentCommandType = CommandTypes.Add;
@@ -81,7 +81,9 @@ export class DataTableInlineEditingService {
             this.setFormControlValues();
             //return this.insertFirst(rows, this._activeRecord);
             this.datatable.pageNumber = 0;
-            this.datatable._tempRows = this.insertFirst(this.datatable._tempRows, this._activeRecord);
+            this.datatable._tempRows = front
+                ? this.insertFirst(this.datatable._tempRows, this._activeRecord)
+                : this.insertLast(this.datatable._tempRows, this._activeRecord);
             this.datatable._totalRecordsCount++;
             this.datatable.activeRecordChanged.emit(undefined);
             //this.changeRowsContext(false);
