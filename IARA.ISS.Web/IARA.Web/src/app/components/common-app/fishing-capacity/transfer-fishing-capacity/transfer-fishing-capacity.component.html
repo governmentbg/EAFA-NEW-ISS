@@ -57,12 +57,20 @@
                           tooltipResourceName="fishing-capacity.transfer-certificate-power-helper"
                           label="{{ 'fishing-capacity.transfer-certificate-power' | tlTranslate }}">
                 </tl-input>
-                <tl-input *ngIf="form.controls.capacityCertificateControl.value"
-                          fxFlex="25"
-                          [formControl]="validToControl"
-                          tooltipResourceName="fishing-capacity.transfer-certificate-valid-to-helper"
-                          label="{{ 'fishing-capacity.transfer-certificate-valid-to' | tlTranslate }}">
-                </tl-input>
+                <div *ngIf="form.controls.capacityCertificateControl.value"
+                     fxFlex="25"
+                     fxLayout="column"
+                     fxLayoutAlign="start stretch">
+                    <tl-input [formControl]="validToControl"
+                              tooltipResourceName="fishing-capacity.transfer-certificate-valid-to-helper"
+                              label="{{ 'fishing-capacity.transfer-certificate-valid-to' | tlTranslate }}">
+                    </tl-input>
+
+                    <span *ngIf="licenceInvalid"
+                          class="warn-orange-color warning">
+                        {{ 'fishing-capacity.transfer-certificate-expired' | tlTranslate }}
+                    </span>
+                </div>
                 <div [fxFlex]="form.controls.capacityCertificateControl.value ? 0 : 25"></div>
                 <div [fxFlex]="form.controls.capacityCertificateControl.value ? 0 : 25"></div>
                 <div [fxFlex]="form.controls.capacityCertificateControl.value ? 0 : 25"></div>
@@ -112,7 +120,7 @@
                         title="{{ 'fishing-capacity.transfer-payment-information' | tlTranslate }}"
                         tooltipResourceName="fishing-capacity.transfer-payment-information-helper">
         <payment-information formControlName="applicationPaymentInformationControl"
-                             [hideBasicInfo]="hideBasicPaymentInfo" 
+                             [hideBasicInfo]="hideBasicPaymentInfo"
                              [isOnlineApplication]="isOnlineApplication">
         </payment-information>
     </tl-expansion-panel>

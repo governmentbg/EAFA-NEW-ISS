@@ -60,7 +60,7 @@
                               tooltipResourceName="fishing-capacity.acquired-licence-valid-to-helper">
                     </tl-input>
 
-                    <span *ngIf="!isDisabled && control.value?.validTo && control.value.validTo < now"
+                    <span *ngIf="control.value?.validTo && control.value.validTo < now"
                           class="warn-orange-color warning">
                         {{ 'fishing-capacity.acquired-licence-expired' | tlTranslate }}
                     </span>

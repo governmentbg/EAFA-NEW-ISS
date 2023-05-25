@@ -1,5 +1,5 @@
-﻿using IARA.Security;
-using IARA.Security.SecurityModels;
+﻿using IARA.Security.Interfaces;
+using IARA.Security.Models.SecurityModels;
 using IARA.Security.Services;
 using Microsoft.AspNetCore.Http;
 

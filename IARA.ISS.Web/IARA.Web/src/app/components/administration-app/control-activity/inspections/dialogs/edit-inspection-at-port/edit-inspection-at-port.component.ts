@@ -184,6 +184,7 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
                     permits: this.model.receivingShipInspection.permits,
                     personnel: this.model.receivingShipInspection.personnel,
                     ship: this.model.receivingShipInspection.inspectedShip,
+                    port: this.model.receivingShipInspection.lastPortVisit,
                 }));
 
                 if (this.model.receivingShipInspection.inspectionPortId || this.model.receivingShipInspection.unregisteredPortName) {
@@ -249,7 +250,6 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
                 inspectionPortId: port?.portId,
                 unregisteredPortCountryId: port?.portCountryId,
                 unregisteredPortName: port?.portName,
-                //lastPortVisit: port,
                 logBooks: shipSections.logBooks,
                 permitLicenses: shipSections.permitLicenses,
                 permits: shipSections.permits,

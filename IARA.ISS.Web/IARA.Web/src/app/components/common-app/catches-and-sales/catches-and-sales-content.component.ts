@@ -288,12 +288,18 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             filtersMapper: this.mapFilters.bind(this)
         });
 
-        const personId: number | undefined = window.history.state?.personId;
+        const ownerId: number | undefined = window.history.state?.id;
+        const isPerson: boolean | undefined = window.history.state?.isPerson;
         const tableId: number | undefined = window.history.state?.tableId;
         const pageCode: string | undefined = window.history.state?.pageCode;
         
-        if (!this.isPublicApp && !CommonUtils.isNullOrEmpty(personId)) {
-            this.gridManager.advancedFilters = new CatchesAndSalesAdministrationFilters({ personId: personId });
+        if (!this.isPublicApp && !CommonUtils.isNullOrEmpty(ownerId)) {
+            if (isPerson === true) {
+                this.gridManager.advancedFilters = new CatchesAndSalesAdministrationFilters({ personId: ownerId });
+            }
+            else if (isPerson === false) {
+                this.gridManager.advancedFilters = new CatchesAndSalesAdministrationFilters({ legalId: ownerId });
+            }
         }
 
         if (!CommonUtils.isNullOrEmpty(tableId) && !CommonUtils.isNullOrEmpty(pageCode)) {
