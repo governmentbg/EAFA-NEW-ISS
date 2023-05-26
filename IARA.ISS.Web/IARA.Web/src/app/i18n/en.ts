@@ -3553,6 +3553,7 @@
         'transfer-certificate-tonnage': 'Gross tonnage',
         'transfer-certificate-power': 'Power (kW)',
         'transfer-certificate-valid-to': 'Valid to',
+        'transfer-certificate-expired': 'The licence is expired',
         'transfer-to-people': 'Persons/legal entities to which to transfer capacity from the certificate',
         'transfer-delivery-data': 'Manner of obtaining free capacity certificates issued by NAFA',
         'transfer-has-no-e-delivery-registration-error': 'You must have e-delivery access in order to choose e-delivery as delivery type',

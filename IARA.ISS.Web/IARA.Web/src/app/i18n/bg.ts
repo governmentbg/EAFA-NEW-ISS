@@ -3604,6 +3604,7 @@
         'transfer-certificate-tonnage': 'Бруто тонаж',
         'transfer-certificate-power': 'Мощност (kW)',
         'transfer-certificate-valid-to': 'Валидно до',
+        'transfer-certificate-expired': 'Удостоверението е невалидно',
         'transfer-to-people': 'Лица, на които се прехвърля риболовният капацитет от удостоверението',
         'transfer-delivery-data': 'Информация за връчване на издадени удостоверения за свободен капацитет',
         'transfer-has-no-e-delivery-registration-error': 'Трябва да имате достъп до системата за електронно връчване (EDelivery), за да изберете електронно връчване',

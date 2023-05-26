@@ -41,6 +41,12 @@ export class AquacultureLogBookPageRegisterDTO {
     @StrictlyTyped(String)
     public cancellationReason?: string;
 
+    @StrictlyTyped(Number)
+    public personBuyerId?: number;
+
+    @StrictlyTyped(Number)
+    public legalBuyerId?: number;
+
     @StrictlyTyped(Boolean)
     public isActive?: boolean;
 }

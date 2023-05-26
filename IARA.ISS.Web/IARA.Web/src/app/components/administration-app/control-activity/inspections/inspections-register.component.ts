@@ -159,6 +159,26 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             filtersMapper: this.mapFilters.bind(this),
         });
 
+        const subjectId: number | undefined = window.history.state?.id;
+        const isPerson: boolean | undefined = window.history.state?.isPerson;
+        
+        if (!CommonUtils.isNullOrEmpty(subjectId)) {
+            if (isPerson === true) {
+                this.gridManager.advancedFilters = new InspectionsFilters({
+                    inspectedPersonId: subjectId,
+                    subjectIsLegal: false
+                });
+            }
+            else if (isPerson === false) {
+                this.gridManager.advancedFilters = new InspectionsFilters({
+                    inspectedLegalId: subjectId,
+                    subjectIsLegal: true
+                });
+            }
+
+            this.gridManager.refreshData();
+        }
+
         this.gridManager.advancedFilters = new InspectionsFilters({
             shipId: this.shipId ?? undefined,
         });

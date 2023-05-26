@@ -56,6 +56,9 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
     public includeForeigner: boolean = false;
 
     @Input()
+    public guidIdentifier: boolean = false;
+
+    @Input()
     public checkboxLabel: string | null = null;
 
     @Input()
@@ -180,13 +183,15 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
     public ngAfterViewInit(): void {
         if (!this.showOnlyBasicData) {
             if (this.isPerson === true) {
-                this.form.get('idNumberControl')!.valueChanges.subscribe({
-                    next: (value: EgnLncDTO | string) => {
-                        if (value !== null && value !== undefined && typeof value !== 'string') {
-                            this.setDateOfBirthValidators(value);
+                if (!this.guidIdentifier) {
+                    this.form.get('idNumberControl')!.valueChanges.subscribe({
+                        next: (value: EgnLncDTO | string) => {
+                            if (value !== null && value !== undefined && typeof value !== 'string') {
+                                this.setDateOfBirthValidators(value);
+                            }
                         }
-                    }
-                });
+                    });
+                }
 
                 if (this.showGender === true) {
                     this.form.get('genderControl')!.valueChanges.subscribe({
@@ -523,9 +528,15 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
 
     protected getValue(): RegixPersonDataDTO | RegixLegalDataDTO {
         if (this.isPerson) {
+            const defaultEgnLnc: EgnLncDTO | undefined = this.guidIdentifier
+                ? new EgnLncDTO({
+                    identifierType: IdentifierTypeEnum.GUID
+                })
+                : undefined;
+
             if (this.showOnlyBasicData) {
                 return new RegixPersonDataDTO({
-                    egnLnc: this.form.get('idNumberControl')!.value ?? undefined,
+                    egnLnc: this.form.get('idNumberControl')!.value ?? defaultEgnLnc,
                     firstName: this.form.get('firstNameControl')!.value ?? undefined,
                     middleName: this.form.get('middleNameControl')!.value ?? undefined,
                     lastName: this.form.get('lastNameControl')!.value ?? undefined
@@ -533,7 +544,7 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
             }
             else {
                 return new RegixPersonDataDTO({
-                    egnLnc: this.form.get('idNumberControl')!.value ?? undefined,
+                    egnLnc: this.form.get('idNumberControl')!.value ?? defaultEgnLnc,
                     firstName: this.form.get('firstNameControl')!.value ?? undefined,
                     middleName: this.form.get('middleNameControl')!.value ?? undefined,
                     lastName: this.form.get('lastNameControl')!.value ?? undefined,
@@ -590,7 +601,7 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
         if (this.isPerson) {
             const expectedResults: RegixPersonDataDTO | undefined = this.expectedRegixResults as RegixPersonDataDTO;
 
-            if (this.isIdentityRequired) {
+            if (this.isIdentityRequired && !this.guidIdentifier) {
                 this.form.get('idNumberControl')!.setValidators(Validators.required);
             }
             else {

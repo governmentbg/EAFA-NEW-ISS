@@ -38,7 +38,8 @@ import { ApplicationValidationErrorsEnum } from '@app/enums/application-validati
 
 @Component({
     selector: 'transfer-fishing-capacity',
-    templateUrl: './transfer-fishing-capacity.component.html'
+    templateUrl: './transfer-fishing-capacity.component.html',
+    styleUrls: ['./transfer-fishing-capacity.component.scss']
 })
 export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, IDialogComponent {
     public form!: FormGroup;
@@ -70,6 +71,7 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
     public hasDelivery: boolean = false;
     public hasNoEDeliveryRegistrationError: boolean = false;
     public hideBasicPaymentInfo: boolean = false;
+    public licenceInvalid: boolean = false;
     public service!: IFishingCapacityService;
 
     @ViewChild(ValidityCheckerGroupDirective)
@@ -117,11 +119,6 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
         });
 
         this.certificates = await this.service.getAllCapacityCertificateNomenclatures().toPromise();
-
-        const now: Date = new Date();
-        for (const certificate of this.certificates) {
-            certificate.isActive = certificate.isActive && certificate.validTo! >= now;
-        }
 
         // извличане на исторически данни за заявление
         if (this.isApplicationHistoryMode && this.applicationId !== undefined) {
@@ -220,6 +217,8 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
                         this.tonnageControl.setValue(licence.grossTonnage!.toFixed(2));
                         this.powerControl.setValue(licence.power!.toFixed(2));
                         this.validToControl.setValue(this.datePipe.transform(licence.validTo!, 'dd.MM.yyyy'));
+
+                        this.licenceInvalid = licence.validTo!.getTime() < Date.now();
                     }
                     else {
                         this.maxGrossTonnage = 0;
@@ -228,6 +227,8 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
                         this.validToControl.setValue('');
                         this.tonnageControl.setValue('');
                         this.powerControl.setValue('');
+
+                        this.licenceInvalid = false;
                     }
                 }
             });

@@ -27,7 +27,7 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
     private allLogBooks: LogBookForRenewalDTO[] = [];
     private selectedLogBooks: LogBookForRenewalDTO[] = [];
 
-    private permitLicenseId!: number;
+    private permitLicenseId: number | undefined;
     private service!: ILogBookService;
     private saveToDB: boolean = false;
 
@@ -55,9 +55,26 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
     }
 
     public setData(data: ChooseLogBookForRenewalDialogParams, wrapperData: DialogWrapperData): void {
-        this.permitLicenseId = data.permitLicenseId!;
+        this.permitLicenseId = data.permitLicenseId;
         this.service = data.service!;
         this.saveToDB = data.saveToDB;
+        
+        if (data.permitLicenseId === undefined || data.permitLicenseId === null) {
+            this.allLogBooks = data.logBooks.map(x => new LogBookForRenewalDTO({
+                logBookPermitLicenseId: x.lastLogBookLicenseId,
+                logBookId: x.logBookId,
+                number: x.logbookNumber,
+                isOnline: x.isOnline,
+                startPageNumber: x.startPageNumber,
+                endPageNumber: x.endPageNumber,
+                lastUsedPageNumber: x.lastPageNumber,
+                statusName: x.statusName,
+                logBookTypeName: x.logBookTypeName,
+                isChecked: false
+            }));
+
+            this.logBooks = this.allLogBooks.slice();
+        }
     }
 
     public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
@@ -167,14 +184,16 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
     }
 
     private getData(showFinished: boolean): void {
-        this.service.getLogBooksForRenewal(this.permitLicenseId, showFinished).subscribe({
-            next: (results: LogBookForRenewalDTO[]) => {
-                this.allLogBooks = results;
+        if (this.permitLicenseId !== undefined && this.permitLicenseId !== null) {
+            this.service.getLogBooksForRenewal(this.permitLicenseId!, showFinished).subscribe({
+                next: (results: LogBookForRenewalDTO[]) => {
+                    this.allLogBooks = results;
 
-                setTimeout(() => {
-                    this.logBooks = this.allLogBooks.slice();
-                });
-            }
-        });
+                    setTimeout(() => {
+                        this.logBooks = this.allLogBooks.slice();
+                    });
+                }
+            });
+        }
     }
 }

@@ -115,6 +115,9 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     @Input()
     public showInactivePagesAndDocuments: boolean = false;
 
+    @Input()
+    public isRegister: boolean | undefined;
+
     @Output()
     public onActionEnded: EventEmitter<OnActionEndedType> = new EventEmitter<OnActionEndedType>();
 
@@ -122,6 +125,8 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     public readonly logBookGroupsEnum: typeof LogBookGroupsEnum = LogBookGroupsEnum;
 
     public logBooks: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[] = [];
+    public renewalLogBooks: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[] = []; 
+    public allRenewalLogBooks: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[] = []; 
     public logBookStatuses: NomenclatureDTO<number>[] = [];
     public logBookTypes: NomenclatureDTO<number>[] = [];
 
@@ -226,21 +231,34 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     public writeValue(value: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[]): void {
         if (value !== null && value !== undefined) {
             this.loader.load(() => {
-                this.logBooks = value.slice();
+                
+                if (this.isRegister || (this.permitLicenseId !== undefined && this.permitLicenseId !== null)) {
+                    this.logBooks = value.slice();
 
-                if (this.logBooks.length > 0 && this.logBooks[0] instanceof CommercialFishingLogBookEditDTO) {
-                    this.hasLogBooksForRenewal = (this.logBooks as CommercialFishingLogBookEditDTO[]).some(x => x.isForRenewal);
+                    if (this.logBooks.length > 0 && this.logBooks[0] instanceof CommercialFishingLogBookEditDTO) {
+                        this.hasLogBooksForRenewal = (this.logBooks as CommercialFishingLogBookEditDTO[]).some(x => x.isForRenewal);
 
-                    if (this.ngControl) {
-                        this.control.updateValueAndValidity();
-                        this.onChanged(this.getValue());
+                        if (this.ngControl) {
+                            this.control.updateValueAndValidity();
+                            this.onChanged(this.getValue());
+                        }
+                    }
+                    else {
+                        if (this.ngControl) {
+                            this.control.updateValueAndValidity();
+                            this.onChanged(this.getValue());
+                        }
                     }
                 }
                 else {
+                    this.allRenewalLogBooks = value.slice();
+                    this.logBooks = [];
+
                     if (this.ngControl) {
                         this.control.updateValueAndValidity();
                         this.onChanged(this.getValue());
                     }
+
                 }
             });
         }
@@ -255,6 +273,11 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     }
 
     public getValue(): CommercialFishingLogBookEditDTO[] | LogBookEditDTO[] {
+        if (this.allRenewalLogBooks.length > 0) {
+            const logBookIds: number[] = (this.logBooks as CommercialFishingLogBookEditDTO[])?.map(x => x.logBookId!);
+            this.renewalLogBooks = this.allRenewalLogBooks.filter(x => !logBookIds.includes(x.logBookId!));
+        }
+
         return this.logBooks?.slice() ?? [];
     }
 
@@ -296,7 +319,8 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
             title: this.translate.getValue('catches-and-sales.choose-log-book-for-renewal-title'),
             componentData: new ChooseLogBookForRenewalDialogParams({
                 permitLicenseId: this.permitLicenseId!,
-                service: this.service
+                service: this.service,
+                logBooks: this.renewalLogBooks
             }),
             headerCancelButton: {
                 cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }

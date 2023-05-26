@@ -28,9 +28,9 @@
 
   <ItemGroup>
     <PackageReference Include="TechnoLogica.Authentication.EAuth" Version="1.1.31" />
-    <PackageReference Include="TechnoLogica.Authentication.EAuthV2" Version="2.6.10" />
+    <PackageReference Include="TechnoLogica.Authentication.EAuthV2" Version="2.6.11" />
     <PackageReference Include="TechnoLogica.Authentication.Mock" Version="1.6.4" />
-    <PackageReference Include="TechnoLogica.IdentityServer" Version="1.6.22" />
+    <PackageReference Include="TechnoLogica.IdentityServer" Version="1.6.23" />
     <PackageReference Include="TechnoLogica.IdentityServer.PostgreSQLOperationalStore" Version="1.0.0" />
   </ItemGroup>
 

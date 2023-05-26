@@ -27,4 +27,6 @@ export class InspectionsFilters extends BaseRequestModel {
     public subjectEGN: string | undefined;
     public updatedAfter: Date | undefined;
     public showBothActiveAndInactive: boolean | undefined;
+    public inspectedPersonId: number | undefined;
+    public inspectedLegalId: number | undefined;
 }

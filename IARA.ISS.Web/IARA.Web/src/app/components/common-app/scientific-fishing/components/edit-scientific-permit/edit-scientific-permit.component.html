@@ -17,6 +17,7 @@
                     [isPerson]="true"
                     [isIdReadOnly]="isEditing || isPublicApp"
                     [hideDocument]="true"
+                    [guidIdentifier]="true"
                     [expectedResults]="expectedResults.requester"
                     (downloadDataBtnClicked)="downloadedPersonData($event)">
         </regix-data>
@@ -192,7 +193,7 @@
                              columnName="{{ 'scientific-fishing.position' | tlTranslate }}">
                 </data-column>
 
-                <data-template-column [flexRate]="0.6" [cellClass]="'justify-center'">
+                <data-template-column [flexRate]="0.8" [cellClass]="'justify-center'">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row wrap" fxLayoutAlign="end center">
                             <tl-icon *ngIf="row.data.hasRegixDataDiscrepancy || (holdersTouched && row.data.hasValidationErrors)"

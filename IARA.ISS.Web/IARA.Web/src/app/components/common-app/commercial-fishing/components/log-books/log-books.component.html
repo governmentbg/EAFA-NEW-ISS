@@ -11,8 +11,6 @@
                    (addButtonClicked)="addEditLogBook()"
                    (activeRecordChanged)="addEditLogBook($event)">
         <div *ngIf="logBookGroup === logBookGroupsEnum.Ship 
-                    && permitLicenseId !== null 
-                    && permitLicenseId !== undefined
                     && !isReadonly" 
              datatable-add-buttons 
              fxLayout="row" 
@@ -52,7 +50,7 @@
                      propertyName="statusId"
                      dataType="nomenclature"
                      [options]="logBookStatuses"
-                     columnName="{{ 'catches-and-sales.log-book-status' | tlTranslate }}">
+                     columnName="{{ 'catches-and-sales.log-book-status' | tlTranslate }}">  <!-- TODO -->
         </data-column>
         <data-template-column [flexRate]="0.2"
                               columnName="{{ 'catches-and-sales.log-book-from-old-permit' | tlTranslate }}">
