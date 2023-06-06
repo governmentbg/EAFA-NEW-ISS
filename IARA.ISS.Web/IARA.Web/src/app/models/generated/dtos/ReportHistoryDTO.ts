@@ -15,6 +15,9 @@ export class ReportHistoryDTO {
     public egn?: string;
 
     @StrictlyTyped(String)
+    public eik?: string;
+
+    @StrictlyTyped(String)
     public documentsName?: string;
 
     @StrictlyTyped(Number)
@@ -28,4 +31,10 @@ export class ReportHistoryDTO {
 
     @StrictlyTyped(Boolean)
     public isPerson?: boolean;
+
+    @StrictlyTyped(Boolean)
+    public isApplication?: boolean;
+
+    @StrictlyTyped(Boolean)
+    public isSubmittedFor?: boolean;
 }

@@ -50,7 +50,7 @@ export class PersonReportsService extends BaseAuditService implements IPersonRep
             return this.getLegalEntitiesHistory(ids).pipe(map((history: ReportHistoryDTO[]) => {
                 for (const h of history) {
                     const found = entries.records.find((entry: LegalEntityReportDTO) => {
-                        return entry.id === h.id;
+                        return entry.eik === h.eik;
                     });
 
                     if (h.pageCode !== undefined && h.pageCode !== null) {
@@ -93,7 +93,7 @@ export class PersonReportsService extends BaseAuditService implements IPersonRep
             if (validPeopleIds.length === 0) {
                 return of(entries);
             }
-
+            
             return this.getPeopleHistory(validPeopleIds).pipe(map((history: ReportHistoryDTO[]) => {
                 for (const h of history) {
                     const found = entries.records.find((entry: PersonReportDTO) => {
@@ -101,7 +101,7 @@ export class PersonReportsService extends BaseAuditService implements IPersonRep
                     });
 
                     if (h.pageCode !== undefined && h.pageCode !== null) {
-                        h.documentsName = this.getHistoryDocumentName(h.pageCode);
+                        h.documentsName = this.getHistoryDocumentName(h.pageCode, h.isApplication);
                     }
 
                     if (found !== undefined) {
@@ -143,14 +143,16 @@ export class PersonReportsService extends BaseAuditService implements IPersonRep
         });
     }
 
-    private getHistoryDocumentName(pageCode: PageCodeEnum): string {
+    private getHistoryDocumentName(pageCode: PageCodeEnum, isApplication: boolean = false): string {
         let documentName: string;
 
         switch (pageCode) {
             case PageCodeEnum.RegVessel:
             case PageCodeEnum.DeregShip:
             case PageCodeEnum.ShipRegChange:
-                documentName = this.translationService.getValue('persons-report-page.ship-owner');
+                documentName = isApplication
+                    ? this.translationService.getValue('persons-report-page.aquaculture-facility-appl')
+                    : this.translationService.getValue('persons-report-page.ship-owner');
                 break;
             case PageCodeEnum.CommFish:
             case PageCodeEnum.PoundnetCommFish:
@@ -158,7 +160,9 @@ export class PersonReportsService extends BaseAuditService implements IPersonRep
             case PageCodeEnum.DupCommFish:
             case PageCodeEnum.DupRightToFishThirdCountry:
             case PageCodeEnum.DupPoundnetCommFish:
-                documentName = this.translationService.getValue('persons-report-page.permit');
+                documentName = isApplication
+                    ? this.translationService.getValue('persons-report-page.permit-appl')
+                    : this.translationService.getValue('persons-report-page.permit');
                 break;
             case PageCodeEnum.RightToFishResource:
             case PageCodeEnum.PoundnetCommFishLic:
@@ -166,17 +170,23 @@ export class PersonReportsService extends BaseAuditService implements IPersonRep
             case PageCodeEnum.DupRightToFishResource:
             case PageCodeEnum.DupPoundnetCommFishLic:
             case PageCodeEnum.DupCatchQuataSpecies:
-                documentName = this.translationService.getValue('persons-report-page.permit-licenses');
+                documentName = isApplication
+                    ? this.translationService.getValue('persons-report-page.permit-licenses-appl')
+                    : this.translationService.getValue('persons-report-page.permit-licenses');
                 break;
             case PageCodeEnum.AptitudeCourceExam:
             case PageCodeEnum.CommFishLicense:
             case PageCodeEnum.CompetencyDup:
-                documentName = this.translationService.getValue('persons-report-page.qualified-fishers');
+                documentName = isApplication
+                    ? this.translationService.getValue('persons-report-page.qualified-fishers-appl')
+                    : this.translationService.getValue('persons-report-page.qualified-fishers');
                 break;
             case PageCodeEnum.AquaFarmReg:
             case PageCodeEnum.AquaFarmChange:
             case PageCodeEnum.AquaFarmDereg:
-                documentName = this.translationService.getValue('persons-report-page.aquaculture-facility');
+                documentName = isApplication
+                    ? this.translationService.getValue('persons-report-page.aquaculture-facility-appl')
+                    : this.translationService.getValue('persons-report-page.aquaculture-facility');
                 break;
             case PageCodeEnum.AquacultureLogBookPage:
                 documentName = this.translationService.getValue('persons-report-page.aquaculture-log-book-pages');
@@ -193,13 +203,17 @@ export class PersonReportsService extends BaseAuditService implements IPersonRep
             case PageCodeEnum.DupFirstSaleBuyer:
             case PageCodeEnum.DupFirstSaleCenter:
             case PageCodeEnum.Buyers:
-                documentName = this.translationService.getValue('persons-report-page.buyer');
+                documentName = isApplication
+                    ? this.translationService.getValue('persons-report-page.buyer-appl')
+                    : this.translationService.getValue('persons-report-page.buyer');
                 break;
             case PageCodeEnum.IncreaseFishCap:
             case PageCodeEnum.ReduceFishCap:
             case PageCodeEnum.TransferFishCap:
             case PageCodeEnum.CapacityCertDup:
-                documentName = this.translationService.getValue('persons-report-page.capacity-certificates');
+                documentName = isApplication
+                    ? this.translationService.getValue('persons-report-page.capacity-certificates-appl')
+                    : this.translationService.getValue('persons-report-page.capacity-certificates');
                 break;
             case PageCodeEnum.Inspections:
                 documentName = this.translationService.getValue('persons-report-page.inspected-people');
@@ -208,12 +222,16 @@ export class PersonReportsService extends BaseAuditService implements IPersonRep
                 documentName = this.translationService.getValue('persons-report-page.fishing-tickets');
                 break;
             case PageCodeEnum.Assocs:
-                documentName = this.translationService.getValue('persons-report-page.fishing-associations');
+                documentName = isApplication
+                    ? this.translationService.getValue('persons-report-page.assoc-appl')
+                    : this.translationService.getValue('persons-report-page.fishing-associations');
                 break;
             case PageCodeEnum.StatFormAquaFarm:
             case PageCodeEnum.StatFormFishVessel:
             case PageCodeEnum.StatFormRework:
-                documentName = this.translationService.getValue('persons-report-page.statistical-forms');
+                documentName = isApplication
+                    ? this.translationService.getValue('persons-report-page.statistical-forms-appl')
+                    : this.translationService.getValue('persons-report-page.statistical-forms');
                 break;
             case PageCodeEnum.AdmissionLogBookPage:
             case PageCodeEnum.FirstSaleLogBookPage:
@@ -222,7 +240,9 @@ export class PersonReportsService extends BaseAuditService implements IPersonRep
                 documentName = this.translationService.getValue('persons-report-page.log-books');
                 break;
             case PageCodeEnum.SciFi:
-                documentName = this.translationService.getValue('persons-report-page.scientific-fishing');
+                documentName = isApplication
+                    ? this.translationService.getValue('persons-report-page.scientific-fishing-appl')
+                    : this.translationService.getValue('persons-report-page.scientific-fishing');
                 break;
             case PageCodeEnum.PenalDecrees:
                 documentName = this.translationService.getValue('persons-report-page.penal-points');

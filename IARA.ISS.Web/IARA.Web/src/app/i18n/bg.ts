@@ -281,7 +281,8 @@
         'flux-vms-requests': 'Комуникация с FLUX/СНРК',
         'report-execution': 'Изпълнение на справки',
         'application-regix-checks': 'Заявки към RegiX',
-        'catches-and-sales-public': 'Улови и продажби'
+        'catches-and-sales-public': 'Улови и продажби',
+        'dashboard-public': 'Начало'
     },
     'user-registration': {
         'profile-registration-title': 'Регистрация на профил',
@@ -1441,22 +1442,35 @@
         'persons-report-list-card-title': 'Валидност',
 
         'qualified-fishers': 'Правоспособни рибари',
+        'qualified-fishers-appl': 'Заявления правоспособни рибари',
         'scientific-fishing': 'Научен риболов',
+        'scientific-fishing-appl': 'Заявления научен риболов',
         'aquaculture-facility': 'Аквакултурни стопанства',
+        'aquaculture-facility-appl': 'Заявления аквакултурни стопанства',
         'aquaculture-log-book-pages': 'Страници от дневник на аквакултурно стопанство',
         'auan': 'АУАН',
         'buyer': 'Купувачи и ЦПП',
+        'buyer-appl': 'Заявления купувачи и ЦПП',
         'capacity-certificates': 'Удостоверения за свободен риболовен капацитет',
+        'capacity-certificates-appl': 'Заявления удостоверения за свободен риболовен капацитет',
         'fishing-associations': 'Членство в сдружения',
+        'assoc-appl': 'Заявление за членство в сдружения',
         'fishing-tickets': 'Билети за любителски риболов',
         'inspected-people': 'Инспектирани хора',
         'log-books': 'Риболовни дневници',
         'permit-licenses': 'Удостоверения за стопански риболов',
+        'permit-licenses-appl': 'Заявления удостоверения за стопански риболов',
         'permit': 'Стопански риболов',
-        'ship-owner': 'Собственик на риболовен кораб',
+        'permit-appl': 'Заявления стопански риболов',
+        'ship-owner': 'Риболовни кораби',
+        'ship-appl': 'Заявления риболовни кораби',
+        'ship-change-of-circumstances': 'Промяна в обстоятелствата риболовни кораби',
+        'ship-change-of-circumstances-appl': 'Заявления ромяна в обстоятелствата риболовни кораби',
         'statistical-forms': 'Статистически формуляри',
+        'statistical-forms-appl': 'Заявления статистически формуляри',
         'user-legals': 'Потребители',
-        'penal-points': 'Присъдени точки'
+        'penal-points': 'Присъдени точки',
+        'online-appl': 'Заявление'
     },
     'translation-management': {
         'code': 'Код на ресурс',
@@ -2378,6 +2392,11 @@
         'reference-label': 'Текущи заявления, изчакващи обработка по тип',
         'ticket-reference-label': 'Текущи билети, изчакващи обработка по тип',
         'dialog-news-is-published': 'Публикувана',
+        'registration': 'Регистрация',
+        'application-types': 'Административни услуги, предоставяни  от ИАРА по електронен път',
+        'application-type-name': 'Име на услуга',
+        'tickets': 'Електронен билет за любителски риболов на физическо лице',
+        'associations': 'Сдружения'
     },
     'inspections': {
         'territory': 'Териториално звено',
@@ -3311,7 +3330,9 @@
         'last-run-duration-sec': 'Продължителност на последната заявка в секунди',
         'report-type': 'Вид на справката',
         'report-icon-search': 'Търсене',
-        'report-group': 'Група на репорта'
+        'report-group': 'Група на репорта',
+        'report-code-already-exists-error': 'Вече съществува справка със същия код в тази група.',
+        'copy': 'Копие'
     },
     'report-parameter-definition': {
         'filter-date-from': 'Активни от',
@@ -3325,7 +3346,6 @@
         'parameters-table-parameter-description': 'Описание на параметър',
         'parameters-table-parameter-error-message': 'Съобщение за грешка',
         'parameters-table-parameter-pattern': 'Шаблон',
-
 
         'dialog-parameter-name': 'Име на параметър',
         'dialog-parameter-code': 'Код на параметър',
@@ -3397,6 +3417,7 @@
 
         'view-report-btn': 'Преглед на справка',
         'edit-report-btn': 'Редакция на справка',
+        'copy-report-btn': 'Копиране на справка',
         'delete-report-btn': 'Изтриване на справка',
         'restore-report-btn': 'Възстановяване на справка'
     },

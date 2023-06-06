@@ -116,7 +116,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
         ).toPromise();
 
         this.allLogBookStatuses = this.deepCopyLogBookStatuses(logBookStatusesNomenclature);
-        
+
         if ((this.logBookId !== null && this.logBookId !== undefined) || (this.logBookPermitLicenseId !== null && this.logBookPermitLicenseId !== undefined)) {
             if ((this.model === null || this.model === undefined) && this.service !== null && this.service !== undefined) {
                 switch (this.logBookGroup) {
@@ -533,6 +533,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
 
         if (this.logBookGroup === LogBookGroupsEnum.Ship) {
             this.form.addControl('isOnlineControl', new FormControl({ value: false, disabled: true }));
+            this.form.addControl('startPageControl', new FormControl({ value: false, disabled: true }));
 
             this.form.addControl('permitLicenseStartPageNumberControl', new FormControl());
             this.form.addControl('permitLicenseEndPageNumberControl', new FormControl());
@@ -567,6 +568,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
 
         if (this.model instanceof CommercialFishingLogBookEditDTO) {
             this.form.get('isOnlineControl')!.setValue(this.model.isOnline);
+            this.form.get('startPageControl')!.setValue(this.model.startPage);
 
             if (this.model.permitLicenseStartPageNumber !== null && this.model.permitLicenseStartPageNumber !== undefined) {
                 this.form.get('permitLicenseStartPageNumberControl')!.setValue(this.model.permitLicenseStartPageNumber);
@@ -628,6 +630,12 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             this.model.permitLicenseStartPageNumber = this.form.get('permitLicenseStartPageNumberControl')!.value;
             this.model.permitLicenseEndPageNumber = this.form.get('permitLicenseEndPageNumberControl')!.value;
             this.model.isOnline = this.form.get('isOnlineControl')!.value;
+            
+            if (this.model.startPageNumber !== undefined && this.model.startPageNumber !== null
+                && this.model.permitLicenseStartPageNumber !== undefined && this.model.permitLicenseStartPageNumber !== null
+            ) {
+                this.model.startPage = `${this.model.logbookNumber}-${this.model.permitLicenseStartPageNumber}`;
+            }
         }
 
         if (!this.isAdd) {

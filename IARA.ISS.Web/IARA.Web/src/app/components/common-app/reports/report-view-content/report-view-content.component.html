@@ -4,6 +4,7 @@
             <tl-card-title fxLayoutAlign="space-between center">
                 <span>{{ 'report-view.reports-title' | tlTranslate }}</span>
             </tl-card-title>
+
             <tl-card-subtitle fxLayoutAlign="end none" *ngIf="!isPublic">
                 <button *ngIf="canAddReport || canRestoreReport"
                         mat-icon-button [matMenuTriggerFor]="menu">
@@ -24,6 +25,7 @@
                     </button>
                 </mat-menu>
             </tl-card-subtitle>
+
             <tl-card-content fxLayoutGap="2em" [formGroup]="filterGroup">
                 <tl-input label="{{ 'report-view.filter-keyword-search' |  tlTranslate }}"
                           formControlName="keywordSearchControl">
@@ -31,7 +33,7 @@
                 <mat-tree id="reports-tree" [dataSource]="dataSource" [treeControl]="treeControl" class="tree">
                     <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle fxLayout="column" fxLayoutGap="0.2em">
                         <div fxFlexFill fxLayout="row" fxLayoutAlign="space-between start">
-                            <div fxFlex="75" id="reports-tree-text-button" fxLayout="row">
+                            <div fxFlex="70" id="reports-tree-text-button" fxLayout="row">
                                 <button matTooltip="{{ node.name }}"
                                         [matTooltipShowDelay]="500"
                                         mat-button
@@ -45,7 +47,7 @@
                                 </button>
                             </div>
                             <div *ngIf="!isPublic"
-                                 fxFlex="25"
+                                 fxFlex="30"
                                  id="reports-tree-action-buttons"
                                  fxLayout="row wrap"
                                  fxLayoutGap="0.3em"
@@ -60,6 +62,12 @@
                                                 (buttonClicked)="openEditComponent(node.id)"
                                                 tooltipText="{{ 'report-view.edit-report-btn' | tlTranslate }}">
                                 </tl-icon-button>
+                                <tl-icon-button *ngIf="node.isActive && canEditReport"
+                                                icon='ic-copy'
+                                                [size]="icIconSize"
+                                                (buttonClicked)="openEditComponent(node.id, false, false, true)"
+                                                tooltipText="{{ 'report-view.copy-report-btn' | tlTranslate }}">
+                                </tl-icon-button>
                                 <tl-icon-button *ngIf="node.isActive && canDeleteReport"
                                                 icon="delete"
                                                 (buttonClicked)="deleteReport(node.id)"
@@ -73,6 +81,7 @@
                             </div>
                         </div>
                     </mat-tree-node>
+
                     <mat-nested-tree-node *matTreeNodeDef="let node; when: isGroup">
                         <div class="mat-tree-node">
                             <div fxFlex="90"
@@ -86,6 +95,7 @@
                                     </mat-icon>
                                 </button>{{ node.name }}
                             </div>
+
                             <div *ngIf="!isPublic">
                                 <button *ngIf="canAddReport || canEditReport || canDeleteReport || canRestoreReport"
                                         mat-icon-button [matMenuTriggerFor]="groupMenu">
@@ -128,6 +138,7 @@
             </tl-card-content>
         </tl-card>
     </div>
+
     <div *ngIf="isReportClicked"
          fxLayout="column"
          fxFlex="75">

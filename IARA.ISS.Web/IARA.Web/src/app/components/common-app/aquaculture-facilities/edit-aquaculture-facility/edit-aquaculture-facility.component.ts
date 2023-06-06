@@ -895,8 +895,8 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     public deleteWaterLawCertificate(certificate: GridRow<AquacultureWaterLawCertificateDTO>): void {
         this.confirmDialog.open({
             title: this.translate.getValue('aquacultures.delete-water-law-certificate-dialog-title'),
-            message: this.translate.getValue('aquaculture.delete-water-law-certificate-dialog-message'),
-            okBtnLabel: this.translate.getValue('aquaculture.delete-water-law-certificate-dialog-ok-btn-label')
+            message: this.translate.getValue('aquacultures.delete-water-law-certificate-dialog-message'),
+            okBtnLabel: this.translate.getValue('aquacultures.delete-water-law-certificate-dialog-ok-btn-label')
         }).subscribe({
             next: (ok: boolean) => {
                 if (ok) {
@@ -994,8 +994,8 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     public deleteOvosCertificate(certificate: GridRow<CommonDocumentDTO>): void {
         this.confirmDialog.open({
             title: this.translate.getValue('aquacultures.delete-ovos-certificate-dialog-title'),
-            message: this.translate.getValue('aquaculture.delete-ovos-certificate-dialog-message'),
-            okBtnLabel: this.translate.getValue('aquaculture.delete-ovos-certificate-dialog-ok-btn-label')
+            message: this.translate.getValue('aquacultures.delete-ovos-certificate-dialog-message'),
+            okBtnLabel: this.translate.getValue('aquacultures.delete-ovos-certificate-dialog-ok-btn-label')
         }).subscribe({
             next: (ok: boolean) => {
                 if (ok) {
@@ -1093,8 +1093,8 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     public deleteBabhCertificate(certificate: GridRow<CommonDocumentDTO>): void {
         this.confirmDialog.open({
             title: this.translate.getValue('aquacultures.delete-babh-certificate-dialog-title'),
-            message: this.translate.getValue('aquaculture.delete-babh-certificate-dialog-message'),
-            okBtnLabel: this.translate.getValue('aquaculture.delete-babh-certificate-dialog-ok-btn-label')
+            message: this.translate.getValue('aquacultures.delete-babh-certificate-dialog-message'),
+            okBtnLabel: this.translate.getValue('aquacultures.delete-babh-certificate-dialog-ok-btn-label')
         }).subscribe({
             next: (ok: boolean) => {
                 if (ok) {
@@ -1107,7 +1107,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         });
     }
 
-    public undoDeleteBabgCertificate(certificate: GridRow<CommonDocumentDTO>): void {
+    public undoDeleteBabhCertificate(certificate: GridRow<CommonDocumentDTO>): void {
         this.confirmDialog.open().subscribe({
             next: (ok: boolean) => {
                 if (ok) {

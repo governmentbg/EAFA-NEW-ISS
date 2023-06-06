@@ -15,6 +15,8 @@ import { DialogCloseCallback } from '@app/shared/components/dialog-wrapper/inter
 import { ReportGroupDTO } from '@app/models/generated/dtos/ReportGroupDTO';
 import { Router } from '@angular/router';
 import { IReportService } from '@app/interfaces/administration-app/report.interface';
+import { CommonUtils } from '@app/shared/utils/common.utils';
+import { EditReportParamsModel } from '../models/edit-report-params.model';
 
 @Component({
     selector: 'report-view-content',
@@ -27,6 +29,8 @@ export class ReportViewContentComponent implements OnInit, AfterViewInit {
 
     @Input()
     public isPublic!: boolean;
+
+    public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
     public filterGroup: FormGroup;
     public menuGroup: FormGroup;
@@ -145,12 +149,17 @@ export class ReportViewContentComponent implements OnInit, AfterViewInit {
         this.name = name;
     }
 
-    public openEditComponent(id: number, isGroupId: boolean = false, viewMode: boolean = false): void {
+    public openEditComponent(id: number, isAdd: boolean = false, viewMode: boolean = false, isCopy: boolean = false): void {
+        const data: EditReportParamsModel = new EditReportParamsModel({
+            id: id,
+            viewMode: (!this.canEditReport && !this.canAddReport) || viewMode,
+            isAdd: isAdd,
+            isCopy: isCopy
+        });
+
         this.router.navigateByUrl('/reports/report_definition', {
             state: {
-                id: id,
-                viewMode: (!this.canEditReport && !this.canAddReport) || viewMode,
-                isGroupId: isGroupId
+                data: data
             }
         });
     }

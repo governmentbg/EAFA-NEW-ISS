@@ -282,7 +282,8 @@
         'report-execution': 'Report execution',
         'application-regix-checks': 'RegiX requests',
         'catches-and-sales-public': 'Catches and sales',
-        'print-configurations': 'Print configurations'
+        'print-configurations': 'Print configurations',
+        'dashboard-public': 'Home'
     },
     'user-registration': {
         'profile-registration-title': 'Profile registration',
@@ -1451,6 +1452,7 @@
         'persons-report-list-card-title': 'Validity',
 
         'qualified-fishers': 'Fishermen register',
+        'qualified-fishers-appl': 'Fishermen application',
         'scientific-fishing': 'Scientific permit register',
         'aquaculture-facility': 'Aquaculture facility register',
         'aquaculture-log-book-pages': 'Aquaculture log book pages',
@@ -1466,7 +1468,19 @@
         'ship-owner': 'Ship owner',
         'statistical-forms': 'Statistical forms',
         'user-legals': 'Users',
-        'penal-points': 'Penal points'
+        'penal-points': 'Penal points',
+        'online-appl': 'Application',
+        'scientific-fishing-appl': 'Scientific permit application',
+        'aquaculture-facility-appl': 'Aquaculture facility application',
+        'buyer-appl': 'Buyer application',
+        'capacity-certificates-appl': 'Capacity certificates application',
+        'permit-licenses-appl': 'Permit licenses application',
+        'permit-appl': 'Permit application',
+        'ship-appl': 'Ship application',
+        'ship-change-of-circumstances': 'Ship change of circumstances',
+        'ship-change-of-circumstances-appl': 'Ship change of circumstances application',
+        'statistical-forms-appl': 'Statistical forms application',
+        'assoc-appl': 'Fishing association application'
     },
     'translation-management': {
         'code': 'Resource code',
@@ -2328,7 +2342,12 @@
         'tickets-table-label': 'Pending tickets',
         'reference-label': 'Current applications waiting processing by type',
         'ticket-reference-label': 'Current tickets waiting processing by type',
-        'dialog-news-is-published': 'Published'
+        'dialog-news-is-published': 'Published',
+        'registration': 'Registration',
+        'application-types': 'Application types',
+        'application-type-name': 'Service name',
+        'tickets': 'Recreational fishing ticket',
+        'associations': 'Associations'
     },
     'inspections': {
         'territory': 'Territory unit',
@@ -3257,7 +3276,9 @@
         'report-group': 'Report group',
         'parameters-table-parameter-name': 'Parameter name',
         'parameters-table-parameter-code': 'Parameter code',
-        'dialog-parameter-code': 'Parameter code'
+        'dialog-parameter-code': 'Parameter code',
+        'report-code-already-exists-error': 'There is already a report with this code in the report group.',
+        'copy': 'Copy'
     },
     'report-parameter-definition': {
         'definition.filter-date-from': 'Active from',
@@ -3346,6 +3367,7 @@
 
         'view-report-btn': 'View report',
         'edit-report-btn': 'Edit report',
+        'copy-report-btn': 'Copy report',
         'delete-report-btn': 'Delete report',
         'restore-report-btn': 'Restore report'
     },

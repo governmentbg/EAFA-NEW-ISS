@@ -44,18 +44,28 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
 
     public readonly pageCodes: typeof PageCodeEnum = PageCodeEnum;
     public readonly canReadSciFiRegisterRecords: boolean;
+    public readonly canReadSciFiApplicationRecords: boolean;
     public readonly canReadQuaFiRegisterRecords: boolean;
+    public readonly canReadQuaFiApplicationRecords: boolean;
     public readonly canReadAquacultureRegisterRecords: boolean;
+    public readonly canReadAquacultureApplicationRecords: boolean;
     public readonly canReadBuyerRegisterRecords: boolean;
+    public readonly canReadBuyerApplicationRecords: boolean;
     public readonly canReadAuanRegisterRecords: boolean;
     public readonly canReadCapacityRegisterRecords: boolean;
+    public readonly canReadCapacityApplicationRecords: boolean;
     public readonly canReadInspectedPeopleRegisterRecords: boolean;
     public readonly canReadLogBookRegisterRecords: boolean;
     public readonly canReadPermitLicensesRegisterRecords: boolean;
+    public readonly canReadPermitLicensesApplicationRecords: boolean;
     public readonly canReadPermitRegisterRecords: boolean;
+    public readonly canReadPermitApplicationRecords: boolean;
     public readonly canReadShipOwnerRegisterRecords: boolean;
+    public readonly canReadShipOwnerApplicationRecords: boolean;
     public readonly canReadStatFormsRegisterRecords: boolean;
+    public readonly canReadStatFormsApplicationRecords: boolean;
     public readonly canReadAssocationsRecords: boolean;
+    public readonly canReadAssocationsApplicationRecords: boolean;
     public readonly canReadAssociationTicketRecords: boolean;
     public readonly canReadTicketRecords: boolean;
     public readonly canReadUserRecords: boolean;
@@ -94,10 +104,14 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
         this.router = router;
 
         this.canReadSciFiRegisterRecords = permissions.has(PermissionsEnum.ScientificFishingRead);
+        this.canReadSciFiApplicationRecords = permissions.has(PermissionsEnum.ScientificFishingApplicationsRead);
         this.canReadQuaFiRegisterRecords = permissions.has(PermissionsEnum.QualifiedFishersRead);
+        this.canReadQuaFiApplicationRecords = permissions.has(PermissionsEnum.QualifiedFishersApplicationsRead);
         this.canReadAquacultureRegisterRecords = this.permissions.has(PermissionsEnum.AquacultureFacilitiesRead);
+        this.canReadAquacultureApplicationRecords = this.permissions.has(PermissionsEnum.AquacultureFacilitiesApplicationsRead);
         this.canReadAuanRegisterRecords = this.permissions.has(PermissionsEnum.AuanRegisterRead)
         this.canReadBuyerRegisterRecords = this.permissions.has(PermissionsEnum.BuyersRead);
+        this.canReadBuyerApplicationRecords = this.permissions.has(PermissionsEnum.BuyersApplicationsRead);
         this.canReadLogBookRegisterRecords = this.permissions.has(PermissionsEnum.FishLogBookRead)
             || this.permissions.has(PermissionsEnum.TransportationLogBookRead)
             || this.permissions.has(PermissionsEnum.ApplicationsRead)
@@ -107,17 +121,26 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
             || this.permissions.has(PermissionsEnum.AquacultureLogBookRead);
 
         this.canReadPermitLicensesRegisterRecords = this.permissions.has(PermissionsEnum.CommercialFishingPermitLicenseRegisterRead);
+        this.canReadPermitLicensesApplicationRecords = this.permissions.has(PermissionsEnum.CommercialFishingPermitLicenseApplicationsRead);
         this.canReadPermitRegisterRecords = this.permissions.has(PermissionsEnum.CommercialFishingPermitRegisterRead);
+        this.canReadPermitApplicationRecords = this.permissions.has(PermissionsEnum.CommercialFishingPermitApplicationsRead);
         this.canReadInspectedPeopleRegisterRecords = this.permissions.has(PermissionsEnum.InspectionsRead);
         this.canReadAssocationsRecords = this.permissions.has(PermissionsEnum.AssociationsRead);
+        this.canReadAssocationsApplicationRecords = this.permissions.has(PermissionsEnum.LegalEntitiesApplicationsRead);
         this.canReadAssociationTicketRecords = this.permissions.has(PermissionsEnum.AssociationsTicketsRead);
         this.canReadTicketRecords = this.permissions.has(PermissionsEnum.TicketsRead);
         this.canReadCapacityRegisterRecords = this.permissions.has(PermissionsEnum.FishingCapacityCertificatesRead);
+        this.canReadCapacityApplicationRecords = this.permissions.has(PermissionsEnum.FishingCapacityApplicationsRead);
         this.canReadShipOwnerRegisterRecords = this.permissions.has(PermissionsEnum.ShipsRegisterRead);
+        this.canReadShipOwnerApplicationRecords = this.permissions.has(PermissionsEnum.ShipsRegisterApplicationsRead);
 
         this.canReadStatFormsRegisterRecords = this.permissions.has(PermissionsEnum.StatisticalFormsAquaFarmRead)
             || this.permissions.has(PermissionsEnum.StatisticalFormsReworkRead)
             || this.permissions.has(PermissionsEnum.StatisticalFormsFishVesselRead);
+
+        this.canReadStatFormsApplicationRecords = this.permissions.has(PermissionsEnum.StatisticalFormsAquaFarmApplicationsRead)
+            || this.permissions.has(PermissionsEnum.StatisticalFormsReworkApplicationsRead)
+            || this.permissions.has(PermissionsEnum.StatisticalFormsFishVesselsApplicationsRead);
 
         this.canReadUserRecords = this.permissions.has(PermissionsEnum.InternalUsersRead)
             || this.permissions.has(PermissionsEnum.ExternalUsersRead);
@@ -212,29 +235,31 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
     }
 
     public canReadRegister(row: GridRow<ReportHistoryDTO>): boolean {
+        const isApplication: boolean = row.data.isApplication ?? false;
+
         switch (row.data.pageCode) {
             case PageCodeEnum.RegVessel:
             case PageCodeEnum.ShipRegChange:
             case PageCodeEnum.DeregShip:
-                return this.canReadShipOwnerRegisterRecords;
+                return isApplication ? this.canReadShipOwnerApplicationRecords : this.canReadShipOwnerRegisterRecords;
             case PageCodeEnum.CommFish:
             case PageCodeEnum.RightToFishResource:
             case PageCodeEnum.RightToFishThirdCountry:
             case PageCodeEnum.DupCommFish:
             case PageCodeEnum.DupRightToFishThirdCountry:
             case PageCodeEnum.DupPoundnetCommFish:
-                return this.canReadPermitRegisterRecords;
+                return isApplication ? this.canReadPermitApplicationRecords : this.canReadPermitRegisterRecords;
             case PageCodeEnum.PoundnetCommFish:
             case PageCodeEnum.PoundnetCommFishLic:
             case PageCodeEnum.CatchQuataSpecies:
             case PageCodeEnum.DupRightToFishResource:
             case PageCodeEnum.DupPoundnetCommFishLic:
             case PageCodeEnum.DupCatchQuataSpecies:
-                return this.canReadPermitLicensesRegisterRecords;
+                return isApplication ? this.canReadPermitLicensesApplicationRecords : this.canReadPermitLicensesRegisterRecords;
             case PageCodeEnum.AptitudeCourceExam:
             case PageCodeEnum.CommFishLicense:
             case PageCodeEnum.CompetencyDup:
-                return this.canReadQuaFiRegisterRecords;
+                return isApplication ? this.canReadQuaFiApplicationRecords : this.canReadQuaFiRegisterRecords;
             case PageCodeEnum.AquaFarmReg:
             case PageCodeEnum.AquaFarmChange:
             case PageCodeEnum.AquaFarmDereg:
@@ -250,22 +275,22 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
             case PageCodeEnum.DupFirstSaleBuyer:
             case PageCodeEnum.DupFirstSaleCenter:
             case PageCodeEnum.Buyers:
-                return this.canReadBuyerRegisterRecords;
+                return isApplication ? this.canReadBuyerApplicationRecords : this.canReadBuyerRegisterRecords;
             case PageCodeEnum.IncreaseFishCap:
             case PageCodeEnum.ReduceFishCap:
             case PageCodeEnum.TransferFishCap:
             case PageCodeEnum.CapacityCertDup:
-                return this.canReadCapacityRegisterRecords;
+                return isApplication ? this.canReadCapacityApplicationRecords : this.canReadCapacityRegisterRecords;
             case PageCodeEnum.Inspections:
                 return this.canReadInspectedPeopleRegisterRecords;
             case PageCodeEnum.RecFish:
                 return this.canReadTicketRecords;
             case PageCodeEnum.Assocs:
-                return this.canReadAssociationTicketRecords;
+                return isApplication ? this.canReadAssocationsApplicationRecords : this.canReadAssociationTicketRecords;
             case PageCodeEnum.StatFormAquaFarm:
             case PageCodeEnum.StatFormFishVessel:
             case PageCodeEnum.StatFormRework:
-                return this.canReadStatFormsRegisterRecords;
+                return isApplication ? this.canReadStatFormsApplicationRecords : this.canReadStatFormsRegisterRecords;
             case PageCodeEnum.AdmissionLogBookPage:
             case PageCodeEnum.AquacultureLogBookPage:
             case PageCodeEnum.FirstSaleLogBookPage:
@@ -284,12 +309,19 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
     public openRegister(row: GridRow<ReportHistoryDTO>): void {
         const id: number = row.data.id!;
         const isPerson: boolean = row.data.isPerson!;
+        const isApplication: boolean = row.data.isApplication ?? false;
+        const isSubmittedFor: boolean = row.data.isApplication ?? false;
 
         switch (row.data.pageCode) {
             case PageCodeEnum.RegVessel:
-            case PageCodeEnum.ShipRegChange:
             case PageCodeEnum.DeregShip:
-                this.navigateByUrl('/fishing-vessels', id, isPerson);
+            case PageCodeEnum.ShipRegChange:
+                if (isApplication) {
+                    this.navigateByUrl('/fishing-vessels-applications', id, isPerson, isSubmittedFor);
+                }
+                else {
+                    this.navigateByUrl('/fishing-vessels', id, isPerson);
+                }
                 break;
             case PageCodeEnum.CommFish:
             case PageCodeEnum.RightToFishResource:
@@ -297,46 +329,82 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
             case PageCodeEnum.PoundnetCommFish:
             case PageCodeEnum.PoundnetCommFishLic:
             case PageCodeEnum.CatchQuataSpecies:
-                this.navigateByUrl('/commercial-fishing-permits-and-licenses', id, isPerson);
+                if (isApplication) {
+                    this.navigateByUrl('/commercial-fishing-applications', id, isPerson);
+                }
+                else {
+                    this.navigateByUrl('/commercial-fishing-permits-and-licenses', id, isPerson);
+                }
                 break;
             case PageCodeEnum.AptitudeCourceExam:
             case PageCodeEnum.CommFishLicense:
-                this.navigateByUrl('/qualified-fishers-register', id, isPerson);
+            case PageCodeEnum.CompetencyDup:
+                if (isApplication) {
+                    this.navigateByUrl('/qualified-fishers-applications', id, isPerson, isSubmittedFor);
+                }
+                else {
+                    this.navigateByUrl('/qualified-fishers-register', id, isPerson);
+                }
                 break;
             case PageCodeEnum.AquaFarmReg:
-            case PageCodeEnum.AquaFarmChange:
             case PageCodeEnum.AquaFarmDereg:
-                this.navigateByUrl('/aquaculture-farms', id, isPerson);
+            case PageCodeEnum.AquaFarmChange:
+                if (isApplication) {
+                    this.navigateByUrl('/aquaculture-farms-applications', id, isPerson, isSubmittedFor);
+                }
+                else {
+                    this.navigateByUrl('/aquaculture-farms', id, isPerson);
+                }
                 break;
             case PageCodeEnum.AuanRegister:
                 this.navigateByUrl('/auan-register', id, isPerson);
                 break;
-            case PageCodeEnum.ChangeFirstSaleBuyer:
-            case PageCodeEnum.ChangeFirstSaleCenter:
             case PageCodeEnum.RegFirstSaleBuyer:
             case PageCodeEnum.RegFirstSaleCenter:
             case PageCodeEnum.TermFirstSaleBuyer:
             case PageCodeEnum.TermFirstSaleCenter:
             case PageCodeEnum.Buyers:
-                this.navigateByUrl('/sales-centers-register', id, isPerson);
+            case PageCodeEnum.ChangeFirstSaleBuyer:
+            case PageCodeEnum.ChangeFirstSaleCenter:
+                if (isApplication) {
+                    this.navigateByUrl('/sales-centers-applications', id, isPerson, isSubmittedFor);
+                }
+                else {
+                    this.navigateByUrl('/sales-centers-register', id, isPerson);
+                }
                 break;
             case PageCodeEnum.IncreaseFishCap:
             case PageCodeEnum.ReduceFishCap:
             case PageCodeEnum.TransferFishCap:
-            case PageCodeEnum.CapacityCertDup:
-                this.navigateByUrl('/fishing-capacity-certificates-register', id, isPerson);
+            case PageCodeEnum.CapacityCertDup: 
+                if (isApplication) {
+                    this.navigateByUrl('/fishing-capacity-applications', id, isPerson, isSubmittedFor);
+                }
+                else {
+                    this.navigateByUrl('/fishing-capacity-certificates-register', id, isPerson);
+                }
                 break;
             case PageCodeEnum.Inspections:
                 this.navigateByUrl('/inspections-register', id, isPerson);
                 break;
             case PageCodeEnum.RecFish:
             case PageCodeEnum.Assocs:
-                this.navigateByUrl('/ticket_applications', id, isPerson);
+                if (isApplication) {
+                    this.navigateByUrl('/legal-entities-applications', id, isPerson, isSubmittedFor);
+                }
+                else {
+                    this.navigateByUrl('/ticket_applications', id, isPerson);
+                }
                 break;
             case PageCodeEnum.StatFormAquaFarm:
             case PageCodeEnum.StatFormFishVessel:
             case PageCodeEnum.StatFormRework:
-                this.navigateByUrl('/statistical-forms-register', id, isPerson);
+                if (isApplication) {
+                    this.navigateByUrl('/statistical-forms-applications', id, isPerson, isSubmittedFor);
+                }
+                else {
+                    this.navigateByUrl('/statistical-forms-register', id, isPerson);
+                }
                 break;
             case PageCodeEnum.AdmissionLogBookPage:
             case PageCodeEnum.AquacultureLogBookPage:
@@ -346,7 +414,12 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
                 this.navigateByUrl('/log-books-and-declarations', id, isPerson);
                 break;
             case PageCodeEnum.SciFi:
-                this.navigateByUrl('/scientific-fishing', id, isPerson);
+                if (isApplication) {
+                    this.navigateByUrl('/scientific-fishing-applications', id, isPerson, isSubmittedFor);
+                }
+                else {
+                    this.navigateByUrl('/scientific-fishing', id, isPerson);
+                }
                 break;
             case PageCodeEnum.PenalDecrees:
                 this.navigateByUrl('/awarded-points', id, isPerson);
@@ -406,7 +479,13 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
         closeFn();
     }
 
-    private navigateByUrl(url: string, id: number, isPerson: boolean): void {
-        this.router.navigateByUrl(url, { state: { id: id, isPerson: isPerson } });
+    private navigateByUrl(url: string, id: number, isPerson: boolean, isSubmittedFor: boolean = false): void {
+        this.router.navigateByUrl(url, {
+            state: {
+                id: id,
+                isPerson: isPerson,
+                isSubmittedFor: isSubmittedFor
+            }
+        });
     }
 }

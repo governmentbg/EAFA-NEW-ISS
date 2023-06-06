@@ -32,6 +32,9 @@ import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { TLValidators } from '@app/shared/utils/tl-validators';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { EditReportParamsModel } from '@app/components/common-app/reports/models/edit-report-params.model';
 
 @Component({
     selector: 'report-definition',
@@ -59,15 +62,20 @@ export class ReportDefinitionComponent implements OnInit {
     public roles: NomenclatureDTO<number>[] = [];
     public selectedRoles: NomenclatureDTO<number>[] = [];
     public reportGroups: NomenclatureDTO<number>[] = [];
+    public parameters: ReportParameterDTO[] = [];
 
     public reportTypes: string[];
     public reportInfo!: ExecutionReportInfoDTO;
+
+    public getReportCodeErrorTextMethod: GetControlErrorLabelTextCallback = this.getReportCodeErrorText.bind(this);
 
     @ViewChild('container')
     public container!: ElementRef;
 
     @ViewChild('parametersTable')
     private parametersTable!: TLDataTableComponent;
+
+    private isCopy: boolean = false;
 
     private readonly router: Router;
     private readonly translateService: FuseTranslationLoaderService;
@@ -101,7 +109,6 @@ export class ReportDefinitionComponent implements OnInit {
         this.selectedUsers = [];
         this.selectedRoles = [];
         this.report = new ReportDTO();
-        this.report.parameters = [];
 
         this.reportTypes = [
             ReportTypesEnum[ReportTypesEnum.SQL],
@@ -109,26 +116,7 @@ export class ReportDefinitionComponent implements OnInit {
             ReportTypesEnum[ReportTypesEnum.JasperWord]
         ];
 
-        this.formGroup = new FormGroup({
-            generalInformationGroup: new FormGroup({
-                titleControl: new FormControl(null, [Validators.required, Validators.maxLength(500)]),
-                codeControl: new FormControl(null, [Validators.required, Validators.maxLength(200)]),
-                descriptionControl: new FormControl(null, Validators.maxLength(1000)),
-                lastRunUserControl: new FormControl({ value: null, disabled: true }),
-                lastRunDateTimeControl: new FormControl({ value: null, disabled: true }),
-                lastRunDurationSecControl: new FormControl({ value: null, disabled: true }),
-                reportTypeControl: new FormControl(null, Validators.required),
-                reportGroupControl: new FormControl(null, Validators.required),
-                orderNumControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
-                iconNameControl: this.iconNameControl
-            }),
-            accessManagementGroup: new FormGroup({
-                selectedRolesControl: new FormControl(),
-                selectedUsersControl: new FormControl()
-            }),
-            queryControl: new FormControl()
-        });
-
+        this.formGroup = this.buildForm();
     }
 
     public hasChild = (_: number, node: TableNodeDTO): boolean => !!node.children && node.children.length > 0;
@@ -144,32 +132,35 @@ export class ReportDefinitionComponent implements OnInit {
         this.allRoles = await this.reportService.getActiveRoles().toPromise();
         this.roles = this.allRoles;
 
-        const id: number = window.history.state?.id;
-        const isGroupId: boolean = window.history.state?.isGroupId;
-        const viewMode: boolean = window.history.state?.viewMode;
+        const data: EditReportParamsModel = window.history.state?.data;
+        if (data !== undefined && data !== null) {
+            if (!data.isAdd) {
+                this.isCopy = data.isCopy;
 
-        if (isGroupId !== undefined) {
-            this.viewMode = viewMode;
+                this.reportService.getReport(data.id!).subscribe({
+                    next: (report: ReportDTO) => {
+                        this.report = report;
 
-            if (!isGroupId) {
-                this.report = await this.reportService.getReport(id).toPromise();
-                this.fillForm(this.report);
-
-                this.reportInfo = new ExecutionReportInfoDTO({ reportId: this.report.id });
-                this.reportInfo.parameters = this.getReportInfoParams();
+                        this.fillForm();
+                        this.reportInfo = new ExecutionReportInfoDTO({ reportId: report.id });
+                        this.reportInfo.parameters = this.getReportInfoParams();
+                    }
+                });
             }
             else {
-                this.reportGroupId = id;
-                (this.formGroup.controls.generalInformationGroup as FormGroup).controls.reportGroupControl.setValue(this.reportGroups.find(x => x.value === this.reportGroupId));
+                this.reportGroupId = data.id;
+                (this.formGroup.get('generalInformationGroup') as FormGroup).get('reportGroupControl')!.setValue(this.reportGroups.find(x => x.value === this.reportGroupId));
             }
 
-            if (viewMode) {
+            this.viewMode = data.viewMode;
+            if (data.viewMode) {
                 this.formGroup.disable();
             }
         }
         else {
             this.router.navigateByUrl('/reports');
         }
+
         this.maxLayoutWidth = this.container.nativeElement.offsetWidth;
     }
 
@@ -192,7 +183,7 @@ export class ReportDefinitionComponent implements OnInit {
     }
 
     public detailedAuditClicked(): void {
-        if (this.report.id !== undefined && this.report.id !== null) {
+        if (this.report.id !== undefined && this.report.id !== null && !this.isCopy) {
             this.router.navigateByUrl('/system-log', {
                 state: {
                     tableId: this.report.id.toString(),
@@ -202,6 +193,10 @@ export class ReportDefinitionComponent implements OnInit {
         }
     }
 
+    public cancelBtnClicked(): void {
+        this.router.navigateByUrl('/reports');
+    }
+
     public addOrEditParameter(parameter?: ReportParameterDTO, viewMode: boolean = false): void {
         let title: string = this.translateService.getValue('report-definition.dialog-parameter-edit-title');
         let auditButtons: IHeaderAuditButton | undefined;
@@ -209,7 +204,7 @@ export class ReportDefinitionComponent implements OnInit {
         const parameterId: number | undefined = parameter?.id;
 
         //edit
-        if (parameter !== undefined) {
+        if (parameter !== undefined && parameter !== null) {
             if (viewMode) title = this.translateService.getValue('report-definition.dialog-parameter-view-title');
 
             data = new ReportDefinitionDialogParams({
@@ -217,7 +212,7 @@ export class ReportDefinitionComponent implements OnInit {
                 viewMode: viewMode
             });
 
-            if (parameterId !== undefined) {
+            if (parameterId !== undefined && parameterId !== null) {
                 auditButtons = {
                     getAuditRecordData: this.reportService.getReportParametersAudit.bind(this.reportService),
                     id: parameterId,
@@ -243,20 +238,19 @@ export class ReportDefinitionComponent implements OnInit {
         }, '1000px');
 
         dialog.subscribe({
-            next: (inputParameter: ReportParameterDTO | undefined) => {
+            next: (result: ReportParameterDTO | undefined) => {
                 //ако се натисне 'Отказ' в диалога
-                if (inputParameter !== undefined && inputParameter !== null) {
+                if (result !== undefined && result !== null) {
                     //edit
                     if (parameter !== undefined && parameter !== null) {
-                        parameter = inputParameter;
+                        parameter = result;
                     }
                     //add
                     else {
-                        this.report.parameters!.push(inputParameter);
+                        this.parameters!.push(result);
                     }
 
-                    this.report.parameters = this.report.parameters?.slice();
-                    this.refreshParametersTable();
+                    this.parameters = this.parameters?.slice();
                 }
             }
         });
@@ -290,14 +284,10 @@ export class ReportDefinitionComponent implements OnInit {
         });
     }
 
-    public closeDialogBtnClicked(closeFn: DialogCloseCallback): void {
-        closeFn();
-    }
-
     public saveBtnClicked(): void {
         this.formGroup.markAllAsTouched();
         if (this.formGroup.valid) {
-            this.report = this.fillModel(this.formGroup);
+            this.fillModel();
             this.report = CommonUtils.sanitizeModelStrings(this.report);
 
             for (let i: number = 0; i < this.report.parameters!.length; i++) {
@@ -311,7 +301,7 @@ export class ReportDefinitionComponent implements OnInit {
             }
 
             //edit
-            if (this.report.id !== undefined) {
+            if (this.report.id !== undefined && this.report.id !== null && !this.isCopy) {
                 this.reportService.editReport(this.report).subscribe({
                     next: () => {
                         this.router.navigateByUrl('/reports');
@@ -324,7 +314,7 @@ export class ReportDefinitionComponent implements OnInit {
             //add
             else {
                 this.reportService.addReport(this.report).subscribe({
-                    next: (addedReportId: number) => {
+                    next: (id: number) => {
                         this.router.navigateByUrl('/reports');
                     },
                     error: (response: HttpErrorResponse) => {
@@ -335,15 +325,13 @@ export class ReportDefinitionComponent implements OnInit {
         }
     }
 
-    public cancelBtnClicked(): void {
-        this.router.navigateByUrl('/reports');
-    }
-
     public setData(data: DialogParamsModel, buttons: DialogWrapperData): void {
         this.viewMode = data.isReadonly;
-        this.reportService.getReport(data.id).subscribe((result: ReportDTO) => {
-            this.report = result;
-            this.fillForm(this.report);
+        this.reportService.getReport(data.id).subscribe({
+            next: (result: ReportDTO) => {
+                this.report = result;
+                this.fillForm();
+            }
         });
 
         if (this.viewMode) {
@@ -351,38 +339,75 @@ export class ReportDefinitionComponent implements OnInit {
         }
     }
 
-    private fillForm(report: ReportDTO) {
-        (this.formGroup.controls.generalInformationGroup as FormGroup).controls.titleControl.setValue(report.name);
-        (this.formGroup.controls.generalInformationGroup as FormGroup).controls.descriptionControl.setValue(report.description);
-        (this.formGroup.controls.generalInformationGroup as FormGroup).controls.codeControl.setValue(report.code);
-        (this.formGroup.controls.generalInformationGroup as FormGroup).controls.lastRunUserControl.setValue(report.lastRunUsername);
-        (this.formGroup.controls.generalInformationGroup as FormGroup).controls.lastRunDateTimeControl.setValue(report.lastRunDateTime);
-        (this.formGroup.controls.generalInformationGroup as FormGroup).controls.lastRunDurationSecControl.setValue(report.lastRunDurationSec);
-        (this.formGroup.controls.generalInformationGroup as FormGroup).controls.iconNameControl.setValue(report.iconName);
-        (this.formGroup.controls.generalInformationGroup as FormGroup).controls.reportTypeControl.setValue(report.reportType);
-        (this.formGroup.controls.generalInformationGroup as FormGroup).controls.orderNumControl.setValue(report.orderNum);
-
-        this.formGroup.controls.queryControl.setValue(report.reportSQL);
-        (this.formGroup.controls.accessManagementGroup as FormGroup).controls.selectedUsersControl.setValue(report.users);
-        (this.formGroup.controls.accessManagementGroup as FormGroup).controls.selectedRolesControl.setValue(report.roles);
-        (this.formGroup.controls.generalInformationGroup as FormGroup).controls.reportGroupControl.setValue(this.reportGroups.find(x => x.value === report.reportGroupId));
+    public getReportCodeErrorText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
+        if (errorCode === 'reportCodeAlreadyExists') {
+            if (errorValue === true) {
+                return new TLError({ text: this.translateService.getValue('report-definition.report-code-already-exists-error'), type: 'error' });
+            }
+        }
+        return undefined;
     }
 
-    private fillModel(formGroup: FormGroup): ReportDTO {
-        this.report.name = (formGroup.controls.generalInformationGroup as FormGroup).controls.titleControl.value;
-        this.report.description = (formGroup.controls.generalInformationGroup as FormGroup).controls.descriptionControl.value;
-        this.report.code = (formGroup.controls.generalInformationGroup as FormGroup).controls.codeControl.value;
-        this.report.orderNum = (formGroup.controls.generalInformationGroup as FormGroup).controls.orderNumControl.value;
-        this.report.reportSQL = formGroup.controls.queryControl.value;
+    private buildForm(): FormGroup {
+        return new FormGroup({
+            generalInformationGroup: new FormGroup({
+                titleControl: new FormControl(null, [Validators.required, Validators.maxLength(500)]),
+                codeControl: new FormControl(null, [Validators.required, Validators.maxLength(200)]),
+                descriptionControl: new FormControl(null, Validators.maxLength(1000)),
+                lastRunUserControl: new FormControl({ value: null, disabled: true }),
+                lastRunDateTimeControl: new FormControl({ value: null, disabled: true }),
+                lastRunDurationSecControl: new FormControl({ value: null, disabled: true }),
+                reportTypeControl: new FormControl(null, Validators.required),
+                reportGroupControl: new FormControl(null, Validators.required),
+                orderNumControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
+                iconNameControl: this.iconNameControl
+            }),
+            accessManagementGroup: new FormGroup({
+                selectedRolesControl: new FormControl(),
+                selectedUsersControl: new FormControl()
+            }),
+            queryControl: new FormControl()
+        });
+    }
 
-        this.report.iconName = (formGroup.controls.generalInformationGroup as FormGroup).controls.iconNameControl.value;
+    private fillForm() {
+        const reportName: string | undefined = this.isCopy
+            ? `${this.report.name} - ${this.translateService.getValue('report-definition.copy')}`
+            : this.report.name;
 
-        this.report.reportType = (formGroup.controls.generalInformationGroup as FormGroup).controls.reportTypeControl.value;
+        (this.formGroup.get('generalInformationGroup') as FormGroup).get('titleControl')!.setValue(reportName);
+        (this.formGroup.get('generalInformationGroup') as FormGroup).get('descriptionControl')!.setValue(this.report.description);
+        (this.formGroup.get('generalInformationGroup') as FormGroup).get('codeControl')!.setValue(this.report.code);
+        (this.formGroup.get('generalInformationGroup') as FormGroup).get('lastRunUserControl')!.setValue(this.report.lastRunUsername);
+        (this.formGroup.get('generalInformationGroup') as FormGroup).get('lastRunDateTimeControl')!.setValue(this.report.lastRunDateTime);
+        (this.formGroup.get('generalInformationGroup') as FormGroup).get('lastRunDurationSecControl')!.setValue(this.report.lastRunDurationSec);
+        (this.formGroup.get('generalInformationGroup') as FormGroup).get('iconNameControl')!.setValue(this.report.iconName);
+        (this.formGroup.get('generalInformationGroup') as FormGroup).get('reportTypeControl')!.setValue(this.report.reportType);
+        (this.formGroup.get('generalInformationGroup') as FormGroup).get('orderNumControl')!.setValue(this.report.orderNum);
 
-        this.report.roles = (this.formGroup.controls.accessManagementGroup as FormGroup).get('selectedRolesControl')!.value;
-        this.report.users = (this.formGroup.controls.accessManagementGroup as FormGroup).get('selectedUsersControl')!.value;
+        this.formGroup.get('queryControl')!.setValue(this.report.reportSQL);
+        (this.formGroup.get('accessManagementGroup') as FormGroup).get('selectedUsersControl')!.setValue(this.report.users);
+        (this.formGroup.get('accessManagementGroup') as FormGroup).get('selectedRolesControl')!.setValue(this.report.roles);
+        (this.formGroup.get('generalInformationGroup') as FormGroup).get('reportGroupControl')!.setValue(this.reportGroups.find(x => x.value === this.report.reportGroupId));
 
-        const groupId: number = (formGroup.controls.generalInformationGroup as FormGroup).get('reportGroupControl')!.value?.value;
+        this.parameters = this.report.parameters ?? [];
+    }
+
+    private fillModel(): void {
+        this.report.name = (this.formGroup.get('generalInformationGroup') as FormGroup).get('titleControl')!.value;
+        this.report.description = (this.formGroup.get('generalInformationGroup') as FormGroup).get('descriptionControl')!.value;
+        this.report.code = (this.formGroup.get('generalInformationGroup') as FormGroup).get('codeControl')!.value;
+        this.report.orderNum = (this.formGroup.get('generalInformationGroup') as FormGroup).get('orderNumControl')!.value;
+        this.report.iconName = (this.formGroup.get('generalInformationGroup') as FormGroup).get('iconNameControl')!.value;
+        this.report.reportType = (this.formGroup.get('generalInformationGroup') as FormGroup).get('reportTypeControl')!.value;
+
+        this.report.reportSQL = this.formGroup.get('queryControl')!.value;
+        this.report.roles = (this.formGroup.get('accessManagementGroup') as FormGroup).get('selectedRolesControl')!.value;
+        this.report.users = (this.formGroup.get('accessManagementGroup') as FormGroup).get('selectedUsersControl')!.value;
+
+        this.report.parameters = this.parameters;
+
+        const groupId: number = (this.formGroup.get('generalInformationGroup') as FormGroup).get('reportGroupControl')!.value?.value;
         if (groupId !== null && groupId !== undefined) {
             this.reportGroupId = groupId;
         }
@@ -391,11 +416,13 @@ export class ReportDefinitionComponent implements OnInit {
             this.report.reportGroupId = this.reportGroupId;
         }
 
-        return this.report;
+        if (this.isCopy) {
+            this.report.id = undefined;
+        }
     }
 
-    private refreshParametersTable(): void {
-        this.report.parameters = this.report.parameters!.slice();
+    private closeDialogBtnClicked(closeFn: DialogCloseCallback): void {
+        closeFn();
     }
 
     private getReportInfoParams(): ExecutionParamDTO[] {
@@ -432,8 +459,14 @@ export class ReportDefinitionComponent implements OnInit {
                     });
                 }
             }
+
             if ((response.error as ErrorModel).code === ErrorCode.InvalidSqlQuery) {
                 this.formGroup.get('queryControl')!.setErrors({ 'invalidSqlQuery': true });
+            }
+
+            if ((response.error as ErrorModel).code === ErrorCode.ReportCodeAlreadyExists) {
+                (this.formGroup.get('generalInformationGroup') as FormGroup).get('codeControl')!.setErrors({ 'reportCodeAlreadyExists': true });
+                (this.formGroup.get('generalInformationGroup') as FormGroup).get('codeControl')!.markAsTouched();
             }
         }
     }

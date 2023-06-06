@@ -48,6 +48,9 @@ export class LogBookEditDTO {
     @StrictlyTyped(Boolean)
     public isActive?: boolean;
 
+    @StrictlyTyped(String)
+    public startPage?: string;
+
     @StrictlyTyped(Number)
     public price?: number;
 
