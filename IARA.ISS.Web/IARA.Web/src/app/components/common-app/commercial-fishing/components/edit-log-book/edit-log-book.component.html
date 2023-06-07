@@ -44,13 +44,21 @@
                            label="{{ 'catches-and-sales.log-book-status' | tlTranslate }}"
                            tooltipResourceName="catches-and-sales.log-book-status-helper">
                 </tl-select>
-                <tl-input fxFlex="20"
+                <tl-input *ngIf="selectedLogBookType === logBookTypesEnum.Ship && isOnline"
+                          fxFlex="20"
+                          formControlName="startPageControl"
+                          label="{{ 'catches-and-sales.log-book-start-page-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.log-book-start-page-number-helper">
+                </tl-input>
+                <tl-input *ngIf="selectedLogBookType !== logBookTypesEnum.Ship || !isOnline"
+                          fxFlex="20"
                           formControlName="startPageNumberControl"
                           label="{{ 'catches-and-sales.log-book-start-page-number' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.log-book-start-page-number-helper"
                           [readonly]="isForRenewal">
                 </tl-input>
-                <tl-input fxFlex="20"
+                <tl-input *ngIf="selectedLogBookType !== logBookTypesEnum.Ship || !isOnline"
+                          fxFlex="20"
                           formControlName="endPageNumberControl"
                           label="{{ 'catches-and-sales.log-book-end-page-number' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.log-book-end-page-number-helper"
@@ -62,6 +70,7 @@
                           tooltipResourceName="catches-and-sales.log-book-price-helper">
                 </tl-input>
                 <div *ngIf="selectedLogBookType !== logBookTypesEnum.Ship || !isOnline" fxFlex="20"></div>
+                <div *ngIf="isOnline" fxFlex="20"></div>
             </div>
             <mat-error *ngIf="logBookGroup !== logBookGroupsEnum.Ship
                               && ownerType !== logBookPagePersonTypesEnum.Person

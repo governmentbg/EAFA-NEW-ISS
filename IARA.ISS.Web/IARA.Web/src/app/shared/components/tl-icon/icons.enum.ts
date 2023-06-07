@@ -95,7 +95,8 @@
     faFileExport,
     faSignature,
     faSpinner,
-    faBolt
+    faBolt,
+    faPlayCircle
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faAddressBook as faAddressBookRegular } from '@fortawesome/free-regular-svg-icons';
@@ -288,7 +289,8 @@ export class AppIcons {
         'fa-file-export': faFileExport,
         'fa-signature': faSignature,
         'fa-spinner': faSpinner,
-        'fa-bolt': faBolt
+        'fa-bolt': faBolt,
+        'fa-play-circle': faPlayCircle
     };
 
     public static get FaIconsDictionary(): Map<string, any> {

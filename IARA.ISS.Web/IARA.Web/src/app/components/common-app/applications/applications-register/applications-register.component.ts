@@ -158,6 +158,25 @@ export class ApplicationsRegisterComponent<T extends IDialogComponent> implement
             if (!CommonUtils.isNumberNullOrNaN(applicationId)) {
                 this.grid.advancedFilters = new ApplicationsRegisterFilters({ applicationId: applicationId });
             }
+
+            const isPerson: boolean | undefined = window.history.state?.isPerson;
+            const isSubmittedFor: boolean | undefined = window.history.state?.isSubmittedFor;
+            const personReportId: number | undefined = Number(window.history.state?.id);
+
+            if (!CommonUtils.isNumberNullOrNaN(personReportId)) {
+                if (isPerson) {
+                    if (isSubmittedFor) {
+                        this.grid.advancedFilters = new ApplicationsRegisterFilters({ submittedForPersonId: personReportId });
+                    }
+                    else {
+                        this.grid.advancedFilters = new ApplicationsRegisterFilters({ submittedByPersonId: personReportId });
+                    }
+                }
+                else {
+                    this.grid.advancedFilters = new ApplicationsRegisterFilters({ submittedForLegalId: personReportId });
+
+                }
+            }
         }
 
         this.grid.refreshData();

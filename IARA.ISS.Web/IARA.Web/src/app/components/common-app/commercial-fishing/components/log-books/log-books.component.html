@@ -10,10 +10,10 @@
                    [recordsPerPage]="logBooksPerPages"
                    (addButtonClicked)="addEditLogBook()"
                    (activeRecordChanged)="addEditLogBook($event)">
-        <div *ngIf="logBookGroup === logBookGroupsEnum.Ship 
-                    && !isReadonly" 
-             datatable-add-buttons 
-             fxLayout="row" 
+        <div *ngIf="logBookGroup === logBookGroupsEnum.Ship
+                    && !isReadonly"
+             datatable-add-buttons
+             fxLayout="row"
              fxLayoutGap="1em">
             <div [matTooltip]="disableAddButtons ? disabledAddBtnTooltipText : undefined" matTooltipShowDelay="300">
                 <button mat-raised-button color="accent"
@@ -50,7 +50,7 @@
                      propertyName="statusId"
                      dataType="nomenclature"
                      [options]="logBookStatuses"
-                     columnName="{{ 'catches-and-sales.log-book-status' | tlTranslate }}">  <!-- TODO -->
+                     columnName="{{ 'catches-and-sales.log-book-status' | tlTranslate }}">
         </data-column>
         <data-template-column [flexRate]="0.2"
                               columnName="{{ 'catches-and-sales.log-book-from-old-permit' | tlTranslate }}">
@@ -60,26 +60,34 @@
                 </div>
             </ng-template>
         </data-template-column>
-        <data-column *ngIf="logBookGroup !== logBookGroupsEnum.Ship"
-                     [flexRate]="0.2"
-                     propertyName="startPageNumber"
-                     columnName="{{ 'catches-and-sales.log-book-start-page-number' | tlTranslate }}">
-        </data-column>
-        <data-column *ngIf="logBookGroup !== logBookGroupsEnum.Ship"
-                     [flexRate]="0.2"
-                     propertyName="endPageNumber"
-                     columnName="{{ 'catches-and-sales.log-book-end-page-number' | tlTranslate }}">
-        </data-column>
-        <data-column *ngIf="logBookGroup === logBookGroupsEnum.Ship"
-                     [flexRate]="0.2"
-                     propertyName="permitLicenseStartPageNumber"
-                     columnName="{{ 'catches-and-sales.log-book-permit-license-start-page-number' | tlTranslate }}">
-        </data-column>
-        <data-column *ngIf="logBookGroup === logBookGroupsEnum.Ship"
-                     [flexRate]="0.2"
-                     propertyName="permitLicenseEndPageNumber"
-                     columnName="{{ 'catches-and-sales.log-book-permit-license-end-page-number' | tlTranslate }}">
-        </data-column>
+        <data-template-column [flexRate]="0.4"
+                              columnName="{{ 'catches-and-sales.log-book-permit-license-start-page-number' | tlTranslate }}">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                <div *ngIf="logBookGroup !== logBookGroupsEnum.Ship && !row.data.isOnline">
+                    {{ row.data.startPageNumber }}
+                </div>
+
+                <div *ngIf="logBookGroup === logBookGroupsEnum.Ship && !row.data.isOnline">
+                    {{ row.data.permitLicenseStartPageNumber }}
+                </div>
+
+                <div *ngIf="row.data.isOnline">
+                    {{ row.data.startPage }}
+                </div>
+            </ng-template>
+        </data-template-column>
+        <data-template-column [flexRate]="0.3"
+                              columnName="{{ 'catches-and-sales.log-book-end-page-number' | tlTranslate }}">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                <div *ngIf="logBookGroup !== logBookGroupsEnum.Ship && !row.data.isOnline">
+                    {{ row.data.endPageNumber }}
+                </div>
+
+                <div *ngIf="logBookGroup === logBookGroupsEnum.Ship && !row.data.isOnline">
+                    {{ row.data.permitLicenseEndPageNumber }}
+                </div>
+            </ng-template>
+        </data-template-column>
         <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
             <ng-template let-row="row" ngx-datatable-cell-template>
                 <div fxLayout="row wrap" fxLayoutAlign="end center">
@@ -110,16 +118,16 @@
                                     [disabled]="((row.data.shipPagesAndDeclarations && row.data.shipPagesAndDeclarations.length === 0)
                                                  || (row.data.transportationPagesAndDeclarations && row.data.transportationPagesAndDeclarations.length === 0)
                                                  || (row.data.admissionPagesAndDeclarations && row.data.admissionPagesAndDeclarations.length === 0)
-                                                 || (row.data.firstSalePages && row.data.firstSalePages.length === 0) 
+                                                 || (row.data.firstSalePages && row.data.firstSalePages.length === 0)
                                                  || (row.data.aquaculturePages && row.data.aquaculturePages.length === 0))
                                                  || row.data.hasRelatedPages"
                                     [tooltipText]="((row.data.shipPagesAndDeclarations && row.data.shipPagesAndDeclarations.length === 0)
                                                      || (row.data.transportationPagesAndDeclarations && row.data.transportationPagesAndDeclarations.length === 0)
                                                      || (row.data.admissionPagesAndDeclarations && row.data.admissionPagesAndDeclarations.length === 0)
-                                                     || (row.data.firstSalePages && row.data.firstSalePages.length === 0) 
+                                                     || (row.data.firstSalePages && row.data.firstSalePages.length === 0)
                                                      || (row.data.aquaculturePages && row.data.aquaculturePages.length === 0))
-                                                     || row.data.hasRelatedPages 
-                                                    ? deleteDisabledTooltipText 
+                                                     || row.data.hasRelatedPages
+                                                    ? deleteDisabledTooltipText
                                                     : deleteTooltipText">
                     </tl-icon-button>
                     <tl-icon-button *ngIf="row.data.isForRenewal && row.data.isActive && !isReadonly"

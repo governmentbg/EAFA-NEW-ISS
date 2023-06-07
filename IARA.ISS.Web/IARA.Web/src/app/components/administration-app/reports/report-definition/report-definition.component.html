@@ -68,6 +68,7 @@
                     <tl-input label="{{ 'report-definition.general-information-report-code' | tlTranslate }}"
                               formControlName="codeControl"
                               fxFlex="75"
+                              [getControlErrorLabelText]="getReportCodeErrorTextMethod"
                               tooltipResourceName="report-definition.general-information-report-code-helper">
                     </tl-input>
                     <tl-select label="{{ 'report-definition.report-type' | tlTranslate }}"
@@ -154,7 +155,7 @@
                            [showAddButton]="!viewMode"
                            (addButtonClicked)="addOrEditParameter()"
                            (activeRecordChanged)="addOrEditParameter($event)"
-                           [rows]="report.parameters"
+                           [rows]="parameters"
                            [isRemote]="false"
                            [isSoftDeletable]="true">
                 <data-column [flexRate]="0.3"
@@ -185,7 +186,7 @@
                              columnName="{{ 'report-definition.parameters-table-parameter-is-required' | tlTranslate }}"
                              propertyName="isMandatory">
                 </data-column>
-                <data-template-column [flexRate]="0.3">
+                <data-template-column [flexRate]="0.4">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row wrap" fxLayoutAlign="end center" fxLayoutGap="1em">
                             <tl-icon-button icon="visibility"

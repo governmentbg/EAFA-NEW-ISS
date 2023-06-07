@@ -66,5 +66,6 @@ export enum ErrorCode {
     CannotAddEditFirstSalePageAboveLimitTurnover = 47,
     CannotAddEditFirstSalePageBelowLimitTurnover = 48,
     CannotAddEditLockedAdmissionPage = 49,
-    CannotAddEditLockedAquaculturePage = 50
+    CannotAddEditLockedAquaculturePage = 50,
+    ReportCodeAlreadyExists = 51
 }
