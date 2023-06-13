@@ -172,6 +172,7 @@
                        #rawMaterialTable
                        [rows]="rawMaterials"
                        [isRemote]="false"
+                       [isSoftDeletable]="true"
                        [showInactiveRecords]="false"
                        [showAddButton]="!viewMode && !isReadonly"
                        (activeRecordChanged)="rawMaterialsActiveRecordChanged()">
@@ -218,6 +219,7 @@
                        #productTable
                        [rows]="products"
                        [isRemote]="false"
+                       [isSoftDeletable]="true"
                        [showInactiveRecords]="false"
                        [showAddButton]="!viewMode && !isReadonly">
             <data-column [flexRate]="0.5"

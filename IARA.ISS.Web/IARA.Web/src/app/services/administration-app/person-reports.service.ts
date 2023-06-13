@@ -54,7 +54,7 @@ export class PersonReportsService extends BaseAuditService implements IPersonRep
                     });
 
                     if (h.pageCode !== undefined && h.pageCode !== null) {
-                        h.documentsName = this.getHistoryDocumentName(h.pageCode);
+                        h.documentsName = this.getHistoryDocumentName(h.pageCode, h.isApplication);
                     }
 
                     if (found !== undefined) {
@@ -151,7 +151,7 @@ export class PersonReportsService extends BaseAuditService implements IPersonRep
             case PageCodeEnum.DeregShip:
             case PageCodeEnum.ShipRegChange:
                 documentName = isApplication
-                    ? this.translationService.getValue('persons-report-page.aquaculture-facility-appl')
+                    ? this.translationService.getValue('persons-report-page.ship-appl')
                     : this.translationService.getValue('persons-report-page.ship-owner');
                 break;
             case PageCodeEnum.CommFish:

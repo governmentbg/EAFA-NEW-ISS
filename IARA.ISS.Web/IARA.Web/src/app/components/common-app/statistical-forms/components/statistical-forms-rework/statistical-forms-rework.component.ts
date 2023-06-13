@@ -298,7 +298,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
             this.productGroup?.get('productTypeIdControl')?.valueChanges.subscribe({
                 next: () => {
                     this.productTypes = [...this.allProductTypes];
-                    const currentIds: number[] = this.productTable.rows.map(x => x.productTypeId);
+                    const currentIds: number[] = this.productTable.rows.filter(x => x.isActive !== false).map(x => x.productTypeId);
 
                     this.productTypes = this.productTypes.filter(x => !currentIds.includes(x.value!));
                     this.productTypes = this.productTypes.slice();
@@ -929,7 +929,23 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                 }
             }
 
-            result.push(entry);
+            if (result.findIndex(x => x.productTypeId === product.productTypeId) === -1) {
+                if (rows.length > 0) {
+                    const original = rows.filter(x => x.productTypeId === product.productTypeId);
+
+                    if (original.length === 1) {
+                        result.push(entry);
+                    }
+                    else {
+                        if (entry.isActive === true) {
+                            result.push(entry);
+                        }
+                    }
+                }
+                else {
+                    result.push(entry);
+                }
+            }
         }
 
         return result;

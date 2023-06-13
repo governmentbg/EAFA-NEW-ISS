@@ -101,7 +101,7 @@ namespace IARA.Mobile.Insp
             builder.Call(LoadInitialResources);
 
             // Check if device is allowed
-            builder.Call<IStartupTransaction, IApplicationInstance>(CheckIfDeviceAllowed);
+            builder.Call<IStartupTransaction, IApplicationInstance, ISettings>(CheckIfDeviceAllowed);
 
             if (state != CommonConstants.NewLogin)
             {
@@ -286,20 +286,23 @@ namespace IARA.Mobile.Insp
             App.Current.LoadInitialResources();
         }
 
-        private async Task CheckIfDeviceAllowed(IStartupTransaction startUp, IApplicationInstance appInstance)
+        private async Task CheckIfDeviceAllowed(IStartupTransaction startUp, IApplicationInstance appInstance, ISettings settings)
         {
             string imei = appInstance.Id;
 
+            if (CommonGlobalVariables.InternetStatus == InternetStatus.Disconnected && settings.IsDeviceAllowed)
+            {
+                return;
+            }
+
+            settings.IsDeviceAllowed = false;
+
             while (!await startUp.IsDeviceAllowed(imei))
             {
-                const string group = nameof(GroupResourceEnum.Common);
-
-                await App.Current.MainPage.DisplayAlert(
-                    TranslateExtension.Translator[group + "/DeviceNotAllowedTitle"],
-                    string.Format(TranslateExtension.Translator[group + "/DeviceNotAllowedMessage"], imei),
-                    TranslateExtension.Translator[group + "/Okay"]
-                );
+                await ShowDeviceNotAllowed(imei);
             }
+
+            settings.IsDeviceAllowed = true;
         }
 
         private async Task PostOfflineData(IStartupTransaction startUp, IInspectionsTransaction inspections)
@@ -317,6 +320,17 @@ namespace IARA.Mobile.Insp
         private void SetLoginAsSuccessful(ISettings settings)
         {
             settings.SuccessfulLogin = true;
+        }
+
+        private Task ShowDeviceNotAllowed(string imei)
+        {
+            const string group = nameof(GroupResourceEnum.Common);
+
+            return App.Current.MainPage.DisplayAlert(
+                TranslateExtension.Translator[group + "/DeviceNotAllowedTitle"],
+                string.Format(TranslateExtension.Translator[group + "/DeviceNotAllowedMessage"], imei),
+                TranslateExtension.Translator[group + "/Okay"]
+            );
         }
     }
 }

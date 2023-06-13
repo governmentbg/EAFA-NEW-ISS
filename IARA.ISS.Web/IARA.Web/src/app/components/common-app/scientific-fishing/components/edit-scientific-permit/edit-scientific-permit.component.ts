@@ -706,7 +706,7 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
 
                 shipIsNotRegisteredControl: new FormControl(false),
                 existingShipNameControl: new FormControl(null, [this.shipValidator()]),
-                shipNameControl: new FormControl('', Validators.maxLength(500)),
+                shipNameControl: new FormControl('', Validators.maxLength(4000)),
                 shipExternalMarkingControl: new FormControl('', Validators.maxLength(50)),
                 shipCaptainNameControl: new FormControl('', Validators.maxLength(500)),
 
@@ -947,8 +947,6 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
                 this.form.get('shipIsNotRegisteredControl')!.setValue(true);
 
                 this.form.get('shipNameControl')?.setValue(model.shipName);
-                this.form.get('shipExternalMarkingControl')?.setValue(model.shipExternalMark);
-                this.form.get('shipCaptainNameControl')?.setValue(model.shipCaptainName);
             }
 
             if (model instanceof ScientificFishingPermitEditDTO) {
@@ -1094,8 +1092,6 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
             }
             else {
                 this.model.shipName = form.get('shipNameControl')!.value;
-                this.model.shipExternalMark = form.get('shipExternalMarkingControl')!.value;
-                this.model.shipCaptainName = form.get('shipCaptainNameControl')!.value;
             }
 
             this.model.files = form.get('filesControl')!.value;

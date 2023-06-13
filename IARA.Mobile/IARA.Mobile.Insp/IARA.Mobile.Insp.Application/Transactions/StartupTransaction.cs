@@ -102,7 +102,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
         {
             if (CommonGlobalVariables.InternetStatus == InternetStatus.Disconnected)
             {
-                return true;
+                return !isLoginRequest;
             }
 
             if (isLoginRequest)
@@ -110,7 +110,6 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 await PullUserAuthInfo();
             }
 
-            bool pulledAllData = true;
             Task<Nom>[] nomTasks = await StartupNomenclatureHelper.PullNomenclatureTables(RestClient, nomenclatureDates);
 
             NomenclatureEnum[] inspNoms = new[]
@@ -150,8 +149,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     {
                         if (nom == null)
                         {
-                            pulledAllData = false;
-                            continue;
+                            return false;
                         }
                         else if (nom.UpdateDatabase == null)
                         {
@@ -168,6 +166,10 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         }
                     }
                 }
+            }
+            else
+            {
+                return false;
             }
 
             HashSet<int> personsToPull = new HashSet<int>();
@@ -191,7 +193,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
                 if (!pullResult)
                 {
-                    pulledAllData = false;
+                    return false;
                 }
 
                 finishCallback?.Invoke();
@@ -244,7 +246,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
                         if (!pulled)
                         {
-                            pulledAllData = false;
+                            return false;
                         }
                     }
                     if (pullLegals)
@@ -263,7 +265,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
                         if (!pulled)
                         {
-                            pulledAllData = false;
+                            return false;
                         }
                     }
                 }
@@ -271,7 +273,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
             finishCallback?.Invoke();
 
-            return pulledAllData;
+            return true;
         }
 
         private async Task<bool> PullUserAuthInfo()

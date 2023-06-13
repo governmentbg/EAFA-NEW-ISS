@@ -15,6 +15,12 @@ namespace IARA.Mobile.Insp.Utilities
             set => Preferences.Set(nameof(SuccessfulLogin), value, SharedName);
         }
 
+        public bool IsDeviceAllowed
+        {
+            get => Preferences.Get(nameof(IsDeviceAllowed), false, SharedName);
+            set => Preferences.Set(nameof(IsDeviceAllowed), value, SharedName);
+        }
+
         public double FontSize
         {
             get => Preferences.Get(nameof(FontSize), 16d, SharedName);
