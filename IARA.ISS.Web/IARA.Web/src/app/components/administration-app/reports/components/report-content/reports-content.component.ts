@@ -310,7 +310,7 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
         const id: number = row.data.id!;
         const isPerson: boolean = row.data.isPerson!;
         const isApplication: boolean = row.data.isApplication ?? false;
-        const isSubmittedFor: boolean = row.data.isApplication ?? false;
+        const isSubmittedFor: boolean = row.data.isSubmittedFor ?? false;
 
         switch (row.data.pageCode) {
             case PageCodeEnum.RegVessel:
@@ -376,7 +376,7 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
             case PageCodeEnum.IncreaseFishCap:
             case PageCodeEnum.ReduceFishCap:
             case PageCodeEnum.TransferFishCap:
-            case PageCodeEnum.CapacityCertDup: 
+            case PageCodeEnum.CapacityCertDup:
                 if (isApplication) {
                     this.navigateByUrl('/fishing-capacity-applications', id, isPerson, isSubmittedFor);
                 }
@@ -388,6 +388,8 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
                 this.navigateByUrl('/inspections-register', id, isPerson);
                 break;
             case PageCodeEnum.RecFish:
+                this.navigateByUrl('/ticket_applications', id, isPerson);
+                break;
             case PageCodeEnum.Assocs:
                 if (isApplication) {
                     this.navigateByUrl('/legal-entities-applications', id, isPerson, isSubmittedFor);

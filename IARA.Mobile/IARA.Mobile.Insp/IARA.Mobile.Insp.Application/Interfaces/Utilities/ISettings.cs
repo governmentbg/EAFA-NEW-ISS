@@ -6,6 +6,8 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Utilities
     {
         bool SuccessfulLogin { get; set; }
 
+        bool IsDeviceAllowed { get; set; }
+
         double FontSize { get; set; }
 
         DateTime? LastInspectionFetchDate { get; set; }

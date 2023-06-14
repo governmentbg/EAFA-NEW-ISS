@@ -313,7 +313,7 @@
                 <tl-checkbox fxFlex="50"
                              formControlName="shipIsNotRegisteredControl"
                              tooltipResourceName="scientific-fishing.ship-does-not-exist-in-register-helper"
-                             label="{{ 'scientific-fishing.ship-does-not-exist-in-register' | tlTranslate }}">
+                             label="{{ 'scientific-fishing.ship-does-not-exist-in-register-or-more-than-one' | tlTranslate }}">
                 </tl-checkbox>
             </div>
 
@@ -335,25 +335,16 @@
                 </tl-input>
             </div>
 
-            <div *ngIf="form.controls.shipIsNotRegisteredControl.value === true"
-                 fxLayout="row"
-                 fxLayoutGap="1em"
-                 fxLayoutAlign="start center">
-                <tl-input fxFlex="25"
-                          formControlName="shipNameControl"
-                          tooltipResourceName="scientific-fishing.ship-name-helper"
-                          label="{{ 'scientific-fishing.ship-name' | tlTranslate }}">
-                </tl-input>
-                <tl-input fxFlex="25"
-                          formControlName="shipExternalMarkingControl"
-                          tooltipResourceName="scientific-fishing.ship-external-mark-helper"
-                          label="{{ 'scientific-fishing.ship-external-mark' | tlTranslate }}">
-                </tl-input>
-                <tl-input fxFlex="50"
-                          formControlName="shipCaptainNameControl"
-                          tooltipResourceName="scientific-fishing.ship-captain-name-helper"
-                          label="{{ 'scientific-fishing.ship-captain-name' | tlTranslate }}">
-                </tl-input>
+            <div *ngIf="form.controls.shipIsNotRegisteredControl.value === true">
+                <div fxLayout="row"
+                     fxLayoutGap="1em"
+                     fxLayoutAlign="start center">
+                    <tl-textarea fxFlex="100"
+                                 formControlName="shipNameControl"
+                                 tooltipResourceName="scientific-fishing.ship-name-helper"
+                                 label="{{ 'scientific-fishing.ship-names' | tlTranslate }}">
+                    </tl-textarea>
+                </div>
             </div>
         </div>
     </tl-expansion-panel>
