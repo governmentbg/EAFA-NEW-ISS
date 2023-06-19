@@ -504,14 +504,12 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             });
         }
 
-        if (ticket.ticketStatus === TicketStatusEnum.APPROVED) {
-            rightButtons.push({
-                id: 'print',
-                color: 'accent',
-                translateValue: this.translate.getValue('recreational-fishing.print'),
-                isVisibleInViewMode: true
-            });
-        }
+        rightButtons.push({
+            id: 'print',
+            color: 'accent',
+            translateValue: this.translate.getValue('recreational-fishing.print'),
+            isVisibleInViewMode: true
+        });
 
         this.editDialog.openWithTwoButtons({
             title: title,
