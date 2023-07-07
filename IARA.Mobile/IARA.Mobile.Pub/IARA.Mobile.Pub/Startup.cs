@@ -47,10 +47,13 @@ namespace IARA.Mobile.Pub
 
         public void Configure(IApplicationBuilder builder, bool isInitialCall, string state)
         {
+            // Setup variables inside IStates to make sure if one step throws an exception, the variables are accessable by other steps
+            builder.Call<IStates>(SetupVariables);
+
             if (isInitialCall)
             {
                 // Initializes global variables and which server the app will use and font size
-                builder.Call<IStates, IServerUrl, ISettings>(Init);
+                builder.Call<IServerUrl, ISettings>(Init);
             }
 
             // Health check
@@ -107,7 +110,7 @@ namespace IARA.Mobile.Pub
             builder.Call<ISettings>(SetLoginAsSuccessful);
         }
 
-        private void Init(IStates states, IServerUrl serverUrl, ISettings settings)
+        private void Init(IServerUrl serverUrl, ISettings settings)
         {
             CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfoByIetfLanguageTag(
                 settings.CurrentResourceLanguage.ToString().ToLower()
@@ -115,7 +118,7 @@ namespace IARA.Mobile.Pub
             CommonGlobalVariables.PullItemsCount = Device.Idiom == TargetIdiom.Phone ? 20 : 40;
             CommonGlobalVariables.DatabasePath = Path.Combine(FileSystem.AppDataDirectory, "IARA.db3");
 #if DEBUG
-            serverUrl.Environment = Environments.DEVELOPMENT_INTERNAL;
+            serverUrl.Environment = Environments.DEVELOPMENT_LOCAL;
 #elif PRODRELEASE
             serverUrl.Environment = Environments.PRODUCTION;
 #else
@@ -123,7 +126,10 @@ namespace IARA.Mobile.Pub
 #endif
 
             CommonGlobalVariables.FinishedSetup = true;
+        }
 
+        private void SetupVariables(IStates states)
+        {
             states.Set(StartupData, false);
         }
 
