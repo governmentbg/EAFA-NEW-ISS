@@ -92,7 +92,7 @@ namespace IARA.Mobile.Pub.Application.Transactions
         {
             if (CommonGlobalVariables.InternetStatus == InternetStatus.Disconnected)
             {
-                return true;
+                return !isLoginRequest;
             }
 
             if (isLoginRequest)
@@ -100,7 +100,6 @@ namespace IARA.Mobile.Pub.Application.Transactions
                 await PullUserAuthInfo();
             }
 
-            bool pulledNomenclatures = true;
             List<Task<Nom>> nomTasks = await PullNomenclatureTables();
 
             if (nomTasks?.Count > 0)
@@ -119,8 +118,7 @@ namespace IARA.Mobile.Pub.Application.Transactions
                     {
                         if (result == null)
                         {
-                            pulledNomenclatures = false;
-                            continue;
+                            return false;
                         }
                         else if (result.UpdateDatabase == null)
                         {
@@ -139,7 +137,7 @@ namespace IARA.Mobile.Pub.Application.Transactions
                 }
             }
 
-            return pulledNomenclatures;
+            return true;
         }
 
         public async Task<UserAuthDto> GetUserAuthInfo()
