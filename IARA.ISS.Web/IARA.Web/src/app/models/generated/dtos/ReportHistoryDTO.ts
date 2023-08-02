@@ -37,4 +37,7 @@ export class ReportHistoryDTO {
 
     @StrictlyTyped(Boolean)
     public isSubmittedFor?: boolean;
+
+    @StrictlyTyped(Boolean)
+    public isInternal?: boolean;
 }

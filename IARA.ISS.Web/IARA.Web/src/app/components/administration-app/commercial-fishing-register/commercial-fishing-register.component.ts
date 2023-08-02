@@ -367,8 +367,10 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         }
 
         const isPerson: boolean | undefined = window.history.state?.isPerson;
+        const isDuplicate: boolean | undefined = window.history.state?.isDuplicate;
         let legalId: number | undefined;
         let personId: number | undefined;
+
         if (isPerson === true) {
             personId = window.history.state?.id;
         }
@@ -377,11 +379,20 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             legalId = window.history.state?.id;
         }
 
-        this.gridManager.advancedFilters = new CommercialFishingRegisterFilters({
-            personId: personId ?? undefined,
-            legalId: legalId ?? undefined,
-            shipId: this.shipId ?? undefined
-        });
+        if (isDuplicate) {
+            this.gridManager.advancedFilters = new CommercialFishingRegisterFilters({
+                duplicatePersonId: personId ?? undefined,
+                duplicateLegalId: legalId ?? undefined,
+                shipId: this.shipId ?? undefined
+            });
+        }
+        else {
+            this.gridManager.advancedFilters = new CommercialFishingRegisterFilters({
+                personId: personId ?? undefined,
+                legalId: legalId ?? undefined,
+                shipId: this.shipId ?? undefined
+            });
+        }
 
         if (this.shipId === null || this.shipId === undefined) {
             this.gridManager.refreshData();

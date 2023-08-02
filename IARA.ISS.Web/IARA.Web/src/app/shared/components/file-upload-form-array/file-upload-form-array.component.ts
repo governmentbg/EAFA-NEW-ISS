@@ -326,6 +326,11 @@ export class FileUploadFormArrayComponent implements OnInit, AfterViewInit, DoCh
                         }
                     }
                 }
+                else {
+                    if ((file.file !== undefined && file.file !== null) || (file.id !== undefined && file.id !== null)) {
+                        errors['required'] = true;
+                    }
+                }
             }
             return Object.keys(errors).length > 0 ? errors : null;
         };

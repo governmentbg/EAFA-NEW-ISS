@@ -68,7 +68,8 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
     public readonly canReadAssocationsApplicationRecords: boolean;
     public readonly canReadAssociationTicketRecords: boolean;
     public readonly canReadTicketRecords: boolean;
-    public readonly canReadUserRecords: boolean;
+    public readonly canReadExternalUserRecords: boolean;
+    public readonly canReadInternalUserRecords: boolean;
     public readonly canReadPenalPointsRecords: boolean;
 
     @ViewChild(TLDataTableComponent)
@@ -142,8 +143,8 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
             || this.permissions.has(PermissionsEnum.StatisticalFormsReworkApplicationsRead)
             || this.permissions.has(PermissionsEnum.StatisticalFormsFishVesselsApplicationsRead);
 
-        this.canReadUserRecords = this.permissions.has(PermissionsEnum.InternalUsersRead)
-            || this.permissions.has(PermissionsEnum.ExternalUsersRead);
+        this.canReadExternalUserRecords = this.permissions.has(PermissionsEnum.ExternalUsersRead);
+        this.canReadInternalUserRecords = this.permissions.has(PermissionsEnum.InternalUsersRead);
 
         this, this.canReadPenalPointsRecords = this.permissions.has(PermissionsEnum.AwardedPointsRead);
     }
@@ -286,6 +287,7 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
             case PageCodeEnum.RecFish:
                 return this.canReadTicketRecords;
             case PageCodeEnum.Assocs:
+            case PageCodeEnum.LE:
                 return isApplication ? this.canReadAssocationsApplicationRecords : this.canReadAssociationTicketRecords;
             case PageCodeEnum.StatFormAquaFarm:
             case PageCodeEnum.StatFormFishVessel:
@@ -301,6 +303,8 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
                 return this.canReadSciFiRegisterRecords;
             case PageCodeEnum.PenalDecrees:
                 return this.canReadPenalPointsRecords;
+            case PageCodeEnum.NewsManagement:
+                return row.data.isInternal ? this.canReadInternalUserRecords : this.canReadExternalUserRecords;
             default:
                 return false;
         }
@@ -311,13 +315,14 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
         const isPerson: boolean = row.data.isPerson!;
         const isApplication: boolean = row.data.isApplication ?? false;
         const isSubmittedFor: boolean = row.data.isSubmittedFor ?? false;
+        const isInternal: boolean = row.data.isInternal ?? false;
 
         switch (row.data.pageCode) {
             case PageCodeEnum.RegVessel:
             case PageCodeEnum.DeregShip:
             case PageCodeEnum.ShipRegChange:
                 if (isApplication) {
-                    this.navigateByUrl('/fishing-vessels-applications', id, isPerson, isSubmittedFor);
+                    this.navigateByUrl('/fishing-vessels-applications', id, isPerson);
                 }
                 else {
                     this.navigateByUrl('/fishing-vessels', id, isPerson);
@@ -334,6 +339,19 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
                 }
                 else {
                     this.navigateByUrl('/commercial-fishing-permits-and-licenses', id, isPerson);
+                }
+                break;
+            case PageCodeEnum.DupCommFish:
+            case PageCodeEnum.DupRightToFishThirdCountry:
+            case PageCodeEnum.DupPoundnetCommFish:
+            case PageCodeEnum.DupRightToFishResource:
+            case PageCodeEnum.DupPoundnetCommFishLic:
+            case PageCodeEnum.DupCatchQuataSpecies:
+                if (isApplication) {
+                    this.navigateByUrl('/commercial-fishing-applications', id, isPerson, isSubmittedFor, false);
+                }
+                else {
+                    this.navigateByUrl('/commercial-fishing-permits-and-licenses', id, isPerson, false, true);
                 }
                 break;
             case PageCodeEnum.AptitudeCourceExam:
@@ -366,6 +384,8 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
             case PageCodeEnum.Buyers:
             case PageCodeEnum.ChangeFirstSaleBuyer:
             case PageCodeEnum.ChangeFirstSaleCenter:
+            case PageCodeEnum.DupFirstSaleBuyer:
+            case PageCodeEnum.DupFirstSaleCenter:
                 if (isApplication) {
                     this.navigateByUrl('/sales-centers-applications', id, isPerson, isSubmittedFor);
                 }
@@ -391,6 +411,7 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
                 this.navigateByUrl('/ticket_applications', id, isPerson);
                 break;
             case PageCodeEnum.Assocs:
+            case PageCodeEnum.LE:
                 if (isApplication) {
                     this.navigateByUrl('/legal-entities-applications', id, isPerson, isSubmittedFor);
                 }
@@ -426,8 +447,16 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
             case PageCodeEnum.PenalDecrees:
                 this.navigateByUrl('/awarded-points', id, isPerson);
                 break;
+            case PageCodeEnum.NewsManagement:
+                if (isInternal) {
+                    this.navigateByUrl('/internal-users', id, isPerson);
+                }
+                else {
+                    this.navigateByUrl('/external-users', id, isPerson);
+                }
+                break;
             default:
-                this.navigateByUrl('/application_processing', id, isPerson);
+                this.navigateByUrl('/application_processing', id, isPerson); 
                 break;
         }
     }
@@ -481,12 +510,13 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
         closeFn();
     }
 
-    private navigateByUrl(url: string, id: number, isPerson: boolean, isSubmittedFor: boolean = false): void {
+    private navigateByUrl(url: string, id: number, isPerson: boolean, isSubmittedFor: boolean = false, isDuplicate: boolean = false): void {
         this.router.navigateByUrl(url, {
             state: {
                 id: id,
                 isPerson: isPerson,
-                isSubmittedFor: isSubmittedFor
+                isSubmittedFor: isSubmittedFor,
+                isDuplicate: isDuplicate
             }
         });
     }

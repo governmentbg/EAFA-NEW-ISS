@@ -1482,7 +1482,15 @@
         'ship-change-of-circumstances': 'Ship change of circumstances',
         'ship-change-of-circumstances-appl': 'Ship change of circumstances application',
         'statistical-forms-appl': 'Statistical forms application',
-        'assoc-appl': 'Fishing association application'
+        'assoc-appl': 'Fishing association application',
+        'qualified-fishers-dup': 'Fishermen duplicates',
+        'qualified-fishers-dup-appl': 'Fishermen applications duplicates',
+        'buyer-dup': 'Buyer duplicates',
+        'buyer-dup-appl': 'Buyer applications duplicates',
+        'permit-licenses-dup': 'Permit licenses duplicates',
+        'permit-licenses-dup-appl': 'Permit licenses application dupliates',
+        'permit-dup': 'Permit duplicates',
+        'permit-dup-appl': 'Permit application duplicates'
     },
     'translation-management': {
         'code': 'Resource code',
