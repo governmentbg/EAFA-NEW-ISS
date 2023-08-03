@@ -7,7 +7,7 @@ export class TLCoordinatesPipe {
             value = value.trim();
             if (value != '') {
                 const values: string[] = value.split(' ');
-                return `${values[0]}° ${values[1]}' ${values[2]}"`;
+                return `${values[0]}° ${values[1]}' ${Number(parseFloat(values[2]).toFixed(2))}"`;
             } else {
                 return '';
             }

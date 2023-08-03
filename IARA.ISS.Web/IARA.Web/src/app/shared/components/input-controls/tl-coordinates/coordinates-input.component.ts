@@ -22,6 +22,7 @@ import {
 } from '@angular/forms';
 import { MatFormField, MatFormFieldControl, MAT_FORM_FIELD } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
+import { CommonUtils } from '../../../utils/common.utils';
 import { Coordinates } from './coordinates.model';
 
 
@@ -200,7 +201,9 @@ export class CoordinatesInputComponent implements ControlValueAccessor, MatFormF
             this.parts.setValue({
                 degreesControl: this.coordinates.degrees,
                 minutesControl: this.coordinates.minutes,
-                secondsControl: this.coordinates.seconds
+                secondsControl: !CommonUtils.isNullOrEmpty(this.coordinates.seconds)
+                    ? Number(parseFloat(this.coordinates.seconds).toFixed(2))
+                    : this.coordinates.seconds
             });
             this.stateChanges.next();
         }

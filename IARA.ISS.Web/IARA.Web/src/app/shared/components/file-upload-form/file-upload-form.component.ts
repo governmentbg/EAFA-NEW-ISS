@@ -51,6 +51,16 @@ export class FileUploadFormComponent implements OnInit, DoCheck, ControlValueAcc
                 file.fileTypeId = this.fileUploadForm.get('type')!.value?.value;
                 file.description = this.fileUploadForm.get('description')!.value;
 
+                if (file.file !== undefined && file.file !== null) {
+                    this.fileUploadForm.get('type')!.setValidators(Validators.required);
+                }
+                else {
+                    this.fileUploadForm.get('type')!.clearValidators();
+                }
+
+                this.fileUploadForm.get('type')!.markAsPending({ emitEvent: false });
+                this.fileUploadForm.updateValueAndValidity({ emitEvent: false });
+
                 this.onChanged(file);
             }
         });

@@ -45,4 +45,6 @@ export class CommercialFishingRegisterFilters extends BaseRequestModel {
     public permitLicenseIsExpired: boolean | undefined;
     public personId: number | undefined;
     public legalId: number | undefined;
+    public duplicatePersonId: number | undefined;
+    public duplicateLegalId: number | undefined;
 }

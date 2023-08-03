@@ -22,4 +22,5 @@ export class UserManagementFilters extends BaseRequestModel {
     public registeredDateFrom: Date | undefined;
     public registeredDateTo: Date | undefined;
     public isRequestedAccess: boolean | undefined;
+    public personId: number | undefined;
 }

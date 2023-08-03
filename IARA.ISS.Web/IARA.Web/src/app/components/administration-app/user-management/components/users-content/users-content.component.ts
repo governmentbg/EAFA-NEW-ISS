@@ -23,6 +23,7 @@ import { EditAccessDialogParams } from '../models/edit-access-dialog-params';
 import { EditUserDialogParams } from '../models/edit-user-dialog-params';
 import { EditUserComponent } from './edit-users/edit-user.component';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
+import { CommonUtils } from '@app/shared/utils/common.utils';
 
 @Component({
     selector: 'users-content',
@@ -125,6 +126,12 @@ export class UsersContentComponent implements OnInit, AfterViewInit {
                 this.createEditUser(result.id, false);
             }
         });
+
+        const personId: number | undefined = window.history.state?.id;
+
+        if (!CommonUtils.isNullOrEmpty(personId)) {
+            this.gridManager.advancedFilters = new UserManagementFilters({ personId: personId });
+        }
 
         this.gridManager.refreshData();
     }
