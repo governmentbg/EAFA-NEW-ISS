@@ -72,7 +72,7 @@
 
     <!-- Свидетели -->
     <tl-expansion-panel title="{{ 'auan-register.edit-auan-witnesses' | tlTranslate }}"
-                        tooltipResourceName="auan-register.edit-auan-witnesses-helper"
+                        tooltipResourceName="auan-register.auan-witnesses-helper"
                         [validityChecker]="form">
         <auan-witnesses-array formControlName="witnessesControl"
                               validityChecker
@@ -81,8 +81,8 @@
     </tl-expansion-panel>
 
     <!-- Проверявано лице -->
-    <tl-expansion-panel title="{{ 'auan-register.edit-auan-inspected-person' | tlTranslate }}"
-                        tooltipResourceName="auan-register.edit-auan-inspected-person-helper"
+    <tl-expansion-panel title="{{ 'auan-register.auan-inspected-person' | tlTranslate }}"
+                        tooltipResourceName="auan-register.auan-inspected-person-helper"
                         [validityChecker]="form">
         <div fxLayout="column" fxLayoutGap="1em">
             <div *ngIf="isAdding" fxLayout="row" fxLayoutAlign="start center">

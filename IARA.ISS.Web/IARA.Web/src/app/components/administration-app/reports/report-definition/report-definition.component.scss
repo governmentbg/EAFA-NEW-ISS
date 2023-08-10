@@ -7,13 +7,17 @@
     margin-top: 0;
     margin-bottom: 0;
     list-style-type: none;
+    word-wrap: break-word;
 }
 
 /*
  * This padding sets alignment of the nested nodes.
  */
 .tree .mat-nested-tree-node div[role=group] {
-    padding-left: 40px;
+    padding-left: 20px;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /*
@@ -22,18 +26,69 @@
  * under the same parent.
  */
 .tree div[role=group] > .mat-tree-node {
-    padding-left: 40px;
+    padding-left: 20px;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .hover {
     position: fixed;
     bottom: 0;
-    width:85%;
+    width: stretch;
+    height: 50px;
     cursor: pointer;
+    z-index: 2;
 }
 
-.style-menu{
+.style-menu {
     background-color: white;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
     padding: 1em;
     outline: thin;
+}
+
+.container {
+    width: 100%;
+    overflow: hidden;
+    padding-bottom: 50px;
+
+    .main-panel {
+        height: inherit;
+        float: right;
+        right: 0;
+        top: 0;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        padding-left: 35px;
+        padding-bottom: 60px;
+    }
+
+    .tree-panel {
+        height: inherit;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 1;
+        overflow: hidden;
+        border-right: 1px groove;
+        max-width: 300px;
+        padding-top: 0.5em;
+        padding-bottom: inherit;
+        transition: width 0.1s ease-in-out;
+    }
+
+    .tree-panel:hover {
+        overflow-y: auto;
+    }
+
+    .expanded-tree-panel {
+        @extend .tree-panel;
+        width: 25%;
+    }
+
+    .collapsed-tree-panel {
+        @extend .tree-panel;
+        width: 50px;
+    }
 }

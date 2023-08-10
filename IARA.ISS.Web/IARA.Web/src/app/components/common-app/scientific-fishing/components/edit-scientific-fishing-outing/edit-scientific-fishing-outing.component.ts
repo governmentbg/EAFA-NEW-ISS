@@ -207,12 +207,12 @@ export class EditScientificFishingOutingComponent implements OnInit, AfterViewIn
 
         this.outingCatchForm = new FormGroup({
             fishTypeIdControl: new FormControl(null, Validators.required),
-            catchUnder100Control: new FormControl(null, [TLValidators.number(0), Validators.required]),
-            catch100To500Control: new FormControl(null, [TLValidators.number(0), Validators.required]),
-            catch500To1000Control: new FormControl(null, [TLValidators.number(0), Validators.required]),
-            catchOver1000Control: new FormControl(null, [TLValidators.number(0), Validators.required]),
+            catchUnder100Control: new FormControl(null, [TLValidators.number(0, undefined, 0), Validators.required]),
+            catch100To500Control: new FormControl(null, [TLValidators.number(0, undefined, 0), Validators.required]),
+            catch500To1000Control: new FormControl(null, [TLValidators.number(0, undefined, 0), Validators.required]),
+            catchOver1000Control: new FormControl(null, [TLValidators.number(0, undefined, 0), Validators.required]),
             totalCatchControl: new FormControl(0),
-            totalKeptCountControl: new FormControl(null, [TLValidators.number(0), Validators.required, this.totalKeptCountValidate()])
+            totalKeptCountControl: new FormControl(null, [TLValidators.number(0, undefined, 0), Validators.required, this.totalKeptCountValidate()])
         });
 
         this.totalCatchCalculateControls = ['catchUnder100Control', 'catch100To500Control', 'catch500To1000Control', 'catchOver1000Control'];

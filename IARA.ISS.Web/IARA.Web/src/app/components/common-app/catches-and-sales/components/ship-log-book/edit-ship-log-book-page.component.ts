@@ -104,6 +104,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     public isAdd: boolean = false;
 
     public allCatchIsTransboardedValue: boolean = false;
+    public isLogBookPageDateLockedError: boolean = false;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
@@ -644,7 +645,12 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             }
             else if (errorCode === 'logBookPageDateLocked') {
                 const messageText: string = this.translationService.getValue('catches-and-sales.ship-page-date-cannot-be-chosen-error');
-                return new TLError({ text: messageText });
+                if (this.isLogBookPageDateLockedError) {
+                    return new TLError({ text: messageText, type: 'error' });
+                }
+                else {
+                    return new TLError({ text: messageText, type: 'warn' });
+                }
             }
         }
         else if (controlName === 'unloadDateTimeControl') {
@@ -665,7 +671,12 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             }
             else if (errorCode === 'logBookPageDateLocked') {
                 const messageText: string = this.translationService.getValue('catches-and-sales.ship-page-date-cannot-be-chosen-error');
-                return new TLError({ text: messageText });
+                if (this.isLogBookPageDateLockedError) {
+                    return new TLError({ text: messageText, type: 'error' });
+                }
+                else {
+                    return new TLError({ text: messageText, type: 'warn' });
+                }
             }
         }
 
@@ -914,7 +925,14 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             for (const controlName in this.form.controls) {
                 if (this.form.get(controlName)!.errors !== null && this.form.get(controlName)!.errors !== undefined) {
                     for (const key in this.form.get(controlName)!.errors) {
-                        innerErrors[key] = this.form.get(controlName)!.errors![key];
+                        if (controlName === 'fishTripEndDateTimeControl' || controlName === 'unloadDateTimeControl') {
+                            if (key !== 'logBookPageDateLocked' && !this.isLogBookPageDateLockedError) {
+                                innerErrors[key] = this.form.get(controlName)!.errors![key];
+                            }
+                        }
+                        else {
+                            innerErrors[key] = this.form.get(controlName)!.errors![key];
+                        }
                     }
                 }
             }
@@ -922,11 +940,24 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             const innerErrorKeys = Object.keys(innerErrors);
             if (innerErrorKeys.length === 0) {
                 if (this.form.errors !== null && this.form.errors !== undefined) {
-                    const errorKeys = Object.keys(this.form.errors);
+                    let errorKeys = Object.keys(this.form.errors);
+
+                    const logBookPageDateLocked: string | undefined = errorKeys.find((key: string) => key === 'logBookPageDateLocked');
+                    if (logBookPageDateLocked !== undefined && logBookPageDateLocked !== null && !this.isLogBookPageDateLockedError) {
+                        errorKeys.splice(errorKeys.indexOf(logBookPageDateLocked), 1);
+                        errorKeys = errorKeys.slice();
+                    }
 
                     if (errorKeys.length === 1 && errorKeys[0] === QUALITY_DIFF_VALIDATOR_NAME) {
                         isValid = true;
                     }
+
+                    if (errorKeys.length === 0) {
+                        isValid = true;
+                    }
+                }
+                else {
+                    isValid = true;
                 }
             }
         }

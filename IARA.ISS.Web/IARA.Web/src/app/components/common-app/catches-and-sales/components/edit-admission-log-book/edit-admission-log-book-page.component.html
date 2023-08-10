@@ -5,7 +5,7 @@
      validityCheckerGroup
      [formGroup]="form">
     <tl-card tooltipResourceName="catches-and-sales.admission-basic-information-card-helper" [validityChecker]="form">
-        <tl-card-content >
+        <tl-card-content>
             <div fxLayout="column" fxLayoutGap="1em">
                 <div fxFLex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
                     <tl-input fxFlex="25"
@@ -35,8 +35,12 @@
                     </tl-input>
                     <div *ngIf="isAdd" fxFlex="25"></div>
                 </div>
-                <div *ngIf="form.touched && form.get('handoverDateControl')?.errors?.logBookPageDateLocked" fxLayout="row" fxFlex="100">
-                    <mat-error>
+                <div *ngIf="!viewMode && form.get('handoverDateControl')?.errors?.logBookPageDateLocked" fxLayout="row" fxFlex="100">
+                    <mat-error *ngIf="!isLogBookPageDateLockedError" class="warn-orange-color">
+                        * {{ 'catches-and-sales.admission-page-cannot-add-page-after-error' | tlTranslate }} {{ form.get('handoverDateControl')?.errors?.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.admission-page-hours-after-the-admission' | tlTranslate }} {{ 'catches-and-sales.admission-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                    </mat-error>
+
+                    <mat-error *ngIf="isLogBookPageDateLockedError">
                         * {{ 'catches-and-sales.admission-page-cannot-add-page-after-error' | tlTranslate }} {{ form.get('handoverDateControl')?.errors?.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.admission-page-hours-after-the-admission' | tlTranslate }} {{ 'catches-and-sales.admission-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
                     </mat-error>
                 </div>

@@ -17,6 +17,7 @@
                  fxLayoutAlign="space-between center">
                 <tl-input fxFlex="33"
                           formControlName="numberControl"
+                          [getControlErrorLabelText]="poundnetNumErrorLabelTextMethod"
                           label="{{ 'poundnet-page.number' | tlTranslate }}"
                           tooltipResourceName="poundnet-page.number-helper">
                 </tl-input>

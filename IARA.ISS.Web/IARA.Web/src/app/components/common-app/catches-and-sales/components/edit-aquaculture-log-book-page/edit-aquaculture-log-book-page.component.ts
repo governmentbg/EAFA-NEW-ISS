@@ -44,6 +44,7 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
     public model!: AquacultureLogBookPageEditDTO;
     public service!: ICatchesAndSalesService;
     public isAdd: boolean = false;
+    public isLogBookPageDateLockedError: boolean = false;
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -135,7 +136,7 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
         this.form.markAllAsTouched();
         this.validityCheckerGroup.validate();
 
-        if (this.form.valid) {
+        if (this.isFormValid()) {
             this.fillModel();
             this.model = CommonUtils.sanitizeModelStrings(this.model);
 
@@ -167,7 +168,12 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
         if (controlName === 'fillDateControl') {
             if (errorCode === 'logBookPageDateLocked') {
                 const message: string = this.translationService.getValue('catches-and-sales.aquaculture-page-date-cannot-be-chosen-error');
-                return new TLError({ text: message });
+                if (this.isLogBookPageDateLockedError) {
+                    return new TLError({ text: message, type: 'error' });
+                }
+                else {
+                    return new TLError({ text: message, type: 'warn' });
+                }
             }
         }
 
@@ -355,6 +361,33 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
             }
 
             return null;
+        }
+    }
+
+    private isFormValid(): boolean {
+        if (this.form.valid) {
+            return true;
+        }
+        else {
+            const errors: ValidationErrors = {};
+
+            for (const key of Object.keys(this.form.controls)) {
+                if (key === 'fillDateControl' && !this.isLogBookPageDateLockedError) {
+                    for (const error in this.form.controls[key].errors) {
+                        if (error !== 'logBookPageDateLocked') {
+                            errors[key] = this.form.controls[key].errors![error];
+                        }
+                    }
+                }
+                else {
+                    const controlErrors: ValidationErrors | null = this.form.controls[key].errors;
+                    if (controlErrors !== null) {
+                        errors[key] = controlErrors;
+                    }
+                }
+            }
+
+            return Object.keys(errors).length === 0 ? true : false;
         }
     }
 }

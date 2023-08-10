@@ -214,11 +214,6 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
                 row.data.lawText = entry.lawText;
                 this.seizedFishForm.get('lawTextControl')!.setValue(row.data.lawText);
             }
-            else {
-                row.data.lawSectionId = undefined;
-                row.data.lawText = undefined;
-                this.seizedFishForm.get('lawTextControl')!.reset();
-            }
 
             this.onChanged(this.seizedFish);
             this.seizedFishForm.get('lawTextControl')!.updateValueAndValidity({ onlySelf: true });
@@ -259,7 +254,7 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
             fishTypeIdControl: new FormControl(null, [Validators.required, this.fishCountValidator()]),
             weightControl: new FormControl(null, TLValidators.number(0)),
             lengthControl: new FormControl(null, TLValidators.number(0)),
-            countControl: new FormControl(null, [Validators.required, TLValidators.number(1)]),
+            countControl: new FormControl(null, [Validators.required, TLValidators.number(1, undefined, 0)]),
             confiscationActionIdControl: new FormControl(null, Validators.required),
             applianceIdControl: new FormControl(null, Validators.required),
             turbotSizeGroupIdControl: new FormControl(null),

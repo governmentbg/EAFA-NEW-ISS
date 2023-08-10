@@ -145,7 +145,27 @@
                              label="{{ 'catches-and-sales.ship-page-all-catch-is-transboarded' | tlTranslate }}">
                 </tl-checkbox>
             </div>
-            <div fxLayout="row" fxFlex="100">
+
+            <div fxLayout="row" fxFlex="100" *ngIf="!isLogBookPageDateLockedError">
+                <mat-error *ngIf="!viewMode && form.get('unloadDateTimeControl')?.errors?.logBookPageDateLocked != null" class="warn-orange-color">
+                    <span *ngIf="form.get('unloadDateTimeControl')?.errors?.logBookPageDateLocked.periodType === 'days-after-month'">
+                        * {{ 'catches-and-sales.ship-page-cannot-add-for-chosen-unloading-date' | tlTranslate }} {{ form.get('unloadDateTimeControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.ship-page-days-have-past-from-previous-month' | tlTranslate }}. {{ 'catches-and-sales.ship-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                    </span>
+                    <span *ngIf="form.get('unloadDateTimeControl')?.errors?.logBookPageDateLocked.periodType === 'hours'">
+                        * {{ 'catches-and-sales.ship-page-cannot-add-for-chosen-unloading-date' | tlTranslate }} {{ form.get('unloadDateTimeControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.ship-page-hours-have-past-from-unloading' | tlTranslate }}. {{ 'catches-and-sales.ship-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                    </span>
+                </mat-error>
+                <mat-error *ngIf="!viewMode && form.get('fishTripEndDateTimeControl')?.errors?.logBookPageDateLocked != null" class="warn-orange-color">
+                    <span *ngIf="form.get('fishTripEndDateTimeControl')?.errors?.logBookPageDateLocked.periodType === 'days-after-month'">
+                        * {{ 'catches-and-sales.ship-page-cannot-add-for-chosen-trip-end-date' | tlTranslate }} {{ form.get('fishTripEndDateTimeControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.ship-page-days-have-past-from-previous-month' | tlTranslate }}. {{ 'catches-and-sales.ship-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                    </span>
+                    <span *ngIf="form.get('fishTripEndDateTimeControl')?.errors?.logBookPageDateLocked.periodType === 'hours'">
+                        * {{ 'catches-and-sales.ship-page-cannot-add-for-chosen-trip-end-date' | tlTranslate }} {{ form.get('fishTripEndDateTimeControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.ship-page-hours-have-past-from-trip-end-date' | tlTranslate }}. {{ 'catches-and-sales.ship-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                    </span>
+                </mat-error>
+            </div>
+
+            <div fxLayout="row" fxFlex="100" *ngIf="isLogBookPageDateLockedError">
                 <mat-error *ngIf="form.touched && form.get('unloadDateTimeControl')?.errors?.logBookPageDateLocked != null">
                     <span *ngIf="form.get('unloadDateTimeControl')?.errors?.logBookPageDateLocked.periodType === 'days-after-month'">
                         * {{ 'catches-and-sales.ship-page-cannot-add-for-chosen-unloading-date' | tlTranslate }} {{ form.get('unloadDateTimeControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.ship-page-days-have-past-from-previous-month' | tlTranslate }}. {{ 'catches-and-sales.ship-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
@@ -169,7 +189,7 @@
     <tl-expansion-panel title="{{ 'catches-and-sales.ship-page-catch-records-and-unloading-panel' | tlTranslate }}"
                         tooltipResourceName="catches-and-sales.ship-page-catch-records-and-unloading-panel-helper"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="form.errors?.hasInvalidCatchRecordDates !== true 
+                        [validityCheckerExtraCondition]="form.errors?.hasInvalidCatchRecordDates !== true
                                                          && form.errors?.invalidOriginDeclarationCatchRecords !== true
                                                          && form.errors?.noTransboardDataForTransboardedCatch !== true
                                                          && form.errors?.originDeclarationFishesRequired !== true
@@ -289,7 +309,7 @@
             <tl-card fxLayout="row"
                      tooltipResourceName="catches-and-sales.ship-page-declaration-of-origin-panel-helper"
                      validityChecker
-                     [validityCheckerExtraCondition]="form.errors?.hasInvalidCatchRecordDates !== true 
+                     [validityCheckerExtraCondition]="form.errors?.hasInvalidCatchRecordDates !== true
                                                       && form.errors?.invalidOriginDeclarationCatchRecords !== true
                                                       && form.errors?.noTransboardDataForTransboardedCatch !== true
                                                       && form.errors?.originDeclarationFishesRequired !== true

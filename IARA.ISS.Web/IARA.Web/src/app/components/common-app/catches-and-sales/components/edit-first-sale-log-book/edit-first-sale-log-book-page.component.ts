@@ -54,6 +54,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
     public isAdd: boolean = false;
 
     public noAvailableProducts: boolean = false;
+    public isLogBookPageDateLockedError: boolean = false;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
@@ -236,7 +237,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
         this.form.markAllAsTouched();
         this.validityCheckerGroup.validate();
 
-        if (this.form.valid) {
+        if (this.isFormValid()) {
             this.fillModel();
             this.model = CommonUtils.sanitizeModelStrings(this.model);
 
@@ -266,9 +267,14 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
 
     public getControlErrorLabelText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'saleDateControl') {
-            if (errorCode === 'logBookPageDateLocked') {
+            if (errorCode === 'logBookPageDateLocked') { 
                 const message: string = this.translationService.getValue('catches-and-sales.first-sale-date-cannot-be-chosen-error');
-                return new TLError({ text: message });
+                if (this.isLogBookPageDateLockedError) {
+                    return new TLError({ text: message, type: 'error' });
+                }
+                else {
+                    return new TLError({ text: message, type: 'warn' });
+                }
             }
         }
 
@@ -280,7 +286,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
             logBookNumberControl: new FormControl(),
             pageNumberControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
             statusControl: new FormControl(),
-            saleDateControl: new FormControl(undefined, [Validators.required, this.checkDateValidityVsLockPeriodsValidator()]),
+            saleDateControl: new FormControl(undefined, [Validators.required, this.checkDateValidityVsLockPeriodsValidator()]), 
             saleContractNumberControl: new FormControl(undefined, Validators.maxLength(100)),
             saleLocationControl: new FormControl(undefined, [Validators.maxLength(500), Validators.required]),
             saleContractDateControl: new FormControl(),
@@ -549,6 +555,33 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
             }
 
             return null;
+        }
+    }
+
+    private isFormValid(): boolean {
+        if (this.form.valid) {
+            return true;
+        }
+        else {
+            const errors: ValidationErrors = {};
+
+            for (const key of Object.keys(this.form.controls)) {
+                if (key === 'saleDateControl' && !this.isLogBookPageDateLockedError) {
+                    for (const error in this.form.controls[key].errors) {
+                        if (error !== 'logBookPageDateLocked') {
+                            errors[key] = this.form.controls[key].errors![error];
+                        }
+                    }
+                }
+                else {
+                    const controlErrors: ValidationErrors | null = this.form.controls[key].errors;
+                    if (controlErrors !== null) {
+                        errors[key] = controlErrors;
+                    }
+                }
+            }
+
+            return Object.keys(errors).length === 0 ? true : false;
         }
     }
 }

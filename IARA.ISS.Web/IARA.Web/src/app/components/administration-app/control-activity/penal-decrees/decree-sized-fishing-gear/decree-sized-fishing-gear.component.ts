@@ -120,7 +120,7 @@ export class DecreeSizedFishingGearComponent extends CustomFormControl<PenalDecr
     protected buildForm(): AbstractControl {
         this.seizedFishingGearForm = new FormGroup({
             fishingGearIdControl: new FormControl(null, Validators.required),
-            countControl: new FormControl(null, [Validators.required, TLValidators.number(1)]),
+            countControl: new FormControl(null, [Validators.required, TLValidators.number(1, undefined, 0)]),
             lengthControl: new FormControl(null, TLValidators.number(0)),
             netEyeSizeControl: new FormControl(null, TLValidators.number(0)),
             confiscationActionIdControl: new FormControl(null, Validators.required),

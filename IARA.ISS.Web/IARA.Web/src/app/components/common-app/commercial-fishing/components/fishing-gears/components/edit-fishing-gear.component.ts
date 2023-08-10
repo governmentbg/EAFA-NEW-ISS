@@ -25,7 +25,6 @@ import { GridRow } from '@app/shared/components/data-table/models/row.model';
 import { FishingGearMarkStatusesEnum } from '@app/enums/fishing-gear-mark-statuses.enum';
 import { FishingGearPingerStatusesEnum } from '@app/enums/fishing-gear-pinger-statuses.enum';
 import { TLValidators } from '@app/shared/utils/tl-validators';
-import { RangeInputData } from '@app/shared/components/input-controls/tl-range-input/range-input.component';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
@@ -307,18 +306,18 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     protected buildForm(): AbstractControl {
         const form = new FormGroup({
             typeControl: new FormControl(undefined, Validators.required),
-            countControl: new FormControl(undefined, TLValidators.number(0)),
+            countControl: new FormControl(undefined, TLValidators.number(0, undefined, 0)),
             netEyeSizeControl: new FormControl(undefined, TLValidators.number(0)),
             descriptionControl: new FormControl(undefined, Validators.maxLength(4000)),
-            hooksCountControl: new FormControl(undefined, TLValidators.number(0)),
+            hooksCountControl: new FormControl(undefined, TLValidators.number(0, undefined, 0)),
             lengthControl: new FormControl(undefined, TLValidators.number(0)),
             heightControl: new FormControl(undefined, TLValidators.number(0)),
-            towelLengthControl: new FormControl(undefined, TLValidators.number(0)),
-            houseLengthControl: new FormControl(undefined, TLValidators.number(0)),
-            houseWidthControl: new FormControl(undefined, TLValidators.number(0)),
+            towelLengthControl: new FormControl(undefined, TLValidators.number(0, undefined, 0)),
+            houseLengthControl: new FormControl(undefined, TLValidators.number(0, undefined, 0)),
+            houseWidthControl: new FormControl(undefined, TLValidators.number(0, undefined, 0)),
             hasPingersControl: new FormControl(),
             cordThicknessControl: new FormControl(undefined, TLValidators.number(0)),
-            lineCountControl: new FormControl(undefined, TLValidators.number(0)),
+            lineCountControl: new FormControl(undefined, TLValidators.number(0, undefined, 0)),
             netNominalLengthControl: new FormControl(undefined, TLValidators.number(0)),
             netsInFleetCountControl: new FormControl(undefined, TLValidators.number(0)),
             trawlModelControl: new FormControl(undefined, Validators.maxLength(500))
@@ -372,11 +371,11 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
                     this.setFieldsValidators(value.code);
 
                     if (value.hasHooks) {
-                        this.form.get('hooksCountControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+                        this.form.get('hooksCountControl')!.setValidators([Validators.required, TLValidators.number(0, undefined, 0)]);
                         this.form.get('hooksCountControl')!.markAsPending();
                     }
                     else {
-                        this.form.get('hooksCountControl')!.setValidators(TLValidators.number(0));
+                        this.form.get('hooksCountControl')!.setValidators(TLValidators.number(0, undefined, 0));
                         this.form.get('hooksCountControl')!.markAsPending();
                     }
                 }
@@ -384,7 +383,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
                     this.selectedGearTypeIsPoundNet = false;
                     this.setFieldsValidators(undefined);
 
-                    this.form.get('hooksCountControl')!.setValidators(TLValidators.number(0));
+                    this.form.get('hooksCountControl')!.setValidators(TLValidators.number(0, undefined, 0));
                     this.form.get('hooksCountControl')!.markAsPending();
                 }
             }
@@ -569,12 +568,12 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
     private setCountAndQuotaGearLength(gearType: NomenclatureDTO<number>): void {
         if (gearType.code !== FishingGearTypesEnum[FishingGearTypesEnum.DLN]) {
-            this.form.get('countControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+            this.form.get('countControl')!.setValidators([Validators.required, TLValidators.number(0, undefined, 0)]);
             this.form.get('countControl')!.markAsPending();
         }
         else {
             this.form.get('countControl')!.reset();
-            this.form.get('countControl')!.setValidators(TLValidators.number(0));
+            this.form.get('countControl')!.setValidators(TLValidators.number(0, undefined, 0));
             this.form.get('countControl')!.markAsPending();
         }
 
@@ -663,11 +662,11 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             //}
 
             if (FishingGearUtils.fishingGearCodesWithRequiredNumberOfLines.some(x => x === fishingGearCode)) { // трябва да има задължително Line Count
-                this.form.get('lineCountControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+                this.form.get('lineCountControl')!.setValidators([Validators.required, TLValidators.number(0, undefined, 0)]);
                 this.form.get('lineCountControl')!.markAsPending();
             }
             else {
-                this.form.get('lineCountControl')!.setValidators(TLValidators.number(0));
+                this.form.get('lineCountControl')!.setValidators(TLValidators.number(0, undefined, 0));
                 this.form.get('lineCountControl')!.markAsPending();
             }
 
@@ -722,7 +721,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             //    this.form.get('hooksCountControl')!.setValidators(TLValidators.number(0));
             //    this.form.get('hooksCountControl')!.markAsPending();
 
-            this.form.get('lineCountControl')!.setValidators(TLValidators.number(0));
+            this.form.get('lineCountControl')!.setValidators(TLValidators.number(0, undefined, 0));
             this.form.get('lineCountControl')!.markAsPending();
 
             this.form.get('netsInFleetCountControl')!.setValidators(TLValidators.number(0));

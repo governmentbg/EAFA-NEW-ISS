@@ -390,14 +390,14 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
             permitLicenseControl: new FormControl(null),
             isPermitOwnerControl: new FormControl(true),
             personControl: new FormControl(null),
-            
+
             shipControl: new FormControl({ value: null, disabled: true }),
             orderTypeControl: new FormControl(null, Validators.required),
             orderNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
             issueDateControl: new FormControl(null, Validators.required),
             effectiveDateControl: new FormControl(null),
             deliveryDateControl: new FormControl(null),
-            pointsAmountControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
+            pointsAmountControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 0)]),
             pointsTotalCountControl: new FormControl({ value: null, disabled: true }),
 
             captainControl: new FormControl(null),

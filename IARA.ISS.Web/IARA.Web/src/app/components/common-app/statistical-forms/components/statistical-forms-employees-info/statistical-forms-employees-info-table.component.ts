@@ -158,10 +158,10 @@ export class StatisticalFormsEmployeesInfoTableComponent implements OnInit, Afte
             const menWithoutPayControlName: string = row.code! + 'menWithoutPayControl';
             const womenWithPayControlName: string = row.code! + 'womenWithPayControl';
             const womenWithoutPayControlName: string = row.code! + 'womenWithoutPayControl';
-            this.formGroup.addControl(menWithPayControlName, new FormControl(row.menWithPay, TLValidators.number(0)));
-            this.formGroup.addControl(menWithoutPayControlName, new FormControl(row.menWithoutPay, TLValidators.number(0)));
-            this.formGroup.addControl(womenWithPayControlName, new FormControl(row.womenWithPay, TLValidators.number(0)));
-            this.formGroup.addControl(womenWithoutPayControlName, new FormControl(row.womenWithoutPay, TLValidators.number(0)));
+            this.formGroup.addControl(menWithPayControlName, new FormControl(row.menWithPay, TLValidators.number(0, undefined, 0)));
+            this.formGroup.addControl(menWithoutPayControlName, new FormControl(row.menWithoutPay, TLValidators.number(0, undefined, 0)));
+            this.formGroup.addControl(womenWithPayControlName, new FormControl(row.womenWithPay, TLValidators.number(0, undefined, 0)));
+            this.formGroup.addControl(womenWithoutPayControlName, new FormControl(row.womenWithoutPay, TLValidators.number(0, undefined, 0)));
         }
 
         this.formGroup.setValidators(this.payCountValidator());

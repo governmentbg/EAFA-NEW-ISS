@@ -104,7 +104,6 @@ export class FishingCapacityRegisterComponent implements AfterViewInit {
     }
 
     public openHistoryApplication(history: ShipFishingCapacityHistoryDTO): void {
-        // TODO fix audit button
         let title: string;
         let editDialog: TLMatDialog<IDialogComponent>;
         let editDialogTCtor: new (...args: any[]) => IDialogComponent;
@@ -117,9 +116,9 @@ export class FishingCapacityRegisterComponent implements AfterViewInit {
             editDialogTCtor = EditShipComponent;
             service = this.shipsService;
             auditButton = {
-                id: history.applicationId!,
+                id: history.shipId!,
                 getAuditRecordData: this.shipsService.getSimpleAudit.bind(this.shipsService),
-                tableName: 'ShipsRegister'
+                tableName: 'ShipRegister'
             };
         }
         else if (history.pageCode === PageCodeEnum.DeregShip) {
@@ -128,9 +127,9 @@ export class FishingCapacityRegisterComponent implements AfterViewInit {
             editDialogTCtor = ShipDeregistrationComponent;
             service = this.shipsService;
             auditButton = {
-                id: history.applicationId!,
+                id: history.shipId!,
                 getAuditRecordData: this.shipsService.getSimpleAudit.bind(this.shipsService),
-                tableName: 'ShipsRegister'
+                tableName: 'ShipRegister'
             };
         }
         else if (history.pageCode === PageCodeEnum.IncreaseFishCap) {
@@ -139,7 +138,7 @@ export class FishingCapacityRegisterComponent implements AfterViewInit {
             editDialogTCtor = IncreaseFishingCapacityComponent;
             service = this.service;
             auditButton = {
-                id: history.applicationId!,
+                id: history.id!,
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
                 tableName: 'ShipCapacityRegister'
             };
@@ -150,7 +149,7 @@ export class FishingCapacityRegisterComponent implements AfterViewInit {
             editDialogTCtor = ReduceFishingCapacityComponent;
             service = this.service;
             auditButton = {
-                id: history.applicationId!,
+                id: history.id!,
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
                 tableName: 'ShipCapacityRegister'
             };

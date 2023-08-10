@@ -133,11 +133,6 @@ export class AuanViolatedRegulationsComponent extends CustomFormControl<AuanViol
                 row.data.lawText = entry.lawText;
                 this.violatedRegulationsForm.get('lawTextControl')!.setValue(row.data.lawText);
             }
-            else {
-                row.data.lawSectionId = undefined;
-                row.data.lawText = undefined;
-                this.violatedRegulationsForm.get('lawTextControl')!.reset();
-            }
         });
     }
 

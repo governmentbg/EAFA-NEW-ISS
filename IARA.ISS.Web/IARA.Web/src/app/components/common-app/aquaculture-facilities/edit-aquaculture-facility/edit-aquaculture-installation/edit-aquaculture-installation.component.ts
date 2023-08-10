@@ -322,7 +322,7 @@ export class EditAquacultureInstallationComponent implements OnInit, AfterViewIn
             }),
 
             aquariumsGroup: new FormGroup({
-                countControl: new FormControl(null, [Validators.required, TLValidators.number(1)]),
+                countControl: new FormControl(null, [Validators.required, TLValidators.number(1, undefined, 0)]),
                 volumeControl: new FormControl(null, [Validators.required, TLValidators.number(1)]),
                 commentsControl: new FormControl(null, Validators.maxLength(4000))
             }),
@@ -348,14 +348,14 @@ export class EditAquacultureInstallationComponent implements OnInit, AfterViewIn
         this.basinsGroup = new FormGroup({
             basinPurposeTypeIdControl: new FormControl(null, Validators.required),
             basinMaterialTypeIdControl: new FormControl(null, Validators.required),
-            countControl: new FormControl(null, [Validators.required, TLValidators.number(1)]),
+            countControl: new FormControl(null, [Validators.required, TLValidators.number(1, undefined, 0)]),
             areaControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
             volumeControl: new FormControl(null, [Validators.required, TLValidators.number(0)])
         });
 
         this.collectorsGroup = new FormGroup({
             collectorTypeIdControl: new FormControl(null, Validators.required),
-            totalCountControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
+            totalCountControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 0)]),
             totalAreaControl: new FormControl(null, [Validators.required, TLValidators.number(0)])
         });
 
@@ -363,13 +363,13 @@ export class EditAquacultureInstallationComponent implements OnInit, AfterViewIn
             lengthControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
             widthControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
             areaControl: new FormControl(null),
-            countControl: new FormControl(null, [Validators.required, TLValidators.number(1)])
+            countControl: new FormControl(null, [Validators.required, TLValidators.number(1, undefined, 0)])
         });
 
         this.recirculatoryGroup = new FormGroup({
             basinPurposeTypeIdControl: new FormControl(null, Validators.required),
             basinMaterialTypeIdControl: new FormControl(null, Validators.required),
-            countControl: new FormControl(null, [Validators.required, TLValidators.number(1)]),
+            countControl: new FormControl(null, [Validators.required, TLValidators.number(1, undefined, 0)]),
             areaControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
             volumeControl: new FormControl(null, [Validators.required, TLValidators.number(0)])
         });

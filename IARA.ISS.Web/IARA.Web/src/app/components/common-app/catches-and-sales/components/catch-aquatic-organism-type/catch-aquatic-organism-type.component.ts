@@ -418,7 +418,7 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
 
     private setTurbotControlsValidators(): void {
         if (this.showTurbotControls === true) {
-            this.form.get('turbotCountControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+            this.form.get('turbotCountControl')!.setValidators([Validators.required, TLValidators.number(0, undefined, 0)]);
             this.form.get('turbotSizeGroupControl')!.setValidators(Validators.required);
 
             this.form.get('turbotCountControl')!.markAsPending();

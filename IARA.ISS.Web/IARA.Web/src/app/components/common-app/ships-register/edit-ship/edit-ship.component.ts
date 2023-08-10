@@ -1118,8 +1118,8 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
             form.get('additionalFishingGearControl')!.setValidators(Validators.required);
             form.get('hullMaterialControl')!.setValidators(Validators.required);
             form.get('fleetSegmentControl')!.setValidators(Validators.required);
-            form.get('totalPassengerCapacityControl')!.setValidators([TLValidators.number(0), Validators.required]);
-            form.get('crewCountControl')!.setValidators([Validators.required, Validators.maxLength(50), TLValidators.number(0)]);
+            form.get('totalPassengerCapacityControl')!.setValidators([TLValidators.number(0, undefined, 0), Validators.required]);
+            form.get('crewCountControl')!.setValidators([Validators.required, Validators.maxLength(50), TLValidators.number(0, undefined, 0)]);
         }
 
         form.get('totalLengthControl')!.setValidators([Validators.required, TLValidators.number(0), TLValidators.expectedValueMatch(this.expectedResults.totalLength)]);

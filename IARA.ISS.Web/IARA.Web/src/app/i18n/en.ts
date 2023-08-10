@@ -446,7 +446,8 @@
         'at-least-one-connection-point': 'One connection point is needed',
         'area-description': 'Area of action',
         'delete-poundnet-confirmation': 'Are you sure you want to delete poundnet',
-        'permit-license-price': 'Permit license price'
+        'permit-license-price': 'Permit license price',
+        'poundnet-num-already-exists-error': 'Poundnet num already exists'
     },
     'scientific-fishing': {
         'request-number': 'Entry number',
@@ -2357,7 +2358,18 @@
         'application-types': 'Application types',
         'application-type-name': 'Service name',
         'tickets': 'Recreational fishing ticket',
-        'associations': 'Associations'
+        'associations': 'Associations',
+        'welcome': 'Welcome to EAFA portal',
+        'log-in-paragraph': ' Входът в портала се осъществява чрез регистрация на потребител или системата за електронна автентикация. Всяко едно от средставата за автентикация ще Ви позволи да достъпите портала, но за да заявите услуга по електронен път, е необходимо да притежавате и инсталирате на Вашия компютър  квалифициран електронен подпис (КЕП).',
+        'egov-paragraph': 'В случай, че желаете електронно връчване на документ е препоръчително да имате профил в системата за сигурно електронно връчване(може да се регистрирате ',
+        'here': 'here',
+        'epay-paragraph': 'Ако изберете опция за плащане на административната такса чрез системата за електронни плащания за централната и местна администрация, е необходимо да имате регистрация ',
+        'adobe-reader-paragraph': 'Необходимо е да да имате и инсталиран локално на компютъра си Adobe Reader (можете да изтеглите актуална версия ',
+        'associations-registration-paragraph': 'Сдружения, които искат да добавят нови потребители с права за издаване на билети за любителски риболов, е необходимо да преминат през процес за създаване на нов потребител(ако все още не е създаден) и подаване на Заявление за достъп на юридическо лице(безплатна услуга на ИАРА, която се заявява  с КЕП.) ',
+        'assotiations-paragraph': 'Сдружения със съществуващи потребители с права за издаване на билети за любителски риболов в старата система на ИАРА, е необходимо да влязат в настоящия портал със своите потребител и парола и да актуализират профилните си данни. След актуализацията потребителското име ще бъде заменено с посочения e- mail, а паролата ще остане същата(освен ако потребителят не я промени в меню „Моят профил“)',
+        'tickets-buy': 'За да закупите своя (или за лице под 14 години) електронен билет  за любителски риболов като физическо лице, е необходимо единствено да създадете потребител в публичния портал на ИАРА.',
+        'tickets-log-in': 'След вход в системата изберете бутон от лявото меню „Билет за любителски риболов“ и следвайте стъпките.',
+        'tickets-pay': 'Билетът може да бъде платен чрез системата на ePay, кредитна или дебитна карта или портала за електронни плащания за централната и местна администрация('
     },
     'inspections': {
         'territory': 'Territory unit',
@@ -3288,7 +3300,10 @@
         'parameters-table-parameter-code': 'Parameter code',
         'dialog-parameter-code': 'Parameter code',
         'report-code-already-exists-error': 'There is already a report with this code in the report group.',
-        'copy': 'Copy'
+        'copy': 'Copy',
+
+        'collapse-tree': 'Hide',
+        'expand-tree': 'Show'
     },
     'report-parameter-definition': {
         'definition.filter-date-from': 'Active from',
@@ -3379,7 +3394,10 @@
         'edit-report-btn': 'Edit report',
         'copy-report-btn': 'Copy report',
         'delete-report-btn': 'Delete report',
-        'restore-report-btn': 'Restore report'
+        'restore-report-btn': 'Restore report',
+
+        'collapse-tree': 'Hide',
+        'expand-tree': 'Show'
     },
     'change-of-circumstances': {
         'add-change-of-circumstances': 'Add change',
@@ -4879,7 +4897,7 @@
         'edit-status': 'Status',
         'auan-num-already-exist-error': 'An AUAN with this number already exists',
 
-        'edit-auan-inspected-person': 'Inspected person/legal entity',
+        'auan-inspected-person': 'Inspected person/legal entity',
         'edit-inspected-entity-select': 'Select person/legal entity',
         'edit-inspected-entity-work-place': 'Place of employment',
         'edit-inspected-entity-work-position': 'Position',
