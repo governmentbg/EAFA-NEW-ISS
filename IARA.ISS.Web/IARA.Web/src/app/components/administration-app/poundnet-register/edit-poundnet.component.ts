@@ -23,6 +23,11 @@ import { IPoundnetRegisterService } from '@app/interfaces/administration-app/pou
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { RangeInputData } from '@app/shared/components/input-controls/tl-range-input/range-input.component';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorCode } from '@app/models/common/exception.model';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'edit-poundnet-component',
@@ -44,6 +49,8 @@ export class EditPoundnetComponent implements OnInit, IDialogComponent {
     public viewMode: boolean = false;
     public gpsCoordinatesTouched: boolean = false;
 
+    public poundnetNumErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.numberErrorLabelText.bind(this);
+
     @ViewChild(TLMapViewerComponent)
     private mapViewer!: TLMapViewerComponent;
 
@@ -53,15 +60,21 @@ export class EditPoundnetComponent implements OnInit, IDialogComponent {
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
 
-    private service: IPoundnetRegisterService;
-    private nomenclatures: CommonNomenclatures;
+    private readonly service: IPoundnetRegisterService;
+    private readonly nomenclatures: CommonNomenclatures;
+    private readonly translate: FuseTranslationLoaderService;
 
     private model!: PoundnetRegisterDTO;
     private poundNetId!: number;
 
-    public constructor(service: PoundnetRegisterService, nomenclatures: CommonNomenclatures) {
+    public constructor(
+        service: PoundnetRegisterService,
+        nomenclatures: CommonNomenclatures,
+        translate: FuseTranslationLoaderService
+    ) {
         this.service = service;
         this.nomenclatures = nomenclatures;
+        this.translate = translate;
 
         this.buildForm();
 
@@ -148,6 +161,9 @@ export class EditPoundnetComponent implements OnInit, IDialogComponent {
                     next: () => {
                         NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.PoundNets);
                         dialogClose(this.model);
+                    },
+                    error: (err: HttpErrorResponse) => {
+                        this.handlePoundNetNumException(err);
                     }
                 });
             } else {
@@ -156,6 +172,9 @@ export class EditPoundnetComponent implements OnInit, IDialogComponent {
                         this.model.id = id;
                         NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.PoundNets);
                         dialogClose(this.model);
+                    },
+                    error: (err: HttpErrorResponse) => {
+                        this.handlePoundNetNumException(err);
                     }
                 });
             }
@@ -188,6 +207,15 @@ export class EditPoundnetComponent implements OnInit, IDialogComponent {
         }
     }
 
+    public numberErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+        if (controlName === 'numberControl') {
+            if (errorCode === 'poundNetNumAlreadyExists' && error === true) {
+                return new TLError({ type: 'error', text: this.translate.getValue('poundnet-page.poundnet-num-already-exists-error') });
+            }
+        }
+        return undefined;
+    }
+
     private buildForm(): void {
         this.form = new FormGroup({
             numberControl: new FormControl(undefined, [Validators.required, Validators.maxLength(20)]),
@@ -210,7 +238,7 @@ export class EditPoundnetComponent implements OnInit, IDialogComponent {
             populatedAreaControl: new FormControl(undefined),
             regionControl: new FormControl(undefined, Validators.maxLength(100)),
             placeDescriptionControl: new FormControl(undefined, Validators.maxLength(500)),
-            permitLicensePriceControl: new FormControl(undefined, TLValidators.number(0))
+            permitLicensePriceControl: new FormControl(undefined, TLValidators.number(0, undefined, 2))
         }, this.coordinatesValidator());
 
         this.coordinatesForm = new FormGroup({
@@ -348,5 +376,13 @@ export class EditPoundnetComponent implements OnInit, IDialogComponent {
 
             return null;
         };
+    }
+
+    private handlePoundNetNumException(response: HttpErrorResponse) {
+        if (response.error?.code === ErrorCode.PoundNetNumAlreadyExists) {
+            this.form.get('numberControl')!.setErrors({ 'poundNetNumAlreadyExists': true });
+            this.form.get('numberControl')!.markAsTouched();
+            this.validityCheckerGroup.validate();
+        }
     }
 }

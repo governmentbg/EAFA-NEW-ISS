@@ -52,13 +52,25 @@
                          [max]="currentDate">
                 </tl-date>
             </div>
-            <div *ngIf="form.touched && form.get('saleDateControl')?.errors?.logBookPageDateLocked" fxFlex="100" fxLayout="row">
-                <mat-error *ngIf="form.get('saleDateControl').errors.logBookPageDateLocked.hasAboveLimitAnnualTurnOver">
-                    * {{ 'catches-and-sales.first-sale-cannot-add-page-turnover-above-limit-error' | tlTranslate }} {{ form.get('saleDateControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.first-sale-hours-after-sale' | tlTranslate }}. {{ 'catches-and-sales.first-sale-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
-                </mat-error>
-                <mat-error *ngIf="!form.get('saleDateControl').errors.logBookPageDateLocked.hasAboveLimitAnnualTurnOver">
-                    * {{ 'catches-and-sales.first-sale-cannot-add-page-turnover-below-limit-error' | tlTranslate }} {{ form.get('saleDateControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.first-sale-hours-after-sale' | tlTranslate }}. {{ 'catches-and-sales.first-sale-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
-                </mat-error>
+            <div *ngIf="!viewMode && form.get('saleDateControl')?.errors?.logBookPageDateLocked" fxFlex="100" fxLayout="row">
+                <div *ngIf="form.get('saleDateControl').errors.logBookPageDateLocked.hasAboveLimitAnnualTurnOver">
+                    <mat-error *ngIf="!isLogBookPageDateLockedError" class="warn-orange-color">
+                        * {{ 'catches-and-sales.first-sale-cannot-add-page-turnover-above-limit-error' | tlTranslate }} {{ form.get('saleDateControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.first-sale-hours-after-sale' | tlTranslate }}. {{ 'catches-and-sales.first-sale-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                    </mat-error>
+
+                    <mat-error *ngIf="isLogBookPageDateLockedError">
+                        * {{ 'catches-and-sales.first-sale-cannot-add-page-turnover-above-limit-error' | tlTranslate }} {{ form.get('saleDateControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.first-sale-hours-after-sale' | tlTranslate }}. {{ 'catches-and-sales.first-sale-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                    </mat-error>
+                </div>
+                <div *ngIf="!form.get('saleDateControl').errors.logBookPageDateLocked.hasAboveLimitAnnualTurnOver">
+                    <mat-error *ngIf="!isLogBookPageDateLockedError" class="warn-orange-color">
+                        * {{ 'catches-and-sales.first-sale-cannot-add-page-turnover-below-limit-error' | tlTranslate }} {{ form.get('saleDateControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.first-sale-hours-after-sale' | tlTranslate }}. {{ 'catches-and-sales.first-sale-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                    </mat-error>
+
+                    <mat-error *ngIf="isLogBookPageDateLockedError">
+                        * {{ 'catches-and-sales.first-sale-cannot-add-page-turnover-below-limit-error' | tlTranslate }} {{ form.get('saleDateControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.first-sale-hours-after-sale' | tlTranslate }}. {{ 'catches-and-sales.first-sale-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                    </mat-error>
+                </div>
             </div>
         </tl-card-content>
     </tl-card>

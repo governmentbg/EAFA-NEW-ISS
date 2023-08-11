@@ -198,7 +198,7 @@ export class AcquiredFishingCapacityComponent extends CustomFormControl<Acquired
 
             const certificates = (this.certificatesArray.value as FishingCapacityCertificateNomenclatureDTO[]) ?? [];
             result.capacityLicenceIds = certificates
-                .filter(x => x !== undefined && x !== null)
+                .filter(x => x !== undefined && x !== null && typeof (x.value) === 'number') 
                 .map(x => x.value!);
         }
 

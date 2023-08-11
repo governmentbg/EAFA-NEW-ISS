@@ -172,7 +172,7 @@ export class EditYearlyQuotaComponent implements OnInit, IDialogComponent {
         this.editForm = new FormGroup({
             yearControl: new FormControl(null, Validators.required),
             fishesControl: new FormControl(null, Validators.required),
-            quotaSizeControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
+            quotaSizeControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 0)]),
             filesControl: new FormControl(null),
             quotaChangeBasisControl: new FormControl(null, [Validators.required, Validators.maxLength(1000)]),
             portsControl: new FormControl(null)

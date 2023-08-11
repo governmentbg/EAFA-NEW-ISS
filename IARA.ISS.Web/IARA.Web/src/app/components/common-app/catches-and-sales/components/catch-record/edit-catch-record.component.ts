@@ -196,7 +196,7 @@ export class EditCatchRecordComponent implements AfterViewInit, IDialogComponent
             gearExitDateTimeControl: new FormControl(undefined, Validators.required),
             hasNoGearExitControl: new FormControl(false),
             totalTimeControl: new FormControl(undefined, this.totalTimeGreaterThanZeroValidator()),
-            catchOperationsCountControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
+            catchOperationsCountControl: new FormControl(undefined, [Validators.required, TLValidators.number(0, undefined, 0)]),
             depthControl: new FormControl(undefined, Validators.required),
 
             aquaticOrganismTypesControl: new FormControl()

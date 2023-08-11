@@ -93,7 +93,7 @@ export class EditInstallationNetCageComponent implements IDialogComponent {
         this.form = new FormGroup({
             typeControl: new FormControl(null, Validators.required),
             shapeControl: new FormControl(null, Validators.required),
-            countControl: new FormControl(null, [Validators.required, TLValidators.number(1)]),
+            countControl: new FormControl(null, [Validators.required, TLValidators.number(1, undefined, 0)]),
             radiusControl: new FormControl(null, TLValidators.number(0)),
             lengthControl: new FormControl(null, TLValidators.number(0)),
             widthControl: new FormControl(null, TLValidators.number(0)),

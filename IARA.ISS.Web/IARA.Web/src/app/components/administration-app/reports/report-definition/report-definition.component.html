@@ -1,36 +1,69 @@
-﻿<div #container fxFlexFill fxLayoutGap="1em" class="space-cards" [formGroup]="formGroup">
-    <div fxLayout="column" fxFlex="20">
+﻿<div #container 
+     fxFlexFill 
+     fxLayoutGap="1em" 
+     class="space-cards container" 
+     [formGroup]="formGroup"
+     [style.height.px]="containerHeightPx">
+    <div fxLayout="column"
+         class="tree-panel"
+         [class.expanded-tree-panel]="isTreeExpanded"
+         [class.collapsed-tree-panel]="!isTreeExpanded"
+         (transitionend)="onTreePanelToggled($event)">
+
+        <tl-icon-button *ngIf="!isTreeExpanded"
+                        icon="arrow_forward_ios"
+                        (buttonClicked)="toggleTree()"
+                        tooltipText="{{ 'report-view.expand-tree' | tlTranslate }}">
+        </tl-icon-button>
+
         <!-- Таблици -->
-        <tl-card fxFlexFill>
-            <tl-card-title>{{ 'report-definition.tables-title' | tlTranslate }}</tl-card-title>
-            <tl-card-content>
-                <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="tree">
-                    <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
-                        {{ node.displayName }}
-                    </mat-tree-node>
-                    <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
-                        <div class="mat-tree-node">
-                            <button mat-icon-button matTreeNodeToggle
-                                    [attr.aria-label]="'Toggle ' + node.displayName">
-                                <mat-icon class="mat-icon-rtl-mirror">
-                                    {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
-                                </mat-icon>
-                            </button>
+        <div *ngIf="isTreeExpanded">
+            <tl-card>
+                <tl-card-title fxFlexFill fxLayoutAlign="space-between center">
+                    <span>{{ 'report-definition.tables-title' | tlTranslate }}</span>
+
+                    <tl-icon-button icon="arrow_back_ios"
+                                    (buttonClicked)="toggleTree()"
+                                    tooltipText="{{ 'report-view.collapse-tree' | tlTranslate }}">
+                    </tl-icon-button>
+                </tl-card-title>
+
+                <tl-card-content>
+                    <mat-tree [dataSource]="dataSource"
+                              [treeControl]="treeControl"
+                              class="tree">
+                        <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
                             {{ node.displayName }}
-                        </div>
-                        <div [class.tree-invisible]="!treeControl.isExpanded(node)"
-                             role="group">
-                            <ng-container matTreeNodeOutlet></ng-container>
-                        </div>
-                    </mat-nested-tree-node>
-                </mat-tree>
-            </tl-card-content>
-        </tl-card>
+                        </mat-tree-node>
+
+                        <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+                            <div class="mat-tree-node">
+                                <button mat-icon-button matTreeNodeToggle
+                                        [attr.aria-label]="'Toggle ' + node.displayName">
+                                    <mat-icon class="mat-icon-rtl-mirror">
+                                        {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
+                                    </mat-icon>
+                                </button>
+                                {{ node.displayName }}
+                            </div>
+
+                            <div [class.tree-invisible]="!treeControl.isExpanded(node)"
+                                 role="group">
+                                <ng-container matTreeNodeOutlet></ng-container>
+                            </div>
+                        </mat-nested-tree-node>
+                    </mat-tree>
+                </tl-card-content>
+            </tl-card>
+        </div>
     </div>
 
-    <div fxLayout="column" fxFlex="80" fxLayoutGap="1em">
-
-        <!-- Обща информация за справка -->
+    <!-- Обща информация за справка -->
+    <div fxLayout="column" 
+         fxLayoutGap="1em" 
+         class="main-panel"
+         [style.width.px]="mainPanelWidthPx"
+         [style.height.px]="mainPanelHeightPx">
         <tl-expansion-panel title="{{ 'report-definition.general-information-title' | tlTranslate }}"
                             tooltipResourceName="report-definition.general-information-title-helper">
             <div fxLayout="column" fxLayoutGap="1em" formGroupName="generalInformationGroup">
@@ -40,10 +73,12 @@
                               fxFlex="75"
                               tooltipResourceName="report-definition.general-information-report-title-helper">
                     </tl-input>
-                    <div class="container" fxLayout="row" fxFlex="24">
-                        <div class="input-group-addon" fxFlex="20" fxLayoutAlign="start center">
+
+                    <div class="container" fxLayout="row" fxFlex="25">
+                        <div class="input-group-addon" fxFlex="20" fxLayoutAlign="center center">
                             <i [ngClass]="iconNameControl.value">{{ iconNameControl.value }} </i>
                         </div>
+
                         <mat-form-field fxFlex="80">
                             <mat-label>{{ 'report-definition.report-icon' | tlTranslate }}</mat-label>
                             <input matInput
@@ -64,6 +99,7 @@
                         </mat-form-field>
                     </div>
                 </div>
+
                 <div fxLayout="row" fxLayoutGap="1em" fxFlex>
                     <tl-input label="{{ 'report-definition.general-information-report-code' | tlTranslate }}"
                               formControlName="codeControl"
@@ -71,6 +107,7 @@
                               [getControlErrorLabelText]="getReportCodeErrorTextMethod"
                               tooltipResourceName="report-definition.general-information-report-code-helper">
                     </tl-input>
+
                     <tl-select label="{{ 'report-definition.report-type' | tlTranslate }}"
                                formControlName="reportTypeControl"
                                [options]="reportTypes"
@@ -78,29 +115,32 @@
                                tooltipResourceName="report-definition.report-type-helper">
                     </tl-select>
                 </div>
+
                 <tl-textarea label="{{ 'report-definition.general-information-report-description' | tlTranslate }}"
                              formControlName="descriptionControl"
                              tooltipResourceName="report-definition.general-information-report-description-helper">
                 </tl-textarea>
 
                 <div fxLayout="row" fxLayoutGap="1em" fxFlex>
-
                     <tl-input label="{{ 'report-definition.last-run-user' | tlTranslate }}"
                               formControlName="lastRunUserControl"
                               fxFlex="33"
                               tooltipResourceName="report-definition.last-run-user-helper">
                     </tl-input>
+
                     <tl-date-time label="{{ 'report-definition.last-run-date-time' | tlTranslate }}"
                                   formControlName="lastRunDateTimeControl"
                                   fxFlex="33"
                                   tooltipResourceName="report-definition.last-run-date-time-helper">
                     </tl-date-time>
+
                     <tl-input label="{{ 'report-definition.last-run-duration-sec' | tlTranslate }}"
                               formControlName="lastRunDurationSecControl"
                               fxFlex="33"
                               tooltipResourceName="report-definition.last-run-duration-sec-helper">
                     </tl-input>
                 </div>
+
                 <div fxLayout="row" fxLayoutGap="1em" fxFlex>
                     <tl-autocomplete label="{{ 'report-definition.report-group' | tlTranslate }}"
                                      formControlName="reportGroupControl"
@@ -108,6 +148,7 @@
                                      fxFlex="75"
                                      tooltipResourceName="report-definition.report-group-helper">
                     </tl-autocomplete>
+
                     <tl-input label="{{ 'report-definition.general-information-order-num' | tlTranslate }}"
                               formControlName="orderNumControl"
                               fxFlex="25"
@@ -127,6 +168,7 @@
                                      columnName="{{ 'report-definition.access-management-selected-users' | tlTranslate }}"
                                      fxFlex="50">
                 </simple-select-table>
+
                 <simple-select-table formControlName="selectedRolesControl"
                                      [allRows]="roles"
                                      autocompleteLabel="{{ 'report-definition.access-management-add-role' | tlTranslate }}"
@@ -143,6 +185,7 @@
                         [reportInfo]="reportInfo"
                         [hasExecuteTable]="true">
             </report-sql>
+
             <mat-error *ngIf="formGroup.controls.queryControl.errors?.invalidSqlQuery">
                 * {{ 'report-view.invalid-sql' | tlTranslate }}
             </mat-error>
@@ -186,9 +229,10 @@
                              columnName="{{ 'report-definition.parameters-table-parameter-is-required' | tlTranslate }}"
                              propertyName="isMandatory">
                 </data-column>
-                <data-template-column [flexRate]="0.4">
+
+                <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
                     <ng-template let-row="row" ngx-datatable-cell-template>
-                        <div fxLayout="row wrap" fxLayoutAlign="end center" fxLayoutGap="1em">
+                        <div fxLayout="row wrap" fxLayoutAlign="end center">
                             <tl-icon-button icon="visibility"
                                             (buttonClicked)="addOrEditParameter(row.data, true)"
                                             iconClass="accent-color">
@@ -213,25 +257,28 @@
             </tl-data-table>
         </tl-expansion-panel>
     </div>
+</div>
 
-    <div class="hover style-menu"
-         fxLayout="row"
-         fxLayoutAlign="end center"
-         fxLayoutGap="2em">
-        <tl-audit [auditInfo]="auditInfo"
-                  (openAudit)="auditBtnClicked()"
-                  (openDetailedAudit)="detailedAuditClicked()">
-        </tl-audit>
-        <button (click)="cancelBtnClicked()"
-                mat-raised-button
-                color="primary">
-            {{ 'report-definition.general-information-report-cancel-button' | tlTranslate }}
-        </button>
-        <button *ngIf="!viewMode"
-                (click)="saveBtnClicked()"
-                mat-raised-button
-                color="accent">
-            {{ 'report-definition.general-information-report-save-button' | tlTranslate }}
-        </button>
-    </div>
+<!-- Бутони -->
+<div class="hover style-menu"
+     fxLayout="row"
+     fxLayoutAlign="end center"
+     fxLayoutGap="2em">
+    <tl-audit [auditInfo]="auditInfo"
+              (openAudit)="auditBtnClicked()"
+              (openDetailedAudit)="detailedAuditClicked()">
+    </tl-audit>
+
+    <button (click)="cancelBtnClicked()"
+            mat-raised-button
+            color="primary">
+        {{ 'report-definition.general-information-report-cancel-button' | tlTranslate }}
+    </button>
+
+    <button *ngIf="!viewMode"
+            (click)="saveBtnClicked()"
+            mat-raised-button
+            color="accent">
+        {{ 'report-definition.general-information-report-save-button' | tlTranslate }}
+    </button>
 </div>

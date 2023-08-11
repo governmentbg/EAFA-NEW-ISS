@@ -24,3 +24,67 @@
 .tree div[role=group] > .mat-tree-node {
     padding-left: 12px;
 }
+
+.container {
+    width: 100%;
+
+    .main-panel {
+        height: inherit;
+        float: right;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .tree-panel {
+        height: inherit;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 1;
+        overflow: hidden;
+        border-right: 1px groove;
+        max-width: 25%;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        transition: width 0.1s ease-in-out;
+    }
+
+    .tree-panel:hover {
+        overflow-y: scroll;
+    }
+
+    .expanded-tree-panel {
+        @extend .tree-panel;
+        width: 25%;
+    }
+
+    .collapsed-tree-panel {
+        @extend .tree-panel;
+        width: 50px;
+    }
+}
+
+::ng-deep #reports-tree {
+    mat-tree-node {
+        min-height: 30px;
+
+        .mat-button {
+            width: 100%;
+
+            .mat-button-wrapper {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                text-align: left;
+            }
+        }
+    }
+}
+
+.selected-node {
+    background-color: rgb(235, 235, 235) !important;
+}

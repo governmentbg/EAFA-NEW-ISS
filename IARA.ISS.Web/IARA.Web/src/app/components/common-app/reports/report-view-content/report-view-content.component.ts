@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+﻿import { AfterViewInit, Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { PermissionsService } from '@app/shared/services/permissions.service';
@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 import { IReportService } from '@app/interfaces/administration-app/report.interface';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { EditReportParamsModel } from '../models/edit-report-params.model';
+import { MenuService } from '@app/shared/services/menu.service';
 
 @Component({
     selector: 'report-view-content',
@@ -42,6 +43,7 @@ export class ReportViewContentComponent implements OnInit, AfterViewInit {
     public selectedReportNodeId: number;
     public lastReportNodeId: number;
     public name!: string;
+    public isTreeExpanded: boolean = true;
 
     public canAddReport!: boolean;
     public canEditReport!: boolean;
@@ -49,24 +51,38 @@ export class ReportViewContentComponent implements OnInit, AfterViewInit {
     public canRestoreReport!: boolean;
     public canReadReport!: boolean;
 
+    public mainPanelWidthPx: number = 0;
+    public containerHeightPx: number = 0;
+    public mainPanelHeightPx: number = 0;
+
+    private host: HTMLElement;
+    private toolbarElement!: HTMLElement;
+    private containerElement!: HTMLElement;
+    private treePanelElement!: HTMLElement;
+
     private readonly router: Router;
     private readonly translateService: FuseTranslationLoaderService;
     private readonly permissionsService: PermissionsService;
+    private menuService: MenuService;
 
     private reportNodes!: ReportNodeDTO[];
     private filteredReportNodes: ReportNodeDTO[] = [];
     private editDialog: TLMatDialog<EditReportViewComponent>;
     private confirmationDialog: TLConfirmDialog;
 
-    public constructor(router: Router,
+    public constructor(
+        router: Router,
         translateService: FuseTranslationLoaderService,
         permissionsService: PermissionsService,
         editDialog: TLMatDialog<EditReportViewComponent>,
-        confirmationDialog: TLConfirmDialog
-        ) {
+        confirmationDialog: TLConfirmDialog,
+        menuService: MenuService,
+        host: ElementRef
+    ) {
         this.router = router;
         this.translateService = translateService;
         this.permissionsService = permissionsService;
+        this.menuService = menuService;
 
         this.filterGroup = new FormGroup({
             keywordSearchControl: new FormControl()
@@ -76,6 +92,8 @@ export class ReportViewContentComponent implements OnInit, AfterViewInit {
             addGroupControl: new FormControl(),
             switchReportStateControl: new FormControl()
         });
+
+        this.host = host.nativeElement as HTMLElement;
 
         this.canAddReport = this.permissionsService.has(PermissionsEnum.ReportAddRecords);
         this.canEditReport = this.permissionsService.has(PermissionsEnum.ReportEditRecords);
@@ -99,6 +117,17 @@ export class ReportViewContentComponent implements OnInit, AfterViewInit {
     }
 
     public ngAfterViewInit(): void {
+        this.calculateMainPanelWidthPx();
+        this.calculateContainerHeightPx();
+
+        this.menuService.folded.subscribe({
+            next: () => {
+                setTimeout(() => {
+                    this.calculateMainPanelWidthPx();
+                });
+            }
+        });
+
         this.filterGroup.controls.keywordSearchControl.valueChanges.subscribe({
             next: (value: string) => {
                 if (value.length > 2) {
@@ -118,6 +147,12 @@ export class ReportViewContentComponent implements OnInit, AfterViewInit {
                 }
             }
         });
+    }
+
+    @HostListener('window:resize')
+    public onWindowResize(): void {
+        this.calculateContainerHeightPx();
+        this.calculateMainPanelWidthPx();
     }
 
     public closeDialogBtnClicked(closeFn: DialogCloseCallback): void {
@@ -147,6 +182,8 @@ export class ReportViewContentComponent implements OnInit, AfterViewInit {
         this.lastReportNodeId = reportNodeId;
 
         this.name = name;
+
+        this.calculateMainPanelWidthPx();
     }
 
     public openEditComponent(id: number, isAdd: boolean = false, viewMode: boolean = false, isCopy: boolean = false): void {
@@ -166,7 +203,6 @@ export class ReportViewContentComponent implements OnInit, AfterViewInit {
 
     public switchReportNodeState(): void {
         this.showActiveNodes = !this.showActiveNodes;
-
         this.dataSource.data = this.filterNodeState();
     }
 
@@ -289,6 +325,23 @@ export class ReportViewContentComponent implements OnInit, AfterViewInit {
             })
     }
 
+    public toggleTree(): void {
+        if (this.isTreeExpanded) {
+            this.isTreeExpanded = false;
+        }
+        else {
+            setTimeout(() => {
+                this.isTreeExpanded = true;
+            }, 180);
+        }
+    }
+
+    public onTreePanelToggled(event: TransitionEvent): void {
+        if (event.propertyName === 'width') {
+            this.calculateMainPanelWidthPx();
+        }
+    }
+
     private refreshReportNodes(): void {
         this.reportService.getReportNodes().subscribe({
             next: (reportNodes: ReportNodeDTO[]) => {
@@ -345,5 +398,26 @@ export class ReportViewContentComponent implements OnInit, AfterViewInit {
         }
 
         return filteredReportNodes;
+    }
+
+    private calculateContainerHeightPx(): void {
+        if (!this.toolbarElement) {
+            this.toolbarElement = document.getElementsByTagName('toolbar').item(0) as HTMLElement;
+        }
+
+        this.containerHeightPx = window.innerHeight - this.toolbarElement.offsetHeight;
+        this.mainPanelHeightPx = this.containerHeightPx;
+    }
+
+    private calculateMainPanelWidthPx(): void {
+        if (!this.containerElement) {
+            this.containerElement = this.host.getElementsByClassName('container').item(0) as HTMLElement;
+        }
+
+        if (!this.treePanelElement) {
+            this.treePanelElement = this.host.getElementsByClassName('tree-panel').item(0) as HTMLElement;
+        }
+
+        this.mainPanelWidthPx = this.containerElement.offsetWidth - this.treePanelElement.offsetWidth;
     }
 }
