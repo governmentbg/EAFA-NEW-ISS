@@ -64,5 +64,9 @@
         <tl-checkbox formControlName="inspectorIdentifiedControl"
                      label="{{ 'inspections.inspector-identified' | tlTranslate }}">
         </tl-checkbox>
+
+        <mat-error *ngIf="form.touched && inspectorExists">
+            * {{ 'inspections.inspector-already-exists-error' | tlTranslate }}
+        </mat-error>
     </div>
 </div>

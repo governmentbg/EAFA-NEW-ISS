@@ -82,6 +82,10 @@
                                  tooltipResourceName="patrol-vehicles.vessel-type-helper">
                 </tl-autocomplete>
             </div>
+
+            <mat-error *ngIf="editVehicleForm.touched && editVehicleForm.errors?.patrolVehicleAlreadyExists">
+                * {{ 'patrol-vehicles.patrol-vehicle-already-exists-error' | tlTranslate }}
+            </mat-error>
         </tl-card-content>
     </tl-card>
 </div>

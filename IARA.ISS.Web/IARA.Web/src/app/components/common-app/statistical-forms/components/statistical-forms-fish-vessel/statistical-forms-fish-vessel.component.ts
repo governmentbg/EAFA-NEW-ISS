@@ -771,6 +771,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
 
     private fillModelRegister(model: StatisticalFormFishVesselEditDTO) {
         model.submittedFor = this.form.get('submittedForControl')!.value;
+        model.year = (this.form.get('yearControl')!.value as Date)?.getFullYear();
         model.shipId = this.form.get('shipNameControl')!.value?.value;
         model.shipPrice = this.form.get('shipPriceControl')!.value;
         model.shipYears = this.form.get('shipYearsControl')!.value;

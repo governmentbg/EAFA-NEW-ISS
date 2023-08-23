@@ -2451,6 +2451,8 @@
         'country': 'Държава',
         'head-of-inspection': 'Водещ инспектор на инспекцията',
         'inspector-identified': 'Инспекторът се идентифицира',
+        'inspector-already-exists-error': 'Инспекторът вече съществува в регистъра на инспектори',
+        'patrol-vehicle-already-exists-error': 'Патрулното средство вече съществува в регистъра на патрулните средства',
         'report-num-on-save': 'Създава се при запазване',
         'edit-inspection-files': 'Файлове',
         'vehicle-name': 'Име',
@@ -3794,7 +3796,8 @@
         'edit-patrol-vehicles-dialog-title': 'Редакция на патрулно средство',
         'add-patrol-vehicles-dialog-title': 'Добавяне на патрулно средство',
         'edit-patrol-vehicle-card-title': 'Основна информация',
-        'invalid-cfr': 'Невалиден CFR'
+        'invalid-cfr': 'Невалиден CFR',
+        'patrol-vehicle-already-exists-error': 'Патрулното средство вече съществува в регистъра'
     },
     'catches-and-sales': {
         'log-book-page-number': 'Номер на страница от хартиен дневник',
