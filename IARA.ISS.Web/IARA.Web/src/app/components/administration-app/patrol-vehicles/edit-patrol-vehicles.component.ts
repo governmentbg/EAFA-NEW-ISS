@@ -1,7 +1,6 @@
 ﻿import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
-
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
@@ -17,6 +16,8 @@ import { TLValidators } from '@app/shared/utils/tl-validators';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { PatrolVehiclesTypeEnum } from '@app/enums/patrol-vehicles-type.enum';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorCode } from '@app/models/common/exception.model';
 
 @Component({
     selector: 'edit-patrol-vehicles',
@@ -33,6 +34,8 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
     public vehicleType: PatrolVehiclesTypeEnum | undefined;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
+
+    public hasPatrolVehicleAlreadyExistsError: boolean = false;
 
     private service: PatrolVehiclesService;
     private translate: FuseTranslationLoaderService;
@@ -103,6 +106,7 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
                 else {
                     this.vehicleType = undefined;
                 }
+
                 this.editVehicleForm.get('registerNumControl')!.markAsPending({ emitEvent: false });
                 this.editVehicleForm.get('registerNumControl')!.updateValueAndValidity({ emitEvent: false });
                 this.editVehicleForm.get('cfrControl')!.markAsPending({ emitEvent: false });
@@ -133,6 +137,9 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
                 this.service.editPatrolVehicle(this.model).subscribe({
                     next: () => {
                         dialogClose(this.model);
+                    },
+                    error: (err: HttpErrorResponse) => {
+                        this.handlePatrolVehicleExistsException(err);
                     }
                 });
             }
@@ -141,6 +148,9 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
                     next: (id: number) => {
                         this.model.id = id;
                         dialogClose(this.model);
+                    },
+                    error: (err: HttpErrorResponse) => {
+                        this.handlePatrolVehicleExistsException(err);
                     }
                 });
             }
@@ -173,6 +183,13 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
             mmsiControl: new FormControl(null, [TLValidators.exactLength(9), TLValidators.number(0)]),
             vesselTypeIdControl: new FormControl(),
             flagCountryIdControl: new FormControl()
+        }, this.uniquePatrolVehicleValidator());
+
+        this.editVehicleForm.valueChanges.subscribe({
+            next: () => {
+                this.hasPatrolVehicleAlreadyExistsError = false;
+                this.editVehicleForm.updateValueAndValidity({ emitEvent: false });
+            }
         });
     }
 
@@ -229,6 +246,27 @@ export class EditPatrolVehiclesComponent implements OnInit, AfterViewInit, IDial
         }
         else {
             this.model.cfr = this.editVehicleForm.get('registerNumControl')!.value;
+        }
+    }
+
+    private handlePatrolVehicleExistsException(response: HttpErrorResponse): void {
+        if (response.error?.code === ErrorCode.PatrolVehicleAlreadyExists) {
+            this.hasPatrolVehicleAlreadyExistsError = true;
+            this.editVehicleForm.updateValueAndValidity({ emitEvent: false });
+        }
+    }
+
+    private uniquePatrolVehicleValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === null || control === undefined) {
+                return null;
+            }
+
+            if (this.hasPatrolVehicleAlreadyExistsError) {
+                return { 'patrolVehicleAlreadyExists': true };
+            }
+
+            return null;
         }
     }
 }

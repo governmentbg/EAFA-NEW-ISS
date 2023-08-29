@@ -22,9 +22,11 @@ import { InspectionsFilters } from '@app/models/generated/filters/InspectionsFil
 import { AreaTypes } from '@app/shared/enums/area-type.enum';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { RequestService } from '@app/shared/services/request.service';
-import { Observable, of } from 'rxjs';
-import { DeclarationLogBookTypeEnum } from '../../enums/declaration-log-book-type.enum';
+import { Observable } from 'rxjs';
+import { DeclarationLogBookTypeEnum } from '@app/enums/declaration-log-book-type.enum';
+import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
 import { BaseAuditService } from '../common-app/base-audit.service';
+import { InspectorDuringInspectionDTO } from '@app/models/generated/dtos/InspectorDuringInspectionDTO';
 
 
 @Injectable({
@@ -296,5 +298,13 @@ export class InspectionsService extends BaseAuditService {
         const service: string = 'DownloadFluxXml' + InspectionTypesEnum[type];
 
         return this.requestService.downloadPost(this.area, this.controller, service, '', id);
+    }
+
+    public unregisteredInspectorExists(inspector: InspectorDuringInspectionDTO): Observable<boolean> {
+        return this.requestService.post(this.area, this.controller, 'UnregisteredInspectorExists', inspector);
+    }
+
+    public unregisteredPatrolVehicleExists(vessel: VesselDuringInspectionDTO): Observable<boolean> {
+        return this.requestService.post(this.area, this.controller, 'UnregisteredPatrolVehicleExists', vessel);
     }
 }

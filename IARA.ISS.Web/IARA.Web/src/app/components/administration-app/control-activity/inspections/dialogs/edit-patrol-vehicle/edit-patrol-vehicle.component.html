@@ -70,6 +70,10 @@
                          [options]="patrolVehicleTypes">
         </tl-autocomplete>
 
+        <mat-error *ngIf="form.touched && patrolVehicleExists">
+            * {{ 'inspections.patrol-vehicle-already-exists-error' | tlTranslate }}
+        </mat-error>
+
         <inspection-map-viewer *ngIf="hasCoordinates"
                                [isRequired]="false"
                                formControlName="mapViewerControl">

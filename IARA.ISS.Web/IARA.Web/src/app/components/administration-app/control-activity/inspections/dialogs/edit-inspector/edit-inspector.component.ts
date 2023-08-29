@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
@@ -27,6 +27,9 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
     public inspectors: NomenclatureDTO<number>[] = [];
     public countries: NomenclatureDTO<number>[] = [];
     public institutions: NomenclatureDTO<number>[] = [];
+    public allInstitutions: NomenclatureDTO<number>[] = [];
+
+    public inspectorExists: boolean = false;
 
     protected model: InspectorTableModel = new InspectorTableModel();
 
@@ -47,10 +50,6 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
     }
 
     public async ngOnInit(): Promise<void> {
-        if (this.readOnly) {
-            this.form.disable();
-        }
-
         const nomenclatureTables = await forkJoin(
             NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false
@@ -62,7 +61,7 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
         ).toPromise();
 
         this.countries = nomenclatureTables[0];
-        this.institutions = nomenclatureTables[1];
+        this.allInstitutions = this.institutions = nomenclatureTables[1];
         this.unfilteredInspectors = nomenclatureTables[2];
         this.inspectors = nomenclatureTables[2].filter(f => !this.excludeIds.includes(f.value!));
 
@@ -90,10 +89,26 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
         }
         else {
             this.form.markAllAsTouched();
+
             if (this.form.valid) {
                 this.fillModel();
                 CommonUtils.sanitizeModelStrings(this.model);
-                dialogClose(this.model);
+
+                if (this.isFromRegister) {
+                    dialogClose(this.model);
+                }
+                else {
+                    this.service.unregisteredInspectorExists(this.model).subscribe({
+                        next: (exists: boolean) => {
+                            if (exists) {
+                                this.inspectorExists = true;
+                            }
+                            else {
+                                dialogClose(this.model);
+                            }
+                        }
+                    });
+                }
             }
         }
     }
@@ -123,6 +138,13 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
         this.form.get('inspectorControl')!.valueChanges.subscribe({
             next: this.onInspectorChanged.bind(this)
         });
+
+        this.form.valueChanges.subscribe({
+            next: () => {
+                this.inspectorExists = false;
+            }
+        });
+
     }
 
     protected fillForm(): void {
@@ -156,6 +178,10 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
             this.form.get('countryControl')!.setValue(this.countries.find(f => f.code === CommonUtils.COUNTRIES_BG));
             this.form.get('institutionControl')!.setValue(this.institutions.find(f => f.code === CommonUtils.INSTITUTIONS_IARA));
         }
+
+        if (this.readOnly) {
+            this.form.disable();
+        }
     }
 
     protected fillModel(): void {
@@ -183,8 +209,13 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
 
     private onInspectorRegisteredChanged(value: boolean): void {
         this.isFromRegister = value;
+        this.inspectorExists = false;
 
         if (value) {
+            this.institutions = this.allInstitutions;
+
+            this.form.get('institutionControl')!.setValue(this.institutions.find(f => f.code === CommonUtils.INSTITUTIONS_IARA));
+
             this.form.get('inspectorControl')!.setValidators(Validators.required);
             this.form.get('firstNameControl')!.clearValidators();
             this.form.get('middleNameControl')!.clearValidators();
@@ -193,7 +224,17 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
 
             this.form.get('countryControl')!.disable();
             this.form.get('institutionControl')!.disable();
-        } else {
+        }
+        else {
+            this.institutions = this.allInstitutions.filter(x => x.code !== CommonUtils.INSTITUTIONS_IARA);
+
+            if (this.isEdit) {
+                this.form.get('institutionControl')!.setValue(this.institutions.find(x => x.value === this.model.institutionId));
+            }
+            else {
+                this.form.get('institutionControl')!.setValue(undefined);
+            }
+
             this.form.get('inspectorControl')!.clearValidators();
             this.form.get('firstNameControl')!.setValidators([Validators.required, Validators.maxLength(200)]);
             this.form.get('middleNameControl')!.setValidators([Validators.required, Validators.maxLength(200)]);
@@ -213,6 +254,8 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
             this.form.get('countryControl')!.disable();
             this.form.get('institutionControl')!.disable();
         }
+
+        this.institutions = this.institutions.slice();
 
         this.form.get('inspectorControl')!.updateValueAndValidity({ emitEvent: false });
         this.form.get('firstNameControl')!.updateValueAndValidity({ emitEvent: false });

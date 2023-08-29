@@ -97,15 +97,11 @@ export class CancellationHistoryDialogComponent implements OnInit, IDialogCompon
                             this.showIssueOrderNum = true;
                             this.form.get('issueOrderNumControl')!.setValidators([Validators.required, Validators.maxLength(200)]);
                             this.form.get('descriptionControl')!.clearValidators();
-
-                            this.form.get('issueOrderNumControl')!.markAsPending();
                             break;
                         case CancellationReasonsEnum.Other:
                             this.showIssueOrderNum = false;
                             this.form.get('issueOrderNumControl')!.clearValidators();
                             this.form.get('descriptionControl')!.setValidators([Validators.required, Validators.maxLength(4000)]);
-
-                            this.form.get('descriptionControl')!.markAsPending();
                             break;
                         default:
                             this.showIssueOrderNum = false;
@@ -113,6 +109,12 @@ export class CancellationHistoryDialogComponent implements OnInit, IDialogCompon
                             this.form.get('descriptionControl')!.clearValidators();
                             break;
                     }
+
+                    this.form.get('issueOrderNumControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('descriptionControl')!.updateValueAndValidity({ emitEvent: false });
+
+                    this.form.get('issueOrderNumControl')!.markAsPending();
+                    this.form.get('descriptionControl')!.markAsPending();
                 }
             }
         });

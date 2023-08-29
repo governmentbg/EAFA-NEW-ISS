@@ -68,5 +68,6 @@ export enum ErrorCode {
     CannotAddEditLockedAdmissionPage = 49,
     CannotAddEditLockedAquaculturePage = 50,
     ReportCodeAlreadyExists = 51,
-    PoundNetNumAlreadyExists = 52
+    PoundNetNumAlreadyExists = 52,
+    PatrolVehicleAlreadyExists = 53
 }

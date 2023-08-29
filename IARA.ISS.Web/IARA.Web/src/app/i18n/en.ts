@@ -2402,6 +2402,8 @@
         'country': 'Country',
         'head-of-inspection': 'Inspector is leading the inspection',
         'inspector-identified': 'Inspector has identified',
+        'inspector-already-exists-error': 'Inspector is already registered',
+        'patrol-vehicle-already-exists-error': 'Patrol vehisle is already registered',
         'report-num-on-save': 'Generated after saving',
         'edit-inspection-files': 'Файлове',
         'vehicle-name': 'Name',
@@ -3739,7 +3741,8 @@
         'view-patrol-vehicles-dialog-title': 'View patrol vehicle',
         'edit-patrol-vehicles-dialog-title': 'Edit patrol vehicle',
         'add-patrol-vehicles-dialog-title': 'Add patrol vehicle',
-        'invalid-cfr': 'Invalid CFR'
+        'invalid-cfr': 'Invalid CFR',
+        'patrol-vehicle-already-exists-error': 'Patrol vehicle already exists'
     },
     'catches-and-sales': {
         'log-book-page-number': 'Page number from paper log book',

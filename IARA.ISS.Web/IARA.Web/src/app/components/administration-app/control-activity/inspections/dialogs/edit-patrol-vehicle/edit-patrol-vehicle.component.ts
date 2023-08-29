@@ -32,7 +32,10 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
     public patrolVehicles: NomenclatureDTO<number>[] = [];
     public countries: NomenclatureDTO<number>[] = [];
     public institutions: NomenclatureDTO<number>[] = [];
+    public allInstitutions: NomenclatureDTO<number>[] = [];
     public patrolVehicleTypes: NomenclatureDTO<number>[] = [];
+
+    public patrolVehicleExists: boolean = false;
 
     protected model: VesselDuringInspectionDTO = new VesselDuringInspectionDTO();
 
@@ -85,10 +88,10 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
         types = [...types, PatrolVehicleTypeEnum.Air, PatrolVehicleTypeEnum.Other];
 
         this.countries = nomenclatureTables[0];
-        this.institutions = nomenclatureTables[1];
+        this.allInstitutions = this.institutions = nomenclatureTables[1];
         this.patrolVehicleTypes = nomenclatureTables[2].filter(f => types.includes(f.vehicleType!));
         this.unfilteredPatrolVehicles = nomenclatureTables[3];
-        this.patrolVehicles = nomenclatureTables[3].filter(f => !this.excludeIds.includes(f.value!));;
+        this.patrolVehicles = nomenclatureTables[3].filter(f => !this.excludeIds.includes(f.value!));
 
         this.fillForm();
     }
@@ -123,7 +126,22 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
             if (this.form.valid) {
                 this.fillModel();
                 CommonUtils.sanitizeModelStrings(this.model);
-                dialogClose(this.model);
+
+                if (this.isFromRegister) {
+                    dialogClose(this.model);
+                }
+                else {
+                    this.service.unregisteredPatrolVehicleExists(this.model).subscribe({
+                        next: (exists: boolean) => {
+                            if (exists) {
+                                this.patrolVehicleExists = true;
+                            }
+                            else {
+                                dialogClose(this.model);
+                            }
+                        }
+                    });
+                }
             }
         }
     }
@@ -152,6 +170,12 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
 
         this.form.get('patrolVehicleControl')!.valueChanges.subscribe({
             next: this.onPatrolVehicleChanged.bind(this)
+        });
+
+        this.form.valueChanges.subscribe({
+            next: () => {
+                this.patrolVehicleExists = false;
+            }
         });
     }
 
@@ -209,8 +233,11 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
 
     private onPatrolVehicleRegisteredChanged(value: boolean): void {
         this.isFromRegister = value;
+        this.patrolVehicleExists = false;
 
         if (value) {
+            this.institutions = this.allInstitutions;
+
             this.form.get('patrolVehicleControl')!.setValidators(Validators.required);
             this.form.get('nameControl')!.clearValidators();
             this.form.get('cfrControl')!.clearValidators();
@@ -224,6 +251,15 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
             this.form.get('callsignControl')!.disable();
         }
         else {
+            this.institutions = this.allInstitutions.filter(x => x.code !== CommonUtils.INSTITUTIONS_IARA);
+
+            if (this.isEdit) {
+                this.form.get('institutionControl')!.setValue(this.institutions.find(x => x.value === this.model.institutionId));
+            }
+            else {
+                this.form.get('institutionControl')!.setValue(undefined);
+            }
+
             this.form.get('patrolVehicleControl')!.clearValidators();
             this.form.get('nameControl')!.setValidators([Validators.required, Validators.maxLength(500)]);
             this.form.get('cfrControl')!.setValidators([Validators.maxLength(20)]);
@@ -252,7 +288,9 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
             this.form.get('callsignControl')!.disable();
         }
 
-        this.form.get('patrolVehicleControl')!.updateValueAndValidity({ emitEvent: false });
+        this.institutions = this.institutions.slice();
+
+        this.form.get('patrolVehicleControl')!.updateValueAndValidity({ onlySelf: true });
         this.form.get('nameControl')!.updateValueAndValidity({ emitEvent: false });
         this.form.get('cfrControl')!.updateValueAndValidity({ emitEvent: false });
         this.form.get('externalMarkControl')!.updateValueAndValidity({ emitEvent: false });

@@ -54,11 +54,11 @@ import { CancellationReasonGroupEnum } from '@app/enums/cancellation-reason-grou
 import { CancellationHistoryDialogParams } from '@app/shared/components/cancellation-history-dialog/cancellation-history-dialog-params.model';
 import { BuyerStatusesEnum } from '@app/enums/buyer-statuses.enum';
 import { BuyerTerminationApplicationDTO } from '@app/models/generated/dtos/BuyerTerminationApplicationDTO';
-import { CommercialFishingAdministrationService } from '@app/services/administration-app/commercial-fishing-administration.service';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { DuplicatesEntryDTO } from '@app/models/generated/dtos/DuplicatesEntryDTO';
 import { AddressTypesEnum } from '@app/enums/address-types.enum';
 import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { TLValidators } from '@app/shared/utils/tl-validators';
 
 enum AgentSameAsTypesEnum {
     SubmittedByPerson,
@@ -151,13 +151,11 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
     private readonly editVeterinaryVehicleLicenseDialog: TLMatDialog<CommonDocumentComponent>;
     private readonly cancelDialog: TLMatDialog<CancellationHistoryDialogComponent>;
     private readonly confirmDialog: TLConfirmDialog;
-    private readonly commercialFishingService: CommercialFishingAdministrationService;
 
     private dialogRightSideActions: Array<IActionInfo> | undefined;
 
     public constructor(translationService: FuseTranslationLoaderService,
         commonNomenclatureService: CommonNomenclatures,
-        commercialFishingService: CommercialFishingAdministrationService,
         editUsageDocumentDialog: TLMatDialog<UsageDocumentComponent>,
         editBabhLicenseDialog: TLMatDialog<CommonDocumentComponent>,
         editVeterinaryVehicleLicenseDialog: TLMatDialog<CommonDocumentComponent>,
@@ -165,7 +163,6 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
         confirmDialog: TLConfirmDialog
     ) {
         this.commonNomenclatureService = commonNomenclatureService;
-        this.commercialFishingService = commercialFishingService;
         this.translationService = translationService;
         this.editUsageDocumentDialog = editUsageDocumentDialog;
         this.editBabhLicenseDialog = editBabhLicenseDialog;
@@ -1268,7 +1265,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
 
             this.editForm.addControl('babhLawLicenseControl', new FormControl());
             this.editForm.addControl('veteniraryVehicleRegLicenseControl', new FormControl());
-            this.editForm.addControl('annualTurnoverControl', new FormControl());
+            this.editForm.addControl('annualTurnoverControl', new FormControl(undefined, TLValidators.number(0)));
 
             this.editForm.addControl('filesControl', new FormControl());
         }
