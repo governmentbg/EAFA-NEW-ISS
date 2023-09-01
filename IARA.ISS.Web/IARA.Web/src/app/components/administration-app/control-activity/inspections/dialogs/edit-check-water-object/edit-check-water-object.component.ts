@@ -153,7 +153,7 @@ export class EditCheckWaterObjectComponent extends BaseInspectionsComponent impl
             byEmergencySignal: generalInfo.byEmergencySignal,
             inspectionType: InspectionTypesEnum.CWO,
             inspectorComment: additionalInfo?.inspectorComment,
-            violatedRegulations: additionalInfo.violatedRegulations,
+            violatedRegulations: additionalInfo?.violatedRegulations,
             isActive: true,
             checks: this.form.get('togglesControl')!.value,
             patrolVehicles: this.form.get('patrolVehiclesControl')!.value,

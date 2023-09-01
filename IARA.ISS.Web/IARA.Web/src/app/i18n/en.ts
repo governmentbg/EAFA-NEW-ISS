@@ -1399,7 +1399,10 @@
         'view-application-history-draft-content': 'View draft content of application',
         'show-application': 'View',
 
-        'other-group': 'Other'
+        'other-group': 'Other',
+
+        'applications-processing': 'Подадени на хартия заявления',
+        'online-applications': 'Онлайн подадени заявления'
     },
     'register-delivery': {
         'delivery-type': 'Delivery type',
@@ -2706,30 +2709,30 @@
         'add-water-catch-dialog-title': 'Add aquatic organism',
         'edit-water-catch-dialog-title': 'Edit aquatic organism',
         'view-water-catch-dialog-title': 'Review на aquatic organism',
-        'water-catch-table-delete-dialog-title': 'Remove aquatic organism',
-        'water-catch-table-delete-message': 'Are you sure you want to remove this aquatic organism?',
-        'water-catch-table-delete-btn-label': 'Remove',
+        'water-catch-delete-dialog-title': 'Remove aquatic organism',
+        'water-catch-delete-message': 'Are you sure you want to remove this aquatic organism?',
+        'water-catch-delete-btn-label': 'Remove',
 
         'add-water-engine-dialog-title': 'Add engine',
         'edit-water-engine-dialog-title': 'Edit engine',
         'view-water-engine-dialog-title': 'Review на engine',
-        'water-engine-table-delete-dialog-title': 'Remove engine',
-        'water-engine-table-delete-message': 'Are you sure you want to remove this engine?',
-        'water-engine-table-delete-btn-label': 'Remove',
+        'water-engine-delete-dialog-title': 'Remove engine',
+        'water-engine-delete-message': 'Are you sure you want to remove this engine?',
+        'water-engine-delete-btn-label': 'Remove',
 
         'add-water-fishing-gear-dialog-title': 'Add fishing gear',
         'edit-water-fishing-gear-dialog-title': 'Edit fishing gear',
         'view-water-fishing-gear-dialog-title': 'Review на fishing gear',
-        'water-fishing-gear-table-delete-dialog-title': 'Remove fishing gear',
-        'water-fishing-gear-table-delete-message': 'Are you sure you want to remove this fishing gear?',
-        'water-fishing-gear-table-delete-btn-label': 'Remove',
+        'water-fishing-gear-delete-dialog-title': 'Remove fishing gear',
+        'water-fishing-gear-delete-message': 'Are you sure you want to remove this fishing gear?',
+        'water-fishing-gear-delete-btn-label': 'Remove',
 
         'add-water-vessel-dialog-title': 'Add water vessel',
         'edit-water-vessel-dialog-title': 'Edit water vessel',
         'view-water-vessel-dialog-title': 'Review на water vessel',
-        'water-vessel-table-delete-dialog-title': 'Remove water vessel',
-        'water-vessel-table-delete-message': 'Are you sure you want to remove this water vessel?',
-        'water-vessel-table-delete-btn-label': 'Remove',
+        'water-vessel-delete-dialog-title': 'Remove water vessel',
+        'water-vessel-delete-message': 'Are you sure you want to remove this water vessel?',
+        'water-vessel-delete-btn-label': 'Remove',
 
         'patrol-vehicles': 'Patrol vehicles',
         'patrol-vehicle-table-view': 'Review patrol vehicle',

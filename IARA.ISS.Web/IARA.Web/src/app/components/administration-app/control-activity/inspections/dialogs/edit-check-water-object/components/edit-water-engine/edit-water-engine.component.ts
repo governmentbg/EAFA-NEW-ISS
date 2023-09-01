@@ -87,12 +87,16 @@ export class EditWaterEngineComponent implements OnInit, IDialogComponent {
 
     protected fillModel(): void {
         this.model.model = this.form.get('modelControl')!.value;
-        this.model.power = Number(this.form.get('powerControl')!.value);
         this.model.type = this.form.get('typeControl')!.value;
-        this.model.totalCount = Number(this.form.get('totalCountControl')!.value);
         this.model.engineDescription = this.form.get('colorControl')!.value;
         this.model.isTaken = this.form.get('takenControl')!.value ?? false;
         this.model.isStored = this.form.get('storedControl')!.value ?? false;
         this.model.storageLocation = this.form.get('storageControl')!.value;
+
+        const power: number | undefined = Number(this.form.get('powerControl')!.value);
+        this.model.power = isNaN(power) ? undefined : power;
+
+        const totalCount: number | undefined = Number(this.form.get('totalCountControl')!.value);
+        this.model.totalCount = isNaN(totalCount) ? undefined : totalCount;
     }
 }

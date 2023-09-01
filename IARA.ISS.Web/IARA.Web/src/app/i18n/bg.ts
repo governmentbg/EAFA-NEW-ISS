@@ -1389,7 +1389,10 @@
         'view-application-history-draft-content': 'Преглед на чернова на заявлението',
         'show-application': 'Преглед',
 
-        'other-group': 'Други'
+        'other-group': 'Други',
+
+        'applications-processing': 'Подадени на хартия заявления',
+        'online-applications': 'Онлайн подадени заявления'
     },
     'register-delivery': {
         'delivery-type': 'Тип на връчване',
@@ -2755,30 +2758,30 @@
         'add-water-catch-dialog-title': 'Добави воден организъм',
         'edit-water-catch-dialog-title': 'Редактирай воден организъм',
         'view-water-catch-dialog-title': 'Преглед на воден организъм',
-        'water-catch-table-delete-dialog-title': 'Премахване на воден организъм',
-        'water-catch-table-delete-message': 'Сигурен ли сте, че искате да премахнете водния организъм?',
-        'water-catch-table-delete-btn-label': 'Премахни',
+        'water-catch-delete-dialog-title': 'Премахване на воден организъм',
+        'water-catch-delete-message': 'Сигурен ли сте, че искате да премахнете водния организъм?',
+        'water-catch-delete-btn-label': 'Премахни',
 
         'add-water-engine-dialog-title': 'Добави двигател',
         'edit-water-engine-dialog-title': 'Редактирай двигател',
         'view-water-engine-dialog-title': 'Преглед на двигател',
-        'water-engine-table-delete-dialog-title': 'Премахване на двигател',
-        'water-engine-table-delete-message': 'Сигурен ли сте, че искате да премахнете двигателят?',
-        'water-engine-table-delete-btn-label': 'Премахни',
+        'water-engine-delete-dialog-title': 'Премахване на двигател',
+        'water-engine-delete-message': 'Сигурен ли сте, че искате да премахнете двигателят?',
+        'water-engine-delete-btn-label': 'Премахни',
 
         'add-water-fishing-gear-dialog-title': 'Добави риболовен уред',
         'edit-water-fishing-gear-dialog-title': 'Редактирай риболовен уред',
         'view-water-fishing-gear-dialog-title': 'Преглед на риболовен уред',
-        'water-fishing-gear-table-delete-dialog-title': 'Премахване на риболовен уред',
-        'water-fishing-gear-table-delete-message': 'Сигурен ли сте, че искате да премахнете риболовния уред?',
-        'water-fishing-gear-table-delete-btn-label': 'Премахни',
+        'water-fishing-gear-delete-dialog-title': 'Премахване на риболовен уред',
+        'water-fishing-gear-delete-message': 'Сигурен ли сте, че искате да премахнете риболовния уред?',
+        'water-fishing-gear-delete-btn-label': 'Премахни',
 
         'add-water-vessel-dialog-title': 'Добави плавателно средство',
         'edit-water-vessel-dialog-title': 'Редактирай плавателно средство',
         'view-water-vessel-dialog-title': 'Преглед на плавателно средство',
-        'water-vessel-table-delete-dialog-title': 'Премахване на плавателно средство',
-        'water-vessel-table-delete-message': 'Сигурен ли сте, че искате да премахнете плавателното средство?',
-        'water-vessel-table-delete-btn-label': 'Премахни',
+        'water-vessel-delete-dialog-title': 'Премахване на плавателно средство',
+        'water-vessel-delete-message': 'Сигурен ли сте, че искате да премахнете плавателното средство?',
+        'water-vessel-delete-btn-label': 'Премахни',
 
         'patrol-vehicles': 'Патрулни средства',
         'patrol-vehicle-table-view': 'Преглед на патрулно средство',
@@ -2864,7 +2867,7 @@
         'oth': 'Мигриран констативен протокол',
         'view-oth-dialog-title': 'Преглед на мигриран констативен протокол',
         'edit-oth-dialog-title': 'Редакция на мигриран констативен протокол',
-        'add-oth-dialog-title': 'Добавяне на мигриран констативен протокол',
+        'add-oth-dialog-title': 'Добавяне на мигриран констативен протокол'
     },
     'vessel': {
         'name': 'Име',

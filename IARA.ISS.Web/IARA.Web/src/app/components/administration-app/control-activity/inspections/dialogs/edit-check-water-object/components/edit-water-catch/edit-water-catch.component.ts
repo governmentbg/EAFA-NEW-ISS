@@ -46,7 +46,7 @@ export class EditWaterCatchComponent implements OnInit, IDialogComponent {
                 value: CatchActionEnum.Destroyed,
                 displayName: translate.getValue('inspections.water-inspection-destroyed'),
                 isActive: true
-            }),
+            })
         ];
 
         this.buildForm();
@@ -97,7 +97,7 @@ export class EditWaterCatchComponent implements OnInit, IDialogComponent {
             quantityControl: new FormControl(null),
             takenControl: new FormControl(null),
             storedControl: new FormControl(null, [Validators.required]),
-            storageControl: new FormControl(null),
+            storageControl: new FormControl(null)
         });
     }
 
@@ -111,9 +111,11 @@ export class EditWaterCatchComponent implements OnInit, IDialogComponent {
 
     protected fillModel(): void {
         this.model.fishId = this.form.get('typeControl')!.value?.value;
-        this.model.catchQuantity = Number(this.form.get('quantityControl')!.value);
         this.model.isTaken = this.form.get('takenControl')!.value ?? false;
         this.model.action = this.form.get('storedControl')!.value?.value;
         this.model.storageLocation = this.form.get('storageControl')!.value;
+
+        const catchQuantity: number | undefined = Number(this.form.get('quantityControl')!.value);
+        this.model.catchQuantity = isNaN(catchQuantity) ? undefined : catchQuantity;
     }
 }
