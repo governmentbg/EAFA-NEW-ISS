@@ -107,12 +107,18 @@ export class EditWaterVesselComponent implements OnInit, IDialogComponent {
         this.model.vesselTypeId = this.form.get('typeControl')!.value?.value;
         this.model.number = this.form.get('numberControl')!.value;
         this.model.color = this.form.get('colorControl')!.value;
-        this.model.length = Number(this.form.get('lengthControl')!.value);
-        this.model.width = Number(this.form.get('widthControl')!.value);
-        this.model.totalCount = Number(this.form.get('totalControl')!.value);
         this.model.isTaken = this.form.get('takenControl')!.value ?? false;
         this.model.isStored = this.form.get('storedControl')!.value ?? false;
         this.model.storageLocation = this.form.get('storageControl')!.value;
         this.model.description = this.form.get('descriptionControl')!.value;
+
+        const totalCount: number | undefined = Number(this.form.get('totalControl')!.value);
+        this.model.totalCount = isNaN(totalCount) ? undefined : totalCount;
+
+        const length: number | undefined = Number(this.form.get('lengthControl')!.value);
+        this.model.length = isNaN(length) ? undefined : length;
+
+        const width: number | undefined = Number(this.form.get('widthControl')!.value);
+        this.model.width = isNaN(width) ? undefined : width;
     }
 }
