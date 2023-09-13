@@ -11,7 +11,8 @@
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
             <inspection-general-info formControlName="generalInfoControl"
-                                     [institutions]="institutions">
+                                     [institutions]="institutions"
+                                     [canEditNumber]="canEditNumber">
             </inspection-general-info>
             <patrol-vehicles-table formControlName="patrolVehiclesControl"
                                    [isWaterVehicle]="undefined"

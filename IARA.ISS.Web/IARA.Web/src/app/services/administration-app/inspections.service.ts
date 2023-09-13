@@ -262,6 +262,14 @@ export class InspectionsService extends BaseAuditService {
         });
     }
 
+    public sendForFurtherCorrections(inspection: InspectionDraftDTO): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'SendForFurtherCorrections', inspection, {
+            properties: new RequestProperties({
+                asFormData: true
+            })
+        });
+    }
+
     public add(inspection: InspectionDraftDTO): Observable<number> {
         return this.requestService.post(this.area, this.controller, 'Add', inspection, {
             properties: new RequestProperties({

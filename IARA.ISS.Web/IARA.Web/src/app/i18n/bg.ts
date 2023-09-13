@@ -2728,6 +2728,7 @@
         'registered-permit': 'Уреди на издадено УСР',
         'unregistered-permit': 'Уреди на неиздадено УСР за година',
         'permit-year': 'Година на УСР',
+        'confirm-need-for-corrections': 'Върни за корекции',
 
         'add-catch-ship-dialog-title': 'Добави кораб',
         'edit-catch-ship-dialog-title': 'Редактирай кораб',

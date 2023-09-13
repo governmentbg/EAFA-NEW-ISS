@@ -13,6 +13,9 @@ export class InspectedDeclarationCatchDTO {
     public id?: number;
 
     @StrictlyTyped(Number)
+    public inspectionLogBookPageId?: number;
+
+    @StrictlyTyped(Number)
     public catchTypeId?: number;
 
     @StrictlyTyped(Number)

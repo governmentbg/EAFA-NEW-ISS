@@ -3,7 +3,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
-import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { InspectionEditDTO } from '@app/models/generated/dtos/InspectionEditDTO';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
@@ -18,6 +17,7 @@ import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { Component, ViewChild } from '@angular/core';
 import { InspectionTypesEnum } from '@app/enums/inspection-types.enum';
+import { InspectionDialogParamsModel } from '../models/inspection-dialog-params.model';
 
 @Component({
     template: ''
@@ -29,6 +29,7 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
 
     public service: InspectionsService;
     public viewMode: boolean = false;
+    public canEditNumber: boolean = false;
 
     @ViewChild(ValidityCheckerGroupDirective)
     public validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -56,10 +57,11 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
         this.buildForm();
     }
 
-    public setData(data: DialogParamsModel, buttons: DialogWrapperData): void {
+    public setData(data: InspectionDialogParamsModel, buttons: DialogWrapperData): void {
         if (data !== undefined && data !== null) {
             this.id = data.id;
             this.viewMode = data.viewMode;
+            this.canEditNumber = data.canEditNumber;
         }
     }
 
@@ -139,6 +141,15 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
         }
         else if (actionInfo.id === 'flux') {
             this.service.downloadFluxXml(this.id!, this.model.inspectionType!).subscribe();
+        }
+        else if (actionInfo.id === 'more-corrections-needed' && this.canEditNumber) {
+            this.model.id = this.id;
+
+            this.service.sendForFurtherCorrections(this.mapToDraft()).subscribe({
+                next: () => {
+                    dialogClose(this.model);
+                }
+            });
         }
     }
 

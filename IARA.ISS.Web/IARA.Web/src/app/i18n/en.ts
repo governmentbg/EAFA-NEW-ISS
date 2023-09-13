@@ -2679,6 +2679,7 @@
         'registered-permit': 'Fishing gears of an issued permit license',
         'unregistered-permit': 'Fishing gears of an unissued permit license for year',
         'permit-year': 'Permit license year',
+        'confirm-need-for-corrections': 'Return for corrections',
 
         'add-catch-ship-dialog-title': 'Add ship',
         'edit-catch-ship-dialog-title': 'Edit ship',

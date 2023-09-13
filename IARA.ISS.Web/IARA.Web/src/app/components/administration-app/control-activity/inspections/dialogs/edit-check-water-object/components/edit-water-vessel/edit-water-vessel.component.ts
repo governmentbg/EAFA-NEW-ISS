@@ -39,7 +39,7 @@ export class EditWaterVesselComponent implements OnInit, IDialogComponent {
         }
 
         this.vesselTypes = await NomenclatureStore.instance.getNomenclature(
-            NomenclatureTypes.VesselTypes, this.service.getInspectionVesselTypes.bind(this.service), false
+            NomenclatureTypes.InspectionVesselTypes, this.service.getInspectionVesselTypes.bind(this.service), false
         ).toPromise();
 
         this.fillForm();
