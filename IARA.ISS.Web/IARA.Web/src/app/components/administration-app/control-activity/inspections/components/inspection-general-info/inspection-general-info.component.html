@@ -6,9 +6,9 @@
          fxLayoutGap="1em"
          fxLayoutAlign="start center">
         <tl-input fxFlex="25"
+                  [prefixText]="numPrefix"
                   formControlName="reportNumberControl"
-                  label="{{ 'inspections.report-number' | tlTranslate }}"
-                  [prefixText]="numPrefix">
+                  label="{{ 'inspections.report-number' | tlTranslate }}">
         </tl-input>
         <tl-date-time fxFlex="25"
                       [disabled]="isDisabled"

@@ -256,6 +256,7 @@
     InspectionsEditRecords = 'InspectionsEditRecords',
     InspectionsDeleteRecords = 'InspectionsDeleteRecords',
     InspectionsRestoreRecords = 'InspectionsRestoreRecords',
+    InspectionEditNumber = 'InspectionEditNumber',
 
     // Commercial Fishing
     CommercialFishingPermitRegisterReadAll = 'CommercialFishingPermitRegisterReadAll',

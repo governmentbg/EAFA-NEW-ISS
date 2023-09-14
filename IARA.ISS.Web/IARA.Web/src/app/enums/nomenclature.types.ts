@@ -119,5 +119,6 @@
     MyTerritoryUnitUsers,
     AllUsers,
     PaymentStatuses,
-    CheckSources
+    CheckSources,
+    InspectionVesselTypes
 }

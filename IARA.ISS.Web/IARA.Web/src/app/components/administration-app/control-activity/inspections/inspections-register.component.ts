@@ -5,7 +5,6 @@ import { EditDialogInfo } from '@app/components/common-app/applications/models/e
 import { InspectionStatesEnum } from '@app/enums/inspection-states.enum';
 import { InspectionTypesEnum } from '@app/enums/inspection-types.enum';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
-import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { InspectionDTO } from '@app/models/generated/dtos/InspectionDTO';
 import { InspectionsFilters } from '@app/models/generated/filters/InspectionsFilters';
@@ -40,6 +39,7 @@ import { EditCheckWaterObjectComponent } from './dialogs/edit-check-water-object
 import { EditInspectionFishingGearComponent } from './dialogs/edit-inspection-fishing-gear/edit-inspection-fishing-gear.component';
 import { SignInspectionComponent } from './dialogs/sign-inspection/sign-inspection.component';
 import { CommonUtils } from '@app/shared/utils/common.utils';
+import { InspectionDialogParamsModel } from './models/inspection-dialog-params.model';
 
 @Component({
     selector: 'inspections-register',
@@ -69,6 +69,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     public readonly canEditRecords: boolean;
     public readonly canDeleteRecords: boolean;
     public readonly canRestoreRecords: boolean;
+    public readonly canEditInspectionNumber: boolean;
 
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
@@ -110,6 +111,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         this.canEditRecords = permissions.has(PermissionsEnum.InspectionsEditRecords);
         this.canDeleteRecords = permissions.has(PermissionsEnum.InspectionsDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.InspectionsRestoreRecords);
+        this.canEditInspectionNumber = permissions.has(PermissionsEnum.InspectionEditNumber);
 
         this.buildForm();
     }
@@ -161,7 +163,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
 
         const subjectId: number | undefined = window.history.state?.id;
         const isPerson: boolean | undefined = window.history.state?.isPerson;
-        
+
         if (!CommonUtils.isNullOrEmpty(subjectId)) {
             if (isPerson === true) {
                 this.gridManager.advancedFilters = new InspectionsFilters({
@@ -318,7 +320,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         readOnly: boolean = false
     ): void {
         let auditBtn: IHeaderAuditButton | undefined;
-        let data: DialogParamsModel | undefined;
+        let data: InspectionDialogParamsModel | undefined;
 
         const rightSideButtons: IActionInfo[] = [
             {
@@ -341,23 +343,42 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             ) {
                 readOnly = true;
 
+                rightSideButtons.push(
+                    {
+                        id: 'flux',
+                        color: 'primary',
+                        translateValue: 'common.export',
+                        isVisibleInViewMode: true
+                    },
+                    {
+                        id: 'print',
+                        color: 'primary',
+                        translateValue: 'inspections.print-inspection',
+                        isVisibleInViewMode: true,
+                    }
+                );
+            }
+
+            if (entry.inspectionState === InspectionStatesEnum.Submitted && this.canEditInspectionNumber) {
                 rightSideButtons.push({
-                    id: 'flux',
+                    id: 'more-corrections-needed',
                     color: 'primary',
-                    translateValue: 'common.export',
-                    isVisibleInViewMode: true
-                }, {
-                    id: 'print',
-                    color: 'primary',
-                    translateValue: 'inspections.print-inspection',
+                    translateValue: 'inspections.confirm-need-for-corrections',
+                    icon: { id: 'ic-fluent-doc-person-20-regular', size: this.icIconSize },
                     isVisibleInViewMode: true,
                 });
             }
 
-            data = new DialogParamsModel({
+            data = new InspectionDialogParamsModel({
                 id: entry.id,
                 viewMode: readOnly,
-                service: this.service,
+                canEditNumber: this.canEditInspectionNumber,
+                service: this.service
+            });
+        }
+        else {
+            data = new InspectionDialogParamsModel({
+                canEditNumber: this.canEditInspectionNumber
             });
         }
 
