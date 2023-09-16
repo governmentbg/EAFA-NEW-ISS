@@ -3976,6 +3976,7 @@
         'ship-page-permit-license': 'Commercial fishing permit license',
         'ship-page-fishing-gear': 'Fishing gear type',
         'ship-page-fishing-gear-count': 'Fishing gears count',
+        'ship-page-fishing-gear-net-eye-size': 'Fishing gear net eye size',
         'ship-page-fishing-gear-hook-count': 'Fishing gear hooks count',
         'ship-page-partner-ship': 'Partner ship',
         'ship-page-fish-trip-information-panel': 'Fishing trip',

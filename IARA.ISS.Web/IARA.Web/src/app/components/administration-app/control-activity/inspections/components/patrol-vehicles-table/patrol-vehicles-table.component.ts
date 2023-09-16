@@ -116,7 +116,8 @@ export class PatrolVehiclesTableComponent extends CustomFormControl<VesselDuring
         dialog.subscribe((result: VesselDuringInspectionDTO) => {
             if (result !== undefined && result !== null) {
                 if (patrolVehicle !== undefined) {
-                    patrolVehicle = result;
+                    const idx: number = this.patrolVehicles.findIndex(x => x === patrolVehicle);
+                    this.patrolVehicles[idx] = result;
                 }
                 else {
                     this.patrolVehicles.push(result);

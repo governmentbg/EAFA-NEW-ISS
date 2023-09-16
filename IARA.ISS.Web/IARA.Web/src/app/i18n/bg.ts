@@ -4032,6 +4032,7 @@
         'ship-page-fishing-gear': 'Вид риболовен уред',
         'ship-page-fishing-gear-count': 'Брой риболовни уреди',
         'ship-page-fishing-gear-hook-count': 'Брой куки на риболовния уред',
+        'ship-page-fishing-gear-net-eye-size': 'Размер на окото на риболовния уред',
         'ship-page-partner-ship': 'Партниращ кораб',
         'ship-page-fish-trip-information-panel': 'Риболовен излет',
         'ship-page-fish-trip-start-date-time': 'Дата и час на тръгване',
