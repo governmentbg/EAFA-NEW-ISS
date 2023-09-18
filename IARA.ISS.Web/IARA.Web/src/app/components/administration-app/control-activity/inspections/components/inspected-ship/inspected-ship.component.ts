@@ -162,6 +162,11 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
                     this.form.get('shipControl')!.setValue(ship, { emitEvent: false });
                 });
             }
+            else {
+                this.form.get('nameControl')!.setValue(value.name);
+                this.form.get('externalMarkControl')!.setValue(value.externalMark);
+                this.form.get('cfrControl')!.setValue(value.cfr);
+            }
 
             this.form.get('flagControl')!.setValue(this.countries.find(f => f.value === value.flagCountryId));
             this.form.get('uviControl')!.setValue(value.uvi);
@@ -207,6 +212,7 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
     }
 
     protected getValue(): VesselDuringInspectionDTO | undefined {
+        debugger;
         if (!this.isFromRegister) {
             return new VesselDuringInspectionDTO({
                 isRegistered: false,
@@ -219,6 +225,7 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
                 uvi: this.form.get('uviControl')!.value,
                 vesselTypeId: this.form.get('shipTypeControl')!.value?.value,
                 location: this.form.get('shipMapControl')!.value,
+                shipId: undefined
             });
         }
         else if (this.selectedShip !== undefined && this.selectedShip !== null) {
@@ -296,6 +303,8 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
         this.form.get('callsignControl')!.updateValueAndValidity({ emitEvent: false });
         this.form.get('shipTypeControl')!.updateValueAndValidity({ emitEvent: false });
         this.form.get('mmsiControl')!.updateValueAndValidity({ emitEvent: false });
+
+        this.shipSelected.emit(this.getValue());
     }
 
     private async onShipChanged(value: InspectionShipNomenclatureDTO): Promise<void> {

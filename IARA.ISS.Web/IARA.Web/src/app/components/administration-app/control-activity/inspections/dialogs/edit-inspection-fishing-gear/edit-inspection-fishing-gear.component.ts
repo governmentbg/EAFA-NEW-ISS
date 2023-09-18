@@ -25,7 +25,6 @@ import { InspectedFishingGearDTO } from '@app/models/generated/dtos/InspectedFis
 import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
 import { InspectionShipSubjectNomenclatureDTO } from '@app/models/generated/dtos/InspectionShipSubjectNomenclatureDTO';
 import { InspectionSubjectPersonnelDTO } from '@app/models/generated/dtos/InspectionSubjectPersonnelDTO';
-import { TLValidators } from '@app/shared/utils/tl-validators';
 
 enum InspectionPermitTypeEnum {
     Registered,
@@ -76,26 +75,26 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             new NomenclatureDTO({
                 value: InspectionSubjectEnum.Ship,
                 displayName: translate.getValue('inspections.fishing-ship'),
-                isActive: true,
+                isActive: true
             }),
             new NomenclatureDTO({
                 value: InspectionSubjectEnum.Poundnet,
                 displayName: translate.getValue('inspections.dalyan'),
-                isActive: true,
-            }),
+                isActive: true
+            })
         ];
 
         this.permitTypeControls = [
             new NomenclatureDTO({
                 value: InspectionPermitTypeEnum.Registered,
                 displayName: translate.getValue('inspections.registered-permit'),
-                isActive: true,
+                isActive: true
             }),
             new NomenclatureDTO({
                 value: InspectionPermitTypeEnum.Unregistered,
                 displayName: translate.getValue('inspections.unregistered-permit'),
-                isActive: true,
-            }),
+                isActive: true
+            })
         ];
     }
 
@@ -124,12 +123,12 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                 NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false
             ),
             NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.VesselTypes, this.nomenclatures.getVesselTypes.bind(this.nomenclatures), false 
+                NomenclatureTypes.VesselTypes, this.nomenclatures.getVesselTypes.bind(this.nomenclatures), false
             ),
             NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.Ports, this.nomenclatures.getPorts.bind(this.nomenclatures), false
             ),
-            this.service.getCheckTypesForInspection(InspectionTypesEnum.IGM),
+            this.service.getCheckTypesForInspection(InspectionTypesEnum.IGM)
         ]).toPromise();
 
         this.institutions = nomenclatureTables[0];
@@ -176,7 +175,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             permitTypeControl: new FormControl(undefined, Validators.required),
             permitControl: new FormControl(undefined, [Validators.required]),
             unregisteredPermitControl: new FormControl(undefined, [Validators.required, Validators.maxLength(50)]),
-            unregisteredPermitYearControl: new FormControl(undefined, [Validators.required, TLValidators.number(1900, 2100, 0)]),
+            unregisteredPermitYearControl: new FormControl(undefined, Validators.required)
         });
 
         this.form.get('unregisteredPermitControl')!.disable();
@@ -210,7 +209,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                 startDate: this.model.startDate,
                 endDate: this.model.endDate,
                 inspectors: this.model.inspectors,
-                byEmergencySignal: this.model.byEmergencySignal,
+                byEmergencySignal: this.model.byEmergencySignal
             }));
 
             this.form.get('filesControl')!.setValue(this.model.files);
@@ -220,7 +219,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                 administrativeViolation: this.model.administrativeViolation,
                 inspectorComment: this.model.inspectorComment,
                 violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo),
-                violatedRegulations: this.model.violatedRegulations,
+                violatedRegulations: this.model.violatedRegulations
             }));
 
             this.form.get('togglesControl')!.setValue(this.model.checks);
@@ -242,14 +241,17 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             this.form.get('otherRemarkReasonControl')!.setValue(this.model.otherRecheckReason);
 
             this.form.get('ownerCommentControl')!.setValue(this.model.ownerComment);
-            
+
             if (this.model.permitId) {
-                this.form.get('permitTypeControl')!.setValue(this.permitTypeControls[0]); 
+                this.form.get('permitTypeControl')!.setValue(this.permitTypeControls[0]);
             }
             else {
                 this.form.get('permitTypeControl')!.setValue(this.permitTypeControls[1]);
                 this.form.get('unregisteredPermitControl')!.setValue(this.model.unregisteredPermitNumber);
-                this.form.get('unregisteredPermitYearControl')!.setValue(this.model.unregisteredPermitYear);
+
+                if (this.model.unregisteredPermitYear !== undefined && this.model.unregisteredPermitYear !== null) {
+                    this.form.get('unregisteredPermitYearControl')!.setValue(new Date(this.model.unregisteredPermitYear, 0, 1));
+                }
             }
 
             if (poundNet !== null && poundNet !== undefined) {
@@ -311,14 +313,21 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                 : undefined,
             otherRecheckReason: this.form.get('otherRemarkReasonControl')!.value,
             unregisteredPermitNumber: this.form.get('unregisteredPermitControl')!.value,
-            unregisteredPermitYear: this.form.get('unregisteredPermitYearControl')!.value,
             ownerComment: this.form.get('ownerCommentControl')!.value,
             personnel: personnel,
             observationTexts: [
-                additionalInfo?.violation,
+                additionalInfo?.violation
             ].filter(f => f !== null && f !== undefined) as InspectionObservationTextDTO[],
         });
-        
+
+        const year: Date | undefined = this.form.get('unregisteredPermitYearControl')!.value;
+        if (year !== undefined && year !== null) {
+            this.model.unregisteredPermitYear = (year as Date).getFullYear();
+        }
+        else {
+            this.model.unregisteredPermitYear = undefined;
+        }
+
         const type: InspectionSubjectEnum = this.form.get('inspectedTypeControl')!.value?.value;
         if (type === InspectionSubjectEnum.Ship) {
             this.model.inspectedShip = this.form.get('shipControl')!.value;

@@ -112,10 +112,10 @@
                           formControlName="unregisteredPermitControl"
                           label="{{ 'inspections.permit' | tlTranslate }}">
                 </tl-input>
-                <tl-input fxFlex="50"
-                          formControlName="unregisteredPermitYearControl"
-                          label="{{ 'inspections.permit-year' | tlTranslate }}">
-                </tl-input>
+                <tl-date-year fxFlex="50"
+                              formControlName="unregisteredPermitYearControl"
+                              label="{{ 'inspections.permit-year' | tlTranslate }}">
+                </tl-date-year>
             </div>
             <inspected-fishing-gears-table formControlName="fishingGearsControl"
                                            [permitIds]="selectedPermitIds">

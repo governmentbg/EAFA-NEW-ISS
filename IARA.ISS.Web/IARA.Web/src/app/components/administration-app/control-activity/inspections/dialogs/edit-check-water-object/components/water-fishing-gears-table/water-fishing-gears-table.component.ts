@@ -106,7 +106,8 @@ export class WaterFishingGearsTableComponent extends CustomFormControl<WaterInsp
         dialog.subscribe((result: WaterInspectionFishingGearDTO) => {
             if (result !== undefined && result !== null) {
                 if (fishingGear !== undefined) {
-                    fishingGear = result;
+                    const idx: number = this.fishingGears.findIndex(x => x === fishingGear);
+                    this.fishingGears[idx] = result;
                 }
                 else {
                     this.fishingGears.push(result);

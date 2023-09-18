@@ -784,6 +784,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             shipControl: new FormControl(undefined, Validators.required),
             permitLicenseControl: new FormControl(undefined, Validators.required),
             fishingGearRegisterControl: new FormControl(undefined, Validators.required),
+            fishingGearNetEyeSizeControl: new FormControl({ value: null, disabled: true }), 
             fishingGearCountControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
             fishingGearHookCountControl: new FormControl(undefined),
             partnerShipControl: new FormControl(),
@@ -1312,11 +1313,16 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 this.showPartnerShipField = false;
                 this.form.get('partnerShipControl')!.clearValidators();
             }
+
+            if (value.netEyeSize !== undefined && value.netEyeSize !== null) {
+                this.form.get('fishingGearNetEyeSizeControl')!.setValue(value.netEyeSize);
+            }
         }
         else {
             if (value === null || value === undefined) {
                 this.form.get('fishingGearCountControl')!.reset();
                 this.form.get('fishingGearHookCountControl')!.reset();
+                this.form.get('fishingGearNetEyeSizeControl')!.reset();
             }
 
             this.showHooksCountField = false;

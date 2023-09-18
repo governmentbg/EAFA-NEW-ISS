@@ -254,7 +254,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
     }
 
     public async onShipSelected(ship: VesselDuringInspectionDTO | undefined): Promise<void> {
-        if (ship === null || ship === undefined) {
+        if (ship === null || ship === undefined || ship.shipId === undefined || ship.shipId === null) {
             return;
         }
 

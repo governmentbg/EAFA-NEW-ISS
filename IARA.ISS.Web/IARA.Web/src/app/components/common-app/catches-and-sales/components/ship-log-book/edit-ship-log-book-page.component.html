@@ -44,31 +44,35 @@
                 </tl-input>
             </div>
             <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-                <tl-input fxFlex="25"
+                <tl-input [fxFlex]="showHooksCountField ? 20 : 25"
                           formControlName="permitLicenseControl"
                           label="{{ 'catches-and-sales.ship-page-permit-license' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.ship-page-permit-license-helper"
                           [readonly]="true">
                 </tl-input>
-                <tl-autocomplete fxFlex="25"
+                <tl-autocomplete [fxFlex]="showHooksCountField ? 20 : 25"
                                  formControlName="fishingGearRegisterControl"
                                  label="{{ 'catches-and-sales.ship-page-fishing-gear' | tlTranslate }}"
                                  tooltipResourceName="catches-and-sales.ship-page-fishing-gear-helper"
                                  [templateOptions]="true"
                                  [options]="fishingGearsRegister">
                 </tl-autocomplete>
-                <tl-input fxFlex="25"
+                <tl-input [fxFlex]="showHooksCountField ? 20 : 25"
+                          formControlName="fishingGearNetEyeSizeControl"
+                          label="{{ 'catches-and-sales.ship-page-fishing-gear-net-eye-size' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-fishing-gear-net-eye-size-helper">
+                </tl-input>
+                <tl-input [fxFlex]="showHooksCountField ? 20 : 25"
                           formControlName="fishingGearCountControl"
                           label="{{ 'catches-and-sales.ship-page-fishing-gear-count' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.ship-page-fishing-gear-count-helper">
                 </tl-input>
                 <tl-input *ngIf="showHooksCountField"
-                          fxFlex="25"
+                          [fxFlex]="showHooksCountField ? 20 : 25"
                           formControlName="fishingGearHookCountControl"
                           label="{{ 'catches-and-sales.ship-page-fishing-gear-hook-count' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.ship-page-fishing-gear-hook-count-helper">
                 </tl-input>
-                <div *ngIf="!showHooksCountField" fxFlex="25"></div>
             </div>
             <div *ngIf="showPartnerShipField" fxLayout="row" fxFlex="100">
                 <tl-autocomplete fxFlex="50"
