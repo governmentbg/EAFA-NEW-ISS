@@ -1,5 +1,5 @@
 ﻿<div [formGroup]="form" fxLayout="column" fxLayoutGap="1em">
-    <tl-radio-button-group *ngIf="!viewMode"
+    <tl-radio-button-group *ngIf="!isFromRegister"
                            fxFlex="100"
                            formControlName="isInspectedEntityPersonControl"
                            [options]="inspectedEntityOptions"

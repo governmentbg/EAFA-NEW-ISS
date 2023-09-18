@@ -74,7 +74,7 @@
                 <tl-card-title>{{ 'auan-register.edit-auan-inspected-person' | tlTranslate }}</tl-card-title>
                 <tl-card-content fxLayout="column" fxLayoutGap="1em">
                     <inspected-entity-basic-info formControlName="auanInspectedEntityControl"
-                                                 [viewMode]="true"
+                                                 [isFromRegister]="true"
                                                  [isIdReadOnly]="true">
                     </inspected-entity-basic-info>
                 </tl-card-content>

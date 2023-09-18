@@ -74,6 +74,8 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
     public isInspector: boolean = false;
     public isFromThirdPartyInspection: boolean = false;
     public violatedRegulationsTouched: boolean = false;
+    public showInspectedEntity: boolean = false;
+    public isFromInspection: boolean = true;
 
     public auanNumErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.auanNumErrorLabelText.bind(this);
 
@@ -116,6 +118,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
     public async ngOnInit(): Promise<void> {
         this.isAdding = this.auanId === undefined || this.auanId === null;
+        this.showInspectedEntity = !this.isAdding;
 
         const nomenclatures: (NomenclatureDTO<number> | InspDeliveryTypesNomenclatureDTO)[][] = await forkJoin(
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.InspectionTypes, this.nomenclatures.getInspectionTypes.bind(this.nomenclatures), false),
@@ -134,8 +137,8 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         this.service.getAuanReportData(this.inspectionId).subscribe({
             next: (data: AuanReportDataDTO) => {
                 this.isInspector = true;
-
                 this.fillReportData(data);
+
                 if (this.auanId === undefined || this.auanId === null) {
                     this.model = new AuanRegisterEditDTO();
                 }
@@ -171,10 +174,36 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                     this.inspectedEntity = entity;
 
                     if (this.inspectedEntity !== null && this.inspectedEntity !== undefined) {
+                        this.showInspectedEntity = true;
                         this.form.get('inspectedEntityBasicInfoControl')!.setValue(this.inspectedEntity);
+                    }
+                    else {
+                        this.showInspectedEntity = false;
                     }
                 }
             });
+
+            if (!this.isFromThirdPartyInspection) {
+                this.form.get('isInspectedEntityFromInspectionControl')!.valueChanges.subscribe({
+                    next: (value: boolean | undefined) => {
+                        this.isFromInspection = false;
+
+                        if (value === true) {
+                            this.isFromInspection = true;
+                            this.form.get('inspectedEntityControl')!.setValidators(Validators.required);
+                            this.form.get('inspectedEntityControl')!.setValue(this.inspectedEntities.find(x => x === this.inspectedEntity));
+                        }
+                        else {
+                            this.showInspectedEntity = true;
+                            this.form.get('inspectedEntityControl')!.clearValidators();
+                            this.form.get('inspectedEntityBasicInfoControl')!.setValue(null);
+                        }
+
+                        this.form.get('inspectedEntityControl')!.updateValueAndValidity({ emitEvent: false });
+                        this.form.get('inspectedEntityBasicInfoControl')!.updateValueAndValidity({ emitEvent: false });
+                    }
+                });
+            }
         }
 
         this.form.get('deliveryTypeControl')!.valueChanges.subscribe({
@@ -399,6 +428,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
             inspectedEntityControl: new FormControl(null),
             inspectedEntityBasicInfoControl: new FormControl(null),
+            isInspectedEntityFromInspectionControl: new FormControl(true),
 
             witnessesControl: new FormControl(null, Validators.required),
 

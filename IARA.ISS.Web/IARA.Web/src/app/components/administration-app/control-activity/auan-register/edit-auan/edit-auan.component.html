@@ -85,8 +85,8 @@
                         tooltipResourceName="auan-register.auan-inspected-person-helper"
                         [validityChecker]="form">
         <div fxLayout="column" fxLayoutGap="1em">
-            <div *ngIf="isAdding" fxLayout="row" fxLayoutAlign="start center">
-                <tl-autocomplete *ngIf="!isFromThirdPartyInspection"
+            <div *ngIf="isAdding" fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+                <tl-autocomplete *ngIf="!isFromThirdPartyInspection && isFromInspection"
                                  fxFlex="50"
                                  formControlName="inspectedEntityControl"
                                  [options]="inspectedEntities"
@@ -94,12 +94,18 @@
                                  label="{{ 'auan-register.edit-inspected-entity-select' | tlTranslate }}"
                                  tooltipResourceName="auan-register.edit-inspected-entity-select-helper">
                 </tl-autocomplete>
+
+                <tl-checkbox *ngIf="!isFromThirdPartyInspection"
+                             formControlName="isInspectedEntityFromInspectionControl"
+                             label="{{ 'auan-register.edit-is-inspected-entity-from-inspection' | tlTranslate }}"
+                             tooltipResourceName="auan-register.edit-is-inspected-entity-from-inspection-helper">
+                </tl-checkbox>
             </div>
 
-            <inspected-entity-basic-info *ngIf="(inspectedEntity !== undefined && inspectedEntity !== null) || isFromThirdPartyInspection"
+            <inspected-entity-basic-info *ngIf="showInspectedEntity || isFromThirdPartyInspection"
                                          formControlName="inspectedEntityBasicInfoControl"
                                          validityChecker
-                                         [viewMode]="!isFromThirdPartyInspection"
+                                         [isFromRegister]="!isFromThirdPartyInspection && isFromInspection"
                                          [isIdReadOnly]="viewMode">
             </inspected-entity-basic-info>
         </div>

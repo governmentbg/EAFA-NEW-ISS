@@ -4912,6 +4912,7 @@
         'edit-inspected-entity-address': 'Address',
         'inspected-entity-person': 'Inspected person',
         'inspected-entity-legal': 'Inspected legal entity',
+        'edit-is-inspected-entity-from-inspection': 'Inspected entity from inspection',
 
         'edit-auan-witnesses': 'Witnesses',
         'edit-witness': 'Witness #1',
