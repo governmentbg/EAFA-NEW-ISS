@@ -27,11 +27,11 @@ export class AuanWitnessesArrayComponent extends CustomFormControl<AuanWitnessDT
     }
 
     public addWitnessControl(): void {
-        const catchAquaticOrganismType: AuanWitnessDTO = new AuanWitnessDTO({
+        const auanWitness: AuanWitnessDTO = new AuanWitnessDTO({
             isActive: true
         });
 
-        const control: FormControl = new FormControl(catchAquaticOrganismType);
+        const control: FormControl = new FormControl(auanWitness);
         this.formArray.push(control);
 
         this.onChanged(this.form.value);

@@ -212,7 +212,6 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
     }
 
     protected getValue(): VesselDuringInspectionDTO | undefined {
-        debugger;
         if (!this.isFromRegister) {
             return new VesselDuringInspectionDTO({
                 isRegistered: false,

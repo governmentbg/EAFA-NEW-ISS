@@ -4970,6 +4970,7 @@
         'edit-inspected-entity-address': 'Адрес',
         'inspected-entity-person': 'Физическо лице',
         'inspected-entity-legal': 'Юридическо лице',
+        'edit-is-inspected-entity-from-inspection': 'Нарушителят е от инспекция',
 
         'edit-auan-witnesses': 'Свидетели',
         'edit-auan-witness': 'Свидетел',

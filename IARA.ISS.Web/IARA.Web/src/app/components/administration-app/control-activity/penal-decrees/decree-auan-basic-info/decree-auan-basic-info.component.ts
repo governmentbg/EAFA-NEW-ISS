@@ -14,7 +14,7 @@ export class DecreeAuanBasicInfoComponent extends CustomFormControl<PenalDecreeA
     public isAdding: boolean = false;
 
     public auan: PenalDecreeAuanDataDTO | undefined;
-    public viewMode: boolean = false;
+    public isFromRegister: boolean = false;
 
     public users: NomenclatureDTO<number>[] = [];
 
@@ -35,7 +35,7 @@ export class DecreeAuanBasicInfoComponent extends CustomFormControl<PenalDecreeA
         this.initCustomFormControl();
 
         if (!this.isAdding) {
-            this.viewMode = true;
+            this.isFromRegister = true;
             this.setDisabledState(true);
         }
         else {
