@@ -159,7 +159,7 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
     public async onShipSelected(ship: VesselDuringInspectionDTO): Promise<void> {
         this.shipSelected.emit(ship);
 
-        if (ship.shipId !== undefined && ship.shipId !== null) {
+        if (ship?.shipId !== undefined && ship?.shipId !== null) {
             const personnel: InspectionShipSubjectNomenclatureDTO[] = await this.service.getShipPersonnel(ship.shipId!).toPromise();
 
             this.assignPersonnel(personnel);

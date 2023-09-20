@@ -127,11 +127,13 @@
             </tl-slide-toggle>
 
             <div *ngIf="form.controls.isPermitOwnerControl.value === false">
-                <tl-card tooltipResourceName="penal-points.edit-owner-person-helper">
+                <tl-card [validityChecker]="form"
+                         tooltipResourceName="penal-points.edit-owner-person-helper">
                     <tl-card-title>{{ 'penal-points.edit-owner-person' | tlTranslate }}</tl-card-title>
                     <tl-card-content>
                         <regix-data formControlName="personControl"
                                     [isPerson]="true"
+                                    validityChecker
                                     [hideDocument]="true"
                                     [isIdReadOnly]="viewMode"
                                     (downloadDataBtnClicked)="downloadedPersonData($event)"

@@ -1,41 +1,48 @@
-﻿<tl-card [formGroup]="form">
-    <tl-card-title>
-        {{ 'auan-register.edit-auan-witness' | tlTranslate }}
-        {{ 'auan-register.edit-auan-witness-no' | tlTranslate }}{{ orderNum + 1 }}
-    </tl-card-title>
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     validityCheckerGroup
+     [formGroup]="form">
+    <tl-card [validityChecker]="form">
+        <tl-card-title>
+            {{ 'auan-register.edit-auan-witness' | tlTranslate }}
+            {{ 'auan-register.edit-auan-witness-no' | tlTranslate }}{{ orderNum + 1 }}
+        </tl-card-title>
 
-    <tl-card-content>
-        <div fxFlexFill
-             fxLayout="column"
-             fxLayoutGap="1em"
-             fxFlex="100"
-             fxLayoutAlign="space-between stretch">
-            <div fxFlex="100" fxLayout="row" fxLayoutAlign="end start">
-                <tl-icon-button icon="delete"
-                                iconClass="accent-color"
-                                (buttonClicked)="deletePanel()"
-                                [disabled]="isDisabled">
-                </tl-icon-button>
+        <tl-card-content>
+            <div fxFlexFill
+                 fxLayout="column"
+                 fxLayoutGap="1em"
+                 fxFlex="100"
+                 fxLayoutAlign="space-between stretch">
+                <div fxFlex="100" fxLayout="row" fxLayoutAlign="end start">
+                    <tl-icon-button icon="delete"
+                                    iconClass="accent-color"
+                                    (buttonClicked)="deletePanel()"
+                                    [disabled]="isDisabled">
+                    </tl-icon-button>
+                </div>
+                <div fxLayout="row" fxLayoutGap="1em" fxFlex="100">
+                    <tl-input fxFlex="75"
+                              formControlName="personNameControl"
+                              label="{{ 'auan-register.edit-witness-name' | tlTranslate }}"
+                              tooltipResourceName="auan-register.edit-witness-name-helper">
+                    </tl-input>
+
+                    <tl-date fxFlex="25"
+                             [max]="today"
+                             formControlName="personDateOfBirthControl"
+                             label="{{ 'auan-register.edit-witness-date-of-birth' | tlTranslate }}"
+                             tooltipResourceName="auan-register.edit-witness-date-of-birth-helper">
+                    </tl-date>
+                </div>
+
+                <single-address-registration formControlName="addressesControl"
+                                             [addressType]="addressType"
+                                             validityChecker
+                                             label="{{ 'auan-register.edit-inspected-entity-address' | tlTranslate : 'cap' }}">
+                </single-address-registration>
             </div>
-            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100">
-                <tl-input fxFlex="75"
-                          formControlName="personNameControl"
-                          label="{{ 'auan-register.edit-witness-name' | tlTranslate }}"
-                          tooltipResourceName="auan-register.edit-witness-name-helper">
-                </tl-input>
-
-                <tl-date fxFlex="25"
-                         [max]="today"
-                         formControlName="personDateOfBirthControl"
-                         label="{{ 'auan-register.edit-witness-date-of-birth' | tlTranslate }}"
-                         tooltipResourceName="auan-register.edit-witness-date-of-birth-helper">
-                </tl-date>
-            </div>
-
-            <single-address-registration formControlName="addressesControl"
-                                         [addressType]="addressType"
-                                         label="{{ 'auan-register.edit-inspected-entity-address' | tlTranslate : 'cap' }}">
-            </single-address-registration>
-        </div>
-    </tl-card-content>
-</tl-card>
+        </tl-card-content>
+    </tl-card>
+</div>

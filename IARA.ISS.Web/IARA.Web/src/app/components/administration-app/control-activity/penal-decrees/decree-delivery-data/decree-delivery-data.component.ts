@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, Input, OnInit, Self } from '@angular/core';
+﻿import { AfterViewInit, Component, Input, OnInit, Optional, Self } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
 import { PenalDecreeDeliveryDataDTO } from '@app/models/generated/dtos/PenalDecreeDeliveryDataDTO';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
@@ -14,6 +14,7 @@ import { InspDeliveryConfirmationTypesEnum } from '@app/enums/insp-delivery-conf
 import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/InspDeliveryTypesNomenclatureDTO';
 import { InspDeliveryTypeGroupsEnum } from '@app/enums/insp-delivery-type-groups.enum';
 import { AuanWitnessDTO } from '@app/models/generated/dtos/AuanWitnessDTO';
+import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 
 @Component({
     selector: 'decree-delivery-data',
@@ -40,9 +41,10 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
 
     public constructor(
         @Self() ngControl: NgControl,
+        @Self() @Optional() validityChecker: ValidityCheckerDirective,
         service: PenalDecreesService
     ) {
-        super(ngControl);
+        super(ngControl, true, validityChecker);
 
         this.service = service;
 

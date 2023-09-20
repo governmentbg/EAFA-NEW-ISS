@@ -1,8 +1,9 @@
-﻿import { Component, EventEmitter, Input, OnInit, Output, Self } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnInit, Optional, Output, Self } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, Validators } from '@angular/forms';
 import { AuanWitnessDTO } from '@app/models/generated/dtos/AuanWitnessDTO';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { AddressTypesEnum } from '@app/enums/address-types.enum';
+import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 
 @Component({
     selector: 'auan-witness',
@@ -23,9 +24,10 @@ export class AuanWitnessComponent extends CustomFormControl<AuanWitnessDTO> impl
     private model: AuanWitnessDTO | undefined;
 
     public constructor(
-        @Self() ngControl: NgControl
+        @Self() ngControl: NgControl,
+        @Self() @Optional() validityChecker: ValidityCheckerDirective
     ) {
-        super(ngControl, false);
+        super(ngControl, false, validityChecker);
 
         this.buildForm();
     }

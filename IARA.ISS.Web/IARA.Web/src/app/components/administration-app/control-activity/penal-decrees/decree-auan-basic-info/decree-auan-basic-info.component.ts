@@ -1,9 +1,10 @@
-﻿import { Component, Input, OnInit, Self } from '@angular/core';
+﻿import { Component, Input, OnInit, Optional, Self } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
 import { PenalDecreeAuanDataDTO } from '@app/models/generated/dtos/PenalDecreeAuanDataDTO';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { PenalDecreesService } from '@app/services/administration-app/penal-decrees.service';
+import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 
 @Component({
     selector: 'decree-auan-basic-info',
@@ -24,9 +25,10 @@ export class DecreeAuanBasicInfoComponent extends CustomFormControl<PenalDecreeA
 
     public constructor(
         @Self() ngControl: NgControl,
+        @Self() @Optional() validityChecker: ValidityCheckerDirective,
         service: PenalDecreesService
     ) {
-        super(ngControl);
+        super(ngControl, true, validityChecker);
 
         this.service = service;
     }

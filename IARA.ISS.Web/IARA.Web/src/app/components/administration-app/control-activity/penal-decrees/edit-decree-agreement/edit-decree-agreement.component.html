@@ -67,6 +67,7 @@
             </mat-error>
 
             <decree-auan-basic-info formControlName="auanControl"
+                                    validityChecker
                                     [isAdding]="isThirdParty">
             </decree-auan-basic-info>
         </div>
@@ -186,6 +187,7 @@
                         tooltipResourceName="penal-decrees.edit-decree-files-helper"
                         [validityChecker]="form">
         <file-uploader-form-array formControlName="filesControl"
+                                  validityChecker
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">
         </file-uploader-form-array>

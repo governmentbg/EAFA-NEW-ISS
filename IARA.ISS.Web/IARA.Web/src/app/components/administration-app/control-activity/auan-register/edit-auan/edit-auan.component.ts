@@ -43,10 +43,6 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
     public form!: FormGroup;
     public auanId!: number | undefined;
 
-    public get witnesses(): FormArray {
-        return this.form.get('witnessesControl') as FormArray;
-    }
-
     public readonly service!: IAuanRegisterService;
     public readonly pageCode: PageCodeEnum = PageCodeEnum.AuanRegister;
     public readonly companyHeadquartersType: AddressTypesEnum = AddressTypesEnum.COMPANY_HEADQUARTERS;
@@ -119,7 +115,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
     public async ngOnInit(): Promise<void> {
         this.isAdding = this.auanId === undefined || this.auanId === null;
         this.showInspectedEntity = !this.isAdding;
-
+       
         const nomenclatures: (NomenclatureDTO<number> | InspDeliveryTypesNomenclatureDTO)[][] = await forkJoin(
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.InspectionTypes, this.nomenclatures.getInspectionTypes.bind(this.nomenclatures), false),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures), false),
@@ -133,7 +129,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         this.deliveryTypes = (nomenclatures[2] as InspDeliveryTypesNomenclatureDTO[]).filter(x => x.group === InspDeliveryTypeGroupsEnum.AUAN);
         this.deliveryConfirmationTypes = (nomenclatures[3] as InspDeliveryTypesNomenclatureDTO[]).filter(x => x.group === InspDeliveryTypeGroupsEnum.AUAN);
         this.drafters = nomenclatures[4];
-
+       
         this.service.getAuanReportData(this.inspectionId).subscribe({
             next: (data: AuanReportDataDTO) => {
                 this.isInspector = true;
@@ -366,6 +362,8 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             }
             else {
                 this.markAllAsTouched();
+                this.validityCheckerGroup.validate();
+
                 if (this.form.valid) {
                     this.fillModel();
                     CommonUtils.sanitizeModelStrings(this.model);
