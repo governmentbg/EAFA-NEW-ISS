@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, Input, OnInit, Self } from '@angular/core';
+﻿import { AfterViewInit, Component, Input, OnInit, Optional, Self } from '@angular/core';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { AuanInspectedEntityDTO } from '@app/models/generated/dtos/AuanInspectedEntityDTO';
 import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
@@ -8,6 +8,7 @@ import { AddressTypesEnum } from '@app/enums/address-types.enum';
 import { RegixLegalDataDTO } from '@app/models/generated/dtos/RegixLegalDataDTO';
 import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
+import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 
 @Component({
     selector: 'inspected-entity-basic-info',
@@ -29,9 +30,10 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
 
     public constructor(
         @Self() ngControl: NgControl,
+        @Self() @Optional() validityChecker: ValidityCheckerDirective,
         translate: FuseTranslationLoaderService
     ) {
-        super(ngControl);
+        super(ngControl, true, validityChecker);
 
         this.translate = translate;
 
@@ -147,10 +149,12 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
 
     public downloadedPersonData(person: PersonFullDataDTO): void {
         this.form.get('personControl')!.setValue(person.person);
+        this.form.get('personAddressesControl')!.setValue(person.addresses);
     }
 
     public downloadedLegalData(legal: LegalFullDataDTO): void {
         this.form.get('legalControl')!.setValue(legal.legal);
+        this.form.get('legalAddressesControl')!.setValue(legal.addresses);
     }
 
     protected getValue(): AuanInspectedEntityDTO {

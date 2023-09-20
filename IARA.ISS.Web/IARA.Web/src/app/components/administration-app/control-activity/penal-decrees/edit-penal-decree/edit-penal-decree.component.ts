@@ -228,6 +228,8 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             }
             else {
                 this.markAllAsTouched();
+                this.validityCheckerGroup.validate();
+
                 if (this.form.valid) {
                     this.fillModel();
                     CommonUtils.sanitizeModelStrings(this.model);
@@ -497,7 +499,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
                 });
             }
         }
-        
+
         if (response.error?.code === ErrorCode.NoEDeliveryRegistration) {
             this.form.get('deliveryControl')!.setErrors({ 'hasNoEDeliveryRegistrationError': true });
             this.form.get('deliveryControl')!.markAsTouched();

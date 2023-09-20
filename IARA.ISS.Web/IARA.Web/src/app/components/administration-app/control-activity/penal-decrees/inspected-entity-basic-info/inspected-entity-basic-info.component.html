@@ -1,4 +1,7 @@
-﻿<div [formGroup]="form" fxLayout="column" fxLayoutGap="1em">
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     validityCheckerGroup 
+     [formGroup]="form">
     <tl-radio-button-group *ngIf="!isFromRegister"
                            fxFlex="100"
                            formControlName="isInspectedEntityPersonControl"
@@ -12,6 +15,7 @@
         <!-- Физическо лице -->
         <div *ngIf="inspectedEntity.isPerson === true">
             <regix-data formControlName="personControl"
+                        validityChecker
                         [isPerson]="true"
                         [hideDocument]="true"
                         [isIdReadOnly]="isIdReadOnly"
@@ -35,6 +39,7 @@
             </div>
 
             <address-registration formControlName="personAddressesControl"
+                                  validityChecker
                                   addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
                                   secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
                                   checkboxLabel="{{ 'auan-register.permanent-address-same-as-correspondence' | tlTranslate }}">
@@ -45,6 +50,7 @@
         <div *ngIf="inspectedEntity.isPerson === false">
             <regix-data formControlName="legalControl"
                         [isPerson]="false"
+                        validityChecker
                         [showCustodianOfProperty]="false"
                         [isIdReadOnly]="isIdReadOnly"
                         (downloadDataBtnClicked)="downloadedLegalData($event)"
@@ -52,6 +58,7 @@
             </regix-data>
 
             <address-registration formControlName="legalAddressesControl"
+                                  validityChecker
                                   addressLabel="{{ 'common.company-headquarters-address' | tlTranslate : 'cap' }}"
                                   [addressType]="companyHeadquartersType">
             </address-registration>

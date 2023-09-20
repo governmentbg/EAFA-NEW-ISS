@@ -144,7 +144,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
 
         this.markAllAsTouched();
         this.validityCheckerGroup.validate();
-        
+
         if (this.form.valid) {
             this.fillModel();
             CommonUtils.sanitizeModelStrings(this.model);
@@ -188,6 +188,8 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
             }
             else {
                 this.markAllAsTouched();
+                this.validityCheckerGroup.validate();
+
                 if (this.form.valid) {
                     this.fillModel();
                     CommonUtils.sanitizeModelStrings(this.model);
@@ -321,7 +323,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
 
         this.model.auanViolatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
         this.model.decreeViolatedRegulations = this.form.get('violatedRegulationsControl')!.value;
-        
+
         if (this.isThirdParty) {
             this.model.auanData = this.form.get('auanControl')!.value;
             this.model.auanData!.territoryUnitId = this.form.get('territoryUnitControl')!.value?.value;

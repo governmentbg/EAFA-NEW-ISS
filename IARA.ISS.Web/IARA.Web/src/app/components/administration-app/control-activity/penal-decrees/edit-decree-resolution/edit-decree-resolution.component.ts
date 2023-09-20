@@ -30,7 +30,7 @@ import { PenalDecreeResolutionDTO } from '@app/models/generated/dtos/PenalDecree
     selector: 'edit-decree-resolution',
     templateUrl: './edit-decree-resolution.component.html'
 })
-export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDialogComponent{
+export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDialogComponent {
     public form!: FormGroup;
 
     public readonly service!: IPenalDecreesService;
@@ -189,6 +189,8 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
             }
             else {
                 this.markAllAsTouched();
+                this.validityCheckerGroup.validate();
+
                 if (this.form.valid) {
                     this.fillModel();
                     CommonUtils.sanitizeModelStrings(this.model);

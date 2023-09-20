@@ -1,7 +1,7 @@
-﻿<div #container 
-     fxFlexFill 
-     fxLayoutGap="1em" 
-     class="space-cards container" 
+﻿<div #container
+     fxFlexFill
+     fxLayoutGap="1em"
+     class="space-cards container"
      [formGroup]="formGroup"
      [style.height.px]="containerHeightPx">
     <div fxLayout="column"
@@ -59,8 +59,8 @@
     </div>
 
     <!-- Обща информация за справка -->
-    <div fxLayout="column" 
-         fxLayoutGap="1em" 
+    <div fxLayout="column"
+         fxLayoutGap="1em"
          class="main-panel"
          [style.width.px]="mainPanelWidthPx"
          [style.height.px]="mainPanelHeightPx">
@@ -131,6 +131,7 @@
                     <tl-date-time label="{{ 'report-definition.last-run-date-time' | tlTranslate }}"
                                   formControlName="lastRunDateTimeControl"
                                   fxFlex="33"
+                                  [disabled]="true"
                                   tooltipResourceName="report-definition.last-run-date-time-helper">
                     </tl-date-time>
 

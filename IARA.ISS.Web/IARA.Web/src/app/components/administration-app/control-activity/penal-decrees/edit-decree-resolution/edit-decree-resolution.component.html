@@ -90,6 +90,7 @@
             </mat-error>
 
             <decree-auan-basic-info formControlName="auanControl"
+                                    validityChecker
                                     [isAdding]="isThirdParty">
             </decree-auan-basic-info>
         </div>
@@ -225,6 +226,7 @@
                         [validityCheckerExtraCondition]="form.controls.deliveryControl.errors?.hasNoEDeliveryRegistrationError !== true"
                         [validityChecker]="form">
         <decree-delivery-data formControlName="deliveryControl"
+                              validityChecker
                               [viewMode]="viewMode">
         </decree-delivery-data>
 
@@ -238,6 +240,7 @@
                         tooltipResourceName="penal-decree.edit-decree-files-helper"
                         [validityChecker]="form">
         <file-uploader-form-array formControlName="filesControl"
+                                  validityChecker
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">
         </file-uploader-form-array>

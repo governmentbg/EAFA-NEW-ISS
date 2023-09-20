@@ -182,6 +182,8 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
             }
             else {
                 this.markAllAsTouched();
+                this.validityCheckerGroup.validate();
+
                 if (this.form.valid) {
                     this.fillModel();
                     CommonUtils.sanitizeModelStrings(this.model);

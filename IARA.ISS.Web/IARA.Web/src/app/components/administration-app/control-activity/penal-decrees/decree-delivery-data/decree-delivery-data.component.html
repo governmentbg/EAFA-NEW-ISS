@@ -1,4 +1,7 @@
-﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="form">
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     validityCheckerGroup
+     [formGroup]="form">
     <div fxLayout="column" fxLayoutGap="1em">
         <tl-radio-button-group fxFlex="100"
                                formControlName="deliveryTypeControl"
@@ -43,6 +46,7 @@
 
     <div fxLayout="column" fxLayoutGap="1em" *ngIf="confirmationType === confirmationTypesEnum.RefusalDecree">
         <auan-witnesses-array formControlName="witnessesControl"
+                              validityChecker
                               [viewMode]="viewMode">
         </auan-witnesses-array>
     </div>

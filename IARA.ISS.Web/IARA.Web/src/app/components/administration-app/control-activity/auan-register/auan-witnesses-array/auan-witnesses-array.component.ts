@@ -1,7 +1,8 @@
-﻿import { Component, Input, OnInit, Self } from '@angular/core';
+﻿import { Component, Input, OnInit, Optional, Self } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, NgControl } from '@angular/forms';
 import { AuanWitnessDTO } from '@app/models/generated/dtos/AuanWitnessDTO';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
+import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 
 @Component({
     selector: 'auan-witnesses-array',
@@ -13,9 +14,10 @@ export class AuanWitnessesArrayComponent extends CustomFormControl<AuanWitnessDT
     public isDisabled: boolean = false;
 
     public constructor(
-        @Self() ngControl: NgControl
+        @Self() ngControl: NgControl,
+        @Self() @Optional() validityChecker: ValidityCheckerDirective
     ) {
-        super(ngControl);
+        super(ngControl, true, validityChecker);
     }
 
     public ngOnInit(): void {
