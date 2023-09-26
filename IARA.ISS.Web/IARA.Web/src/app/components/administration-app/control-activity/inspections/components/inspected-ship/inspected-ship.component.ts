@@ -183,6 +183,8 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
             this.form.get('shipTypeControl')!.setValue(null);
             this.form.get('mmsiControl')!.setValue(null);
         }
+
+        this.setDisabledState(this.isDisabled);
     }
 
     protected buildForm(): AbstractControl {

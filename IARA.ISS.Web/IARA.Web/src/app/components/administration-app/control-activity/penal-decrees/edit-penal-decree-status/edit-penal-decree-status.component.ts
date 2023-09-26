@@ -161,7 +161,7 @@ export class EditPenalDecreeStatusComponent implements OnInit, AfterViewInit, ID
             appealGroup: new FormGroup({
                 courtControl: new FormControl(null, Validators.required),
                 appealDateControl: new FormControl(null, Validators.required),
-                caseNumControl: new FormControl(null, Validators.required)
+                caseNumControl: new FormControl(null, [Validators.required, Validators.maxLength(50)])
             }),
 
             firstDecisionGroup: new FormGroup({

@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
 import { IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
@@ -135,8 +135,8 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
             transshipmentCatchesControl: new FormControl({ value: [], disabled: true }),
             transshipmentViolationControl: new FormControl(undefined),
             nnnShipStatusControl: new FormControl(undefined),
-            captainCommentControl: new FormControl(undefined),
-            additionalInfoControl: new FormControl(undefined),
+            captainCommentControl: new FormControl(undefined, Validators.maxLength(4000)),
+            additionalInfoControl: new FormControl(undefined, Validators.maxLength(4000)),
             filesControl: new FormControl([])
         });
 

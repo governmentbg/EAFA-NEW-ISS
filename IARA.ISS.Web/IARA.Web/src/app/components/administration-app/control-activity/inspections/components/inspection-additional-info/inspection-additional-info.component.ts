@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit, Self } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NgControl } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
 
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { InspectionObservationTextDTO } from '@app/models/generated/dtos/InspectionObservationTextDTO';
@@ -46,10 +46,10 @@ export class InspectionAdditionalInfoComponent extends CustomFormControl<Inspect
     protected buildForm(): AbstractControl {
         return new FormGroup({
             violationControl: new FormControl(undefined),
-            inspectorCommentControl: new FormControl(undefined),
-            actionsTakenControl: new FormControl(undefined),
+            inspectorCommentControl: new FormControl(undefined, Validators.maxLength(4000)),
+            actionsTakenControl: new FormControl(undefined, Validators.maxLength(4000)),
             administrativeViolationControl: new FormControl(false),
-            violatedRegulationsControl: new FormControl(undefined),
+            violatedRegulationsControl: new FormControl(undefined)
         });
     }
 

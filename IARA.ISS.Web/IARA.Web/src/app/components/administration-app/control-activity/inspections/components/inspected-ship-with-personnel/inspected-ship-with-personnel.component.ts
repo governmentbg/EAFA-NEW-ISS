@@ -164,6 +164,9 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
 
             this.assignPersonnel(personnel);
         }
+        else {
+            this.assignPersonnel([]);
+        }
     }
 
     public assignPersonnel(personnel: InspectionShipSubjectNomenclatureDTO[]): void {

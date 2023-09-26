@@ -118,8 +118,8 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
             representerControl: new FormControl(undefined),
             catchesControl: new FormControl([]),
             catchTogglesControl: new FormControl([]),
-            otherFishingGearControl: new FormControl(undefined),
-            representativeControl: new FormControl(undefined),
+            otherFishingGearControl: new FormControl(undefined, Validators.maxLength(4000)),
+            representativeControl: new FormControl(undefined, Validators.maxLength(4000)),
             additionalInfoControl: new FormControl(undefined),
             filesControl: new FormControl([])
         });

@@ -121,9 +121,9 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
         this.form = new FormGroup({
             inspectorRegisteredControl: new FormControl(true),
             inspectorControl: new FormControl(undefined, Validators.required),
-            firstNameControl: new FormControl(undefined),
-            middleNameControl: new FormControl(undefined),
-            lastNameControl: new FormControl(undefined),
+            firstNameControl: new FormControl(undefined, Validators.maxLength(200)),
+            middleNameControl: new FormControl(undefined, Validators.maxLength(200)),
+            lastNameControl: new FormControl(undefined, Validators.maxLength(200)),
             cardNumControl: new FormControl(undefined),
             countryControl: new FormControl({ value: undefined, disabled: true }, Validators.required),
             institutionControl: new FormControl({ value: undefined, disabled: true }, Validators.required),

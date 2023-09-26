@@ -19,6 +19,7 @@ import { InspectionFisherDTO } from '@app/models/generated/dtos/InspectionFisher
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { TLValidators } from '@app/shared/utils/tl-validators';
 
 @Component({
     selector: 'edit-inspection-person',
@@ -112,15 +113,15 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
             generalInfoControl: new FormControl(undefined),
             patrolVehiclesControl: new FormControl(undefined),
             mapControl: new FormControl(undefined),
-            addressControl: new FormControl(undefined),
+            addressControl: new FormControl(undefined, Validators.maxLength(500)),
             personControl: new FormControl(undefined),
             hasTicketControl: new FormControl(true),
-            ticketControl: new FormControl(undefined),
-            fishingGearCountControl: new FormControl(undefined, Validators.required),
-            hookCountControl: new FormControl(undefined, Validators.required),
+            ticketControl: new FormControl(undefined, Validators.maxLength(50)),
+            fishingGearCountControl: new FormControl(undefined, [Validators.required, TLValidators.number(0, undefined, 0)]),
+            hookCountControl: new FormControl(undefined, [Validators.required, TLValidators.number(0, undefined, 0)]),
             catchesControl: new FormControl(undefined),
             catchTogglesControl: new FormControl(undefined),
-            fishermanCommentControl: new FormControl(undefined),
+            fishermanCommentControl: new FormControl(undefined, Validators.maxLength(4000)),
             additionalInfoControl: new FormControl(undefined),
             filesControl: new FormControl(undefined)
         });

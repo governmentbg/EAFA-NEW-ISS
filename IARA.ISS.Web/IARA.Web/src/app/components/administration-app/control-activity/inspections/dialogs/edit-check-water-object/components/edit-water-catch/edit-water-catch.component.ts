@@ -10,6 +10,7 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { CatchActionEnum } from '@app/enums/catch-action.enum';
 import { InspectionCatchMeasureDTO } from '@app/models/generated/dtos/InspectionCatchMeasureDTO';
 import { WaterCatchTableParams } from '../water-catches-table/models/water-catch-table-params';
+import { TLValidators } from '@app/shared/utils/tl-validators';
 
 @Component({
     selector: 'edit-water-catch',
@@ -94,10 +95,10 @@ export class EditWaterCatchComponent implements OnInit, IDialogComponent {
     protected buildForm(): void {
         this.form = new FormGroup({
             typeControl: new FormControl(null),
-            quantityControl: new FormControl(null),
+            quantityControl: new FormControl(null, TLValidators.number(0)),
             takenControl: new FormControl(null),
             storedControl: new FormControl(null, [Validators.required]),
-            storageControl: new FormControl(null)
+            storageControl: new FormControl(null, Validators.maxLength(500))
         });
     }
 

@@ -223,7 +223,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
             decreeNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
             drafterControl: new FormControl(null, Validators.required),
             issueDateControl: new FormControl(null, Validators.required),
-            issuerPositionControl: new FormControl(null),
+            issuerPositionControl: new FormControl(null, Validators.maxLength(100)),
             territoryUnitControl: new FormControl(null),
             effectiveDateControl: new FormControl(null),
             auanControl: new FormControl(null),

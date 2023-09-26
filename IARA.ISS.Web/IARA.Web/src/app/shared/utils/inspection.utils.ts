@@ -1,12 +1,13 @@
 ﻿import { InspectionSubjectAddressDTO } from '@app/models/generated/dtos/InspectionSubjectAddressDTO';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { InspectionToggleTypesEnum } from '../../enums/inspection-toggle-types.enum';
+import { AddressRegistrationDTO } from '../../models/generated/dtos/AddressRegistrationDTO';
 import { NomenclatureDTO } from '../../models/generated/dtos/GenericNomenclatureDTO';
 import { CommonUtils } from './common.utils';
 
 export class InspectionUtils {
     public static buildAddress(
-        address: InspectionSubjectAddressDTO | undefined,
+        address: InspectionSubjectAddressDTO | AddressRegistrationDTO | undefined,
         translate: FuseTranslationLoaderService
     ): string | undefined {
 
@@ -14,8 +15,17 @@ export class InspectionUtils {
             return undefined;
         }
 
+        let populatedArea: string | undefined;
+
+        if (address instanceof InspectionSubjectAddressDTO) {
+            populatedArea = address.populatedArea;
+        }
+        else if (address instanceof AddressRegistrationDTO) {
+            populatedArea = address.populatedAreaName;
+        }
+
         return [
-            address.populatedArea,
+            populatedArea,
             address.region,
             !CommonUtils.isNullOrWhiteSpace(address.street) && !CommonUtils.isNullOrWhiteSpace(address.streetNum)
                 ? (address.street + ' ' + address.streetNum)

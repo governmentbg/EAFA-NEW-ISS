@@ -295,7 +295,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
         this.catchesFormGroup = new FormGroup({
             fishIdControl: new FormControl(undefined, [Validators.required]),
             catchInspectionTypeIdControl: new FormControl(undefined, [Validators.required]),
-            catchCountControl: new FormControl(undefined, [TLValidators.number(1)]),
+            catchCountControl: new FormControl(undefined, [TLValidators.number(1, undefined, 0)]),
             catchQuantityControl: new FormControl(undefined, [Validators.required, TLValidators.number(1)]),
             unloadedQuantityControl: new FormControl(undefined, [TLValidators.number(1)]),
             allowedDeviationControl: new FormControl(undefined, [TLValidators.number(0, 100)]),
@@ -303,7 +303,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
             shipControl: new FormControl(undefined),
             turbotSizeGroupIdControl: new FormControl(undefined),
             fishSexIdControl: new FormControl(undefined),
-            undersizedControl: new FormControl(false),
+            undersizedControl: new FormControl(false)
         });
 
         return new FormControl(undefined, [this.catchesValidator()]);

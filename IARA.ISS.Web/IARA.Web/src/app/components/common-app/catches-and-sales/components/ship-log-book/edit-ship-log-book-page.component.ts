@@ -785,7 +785,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             permitLicenseControl: new FormControl(undefined, Validators.required),
             fishingGearRegisterControl: new FormControl(undefined, Validators.required),
             fishingGearNetEyeSizeControl: new FormControl({ value: null, disabled: true }), 
-            fishingGearCountControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
+            fishingGearCountControl: new FormControl(undefined, [Validators.required, TLValidators.number(0, undefined, 0)]),
             fishingGearHookCountControl: new FormControl(undefined),
             partnerShipControl: new FormControl(),
 
@@ -1284,7 +1284,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
             if (value.hasHooks === true) {
                 this.showHooksCountField = true;
-                this.form.get('fishingGearHookCountControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+                this.form.get('fishingGearHookCountControl')!.setValidators([Validators.required, TLValidators.number(0, undefined, 0)]);
                 this.form.get('fishingGearHookCountControl')!.markAsPending();
 
                 this.form.get('fishingGearHookCountControl')!.setValue(value.hooksCount);
