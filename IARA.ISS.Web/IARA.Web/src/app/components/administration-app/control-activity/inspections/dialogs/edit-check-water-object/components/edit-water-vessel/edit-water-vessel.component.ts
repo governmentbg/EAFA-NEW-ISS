@@ -11,6 +11,7 @@ import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { WaterInspectionVesselDTO } from '@app/models/generated/dtos/WaterInspectionVesselDTO';
 import { WaterVesselTableParams } from '../water-vessels-table/models/water-vessel-table-params';
 import { InspectionsService } from '@app/services/administration-app/inspections.service';
+import { TLValidators } from '@app/shared/utils/tl-validators';
 
 @Component({
     selector: 'edit-water-vessel',
@@ -78,15 +79,15 @@ export class EditWaterVesselComponent implements OnInit, IDialogComponent {
     protected buildForm(): void {
         this.form = new FormGroup({
             typeControl: new FormControl(null),
-            numberControl: new FormControl(null),
-            colorControl: new FormControl(null),
-            lengthControl: new FormControl(null),
-            widthControl: new FormControl(null),
-            totalControl: new FormControl(null),
+            numberControl: new FormControl(null, Validators.maxLength(50)),
+            colorControl: new FormControl(null, Validators.maxLength(50)),
+            lengthControl: new FormControl(null, TLValidators.number(0)),
+            widthControl: new FormControl(null, TLValidators.number(0)),
+            totalControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
             takenControl: new FormControl(null),
             storedControl: new FormControl(null),
-            storageControl: new FormControl(null),
-            descriptionControl: new FormControl(null, Validators.maxLength(500)),
+            storageControl: new FormControl(null, Validators.maxLength(500)),
+            descriptionControl: new FormControl(null, Validators.maxLength(500))
         });
     }
 

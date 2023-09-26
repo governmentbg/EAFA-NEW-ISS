@@ -617,11 +617,11 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     private setFieldsValidators(fishingGearCode: string | undefined): void {
         if (fishingGearCode !== null && fishingGearCode !== undefined) {
             if (FishingGearUtils.fishingGearCodesWithRequiredMeshSize.some(x => x === fishingGearCode)) { // трябва да има задължителен размер на око
-                this.form.get('netEyeSizeControl')!.setValidators(Validators.required);
+                this.form.get('netEyeSizeControl')!.setValidators([Validators.required, TLValidators.number(0)]);
                 this.form.get('netEyeSizeControl')!.markAsPending();
             }
             else {
-                this.form.get('netEyeSizeControl')!.clearValidators();
+                this.form.get('netEyeSizeControl')!.setValidators(TLValidators.number(0));
                 this.form.get('netEyeSizeControl')!.markAsPending();
             }
 

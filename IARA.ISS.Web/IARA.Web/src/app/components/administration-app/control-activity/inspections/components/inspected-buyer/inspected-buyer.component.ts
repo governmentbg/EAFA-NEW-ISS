@@ -120,11 +120,35 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
     }
 
     public downloadedPersonData(person: PersonFullDataDTO): void {
-        this.form.get('personControl')?.setValue(person.person);
+        this.form.get('personControl')!.setValue(person.person);
+
+        if (person.addresses !== undefined && person.addresses !== null && person.addresses.length > 0) {
+            this.form.get('addressControl')!.setValue(
+                InspectionUtils.buildAddress(person.addresses[0], this.translate)
+            );
+
+            this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === person.addresses![0].countryId));
+        }
+        else {
+            this.form.get('addressControl')!.setValue(null);
+            this.form.get('countryControl')!.setValue(null);
+        }
     }
 
     public downloadedLegalData(legal: LegalFullDataDTO): void {
-        this.form.get('legalControl')?.setValue(legal.legal);
+        this.form.get('legalControl')!.setValue(legal.legal);
+
+        if (legal.addresses !== undefined && legal.addresses !== null && legal.addresses.length > 0) {
+            this.form.get('addressControl')!.setValue(
+                InspectionUtils.buildAddress(legal.addresses[0], this.translate)
+            );
+
+            this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === legal.addresses![0].countryId));
+        }
+        else {
+            this.form.get('addressControl')!.setValue(null);
+            this.form.get('countryControl')!.setValue(null);
+        }
     }
 
     protected buildForm(): AbstractControl {

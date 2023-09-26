@@ -1,5 +1,5 @@
 ﻿import { Component, Input, OnInit, Self } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NgControl } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
 
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
@@ -72,13 +72,25 @@ export class InspectedPersonComponent extends CustomFormControl<InspectionSubjec
 
     public downloadedPersonData(person: PersonFullDataDTO): void {
         this.form.get('personControl')!.setValue(person.person);
+
+        if (person.addresses !== undefined && person.addresses !== null && person.addresses.length > 0) {
+            this.form.get('addressControl')!.setValue(
+                InspectionUtils.buildAddress(person.addresses[0], this.translate)
+            );
+
+            this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === person.addresses![0].countryId));
+        }
+        else {
+            this.form.get('addressControl')!.setValue(null);
+            this.form.get('countryControl')!.setValue(null);
+        }
     }
 
     protected buildForm(): AbstractControl {
         const form = new FormGroup({
             personControl: new FormControl(),
-            addressControl: new FormControl(undefined),
-            countryControl: new FormControl(undefined),
+            addressControl: new FormControl(undefined, Validators.maxLength(4000)),
+            countryControl: new FormControl(undefined)
         });
 
         return form;

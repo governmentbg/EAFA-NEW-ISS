@@ -105,7 +105,7 @@ export class AuanWitnessComponent extends CustomFormControl<AuanWitnessDTO> impl
 
     protected buildForm(): AbstractControl {
         return new FormGroup({
-            personNameControl: new FormControl(null, Validators.required),
+            personNameControl: new FormControl(null, [Validators.required, Validators.maxLength(500)]),
             personDateOfBirthControl: new FormControl(null, Validators.required),
             addressesControl: new FormControl(null)
         });

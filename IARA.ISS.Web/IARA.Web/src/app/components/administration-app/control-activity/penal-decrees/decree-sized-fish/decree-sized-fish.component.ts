@@ -164,7 +164,21 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
     }
 
     public seizedFishRecordChanged(event: RecordChangedEventArgs<AuanConfiscatedFishDTO>): void {
-        this.seizedFish = this.seizedFishTable.rows;
+        this.seizedFish = this.seizedFishTable.rows.map(x => new AuanConfiscatedFishDTO({
+            id: x.id,
+            fishTypeId: x.fishTypeId,
+            confiscationActionId: x.confiscationActionId,
+            territoryUnitId: x.territoryUnitId,
+            turbotSizeGroupId: x.turbotSizeGroupId,
+            applianceId: x.applianceId,
+            weight: x.weight,
+            length: x.length,
+            count: x.count,
+            comments: x.comments,
+            isActive: x.isActive ?? true,
+            lawSectionId: x.lawSectionId ?? undefined,
+            lawText: x.lawText ?? undefined,
+        }));
 
         this.onChanged(this.getValue());
         this.control.updateValueAndValidity({ emitEvent: false });

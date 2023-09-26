@@ -223,7 +223,9 @@ export class FileUploadFormArrayComponent implements OnInit, AfterViewInit, DoCh
 
     private applyOnChanged(): void {
         const files: FileInfoDTO[] = (this.form.value as FileInfoDTO[]).filter((file: FileInfoDTO) => {
-            return (file.file !== undefined && file.file !== null) || (file.id !== undefined && file.id !== null) && !file.deleted;
+            return (file.file !== undefined && file.file !== null && file.fileTypeId !== undefined && file.fileTypeId !== null)
+                || (file.id !== undefined && file.id !== null)
+                && !file.deleted;
         });
 
         files.push(...this.deletedFiles);

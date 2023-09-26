@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
 import { IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
@@ -123,7 +123,7 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
             generalInfoControl: new FormControl(undefined),
             patrolVehiclesControl: new FormControl([]),
             shipSectionsControl: new FormControl([]),
-            captainCommentControl: new FormControl(undefined),
+            captainCommentControl: new FormControl(undefined, Validators.maxLength(4000)),
             additionalInfoControl: new FormControl(undefined),
             filesControl: new FormControl([])
         });

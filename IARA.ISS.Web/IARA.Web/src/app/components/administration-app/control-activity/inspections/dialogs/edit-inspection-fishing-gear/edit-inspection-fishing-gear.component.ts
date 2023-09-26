@@ -166,7 +166,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             dalyanControl: new FormControl({ value: undefined, disabled: true }, [Validators.required]),
             markReasonControl: new FormControl(undefined, [Validators.required]),
             remarkReasonControl: new FormControl(undefined),
-            otherRemarkReasonControl: new FormControl(undefined),
+            otherRemarkReasonControl: new FormControl(undefined, Validators.maxLength(500)),
             fishingGearsControl: new FormControl([]),
             togglesControl: new FormControl([]),
             additionalInfoControl: new FormControl(undefined),

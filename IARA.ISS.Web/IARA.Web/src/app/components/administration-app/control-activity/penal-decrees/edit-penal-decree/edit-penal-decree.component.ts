@@ -273,7 +273,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.form = new FormGroup({
             decreeNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
             drafterControl: new FormControl(null, Validators.required),
-            issuerPositionControl: new FormControl(null),
+            issuerPositionControl: new FormControl(null, Validators.maxLength(100)),
             issueDateControl: new FormControl(null, Validators.required),
             effectiveDateControl: new FormControl(null),
             territoryUnitControl: new FormControl(null),
@@ -303,7 +303,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.fishCompensationForm = new FormGroup({
             fishIdControl: new FormControl(null, Validators.required),
             weightControl: new FormControl(null, TLValidators.number(0)),
-            countControl: new FormControl(null, TLValidators.number(1)),
+            countControl: new FormControl(null, TLValidators.number(1, undefined, 0)),
             totalPriceControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)]),
             unitPriceControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)]),
             turbotSizeGroupIdControl: new FormControl(null),

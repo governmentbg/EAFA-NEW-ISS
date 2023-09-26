@@ -90,20 +90,21 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
 
         if (subjects !== null && subjects !== undefined) {
             if (!subjects.firstChange) {
-                this.form.get('personTypeControl')!.setValue(this.personTypes[this.PERSON_IDX]);
-                this.form.get('subjectControl')!.setValue(null);
-                this.form.get('personControl')!.setValue(null);
-                this.form.get('legalControl')!.setValue(null);
-                this.form.get('addressControl')!.setValue(null);
-
                 if ((subjects.currentValue as InspectionShipSubjectNomenclatureDTO[]).length === 0) {
                     this.form.get('personRegisteredControl')!.setValue(false);
+                    this.form.get('subjectControl')!.setValue(null);
                     this.hasSubjects = false;
                 }
                 else {
                     this.form.get('personRegisteredControl')!.setValue(true);
+                    this.form.get('personControl')!.setValue(null);
+                    this.form.get('legalControl')!.setValue(null);
                     this.hasSubjects = true;
+
+                    this.form.get('personControl')!.clearValidators();
                 }
+
+                this.form.get('personControl')!.updateValueAndValidity({ emitEvent: false });
             }
         }
     }
@@ -165,6 +166,7 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
             this.form.get('addressControl')!.setValue(
                 InspectionUtils.buildAddress(value.registeredAddress, this.translate) ?? value.address
             );
+
             this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === value.citizenshipId));
         }
         else {
@@ -174,10 +176,34 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
 
     public downloadedPersonData(person: PersonFullDataDTO): void {
         this.form.get('personControl')!.setValue(person.person);
+
+        if (person.addresses !== undefined && person.addresses !== null && person.addresses.length > 0) {
+            this.form.get('addressControl')!.setValue(
+                InspectionUtils.buildAddress(person.addresses[0], this.translate)
+            );
+
+            this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === person.addresses![0].countryId));
+        }
+        else {
+            this.form.get('addressControl')!.setValue(null);
+            this.form.get('countryControl')!.setValue(null);
+        }
     }
 
     public downloadedLegalData(legal: LegalFullDataDTO): void {
         this.form.get('legalControl')!.setValue(legal.legal);
+
+        if (legal.addresses !== undefined && legal.addresses !== null && legal.addresses.length > 0) {
+            this.form.get('addressControl')!.setValue(
+                InspectionUtils.buildAddress(legal.addresses[0], this.translate)
+            );
+
+            this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === legal.addresses![0].countryId));
+        }
+        else {
+            this.form.get('addressControl')!.setValue(null);
+            this.form.get('countryControl')!.setValue(null);
+        }
     }
 
     protected buildForm(): AbstractControl {
@@ -226,7 +252,7 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
                     firstName: person.firstName,
                     middleName: person.middleName,
                     lastName: person.lastName,
-                    type: this.personType,
+                    type: this.personType
                 });
             }
             else {
@@ -243,7 +269,7 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
                     isLegal: true,
                     eik: legal.eik,
                     firstName: legal.name,
-                    type: this.legalType!,
+                    type: this.legalType!
                 });
             }
         }

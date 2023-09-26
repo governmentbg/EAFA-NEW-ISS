@@ -233,7 +233,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         this.form = new FormGroup({
             decreeNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
             drafterControl: new FormControl(null, Validators.required),
-            issuerPositionControl: new FormControl(null),
+            issuerPositionControl: new FormControl(null, Validators.maxLength(100)),
             issueDateControl: new FormControl(null, Validators.required),
             territoryUnitControl: new FormControl(null),
             effectiveDateControl: new FormControl(null),

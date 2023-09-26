@@ -113,7 +113,7 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
 
     protected buildForm(): AbstractControl {
         const form: FormGroup = new FormGroup({
-            reportNumberControl: new FormControl(undefined, Validators.required),
+            reportNumberControl: new FormControl(undefined, [Validators.required, Validators.maxLength(50)]),
             inspectionStartDateControl: new FormControl(undefined, Validators.required),
             inspectionEndDateControl: new FormControl(undefined, Validators.required),
             emergencySignalControl: new FormControl(false),

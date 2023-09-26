@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
@@ -7,6 +7,7 @@ import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { WaterVesselTableParams } from '../water-vessels-table/models/water-vessel-table-params';
 import { WaterInspectionEngineDTO } from '@app/models/generated/dtos/WaterInspectionEngineDTO';
+import { TLValidators } from '@app/shared/utils/tl-validators';
 
 @Component({
     selector: 'edit-water-engine',
@@ -63,14 +64,14 @@ export class EditWaterEngineComponent implements OnInit, IDialogComponent {
 
     protected buildForm(): void {
         this.form = new FormGroup({
-            modelControl: new FormControl(null),
-            powerControl: new FormControl(null),
-            typeControl: new FormControl(null),
-            totalCountControl: new FormControl(null),
-            colorControl: new FormControl(null),
+            modelControl: new FormControl(null, Validators.maxLength(50)),
+            powerControl: new FormControl(null, TLValidators.number(0)),
+            typeControl: new FormControl(null, Validators.maxLength(50)),
+            totalCountControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
+            colorControl: new FormControl(null, Validators.maxLength(50)),
             takenControl: new FormControl(null),
             storedControl: new FormControl(null),
-            storageControl: new FormControl(null),
+            storageControl: new FormControl(null, Validators.maxLength(500))
         });
     }
 

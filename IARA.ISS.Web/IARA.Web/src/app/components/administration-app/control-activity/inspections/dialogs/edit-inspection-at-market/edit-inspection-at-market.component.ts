@@ -113,8 +113,8 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
     protected buildForm(): void {
         this.form = new FormGroup({
             generalInfoControl: new FormControl(undefined),
-            marketNameControl: new FormControl(undefined, Validators.required),
-            addressControl: new FormControl(undefined, Validators.required),
+            marketNameControl: new FormControl(undefined, [Validators.required, Validators.maxLength(500)]),
+            addressControl: new FormControl(undefined, [Validators.required, Validators.maxLength(500)]),
             buyerControl: new FormControl(undefined),
             representativeControl: new FormControl(undefined),
             catchTogglesControl: new FormControl([]),
@@ -122,7 +122,7 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
             importerControl: new FormControl(undefined),
             catchesControl: new FormControl([]),
             catchViolationControl: new FormControl(undefined),
-            representativeCommentControl: new FormControl(undefined),
+            representativeCommentControl: new FormControl(undefined, Validators.max(4000)),
             additionalInfoControl: new FormControl(undefined),
             filesControl: new FormControl([])
         });

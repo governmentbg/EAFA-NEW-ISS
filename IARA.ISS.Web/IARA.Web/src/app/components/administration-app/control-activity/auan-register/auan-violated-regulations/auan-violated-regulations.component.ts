@@ -78,7 +78,17 @@ export class AuanViolatedRegulationsComponent extends CustomFormControl<AuanViol
     }
 
     public violatedRegulationsRecordChanged(event: RecordChangedEventArgs<AuanViolatedRegulationDTO>): void {
-        this.violatedRegulations = this.violatedRegulationsTable.rows;
+        this.violatedRegulations = this.violatedRegulationsTable.rows.map(x => new AuanViolatedRegulationDTO({
+            id: x.id,
+            article: x.article,
+            paragraph: x.paragraph,
+            section: x.section,
+            letter: x.letter,
+            lawSectionId: x.lawSectionId ?? undefined,
+            lawText: x.lawText ?? undefined,
+            comments: x.comments,
+            isActive: x.isActive ?? true
+        }));
 
         this.onChanged(this.getValue());
         this.control.updateValueAndValidity();
@@ -147,7 +157,7 @@ export class AuanViolatedRegulationsComponent extends CustomFormControl<AuanViol
             lawText: x.lawText ?? undefined,
             comments: x.comments,
             isActive: x.isActive ?? true
-        }));;
+        }));
     }
 
     protected buildForm(): AbstractControl {

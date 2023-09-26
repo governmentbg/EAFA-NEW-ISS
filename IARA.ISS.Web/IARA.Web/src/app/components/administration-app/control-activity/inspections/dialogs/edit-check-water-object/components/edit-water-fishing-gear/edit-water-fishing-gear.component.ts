@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
@@ -66,7 +66,7 @@ export class EditWaterFishingGearComponent implements OnInit, IDialogComponent {
             fishingGearControl: new FormControl(null),
             takenControl: new FormControl(null),
             storedControl: new FormControl(null),
-            storageControl: new FormControl(null),
+            storageControl: new FormControl(null, Validators.maxLength(500))
         });
     }
 
