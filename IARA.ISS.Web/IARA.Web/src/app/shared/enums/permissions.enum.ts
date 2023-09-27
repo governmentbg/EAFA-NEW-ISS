@@ -212,6 +212,7 @@
     ShipsRegisterDeleteRecords = 'ShipsRegisterDeleteRecords',
     ShipsRegisterRestoreRecords = 'ShipsRegisterRestoreRecords',
     ShipsRegisterThirdPartyShips = 'ShipsRegisterThirdPartyShips',
+    ShipsRegisterSendFluxData = 'ShipsRegisterSendFluxData',
 
     ShipsRegisterApplicationReadAll = 'ShipsRegisterApplicationReadAll',
     ShipsRegisterApplicationsRead = 'ShipsRegisterApplicationsRead',

@@ -35,6 +35,7 @@ import { FishNomenclatureDTO } from '@app/models/generated/dtos/FishNomenclature
 import { CancellationReasonDTO } from '@app/models/generated/dtos/CancellationReasonDTO';
 import { CancellationReasonGroupEnum } from '@app/enums/cancellation-reason-group.enum';
 import { ShipEventTypeEnum } from '@app/enums/ship-event-type.enum';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 
 type ThreeState = 'yes' | 'no' | 'both';
 
@@ -66,6 +67,7 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
     public readonly canAddThirdPartyShipRecords: boolean;
     public readonly canEditRecords: boolean;
     public readonly canReadApplications: boolean;
+    public readonly canSendFluxData: boolean;
 
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
@@ -79,6 +81,7 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
     private readonly nomenclatures: CommonNomenclatures;
     private readonly editDialog: TLMatDialog<EditShipComponent>;
     private readonly chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>;
+    private readonly confirmDialog: TLConfirmDialog;
     private readonly router: Router;
 
     public constructor(
@@ -87,6 +90,7 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
         nomenclatures: CommonNomenclatures,
         editDialog: TLMatDialog<EditShipComponent>,
         chooseApplicationDialog: TLMatDialog<ChooseApplicationComponent>,
+        confirmDialog: TLConfirmDialog,
         permissions: PermissionsService,
         router: Router
     ) {
@@ -95,11 +99,13 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
         this.nomenclatures = nomenclatures;
         this.editDialog = editDialog;
         this.chooseApplicationDialog = chooseApplicationDialog;
+        this.confirmDialog = confirmDialog;
         this.router = router;
 
         this.canAddRecords = permissions.has(PermissionsEnum.ShipsRegisterAddRecords);
         this.canAddThirdPartyShipRecords = true;
         this.canEditRecords = permissions.has(PermissionsEnum.ShipsRegisterEditRecords);
+        this.canSendFluxData = permissions.has(PermissionsEnum.ShipsRegisterSendFluxData);
 
         this.canReadApplications = permissions.has(PermissionsEnum.ShipsRegisterApplicationsRead) || permissions.has(PermissionsEnum.ShipsRegisterApplicationReadAll);
 
@@ -351,6 +357,26 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
                 isThirdPartyShip: ship.isThirdPartyShip
             }
         });
+    }
+
+    public sendHistoryToFlux(ship: ShipRegisterDTO): void {
+        if (this.canSendFluxData) {
+            this.confirmDialog.open({
+                title: `${this.translate.getValue('ships-register.send-history-to-flux-confirmation-title')} ${ship.name}`,
+                message: this.translate.getValue('ships-register.send-history-to-flux-confirmation-message'),
+                okBtnLabel: this.translate.getValue('ships-register.send-history-to-flux-confirmation-ok-btn')
+            }).subscribe({
+                next: (yes: boolean) => {
+                    if (yes) {
+                        this.service.reportShipHistoryToFlux(ship.id!).subscribe({
+                            next: () => {
+                                // nothing to do
+                            }
+                        });
+                    }
+                }
+            });
+        }
     }
 
     public gotToApplication(ship: ShipRegisterDTO): void {

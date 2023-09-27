@@ -1,0 +1,35 @@
+namespace IARA.FluxInspectionModels
+{
+    [Serializable]
+    [XmlType(AnonymousType = true, Namespace = "urn:un:unece:uncefact:data:standard:QualifiedDataType:32")]
+    public partial class DateOnlyFormattedDateTimeTypeDateTimeString
+    {
+
+        private DateOnlyFormatCodeContentType formatField;
+
+        private bool formatFieldSpecified;
+
+        private string valueField;
+
+        [XmlAttribute]
+        public DateOnlyFormatCodeContentType format
+        {
+            get => this.formatField;
+            set => this.formatField = value;
+        }
+
+        [XmlIgnore()]
+        public bool formatSpecified
+        {
+            get => this.formatFieldSpecified;
+            set => this.formatFieldSpecified = value;
+        }
+
+        [XmlText]
+        public string Value
+        {
+            get => this.valueField;
+            set => this.valueField = value;
+        }
+    }
+}
