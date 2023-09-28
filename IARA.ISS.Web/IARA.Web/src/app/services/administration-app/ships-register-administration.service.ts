@@ -277,6 +277,14 @@ export class ShipsRegisterAdministrationService extends ApplicationsRegisterAdmi
         });
     }
 
+    public reportShipHistoryToFlux(id: number): Observable<void> {
+        const params = new HttpParams().append('id', id.toString());
+        return this.requestService.post(this.area, this.controller, 'ReportShipHistoryToFlux', undefined, {
+            httpParams: params,
+            successMessage: 'ships-register.send-history-to-flux-success'
+        });
+    }
+
     // nomenclatures
     public getEventTypes(): Observable<ShipEventTypeDTO[]> {
         return this.requestService.get(this.area, this.controller, 'GetEventTypes', { responseTypeCtr: ShipEventTypeDTO });
