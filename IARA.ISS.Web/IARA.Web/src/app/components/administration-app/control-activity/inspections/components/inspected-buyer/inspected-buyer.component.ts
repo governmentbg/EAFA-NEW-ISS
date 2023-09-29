@@ -251,6 +251,8 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
             this.form.get('buyerControl')!.setValidators([Validators.required]);
             this.form.get('addressControl')!.clearValidators();
             this.form.get('countryControl')!.clearValidators();
+            this.form.get('personControl')!.clearValidators();
+            this.form.get('legalControl')!.clearValidators();
 
             this.form.get('addressControl')!.disable();
             this.form.get('countryControl')!.disable();
@@ -270,6 +272,8 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
         this.form.get('buyerControl')!.updateValueAndValidity({ emitEvent: false });
         this.form.get('addressControl')!.updateValueAndValidity({ emitEvent: false });
         this.form.get('countryControl')!.updateValueAndValidity({ emitEvent: false });
+        this.form.get('personControl')!.updateValueAndValidity({ emitEvent: false });
+        this.form.get('legalControl')!.updateValueAndValidity({ emitEvent: false });
 
         if (this.isDisabled) {
             this.form.get('addressControl')!.disable();

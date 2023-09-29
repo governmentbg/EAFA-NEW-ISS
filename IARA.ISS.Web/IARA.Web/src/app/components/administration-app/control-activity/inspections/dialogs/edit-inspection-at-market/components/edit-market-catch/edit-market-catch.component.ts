@@ -22,6 +22,7 @@ import { forkJoin } from 'rxjs';
 import { DeclarationLogBookPageFishDTO } from '@app/models/generated/dtos/DeclarationLogBookPageFishDTO';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { CatchSizeCodesEnum } from '@app/enums/catch-size-codes.enum';
+import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 
 @Component({
     selector: 'edit-market-catch',
@@ -32,12 +33,6 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     public form!: FormGroup;
 
     protected model: InspectedDeclarationCatchDTO = new InspectedDeclarationCatchDTO();
-
-    @ViewChild(TLMapViewerComponent)
-    private mapViewer!: TLMapViewerComponent;
-
-    @ViewChild(TLPopoverComponent)
-    private mapPopover!: TLPopoverComponent;
 
     public mapOptions: MapOptions;
 
@@ -62,6 +57,15 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     public declarations: NomenclatureDTO<number>[] = [];
     public aquacultures: NomenclatureDTO<number>[] = [];
     public fishErrors: TLError[] = [];
+
+    @ViewChild(TLMapViewerComponent)
+    private mapViewer!: TLMapViewerComponent;
+
+    @ViewChild(TLPopoverComponent)
+    private mapPopover!: TLPopoverComponent;
+
+    @ViewChild(ValidityCheckerGroupDirective)
+    private validityCheckerGroup!: ValidityCheckerGroupDirective;
 
     private temporarySelectedGridSector: NomenclatureDTO<number> | undefined;
     private logBookPages: DeclarationLogBookPageDTO[] = [];
@@ -188,6 +192,8 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         }
         else {
             this.form.markAllAsTouched();
+            this.validityCheckerGroup.validate();
+
             if (this.form.valid) {
                 this.fillModel();
                 CommonUtils.sanitizeModelStrings(this.model);
@@ -251,7 +257,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             aquacultureRegisteredControl: new FormControl(true),
             aquacultureControl: new FormControl(undefined, [Validators.required]),
             aquacultureTextControl: new FormControl(undefined, [Validators.required, Validators.maxLength(4000)]),
-            declarationNumberControl: new FormControl(undefined, Validators.maxLength(50)),
+            declarationNumberControl: new FormControl(undefined),
             declarationDateControl: new FormControl(undefined),
             invoiceDataControl: new FormControl(undefined, Validators.maxLength(4000)),
             undersizedControl: new FormControl(false),
@@ -262,10 +268,11 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         this.form.get('aquacultureTextControl')!.disable();
 
         this.form.get('declarationNumberControl')!.valueChanges.subscribe({
-            next: async (value: NomenclatureDTO<number> | undefined) => {
+            next: async (value: NomenclatureDTO<number> | string | undefined) => {
                 if (typeof value === 'string') {
                     this.form.get('declarationDateControl')!.enable();
-                } else {
+                }
+                else if (value instanceof NomenclatureDTO) {
                     const page = this.logBookPages.find(f => f.id === value!.value);
 
                     this.form.get('declarationDateControl')!.setValue(page!.date);
@@ -285,18 +292,21 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
                 if (this.permitTypeSelected === DeclarationLogBookTypeEnum.AquacultureLogBook) {
                     this.form.get('aquacultureRegisteredControl')!.setValue(this.aquacultureRegistered);
                 }
-                else if (this.permitTypeSelected !== DeclarationLogBookTypeEnum.Invoice && this.permitTypeSelected !== DeclarationLogBookTypeEnum.NNN) {
-                    this.form.get('shipControl')!.enable();
-                }
 
                 if (this.permitTypeSelected == null || this.permitTypeSelected === DeclarationLogBookTypeEnum.AquacultureLogBook || this.permitTypeSelected === DeclarationLogBookTypeEnum.Invoice || this.permitTypeSelected === DeclarationLogBookTypeEnum.NNN) {
                     this.form.get('catchZoneControl')!.disable();
+                    this.form.get('shipControl')!.disable();
                 }
                 else if (!this.readOnly) {
                     this.form.get('catchZoneControl')!.enable();
+                    this.form.get('shipControl')!.enable();
                 }
 
                 this.pullDeclarations();
+
+                if (this.readOnly === true) {
+                    this.form.get('shipControl')!.disable();
+                }
             }
         });
 
@@ -373,7 +383,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
 
         this.permitTypeSelected = this.model.logBookType;
 
-        this.form.get('permitControl')!.setValue(this.permitTypes.find(f => f.value === this.model.logBookType), { emitEvent: false });
+        this.form.get('permitControl')!.setValue(this.permitTypes.find(f => f.value === this.model.logBookType));
 
         if (this.model.aquacultureId) {
             this.form.get('aquacultureControl')!.setValue(this.aquacultures.find(f => f.value == this.model.aquacultureId));
