@@ -91,6 +91,31 @@
             <mat-card>
                 <tl-data-table [showAddButton]="false"
                                [showInactiveRecords]="false">
+                    <div datatable-add-buttons>
+                        <button mat-raised-button
+                                color="accent"
+                                [matMenuTriggerFor]="queryButtonsMenu">
+                            <tl-icon icon="send"></tl-icon> {{ 'flux-vms-requests.send-queries' | tlTranslate }}
+                        </button>
+
+                        <mat-menu #queryButtonsMenu="matMenu">
+                            <button mat-menu-item
+                                    (click)="openFluxVesselQueryDialog()">
+                                {{ 'flux-vms-requests.send-vessel-query' | tlTranslate }}
+                            </button>
+
+                            <button mat-menu-item
+                                    (click)="openFluxSalesQueryDialog()">
+                                {{ 'flux-vms-requests.send-sales-query' | tlTranslate }}
+                            </button>
+
+                            <button mat-menu-item
+                                    (click)="openFluxFAQueryDialog()">
+                                {{ 'flux-vms-requests.send-fa-query' | tlTranslate }}
+                            </button>
+                        </mat-menu>
+                    </div>
+
                     <data-template-column [flexRate]="0.2"
                                           columnName="{{ 'flux-vms-requests.is-outgoing' | tlTranslate }}"
                                           propertyName="isOutgoing">

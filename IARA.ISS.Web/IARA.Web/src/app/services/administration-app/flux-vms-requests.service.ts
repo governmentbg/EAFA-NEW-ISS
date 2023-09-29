@@ -1,5 +1,8 @@
 ﻿import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { FluxFvmsDomainsEnum } from '@app/enums/flux-fvms-domains.enum';
 import { IFluxVmsRequestsService } from '@app/interfaces/administration-app/flux-vms-requests.interface';
 import { GridRequestModel } from '@app/models/common/grid-request.model';
@@ -14,10 +17,11 @@ import { AreaTypes } from '@app/shared/enums/area-type.enum';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { RequestService } from '@app/shared/services/request.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { NomenclatureDTO } from '../../models/generated/dtos/GenericNomenclatureDTO';
-import { SimpleAuditDTO } from '../../models/generated/dtos/SimpleAuditDTO';
+import { FluxFAQueryRequestEditDTO } from '@app/models/generated/dtos/FluxFAQueryRequestEditDTO';
+import { FluxSalesQueryRequestEditDTO } from '@app/models/generated/dtos/FluxSalesQueryRequestEditDTO';
+import { FluxVesselQueryRequestEditDTO } from '@app/models/generated/dtos/FluxVesselQueryRequestEditDTO';
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { BaseAuditService } from '../common-app/base-audit.service';
 
 
@@ -70,6 +74,18 @@ export class FluxVmsRequestsService extends BaseAuditService implements IFluxVms
         return this.requestService.post(this.area, this.controller, 'AddFlapRequest', flap);
     }
 
+    public addVesselQueryRequest(flap: FluxVesselQueryRequestEditDTO): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'AddVesselQueryRequest', flap);
+    }
+
+    public addSalesQueryRequest(flap: FluxSalesQueryRequestEditDTO): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'AddSalesQueryRequest', flap);
+    }
+
+    public addFAQueryRequest(flap: FluxFAQueryRequestEditDTO): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'AddFAQueryRequest', flap);
+    }
+
     public getFlapRequestAudit(id: number): Observable<SimpleAuditDTO> {
         const params = new HttpParams().append('id', id.toString());
 
@@ -81,6 +97,18 @@ export class FluxVmsRequestsService extends BaseAuditService implements IFluxVms
 
     public getAgreementTypes(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get<NomenclatureDTO<number>[]>(this.area, this.controller, 'GetAgreementTypes', {
+            responseTypeCtr: NomenclatureDTO
+        }).pipe(map((types: NomenclatureDTO<number>[]) => {
+            for (const type of types) {
+                type.displayName = `${type.code} - ${type.displayName}`;
+            }
+
+            return types;
+        }));
+    }
+
+    public getTerritories(): Observable<NomenclatureDTO<number>[]> {
+        return this.requestService.get<NomenclatureDTO<number>[]>(this.area, this.controller, 'GetTerritories', {
             responseTypeCtr: NomenclatureDTO
         }).pipe(map((types: NomenclatureDTO<number>[]) => {
             for (const type of types) {

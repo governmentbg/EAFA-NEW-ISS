@@ -1,0 +1,86 @@
+﻿<div [formGroup]="form" class="dialog-padding">
+    <tl-card tooltipResourceName="flux-vms-requests.fa-query-data-helper">
+        <tl-card-title>{{ 'flux-vms-requests.fa-query-data' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="column" fxLayoutGap="1em">
+                <div fxLayout="row"
+                     fxLayoutAlign="space-between center"
+                     fxLayoutGap="1em">
+                    <tl-select fxFlex="50"
+                               formControlName="queryTypeControl"
+                               [options]="queryTypes"
+                               label="{{ 'flux-vms-requests.fa-query-query-type' | tlTranslate }}"
+                               tooltipResourceName="flux-vms-requests.fa-query-query-type-helper">
+                    </tl-select>
+
+                    <div fxFlex="50"></div>
+                </div>
+
+                <div *ngIf="form.controls.queryTypeControl.value?.value === faQueryTypes.VESSEL"
+                     fxLayout="row"
+                     fxLayoutAlign="space-between center"
+                     fxLayoutGap="1em">
+                    <tl-date fxFlex="50"
+                             formControlName="dateTimeFromControl"
+                             [max]="form.controls.dateTimeToControl.value"
+                             tooltipResourceName="flux-vms-requests.fa-query-date-time-from-helper"
+                             label="{{ 'flux-vms-requests.fa-query-date-time-from' | tlTranslate }}">
+                    </tl-date>
+
+                    <tl-date fxFlex="50"
+                             formControlName="dateTimeToControl"
+                             [min]="form.controls.dateTimeFromControl.value"
+                             tooltipResourceName="flux-vms-requests.fa-query-date-time-to-helper"
+                             label="{{ 'flux-vms-requests.fa-query-date-time-to' | tlTranslate }}">
+                    </tl-date>
+                </div>
+
+                <div *ngIf="form.controls.queryTypeControl.value?.value === faQueryTypes.VESSEL"
+                     formGroupName="vesselIdsGroup"
+                     fxLayout="column">
+                    <div fxLayout="row"
+                         fxLayoutAlign="space-between center"
+                         fxLayoutGap="1em">
+                        <tl-input fxFlex="50"
+                                  formControlName="vesselCfrControl"
+                                  tooltipResourceName="flux-vms-requests.fa-query-cfr-helper"
+                                  label="{{ 'flux-vms-requests.fa-query-cfr' | tlTranslate }}">
+                        </tl-input>
+
+                        <tl-input fxFlex="50"
+                                  formControlName="vesselIrcsControl"
+                                  tooltipResourceName="flux-vms-requests.fa-query-ircs-helper"
+                                  label="{{ 'flux-vms-requests.fa-query-ircs' | tlTranslate }}">
+                        </tl-input>
+                    </div>
+
+                    <mat-error *ngIf="form.controls.vesselIdsGroup.touched && form.controls.vesselIdsGroup.errors?.atLeastOneVesselIdRequired === true">
+                        * {{ 'flux-vms-requests.fa-query-vessel-ids-required' | tlTranslate }}
+                    </mat-error>
+                </div>
+
+                <div *ngIf="form.controls.queryTypeControl.value?.value === faQueryTypes.TRIP"
+                     fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-input fxFlex="50"
+                              formControlName="tripIdentifierControl"
+                              tooltipResourceName="flux-vms-requests.fa-query-trip-identifier-helper"
+                              label="{{ 'flux-vms-requests.fa-query-trip-identifier' | tlTranslate }}">
+                    </tl-input>
+
+                    <div fxFlex="50"></div>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-checkbox fxFlex="50"
+                                 formControlName="consolidatedControl"
+                                 tooltipResourceName="flux-vms-requests.fa-query-consolidated-helper"
+                                 label="{{ 'flux-vms-requests.fa-query-consolidated' | tlTranslate }}">
+                    </tl-checkbox>
+
+                    <div fxFlex="50"></div>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

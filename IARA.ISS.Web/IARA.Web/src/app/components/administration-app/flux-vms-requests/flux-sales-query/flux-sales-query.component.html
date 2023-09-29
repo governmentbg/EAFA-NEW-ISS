@@ -1,0 +1,60 @@
+﻿<div [formGroup]="form" class="dialog-padding">
+    <tl-card tooltipResourceName="flux-vms-requests.sales-query-data-helper">
+        <tl-card-title>{{ 'flux-vms-requests.sales-query-data' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="column" fxLayoutGap="1em">
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-select fxFlex="50"
+                               formControlName="queryTypeControl"
+                               [options]="queryTypes"
+                               label="{{ 'flux-vms-requests.sales-query-query-type' | tlTranslate }}"
+                               tooltipResourceName="flux-vms-requests.sales-query-query-type-helper">
+                    </tl-select>
+
+                    <div fxFlex="50"></div>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-date fxFlex="50"
+                             formControlName="dateTimeFromControl"
+                             [max]="form.controls.dateTimeToControl.value"
+                             tooltipResourceName="flux-vms-requests.sales-query-date-time-from-helper"
+                             label="{{ 'flux-vms-requests.sales-query-date-time-from' | tlTranslate }}">
+                    </tl-date>
+
+                    <tl-date fxFlex="50"
+                             formControlName="dateTimeToControl"
+                             [min]="form.controls.dateTimeFromControl.value"
+                             tooltipResourceName="flux-vms-requests.sales-query-date-time-to-helper"
+                             label="{{ 'flux-vms-requests.sales-query-date-time-to' | tlTranslate }}">
+                    </tl-date>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-input fxFlex="50"
+                              formControlName="vesselCfrControl"
+                              tooltipResourceName="flux-vms-requests.sales-query-cfr-helper"
+                              label="{{ 'flux-vms-requests.sales-query-cfr' | tlTranslate }}">
+                    </tl-input>
+
+                    <tl-input fxFlex="50"
+                              formControlName="salesIdControl"
+                              tooltipResourceName="flux-vms-requests.sales-query-sales-id-helper"
+                              label="{{ 'flux-vms-requests.sales-query-sales-id' | tlTranslate }}">
+                    </tl-input>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-input fxFlex="50"
+                              formControlName="tripIdControl"
+                              tooltipResourceName="flux-vms-requests.sales-query-trip-id-helper"
+                              label="{{ 'flux-vms-requests.sales-query-trip-id' | tlTranslate }}">
+                    </tl-input>
+
+                    <div fxFlex="50"></div>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

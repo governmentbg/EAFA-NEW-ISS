@@ -8,6 +8,9 @@ import { FluxFlapRequestDTO } from '@app/models/generated/dtos/FluxFlapRequestDT
 import { FluxFlapRequestEditDTO } from '@app/models/generated/dtos/FluxFlapRequestEditDTO';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { FluxVesselQueryRequestEditDTO } from '@app/models/generated/dtos/FluxVesselQueryRequestEditDTO';
+import { FluxSalesQueryRequestEditDTO } from '@app/models/generated/dtos/FluxSalesQueryRequestEditDTO';
+import { FluxFAQueryRequestEditDTO } from '@app/models/generated/dtos/FluxFAQueryRequestEditDTO';
 import { IBaseAuditService } from '../base-audit.interface';
 
 export interface IFluxVmsRequestsService extends IBaseAuditService {
@@ -19,7 +22,12 @@ export interface IFluxVmsRequestsService extends IBaseAuditService {
     addFlapRequest(flap: FluxFlapRequestEditDTO): Observable<void>;
     getFlapRequestAudit(id: number): Observable<SimpleAuditDTO>;
 
+    addVesselQueryRequest(flap: FluxVesselQueryRequestEditDTO): Observable<void>;
+    addSalesQueryRequest(flap: FluxSalesQueryRequestEditDTO): Observable<void>;
+    addFAQueryRequest(flap: FluxFAQueryRequestEditDTO): Observable<void>;
+
     getAgreementTypes(): Observable<NomenclatureDTO<number>[]>;
+    getTerritories(): Observable<NomenclatureDTO<number>[]>;
     getCoastalParties(): Observable<NomenclatureDTO<number>[]>;
     getRequestPurposes(): Observable<NomenclatureDTO<number>[]>;
     getFishingCategories(): Observable<NomenclatureDTO<number>[]>;
