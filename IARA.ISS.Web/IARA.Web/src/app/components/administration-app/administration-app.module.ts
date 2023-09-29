@@ -180,6 +180,9 @@ import { PrintConfigurationsComponent } from './print-configurations/print-confi
 import { EditPrintConfigurationComponent } from './print-configurations/components/edit-print-configuration/edit-print-configuration.component';
 import { LogBookPageEditExceptionsComponent } from './catches-and-sales/log-book-page-edit-exceptions/log-book-page-edit-exceptions.component';
 import { EditLogBookPageEditExceptionComponent } from './catches-and-sales/log-book-page-edit-exceptions/components/edit-log-book-page-edit-exception.component';
+import { FluxSalesQueryComponent } from './flux-vms-requests/flux-sales-query/flux-sales-query.component';
+import { FluxVesselQueryComponent } from './flux-vms-requests/flux-vessel-query/flux-vessel-query.component';
+import { FluxFAQueryComponent } from './flux-vms-requests/flux-fa-query/flux-fa-query.component';
 
 @NgModule({
     declarations: [
@@ -352,7 +355,10 @@ import { EditLogBookPageEditExceptionComponent } from './catches-and-sales/log-b
         PrintConfigurationsComponent,
         EditPrintConfigurationComponent,
         LogBookPageEditExceptionsComponent,
-        EditLogBookPageEditExceptionComponent
+        EditLogBookPageEditExceptionComponent,
+        FluxSalesQueryComponent,
+        FluxVesselQueryComponent,
+        FluxFAQueryComponent
     ],
     imports: [
         TLCommonModule,
@@ -529,7 +535,10 @@ import { EditLogBookPageEditExceptionComponent } from './catches-and-sales/log-b
         PrintConfigurationsComponent,
         EditPrintConfigurationComponent,
         LogBookPageEditExceptionsComponent,
-        EditLogBookPageEditExceptionComponent
+        EditLogBookPageEditExceptionComponent,
+        FluxSalesQueryComponent,
+        FluxVesselQueryComponent,
+        FluxFAQueryComponent
     ]
 })
 export class IARAApplicationModule {

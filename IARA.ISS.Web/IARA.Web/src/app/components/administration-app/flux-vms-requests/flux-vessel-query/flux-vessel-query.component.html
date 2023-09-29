@@ -1,0 +1,91 @@
+﻿<div [formGroup]="form" class="dialog-padding">
+    <tl-card tooltipResourceName="flux-vms-requests.vessel-query-data-helper">
+        <tl-card-title>{{ 'flux-vms-requests.vessel-query-data' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="column" fxLayoutGap="1em">
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-date fxFlex="50"
+                             formControlName="dateTimeFromControl"
+                             [max]="form.controls.dateTimeToControl.value"
+                             tooltipResourceName="flux-vms-requests.vessel-query-date-time-from-helper"
+                             label="{{ 'flux-vms-requests.vessel-query-date-time-from' | tlTranslate }}">
+                    </tl-date>
+
+                    <tl-date fxFlex="50"
+                             formControlName="dateTimeToControl"
+                             [min]="form.controls.dateTimeFromControl.value"
+                             tooltipResourceName="flux-vms-requests.vessel-query-date-time-to-helper"
+                             label="{{ 'flux-vms-requests.vessel-query-date-time-to' | tlTranslate }}">
+                    </tl-date>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-input fxFlex="50"
+                              formControlName="cfrControl"
+                              tooltipResourceName="flux-vms-requests.vessel-query-cfr-helper"
+                              label="{{ 'flux-vms-requests.vessel-query-cfr' | tlTranslate }}">
+                    </tl-input>
+
+                    <tl-input fxFlex="50"
+                              formControlName="uviControl"
+                              tooltipResourceName="flux-vms-requests.vessel-query-uvi-helper"
+                              label="{{ 'flux-vms-requests.vessel-query-uvi' | tlTranslate }}">
+                    </tl-input>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-input fxFlex="50"
+                              formControlName="ircsControl"
+                              tooltipResourceName="flux-vms-requests.vessel-query-ircs-helper"
+                              label="{{ 'flux-vms-requests.vessel-query-ircs' | tlTranslate }}">
+                    </tl-input>
+
+                    <tl-input fxFlex="50"
+                              formControlName="mmsiControl"
+                              tooltipResourceName="flux-vms-requests.vessel-query-mmsi-helper"
+                              label="{{ 'flux-vms-requests.vessel-query-mmsi' | tlTranslate }}">
+                    </tl-input>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-autocomplete fxFlex="50"
+                                     formControlName="flagStateControl"
+                                     [options]="flagStates"
+                                     tooltipResourceName="flux-vms-requests.vessel-query-flag-state-helper"
+                                     label="{{ 'flux-vms-requests.vessel-query-flag-state' | tlTranslate }}">
+                    </tl-autocomplete>
+
+                    <div fxFlex="50"></div>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="start center">
+                    <tl-radio-button-group fxFlex="100"
+                                           formControlName="histControl"
+                                           direction="row"
+                                           gap="1em"
+                                           [options]="histOptions">
+                    </tl-radio-button-group>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="start center">
+                    <tl-radio-button-group fxFlex="100"
+                                           formControlName="vesselActiveControl"
+                                           direction="row"
+                                           gap="1em"
+                                           [options]="vesselActiveOptions">
+                    </tl-radio-button-group>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="start center">
+                    <tl-radio-button-group fxFlex="100"
+                                           formControlName="dataControl"
+                                           direction="row"
+                                           gap="1em"
+                                           [options]="dataOptions">
+                    </tl-radio-button-group>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>
