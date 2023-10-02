@@ -142,6 +142,19 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
         this.form.get('hasSealControl')!.valueChanges.subscribe({
             next: this.onHasSealChanged.bind(this)
         });
+
+        this.form.get('ownerIsDriverControl')!.valueChanges.subscribe({
+            next: (yes: boolean) => {
+                if (yes) {
+                    this.form.get('driverControl')!.clearValidators();
+                }
+                else {
+                    this.form.get('driverControl')!.setValidators([Validators.required]);
+                }
+
+                this.form.get('driverControl')!.updateValueAndValidity({ emitEvent: false });
+            }
+        })
     }
 
     protected fillForm(): void {
@@ -191,6 +204,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
                 this.form.get('ownerControl')!.setValue(
                     this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.OwnerLegal || f.type === InspectedPersonTypeEnum.OwnerPers)
                 );
+
                 this.form.get('driverControl')!.setValue(
                     this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.Driver)
                 );
@@ -255,27 +269,34 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
             catchMeasures: this.form.get('catchesControl')!.value,
             observationTexts: [
                 additionalInfo?.violation,
-            ].filter(f => f !== null && f !== undefined) as InspectionObservationTextDTO[],
-            personnel: [
-                buyer !== null && buyer !== undefined
-                    ? new InspectionSubjectPersonnelDTO({
-                        entryId: buyer.entryId,
-                        citizenshipId: buyer.countryId,
-                        egnLnc: buyer.egnLnc,
-                        eik: buyer.eik,
-                        isLegal: buyer.isLegal,
-                        firstName: buyer.firstName,
-                        middleName: buyer.middleName,
-                        lastName: buyer.lastName,
-                        registeredAddress: buyer.address,
-                        isRegistered: true,
-                        type: InspectedPersonTypeEnum.RegBuyer,
-                        address: InspectionUtils.buildAddress(buyer.address, this.translate)
-                    }) : undefined,
-                this.modifiedOwner(),
-                this.form.get('driverControl')!.value,
-            ].filter(f => f !== null && f !== undefined),
+            ].filter(f => f !== null && f !== undefined) as InspectionObservationTextDTO[]
         });
+
+        this.model.personnel = [];
+        const driver: InspectionSubjectPersonnelDTO | undefined = this.getDriver();
+
+        if (driver !== undefined && driver !== null) {
+            this.model.personnel.push(driver);
+        }
+
+        if (buyer !== undefined && buyer !== null) {
+            this.model.personnel.push(new InspectionSubjectPersonnelDTO({
+                entryId: buyer.entryId,
+                citizenshipId: buyer.countryId,
+                egnLnc: buyer.egnLnc,
+                eik: buyer.eik,
+                isLegal: buyer.isLegal,
+                firstName: buyer.firstName,
+                middleName: buyer.middleName,
+                lastName: buyer.lastName,
+                registeredAddress: buyer.address,
+                isRegistered: true,
+                type: InspectedPersonTypeEnum.RegBuyer,
+                address: InspectionUtils.buildAddress(buyer.address, this.translate)
+            }));
+        }
+
+        this.model.personnel.push(this.modifiedOwner());
     }
 
     private onHasSealChanged(value: boolean): void {
@@ -307,5 +328,20 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
         else {
             return this.form.get('ownerControl')!.value;
         }
+    }
+
+    private getDriver(): InspectionSubjectPersonnelDTO | undefined {
+        let driver: InspectionSubjectPersonnelDTO | undefined;
+        const ownerIsDriver: boolean = this.form.get('ownerIsDriverControl')!.value;
+
+        if (ownerIsDriver) {
+            driver = this.modifiedOwner();
+            driver.type = InspectedPersonTypeEnum.Driver;
+        }
+        else {
+            driver = this.form.get('driverControl')!.value;
+        }
+
+        return driver;
     }
 }
