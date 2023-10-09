@@ -126,6 +126,12 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
             filesControl: new FormControl(undefined)
         });
 
+        this.form.get('generalInfoControl')!.valueChanges.subscribe({
+            next: () => {
+                this.reportNumAlreadyExistsError = false;
+            }
+        });
+
         this.form.get('hasTicketControl')!.valueChanges.subscribe({
             next: this.onHasTicketChanged.bind(this)
         });

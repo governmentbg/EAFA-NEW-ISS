@@ -181,6 +181,12 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
         this.form.get('unregisteredPermitControl')!.disable();
         this.form.get('unregisteredPermitYearControl')!.disable();
 
+        this.form.get('generalInfoControl')!.valueChanges.subscribe({
+            next: () => {
+                this.reportNumAlreadyExistsError = false;
+            }
+        });
+
         this.form.get('remarkReasonControl')!.valueChanges.subscribe({
             next: this.onRemarkReasonChanged.bind(this)
         });

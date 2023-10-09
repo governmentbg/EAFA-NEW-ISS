@@ -69,5 +69,6 @@ export enum ErrorCode {
     CannotAddEditLockedAquaculturePage = 50,
     ReportCodeAlreadyExists = 51,
     PoundNetNumAlreadyExists = 52,
-    PatrolVehicleAlreadyExists = 53
+    PatrolVehicleAlreadyExists = 53,
+    InspectionReportNumAlreadyExists = 54
 }

@@ -13,7 +13,7 @@ import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatur
 import { InspectionsService } from '@app/services/administration-app/inspections.service';
 import { InspectionDraftDTO } from '@app/models/generated/dtos/InspectionDraftDTO';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { ErrorCode } from '@app/models/common/exception.model';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { Component, ViewChild } from '@angular/core';
 import { InspectionTypesEnum } from '@app/enums/inspection-types.enum';
@@ -30,6 +30,7 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
     public service: InspectionsService;
     public viewMode: boolean = false;
     public canEditNumber: boolean = false;
+    public reportNumAlreadyExistsError: boolean = false;
 
     @ViewChild(ValidityCheckerGroupDirective)
     public validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -90,9 +91,7 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
                     dialogClose(dialogClose);
                 },
                 error: (err: HttpErrorResponse) => {
-                    if ((err.error as ErrorModel)?.code === ErrorCode.NotInspector) {
-                        this.snackbar.open(this.translate.getValue('inspections.not-inspector'));
-                    }
+                    this.handleErrorResponse(err);
                 }
             });
         }
@@ -177,5 +176,16 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
         draft.json = JSON.stringify(camelCaseModel);
 
         return draft;
+    }
+
+    private handleErrorResponse(response: HttpErrorResponse): void {
+        if (response.error?.code === ErrorCode.NotInspector) {
+            this.snackbar.open(this.translate.getValue('inspections.not-inspector'));
+        }
+        else if (response.error?.code === ErrorCode.InspectionReportNumAlreadyExists) {
+            this.reportNumAlreadyExistsError = true;
+            this.form.get('generalInfoControl')!.setErrors({ reportNumAlreadyExists: true });
+            this.validityCheckerGroup.validate();
+        }
     }
 }

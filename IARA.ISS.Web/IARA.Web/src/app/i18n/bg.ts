@@ -2461,6 +2461,7 @@
         'inspector-identified': 'Инспекторът се идентифицира',
         'inspector-already-exists-error': 'Инспекторът вече съществува в регистъра на инспектори',
         'patrol-vehicle-already-exists-error': 'Патрулното средство вече съществува в регистъра на патрулните средства',
+        'report-num-already-exists-error': 'Вече съществува инспекция с такъв номер на доклад за същата година',
         'report-num-on-save': 'Създава се при запазване',
         'edit-inspection-files': 'Файлове',
         'vehicle-name': 'Име',
@@ -5651,6 +5652,7 @@
     'flux-vms-requests': {
         'common': 'Общи',
         'flap-domain': 'FLAP заявки',
+        'acdr-domain': 'ACDR заявки',
         'resend': 'Повторно изпращане',
         'filters-is-outgoing': 'Заявки, изходящи за ИСС',
         'filters-web-service-name': 'Име на услуга',
@@ -5682,6 +5684,7 @@
         'view-request': 'Преглед',
         'request-dialog-title': 'Преглед на комуникация с FLUX/СНРК',
         'flux-replay-success': 'Успешно повторно закачане на съобщение на опашка за обработка',
+        'request-month': 'Месец на изпращане на заявката',
 
         'send-queries': 'Изпращане на FLUX заявка',
         'send-vessel-query': 'Заявка за риболовни кораби',
@@ -5780,7 +5783,17 @@
         'remarks-panel': 'Remarks',
         'remarks': 'Remarks',
         'flap-at-least-one-authorized-gear-needed-error': 'At least one gear type must be specified',
-        'flap-at-least-one-targeted-quota-needed-error': 'At least one quota must be specified'
+        'flap-at-least-one-targeted-quota-needed-error': 'At least one quota must be specified',
+
+        'download-content': 'Изтегли',
+        'copy-content': 'Копирай',
+        'request-copied-successfully': 'Заявката е копирана успешно',
+        'request-copy-failed': 'Настъпи грешка при копирането',
+        'acdr-request-history-records': 'Исторически данни',
+        'send-acdr-queries': 'Изпращане на ACDR заявка',
+        'acdr-query-data': 'Параметри на заявката',
+        'acdr-query-request-title': 'Параметри на заявката',
+        'acdr-query-month': 'Месец'
     },
     'application-regix-checks': {
         'filters-application-id': '№ на заявление',

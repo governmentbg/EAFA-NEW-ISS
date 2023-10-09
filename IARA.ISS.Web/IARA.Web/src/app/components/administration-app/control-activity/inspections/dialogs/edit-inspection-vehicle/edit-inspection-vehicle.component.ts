@@ -139,6 +139,12 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
             filesControl: new FormControl([])
         });
 
+        this.form.get('generalInfoControl')!.valueChanges.subscribe({
+            next: () => {
+                this.reportNumAlreadyExistsError = false;
+            }
+        });
+
         this.form.get('hasSealControl')!.valueChanges.subscribe({
             next: this.onHasSealChanged.bind(this)
         });

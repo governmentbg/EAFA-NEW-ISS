@@ -26,6 +26,9 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
     @Input()
     public canEditNumber: boolean = false;
 
+    @Input()
+    public reportNumAlreadyExists: boolean = false;
+
     public numPrefix?: string;
 
     private numberWritten: boolean = false;
@@ -91,6 +94,8 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
     }
 
     public onReportNumChanged(codes: string[]): void {
+        this.reportNumAlreadyExists = false;
+
         if (this.numberWritten || (this.isDisabled && !this.skipDisabledCheck)) {
             this.numberWritten = false;
             return;

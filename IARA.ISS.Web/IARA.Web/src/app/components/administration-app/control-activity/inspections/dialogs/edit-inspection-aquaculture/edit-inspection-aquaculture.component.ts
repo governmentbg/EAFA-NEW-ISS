@@ -124,6 +124,12 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
             filesControl: new FormControl([])
         });
 
+        this.form.get('generalInfoControl')!.valueChanges.subscribe({
+            next: () => {
+                this.reportNumAlreadyExistsError = false;
+            }
+        });
+
         this.form.get('aquacultureControl')!.valueChanges.subscribe({
             next: this.onAquacultureChanged.bind(this)
         })
