@@ -6,13 +6,15 @@
      class="dialog-padding">
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
             <inspection-general-info formControlName="generalInfoControl"
                                      [institutions]="institutions"
-                                     [canEditNumber]="canEditNumber">
+                                     [canEditNumber]="canEditNumber"
+                                     [reportNumAlreadyExists]="reportNumAlreadyExistsError">
             </inspection-general-info>
         </div>
     </tl-expansion-panel>

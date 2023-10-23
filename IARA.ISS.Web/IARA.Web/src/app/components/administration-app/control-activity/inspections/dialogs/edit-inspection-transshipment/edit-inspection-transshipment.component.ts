@@ -136,6 +136,12 @@ export class EditInspectionTransshipmentComponent extends BaseInspectionsCompone
             additionalInfoControl: new FormControl(undefined),
             filesControl: new FormControl([])
         });
+
+        this.form.get('generalInfoControl')!.valueChanges.subscribe({
+            next: () => {
+                this.reportNumAlreadyExistsError = false;
+            }
+        });
     }
 
     protected fillForm(): void {

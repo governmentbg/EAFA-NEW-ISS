@@ -140,6 +140,12 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
             filesControl: new FormControl([])
         });
 
+        this.form.get('generalInfoControl')!.valueChanges.subscribe({
+            next: () => {
+                this.reportNumAlreadyExistsError = false;
+            }
+        });
+
         this.form.get('hasTransshipmentControl')!.valueChanges.subscribe({
             next: this.onHasTransshipmentChanged.bind(this),
         });

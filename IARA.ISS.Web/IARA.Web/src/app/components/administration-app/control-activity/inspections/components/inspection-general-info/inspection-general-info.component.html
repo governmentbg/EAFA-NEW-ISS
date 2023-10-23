@@ -27,6 +27,10 @@
         </tl-checkbox>
     </div>
 
+    <mat-error *ngIf="reportNumAlreadyExists === true">
+        * {{ 'inspections.report-num-already-exists-error' | tlTranslate }}
+    </mat-error>
+
     <inspectors-table formControlName="inspectorsControl"
                       [institutions]="institutions"
                       (headInspectorChanged)="onReportNumChanged($event)">

@@ -2412,6 +2412,7 @@
         'inspector-identified': 'Inspector has identified',
         'inspector-already-exists-error': 'Inspector is already registered',
         'patrol-vehicle-already-exists-error': 'Patrol vehisle is already registered',
+        'report-num-already-exists-error': 'Report num already exists',
         'report-num-on-save': 'Generated after saving',
         'edit-inspection-files': 'Файлове',
         'vehicle-name': 'Name',
@@ -5650,6 +5651,7 @@
     'flux-vms-requests': {
         'common': 'Common',
         'flap-domain': 'FLAP requests',
+        'acdr-domain': 'ACDR requests',
         'resend': 'Resend',
         'filters-is-outgoing': 'Outgoing requests',
         'filters-web-service-name': 'Service name',
@@ -5681,6 +5683,7 @@
         'view-request': 'View',
         'request-dialog-title': 'View FLUX/VMS communication',
         'flux-replay-success': 'Message successfully enqueued for sending',
+        'request-month': 'Month',
 
         'send-queries': 'Send FLUX query',
         'send-vessel-query': 'Vessel query',
@@ -5779,7 +5782,17 @@
         'remarks-panel': 'Remarks',
         'remarks': 'Remarks',
         'flap-at-least-one-authorized-gear-needed-error': 'At least one gear type must be specified',
-        'flap-at-least-one-targeted-quota-needed-error': 'At least one quota must be specified'
+        'flap-at-least-one-targeted-quota-needed-error': 'At least one quota must be specified',
+        
+        'download-content': 'Download',
+        'copy-content': 'Copy',
+        'request-copied-successfully': 'Request copied successfully',
+        'request-copy-failed': 'Request copy failed',
+        'acdr-request-history-records': 'Historic data',
+        'send-acdr-queries': 'Send ACDR query',
+        'acdr-query-data': 'Query data',
+        'acdr-query-request-title': 'Query parameters',
+        'acdr-query-month': 'Month'
     },
     'application-regix-checks': {
         'filters-application-id': 'Application no.',

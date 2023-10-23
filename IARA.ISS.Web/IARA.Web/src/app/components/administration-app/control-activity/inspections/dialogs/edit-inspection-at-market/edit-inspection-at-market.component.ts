@@ -127,6 +127,12 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
             filesControl: new FormControl([])
         });
 
+        this.form.get('generalInfoControl')!.valueChanges.subscribe({
+            next: () => {
+                this.reportNumAlreadyExistsError = false;
+            }
+        });
+
         this.form.get('hasImporterControl')!.valueChanges.subscribe({
             next: (value: boolean) => {
                 this.hasImporter = value;

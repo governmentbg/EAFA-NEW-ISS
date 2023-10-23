@@ -133,6 +133,12 @@ export class EditObservationAtSeaComponent extends BaseInspectionsComponent impl
             filesControl: new FormControl([])
         });
 
+        this.form.get('generalInfoControl')!.valueChanges.subscribe({
+            next: () => {
+                this.reportNumAlreadyExistsError = false;
+            }
+        });
+
         this.form.get('onBoardObservationToolsControl')!.valueChanges.subscribe({
             next: this.onOnBoardObservationToolsChanged.bind(this)
         });
