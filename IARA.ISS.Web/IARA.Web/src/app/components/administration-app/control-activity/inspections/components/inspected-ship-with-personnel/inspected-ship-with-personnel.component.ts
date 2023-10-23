@@ -63,7 +63,8 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
 
     private readonly service: InspectionsService;
 
-    public constructor(@Self() ngControl: NgControl,
+    public constructor(
+        @Self() ngControl: NgControl,
         @Self() validityChecker: ValidityCheckerDirective,
         service: InspectionsService,
         translate: FuseTranslationLoaderService,
@@ -154,18 +155,28 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
                 );
             }
         }
+        else {
+            this.form.reset();
+            this.owners = [];
+            this.users = [];
+            this.representatives = [];
+            this.captains = [];
+        }
     }
 
     public async onShipSelected(ship: VesselDuringInspectionDTO): Promise<void> {
         this.shipSelected.emit(ship);
 
-        if (ship?.shipId !== undefined && ship?.shipId !== null) {
-            const personnel: InspectionShipSubjectNomenclatureDTO[] = await this.service.getShipPersonnel(ship.shipId!).toPromise();
+        if (ship !== undefined && ship !== null && ship.shipId !== undefined && ship.shipId !== null) {
+            const personnel: InspectionShipSubjectNomenclatureDTO[] = await this.service.getShipPersonnel(ship.shipId).toPromise();
 
             this.assignPersonnel(personnel);
         }
         else {
-            this.assignPersonnel([]);
+            this.owners = [];
+            this.users = [];
+            this.representatives = [];
+            this.captains = [];
         }
     }
 

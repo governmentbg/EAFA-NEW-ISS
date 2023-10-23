@@ -29,7 +29,7 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
     public form!: FormGroup;
 
     protected model: InspectedFishingGearTableModel = new InspectedFishingGearTableModel({
-        DTO: new InspectedFishingGearDTO()
+        gear: new InspectedFishingGearDTO()
     });
 
     public toggle: InspectionCheckModel;
@@ -41,6 +41,8 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
     public hasAttachedAppliances: boolean = false;
 
     private readOnly: boolean = false;
+
+    private inspectedMarks: FishingGearMarkDTO[] = [];
 
     private readonly translate: FuseTranslationLoaderService;
     private readonly gearManipulationService: FishingGearManipulationService;
@@ -102,6 +104,7 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
         }
         else {
             this.form.markAllAsTouched();
+
             if (this.form.valid) {
                 this.fillModel();
                 CommonUtils.sanitizeModelStrings(this.model);
@@ -116,6 +119,7 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
 
     public onMarkSelected(mark: FishingGearMarkDTO): void {
         this.gearManipulationService.markAdded.emit(mark);
+        this.inspectedMarks.push(mark);
     }
 
     protected buildForm(): void {
@@ -123,7 +127,7 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
             permittedGearControl: new FormControl({ value: undefined, disabled: true }),
             inspectedGearControl: new FormControl(undefined),
             optionsControl: new FormControl(undefined, [Validators.required]),
-            appliancesOptionsControl: new FormControl(undefined, [Validators.required]),
+            appliancesOptionsControl: new FormControl(undefined, [Validators.required])
         });
 
         this.form.get('optionsControl')!.valueChanges.subscribe({
@@ -133,11 +137,29 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
                 }
                 else {
                     this.canEditInspectedGear = true;
+
                     setTimeout(() => {
-                        const gear = this.remap(this.model.DTO.inspectedFishingGear ?? this.model.DTO.permittedFishingGear)!;
-                        gear.marks = [];
+                        let gear: FishingGearDTO = new FishingGearDTO();
+
+                        if (this.model.gear.inspectedFishingGear !== null && this.model.gear.inspectedFishingGear !== undefined) {
+                            gear = this.remap(this.model.gear.inspectedFishingGear);
+                            this.inspectedMarks = gear.marks ?? [];
+                        }
+                        else {
+                            gear = this.remap(this.model.gear.permittedFishingGear);
+                            gear.id = undefined;
+                        }
+
                         this.form.get('inspectedGearControl')!.setValue(gear);
                     }, 100);
+                }
+            }
+        });
+
+        this.form.get('inspectedGearControl')!.valueChanges.subscribe({
+            next: (gear: FishingGearDTO | undefined) => {
+                if (gear !== undefined && gear !== null) {
+                    this.inspectedMarks = gear.marks ?? [];
                 }
             }
         });
@@ -145,11 +167,10 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
 
     protected fillForm(): void {
         setTimeout(() => {
-            this.form.get('permittedGearControl')!.setValue(this.remap(this.model.DTO.permittedFishingGear));
+            this.form.get('permittedGearControl')!.setValue(this.remap(this.model.gear.permittedFishingGear));
         }, 100);
 
-        const checkValue = this.mapToCheckValue(this.model.DTO.checkInspectedMatchingRegisteredGear);
-
+        const checkValue = this.mapToCheckValue(this.model.gear.checkInspectedMatchingRegisteredGear);
         if (checkValue !== null && checkValue !== undefined) {
             this.form.get('optionsControl')!.setValue(new InspectionCheckDTO({ checkValue: checkValue }));
         }
@@ -157,33 +178,48 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
             this.form.get('optionsControl')!.setValue(null);
         }
 
-        if (this.model.DTO.hasAttachedAppliances !== null && this.model.DTO.hasAttachedAppliances !== undefined) {
+        if (this.model.gear.hasAttachedAppliances !== null && this.model.gear.hasAttachedAppliances !== undefined) {
+            if (this.model.gear.hasAttachedAppliances) {
+                this.form.get('appliancesOptionsControl')!.setValue(
+                    new InspectionCheckDTO({
+                        checkValue: InspectionToggleTypesEnum.Y
+                    })
+                );
+            }
+            else {
+                this.form.get('appliancesOptionsControl')!.setValue(
+                    new InspectionCheckDTO({
+                        checkValue: InspectionToggleTypesEnum.N
+                    })
+                );
+            }
+
+        }
+        else {
             this.form.get('appliancesOptionsControl')!.setValue(
                 new InspectionCheckDTO({
                     checkValue: InspectionToggleTypesEnum.R
                 })
             );
         }
-        else if (this.model.DTO.hasAttachedAppliances) {
-            this.form.get('appliancesOptionsControl')!.setValue(
-                new InspectionCheckDTO({
-                    checkValue: InspectionToggleTypesEnum.Y
-                })
-            );
-        }
-        else {
-            this.form.get('appliancesOptionsControl')!.setValue(
-                new InspectionCheckDTO({
-                    checkValue: InspectionToggleTypesEnum.N
-                })
-            );
-        }
 
-        if (this.model.DTO.checkInspectedMatchingRegisteredGear === InspectedFishingGearEnum.N
-            || this.model.DTO.checkInspectedMatchingRegisteredGear === InspectedFishingGearEnum.I) {
+        if (this.model.gear.checkInspectedMatchingRegisteredGear === InspectedFishingGearEnum.N
+            || this.model.gear.checkInspectedMatchingRegisteredGear === InspectedFishingGearEnum.I) {
             this.canEditInspectedGear = true;
+
             setTimeout(() => {
-                this.form.get('inspectedGearControl')!.setValue(this.remap(this.model.DTO.inspectedFishingGear ?? this.model.DTO.permittedFishingGear));
+                let gear: FishingGearDTO = new FishingGearDTO();
+
+                if (this.model.gear.inspectedFishingGear !== null && this.model.gear.inspectedFishingGear !== undefined) {
+                    gear = this.remap(this.model.gear.inspectedFishingGear);
+                    this.inspectedMarks = gear.marks ?? [];
+                }
+                else if (this.model.gear.permittedFishingGear !== undefined && this.model.gear.permittedFishingGear !== null) {
+                    gear = this.remap(this.model.gear.permittedFishingGear);
+                    gear.id = undefined;
+                }
+               
+                this.form.get('inspectedGearControl')!.setValue(gear);
             }, 500);
         }
         else {
@@ -192,41 +228,45 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
     }
 
     protected fillModel(): void {
-        this.model.DTO.inspectedFishingGear = this.canEditInspectedGear
+        this.model.gear.inspectedFishingGear = this.canEditInspectedGear
             ? this.form.get('inspectedGearControl')!.value
             : undefined;
-        this.model.DTO.checkInspectedMatchingRegisteredGear = this.mapToFishingGearEnum();
+
+        this.model.gear.checkInspectedMatchingRegisteredGear = this.mapToFishingGearEnum();
 
         const appliancesOptions: InspectionToggleTypesEnum = this.form.get('appliancesOptionsControl')!.value?.checkValue;
-
         if (appliancesOptions == null || appliancesOptions === InspectionToggleTypesEnum.R) {
-            this.model.DTO.hasAttachedAppliances = undefined;
+            this.model.gear.hasAttachedAppliances = undefined;
         }
         else if (appliancesOptions === InspectionToggleTypesEnum.Y) {
-            this.model.DTO.hasAttachedAppliances = true;
+            this.model.gear.hasAttachedAppliances = true;
         }
         else {
-            this.model.DTO.hasAttachedAppliances = false;
+            this.model.gear.hasAttachedAppliances = false;
         }
 
-        if (this.model.DTO.inspectedFishingGear !== null && this.model.DTO.inspectedFishingGear !== undefined) {
-            if (this.model.DTO.inspectedFishingGear.marks !== null && this.model.DTO.inspectedFishingGear.marks !== undefined) {
-                this.model.DTO.inspectedFishingGear.marks = this.model.DTO.inspectedFishingGear.marks.filter(f => f.isActive);
-            }
+        if (this.model.gear.inspectedFishingGear !== null && this.model.gear.inspectedFishingGear !== undefined) {
+            this.model.gear.inspectedFishingGear.marks = this.inspectedMarks;
 
-            if (this.model.DTO.inspectedFishingGear.pingers !== null && this.model.DTO.inspectedFishingGear.pingers !== undefined) {
-                this.model.DTO.inspectedFishingGear.pingers = this.model.DTO.inspectedFishingGear.pingers.filter(f => f.isActive);
+            if (this.model.gear.inspectedFishingGear.pingers !== null && this.model.gear.inspectedFishingGear.pingers !== undefined) {
+                const pingers: FishingGearPingerDTO[] = this.model.gear.inspectedFishingGear.pingers.filter(f => f.isActive) ?? [];
+
+                if (pingers.length > 0) {
+                    this.model.gear.inspectedFishingGear.pingers = pingers;
+                    this.model.gear.inspectedFishingGear.hasPingers = true;
+                }
             }
         }
 
-        const fishingGear: FishingGearDTO = (this.model.DTO.inspectedFishingGear ?? this.model.DTO.permittedFishingGear)!;
+        const fishingGear: FishingGearDTO = (this.model.gear.inspectedFishingGear ?? this.model.gear.permittedFishingGear)!;
 
         this.model.type = fishingGear.type;
         this.model.count = fishingGear.count;
         this.model.netEyeSize = fishingGear.netEyeSize;
         this.model.marksNumbers = fishingGear.marksNumbers;
+        this.model.gear.isActive = true;
 
-        switch (this.model.DTO.checkInspectedMatchingRegisteredGear) {
+        switch (this.model.gear.checkInspectedMatchingRegisteredGear) {
             case InspectedFishingGearEnum.I:
                 this.model.checkName = this.translate.getValue('inspections.toggle-unregistered');
                 break;
@@ -260,14 +300,13 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
     }
 
     private mapToFishingGearEnum(): InspectedFishingGearEnum | undefined {
-        if (this.model.DTO.checkInspectedMatchingRegisteredGear === InspectedFishingGearEnum.I) {
+        if (this.model.gear.checkInspectedMatchingRegisteredGear === InspectedFishingGearEnum.I) {
             return InspectedFishingGearEnum.I;
         }
 
         const checkValue: InspectionCheckDTO = this.form.get('optionsControl')!.value;
 
-        if (checkValue === null || checkValue === undefined
-            || checkValue.checkValue === null || checkValue.checkValue === undefined) {
+        if (checkValue === null || checkValue === undefined || checkValue.checkValue === null || checkValue.checkValue === undefined) {
             return undefined;
         }
 
@@ -283,30 +322,33 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
         }
     }
 
-    private remap(dto: FishingGearDTO | undefined): FishingGearDTO | undefined {
-        if (dto === null || dto === undefined) {
-            return undefined;
+    private remap(gear: FishingGearDTO | undefined): FishingGearDTO {
+        if (gear === null || gear === undefined) {
+            return new FishingGearDTO();
         }
 
-        return new FishingGearDTO({
-            cordThickness: dto.cordThickness,
-            count: dto.count,
-            description: dto.description,
-            hasPingers: dto.hasPingers,
-            height: dto.height,
-            hookCount: dto.hookCount,
-            houseLength: dto.houseLength,
-            houseWidth: dto.houseWidth,
-            id: dto.id,
-            isActive: dto.isActive,
-            length: dto.length,
-            marksNumbers: dto.marksNumbers,
-            netEyeSize: dto.netEyeSize,
-            towelLength: dto.towelLength,
-            type: dto.type,
-            typeId: dto.typeId,
-            permitId: dto.permitId,
-            marks: dto.marks?.map(f => new FishingGearMarkDTO({
+        const result: FishingGearDTO = new FishingGearDTO({
+            cordThickness: gear.cordThickness,
+            count: gear.count,
+            description: gear.description,
+            hasPingers: gear.hasPingers,
+            height: gear.height,
+            hookCount: gear.hookCount,
+            houseLength: gear.houseLength,
+            houseWidth: gear.houseWidth,
+            id: gear.id,
+            isActive: gear.isActive,
+            length: gear.length,
+            marksNumbers: gear.marksNumbers,
+            netEyeSize: gear.netEyeSize,
+            towelLength: gear.towelLength,
+            type: gear.type,
+            typeId: gear.typeId,
+            permitId: gear.permitId
+        });
+
+        if (gear.marks !== undefined && gear.marks !== null && gear.marks.length > 0) {
+            result.marks = gear.marks.map(f => new FishingGearMarkDTO({
                 id: f.id,
                 isActive: f.isActive,
                 createdOn: f.createdOn,
@@ -316,14 +358,21 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
                 }),
                 selectedStatus: f.selectedStatus,
                 statusId: f.statusId
-            })),
-            pingers: dto.pingers?.map(f => new FishingGearPingerDTO({
+            }));
+        }
+
+        if (gear.pingers !== undefined && gear.pingers !== null && gear.pingers.length > 0) {
+            result.hasPingers = true;
+
+            result.pingers = gear.pingers.map(f => new FishingGearPingerDTO({
                 id: f.id,
                 isActive: f.isActive,
                 number: f.number,
                 selectedStatus: f.selectedStatus,
                 statusId: f.statusId
-            }))
-        });
+            }));
+        }
+
+        return result;
     }
 }

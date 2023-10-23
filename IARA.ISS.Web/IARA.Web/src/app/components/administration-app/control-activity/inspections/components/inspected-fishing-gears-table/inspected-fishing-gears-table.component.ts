@@ -65,8 +65,8 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
         if (permitIds !== null && permitIds !== undefined) {
             if (this.allFishingGears.length > 0) {
                 this.fishingGears = this.allFishingGears
-                    .filter(f => f.DTO.permittedFishingGear === null || f.DTO.permittedFishingGear === undefined
-                        || this.permitIds.includes(f.DTO.permittedFishingGear.permitId!));
+                    .filter(f => f.gear.permittedFishingGear === null || f.gear.permittedFishingGear === undefined
+                        || this.permitIds.includes(f.gear.permittedFishingGear.permitId!));
             }
         }
     }
@@ -76,9 +76,9 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
     }
 
     public markAllAsNotAvailable(): void {
-        for (const gear of this.fishingGears) {
-            if (!gear.DTO.checkInspectedMatchingRegisteredGear) {
-                gear.DTO.checkInspectedMatchingRegisteredGear = InspectedFishingGearEnum.R;
+        for (const fishingGear of this.fishingGears) {
+            if (!fishingGear.gear.checkInspectedMatchingRegisteredGear) {
+                fishingGear.gear.checkInspectedMatchingRegisteredGear = InspectedFishingGearEnum.R;
             }
         }
     }
@@ -91,8 +91,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
                 let checkName: string | undefined = undefined;
 
                 if (f.checkInspectedMatchingRegisteredGear === null || f.checkInspectedMatchingRegisteredGear === undefined) {
-                    // There is a bug with TypeScript that requires us to cast this to any
-                    f.checkInspectedMatchingRegisteredGear = InspectedFishingGearEnum.R as any;
+                    f.checkInspectedMatchingRegisteredGear = InspectedFishingGearEnum.R;
                 }
 
                 switch (f.checkInspectedMatchingRegisteredGear) {
@@ -111,27 +110,25 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
                 }
 
                 return new InspectedFishingGearTableModel({
-                    DTO: f,
+                    gear: f,
                     type: fishingGear.type,
                     count: fishingGear.count,
                     netEyeSize: fishingGear.netEyeSize,
                     marksNumbers: fishingGear.marksNumbers,
-                    checkName: checkName,
+                    checkName: checkName
                 })
             });
 
             setTimeout(() => {
                 this.allFishingGears = fishingGears;
                 this.fishingGears = fishingGears
-                    .filter(f => f.DTO.permittedFishingGear === null || f.DTO.permittedFishingGear === undefined
-                        || this.permitIds.includes(f.DTO.permittedFishingGear.permitId!));
+                    .filter(f => f.gear.permittedFishingGear === null || f.gear.permittedFishingGear === undefined
+                        || this.permitIds.includes(f.gear.permittedFishingGear.permitId!));
             });
         }
         else {
-            setTimeout(() => {
-                this.fishingGears = [];
-                this.allFishingGears = [];
-            });
+            this.fishingGears = [];
+            this.allFishingGears = [];
         }
     }
 
@@ -145,7 +142,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
             data = new InspectedFishingGearTableParams({
                 model: fishingGear,
                 readOnly: readOnly,
-                isRegistered: fishingGear.DTO.permittedFishingGear !== null && fishingGear.DTO.permittedFishingGear !== undefined,
+                isRegistered: fishingGear.gear.permittedFishingGear !== null && fishingGear.gear.permittedFishingGear !== undefined,
                 isEdit: true,
                 hasAttachedAppliances: this.hasAttachedAppliances,
             });
@@ -160,9 +157,9 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
         else {
             data = new InspectedFishingGearTableParams({
                 model: new InspectedFishingGearTableModel({
-                    DTO: new InspectedFishingGearDTO({
+                    gear: new InspectedFishingGearDTO({
                         checkInspectedMatchingRegisteredGear: InspectedFishingGearEnum.I
-                    }),
+                    })
                 }),
                 isEdit: false,
                 isRegistered: false,
@@ -182,7 +179,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
             translteService: this.translate,
             disableDialogClose: !readOnly,
             viewMode: readOnly
-        }, fishingGear?.DTO?.permittedFishingGear == undefined ? '800px' : '1600px');
+        }, fishingGear?.gear?.permittedFishingGear == undefined ? '800px' : '1600px');
 
         dialog.subscribe((result: InspectedFishingGearTableModel) => {
             if (result !== undefined && result !== null) {
@@ -223,14 +220,23 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
     }
 
     protected getValue(): InspectedFishingGearDTO[] {
-        return this.allFishingGears.map(f => f.DTO);
+        const result: InspectedFishingGearDTO[] = this.allFishingGears.filter(x => x.gear.isActive).map(x => new InspectedFishingGearDTO({
+            id: x.gear.id,
+            inspectedFishingGear: x.gear.inspectedFishingGear,
+            permittedFishingGear: x.gear.permittedFishingGear,
+            checkInspectedMatchingRegisteredGear: x.gear.checkInspectedMatchingRegisteredGear,
+            hasAttachedAppliances: x.gear.hasAttachedAppliances,
+            isActive: x.gear.isActive
+        }));
+
+        return result;
     }
 
     private fishingGearsValidator(): ValidatorFn {
         return (): ValidationErrors | null => {
             if (this.fishingGears !== undefined && this.fishingGears !== null) {
                 for (const fishingGear of this.fishingGears) {
-                    if (fishingGear.DTO.checkInspectedMatchingRegisteredGear === null || fishingGear.DTO.checkInspectedMatchingRegisteredGear === undefined) {
+                    if (fishingGear.gear.checkInspectedMatchingRegisteredGear === null || fishingGear.gear.checkInspectedMatchingRegisteredGear === undefined) {
                         return { 'fishingGearMustBeChecked': true };
                     }
                 }

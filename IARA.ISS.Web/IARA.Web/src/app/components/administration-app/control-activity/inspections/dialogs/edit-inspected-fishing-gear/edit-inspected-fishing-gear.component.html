@@ -52,7 +52,10 @@
         <tl-expansion-panel title="{{ 'inspections.inspected-fishing-gear' | tlTranslate }}"
                             [validityChecker]="form">
             <edit-fishing-gear formControlName="inspectedGearControl"
-                               [isInspected]="true">
+                               [isInspected]="true"
+                               [filterTypes]="false"
+                               [listenToService]="true"
+                               (selectedMark)="onMarkSelected($event)">
             </edit-fishing-gear>
         </tl-expansion-panel>
         <inspection-toggle *ngIf="hasAttachedAppliances"

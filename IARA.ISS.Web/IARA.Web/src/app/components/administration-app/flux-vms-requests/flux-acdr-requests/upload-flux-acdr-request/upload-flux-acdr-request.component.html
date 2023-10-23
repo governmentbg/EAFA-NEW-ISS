@@ -1,0 +1,10 @@
+﻿<tl-card tooltipResourceName="flux-fms-requests.acdr-upload-request-helper">
+    <tl-card-content>
+        <tl-file-uploader [formControl]="fileControl"
+                          [isFileRequired]="true"
+                          acceptedFormats=".xml"
+                          label="{{ 'flux-vms-requests.acdr-query-file' | tlTranslate }}"
+                          tooltipResourceName="flux-vms-requests.acdr-query-file-helper">
+        </tl-file-uploader>
+    </tl-card-content>
+</tl-card>

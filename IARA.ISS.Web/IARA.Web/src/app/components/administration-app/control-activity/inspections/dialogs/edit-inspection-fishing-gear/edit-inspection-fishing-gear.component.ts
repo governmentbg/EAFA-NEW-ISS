@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
 import { IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
@@ -17,14 +17,12 @@ import { InspectionAdditionalInfoModel } from '../../models/inspection-additiona
 import { InspectionObservationCategoryEnum } from '@app/enums/inspection-observation-category.enum';
 import { InspectedPersonTypeEnum } from '@app/enums/inspected-person-type.enum';
 import { InspectionCheckModel } from '../../models/inspection-check.model';
-import { InspectionObservationTextDTO } from '@app/models/generated/dtos/InspectionObservationTextDTO';
 import { InspectionCheckToolMarkDTO } from '@app/models/generated/dtos/InspectionCheckToolMarkDTO';
 import { InspectionSubjectEnum } from '@app/enums/inspection-subject.enum';
 import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 import { InspectedFishingGearDTO } from '@app/models/generated/dtos/InspectedFishingGearDTO';
 import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
 import { InspectionShipSubjectNomenclatureDTO } from '@app/models/generated/dtos/InspectionShipSubjectNomenclatureDTO';
-import { InspectionSubjectPersonnelDTO } from '@app/models/generated/dtos/InspectionSubjectPersonnelDTO';
 
 enum InspectionPermitTypeEnum {
     Registered,
@@ -173,7 +171,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             filesControl: new FormControl([]),
             ownerCommentControl: new FormControl(undefined, Validators.maxLength(4000)),
             permitTypeControl: new FormControl(undefined, Validators.required),
-            permitControl: new FormControl(undefined, [Validators.required]),
+            permitControl: new FormControl(undefined, [Validators.required, this.noPermitLicensesValidator()]),
             unregisteredPermitControl: new FormControl(undefined, [Validators.required, Validators.maxLength(50)]),
             unregisteredPermitYearControl: new FormControl(undefined, Validators.required)
         });
@@ -229,23 +227,19 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             }));
 
             this.form.get('togglesControl')!.setValue(this.model.checks);
-
             this.form.get('shipControl')!.setValue(this.model.inspectedShip, { emitEvent: false });
-
             this.form.get('portControl')!.setValue(this.model.port);
 
+            if (this.model.personnel !== undefined && this.model.personnel !== null) {
+                this.form.get('shipOwnerControl')!.setValue(this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.OwnerLegal || f.type === InspectedPersonTypeEnum.OwnerPers));
+            }
+
             const poundNet = this.dalyans.find(f => f.value === this.model.poundNetId);
-
             this.form.get('dalyanControl')!.setValue(poundNet, { emitEvent: false });
-
             this.form.get('fishingGearsControl')!.setValue(this.model.fishingGears);
-
             this.form.get('markReasonControl')!.setValue(this.markReasons.find(f => f.value === this.model.checkReasonId));
-
             this.form.get('remarkReasonControl')!.setValue(this.remarkReasons.find(f => f.value === this.model.recheckReasonId));
-
             this.form.get('otherRemarkReasonControl')!.setValue(this.model.otherRecheckReason);
-
             this.form.get('ownerCommentControl')!.setValue(this.model.ownerComment);
 
             if (this.model.permitId) {
@@ -265,6 +259,10 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                 await this.onDalyanChanged(poundNet);
                 this.form.get('permitControl')!.setValue(this.permits.find(f => f.value === this.model.permitId), { emitEvent: false });
                 this.form.get('fishingGearsControl')!.setValue(this.model.fishingGears, { emitEvent: false });
+
+                if (this.form.get('permitControl')!.value) {
+                    this.selectedPermitIds = [this.form.get('permitControl')!.value.value];
+                }
             }
             else if (this.model.inspectedShip !== null && this.model.inspectedShip !== undefined) {
                 this.form.get('inspectedTypeControl')!.setValue(this.inspectedTypes[0]);
@@ -287,44 +285,39 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
 
     protected fillModel(): void {
         const generalInfo: InspectionGeneralInfoModel = this.form.get('generalInfoControl')!.value;
-        const additionalInfo: InspectionAdditionalInfoModel = this.form.get('additionalInfoControl')!.value;
+        const additionalInfo: InspectionAdditionalInfoModel | undefined = this.form.get('additionalInfoControl')!.value;
 
-        const personnel: InspectionSubjectPersonnelDTO[] = [];
+        this.model.inspectionType = InspectionTypesEnum.IGM;
+        this.model.startDate = generalInfo.startDate;
+        this.model.endDate = generalInfo.endDate;
+        this.model.inspectors = generalInfo.inspectors;
+        this.model.reportNum = generalInfo.reportNum;
+        this.model.actionsTaken = additionalInfo?.actionsTaken;
+        this.model.administrativeViolation = additionalInfo?.administrativeViolation === true;
+        this.model.byEmergencySignal = generalInfo.byEmergencySignal;
+        this.model.inspectorComment = additionalInfo?.inspectorComment;
+        this.model.violatedRegulations = additionalInfo?.violatedRegulations;
 
+        this.model.port = this.form.get('portControl')!.value;
+        this.model.checks = this.form.get('togglesControl')!.value;
+        this.model.fishingGears = this.form.get('fishingGearsControl')!.value;
+        this.model.checkReasonId = this.form.get('markReasonControl')!.value?.value;
+        this.model.recheckReasonId = this.form.get('remarkReasonControl')!.value?.value;
+        this.model.permitId = this.form.controls.permitTypeControl.value?.value === InspectionPermitTypeEnum.Registered ? this.form.get('permitControl')!.value?.value : undefined;
+        this.model.otherRecheckReason = this.form.get('otherRemarkReasonControl')!.value;
+        this.model.unregisteredPermitNumber = this.form.get('unregisteredPermitControl')!.value;
+        this.model.ownerComment = this.form.get('ownerCommentControl')!.value;
+        this.model.files = this.form.get('filesControl')!.value;
+
+        this.model.personnel = [];
         if (this.isShip) {
-            personnel.push(this.form.get('shipOwnerControl')!.value);
+            this.model.personnel.push(this.form.get('shipOwnerControl')!.value);
         }
-
-        this.model = new InspectionCheckToolMarkDTO({
-            id: this.model.id,
-            startDate: generalInfo.startDate,
-            endDate: generalInfo.endDate,
-            inspectors: generalInfo.inspectors,
-            reportNum: generalInfo.reportNum,
-            files: this.form.get('filesControl')!.value,
-            actionsTaken: additionalInfo?.actionsTaken,
-            administrativeViolation: additionalInfo?.administrativeViolation === true,
-            byEmergencySignal: generalInfo.byEmergencySignal,
-            inspectionType: InspectionTypesEnum.IGM,
-            inspectorComment: additionalInfo?.inspectorComment,
-            violatedRegulations: additionalInfo?.violatedRegulations,
-            isActive: true,
-            port: this.form.get('portControl')!.value,
-            checks: this.form.get('togglesControl')!.value,
-            fishingGears: this.form.get('fishingGearsControl')!.value,
-            checkReasonId: this.form.get('markReasonControl')!.value?.value,
-            recheckReasonId: this.form.get('remarkReasonControl')!.value?.value,
-            permitId: this.form.controls.permitTypeControl.value?.value === InspectionPermitTypeEnum.Registered
-                ? this.form.get('permitControl')!.value?.value
-                : undefined,
-            otherRecheckReason: this.form.get('otherRemarkReasonControl')!.value,
-            unregisteredPermitNumber: this.form.get('unregisteredPermitControl')!.value,
-            ownerComment: this.form.get('ownerCommentControl')!.value,
-            personnel: personnel,
-            observationTexts: [
-                additionalInfo?.violation
-            ].filter(f => f !== null && f !== undefined) as InspectionObservationTextDTO[],
-        });
+       
+        this.model.observationTexts = [];
+        if (additionalInfo?.violation !== null && additionalInfo?.violation !== undefined) {
+            this.model.observationTexts.push(additionalInfo.violation);
+        }
 
         const year: Date | undefined = this.form.get('unregisteredPermitYearControl')!.value;
         if (year !== undefined && year !== null) {
@@ -408,46 +401,57 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
         if (this.isSaving) {
             return;
         }
-
-        if (value?.shipId) {
-            const permits = await this.service.getShipPermitLicenses(value.shipId).toPromise();
-
-            if (permits !== null && permits !== undefined) {
-                this.permits = permits.map(f => new NomenclatureDTO({
-                    value: f.id,
-                    displayName: f.licenseNumber + ' (' + f.typeName + ')',
-                    code: f.typeName,
-                    isActive: true,
-                }));
-            } else {
-                this.permits = [];
-            }
-
-            this.service.getShipPersonnel(value.shipId!).subscribe({
-                next: (personnel: InspectionShipSubjectNomenclatureDTO[]) => {
-                    this.owners = personnel.filter(f => f.type === InspectedPersonTypeEnum.OwnerLegal || f.type === InspectedPersonTypeEnum.OwnerPers);
-
-                    setTimeout(() => {
-                        if (this.model.personnel !== null && this.model.personnel !== undefined && this.model.inspectedShip?.shipId === value.shipId) {
-                            this.form.get('shipOwnerControl')!.setValue(
-                                this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.OwnerLegal || f.type === InspectedPersonTypeEnum.OwnerPers)
-                            );
-                        }
-                        else {
-                            this.form.get('shipOwnerControl')!.setValue(null);
-                        }
-                    });
-                }
-            });
-        } else {
-            this.permits = [];
-            this.form.get('shipOwnerControl')!.setValue(null);
-        }
-
+        
         this.selectedPermitIds = [];
+        this.owners = [];
         this.form.get('fishingGearsControl')!.setValue([]);
         this.form.get('permitControl')!.setValue(null, { emitEvent: false });
+        this.form.get('shipOwnerControl')!.setValue(null);
+
+        if (value !== undefined && value !== null) {
+            if (value.shipId !== undefined && value.shipId !== null && value.isRegistered) {
+                const permits = await this.service.getShipPermitLicenses(value.shipId).toPromise();
+
+                if (permits !== null && permits !== undefined) {
+                    this.permits = permits.map(f => new NomenclatureDTO({
+                        value: f.id,
+                        displayName: f.licenseNumber + ' (' + f.typeName + ')',
+                        code: f.typeName,
+                        isActive: true,
+                    }));
+                }
+                else {
+                    this.permits = [];
+                }
+
+                this.service.getShipPersonnel(value.shipId!).subscribe({
+                    next: (personnel: InspectionShipSubjectNomenclatureDTO[]) => {
+                        this.owners = personnel.filter(f => f.type === InspectedPersonTypeEnum.OwnerLegal || f.type === InspectedPersonTypeEnum.OwnerPers);
+
+                        setTimeout(() => {
+                            if (this.model.personnel !== null && this.model.personnel !== undefined && this.model.inspectedShip?.shipId === value.shipId) {
+                                this.form.get('shipOwnerControl')!.setValue(
+                                    this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.OwnerLegal || f.type === InspectedPersonTypeEnum.OwnerPers)
+                                );
+                            }
+                        });
+                    }
+                });
+            }
+            else {
+                this.permits = [];
+
+                if (this.model.personnel !== null && this.model.personnel !== undefined && this.model.inspectedShip?.shipId === value.shipId) {
+                    this.form.get('shipOwnerControl')!.setValue(
+                        this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.OwnerLegal || f.type === InspectedPersonTypeEnum.OwnerPers)
+                    );
+                }
+            }
+        }
+
+
     }
+
 
     private async onDalyanChanged(value: NomenclatureDTO<number>): Promise<void> {
         if (this.isSaving) {
@@ -464,11 +468,17 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                     code: f.typeName,
                     isActive: true,
                 }));
-            } else {
-                this.permits = [];
+
+                this.selectedPermitIds = [value.value!];
             }
-        } else {
+            else {
+                this.permits = [];
+                this.selectedPermitIds = [];
+            }
+        }
+        else {
             this.permits = [];
+            this.selectedPermitIds = [];
         }
 
         this.form.get('fishingGearsControl')!.setValue([]);
@@ -488,7 +498,8 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                 if (shipId !== null && shipId !== undefined) {
                     fishingGears = await this.service.getShipFishingGears(shipId).toPromise();
                 }
-            } else {
+            }
+            else {
                 const dalyanId = this.form.get('dalyanControl')!.value?.value;
                 if (dalyanId !== null && dalyanId !== undefined) {
                     fishingGears = await this.service.getPoundNetFishingGears(dalyanId).toPromise();
@@ -501,12 +512,15 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                         permittedFishingGear: f
                     }))
                 );
+
                 this.selectedPermitIds = [value.value!];
-            } else {
+            }
+            else {
                 this.form.get('fishingGearsControl')!.setValue([]);
                 this.selectedPermitIds = [];
             }
-        } else {
+        }
+        else {
             this.form.get('fishingGearsControl')!.setValue([]);
             this.selectedPermitIds = [];
         }
@@ -527,5 +541,19 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             this.form.get('unregisteredPermitControl')!.enable();
             this.form.get('unregisteredPermitYearControl')!.enable();
         }
+    }
+
+    private noPermitLicensesValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === null || control === undefined) {
+                return null;
+            }
+
+            if (this.permits === undefined || this.permits === null || this.permits.length === 0) {
+                return { 'novaluesindropdown': true };
+            }
+
+            return null;
+        };
     }
 }

@@ -481,6 +481,10 @@
                         <mat-error *ngIf="babhLicensesTouched && editForm.errors?.noPremiseBabhLicenses">
                             * {{ 'buyers-and-sales-centers.no-premise-babh-license-error' | tlTranslate }}
                         </mat-error>
+
+                        <mat-error *ngIf="babhLicensesTouched && editForm.errors?.uniqueBabhLicenseDocumentNumber === true">
+                            * {{ 'buyers-and-sales-centers.unique-babh-license-document-number-error' | tlTranslate }}
+                        </mat-error>
                     </div>
                 </tl-card-content>
             </tl-card>
@@ -554,6 +558,10 @@
                         </tl-data-table>
                         <mat-error *ngIf="veterinaryVehicleLicensesTouched && editForm.errors?.noVehicleBabhLicenses">
                             * {{ 'buyers-and-sales-centers.no-vehicle-babh-license-error' | tlTranslate }}
+                        </mat-error>
+
+                        <mat-error *ngIf="veterinaryVehicleLicensesTouched && editForm.errors?.uniqueVehicleLicenseDocumentNumber === true">
+                            * {{ 'buyers-and-sales-centers.unique-vehicle-license-document-number-error' | tlTranslate }}
                         </mat-error>
                     </div>
                 </tl-card-content>

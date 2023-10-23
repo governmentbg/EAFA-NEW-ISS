@@ -19,7 +19,6 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { RegixChecksWrapperDTO } from '@app/models/generated/dtos/RegixChecksWrapperDTO';
 import { ApplicationDialogData, ApplicationUtils } from '@app/shared/utils/application.utils';
 import { CommonUtils } from '@app/shared/utils/common.utils';
-import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
 import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
@@ -234,7 +233,7 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         this.form.markAllAsTouched();
         this.validityCheckerGroup.validate();
-
+     
         if (this.form.valid) {
             this.saveApplication(dialogClose);
         }
@@ -263,7 +262,7 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
                 this.validityCheckerGroup.validate();
             }
         }));
-
+        
         if (!this.isReadonly && !this.viewMode && !applicationAction) {
             this.form.markAllAsTouched();
             this.validityCheckerGroup.validate();

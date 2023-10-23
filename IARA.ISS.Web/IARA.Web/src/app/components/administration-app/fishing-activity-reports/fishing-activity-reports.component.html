@@ -1,0 +1,188 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+    <!-- Филтри -->
+    <search-panel [translateService]="translate">
+        <div [formGroup]="form" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-input fxFlex="25"
+                      formControlName="tripIdentifierControl"
+                      tooltipResourceName="fishing-activities.filters-trip-identifier-helper"
+                      label="{{ 'fishing-activities.filters-trip-identifier' | tlTranslate }}">
+            </tl-input>
+
+            <tl-autocomplete fxFlex="25"
+                             formControlName="shipControl"
+                             [options]="ships"
+                             tooltipResourceName="fishing-activities.filters-ship-helper"
+                             label="{{ 'fishing-activities.filters-ship' | tlTranslate }}">
+            </tl-autocomplete>
+
+            <tl-date fxFlex="25"
+                     formControlName="startTimeControl"
+                     tooltipResourceName="fishing-activities.filters-start-time-helper"
+                     label="{{ 'fishing-activities.filters-start-time' | tlTranslate }}">
+            </tl-date>
+
+            <tl-date fxFlex="25"
+                     formControlName="endTimeControl"
+                     tooltipResourceName="fishing-activities.filters-end-time-helper"
+                     label="{{ 'fishing-activities.filters-end-time' | tlTranslate }}">
+            </tl-date>
+        </div>
+    </search-panel>
+
+    <!-- Таблица -->
+    <mat-card>
+        <tl-data-table [showAddButton]="false"
+                       [showInactiveRecords]="false">
+            <row-detail>
+                <ng-template let-row="row" ngx-datatable-row-detail-template>
+                    <tl-card>
+                        <tl-card-title>{{ 'fishing-activities.activities' | tlTranslate }}</tl-card-title>
+
+                        <tl-card-content>
+                            <tl-data-table [rows]="row.items"
+                                           [isRemote]="false"
+                                           [showAddButton]="false"
+                                           [isSoftDeletable]="true">
+                                <data-column propertyName="date"
+                                             [flexRate]="0.15"
+                                             dataType="datetime"
+                                             columnName="{{ 'fishing-activities.date' | tlTranslate }}">
+                                </data-column>
+
+                                <data-column propertyName="uuid"
+                                             [flexRate]="0.25"
+                                             columnName="{{ 'fishing-activities.uuid' | tlTranslate }}">
+                                </data-column>
+
+                                <data-column propertyName="purpose"
+                                             [flexRate]="0.15"
+                                             columnName="{{ 'fishing-activities.purpose' | tlTranslate }}">
+                                </data-column>
+
+                                <data-column propertyName="reportType"
+                                             [flexRate]="0.15"
+                                             columnName="{{ 'fishing-activities.report-type' | tlTranslate }}">
+                                </data-column>
+
+                                <data-column propertyName="faType"
+                                             [flexRate]="0.2"
+                                             columnName="{{ 'fishing-activities.fa-type' | tlTranslate }}">
+                                </data-column>
+
+                                <data-template-column [flexRate]="0.15"
+                                                      propertyName="status"
+                                                      columnName="{{ 'fishing-activities.fa-status' | tlTranslate }}">
+                                    <ng-template ngx-datatable-cell-template let-row="row">
+                                        <div fxLayout="row" fxLayoutAlign="start center">
+                                            <div>{{ row.data.status }}</div>
+
+                                            <tl-popover-button *ngIf="row.data.errorMessage"
+                                                               icon="info"
+                                                               iconClass="accent-color">
+                                                <span fxLayout="row" class="scroll">{{ row.data.errorMessage }}</span>
+                                            </tl-popover-button>
+                                        </div>
+                                    </ng-template>
+                                </data-template-column>
+
+                                <data-template-column [flexRate]="0.05">
+                                    <ng-template ngx-datatable-cell-template let-row="row">
+                                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                            <tl-icon-button icon="visibility"
+                                                            iconClass="accent-color"
+                                                            (buttonClicked)="openViewDialog(row.data)"
+                                                            tooltipText="{{ 'fishing-activities.view-report' | tlTranslate }}">
+                                            </tl-icon-button>
+                                        </div>
+                                    </ng-template>
+                                </data-template-column>
+                            </tl-data-table>
+                        </tl-card-content>
+                    </tl-card>
+
+                    <tl-card>
+                        <tl-card-title>{{ 'fishing-activities.pages-from-trip' | tlTranslate }}</tl-card-title>
+
+                        <tl-card-content>
+                            <tl-data-table [rows]="row.pages"
+                                           [isRemote]="false"
+                                           [showAddButton]="false"
+                                           [isSoftDeletable]="true">
+                                <data-column propertyName="pageNumber"
+                                             [flexRate]="0.25"
+                                             columnName="{{ 'fishing-activities.page-number' | tlTranslate }}">
+                                </data-column>
+
+                                <data-column propertyName="pageStatus"
+                                             [flexRate]="0.15"
+                                             columnName="{{ 'fishing-activities.page-status' | tlTranslate }}">
+                                </data-column>
+
+                                <data-column propertyName="gearName"
+                                             [flexRate]="0.2"
+                                             columnName="{{ 'fishing-activities.gear-name' | tlTranslate }}">
+                                </data-column>
+
+                                <data-column propertyName="unloadPort"
+                                             [flexRate]="0.1"
+                                             columnName="{{ 'fishing-activities.unload-port' | tlTranslate }}">
+                                </data-column>
+
+                                <data-column propertyName="unloadedFish"
+                                             [flexRate]="0.3"
+                                             columnName="{{ 'fishing-activities.unloaded-fish' | tlTranslate }}">
+                                </data-column>
+
+                                <data-template-column *ngIf="hasFishLogBookPageReadPermission"
+                                                      [flexRate]="0.1">
+                                    <ng-template ngx-datatable-cell-template let-row="row">
+                                        <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                            <tl-icon-button icon="visibility"
+                                                            iconClass="accent-color"
+                                                            (buttonClicked)="openPageDialog(row.data)"
+                                                            tooltipText="{{ 'fishing-activities.view-page' | tlTranslate }}">
+                                            </tl-icon-button>
+                                        </div>
+                                    </ng-template>
+                                </data-template-column>
+                            </tl-data-table>
+                        </tl-card-content>
+                    </tl-card>
+                </ng-template>
+            </row-detail>
+
+            <data-column propertyName="shipCfr"
+                         [flexRate]="0.15"
+                         columnName="{{ 'fishing-activities.ship-cfr' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="shipName"
+                         [flexRate]="0.15"
+                         columnName="{{ 'fishing-activities.ship-name' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="tripIdentifier"
+                         [flexRate]="0.3"
+                         columnName="{{ 'fishing-activities.trip-identifier' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="startTime"
+                         [flexRate]="0.15"
+                         dataType="datetime"
+                         columnName="{{ 'fishing-activities.start-time' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="endTime"
+                         [flexRate]="0.15"
+                         dataType="datetime"
+                         columnName="{{ 'fishing-activities.end-time' | tlTranslate }}">
+            </data-column>
+
+            <data-column propertyName="unloadTime"
+                         [flexRate]="0.15"
+                         dataType="datetime"
+                         columnName="{{ 'fishing-activities.unload-time' | tlTranslate }}">
+            </data-column>
+        </tl-data-table>
+    </mat-card>
+</div>

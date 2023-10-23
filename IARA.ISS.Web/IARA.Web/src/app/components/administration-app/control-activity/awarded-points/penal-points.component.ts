@@ -40,6 +40,9 @@ export class PenalPointsComponent implements OnInit, AfterViewInit, OnChanges {
     @Input()
     public reloadData: boolean = false;
 
+    @Input()
+    public recordsPerPage: number = 20;
+
     public translate: FuseTranslationLoaderService;
     public form!: FormGroup;
 
@@ -157,7 +160,7 @@ export class PenalPointsComponent implements OnInit, AfterViewInit, OnChanges {
             personId: personId ?? undefined,
             legalId: legalId ?? undefined
         });
-        
+
         if ((this.shipId === null || this.shipId === undefined)) {
             this.grid.refreshData();
         }

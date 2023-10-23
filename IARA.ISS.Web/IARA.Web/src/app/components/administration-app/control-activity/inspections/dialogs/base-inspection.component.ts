@@ -31,6 +31,7 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
     public viewMode: boolean = false;
     public canEditNumber: boolean = false;
     public reportNumAlreadyExistsError: boolean = false;
+    public inspectionTypesEnum: typeof InspectionTypesEnum = InspectionTypesEnum;
 
     @ViewChild(ValidityCheckerGroupDirective)
     public validityCheckerGroup!: ValidityCheckerGroupDirective;

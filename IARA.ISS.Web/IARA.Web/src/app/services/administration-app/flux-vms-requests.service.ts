@@ -1,7 +1,7 @@
 ﻿import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { FluxFvmsDomainsEnum } from '@app/enums/flux-fvms-domains.enum';
 import { IFluxVmsRequestsService } from '@app/interfaces/administration-app/flux-vms-requests.interface';
@@ -23,6 +23,12 @@ import { FluxVesselQueryRequestEditDTO } from '@app/models/generated/dtos/FluxVe
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { BaseAuditService } from '../common-app/base-audit.service';
+import { FluxAcdrRequestDTO } from '@app/models/generated/dtos/FluxAcdrRequestDTO';
+import { FluxAcdrRequestEditDTO } from '@app/models/generated/dtos/FluxAcdrRequestEditDTO';
+import { FileInfoDTO } from '@app/models/generated/dtos/FileInfoDTO';
+import { FluxAcdrReportDTO } from '@app/models/generated/dtos/FluxAcdrReportDTO';
+import { FluxAcdrRequestFilters } from '@app/models/generated/filters/FluxAcdrRequestFilters';
+import { FluxAcdrReportStatusEnum } from '@app/enums/flux-acdr-report-status.enum';
 
 
 @Injectable({
@@ -84,6 +90,19 @@ export class FluxVmsRequestsService extends BaseAuditService implements IFluxVms
 
     public addFAQueryRequest(flap: FluxFAQueryRequestEditDTO): Observable<void> {
         return this.requestService.post(this.area, this.controller, 'AddFAQueryRequest', flap);
+    }
+
+    public addAcdrQueryRequest(acdr: FluxAcdrRequestEditDTO): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'AddAcdrQueryRequest', acdr);
+    }
+
+    public importAcdrQueryRequest(id: number, fileInfo: FileInfoDTO): Observable<void> {
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.post(this.area, this.controller, 'ImportAcdrQueryRequest', fileInfo, {
+            httpParams: params,
+            properties: new RequestProperties({ asFormData: true })
+        });
     }
 
     public getFlapRequestAudit(id: number): Observable<SimpleAuditDTO> {
@@ -180,5 +199,89 @@ export class FluxVmsRequestsService extends BaseAuditService implements IFluxVms
             httpParams: httpParams,
             successMessage: this.translateService.getValue('flux-vms-requests.flux-replay-success')
         });
+    }
+
+    public getAllAcdrRequests(request: GridRequestModel<FluxAcdrRequestFilters>): Observable<GridResultModel<FluxAcdrRequestDTO>> {
+        type Result = GridResultModel<FluxAcdrRequestDTO>;
+        type Request = GridRequestModel<FluxAcdrRequestFilters>;
+
+        return this.requestService.post<Result, Request>(this.area, this.controller, 'GetAllAcdrRequests', request, {
+            properties: RequestProperties.NO_SPINNER,
+            responseTypeCtr: GridResultModel
+        }).pipe(switchMap((entries: Result) => {
+            for (const entry of entries.records) {
+                entry.reportStatusName = this.getAcdrReportStatusTranslation(entry.reportStatus!);
+            }
+
+            const ids: number[] = entries.records.map((acdrRequest: FluxAcdrRequestDTO) => {
+                return acdrRequest.fluxRequestId!;
+            });
+
+            if (ids.length === 0) {
+                return of(entries);
+            }
+
+            return this.getAcdrRequestHistoryRecords(ids, request.filters).pipe(map((historyRecords: FluxAcdrReportDTO[]) => {
+                for (const record of historyRecords) {
+                    record.reportStatusName = this.getAcdrReportStatusTranslation(record.reportStatus!);
+
+                    const found = entries.records.find((entry: FluxAcdrRequestDTO) => {
+                        return entry.periodMonth === (record.periodStart!.getMonth() + 1)
+                            && entry.periodYear === (record.periodStart!.getFullYear());
+                    });
+
+                    if (found !== undefined) {
+                        if (found.historyRecords !== undefined && found.historyRecords !== null) {
+                            found.historyRecords.push(new FluxAcdrReportDTO(record));
+                        }
+                        else {
+                            found.historyRecords = [record];
+                        }
+                    }
+                }
+                return entries;
+            }));
+        }));
+    }
+
+    public downloadAcdrRequestContent(id: number): Observable<boolean> {
+        const params: HttpParams = new HttpParams().append('id', id.toString());
+
+        return this.requestService.download(this.area, this.controller, 'DownloadAcdrRequestContent', '', {
+            httpParams: params
+        });
+    }
+
+    private getAcdrRequestHistoryRecords(ids: number[], filters: FluxAcdrRequestFilters | undefined): Observable<FluxAcdrReportDTO[]> {
+        const request = new AcdrRequestHistoryRecordData({ filters: filters, ids: ids });
+        return this.requestService.post(this.area, this.controller, 'GetAllAcdrHistoryRequests', request, {
+            responseTypeCtr: FluxAcdrReportDTO
+        });
+    }
+
+    private getAcdrReportStatusTranslation(status: FluxAcdrReportStatusEnum): string {
+        switch (status) {
+            case FluxAcdrReportStatusEnum.GENERATED:
+                return this.translateService.getValue('flux-vms-requests.acdr-report-status-generated');
+            case FluxAcdrReportStatusEnum.MANUAL:
+                return this.translateService.getValue('flux-vms-requests.acdr-report-status-manual');
+            case FluxAcdrReportStatusEnum.DOWNLOADED:
+                return this.translateService.getValue('flux-vms-requests.acdr-report-status-downloaded');
+            case FluxAcdrReportStatusEnum.UPLOADED:
+                return this.translateService.getValue('flux-vms-requests.acdr-report-status-uploaded');
+            case FluxAcdrReportStatusEnum.SENT:
+                return this.translateService.getValue('flux-vms-requests.acdr-report-status-sent');
+            default:
+                throw new Error('Invalid ACDR report status: ' + status);
+        }
+    }
+}
+
+class AcdrRequestHistoryRecordData {
+    public filters: FluxAcdrRequestFilters | undefined;
+    public ids: number[] = [];
+
+    public constructor(obj?: Partial<AcdrRequestHistoryRecordData>) {
+        Object.assign(this, obj);
     }
 }

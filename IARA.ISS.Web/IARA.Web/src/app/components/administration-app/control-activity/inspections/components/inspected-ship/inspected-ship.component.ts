@@ -155,11 +155,10 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
 
             if (this.isFromRegister) {
                 this.selectedShip = new VesselDuringInspectionDTO(value);
-                const ship = this.ships.find(f => f.value === this.selectedShip!.shipId);
                 setTimeout(() => {
                     // Кода стига до тук преди angular да построи своя UI,
                     // карайки [options]="ship" да не се е случило и стойността да не се покаже.
-                    this.form.get('shipControl')!.setValue(ship, { emitEvent: false });
+                    this.form.get('shipControl')!.setValue(this.ships.find(x => x.value === value.shipId));
                 });
             }
             else {
@@ -199,7 +198,7 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
             callsignControl: new FormControl({ value: undefined, disabled: true }),
             shipTypeControl: new FormControl({ value: undefined, disabled: true }),
             mmsiControl: new FormControl({ value: undefined, disabled: true }),
-            shipMapControl: new FormControl(undefined, Validators.required),
+            shipMapControl: new FormControl(undefined, Validators.required)
         });
 
         form.get('shipRegisteredControl')!.valueChanges.subscribe({
@@ -309,20 +308,21 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
     }
 
     private async onShipChanged(value: InspectionShipNomenclatureDTO): Promise<void> {
-        if (typeof value === 'string' || value === null || value === undefined || value.value === null || value.value === undefined || value.value === this.selectedShip?.shipId) {
-            return;
+        if (typeof value === 'string' || value === null || value === undefined || value.value === null || value.value === undefined) {
+            this.shipSelected.emit(value);
         }
+        else {
+            this.element.nativeElement.focus();
 
-        this.element.nativeElement.focus();
+            this.selectedShip = await this.service.getShip(value.value!).toPromise();
 
-        this.selectedShip = await this.service.getShip(value.value!).toPromise();
+            this.form.get('flagControl')!.setValue(this.countries.find(f => f.value === this.selectedShip!.flagCountryId));
+            this.form.get('uviControl')!.setValue(this.selectedShip.uvi);
+            this.form.get('callsignControl')!.setValue(this.selectedShip.regularCallsign);
+            this.form.get('shipTypeControl')!.setValue(this.vesselTypes.find(f => f.value === this.selectedShip!.vesselTypeId));
+            this.form.get('mmsiControl')!.setValue(this.selectedShip.mmsi);
 
-        this.form.get('flagControl')!.setValue(this.countries.find(f => f.value === this.selectedShip!.flagCountryId));
-        this.form.get('uviControl')!.setValue(this.selectedShip.uvi);
-        this.form.get('callsignControl')!.setValue(this.selectedShip.regularCallsign);
-        this.form.get('shipTypeControl')!.setValue(this.vesselTypes.find(f => f.value === this.selectedShip!.vesselTypeId));
-        this.form.get('mmsiControl')!.setValue(this.selectedShip.mmsi);
-
-        this.shipSelected.emit(this.selectedShip);
+            this.shipSelected.emit(this.selectedShip);
+        }
     }
 }

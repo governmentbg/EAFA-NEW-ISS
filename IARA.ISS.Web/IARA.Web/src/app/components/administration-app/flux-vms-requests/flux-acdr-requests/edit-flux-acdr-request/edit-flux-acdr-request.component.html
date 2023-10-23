@@ -1,0 +1,15 @@
+﻿<tl-card tooltipResourceName="flux-fms-requests.acdr-query-data-helper">
+    <tl-card-title>{{ 'flux-vms-requests.acdr-query-data' | tlTranslate }}</tl-card-title>
+    <tl-card-content>
+        <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start-center">
+                <tl-date-month fxFlex="100"
+                               [max]="previousMonth"
+                               [formControl]="monthControl"
+                               label="{{ 'flux-vms-requests.acdr-query-month' | tlTranslate }}"
+                               tooltipResourceName="flux-vms-requests.acdr-query-month-helper">
+                </tl-date-month>
+            </div>
+        </div>
+    </tl-card-content>
+</tl-card>

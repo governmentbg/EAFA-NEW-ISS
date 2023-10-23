@@ -80,9 +80,28 @@
             <tl-card-title>{{ 'flux-vms-requests.request-content' | tlTranslate }}</tl-card-title>
 
             <tl-card-content>
-                <ngx-json-viewer [json]="requestContent"
-                                 [expanded]="false">
-                </ngx-json-viewer>
+                <div fxLayout="column" fxLayoutGap="1em" fxFlexFill>
+                    <ngx-json-viewer [json]="requestContent"
+                                     [expanded]="false">
+                    </ngx-json-viewer>
+
+                    <div *ngIf="canDownload" fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="end center">
+                        <button mat-raised-button
+                                color="accent"
+                                [cdkCopyToClipboard]="copyContentToClipboard()"
+                                (cdkCopyToClipboardCopied)="contentCopied($event)">
+                            <tl-icon type="IC_ICON" icon="ic-copy" [size]="icIconSize"></tl-icon>
+                            {{ 'flux-vms-requests.copy-content' | tlTranslate : 'cap' }}
+                        </button>
+
+                        <button mat-raised-button
+                                color="accent"
+                                (click)="downloadContent()">
+                            <tl-icon type="IC_ICON" icon="ic-fluent-arrow-download-16-filled" [size]="icIconSize"></tl-icon>
+                            {{ 'flux-vms-requests.download-content' | tlTranslate : 'cap' }}
+                        </button>
+                    </div>
+                </div>
             </tl-card-content>
         </tl-card>
 

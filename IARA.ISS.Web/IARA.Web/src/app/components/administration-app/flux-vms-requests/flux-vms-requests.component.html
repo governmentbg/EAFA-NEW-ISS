@@ -132,7 +132,7 @@
 
                     <data-template-column propertyName="webServiceName"
                                           [flexRate]="0.4"
-                                          columnName="{{ 'application-regix-checks.web-service-name' | tlTranslate }}">
+                                          columnName="{{ 'flux-vms-requests.web-service-name' | tlTranslate }}">
                         <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                             <span class="break-all-words">{{ value }}</span>
                         </ng-template>
@@ -209,5 +209,10 @@
     <!-- FLAP domain -->
     <mat-tab label="{{ 'flux-vms-requests.flap-domain' | tlTranslate }}">
         <flux-flap-requests *ngIf="fluxFlapRequestsLoaded"></flux-flap-requests>
+    </mat-tab>
+
+    <!-- ACDR domain -->
+    <mat-tab label="{{ 'flux-vms-requests.acdr-domain' | tlTranslate }}">
+        <flux-acdr-requests *ngIf="fluxAcdrRequestsLoaded"></flux-acdr-requests>
     </mat-tab>
 </mat-tab-group>

@@ -42,8 +42,7 @@
                             checkboxLabel="{{ 'catches-and-sales.log-book-page-person-has-bulgarian-address-registration' | tlTranslate }}">
                 </regix-data>
             </ng-container>
-            <ng-container
-                          *ngIf="form.controls.personTypeControl.value?.value === logBookPagePersonTypesEnum.LegalPerson">
+            <ng-container *ngIf="form.controls.personTypeControl.value?.value === logBookPagePersonTypesEnum.LegalPerson">
                 <regix-data formControlName="legalControl"
                             [isPerson]="false"
                             [showCustodianOfProperty]="false"

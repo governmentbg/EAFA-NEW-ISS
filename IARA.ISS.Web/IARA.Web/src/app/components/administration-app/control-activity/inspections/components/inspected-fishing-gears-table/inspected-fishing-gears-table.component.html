@@ -31,10 +31,8 @@
         </data-column>
 
         <data-template-column [flexRate]="0.5">
-            <ng-template let-row="row"
-                         ngx-datatable-cell-template>
-                <div fxLayout="row wrap"
-                     fxLayoutAlign="end center">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                <div fxLayout="row wrap" fxLayoutAlign="end center">
                     <tl-icon-button icon="visibility"
                                     (buttonClicked)="addEditEntry(row.data, true)"
                                     iconClass="accent-color"
@@ -46,7 +44,7 @@
                                     iconClass="accent-color"
                                     tooltipText="{{ 'inspections.patrol-vehicle-table-edit' | tlTranslate }}">
                     </tl-icon-button>
-                    <tl-icon-button *ngIf="!isDisabled && row.data.DTO.checkInspectedMatchingRegisteredGear === inspectedFishingGearEnum.I"
+                    <tl-icon-button *ngIf="!isDisabled && row.data.gear.checkInspectedMatchingRegisteredGear === inspectedFishingGearEnum.I"
                                     icon="delete"
                                     (buttonClicked)="deleteEntry(row)"
                                     iconClass="accent-color"

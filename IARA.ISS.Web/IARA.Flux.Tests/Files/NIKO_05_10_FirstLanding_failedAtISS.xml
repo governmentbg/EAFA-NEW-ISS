@@ -1,0 +1,167 @@
+
+<Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+  <Body>
+    <POSTMSG AD="XEU" AR="true" DF="urn:un:unece:uncefact:fisheries:FLUX:FA:EU:2" FR="BGR:NAFA" TS="true" VB="debug" xmlns="urn:xeu:connector-bridge:v1">
+      <FLUXFAReportMessage xmlns="urn:un:unece:uncefact:data:standard:FLUXFAReportMessage:3">
+        <FLUXReportDocument>
+          <ID schemeID="UUID" xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:20">31de09c5-d00d-42b5-9431-fac060312402</ID>
+          <CreationDateTime xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:20">
+            <DateTime xmlns="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:20">2023-10-05T13:26:49.946Z</DateTime>
+          </CreationDateTime>
+          <PurposeCode listID="FLUX_GP_PURPOSE" xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:20">9</PurposeCode>
+          <OwnerFLUXParty xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:20">
+            <ID schemeID="FLUX_GP_PARTY">BGR</ID>
+          </OwnerFLUXParty>
+        </FLUXReportDocument>
+        <FAReportDocument>
+          <TypeCode listID="FLUX_FA_REPORT_TYPE" xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:20">DECLARATION</TypeCode>
+          <AcceptanceDateTime xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:20">
+            <DateTime xmlns="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:20">2023-10-05T13:26:49.947Z</DateTime>
+          </AcceptanceDateTime>
+          <RelatedFLUXReportDocument xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:20">
+            <ID schemeID="UUID">31de09c5-d00d-42b5-9431-fac060312402</ID>
+            <CreationDateTime>
+              <DateTime xmlns="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:20">2023-10-05T13:26:49.94Z</DateTime>
+            </CreationDateTime>
+            <PurposeCode listID="FLUX_GP_PURPOSE">9</PurposeCode>
+            <OwnerFLUXParty>
+              <ID schemeID="FLUX_GP_PARTY">BGR</ID>
+            </OwnerFLUXParty>
+          </RelatedFLUXReportDocument>
+          <SpecifiedFishingActivity xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:20">
+            <TypeCode listID="FLUX_FA_TYPE">LANDING</TypeCode>
+            <SpecifiedFACatch>
+              <SpeciesCode listID="FAO_SPECIES">HMM</SpeciesCode>
+              <WeightMeasure unitCode="KGM">51</WeightMeasure>
+              <TypeCode listID="FA_CATCH_TYPE">UNLOADED</TypeCode>
+              <SpecifiedSizeDistribution>
+                <ClassCode listID="FISH_SIZE_CLASS">LSC</ClassCode>
+              </SpecifiedSizeDistribution>
+              <AppliedAAPProcess>
+                <TypeCode listID="FISH_PRESENTATION">WHL</TypeCode>
+                <TypeCode listID="FISH_PRESERVATION">FRE</TypeCode>
+                <ConversionFactorNumeric>1</ConversionFactorNumeric>
+                <ResultAAPProduct>
+                  <WeightMeasure unitCode="KGM">51</WeightMeasure>
+                  <PackagingUnitQuantity unitCode="C62">1</PackagingUnitQuantity>
+                  <PackagingTypeCode listID="FISH_PACKAGING">BOX</PackagingTypeCode>
+                </ResultAAPProduct>
+              </AppliedAAPProcess>
+              <SpecifiedFLUXLocation>
+                <TypeCode listID="FLUX_LOCATION_TYPE">AREA</TypeCode>
+                <ID schemeID="FAO_AREA">37.4.2</ID>
+              </SpecifiedFLUXLocation>
+              <UsedFishingGear>
+                <TypeCode listID="GEAR_TYPE">OTM</TypeCode>
+                <RoleCode listID="FA_GEAR_ROLE">ONBOARD</RoleCode>
+                <ApplicableGearCharacteristic>
+                  <TypeCode listID="FA_GEAR_CHARACTERISTIC">ME</TypeCode>
+                  <ValueMeasure unitCode="MMT">14</ValueMeasure>
+                </ApplicableGearCharacteristic>
+                <ApplicableGearCharacteristic>
+                  <TypeCode listID="FA_GEAR_CHARACTERISTIC">MT</TypeCode>
+                  <Value languageID="GBR" />
+                </ApplicableGearCharacteristic>
+                <ApplicableGearCharacteristic>
+                  <TypeCode listID="FA_GEAR_CHARACTERISTIC">GD</TypeCode>
+                  <Value languageID="BGR">02160026-009</Value>
+                </ApplicableGearCharacteristic>
+              </UsedFishingGear>
+            </SpecifiedFACatch>
+            <SpecifiedFACatch>
+              <SpeciesCode listID="FAO_SPECIES">HMM</SpeciesCode>
+              <WeightMeasure unitCode="KGM">31</WeightMeasure>
+              <TypeCode listID="FA_CATCH_TYPE">UNLOADED</TypeCode>
+              <SpecifiedSizeDistribution>
+                <ClassCode listID="FISH_SIZE_CLASS">LSC</ClassCode>
+              </SpecifiedSizeDistribution>
+              <AppliedAAPProcess>
+                <TypeCode listID="FISH_PRESENTATION">WHL</TypeCode>
+                <TypeCode listID="FISH_PRESERVATION">FRE</TypeCode>
+                <ConversionFactorNumeric>1</ConversionFactorNumeric>
+                <ResultAAPProduct>
+                  <WeightMeasure unitCode="KGM">31</WeightMeasure>
+                  <PackagingUnitQuantity unitCode="C62">1</PackagingUnitQuantity>
+                  <PackagingTypeCode listID="FISH_PACKAGING">BOX</PackagingTypeCode>
+                </ResultAAPProduct>
+              </AppliedAAPProcess>
+              <SpecifiedFLUXLocation>
+                <TypeCode listID="FLUX_LOCATION_TYPE">AREA</TypeCode>
+                <ID schemeID="FAO_AREA">37.4.2</ID>
+              </SpecifiedFLUXLocation>
+              <UsedFishingGear>
+                <TypeCode listID="GEAR_TYPE">OTM</TypeCode>
+                <RoleCode listID="FA_GEAR_ROLE">ONBOARD</RoleCode>
+                <ApplicableGearCharacteristic>
+                  <TypeCode listID="FA_GEAR_CHARACTERISTIC">ME</TypeCode>
+                  <ValueMeasure unitCode="MMT">14</ValueMeasure>
+                </ApplicableGearCharacteristic>
+                <ApplicableGearCharacteristic>
+                  <TypeCode listID="FA_GEAR_CHARACTERISTIC">MT</TypeCode>
+                  <Value languageID="GBR" />
+                </ApplicableGearCharacteristic>
+                <ApplicableGearCharacteristic>
+                  <TypeCode listID="FA_GEAR_CHARACTERISTIC">GD</TypeCode>
+                  <Value languageID="BGR">02160026-009</Value>
+                </ApplicableGearCharacteristic>
+              </UsedFishingGear>
+            </SpecifiedFACatch>
+            <RelatedFLUXLocation>
+              <TypeCode listID="FLUX_LOCATION_TYPE">LOCATION</TypeCode>
+              <CountryID schemeID="TERRITORY">BGR</CountryID>
+              <ID schemeID="LOCATION">BGNES</ID>
+            </RelatedFLUXLocation>
+            <RelatedFLUXLocation>
+              <TypeCode listID="FLUX_LOCATION_TYPE">AREA</TypeCode>
+              <CountryID schemeID="TERRITORY">BGR</CountryID>
+              <ID schemeID="FAO_AREA">37.4.2</ID>
+            </RelatedFLUXLocation>
+            <SpecifiedDelimitedPeriod>
+              <StartDateTime>
+                <DateTime xmlns="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:20">2023-10-05T12:55:10Z</DateTime>
+              </StartDateTime>
+              <EndDateTime>
+                <DateTime xmlns="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:20">2023-10-05T13:20:10Z</DateTime>
+              </EndDateTime>
+            </SpecifiedDelimitedPeriod>
+            <SpecifiedFishingTrip>
+              <ID schemeID="EU_TRIP_ID">BGR-TRP-3ae5Ok6kWq4G2GGPdYUA</ID>
+              <SpecifiedDelimitedPeriod>
+                <StartDateTime>
+                  <DateTime xmlns="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:20">2023-10-05T06:09:05Z</DateTime>
+                </StartDateTime>
+                <EndDateTime>
+                  <DateTime xmlns="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:20">2023-10-05T13:24:43Z</DateTime>
+                </EndDateTime>
+              </SpecifiedDelimitedPeriod>
+            </SpecifiedFishingTrip>
+          </SpecifiedFishingActivity>
+          <SpecifiedVesselTransportMeans xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:20">
+            <ID schemeID="CFR">BGR002020152</ID>
+            <ID schemeID="IRCS">LZH2258</ID>
+            <ID schemeID="EXT_MARK">BS 152</ID>
+            <Name />
+            <RegistrationVesselCountry>
+              <ID schemeID="TERRITORY">BGR</ID>
+            </RegistrationVesselCountry>
+            <SpecifiedContactParty>
+              <RoleCode listID="FLUX_CONTACT_ROLE">MASTER</RoleCode>
+              <SpecifiedStructuredAddress>
+                <StreetName>ABC</StreetName>
+                <CityName>CITY</CityName>
+                <CountryID schemeID="TERRITORY">BGR</CountryID>
+                <PlotIdentification>1</PlotIdentification>
+                <PostalArea>1000</PostalArea>
+              </SpecifiedStructuredAddress>
+              <SpecifiedContactPerson>
+                <GivenName>Name</GivenName>
+                <FamilyName>Family</FamilyName>
+                <Alias>Alias</Alias>
+              </SpecifiedContactPerson>
+            </SpecifiedContactParty>
+          </SpecifiedVesselTransportMeans>
+        </FAReportDocument>
+      </FLUXFAReportMessage>
+    </POSTMSG>
+  </Body>
+</Envelope>

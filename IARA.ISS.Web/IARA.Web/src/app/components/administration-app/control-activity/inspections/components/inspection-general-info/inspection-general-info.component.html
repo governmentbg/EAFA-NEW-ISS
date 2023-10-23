@@ -13,12 +13,12 @@
         <tl-date-time fxFlex="25"
                       [disabled]="isDisabled"
                       formControlName="inspectionStartDateControl"
-                      label="{{ 'inspections.inspection-start-date' | tlTranslate }}">
+                      label="{{ startDateLabel }}">
         </tl-date-time>
         <tl-date-time fxFlex="25"
                       [disabled]="isDisabled"
                       formControlName="inspectionEndDateControl"
-                      label="{{ 'inspections.inspection-end-date' | tlTranslate }}">
+                      label="{{ endDateLabel }}">
         </tl-date-time>
         <tl-checkbox *ngIf="hasEmergencySignal"
                      fxFlex="25"

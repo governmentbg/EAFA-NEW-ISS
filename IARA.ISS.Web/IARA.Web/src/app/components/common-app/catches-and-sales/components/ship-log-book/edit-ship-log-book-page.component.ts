@@ -228,6 +228,12 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             this.fishingGearsRegister = await this.service.getFishingGearsRegister(this.model.permitLicenseId!).toPromise();
             this.fillForm();
         }
+
+        this.form.get('departurePortControl')!.valueChanges.subscribe({
+            next: (departurePort: NomenclatureDTO<number> | string | null | undefined) => {
+                this.onDeparturePortChanged(departurePort);
+            }
+        });
     }
 
     public setData(data: EditShipLogBookPageDialogParams, buttons: DialogWrapperData): void {
@@ -784,7 +790,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             shipControl: new FormControl(undefined, Validators.required),
             permitLicenseControl: new FormControl(undefined, Validators.required),
             fishingGearRegisterControl: new FormControl(undefined, Validators.required),
-            fishingGearNetEyeSizeControl: new FormControl({ value: null, disabled: true }), 
+            fishingGearNetEyeSizeControl: new FormControl({ value: null, disabled: true }),
             fishingGearCountControl: new FormControl(undefined, [Validators.required, TLValidators.number(0, undefined, 0)]),
             fishingGearHookCountControl: new FormControl(undefined),
             partnerShipControl: new FormControl(),
@@ -826,12 +832,6 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         this.form.get('fishTripStartDateTimeControl')!.valueChanges.subscribe({
             next: (startDate: Moment | null | undefined) => {
                 this.onFishTripStartDateTimeChanged(startDate);
-            }
-        });
-
-        this.form.get('departurePortControl')!.valueChanges.subscribe({
-            next: (departurePort: NomenclatureDTO<number> | string | null | undefined) => {
-                this.onDeparturePortChanged(departurePort);
             }
         });
 
@@ -1331,9 +1331,9 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     }
 
     private onFishTripStartDateTimeChanged(startDate: Moment | null | undefined): void {
-        if (startDate !== null && startDate !== undefined) {
+        if (startDate !== null && startDate !== undefined && startDate.isValid()) {
             const endDate: Moment | null | undefined = this.form.get('fishTripEndDateTimeControl')!.value;
-            if (endDate !== null && endDate !== undefined) {
+            if (endDate !== null && endDate !== undefined && endDate.isValid()) {
                 const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate.toDate(), endDate.toDate());
                 const daysAtSeaValue: string = this.getDaysAtSeaValue(difference);
 
@@ -1346,7 +1346,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
             const unloadingDateTime: Moment | null | undefined = this.form.get('unloadDateTimeControl')!.value;
             const hasNoCatch: boolean = this.form.get('noCatchUnloadedControl')!.value ?? false;
-            if (!hasNoCatch && (unloadingDateTime === null || unloadingDateTime === undefined)) {
+            if (!hasNoCatch && (unloadingDateTime === null || unloadingDateTime === undefined || !unloadingDateTime.isValid())) {
                 this.form.get('unloadDateTimeControl')!.setValue(startDate);
             }
         }
@@ -1376,9 +1376,9 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     }
 
     private onFishTripEndDateTimeChanged(endDate: Moment | null | undefined): void {
-        if (endDate !== null && endDate !== undefined) {
+        if (endDate !== null && endDate !== undefined && endDate.isValid()) {
             const startDate: Moment | null | undefined = this.form.get('fishTripStartDateTimeControl')!.value;
-            if (startDate !== null && startDate !== undefined) {
+            if (startDate !== null && startDate !== undefined && startDate.isValid()) {
                 const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate.toDate(), endDate.toDate());
                 const daysAtSeaValue: string = this.getDaysAtSeaValue(difference);
 
