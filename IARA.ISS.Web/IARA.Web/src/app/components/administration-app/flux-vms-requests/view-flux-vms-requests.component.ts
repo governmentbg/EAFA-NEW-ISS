@@ -4,9 +4,14 @@ import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/di
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
 import { FormControl, FormGroup } from '@angular/forms';
-import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { FluxVmsRequestsService } from '@app/services/administration-app/flux-vms-requests.service';
 import { FLUXVMSRequestEditDTO } from '@app/models/generated/dtos/FLUXVMSRequestEditDTO';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { RequestProperties } from '@app/shared/services/request-properties';
+import { ViewFluxVmsRequestsDialogParams } from './models/view-flux-vms-requests-dialog-params.model';
+import { CommonUtils } from '@app/shared/utils/common.utils';
+import { FluxAcdrReportStatusEnum } from '@app/enums/flux-acdr-report-status.enum';
 
 @Component({
     selector: 'view-flux-vms-requests',
@@ -18,13 +23,26 @@ export class ViewFluxVmsRequestsComponent implements IDialogComponent, OnInit {
     public requestContent: Record<string, unknown> | undefined;
     public responseContent: Record<string, unknown> | undefined;
 
+    public canDownload: boolean = false;
+
+    public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
+
     private id!: number;
+    private acdrId: number | undefined;
     private request!: FLUXVMSRequestEditDTO;
 
     private service: FluxVmsRequestsService;
+    private translate: FuseTranslationLoaderService;
+    private snackBar: MatSnackBar;
 
-    public constructor(service: FluxVmsRequestsService) {
+    public constructor(
+        service: FluxVmsRequestsService,
+        translate: FuseTranslationLoaderService,
+        snackBar: MatSnackBar
+    ) {
         this.service = service;
+        this.translate = translate;
+        this.snackBar = snackBar;
 
         this.buildForm();
     }
@@ -38,8 +56,40 @@ export class ViewFluxVmsRequestsComponent implements IDialogComponent, OnInit {
         });
     }
 
-    public setData(data: DialogParamsModel, wrapperData: DialogWrapperData): void {
+    public downloadContent(): void {
+        if (this.acdrId !== undefined && this.acdrId !== null) {
+            this.service.downloadAcdrRequestContent(this.acdrId).subscribe();
+        }
+    }
+
+    public copyContentToClipboard(): string {
+        return JSON.stringify(this.requestContent, undefined, 2);
+    }
+
+    public contentCopied(copied: boolean): void {
+        const messageSuccess: string = this.translate.getValue('flux-vms-requests.request-copied-successfully');
+        const messageFail: string = this.translate.getValue('flux-vms-requests.request-copy-failed');
+        if (copied === true) {
+            this.snackBar.open(messageSuccess, undefined, {
+                duration: RequestProperties.DEFAULT.showExceptionDurationSucc,
+                panelClass: RequestProperties.DEFAULT.showExceptionColorClassSucc
+            });
+        }
+        else {
+            this.snackBar.open(messageFail, undefined, {
+                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+            });
+        }
+    }
+
+    public setData(data: ViewFluxVmsRequestsDialogParams, wrapperData: DialogWrapperData): void {
         this.id = data.id;
+        this.acdrId = data.acdrId;
+
+        if (data.acdrId !== undefined && data.acdrId !== null && (data.reportStatus === FluxAcdrReportStatusEnum.MANUAL || data.reportStatus === FluxAcdrReportStatusEnum.GENERATED)) {
+            this.canDownload = true;
+        }
     }
 
     public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {

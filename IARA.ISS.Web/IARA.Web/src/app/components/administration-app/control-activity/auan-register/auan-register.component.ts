@@ -34,6 +34,9 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
     @Input()
     public inspectionId: number | undefined;
 
+    @Input()
+    public recordsPerPage: number = 20;
+
     public translate: FuseTranslationLoaderService;
     public form!: FormGroup;
 

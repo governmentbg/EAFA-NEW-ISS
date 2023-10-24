@@ -16,6 +16,9 @@ import { IdentifierTypeEnum } from '@app/enums/identifier-type.enum';
 import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 
+const PERSON_IDX: number = 0;
+const LEGAL_IDX: number = 1;
+
 @Component({
     selector: 'inspected-ship-subject',
     templateUrl: './inspected-ship-subject.component.html'
@@ -46,9 +49,6 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
     public readonly logBookPagePersonTypesEnum: typeof LogBookPagePersonTypesEnum = LogBookPagePersonTypesEnum;
 
     public personTypes: NomenclatureDTO<LogBookPagePersonTypesEnum>[] = [];
-
-    private readonly PERSON_IDX = 0;
-    private readonly LEGAL_IDX = 1;
 
     private readonly translate: FuseTranslationLoaderService;
 
@@ -88,7 +88,7 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
 
         const subjects = changes['subjects'];
 
-        if (subjects !== null && subjects !== undefined) {
+        if (subjects !== null && subjects !== undefined && !this.isDisabled) {
             if (!subjects.firstChange) {
                 if ((subjects.currentValue as InspectionShipSubjectNomenclatureDTO[]).length === 0) {
                     this.form.get('personRegisteredControl')!.setValue(false);
@@ -116,8 +116,8 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
     }
 
     public writeValue(value: InspectionSubjectPersonnelDTO | undefined): void {
-        this.form.get('personTypeControl')!.setValue(this.personTypes[this.PERSON_IDX]);
-
+        this.form.get('personTypeControl')!.setValue(this.personTypes[PERSON_IDX]);
+       
         if (value !== undefined && value !== null) {
             this.isFromRegister = value.isRegistered === true;
             this.form.get('personRegisteredControl')!.setValue(this.isFromRegister);
@@ -139,28 +139,28 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
                     middleName: value.middleName,
                     type: value.type,
                     value: value.id,
-                    countryId: value.citizenshipId,
+                    countryId: value.citizenshipId
                 }));
             }
             else if (value.isLegal === true) {
-                this.form.get('personTypeControl')!.setValue(this.personTypes[this.LEGAL_IDX]);
+                this.form.get('personTypeControl')!.setValue(this.personTypes[LEGAL_IDX]);
 
                 this.form.get('legalControl')!.setValue(
                     new RegixLegalDataDTO({
                         eik: value.eik,
-                        name: value.firstName,
+                        name: value.firstName
                     })
                 );
             }
             else if (value.egnLnc !== undefined && value.egnLnc !== null) {
-                this.form.get('personTypeControl')!.setValue(this.personTypes[this.PERSON_IDX]);
+                this.form.get('personTypeControl')!.setValue(this.personTypes[PERSON_IDX]);
 
                 this.form.get('personControl')!.setValue(
                     new RegixPersonDataDTO({
                         egnLnc: value.egnLnc,
                         firstName: value.firstName,
                         middleName: value.middleName,
-                        lastName: value.lastName,
+                        lastName: value.lastName
                     })
                 );
             }
@@ -216,7 +216,7 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
             personControl: new FormControl({ disabled: true }),
             legalControl: new FormControl({ disabled: true }),
             addressControl: new FormControl({ value: undefined, disabled: true }),
-            countryControl: new FormControl({ value: undefined, disabled: true }),
+            countryControl: new FormControl({ value: undefined, disabled: true })
         });
 
         form.get('personRegisteredControl')!.valueChanges.subscribe({
@@ -293,7 +293,7 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
                 // and the type in them is not ReprsPers
                 type: this.personType === InspectedPersonTypeEnum.ReprsPers
                     ? InspectedPersonTypeEnum.ReprsPers
-                    : subject.type,
+                    : subject.type
             });
         }
 
@@ -344,19 +344,25 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
                     egnLnc: value.egnLnc,
                     firstName: value.firstName,
                     middleName: value.middleName,
-                    lastName: value.lastName,
+                    lastName: value.lastName
                 }), { emitEvent: false });
             }
             else {
                 this.form.get('personControl')!.setValue(new RegixLegalDataDTO({
                     eik: value.egnLnc?.egnLnc,
-                    name: value.firstName,
+                    name: value.firstName
                 }), { emitEvent: false });
             }
 
             if (value.address !== undefined && value.address !== null) {
                 this.form.get('addressControl')!.setValue(InspectionUtils.buildAddress(value.address, this.translate) ?? value.description);
                 this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === value.address!.countryId));
+            }
+        }
+        else {
+            if (this.isFromRegister) {
+                this.form.get('addressControl')!.setValue(undefined);
+                this.form.get('countryControl')!.setValue(undefined);
             }
         }
     }

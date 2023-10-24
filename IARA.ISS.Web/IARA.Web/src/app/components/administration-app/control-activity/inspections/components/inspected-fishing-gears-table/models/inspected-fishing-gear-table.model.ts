@@ -1,7 +1,7 @@
 ﻿import { InspectedFishingGearDTO } from '@app/models/generated/dtos/InspectedFishingGearDTO';
 
 export class InspectedFishingGearTableModel {
-    public DTO!: InspectedFishingGearDTO;
+    public gear!: InspectedFishingGearDTO;
     public type: string | undefined;
     public count: number | undefined;
     public netEyeSize: number | undefined;

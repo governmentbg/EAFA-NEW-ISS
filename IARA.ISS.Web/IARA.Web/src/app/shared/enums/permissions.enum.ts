@@ -468,6 +468,9 @@
     LogBookPageEditExceptionsDeleteRecords = 'LogBookPageEditExceptionsDeleteRecords',
     LogBookPageEditExceptionsRestoreRecords = 'LogBookPageEditExceptionsRestoreRecords',
 
+    // Fishing activity reports
+    FishingActivityReportsRead = 'FishingActivityReportsRead',
+
     // AUANs
     AuanRegisterReadAll = 'AuanRegisterReadAll',
     AuanRegisterRead = 'AuanRegisterRead',

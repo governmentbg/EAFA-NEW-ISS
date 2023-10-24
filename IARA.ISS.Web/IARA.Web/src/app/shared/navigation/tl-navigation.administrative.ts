@@ -59,6 +59,7 @@ import { ApplicationRegixChecksComponent } from '@app/components/administration-
 import { PenalPointsComponent } from '@app/components/administration-app/control-activity/awarded-points/penal-points.component';
 import { PrintConfigurationsComponent } from '@app/components/administration-app/print-configurations/print-configurations.component';
 import { LogBookPageEditExceptionsComponent } from '@app/components/administration-app/catches-and-sales/log-book-page-edit-exceptions/log-book-page-edit-exceptions.component';
+import { FishingActivityReportsComponent } from '@app/components/administration-app/fishing-activity-reports/fishing-activity-reports.component';
 
 export class Navigation {
     public static getMenu(isPublic: boolean): ITLNavigation[] {
@@ -416,6 +417,17 @@ export class Navigation {
                     isPublic: false,
                     component: LogBookPageEditExceptionsComponent,
                     permissions: [PermissionsEnum.LogBookPageEditExceptionsRead]
+                },
+                {
+                    id: 'fishing_activity_reports',
+                    title: 'Fishing activity reports',
+                    translate: 'navigation.fishing-activity-reports',
+                    type: 'item',
+                    icon: 'directions_boat',
+                    url: '/fishing-activity-reports',
+                    isPublic: false,
+                    component: FishingActivityReportsComponent,
+                    permissions: [PermissionsEnum.FishingActivityReportsRead]
                 }
             ]
         },

@@ -38,6 +38,12 @@ export class SingleChangeOfCircumstancesComponent extends CustomFormControl<Chan
             this.form.get('changeTypeControl')!.disable({ emitEvent: false });
             this.form.get('descriptionControl')!.disable({ emitEvent: false });
         }
+
+        this.form.valueChanges.subscribe({
+            next: () => {
+                this.onChanged(this.getValue());
+            }
+        });
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
@@ -60,6 +66,10 @@ export class SingleChangeOfCircumstancesComponent extends CustomFormControl<Chan
             this.form.get('legalControl')!.setValue(value.legal);
             this.form.get('addressControl')!.setValue(value.address);
         }
+
+        setTimeout(() => {
+            this.onChanged(this.getValue());
+        });
     }
 
     protected buildForm(): AbstractControl {

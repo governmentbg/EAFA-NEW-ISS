@@ -95,6 +95,8 @@ export class ChangeOfCircumstancesComponent extends CustomFormControl<ChangeOfCi
     private addChangeControl(change?: ChangeOfCircumstancesDTO): void {
         const control: FormControl = new FormControl(change ?? new ChangeOfCircumstancesDTO());
         this.formArray.push(control);
+
+        this.onChanged(this.getValue());
     }
 
     private getChangeOfCircumstancesTypes(): Subscription {

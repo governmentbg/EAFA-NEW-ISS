@@ -13,7 +13,6 @@ import { FilterEventArgs } from '@app/shared/components/data-table/models/filter
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
 import { ViewFluxVmsRequestsComponent } from './view-flux-vms-requests.component';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
-import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { FluxResponseStatuses } from '@app/enums/flux-response-statuses.enum';
 import { FluxFvmsDomainsEnum } from '@app/enums/flux-fvms-domains.enum';
@@ -21,6 +20,10 @@ import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-c
 import { FluxFAQueryComponent } from './flux-fa-query/flux-fa-query.component';
 import { FluxSalesQueryComponent } from './flux-sales-query/flux-sales-query.component';
 import { FluxVesselQueryComponent } from './flux-vessel-query/flux-vessel-query.component';
+import { ViewFluxVmsRequestsDialogParams } from './models/view-flux-vms-requests-dialog-params.model';
+
+const FLAP_TAB_INDEX: number = 1;
+const ACDR_TAB_INDEX: number = 2;
 
 @Component({
     selector: 'flux-vms-requests',
@@ -34,6 +37,7 @@ export class FluxVmsRequestsComponent implements OnInit, AfterViewInit {
     public domainNames: NomenclatureDTO<string>[] = [];
 
     public fluxFlapRequestsLoaded: boolean = false;
+    public fluxAcdrRequestsLoaded: boolean = false;
 
     @ViewChild(TLDataTableComponent)
     private datatable!: IRemoteTLDatatableComponent;
@@ -103,6 +107,10 @@ export class FluxVmsRequestsComponent implements OnInit, AfterViewInit {
     }
 
     public openDialog(request: FLUXVMSRequestDTO): void {
+        const data: ViewFluxVmsRequestsDialogParams = new ViewFluxVmsRequestsDialogParams({
+            id: request.id
+        });
+
         this.viewDialog.open({
             title: this.translate.getValue('flux-vms-requests.request-dialog-title'),
             TCtor: ViewFluxVmsRequestsComponent,
@@ -111,7 +119,7 @@ export class FluxVmsRequestsComponent implements OnInit, AfterViewInit {
                     closeFn();
                 }
             },
-            componentData: new DialogParamsModel({ id: request.id }),
+            componentData: data,
             translteService: this.translate,
             viewMode: true
         });
@@ -130,8 +138,11 @@ export class FluxVmsRequestsComponent implements OnInit, AfterViewInit {
     }
 
     public tabChanged(event: MatTabChangeEvent): void {
-        if (event.index === 1) {
+        if (event.index === FLAP_TAB_INDEX) {
             this.fluxFlapRequestsLoaded = true;
+        }
+        else if (event.index === ACDR_TAB_INDEX) {
+            this.fluxAcdrRequestsLoaded = true;
         }
     }
 

@@ -9,6 +9,9 @@ export class InspectedFishingGearDTO {
         Object.assign(this, obj);
     }
 
+    @StrictlyTyped(Number)
+    public id?: number;
+
     @StrictlyTyped(FishingGearDTO)
     public permittedFishingGear?: FishingGearDTO;
 

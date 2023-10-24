@@ -115,11 +115,13 @@
             <tl-data-table [showAddButton]="canAddRecords && (inspectionId === null || inspectionId === undefined)"
                            [showInactiveRecords]="canRestoreRecords && (inspectionId === null || inspectionId === undefined)"
                            (addButtonClicked)="addEditAuan(undefined, false)"
-                           (activeRecordChanged)="addEditAuan($event, !$event.isActive || !canEditRecords)">
+                           (activeRecordChanged)="addEditAuan($event, !$event.isActive || !canEditRecords)"
+                           [recordsPerPage]="recordsPerPage">
                 <row-detail>
                     <ng-template let-row="row" ngx-datatable-row-detail-template>
                         <penal-decrees fxFlexFill
-                                       [auanId]="row.data.id">
+                                       [auanId]="row.data.id"
+                                       [recordsPerPage]="10">
                         </penal-decrees>
                     </ng-template>
                 </row-detail>

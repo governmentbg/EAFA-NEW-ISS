@@ -12,6 +12,9 @@ import { FluxVesselQueryRequestEditDTO } from '@app/models/generated/dtos/FluxVe
 import { FluxSalesQueryRequestEditDTO } from '@app/models/generated/dtos/FluxSalesQueryRequestEditDTO';
 import { FluxFAQueryRequestEditDTO } from '@app/models/generated/dtos/FluxFAQueryRequestEditDTO';
 import { IBaseAuditService } from '../base-audit.interface';
+import { FluxAcdrRequestEditDTO } from '@app/models/generated/dtos/FluxAcdrRequestEditDTO';
+import { FileInfoDTO } from '@app/models/generated/dtos/FileInfoDTO';
+import { FluxAcdrRequestDTO } from '@app/models/generated/dtos/FluxAcdrRequestDTO';
 
 export interface IFluxVmsRequestsService extends IBaseAuditService {
     getAll(request: GridRequestModel<FLUXVMSRequestFilters>): Observable<GridResultModel<FLUXVMSRequestDTO>>;
@@ -25,6 +28,8 @@ export interface IFluxVmsRequestsService extends IBaseAuditService {
     addVesselQueryRequest(flap: FluxVesselQueryRequestEditDTO): Observable<void>;
     addSalesQueryRequest(flap: FluxSalesQueryRequestEditDTO): Observable<void>;
     addFAQueryRequest(flap: FluxFAQueryRequestEditDTO): Observable<void>;
+    addAcdrQueryRequest(acdr: FluxAcdrRequestEditDTO): Observable<void>;
+    importAcdrQueryRequest(id: number, file: FileInfoDTO): Observable<void>;
 
     getAgreementTypes(): Observable<NomenclatureDTO<number>[]>;
     getTerritories(): Observable<NomenclatureDTO<number>[]>;
@@ -32,4 +37,7 @@ export interface IFluxVmsRequestsService extends IBaseAuditService {
     getRequestPurposes(): Observable<NomenclatureDTO<number>[]>;
     getFishingCategories(): Observable<NomenclatureDTO<number>[]>;
     getFlapQuotaTypes(): Observable<NomenclatureDTO<number>[]>;
+
+    getAllAcdrRequests(request: GridRequestModel<FLUXVMSRequestFilters>): Observable<GridResultModel<FluxAcdrRequestDTO>>
+    downloadAcdrRequestContent(id: number): Observable<boolean>;
 }

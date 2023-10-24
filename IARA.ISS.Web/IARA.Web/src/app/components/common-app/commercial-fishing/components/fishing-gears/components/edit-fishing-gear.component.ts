@@ -250,15 +250,22 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     }
 
     private addMarksByRange(start: number, end: number): void {
-        const status: NomenclatureDTO<number> = this.markStatuses.find(x => x.code === FishingGearMarkStatusesEnum[FishingGearMarkStatusesEnum.NEW])!;
+        let status: NomenclatureDTO<number>;
+
+        if (this.isInspected) {
+            status = this.markStatuses.find(x => x.code === FishingGearMarkStatusesEnum[FishingGearMarkStatusesEnum.MARKED])!;
+        }
+        else {
+            status = this.markStatuses.find(x => x.code === FishingGearMarkStatusesEnum[FishingGearMarkStatusesEnum.NEW])!
+        }
 
         for (let num = start; num <= end; num++) {
             if (this.marks === null || this.marks === undefined) {
                 this.marks = [];
             }
 
-            this.marks.push(new FishingGearMarkDTO({
-                selectedStatus: FishingGearMarkStatusesEnum.NEW,
+            const mark: FishingGearMarkDTO = new FishingGearMarkDTO({
+                selectedStatus: this.isInspected ? FishingGearMarkStatusesEnum.MARKED : FishingGearMarkStatusesEnum.NEW,
                 createdOn: new Date(),
                 statusId: status.value,
                 fullNumber: new PrefixInputDTO({
@@ -266,9 +273,15 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
                     inputValue: num.toString()
                 }),
                 isActive: true
-            }));
-        }
+            });
 
+            this.marks.push(mark);
+
+            if (this.isInspected) {
+                this.selectedMark.emit(mark);
+            }
+        }
+        
         this.marks = this.marks.slice();
         this.marksForm.updateValueAndValidity({ emitEvent: false });
     }
@@ -300,7 +313,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             }
         }
 
-        return this.fillModel(true);
+        return this.fillModel(false);
     }
 
     protected buildForm(): AbstractControl {
@@ -429,7 +442,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
     private fillModel(returnNewObject: boolean): FishingGearDTO {
         let result: FishingGearDTO;
-
+        
         if (returnNewObject) {
             result = new FishingGearDTO();
         }
@@ -519,7 +532,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
     private onEditedMark(row: any): void {
         this.marks = this.getMarksFromTable();
-
+       
         if (this.isInspected) {
             this.onChanged(this.getValue());
         }

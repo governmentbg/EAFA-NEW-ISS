@@ -45,6 +45,7 @@
                                 [countries]="countries"
                                 (shipSelected)="onShipChanged($event)">
                 </inspected-ship>
+
                 <inspected-ship-subject formControlName="shipOwnerControl"
                                         [subjects]="owners"
                                         [countries]="countries"
@@ -53,6 +54,7 @@
                                         label="{{ 'inspections.ship-owner-registered' | tlTranslate }}"
                                         title="{{ 'inspections.ship-owner' | tlTranslate }}">
                 </inspected-ship-subject>
+
                 <inspected-port formControlName="portControl"
                                 [ports]="ports"
                                 [countries]="countries">
@@ -77,12 +79,14 @@
                                  [options]="markReasons"
                                  label="{{ 'inspections.mark-reason' | tlTranslate }}">
                 </tl-autocomplete>
+
                 <tl-autocomplete fxFlex="50"
                                  formControlName="remarkReasonControl"
                                  [options]="remarkReasons"
                                  label="{{ 'inspections.remark-reason' | tlTranslate }}">
                 </tl-autocomplete>
             </div>
+
             <tl-input *ngIf="otherRemarkReasonSelected"
                       formControlName="otherRemarkReasonControl"
                       label="{{ 'inspections.other-remark-reason' | tlTranslate }}">
@@ -101,11 +105,13 @@
                                    gap="1em"
                                    [options]="permitTypeControls">
             </tl-radio-button-group>
+
             <tl-autocomplete *ngIf="form.controls.permitTypeControl.value?.value === inspectionPermitTypeEnum.Registered"
                              formControlName="permitControl"
                              [options]="permits"
                              label="{{ 'inspections.permit' | tlTranslate }}">
             </tl-autocomplete>
+
             <div *ngIf="form.controls.permitTypeControl.value?.value === inspectionPermitTypeEnum.Unregistered"
                  fxLayout="row"
                  fxLayoutGap="1em"
@@ -114,14 +120,17 @@
                           formControlName="unregisteredPermitControl"
                           label="{{ 'inspections.permit' | tlTranslate }}">
                 </tl-input>
+
                 <tl-date-year fxFlex="50"
                               formControlName="unregisteredPermitYearControl"
                               label="{{ 'inspections.permit-year' | tlTranslate }}">
                 </tl-date-year>
             </div>
+
             <inspected-fishing-gears-table formControlName="fishingGearsControl"
                                            [permitIds]="selectedPermitIds">
             </inspected-fishing-gears-table>
+
             <inspection-toggle-list formControlName="togglesControl"
                                     [toggles]="toggles">
             </inspection-toggle-list>

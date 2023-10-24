@@ -118,6 +118,7 @@
         <tl-card-content>
             <tl-data-table [showAddButton]="canAddRecords && openedFromMenu"
                            [showInactiveRecords]="canRestoreRecords && openedFromMenu"
+                           [recordsPerPage]="recordsPerPage"
                            (addButtonClicked)="addEditPenalPoints(undefined, false)">
                 <data-column propertyName="penalDecreeNum"
                              [flexRate]="0.3"

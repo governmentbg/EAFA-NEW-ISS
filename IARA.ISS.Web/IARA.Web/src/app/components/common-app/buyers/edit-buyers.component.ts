@@ -1224,7 +1224,9 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
         }, [
             this.atLeastOneActivePremiseBabhDocumentValidator(),
             this.atLeastOneActiveVehicleBabhDocumentValidator(),
-            this.atLeastOneActivePremiseUsageDocumentValidator()
+            this.atLeastOneActivePremiseUsageDocumentValidator(),
+            this.babhLicenseDocumentNumberValidator(),
+            this.vehicleLicenseDocumentNumberValidator()
         ]);
 
         if (this.isFirstSaleBuyer) {
@@ -1518,7 +1520,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
             if (this.model.hasUtility === true) {
                 this.model.utilityName = this.editForm.get('premiseNameControl')!.value;
                 this.model.premiseAddress = this.editForm.get('premiseAddressControl')!.value;
-                this.model.babhLawLicenseDocuments = this.babhLicenses;
+                this.model.babhLawLicenseDocuments = this.getBabhLicensesFromTable();
             }
             else {
                 this.model.utilityName = undefined;
@@ -1529,7 +1531,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
             this.model.hasVehicle = (this.editForm.get('hasPremiseOrVehicleGroup') as FormGroup).get('hasVehicleControl')!.value ?? false;
             if (this.model.hasVehicle === true) {
                 this.model.vehicleNumber = this.editForm.get('vehicleNumberControl')!.value;
-                this.model.veteniraryVehicleRegLicenseDocuments = this.veterinaryVehicleLicenses;
+                this.model.veteniraryVehicleRegLicenseDocuments = this.getVehicleLicensesFromTable();
             }
             else {
                 this.model.vehicleNumber = undefined;
@@ -1546,7 +1548,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
             }
 
             this.model.annualTurnover = this.editForm.get('annualTurnoverControl')!.value;
-            this.model.babhLawLicenseDocuments = this.babhLicenses;
+            this.model.babhLawLicenseDocuments = this.getBabhLicensesFromTable();
             this.model.territoryUnitId = this.editForm.get('territoryUnitControl')!.value.value;
             this.model.files = this.editForm.get('filesControl')!.value;
         }
@@ -1593,7 +1595,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
             if (this.hasDelivery) {
                 this.model.deliveryData = this.editForm.get('deliveryDataControl')!.value;
             }
-            
+
             if (this.isPaid === true) {
                 this.model.paymentInformation = this.editForm.get('applicationPaymentInformationControl')!.value;
             }
@@ -1841,6 +1843,52 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
 
             return null;
         }
+    }
+
+    private babhLicenseDocumentNumberValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === null || form === undefined) {
+                return null;
+            }
+
+            const documentNumGrouped = CommonUtils.groupBy(this.babhLicenses.filter(x => x.isActive), x => x.num!);
+
+            for (const documentNum in documentNumGrouped) {
+                if (documentNumGrouped[documentNum].length > 1) {
+                    return { 'uniqueBabhLicenseDocumentNumber': true };
+                }
+            }
+
+            return null;
+        }
+    }
+
+    private vehicleLicenseDocumentNumberValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === null || form === undefined) {
+                return null;
+            }
+
+            const documentNumGrouped = CommonUtils.groupBy(this.veterinaryVehicleLicenses.filter(x => x.isActive), x => x.num!);
+
+            for (const documentNum in documentNumGrouped) {
+                if (documentNumGrouped[documentNum].length > 1) {
+                    return { 'uniqueVehicleLicenseDocumentNumber': true };
+                }
+            }
+
+            return null;
+        }
+    }
+
+    private getBabhLicensesFromTable(): CommonDocumentDTO[] {
+        const result: CommonDocumentDTO[] = this.babhLicenses.filter(x => (x.id !== undefined && x.id !== null) || x.isActive);
+        return result;
+    }
+
+    private getVehicleLicensesFromTable(): CommonDocumentDTO[] {
+        const result: CommonDocumentDTO[] = this.veterinaryVehicleLicenses.filter(x => (x.id !== undefined && x.id !== null) || x.isActive);
+        return result;
     }
 
     private shouldHidePaymentData(): boolean {

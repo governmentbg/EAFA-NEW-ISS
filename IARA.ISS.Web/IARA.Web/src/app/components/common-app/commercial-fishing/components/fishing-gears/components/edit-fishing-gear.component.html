@@ -151,7 +151,7 @@
                            [recordsPerPage]="marksPerPage"
                            (activeRecordChanged)="onMarkActiveRecordChanged($event)"
                            (recordChanged)="onMarkRecordChanged($event)">
-                <div *ngIf="!isInspected && !isDisabled" datatable-add-buttons fxLayout="row" fxLayoutGap="1em">
+                <div *ngIf="!isDisabled" datatable-add-buttons fxLayout="row" fxLayoutGap="1em">
                     <button mat-raised-button
                             color="accent"
                             (click)="openGenerateMarksDialog()">

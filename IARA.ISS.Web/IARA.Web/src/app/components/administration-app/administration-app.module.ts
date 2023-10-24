@@ -183,6 +183,10 @@ import { EditLogBookPageEditExceptionComponent } from './catches-and-sales/log-b
 import { FluxSalesQueryComponent } from './flux-vms-requests/flux-sales-query/flux-sales-query.component';
 import { FluxVesselQueryComponent } from './flux-vms-requests/flux-vessel-query/flux-vessel-query.component';
 import { FluxFAQueryComponent } from './flux-vms-requests/flux-fa-query/flux-fa-query.component';
+import { FluxAcdrRequestsComponent } from './flux-vms-requests/flux-acdr-requests/flux-acdr-requests.component';
+import { EditFluxAcdrRequestsComponent } from './flux-vms-requests/flux-acdr-requests/edit-flux-acdr-request/edit-flux-acdr-request.component';
+import { UploadFluxAcdrRequestsComponent } from './flux-vms-requests/flux-acdr-requests/upload-flux-acdr-request/upload-flux-acdr-request.component';
+import { FishingActivityReportsComponent } from './fishing-activity-reports/fishing-activity-reports.component';
 
 @NgModule({
     declarations: [
@@ -358,7 +362,11 @@ import { FluxFAQueryComponent } from './flux-vms-requests/flux-fa-query/flux-fa-
         EditLogBookPageEditExceptionComponent,
         FluxSalesQueryComponent,
         FluxVesselQueryComponent,
-        FluxFAQueryComponent
+        FluxFAQueryComponent,
+        FluxAcdrRequestsComponent,
+        EditFluxAcdrRequestsComponent,
+        UploadFluxAcdrRequestsComponent,
+        FishingActivityReportsComponent
     ],
     imports: [
         TLCommonModule,
@@ -538,7 +546,11 @@ import { FluxFAQueryComponent } from './flux-vms-requests/flux-fa-query/flux-fa-
         EditLogBookPageEditExceptionComponent,
         FluxSalesQueryComponent,
         FluxVesselQueryComponent,
-        FluxFAQueryComponent
+        FluxFAQueryComponent,
+        FluxAcdrRequestsComponent,
+        EditFluxAcdrRequestsComponent,
+        UploadFluxAcdrRequestsComponent,
+        FishingActivityReportsComponent
     ]
 })
 export class IARAApplicationModule {

@@ -115,9 +115,12 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
 
     public permitIds: number[] = [];
 
+    private shipId: number | undefined;
+
     private readonly service: InspectionsService;
 
-    public constructor(@Self() ngControl: NgControl,
+    public constructor(
+        @Self() ngControl: NgControl,
         @Self() validityChecker: ValidityCheckerDirective,
         service: InspectionsService,
         translate: FuseTranslationLoaderService
@@ -183,13 +186,16 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
 
     public writeValue(value: InspectedShipSectionsModel | undefined): void {
         if (value !== null && value !== undefined) {
+            this.shipId = value.ship?.shipId;
+
             this.form.get('shipControl')!.setValue(new ShipWithPersonnelModel({
                 ship: value.ship,
                 personnel: value.personnel,
                 toggles: value.checks,
                 port: value.port,
-                observationTexts: value.observationTexts,
+                observationTexts: value.observationTexts
             }));
+
             this.form.get('permitLicensesControl')!.setValue(value.permitLicenses);
             this.form.get('permitsControl')!.setValue(value.permits);
             this.form.get('togglesControl')!.setValue(value.checks);
@@ -204,7 +210,6 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
                 .map(f => f.permitLicenseId!) ?? [];
 
             const checks = value.checks ?? [];
-
             const membership = checks.find(f => f.checkTypeId === this.opMembership!.value);
             const notice = checks.find(f => f.checkTypeId === this.preliminaryNotice!.value);
 
@@ -238,69 +243,74 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             }
         }
         else {
-            this.form.get('shipControl')!.setValue(null);
-            this.form.get('togglesControl')!.setValue(null);
-            this.form.get('opMembershipControl')!.setValue(null);
-            this.form.get('opMembershipAssociationControl')!.setValue(null);
-            this.form.get('preliminaryNoticeControl')!.setValue(null);
-            this.form.get('preliminaryNoticeNumberControl')!.setValue(null);
-            this.form.get('preliminaryNoticePurposeControl')!.setValue(null);
-            this.form.get('catchTogglesControl')!.setValue(null);
-            this.form.get('catchesControl')!.setValue(null);
-            this.form.get('fishingGearsControl')!.setValue(null);
-            this.form.get('logBooksControl')!.setValue(null);
+            this.form.reset();
             this.permitIds = [];
+            this.shipId = undefined;
         }
     }
 
     public async onShipSelected(ship: VesselDuringInspectionDTO | undefined): Promise<void> {
-        if (ship === null || ship === undefined || ship.shipId === undefined || ship.shipId === null) {
-            return;
+        if (ship === null || ship === undefined) {
+            this.form.get('permitsControl')!.setValue(undefined);
+            this.form.get('permitLicensesControl')!.setValue(undefined);
+            this.form.get('logBooksControl')!.setValue(undefined);
+            this.form.get('fishingGearsControl')!.setValue(undefined);
         }
+        else {
+            if (ship.shipId !== undefined && ship.shipId !== null && ship.shipId !== this.shipId) {
+                const result = await forkJoin([
+                    this.service.getShipPermits(ship.shipId!),
+                    this.service.getShipPermitLicenses(ship.shipId!),
+                    this.service.getShipLogBooks(ship.shipId!),
+                    this.service.getShipFishingGears(ship.shipId!)
+                ]).toPromise();
 
-        const result = await forkJoin([
-            this.service.getShipPermits(ship.shipId!),
-            this.service.getShipPermitLicenses(ship.shipId!),
-            this.service.getShipLogBooks(ship.shipId!),
-            this.service.getShipFishingGears(ship.shipId!),
-        ]).toPromise();
+                const permits: InspectionPermitLicenseDTO[] = result[0];
+                const permitLicenses: InspectionPermitLicenseDTO[] = result[1];
+                const logBooks: InspectionShipLogBookDTO[] = result[2];
+                const fishingGears: FishingGearDTO[] = result[3];
 
-        const permits: InspectionPermitLicenseDTO[] = result[0];
-        const permitLicenses: InspectionPermitLicenseDTO[] = result[1];
-        const logBooks: InspectionShipLogBookDTO[] = result[2];
-        const fishingGears: FishingGearDTO[] = result[3];
+                if (permits.length > 0) {
+                    this.form.get('permitsControl')!.setValue(permits.map(f => new InspectionPermitDTO({
+                        from: f.validFrom,
+                        to: f.validTo,
+                        permitNumber: f.permitNumber,
+                        permitLicenseId: f.id,
+                        typeId: f.typeId,
+                        typeName: f.typeName,
+                    })));
+                }
 
-        this.form.get('permitsControl')!.setValue(permits.map(f => new InspectionPermitDTO({
-            from: f.validFrom,
-            to: f.validTo,
-            permitNumber: f.permitNumber,
-            permitLicenseId: f.id,
-            typeId: f.typeId,
-            typeName: f.typeName,
-        })));
+                if (permitLicenses.length > 0) {
+                    this.form.get('permitLicensesControl')!.setValue(permitLicenses.map(f => new InspectionPermitDTO({
+                        from: f.validFrom,
+                        to: f.validTo,
+                        licenseNumber: f.licenseNumber,
+                        permitNumber: f.permitNumber,
+                        permitLicenseId: f.id,
+                        typeId: f.typeId,
+                        typeName: f.typeName,
+                    })));
+                }
 
-        this.form.get('permitLicensesControl')!.setValue(permitLicenses.map(f => new InspectionPermitDTO({
-            from: f.validFrom,
-            to: f.validTo,
-            licenseNumber: f.licenseNumber,
-            permitNumber: f.permitNumber,
-            permitLicenseId: f.id,
-            typeId: f.typeId,
-            typeName: f.typeName,
-        })));
+                if (logBooks.length > 0) {
+                    this.form.get('logBooksControl')!.setValue(logBooks.map(f => new InspectionLogBookDTO({
+                        endPage: f.endPage,
+                        from: f.issuedOn,
+                        logBookId: f.id,
+                        number: f.number,
+                        pages: f.pages,
+                        startPage: f.startPage,
+                    })));
+                }
 
-        this.form.get('logBooksControl')!.setValue(logBooks.map(f => new InspectionLogBookDTO({
-            endPage: f.endPage,
-            from: f.issuedOn,
-            logBookId: f.id,
-            number: f.number,
-            pages: f.pages,
-            startPage: f.startPage,
-        })));
-
-        this.form.get('fishingGearsControl')!.setValue(fishingGears.map(f => new InspectedFishingGearDTO({
-            permittedFishingGear: f,
-        })));
+                if (fishingGears.length > 0) {
+                    this.form.get('fishingGearsControl')!.setValue(fishingGears.map(f => new InspectedFishingGearDTO({
+                        permittedFishingGear: f,
+                    })));
+                }
+            }
+        }
     }
 
     public onPermitIdsChanged(permitIds: number[]): void {
@@ -325,7 +335,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             fishingGearTogglesControl: new FormControl(undefined),
             checkObservationControl: new FormControl(undefined),
             catchObservationControl: new FormControl(undefined),
-            fishingGearObservationControl: new FormControl(undefined),
+            fishingGearObservationControl: new FormControl(undefined)
         });
 
         form.get('opMembershipControl')!.valueChanges.subscribe({
@@ -364,7 +374,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             ...(this.form.get('catchTogglesControl')!.value ?? []),
             ...(this.form.get('fishingGearTogglesControl')!.value ?? []),
             opMembership,
-            notice,
+            notice
         ].filter(f => f !== null && f !== undefined);
 
         return new InspectedShipSectionsModel({
@@ -391,7 +401,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
                     text: this.form.get('fishingGearObservationControl')!.value
                 }),
                 ...(ship.observationTexts ?? [])
-            ].filter(f => f !== null && f !== undefined && !CommonUtils.isNullOrWhiteSpace(f.text)),
+            ].filter(f => f !== null && f !== undefined && !CommonUtils.isNullOrWhiteSpace(f.text))
         });
     }
 
