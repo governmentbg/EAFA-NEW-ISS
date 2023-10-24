@@ -72,6 +72,8 @@ const STAT_FORMS_TAB_INDEX: number = 7;
     styleUrls: ['./edit-ship-register.component.scss']
 })
 export class EditShipRegisterComponent extends BasePageComponent implements OnInit, AfterViewInit, OnDestroy {
+    public readonly eventTypesEnum: typeof ShipEventTypeEnum = ShipEventTypeEnum;
+
     public model!: ShipRegisterEditDTO;
     public selectedEventHistoryNo!: number;
 
@@ -131,8 +133,9 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
 
     public disableTabs: boolean = true;
 
-    public hasCatchesAndSalesReadPermission: boolean = false;
-    public hasStatisticalFormReadPermission: boolean = false;
+    public readonly hasCatchesAndSalesReadPermission: boolean;
+    public readonly hasStatisticalFormReadPermission: boolean;
+    public readonly canSendFluxData: boolean;
 
     public getEventTypeErrorTextMethod: GetControlErrorLabelTextCallback = this.getEventTypeErrorText.bind(this);
 
@@ -204,6 +207,7 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
 
         this.hasCatchesAndSalesReadPermission = permissions.hasAny(PermissionsEnum.FishLogBookPageReadAll, PermissionsEnum.FishLogBookPageRead);
         this.hasStatisticalFormReadPermission = permissions.hasAny(PermissionsEnum.StatisticalFormsFishVesselReadAll, PermissionsEnum.StatisticalFormsFishVesselRead);
+        this.canSendFluxData = permissions.has(PermissionsEnum.ShipsRegisterSendFluxData);
 
         this.host = host.nativeElement as HTMLElement;
 
@@ -790,6 +794,66 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
                 state: {
                     tableId: this.model.id.toString(),
                     tableName: 'ShipRegister'
+                }
+            });
+        }
+    }
+
+    public sendEventVcdToFlux(): void {
+        if (this.canSendFluxData) {
+            this.confirmDialog.open({
+                title: `${this.translate.getValue('ships-register.send-event-vcd-to-flux-confirmation-title')}`,
+                message: this.translate.getValue('ships-register.send-event-vcd-to-flux-confirmation-message'),
+                okBtnLabel: this.translate.getValue('ships-register.send-event-vcd-to-flux-confirmation-ok-btn')
+            }).subscribe({
+                next: (yes: boolean) => {
+                    if (yes) {
+                        this.service.reportShipVCDToFlux(this.model.id!).subscribe({
+                            next: () => {
+                                // nothing to do
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    }
+
+    public sendEventVedToFlux(): void {
+        if (this.canSendFluxData) {
+            this.confirmDialog.open({
+                title: `${this.translate.getValue('ships-register.send-event-ved-to-flux-confirmation-title')}`,
+                message: this.translate.getValue('ships-register.send-event-ved-to-flux-confirmation-message'),
+                okBtnLabel: this.translate.getValue('ships-register.send-event-ved-to-flux-confirmation-ok-btn')
+            }).subscribe({
+                next: (yes: boolean) => {
+                    if (yes) {
+                        this.service.reportShipVEDToFlux(this.model.id!).subscribe({
+                            next: () => {
+                                // nothing to do
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    }
+
+    public sendHistoryToFlux(): void {
+        if (this.canSendFluxData) {
+            this.confirmDialog.open({
+                title: `${this.translate.getValue('ships-register.send-history-to-flux-confirmation-title')} ${this.model.name}`,
+                message: this.translate.getValue('ships-register.send-history-to-flux-confirmation-message'),
+                okBtnLabel: this.translate.getValue('ships-register.send-history-to-flux-confirmation-ok-btn')
+            }).subscribe({
+                next: (yes: boolean) => {
+                    if (yes) {
+                        this.service.reportShipHistoryToFlux(this.model.id!).subscribe({
+                            next: () => {
+                                // nothing to do
+                            }
+                        });
+                    }
                 }
             });
         }

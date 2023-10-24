@@ -85,9 +85,15 @@
                                     </ng-template>
                                 </data-template-column>
 
-                                <data-template-column [flexRate]="0.05">
+                                <data-template-column [flexRate]="0.1">
                                     <ng-template ngx-datatable-cell-template let-row="row">
                                         <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                            <tl-icon-button icon="replay"
+                                                            iconClass="accent-color"
+                                                            (buttonClicked)="replayMessage(row.data)"
+                                                            tooltipText="{{ 'fishing-activities.replay-message' | tlTranslate }}">
+                                            </tl-icon-button>
+
                                             <tl-icon-button icon="visibility"
                                                             iconClass="accent-color"
                                                             (buttonClicked)="openViewDialog(row.data)"
@@ -183,6 +189,19 @@
                          dataType="datetime"
                          columnName="{{ 'fishing-activities.unload-time' | tlTranslate }}">
             </data-column>
+
+            <data-template-column *ngIf="hasReplayMessagesPermission"
+                                  [flexRate]="0.05">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                        <tl-icon-button icon="replay"
+                                        iconClass="accent-color"
+                                        (buttonClicked)="replayTrip(row.data)"
+                                        tooltipText="{{ 'fishing-activities.replay-trip' | tlTranslate }}">
+                        </tl-icon-button>
+                    </div>
+                </ng-template>
+            </data-template-column>
         </tl-data-table>
     </mat-card>
 </div>

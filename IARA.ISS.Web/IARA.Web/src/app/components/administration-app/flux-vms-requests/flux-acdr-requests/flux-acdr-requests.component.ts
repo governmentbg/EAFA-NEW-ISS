@@ -28,6 +28,8 @@ import { FluxAcdrReportStatusEnum } from '@app/enums/flux-acdr-report-status.enu
 import { FluxAcdrRequestEditDTO } from '@app/models/generated/dtos/FluxAcdrRequestEditDTO';
 import { FluxAcdrReportDTO } from '@app/models/generated/dtos/FluxAcdrReportDTO';
 
+type ThreeState = 'yes' | 'no' | 'both';
+
 @Component({
     selector: 'flux-acdr-requests',
     templateUrl: './flux-acdr-requests.component.html'
@@ -38,6 +40,7 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
 
     public responseStatuses: NomenclatureDTO<string>[] = [];
     public reportStatuses: NomenclatureDTO<string>[] = [];
+    public isModifiedOptions: NomenclatureDTO<ThreeState>[] = [];
 
     public readonly canAddRecords: boolean;
     public readonly canEditRecords: boolean;
@@ -119,6 +122,24 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
                 displayName: this.translate.getValue('flux-vms-requests.acdr-report-status-sent'),
             })
         ];
+
+        this.isModifiedOptions = [
+            new NomenclatureDTO<ThreeState>({
+                value: 'yes',
+                displayName: this.translate.getValue('flux-vms-requests.acdr-is-modified-yes'),
+                isActive: true
+            }),
+            new NomenclatureDTO<ThreeState>({
+                value: 'no',
+                displayName: this.translate.getValue('flux-vms-requests.acdr-is-modified-no'),
+                isActive: true
+            }),
+            new NomenclatureDTO<ThreeState>({
+                value: 'both',
+                displayName: this.translate.getValue('flux-vms-requests.acdr-is-modified-both'),
+                isActive: true
+            })
+        ];
     }
 
     public ngAfterViewInit(): void {
@@ -169,7 +190,7 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
     }
 
     public uploadRequest(acdr: FluxAcdrReportDTO): void {
-        const title: string = `${this.translate.getValue('flux-vms-requests.acdr-query-request-title')} ${this.datePipe.transform(acdr.periodStart, 'MM.yyyy')}`;
+        const title: string = `${this.translate.getValue('flux-vms-requests.acdr-query-request-title')} ${this.datePipe.transform(acdr.periodEnd, 'MM.yyyy')}`;
 
         this.uploadDialog.open({
             title: title,
@@ -267,7 +288,6 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
 
     private buildForm(): FormGroup {
         const result: FormGroup = new FormGroup({
-            webServiceNameControl: new FormControl(),
             monthControl: new FormControl(),
             requestDateTimeFromControl: new FormControl(),
             requestDateTimeToControl: new FormControl(),
@@ -278,7 +298,8 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
             responseStatusControl: new FormControl(),
             requestContentControl: new FormControl(),
             responseContentControl: new FormControl(),
-            reportStatusControl: new FormControl()
+            reportStatusControl: new FormControl(),
+            isModifiedControl: new FormControl()
         });
 
         return result;
@@ -289,7 +310,6 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
             freeTextSearch: filters.searchText,
             showInactiveRecords: filters.showInactiveRecords,
 
-            webServiceName: filters.getValue('webServiceNameControl'),
             requestDateFrom: filters.getValue('requestDateTimeFromControl'),
             requestDateTo: filters.getValue('requestDateTimeToControl'),
             responseDateFrom: filters.getValue('responseDateTimeFromControl'),
@@ -302,6 +322,20 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
             reportStatuses: filters.getValue('reportStatusControl'),
             requestMonthDateFrom: filters.getValue('monthControl')
         });
+
+        const isModified: ThreeState | undefined = filters.getValue<ThreeState>('isModifiedControl');
+        switch (isModified) {
+            case 'yes':
+                result.isModified = true;
+                break;
+            case 'no':
+                result.isModified = false;
+                break;
+            default:
+            case 'both':
+                result.isModified = undefined;
+                break;
+        }
 
         return result;
     }

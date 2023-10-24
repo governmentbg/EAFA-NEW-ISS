@@ -131,7 +131,10 @@
                                                  [price]="childTickets[i].price"
                                                  [isEgnEditable]="!isPersonal"
                                                  [isPersonal]="isPersonal"
-                                                 [isAssociation]="isAssociation">
+                                                 [isAssociation]="isAssociation"
+                                                 [adultTicketType]="adultTicketType"
+                                                 [representativePerson]="tickets[0]?.person"
+                                                 [representativePersonAddressRegistrations]="tickets[0]?.personAddressRegistrations">
                     </recreational-fishing-ticket>
                 </mat-step>
             </div>

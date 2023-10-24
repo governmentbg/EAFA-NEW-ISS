@@ -278,10 +278,38 @@
                             tooltipText="{{ 'ships-register.collapse-events-panel' | tlTranslate }}">
             </tl-icon-button>
 
-            <tl-audit [auditInfo]="auditInfo"
-                      (openAudit)="auditBtnClicked()"
-                      (openDetailedAudit)="detailedAuditBtnClicked()">
-            </tl-audit>
+            <div fxLayout="row">
+                <button *ngIf="canSendFluxData"
+                        mat-icon-button
+                        matTooltip="{{ 'ships-register.send-to-flux' | tlTranslate }}"
+                        [matMenuTriggerFor]="fluxButtonsMenu">
+                    <tl-icon icon="send" size="1.8"></tl-icon>
+                </button>
+
+                <mat-menu #fluxButtonsMenu=matMenu>
+                    <button mat-menu-item
+                            (click)="sendHistoryToFlux()">
+                        {{ 'ships-register.send-history-to-flux' | tlTranslate }}
+                    </button>
+
+                    <button *ngIf="model?.eventType !== eventTypesEnum.EDIT"
+                            mat-menu-item
+                            (click)="sendEventVcdToFlux()">
+                        {{ 'ships-register.send-event-vcd-to-flux' | tlTranslate }}
+                    </button>
+
+                    <button *ngIf="model?.eventType !== eventTypesEnum.EDIT"
+                            mat-menu-item
+                            (click)="sendEventVedToFlux()">
+                        {{ 'ships-register.send-event-ved-to-flux' | tlTranslate }}
+                    </button>
+                </mat-menu>
+
+                <tl-audit [auditInfo]="auditInfo"
+                          (openAudit)="auditBtnClicked()"
+                          (openDetailedAudit)="detailedAuditBtnClicked()">
+                </tl-audit>
+            </div>
         </div>
 
         <div *ngIf="!isEventsPanelExpanded">

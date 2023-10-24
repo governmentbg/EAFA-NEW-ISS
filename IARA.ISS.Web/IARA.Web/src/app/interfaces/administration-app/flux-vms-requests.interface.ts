@@ -15,6 +15,7 @@ import { IBaseAuditService } from '../base-audit.interface';
 import { FluxAcdrRequestEditDTO } from '@app/models/generated/dtos/FluxAcdrRequestEditDTO';
 import { FileInfoDTO } from '@app/models/generated/dtos/FileInfoDTO';
 import { FluxAcdrRequestDTO } from '@app/models/generated/dtos/FluxAcdrRequestDTO';
+import { FluxAcdrRequestFilters } from '@app/models/generated/filters/FluxAcdrRequestFilters';
 
 export interface IFluxVmsRequestsService extends IBaseAuditService {
     getAll(request: GridRequestModel<FLUXVMSRequestFilters>): Observable<GridResultModel<FLUXVMSRequestDTO>>;
@@ -38,6 +39,6 @@ export interface IFluxVmsRequestsService extends IBaseAuditService {
     getFishingCategories(): Observable<NomenclatureDTO<number>[]>;
     getFlapQuotaTypes(): Observable<NomenclatureDTO<number>[]>;
 
-    getAllAcdrRequests(request: GridRequestModel<FLUXVMSRequestFilters>): Observable<GridResultModel<FluxAcdrRequestDTO>>
+    getAllAcdrRequests(request: GridRequestModel<FluxAcdrRequestFilters>): Observable<GridResultModel<FluxAcdrRequestDTO>>
     downloadAcdrRequestContent(id: number): Observable<boolean>;
 }

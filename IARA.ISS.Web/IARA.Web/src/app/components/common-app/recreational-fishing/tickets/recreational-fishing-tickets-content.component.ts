@@ -92,6 +92,8 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
 
     public paidTicketApplicationId: number | undefined;
 
+    public adultTicketType: TicketTypeEnum = TicketTypeEnum.STANDARD;
+
     public getControlErrorLabelTextForTicketNumberMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelTextForTicketNumber.bind(this);
 
     public get ticketsArray(): FormArray {
@@ -406,7 +408,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
                         this.tickets[i].ticketNum = ticketNum;
                     }
                     else {
-                        this.childTickets[this.tickets.length - i].ticketNum = ticketNum;
+                        this.childTickets[i - this.tickets.length].ticketNum = ticketNum;
                     }
                 }
             }
@@ -694,6 +696,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
 
         for (const ticket of this.tickets) {
             const type: string = this.ticketTypes.find(x => x.value === ticket.typeId)!.displayName!;
+            this.adultTicketType = TicketTypeEnum[this.ticketTypes.find(x => x.value === ticket.typeId)!.code! as keyof typeof TicketTypeEnum];
 
             if (this.ticketTypeComment === null) {
                 this.ticketTypeComment = `${type}`;

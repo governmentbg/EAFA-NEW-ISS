@@ -48,6 +48,8 @@ import { TicketPeriodEnum } from '@app/enums/ticket-period.enum';
 import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 import { IssueDuplicateTicketComponent } from '../../../applications/components/issue-duplicate-ticket/issue-duplicate-ticket.component';
 import { IssueDuplicateTicketDialogParams } from '../../../applications/models/issue-duplicate-ticket-dialog-params.model';
+import { RegixPersonDataDTO } from '@app/models/generated/dtos/RegixPersonDataDTO';
+import { AddressRegistrationDTO } from '@app/models/generated/dtos/AddressRegistrationDTO';
 
 @Component({
     selector: 'recreational-fishing-ticket',
@@ -63,6 +65,10 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
     @Input() public isEgnEditable: boolean = true;
     @Input() public isPersonal!: boolean;
     @Input() public isAssociation!: boolean;
+
+    @Input() public representativePerson: RegixPersonDataDTO | undefined;
+    @Input() public representativePersonAddressRegistrations: AddressRegistrationDTO[] = [];
+    @Input() public adultTicketType: TicketTypeEnum = TicketTypeEnum.STANDARD;
 
     @Output() public updatePersonalData: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -85,6 +91,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
 
     public dateOfBirthProperties!: RegixDateOfBirthProperties;
     public dateOfBirthRequiredTicketTypes: string[] = [];
+    public representativeSameAsAdultLabel: string | undefined;
 
     public regixChecksData: RecreationalFishingTicketBaseRegixDataDTO | undefined;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
@@ -159,6 +166,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
         this.systemProperties = await this.systemPropertiesService.properties.toPromise();
         this.getFishingAssociations().subscribe();
         this.pageCode = this.getPageCodeFromTicketType();
+        this.representativeSameAsAdultLabel = this.getRepresentativeLabel();
 
         NomenclatureStore.instance.getNomenclature(
             NomenclatureTypes.PermittedFileTypes, this.nomenclatures.getPermittedFileTypes.bind(this.nomenclatures), false
@@ -244,6 +252,18 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
         this.form.get('updatePersonalDataControl')?.valueChanges.subscribe({
             next: (checked: boolean) => {
                 this.updatePersonalData.emit(checked);
+            }
+        });
+
+        const type: TicketTypeEnum = TicketTypeEnum[this.type.code as keyof typeof TicketTypeEnum];
+
+        if (!this.isRegisterEntry && type === TicketTypeEnum.UNDER14)
+        this.form.get('representativeSameAsAdultControl')?.valueChanges.subscribe({
+            next: (checked: boolean) => {
+                if (checked) {
+                    this.form.get('representativeRegixDataControl')!.setValue(this.representativePerson);
+                    this.form.get('representativeAddressControl')!.setValue(this.representativePersonAddressRegistrations);
+                }
             }
         });
     }
@@ -547,6 +567,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             regixDataControl: new FormControl(null, Validators.required),
             photoControl: new FormControl(null),
             addressControl: new FormControl(null, Validators.required),
+            representativeSameAsAdultControl: new FormControl(false),
             representativeRegixDataControl: new FormControl(null),
             representativeAddressControl: new FormControl(null),
             membershipCardNumberControl: new FormControl(null),
@@ -983,6 +1004,27 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                 case TicketTypeEnum.ELDERASSOCIATION:
                     return PageCodeEnum.OnlineRecFishElderAssoc;
             }
+        }
+    }
+
+    private getRepresentativeLabel(): string | undefined {
+        const representative: string = this.translate.getValue('recreational-fishing.representative-same-as-adult');
+
+        switch (this.adultTicketType) {
+            case TicketTypeEnum.STANDARD:
+                return `${representative} ${this.translate.getValue('recreational-fishing.representative-same-as-standart')}`;
+            case TicketTypeEnum.BETWEEN14AND18:
+                return `${representative} ${this.translate.getValue('recreational-fishing.representative-same-as-between14and18')}`;
+            case TicketTypeEnum.ELDER:
+                return `${representative} ${this.translate.getValue('recreational-fishing.representative-same-as-elder')}`;
+            case TicketTypeEnum.DISABILITY:
+                return `${representative} ${this.translate.getValue('recreational-fishing.representative-same-as-disability')}`;
+            case TicketTypeEnum.ASSOCIATION:
+                return `${representative} ${this.translate.getValue('recreational-fishing.representative-same-as-association')}`;
+            case TicketTypeEnum.ELDERASSOCIATION:
+                return `${representative} ${this.translate.getValue('recreational-fishing.representative-same-as-elderassociation')}`;
+            default:
+                return undefined;
         }
     }
 
