@@ -20,6 +20,7 @@ import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 import { PermissionsService } from '@app/shared/services/permissions.service';
 import { DataTableManager } from '@app/shared/utils/data-table.manager';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { EditShipLogBookPageComponent } from '../../common-app/catches-and-sales/components/ship-log-book/edit-ship-log-book-page.component';
 import { EditShipLogBookPageDialogParams } from '../../common-app/catches-and-sales/components/ship-log-book/models/edit-ship-log-book-page-dialog-params.model';
 import { ViewFluxVmsRequestsDialogParams } from '../flux-vms-requests/models/view-flux-vms-requests-dialog-params.model';
@@ -36,6 +37,7 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
     public ships: ShipNomenclatureDTO[] = [];
 
     public readonly hasFishLogBookPageReadPermission: boolean;
+    public readonly hasReplayMessagesPermission: boolean;
 
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
@@ -50,6 +52,7 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
     private readonly nomenclatures: CommonNomenclatures;
     private readonly viewDialog: TLMatDialog<ViewFluxVmsRequestsComponent>;
     private readonly pageDialog: TLMatDialog<EditShipLogBookPageComponent>;
+    private readonly confirmDialog: TLConfirmDialog;
 
     public constructor(
         translate: FuseTranslationLoaderService,
@@ -58,7 +61,8 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
         nomenclatures: CommonNomenclatures,
         permissions: PermissionsService,
         viewDialog: TLMatDialog<ViewFluxVmsRequestsComponent>,
-        pageDialog: TLMatDialog<EditShipLogBookPageComponent>
+        pageDialog: TLMatDialog<EditShipLogBookPageComponent>,
+        confirmDialog: TLConfirmDialog
     ) {
         this.translate = translate;
         this.service = service;
@@ -66,8 +70,10 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
         this.nomenclatures = nomenclatures;
         this.viewDialog = viewDialog;
         this.pageDialog = pageDialog;
+        this.confirmDialog = confirmDialog;
 
         this.hasFishLogBookPageReadPermission = permissions.hasAny(PermissionsEnum.FishLogBookPageReadAll, PermissionsEnum.FishLogBookRead);
+        this.hasReplayMessagesPermission = permissions.has(PermissionsEnum.FishingActivityReportsReplay);
 
         this.form = this.buildForm();
     }
@@ -113,6 +119,42 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
         }).subscribe({
             next: () => {
                 // nothing to do
+            }
+        });
+    }
+
+    public replayTrip(trip: FishingActivityReportDTO): void {
+        this.confirmDialog.open({
+            title: this.translate.getValue('fishing-activities.replay-trip-title'),
+            message: this.translate.getValue('fishing-activities.replay-trip-message'),
+            okBtnLabel: this.translate.getValue('fishing-activities.replay-trip-ok-btn-label')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.fishingActivityReportReplayTrip(trip.tripIdentifier!).subscribe({
+                        next: () => {
+                            this.grid.refreshData();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public replayMessage(report: FishingActivityReportItemDTO): void {
+        this.confirmDialog.open({
+            title: this.translate.getValue('fishing-activities.replay-message-title'),
+            message: this.translate.getValue('fishing-activities.replay-message-message'),
+            okBtnLabel: this.translate.getValue('fishing-activities.replay-message-ok-btn-label')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.fishingActivityReportReplayMessage(report.id!).subscribe({
+                        next: () => {
+                            this.grid.refreshData();
+                        }
+                    });
+                }
             }
         });
     }

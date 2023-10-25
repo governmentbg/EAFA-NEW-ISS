@@ -3,12 +3,6 @@
     <search-panel [translateService]="translate">
         <div [formGroup]="form" fxLayout="column">
             <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-                <tl-input fxFlex="33"
-                          formControlName="webServiceNameControl"
-                          label="{{ 'flux-vms-requests.filters-web-service-name' | tlTranslate }}"
-                          tooltipResourceName="flux-vms-requests.filters-web-service-name-helper">
-                </tl-input>
-
                 <tl-select fxFlex="33"
                            formControlName="responseStatusControl"
                            [options]="responseStatuses"
@@ -22,6 +16,14 @@
                                label="{{ 'flux-vms-requests.filters-request-month' | tlTranslate }}"
                                tooltipResourceName="flux-vms-requests.filters-request-month-helper">
                 </tl-date-month>
+
+                <tl-select fxFlex="33"
+                           formControlName="reportStatusControl"
+                           [options]="reportStatuses"
+                           [isMultiple]="true"
+                           label="{{ 'flux-vms-requests.filters-report-status' | tlTranslate }}"
+                           tooltipResourceName="flux-vms-requests.filters-report-status-helper">
+                </tl-select>
             </div>
 
             <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
@@ -78,11 +80,10 @@
                 </tl-input>
 
                 <tl-select fxFlex="33"
-                           formControlName="reportStatusControl"
-                           [options]="reportStatuses"
-                           [isMultiple]="true"
-                           label="{{ 'flux-vms-requests.filters-report-status' | tlTranslate }}"
-                           tooltipResourceName="flux-vms-requests.filters-report-status-helper">
+                           formControlName="isModifiedControl"
+                           [options]="isModifiedOptions"
+                           label="{{ 'flux-vms-requests.filters-is-modified' | tlTranslate }}"
+                           tooltipResourceName="flux-vms-requests.filters-is-modified-helper">
                 </tl-select>
             </div>
         </div>
@@ -103,7 +104,7 @@
             <row-detail>
                 <ng-template let-row="row" ngx-datatable-row-detail-template>
                     <tl-card tooltipResourceName="flux-fms-requests.acdr-request-history-records-helper">
-                        <tl-card-title>{{ 'flux-vms-requests.acdr-request-history-records' | tlTranslate }} {{ row.data.periodStart | date: 'MM.yyyy' }}</tl-card-title>
+                        <tl-card-title>{{ 'flux-vms-requests.acdr-request-history-records' | tlTranslate }} {{ row.data.periodEnd | date: 'MM.yyyy' }}</tl-card-title>
                         <tl-card-content>
                             <tl-data-table [isRemote]="false"
                                            [showAddButton]="false"
@@ -185,12 +186,12 @@
                                 <data-template-column [flexRate]="0.2"
                                                       columnName="{{ 'flux-vms-requests.error-description' | tlTranslate }}"
                                                       propertyName="errorDescription">
-                                    <ng-template ngx-datatable-cell-template let-value="value">
-                                        <div fxLayout="row" fxLayoutAlign="center center">
-                                            <tl-popover-button *ngIf="value !== null && value !== undefined && value.length > 0; else noValue"
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        <div fxLayoutAlign="center center">
+                                            <tl-popover-button *ngIf="row.data.errorDescription !== null && row.data.errorDescription !== undefined && row.data.errorDescription.length > 0; else noValue"
                                                                icon="info"
                                                                iconClass="accent-color">
-                                                <span fxLayout="row" class="scroll">{{ value }}</span>
+                                                <span fxLayout="row" class="scroll">{{ row.data.errorDescription }}</span>
                                             </tl-popover-button>
 
                                             <ng-template #noValue>
@@ -236,7 +237,7 @@
             <data-template-column [flexRate]="0.2"
                                   columnName="{{ 'flux-vms-requests.request-month' | tlTranslate }}">
                 <ng-template let-row="row" ngx-datatable-cell-template>
-                    {{ row.data.periodStart | date: 'MM.yyyy' }}
+                    {{ row.data.periodEnd | date: 'MM.yyyy' }}
                 </ng-template>
             </data-template-column>
 

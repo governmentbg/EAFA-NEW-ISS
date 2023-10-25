@@ -470,6 +470,7 @@
 
     // Fishing activity reports
     FishingActivityReportsRead = 'FishingActivityReportsRead',
+    FishingActivityReportsReplay = 'FishingActivityReportsReplay',
 
     // AUANs
     AuanRegisterReadAll = 'AuanRegisterReadAll',

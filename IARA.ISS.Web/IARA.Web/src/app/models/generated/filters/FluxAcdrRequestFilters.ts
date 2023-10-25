@@ -14,7 +14,6 @@ export class FluxAcdrRequestFilters extends BaseRequestModel {
     }
 
     
-    public webServiceName: string | undefined;
     public requestDateFrom: Date | undefined;
     public requestDateTo: Date | undefined;
     public responseDateFrom: Date | undefined;
@@ -27,4 +26,5 @@ export class FluxAcdrRequestFilters extends BaseRequestModel {
     public responseStatuses: string[] | undefined;
     public domainNames: string[] | undefined;
     public reportStatuses: string[] | undefined;
+    public isModified: boolean | undefined;
 }

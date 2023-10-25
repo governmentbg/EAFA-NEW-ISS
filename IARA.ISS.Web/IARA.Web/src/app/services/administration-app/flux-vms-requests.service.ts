@@ -226,8 +226,8 @@ export class FluxVmsRequestsService extends BaseAuditService implements IFluxVms
                     record.reportStatusName = this.getAcdrReportStatusTranslation(record.reportStatus!);
 
                     const found = entries.records.find((entry: FluxAcdrRequestDTO) => {
-                        return entry.periodMonth === (record.periodStart!.getMonth() + 1)
-                            && entry.periodYear === (record.periodStart!.getFullYear());
+                        return entry.periodMonth === (record.periodEnd!.getMonth() + 1)
+                            && entry.periodYear === (record.periodEnd!.getFullYear());
                     });
 
                     if (found !== undefined) {

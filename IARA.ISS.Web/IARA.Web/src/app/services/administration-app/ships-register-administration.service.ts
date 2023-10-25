@@ -277,11 +277,27 @@ export class ShipsRegisterAdministrationService extends ApplicationsRegisterAdmi
         });
     }
 
+    public reportShipVCDToFlux(id: number): Observable<void> {
+        const params = new HttpParams().append('id', id.toString());
+        return this.requestService.post(this.area, this.controller, 'ReportShipVCDToFlux', undefined, {
+            httpParams: params,
+            successMessage: 'send-event-to-flux-success'
+        });
+    }
+
+    public reportShipVEDToFlux(id: number): Observable<void> {
+        const params = new HttpParams().append('id', id.toString());
+        return this.requestService.post(this.area, this.controller, 'ReportShipVEDToFlux', undefined, {
+            httpParams: params,
+            successMessage: 'send-event-to-flux-success'
+        });
+    }
+
     public reportShipHistoryToFlux(id: number): Observable<void> {
         const params = new HttpParams().append('id', id.toString());
         return this.requestService.post(this.area, this.controller, 'ReportShipHistoryToFlux', undefined, {
             httpParams: params,
-            successMessage: 'ships-register.send-history-to-flux-success'
+            successMessage: 'send-history-to-flux-success'
         });
     }
 

@@ -74,8 +74,8 @@
                               tooltipResourceName="report-definition.general-information-report-title-helper">
                     </tl-input>
 
-                    <div class="container" fxLayout="row" fxFlex="25">
-                        <div class="input-group-addon" fxFlex="20" fxLayoutAlign="center center">
+                    <div fxLayout="row" fxFlex="25">
+                        <div fxFlex="20" fxLayoutAlign="center center">
                             <i [ngClass]="iconNameControl.value">{{ iconNameControl.value }} </i>
                         </div>
 
@@ -86,12 +86,12 @@
                                    formControlName="iconNameControl"
                                    [iconPicker]="iconNameControl.value"
                                    [ipIconPack]="['mat']"
-                                   [ipPosition]="'bottom'"
-                                   [ipWidth]="'250px'"
-                                   [ipIconSize]="'20px'"
-                                   [ipIconVerticalPadding]="'6px'"
-                                   [ipIconHorizontalPadding]="'10px'"
-                                   [ipKeepSearchFilter]="false"
+                                   ipPosition="left"
+                                   ipWidth="250px"
+                                   ipIconSize="20px"
+                                   ipIconVerticalPadding="6px"
+                                   ipIconHorizontalPadding="10px"
+                                   ipKeepSearchFilter="true"
                                    ipFallbackIcon="description"
                                    ipPlaceHolder="{{ 'report-definition.report-icon-search' | tlTranslate }}"
                                    (iconPickerSelect)="onIconPickerSelect($event)"

@@ -139,6 +139,11 @@
         <tl-card-title>{{ 'recreational-fishing.ticket-holder-representative-data' | tlTranslate }}</tl-card-title>
 
         <tl-card-content fxLayout="column">
+            <tl-checkbox *ngIf="!isRegisterEntry && representativePerson !== undefined && representativePerson !== null"
+                         formControlName="representativeSameAsAdultControl"
+                         label="{{ representativeSameAsAdultLabel }}"> 
+            </tl-checkbox>
+
             <regix-data fxFlex="75"
                         formControlName="representativeRegixDataControl"
                         notifier
