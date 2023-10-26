@@ -19,6 +19,7 @@ import { RequestService } from '@app/shared/services/request.service';
 import { BaseAuditService } from '../common-app/base-audit.service';
 import { ApplicationsProcessingService } from './applications-processing.service';
 import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
+import { ApplicationsNotAssignedDTO } from '@app/models/generated/dtos/ApplicationsNotAssignedDTO';
 
 export abstract class ApplicationsRegisterAdministrativeBaseService extends BaseAuditService implements IApplicationsRegisterService {
     protected readonly applicationsProcessingController: string = 'ApplicationsProcessing';
@@ -148,5 +149,9 @@ export abstract class ApplicationsRegisterAdministrativeBaseService extends Base
             responseTypeCtr: ApplicationsChangeHistoryDTO,
             properties: RequestProperties.NO_SPINNER
         });
+    }
+
+    public getNotAssignedApplications(): Observable<ApplicationsNotAssignedDTO> {
+        return this.requestService.get(this.area, this.controller, 'GetNotAssignedApplications', { responseTypeCtr: ApplicationsNotAssignedDTO });
     }
 }

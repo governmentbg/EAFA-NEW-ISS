@@ -153,11 +153,11 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
         this.grid.refreshData();
     }
 
-    public openViewDialog(request: FluxAcdrReportDTO): void {
+    public openViewDialog(report: FluxAcdrReportDTO): void {
         const data: ViewFluxVmsRequestsDialogParams = new ViewFluxVmsRequestsDialogParams({
-            id: request.requestId,
-            acdrId: request.id,
-            reportStatus: request.reportStatus
+            id: report.requestId,
+            acdrId: report.id,
+            reportStatus: report.reportStatus
         });
 
         this.viewDialog.open({
@@ -174,12 +174,24 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
         });
     }
 
-    public replayRequest(request: FluxAcdrReportDTO): void {
+    public downloadRequest(acdrId: number): void {
+        this.service.downloadAcdrRequestContent(acdrId).subscribe({
+            next: (result: boolean | undefined) => {
+                if (result) {
+                    setTimeout(() => {
+                        this.grid.refreshData();
+                    }, 2000);
+                }
+            }
+        });
+    }
+
+    public replayRequest(report: FluxAcdrReportDTO): void {
         this.confirmDialog.open().toPromise().then(result => {
             if (result) {
-                const webServiceNameParts: string[] = request.webServiceName?.split('/') ?? [];
+                const webServiceNameParts: string[] = report.webServiceName?.split('/') ?? [];
 
-                this.service.replayRequest(request.requestId as number, FluxFvmsDomainsEnum[webServiceNameParts[0] as keyof typeof FluxFvmsDomainsEnum], webServiceNameParts[1])
+                this.service.replayRequest(report.requestId as number, FluxFvmsDomainsEnum[webServiceNameParts[0] as keyof typeof FluxFvmsDomainsEnum], webServiceNameParts[1])
                     .subscribe();
 
                 setTimeout(() => {
@@ -189,7 +201,7 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
         });
     }
 
-    public uploadRequest(acdr: FluxAcdrReportDTO): void {
+    public uploadRequest(acdr: FluxAcdrRequestDTO): void {
         const title: string = `${this.translate.getValue('flux-vms-requests.acdr-query-request-title')} ${this.datePipe.transform(acdr.periodEnd, 'MM.yyyy')}`;
 
         this.uploadDialog.open({
@@ -210,7 +222,7 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
                 color: 'primary',
                 translateValue: this.translate.getValue('common.cancel'),
             },
-            componentData: new DialogParamsModel({ id: acdr.requestId }),
+            componentData: new DialogParamsModel({ id: acdr.fluxRequestId }),
             translteService: this.translate,
             viewMode: false
         }, '600px').subscribe({
@@ -220,6 +232,25 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
                         this.grid.refreshData();
                     }, 2000);
                 }
+            }
+        });
+    }
+
+    public generateAcdrQueryForMonth(acdr: FluxAcdrRequestDTO): void {
+        this.confirmDialog.open().toPromise().then(result => {
+            if (result) {
+                const request: FluxAcdrRequestEditDTO = new FluxAcdrRequestEditDTO({
+                    fromDate: acdr.periodStart,
+                    toDate: acdr.periodEnd
+                });
+
+                this.service.addAcdrQueryRequest(request).subscribe({
+                    next: () => {
+                        setTimeout(() => {
+                            this.grid.refreshData();
+                        }, 2000);
+                    }
+                });
             }
         });
     }
@@ -247,35 +278,6 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
             componentData: undefined,
             translteService: this.translate
         }, '600px').subscribe({
-            next: (result: boolean | undefined) => {
-                if (result) {
-                    setTimeout(() => {
-                        this.grid.refreshData();
-                    }, 2000);
-                }
-            }
-        });
-    }
-
-    public generateAcdrQueryForMonth(acdr: FluxAcdrRequestDTO): void {
-        this.confirmDialog.open().toPromise().then(result => {
-            if (result) {
-                const request: FluxAcdrRequestEditDTO = new FluxAcdrRequestEditDTO({
-                    fromDate: acdr.periodStart,
-                    toDate: acdr.periodEnd
-                });
-
-                this.service.addAcdrQueryRequest(request).subscribe();
-
-                setTimeout(() => {
-                    this.grid.refreshData();
-                }, 2000);
-            }
-        });
-    }
-
-    public downloadRequest(acdrId: number): void {
-        this.service.downloadAcdrRequestContent(acdrId).subscribe({
             next: (result: boolean | undefined) => {
                 if (result) {
                     setTimeout(() => {

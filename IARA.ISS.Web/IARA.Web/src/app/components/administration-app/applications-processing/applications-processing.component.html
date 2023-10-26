@@ -1,6 +1,40 @@
-﻿<applications-register fxFlexFill
-                       [service]="service"
-                       [applicationsService]="applicationsService"
-                       pageType="FileInPage"
-                       [processingPermissions]="processingPermissions">
-</applications-register>
+﻿<mat-tab-group mat-align-tabs="start" fxFlexFill (selectedIndexChange)="onTabChanged($event)">
+    <mat-tab>
+        <ng-template matTabLabel>
+            <span [matBadge]="paperNotAssigned"
+                  [matBadgeHidden]="paperNotAssigned === 0"
+                  matBadgeColor="warn"
+                  matBadgePosition="above after"
+                  matBadgeOverlap="false">
+                {{ 'applications-register.applications-processing' | tlTranslate : 'cap' }}
+            </span>
+        </ng-template>
+
+        <applications-register fxFlexFill
+                               [service]="service"
+                               [applicationsService]="applicationsService"
+                               pageType="FileInPage"
+                               [processingPermissions]="processingPermissions">
+        </applications-register>
+    </mat-tab>
+
+    <mat-tab label="{{ 'applications-register.online-applications' | tlTranslate }}">
+        <ng-template matTabLabel>
+            <span [matBadge]="onlineNotAssigned"
+                  [matBadgeHidden]="onlineNotAssigned === 0"
+                  matBadgeColor="warn"
+                  matBadgePosition="above after"
+                  matBadgeOverlap="false">
+                {{ 'applications-register.online-applications' | tlTranslate : 'cap' }}
+            </span>
+        </ng-template>
+
+        <div *ngIf="onlineApplicationsLoaded">
+            <online-applications fxFlexFill
+                                 [service]="service"
+                                 [applicationsService]="applicationsService"
+                                 [processingPermissions]="processingPermissions">
+            </online-applications>
+        </div>
+    </mat-tab>
+</mat-tab-group>

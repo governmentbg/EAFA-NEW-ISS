@@ -27,6 +27,7 @@ export class ApplicationsRegisterFilters extends BaseRequestModel {
     public showAssignedApplications: boolean | undefined;
     public assignedToUserId: number | undefined;
     public showOnlyNotFinished: boolean | undefined;
+    public showOnlineApplications: boolean | undefined;
     public territoryUnitId: number | undefined;
     public submittedByPersonId: number | undefined;
     public submittedForPersonId: number | undefined;

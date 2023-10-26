@@ -7,6 +7,7 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { ApplicationsRegisterFilters } from '@app/models/generated/filters/ApplicationsRegisterFilters';
 import { IApplicationsActionsService } from '../common-app/application-actions.interface';
+import { ApplicationsNotAssignedDTO } from '@app/models/generated/dtos/ApplicationsNotAssignedDTO';
 
 export interface IApplicationsRegisterService extends IApplicationsActionsService {
     getAllApplications(request: GridRequestModel<ApplicationsRegisterFilters>): Observable<GridResultModel<ApplicationRegisterDTO>>;
@@ -17,6 +18,7 @@ export interface IApplicationsRegisterService extends IApplicationsActionsServic
     getApplicationStatuses(): Observable<NomenclatureDTO<number>[]>;
     getApplicationTypes(): Observable<NomenclatureDTO<number>[]>;
     getApplicationSources(): Observable<NomenclatureDTO<number>[]>;
+    getNotAssignedApplications(): Observable<ApplicationsNotAssignedDTO>;
 
     getSimpleAudit(id: number): Observable<SimpleAuditDTO>;
     getApplicationHistorySimpleAudit(id: number): Observable<SimpleAuditDTO>;
