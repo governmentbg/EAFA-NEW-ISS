@@ -1,4 +1,4 @@
-﻿<tl-data-table [showAddButton]="showAddButton"
+﻿<tl-data-table [showAddButton]="showAddButton && pageType !== 'OnlineApplPage'"
                [showInactiveRecords]="showInactiveRecords"
                (addButtonClicked)="createOrAssignApplication()"
                [recordsPerPage]="recordsPerPage">
@@ -66,7 +66,7 @@
             <span class="multi-line break-all-words">{{ row.data.eventisNum }}</span>
         </ng-template>
     </data-template-column>
-    <data-column *ngIf="pageType === 'FileInPage'"
+    <data-column *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'"
                  propertyName="accessCode"
                  [flexRate]="0.3"
                  columnName="{{ 'applications-register.application-access-code' | tlTranslate }}"></data-column>
@@ -215,7 +215,7 @@
                                 tooltipText="{{ 'applications-register.view-application' | tlTranslate }}"
                                 (buttonClicked)="openApplicationInViewMode(row.data)">
                 </tl-icon-button>
-                <tl-icon-button *ngIf="row.data.isActive && (pageType === 'DashboardPage' || pageType === 'FileInPage')"
+                <tl-icon-button *ngIf="row.data.isActive && (pageType === 'DashboardPage' || pageType === 'FileInPage' || pageType === 'OnlineApplPage')"
                                 icon="search"
                                 (buttonClicked)="showApplication(row.data)"
                                 iconClass="accent-color"
@@ -242,7 +242,7 @@
     <ng-container *ngIf="value.row.sourceCode === applicationSourceTypeEnum.Online">
         <ng-container [ngSwitch]="value.row.statusCode">
             <ng-container *ngSwitchCase="applicationStatusEnum.INITIAL">
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
                                     iconClass="error-color"
@@ -268,7 +268,7 @@
                 </ng-container>
             </ng-container>
             <ng-container *ngSwitchCase="applicationStatusEnum.FILL_BY_APPL">
-                <ng-container *ngIf="pageType === 'FileInPage' && value.row.assignedUser == undefined">
+                <ng-container *ngIf="(pageType === 'FileInPage' || pageType === 'OnlineApplPage') && value.row.assignedUser == undefined">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
                                     iconClass="error-color"
@@ -310,7 +310,7 @@
                 </ng-container>
             </ng-container>
             <ng-container *ngSwitchCase="applicationStatusEnum.APPL_FOR_SIGN">
-                <ng-container *ngIf="pageType === 'FileInPage' && value.row.assignedUser == undefined">
+                <ng-container *ngIf="(pageType === 'FileInPage' || pageType === 'OnlineApplPage') && value.row.assignedUser == undefined">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
                                     iconClass="error-color"
@@ -360,7 +360,7 @@
                 </ng-container>
             </ng-container>
             <ng-container *ngSwitchCase="applicationStatusEnum.UPLOADED_SIGNED">
-                <ng-container *ngIf="pageType === 'FileInPage' && value.row.assignedUser == undefined">
+                <ng-container *ngIf="(pageType === 'FileInPage' || pageType === 'OnlineApplPage') && value.row.assignedUser == undefined">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
                                     iconClass="error-color"
@@ -394,7 +394,7 @@
                 </ng-container>
             </ng-container>
             <ng-container *ngSwitchCase="applicationStatusEnum.EXT_CHK_STARTED">
-                <ng-container *ngIf="pageType === 'FileInPage' && value.row.assignedUser == undefined">
+                <ng-container *ngIf="(pageType === 'FileInPage' || pageType === 'OnlineApplPage') && value.row.assignedUser == undefined">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canCancelRecords"
                                     icon="ic-fluent-doc-prohibited-24-regular"
                                     iconClass="error-color"
@@ -423,7 +423,7 @@
                 </ng-container>
             </ng-container>
             <ng-container *ngSwitchCase="applicationStatusEnum.INSP_CORR_FROM_EMP">
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <ng-container *ngIf="value.row.assignedUser == undefined">
                         <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canInspectAndCorrectRecords"
                                         icon="ic-fluent-doc-question-mark-24-regular"
@@ -484,7 +484,7 @@
                 </ng-container>
             </ng-container>
             <ng-container *ngSwitchCase="applicationStatusEnum.CORR_BY_USR_NEEDED">
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canReAssignApplicationRecords"
                                     icon="ic-account-switch"
                                     iconClass="accent-color"
@@ -535,7 +535,7 @@
                 </ng-container>
             </ng-container>
             <ng-container *ngSwitchCase="applicationStatusEnum.WAIT_ENTRY">
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canEnterEventisNumber"
                                     icon="ic-fluent-doc-arrow-right-24-regular"
                                     iconClass="accent-color"
@@ -729,7 +729,7 @@
     <ng-container *ngIf="value.row.sourceCode === applicationSourceTypeEnum.OnPaper">
         <ng-container [ngSwitch]="value.row.statusCode">
             <ng-container *ngSwitchCase="applicationStatusEnum.INITIAL">
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canEnterEventisNumber"
                                     icon="ic-fluent-doc-arrow-right-24-regular"
                                     iconClass="accent-color"
@@ -762,7 +762,7 @@
                                     (buttonClicked)="cancellationActionClicked(value.row)">
                     </tl-icon-button>
                 </ng-container>
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canReAssignApplicationRecords"
                                     icon="ic-account-switch"
                                     iconClass="accent-color"
@@ -795,7 +795,7 @@
                                     (buttonClicked)="cancellationActionClicked(value.row)">
                     </tl-icon-button>
                 </ng-container>
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canReAssignApplicationRecords"
                                     icon="ic-account-switch"
                                     iconClass="accent-color"
@@ -829,7 +829,7 @@
                                     (buttonClicked)="cancellationActionClicked(value.row)">
                     </tl-icon-button>
                 </ng-container>
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canReAssignApplicationRecords"
                                     icon="ic-account-switch"
                                     iconClass="accent-color"
@@ -862,7 +862,7 @@
                                     (buttonClicked)="cancellationActionClicked(value.row)">
                     </tl-icon-button>
                 </ng-container>
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canReAssignApplicationRecords"
                                     icon="ic-account-switch"
                                     iconClass="accent-color"
@@ -903,7 +903,7 @@
                                     (buttonClicked)="cancellationActionClicked(value.row)">
                     </tl-icon-button>
                 </ng-container>
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canProcessPaymentData"
                                     icon="ic-fluent-person-money-24-filled"
                                     iconClass="accent-color"
@@ -951,7 +951,7 @@
                                     (buttonClicked)="cancellationActionClicked(value.row)">
                     </tl-icon-button>
                 </ng-container>
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canReAssignApplicationRecords"
                                     icon="ic-account-switch"
                                     iconClass="accent-color"
@@ -978,7 +978,7 @@
                                     (buttonClicked)="assignApplicationViaUserId(value.row)">
                     </tl-icon-button>
                 </ng-container>
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canReAssignApplicationRecords"
                                     icon="ic-account-switch"
                                     iconClass="accent-color"
@@ -1003,7 +1003,7 @@
     <ng-container *ngIf="value.row.sourceCode === applicationSourceTypeEnum.PaperShortProcess">
         <ng-container [ngSwitch]="value.row.statusCode">
             <ng-container *ngSwitchCase="applicationStatusEnum.INITIAL">
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canEnterEventisNumber"
                                     icon="ic-fluent-doc-arrow-right-24-regular"
                                     iconClass="accent-color"
@@ -1036,7 +1036,7 @@
                                     (buttonClicked)="cancellationActionClicked(value.row)">
                     </tl-icon-button>
                 </ng-container>
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canReAssignApplicationRecords"
                                     icon="ic-account-switch"
                                     iconClass="accent-color"
@@ -1069,7 +1069,7 @@
                                     (buttonClicked)="cancellationActionClicked(value.row)">
                     </tl-icon-button>
                 </ng-container>
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canReAssignApplicationRecords"
                                     icon="ic-account-switch"
                                     iconClass="accent-color"
@@ -1103,7 +1103,7 @@
                                     (buttonClicked)="cancellationActionClicked(value.row)">
                     </tl-icon-button>
                 </ng-container>
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canReAssignApplicationRecords"
                                     icon="ic-account-switch"
                                     iconClass="accent-color"
@@ -1136,7 +1136,7 @@
                                     (buttonClicked)="cancellationActionClicked(value.row)">
                     </tl-icon-button>
                 </ng-container>
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="processingPermissions.get(value.row.pageCode)?.canReAssignApplicationRecords"
                                     icon="ic-account-switch"
                                     iconClass="accent-color"
@@ -1170,7 +1170,7 @@
                                     (buttonClicked)="cancellationActionClicked(value.row)">
                     </tl-icon-button>
                 </ng-container>
-                <ng-container *ngIf="pageType === 'FileInPage'">
+                <ng-container *ngIf="pageType === 'FileInPage' || pageType === 'OnlineApplPage'">
                     <tl-icon-button *ngIf="userId === value.row.assignedUserId && processingPermissions.get(value.row.pageCode)?.canProcessPaymentData"
                                     icon="ic-fluent-person-money-24-filled"
                                     iconClass="accent-color"

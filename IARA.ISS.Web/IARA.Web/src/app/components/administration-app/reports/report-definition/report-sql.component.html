@@ -25,7 +25,7 @@
                            [isRemote]="false">
                 <ng-container *ngFor="let reportColumn of reportDisplayColumns">
                     <data-column columnName="{{ reportColumn.propertyDisplayName }}"
-                                 propertyName="{{ reportColumn.propertyName }}">
+                                 propertyName="{{ reportColumn.propertyDisplayName }}">
                     </data-column>
                 </ng-container>
             </tl-data-table>

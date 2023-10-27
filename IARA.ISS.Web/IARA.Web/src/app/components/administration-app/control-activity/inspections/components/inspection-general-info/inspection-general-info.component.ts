@@ -94,7 +94,6 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
             this.form.get('emergencySignalControl')!.setValue(value.byEmergencySignal === true);
         }
         else {
-            //this.form.get('reportNumberControl')!.setValue(this.translate.getValue('inspections.report-num-on-save'));
             this.form.get('inspectionStartDateControl')!.setValue(new Date());
             this.form.get('inspectionEndDateControl')!.setValue(this.getDateWith1HourInFuture());
             this.form.get('emergencySignalControl')!.setValue(false);
@@ -158,7 +157,7 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
         }
         else {
             if (!CommonUtils.isNullOrEmpty(this.numPrefix)) {
-                result.reportNum = this.numPrefix + this.form.get('reportNumberControl')!.value;
+                result.reportNum = this.numPrefix + this.handleNumber(this.form.get('reportNumberControl')!.value);
             }
         }
 
@@ -239,12 +238,13 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
 
                 newStr = newStr.slice();
             }
-            else {
-                newStr = reportNum;
-            }
 
             if (reportNum !== newStr) {
                 control.setValue(newStr);
+            }
+
+            if (parts.length > 2 || parts.some(x => x.length < 1)) {
+                return { invalidReportNumber: true };
             }
 
             return null;
@@ -279,11 +279,19 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
                     newStr = res.slice(0, 3) + '-' + res.slice(3, 6) + '-' + res.slice(6, 9) + '#' + res.slice(9);
                 }
 
-                newStr = newStr.slice();
+                newStr = newStr.slice(0);
+            }
+
+            if (newStr.length > 15) {
+                newStr = newStr.slice(0, 15);
             }
 
             if (reportNum !== newStr) {
                 control.setValue(newStr);
+            }
+
+            if (parts.length > 2 || parts.some(x => x.length < 1) || numParts.length !== 3 || numParts.some(x => x.length < 1)) {
+                return { invalidReportNumber: true };
             }
 
             return null;

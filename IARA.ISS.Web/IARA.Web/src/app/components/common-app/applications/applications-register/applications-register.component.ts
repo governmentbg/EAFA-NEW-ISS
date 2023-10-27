@@ -159,6 +159,10 @@ export class ApplicationsRegisterComponent<T extends IDialogComponent> implement
                 this.grid.advancedFilters = new ApplicationsRegisterFilters({ applicationId: applicationId });
             }
 
+            if (this.pageType === 'FileInPage') {
+                this.grid.advancedFilters = new ApplicationsRegisterFilters({ showOnlineApplications: false });
+            }
+
             const isPerson: boolean | undefined = window.history.state?.isPerson;
             const isSubmittedFor: boolean | undefined = window.history.state?.isSubmittedFor;
             const personReportId: number | undefined = Number(window.history.state?.id);
@@ -249,6 +253,13 @@ export class ApplicationsRegisterComponent<T extends IDialogComponent> implement
                         break;
                 }
             }
+        }
+
+        if (this.pageType === 'FileInPage') {
+            result.showOnlineApplications = false;
+        }
+        else {
+            result.showOnlineApplications = undefined;
         }
 
         return result;

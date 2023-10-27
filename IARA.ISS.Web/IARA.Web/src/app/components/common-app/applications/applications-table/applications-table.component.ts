@@ -65,7 +65,6 @@ import { ApplicationProcessingHasPermissions } from '../models/application-proce
 import { EditDialogInfo } from '../models/edit-dialog-info.model';
 import { FishingCapacityPublicService } from '@app/services/public-app/fishing-capacity-public.service';
 import { FishingCapacityAdministrationService } from '@app/services/administration-app/fishing-capacity-administration.service';
-import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { IncreaseFishingCapacityComponent } from '@app/components/common-app/fishing-capacity/increase-fishing-capacity/increase-fishing-capacity.component';
 import { ReduceFishingCapacityComponent } from '@app/components/common-app/fishing-capacity/reduce-fishing-capacity/reduce-fishing-capacity.component';
 import { TransferFishingCapacityComponent } from '@app/components/common-app/fishing-capacity/transfer-fishing-capacity/transfer-fishing-capacity.component';
@@ -96,7 +95,7 @@ import { WaitExternalChecksToFinishComponent } from '../components/wait-external
 import { AddApplicationResultDTO } from '@app/models/generated/dtos/AddApplicationResultDTO';
 
 const DIALOG_WIDTH: string = '1600px';
-export type ApplicationTablePageType = 'FileInPage' | 'DashboardPage' | 'ApplicationPage' | 'PublicPage';
+export type ApplicationTablePageType = 'FileInPage' | 'DashboardPage' | 'ApplicationPage' | 'PublicPage' | 'OnlineApplPage';
 
 @Component({
     selector: 'applications-table',
@@ -222,7 +221,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
     }
 
     public createOrAssignApplication(): void {
-        if (this.pageType === 'FileInPage') {
+        if (this.pageType === 'FileInPage' || this.pageType === 'OnlineApplPage') {
             const data: FileInApplicationDialogParams = new FileInApplicationDialogParams();
             const dialog = this.addApplicationRequestDialog.openWithTwoButtons({
                 title: this.translationService.getValue('applications-register.add-application-request-dialog-title'),
@@ -459,7 +458,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
     }
 
     public assignApplicationViaUserId(application: ApplicationRegisterDTO): void {
-        if (this.pageType === 'FileInPage' || this.pageType === 'ApplicationPage') { // Не се позволява присвояване в публичното и в таблото
+        if (this.pageType === 'FileInPage' || this.pageType === 'OnlineApplPage' || this.pageType === 'ApplicationPage') { // Не се позволява присвояване в публичното и в таблото
             const dialog = this.assignApplicationByUserIdDialog.openWithTwoButtons({
                 TCtor: AssignApplicationByUserComponent,
                 title: this.translationService.getValue('applications-register.assign-application-by-user-dialog-title'),
@@ -542,7 +541,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
         this.service.confirmNoErrorsAndFillAdmAct(applicationId, undefined, pageCode).subscribe({
             next: () => {
                 dialogClose();
-                
+
                 this.onAddedOrEditted.emit(applicationId);
             }
         });
@@ -983,7 +982,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
                 showRegixData = true;
             }
         }
-        else if (this.pageType === 'FileInPage') {
+        else if (this.pageType === 'FileInPage' || this.pageType === 'OnlineApplPage') {
             switch (applicationStatus) {
                 case ApplicationStatusesEnum.INSP_CORR_FROM_EMP: {
                     showOnlyRegiXData = true;
@@ -1037,7 +1036,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
             }
         }
 
-        if (this.pageType === 'FileInPage' || this.pageType === 'PublicPage') {
+        if (this.pageType === 'FileInPage' || this.pageType === 'OnlineApplPage' || this.pageType === 'PublicPage') {
             const editDialogInfo = this.getEditDialogInfo(pageCode as PageCodeEnum, false);
             this.editDialog = editDialogInfo!.editDialog;
             this.editDialogTCtor = editDialogInfo!.editDialogTCtor;

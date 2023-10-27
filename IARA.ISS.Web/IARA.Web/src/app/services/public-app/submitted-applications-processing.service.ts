@@ -19,6 +19,7 @@ import { RequestService } from '@app/shared/services/request.service';
 import { BaseAuditService } from '@app/services/common-app/base-audit.service';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
+import { ApplicationsNotAssignedDTO } from '@app/models/generated/dtos/ApplicationsNotAssignedDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -149,6 +150,10 @@ export class SubmittedApplicationsProcessingService extends BaseAuditService imp
     }
 
     public confirmNoErrorsAndFillAdmAct(id: number, model: any, pageCode?: PageCodeEnum): Observable<void> {
+        throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
+    }
+
+    public getNotAssignedApplications(): Observable<ApplicationsNotAssignedDTO> {
         throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
     }
 }

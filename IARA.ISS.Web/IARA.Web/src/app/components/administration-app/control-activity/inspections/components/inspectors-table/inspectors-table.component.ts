@@ -21,7 +21,6 @@ import { InspectionsService } from '@app/services/administration-app/inspections
     templateUrl: './inspectors-table.component.html'
 })
 export class InspectorsTableComponent extends CustomFormControl<InspectorDuringInspectionDTO[]> implements OnInit {
-
     @Input()
     public institutions: NomenclatureDTO<number>[] = [];
 
@@ -242,11 +241,13 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
     }
 
     private changeReportNumber(inspector: InspectorTableModel): void {
-        this.service.getNextReportNumber(inspector.userId!).subscribe({
-            next: (value) => {
-                this.headInspectorChanged.emit([inspector.territoryCode!, inspector.cardNum!, value!.num]);
-            }
-        })
+        if (!this.isDisabled) {
+            this.service.getNextReportNumber(inspector.userId!).subscribe({
+                next: (value) => {
+                    this.headInspectorChanged.emit([inspector.territoryCode!, inspector.cardNum!, value!.num]);
+                }
+            });
+        }
     }
 
     private inspectorsValidator(): ValidatorFn {

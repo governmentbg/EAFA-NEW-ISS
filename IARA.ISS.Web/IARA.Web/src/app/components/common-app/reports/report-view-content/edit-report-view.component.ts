@@ -32,8 +32,7 @@ export class EditReportViewComponent implements OnInit, IDialogComponent {
 
         this.groupTypes = [
             ReportTypesEnum[ReportTypesEnum.SQL],
-            ReportTypesEnum[ReportTypesEnum.JasperPDF],
-            ReportTypesEnum[ReportTypesEnum.JasperWord]
+            ReportTypesEnum[ReportTypesEnum.Jasper]
         ];
     }
 

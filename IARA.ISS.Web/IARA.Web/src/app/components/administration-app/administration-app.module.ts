@@ -187,6 +187,8 @@ import { FluxAcdrRequestsComponent } from './flux-vms-requests/flux-acdr-request
 import { EditFluxAcdrRequestsComponent } from './flux-vms-requests/flux-acdr-requests/edit-flux-acdr-request/edit-flux-acdr-request.component';
 import { UploadFluxAcdrRequestsComponent } from './flux-vms-requests/flux-acdr-requests/upload-flux-acdr-request/upload-flux-acdr-request.component';
 import { FishingActivityReportsComponent } from './fishing-activity-reports/fishing-activity-reports.component';
+import { OnlineApplicationsComponent } from './applications-processing/online-applications/online-applications.component';
+import { MatBadgeModule } from '@angular/material/badge';
 
 @NgModule({
     declarations: [
@@ -366,7 +368,8 @@ import { FishingActivityReportsComponent } from './fishing-activity-reports/fish
         FluxAcdrRequestsComponent,
         EditFluxAcdrRequestsComponent,
         UploadFluxAcdrRequestsComponent,
-        FishingActivityReportsComponent
+        FishingActivityReportsComponent,
+        OnlineApplicationsComponent
     ],
     imports: [
         TLCommonModule,
@@ -380,7 +383,8 @@ import { FishingActivityReportsComponent } from './fishing-activity-reports/fish
         TLAngularMapModule,
         IconPickerModule,
         MonacoEditorModule.forRoot(),
-        NgxJsonViewerModule
+        NgxJsonViewerModule,
+        MatBadgeModule
     ],
     exports: [
         ApplicationsProcessingComponent,
@@ -550,7 +554,8 @@ import { FishingActivityReportsComponent } from './fishing-activity-reports/fish
         FluxAcdrRequestsComponent,
         EditFluxAcdrRequestsComponent,
         UploadFluxAcdrRequestsComponent,
-        FishingActivityReportsComponent
+        FishingActivityReportsComponent,
+        OnlineApplicationsComponent
     ]
 })
 export class IARAApplicationModule {

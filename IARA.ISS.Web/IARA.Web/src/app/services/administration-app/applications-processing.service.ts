@@ -21,6 +21,7 @@ import { BaseAuditService } from '../common-app/base-audit.service';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { IPrintConfigurationsService } from '@app/components/common-app/applications/interfaces/print-cofigurations.interface';
 import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
+import { ApplicationsNotAssignedDTO } from '@app/models/generated/dtos/ApplicationsNotAssignedDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -134,6 +135,10 @@ export class ApplicationsProcessingService extends BaseAuditService implements I
             httpParams: params,
             responseTypeCtr: AssignedApplicationInfoDTO
         });
+    }
+
+    public getNotAssignedApplications(): Observable<ApplicationsNotAssignedDTO> {
+        return this.requestService.get(this.area, this.controller, 'GetNotAssignedApplications', { responseTypeCtr: ApplicationsNotAssignedDTO });
     }
 
     public editApplicationAndSendForCorrections(model: IApplicationRegister): Observable<void> {

@@ -1,4 +1,4 @@
-﻿import { Component } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 
 import { IApplicationsRegisterService } from '@app/interfaces/administration-app/applications-register.interface';
 import { IApplicationsService } from '@app/interfaces/administration-app/applications.interface';
@@ -7,18 +7,29 @@ import { ApplicationsAdministrationService } from '@app/services/administration-
 import { ApplicationsProcessingService } from '@app/services/administration-app/applications-processing.service';
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { ApplicationsNotAssignedDTO } from '@app/models/generated/dtos/ApplicationsNotAssignedDTO';
 
 @Component({
     selector: 'applications-processing',
     templateUrl: './applications-processing.component.html'
 })
-export class ApplicationsProcessingComponent {
+export class ApplicationsProcessingComponent implements OnInit {
     public service: IApplicationsRegisterService;
     public processingPermissions: Map<PageCodeEnum, ApplicationProcessingPermissions>;
     public applicationsService: IApplicationsService;
+    public translate: FuseTranslationLoaderService;
 
-    public constructor(service: ApplicationsProcessingService, applicationsService: ApplicationsAdministrationService) {
+    public onlineApplicationsLoaded: boolean = false;
+    public paperNotAssigned: number = 0;
+    public onlineNotAssigned: number = 0;
+
+    public constructor(service: ApplicationsProcessingService,
+        applicationsService: ApplicationsAdministrationService,
+        translate: FuseTranslationLoaderService
+    ) {
         this.service = service;
+        this.translate = translate;
         this.applicationsService = applicationsService;
 
         const applicationProcessingPermissions: ApplicationProcessingPermissions = new ApplicationProcessingPermissions({
@@ -75,5 +86,20 @@ export class ApplicationsProcessingComponent {
                 [PageCodeEnum.StatFormFishVessel, applicationProcessingPermissions]
             ]
         );
+    }
+
+    public ngOnInit(): void {
+        this.service.getNotAssignedApplications().subscribe({
+            next: (data: ApplicationsNotAssignedDTO) => {
+                this.paperNotAssigned = data.paperApplicationsCount!;
+                this.onlineNotAssigned = data.onlineApplicationsCount!;
+            }
+        });
+    }
+
+    public onTabChanged(index: number): void {
+        if (index === 1) {
+            this.onlineApplicationsLoaded = true;
+        }
     }
 }
