@@ -54,7 +54,7 @@ export class AuthService implements INotificationSecurity {
     private _userRegistrationInfo?: UserAuthDTO;
     private _userEmail?: string;
     private snackBarRef: MatSnackBar;
-    
+
     public startedUserInfoRequest: boolean = false;
     public startedAuthenticationCheck: boolean = false;
 
@@ -497,6 +497,10 @@ export class AuthService implements INotificationSecurity {
         else {
             this.redirectToHomePagePublicApp();
         }
+    }
+
+    public redirectToHomePagePublicAppNotAuthenticated(): void {
+        this.router.navigate(['/home']);
     }
 
     private redirectToUnauthorized(): void {

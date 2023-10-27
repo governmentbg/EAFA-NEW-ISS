@@ -12,6 +12,7 @@ import { SubmittedApplicationsComponent } from '@app/components/public-app/submi
 import { PermissionsEnum } from '../enums/permissions.enum';
 import { ITLNavigation } from './base/tl-navigation.interface';
 import { CatchesAndSalesPublicComponent } from '@app/components/public-app/catches-and-sales/catches-and-sales.component';
+import { HomePagePublicComponent } from '@app/components/public-app/home-page-public/home-page-public.component';
 
 export class Navigation {
     public static getMenu(isPublic: boolean): ITLNavigation[] {
@@ -19,6 +20,34 @@ export class Navigation {
     }
 
     public static Menu: ITLNavigation[] = [
+        {
+            id: 'home',
+            title: 'Home',
+            translate: 'navigation.home-page-public',
+            type: 'item',
+            icon: 'ic-home',
+            url: '/home',
+            permissions: [],
+            exceptPermissions: [
+                PermissionsEnum.OnlineSubmittedApplicationsRead,
+                PermissionsEnum.FishLogBookRead,
+                PermissionsEnum.FirstSaleLogBookRead,
+                PermissionsEnum.AdmissionLogBookRead,
+                PermissionsEnum.TransportationLogBookRead,
+                PermissionsEnum.AquacultureLogBookRead,
+                PermissionsEnum.TicketsPublicRead,
+                PermissionsEnum.TicketsPublicAddRecords,
+                PermissionsEnum.ScientificFishingRead,
+                PermissionsEnum.StatisticalFormsAquaFarmRead,
+                PermissionsEnum.StatisticalFormsReworkRead,
+                PermissionsEnum.StatisticalFormsFishVesselRead,
+                PermissionsEnum.AssociationsTicketsRead,
+                PermissionsEnum.AssociationsTicketsAddRecords,
+                PermissionsEnum.ReportRead
+            ],
+            component: HomePagePublicComponent,
+            isPublic: true,
+        },
         {
             id: 'news',
             title: 'News',

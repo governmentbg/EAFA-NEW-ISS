@@ -19,6 +19,8 @@ import { NewsDetailsComponent } from './news-details/news-details.component';
 import { CatchesAndSalesPublicComponent } from './catches-and-sales/catches-and-sales.component';
 import { StatisticalFormsComponent } from './statistical-forms/statistical-forms.component';
 import { ReportViewComponent } from './reports/report-view.component';
+import { HomePagePublicComponent } from './home-page-public/home-page-public.component';
+import { HomePageVideoComponent } from './home-page-public/home-page-video.component';
 
 @NgModule({
     declarations: [
@@ -35,7 +37,9 @@ import { ReportViewComponent } from './reports/report-view.component';
         PaymentRedirectPageComponent,
         CatchesAndSalesPublicComponent,
         StatisticalFormsComponent,
-        ReportViewComponent
+        ReportViewComponent,
+        HomePagePublicComponent,
+        HomePageVideoComponent
     ],
     imports: [
         TLCommonModule,
@@ -58,7 +62,9 @@ import { ReportViewComponent } from './reports/report-view.component';
         PaymentRedirectPageComponent,
         CatchesAndSalesPublicComponent,
         StatisticalFormsComponent,
-        ReportViewComponent
+        ReportViewComponent,
+        HomePagePublicComponent,
+        HomePageVideoComponent
     ]
 })
 export class IARAApplicationModule {

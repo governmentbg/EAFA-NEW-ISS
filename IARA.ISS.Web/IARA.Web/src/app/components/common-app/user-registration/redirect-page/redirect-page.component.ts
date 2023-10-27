@@ -20,7 +20,7 @@ export class RedirectPageComponent implements OnInit {
                         if (isAuthenticated) {
                             this.authService.redirectBasedOnUser();
                         } else if (IS_PUBLIC_APP) {
-                            this.authService.redirectToHome();
+                            this.authService.redirectToHomePagePublicAppNotAuthenticated();
                         }
                     });
                 } else {
