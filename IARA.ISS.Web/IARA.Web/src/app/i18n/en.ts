@@ -286,7 +286,7 @@
         'application-regix-checks': 'RegiX requests',
         'catches-and-sales-public': 'Catches and sales',
         'print-configurations': 'Print configurations',
-        'dashboard-public': 'Home'
+        'home-page-public': 'Home'
     },
     'user-registration': {
         'profile-registration-title': 'Profile registration',
@@ -602,7 +602,7 @@
         'last-name': 'Last Name',
         'role': 'Role',
         'email': 'Username/Email',
-        'egn': 'ЕГН/ЛНЧ',
+        'egn': 'EGN/PNF',
         'phone-number': 'Phone number',
         'territorial-unit': 'Territorial unit',
         'department': 'Department',
@@ -1411,8 +1411,8 @@
 
         'other-group': 'Other',
 
-        'applications-processing': 'Подадени на хартия заявления',
-        'online-applications': 'Онлайн подадени заявления'
+        'applications-processing': 'Paper applications',
+        'online-applications': 'Online applications'
     },
     'register-delivery': {
         'delivery-type': 'Delivery type',
@@ -2141,7 +2141,7 @@
         'ship-quota-leftover': 'Leftover quota (kg)',
         'ship-quota-view-history': 'Quota changes',
         'ship-quota-history-date': 'Date of change',
-        'ship-quota-history-size': 'Quota (кг)',
+        'ship-quota-history-size': 'Quota (kg)',
         'ship-quota-history-increment': 'Added/seized quota (kg)',
         'ship-quota-increment-reason': 'Reason',
         'ship-quota-view-catch-history': 'Catch history',
@@ -2381,23 +2381,7 @@
         'tickets-table-label': 'Pending tickets',
         'reference-label': 'Current applications waiting processing by type',
         'ticket-reference-label': 'Current tickets waiting processing by type',
-        'dialog-news-is-published': 'Published',
-        'registration': 'Registration',
-        'application-types': 'Application types',
-        'application-type-name': 'Service name',
-        'tickets': 'Recreational fishing ticket',
-        'associations': 'Associations',
-        'welcome': 'Welcome to EAFA portal',
-        'log-in-paragraph': ' Входът в портала се осъществява чрез регистрация на потребител или системата за електронна автентикация. Всяко едно от средставата за автентикация ще Ви позволи да достъпите портала, но за да заявите услуга по електронен път, е необходимо да притежавате и инсталирате на Вашия компютър  квалифициран електронен подпис (КЕП).',
-        'egov-paragraph': 'В случай, че желаете електронно връчване на документ е препоръчително да имате профил в системата за сигурно електронно връчване(може да се регистрирате ',
-        'here': 'here',
-        'epay-paragraph': 'Ако изберете опция за плащане на административната такса чрез системата за електронни плащания за централната и местна администрация, е необходимо да имате регистрация ',
-        'adobe-reader-paragraph': 'Необходимо е да да имате и инсталиран локално на компютъра си Adobe Reader (можете да изтеглите актуална версия ',
-        'associations-registration-paragraph': 'Сдружения, които искат да добавят нови потребители с права за издаване на билети за любителски риболов, е необходимо да преминат през процес за създаване на нов потребител(ако все още не е създаден) и подаване на Заявление за достъп на юридическо лице(безплатна услуга на ИАРА, която се заявява  с КЕП.) ',
-        'assotiations-paragraph': 'Сдружения със съществуващи потребители с права за издаване на билети за любителски риболов в старата система на ИАРА, е необходимо да влязат в настоящия портал със своите потребител и парола и да актуализират профилните си данни. След актуализацията потребителското име ще бъде заменено с посочения e- mail, а паролата ще остане същата(освен ако потребителят не я промени в меню „Моят профил“)',
-        'tickets-buy': 'За да закупите своя (или за лице под 14 години) електронен билет  за любителски риболов като физическо лице, е необходимо единствено да създадете потребител в публичния портал на ИАРА.',
-        'tickets-log-in': 'След вход в системата изберете бутон от лявото меню „Билет за любителски риболов“ и следвайте стъпките.',
-        'tickets-pay': 'Билетът може да бъде платен чрез системата на ePay, кредитна или дебитна карта или портала за електронни плащания за централната и местна администрация('
+        'dialog-news-is-published': 'Published'
     },
     'inspections': {
         'territory': 'Territory unit',
@@ -2741,28 +2725,28 @@
 
         'add-water-catch-dialog-title': 'Add aquatic organism',
         'edit-water-catch-dialog-title': 'Edit aquatic organism',
-        'view-water-catch-dialog-title': 'Review на aquatic organism',
+        'view-water-catch-dialog-title': 'Review aquatic organism',
         'water-catch-delete-dialog-title': 'Remove aquatic organism',
         'water-catch-delete-message': 'Are you sure you want to remove this aquatic organism?',
         'water-catch-delete-btn-label': 'Remove',
 
         'add-water-engine-dialog-title': 'Add engine',
         'edit-water-engine-dialog-title': 'Edit engine',
-        'view-water-engine-dialog-title': 'Review на engine',
+        'view-water-engine-dialog-title': 'Review engine',
         'water-engine-delete-dialog-title': 'Remove engine',
         'water-engine-delete-message': 'Are you sure you want to remove this engine?',
         'water-engine-delete-btn-label': 'Remove',
 
         'add-water-fishing-gear-dialog-title': 'Add fishing gear',
         'edit-water-fishing-gear-dialog-title': 'Edit fishing gear',
-        'view-water-fishing-gear-dialog-title': 'Review на fishing gear',
+        'view-water-fishing-gear-dialog-title': 'Review fishing gear',
         'water-fishing-gear-delete-dialog-title': 'Remove fishing gear',
         'water-fishing-gear-delete-message': 'Are you sure you want to remove this fishing gear?',
         'water-fishing-gear-delete-btn-label': 'Remove',
 
         'add-water-vessel-dialog-title': 'Add water vessel',
         'edit-water-vessel-dialog-title': 'Edit water vessel',
-        'view-water-vessel-dialog-title': 'Review на water vessel',
+        'view-water-vessel-dialog-title': 'Review water vessel',
         'water-vessel-delete-dialog-title': 'Remove water vessel',
         'water-vessel-delete-message': 'Are you sure you want to remove this water vessel?',
         'water-vessel-delete-btn-label': 'Remove',
@@ -3194,7 +3178,7 @@
         'show-past-permits': 'Show past/invalid permits as well',
         'permit': 'Permit',
         'permit-is-readonly-info': 'A ship must be chosen in order to chosee a permit',
-        'permit-registration-number': 'Номер на разрешително'
+        'permit-registration-number': 'Permit registration number'
     },
     'overlapping-log-books': {
         'there-are-overlapping-logb-books-main-message': 'There are log books that cannot be added in the system, because their page ranges overlap with page ranges of other already added log books.',
@@ -3798,7 +3782,7 @@
         'document-number-helper': 'Existing number of document for first sale, admission or transportation',
         'log-book-page-number-helper': 'Number of page for any kind of log book type (the returned log books are all in which this number is contained in their page range)',
 
-        'admission-page': 'Страница',
+        'admission-page': 'Page',
         'admission-declaration': 'Admission declaration',
         'admission-accepted-person-names': 'Accepted person',
         'admission-handover-date': 'Handover date',
@@ -3851,8 +3835,8 @@
         'view-first-sale-log-book-page': 'View first sale log book page',
         'edit-first-sale-log-book-page': 'Edit first sale log book page',
         'first-sale-page': 'Page',
-        'аquaculture-page': 'Page',
-        'аquaculture-filling-date': 'Filling date',
+        'aquaculture-page': 'Page',
+        'aquaculture-filling-date': 'Filling date',
         'aquaculture-buyer-name': 'Buyer',
         'aquaculture-production-information': 'Production information',
         'view-aquaculture-log-book-page': 'View aquaculture log book page',
@@ -6205,5 +6189,23 @@
         'update-print-configuration-dialog-cancel-btn-label': 'No',
 
         'print-configuration-already-exists-error': 'Already exists a configuration for this pair of application type and territory unit.'
+    },
+    'home-page-public': {
+        'registration': 'Registration',
+        'application-types': 'Application types',
+        'application-type-name': 'Service name',
+        'tickets': 'Recreational fishing ticket',
+        'associations': 'Associations',
+        'welcome': 'Welcome to EAFA portal',
+        'log-in-paragraph': 'Login to the portal is done through user registration or the eAuth system. Any of the means of authentication will allow you to access the portal, but in order to request a service electronically, it is necessary to have and install on your computer a qualified electronic signature ',
+        'egov-paragraph': 'You must have e-gov access in order to choose e-delivery as delivery type ',
+        'here': 'here',
+        'epay-paragraph': 'You must have e-pay access in order to choose e-pay as payment type ',
+        'adobe-reader-paragraph': 'You need to download Adobe Reader (you can download it ',
+        'associations-registration-paragraph': 'Associations wishing to add new users with recreational fishing ticketing rights need to go through the process of creating a new user (if not already created) and submitting an Application for Legal Entity Access ',
+        'assotiations-paragraph': 'Associations with existing users with rights to issue recreational fishing tickets in the old EAFA system, need to log into the current portal with their username and password and update their profile data. After the update, the username will be replaced with the specified e-mail, and the password will remain the same (unless the user changes it in the "My Profile" menu)',
+        'tickets-buy': 'To purchase your ticket for recreational fishing as an individual, you only need to create an account in the public portal of EAFA.',
+        'tickets-log-in': 'After login choose "Recreational fishing ticket" and follow the instructions',
+        'tickets-pay': 'You must have e-pay access in order to choose e-pay as payment type for your recreational ticket('
     }
 };

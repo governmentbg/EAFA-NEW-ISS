@@ -1,0 +1,19 @@
+﻿<div fxLayout="row" fxLayoutGap="1em">
+    <tl-card fxFlexFill>
+        <tl-card-content fxFlexFill>
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-icon-button fxFlex="15"
+                                [size]="2.5"
+                                icon="fa-play-circle"
+                                iconClass="accent-color"
+                                (buttonClicked)="redirectToVid()"
+                                [tooltipText]="tooltipText">
+                </tl-icon-button>
+
+                <div [style.font-size.em]="1.1" class="overflow" fxFlex="85">
+                    <a [href]="url" target="_blank" rel="noopener noreferrer">{{ title }}</a>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

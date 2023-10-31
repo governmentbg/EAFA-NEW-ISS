@@ -1,0 +1,154 @@
+﻿<div fxLayout="column" fxLayoutGap="1em" fxFlexFill>
+    <div fxLayout="row" class="header-size">
+        <img src="assets/images/fredrik-ohlander-CbeApl8sxxw-unsplash.jpg" class="image-size" />
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="1em">
+        <div fxFlex="40" fxLayoutGap="1em">
+            <tl-card>
+                <tl-card-title>{{ 'home-page-public.application-types' | tlTranslate }}</tl-card-title>
+
+                <tl-card-content fxLayoutGap="1em" fxLayout="column">
+                    <tl-data-table #table
+                                   [showAddButton]="false"
+                                   [showInactiveRecords]="false"
+                                   [isRemote]="false"
+                                   [rows]="applicationTypes"
+                                   [groupRowsByFieldName]="'groupId'"
+                                   class="custom-row-background">
+                        <group-header>
+                            <ng-template let-group="group"
+                                         let-expanded="expanded"
+                                         ngx-datatable-group-header-template>
+                                <div fxLayout="row" class="h-48" fxLayoutGap="1em">
+                                    <div fxFlex="32px"
+                                         fxLayout="column"
+                                         fxLayoutAlign="center center"
+                                         [class.datatable-icon-right]="!expanded"
+                                         [class.datatable-icon-down]="expanded"
+                                         class="accent-color"
+                                         (click)="toggleExpandGroup(group)"
+                                         *ngIf="group.value.length > 1">
+                                    </div>
+                                    <div fxFlex="32px"
+                                         *ngIf="group.value.length === 1">
+                                    </div>
+                                    <div fxFlex fxLayout="column" fxLayoutAlign="center start" *ngIf="group.value.length > 1">
+                                        <span class="overflow">
+                                            <b>{{ group.value[0].data.groupName }}</b>
+                                        </span>
+                                    </div>
+                                    <div fxFlex
+                                         fxLayout="column"
+                                         fxLayoutAlign="center start"
+                                         *ngIf="group.value.length === 1"
+                                         class="appl-type"
+                                         (click)="login()">
+                                        <span class="overflow">{{ group.value[0].data.displayName }}</span>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </group-header>
+
+                        <data-template-column [isSortable]="false"
+                                              columnName="{{ 'home-page-public.application-type-name' | tlTranslate }}">
+                            <ng-template let-row="row" ngx-datatable-cell-template>
+                                <div fxLayout="row" fxFlex="100" class="appl-type" (click)="login()">
+                                    <span>{{ row.data.displayName }}</span>
+                                </div>
+                            </ng-template>
+                        </data-template-column>
+                    </tl-data-table>
+                </tl-card-content>
+            </tl-card>
+        </div>
+
+        <div fxFlex="60" class="text-container-wrapper">
+            <div class="text-container">
+                <h1>{{ 'home-page-public.welcome' | tlTranslate }}</h1>
+                <p>
+                    {{ 'home-page-public.log-in-paragraph' | tlTranslate }}
+                </p>
+                <p>
+                    {{ 'home-page-public.egov-paragraph' | tlTranslate }}
+                    <a href="https://edelivery.egov.bg/" target="_blank" rel="noopener noreferrer">
+                        {{ 'home-page-public.here' | tlTranslate }}
+                    </a>.
+                </p>
+                <p>
+                    {{ 'home-page-public.epay-paragraph' | tlTranslate }}
+                    <a href="https://pay.egov.bg/" target="_blank" rel="noopener noreferrer">
+                        {{ 'home-page-public.here' | tlTranslate }}
+                    </a>.
+                </p>
+                <p>
+                    {{ 'home-page-public.adobe-reader-paragraph' | tlTranslate }}
+                    <a href="https://get.adobe.com/reader/" target="_blank" rel="noopener noreferrer">
+                        {{ 'home-page-public.here' | tlTranslate }}
+                    </a>).
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="1em">
+        <div fxFlex="50">
+            <tl-card>
+                <tl-card-title>{{ 'home-page-public.tickets' | tlTranslate }}</tl-card-title>
+
+                <tl-card-content fxLayoutGap="1em" fxLayout="column" class="text-size">
+                    <p>
+                        {{ 'home-page-public.tickets-buy' | tlTranslate }}
+                        {{ 'home-page-public.tickets-log-in' | tlTranslate }}
+                        {{ 'home-page-public.tickets-pay' | tlTranslate }}
+                        <a href="https://pay.egov.bg/" target="_blank" rel="noopener noreferrer">
+                            {{ 'home-page-public.here' | tlTranslate }}
+                        </a>).
+                    </p>
+
+                    <div *ngIf="!isAuthenticated" fxLayout="row" fxLayoutAlign="center center">
+                        <button mat-raised-button
+                                color="accent"
+                                (click)="login()">
+                            <tl-icon icon="fa-sign-in"></tl-icon>
+                            <span>{{ 'common.login' | tlTranslate : 'cap' }}</span>
+                        </button>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+        </div>
+
+        <div fxFlex="50">
+            <tl-card>
+                <tl-card-title>{{ 'home-page-public.associations' | tlTranslate }}</tl-card-title>
+
+                <tl-card-content fxLayoutGap="1em" fxLayout="column" class="text-size">
+                    <p>
+                        {{ 'home-page-public.assotiations-paragraph' | tlTranslate }}
+                    </p>
+
+                    <div *ngIf="!isAuthenticated" fxLayout="row" fxLayoutAlign="center center">
+                        <button mat-raised-button
+                                color="accent"
+                                (click)="login()">
+                            <tl-icon icon="fa-sign-in"></tl-icon>
+                            <span>{{ 'common.login' | tlTranslate : 'cap' }}</span>
+                        </button>
+                    </div>
+
+                    <p>
+                        {{ 'home-page-public.associations-registration-paragraph' | tlTranslate }}
+                    </p>
+
+                    <div *ngIf="!isAuthenticated" fxLayout="row" fxLayoutAlign="center center">
+                        <button mat-raised-button
+                                color="accent"
+                                (click)="redirectToRegistration()">
+                            {{ 'home-page-public.registration' | tlTranslate }}
+                        </button>
+                    </div>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </div>
+</div>
