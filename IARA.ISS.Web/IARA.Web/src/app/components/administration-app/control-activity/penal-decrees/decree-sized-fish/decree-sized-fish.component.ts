@@ -106,10 +106,11 @@ export class DecreeSizedFishComponent extends CustomFormControl<AuanConfiscatedF
 
         if (this.isAppliance) {
             this.seizedFishForm.get('applianceIdControl')!.setValidators(Validators.required);
-            this.seizedFishForm.get('countControl')!.setValidators(Validators.required);
+            this.seizedFishForm.get('countControl')!.setValidators([Validators.required, TLValidators.number(1, undefined, 0)]);
         }
         else {
             this.seizedFishForm.get('fishTypeIdControl')!.setValidators(Validators.required);
+            this.seizedFishForm.get('countControl')!.setValidators(TLValidators.number(1, undefined, 0));
 
             this.seizedFishForm.get('countControl')!.valueChanges.subscribe({
                 next: (event: RecordChangedEventArgs<AuanConfiscatedFishDTO>) => {

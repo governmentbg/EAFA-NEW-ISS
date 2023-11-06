@@ -68,6 +68,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
     public mobileDevicesMatCardTitleLabel!: string;
     public userFullName!: string;
     public legalStatusEnum: typeof UserLegalStatusEnum = UserLegalStatusEnum;
+    public userRolesTouched: boolean = false;
 
     public canRestoreRecords!: boolean;
     public isAdd: boolean = false;
@@ -184,6 +185,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         }
 
         this.editUserForm.markAllAsTouched();
+        this.userRolesTouched = true;
 
         if (this.editUserForm.valid) {
             if (actionInfo.id === 'deactivate') {
@@ -239,6 +241,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: (dialogResult?: any) => void): void {
         if (actionInfo.id === 'save') {
             this.editUserForm.markAllAsTouched();
+            this.userRolesTouched = true;
 
             if (this.editUserForm.valid) {
                 this.fillModel(this.editUserForm);
@@ -359,6 +362,8 @@ export class EditUserComponent implements OnInit, IDialogComponent {
     }
 
     public userRoleChanged(recordChangedEvent: RecordChangedEventArgs<RoleDTO>): void {
+        this.userRolesTouched = true;
+
         if (recordChangedEvent.Command === CommandTypes.Add || recordChangedEvent.Command === CommandTypes.Edit) {
             if (recordChangedEvent.Record.accessValidFrom === null
                 || recordChangedEvent.Record.accessValidFrom === undefined) {
@@ -370,6 +375,8 @@ export class EditUserComponent implements OnInit, IDialogComponent {
                 recordChangedEvent.Record.accessValidTo = new Date(9999, 0, 1);
             }
         }
+
+        this.editUserForm.updateValueAndValidity();
     }
 
     public userLegalsChanged(recordChangedEvent: RecordChangedEventArgs<UserLegalDTO>): void {
@@ -521,7 +528,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         this.editUserForm = new FormGroup({
             identificationDataControl: new FormControl(),
             usernameEmailGroup: new FormGroup({
-                emailControl: new FormControl(null, [Validators.email, Validators.maxLength(200)])
+                emailControl: new FormControl(null, [Validators.required, Validators.email, Validators.maxLength(200)])
             }, this.uniqueEmailValidator()),
             phoneNumberControl: new FormControl(null, Validators.maxLength(50)),
             userMustChangePasswordControl: new FormControl(false),
@@ -532,7 +539,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             positionControl: new FormControl(null, Validators.maxLength(500)),
             titleControl: new FormControl(null, Validators.maxLength(50)),
             mobileDevicesControl: new FormControl()
-        }, this.uniqueValidEgnLncValidator());
+        }, [this.uniqueValidEgnLncValidator(), this.userRolesValidator()]);
 
         this.editUserForm.get('identificationDataControl')!.valueChanges.subscribe({
             next: (regixData: RegixPersonDataDTO | undefined) => {
@@ -670,6 +677,17 @@ export class EditUserComponent implements OnInit, IDialogComponent {
                 return { 'invalidEgnLnc': true };
             }
 
+            return null;
+        }
+    }
+
+    private userRolesValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (this.isInternalUser && this.roleDataTable !== null && this.roleDataTable !== undefined) {
+                if (this.roleDataTable.rows.length === 0) {
+                    return { 'atLeastOneRoleNeeded': true };
+                }
+            }
             return null;
         }
     }

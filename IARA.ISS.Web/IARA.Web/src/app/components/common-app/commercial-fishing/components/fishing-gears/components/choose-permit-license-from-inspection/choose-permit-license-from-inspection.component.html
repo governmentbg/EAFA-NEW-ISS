@@ -1,0 +1,151 @@
+﻿<mat-vertical-stepper linear #stepper color="accent">
+    <mat-step [stepControl]="chooseShipAndYearGroup" [editable]="true">
+        <div [formGroup]="chooseShipAndYearGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span [ngClass]="{ 'error-color': chooseShipAndYearGroup.touched && chooseShipAndYearGroup.invalid }">
+                    {{ 'fishing-gears.choose-ship-and-year' | tlTranslate }}
+                </span>
+            </ng-template>
+
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-autocomplete fxFlex="70"
+                                 formControlName="shipControl"
+                                 [options]="ships"
+                                 label="{{ 'fishing-gears.choose-ship' | tlTranslate }}"
+                                 tooltipResourceName="fishing-gears.choose-ship-helper">
+                </tl-autocomplete>
+
+                <tl-date-year fxFlex="30"
+                              formControlName="yearControl"
+                              label="{{ 'fishing-gears.choose-year' | tlTranslate }}"
+                              tooltipResourceName="fishing-gears.choose-year-helper">
+                </tl-date-year>
+            </div>
+        </div>
+    </mat-step>
+
+    <mat-step [stepControl]="choosePermitLicenseGroup" [editable]="true">
+        <div [formGroup]="choosePermitLicenseGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span [ngClass]="{ 'error-color': choosePermitLicenseGroup.touched && choosePermitLicenseGroup.invalid }">
+                    {{ 'fishing-gears.choose-permit-license' | tlTranslate }}
+                </span>
+            </ng-template>
+
+            <div fxLayout="row">
+                <tl-autocomplete fxFlex="70"
+                                 formControlName="permitLicenseControl"
+                                 [options]="permitLicenses"
+                                 label="{{ 'fishing-gears.choose-permit-license-number' | tlTranslate }}"
+                                 tooltipResourceName="fishing-gears.choose-permit-license-helper">
+                </tl-autocomplete>
+            </div>
+        </div>
+    </mat-step>
+
+    <mat-step [editable]="true">
+        <div fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill
+             fxLayoutAlign="space-around stretch">
+            <ng-template matStepLabel>{{ 'fishing-gears.choose-fishing-gears' | tlTranslate }}</ng-template>
+
+            <div fxFlex="100">
+                <tl-input label="{{ 'fishing-gears.keyword-filter' | tlTranslate }}"
+                          [formControl]="filterControl">
+                </tl-input>
+            </div>
+
+            <div *ngIf="fishingGears.length > 0; else noFishingGears"
+                 fxFlex="100"
+                 fxLayout="column"
+                 fxLayoutGap="1em">
+                <tl-data-table #table
+                               [showAddButton]="false"
+                               [showInactiveRecords]="false"
+                               [rows]="fishingGears"
+                               [isRemote]="false"
+                               [rowClass]="getRowClass">
+                    <data-template-column [flexRate]="0.001">
+                        <ng-template ngx-datatable-cell-template
+                                     let-rowIndex="rowIndex"
+                                     let-value="value"
+                                     let-row="row">
+                            <label for="ep1{{ rowIndex }}" class="datatable-checkbox">
+                                <input type="checkbox"
+                                       id="choose-fishing-gear-{{ rowIndex }}"
+                                       [checked]="row.data['isChecked']"
+                                       (change)="checkedRow(row)" />
+                            </label>
+                        </ng-template>
+                    </data-template-column>
+
+                    <data-column [flexRate]="0.4"
+                                 propertyName="type"
+                                 columnName="{{ 'fishing-gears.type' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.2"
+                                 propertyName="count"
+                                 columnName="{{ 'fishing-gears.count' | tlTranslate }}">
+                    </data-column>
+
+                    <data-template-column [flexRate]="0.4" columnName="{{ 'fishing-gears.marks-numbers' | tlTranslate }}">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div fxLayout="row"
+                                 fxLayoutAlign="space-between center"
+                                 [matTooltip]="row.data.marksNumbers"
+                                 matTooltipClass="tooltip-no-truncate"
+                                 matTooltipShowDelay="500">
+                                <span class="text-ellipsis">
+                                    {{ row.data.marksNumbers }}
+                                </span>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+
+                    <data-column [flexRate]="0.2"
+                                 propertyName="length"
+                                 columnName="{{ 'fishing-gears.length' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.2"
+                                 propertyName="netEyeSize"
+                                 columnName="{{ 'fishing-gears.net-eye-size' | tlTranslate }}">
+                    </data-column>
+
+                    <data-column [flexRate]="0.2"
+                                 propertyName="description"
+                                 columnName="{{ 'fishing-gears.description' | tlTranslate }}">
+                    </data-column>
+                </tl-data-table>
+
+                <div *ngIf="touched && noFishingGearsChosenValidation; else numberOfSelectedItemsTemplate" fxLayout="row" fxFlex="100">
+                    <mat-error fxFlex="100">
+                        * {{ 'fishing-gears.no-fishing-gears-chosen-error' | tlTranslate }}
+                    </mat-error>
+                </div>
+
+                <ng-template #numberOfSelectedItemsTemplate>
+                    <div fxLayout="row" fxFlex="100" fxLayoutAlign="end center">
+                        <mat-hint fxFlex="100">
+                            {{ 'fishing-gears.choose-fishing-gears-from-inspection-count' | tlTranslate }}: {{ numberOfSelectedFishingGears }}
+                        </mat-hint>
+                    </div>
+                </ng-template>
+            </div>
+
+            <ng-template #noFishingGears>
+                <div fxFlex="100" fxLayout="row">
+                    <mat-error>{{ 'fishing-gears.no-fishing-gears-to-choose' | tlTranslate }}</mat-error>
+                </div>
+            </ng-template>
+        </div>
+    </mat-step>
+</mat-vertical-stepper>

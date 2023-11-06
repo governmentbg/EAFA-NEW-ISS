@@ -1,12 +1,12 @@
-﻿import { Observable } from "rxjs";
-import { PageCodeEnum } from "@app/enums/page-code.enum";
+﻿import { Observable } from 'rxjs';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
 
-import { GridRequestModel } from "@app/models/common/grid-request.model";
-import { GridResultModel } from "@app/models/common/grid-result.model";
-import { CommercialFishingEditDTO } from "@app/models/generated/dtos/CommercialFishingEditDTO";
-import { CommercialFishingPermitRegisterDTO } from "@app/models/generated/dtos/CommercialFishingPermitRegisterDTO";
-import { CommercialFishingRegisterFilters } from "@app/models/generated/filters/CommercialFishingRegisterFilters";
-import { IApplicationsActionsService } from "./application-actions.interface";
+import { GridRequestModel } from '@app/models/common/grid-request.model';
+import { GridResultModel } from '@app/models/common/grid-result.model';
+import { CommercialFishingEditDTO } from '@app/models/generated/dtos/CommercialFishingEditDTO';
+import { CommercialFishingPermitRegisterDTO } from '@app/models/generated/dtos/CommercialFishingPermitRegisterDTO';
+import { CommercialFishingRegisterFilters } from '@app/models/generated/filters/CommercialFishingRegisterFilters';
+import { IApplicationsActionsService } from './application-actions.interface';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { CommercialFishingApplicationEditDTO } from '@app/models/generated/dtos/CommercialFishingApplicationEditDTO';
@@ -20,6 +20,9 @@ import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
 import { PermitLicenseTariffCalculationParameters } from '@app/components/common-app/commercial-fishing/models/permit-license-tariff-calculation-parameters.model';
 import { SuspensionDataDTO } from '@app/models/generated/dtos/SuspensionDataDTO';
 import { ISuspensionService } from './suspension.interface';
+import { InspectedPermitLicenseNomenclatureDTO } from '@app/models/generated/dtos/InspectedPermitLicenseNomenclatureDTO';
+import { FishingGearForChoiceDTO } from '@app/models/generated/dtos/FishingGearForChoiceDTO';
+import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 
 export interface ICommercialFishingService extends IApplicationsActionsService, ISuspensionService {
     getAllPermits(request: GridRequestModel<CommercialFishingRegisterFilters>): Observable<GridResultModel<CommercialFishingPermitRegisterDTO>>;
@@ -67,6 +70,9 @@ export interface ICommercialFishingService extends IApplicationsActionsService, 
     getSuspensionReasons(): Observable<SuspensionReasonNomenclatureDTO[]>;
     getPermitNomenclatures(shipId: number, showPastPermits: boolean, onlyPoundNet: boolean): Observable<PermitNomenclatureDTO[]>;
     calculatePermitLicenseAppliedTariffs(tariffCalculationParameters: PermitLicenseTariffCalculationParameters): Observable<PaymentTariffDTO[]>;
+    getShipPermitLicensesFromInspection(shipId: number): Observable<InspectedPermitLicenseNomenclatureDTO[]>;
+    getShipFishingGearsFromInspection(inspectionId: number): Observable<FishingGearForChoiceDTO[]>;
+    getFishingGearsForIds(gearIds: number[]): Observable<FishingGearDTO[]>;
 
     getSimpleAudit(id: number): Observable<SimpleAuditDTO>;
     getPermitLicenseSimpleAudit(id: number): Observable<SimpleAuditDTO>;

@@ -1,4 +1,4 @@
-﻿import { Component, DoCheck, Input, OnInit, Self, SimpleChanges, ViewChild } from '@angular/core';
+﻿import { Component, Input, OnInit, Self, ViewChild } from '@angular/core';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
@@ -9,12 +9,15 @@ import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interf
 import { ICommercialFishingService } from '@app/interfaces/common-app/commercial-fishing.interface';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
-import { AbstractControl, ControlValueAccessor, FormControl, NgControl, ValidationErrors, Validator, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormControl, NgControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { EditFishingGearDialogParamsModel } from './models/edit-fishing-gear-dialog-params.model';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
+import { ChoosePermitLicenseFromInspectionComponent } from './components/choose-permit-license-from-inspection/choose-permit-license-from-inspection.component';
+import { ChoosePermitLicenseFromInspectionDialogParams } from './components/choose-permit-license-from-inspection/models/choose-permit-license-from-inspection-dialog-params.model';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 
 @Component({
     selector: 'fishing-gears',
@@ -36,7 +39,14 @@ export class FishingGearsComponent extends CustomFormControl<FishingGearDTO[]> i
     @Input()
     public pageCode: PageCodeEnum | undefined;
 
+    @Input()
+    public shipId: number | undefined;
+
+    @Input()
+    public ships: ShipNomenclatureDTO[] = [];
+
     public fishingGears: FishingGearDTO[] = [];
+    public isPublicApp: boolean;
 
     @ViewChild('fishingGearsTable')
     private fishingGearsTable!: TLDataTableComponent;
@@ -44,19 +54,21 @@ export class FishingGearsComponent extends CustomFormControl<FishingGearDTO[]> i
     private translate: FuseTranslationLoaderService;
     private confirmDialog: TLConfirmDialog;
     private editFishingGearDialog: TLMatDialog<EditFishingGearComponent>;
-    private isPublicApp: boolean;
+    private choosePermitLicenseFromInspectionDialog: TLMatDialog<ChoosePermitLicenseFromInspectionComponent>;
 
     public constructor(
         @Self() ngControl: NgControl,
         translate: FuseTranslationLoaderService,
         confirmDialog: TLConfirmDialog,
-        editFishingGearDialog: TLMatDialog<EditFishingGearComponent>
+        editFishingGearDialog: TLMatDialog<EditFishingGearComponent>,
+        choosePermitLicenseFromInspectionDialog: TLMatDialog<ChoosePermitLicenseFromInspectionComponent>
     ) {
         super(ngControl, false);
 
         this.translate = translate;
         this.confirmDialog = confirmDialog;
         this.editFishingGearDialog = editFishingGearDialog;
+        this.choosePermitLicenseFromInspectionDialog = choosePermitLicenseFromInspectionDialog;
         this.isPublicApp = IS_PUBLIC_APP;
     }
 
@@ -182,6 +194,39 @@ export class FishingGearsComponent extends CustomFormControl<FishingGearDTO[]> i
                     this.control.updateValueAndValidity();
                     this.onChanged(this.getValue());
                 }
+            }
+        });
+    }
+
+    public choosePermitLicenseFromInspection(): void {
+        const dialog = this.choosePermitLicenseFromInspectionDialog.openWithTwoButtons({
+            title: this.translate.getValue('fishing-gears.choose-permit-license-from-inspection-dialog-title'),
+            componentData: new ChoosePermitLicenseFromInspectionDialogParams({
+                shipId: this.shipId,
+                service: this.service,
+                ships: this.ships
+            }),
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            translteService: this.translate,
+            TCtor: ChoosePermitLicenseFromInspectionComponent
+        }, '1500px');
+
+        dialog.subscribe((gearIds: number[] | null | undefined) => {
+            if (gearIds !== null && gearIds !== undefined && gearIds.length > 0) {
+                this.service.getFishingGearsForIds(gearIds).subscribe({
+                    next: (gears: FishingGearDTO[]) => {
+                        if (gears.length > 0) { 
+                            this.fishingGears.push(...gears);
+                            this.fishingGears = this.fishingGears.slice();
+                            
+                            this.control.markAsTouched();
+                            this.control.updateValueAndValidity();
+                            this.onChanged(this.getValue());
+                        }
+                    }
+                });
             }
         });
     }

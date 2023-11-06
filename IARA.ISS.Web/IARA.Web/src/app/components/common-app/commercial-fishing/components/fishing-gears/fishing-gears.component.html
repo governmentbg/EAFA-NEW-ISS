@@ -6,6 +6,16 @@
                    [showAddButton]="!isReadonly && !isDisabled"
                    [showInactiveRecords]="true"
                    (addButtonClicked)="addEditFishingGear()">
+        <div *ngIf="isApplication && !isReadonly && !isPublicApp"
+             datatable-add-buttons
+             fxLayout="row"
+             fxLayoutGap="1em">
+            <button mat-raised-button color="accent"
+                    (click)="choosePermitLicenseFromInspection()"
+                    style="margin-left:auto;">
+                {{ 'fishing-gears.choose-permit-license-from-inspection' | tlTranslate }}
+            </button>
+        </div>
         <data-column [flexRate]="0.4"
                      propertyName="type"
                      columnName="{{ 'fishing-gears.type' | tlTranslate }}">
@@ -16,8 +26,8 @@
         </data-column>
         <data-template-column [flexRate]="0.4" columnName="{{ 'fishing-gears.marks-numbers' | tlTranslate }}">
             <ng-template let-row="row" ngx-datatable-cell-template>
-                <div fxLayout="row" 
-                     fxLayoutAlign="space-between center" 
+                <div fxLayout="row"
+                     fxLayoutAlign="space-between center"
                      [matTooltip]="row.data.marksNumbers"
                      matTooltipClass="tooltip-no-truncate"
                      matTooltipShowDelay="500">

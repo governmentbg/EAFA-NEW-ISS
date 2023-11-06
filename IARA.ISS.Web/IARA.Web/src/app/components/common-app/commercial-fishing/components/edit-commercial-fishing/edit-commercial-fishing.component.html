@@ -503,7 +503,9 @@
                                [isApplication]="isApplication"
                                [service]="service"
                                [maxNumberOfFishingGears]="maxNumberOfFishingGears"
-                               [pageCode]="pageCode">
+                               [pageCode]="pageCode"
+                               [ships]="ships"
+                               [shipId]="shipId">
                 </fishing-gears>
             </div>
             <mat-error *ngIf="form.touched && form.get('fishingGearsGroup')!.errors?.atLeastOneFishingGear">

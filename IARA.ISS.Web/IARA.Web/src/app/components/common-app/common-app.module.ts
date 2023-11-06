@@ -55,6 +55,7 @@ import { ChoosePermitLicenseForRenewalComponent } from './commercial-fishing/com
 import { ChoosePermitToCopyFromComponent } from './commercial-fishing/components/choose-permit-to-copy-from/choose-permit-to-copy-from.component';
 import { EditCommercialFishingComponent } from './commercial-fishing/components/edit-commercial-fishing/edit-commercial-fishing.component';
 import { EditLogBookComponent } from './commercial-fishing/components/edit-log-book/edit-log-book.component';
+import { ChoosePermitLicenseFromInspectionComponent } from './commercial-fishing/components/fishing-gears/components/choose-permit-license-from-inspection/choose-permit-license-from-inspection.component';
 import { EditFishingGearComponent } from './commercial-fishing/components/fishing-gears/components/edit-fishing-gear.component';
 import { GenerateMarksComponent } from './commercial-fishing/components/fishing-gears/components/generate-marks/generate-marks.component';
 import { FishingGearsComponent } from './commercial-fishing/components/fishing-gears/fishing-gears.component';
@@ -209,7 +210,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         PrintConfigurationsDialogComponent,
         AssignApplicationByUserComponent,
         WaitExternalChecksToFinishComponent,
-        SuspensionsComponent
+        SuspensionsComponent,
+        ChoosePermitLicenseFromInspectionComponent
     ],
     imports: [
         TLCommonModule,
@@ -316,7 +318,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         PrintConfigurationsDialogComponent,
         AssignApplicationByUserComponent,
         WaitExternalChecksToFinishComponent,
-        SuspensionsComponent
+        SuspensionsComponent,
+       // ChoosePermitLicenseFromInspectionComponent
     ],
     providers: [CurrencyPipe, TLDateDifferencePipe, DatePipe]
 })

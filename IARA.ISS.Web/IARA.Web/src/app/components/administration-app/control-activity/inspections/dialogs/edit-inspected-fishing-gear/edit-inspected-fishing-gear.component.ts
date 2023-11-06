@@ -342,6 +342,10 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
             marksNumbers: gear.marksNumbers,
             netEyeSize: gear.netEyeSize,
             towelLength: gear.towelLength,
+            netNominalLength: gear.netNominalLength,
+            netsInFleetCount: gear.netsInFleetCount,
+            lineCount: gear.lineCount,
+            trawlModel: gear.trawlModel,
             type: gear.type,
             typeId: gear.typeId,
             permitId: gear.permitId
