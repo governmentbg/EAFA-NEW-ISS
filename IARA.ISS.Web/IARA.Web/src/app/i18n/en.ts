@@ -680,7 +680,8 @@
         'change-user-message': 'Are you sure you want to make this user internal?',
         'change-user-ok-btn-label': '',
         'change-user-cancel-btn-label': 'Cancel',
-        'title': 'Title'
+        'title': 'Title',
+        'at-least-one-role-needed-error': 'At least one role is needed'
     },
     'legal-entities-page': {
         'legal-entity-register-title': 'legal entity access',
@@ -3117,7 +3118,10 @@
         'view-permit-suspension-history-dialog-title': 'View suspensions for permit with number',
         'change-permit-suspension-history-dialog-title': 'Change suspensions for permit with number',
         'view-permit-license-suspension-history-dialog-title': 'View suspensions for permit licese with number',
-        'change-permit-license-suspension-history-dialog-title': 'Change suspensions for permit license with number'
+        'change-permit-license-suspension-history-dialog-title': 'Change suspensions for permit license with number',
+
+        'permit-license-nomenclature-inspection-num': 'Report num',
+        'permit-license-nomenclature-year': 'Year'
     },
     'suspensions': {
         'suspension-type': 'Type',
@@ -3256,6 +3260,19 @@
         'generate-marks-from-range-confirm-message': 'Are you sure that you want to generate this number of marks',
         'generate': 'Generate',
         'height': 'Height',
+
+        'choose-ship-and-year': 'Ship and year',
+        'choose-ship': 'Ship',
+        'choose-year': 'Year',
+        'choose-permit-license': 'Inspected permit license',
+        'choose-permit-license-number': 'Inspected permit license number',
+        'choose-fishing-gears': 'Fishing gears',
+        'keyword-filter': 'Keyword search',
+        'no-fishing-gears-to-choose': 'There are no fishing gears with these filters for the chosen ship and permit license',
+        'choose-permit-license-from-inspection': 'Copy from inspected permit license',
+        'choose-permit-license-from-inspection-dialog-title': 'Choose fishing gears from inspected permit license',
+        'choose-fishing-gears-from-inspection-count': 'Fishing gears count',
+        'no-fishing-gears-chosen-error': 'At least one fishing gear must be chosen',
 
         'type-helper': '',
         'count-helper': '',

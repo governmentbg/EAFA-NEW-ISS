@@ -47,6 +47,9 @@ import { ShipLogBookPageRegisterDTO } from '@app/models/generated/dtos/ShipLogBo
 import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 import { SuspensionDataDTO } from '@app/models/generated/dtos/SuspensionDataDTO';
 import { ISuspensionService } from '@app/interfaces/common-app/suspension.interface';
+import { InspectedPermitLicenseNomenclatureDTO } from '@app/models/generated/dtos/InspectedPermitLicenseNomenclatureDTO';
+import { FishingGearForChoiceDTO } from '@app/models/generated/dtos/FishingGearForChoiceDTO';
+import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -975,6 +978,44 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
 
             return permits;
         }));
+    }
+
+    public getShipPermitLicensesFromInspection(shipId: number): Observable<InspectedPermitLicenseNomenclatureDTO[]> {
+        const params: HttpParams = new HttpParams().append('shipId', shipId.toString());
+
+        return this.requestService.get<InspectedPermitLicenseNomenclatureDTO[]>(this.area, this.controller, 'GetShipPermitLicensesFromInspection', {
+            httpParams: params,
+            responseTypeCtr: InspectedPermitLicenseNomenclatureDTO
+        }).pipe(map((licenses: InspectedPermitLicenseNomenclatureDTO[]) => {
+            for (const license of licenses) {
+                const inspection: string = this.translate.getValue('commercial-fishing.permit-license-nomenclature-inspection-num'); 
+                const year: string = this.translate.getValue('commercial-fishing.permit-license-nomenclature-year'); 
+
+                if (license.displayName !== null && license.displayName !== undefined && license.displayName.length > 0) {
+                    license.displayName += ` | ${year}: ${license.year} | ${inspection}: ${license.inspectionReportNum}`;
+                }
+                else {
+                    license.displayName = `${year}: ${license.year} | ${inspection}: ${license.inspectionReportNum}`;
+                }
+            }
+
+            return licenses;
+        }));
+    }
+
+    public getShipFishingGearsFromInspection(inspectionId: number): Observable<FishingGearForChoiceDTO[]> {
+        const params: HttpParams = new HttpParams().append('inspectionId', inspectionId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetShipFishingGearsFromInspection', {
+            httpParams: params,
+            responseTypeCtr: FishingGearForChoiceDTO
+        });
+    }
+
+    public getFishingGearsForIds(gearIds: number[]): Observable<FishingGearDTO[]> {
+        return this.requestService.post(this.area, this.controller, 'GetFishingGearsForIds', gearIds, {
+            responseTypeCtr: FishingGearDTO
+        });
     }
 
     // helpers

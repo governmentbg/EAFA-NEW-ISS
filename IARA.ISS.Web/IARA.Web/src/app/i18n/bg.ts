@@ -675,7 +675,8 @@
         'username-already-exists-error': 'Въведеното потребителско име вече съществува в системата',
         'email-already-exists-error': 'Въведеният имейл вече съществува в системата',
         'must-have-one-valid-egn-lnc-error': 'В системата вече има валиден потребител с посоченото ЕГН/ЛНЧ',
-        'dates-overlap-with-other-record': 'Датите за валидност се припокриват с друг запис за този потребител'
+        'dates-overlap-with-other-record': 'Датите за валидност се припокриват с друг запис за този потребител',
+        'at-least-one-role-needed-error': 'Необходимо е да бъде въведена поне една роля'
     },
     'legal-entities-page': {
         'legal-entity-register-title': 'Достъп на юридически лица',
@@ -3171,7 +3172,10 @@
         'view-permit-suspension-history-dialog-title': 'Преглед на прекратявания на разрешително с номер',
         'change-permit-suspension-history-dialog-title': 'Промяна на прекратявания на разрешително с номер',
         'view-permit-license-suspension-history-dialog-title': 'Преглед на прекратявания на удостоверение с номер',
-        'change-permit-license-suspension-history-dialog-title': 'Промяна на прекратявания на удостоверение с номер'
+        'change-permit-license-suspension-history-dialog-title': 'Промяна на прекратявания на удостоверение с номер',
+
+        'permit-license-nomenclature-inspection-num': 'Номер на проверка',
+        'permit-license-nomenclature-year': 'Година'
     },
     'suspensions': {
         'suspension-type': 'Тип',
@@ -3310,6 +3314,19 @@
         'generate-marks-from-range-confirm-dialog-title': 'Потвърждение за генериране на голям диапазон от марки',
         'generate-marks-from-range-confirm-message': 'Сигурни ли сте, че искате да генерирате следния брой марки',
         'generate': 'Генерирай',
+
+        'choose-ship-and-year' : 'Избор на кораб и година',
+        'choose-ship' : 'Кораб',
+        'choose-year' : 'Година',
+        'choose-permit-license' : 'Избор на нерегистрирано удостоверение от инспекция',
+        'choose-permit-license-number': 'Номер на нерегистрирано удостоверение от инспекция',
+        'choose-fishing-gears': 'Риболовни уреди',
+        'keyword-filter': 'Търсене по ключова дума',
+        'no-fishing-gears-to-choose': 'Няма риболовни уреди с приложените филтри за избраните кораб и удостоверение',
+        'choose-permit-license-from-inspection': 'Добави уреди от проверка и маркировка',
+        'choose-permit-license-from-inspection-dialog-title': 'Избор на риболовни уреди от инспектирано удостоверение',
+        'choose-fishing-gears-from-inspection-count': 'Брой избрани риболовни уреди',
+        'no-fishing-gears-chosen-error': 'Трябва да бъде избран поне един риболовен уред',
 
         'type-helper': '',
         'count-helper': '',

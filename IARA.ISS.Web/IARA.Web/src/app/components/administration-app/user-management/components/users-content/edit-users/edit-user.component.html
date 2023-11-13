@@ -94,7 +94,9 @@
 
     <tl-card tooltipResourceName="users-page.role-helper">
         <tl-card-title fxFlex="row">{{  'users-page.role' | tlTranslate }}</tl-card-title>
-        <tl-card-content>
+        <tl-card-content fxFlex="100"
+                         fxLayout="column"
+                         fxLayoutGap="1em">
             <tl-data-table #roleDataTable
                            fxFlexFill
                            fxLayoutGap="1em"
@@ -126,6 +128,10 @@
                 </data-column>
                 <data-column-inline [flexRate]="0.3" *ngIf="!readOnly"></data-column-inline>
             </tl-data-table>
+
+            <mat-error *ngIf="userRolesTouched && editUserForm.errors?.atLeastOneRoleNeeded === true" fxFlex="100">
+                * {{ 'users-page.at-least-one-role-needed-error' | tlTranslate }}
+            </mat-error>
         </tl-card-content>
     </tl-card>
 

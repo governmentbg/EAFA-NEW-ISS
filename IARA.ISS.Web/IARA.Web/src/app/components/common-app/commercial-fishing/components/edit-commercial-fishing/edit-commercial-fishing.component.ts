@@ -40,7 +40,6 @@ import { CommercialFishingValidationErrorsEnum } from '@app/enums/commercial-fis
 import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
-import { GridRow } from '@app/shared/components/data-table/models/row.model';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
 import { CommercialFishingLogBookEditDTO } from '@app/models/generated/dtos/CommercialFishingLogBookEditDTO';
@@ -52,7 +51,6 @@ import { RecordChangedEventArgs } from '@app/shared/components/data-table/models
 import { CommandTypes } from '@app/shared/components/data-table/enums/command-type.enum';
 import { SuspensionDataDTO } from '@app/models/generated/dtos/SuspensionDataDTO';
 import { SuspnesionDataDialogParams } from '../../models/suspnesion-data-dialog-params.model';
-import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 import { LogBookGroupsEnum } from '@app/enums/log-book-groups.enum';
@@ -183,6 +181,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public readonly logBookGroup: LogBookGroupsEnum = LogBookGroupsEnum.Ship;
     public readonly disabledAddBtnTooltipText: string;
     public permitLicenseRegisterId: number | undefined;
+    public shipId: number | undefined;
 
     public ships: ShipNomenclatureDTO[] = [];
     public qualifiedFishers: QualifiedFisherNomenclatureDTO[] = []; // needed only when isApplication is FALSE
@@ -191,6 +190,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public aquaticOrganismTypes: FishNomenclatureDTO[] = [];
     public quotaAquaticOrganismTypes: FishNomenclatureDTO[] = []; // need only for CatchQuotaSpecies Permit License
     public selectedAquaticOrganismTypes: FishNomenclatureDTO[] = []; // for Permit License only (when pageCode !== CatchQuotaSpecies)
+    public waterAquaticOrganismTypes: FishNomenclatureDTO[] = []; 
     public holderShipRelations: NomenclatureDTO<boolean>[] = [];
     public groundForUseTypes: NomenclatureDTO<number>[] = [];
     public poundNets: IGroupedOptions<number>[] = []; // needed only when Permit/Permit License is for pound net
@@ -701,6 +701,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 if (errorValue === true) {
                     return new TLError({ text: this.translationService.getValue('commercial-fishing.no-permit-register-for-permit-license'), type: 'error' });
                 }
+                break;
             case 'poundNetAlreadyHasPermit':
                 if (errorValue === true) {
                     return new TLError({ text: this.translationService.getValue('commercial-fishing.pound-net-already-has-valid-permit'), type: 'error' });
@@ -778,10 +779,12 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     this.selectedShipIsThirdCountryError = false;
                     this.selectedShipIsNotThirdCountryError = false;
                     this.hasNoPermitRegisterForPermitLicenseError = false;
+                    this.shipId = undefined;
 
                     if (!this.isPublicApp && this.isPermitLicense && this.isApplication && !this.showOnlyRegiXData) {
                         if (ship !== null && ship !== undefined && ship instanceof NomenclatureDTO) {
                             this.noShipSelected = false;
+                            this.shipId = ship.value;
                             this.getShipPermitsNomenclature(ship.value!);
                         }
                         else {
@@ -1235,12 +1238,14 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     setTimeout(() => {
                         this.selectedAquaticOrganismTypes = this.selectedAquaticOrganismTypes.filter(x => x.isBlackSea);
                         this.aquaticOrganismTypes = this.allAquaticOrganismTypes.filter(x => x.isBlackSea && !this.selectedAquaticOrganismTypes.includes(x))
+                        this.waterAquaticOrganismTypes  = this.allAquaticOrganismTypes.filter(x => x.isBlackSea);
                     });
                 } break;
                 case WaterTypesEnum.DANUBE: {
                     setTimeout(() => {
                         this.selectedAquaticOrganismTypes = this.selectedAquaticOrganismTypes.filter(x => x.isDanube);
                         this.aquaticOrganismTypes = this.allAquaticOrganismTypes.filter(x => x.isDanube && !this.selectedAquaticOrganismTypes.includes(x))
+                        this.waterAquaticOrganismTypes = this.allAquaticOrganismTypes.filter(x => x.isDanube);
                     });
                 } break;
             }
@@ -2405,7 +2410,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         this.service.getPermitNomenclatures(shipId, false, this.pageCode === PageCodeEnum.PoundnetCommFishLic).subscribe({
             next: (values: PermitNomenclatureDTO[]) => {
                 this.allPermits = values;
-
                 this.filterPermitsByWaterTypeAndSelectIfOne();
             }
         });
@@ -2553,7 +2557,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 this.selectedAquaticOrganismTypes = this.selectedAquaticOrganismTypes.slice();
             });
 
-            this.aquaticOrganismTypes = this.allAquaticOrganismTypes.filter(x => !this.selectedAquaticOrganismTypes.includes(x)).slice();
+            this.aquaticOrganismTypes = this.waterAquaticOrganismTypes.filter(x => !this.selectedAquaticOrganismTypes.includes(x)).slice();
             this.aquaticOrganismTypesControl.setValue(undefined);
 
             if (this.isApplication

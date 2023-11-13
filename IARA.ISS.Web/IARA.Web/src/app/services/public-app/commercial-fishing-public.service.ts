@@ -25,11 +25,12 @@ import { PoundNetNomenclatureDTO } from '@app/models/generated/dtos/PoundNetNome
 import { QualifiedFisherNomenclatureDTO } from '@app/models/generated/dtos/QualifiedFisherNomenclatureDTO';
 import { PermitLicenseTariffCalculationParameters } from '@app/components/common-app/commercial-fishing/models/permit-license-tariff-calculation-parameters.model';
 import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
-import { OverlappingLogBooksParameters } from '@app/shared/components/overlapping-log-books/models/overlapping-log-books-parameters.model';
-import { RangeOverlappingLogBooksDTO } from '@app/models/generated/dtos/RangeOverlappingLogBooksDTO';
 import { CatchesAndSalesCommonService } from '@app/services/common-app/catches-and-sales-common.service';
 import { SuspensionDataDTO } from '@app/models/generated/dtos/SuspensionDataDTO';
 import { ISuspensionService } from '@app/interfaces/common-app/suspension.interface';
+import { InspectedPermitLicenseNomenclatureDTO } from '@app/models/generated/dtos/InspectedPermitLicenseNomenclatureDTO';
+import { FishingGearForChoiceDTO } from '@app/models/generated/dtos/FishingGearForChoiceDTO';
+import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -355,6 +356,18 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
 
     public getSuspensionReasons(): Observable<SuspensionReasonNomenclatureDTO[]> {
         return this.requestService.get(this.area, this.controller, 'GetSuspensionReasons', { responseTypeCtr: SuspensionReasonNomenclatureDTO });
+    }
+
+    public getShipPermitLicensesFromInspection(shipId: number): Observable<InspectedPermitLicenseNomenclatureDTO[]> {
+        throw new Error('This method should not be called from the public app');
+    }
+
+    public getShipFishingGearsFromInspection(inspectionId: number): Observable<FishingGearForChoiceDTO[]> {
+        throw new Error('This method should not be called from the public app');
+    }
+
+    public getFishingGearsForIds(gearIds: number[]): Observable<FishingGearDTO[]> {
+        throw new Error('This method should not be called from the public app');
     }
 
     public getPermitNomenclatures(shipId: number, showPastPermits: boolean, onlyPoundNet: boolean): Observable<PermitNomenclatureDTO[]> {
