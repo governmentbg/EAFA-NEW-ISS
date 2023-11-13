@@ -7,6 +7,8 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.ResourceTranslator;
+using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 
 namespace IARA.Mobile.Insp.Base
 {
@@ -20,10 +22,10 @@ namespace IARA.Mobile.Insp.Base
 
             Print = CommandBuilder.CreateFrom(OnPrint);
         }
-
         protected InspectionEditDto ProtectedEdit { get; set; }
 
         public ViewActivityType ActivityType { get; set; }
+        public SubmitType SubmitType { get; set; }
         public bool IsLocal { get; set; }
 
         public string LocalIdentifier { get; set; }
@@ -37,6 +39,7 @@ namespace IARA.Mobile.Insp.Base
         public ICommand SaveDraft { get; protected set; }
         public ICommand Finish { get; protected set; }
         public ICommand Print { get; }
+        public ICommand ReturnForEdit { get; protected set; }
 
         private async Task OnPrint()
         {

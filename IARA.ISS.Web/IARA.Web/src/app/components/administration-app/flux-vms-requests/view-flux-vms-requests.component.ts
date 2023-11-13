@@ -7,8 +7,6 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { FluxVmsRequestsService } from '@app/services/administration-app/flux-vms-requests.service';
 import { FLUXVMSRequestEditDTO } from '@app/models/generated/dtos/FLUXVMSRequestEditDTO';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { RequestProperties } from '@app/shared/services/request-properties';
 import { ViewFluxVmsRequestsDialogParams } from './models/view-flux-vms-requests-dialog-params.model';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { FluxAcdrReportStatusEnum } from '@app/enums/flux-acdr-report-status.enum';
@@ -33,16 +31,13 @@ export class ViewFluxVmsRequestsComponent implements IDialogComponent, OnInit {
 
     private service: FluxVmsRequestsService;
     private translate: FuseTranslationLoaderService;
-    private snackBar: MatSnackBar;
 
     public constructor(
         service: FluxVmsRequestsService,
-        translate: FuseTranslationLoaderService,
-        snackBar: MatSnackBar
+        translate: FuseTranslationLoaderService
     ) {
         this.service = service;
         this.translate = translate;
-        this.snackBar = snackBar;
 
         this.buildForm();
     }
@@ -59,27 +54,6 @@ export class ViewFluxVmsRequestsComponent implements IDialogComponent, OnInit {
     public downloadContent(): void {
         if (this.acdrId !== undefined && this.acdrId !== null) {
             this.service.downloadAcdrRequestContent(this.acdrId).subscribe();
-        }
-    }
-
-    public copyContentToClipboard(): string {
-        return JSON.stringify(this.requestContent, undefined, 2);
-    }
-
-    public contentCopied(copied: boolean): void {
-        const messageSuccess: string = this.translate.getValue('flux-vms-requests.request-copied-successfully');
-        const messageFail: string = this.translate.getValue('flux-vms-requests.request-copy-failed');
-        if (copied === true) {
-            this.snackBar.open(messageSuccess, undefined, {
-                duration: RequestProperties.DEFAULT.showExceptionDurationSucc,
-                panelClass: RequestProperties.DEFAULT.showExceptionColorClassSucc
-            });
-        }
-        else {
-            this.snackBar.open(messageFail, undefined, {
-                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-            });
         }
     }
 

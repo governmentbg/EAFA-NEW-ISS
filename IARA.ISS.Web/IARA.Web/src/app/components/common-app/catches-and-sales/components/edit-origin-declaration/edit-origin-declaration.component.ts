@@ -21,11 +21,12 @@ import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclature
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { FishPresentationCodesEnum } from '@app/enums/fish-presentation-codes.enum';
 import { FishCatchStateCodesEnum } from '@app/enums/fish-catch-state-codes.enum';
-import { DEFAULT_CATCH_STATE_CODE, DEFAULT_PRESENTATION_CODE } from '../ship-log-book/edit-ship-log-book-page.component';
+import { DEFAULT_CATCH_STATE_CODE, DEFAULT_PRESENTATION_CODE, DEFAULT_PRESERVATION_CODE } from '../ship-log-book/edit-ship-log-book-page.component';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { FishQuotaDTO } from '@app/models/generated/dtos/FishQuotaDTO';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { FishPreservationCodesEnum } from '@app/enums/fish-preservation-codes.enum';
 
 
 @Component({
@@ -41,6 +42,7 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
     public aquaticOrganismTypes: FishNomenclatureDTO[] = [];
     public catchStates: NomenclatureDTO<number>[] = [];
     public catchPresentations: NomenclatureDTO<number>[] = [];
+    public catchPreservations: NomenclatureDTO<number>[] = [];
     public allPorts: NomenclatureDTO<number>[] = [];
     public ports: NomenclatureDTO<number>[] = [];
     public ships: ShipNomenclatureDTO[] = [];
@@ -74,6 +76,8 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
             NomenclatureStore.instance.getNomenclature<number>(
                 NomenclatureTypes.CatchPresentations, this.commonNomenclaturesService.getCatchPresentations.bind(this.commonNomenclaturesService), false),
             NomenclatureStore.instance.getNomenclature<number>(
+                NomenclatureTypes.CatchPreservations, this.commonNomenclaturesService.getCatchPreservations.bind(this.commonNomenclaturesService), false),
+            NomenclatureStore.instance.getNomenclature<number>(
                 NomenclatureTypes.Ports, this.commonNomenclaturesService.getPorts.bind(this.commonNomenclaturesService), false),
             NomenclatureStore.instance.getNomenclature<number>(
                 NomenclatureTypes.Ships, this.commonNomenclaturesService.getShips.bind(this.commonNomenclaturesService), false)
@@ -82,12 +86,13 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
         this.aquaticOrganismTypes = nomenclatures[0] as FishNomenclatureDTO[];
         this.catchStates = nomenclatures[1] as NomenclatureDTO<number>[];
         this.catchPresentations = nomenclatures[2] as NomenclatureDTO<number>[];
+        this.catchPreservations = nomenclatures[3] as NomenclatureDTO<number>[];
 
-        const portsNomenclature = nomenclatures[3] as NomenclatureDTO<number>[];
+        const portsNomenclature = nomenclatures[4] as NomenclatureDTO<number>[];
         this.allPorts = this.deepCopyPorts(portsNomenclature);
         this.ports = this.allPorts.slice();
 
-        this.ships = nomenclatures[4] as ShipNomenclatureDTO[];
+        this.ships = nomenclatures[5] as ShipNomenclatureDTO[];
 
         this.fillForm();
     }
@@ -151,20 +156,6 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
         if (this.model.fishId !== null && this.model.fishId !== undefined) {
             const aquaticOrganism: FishNomenclatureDTO = this.aquaticOrganismTypes.find(x => x.value === this.model.fishId)!;
             this.form.get('aquaticOrganismTypeControl')!.setValue(aquaticOrganism);
-
-
-
-            //if (aquaticOrganism.quotaId !== null
-            //    && aquaticOrganism.quotaId !== undefined
-            //    && aquaticOrganism.quotaSpiciesPermittedPortIds !== null
-            //    && aquaticOrganism.quotaSpiciesPermittedPortIds !== undefined
-            //) { // the fish is part of a quota so the ports must be filtered
-            //    this.ports = this.allPorts.filter(x => aquaticOrganism.quotaSpiciesPermittedPortIds!.some(y => y.portId === x.value));
-
-            //    for (const port of this.ports) {
-            //        port.isActive = aquaticOrganism.quotaSpiciesPermittedPortIds.find(x => x.portId === port.value)!.isActive;
-            //    }
-            //}
         }
 
         if (this.model.catchFishStateId !== null && this.model.catchFishStateId !== undefined) {
@@ -186,6 +177,17 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
             const defaultPresentation: NomenclatureDTO<number> | undefined = this.catchPresentations.find(x => x.code === FishPresentationCodesEnum[DEFAULT_PRESENTATION_CODE] && x.isActive);
             if (defaultPresentation !== null && defaultPresentation !== undefined) {
                 this.form.get('catchPresentationControl')!.setValue(defaultPresentation);
+            }
+        }
+
+        if (this.model.catchFishPreservationId !== null && this.model.catchFishPreservationId !== undefined) {
+            const preservation: NomenclatureDTO<number> = this.catchPreservations.find(x => x.value === this.model.catchFishPreservationId)!;
+            this.form.get('catchPreservationControl')!.setValue(preservation);
+        }
+        else {
+            const defaultPreservation: NomenclatureDTO<number> | undefined = this.catchPreservations.find(x => x.code === FishPreservationCodesEnum[DEFAULT_PRESERVATION_CODE] && x.isActive);
+            if (defaultPreservation !== null && defaultPreservation !== undefined) {
+                this.form.get('catchPreservationControl')!.setValue(defaultPreservation);
             }
         }
 
@@ -222,6 +224,7 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
             aquaticOrganismTypeControl: new FormControl(undefined, Validators.required),
             catchStateControl: new FormControl(undefined, Validators.required),
             catchPresentationControl: new FormControl(undefined, Validators.required),
+            catchPreservationControl: new FormControl(undefined, Validators.required),
 
             isProcessedOnBoardControl: new FormControl(false),
             quantityKgControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
@@ -282,13 +285,13 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
     private fillModel(): void {
         const state: NomenclatureDTO<number> | undefined = this.form.get('catchStateControl')!.value;
         const presentation: NomenclatureDTO<number> | undefined = this.form.get('catchPresentationControl')!.value;
+        const preservation: NomenclatureDTO<number> | undefined = this.form.get('catchPreservationControl')!.value;
         const transboardingShip: NomenclatureDTO<number> | undefined = this.form.get('transboardingShipControl')!.value;
         const transboardingPort: NomenclatureDTO<number> | undefined = this.form.get('transboardTargetPortControl')!.value;
 
         this.model.catchFishStateId = state?.value;
-        this.model.catchFishStateName = state?.displayName;
         this.model.catchFishPresentationId = presentation?.value;
-        this.model.catchFishPresentationName = presentation?.displayName;
+        this.model.catchFishPreservationId = preservation?.value;
         this.model.isProcessedOnBoard = this.form.get('isProcessedOnBoardControl')!.value ?? false;
         this.model.quantityKg = this.form.get('quantityKgControl')!.value;
         this.model.unloadedProcessedQuantityKg = this.form.get('unloadedProcessedQuantityKgControl')!.value;

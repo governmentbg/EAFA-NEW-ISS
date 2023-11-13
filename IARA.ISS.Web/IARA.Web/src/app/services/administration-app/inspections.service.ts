@@ -27,6 +27,7 @@ import { DeclarationLogBookTypeEnum } from '@app/enums/declaration-log-book-type
 import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
 import { BaseAuditService } from '../common-app/base-audit.service';
 import { InspectorDuringInspectionDTO } from '@app/models/generated/dtos/InspectorDuringInspectionDTO';
+import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 
 
 @Injectable({
@@ -314,5 +315,60 @@ export class InspectionsService extends BaseAuditService {
 
     public unregisteredPatrolVehicleExists(vessel: VesselDuringInspectionDTO): Observable<boolean> {
         return this.requestService.post(this.area, this.controller, 'UnregisteredPatrolVehicleExists', vessel);
+    }
+
+    //Audits
+    public getInspectionInspectorSimpleAudit(id: number): Observable<SimpleAuditDTO> {
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetInspectionInspectorSimpleAudit', {
+            httpParams: params,
+            responseTypeCtr: SimpleAuditDTO
+        });
+    }
+
+    public getInspectionPatrolVehicleSimpleAudit(id: number): Observable<SimpleAuditDTO> {
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetInspectionPatrolVehicleSimpleAudit', {
+            httpParams: params,
+            responseTypeCtr: SimpleAuditDTO
+        });
+    }
+
+    public getInspectionVesselSimpleAudit(id: number): Observable<SimpleAuditDTO> {
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetInspectionVesselSimpleAudit', {
+            httpParams: params,
+            responseTypeCtr: SimpleAuditDTO
+        });
+    }
+
+    public getInspectedFishingGearSimpleAudit(id: number): Observable<SimpleAuditDTO> {
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetInspectedFishingGearSimpleAudit', {
+            httpParams: params,
+            responseTypeCtr: SimpleAuditDTO
+        });
+    }
+
+    public getInspectionCatchMeasureSimpleAudit(id: number): Observable<SimpleAuditDTO> {
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetInspectionCatchMeasureSimpleAudit', {
+            httpParams: params,
+            responseTypeCtr: SimpleAuditDTO
+        });
+    }
+
+    public getInspectionEngineSimpleAudit(id: number): Observable<SimpleAuditDTO> {
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetInspectionEngineSimpleAudit', {
+            httpParams: params,
+            responseTypeCtr: SimpleAuditDTO
+        });
     }
 }

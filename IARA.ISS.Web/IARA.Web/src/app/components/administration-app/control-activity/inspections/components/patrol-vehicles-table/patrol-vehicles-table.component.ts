@@ -11,6 +11,8 @@ import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/inter
 import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
 import { PatrolVehicleTableParams } from './models/patrol-vehicle-table-params';
 import { EditPatrolVehicleComponent } from '../../dialogs/edit-patrol-vehicle/edit-patrol-vehicle.component';
+import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
+import { InspectionsService } from '@app/services/administration-app/inspections.service';
 
 @Component({
     selector: 'patrol-vehicles-table',
@@ -32,18 +34,21 @@ export class PatrolVehiclesTableComponent extends CustomFormControl<VesselDuring
     private translate: FuseTranslationLoaderService;
     private confirmDialog: TLConfirmDialog;
     private editEntryDialog: TLMatDialog<EditPatrolVehicleComponent>;
+    private readonly service: InspectionsService;
 
     public constructor(
         @Self() ngControl: NgControl,
         translate: FuseTranslationLoaderService,
         confirmDialog: TLConfirmDialog,
-        editEntryDialog: TLMatDialog<EditPatrolVehicleComponent>
+        editEntryDialog: TLMatDialog<EditPatrolVehicleComponent>,
+        service: InspectionsService
     ) {
         super(ngControl);
 
         this.translate = translate;
         this.confirmDialog = confirmDialog;
         this.editEntryDialog = editEntryDialog;
+        this.service = service;
 
         this.onMarkAsTouched.subscribe({
             next: () => {
@@ -72,6 +77,7 @@ export class PatrolVehiclesTableComponent extends CustomFormControl<VesselDuring
 
         let data: PatrolVehicleTableParams | undefined;
         let title: string;
+        let auditBtn: IHeaderAuditButton | undefined;
 
         if (patrolVehicle !== undefined && patrolVehicle !== null) {
             data = new PatrolVehicleTableParams({
@@ -82,6 +88,14 @@ export class PatrolVehiclesTableComponent extends CustomFormControl<VesselDuring
                 excludeIds: this.patrolVehicles.map(f => f.unregisteredVesselId!),
                 hasCoordinates: this.hasCoordinates,
             });
+
+            if (patrolVehicle.id !== undefined && patrolVehicle.id !== null) {
+                auditBtn = {
+                    id: patrolVehicle.id,
+                    getAuditRecordData: this.service.getInspectionPatrolVehicleSimpleAudit.bind(this.service),
+                    tableName: 'InspectionPatrolVehicles'
+                };
+            }
 
             if (readOnly) {
                 title = this.translate.getValue('inspections.view-patrol-vehicle-dialog-title');
@@ -107,6 +121,7 @@ export class PatrolVehiclesTableComponent extends CustomFormControl<VesselDuring
             headerCancelButton: {
                 cancelBtnClicked: (closeFn: HeaderCloseFunction) => closeFn()
             },
+            headerAuditButton: auditBtn,
             componentData: data,
             translteService: this.translate,
             disableDialogClose: !readOnly,

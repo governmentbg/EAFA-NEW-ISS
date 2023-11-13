@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using IARA.Mobile.Application.DTObjects.Profile.API;
 using IARA.Mobile.Application.DTObjects.Users;
 using IARA.Mobile.Application.Extensions;
 using IARA.Mobile.Application.Interfaces.Transactions;
 using IARA.Mobile.Domain.Models;
+using IARA.Mobile.Insp.Application.Interfaces.Database;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Application.Transactions.Base;
 
@@ -61,6 +63,15 @@ namespace IARA.Mobile.Insp.Application.Transactions
         {
             return RestClient.PostAsync("Profile/ChangeUserPassword", userPassword)
                 .IsSuccessfulResult();
+        }
+
+        public bool HasPermission(string permission)
+        {
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+
+                return context.NPermissions.Select(p=>p.Permission).Contains(permission);
+            }
         }
     }
 }

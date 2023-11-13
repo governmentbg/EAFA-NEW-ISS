@@ -71,5 +71,6 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
         Task<PersonFullDataDto> GetPersonFullData(IdentifierTypeEnum identifierType, string identifier);
 
         Task<LegalFullDataDto> GetLegalFullData(string eik);
+        InspectionDraftDto MapToDraftDto<TDto>(TDto dto) where TDto : InspectionEditDto;
     }
 }

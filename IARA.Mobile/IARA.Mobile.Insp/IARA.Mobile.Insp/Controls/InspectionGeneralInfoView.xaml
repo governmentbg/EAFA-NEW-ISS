@@ -11,13 +11,13 @@
     <tl:TLFlex GrowUnit="200">
         <tl:TLEntry Title="{rt:Translate DocumentNumber, Group=GeneralInfo}"
                 ValidState="{Binding ReportNr}"
-                Keyboard="Numeric"
+                Keyboard="Telephone"
                 IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}">
             <StackLayout Orientation="Horizontal"
                     Spacing="0">
                 <Label Text="{Binding BindingContext.ReportNrStart, Source={Reference view}}"
                         VerticalOptions="Center" />
-                <tl:TLInnerInput />
+                <tl:TLInnerInput/>
             </StackLayout>
         </tl:TLEntry>
         <tl:TLFlex tl:TLFlex.Grow="2"

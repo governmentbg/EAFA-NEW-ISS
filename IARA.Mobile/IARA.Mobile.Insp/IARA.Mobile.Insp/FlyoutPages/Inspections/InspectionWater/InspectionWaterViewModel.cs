@@ -32,6 +32,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
         {
             SaveDraft = CommandBuilder.CreateFrom(OnSaveDraft);
             Finish = CommandBuilder.CreateFrom(OnFinish);
+            ReturnForEdit = CommandBuilder.CreateFrom(OnReturnForEdit);
 
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             PatrolVehicles = new PatrolVehiclesViewModel(this, null);
@@ -221,6 +222,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
             return InspectionSaveHelper.Finish(Sections, Validation, Save);
         }
 
+        private Task OnReturnForEdit()
+        {
+            return Save(SubmitType.ReturnForEdit);
+        }
+
         private Task Save(SubmitType submitType)
         {
             return this.Save(Edit,
@@ -233,7 +239,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
                         ReportNum = InspectionGeneralInfo.BuildReportNum(),
                         LocalIdentifier = inspectionIdentifier,
                         Files = files,
-                        InspectionState = submitType == SubmitType.Draft || submitType == SubmitType.Edit ? InspectionState.Draft : InspectionState.Submitted,
+                        InspectionState = submitType == SubmitType.Draft || submitType == SubmitType.Edit || submitType == SubmitType.ReturnForEdit ? InspectionState.Draft : InspectionState.Submitted,
                         InspectionType = InspectionType.CWO,
                         ActionsTaken = AdditionalInfo.ActionsTaken,
                         AdministrativeViolation = AdditionalInfo.AdministrativeViolation,

@@ -8,8 +8,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class HarbourInspectionPage : BasePage<HarbourInspectionViewModel>
     {
-        public HarbourInspectionPage(ViewActivityType activityType = ViewActivityType.Add, InspectionTransboardingDto dto = null, bool isLocal = false)
+        public HarbourInspectionPage(SubmitType submitType = SubmitType.Draft, ViewActivityType activityType = ViewActivityType.Add, InspectionTransboardingDto dto = null, bool isLocal = false)
         {
+            ViewModel.SubmitType = submitType;
             ViewModel.ActivityType = activityType;
             ViewModel.Edit = dto;
             ViewModel.IsLocal = isLocal;

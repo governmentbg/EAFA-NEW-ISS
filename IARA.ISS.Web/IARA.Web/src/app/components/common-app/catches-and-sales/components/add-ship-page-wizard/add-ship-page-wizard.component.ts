@@ -213,7 +213,7 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
     }
 
     private buildForm(): void {
-        this.pageNumberControl = new FormControl(null, [Validators.required, TLValidators.number(0)]);
+        this.pageNumberControl = new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 0)]);
 
         this.dataFormGroup = new FormGroup({
             shipControl: new FormControl(undefined, Validators.required),

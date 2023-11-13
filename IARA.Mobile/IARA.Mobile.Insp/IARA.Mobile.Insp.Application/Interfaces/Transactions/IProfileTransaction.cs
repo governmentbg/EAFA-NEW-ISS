@@ -10,5 +10,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
         Task<bool> SaveInfo(EditProfileApiDto profile);
 
         Task<byte[]> GetPhoto();
+
+        bool HasPermission(string permission);
     }
 }

@@ -62,7 +62,7 @@ export class CustomDomSharedStylesHost extends ɵSharedStylesHost implements OnD
         this._hostNodes.delete(hostNode);
     }
 
-    override onStylesAdded(additions: Set<string>): void {
+    onStylesAdded(additions: Set<string>): void {
         this._hostNodes.forEach((styleNodes, hostNode) => {
             this._addStylesToHost(additions, hostNode, styleNodes);
         });

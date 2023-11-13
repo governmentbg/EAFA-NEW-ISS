@@ -12,6 +12,8 @@ import { InspectionCatchMeasureDTO } from '@app/models/generated/dtos/Inspection
 import { WaterCatchTableParams } from './models/water-catch-table-params';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { EditWaterCatchComponent } from '../edit-water-catch/edit-water-catch.component';
+import { InspectionsService } from '@app/services/administration-app/inspections.service';
+import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
 
 @Component({
     selector: 'water-catches-table',
@@ -31,18 +33,21 @@ export class WaterCatchesTableComponent extends CustomFormControl<InspectionCatc
     private editEntryDialog: TLMatDialog<EditWaterCatchComponent>;
 
     private readonly translate: FuseTranslationLoaderService;
+    private readonly service: InspectionsService;
 
     public constructor(
         @Self() ngControl: NgControl,
         translate: FuseTranslationLoaderService,
         confirmDialog: TLConfirmDialog,
-        editEntryDialog: TLMatDialog<EditWaterCatchComponent>
+        editEntryDialog: TLMatDialog<EditWaterCatchComponent>,
+        service: InspectionsService
     ) {
         super(ngControl);
 
         this.translate = translate;
         this.confirmDialog = confirmDialog;
         this.editEntryDialog = editEntryDialog;
+        this.service = service;
 
         this.onMarkAsTouched.subscribe({
             next: () => {
@@ -68,18 +73,27 @@ export class WaterCatchesTableComponent extends CustomFormControl<InspectionCatc
         }
     }
 
-    public addEditEntry(fishingGear?: InspectionCatchMeasureDTO, viewMode?: boolean): void {
+    public addEditEntry(catchMeasure?: InspectionCatchMeasureDTO, viewMode?: boolean): void {
         const readOnly: boolean = this.isDisabled || viewMode === true;
 
         let data: WaterCatchTableParams | undefined;
         let title: string;
+        let auditBtn: IHeaderAuditButton | undefined;
 
-        if (fishingGear !== undefined && fishingGear !== null) {
+        if (catchMeasure !== undefined && catchMeasure !== null) {
             data = new WaterCatchTableParams({
-                model: fishingGear,
+                model: catchMeasure,
                 readOnly: readOnly,
                 fishes: this.fishes,
             });
+
+            if (catchMeasure.id !== undefined && catchMeasure.id !== null) {
+                auditBtn = {
+                    id: catchMeasure.id,
+                    getAuditRecordData: this.service.getInspectionCatchMeasureSimpleAudit.bind(this.service),
+                    tableName: 'InspectionCatchMeasures'
+                };
+            }
 
             if (readOnly) {
                 title = this.translate.getValue('inspections.view-water-catch-dialog-title');
@@ -103,6 +117,7 @@ export class WaterCatchesTableComponent extends CustomFormControl<InspectionCatc
             headerCancelButton: {
                 cancelBtnClicked: (closeFn: HeaderCloseFunction) => closeFn()
             },
+            headerAuditButton: auditBtn,
             componentData: data,
             translteService: this.translate,
             disableDialogClose: !readOnly,
@@ -111,8 +126,8 @@ export class WaterCatchesTableComponent extends CustomFormControl<InspectionCatc
 
         dialog.subscribe((result: InspectionCatchMeasureDTO) => {
             if (result !== undefined && result !== null) {
-                if (fishingGear !== undefined) {
-                    fishingGear = result;
+                if (catchMeasure !== undefined) {
+                    catchMeasure = result;
                 }
                 else {
                     this.catches.push(result);
@@ -125,7 +140,7 @@ export class WaterCatchesTableComponent extends CustomFormControl<InspectionCatc
         });
     }
 
-    public deleteEntry(patrolVehicle: GridRow<InspectionCatchMeasureDTO>): void {
+    public deleteEntry(catchMeasure: GridRow<InspectionCatchMeasureDTO>): void {
         this.confirmDialog.open({
             title: this.translate.getValue('inspections.water-catch-delete-dialog-title'),
             message: this.translate.getValue('inspections.water-catch-delete-message'),
@@ -133,8 +148,8 @@ export class WaterCatchesTableComponent extends CustomFormControl<InspectionCatc
         }).subscribe({
             next: (ok: boolean) => {
                 if (ok) {
-                    this.datatable.softDelete(patrolVehicle);
-                    this.catches.splice(this.catches.indexOf(patrolVehicle.data), 1);
+                    this.datatable.softDelete(catchMeasure);
+                    this.catches.splice(this.catches.indexOf(catchMeasure.data), 1);
                     this.onChanged(this.getValue());
                     this.control.updateValueAndValidity();
                 }

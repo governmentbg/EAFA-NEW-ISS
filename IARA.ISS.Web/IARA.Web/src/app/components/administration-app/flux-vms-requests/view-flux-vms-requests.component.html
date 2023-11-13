@@ -88,14 +88,6 @@
                     <div *ngIf="canDownload" fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="end center">
                         <button mat-raised-button
                                 color="accent"
-                                [cdkCopyToClipboard]="copyContentToClipboard()"
-                                (cdkCopyToClipboardCopied)="contentCopied($event)">
-                            <tl-icon type="IC_ICON" icon="ic-copy" [size]="icIconSize"></tl-icon>
-                            {{ 'flux-vms-requests.copy-content' | tlTranslate : 'cap' }}
-                        </button>
-
-                        <button mat-raised-button
-                                color="accent"
                                 (click)="downloadContent()">
                             <tl-icon type="IC_ICON" icon="ic-fluent-arrow-download-16-filled" [size]="icIconSize"></tl-icon>
                             {{ 'flux-vms-requests.download-content' | tlTranslate : 'cap' }}

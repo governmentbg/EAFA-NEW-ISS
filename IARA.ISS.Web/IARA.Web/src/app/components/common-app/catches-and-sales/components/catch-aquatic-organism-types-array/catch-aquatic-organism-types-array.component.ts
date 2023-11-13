@@ -1,5 +1,5 @@
-﻿import { Component, Input, OnChanges, OnInit, Self, SimpleChanges } from '@angular/core';
-import { AbstractControl, ControlValueAccessor, FormArray, FormControl, NgControl, ValidationErrors, Validator } from '@angular/forms';
+﻿import { Component, Input, OnChanges, OnInit, Optional, Self, SimpleChanges } from '@angular/core';
+import { AbstractControl, FormArray, FormControl, NgControl } from '@angular/forms';
 import { forkJoin, Observable, Subscription } from 'rxjs';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
@@ -19,6 +19,7 @@ import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { ShipLogBookPageDataService } from '../ship-log-book/services/ship-log-book-page-data.service';
 import { IGroupedOptions } from '@app/shared/components/input-controls/tl-autocomplete/interfaces/grouped-options.interface';
 import { AquaticOrganismCollectionTypesEnum } from './enums/aquatic-organism-collection-types.enum';
+import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 
 @Component({
     selector: 'catch-aquatic-organism-types-array',
@@ -58,10 +59,11 @@ export class CatchAquaticOrganismTypesArrayComponent extends CustomFormControl<C
 
     public constructor(
         @Self() ngControl: NgControl,
+        @Self() @Optional() validityChecker: ValidityCheckerDirective,
         translate: FuseTranslationLoaderService,
         commonNomenclaturesService: CommonNomenclatures
     ) {
-        super(ngControl);
+        super(ngControl, true, validityChecker);
 
         this.translationService = translate;
         this.commonNomenclaturesService = commonNomenclaturesService;

@@ -12,6 +12,8 @@ import { InspectedFishingGearDTO } from '@app/models/generated/dtos/InspectedFis
 import { WaterFishingGearTableParams } from './models/water-fishing-gear-table-params';
 import { WaterInspectionFishingGearDTO } from '@app/models/generated/dtos/WaterInspectionFishingGearDTO';
 import { EditWaterFishingGearComponent } from '../edit-water-fishing-gear/edit-water-fishing-gear.component';
+import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
+import { InspectionsService } from '@app/services/administration-app/inspections.service';
 
 @Component({
     selector: 'water-fishing-gears-table',
@@ -24,21 +26,24 @@ export class WaterFishingGearsTableComponent extends CustomFormControl<WaterInsp
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
 
-    private translate: FuseTranslationLoaderService;
-    private confirmDialog: TLConfirmDialog;
-    private editEntryDialog: TLMatDialog<EditWaterFishingGearComponent>;
+    private readonly translate: FuseTranslationLoaderService;
+    private readonly confirmDialog: TLConfirmDialog;
+    private readonly editEntryDialog: TLMatDialog<EditWaterFishingGearComponent>;
+    private readonly service: InspectionsService;
 
     public constructor(
         @Self() ngControl: NgControl,
         translate: FuseTranslationLoaderService,
         confirmDialog: TLConfirmDialog,
-        editEntryDialog: TLMatDialog<EditWaterFishingGearComponent>
+        editEntryDialog: TLMatDialog<EditWaterFishingGearComponent>,
+        service: InspectionsService
     ) {
         super(ngControl);
 
         this.translate = translate;
         this.confirmDialog = confirmDialog;
         this.editEntryDialog = editEntryDialog;
+        this.service = service;
 
         this.onMarkAsTouched.subscribe({
             next: () => {
@@ -69,12 +74,21 @@ export class WaterFishingGearsTableComponent extends CustomFormControl<WaterInsp
 
         let data: WaterFishingGearTableParams | undefined;
         let title: string;
+        let auditBtn: IHeaderAuditButton | undefined;
 
         if (fishingGear !== undefined && fishingGear !== null) {
             data = new WaterFishingGearTableParams({
                 model: fishingGear,
                 readOnly: readOnly,
             });
+
+            if (fishingGear.inspectedFishingGearId !== undefined && fishingGear.inspectedFishingGearId !== null) {
+                auditBtn = {
+                    id: fishingGear.inspectedFishingGearId,
+                    getAuditRecordData: this.service.getInspectedFishingGearSimpleAudit.bind(this.service),
+                    tableName: 'InspectedFishingGears'
+                };
+            }
 
             if (readOnly) {
                 title = this.translate.getValue('inspections.view-water-fishing-gear-dialog-title');
@@ -97,6 +111,7 @@ export class WaterFishingGearsTableComponent extends CustomFormControl<WaterInsp
             headerCancelButton: {
                 cancelBtnClicked: (closeFn: HeaderCloseFunction) => closeFn()
             },
+            headerAuditButton: auditBtn,
             componentData: data,
             translteService: this.translate,
             disableDialogClose: !readOnly,
@@ -120,7 +135,7 @@ export class WaterFishingGearsTableComponent extends CustomFormControl<WaterInsp
         });
     }
 
-    public deleteEntry(patrolVehicle: GridRow<WaterInspectionFishingGearDTO>): void {
+    public deleteEntry(fishingGear: GridRow<WaterInspectionFishingGearDTO>): void {
         this.confirmDialog.open({
             title: this.translate.getValue('inspections.water-fishing-gear-delete-dialog-title'),
             message: this.translate.getValue('inspections.water-fishing-gear-delete-message'),
@@ -128,8 +143,8 @@ export class WaterFishingGearsTableComponent extends CustomFormControl<WaterInsp
         }).subscribe({
             next: (ok: boolean) => {
                 if (ok) {
-                    this.datatable.softDelete(patrolVehicle);
-                    this.fishingGears.splice(this.fishingGears.indexOf(patrolVehicle.data), 1);
+                    this.datatable.softDelete(fishingGear);
+                    this.fishingGears.splice(this.fishingGears.indexOf(fishingGear.data), 1);
                     this.onChanged(this.getValue());
                     this.control.updateValueAndValidity();
                 }

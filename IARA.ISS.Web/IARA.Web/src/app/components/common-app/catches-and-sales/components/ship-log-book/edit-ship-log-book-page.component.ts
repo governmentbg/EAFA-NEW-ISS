@@ -61,10 +61,12 @@ import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemProperties
 import { CatchesAndSalesUtils } from '@app/components/common-app/catches-and-sales/utils/catches-and-sales.utils';
 import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
 import { AuthService } from '@app/shared/services/auth.service';
+import { FishPreservationCodesEnum } from '@app/enums/fish-preservation-codes.enum';
 
 const PERCENT_TOLERANCE: number = 10;
 const QUALITY_DIFF_VALIDATOR_NAME: string = 'quantityDifferences';
 export const DEFAULT_PRESENTATION_CODE: FishPresentationCodesEnum = FishPresentationCodesEnum.WHL;
+export const DEFAULT_PRESERVATION_CODE: FishPreservationCodesEnum = FishPreservationCodesEnum.FRE;
 export const DEFAULT_CATCH_STATE_CODE: FishCatchStateCodesEnum = FishCatchStateCodesEnum.E;
 
 @Component({
@@ -95,6 +97,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     public aquaticOrganisms: FishNomenclatureDTO[] = [];
     public catchStates: NomenclatureDTO<number>[] = [];
     public catchPresentations: NomenclatureDTO<number>[] = [];
+    public catchPreservations: NomenclatureDTO<number>[] = [];
     public catchZones: CatchZoneNomenclatureDTO[] = [];
 
     public showHooksCountField: boolean = false;
@@ -180,6 +183,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 NomenclatureTypes.CatchStates, this.service.getCatchStates.bind(this.service), false),
             NomenclatureStore.instance.getNomenclature<number>(
                 NomenclatureTypes.CatchPresentations, this.commonNomenclaturesService.getCatchPresentations.bind(this.commonNomenclaturesService), false),
+            NomenclatureStore.instance.getNomenclature<number>(
+                NomenclatureTypes.CatchPreservations, this.commonNomenclaturesService.getCatchPreservations.bind(this.commonNomenclaturesService), false),
             NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.CatchZones, this.commonNomenclaturesService.getCatchZones.bind(this.commonNomenclaturesService), false),
         ];
@@ -194,10 +199,11 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         this.aquaticOrganisms = nomenclatures[2] as FishNomenclatureDTO[];
         this.catchStates = nomenclatures[3] as NomenclatureDTO<number>[];
         this.catchPresentations = nomenclatures[4] as NomenclatureDTO<number>[];
-        this.catchZones = nomenclatures[5] as CatchZoneNomenclatureDTO[];
+        this.catchPreservations = nomenclatures[5] as NomenclatureDTO<number>[];
+        this.catchZones = nomenclatures[6] as CatchZoneNomenclatureDTO[];
 
         if (!this.viewMode) {
-            this.logBookPageEditExceptions = nomenclatures[6] as LogBookPageEditExceptionDTO[];
+            this.logBookPageEditExceptions = nomenclatures[7] as LogBookPageEditExceptionDTO[];
         }
 
         const systemParameters: SystemPropertiesDTO = await this.systemParametersService.systemParameters();
@@ -503,6 +509,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
     public addOriginDeclarationFishesFromPreviousTripCatches(): void {
         const defaultCatchFishPresentation: NomenclatureDTO<number> | undefined = this.catchPresentations.find(x => x.code === FishPresentationCodesEnum[DEFAULT_PRESENTATION_CODE] && x.isActive);
+        const defaultCatchFishPreservation: NomenclatureDTO<number> | undefined = this.catchPreservations.find(x => x.code === FishPreservationCodesEnum[DEFAULT_PRESERVATION_CODE] && x.isActive);
         const defaultCatchFishState: NomenclatureDTO<number> | undefined = this.catchStates.find(x => x.code === FishCatchStateCodesEnum[DEFAULT_CATCH_STATE_CODE] && x.isActive);
 
         const notAddedCatches: OnBoardCatchRecordFishDTO[] = this.selectedCatchesFromPreviousTrips.filter(x => !this.declarationOfOriginCatchRecords.some(y => y.isActive && y.catchRecordFishId === x.id));
@@ -520,6 +527,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     catchQuadrant: catchFish.catchQuadrant,
                     isActive: catchFish.isActive,
                     catchFishPresentationId: defaultCatchFishPresentation?.value,
+                    catchFishPreservationId: defaultCatchFishPreservation?.value,
                     catchFishStateId: defaultCatchFishState?.value,
                     isProcessedOnBoard: false,
                     fromPreviousTrip: true,
@@ -1140,6 +1148,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         const originDeclarationFishes: OriginDeclarationFishDTO[] = [];
         const defaultCatchFishPresentation: NomenclatureDTO<number> | undefined = this.catchPresentations.find(x => x.code === FishPresentationCodesEnum[DEFAULT_PRESENTATION_CODE] && x.isActive);
         const defaultCatchFishState: NomenclatureDTO<number> | undefined = this.catchStates.find(x => x.code === FishCatchStateCodesEnum[DEFAULT_CATCH_STATE_CODE] && x.isActive);
+        const defaultCatchFishPreservation: NomenclatureDTO<number> | undefined = this.catchPreservations.find(x => x.code === FishPreservationCodesEnum[DEFAULT_PRESERVATION_CODE] && x.isActive);
 
         for (const catchRecordFish of catchRecordFishes) {
             const quantityForUnloading: number = (catchRecordFish.quantityKg ?? 0) - (catchRecordFish.unloadedQuantityKg ?? 0) - (catchRecordFish.unloadedInOtherTripQuantityKg ?? 0);
@@ -1161,9 +1170,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     catchQuadrant: catchRecordFish.catchQuadrant,
                     isActive: catchRecordFish.isActive,
                     catchFishPresentationId: defaultCatchFishPresentation?.value,
-                    catchFishPresentationName: defaultCatchFishPresentation?.displayName ?? '',
                     catchFishStateId: defaultCatchFishState?.value,
-                    catchFishStateName: defaultCatchFishState?.displayName ?? '',
+                    catchFishPreservationId: defaultCatchFishPreservation?.value,
                     isProcessedOnBoard: false,
                     fromPreviousTrip: false,
                     isValid: true

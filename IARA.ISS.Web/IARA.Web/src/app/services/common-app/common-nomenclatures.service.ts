@@ -337,6 +337,19 @@ export class CommonNomenclatures {
         );
     }
 
+    public getCatchPreservations(): Observable<NomenclatureDTO<number>[]> {
+        type Result = NomenclatureDTO<number>[];
+        return this.requestService.get<Result>(this.area, this.controller, 'GetCatchPreservations', { responseTypeCtr: NomenclatureDTO }).pipe(map(
+            (entries: Result) => {
+                for (const entry of entries) {
+                    entry.displayName = `${entry.code} - ${entry.displayName}`;
+                }
+
+                return entries;
+            })
+        );
+    }
+
     public getPoundNets(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetPoundNets', { responseTypeCtr: NomenclatureDTO });
     }

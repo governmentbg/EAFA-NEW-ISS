@@ -1,5 +1,5 @@
 ﻿import { Component, EventEmitter, Input, OnInit, Output, Self, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormControl, NgControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { GridRow } from '@app/shared/components/data-table/models/row.model';
@@ -15,6 +15,7 @@ import { InspectorDuringInspectionDTO } from '@app/models/generated/dtos/Inspect
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { AuthService } from '@app/shared/services/auth.service';
 import { InspectionsService } from '@app/services/administration-app/inspections.service';
+import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
 
 @Component({
     selector: 'inspectors-table',
@@ -120,6 +121,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
 
         let data: InspectorTableParams | undefined;
         let title: string;
+        let auditBtn: IHeaderAuditButton | undefined;
 
         if (inspector !== undefined && inspector !== null) {
             data = new InspectorTableParams({
@@ -128,6 +130,14 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
                 isEdit: true,
                 excludeIds: this.inspectors.map(f => f.inspectorId!),
             });
+
+            if (inspector.id !== undefined && inspector.id !== null) {
+                auditBtn = {
+                    id: inspector.id,
+                    getAuditRecordData: this.service.getInspectionInspectorSimpleAudit.bind(this.service),
+                    tableName: 'InspectionInspectors'
+                };
+            }
 
             if (readOnly) {
                 title = this.translate.getValue('inspections.view-inspector-dialog-title');
@@ -150,6 +160,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
             headerCancelButton: {
                 cancelBtnClicked: (closeFn: HeaderCloseFunction) => closeFn()
             },
+            headerAuditButton: auditBtn,
             componentData: data,
             translteService: this.translate,
             disableDialogClose: !readOnly,

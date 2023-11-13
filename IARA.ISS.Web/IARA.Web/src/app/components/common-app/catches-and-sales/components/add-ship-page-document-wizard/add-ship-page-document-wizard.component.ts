@@ -247,7 +247,7 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
     private buildForm(): void {
         this.preliminaryDataFormGroup = new FormGroup({
             documentTypeControl: new FormControl(undefined, Validators.required),
-            documentNumberControl: new FormControl(undefined, Validators.required)
+            documentNumberControl: new FormControl(undefined, [Validators.required, TLValidators.number(0, undefined, 0)])
         });
 
         this.confirmLogBookAndOwnerFormGroup = new FormGroup({

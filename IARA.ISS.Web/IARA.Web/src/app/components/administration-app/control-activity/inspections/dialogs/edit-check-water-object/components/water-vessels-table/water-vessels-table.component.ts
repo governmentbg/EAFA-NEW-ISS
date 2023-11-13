@@ -11,6 +11,8 @@ import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/inter
 import { WaterInspectionVesselDTO } from '@app/models/generated/dtos/WaterInspectionVesselDTO';
 import { WaterVesselTableParams } from './models/water-vessel-table-params';
 import { EditWaterVesselComponent } from '../edit-water-vessel/edit-water-vessel.component';
+import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
+import { InspectionsService } from '@app/services/administration-app/inspections.service';
 
 @Component({
     selector: 'water-vessels-table',
@@ -23,21 +25,24 @@ export class WaterVesselsTableComponent extends CustomFormControl<WaterInspectio
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
 
-    private translate: FuseTranslationLoaderService;
-    private confirmDialog: TLConfirmDialog;
-    private editEntryDialog: TLMatDialog<EditWaterVesselComponent>;
+    private readonly translate: FuseTranslationLoaderService;
+    private readonly confirmDialog: TLConfirmDialog;
+    private readonly editEntryDialog: TLMatDialog<EditWaterVesselComponent>;
+    private readonly service: InspectionsService;
 
     public constructor(
         @Self() ngControl: NgControl,
         translate: FuseTranslationLoaderService,
         confirmDialog: TLConfirmDialog,
-        editEntryDialog: TLMatDialog<EditWaterVesselComponent>
+        editEntryDialog: TLMatDialog<EditWaterVesselComponent>,
+        service: InspectionsService
     ) {
         super(ngControl);
 
         this.translate = translate;
         this.confirmDialog = confirmDialog;
         this.editEntryDialog = editEntryDialog;
+        this.service = service;
 
         this.onMarkAsTouched.subscribe({
             next: () => {
@@ -63,17 +68,26 @@ export class WaterVesselsTableComponent extends CustomFormControl<WaterInspectio
         }
     }
 
-    public addEditEntry(fishingGear?: WaterInspectionVesselDTO, viewMode?: boolean): void {
+    public addEditEntry(vessel?: WaterInspectionVesselDTO, viewMode?: boolean): void {
         const readOnly: boolean = this.isDisabled || viewMode === true;
 
         let data: WaterVesselTableParams | undefined;
         let title: string;
+        let auditBtn: IHeaderAuditButton | undefined;
 
-        if (fishingGear !== undefined && fishingGear !== null) {
+        if (vessel !== undefined && vessel !== null) {
             data = new WaterVesselTableParams({
-                model: fishingGear,
+                model: vessel,
                 readOnly: readOnly,
             });
+
+            if (vessel.id !== undefined && vessel.id !== null) {
+                auditBtn = {
+                    id: vessel.id,
+                    getAuditRecordData: this.service.getInspectionVesselSimpleAudit.bind(this.service),
+                    tableName: 'InspectionVessels'
+                };
+            }
 
             if (readOnly) {
                 title = this.translate.getValue('inspections.view-water-vessel-dialog-title');
@@ -96,6 +110,7 @@ export class WaterVesselsTableComponent extends CustomFormControl<WaterInspectio
             headerCancelButton: {
                 cancelBtnClicked: (closeFn: HeaderCloseFunction) => closeFn()
             },
+            headerAuditButton: auditBtn,
             componentData: data,
             translteService: this.translate,
             disableDialogClose: !readOnly,
@@ -104,8 +119,8 @@ export class WaterVesselsTableComponent extends CustomFormControl<WaterInspectio
 
         dialog.subscribe((result: WaterInspectionVesselDTO) => {
             if (result !== undefined && result !== null) {
-                if (fishingGear !== undefined) {
-                    fishingGear = result;
+                if (vessel !== undefined) {
+                    vessel = result;
                 }
                 else {
                     this.vessels.push(result);
@@ -118,7 +133,7 @@ export class WaterVesselsTableComponent extends CustomFormControl<WaterInspectio
         });
     }
 
-    public deleteEntry(patrolVehicle: GridRow<WaterInspectionVesselDTO>): void {
+    public deleteEntry(vessel: GridRow<WaterInspectionVesselDTO>): void {
         this.confirmDialog.open({
             title: this.translate.getValue('inspections.water-vessel-delete-dialog-title'),
             message: this.translate.getValue('inspections.water-vessel-delete-message'),
@@ -126,8 +141,8 @@ export class WaterVesselsTableComponent extends CustomFormControl<WaterInspectio
         }).subscribe({
             next: (ok: boolean) => {
                 if (ok) {
-                    this.datatable.softDelete(patrolVehicle);
-                    this.vessels.splice(this.vessels.indexOf(patrolVehicle.data), 1);
+                    this.datatable.softDelete(vessel);
+                    this.vessels.splice(this.vessels.indexOf(vessel.data), 1);
                     this.onChanged(this.getValue());
                     this.control.updateValueAndValidity();
                 }

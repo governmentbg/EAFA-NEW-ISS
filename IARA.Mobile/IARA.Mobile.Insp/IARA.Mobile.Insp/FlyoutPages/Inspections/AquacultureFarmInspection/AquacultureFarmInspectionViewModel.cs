@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
             AquacultureChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnAquacultureChosen);
             SaveDraft = CommandBuilder.CreateFrom(OnSaveDraft);
             Finish = CommandBuilder.CreateFrom(OnFinish);
-
+            ReturnForEdit = CommandBuilder.CreateFrom(OnReturnForEdit);
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             PatrolVehicles = new PatrolVehiclesViewModel(this, false);
             LegalEntity = new LegalViewModel(this, InspectedPersonType.LicUsrLgl)
@@ -228,6 +229,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
             return InspectionSaveHelper.Finish(Sections, Validation, Save);
         }
 
+        private Task OnReturnForEdit()
+        {
+            return Save(SubmitType.ReturnForEdit);
+        }
+
         private Task Save(SubmitType submitType)
         {
             return this.Save(Edit,
@@ -240,7 +246,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
                         ReportNum = InspectionGeneralInfo.BuildReportNum(),
                         LocalIdentifier = inspectionIdentifier,
                         Files = files,
-                        InspectionState = submitType == SubmitType.Draft || submitType == SubmitType.Edit ? InspectionState.Draft : InspectionState.Submitted,
+                        InspectionState = submitType == SubmitType.Draft || submitType == SubmitType.Edit || submitType == SubmitType.ReturnForEdit ? InspectionState.Draft : InspectionState.Submitted,
                         InspectionType = InspectionType.IAQ,
                         ActionsTaken = AdditionalInfo.ActionsTaken,
                         AdministrativeViolation = AdditionalInfo.AdministrativeViolation,
