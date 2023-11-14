@@ -380,7 +380,7 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
 
     private buildForm(): void {
         this.preliminaryDataFormGroup = new FormGroup({
-            pageNumberControl: new FormControl(undefined, [Validators.required, TLValidators.number(0), this.pageNumberValidator()]),
+            pageNumberControl: new FormControl(undefined, [Validators.required, TLValidators.number(0, undefined, 0), this.pageNumberValidator()]),
             isImportNotByShipControl: new FormControl(false),
             documentTypeControl: new FormControl(null),
             placeOfImportControl: new FormControl(null, Validators.maxLength(500)),

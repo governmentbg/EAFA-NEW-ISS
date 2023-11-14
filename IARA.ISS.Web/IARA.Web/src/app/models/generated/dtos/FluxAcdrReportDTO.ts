@@ -44,6 +44,9 @@ export class FluxAcdrReportDTO {
     @StrictlyTyped(String)
     public reportStatusName?: string;
 
+    @StrictlyTyped(String)
+    public username?: string;
+
     @StrictlyTyped(Date)
     public periodStart?: Date;
 

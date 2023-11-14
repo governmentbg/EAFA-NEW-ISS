@@ -11,6 +11,8 @@ import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/inter
 import { WaterEngineTableParams } from './models/water-engine-table-params';
 import { WaterInspectionEngineDTO } from '@app/models/generated/dtos/WaterInspectionEngineDTO';
 import { EditWaterEngineComponent } from '../edit-water-engine/edit-water-engine.component';
+import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
+import { InspectionsService } from '@app/services/administration-app/inspections.service';
 
 @Component({
     selector: 'water-engines-table',
@@ -23,21 +25,24 @@ export class WaterEnginesTableComponent extends CustomFormControl<WaterInspectio
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
 
-    private translate: FuseTranslationLoaderService;
-    private confirmDialog: TLConfirmDialog;
-    private editEntryDialog: TLMatDialog<EditWaterEngineComponent>;
+    private readonly translate: FuseTranslationLoaderService;
+    private readonly confirmDialog: TLConfirmDialog;
+    private readonly editEntryDialog: TLMatDialog<EditWaterEngineComponent>;
+    private readonly service: InspectionsService;
 
     public constructor(
         @Self() ngControl: NgControl,
         translate: FuseTranslationLoaderService,
         confirmDialog: TLConfirmDialog,
-        editEntryDialog: TLMatDialog<EditWaterEngineComponent>
+        editEntryDialog: TLMatDialog<EditWaterEngineComponent>,
+        service: InspectionsService
     ) {
         super(ngControl);
 
         this.translate = translate;
         this.confirmDialog = confirmDialog;
         this.editEntryDialog = editEntryDialog;
+        this.service = service;
 
         this.onMarkAsTouched.subscribe({
             next: () => {
@@ -63,17 +68,26 @@ export class WaterEnginesTableComponent extends CustomFormControl<WaterInspectio
         }
     }
 
-    public addEditEntry(fishingGear?: WaterInspectionEngineDTO, viewMode?: boolean): void {
+    public addEditEntry(engine?: WaterInspectionEngineDTO, viewMode?: boolean): void {
         const readOnly: boolean = this.isDisabled || viewMode === true;
 
         let data: WaterEngineTableParams | undefined;
         let title: string;
+        let auditBtn: IHeaderAuditButton | undefined;
 
-        if (fishingGear !== undefined && fishingGear !== null) {
+        if (engine !== undefined && engine !== null) {
             data = new WaterEngineTableParams({
-                model: fishingGear,
+                model: engine,
                 readOnly: readOnly,
             });
+
+            if (engine.id !== undefined && engine.id !== null) {
+                auditBtn = {
+                    id: engine.id,
+                    getAuditRecordData: this.service.getInspectionEngineSimpleAudit.bind(this.service),
+                    tableName: 'InspectionEngines'
+                };
+            }
 
             if (readOnly) {
                 title = this.translate.getValue('inspections.view-water-engine-dialog-title');
@@ -97,6 +111,7 @@ export class WaterEnginesTableComponent extends CustomFormControl<WaterInspectio
                 cancelBtnClicked: (closeFn: HeaderCloseFunction) => closeFn()
             },
             componentData: data,
+            headerAuditButton: auditBtn,
             translteService: this.translate,
             disableDialogClose: !readOnly,
             viewMode: readOnly
@@ -104,8 +119,8 @@ export class WaterEnginesTableComponent extends CustomFormControl<WaterInspectio
 
         dialog.subscribe((result: WaterInspectionEngineDTO) => {
             if (result !== undefined && result !== null) {
-                if (fishingGear !== undefined) {
-                    fishingGear = result;
+                if (engine !== undefined) {
+                    engine = result;
                 }
                 else {
                     this.engines.push(result);

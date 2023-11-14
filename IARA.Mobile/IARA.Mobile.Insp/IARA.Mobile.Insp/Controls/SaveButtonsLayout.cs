@@ -31,6 +31,14 @@ namespace IARA.Mobile.Insp.Controls
             {
                 BackgroundColor = App.GetResource<Color>("Secondary"),
                 Padding = new Thickness(15, 0),
+            }.BindTranslation(Button.TextProperty, "ReturnForEdit", group)
+                .Bind(Button.CommandProperty, nameof(InspectionPageViewModel.ReturnForEdit))
+                .Bind(Button.IsVisibleProperty, nameof(InspectionPageViewModel.InspectionState), convert: (InspectionState state) => state == InspectionState.Submitted));
+
+            Children.Add(new Button
+            {
+                BackgroundColor = App.GetResource<Color>("Secondary"),
+                Padding = new Thickness(15, 0),
             }.BindTranslation(Button.TextProperty, "SaveDraft", group)
                 .Bind(Button.CommandProperty, nameof(InspectionPageViewModel.SaveDraft))
                 .Bind(SaveButtonsLayout.IsVisibleProperty, nameof(InspectionPageViewModel.ActivityType), converter: App.GetResource<IValueConverter>("IsNotReview")));

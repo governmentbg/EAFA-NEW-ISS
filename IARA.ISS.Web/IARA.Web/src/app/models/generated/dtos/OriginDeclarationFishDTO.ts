@@ -34,14 +34,11 @@ export class OriginDeclarationFishDTO {
     @StrictlyTyped(Number)
     public catchFishStateId?: number;
 
-    @StrictlyTyped(String)
-    public catchFishStateName?: string;
-
     @StrictlyTyped(Number)
     public catchFishPresentationId?: number;
 
-    @StrictlyTyped(String)
-    public catchFishPresentationName?: string;
+    @StrictlyTyped(Number)
+    public catchFishPreservationId?: number;
 
     @StrictlyTyped(Boolean)
     public isProcessedOnBoard?: boolean;

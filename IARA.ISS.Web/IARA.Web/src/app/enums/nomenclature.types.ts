@@ -70,6 +70,7 @@
     FishPurposes,
     CatchStates,
     CatchPresentations,
+    CatchPreservations,
     CatchUnloadTypes,
     BuyerTypes,
     BuyerStatuses,

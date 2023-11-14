@@ -27,6 +27,7 @@ import { FluxAcdrRequestFilters } from '@app/models/generated/filters/FluxAcdrRe
 import { FluxAcdrReportStatusEnum } from '@app/enums/flux-acdr-report-status.enum';
 import { FluxAcdrRequestEditDTO } from '@app/models/generated/dtos/FluxAcdrRequestEditDTO';
 import { FluxAcdrReportDTO } from '@app/models/generated/dtos/FluxAcdrReportDTO';
+import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
 
 type ThreeState = 'yes' | 'no' | 'both';
 
@@ -160,6 +161,12 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
             reportStatus: report.reportStatus
         });
 
+        const headerAuditBtn: IHeaderAuditButton = {
+            id: report.requestId!,
+            getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
+            tableName: 'FLUXFVMSRequests'
+        };
+
         this.viewDialog.open({
             title: this.translate.getValue('flux-vms-requests.request-dialog-title'),
             TCtor: ViewFluxVmsRequestsComponent,
@@ -168,6 +175,7 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
                     closeFn();
                 }
             },
+            headerAuditButton: headerAuditBtn,
             componentData: data,
             translteService: this.translate,
             viewMode: true

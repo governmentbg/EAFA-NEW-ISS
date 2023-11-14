@@ -49,6 +49,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
 
             SaveDraft = CommandBuilder.CreateFrom(OnSaveDraft);
             Finish = CommandBuilder.CreateFrom(OnFinish);
+            ReturnForEdit = CommandBuilder.CreateFrom(OnReturnForEdit);
 
             this.AddValidation(
                 groups: new Dictionary<string, Func<bool>>
@@ -306,6 +307,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
             return InspectionSaveHelper.Finish(Sections, Validation, Save);
         }
 
+        private Task OnReturnForEdit()
+        {
+            return Save(SubmitType.ReturnForEdit);
+        }
+
         private Task Save(SubmitType submitType)
         {
             return this.Save(Edit,
@@ -320,7 +326,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                         ReportNum = InspectionGeneralInfo.BuildReportNum(),
                         LocalIdentifier = inspectionIdentifier,
                         Files = files,
-                        InspectionState = submitType == SubmitType.Draft || submitType == SubmitType.Edit ? InspectionState.Draft : InspectionState.Submitted,
+                        InspectionState = submitType == SubmitType.Draft || submitType == SubmitType.Edit || submitType == SubmitType.ReturnForEdit ? InspectionState.Draft : InspectionState.Submitted,
                         InspectionType = InspectionType.IBP,
                         ActionsTaken = AdditionalInfo.ActionsTaken,
                         AdministrativeViolation = AdditionalInfo.AdministrativeViolation,

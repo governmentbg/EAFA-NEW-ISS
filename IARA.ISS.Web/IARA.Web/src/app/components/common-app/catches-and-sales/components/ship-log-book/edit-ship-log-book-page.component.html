@@ -22,13 +22,6 @@
                          tooltipResourceName="catches-and-sales.common-log-book-page-data-origin-declaration-date-helper"
                          [max]="today">
                 </tl-date>
-                <!--<tl-date-time [fxFlex]="isEditing ? '25' : '33'"
-                              formControlName="iaraAcceptanceDateTimeControl"
-                              label="{{ 'catches-and-sales.ship-page-iara-acceptance-date-time' | tlTranslate }}"
-                              tooltipResourceName="catches-and-sales.ship-page-iara-acceptance-date-time-helper"
-                              [min]="form.controls.fillDateControl?.value"
-                              [disabled]="viewMode">
-                </tl-date-time>-->
                 <tl-input *ngIf="isEditing"
                           fxFlex="25"
                           formControlName="statusControl"
@@ -363,27 +356,21 @@
                                 <data-column propertyName="catchFishStateId"
                                              dataType="nomenclature"
                                              columnName="{{ 'catches-and-sales.ship-page-origin-declaration-catch-state' | tlTranslate }}"
-                                             [flexRate]="declarationOfOriginHasCatchFromPreviousTrip ? 0.3 : 0.4"
+                                             [flexRate]="declarationOfOriginHasCatchFromPreviousTrip ? 0.2 : 0.3"
                                              [options]="catchStates">
                                 </data-column>
                                 <data-column propertyName="catchFishPresentationId"
                                              dataType="nomenclature"
                                              columnName="{{ 'catches-and-sales.ship-page-origin-declaration-catch-presentation' | tlTranslate }}"
-                                             [flexRate]="declarationOfOriginHasCatchFromPreviousTrip ? 0.3 : 0.4"
+                                             [flexRate]="declarationOfOriginHasCatchFromPreviousTrip ? 0.2 : 0.3"
                                              [options]="catchPresentations">
                                 </data-column>
-                                <!-- Има проблем с визуализирането на label-а, понеже се ъпдейтва в последствие (след set на флага..) -->
-                                <!--<data-template-column [flexRate]="declarationOfOriginHasCatchFromPreviousTrip ? 0.2 : 0"
-                                                      [columnName]="ogirinDeclarationHasCatchFromPreviousTripLabel"
-                                                      propertyName="fromPreviousTrip">
-                                    <ng-template let-row="row" ngx-datatable-cell-template>
-                                        <div *ngIf="row.data.fromPreviousTrip" fxFlex="row" fxLayoutAlign="center center">
-                                            <tl-icon icon="done_outline"
-                                                     iconClass="accent-color">
-                                            </tl-icon>
-                                        </div>
-                                    </ng-template>
-                                </data-template-column>-->
+                                <data-column propertyName="catchFishPreservationId"
+                                             dataType="nomenclature"
+                                             columnName="{{ 'catches-and-sales.ship-page-origin-declaration-catch-preservation' | tlTranslate }}"
+                                             [flexRate]="declarationOfOriginHasCatchFromPreviousTrip ? 0.2 : 0.3"
+                                             [options]="catchPreservations">
+                                </data-column>
                                 <data-template-column [isSortable]="false" [flexRate]="0.35" [cellClass]="'justify-center'">
                                     <ng-template let-row="row" ngx-datatable-cell-template>
                                         <div fxLayout="row wrap" fxLayoutAlign="end center">

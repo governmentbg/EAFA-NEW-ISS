@@ -14,6 +14,8 @@ import { EditInspectedFishingGearComponent } from '../../dialogs/edit-inspected-
 import { InspectedFishingGearTableModel } from './models/inspected-fishing-gear-table.model';
 import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 import { InspectedFishingGearEnum } from '@app/enums/inspected-fishing-gear.enum';
+import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
+import { InspectionsService } from '@app/services/administration-app/inspections.service';
 
 @Component({
     selector: 'inspected-fishing-gears-table',
@@ -39,18 +41,21 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
     private readonly translate: FuseTranslationLoaderService;
     private readonly confirmDialog: TLConfirmDialog;
     private readonly editEntryDialog: TLMatDialog<EditInspectedFishingGearComponent>;
+    private readonly service: InspectionsService;
 
     public constructor(
         @Self() ngControl: NgControl,
         translate: FuseTranslationLoaderService,
         confirmDialog: TLConfirmDialog,
-        editEntryDialog: TLMatDialog<EditInspectedFishingGearComponent>
+        editEntryDialog: TLMatDialog<EditInspectedFishingGearComponent>,
+        service: InspectionsService
     ) {
         super(ngControl);
 
         this.translate = translate;
         this.confirmDialog = confirmDialog;
         this.editEntryDialog = editEntryDialog;
+        this.service = service;
 
         this.onMarkAsTouched.subscribe({
             next: () => {
@@ -137,6 +142,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
 
         let data: InspectedFishingGearTableParams | undefined;
         let title: string;
+        let auditBtn: IHeaderAuditButton | undefined;
 
         if (fishingGear !== undefined && fishingGear !== null) {
             data = new InspectedFishingGearTableParams({
@@ -146,6 +152,14 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
                 isEdit: true,
                 hasAttachedAppliances: this.hasAttachedAppliances,
             });
+
+            if (fishingGear?.gear?.id !== undefined && fishingGear?.gear?.id !== null) {
+                auditBtn = {
+                    id: fishingGear.gear.id!,
+                    getAuditRecordData: this.service.getInspectedFishingGearSimpleAudit.bind(this.service),
+                    tableName: 'InspectedFishingGears'
+                };
+            }
 
             if (readOnly) {
                 title = this.translate.getValue('inspections.view-inspected-gear-dialog-title');
@@ -175,6 +189,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
             headerCancelButton: {
                 cancelBtnClicked: (closeFn: HeaderCloseFunction) => closeFn()
             },
+            headerAuditButton: auditBtn,
             componentData: data,
             translteService: this.translate,
             disableDialogClose: !readOnly,
@@ -198,7 +213,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
         });
     }
 
-    public deleteEntry(patrolVehicle: GridRow<InspectedFishingGearTableModel>): void {
+    public deleteEntry(fishingGear: GridRow<InspectedFishingGearTableModel>): void {
         this.confirmDialog.open({
             title: this.translate.getValue('inspections.inspected-gear-delete-dialog-title'),
             message: this.translate.getValue('inspections.inspected-gear-delete-message'),
@@ -206,8 +221,8 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
         }).subscribe({
             next: (ok: boolean) => {
                 if (ok) {
-                    this.datatable.softDelete(patrolVehicle);
-                    this.fishingGears.splice(this.fishingGears.indexOf(patrolVehicle.data), 1);
+                    this.datatable.softDelete(fishingGear);
+                    this.fishingGears.splice(this.fishingGears.indexOf(fishingGear.data), 1);
                     this.onChanged(this.getValue());
                     this.control.updateValueAndValidity();
                 }

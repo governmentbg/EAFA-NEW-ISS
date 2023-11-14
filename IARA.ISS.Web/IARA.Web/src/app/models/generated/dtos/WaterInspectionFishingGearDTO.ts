@@ -14,6 +14,9 @@ export class WaterInspectionFishingGearDTO extends FishingGearDTO {
         }
     }
   
+    @StrictlyTyped(Number)
+    public inspectedFishingGearId?: number;
+
     @StrictlyTyped(Boolean)
     public isTaken?: boolean;
 

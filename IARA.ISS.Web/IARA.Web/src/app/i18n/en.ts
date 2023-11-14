@@ -4092,6 +4092,7 @@
         'ship-page-origin-declaration-aquatic-organism-type': 'Aquatic organism type',
         'ship-page-origin-declaration-catch-state': 'Catch state',
         'ship-page-origin-declaration-catch-presentation': 'Catch presentation',
+        'ship-page-origin-declaration-catch-preservation': 'Catch preservation',
         'ship-page-origin-declaration-has-catch-from-previous-trip': 'Catch from previous trip',
         'ship-page-origin-declaration-is-processed-on-board': 'Is processed on board',
         'ship-page-origin-declaration-quantity-kg': 'Quantity (kg)',

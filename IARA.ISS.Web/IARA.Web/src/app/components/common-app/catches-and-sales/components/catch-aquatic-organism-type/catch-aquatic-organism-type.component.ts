@@ -1,6 +1,6 @@
-﻿import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, Self, SimpleChanges, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, Validators } from '@angular/forms';
-import { BehaviorSubject, forkJoin, Subscription } from 'rxjs';
+﻿import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Optional, Output, Self, SimpleChanges, ViewChild } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { FillDef, MapOptions, SimplePolygonStyleDef, StrokeDef, TLMapViewerComponent } from '@tl/tl-angular-map';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
@@ -14,11 +14,7 @@ import { TLPopoverComponent } from '@app/shared/components/tl-popover/tl-popover
 import { CatchZoneNomenclatureDTO } from '@app/models/generated/dtos/CatchZoneNomenclatureDTO';
 import { FishFamilyTypesEnum } from '@app/enums/fish-family-types.enum';
 import { SturgeonGendersEnum } from '@app/enums/sturgeon-genders.enum';
-import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
-import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
-import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { ICatchesAndSalesService } from '@app/interfaces/common-app/catches-and-sales.interface';
-import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { CatchTypeCodesEnum } from '@app/enums/catch-type-codes.enum';
 import { CatchSizeCodesEnum } from '@app/enums/catch-size-codes.enum';
@@ -26,6 +22,7 @@ import { WaterTypesEnum } from '@app/enums/water-types.enum';
 import { ShipLogBookPageDataService } from '../ship-log-book/services/ship-log-book-page-data.service';
 import { IGroupedOptions } from '@app/shared/components/input-controls/tl-autocomplete/interfaces/grouped-options.interface';
 import { AquaticOrganismCollectionTypesEnum } from '../catch-aquatic-organism-types-array/enums/aquatic-organism-collection-types.enum';
+import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 
 const DEFAULT_CATCH_TYPE_CODE = CatchTypeCodesEnum.TAKEN_ONBOARD;
 const DEFAULT_CATCH_SIZE_CODE = CatchSizeCodesEnum.LSC;
@@ -95,9 +92,10 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
 
     public constructor(
         @Self() ngControl: NgControl,
+        @Self() @Optional() validityChecker: ValidityCheckerDirective,
         translate: FuseTranslationLoaderService
     ) {
-        super(ngControl, false);
+        super(ngControl, false, validityChecker);
 
         this.translationService = translate;
         this.hasShipLogBookPageDataServiceSubject = new BehaviorSubject<boolean>(false);

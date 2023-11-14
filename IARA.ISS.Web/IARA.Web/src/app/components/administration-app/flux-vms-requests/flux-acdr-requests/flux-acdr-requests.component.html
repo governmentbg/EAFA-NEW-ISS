@@ -203,6 +203,11 @@
                                     </ng-template>
                                 </data-template-column>
 
+                                <data-column propertyName="username"
+                                             [flexRate]="0.2"
+                                             columnName="{{ 'flux-vms-requests.username' | tlTranslate }}">
+                                </data-column>
+
                                 <data-template-column [flexRate]="0.3">
                                     <ng-template ngx-datatable-cell-template let-row="row">
                                         <div fxLayout="row wrap" fxLayoutAlign="end center">

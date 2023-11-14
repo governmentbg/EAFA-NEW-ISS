@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Threading.Tasks;
 using IARA.Mobile.Application;
@@ -320,9 +322,39 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                 {
                                     idsToNotAdd.Add(dbInsp.Id);
                                 }
+                                else if (dbInsp.LastUpdatedDate < inspection.LastUpdateDate && inspection.IsActive)
+                                {
+                                    if(dbInsp.InspectionState != inspection.InspectionState)
+                                    {
+                                        dbInsp.InspectionState = inspection.InspectionState;
+                                        dbInsp.InspectionStateId = inspectionStates.Find(s => s.Code == inspection.InspectionState.ToString()).Id;
+                                        dbInsp.IsStatusChanged = true;
+                                        if(dbInsp.InspectionState == InspectionState.Submitted || dbInsp.InspectionState == InspectionState.Signed)
+                                        {
+                                            dbInsp.SubmitType = SubmitType.Finish;
+                                        }
+                                        else if(dbInsp.InspectionState == InspectionState.Draft)
+                                        {
+                                            dbInsp.SubmitType = SubmitType.Edit;
+                                        }
+                                    }
+                                    dbInsp.InspectionType = inspection.InspectionType;
+                                    dbInsp.InspectionTypeId = inspectionTypes.Find(s => s.Code == inspection.InspectionType.ToString()).Id;
+                                    dbInsp.ReportNr = inspection.ReportNumber;
+                                    dbInsp.StartDate = inspection.StartDate;
+                                    dbInsp.InspectionSubjects = string.Join(", ", inspection.InspectionSubjects.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries).Distinct());
+                                    dbInsp.Inspectors = inspection.Inspectors;
+                                    dbInsp.LastUpdatedDate = inspection.LastUpdateDate;
+
+                                    dbInsp.JsonContent = null;
+                                    dbInsp.HasJsonContent = false;
+
+                                    context.Inspections.Update(dbInsp);
+                                    idsToNotAdd.Add(dbInsp.Id);
+                                }
                                 // Ако има по-нова драфт версия на сървъра или ако е изтрита на сървъра я изтриваме и при нас.
                                 // Ако сме стигнали до тука сме сигурни че и 2те инспекции са драфт.
-                                else if (dbInsp.LastUpdatedDate < inspection.LastUpdateDate || !inspection.IsActive)
+                                else if (dbInsp.LastUpdatedDate < inspection.LastUpdateDate && !inspection.IsActive)
                                 {
                                     toRemove.Add((dbInsp.Id, dbInsp.Identifier));
                                 }
@@ -458,6 +490,10 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     dto
                 );
             }
+            else if(submitType == SubmitType.ReturnForEdit)
+            {
+                taskResult = RestClient.PostAsFormDataAsync<int>(UrlPrefix + "SendForFurtherCorrections", MapToDraftDto(dto));
+            }
             else
             {
                 taskResult = RestClient.PutAsFormDataAsync<int>(UrlPrefix + "Edit", MapToDraftDto(dto));
@@ -478,11 +514,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
                         if (localInspection != null)
                         {
-                            if (submitType == SubmitType.Finish)
-                            {
-                                localInspection.SubmitType = SubmitType.Finish;
-                            }
-
+                            localInspection.SubmitType = submitType;
                             localInspection.InspectionState = dto.InspectionState;
                             localInspection.InspectionStateId = inspectionStates.Find(s => s.Code == dto.InspectionState.ToString()).Id;
                             localInspection.Inspectors = submitType == SubmitType.Finish
@@ -578,6 +610,14 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         {
                             localInspection.SubmitType = SubmitType.Finish;
                         }
+                        else if (submitType == SubmitType.ReturnForEdit && dto.IsOfflineOnly)
+                        {
+                            localInspection.SubmitType = SubmitType.Draft;
+                        }
+                        else if (submitType == SubmitType.ReturnForEdit)
+                        {
+                            localInspection.SubmitType = SubmitType.ReturnForEdit;
+                        }
 
                         localInspection.InspectionState = dto.InspectionState;
                         localInspection.InspectionStateId = inspectionStates.Find(s => s.Code == dto.InspectionState.ToString()).Id;
@@ -591,6 +631,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         localInspection.HasJsonContent = true;
                         localInspection.LastUpdatedDate = DateTime.Now;
                         localInspection.CreatedByCurrentUser = true;
+                        localInspection.IsLocal = true;
 
                         context.Inspections.Update(localInspection);
                     }
@@ -1090,7 +1131,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
             }
         }
 
-        private InspectionDraftDto MapToDraftDto<TDto>(TDto dto)
+        public InspectionDraftDto MapToDraftDto<TDto>(TDto dto)
             where TDto : InspectionEditDto
         {
             JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web)
@@ -1098,7 +1139,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
-            return new InspectionDraftDto
+            var draftDTO =  new InspectionDraftDto
             {
                 ActionsTaken = dto.ActionsTaken,
                 AdministrativeViolation = dto.AdministrativeViolation,
@@ -1111,6 +1152,8 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 StartDate = dto.StartDate,
                 Json = JsonSerializer.Serialize(dto, options),
             };
+
+            return draftDTO;
         }
 
         private void SaveInspectionInspectors(List<InspectorDuringInspectionDto> inspectors)

@@ -4,6 +4,7 @@
     {
         Draft,
         Edit,
-        Finish
+        Finish,
+        ReturnForEdit
     }
 }

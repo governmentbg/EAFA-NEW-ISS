@@ -4,25 +4,31 @@
                          fxLayoutGap="1em"
                          fxFlexFill
                          fxLayoutAlign="space-between stretch">
-            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
-                <tl-autocomplete fxFlex="32"
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="25"
                                  formControlName="aquaticOrganismTypeControl"
                                  label="{{ 'catches-and-sales.ship-page-origin-declaration-aquatic-organism-type' | tlTranslate }}"
                                  tooltipResourceName="catches-and-sales.ship-page-origin-declaration-aquatic-organism-type-helper"
                                  [options]="aquaticOrganismTypes"
                                  [readonly]="true">
                 </tl-autocomplete>
-                <tl-autocomplete fxFlex="32"
+                <tl-autocomplete fxFlex="25"
                                  formControlName="catchStateControl"
                                  label="{{ 'catches-and-sales.ship-page-origin-declaration-catch-state' | tlTranslate }}"
                                  tooltipResourceName="catches-and-sales.ship-page-origin-declaration-catch-state-helper"
                                  [options]="catchStates">
                 </tl-autocomplete>
-                <tl-autocomplete fxFlex="32"
+                <tl-autocomplete fxFlex="25"
                                  formControlName="catchPresentationControl"
                                  label="{{ 'catches-and-sales.ship-page-origin-declaration-catch-presentation' | tlTranslate }}"
                                  tooltipResourceName="catches-and-sales.ship-page-origin-declaration-catch-presentation-helper"
                                  [options]="catchPresentations">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="catchPreservationControl"
+                                 label="{{ 'catches-and-sales.ship-page-origin-declaration-catch-preservation' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.ship-page-origin-declaration-catch-preservation-helper"
+                                 [options]="catchPreservations">
                 </tl-autocomplete>
             </div>
             <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
