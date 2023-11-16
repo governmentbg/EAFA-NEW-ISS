@@ -25,7 +25,6 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
-import { IAuanRegisterService } from '@app/interfaces/administration-app/auan-register.interface';
 import { AuanRegisterService } from '@app/services/administration-app/auan-register.service';
 import { EditDecreeWarningComponent } from './edit-decree-warning/edit-decree-warning.component';
 import { EditDecreeAgreementComponent } from './edit-decree-agreement/edit-decree-agreement.component';
@@ -36,6 +35,10 @@ import { EditDecreeResolutionComponent } from './edit-decree-resolution/edit-dec
 import { PenalDecreeStatusDTO } from '@app/models/generated/dtos/PenalDecreeStatusDTO';
 import { EditPenalDecreeStatusDialogParams } from './models/edit-penal-decree-status-params.model';
 import { EditPenalDecreeStatusComponent } from './edit-penal-decree-status/edit-penal-decree-status.component';
+import { AuanDeliveryComponent } from '../auan-register/auan-delivery/auan-delivery.component';
+import { InspDeliveryDataDialogParams } from '../auan-register/models/insp-delivery-data-dialog-params.model';
+import { AuanDeliveryDataDTO } from '@app/models/generated/dtos/AuanDeliveryDataDTO';
+import { CommonUtils } from '@app/shared/utils/common.utils';
 
 @Component({
     selector: 'penal-decrees',
@@ -73,6 +76,8 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
 
     public readonly penalDecreeTypeEnum: typeof PenalDecreeTypeEnum = PenalDecreeTypeEnum;
 
+    public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
+
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
 
@@ -81,7 +86,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
 
     private grid!: DataTableManager<PenalDecreeDTO, PenalDecreesFilters>;
 
-    private readonly service: IPenalDecreesService;
+    private readonly service: PenalDecreesService;
     private readonly nomenclatures: CommonNomenclatures;
     private readonly confirmDialog: TLConfirmDialog;
     private readonly penalDecreeDialog: TLMatDialog<EditPenalDecreeComponent>;
@@ -90,7 +95,8 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
     private readonly resolutionDialog: TLMatDialog<EditDecreeResolutionComponent>;
     private readonly editStatusDialog: TLMatDialog<EditPenalDecreeStatusComponent>;
     private readonly auanPickerDialog: TLMatDialog<EditPenalDecreeAuanPickerComponent>;
-    private readonly auanService: IAuanRegisterService;
+    private readonly inspDeliveryDialog: TLMatDialog<AuanDeliveryComponent>;
+    private readonly auanService: AuanRegisterService;
 
     public constructor(
         service: PenalDecreesService,
@@ -103,6 +109,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         resolutionDialog: TLMatDialog<EditDecreeResolutionComponent>,
         editStatusDialog: TLMatDialog<EditPenalDecreeStatusComponent>,
         auanPickerDialog: TLMatDialog<EditPenalDecreeAuanPickerComponent>,
+        inspDeliveryDialog: TLMatDialog<AuanDeliveryComponent>,
         permissions: PermissionsService,
         auanService: AuanRegisterService
     ) {
@@ -116,6 +123,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         this.resolutionDialog = resolutionDialog;
         this.editStatusDialog = editStatusDialog;
         this.auanPickerDialog = auanPickerDialog;
+        this.inspDeliveryDialog = inspDeliveryDialog;
         this.auanService = auanService;
 
         this.canAddRecords = permissions.has(PermissionsEnum.PenalDecreesAddRecords);
@@ -339,7 +347,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         let data: EditPenalDecreeStatusDialogParams | undefined;
         let auditBtn: IHeaderAuditButton | undefined;
         let title: string;
-        
+
         if (status !== undefined) {
             data = new EditPenalDecreeStatusDialogParams(this.service, status, decree.decreeType!, viewMode, decree.id!);
 
@@ -460,6 +468,55 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                 }
             }
         })
+    }
+
+    public openDeliveryDialog(decree: PenalDecreeDTO): void {
+        const data: InspDeliveryDataDialogParams = new InspDeliveryDataDialogParams({
+            registerId: decree.id,
+            id: decree.deliveryId,
+            service: this.service,
+        });
+
+        let auditBtn: IHeaderAuditButton | undefined;
+
+        if (decree.deliveryId !== undefined && decree.deliveryId !== null) {
+            auditBtn = {
+                id: decree.deliveryId,
+                getAuditRecordData: this.service.getInspDeliverySimpleAudit.bind(this.service),
+                tableName: 'InspDelivery'
+            };
+        }
+
+        const dialog = this.inspDeliveryDialog.openWithTwoButtons({
+            title: this.translate.getValue('penal-decrees.delivery-dialog-title'),
+            TCtor: AuanDeliveryComponent,
+            headerAuditButton: auditBtn,
+            headerCancelButton: {
+                cancelBtnClicked: this.closeEditDialogBtnClicked.bind(this)
+            },
+            componentData: data,
+            translteService: this.translate,
+            disableDialogClose: true,
+            viewMode: false,
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                translateValue: this.translate.getValue('common.save')
+            },
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: this.translate.getValue('common.cancel'),
+            },
+        }, '1400px');
+
+        dialog.subscribe({
+            next: (entry: AuanDeliveryDataDTO | undefined) => {
+                if (entry !== undefined && entry !== null) {
+                    this.grid.refreshData();
+                }
+            }
+        });
     }
 
     private closeEditStatusDialogBtnClicked(closeFn: HeaderCloseFunction): void {

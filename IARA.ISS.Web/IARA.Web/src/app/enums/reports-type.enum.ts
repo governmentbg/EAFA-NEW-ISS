@@ -1,7 +1,7 @@
 ﻿export enum ReportTypesEnum {
     SQL,
-    Jasper,
     JasperPDF,
     JasperWord,
+    Jasper,
     Cross
 }

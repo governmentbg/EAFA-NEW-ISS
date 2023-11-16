@@ -2324,6 +2324,7 @@
         'table-user': 'Потребител',
         'table-ip': 'IP адрес',
         'table-browser': 'Браузър',
+        'table-id': 'Първичен ключ на записа',
 
         'dialog-title': 'Системен журнал — детайли за събитие',
         'dialog-old-value': 'Стари данни',
@@ -2338,7 +2339,8 @@
 
         'side-by-side': 'Едно до друго',
         'line-by-line': 'Ред по ред',
-        'only-show-lines-with-differences': 'Покажи само редове с разлики'
+        'only-show-lines-with-differences': 'Покажи само редове с разлики',
+        'table-related-logs': 'Свързани събития'
     },
     'error-log': {
         'log-date': 'Дата на одита',
@@ -3315,10 +3317,10 @@
         'generate-marks-from-range-confirm-message': 'Сигурни ли сте, че искате да генерирате следния брой марки',
         'generate': 'Генерирай',
 
-        'choose-ship-and-year' : 'Избор на кораб и година',
-        'choose-ship' : 'Кораб',
-        'choose-year' : 'Година',
-        'choose-permit-license' : 'Избор на нерегистрирано удостоверение от инспекция',
+        'choose-ship-and-year': 'Избор на кораб и година',
+        'choose-ship': 'Кораб',
+        'choose-year': 'Година',
+        'choose-permit-license': 'Избор на нерегистрирано удостоверение от инспекция',
         'choose-permit-license-number': 'Номер на нерегистрирано удостоверение от инспекция',
         'choose-fishing-gears': 'Риболовни уреди',
         'keyword-filter': 'Търсене по ключова дума',
@@ -5127,7 +5129,9 @@
         'edit-auan-confiscated-appliances': 'Конфискувани приспособления',
         'edit-auan-confiscated-appliances-table': 'Конфискувани приспособления',
 
-        'edit-auan-files': 'Файлове'
+        'edit-auan-files': 'Файлове',
+        'delivery-dialog-title': 'Информация за връчване',
+        'delivery-data': 'Начин на получаване на издаден от ИАРА документ'
     },
     'cross-check-results': {
         'check-code': 'Код',
@@ -5710,7 +5714,9 @@
         'edit-constatation-comments': 'Установих, че',
         'edit-appeal-data': 'Подлежи на обжалване пред',
 
-        'edit-decree-files': 'Файлове'
+        'edit-decree-files': 'Файлове',
+        'delivery-dialog-title': 'Информация за връчване',
+        'delivery-data': 'Начин на получаване на издаден от ИАРА документ'
     },
     'flux-vms-requests': {
         'common': 'Общи',

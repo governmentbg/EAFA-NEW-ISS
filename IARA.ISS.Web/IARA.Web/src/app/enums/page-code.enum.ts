@@ -243,9 +243,19 @@
     StatFormFishVessel,
 
     /**
+    * Риболовни уреди
+    * */
+    FishingGearsCommFish,
+
+    /**
      * За данни за връчване на регистров запис
      * */
     Delivery,
+
+    /**
+     * За данни за връчване в модул "Контролна дейност"
+     * */
+    InspDelivery,
 
     FVMS,
 

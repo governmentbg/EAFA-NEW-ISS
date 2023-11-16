@@ -5,7 +5,7 @@ import { PenalDecreeSeizedFishDTO } from './PenalDecreeSeizedFishDTO';
 import { PenalDecreeSeizedFishingGearDTO } from './PenalDecreeSeizedFishingGearDTO';
 import { PenalDecreeFishCompensationDTO } from './PenalDecreeFishCompensationDTO';
 import { AuanViolatedRegulationDTO } from './AuanViolatedRegulationDTO';
-import { PenalDecreeDeliveryDataDTO } from './PenalDecreeDeliveryDataDTO';
+import { AuanDeliveryDataDTO } from './AuanDeliveryDataDTO';
 import { PenalDecreeAuanDataDTO } from './PenalDecreeAuanDataDTO';
 import { PenalDecreeResolutionDTO } from './PenalDecreeResolutionDTO';
 import { PenalDecreeStatusEditDTO } from './PenalDecreeStatusEditDTO';
@@ -91,8 +91,8 @@ export class PenalDecreeEditDTO {
     @StrictlyTyped(String)
     public minorCircumstancesDescription?: string;
 
-    @StrictlyTyped(PenalDecreeDeliveryDataDTO)
-    public deliveryData?: PenalDecreeDeliveryDataDTO;
+    @StrictlyTyped(AuanDeliveryDataDTO)
+    public deliveryData?: AuanDeliveryDataDTO;
 
     @StrictlyTyped(PenalDecreeAuanDataDTO)
     public auanData?: PenalDecreeAuanDataDTO;

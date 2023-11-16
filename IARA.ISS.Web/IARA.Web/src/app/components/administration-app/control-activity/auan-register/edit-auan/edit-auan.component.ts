@@ -1,5 +1,5 @@
 ﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { forkJoin } from 'rxjs';
@@ -8,7 +8,6 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
-import { IAuanRegisterService } from '@app/interfaces/administration-app/auan-register.interface';
 import { AuanRegisterEditDTO } from '@app/models/generated/dtos/AuanRegisterEditDTO';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { AuanReportDataDTO } from '@app/models/generated/dtos/AuanReportDataDTO';
@@ -20,7 +19,6 @@ import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatur
 import { AuanInspectedEntityDTO } from '@app/models/generated/dtos/AuanInspectedEntityDTO';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { AuanViolatedRegulationDTO } from '@app/models/generated/dtos/AuanViolatedRegulationDTO';
-import { AddressTypesEnum } from '@app/enums/address-types.enum';
 import { AuanObjectionResolutionTypesEnum } from '@app/enums/auan-objection-resolution-types.enum';
 import { AuanDeliveryDataDTO } from '@app/models/generated/dtos/AuanDeliveryDataDTO';
 import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
@@ -30,7 +28,6 @@ import { InspDeliveryConfirmationTypesEnum } from '@app/enums/insp-delivery-conf
 import { InspDeliveryTypesEnum } from '@app/enums/insp-delivery-types.enum';
 import { EditAuanDialogParams } from '../models/edit-auan-dialog-params.model';
 import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/InspDeliveryTypesNomenclatureDTO';
-import { InspDeliveryTypeGroupsEnum } from '@app/enums/insp-delivery-type-groups.enum';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
@@ -43,18 +40,14 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
     public form!: FormGroup;
     public auanId!: number | undefined;
 
-    public readonly service!: IAuanRegisterService;
-    public readonly pageCode: PageCodeEnum = PageCodeEnum.AuanRegister;
-    public readonly companyHeadquartersType: AddressTypesEnum = AddressTypesEnum.COMPANY_HEADQUARTERS;
-    public readonly correspondenceAddressType: AddressTypesEnum = AddressTypesEnum.CORRESPONDENCE;
     public readonly deliveryTypesEnum: typeof InspDeliveryTypesEnum = InspDeliveryTypesEnum;
     public readonly confirmationTypesEnum: typeof InspDeliveryConfirmationTypesEnum = InspDeliveryConfirmationTypesEnum;
+    public readonly service!: AuanRegisterService;
+    public readonly pageCode: PageCodeEnum = PageCodeEnum.AuanRegister;
     public readonly today: Date = new Date();
 
     public inspectionTypes: NomenclatureDTO<number>[] = [];
     public territoryUnits: NomenclatureDTO<number>[] = [];
-    public deliveryTypes: NomenclatureDTO<number>[] = [];
-    public deliveryConfirmationTypes: NomenclatureDTO<number>[] = [];
     public drafters: NomenclatureDTO<number>[] = [];
     public objectionResolutionTypes: NomenclatureDTO<AuanObjectionResolutionTypesEnum>[] = [];
 
@@ -115,21 +108,17 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
     public async ngOnInit(): Promise<void> {
         this.isAdding = this.auanId === undefined || this.auanId === null;
         this.showInspectedEntity = !this.isAdding;
-       
+
         const nomenclatures: (NomenclatureDTO<number> | InspDeliveryTypesNomenclatureDTO)[][] = await forkJoin(
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.InspectionTypes, this.nomenclatures.getInspectionTypes.bind(this.nomenclatures), false),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures), false),
-            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.InspDeliveryTypes, this.service.getAuanDeliveryTypes.bind(this.service), false),
-            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.InspDeliveryConfirmationTypes, this.service.getAuanDeliveryConfirmationTypes.bind(this.service), false),
             this.service.getInspectionDrafters(this.inspectionId)
         ).toPromise();
 
         this.inspectionTypes = nomenclatures[0];
         this.territoryUnits = nomenclatures[1];
-        this.deliveryTypes = (nomenclatures[2] as InspDeliveryTypesNomenclatureDTO[]).filter(x => x.group === InspDeliveryTypeGroupsEnum.AUAN);
-        this.deliveryConfirmationTypes = (nomenclatures[3] as InspDeliveryTypesNomenclatureDTO[]).filter(x => x.group === InspDeliveryTypeGroupsEnum.AUAN);
-        this.drafters = nomenclatures[4];
-       
+        this.drafters = nomenclatures[2];
+
         this.service.getAuanReportData(this.inspectionId).subscribe({
             next: (data: AuanReportDataDTO) => {
                 this.isInspector = true;
@@ -202,52 +191,15 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             }
         }
 
-        this.form.get('deliveryTypeControl')!.valueChanges.subscribe({
-            next: (type: NomenclatureDTO<number> | undefined) => {
-                this.form.get('deliveryDateControl')!.clearValidators();
-                this.form.get('deliveryTerritoryUnitControl')!.clearValidators();
-                this.form.get('stateServiceControl')!.clearValidators();
-                this.form.get('deliveryAddressControl')!.clearValidators();
-                this.form.get('sentDateControl')!.clearValidators();
-                this.form.get('refusalDateControl')!.clearValidators();
-                this.form.get('refusalWitnessesControl')!.clearValidators();
+
+        this.form.get('auanDeliveryDataControl')!.valueChanges.subscribe({
+            next: (delivery: AuanDeliveryDataDTO) => {
+                if (delivery !== undefined && delivery !== null) {
+                    this.deliveryType = delivery.deliveryType;
+                }
+
                 this.form.get('hasObjectionControl')!.setValue(false);
-
-                if (type !== undefined && type !== null) {
-                    this.deliveryType = InspDeliveryTypesEnum[type.code as keyof typeof InspDeliveryTypesEnum];
-
-                    switch (this.deliveryType) {
-                        case InspDeliveryTypesEnum.Personal:
-                            this.form.get('deliveryDateControl')!.setValidators(Validators.required);
-                            break;
-                        case InspDeliveryTypesEnum.Office:
-                            this.form.get('deliveryTerritoryUnitControl')!.setValidators(Validators.required);
-                            break;
-                        case InspDeliveryTypesEnum.StateService:
-                            this.form.get('stateServiceControl')!.setValidators([Validators.required, Validators.maxLength(200)]);
-                            break;
-                        case InspDeliveryTypesEnum.ByMail:
-                            this.form.get('deliveryAddressControl')!.setValidators(Validators.required);
-                            this.form.get('sentDateControl')!.setValidators(Validators.required);
-                            break;
-                        case InspDeliveryTypesEnum.Refusal:
-                            this.form.get('refusalDateControl')!.setValidators(Validators.required);
-                            this.form.get('refusalWitnessesControl')!.setValidators(Validators.required);
-                            break;
-                    }
-                }
-                else {
-                    this.deliveryType = undefined;
-                }
-
                 this.form.get('hasObjectionControl')!.updateValueAndValidity({ emitEvent: false });
-                this.form.get('deliveryTerritoryUnitControl')!.updateValueAndValidity({ emitEvent: false });
-                this.form.get('stateServiceControl')!.updateValueAndValidity({ emitEvent: false });
-                this.form.get('deliveryAddressControl')!.updateValueAndValidity({ emitEvent: false });
-                this.form.get('sentDateControl')!.updateValueAndValidity({ emitEvent: false });
-                this.form.get('refusalDateControl')!.updateValueAndValidity({ emitEvent: false });
-                this.form.get('deliveryDateControl')!.updateValueAndValidity({ emitEvent: false });
-                this.form.get('refusalWitnessesControl')!.updateValueAndValidity({ emitEvent: false });
             }
         });
 
@@ -433,17 +385,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             constatationCommentsControl: new FormControl(null, Validators.maxLength(4000)),
             offenderCommentsControl: new FormControl(null, Validators.maxLength(4000)),
 
-            deliveryTypeControl: new FormControl(null),
-            deliveryTerritoryUnitControl: new FormControl(null),
-            stateServiceControl: new FormControl(null),
-            referenceNumControl: new FormControl(null, Validators.maxLength(500)),
-            deliveryAddressControl: new FormControl(null),
-            isEDeliveryRequestedControl: new FormControl(null),
-
-            confirmationTypeControl: new FormControl(null),
-            deliveryDateControl: new FormControl(null),
-            refusalDateControl: new FormControl(null),
-            refusalWitnessesControl: new FormControl(null),
+            auanDeliveryDataControl: new FormControl(null),
 
             hasObjectionControl: new FormControl(false),
             objectionDateControl: new FormControl(null),
@@ -484,43 +426,23 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         this.form.get('offenderCommentsControl')!.setValue(this.model.offenderComments);
 
         const delivery: AuanDeliveryDataDTO | undefined = this.model.deliveryData;
+        this.form.get('auanDeliveryDataControl')!.setValue(delivery);
+
         if (delivery !== undefined && delivery !== null) {
             const type: InspDeliveryTypesEnum | undefined = delivery.deliveryType;
-            this.form.get('isEDeliveryRequestedControl')!.setValue(delivery.isEDeliveryRequested);
 
-            if (type !== undefined && type !== null) {
-                this.form.get('deliveryTypeControl')!.setValue(this.deliveryTypes.find(x => x.code === InspDeliveryTypesEnum[type]));
+            if (type !== undefined && type !== null && type === InspDeliveryTypesEnum.Personal) {
+                this.form.get('hasObjectionControl')!.setValue(this.model.hasObjection);
+                if (this.model.hasObjection === true) {
+                    this.form.get('objectionDateControl')!.setValue(this.model.objectionDate);
 
-                if (type === InspDeliveryTypesEnum.Office) {
-                    this.form.get('deliveryTerritoryUnitControl')!.setValue(this.territoryUnits.find(x => x.value === delivery.territoryUnitId));
-                }
-                else if (type === InspDeliveryTypesEnum.ByMail) {
-                    this.form.get('sentDateControl')!.setValue(delivery.sentDate);
-                    this.form.get('deliveryAddressControl')!.setValue(delivery.address);
-                }
-                else if (type === InspDeliveryTypesEnum.StateService) {
-                    this.form.get('stateServiceControl')!.setValue(delivery.stateService);
-                    this.form.get('referenceNumControl')!.setValue(delivery.referenceNum);
-                }
-                else if (type === InspDeliveryTypesEnum.Refusal) {
-                    this.form.get('refusalDateControl')!.setValue(delivery.refusalDate);
-                    this.form.get('refusalWitnessesControl')!.setValue(delivery.refusalWitnesses);
-                }
-                else if (type === InspDeliveryTypesEnum.Personal) {
-                    this.form.get('deliveryDateControl')!.setValue(delivery.deliveryDate);
+                    if (this.model.resolutionType !== undefined && this.model.resolutionType !== null) {
+                        this.form.get('objectionResolutionTypeControl')!.setValue(this.objectionResolutionTypes.find(x => {
+                            return x.value === this.model.resolutionType;
+                        }));
 
-                    this.form.get('hasObjectionControl')!.setValue(this.model.hasObjection);
-                    if (this.model.hasObjection === true) {
-                        this.form.get('objectionDateControl')!.setValue(this.model.objectionDate);
-
-                        if (this.model.resolutionType !== undefined && this.model.resolutionType !== null) {
-                            this.form.get('objectionResolutionTypeControl')!.setValue(this.objectionResolutionTypes.find(x => {
-                                return x.value === this.model.resolutionType;
-                            }));
-
-                            this.form.get('objectionResolutionDateControl')!.setValue(this.model.resolutionDate);
-                            this.form.get('objectionResolutionNumControl')!.setValue(this.model.resolutionNum);
-                        }
+                        this.form.get('objectionResolutionDateControl')!.setValue(this.model.resolutionDate);
+                        this.form.get('objectionResolutionNumControl')!.setValue(this.model.resolutionNum);
                     }
                 }
             }
@@ -556,35 +478,12 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             this.model.inspectorId = this.form.get('drafterControl')!.value?.value;
         }
 
-        const deliveryType: NomenclatureDTO<number> | undefined = this.form.get('deliveryTypeControl')!.value;
+        const deliveryData: AuanDeliveryDataDTO = this.form.get('auanDeliveryDataControl')!.value;
+        if (deliveryData !== undefined && deliveryData !== null) {
+            const type: InspDeliveryTypesEnum | undefined = deliveryData.deliveryType;
+            this.model.deliveryData = deliveryData;
 
-        if (deliveryType !== undefined && deliveryType !== null) {
-            this.model.deliveryData = new AuanDeliveryDataDTO({
-                id: this.model.deliveryData?.id,
-                deliveryType: InspDeliveryTypesEnum[deliveryType.code as keyof typeof InspDeliveryTypesEnum],
-                isDelivered: false
-            });
-
-            this.model.deliveryData.isEDeliveryRequested = this.form.get('isEDeliveryRequestedControl')!.value ?? false;
-
-            if (this.model.deliveryData.deliveryType === InspDeliveryTypesEnum.Office) {
-                this.model.deliveryData.territoryUnitId = this.form.get('deliveryTerritoryUnitControl')!.value!.value;
-            }
-            else if (this.model.deliveryData.deliveryType === InspDeliveryTypesEnum.ByMail) {
-                this.model.deliveryData.address = this.form.get('deliveryAddressControl')!.value;
-                this.model.deliveryData.sentDate = this.form.get('sentDateControl')!.value;
-            }
-            else if (this.model.deliveryData.deliveryType === InspDeliveryTypesEnum.StateService) {
-                this.model.deliveryData.stateService = this.form.get('stateServiceControl')!.value;
-                this.model.deliveryData.referenceNum = this.form.get('referenceNumControl')!.value;
-            }
-            else if (this.model.deliveryData.deliveryType === InspDeliveryTypesEnum.Refusal) {
-                this.model.deliveryData.refusalDate = this.form.get('refusalDateControl')!.value;
-                this.model.deliveryData.refusalWitnesses = this.form.get('refusalWitnessesControl')!.value;
-            }
-            else if (this.model.deliveryData.deliveryType === InspDeliveryTypesEnum.Personal) {
-                this.model.deliveryData.deliveryDate = this.form.get('deliveryDateControl')!.value;
-
+            if (type !== undefined && type !== null && type === InspDeliveryTypesEnum.Personal) {
                 this.model.hasObjection = this.form.get('hasObjectionControl')!.value ?? false;
 
                 if (this.model.hasObjection === true) {
@@ -694,8 +593,8 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         }
 
         if (response.error?.code === ErrorCode.NoEDeliveryRegistration) {
-            this.form.get('deliveryTypeControl')!.setErrors({ 'hasNoEDeliveryRegistrationError': true });
-            this.form.get('deliveryTypeControl')!.markAsTouched();
+            this.form.get('auanDeliveryDataControl')!.setErrors({ 'hasNoEDeliveryRegistrationError': true });
+            this.form.get('auanDeliveryDataControl')!.markAsTouched();
             this.validityCheckerGroup.validate();
         }
 

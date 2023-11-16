@@ -185,92 +185,16 @@
     <!-- Начин на връчване -->
     <tl-expansion-panel title="{{ 'auan-register.edit-auan-delivery' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="form.controls.deliveryTypeControl.errors?.hasNoEDeliveryRegistrationError !== true"
+                        [validityCheckerExtraCondition]="form.controls.auanDeliveryDataControl.errors?.hasNoEDeliveryRegistrationError !== true"
                         tooltipResourceName="auan-register.edit-auan-delivery-helper">
-        <div fxLayout="column" fxLayoutGap="1em">
-            <div fxLayout="column" fxLayoutGap="1em">
-                <tl-radio-button-group fxFlex="100"
-                                       formControlName="deliveryTypeControl"
-                                       [options]="deliveryTypes">
-                </tl-radio-button-group>
+        <auan-delivery-data formControlName="auanDeliveryDataControl"
+                            validityChecker
+                            [viewMode]="viewMode">
+        </auan-delivery-data>
 
-                <tl-checkbox fxFlex="100"
-                             formControlName="isEDeliveryRequestedControl"
-                             label="{{ 'auan-register.edit-auan-e-delivery-requested' | tlTranslate }}"
-                             tooltipResourceName="auan-register.edit-auan-e-delivery-requested-helper">
-                </tl-checkbox>
-
-                <mat-error *ngIf="form.controls.deliveryTypeControl.errors?.hasNoEDeliveryRegistrationError === true">
-                    * {{ 'auan-register.has-no-e-delivery-registration-error' | tlTranslate }}
-                </mat-error>
-            </div>
-
-            <div [ngSwitch]="deliveryType">
-                <div *ngSwitchCase="deliveryTypesEnum.Personal" fxLayout="row">
-                    <tl-date fxFlex="25"
-                             formControlName="deliveryDateControl"
-                             [max]="today"
-                             label="{{ 'auan-register.edit-auan-delivery-date' | tlTranslate }}"
-                             tooltipResourceName="auan-register.edit-auan-delivery-date-helper">
-                    </tl-date>
-                </div>
-
-                <div *ngSwitchCase="deliveryTypesEnum.Office" fxLayout="row">
-                    <tl-autocomplete fxFlex="25"
-                                     formControlName="deliveryTerritoryUnitControl"
-                                     [options]="territoryUnits"
-                                     label="{{ 'auan-register.edit-auan-territory-unit' | tlTranslate }}"
-                                     tooltipResourceName="auan-register.edit-auan-territory-unit-helper">
-                    </tl-autocomplete>
-                </div>
-
-                <div *ngSwitchCase="deliveryTypesEnum.ByMail" fxLayout="column">
-                    <div fxLayout="row" fxLayoutGap="1em">
-                        <tl-date fxFlex="25"
-                                 formControlName="sentDateControl"
-                                 [max]="today"
-                                 label="{{ 'auan-register.edit-auan-sent-date' | tlTranslate }}"
-                                 tooltipResourceName="auan-register.edit-edit-auan-sent-date-helper">
-                        </tl-date>
-                    </div>
-                    <single-address-registration formControlName="deliveryAddressControl"
-                                                 [addressType]="correspondenceAddressType"
-                                                 validityChecker
-                                                 label="{{ 'auan-register.edit-auan-delivery-address' | tlTranslate : 'cap' }}">
-                    </single-address-registration>
-                </div>
-
-                <div *ngSwitchCase="deliveryTypesEnum.StateService" fxLayout="row" fxLayoutGap="1em">
-                    <tl-input fxFlex="25"
-                              formControlName="stateServiceControl"
-                              label="{{ 'auan-register.edit-auan-state-service' | tlTranslate }}"
-                              tooltipResourceName="auan-register.edit-auan-state-service-helper">
-                    </tl-input>
-
-                    <tl-input fxFlex="25"
-                              formControlName="referenceNumControl"
-                              label="{{ 'auan-register.edit-auan-reference-num' | tlTranslate }}"
-                              tooltipResourceName="auan-register.edit-auan-reference-num-helper">
-                    </tl-input>
-                </div>
-
-                <div *ngSwitchCase="deliveryTypesEnum.Refusal" fxLayout="column" fxLayoutGap="1em">
-                    <div fxLayout="row">
-                        <tl-date fxFlex="25"
-                                 formControlName="refusalDateControl"
-                                 [max]="today"
-                                 label="{{ 'auan-register.edit-auan-refusal-date' | tlTranslate }}"
-                                 tooltipResourceName="auan-register.edit-auan-refusal-date-helper">
-                        </tl-date>
-                    </div>
-
-                    <auan-witnesses-array formControlName="refusalWitnessesControl"
-                                          validityChecker
-                                          [viewMode]="viewMode">
-                    </auan-witnesses-array>
-                </div>
-            </div>
-        </div>
+        <mat-error *ngIf="form.controls.auanDeliveryDataControl.errors?.hasNoEDeliveryRegistrationError === true">
+            * {{ 'auan-register.has-no-e-delivery-registration-error' | tlTranslate }}
+        </mat-error>
     </tl-expansion-panel>
 
     <!-- Възражение и прекратяване -->
