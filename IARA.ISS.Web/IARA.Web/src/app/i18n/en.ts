@@ -2301,6 +2301,7 @@
         'table-user': 'User',
         'table-ip': 'IP Address',
         'table-browser': 'Browser',
+        'table-id': 'Table ID',
 
         'dialog-title': 'System log — details about the action',
         'dialog-old-value': 'Old data',
@@ -2316,7 +2317,8 @@
 
         'side-by-side': 'Side by side',
         'line-by-line': 'Line by line',
-        'only-show-lines-with-differences': 'Only show lines with differences'
+        'only-show-lines-with-differences': 'Only show lines with differences',
+        'table-related-logs': 'Related events'
     },
     'news-management': {
         'three-state-yes': 'Published',
@@ -5072,7 +5074,9 @@
 
         'edit-auan-witness': 'Witness',
 
-        'edit-auan-confiscated-appliances-table': 'Confiscated appliances'
+        'edit-auan-confiscated-appliances-table': 'Confiscated appliances',
+        'delivery-dialog-title': 'Delivery data',
+        'delivery-data': 'Delivery data'
     },
     'cross-check-results': {
         'check-code': 'Code',
@@ -5652,7 +5656,9 @@
         'view-status': 'View status',
         'edit-status': 'Edit status',
         'delete-status': 'Delete status',
-        'restore-status': 'Restore status'
+        'restore-status': 'Restore status',
+        'delivery-dialog-title': 'Delivery data',
+        'delivery-data': 'Delivery data'
     },
     'catch-quotas': {
         'ship': 'Ship',

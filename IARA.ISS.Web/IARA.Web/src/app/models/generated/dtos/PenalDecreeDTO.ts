@@ -33,6 +33,9 @@ export class PenalDecreeDTO {
     @StrictlyTyped(String)
     public inspectedEntity?: string;
 
+    @StrictlyTyped(Number)
+    public deliveryId?: number;
+
     @StrictlyTyped(String)
     public status?: string;
 

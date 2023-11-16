@@ -1,68 +1,78 @@
 ﻿<div fxLayout="column" fxFlexFill [formGroup]="formGroup" class="dialog-padding">
-    <div fxLayout="row" fxLayoutAlign="space-around start" fxLayoutGap="1em">
-        <tl-input fxFlex="20"
+    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+        <tl-input fxFlex="25"
                   label="{{ 'system-log.table-unique-number' | tlTranslate }}"
                   formControlName="uniqueNumberControl"
                   tooltipResourceName="system-log.table-unique-number-helper">
         </tl-input>
 
-        <tl-date-time fxFlex="20"
+        <tl-date-time fxFlex="25"
                       label="{{ 'system-log.table-date-time' | tlTranslate }}"
                       formControlName="dateTimeControl"
                       dataType="datetime"
                       tooltipResourceName="system-log.table-date-time-helper">
         </tl-date-time>
 
-        <tl-input fxFlex="20"
+        <tl-input fxFlex="25"
                   label="{{ 'system-log.table-user' | tlTranslate }}"
                   formControlName="userControl"
                   tooltipResourceName="system-log.table-user-helper">
         </tl-input>
 
-        <tl-input fxFlex="20"
+        <tl-input fxFlex="25"
                   label="{{ 'system-log.table-ip' | tlTranslate }}"
                   formControlName="ipControl"
                   tooltipResourceName="system-log.table-ip-helper">
         </tl-input>
+    </div>
 
-        <tl-input fxFlex="20"
+    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+        <tl-input fxFlex="25"
                   label="{{ 'system-log.table-browser' | tlTranslate }}"
                   formControlName="browserControl"
                   tooltipResourceName="system-log.table-browser-helper">
         </tl-input>
-    </div>
-    <div fxLayout="row" fxLayoutAlign="space-around start" fxLayoutGap="1em">
-        <tl-input fxFlex="20"
-                  label="{{ 'system-log.table-application' | tlTranslate }}"
-                  formControlName="applicationControl"
-                  tooltipResourceName="system-log.table-application-helper">
-        </tl-input>
 
-        <tl-input fxFlex="20"
+        <tl-input fxFlex="25"
                   label="{{ 'system-log.table-module' | tlTranslate }}"
                   formControlName="moduleControl"
                   tooltipResourceName="system-log.table-module-helper">
         </tl-input>
 
-        <tl-input fxFlex="20"
+        <tl-input fxFlex="25"
+                  label="{{ 'system-log.table-object' | tlTranslate }}"
+                  formControlName="objectControl"
+                  tooltipResourceName="system-log.table-object-helper">
+        </tl-input>
+
+        <tl-input fxFlex="25"
+                  label="{{ 'system-log.table-id' | tlTranslate }}"
+                  formControlName="tableIdControl"
+                  tooltipResourceName="system-log.table-id-helper">
+        </tl-input>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+        <tl-input fxFlex="33"
+                  label="{{ 'system-log.table-application' | tlTranslate }}"
+                  formControlName="applicationControl"
+                  tooltipResourceName="system-log.table-application-helper">
+        </tl-input>
+
+        <tl-input fxFlex="33"
                   label="{{ 'system-log.table-action-type' | tlTranslate }}"
                   formControlName="actionTypeControl"
                   tooltipResourceName="system-log.table-action-type-helper">
         </tl-input>
 
-        <tl-input fxFlex="20"
+        <tl-input fxFlex="33"
                   label="{{ 'system-log.table-action' | tlTranslate }}"
                   formControlName="actionControl"
                   tooltipResourceName="system-log.table-action-helper">
         </tl-input>
-
-        <tl-input fxFlex="20"
-                  label="{{ 'system-log.table-object' | tlTranslate }}"
-                  formControlName="objectControl"
-                  tooltipResourceName="system-log.table-object-helper">
-        </tl-input>
     </div>
 </div>
+
 <td-ngx-text-diff id="text-diff-component"
                   [left]="oldValue"
                   [right]="newValue">

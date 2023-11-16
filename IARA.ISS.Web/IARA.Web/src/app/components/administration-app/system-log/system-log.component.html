@@ -45,6 +45,12 @@
 
             <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
                 <tl-input fxFlex="33"
+                          formControlName="tableIdControl"
+                          label="{{ 'system-log.table-id' | tlTranslate }}"
+                          tooltipResourceName="system-log.table-id-helper">
+                </tl-input>
+
+                <tl-input fxFlex="33"
                           formControlName="oldValueControl"
                           label="{{ 'system-log.audit-old-value' | tlTranslate }}"
                           tooltipResourceName="system-log.old-value-helper">
@@ -55,7 +61,9 @@
                           label="{{ 'system-log.audit-new-value' | tlTranslate }}"
                           tooltipResourceName="system-log.new-value-helper">
                 </tl-input>
+            </div>
 
+            <div fxLayout="row" fxLayoutGap="1em">
                 <tl-slide-toggle fxFlex="33"
                                  formControlName="showRelatedLogsControl"
                                  label="{{ 'system-log.show-related-logs' | tlTranslate }}"
@@ -67,58 +75,120 @@
 
     <tl-card tooltipResourceName="system-log.system-log-table-helper">
         <tl-card-content>
-            <tl-data-table [showAddButton]="false" [showInactiveRecords]="false">
-                <data-column [flexRate]="0.25"
-                             columnName="{{ 'system-log.table-unique-number' | tlTranslate }}"
-                             propertyName="id">
-                </data-column>
-                <data-column [flexRate]="0.4"
+            <tl-data-table [showAddButton]="false"
+                           [showInactiveRecords]="false">
+                <row-detail>
+                    <ng-template let-row="row" ngx-datatable-row-detail-template>
+                        <tl-card tooltipResourceName="system-log.table-related-logs-helper">
+                            <tl-card-title>{{ 'system-log.table-related-logs' | tlTranslate }}</tl-card-title>
+                            <tl-card-content>
+                                <tl-data-table [isRemote]="false"
+                                               [showAddButton]="false"
+                                               [showInactiveRecords]="false"
+                                               [rows]="row.data.systemLogs"
+                                               [recordsPerPage]="10">
+                                    <data-column [flexRate]="0.25"
+                                                 columnName="{{ 'system-log.table-unique-number' | tlTranslate }}"
+                                                 propertyName="id">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.4"
+                                                 columnName="{{ 'system-log.table-date-time' | tlTranslate }}"
+                                                 propertyName="logDate"
+                                                 dataType="datetime">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.4"
+                                                 columnName="{{ 'system-log.table-action-type' | tlTranslate }}"
+                                                 propertyName="actionType">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.8"
+                                                 columnName="{{ 'system-log.table-application' | tlTranslate }}"
+                                                 propertyName="application">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.3"
+                                                 columnName="{{ 'system-log.table-module' | tlTranslate }}"
+                                                 propertyName="module">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.5"
+                                                 columnName="{{ 'system-log.table-action' | tlTranslate }}"
+                                                 propertyName="action">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.5"
+                                                 columnName="{{ 'system-log.table-object' | tlTranslate }}"
+                                                 propertyName="tableName">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.3"
+                                                 columnName="{{ 'system-log.table-id' | tlTranslate }}"
+                                                 propertyName="tableId">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.5"
+                                                 columnName="{{ 'system-log.table-user' | tlTranslate }}"
+                                                 propertyName="username">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.4"
+                                                 columnName="{{ 'system-log.table-ip' | tlTranslate }}"
+                                                 propertyName="ipAddress">
+                                    </data-column>
+
+                                    <data-column [flexRate]="0.5"
+                                                 columnName="{{ 'system-log.table-browser' | tlTranslate }}"
+                                                 propertyName="browserInfo">
+                                    </data-column>
+
+                                    <data-template-column [flexRate]="0.3">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                                <tl-icon-button icon="visibility"
+                                                                (buttonClicked)="openDialog(row.data)"
+                                                                iconClass="accent-color">
+                                                </tl-icon-button>
+                                            </div>
+                                        </ng-template>
+                                    </data-template-column>
+                                </tl-data-table>
+                            </tl-card-content>
+                        </tl-card>
+                    </ng-template>
+                </row-detail>
+
+                <data-column [flexRate]="0.2"
                              columnName="{{ 'system-log.table-date-time' | tlTranslate }}"
                              propertyName="logDate"
                              dataType="datetime">
                 </data-column>
+
                 <data-column [flexRate]="0.5"
-                             columnName="{{ 'system-log.table-action-type' | tlTranslate }}"
-                             propertyName="actionType">
-                </data-column>
-                <data-column [flexRate]="0.8"
                              columnName="{{ 'system-log.table-application' | tlTranslate }}"
                              propertyName="application">
                 </data-column>
-                <data-column [flexRate]="0.4"
+
+                <data-column [flexRate]="0.2"
                              columnName="{{ 'system-log.table-module' | tlTranslate }}"
                              propertyName="module">
                 </data-column>
-                <data-column [flexRate]="0.5"
+
+                <data-column [flexRate]="0.4"
                              columnName="{{ 'system-log.table-action' | tlTranslate }}"
                              propertyName="action">
                 </data-column>
-                <data-column [flexRate]="0.5"
-                             columnName="{{ 'system-log.table-object' | tlTranslate }}"
-                             propertyName="tableName">
-                </data-column>
+
                 <data-column [flexRate]="0.5"
                              columnName="{{ 'system-log.table-user' | tlTranslate }}"
                              propertyName="username">
                 </data-column>
-                <data-column [flexRate]="0.4"
-                             columnName="{{ 'system-log.table-ip' | tlTranslate }}"
-                             propertyName="ipAddress">
-                </data-column>
-                <data-column [flexRate]="0.5"
+
+                <data-column [flexRate]="0.6"
                              columnName="{{ 'system-log.table-browser' | tlTranslate }}"
                              propertyName="browserInfo">
                 </data-column>
-                <data-template-column [flexRate]="0.3">
-                    <ng-template let-row="row" ngx-datatable-cell-template>
-                        <div fxLayout="row" fxLayoutAlign="end center">
-                            <tl-icon-button icon="visibility"
-                                            (buttonClicked)="openDialog(row.data)"
-                                            iconClass="accent-color">
-                            </tl-icon-button>
-                        </div>
-                    </ng-template>
-                </data-template-column>
             </tl-data-table>
         </tl-card-content>
     </tl-card>

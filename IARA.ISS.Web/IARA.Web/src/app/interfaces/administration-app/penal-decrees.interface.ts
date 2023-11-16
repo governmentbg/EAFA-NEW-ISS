@@ -26,7 +26,6 @@ export interface IPenalDecreesService extends IBaseAuditService {
     getPenalDecreeAuanData(auanId: number): Observable<PenalDecreeAuanDataDTO>;
     downloadFile(fileId: number, fileName: string): Observable<boolean>;
     getAllAuans(): Observable<NomenclatureDTO<number>[]>;
-    getInspDeliveryTypes(): Observable<NomenclatureDTO<number>[]>;
     getPenalDecreeStatusTypes(): Observable<NomenclatureDTO<number>[]>;
     getPenalDecreeAuthorityTypes(): Observable<NomenclatureDTO<number>[]>;
     getCourts(): Observable<NomenclatureDTO<number>[]>;

@@ -28,6 +28,9 @@ export class AuanRegisterDTO {
     @StrictlyTyped(Date)
     public draftDate?: Date;
 
+    @StrictlyTyped(Number)
+    public deliveryId?: number;
+
     @StrictlyTyped(Boolean)
     public isActive?: boolean;
 }

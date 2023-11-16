@@ -189,6 +189,8 @@ import { UploadFluxAcdrRequestsComponent } from './flux-vms-requests/flux-acdr-r
 import { FishingActivityReportsComponent } from './fishing-activity-reports/fishing-activity-reports.component';
 import { OnlineApplicationsComponent } from './applications-processing/online-applications/online-applications.component';
 import { MatBadgeModule } from '@angular/material/badge';
+import { AuanDeliveryDataComponent } from './control-activity/auan-register/auan-delivery-data/auan-delivery-data.component';
+import { AuanDeliveryComponent } from './control-activity/auan-register/auan-delivery/auan-delivery.component';
 
 @NgModule({
     declarations: [
@@ -369,7 +371,9 @@ import { MatBadgeModule } from '@angular/material/badge';
         EditFluxAcdrRequestsComponent,
         UploadFluxAcdrRequestsComponent,
         FishingActivityReportsComponent,
-        OnlineApplicationsComponent
+        OnlineApplicationsComponent,
+        AuanDeliveryDataComponent,
+        AuanDeliveryComponent
     ],
     imports: [
         TLCommonModule,
@@ -555,7 +559,9 @@ import { MatBadgeModule } from '@angular/material/badge';
         EditFluxAcdrRequestsComponent,
         UploadFluxAcdrRequestsComponent,
         FishingActivityReportsComponent,
-        OnlineApplicationsComponent
+        OnlineApplicationsComponent,
+        AuanDeliveryDataComponent,
+        AuanDeliveryComponent
     ]
 })
 export class IARAApplicationModule {

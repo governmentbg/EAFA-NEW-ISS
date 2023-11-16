@@ -24,11 +24,13 @@ import { DateUtils } from '@app/shared/utils/date.utils';
 import { PermissionsService } from '@app/shared/services/permissions.service';
 import { PenalDecreeStatusEditDTO } from '@app/models/generated/dtos/PenalDecreeStatusEditDTO';
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
+import { IInspDeliveryService } from '@app/interfaces/administration-app/insp-delivery.interface';
+import { AuanDeliveryDataDTO } from '@app/models/generated/dtos/AuanDeliveryDataDTO';
 
 @Injectable({
     providedIn: 'root'
 })
-export class PenalDecreesService extends BaseAuditService implements IPenalDecreesService {
+export class PenalDecreesService extends BaseAuditService implements IPenalDecreesService, IInspDeliveryService {
     protected controller: string = 'PenalDecrees';
 
     private readonly translate: FuseTranslationLoaderService;
@@ -56,12 +58,12 @@ export class PenalDecreesService extends BaseAuditService implements IPenalDecre
             const decreeIds: number[] = entries.records.map((decree: PenalDecreeDTO) => {
                 return decree.id!;
             });
-           
+
             if (decreeIds.length === 0) {
                 return of(entries);
             }
 
-            if (this.permissions.has(PermissionsEnum.PenalDecreeStatusesRead)) { 
+            if (this.permissions.has(PermissionsEnum.PenalDecreeStatusesRead)) {
                 return this.getPenalDecreeStatusesForTableHelper(this.controller, decreeIds).pipe(map((statuses: PenalDecreeStatusEditDTO[]) => {
                     for (const status of statuses) {
                         const found = entries.records.find((entry: PenalDecreeDTO) => {
@@ -79,7 +81,7 @@ export class PenalDecreesService extends BaseAuditService implements IPenalDecre
                             }
                         }
                     }
-                    
+
                     return entries;
                 }));
             }
@@ -134,9 +136,45 @@ export class PenalDecreesService extends BaseAuditService implements IPenalDecre
         return this.requestService.download(this.area, this.controller, 'DownloadPenalDecree', '', { httpParams: params });
     }
 
-    public downloadFile(fileId: number, fileName: string): Observable<boolean> {
+    public downloadFile(fileId: number): Observable<boolean> {
         const params = new HttpParams().append('id', fileId.toString());
-        return this.requestService.download(this.area, this.controller, 'DownloadFile', fileName, { httpParams: params });
+        return this.requestService.download(this.area, this.controller, 'DownloadFile', '', { httpParams: params });
+    }
+
+    public getDeliveryData(id: number): Observable<AuanDeliveryDataDTO> {
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetPenalDecreeDeliveryData', {
+            httpParams: params,
+            responseTypeCtr: AuanDeliveryDataDTO
+        });
+    }
+
+    public addDeliveryData(decreeId: number, deliveryData: AuanDeliveryDataDTO): Observable<number> {
+        const params = new HttpParams().append('decreeId', decreeId.toString());
+
+        return this.requestService.post(this.area, this.controller, 'AddPenalDecreeDeliveryData', deliveryData, {
+            httpParams: params,
+            successMessage: 'succ-updated-delivery-data',
+            properties: new RequestProperties({
+                asFormData: true
+            })
+        });
+    }
+
+    public editDeliveryData(decreeId: number, deliveryData: AuanDeliveryDataDTO, sendEDelivery: boolean): Observable<void> {
+        const params = new HttpParams()
+            .append('decreeId', decreeId.toString())
+            .append('deliveryId', deliveryData.id!.toString())
+            .append('sendEDelivery', sendEDelivery.toString());
+
+        return this.requestService.post(this.area, this.controller, 'UpdatePenalDecreeDeliveryData', deliveryData, {
+            httpParams: params,
+            successMessage: 'succ-updated-delivery-data',
+            properties: new RequestProperties({
+                asFormData: true
+            })
+        });
     }
 
     //Statuses
@@ -167,7 +205,7 @@ export class PenalDecreesService extends BaseAuditService implements IPenalDecre
         return this.requestService.get(this.area, this.controller, 'GetAllAuans', { responseTypeCtr: NomenclatureDTO });
     }
 
-    public getInspDeliveryTypes(): Observable<NomenclatureDTO<number>[]> {
+    public getDeliveryTypes(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetInspDeliveryTypes', { responseTypeCtr: NomenclatureDTO });
     }
 
@@ -219,10 +257,20 @@ export class PenalDecreesService extends BaseAuditService implements IPenalDecre
         return this.requestService.get(this.area, this.controller, 'GetInspectorUsernames', { responseTypeCtr: NomenclatureDTO });
     }
 
+    //Audits
     public getPenalDecreeStatusAudit(id: number): Observable<SimpleAuditDTO> {
         const params = new HttpParams().append('id', id.toString());
 
         return this.requestService.get(this.area, this.controller, 'GetPenalDecreeStatusSimpleAudit', {
+            httpParams: params,
+            responseTypeCtr: SimpleAuditDTO
+        });
+    }
+
+    public getInspDeliverySimpleAudit(id: number): Observable<SimpleAuditDTO> {
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetInspDeliverySimpleAudit', {
             httpParams: params,
             responseTypeCtr: SimpleAuditDTO
         });

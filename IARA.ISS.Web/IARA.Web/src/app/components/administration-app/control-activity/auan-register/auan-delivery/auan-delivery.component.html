@@ -1,0 +1,26 @@
+﻿<div fxLayout="column" fxLayotGap="1em" class="dialog-padding">
+    <div fxLayout="column" xLayoutGap="1em" [formGroup]="form">
+        <auan-delivery-data *ngIf="isAuan"
+                            formControlName="deliveryDataControl"
+                            [viewMode]="false">
+        </auan-delivery-data>
+
+        <decree-delivery-data *ngIf="!isAuan"
+                              formControlName="deliveryDataControl"
+                              [viewMode]="false">
+        </decree-delivery-data>
+    </div>
+
+    <div *ngIf="isEDeliveryChosen" fxLayout="column" [formGroup]="deliveryForm">
+        <file-uploader-form-array formControlName="deliveryFilesControl"
+                                  [pageCode]="pageCodesEnum.InspDelivery"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.deliveryService)"
+                                  [refreshFileTypes]="refreshFileTypes"
+                                  [hideAddButton]="true">
+        </file-uploader-form-array>
+
+        <mat-error *ngIf="hasNoEDeliveryRegistrationError === true"> 
+            * {{ 'auan-register.has-no-e-delivery-registration-error' | tlTranslate }}
+        </mat-error>
+    </div>
+</div>

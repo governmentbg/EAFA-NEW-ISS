@@ -155,6 +155,14 @@
                 <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row wrap" fxLayoutAlign="end center">
+                            <tl-icon-button *ngIf="row.isActive && canEditRecords && (inspectionId === null || inspectionId === undefined)"
+                                            icon="ic-fluent-document-briefcase-24-regular"
+                                            iconClass="accent-color"
+                                            [size]="icIconSize"
+                                            tooltipText="{{ 'auan-register.delivery-data' | tlTranslate }}"
+                                            (buttonClicked)="openDeliveryDialog(row.data)">
+                            </tl-icon-button>
+
                             <tl-icon-button icon="visibility"
                                             (buttonClicked)="addEditAuan(row.data, true)"
                                             iconClass="accent-color"

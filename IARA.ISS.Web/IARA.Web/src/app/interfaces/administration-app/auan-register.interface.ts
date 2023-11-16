@@ -32,7 +32,6 @@ export interface IAuanRegisterService extends IBaseAuditService {
     getAllInspectionReports(): Observable<NomenclatureDTO<number>[]>;
 
     getConfiscationActions(): Observable<AuanConfiscationActionsNomenclatureDTO[]>;
-    getAuanDeliveryTypes(): Observable<InspDeliveryTypesNomenclatureDTO[]>;
     getAuanDeliveryConfirmationTypes(): Observable<InspDeliveryTypesNomenclatureDTO[]>;
     getAuanLawSections(): Observable<AuanLawSectionDTO[]>;
     getConfiscatedAppliances(): Observable<NomenclatureDTO<number>[]>;

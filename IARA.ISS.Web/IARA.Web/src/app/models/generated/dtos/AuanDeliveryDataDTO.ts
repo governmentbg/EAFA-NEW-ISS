@@ -3,6 +3,7 @@
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { AddressRegistrationDTO } from './AddressRegistrationDTO';
 import { AuanWitnessDTO } from './AuanWitnessDTO';
+import { FileInfoDTO } from './FileInfoDTO';
 import { InspDeliveryTypesEnum } from '@app/enums/insp-delivery-types.enum';
 import { InspDeliveryConfirmationTypesEnum } from '@app/enums/insp-delivery-confirmation-types.enum';
 
@@ -49,4 +50,7 @@ export class AuanDeliveryDataDTO {
 
     @StrictlyTyped(AuanWitnessDTO)
     public refusalWitnesses?: AuanWitnessDTO[];
+
+    @StrictlyTyped(FileInfoDTO)
+    public files?: FileInfoDTO[];
 }

@@ -21,6 +21,7 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { SystemLogDialogParams } from './models/system-log-dialog-params.model';
 import { ViewSystemLogComponent } from './view-system-log.component';
+import { BaseSystemLogDTO } from '@app/models/generated/dtos/BaseSystemLogDTO';
 
 @Component({
     selector: 'system-log',
@@ -47,7 +48,7 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
 
     private datatable!: IRemoteTLDatatableComponent;
     private searchpanel!: SearchPanelComponent;
-    private gridManager!: DataTableManager<SystemLogDTO, SystemLogFilters>;
+    private gridManager!: DataTableManager<BaseSystemLogDTO, SystemLogFilters>;
     private viewDialog: TLMatDialog<ViewSystemLogComponent>;
     private systemLogService: ISystemLogService;
     private translateService: FuseTranslationLoaderService;
@@ -114,7 +115,7 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
     }
 
     public ngAfterViewInit(): void {
-        this.gridManager = new DataTableManager<SystemLogDTO, SystemLogFilters>({
+        this.gridManager = new DataTableManager<BaseSystemLogDTO, SystemLogFilters>({
             tlDataTable: this.datatable,
             searchPanel: this.searchpanel,
             requestServiceMethod: this.systemLogService.getAll.bind(this.systemLogService),
@@ -125,7 +126,7 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
         const tableName: string | undefined = window.history.state?.tableName;
 
         if (!CommonUtils.isNullOrEmpty(id) && !CommonUtils.isNullOrEmpty(tableName)) {
-            this.gridManager.advancedFilters = new SystemLogFilters({ tableId: id, tableName: tableName });
+            this.gridManager.advancedFilters = new SystemLogFilters({ tableId: id, tableName: tableName, showRelatedLogs: true });
         }
 
         this.gridManager.refreshData();
@@ -143,6 +144,7 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
             application: filters.getValue('applicationControl'),
             action: filters.getValue('actionControl'),
             tableName: filters.getValue('tableNameControl'),
+            tableId: filters.getValue('tableIdControl'),
             oldValue: filters.getValue('oldValueControl'),
             newValue: filters.getValue('newValueControl'),
             showRelatedLogs: filters.getValue('showRelatedLogsControl') ?? false
@@ -159,6 +161,7 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
             applicationControl: new FormControl(),
             actionControl: new FormControl(),
             tableNameControl: new FormControl(),
+            tableIdControl: new FormControl(),
             oldValueControl: new FormControl(),
             newValueControl: new FormControl(),
             showRelatedLogsControl: new FormControl(false)

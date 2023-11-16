@@ -1,7 +1,8 @@
 ﻿
+
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 
-export class SystemLogDTO {
+export class SystemLogDTO { 
     public constructor(obj?: Partial<SystemLogDTO>) {
         Object.assign(this, obj);
     }
@@ -35,4 +36,10 @@ export class SystemLogDTO {
 
     @StrictlyTyped(String)
     public browserInfo?: string;
+
+    @StrictlyTyped(String)
+    public eventUID?: string;
+
+    @StrictlyTyped(String)
+    public tableId?: string;
 }

@@ -18,11 +18,14 @@ import { AuanConfiscationActionsNomenclatureDTO } from '@app/models/generated/dt
 import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/InspDeliveryTypesNomenclatureDTO';
 import { AuanInspectionDTO } from '@app/models/generated/dtos/AuanInspectionDTO';
 import { AuanLawSectionDTO } from '@app/models/generated/dtos/AuanLawSectionDTO';
+import { AuanDeliveryDataDTO } from '@app/models/generated/dtos/AuanDeliveryDataDTO';
+import { IInspDeliveryService } from '@app/interfaces/administration-app/insp-delivery.interface';
+import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 
 @Injectable({
     providedIn: 'root'
 })
-export class AuanRegisterService extends BaseAuditService implements IAuanRegisterService {
+export class AuanRegisterService extends BaseAuditService implements IAuanRegisterService, IInspDeliveryService {
     protected controller: string = 'AuanRegister';
 
     public constructor(requestService: RequestService) {
@@ -85,9 +88,9 @@ export class AuanRegisterService extends BaseAuditService implements IAuanRegist
         return this.requestService.download(this.area, this.controller, 'DownloadAuan', 'AUAN', { httpParams: params });
     }
 
-    public downloadFile(fileId: number, fileName: string): Observable<boolean> {
+    public downloadFile(fileId: number): Observable<boolean> {
         const params = new HttpParams().append('id', fileId.toString());
-        return this.requestService.download(this.area, this.controller, 'DownloadFile', fileName, { httpParams: params });
+        return this.requestService.download(this.area, this.controller, 'DownloadFile', '', { httpParams: params });
     }
 
     public getAllDrafters(): Observable<NomenclatureDTO<number>[]> {
@@ -103,6 +106,51 @@ export class AuanRegisterService extends BaseAuditService implements IAuanRegist
         });
     }
 
+    public getDeliveryData(id: number): Observable<AuanDeliveryDataDTO> {
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetAuanDeliveryData', {
+            httpParams: params,
+            responseTypeCtr: AuanDeliveryDataDTO
+        });
+    }
+
+    public addDeliveryData(auanId: number, deliveryData: AuanDeliveryDataDTO): Observable<number> {
+        const params = new HttpParams().append('auanId', auanId.toString());
+
+        return this.requestService.post(this.area, this.controller, 'AddAuanDeliveryData', deliveryData, {
+            httpParams: params,
+            successMessage: 'succ-updated-delivery-data',
+            properties: new RequestProperties({
+                asFormData: true
+            })
+        });
+    }
+
+    public editDeliveryData(auanId: number, deliveryData: AuanDeliveryDataDTO, sendEDelivery: boolean): Observable<void> {
+        const params = new HttpParams()
+            .append('auanId', auanId.toString())
+            .append('deliveryId', deliveryData.id!.toString())
+            .append('sendEDelivery', sendEDelivery.toString());
+
+        return this.requestService.post(this.area, this.controller, 'UpdateAuanDeliveryData', deliveryData, {
+            httpParams: params,
+            successMessage: 'succ-updated-delivery-data',
+            properties: new RequestProperties({
+                asFormData: true
+            })
+        });
+    }
+
+    public getInspDeliverySimpleAudit(id: number): Observable<SimpleAuditDTO> {
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetInspDeliveryAuditInfo', {
+            httpParams: params,
+            responseTypeCtr: SimpleAuditDTO
+        });
+    }
+
     public getAllInspectionReports(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetAllInspectionReports', { responseTypeCtr: NomenclatureDTO });
     }
@@ -111,7 +159,7 @@ export class AuanRegisterService extends BaseAuditService implements IAuanRegist
         return this.requestService.get(this.area, this.controller, 'GetConfiscationActions', { responseTypeCtr: AuanConfiscationActionsNomenclatureDTO });
     }
 
-    public getAuanDeliveryTypes(): Observable<InspDeliveryTypesNomenclatureDTO[]> {
+    public getDeliveryTypes(): Observable<InspDeliveryTypesNomenclatureDTO[]> {
         return this.requestService.get(this.area, this.controller, 'GetAuanDeliveryTypes', { responseTypeCtr: NomenclatureDTO });
     }
 

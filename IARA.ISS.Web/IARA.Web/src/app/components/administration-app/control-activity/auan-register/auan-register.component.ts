@@ -25,6 +25,10 @@ import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
 import { EditAuanInspectionPickerComponent } from './edit-auan-inspection-picker/edit-auan-inspection-picker.component';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
+import { AuanDeliveryComponent } from './auan-delivery/auan-delivery.component';
+import { InspDeliveryDataDialogParams } from './models/insp-delivery-data-dialog-params.model';
+import { AuanDeliveryDataDTO } from '@app/models/generated/dtos/AuanDeliveryDataDTO';
+import { CommonUtils } from '@app/shared/utils/common.utils';
 
 @Component({
     selector: 'auan-register',
@@ -53,6 +57,8 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
     public readonly canDeleteRecords: boolean;
     public readonly canRestoreRecords: boolean;
 
+    public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
+
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
 
@@ -61,11 +67,12 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
 
     private grid!: DataTableManager<AuanRegisterDTO, AuanRegisterFilters>;
 
-    private readonly service: IAuanRegisterService;
+    private readonly service: AuanRegisterService;
     private readonly nomenclatures: CommonNomenclatures;
     private readonly confirmDialog: TLConfirmDialog;
     private readonly editDialog: TLMatDialog<EditAuanComponent>;
     private readonly inspectionPickerDialog: TLMatDialog<EditAuanInspectionPickerComponent>;
+    private readonly inspDeliveryDialog: TLMatDialog<AuanDeliveryComponent>;
 
     public constructor(
         service: AuanRegisterService,
@@ -74,6 +81,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
         confirmDialog: TLConfirmDialog,
         editDialog: TLMatDialog<EditAuanComponent>,
         inspectionPickerDialog: TLMatDialog<EditAuanInspectionPickerComponent>,
+        inspDeliveryDialog: TLMatDialog<AuanDeliveryComponent>,
         permissions: PermissionsService
     ) {
         this.service = service;
@@ -81,6 +89,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
         this.translate = translate;
         this.confirmDialog = confirmDialog;
         this.editDialog = editDialog;
+        this.inspDeliveryDialog = inspDeliveryDialog;
         this.inspectionPickerDialog = inspectionPickerDialog;
 
         this.canAddRecords = permissions.has(PermissionsEnum.AuanRegisterAddRecords);
@@ -301,6 +310,56 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
                             this.grid.refreshData();
                         }
                     });
+                }
+            }
+        });
+    }
+
+    public openDeliveryDialog(auan: AuanRegisterDTO): void {
+        const data: InspDeliveryDataDialogParams = new InspDeliveryDataDialogParams({
+            registerId: auan.id,
+            id: auan.deliveryId,
+            service: this.service,
+            isAuan: true
+        });
+
+        let auditBtn: IHeaderAuditButton | undefined;
+
+        if (auan.deliveryId !== undefined && auan.deliveryId !== null) {
+            auditBtn = {
+                id: auan.deliveryId,
+                getAuditRecordData: this.service.getInspDeliverySimpleAudit.bind(this.service),
+                tableName: 'InspDelivery'
+            };
+        }
+
+        const dialog = this.inspDeliveryDialog.openWithTwoButtons({
+            title: this.translate.getValue('auan-register.delivery-dialog-title'),
+            TCtor: AuanDeliveryComponent,
+            headerAuditButton: auditBtn,
+            headerCancelButton: {
+                cancelBtnClicked: this.closeEditDialogBtnClicked.bind(this)
+            },
+            componentData: data,
+            translteService: this.translate,
+            disableDialogClose: true,
+            viewMode: false,
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                translateValue: this.translate.getValue('common.save')
+            },
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: this.translate.getValue('common.cancel'),
+            },
+        }, '1400px');
+
+        dialog.subscribe({
+            next: (entry: AuanDeliveryDataDTO | undefined) => {
+                if (entry !== undefined && entry !== null) {
+                    this.grid.refreshData();
                 }
             }
         });
