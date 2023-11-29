@@ -863,7 +863,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
 
         let showOnlyRegiXData: boolean = false;
         let showRegixData: boolean = false;
-        let service: IApplicationsActionsService = this.getServiceInstanceForPageCode(pageCode);
+        const service: IApplicationsActionsService = this.getServiceInstanceForPageCode(pageCode);
 
         let auditButton: IHeaderAuditButton | undefined = undefined;
 
@@ -875,11 +875,12 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
                     tableName: 'ApplicationChangeHistory'
                 };
             }
-            else { // TODO when to put audit from Db.Applications and when from the corresponding (by pageCode) register table and how ???
-                //auditButton = {
-                //    id: applicationId,
-                //    getAuditRecordData: this.applicationsService.getSimpleAudit.bind(this.service)
-                //};
+            else {
+                auditButton = {
+                    id: applicationId,
+                    getAuditRecordData: this.service.getApplicationsSimpleAudit.bind(this.service),
+                    tableName: 'Applications'
+                };
             }
         }
 
@@ -1109,6 +1110,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
 
     private openEditRegisterDialog(applicationId: number, viewMode: boolean = false, pageCode: PageCodeEnum): void {
         let title: string = '';
+        let auditButton: IHeaderAuditButton | undefined;
         const isReadOnly: boolean = !this.processingPermissions.get(pageCode)?.canAddAdministrativeActRecords || viewMode;
 
         const service: IApplicationRegister | IApplicationsActionsService = this.getServiceInstanceForPageCode(pageCode);
@@ -1123,6 +1125,14 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
                 this.editDialogTCtor = editDialogInfo!.editDialogTCtor;
                 this.viewRegisterDialogTitle = editDialogInfo!.viewRegisterTitle;
             }
+        }
+
+        if (this.pageType !== 'PublicPage') {
+            auditButton = {
+                id: applicationId,
+                getAuditRecordData: this.service.getApplicationsSimpleAudit.bind(this.service),
+                tableName: 'Applications'
+            };
         }
 
         const editDialogData: DialogParamsModel = new DialogParamsModel({
@@ -1153,6 +1163,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
             headerCancelButton: {
                 cancelBtnClicked: this.closeEditDialogBtnClicked.bind(this)
             },
+            headerAuditButton: auditButton,
             componentData: editDialogData,
             translteService: this.translationService,
             disableDialogClose: true,

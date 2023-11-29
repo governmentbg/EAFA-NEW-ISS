@@ -93,6 +93,10 @@ export class SubmittedApplicationsProcessingService extends BaseAuditService imp
         throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
     }
 
+    public getApplicationsSimpleAudit(id: number): Observable<SimpleAuditDTO> {
+        throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
+    }
+
     public deleteApplication(id: number): Observable<void> {
         throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
     }

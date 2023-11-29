@@ -3177,7 +3177,11 @@
         'change-permit-license-suspension-history-dialog-title': 'Промяна на прекратявания на удостоверение с номер',
 
         'permit-license-nomenclature-inspection-num': 'Номер на проверка',
-        'permit-license-nomenclature-year': 'Година'
+        'permit-license-nomenclature-year': 'Година',
+
+        'complete-application-confirm-dialog-title': 'Приключване на заявление',
+        'complete-application-confirm-dialog-message': 'Сигурни ли сте, че сте приклюичили с всички промени от това заявление?',
+        'complete-application-confirm-dialog-ok-btn-label': 'Приключи'
     },
     'suspensions': {
         'suspension-type': 'Тип',
@@ -3329,6 +3333,25 @@
         'choose-permit-license-from-inspection-dialog-title': 'Избор на риболовни уреди от инспектирано удостоверение',
         'choose-fishing-gears-from-inspection-count': 'Брой избрани риболовни уреди',
         'no-fishing-gears-chosen-error': 'Трябва да бъде избран поне един риболовен уред',
+
+        'edit-fishing-gears-permit-license-application-dialog-title': 'Попълване на заявление за маркиане на риболовни уреди',
+        'view-fishing-gears-permit-license-application-dialog-title': 'Преглед на заявление за маркиане на риболовни уреди',
+        'edit-fishing-gears-permit-license-application-regix-data-dialog-title': 'Редакция на RegiX данни от заявление за маркиане на риболовни уреди',
+        'view-fishing-gears-permit-license-application-regix-data-dialog-title': 'Преглед на RegiX данни от заявление за маркиане на риболовни уреди',
+        'view-fishing-gears-permit-license-appl-and-confirm-regularity-title': 'Преглед на заявление и потвърждение редовността на данните',
+
+        'application-submitted-by': 'Заявител на услугата',
+        'application-requester-role': 'Качество на заявителя спрямо получателя на услугата',
+        'application-receiver': 'Получател на услугата',
+        'application-permit-license': 'Данни за удостоверението',
+        'application-permit-license-number': 'Удостоверение, към което да бъдат маркирани уредите',
+        'application-permit-license-is-readonly-info': 'Трябва да бъде избран кораб, за да се избере удостоверение',
+        'application-fishing-gears': 'Риболовни уеди',
+        'application-payment-information-panel': 'Информация за плащане',
+        'application-delivery-data-panel': 'Начин на получаване на издаден от ИАРА документ',
+        'application-has-no-e-delivery-registration-error': 'Трябва да имате достъп до системата за електронно връчване (EDelivery), за да изберете електронно връчване',
+        'application-files-panel': 'Приложения',
+        'application-regix-checks-results-panel': 'Резултати от автоматични проверки към външни регистри',
 
         'type-helper': '',
         'count-helper': '',
@@ -4511,6 +4534,7 @@
         'filters-ship': 'Кораб',
         'filters-start-time': 'Дата от',
         'filters-end-time': 'Дата до',
+        'filters-has-errors': 'Излети с грешки',
         'uuid': 'UUID на съобщението',
         'purpose': 'Причина',
         'report-type': 'Вид съобщение',
@@ -4539,7 +4563,10 @@
         'gear-name': 'Риболовен уред',
         'unload-port': 'Пристанище на разтоварване',
         'unloaded-fish': 'Информация за разтоварване',
-        'view-page': 'Преглед на страница'
+        'view-page': 'Преглед на страница',
+        'has-errors-yes': 'Покажи само с грешки',
+        'has-errors-no': 'Покажи само без грешки',
+        'has-errors-both': 'Покажи всички'
     },
     'aquacultures': {
         'aquaculture-dropdown-uror': 'УРОРР',
@@ -5887,7 +5914,7 @@
 
         'acdr-is-modified-yes': 'Покажи само променените',
         'acdr-is-modified-no': 'Покажи само непроменените',
-        'acdr-is-modified-both': 'Покажи само всички'
+        'acdr-is-modified-both': 'Покажи всички'
     },
     'application-regix-checks': {
         'filters-application-id': '№ на заявление',

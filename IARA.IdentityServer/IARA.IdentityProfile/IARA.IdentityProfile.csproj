@@ -19,10 +19,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" />
-    <PackageReference Include="TechnoLogica.Authentication.Common" Version="1.6.2" />
-    <PackageReference Include="TL.Dependecy.Injection" Version="23.109.49913" />
-    <PackageReference Include="TL.Logging" Version="23.271.53705" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.10" />
+    <PackageReference Include="TechnoLogica.Authentication.Common" Version="1.0.39" />
+    <PackageReference Include="TL.Dependecy.Injection" Version="22.297.44704" />
+    <PackageReference Include="TL.Logging" Version="23.300.54680" />
   </ItemGroup>
 
   <ItemGroup>

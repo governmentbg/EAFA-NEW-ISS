@@ -25,6 +25,9 @@ import { EditShipLogBookPageComponent } from '../../common-app/catches-and-sales
 import { EditShipLogBookPageDialogParams } from '../../common-app/catches-and-sales/components/ship-log-book/models/edit-ship-log-book-page-dialog-params.model';
 import { ViewFluxVmsRequestsDialogParams } from '../flux-vms-requests/models/view-flux-vms-requests-dialog-params.model';
 import { ViewFluxVmsRequestsComponent } from '../flux-vms-requests/view-flux-vms-requests.component';
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+
+type ThreeState = 'yes' | 'no' | 'both';
 
 @Component({
     selector: 'fishing-activity-reports',
@@ -35,6 +38,7 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
     public form: FormGroup;
 
     public ships: ShipNomenclatureDTO[] = [];
+    public hasErrorsOptions: NomenclatureDTO<ThreeState>[] = [];
 
     public readonly hasFishLogBookPageReadPermission: boolean;
     public readonly hasReplayMessagesPermission: boolean;
@@ -86,6 +90,24 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
                 this.ships = ships;
             }
         });
+
+        this.hasErrorsOptions = [
+            new NomenclatureDTO<ThreeState>({
+                value: 'yes',
+                displayName: this.translate.getValue('fishing-activities.has-errors-yes'),
+                isActive: true
+            }),
+            new NomenclatureDTO<ThreeState>({
+                value: 'no',
+                displayName: this.translate.getValue('fishing-activities.has-errors-no'),
+                isActive: true
+            }),
+            new NomenclatureDTO<ThreeState>({
+                value: 'both',
+                displayName: this.translate.getValue('fishing-activities.has-errors-both'),
+                isActive: true
+            })
+        ];
     }
 
     public ngAfterViewInit(): void {
@@ -201,7 +223,8 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
             tripIdentifierControl: new FormControl(),
             shipControl: new FormControl(),
             startTimeControl: new FormControl(),
-            endTimeControl: new FormControl()
+            endTimeControl: new FormControl(),
+            hasErrorsControl: new FormControl()
         });
     }
 
@@ -215,6 +238,20 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
             startTime: filters.getValue('startTimeControl'),
             endTime: filters.getValue('endTimeControl')
         });
+
+        const hasErrors: ThreeState | undefined = filters.getValue<ThreeState>('hasErrorsControl');
+        switch (hasErrors) {
+            case 'yes':
+                result.hasErrors = true;
+                break;
+            case 'no':
+                result.hasErrors = false;
+                break;
+            default:
+            case 'both':
+                result.hasErrors = undefined;
+                break;
+        }
 
         return result;
     }

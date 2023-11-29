@@ -122,6 +122,15 @@ export class ApplicationsProcessingService extends BaseAuditService implements I
         });
     }
 
+    public getApplicationsSimpleAudit(id: number): Observable<SimpleAuditDTO> {
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetAuditInfo', {
+            httpParams: params,
+            responseTypeCtr: SimpleAuditDTO
+        });
+    }
+
     public assignApplicationViaAccessCode(accessCode: string): Observable<AssignedApplicationInfoDTO> {
         throw new Error('method should not be called from ApplicationsProcessing service');
     }

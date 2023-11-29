@@ -18,4 +18,5 @@ export class FishingActivityReportsFilters extends BaseRequestModel {
     public shipId: number | undefined;
     public startTime: Date | undefined;
     public endTime: Date | undefined;
+    public hasErrors: boolean | undefined;
 }

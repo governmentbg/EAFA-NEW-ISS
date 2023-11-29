@@ -2,7 +2,6 @@
 using IARA.Common.ConfigModels;
 using IARA.Common.Utils;
 using IARA.DataAccess.Abstractions;
-using IARA.IdentityProfile.IdentityProfiles;
 using IARA.Security.AuthContext;
 using IARA.Security.Interfaces;
 using IARA.Security.Services;
@@ -49,7 +48,7 @@ namespace IARA.IdentityProfile
 
             services.AddSingleton<SecurityEmailSender>();
             services.AddSingleton(LoggingSettings.ReadSettings(configuration));
-            services.AddLocalLogging(configuration);
+            services.AddLocalLogging();
             //services.AddEmailQueueSender();
         }
     }

@@ -3123,7 +3123,11 @@
         'change-permit-license-suspension-history-dialog-title': 'Change suspensions for permit license with number',
 
         'permit-license-nomenclature-inspection-num': 'Report num',
-        'permit-license-nomenclature-year': 'Year'
+        'permit-license-nomenclature-year': 'Year',
+
+        'complete-application-confirm-dialog-title': 'Submit application',
+        'complete-application-confirm-dialog-message': 'Are you sure that you are done with the changes for this application?',
+        'complete-application-confirm-dialog-ok-btn-label': 'Submit'
     },
     'suspensions': {
         'suspension-type': 'Type',
@@ -3275,6 +3279,25 @@
         'choose-permit-license-from-inspection-dialog-title': 'Choose fishing gears from inspected permit license',
         'choose-fishing-gears-from-inspection-count': 'Fishing gears count',
         'no-fishing-gears-chosen-error': 'At least one fishing gear must be chosen',
+
+        'edit-fishing-gears-permit-license-application-dialog-title': 'Fill mark fishing gears application',
+        'view-fishing-gears-permit-license-application-dialog-title': 'View mark fishing gears application',
+        'edit-fishing-gears-permit-license-application-regix-data-dialog-title': 'Edit RegiX data from mark feshing gears application',
+        'view-fishing-gears-permit-license-application-regix-data-dialog-title': 'View RegiX data from mark feshing gears application',
+        'view-fishing-gears-permit-license-appl-and-confirm-regularity-title': 'View and confirm regularity of application data',
+
+        'application-submitted-by': 'Заявител на услугата',
+        'application-requester-role': 'Качество на заявителя спрямо получателя на услугата',
+        'application-receiver': 'Получател на услугата',
+        'application-permit-license': 'Данни за удостоверението',
+        'application-permit-license-number': 'Удостоверение, към което да бъдат маркирани уредите',
+        'application-permit-license-is-readonly-info': 'Трябва да бъде избран кораб, за да се избере удостоверение',
+        'application-fishing-gears': 'Риболовни уеди',
+        'application-payment-information-panel': 'Информация за плащане',
+        'application-delivery-data-panel': 'Начин на получаване на издаден от ИАРА документ',
+        'application-has-no-e-delivery-registration-error': 'Трябва да имате достъп до системата за електронно връчване (EDelivery), за да изберете електронно връчване',
+        'application-files-panel': 'Приложения',
+        'application-regix-checks-results-panel': 'Резултати от автоматични проверки към външни регистри',
 
         'type-helper': '',
         'count-helper': '',
@@ -4455,6 +4478,7 @@
         'filters-ship': 'Vessel',
         'filters-start-time': 'Date from',
         'filters-end-time': 'Date to',
+        'filters-has-errors': 'Trips with errors',
         'uuid': 'Request UUID',
         'purpose': 'Purpose',
         'report-type': 'Report type',
@@ -4483,7 +4507,10 @@
         'gear-name': 'Fishing gear',
         'unload-port': 'Unload port',
         'unloaded-fish': 'Unload information',
-        'view-page': 'View page'
+        'view-page': 'View page',
+        'has-errors-yes': 'Trips with errors',
+        'has-errors-no': 'Trips without errors',
+        'has-errors-both': 'All trips',
     },
     'aquacultures': {
         'aquaculture-dropdown-uror': 'URORR',

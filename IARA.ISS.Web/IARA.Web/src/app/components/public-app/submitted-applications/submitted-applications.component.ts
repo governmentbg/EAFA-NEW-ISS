@@ -55,6 +55,7 @@ export class SubmittedApplicationsComponent {
                 [PageCodeEnum.DupPoundnetCommFish, onlineProcessingPermissions],
                 [PageCodeEnum.PoundnetCommFishLic, onlineProcessingPermissions],
                 [PageCodeEnum.DupPoundnetCommFishLic, onlineProcessingPermissions],
+                [PageCodeEnum.FishingGearsCommFish, onlineProcessingPermissions],
                 [PageCodeEnum.ReduceFishCap, onlineProcessingPermissions],
                 [PageCodeEnum.RegVessel, onlineProcessingPermissions],
                 [PageCodeEnum.CommFishLicense, onlineProcessingPermissions],
