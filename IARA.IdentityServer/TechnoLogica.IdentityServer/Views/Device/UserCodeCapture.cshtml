@@ -1,0 +1,14 @@
+@model string
+
+<div class="page-header">
+    <h1>
+        Потребителски код
+    </h1>
+    <p>
+        Моля въведете кодът изписан на вашето устройство
+    </p>
+    <form asp-action="UserCodeCapture" method="post">
+        <input for="userCode" name="userCode" />
+        <button class="btn btn-primary">Въведи</button>
+    </form>
+</div>

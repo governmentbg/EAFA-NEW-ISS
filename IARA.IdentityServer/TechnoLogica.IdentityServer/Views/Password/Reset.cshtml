@@ -1,0 +1,56 @@
+@model ResetPasswordModel
+
+
+<div class="login-form-wrapper">
+    <div class="login-form">
+        <div class="inner-wrapper">
+
+            <partial name="_ValidationSummary" />
+
+            <div class="row">
+                <div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Възстановяване на парола</h3>
+                        </div>
+                        <div class="panel-body">
+
+                            @if (Model.Result)
+                            {
+                                <p>
+                                    Изпратено е съобщение с връзка за въстановяване на  парола. Натистене <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">тук</a> за да се върнете във формата за вход.
+                                </p>
+                            }
+                            else
+                            {
+                                <form asp-route="Login">
+                                    <input type="hidden" asp-for="ReturnUrl" />
+
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <label asp-for="EMail">Е-mail адрес</label>
+                                            <input class="form-control" placeholder="Е-mail адрес" asp-for="EMail" autofocus>
+                                        </div>
+                                        <div class="form-group">
+                                            <button class="btn btn-primary" name="button" value="reset">
+                                                Възстановяване
+                                            </button>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                                <a asp-controller="Account"
+                                   asp-action="Login"
+                                   asp-route-returnUrl="@Model.ReturnUrl">
+                                    Отказ
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="login-form-logo">
+        <img class="img-logo-right" src="~/logoRight.png" alt="Logo">
+    </div>
+</div>

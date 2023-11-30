@@ -1,0 +1,132 @@
+@model LoginViewModel
+
+@section scripts
+{
+    <script src="~/_content/TechnoLogica.IdentityServer/js/reveal-pass.js"></script>
+}
+<div class="login-form-wrapper">
+    <div class="login-form">
+        <div class="inner-wrapper">
+
+            <partial name="_ValidationSummary" />
+
+            <div class="row">
+
+                @if (Model.EnableLocalLogin)
+                {
+                    <div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Вход</h3>
+                            </div>
+                            <div class="panel-body">
+
+                                <form asp-route="Login">
+                                    <input type="hidden" asp-for="ReturnUrl" />
+
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <label asp-for="Username">Потребител</label>
+                                            <input class="form-control" placeholder="Потребител" asp-for="Username" autofocus>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Password">Парола</label>
+                                            <div class="input-group" id="show_hide_password">
+                                                <input id="password" class="form-control" autocomplete="off" asp-for="Password" type="password">
+                                                <div class="input-group-addon">
+                                                    <a id="revealPasswordBtn">
+                                                        <i id="password-eye" class="fa fa-eye" aria-hidden="true"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if (Model.AllowRememberLogin)
+                                        {
+                                            <div class="form-group login-remember">
+                                                <label asp-for="RememberLogin">
+                                                    <input asp-for="RememberLogin">
+                                                    <strong>Запомни ме</strong>
+                                                </label>
+                                            </div>
+                                        }
+                                        <div class="form-group">
+                                            <button class="btn btn-primary" name="button" value="login">Вход</button>
+                                            <button class="btn btn-default" name="button" value="cancel">Отказ</button>
+                                            @if (Model.EnablePasswordReset)
+                                            {
+                                                <a class="pull-right"
+                                           asp-controller="Password"
+                                           asp-action="Reset"
+                                           asp-route-returnUrl="@Model.ReturnUrl">
+                                                    Забравена парола?
+                                                </a>
+                                            }
+                                            @if (!string.IsNullOrEmpty(Model.RegisterURL))
+                                            {
+                                                @if (Model.EnablePasswordReset)
+
+                                                {
+                                                    <br />
+                                                }
+                                                <a class="pull-right"
+                                           href="@Model.RegisterURL">
+                                                    Нова регистрация?
+                                                </a>
+                                            }
+                                        </div>
+                                    </fieldset>
+
+                                </form>
+
+
+                                @if (Model.VisibleExternalProviders.Any())
+                                {
+                                    <hr>
+                                    <ul class="list-inline">
+                                        @foreach (var provider in Model.VisibleExternalProviders)
+                                        {
+                                            @if (string.IsNullOrEmpty(provider.PartialView))
+                                            {
+
+                                                <li>
+                                                    <a class="btn btn-default"
+                                       asp-controller="External"
+                                       asp-action="Challenge"
+                                       asp-route-provider="@provider.AuthenticationScheme"
+                                       asp-route-returnUrl="@Model.ReturnUrl">
+                                                        @provider.DisplayName
+                                                    </a>
+                                                </li>
+                                            }
+                                            else
+                                            {
+                                                await Html.RenderPartialAsync(provider.PartialView, new TechnoLogica.Authentication.Common.ExternalProviderViewModel()
+                            {
+                                AuthenticationScheme = provider.AuthenticationScheme,
+                                DisplayName = provider.DisplayName,
+                                ReturnUrl = Model.ReturnUrl
+                            });
+                                            }
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                }
+
+                @if (!Model.EnableLocalLogin && !Model.VisibleExternalProviders.Any())
+                {
+                    <div class="alert alert-warning">
+                        <strong>Невалидно искане за автентикация</strong>
+                        Не са конфигуирани схеми за автентикация за този клиент.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="login-form-logo">
+        <img class="img-logo-right" src="~/logoRight.png" alt="Logo">
+    </div>
+</div>

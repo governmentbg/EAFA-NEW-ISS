@@ -1,0 +1,68 @@
+@model ResetTokenPasswordModel
+
+@section scripts
+{
+    <script src="~/_content/TechnoLogica.IdentityServer/js/reveal-pass-reset.js"></script>
+}
+
+<div class="login-form-wrapper">
+    <div class="login-form">
+        <div class="inner-wrapper">
+
+            <partial name="_ValidationSummary" />
+
+            <div class="row">
+                <div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Промяна на парола</h3>
+                        </div>
+                        <div class="panel-body">
+                            @if (!Model.Result)
+                            {
+                                <form asp-route="Login">
+                                    <input type="hidden" asp-for="EMail" />
+                                    <input type="hidden" asp-for="ResetToken" />
+                                    <input type="hidden" asp-for="ClientName" />
+                                    <input type="hidden" asp-for="ClientId" />
+
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <label asp-for="Password">Нова парола</label>
+                                            <input id="password" type="password" class="form-control" placeholder="Нова парола" asp-for="Password" autocomplete="off">
+                                            <div class="input-group-addon">
+                                                <a id="revealPasswordBtn">
+                                                    <i id="password-eye" class="fa fa-eye" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="NewPassword">Потвърди нова парола</label>
+                                            <input id="password-new" type="password" class="form-control" placeholder="Потвърди нова парола" asp-for="NewPassword" autocomplete="off">
+                                            <div class="input-group-addon">
+                                                <a id="revealNewPasswordBtn">
+                                                    <i id="password-new-eye" class="fa fa-eye" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <button class="btn btn-primary" name="button" value="reset">Промяна</button>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                            }
+                            else
+                            {
+                                <p>Паролата беше успешно променена! Натистене <a href="@Model.RedirectURI">тук</a> за да се върнете в приложението.</p>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="login-form-logo">
+        <img class="img-logo-right" src="~/logoRight.png" alt="Logo">
+    </div>
+</div>

@@ -4,7 +4,7 @@ using IARA.Security.Models.SecurityModels;
 using IARA.Security.Services;
 using Microsoft.AspNetCore.Http;
 
-namespace IARA.IdentityProfile
+namespace IARA.IdentityProfile.IdentityProfiles
 {
     public class PublicWebProfileClientService : BaseProfileClientService
     {

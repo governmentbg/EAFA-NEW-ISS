@@ -265,5 +265,9 @@ namespace IARA.IdentityProfile
             context.IssuedClaims.AddRange(issuedClaims);
         }
 
+        public Task<UserInfo> FindByUsername(string scheme, string username, List<Claim> externalClaims)
+        {
+            return this.FindByUsername(scheme, username);
+        }
     }
 }

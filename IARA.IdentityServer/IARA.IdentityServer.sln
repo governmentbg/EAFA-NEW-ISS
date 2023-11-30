@@ -23,6 +23,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IARA.EntityModels", "..\IAR
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechnoLogica.IdentityServer.PostgreSQLOperationalStore", "TechnoLogica.IdentityServer.PostgreSQLOperationalStore\TechnoLogica.IdentityServer.PostgreSQLOperationalStore.csproj", "{0A1B4CDC-EF53-4E29-9EE2-C177D72619C2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechnoLogica.IdentityServer", "TechnoLogica.IdentityServer\TechnoLogica.IdentityServer.csproj", "{8D860ADF-9A36-4472-911D-C597B15938F6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechnoLogica.Authentication.EAuth", "TechnoLogica.Authentication.EAuth\TechnoLogica.Authentication.EAuth.csproj", "{23A80027-438F-4B22-ACAE-E652231C3B3B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TechnoLogica", "TechnoLogica", "{BAE84A38-FA62-4BBA-A1A3-70CCB798F1F8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechnoLogica.Authentication.Common", "TechnoLogica.Authentication.Common\TechnoLogica.Authentication.Common.csproj", "{6933304A-E56F-46AA-AFAF-201ECE917A0E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,15 +80,39 @@ Global
 		{0A1B4CDC-EF53-4E29-9EE2-C177D72619C2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0A1B4CDC-EF53-4E29-9EE2-C177D72619C2}.Test|Any CPU.ActiveCfg = Debug|Any CPU
 		{0A1B4CDC-EF53-4E29-9EE2-C177D72619C2}.Test|Any CPU.Build.0 = Debug|Any CPU
+		{8D860ADF-9A36-4472-911D-C597B15938F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D860ADF-9A36-4472-911D-C597B15938F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D860ADF-9A36-4472-911D-C597B15938F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D860ADF-9A36-4472-911D-C597B15938F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D860ADF-9A36-4472-911D-C597B15938F6}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D860ADF-9A36-4472-911D-C597B15938F6}.Test|Any CPU.Build.0 = Debug|Any CPU
+		{23A80027-438F-4B22-ACAE-E652231C3B3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23A80027-438F-4B22-ACAE-E652231C3B3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23A80027-438F-4B22-ACAE-E652231C3B3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23A80027-438F-4B22-ACAE-E652231C3B3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23A80027-438F-4B22-ACAE-E652231C3B3B}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{23A80027-438F-4B22-ACAE-E652231C3B3B}.Test|Any CPU.Build.0 = Debug|Any CPU
+		{6933304A-E56F-46AA-AFAF-201ECE917A0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6933304A-E56F-46AA-AFAF-201ECE917A0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6933304A-E56F-46AA-AFAF-201ECE917A0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6933304A-E56F-46AA-AFAF-201ECE917A0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6933304A-E56F-46AA-AFAF-201ECE917A0E}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{6933304A-E56F-46AA-AFAF-201ECE917A0E}.Test|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0A1B4CDC-EF53-4E29-9EE2-C177D72619C2} = {BAE84A38-FA62-4BBA-A1A3-70CCB798F1F8}
+		{8D860ADF-9A36-4472-911D-C597B15938F6} = {BAE84A38-FA62-4BBA-A1A3-70CCB798F1F8}
+		{23A80027-438F-4B22-ACAE-E652231C3B3B} = {BAE84A38-FA62-4BBA-A1A3-70CCB798F1F8}
+		{6933304A-E56F-46AA-AFAF-201ECE917A0E} = {BAE84A38-FA62-4BBA-A1A3-70CCB798F1F8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E1F9297F-93B9-45C5-B063-B07E786752B1}
 	EndGlobalSection
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
+		SccNumberOfProjects = 11
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = http://tfstl:8080/tfs/defaultcollection
 		SccLocalPath0 = .
@@ -103,7 +135,20 @@ Global
 		SccProjectName6 = ../IARA.ISS.Web-DEV/IARA.EntityModels
 		SccLocalPath6 = ..\\IARA.ISS.Web-DEV\\IARA.EntityModels
 		SccProjectUniqueName7 = TechnoLogica.IdentityServer.PostgreSQLOperationalStore\\TechnoLogica.IdentityServer.PostgreSQLOperationalStore.csproj
+		SccProjectTopLevelParentUniqueName7 = IARA.IdentityServer.sln
 		SccProjectName7 = TechnoLogica.IdentityServer.PostgreSQLOperationalStore
 		SccLocalPath7 = TechnoLogica.IdentityServer.PostgreSQLOperationalStore
+		SccProjectUniqueName8 = TechnoLogica.IdentityServer\\TechnoLogica.IdentityServer.csproj
+		SccProjectTopLevelParentUniqueName8 = IARA.IdentityServer.sln
+		SccProjectName8 = TechnoLogica.IdentityServer
+		SccLocalPath8 = TechnoLogica.IdentityServer
+		SccProjectUniqueName9 = TechnoLogica.Authentication.EAuth\\TechnoLogica.Authentication.EAuth.csproj
+		SccProjectTopLevelParentUniqueName9 = IARA.IdentityServer.sln
+		SccProjectName9 = TechnoLogica.Authentication.EAuth
+		SccLocalPath9 = TechnoLogica.Authentication.EAuth
+		SccProjectUniqueName10 = TechnoLogica.Authentication.Common\\TechnoLogica.Authentication.Common.csproj
+		SccProjectTopLevelParentUniqueName10 = IARA.IdentityServer.sln
+		SccProjectName10 = TechnoLogica.Authentication.Common
+		SccLocalPath10 = TechnoLogica.Authentication.Common
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,73 @@
+﻿@using IdentityServer4.Extensions
+@using Microsoft.AspNetCore.Mvc.ViewEngines
+@inject ICompositeViewEngine Engine
+@{
+    string name = null;
+    if (!true.Equals(ViewData["signed-out"]))
+    {
+        name = Context.User?.GetDisplayName();
+    }
+    string appTitle = ViewBag.ClientName ?? Program.Title;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@appTitle</title>
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
+    <link rel="stylesheet" href="~/_content/TechnoLogica.IdentityServer/lib/bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/_content/TechnoLogica.IdentityServer/css/site.css" />
+    <link rel="stylesheet" href="~/_content/TechnoLogica.IdentityServer/css/fa.css" />
+    <link rel="stylesheet" href="~/_content/TechnoLogica.IdentityServer/css/fira-sans.css">
+    <link rel="stylesheet" href="~/css/Header.css">
+</head>
+<body>
+    <script src="~/_content/TechnoLogica.IdentityServer/lib/jquery/jquery.js"></script>
+    <script src="~/_content/TechnoLogica.IdentityServer/lib/bootstrap/js/bootstrap.js"></script>
+    @RenderSection("scripts", required: false)
+
+    @if (Engine.GetView("", "~/Views/_Header.cshtml", false).Success)
+    {
+        await Html.RenderPartialAsync("~/Views/_Header.cshtml");
+    }
+    <div class="navbar">
+        <div class="container-fluid">
+            <div class="navbar-header">
+
+                <span class="navbar-brand">
+                    @ViewBag.ClientName
+                </span>
+
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(name))
+            {
+                <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">@name <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a asp-action="Logout" asp-controller="Account">Изход</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            }
+        </div>
+    </div>
+
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+
+    @*@{
+            string loaderStyle = ViewBag.ShowLoader != null ? "display:block;" : "display:none;";
+        }
+
+        <div class="loading-wrapper" style="@loaderStyle">
+            <img src="@Url.Content("~/_content/TechnoLogica.IdentityServer/igLoadingSmall.gif")" />
+        </div>*@
+
+</body>
+</html>
