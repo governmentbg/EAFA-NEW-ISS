@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.Composition;
-using IARA.Common.ConfigModels;
+﻿using IARA.Common.ConfigModels;
 using IARA.Common.Utils;
 using IARA.DataAccess.Abstractions;
+using IARA.IdentityProfile.IdentityProfiles;
 using IARA.Security.AuthContext;
 using IARA.Security.Interfaces;
 using IARA.Security.Services;
@@ -14,10 +14,9 @@ using TL.Logging.Abstractions.Interfaces;
 
 namespace IARA.IdentityProfile
 {
-    [Export(typeof(IAuthenticationProfile))]
-    public class AuthenticationProfile : IAuthenticationProfile
+    public static class AuthenticationProfile
     {
-        public void Configure(IServiceCollection services, IConfiguration configuration)
+        public static void AddAuthenticationProfiles(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<AuthDbContext>(options =>
             {

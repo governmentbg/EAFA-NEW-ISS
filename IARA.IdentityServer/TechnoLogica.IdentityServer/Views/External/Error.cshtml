@@ -1,0 +1,14 @@
+﻿@model ExternalLoginErrorViewModel
+<div class="logout-page">
+    <div>
+        <h2>Неуспешен вход в системата с @Model.SchemeDisplayName!</h2>
+
+        <div>
+            @for (int i = 0; i <  Model?.Messages?.Count; i++)
+            {
+                var msg = Model.Messages[i];
+                <div>@Html.Raw(msg)</div>
+            }
+        </div>
+    </div>
+</div>

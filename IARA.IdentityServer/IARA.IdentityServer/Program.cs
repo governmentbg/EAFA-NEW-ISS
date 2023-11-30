@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 
 namespace IARA.IdentityServer
@@ -11,6 +11,8 @@ namespace IARA.IdentityServer
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine("Press enter to start identity server...");
+            Console.ReadLine();
             Console.Title = "IARA IdentityServer";
             TechnoLogica.IdentityServer.Program.CreateWebHostBuilder<Startup>(args)
                     .UseContentRoot(Environment.CurrentDirectory)

@@ -11,10 +11,15 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <RuntimeIdentifiers>win-x64;win10-x64;linux-x64;rhel-x64;</RuntimeIdentifiers>
-    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-    <AssemblyName>IARA.IdentityServer</AssemblyName>
     <UserSecretsId>de71408f-ca04-4340-bd52-1ca2092b00d9</UserSecretsId>
     <Nullable>disable</Nullable>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <MvcRazorCompileOnPublish>true</MvcRazorCompileOnPublish>
+    <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>
+    <RazorCompileOnBuild>true</RazorCompileOnBuild>
+    <RazorCompileOnPublish>true</RazorCompileOnPublish>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <StaticWebAssetBasePath>/</StaticWebAssetBasePath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,10 +36,6 @@
     <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
-    <PackageReference Include="TechnoLogica.Authentication.EAuth" Version="1.1.28" />
-    <PackageReference Include="TechnoLogica.Authentication.EAuthV2" Version="2.0.29" />
-    <PackageReference Include="TechnoLogica.Authentication.Mock" Version="1.0.19" />
-    <PackageReference Include="TechnoLogica.IdentityServer" Version="1.0.73" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,6 +49,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IARA.IdentityProfile\IARA.IdentityProfile.csproj" />
+    <ProjectReference Include="..\TechnoLogica.Authentication.EAuth\TechnoLogica.Authentication.EAuth.csproj" />
+    <ProjectReference Include="..\TechnoLogica.IdentityServer.PostgreSQLOperationalStore\TechnoLogica.IdentityServer.PostgreSQLOperationalStore.csproj" />
+    <ProjectReference Include="..\TechnoLogica.IdentityServer\TechnoLogica.IdentityServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

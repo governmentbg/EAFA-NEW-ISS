@@ -1,0 +1,24 @@
+﻿@using TechnoLogica.Authentication.Common
+@using TechnoLogica.IdentityServer.Models.External
+
+@model RegistrationErrorModel
+
+<div class="logout-page">
+    <div class="page-header">
+        <h1>Грешка при регистрация</h1>
+        <div class="row">
+            <div class="col-sm-6">
+                @foreach (var err in Model.Errors)
+                {
+                    <p>@err.Description</p>
+                }
+            </div>
+        </div>
+        @if (Model.PostLogoutRedirectUri != null)
+        {
+            <div>
+                Натиснете <a class="PostLogoutRedirectUri" href="@Model.PostLogoutRedirectUri">тук</a> за да се върнете в началната страница.
+            </div>
+        }
+    </div>
+</div>
