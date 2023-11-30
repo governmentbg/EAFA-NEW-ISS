@@ -2,30 +2,37 @@
     <!-- Филтри -->
     <search-panel [translateService]="translate">
         <div [formGroup]="form" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-            <tl-input fxFlex="25"
+            <tl-input fxFlex="20"
                       formControlName="tripIdentifierControl"
                       tooltipResourceName="fishing-activities.filters-trip-identifier-helper"
                       label="{{ 'fishing-activities.filters-trip-identifier' | tlTranslate }}">
             </tl-input>
 
-            <tl-autocomplete fxFlex="25"
+            <tl-autocomplete fxFlex="20"
                              formControlName="shipControl"
                              [options]="ships"
                              tooltipResourceName="fishing-activities.filters-ship-helper"
                              label="{{ 'fishing-activities.filters-ship' | tlTranslate }}">
             </tl-autocomplete>
 
-            <tl-date fxFlex="25"
+            <tl-date fxFlex="20"
                      formControlName="startTimeControl"
                      tooltipResourceName="fishing-activities.filters-start-time-helper"
                      label="{{ 'fishing-activities.filters-start-time' | tlTranslate }}">
             </tl-date>
 
-            <tl-date fxFlex="25"
+            <tl-date fxFlex="20"
                      formControlName="endTimeControl"
                      tooltipResourceName="fishing-activities.filters-end-time-helper"
                      label="{{ 'fishing-activities.filters-end-time' | tlTranslate }}">
             </tl-date>
+
+            <tl-select fxFlex="20"
+                       [options]="hasErrorsOptions"
+                       formControlName="hasErrorsControl"
+                       tooltipResourceName="fishing-activities.filters-has-errors-helper"
+                       label="{{ 'fishing-activities.filters-has-errors' | tlTranslate }}">
+            </tl-select>
         </div>
     </search-panel>
 

@@ -5,7 +5,6 @@ import { ApplicationTypeDTO } from '@app/models/generated/dtos/ApplicationTypeDT
 import { FileInfoDTO } from '@app/models/generated/dtos/FileInfoDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { PaymentDataDTO } from '@app/models/generated/dtos/PaymentDataDTO';
-import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
 import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO';
 import { AddApplicationResultDTO } from '@app/models/generated/dtos/AddApplicationResultDTO';
 

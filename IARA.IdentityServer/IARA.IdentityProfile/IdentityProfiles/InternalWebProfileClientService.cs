@@ -1,9 +1,10 @@
-﻿using IARA.Security.Interfaces;
+﻿using IARA.Security.Enums;
+using IARA.Security.Interfaces;
 using IARA.Security.Models.SecurityModels;
 using IARA.Security.Services;
 using Microsoft.AspNetCore.Http;
 
-namespace IARA.IdentityProfile.IdentityProfiles
+namespace IARA.IdentityProfile
 {
     public class InternalWebProfileClientService : BaseProfileClientService
     {
@@ -16,9 +17,9 @@ namespace IARA.IdentityProfile.IdentityProfiles
 
         public override string ClientId => "internal-web-client";
 
-        protected override SecurityUser GetUser(string userName, bool searchByPersonId = false)
+        protected override SecurityUser GetUser(string userName, UserSearchType userSearchType)
         {
-            return securityService.GetInternalUser(userName, searchByPersonId);
+            return securityService.GetUser(userName, userSearchType);
         }
     }
 }

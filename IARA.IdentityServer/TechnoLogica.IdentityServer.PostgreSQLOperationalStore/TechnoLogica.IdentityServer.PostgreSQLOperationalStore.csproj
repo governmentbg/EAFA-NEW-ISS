@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup Label="Globals">
+	  <SccProjectName>SAK</SccProjectName>
+	  <SccProvider>SAK</SccProvider>
+	  <SccAuxPath>SAK</SccAuxPath>
+	  <SccLocalPath>SAK</SccLocalPath>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Version Condition=" '$(Major)$(Minor)$(Patch)' == '' ">1.0.0.0</Version>
+		<Version Condition=" '$(Major)$(Minor)$(Patch)' != '' ">$(Major).$(Minor).$(Patch).0</Version>
+		<Authors>Dimitar Mitev</Authors>
+		<Company>TechnoLogica</Company>
+		<Description>SQL Server Operational Store for Identity Server</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="IdentityServer4.EntityFramework" Version="4.1.2" />
+		<PackageReference Include="IdentityServer4.KeyManagement.EntityFramework" Version="2.1.0" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.22" />
+		<PackageReference Include="TechnoLogica.Authentication.Common" Version="1.0.36" />
+		<PackageReference Include="TechnoLogica.Common" Version="1.0.0" />
+	</ItemGroup>
+
+</Project>

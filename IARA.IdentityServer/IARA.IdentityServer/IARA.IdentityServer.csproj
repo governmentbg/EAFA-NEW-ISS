@@ -27,35 +27,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="TechnoLogica.Authentication.EAuth" Version="1.1.31" />
-    <PackageReference Include="TechnoLogica.Authentication.EAuthV2" Version="2.6.11" />
-    <PackageReference Include="TechnoLogica.Authentication.Mock" Version="1.6.4" />
-    <PackageReference Include="TechnoLogica.IdentityServer" Version="1.6.23" />
-    <PackageReference Include="TechnoLogica.IdentityServer.PostgreSQLOperationalStore" Version="1.0.0" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+    <PackageReference Include="TechnoLogica.Authentication.EAuth" Version="1.1.28" />
+    <PackageReference Include="TechnoLogica.Authentication.EAuthV2" Version="2.0.29" />
+    <PackageReference Include="TechnoLogica.Authentication.Mock" Version="1.0.19" />
+    <PackageReference Include="TechnoLogica.IdentityServer" Version="1.0.73" />
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\DependencyValidationDiagram\DependencyValidation.layerdiagram" Link="DependencyValidation.layerdiagram">
-      <Visible>False</Visible>
-    </AdditionalFiles>
-    <AdditionalFiles Include="..\..\IARA.ISS.Web\DependencyValidationDiagram\DependencyValidation.layerdiagram" Link="DependencyValidation.layerdiagram">
-      <Visible>False</Visible>
-    </AdditionalFiles>
-    <None Include="..\..\IARA.ISS.Web\DependencyValidationDiagram\DependencyValidation.layerdiagram.layout" Link="DependencyValidation.layerdiagram.layout" />
-    <None Include="..\..\IARA.ISS.Web\DependencyValidationDiagram\DependencyValidation.layerdiagram.suppressions" Link="DependencyValidation.layerdiagram.suppressions" />
-    <None Include="..\DependencyValidationDiagram\DependencyValidation.layerdiagram.layout" Link="DependencyValidation.layerdiagram.layout" />
-    <None Include="..\DependencyValidationDiagram\DependencyValidation.layerdiagram.suppressions" Link="DependencyValidation.layerdiagram.suppressions" />
-    <AdditionalFiles Include="..\IARA.IdentityValidationDiagram\DependencyValidation1.layerdiagram" Link="DependencyValidation1.layerdiagram">
-      <Visible>False</Visible>
-    </AdditionalFiles>
     <Content Include="Content\bgEgovEAuthenticatorSigning.cer">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\IARAEAuthEncrypt.pfx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="..\IARA.IdentityValidationDiagram\DependencyValidation1.layerdiagram.layout" Link="DependencyValidation1.layerdiagram.layout" />
-    <None Include="..\IARA.IdentityValidationDiagram\DependencyValidation1.layerdiagram.suppressions" Link="DependencyValidation1.layerdiagram.suppressions" />
   </ItemGroup>
 
   <ItemGroup>

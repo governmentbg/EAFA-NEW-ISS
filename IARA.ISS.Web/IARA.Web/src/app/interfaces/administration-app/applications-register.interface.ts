@@ -20,6 +20,6 @@ export interface IApplicationsRegisterService extends IApplicationsActionsServic
     getApplicationSources(): Observable<NomenclatureDTO<number>[]>;
     getNotAssignedApplications(): Observable<ApplicationsNotAssignedDTO>;
 
-    getSimpleAudit(id: number): Observable<SimpleAuditDTO>;
+    getApplicationsSimpleAudit(id: number): Observable<SimpleAuditDTO>;
     getApplicationHistorySimpleAudit(id: number): Observable<SimpleAuditDTO>;
 }

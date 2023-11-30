@@ -39,7 +39,7 @@ namespace IARA.IdentityProfile
 
         public abstract string ClientId { get; }
 
-        protected abstract SecurityUser GetUser(string userName, bool searchByPersonId = false);
+        protected abstract SecurityUser GetUser(string userName, UserSearchType userSearchType);
 
         public Task<bool> ChangePassword(string scheme, string username, string password, string newPassword)
         {
@@ -55,7 +55,7 @@ namespace IARA.IdentityProfile
                 searchByPersonId = true;
                 username = identification.Identifier;
 
-                SecurityUser user = GetUser(username, searchByPersonId);
+                SecurityUser user = GetUser(username, UserSearchType.UserName);
 
                 if (user != null)
                 {
@@ -88,7 +88,7 @@ namespace IARA.IdentityProfile
             }
             else
             {
-                SecurityUser user = GetUser(username, searchByPersonId);
+                SecurityUser user = GetUser(username, UserSearchType.UserName);
 
                 if (user != null)
                 {
@@ -129,11 +129,11 @@ namespace IARA.IdentityProfile
                         || identification.IdentifierType == UserIdentifierTypes.EGN
                         || identification.IdentifierType == UserIdentifierTypes.LNCH)
                     {
-                        user = securityService.GetUserByPersonIdentifier(identification.Identifier);
+                        user = securityService.GetUser(identification.Identifier, UserSearchType.PersonId);
                     }
                     else if (identification.IdentifierType == UserIdentifierTypes.VAT_LEGAL_ID)
                     {
-                        user = securityService.GetUserByVATNumber(identification.Identifier);
+                        user = securityService.GetUser(identification.Identifier, UserSearchType.VatNumber);
                     }
 
                     if (user != null)
@@ -166,7 +166,7 @@ namespace IARA.IdentityProfile
             string subjectId = context.Subject.GetSubjectId();
             if (subjectId != "-1")
             {
-                context.IsActive = securityService.IsActive(int.Parse(subjectId));
+                context.IsActive = securityService.IsActive(GetUser(subjectId, UserSearchType.UserId));
             }
             else
             {
@@ -191,7 +191,7 @@ namespace IARA.IdentityProfile
 
         public Task<bool> SendPasswordResetTokenAsync(string scheme, string baseAddress, string email)
         {
-            SecurityUser user = GetUser(email);
+            SecurityUser user = GetUser(email, UserSearchType.UserName);
             if (user != null)
             {
                 var uri = new Uri(baseAddress);
@@ -220,7 +220,7 @@ namespace IARA.IdentityProfile
 
         public async Task<bool> ValidateCredentials(string scheme, string username, string password)
         {
-            SecurityUser user = GetUser(username);
+            SecurityUser user = GetUser(username, UserSearchType.UserName);
             if (user != null && user.HasUserPassLogin && securityService.IsActive(user))
             {
                 bool isPasswordValid = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password) == PasswordVerificationResult.Success;
@@ -246,7 +246,7 @@ namespace IARA.IdentityProfile
 
         private void FillKnownUserClaims(ProfileDataRequestContext context, int userId, LoginTypesEnum loginType, bool addPermissions = true)
         {
-            SecurityUser user = securityService.GetUser(userId);
+            SecurityUser user = securityService.GetUser(userId.ToString(), UserSearchType.UserId);
             List<int> userRoles = securityService.GetUserRoles(userId).Concat(securityService.GetUserLegalRoles(userId)).Distinct().ToList();
             List<int> userPermissions = securityService.GetPermissions(userRoles);
 
@@ -265,9 +265,5 @@ namespace IARA.IdentityProfile
             context.IssuedClaims.AddRange(issuedClaims);
         }
 
-        public Task<UserInfo> FindByUsername(string scheme, string username, List<Claim> externalClaims)
-        {
-            return FindByUsername(scheme, username);
-        }
     }
 }

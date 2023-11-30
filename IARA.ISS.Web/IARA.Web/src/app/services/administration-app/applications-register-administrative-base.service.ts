@@ -144,6 +144,13 @@ export abstract class ApplicationsRegisterAdministrativeBaseService extends Base
         throw new Error('"getApplicationHistorySimpleAudit" cannot be called because no valid instance of ApplicationsProcessingService is available');
     }
 
+    public getApplicationsSimpleAudit(id: number): Observable<SimpleAuditDTO> {
+        if (this.applicationsRegisterService) {
+            return this.applicationsRegisterService.getApplicationsSimpleAudit(id);
+        }
+        throw new Error('"getApplicationSimpleAudit" cannot be called because no valid instance of ApplicationsProcessingService is available');
+    }
+
     private getApplicationChangeHistory(applicationIds: number[]): Observable<ApplicationsChangeHistoryDTO[]> {
         return this.requestService.post(this.area, this.applicationsProcessingController, 'GetApplicationChangeHistoryRecords', applicationIds, {
             responseTypeCtr: ApplicationsChangeHistoryDTO,
