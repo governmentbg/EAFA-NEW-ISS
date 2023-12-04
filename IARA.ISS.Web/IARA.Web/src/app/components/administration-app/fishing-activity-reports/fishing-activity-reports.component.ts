@@ -39,6 +39,7 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
 
     public ships: ShipNomenclatureDTO[] = [];
     public hasErrorsOptions: NomenclatureDTO<ThreeState>[] = [];
+    public hasLandingOptions: NomenclatureDTO<ThreeState>[] = [];
 
     public readonly hasFishLogBookPageReadPermission: boolean;
     public readonly hasReplayMessagesPermission: boolean;
@@ -105,6 +106,24 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
             new NomenclatureDTO<ThreeState>({
                 value: 'both',
                 displayName: this.translate.getValue('fishing-activities.has-errors-both'),
+                isActive: true
+            })
+        ];
+
+        this.hasLandingOptions = [
+            new NomenclatureDTO<ThreeState>({
+                value: 'yes',
+                displayName: this.translate.getValue('fishing-activities.has-landing-yes'),
+                isActive: true
+            }),
+            new NomenclatureDTO<ThreeState>({
+                value: 'no',
+                displayName: this.translate.getValue('fishing-activities.has-landing-no'),
+                isActive: true
+            }),
+            new NomenclatureDTO<ThreeState>({
+                value: 'both',
+                displayName: this.translate.getValue('fishing-activities.has-landing-both'),
                 isActive: true
             })
         ];
@@ -224,7 +243,8 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
             shipControl: new FormControl(),
             startTimeControl: new FormControl(),
             endTimeControl: new FormControl(),
-            hasErrorsControl: new FormControl()
+            hasErrorsControl: new FormControl(),
+            hasLandingControl: new FormControl()
         });
     }
 
@@ -250,6 +270,20 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
             default:
             case 'both':
                 result.hasErrors = undefined;
+                break;
+        }
+
+        const hasLanding: ThreeState | undefined = filters.getValue<ThreeState>('hasLandingControl');
+        switch (hasLanding) {
+            case 'yes':
+                result.hasLanding = true;
+                break;
+            case 'no':
+                result.hasLanding = false;
+                break;
+            default:
+            case 'both':
+                result.hasLanding = undefined;
                 break;
         }
 

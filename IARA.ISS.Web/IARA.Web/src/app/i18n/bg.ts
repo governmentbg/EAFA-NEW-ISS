@@ -4535,6 +4535,7 @@
         'filters-start-time': 'Дата от',
         'filters-end-time': 'Дата до',
         'filters-has-errors': 'Излети с грешки',
+        'filters-has-landing': 'Излети с разтоварване',
         'uuid': 'UUID на съобщението',
         'purpose': 'Причина',
         'report-type': 'Вид съобщение',
@@ -4566,7 +4567,10 @@
         'view-page': 'Преглед на страница',
         'has-errors-yes': 'Покажи само с грешки',
         'has-errors-no': 'Покажи само без грешки',
-        'has-errors-both': 'Покажи всички'
+        'has-errors-both': 'Покажи всички',
+        'has-landing-yes': 'Покажи само с разтоварване',
+        'has-landing-no': 'Покажи само без разтоварване',
+        'has-landing-both': 'Покажи всички'
     },
     'aquacultures': {
         'aquaculture-dropdown-uror': 'УРОРР',
