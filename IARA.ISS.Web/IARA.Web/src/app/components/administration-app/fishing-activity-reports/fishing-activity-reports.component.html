@@ -1,38 +1,52 @@
 ﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
     <!-- Филтри -->
     <search-panel [translateService]="translate">
-        <div [formGroup]="form" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-            <tl-input fxFlex="20"
-                      formControlName="tripIdentifierControl"
-                      tooltipResourceName="fishing-activities.filters-trip-identifier-helper"
-                      label="{{ 'fishing-activities.filters-trip-identifier' | tlTranslate }}">
-            </tl-input>
+        <div [formGroup]="form">
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="tripIdentifierControl"
+                          tooltipResourceName="fishing-activities.filters-trip-identifier-helper"
+                          label="{{ 'fishing-activities.filters-trip-identifier' | tlTranslate }}">
+                </tl-input>
 
-            <tl-autocomplete fxFlex="20"
-                             formControlName="shipControl"
-                             [options]="ships"
-                             tooltipResourceName="fishing-activities.filters-ship-helper"
-                             label="{{ 'fishing-activities.filters-ship' | tlTranslate }}">
-            </tl-autocomplete>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="shipControl"
+                                 [options]="ships"
+                                 tooltipResourceName="fishing-activities.filters-ship-helper"
+                                 label="{{ 'fishing-activities.filters-ship' | tlTranslate }}">
+                </tl-autocomplete>
 
-            <tl-date fxFlex="20"
-                     formControlName="startTimeControl"
-                     tooltipResourceName="fishing-activities.filters-start-time-helper"
-                     label="{{ 'fishing-activities.filters-start-time' | tlTranslate }}">
-            </tl-date>
+                <tl-date fxFlex="25"
+                         formControlName="startTimeControl"
+                         tooltipResourceName="fishing-activities.filters-start-time-helper"
+                         label="{{ 'fishing-activities.filters-start-time' | tlTranslate }}">
+                </tl-date>
 
-            <tl-date fxFlex="20"
-                     formControlName="endTimeControl"
-                     tooltipResourceName="fishing-activities.filters-end-time-helper"
-                     label="{{ 'fishing-activities.filters-end-time' | tlTranslate }}">
-            </tl-date>
+                <tl-date fxFlex="25"
+                         formControlName="endTimeControl"
+                         tooltipResourceName="fishing-activities.filters-end-time-helper"
+                         label="{{ 'fishing-activities.filters-end-time' | tlTranslate }}">
+                </tl-date>
+            </div>
 
-            <tl-select fxFlex="20"
-                       [options]="hasErrorsOptions"
-                       formControlName="hasErrorsControl"
-                       tooltipResourceName="fishing-activities.filters-has-errors-helper"
-                       label="{{ 'fishing-activities.filters-has-errors' | tlTranslate }}">
-            </tl-select>
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-select fxFlex="25"
+                           [options]="hasErrorsOptions"
+                           formControlName="hasErrorsControl"
+                           tooltipResourceName="fishing-activities.filters-has-errors-helper"
+                           label="{{ 'fishing-activities.filters-has-errors' | tlTranslate }}">
+                </tl-select>
+
+                <tl-select fxFlex="25"
+                           [options]="hasLandingOptions"
+                           formControlName="hasLandingControl"
+                           tooltipResourceName="fishing-activities.filters-has-landing-helper"
+                           label="{{ 'fishing-activities.filters-has-landing' | tlTranslate }}">
+                </tl-select>
+
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+            </div>
         </div>
     </search-panel>
 
@@ -102,7 +116,8 @@
                                                             tooltipText="{{ 'fishing-activities.replay-message' | tlTranslate }}">
                                             </tl-icon-button>
 
-                                            <tl-icon-button icon="visibility"
+                                            <tl-icon-button *ngIf="row.data.requestId !== undefined && row.data.requestId !== null"
+                                                            icon="visibility"
                                                             iconClass="accent-color"
                                                             (buttonClicked)="openViewDialog(row.data)"
                                                             tooltipText="{{ 'fishing-activities.view-report' | tlTranslate }}">

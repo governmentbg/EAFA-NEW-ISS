@@ -4479,6 +4479,7 @@
         'filters-start-time': 'Date from',
         'filters-end-time': 'Date to',
         'filters-has-errors': 'Trips with errors',
+        'filters-has-landing': 'Trips with landing',
         'uuid': 'Request UUID',
         'purpose': 'Purpose',
         'report-type': 'Report type',
@@ -4511,6 +4512,9 @@
         'has-errors-yes': 'Trips with errors',
         'has-errors-no': 'Trips without errors',
         'has-errors-both': 'All trips',
+        'has-landing-yes': 'Trips with landing',
+        'has-landing-no': 'Trips without landing',
+        'has-landing-both': 'All trips',
     },
     'aquacultures': {
         'aquaculture-dropdown-uror': 'URORR',
