@@ -144,4 +144,13 @@
   <data name="ChooseLanguage" xml:space="preserve">
     <value>Избери език</value>
   </data>
+  <data name="Password" xml:space="preserve">
+    <value>Парола</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Запомни ме</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Потребителско име</value>
+  </data>
 </root>

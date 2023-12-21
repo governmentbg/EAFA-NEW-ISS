@@ -1,5 +1,5 @@
 ﻿import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
@@ -18,10 +18,16 @@ import { DuplicatesRegisterAdministrationService } from '@app/services/administr
 import { ApplicationRegisterDTO } from '@app/models/generated/dtos/ApplicationRegisterDTO';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
+import { EditPermitLicenseFishingGearsComponent } from '@app/components/common-app/commercial-fishing/components/permit-license-fishing-gears/edit-permit-license-fishing-gears.component';
+import { CommercialFishingEditDTO } from '@app/models/generated/dtos/CommercialFishingEditDTO';
+import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
+import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
+import { CommercialFishingDialogParamsModel } from '@app/components/common-app/commercial-fishing/models/commercial-fishing-dialog-params.model';
 
 type CommFishingApplicationsRegisterDataType =
     ApplicationsRegisterData<EditCommercialFishingComponent> |
-    ApplicationsRegisterData<DuplicatesApplicationComponent>;
+    ApplicationsRegisterData<DuplicatesApplicationComponent> |
+    ApplicationsRegisterData<EditPermitLicenseFishingGearsComponent>;
 
 @Component({
     selector: 'commercial-fishing-applications',
@@ -36,6 +42,7 @@ export class CommercialFishingApplicationsComponent {
     private readonly duplicatesService: IDuplicatesRegisterService;
     private readonly translate: FuseTranslationLoaderService;
     private readonly dupDialog: TLMatDialog<DuplicatesApplicationComponent>;
+    private readonly editDialog: TLMatDialog<EditCommercialFishingComponent>;
 
     public constructor(
         service: CommercialFishingAdministrationService,
@@ -44,6 +51,7 @@ export class CommercialFishingApplicationsComponent {
         applicationsService: ApplicationsAdministrationService,
         editDialog: TLMatDialog<EditCommercialFishingComponent>,
         dupDialog: TLMatDialog<DuplicatesApplicationComponent>,
+        fishingGearsDialog: TLMatDialog<EditPermitLicenseFishingGearsComponent>,
         translationService: FuseTranslationLoaderService
     ) {
         this.service = service;
@@ -51,6 +59,7 @@ export class CommercialFishingApplicationsComponent {
         this.translate = translate;
         this.duplicatesService = duplicatesService;
         this.dupDialog = dupDialog;
+        this.editDialog = editDialog;
 
         const permitProcessingPermissions: ApplicationProcessingPermissions = new ApplicationProcessingPermissions({
             addPermission: PermissionsEnum.CommercialFishingPermitApplicationsAddRecords,
@@ -127,6 +136,10 @@ export class CommercialFishingApplicationsComponent {
             ],
             [
                 PageCodeEnum.DupCatchQuataSpecies,
+                permitLicenseProcessingPermissions
+            ],
+            [
+                PageCodeEnum.FishingGearsCommFish,
                 permitLicenseProcessingPermissions
             ]
         ]);
@@ -329,6 +342,20 @@ export class CommercialFishingApplicationsComponent {
                     viewAndConfrimDataRegularityTitle: translationService.getValue('duplicates.view-quata-species-permit-license-appl-and-confirm-regularity-title'),
                     createRegisterCallback: this.openCatchQuataSpeciesDuplicateDialog.bind(this)
                 })
+            ],
+            [
+                PageCodeEnum.FishingGearsCommFish,
+                new ApplicationsRegisterData<EditPermitLicenseFishingGearsComponent>({
+                    editDialog: fishingGearsDialog,
+                    editDialogTCtor: EditPermitLicenseFishingGearsComponent,
+                    editApplicationDialogTitle: translationService.getValue('fishing-gears.edit-fishing-gears-permit-license-application-dialog-title'),
+                    editRegixDataDialogTitle: translationService.getValue('fishing-gears.edit-fishing-gears-permit-license-application-regix-data-dialog-title'),
+                    viewApplicationDialogTitle: translationService.getValue('fishing-gears.view-fishing-gears-permit-license-application-dialog-title'),
+                    viewRegisterDialogTitle: translationService.getValue('fishing-gears.view-fishing-gears-permit-license-application-dialog-title'),
+                    viewRegixDataDialogTitle: translationService.getValue('fishing-gears.view-fishing-gears-permit-license-application-regix-data-dialog-title'),
+                    viewAndConfrimDataRegularityTitle: translationService.getValue('fishing-gears.view-fishing-gears-permit-license-appl-and-confirm-regularity-title'),
+                    createRegisterCallback: this.openFishingGearsDialog.bind(this)
+                })
             ]
         ]);
     }
@@ -388,6 +415,74 @@ export class CommercialFishingApplicationsComponent {
                 translateValue: 'duplicates.save-print'
             }]
         }, '1200px');
+    }
+
+    private openFishingGearsDialog(application: ApplicationRegisterDTO): Observable<any> {
+        const saveOrEditDone: Subject<any> = new Subject<any>();
+
+        const data: CommercialFishingDialogParamsModel = new CommercialFishingDialogParamsModel({
+            id: undefined,
+            service: this.service,
+            applicationId: application.id
+        });
+
+        const title: string = this.translate.getValue('fishing-gears.edit-fishing-gears-permit-license-application-dialog-title');
+
+        this.service.getPermitLicenseFromFishingGearsApplication(application.id!).subscribe({
+            next: (model: CommercialFishingEditDTO) => {
+                data.pageCode = model.pageCode!;
+                data.model = model;
+                data.model.applicationId = application.id;
+                data.model.pageCode = application.pageCode;
+                
+                this.openEditDialog(data, title).subscribe((result: any) => {
+                    saveOrEditDone.next(result);
+                    saveOrEditDone.complete();
+                });
+            },
+            error: () => {
+                saveOrEditDone.next(undefined);
+                saveOrEditDone.complete();
+            }
+        });
+
+        return saveOrEditDone;
+    }
+
+    private openEditDialog(data: DialogParamsModel, title: string): Observable<any> {
+        const auditButton: IHeaderAuditButton = {
+            id: data.model!.id!,
+            getAuditRecordData: this.service.getPermitLicenseSimpleAudit.bind(this.service),
+            tableName: 'PermitLicensesRegister' 
+        };
+
+        const rightButtons: IActionInfo[] = [];
+
+        return this.editDialog.open({
+            title: title,
+            TCtor: EditCommercialFishingComponent,
+            headerAuditButton: auditButton,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction): void => {
+                    closeFn();
+                }
+            },
+            componentData: data,
+            translteService: this.translate,
+            disableDialogClose: true,
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                translateValue: this.translate.getValue('common.save')
+            },
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: this.translate.getValue('common.cancel'),
+            },
+            rightSideActionsCollection: rightButtons,
+            viewMode: false
+        }, '1600px');
     }
 
     private closeDuplicateDialogBtnClicked(closeFn: HeaderCloseFunction): void {

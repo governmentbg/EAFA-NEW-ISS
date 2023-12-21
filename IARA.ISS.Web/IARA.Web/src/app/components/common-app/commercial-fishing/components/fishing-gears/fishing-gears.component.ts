@@ -45,6 +45,15 @@ export class FishingGearsComponent extends CustomFormControl<FishingGearDTO[]> i
     @Input()
     public ships: ShipNomenclatureDTO[] = [];
 
+    @Input()
+    public showInspectedGears: boolean = false;
+
+    @Input()
+    public isDunabe: boolean = false;
+
+    @Input()
+    public appliedTariffs: string[] = [];
+
     public fishingGears: FishingGearDTO[] = [];
     public isPublicApp: boolean;
 
@@ -112,7 +121,9 @@ export class FishingGearsComponent extends CustomFormControl<FishingGearDTO[]> i
             data = new EditFishingGearDialogParamsModel({
                 model: fishingGear,
                 readOnly: this.isReadonly || viewMode,
-                pageCode: this.pageCode
+                pageCode: this.pageCode,
+                isDunabe: this.isDunabe,
+                appliedTariffCodes: this.appliedTariffs
             });
 
             if (fishingGear.id !== undefined && !this.isPublicApp) {
@@ -120,7 +131,7 @@ export class FishingGearsComponent extends CustomFormControl<FishingGearDTO[]> i
                     id: fishingGear.id,
                     getAuditRecordData: this.service.getFishingGearAudit.bind(this.service),
                     tableName: 'FishingGearRegister'
-                }
+                };
             }
 
             if (this.isReadonly || viewMode) {
@@ -132,7 +143,9 @@ export class FishingGearsComponent extends CustomFormControl<FishingGearDTO[]> i
         }
         else {
             data = new EditFishingGearDialogParamsModel({
-                pageCode: this.pageCode
+                pageCode: this.pageCode,
+                isDunabe: this.isDunabe,
+                appliedTariffCodes: this.appliedTariffs
             });
 
             title = this.translate.getValue('fishing-gears.add-fishing-gear-dialog-title');
@@ -217,10 +230,10 @@ export class FishingGearsComponent extends CustomFormControl<FishingGearDTO[]> i
             if (gearIds !== null && gearIds !== undefined && gearIds.length > 0) {
                 this.service.getFishingGearsForIds(gearIds).subscribe({
                     next: (gears: FishingGearDTO[]) => {
-                        if (gears.length > 0) { 
+                        if (gears.length > 0) {
                             this.fishingGears.push(...gears);
                             this.fishingGears = this.fishingGears.slice();
-                            
+
                             this.control.markAsTouched();
                             this.control.updateValueAndValidity();
                             this.onChanged(this.getValue());

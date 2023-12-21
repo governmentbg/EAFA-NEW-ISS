@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
 import { IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
@@ -132,13 +132,13 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
             shipSectionsControl: new FormControl([]),
             hasTransshipmentControl: new FormControl(false),
             transshipmentShipControl: new FormControl({ value: undefined, disabled: true }),
-            transshipmentCatchesControl: new FormControl({ value: [], disabled: true }),
+            catchesControl: new FormControl([]),
             transshipmentViolationControl: new FormControl(undefined),
             nnnShipStatusControl: new FormControl(undefined),
             captainCommentControl: new FormControl(undefined, Validators.maxLength(4000)),
             additionalInfoControl: new FormControl(undefined, Validators.maxLength(4000)),
             filesControl: new FormControl([])
-        });
+        }, this.atLeastOneCatchValidator());
 
         this.form.get('generalInfoControl')!.valueChanges.subscribe({
             next: () => {
@@ -163,7 +163,7 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
 
             this.form.get('filesControl')!.setValue(this.model.files);
 
-            this.form.get('transshipmentCatchesControl')!.setValue(this.model.transboardedCatchMeasures);
+            this.form.get('catchesControl')!.setValue(this.model.transboardedCatchMeasures);
 
             const transshipmentViolation = this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.Transshipment);
 
@@ -218,7 +218,7 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
         const shipSections: InspectedShipSectionsModel = this.form.get('shipSectionsControl')!.value;
         const hasTransshipment: boolean = this.form.get('hasTransshipmentControl')!.value;
         const receivingShip: VesselDTO = this.form.get('transshipmentShipControl')!.value;
-        const receivingShipCatches: InspectionCatchMeasureDTO[] = this.form.get('transshipmentCatchesControl')!.value;
+        const receivingShipCatches: InspectionCatchMeasureDTO[] = this.form.get('catchesControl')!.value;
         const transshipmentViolation: string = this.form.get('transshipmentViolationControl')!.value;
         const port: PortVisitDTO = this.form.get('portControl')!.value;
 
@@ -274,13 +274,29 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
 
         if (value && this.viewMode === false) {
             this.form.get('transshipmentShipControl')!.enable();
-            this.form.get('transshipmentCatchesControl')!.enable();
+            this.form.get('catchesControl')!.enable();
             this.form.get('transshipmentViolationControl')!.enable();
         }
         else {
             this.form.get('transshipmentShipControl')!.disable();
-            this.form.get('transshipmentCatchesControl')!.disable();
+            this.form.get('catchesControl')!.disable();
             this.form.get('transshipmentViolationControl')!.disable();
+        }
+    }
+
+    private atLeastOneCatchValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            const catchesControl = form.get('catchesControl')!;
+
+            if (catchesControl === null || catchesControl === undefined || !this.hasTransshipment) {
+                return null;
+            }
+
+            if (catchesControl.value !== null && catchesControl.value !== undefined && catchesControl.value.length > 0) {
+                return null;
+            }
+
+            return { 'atLeastOneCatchError': true };
         }
     }
 }

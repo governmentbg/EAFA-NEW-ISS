@@ -50,6 +50,8 @@ import { ISuspensionService } from '@app/interfaces/common-app/suspension.interf
 import { InspectedPermitLicenseNomenclatureDTO } from '@app/models/generated/dtos/InspectedPermitLicenseNomenclatureDTO';
 import { FishingGearForChoiceDTO } from '@app/models/generated/dtos/FishingGearForChoiceDTO';
 import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
+import { PermitLicenseFishingGearsApplicationDTO } from '@app/models/generated/dtos/PermitLicenseFishingGearsApplicationDTO';
+import { PermitLicensesNomenclatureDTO } from '@app/models/generated/dtos/PermitLicensesNomenclatureDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -725,14 +727,25 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'GetPermitLicenseApplication';
                 break;
+            case PageCodeEnum.FishingGearsCommFish:
+                serviceMethod = 'GetPermitLicenseFishingGearsApplication';
+                break;
             default:
                 throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
         }
 
-        return this.requestService.get(this.area, this.controller, serviceMethod, {
-            httpParams: params,
-            responseTypeCtr: CommercialFishingApplicationEditDTO
-        });
+        if (pageCode === PageCodeEnum.FishingGearsCommFish) {
+            return this.requestService.get(this.area, this.controller, serviceMethod, {
+                httpParams: params,
+                responseTypeCtr: PermitLicenseFishingGearsApplicationDTO
+            });
+        }
+        else {
+            return this.requestService.get(this.area, this.controller, serviceMethod, {
+                httpParams: params,
+                responseTypeCtr: CommercialFishingApplicationEditDTO
+            });
+        }
     }
 
     public getPermitLicensesForRenewal(permitId: number | undefined, permitNumber: string | undefined, pageCode: PageCodeEnum): Observable<PermitLicenseForRenewalDTO[]> {
@@ -763,6 +776,11 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         throw new Error('This method should not be called from the administration app.');
     };
 
+
+    public getFishingGearsByPermitLicenseRegistrationNumber(permitLicenseNumber: string, shipId: number): Observable<FishingGearDTO[]> {
+        throw new Error('This method should not be called from the administration app.');
+    }
+
     public getRegixData(id: number, pageCode: PageCodeEnum): Observable<RegixChecksWrapperDTO<IApplicationRegister>> {
         const params = new HttpParams().append('applicationId', id.toString());
         let serviceMethod: string = '';
@@ -777,6 +795,9 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.PoundnetCommFishLic:
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'GetPermitLicenseRegixData';
+                break;
+            case PageCodeEnum.FishingGearsCommFish:
+                serviceMethod = 'GetPermitLicenseFishingGearsRegixData';
                 break;
             default:
                 throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
@@ -819,7 +840,7 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         });
     }
 
-    public addApplication(application: CommercialFishingApplicationEditDTO, pageCode: PageCodeEnum): Observable<number> {
+    public addApplication(application: IApplicationRegister, pageCode: PageCodeEnum): Observable<number> {
         let serviceMethod: string = '';
 
         switch (pageCode) {
@@ -832,6 +853,9 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.PoundnetCommFishLic:
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'AddPermitLicenseApplication';
+                break;
+            case PageCodeEnum.FishingGearsCommFish:
+                serviceMethod = 'AddPermitLicenseFishingGearsApplication';
                 break;
             default:
                 throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
@@ -849,7 +873,7 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         });
     }
 
-    public editApplication(application: CommercialFishingApplicationEditDTO, pageCode: PageCodeEnum, fromSaveAsDraft: boolean): Observable<number> {
+    public editApplication(application: IApplicationRegister, pageCode: PageCodeEnum, fromSaveAsDraft: boolean): Observable<number> {
         const params = new HttpParams().append('saveAsDraft', fromSaveAsDraft.toString());
         let serviceMethod: string = '';
 
@@ -863,6 +887,9 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.PoundnetCommFishLic:
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'EditPermitLicenseApplication';
+                break;
+            case PageCodeEnum.FishingGearsCommFish:
+                serviceMethod = 'EditPermitLicenseFishingGearsApplication';
                 break;
             default:
                 throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[pageCode]}`);
@@ -888,11 +915,29 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'EditPermitLicenseApplicationAndStartRegixChecks';
                 break;
+            case PageCodeEnum.FishingGearsCommFish:
+                serviceMethod = 'EditFishingGearApplicationAndStartRegixChecks'; 
+                break;
             default:
                 throw new Error(`Unknown PageCode for commercial fishing administration service: ${PageCodeEnum[model.pageCode!]}`);
         }
 
         return this.requestService.post(this.area, this.controller, serviceMethod, model, {
+            properties: new RequestProperties({ asFormData: true })
+        });
+    }
+
+    public getPermitLicenseFromFishingGearsApplication(applicationId: number): Observable<CommercialFishingEditDTO> {
+        const params = new HttpParams().append('applicationId', applicationId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetPermitLicenseFromFishingGearsApplication', {
+            httpParams: params,
+            responseTypeCtr: CommercialFishingEditDTO
+        });
+    }
+
+    public completePermitLicenseFishingGearsApplication(permitLicense: CommercialFishingEditDTO): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'CompletePermitLicenseFishingGearsApplication', permitLicense, {
             properties: new RequestProperties({ asFormData: true })
         });
     }
@@ -980,6 +1025,28 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         }));
     }
 
+    public getPermitLicensesNomenclatures(shipId: number): Observable<PermitLicensesNomenclatureDTO[]> {
+        const params = new HttpParams().append('shipId', shipId.toString());
+
+        return this.requestService.get<PermitLicensesNomenclatureDTO[]>(this.area, this.controller, 'GetShipPermitLicenses', {
+            httpParams: params,
+            responseTypeCtr: PermitNomenclatureDTO
+        }).pipe(map((permits: PermitNomenclatureDTO[]) => {
+            for (const permit of permits) {
+                const captain: string = this.translate.getValue('commercial-fishing.permit-nomenclature-captain');
+
+                if (permit.displayName !== null && permit.displayName !== undefined && permit.displayName!.length > 0) {
+                    permit.displayName += ` | ${permit.waterTypeName} | ${captain}: ${permit.captainName}`;
+                }
+                else {
+                    permit.displayName = `${permit.waterTypeName} | ${captain}: ${permit.captainName}`;
+                }
+            }
+
+            return permits;
+        }));
+    }
+
     public getShipPermitLicensesFromInspection(shipId: number): Observable<InspectedPermitLicenseNomenclatureDTO[]> {
         const params: HttpParams = new HttpParams().append('shipId', shipId.toString());
 
@@ -988,8 +1055,8 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
             responseTypeCtr: InspectedPermitLicenseNomenclatureDTO
         }).pipe(map((licenses: InspectedPermitLicenseNomenclatureDTO[]) => {
             for (const license of licenses) {
-                const inspection: string = this.translate.getValue('commercial-fishing.permit-license-nomenclature-inspection-num'); 
-                const year: string = this.translate.getValue('commercial-fishing.permit-license-nomenclature-year'); 
+                const inspection: string = this.translate.getValue('commercial-fishing.permit-license-nomenclature-inspection-num');
+                const year: string = this.translate.getValue('commercial-fishing.permit-license-nomenclature-year');
 
                 if (license.displayName !== null && license.displayName !== undefined && license.displayName.length > 0) {
                     license.displayName += ` | ${year}: ${license.year} | ${inspection}: ${license.inspectionReportNum}`;
@@ -1014,6 +1081,15 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
 
     public getFishingGearsForIds(gearIds: number[]): Observable<FishingGearDTO[]> {
         return this.requestService.post(this.area, this.controller, 'GetFishingGearsForIds', gearIds, {
+            responseTypeCtr: FishingGearDTO
+        });
+    }
+
+    public getPermitLicenseFishingGears(permitLicenseId: number): Observable<FishingGearDTO[]> {
+        const params: HttpParams = new HttpParams().append('permitLicenseId', permitLicenseId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetCommercialFishingPermitLicenseFishingGears', {
+            httpParams: params,
             responseTypeCtr: FishingGearDTO
         });
     }

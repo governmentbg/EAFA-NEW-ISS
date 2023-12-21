@@ -2,7 +2,6 @@
 import { FormControl, FormGroup } from '@angular/forms';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { IAuanRegisterService } from '@app/interfaces/administration-app/auan-register.interface';
 import { AuanRegisterDTO } from '@app/models/generated/dtos/AuanRegisterDTO';
 import { AuanRegisterEditDTO } from '@app/models/generated/dtos/AuanRegisterEditDTO';
 import { AuanRegisterFilters } from '@app/models/generated/filters/AuanRegisterFilters';

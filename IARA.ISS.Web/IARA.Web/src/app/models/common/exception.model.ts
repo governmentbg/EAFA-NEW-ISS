@@ -70,5 +70,6 @@ export enum ErrorCode {
     ReportCodeAlreadyExists = 51,
     PoundNetNumAlreadyExists = 52,
     PatrolVehicleAlreadyExists = 53,
-    InspectionReportNumAlreadyExists = 54
+    InspectionReportNumAlreadyExists = 54,
+    InvalidPermitLicenseNumber = 55
 }

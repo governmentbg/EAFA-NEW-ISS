@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { InspectionTypesEnum } from '@app/enums/inspection-types.enum';
 import { GridRequestModel } from '@app/models/common/grid-request.model';
 import { GridResultModel } from '@app/models/common/grid-result.model';
-import { DeclarationLogBookPageDTO } from '@app/models/generated/dtos/DeclarationLogBookPageMobileDTO';
 import { FileInfoDTO } from '@app/models/generated/dtos/FileInfoDTO';
 import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
@@ -28,6 +27,7 @@ import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuri
 import { BaseAuditService } from '../common-app/base-audit.service';
 import { InspectorDuringInspectionDTO } from '@app/models/generated/dtos/InspectorDuringInspectionDTO';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
+import { InspectionLogBookPageNomenclatureDTO } from '@app/models/generated/dtos/InspectionLogBookPageNomenclatureDTO';
 
 
 @Injectable({
@@ -188,20 +188,26 @@ export class InspectionsService extends BaseAuditService {
         });
     }
 
-    public getDeclarationLogBookPages(type: DeclarationLogBookTypeEnum, shipId?: number, aquacultureId?: number): Observable<DeclarationLogBookPageDTO[]> {
-        let params = new HttpParams()
-            .append('type', type.toString());
+    public getInspectionStates(): Observable<NomenclatureDTO<number>[]> {
+        return this.requestService.get(this.area, this.controller, 'GetInspectionStates', {
+            responseTypeCtr: NomenclatureDTO
+        });
+    }
 
-        if (shipId) {
+    public getLogBookPages(type: DeclarationLogBookTypeEnum, shipId: number | undefined, aquacultureId: number | undefined): Observable<InspectionLogBookPageNomenclatureDTO[]> {
+        let params = new HttpParams().append('type', type.toString());
+
+        if (shipId !== undefined && shipId !== null) {
             params = params.append('shipId', shipId.toString());
         }
-        if (aquacultureId) {
+
+        if (aquacultureId !== undefined && aquacultureId !== null) {
             params = params.append('aquacultureId', aquacultureId.toString());
         }
 
-        return this.requestService.get(this.area, this.controller, 'GetDeclarationLogBookPages', {
+        return this.requestService.get(this.area, this.controller, 'GetLogBookPages', {
             httpParams: params,
-            responseTypeCtr: DeclarationLogBookPageDTO
+            responseTypeCtr: InspectionLogBookPageNomenclatureDTO
         });
     }
 

@@ -18,6 +18,7 @@
             </inspection-general-info>
 
             <inspection-map-viewer formControlName="mapControl">
+
             </inspection-map-viewer>
 
             <tl-input formControlName="addressControl"
@@ -40,11 +41,13 @@
                                  [options]="vehicleTypes"
                                  label="{{ 'inspections.transport-vehicle-type' | tlTranslate }}">
                 </tl-autocomplete>
+
                 <tl-autocomplete fxFlex="33"
                                  formControlName="countryControl"
                                  [options]="countries"
                                  label="{{ 'inspections.transport-vehicle-country' | tlTranslate }}">
                 </tl-autocomplete>
+
                 <tl-input fxFlex="33"
                           formControlName="vehicleRegNumControl"
                           label="{{ 'inspections.transport-vehicle-registration-number' | tlTranslate }}">
@@ -57,10 +60,12 @@
                           formControlName="vehicleModelControl"
                           label="{{ 'inspections.transport-vehicle-mark' | tlTranslate }}">
                 </tl-input>
+
                 <tl-input fxFlex="33"
                           formControlName="vehicleMarkControl"
                           label="{{ 'inspections.transport-vehicle-model' | tlTranslate }}">
                 </tl-input>
+
                 <tl-input fxFlex="33"
                           formControlName="vehicleTrailerNumControl"
                           label="{{ 'inspections.transport-vehicle-trailer-number' | tlTranslate }}">
@@ -69,12 +74,14 @@
             <tl-checkbox formControlName="ownerIsDriverControl"
                          label="{{ 'inspections.owner-is-driver' | tlTranslate }}">
             </tl-checkbox>
+
             <inspected-subject formControlName="ownerControl"
                                [countries]="countries"
                                [personType]="inspectedPersonTypeEnum.OwnerPers"
                                [legalType]="inspectedPersonTypeEnum.OwnerLegal"
                                title="{{ 'inspections.owner' | tlTranslate }}">
             </inspected-subject>
+
             <inspected-person *ngIf="!form.controls.ownerIsDriverControl.value"
                               formControlName="driverControl"
                               [countries]="countries"
@@ -86,7 +93,8 @@
 
     <!-- Инспекция на улова при превозно средство -->
     <tl-expansion-panel title="{{ 'inspections.vehicle-catch' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.atLeastOneCatchError !== true">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -99,12 +107,19 @@
                                   [catchZones]="catchZones"
                                   [presentations]="presentations">
             </market-catches-table>
+
+            <mat-error *ngIf="form.controls.catchesControl?.touched && form.errors?.atLeastOneCatchError === true">
+                * {{ 'inspections.market-catch-at-least-one-catch-error' | tlTranslate }}
+            </mat-error>
+
             <inspection-toggle-list formControlName="catchTogglesControl"
                                     [toggles]="catchToggles">
             </inspection-toggle-list>
+
             <tl-checkbox formControlName="hasSealControl"
                          label="{{ 'inspections.has-seal' | tlTranslate }}">
             </tl-checkbox>
+
             <div *ngIf="hasSeal"
                  fxLayout="row"
                  fxLayoutGap="1em"
@@ -114,15 +129,18 @@
                                  [options]="institutions"
                                  label="{{ 'inspections.institution-who-put-seal' | tlTranslate }}">
                 </tl-autocomplete>
+
                 <tl-input fxFlex="50"
                           formControlName="sealConditionControl"
                           label="{{ 'inspections.seal-condition' | tlTranslate }}">
                 </tl-input>
             </div>
+
             <tl-autocomplete formControlName="buyerControl"
                              [options]="buyers"
                              label="{{ 'inspections.registered-buyer' | tlTranslate }}">
             </tl-autocomplete>
+
             <tl-input formControlName="destinationControl"
                       label="{{ 'inspections.destination' | tlTranslate }}">
             </tl-input>

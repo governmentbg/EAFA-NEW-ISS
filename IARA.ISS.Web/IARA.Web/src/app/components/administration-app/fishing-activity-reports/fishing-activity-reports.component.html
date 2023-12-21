@@ -30,6 +30,18 @@
             </div>
 
             <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="requestUuidControl"
+                          tooltipResourceName="fishing-activities.filters-request-uuid-helper"
+                          label="{{ 'fishing-activities.filters-request-uuid' | tlTranslate }}">
+                </tl-input>
+
+                <tl-input fxFlex="25"
+                          formControlName="errorsControl"
+                          tooltipResourceName="fishing-activities.filters-errors-helper"
+                          label="{{ 'fishing-activities.filters-errors' | tlTranslate }}">
+                </tl-input>
+
                 <tl-select fxFlex="25"
                            [options]="hasErrorsOptions"
                            formControlName="hasErrorsControl"
@@ -43,9 +55,6 @@
                            tooltipResourceName="fishing-activities.filters-has-landing-helper"
                            label="{{ 'fishing-activities.filters-has-landing' | tlTranslate }}">
                 </tl-select>
-
-                <div fxFlex="25"></div>
-                <div fxFlex="25"></div>
             </div>
         </div>
     </search-panel>

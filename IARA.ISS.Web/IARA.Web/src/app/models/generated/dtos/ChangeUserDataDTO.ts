@@ -2,7 +2,8 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { RegixPersonDataDTO } from './RegixPersonDataDTO';
-import { AddressRegistrationDTO } from './AddressRegistrationDTO'; 
+import { AddressRegistrationDTO } from './AddressRegistrationDTO';
+import { UserLegalDTO } from './UserLegalDTO'; 
 
 export class ChangeUserDataDTO extends RegixPersonDataDTO {
     public constructor(obj?: Partial<ChangeUserDataDTO>) {
@@ -24,9 +25,15 @@ export class ChangeUserDataDTO extends RegixPersonDataDTO {
     @StrictlyTyped(Boolean)
     public userMustChangePassword?: boolean;
 
+    @StrictlyTyped(Number)
+    public territoryUnitId?: number;
+
     @StrictlyTyped(String)
     public password?: string;
 
     @StrictlyTyped(AddressRegistrationDTO)
     public userAddresses?: AddressRegistrationDTO[];
+
+    @StrictlyTyped(UserLegalDTO)
+    public userLegals?: UserLegalDTO[];
 }

@@ -243,6 +243,8 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
             shipControl: new FormControl(),
             startTimeControl: new FormControl(),
             endTimeControl: new FormControl(),
+            requestUuidControl: new FormControl(),
+            errorsControl: new FormControl(),
             hasErrorsControl: new FormControl(),
             hasLandingControl: new FormControl()
         });
@@ -256,7 +258,9 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
             tripIdentifier: filters.getValue('tripIdentifierControl'),
             shipId: filters.getValue('shipControl'),
             startTime: filters.getValue('startTimeControl'),
-            endTime: filters.getValue('endTimeControl')
+            endTime: filters.getValue('endTimeControl'),
+            requestUuid: filters.getValue('requestUuidControl'),
+            errors: filters.getValue('errorsControl')
         });
 
         const hasErrors: ThreeState | undefined = filters.getValue<ThreeState>('hasErrorsControl');

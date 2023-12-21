@@ -18,6 +18,7 @@ export class InspectionsFilters extends BaseRequestModel {
     public territoryNode: number | undefined;
     public inspector: string | undefined;
     public inspectionTypeId: number | undefined;
+    public stateIds: number[] | undefined;
     public reportNumber: string | undefined;
     public dateFrom: Date | undefined;
     public dateTo: Date | undefined;
@@ -25,8 +26,14 @@ export class InspectionsFilters extends BaseRequestModel {
     public subjectName: string | undefined;
     public subjectEIK: string | undefined;
     public subjectEGN: string | undefined;
-    public updatedAfter: Date | undefined;
-    public showBothActiveAndInactive: boolean | undefined;
+    public aquacultureId: number | undefined;
+    public poundNetId: number | undefined;
+    public unregisteredShipName: string | undefined;
+    public fishermanName: string | undefined;
+    public waterObjectName: string | undefined;
+    public firstSaleCenterName: string | undefined;
+    public tractorLicensePlateNumber: string | undefined;
+    public trailerLicensePlateNumber: string | undefined;
     public inspectedPersonId: number | undefined;
     public inspectedLegalId: number | undefined;
 }

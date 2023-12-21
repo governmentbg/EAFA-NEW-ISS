@@ -256,6 +256,7 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
             case PageCodeEnum.DupRightToFishResource:
             case PageCodeEnum.DupPoundnetCommFishLic:
             case PageCodeEnum.DupCatchQuataSpecies:
+            case PageCodeEnum.FishingGearsCommFish:
                 return isApplication ? this.canReadPermitLicensesApplicationRecords : this.canReadPermitLicensesRegisterRecords;
             case PageCodeEnum.AptitudeCourceExam:
             case PageCodeEnum.CommFishLicense:
@@ -334,6 +335,7 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
             case PageCodeEnum.PoundnetCommFish:
             case PageCodeEnum.PoundnetCommFishLic:
             case PageCodeEnum.CatchQuataSpecies:
+            case PageCodeEnum.FishingGearsCommFish:
                 if (isApplication) {
                     this.navigateByUrl('/commercial-fishing-applications', id, isPerson);
                 }
@@ -456,7 +458,7 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
                 }
                 break;
             default:
-                this.navigateByUrl('/application_processing', id, isPerson); 
+                this.navigateByUrl('/application_processing', id, isPerson);
                 break;
         }
     }

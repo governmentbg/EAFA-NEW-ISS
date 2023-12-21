@@ -5,7 +5,7 @@ import { AuanRegisterDTO } from './AuanRegisterDTO';
 import { InspectionTypesEnum } from '@app/enums/inspection-types.enum';
 import { InspectionStatesEnum } from '@app/enums/inspection-states.enum';
 
-export class InspectionDTO {
+export class InspectionDTO { 
     public constructor(obj?: Partial<InspectionDTO>) {
         Object.assign(this, obj);
     }
@@ -35,7 +35,7 @@ export class InspectionDTO {
     public inspectors?: string;
 
     @StrictlyTyped(String)
-    public inspectionSubjects?: string;
+    public inspectedObject?: string;
 
     @StrictlyTyped(Date)
     public lastUpdateDate?: Date;

@@ -16,6 +16,7 @@
                                      [canEditNumber]="canEditNumber"
                                      [reportNumAlreadyExists]="reportNumAlreadyExistsError">
             </inspection-general-info>
+
             <inspected-port formControlName="portControl"
                             [hasDate]="false"
                             [ports]="ports"
@@ -44,23 +45,26 @@
 
     <!-- Трансбордиране -->
     <tl-expansion-panel title="{{ 'inspections.transshipment' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.atLeastOneCatchError !== true">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
             <tl-checkbox formControlName="hasTransshipmentControl"
                          label="{{ 'inspections.has-transshipment' | tlTranslate }}">
             </tl-checkbox>
+
             <inspected-ship *ngIf="hasTransshipment"
                             formControlName="transshipmentShipControl"
                             [ships]="ships"
                             [vesselTypes]="vesselTypes"
                             [countries]="countries">
             </inspected-ship>
+
             <tl-card *ngIf="hasTransshipment">
                 <tl-card-title>{{ 'inspections.transshipment-catches' | tlTranslate }}</tl-card-title>
-                <tl-card-content>
-                    <inspected-catches-table formControlName="transshipmentCatchesControl"
+                <tl-card-content fxLayoutGap="1em">
+                    <inspected-catches-table formControlName="catchesControl"
                                              [ships]="ships"
                                              [fishes]="fishes"
                                              [types]="catchTypes"
@@ -68,8 +72,13 @@
                                              [fishSex]="fishSex"
                                              [turbotSizeGroups]="turbotSizeGroups">
                     </inspected-catches-table>
+
+                    <mat-error *ngIf="form.touched && form.errors?.atLeastOneCatchError === true">
+                        * {{ 'inspections.market-catch-at-least-one-catch-error' | tlTranslate }}
+                    </mat-error>
                 </tl-card-content>
             </tl-card>
+
             <tl-textarea *ngIf="hasTransshipment"
                          formControlName="transshipmentViolationControl"
                          [minRows]="3"
@@ -85,6 +94,7 @@
                      [minRows]="3"
                      label="{{ 'inspections.nnn-ship-status' | tlTranslate }}">
         </tl-textarea>
+
         <tl-textarea formControlName="captainCommentControl"
                      [minRows]="3"
                      label="{{ 'inspections.captain-comment' | tlTranslate }}">

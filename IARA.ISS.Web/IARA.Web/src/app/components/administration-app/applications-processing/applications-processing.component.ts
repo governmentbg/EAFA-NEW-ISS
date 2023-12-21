@@ -65,6 +65,7 @@ export class ApplicationsProcessingComponent implements OnInit {
                 [PageCodeEnum.DupPoundnetCommFish, applicationProcessingPermissions],
                 [PageCodeEnum.PoundnetCommFishLic, applicationProcessingPermissions],
                 [PageCodeEnum.DupPoundnetCommFishLic, applicationProcessingPermissions],
+                [PageCodeEnum.FishingGearsCommFish, applicationProcessingPermissions],
                 [PageCodeEnum.ReduceFishCap, applicationProcessingPermissions],
                 [PageCodeEnum.RegVessel, applicationProcessingPermissions],
                 [PageCodeEnum.CommFishLicense, applicationProcessingPermissions],

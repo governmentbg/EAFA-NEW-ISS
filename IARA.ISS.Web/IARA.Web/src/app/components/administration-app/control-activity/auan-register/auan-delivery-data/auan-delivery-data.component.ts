@@ -5,7 +5,6 @@ import { InspDeliveryConfirmationTypesEnum } from '@app/enums/insp-delivery-conf
 import { InspDeliveryTypeGroupsEnum } from '@app/enums/insp-delivery-type-groups.enum';
 import { InspDeliveryTypesEnum } from '@app/enums/insp-delivery-types.enum';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
-import { IAuanRegisterService } from '@app/interfaces/administration-app/auan-register.interface';
 import { AuanDeliveryDataDTO } from '@app/models/generated/dtos/AuanDeliveryDataDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/InspDeliveryTypesNomenclatureDTO';

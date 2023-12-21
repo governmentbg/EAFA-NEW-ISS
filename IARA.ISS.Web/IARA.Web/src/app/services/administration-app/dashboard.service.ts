@@ -122,6 +122,7 @@ export class DashboardService implements IDashboardService {
                     case PageCodeEnum.DupRightToFishResource:
                     case PageCodeEnum.DupPoundnetCommFishLic:
                     case PageCodeEnum.DupCatchQuataSpecies:
+                    case PageCodeEnum.FishingGearsCommFish:
                         entry.icon = CommonUtils.MENU_ICONS_MAP.get('commercial_fishing');
                         break;
                     case PageCodeEnum.AptitudeCourceExam:

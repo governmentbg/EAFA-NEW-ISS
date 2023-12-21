@@ -21,6 +21,7 @@ import { InspectionObservationTextDTO } from '@app/models/generated/dtos/Inspect
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { InspectionUtils } from '@app/shared/utils/inspection.utils';
 
 @Component({
     selector: 'edit-inspection-at-market',
@@ -125,7 +126,7 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
             representativeCommentControl: new FormControl(undefined, Validators.max(4000)),
             additionalInfoControl: new FormControl(undefined),
             filesControl: new FormControl([])
-        });
+        }, InspectionUtils.atLeastOneCatchValidator());
 
         this.form.get('generalInfoControl')!.valueChanges.subscribe({
             next: () => {

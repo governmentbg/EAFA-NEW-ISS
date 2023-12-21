@@ -153,7 +153,7 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
         this.translate = translate;
         this.personLegalExtractor = personLegalExtractor;
 
-        this.showSearchButton = !IS_PUBLIC_APP;
+        this.showSearchButton = true;
 
         this.loader = new FormControlDataLoader(this.getNomenclatures.bind(this));
     }

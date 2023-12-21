@@ -84,8 +84,6 @@ import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { IGroupedOptions } from '@app/shared/components/input-controls/tl-autocomplete/interfaces/grouped-options.interface';
 import { FishingGearMarkStatusesEnum } from '@app/enums/fishing-gear-mark-statuses.enum';
 import { FishingGearPingerStatusesEnum } from '@app/enums/fishing-gear-pinger-statuses.enum';
-import { FishingGearMarkDTO } from '@app/models/generated/dtos/FishingGearMarkDTO';
-import { FishingGearPingerDTO } from '@app/models/generated/dtos/FishingGearPingerDTO';
 import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
 import { CommercialFishingAdministrationService } from '@app/services/administration-app/commercial-fishing-administration.service';
 import { RequestProperties } from '@app/shared/services/request-properties';
@@ -107,6 +105,7 @@ import { EditSuspensionComponent } from '../suspensions/components/edit-suspensi
 import { PermissionsService } from '@app/shared/services/permissions.service';
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 import { DateUtils } from '@app/shared/utils/date.utils';
+import { FishingGearUtils } from '../../utils/fishing-gear.utils';
 
 type AquaticOrganismsToAddType = NomenclatureDTO<number> | NomenclatureDTO<number>[] | string | undefined | null;
 type SaveApplicationDraftFnType = ((applicationId: number, model: IApplicationRegister, dialogClose: HeaderCloseFunction) => void) | undefined;
@@ -167,6 +166,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public isSuspended: boolean = false;
     public canReadSuspensions: boolean = false;
+    public isFishingGearsApplication: boolean = false;
 
     public submittedByRole: SubmittedByRolesEnum | undefined;
     public readonly submittedByRoles: typeof SubmittedByRolesEnum = SubmittedByRolesEnum;
@@ -190,7 +190,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public aquaticOrganismTypes: FishNomenclatureDTO[] = [];
     public quotaAquaticOrganismTypes: FishNomenclatureDTO[] = []; // need only for CatchQuotaSpecies Permit License
     public selectedAquaticOrganismTypes: FishNomenclatureDTO[] = []; // for Permit License only (when pageCode !== CatchQuotaSpecies)
-    public waterAquaticOrganismTypes: FishNomenclatureDTO[] = []; 
+    public waterAquaticOrganismTypes: FishNomenclatureDTO[] = [];
     public holderShipRelations: NomenclatureDTO<boolean>[] = [];
     public groundForUseTypes: NomenclatureDTO<number>[] = [];
     public poundNets: IGroupedOptions<number>[] = []; // needed only when Permit/Permit License is for pound net
@@ -390,6 +390,9 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             if (this.model instanceof CommercialFishingApplicationEditDTO) {
                 this.model.pageCode = this.pageCode;
             }
+            else if (this.model.pageCode === PageCodeEnum.FishingGearsCommFish) {
+                this.isFishingGearsApplication = true;
+            }
         }
     }
 
@@ -398,7 +401,16 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         this.validityCheckerGroup.validate();
 
         if (this.form.valid && !this.viewMode && !this.isReadonly) {
-            if (this.isPermitLicense && !this.isApplication && this.onlyOnlineLogBooks) { // В случай че имаме удостоверение само за онлайн (риболовни) дневници
+            if (this.isFishingGearsApplication) {
+                this.openFishingGearsApplicationConfirmationDialog().subscribe({ //Завършване на заявление за маркиране на риболовни уреди
+                    next: (ok: boolean) => {
+                        if (ok) {
+                            this.saveOrPrintCommercialFishingRecord(actionInfo.id, dialogClose);
+                        }
+                    }
+                });
+            }
+            else if (this.isPermitLicense && !this.isApplication && this.onlyOnlineLogBooks) { // В случай че имаме удостоверение само за онлайн (риболовни) дневници
                 const logBooks: CommercialFishingLogBookEditDTO[] = this.form.get('logBooksControl')!.value;
 
                 if (logBooks === null
@@ -1006,7 +1018,15 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             }
         }
 
-        if (this.modelLoadedFromPermit === true && this.model !== null && this.model !== undefined) {
+        //заявление за маркиране на риболовни уреди
+        if (this.isFishingGearsApplication && this.applicationId !== undefined && this.applicationId !== null) {
+            this.form.disable();
+            this.aquaticOrganismTypesControl.disable();
+            this.form.get('fishingGearsGroup.fishingGearsControl')!.enable();
+
+            this.fillForm();
+        }
+        else if (this.modelLoadedFromPermit === true && this.model !== null && this.model !== undefined) {
             if (this.model instanceof CommercialFishingApplicationEditDTO) {
                 this.model.pageCode = this.pageCode;
 
@@ -1238,7 +1258,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     setTimeout(() => {
                         this.selectedAquaticOrganismTypes = this.selectedAquaticOrganismTypes.filter(x => x.isBlackSea);
                         this.aquaticOrganismTypes = this.allAquaticOrganismTypes.filter(x => x.isBlackSea && !this.selectedAquaticOrganismTypes.includes(x))
-                        this.waterAquaticOrganismTypes  = this.allAquaticOrganismTypes.filter(x => x.isBlackSea);
+                        this.waterAquaticOrganismTypes = this.allAquaticOrganismTypes.filter(x => x.isBlackSea);
                     });
                 } break;
                 case WaterTypesEnum.DANUBE: {
@@ -1410,12 +1430,14 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         const originalPaymentInformation = (this.model as CommercialFishingApplicationEditDTO).paymentInformation; // save payment information
         const originalIsPaid: boolean = (this.model as CommercialFishingApplicationEditDTO).isPaid ?? false;
         const originalHasDelivery: boolean = (this.model as CommercialFishingApplicationEditDTO).hasDelivery ?? false;
+        const id: number | undefined = (this.model as CommercialFishingApplicationEditDTO).id;
 
         this.model = result;
 
         (this.model as CommercialFishingApplicationEditDTO).paymentInformation = originalPaymentInformation;
         (this.model as CommercialFishingApplicationEditDTO).isPaid = originalIsPaid;
         (this.model as CommercialFishingApplicationEditDTO).hasDelivery = originalHasDelivery;
+        (this.model as CommercialFishingApplicationEditDTO).id = id;
 
         if (this.model instanceof CommercialFishingApplicationEditDTO) {
             this.model.pageCode = this.pageCode;
@@ -1444,6 +1466,14 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             okBtnLabel: this.translationService.getValue('commercial-fishing.save-permit-license-with-no-online-log-book-ok-label'),
             okBtnColor: 'warn',
             cancelBtnLabel: this.translationService.getValue('commercial-fishing.save-permit-license-with-no-online-log-book-cancel-label')
+        });
+    }
+
+    private openFishingGearsApplicationConfirmationDialog(): Observable<boolean> {
+        return this.confirmDialog.open({
+            title: this.translationService.getValue('commercial-fishing.complete-application-confirm-dialog-title'),
+            message: this.translationService.getValue('commercial-fishing.complete-application-confirm-dialog-message'),
+            okBtnLabel: this.translationService.getValue('commercial-fishing.complete-application-confirm-dialog-ok-btn-label')
         });
     }
 
@@ -1646,7 +1676,10 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         let saveOrEditObservable: Observable<void | number>;
 
         if (this.model instanceof CommercialFishingEditDTO) {
-            if (this.id !== undefined && this.id !== null) {
+            if (this.isFishingGearsApplication) {
+                saveOrEditObservable = this.service.completePermitLicenseFishingGearsApplication(this.model);
+            }
+            else if (this.id !== undefined && this.id !== null) {
                 saveOrEditObservable = this.service.editPermit(this.model, pageCode, this.ignoreLogBookConflicts);
             }
             else {
@@ -1741,12 +1774,12 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             }
             else if (error?.code === ErrorCode.DuplicatedMarksNumbers) {
                 this.duplicatedMarkNumbers = error?.messages ?? [];
-                this.form.get('fishingGearsGroup')!.updateValueAndValidity();
+                this.form.get('fishingGearsGroup')!.setErrors({ 'duplicatedMarkNumbers': this.duplicatedMarkNumbers });
                 this.form.get('fishingGearsGroup')!.markAsTouched();
             }
             else if (error?.code === ErrorCode.DuplicatedPingersNumbers) {
                 this.duplicatedPingerNumbers = error?.messages ?? [];
-                this.form.get('fishingGearsGroup')!.updateValueAndValidity();
+                this.form.get('fishingGearsGroup')!.setErrors({ 'duplicatedPingerNumbers': this.duplicatedPingerNumbers });
                 this.form.get('fishingGearsGroup')!.markAsTouched();
             }
             else if (error?.code === ErrorCode.ShipEventExistsOnSameDate) {
@@ -2181,16 +2214,16 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 if (this.form.get('fishingGearsGroup')!.validator !== null && this.form.get('fishingGearsGroup')!.validator !== undefined) {
                     this.form.get('fishingGearsGroup')!.setValidators([
                         this.form.get('fishingGearsGroup')!.validator!,
-                        this.atLeastOneFishingGear(),
-                        this.permitLicenseDuplicateMarkNumbersValidator(),
-                        this.permitLicenseDuplicatePingerNumbersValidator()
+                        FishingGearUtils.atLeastOneFishingGear(),
+                        FishingGearUtils.permitLicenseDuplicateMarkNumbersValidator(),
+                        FishingGearUtils.permitLicenseDuplicatePingerNumbersValidator()
                     ]);
                 }
                 else {
                     this.form.get('fishingGearsGroup')!.setValidators([
-                        this.atLeastOneFishingGear(),
-                        this.permitLicenseDuplicateMarkNumbersValidator(),
-                        this.permitLicenseDuplicatePingerNumbersValidator()
+                        FishingGearUtils.atLeastOneFishingGear(),
+                        FishingGearUtils.permitLicenseDuplicateMarkNumbersValidator(),
+                        FishingGearUtils.permitLicenseDuplicatePingerNumbersValidator()
                     ]);
                 }
             }
@@ -2608,11 +2641,13 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             }
         }
         else { // register
-            if (isSameAsSubmittedFor) { // TODO set qualified fisher to be as submitted for somehow ???
-                this.form.get('qualifiedFisherControl')!.disable();
-            }
-            else {
-                this.form.get('qualifiedFisherControl')!.enable();
+            if (!this.isFishingGearsApplication) {
+                if (isSameAsSubmittedFor) { // TODO set qualified fisher to be as submitted for somehow ???
+                    this.form.get('qualifiedFisherControl')!.disable();
+                }
+                else {
+                    this.form.get('qualifiedFisherControl')!.enable();
+                }
             }
         }
     }
@@ -3094,25 +3129,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         }
     }
 
-    private atLeastOneFishingGear(): ValidatorFn {
-        return (form: AbstractControl): ValidationErrors | null => {
-
-            const fishingGearsControl = (form as FormGroup).get('fishingGearsControl');
-
-            if (fishingGearsControl === null || fishingGearsControl === undefined) {
-                return null;
-            }
-
-            if (fishingGearsControl.value !== null && fishingGearsControl.value !== undefined && fishingGearsControl.value.length > 0) {
-                if ((fishingGearsControl.value as FishingGearDTO[]).some(x => x.isActive === true) === true) {
-                    return null;
-                }
-            }
-
-            return { 'atLeastOneFishingGear': true };
-        }
-    }
-
     private shipAllowedForSelectionValidator(): ValidatorFn {
         return (form: AbstractControl): ValidationErrors | null => {
             if (form === null || form === undefined) {
@@ -3295,100 +3311,6 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
             if (this.hasNoPermitRegisterForPermitLicenseError) {
                 return { 'noPermitRegisterForPermitLicense': true };
-            }
-
-            return null;
-        }
-    }
-
-    private permitLicenseDuplicateMarkNumbersValidator(): ValidatorFn {
-        return (form: AbstractControl): ValidationErrors | null => {
-            if (form === null || form === undefined) {
-                return null;
-            }
-
-            if (this.duplicatedMarkNumbers.length > 0) { // there are duplicated mark numbers on backend
-                return { 'duplicatedMarkNumbers': this.duplicatedMarkNumbers };
-            }
-
-            const fishingGears: FishingGearDTO[] | null | undefined = form.get('fishingGearsControl')!.value;
-
-            if (fishingGears === null || fishingGears === undefined || fishingGears.length === 0) {
-                return null;
-            }
-
-            let marks: FishingGearMarkDTO[] | null | undefined = fishingGears.filter((x: FishingGearDTO) => {
-                return x.isActive && x.marks !== null && x.marks !== undefined;
-            }).map(x => x.marks!)
-                .reduce((prev: FishingGearMarkDTO[], curr: FishingGearMarkDTO[]) => {
-                    prev.push(...curr);
-                    return prev;
-                }, []);
-            marks = marks.filter(x => x.isActive);
-
-            if (marks === null || marks === undefined || marks.length === 0) {
-                return null;
-            }
-
-            const duplicatedMarkNumbers: string[] = [];
-            const marksGrouped = CommonUtils.groupBy(marks, x => `${x.fullNumber!.prefix ?? ''}${x.fullNumber!.inputValue}`);
-            const entries = Object.entries(marksGrouped);
-
-            for (const entry of entries) {
-                if ((entry[1] as Array<FishingGearMarkDTO>).length > 1) {
-                    duplicatedMarkNumbers.push(entry[0]);
-                }
-            }
-
-            if (duplicatedMarkNumbers.length > 0) { // there are duplicated mark numbers on frontend
-                return { 'duplicatedMarkNumbers': duplicatedMarkNumbers };
-            }
-
-            return null;
-        }
-    }
-
-    private permitLicenseDuplicatePingerNumbersValidator(): ValidatorFn {
-        return (form: AbstractControl): ValidationErrors | null => {
-            if (form === null || form === undefined) {
-                return null;
-            }
-
-            if (this.duplicatedPingerNumbers.length > 0) { // there are duplicated pinger numbers on backend
-                return { 'duplicatedPingerNumbers': this.duplicatedPingerNumbers };
-            }
-
-            const fishingGears: FishingGearDTO[] | null | undefined = form.get('fishingGearsControl')!.value;
-
-            if (fishingGears === null || fishingGears === undefined || fishingGears.length === 0) {
-                return null;
-            }
-
-            let pingers: FishingGearPingerDTO[] | null | undefined = fishingGears.filter((x: FishingGearDTO) => {
-                return x.isActive && x.hasPingers && x.pingers !== null && x.pingers !== undefined;
-            }).map(x => x.pingers!)
-                .reduce((prev: FishingGearPingerDTO[], curr: FishingGearPingerDTO[]) => {
-                    prev.push(...curr);
-                    return prev;
-                }, []);
-            pingers = pingers.filter(x => x.isActive);
-
-            if (pingers === null || pingers === undefined || pingers.length === 0) {
-                return null;
-            }
-
-            const duplicatedPingersNumbers: string[] = [];
-            const pingersGrouped = CommonUtils.groupByKey(pingers, 'number');
-            const entries = Object.entries(pingersGrouped);
-
-            for (const entry of entries) {
-                if ((entry[1] as Array<FishingGearMarkDTO>).length > 1) {
-                    duplicatedPingersNumbers.push(entry[0]);
-                }
-            }
-
-            if (duplicatedPingersNumbers.length > 0) { // there are duplicated pinger numbers on frontend
-                return { 'duplicatedPingerNumbers': duplicatedPingersNumbers };
             }
 
             return null;

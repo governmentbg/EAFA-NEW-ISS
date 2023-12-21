@@ -16,6 +16,9 @@ export class SystemPropertiesDTO {
     @StrictlyTyped(Number)
     public maxNumberOfUnder14Tickets?: number;
 
+    @StrictlyTyped(Date)
+    public blockAssociationsAddTickets?: Date;
+
     @StrictlyTyped(Number)
     public maxNumberFishingGears?: number;
 

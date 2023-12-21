@@ -1,0 +1,172 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     fxLayoutAlign="space-between stretch"
+     validityCheckerGroup
+     [formGroup]="form"
+     [notifierGroup]="notifier"
+     class="dialog-padding">
+    <!-- Заявител -->
+    <application-submitted-by formControlName="submittedByControl"
+                              notifier
+                              validityChecker
+                              label="{{ 'fishing-gears.application-submitted-by' | tlTranslate }}"
+                              [isIdReadOnly]="isEditing || isPublicApp"
+                              [hideDocument]="true"
+                              [expectedResults]="expectedResults.submittedBy">
+    </application-submitted-by>
+
+    <!-- Получател -->
+    <application-submitted-for formControlName="submittedForControl"
+                               notifier
+                               validityChecker
+                               relationLabel="{{ 'fishing-gears.application-requester-role' | tlTranslate }}"
+                               submittedForLabel="{{ 'fishing-gears.application-receiver' | tlTranslate }}"
+                               [pageCode]="pageCode"
+                               [hideRelation]="showOnlyRegiXData"
+                               [isIdReadOnly]="isEditing"
+                               [submittedByControl]="form.controls.submittedByControl"
+                               [expectedResults]="expectedResults.submittedFor">
+    </application-submitted-for>
+
+    <!-- Риболовен кораб и УСР -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'fishing-gears.application-permit-license' | tlTranslate }}"
+                        tooltipResourceName="fishing-gears.application-permit-license-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxFlex="100" fxLayoutGap="1em">
+            <div fxLayout="row" fxFlex="100">
+                <tl-autocomplete fxFlex="70"
+                                 formControlName="shipControl"
+                                 [options]="ships"
+                                 label="{{ 'fishing-gears.choose-ship' | tlTranslate }}"
+                                 tooltipResourceName="fishing-gears.choose-ship-helper">
+                </tl-autocomplete>
+            </div>
+
+            <div *ngIf="!isPublicApp" fxLayout="row" fxFlex="100">
+                <tl-autocomplete fxFlex="70"
+                                 formControlName="permitLicenseControl"
+                                 [options]="permitLicenses"
+                                 [templateOptions]="true"
+                                 tooltipResourceName="fishing-gears.application-permit-license-helper"
+                                 label="{{ 'fishing-gears.application-permit-license-register' | tlTranslate }}">
+                </tl-autocomplete>
+
+                <tl-popover-button *ngIf="noShipSelected"
+                                   iconType="MAT_ICON"
+                                   iconClass="accent-color"
+                                   icon="info"
+                                   style="vertical-align:text-bottom">
+                    <pre style="font-family: inherit !important; max-width: 500px !important;">{{ 'fishing-gears.application-permit-license-is-readonly-info' | tlTranslate }}</pre>
+                </tl-popover-button>
+            </div>
+
+            <div *ngIf="isPublicApp" fxFlex="100" fxLayout="column" fxLayoutGap="1em">
+                <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-input fxFlex="70"
+                              formControlName="permitLicenseNumberControl"
+                              tooltipResourceName="fishing-gears.application-permit-license-number-helper"
+                              label="{{ 'fishing-gears.application-permit-license-number' | tlTranslate }}">
+                    </tl-input>
+
+                    <div fxFLex=30>
+                        <button *ngIf="!isReadonly && !viewMode"
+                                mat-raised-button
+                                color="accent"
+                                (click)="loadFishingGearsFromPermitLicense()">
+                            {{ 'fishing-gears.application-load-fishing-gears-from-permit-license' | tlTranslate }}
+                        </button>
+                    </div>
+                </div>
+
+                <mat-error *ngIf="hasInvalidPermitLicenseRegistrationNumber">{{ 'fishing-gears.application-invalid-permit-license-registration-number' | tlTranslate }} *</mat-error>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Риболовни уреди -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'fishing-gears.application-fishing-gears' | tlTranslate }}"
+                        tooltipResourceName="fishing-gears.application-fishing-gears-helper"
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="(form.get('fishingGearsGroup')!.errors === null
+                                                          || form.get('fishingGearsGroup')!.errors === undefined)
+                                                         && (form.get('fishingGearsGroup')!.get('fishingGearsControl')!.errors === null
+                                                             || form.get('fishingGearsGroup')!.get('fishingGearsControl')!.errors === undefined)">
+        <div fxLayout="column" fxFlex="100" fxLayoutGap="1em" formGroupName="fishingGearsGroup">
+            <fishing-gears formControlName="fishingGearsControl"
+                           validityChecker
+                           [isReadonly]="isReadonly || viewMode"
+                           [isApplication]="true"
+                           [service]="service"
+                           [maxNumberOfFishingGears]="maxNumberOfFishingGears"
+                           [pageCode]="permitLicensePageCode"
+                           [isDunabe]="isDunabe"
+                           [appliedTariffs]="permitLicenseAppliedTariffs">
+            </fishing-gears>
+
+            <mat-error *ngIf="form.touched && form.get('fishingGearsGroup')!.errors?.atLeastOneFishingGear">
+                * {{ 'commercial-fishing.at-least-one-fishing-gear-must-be-selected' | tlTranslate }}
+            </mat-error>
+            <mat-error *ngIf="form.touched && form.get('fishingGearsGroup')!.errors?.duplicatedPingerNumbers">
+                * {{ 'commercial-fishing.permit-license-has-duplicated-pinger-numbers' | tlTranslate }}: {{ form.get('fishingGearsGroup')!.errors!.duplicatedPingerNumbers | tlJoin : ';' }}
+            </mat-error>
+            <mat-error *ngIf="form.touched && form.get('fishingGearsGroup')!.errors?.duplicatedMarkNumbers">
+                * {{ 'commercial-fishing.permit-license-has-duplicated-mark-numbers' | tlTranslate }}: {{ form.get('fishingGearsGroup')!.errors!.duplicatedMarkNumbers | tlJoin : ';' }}
+            </mat-error>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Информация за плащане -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData && isPaid"
+                        title="{{ 'fishing-gears.application-payment-information-panel' | tlTranslate }}"
+                        tooltipResourceName="fishing-gears.application-payment-information-panel-helper"
+                        [validityChecker]="form">
+        <payment-information formControlName="applicationPaymentInformationControl"
+                             validityChecker
+                             [hideBasicInfo]="hideBasicPaymentInfo"
+                             [isOnlineApplication]="isOnlineApplication">
+        </payment-information>
+    </tl-expansion-panel>
+
+    <!-- Информация за начин на връчване -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData && hasDelivery"
+                        title="{{ 'fishing-gears.application-delivery-data-panel' | tlTranslate }}"
+                        tooltipResourceName="fishing-gears.application-delivery-data-panel-helper"
+                        fxFlexLayoutGap="1em"
+                        [validityChecker]="form">
+        <delivery-data formControlName="deliveryDataControl"
+                       validityChecker
+                       [pageCode]="pageCode">
+        </delivery-data>
+
+        <mat-error *ngIf="hasNoEDeliveryRegistrationError">
+            * {{ 'fishing-gears.application-has-no-e-delivery-registration-error' | tlTranslate }}
+        </mat-error>
+    </tl-expansion-panel>
+
+    <!-- Файлове -->
+    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
+                        title="{{ 'fishing-gears.application-files-panel' | tlTranslate }}"
+                        tooltipResourceName="fishing-gears.application-files-panel-helper"
+                        [validityChecker]="form">
+        <file-uploader-form-array formControlName="filesControl"
+                                  validityChecker
+                                  [pageCode]="pageCode"
+                                  [downloadFileMethod]="service.downloadFile.bind(this.service)"
+                                  [fileTypeFilterFn]="fileTypeFilterFn.bind(this)"
+                                  [refreshFileTypes]="refreshFileTypes">
+        </file-uploader-form-array>
+    </tl-expansion-panel>
+
+    <!-- Проверки -->
+    <tl-expansion-panel *ngIf="showOnlyRegiXData || showRegiXData"
+                        title="{{ 'fishing-gears.application-regix-checks-results-panel' | tlTranslate }}"
+                        tooltipResourceName="fishing-gears.application-regix-checks-results-panel-helper">
+        <div fxLayout="column" fxLayoutGap="1em">
+            <regix-checks-results [regixChecksCollection]="regixChecks">
+            </regix-checks-results>
+        </div>
+    </tl-expansion-panel>
+</div>

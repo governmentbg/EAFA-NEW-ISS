@@ -54,7 +54,8 @@
 
     <!-- Данни за инспектираните продукти от риболов -->
     <tl-expansion-panel title="{{ 'inspections.market-catch' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.atLeastOneCatchError !== true">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -66,18 +67,26 @@
                                   [hasCatchType]="false"
                                   [hasUnloadedQuantity]="false">
             </market-catches-table>
+
+            <mat-error *ngIf="form.controls.catchesControl?.touched && form.errors?.atLeastOneCatchError === true">
+                * {{ 'inspections.market-catch-at-least-one-catch-error' | tlTranslate }}
+            </mat-error>
+
             <inspection-toggle-list formControlName="catchTogglesControl"
                                     [toggles]="catchToggles">
             </inspection-toggle-list>
+
             <tl-checkbox formControlName="hasImporterControl"
                          label="{{ 'inspections.has-importer' | tlTranslate }}">
             </tl-checkbox>
+
             <inspected-legal *ngIf="hasImporter"
                              formControlName="importerControl"
                              [countries]="countries"
                              [legalType]="inspectedPersonTypeEnum.Importer"
                              title="{{ 'inspections.importer' | tlTranslate }}">
             </inspected-legal>
+
             <tl-textarea formControlName="catchViolationControl"
                          [minRows]="3"
                          label="{{ 'inspections.violation' | tlTranslate }}">

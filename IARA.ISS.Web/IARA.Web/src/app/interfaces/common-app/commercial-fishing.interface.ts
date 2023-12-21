@@ -23,6 +23,7 @@ import { ISuspensionService } from './suspension.interface';
 import { InspectedPermitLicenseNomenclatureDTO } from '@app/models/generated/dtos/InspectedPermitLicenseNomenclatureDTO';
 import { FishingGearForChoiceDTO } from '@app/models/generated/dtos/FishingGearForChoiceDTO';
 import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
+import { PermitLicensesNomenclatureDTO } from '@app/models/generated/dtos/PermitLicensesNomenclatureDTO';
 
 export interface ICommercialFishingService extends IApplicationsActionsService, ISuspensionService {
     getAllPermits(request: GridRequestModel<CommercialFishingRegisterFilters>): Observable<GridResultModel<CommercialFishingPermitRegisterDTO>>;
@@ -58,6 +59,9 @@ export interface ICommercialFishingService extends IApplicationsActionsService, 
 
     addPermitApplicationAndStartPermitLicenseApplication(permit: CommercialFishingApplicationEditDTO): Observable<CommercialFishingApplicationEditDTO>;
 
+    getPermitLicenseFromFishingGearsApplication(applicationId: number): Observable<CommercialFishingEditDTO>;
+    completePermitLicenseFishingGearsApplication(permitLicense: CommercialFishingEditDTO): Observable<void>;
+
     getCommercialFishingPermitTypes(): Observable<NomenclatureDTO<number>[]>;
     getCommercialFishingPermitLicenseTypes(): Observable<NomenclatureDTO<number>[]>;
     getQualifiedFishers(): Observable<QualifiedFisherNomenclatureDTO[]>;
@@ -73,6 +77,9 @@ export interface ICommercialFishingService extends IApplicationsActionsService, 
     getShipPermitLicensesFromInspection(shipId: number): Observable<InspectedPermitLicenseNomenclatureDTO[]>;
     getShipFishingGearsFromInspection(inspectionId: number): Observable<FishingGearForChoiceDTO[]>;
     getFishingGearsForIds(gearIds: number[]): Observable<FishingGearDTO[]>;
+    getPermitLicensesNomenclatures(shipId: number): Observable<PermitLicensesNomenclatureDTO[]>;
+    getPermitLicenseFishingGears(permitLicenseId: number): Observable<FishingGearDTO[]>;
+    getFishingGearsByPermitLicenseRegistrationNumber(permitLicenseNumber: string, shipId: number): Observable<FishingGearDTO[]>;
 
     getSimpleAudit(id: number): Observable<SimpleAuditDTO>;
     getPermitLicenseSimpleAudit(id: number): Observable<SimpleAuditDTO>;
