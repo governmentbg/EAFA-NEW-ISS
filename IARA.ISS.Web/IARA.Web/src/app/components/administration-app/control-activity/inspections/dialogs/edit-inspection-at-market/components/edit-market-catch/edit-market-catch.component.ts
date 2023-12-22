@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
@@ -16,13 +16,15 @@ import { DeclarationLogBookTypeEnum } from '@app/enums/declaration-log-book-type
 import { InspectedDeclarationCatchDTO } from '@app/models/generated/dtos/InspectedDeclarationCatchDTO';
 import { FillDef, MapOptions, SimplePolygonStyleDef, StrokeDef, TLMapViewerComponent } from '@tl/tl-angular-map';
 import { TLPopoverComponent } from '@app/shared/components/tl-popover/tl-popover.component';
-import { DeclarationLogBookPageDTO } from '@app/models/generated/dtos/DeclarationLogBookPageMobileDTO';
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { forkJoin } from 'rxjs';
 import { DeclarationLogBookPageFishDTO } from '@app/models/generated/dtos/DeclarationLogBookPageFishDTO';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { CatchSizeCodesEnum } from '@app/enums/catch-size-codes.enum';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
+import { InspectionLogBookPageNomenclatureDTO } from '@app/models/generated/dtos/InspectionLogBookPageNomenclatureDTO';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
+import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
 
 @Component({
     selector: 'edit-market-catch',
@@ -40,13 +42,15 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     public hasUndersizedCheck: boolean = false;
     public hasUnloadedQuantity: boolean = true;
     public isMapPopoverOpened: boolean = false;
+    public hasDeclaration: boolean = false;
     public readOnly: boolean = false;
     public aquacultureRegistered: boolean = true;
     public permitTypeSelected: DeclarationLogBookTypeEnum | undefined;
+    public pageDateLabel: string | undefined;
 
     public readonly declarationLogBookTypeEnum = DeclarationLogBookTypeEnum;
 
-    public ships: NomenclatureDTO<number>[] = [];
+    public ships: ShipNomenclatureDTO[] = [];
     public countries: NomenclatureDTO<number>[] = [];
     public vesselTypes: NomenclatureDTO<number>[] = [];
     public fishes: NomenclatureDTO<number>[] = [];
@@ -54,8 +58,8 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     public catchZones: NomenclatureDTO<number>[] = [];
     public presentations: NomenclatureDTO<number>[] = [];
     public permitTypes: NomenclatureDTO<DeclarationLogBookTypeEnum>[] = [];
-    public declarations: NomenclatureDTO<number>[] = [];
     public aquacultures: NomenclatureDTO<number>[] = [];
+    public declarationPages: InspectionLogBookPageNomenclatureDTO[] = [];
     public fishErrors: TLError[] = [];
 
     @ViewChild(TLMapViewerComponent)
@@ -68,9 +72,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
 
     private temporarySelectedGridSector: NomenclatureDTO<number> | undefined;
-    private logBookPages: DeclarationLogBookPageDTO[] = [];
     private logBookFishes: DeclarationLogBookPageFishDTO[] = [];
-    private fetchData: { type: DeclarationLogBookTypeEnum, shipId?: number, aquacultureId?: number } | undefined;
 
     private readonly service: InspectionsService;
     private readonly nomenclatures: CommonNomenclatures;
@@ -154,6 +156,10 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         this.vesselTypes = nomenclatureTables[2];
         this.aquacultures = nomenclatureTables[3];
 
+        if (this.model !== undefined && this.model !== null) {
+            this.fillLogBookPageData();
+        }
+
         setTimeout(() => {
             this.fillForm();
         });
@@ -208,6 +214,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
 
     public onPopoverToggled(isOpened: boolean): void {
         this.isMapPopoverOpened = isOpened;
+
         setTimeout(() => {
             if (this.isMapPopoverOpened === true) {
                 this.mapViewer.selectedGridSectorsChangeEvent.subscribe({
@@ -261,57 +268,77 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             declarationDateControl: new FormControl(undefined),
             invoiceDataControl: new FormControl(undefined, Validators.maxLength(4000)),
             undersizedControl: new FormControl(false),
-        });
+            pageNumberControl: new FormControl(undefined),
+            pageDateControl: new FormControl(undefined)
+        }, this.fishQuantityValidator());
 
         this.form.get('shipControl')!.disable();
         this.form.get('aquacultureControl')!.disable();
         this.form.get('aquacultureTextControl')!.disable();
 
-        this.form.get('declarationNumberControl')!.valueChanges.subscribe({
-            next: async (value: NomenclatureDTO<number> | string | undefined) => {
-                if (typeof value === 'string') {
-                    this.form.get('declarationDateControl')!.enable();
-                }
-                else if (value instanceof NomenclatureDTO) {
-                    const page = this.logBookPages.find(f => f.id === value!.value);
+        this.form.get('permitControl')!.valueChanges.subscribe({
+            next: (value: NomenclatureDTO<DeclarationLogBookTypeEnum> | undefined) => {
+                if (value !== undefined && value !== null) {
+                    this.permitTypeSelected = value?.value;
 
-                    this.form.get('declarationDateControl')!.setValue(page!.date);
-                    this.form.get('declarationDateControl')!.disable();
-                }
+                    this.getPageDateLabel();
+                    this.pullDeclarations();
 
-                if (this.readOnly === true) {
-                    this.form.get('declarationDateControl')!.disable();
+                    if (this.permitTypeSelected === DeclarationLogBookTypeEnum.AquacultureLogBook) {
+                        this.form.get('aquacultureRegisteredControl')!.setValue(this.aquacultureRegistered);
+                    }
+
+                    if (this.permitTypeSelected === DeclarationLogBookTypeEnum.AquacultureLogBook || this.permitTypeSelected === DeclarationLogBookTypeEnum.Invoice || this.permitTypeSelected === DeclarationLogBookTypeEnum.NNN) {
+                        this.form.get('catchZoneControl')!.disable();
+                        this.form.get('shipControl')!.disable();
+                    }
+                    else if (!this.readOnly) {
+                        this.form.get('catchZoneControl')!.enable();
+                        this.form.get('shipControl')!.enable();
+                    }
+                }
+                else {
+                    this.form.get('shipControl')!.setValue(undefined);
+                    this.form.get('catchZoneControl')!.disable();
+                    this.form.get('shipControl')!.disable();
+
+                    this.declarationPages = [];
+                    this.logBookFishes = [];
                 }
             }
         });
 
-        this.form.get('permitControl')!.valueChanges.subscribe({
-            next: async (value: NomenclatureDTO<DeclarationLogBookTypeEnum>) => {
-                this.permitTypeSelected = value?.value;
+        this.form.get('pageNumberControl')!.valueChanges.subscribe({
+            next: (value: NomenclatureDTO<number> | string | undefined) => {
+                this.hasDeclaration = false;
 
-                if (this.permitTypeSelected === DeclarationLogBookTypeEnum.AquacultureLogBook) {
-                    this.form.get('aquacultureRegisteredControl')!.setValue(this.aquacultureRegistered);
-                }
+                if (value !== undefined && value !== null) {
+                    if (typeof value === 'string') {
+                        this.form.get('pageDateControl')!.enable();
+                    }
+                    else if (value instanceof InspectionLogBookPageNomenclatureDTO) {
+                        this.hasDeclaration = true;
+                        this.form.get('pageDateControl')!.setValue(value.logBookPageDate);
+                        this.form.get('declarationNumberControl')!.setValue(value.originDeclarationNum);
+                        this.form.get('declarationDateControl')!.setValue(value.originDeclarationDate);
 
-                if (this.permitTypeSelected == null || this.permitTypeSelected === DeclarationLogBookTypeEnum.AquacultureLogBook || this.permitTypeSelected === DeclarationLogBookTypeEnum.Invoice || this.permitTypeSelected === DeclarationLogBookTypeEnum.NNN) {
-                    this.form.get('catchZoneControl')!.disable();
-                    this.form.get('shipControl')!.disable();
+                        this.disablePageControls();
+                    }
                 }
-                else if (!this.readOnly) {
-                    this.form.get('catchZoneControl')!.enable();
-                    this.form.get('shipControl')!.enable();
+                else {
+                    this.form.get('pageDateControl')!.setValue(undefined);
+                    this.form.get('declarationNumberControl')!.setValue(undefined);
+                    this.form.get('declarationDateControl')!.setValue(undefined);
                 }
-
-                this.pullDeclarations();
 
                 if (this.readOnly === true) {
-                    this.form.get('shipControl')!.disable();
+                    this.disablePageControls();
                 }
             }
         });
 
         this.form.get('aquacultureRegisteredControl')!.valueChanges.subscribe({
-            next: (value) => {
+            next: (value: boolean) => {
                 this.aquacultureRegistered = value;
 
                 if (this.readOnly) {
@@ -321,68 +348,43 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
                 if (value) {
                     this.form.get('aquacultureControl')!.enable();
                     this.form.get('aquacultureTextControl')!.disable();
+                    this.form.get('pageDateControl')!.disable();
                 }
                 else {
+                    this.declarationPages = [];
                     this.form.get('aquacultureControl')!.disable();
                     this.form.get('aquacultureTextControl')!.enable();
+                    this.form.get('pageDateControl')!.enable();
                 }
             }
         });
 
-        this.form.valueChanges.subscribe({
-            next: () => {
-                const permit: NomenclatureDTO<number> | string = this.form.get('declarationNumberControl')!.value;
-                const fishCatch: NomenclatureDTO<number> = this.form.get('typeControl')!.value;
-                const quantity: number = this.form.get('quantityControl')!.value;
-
-                if (typeof permit === 'object' && permit && fishCatch && quantity) {
-                    this.fishErrors = [];
-                    let fishes = this.logBookFishes.filter(f => f.logBookId === permit.value && f.fishId === fishCatch.value);
-
-                    const presentation: NomenclatureDTO<number> = this.form.get('presentationControl')!.value;
-
-                    if (presentation) {
-                        fishes = fishes.filter(f => f.presentationId == null || f.presentationId === presentation.value);
-                    }
-
-                    for (const fish of fishes) {
-                        if (fish.quantity! < quantity) {
-                            this.fishErrors.push({
-                                text: this.translate.getValue('inspections.declaration-fish-quantity-error')
-                                    .replace('{0}', `${fishCatch.displayName} : ${fish.quantity!}`)
-                                    .replace('{1}', (quantity - fish.quantity!).toString()),
-                                type: 'error'
-                            });
-                        }
-                        else {
-                            this.fishErrors.push({
-                                text: this.translate.getValue('inspections.declaration-fish-quantity-warning')
-                                    .replace('{0}', `${fishCatch.displayName} : ${fish.quantity!}`),
-                                type: 'warn'
-                            });
-                        }
-                    }
+        this.form.get('aquacultureControl')!.valueChanges.subscribe({
+            next: (value: NomenclatureDTO<number> | undefined) => {
+                if (value !== undefined && value !== null) {
+                    this.pullDeclarations();
                 }
             }
         });
     }
 
-    protected async fillForm(): Promise<void> {
+    protected fillForm(): void {
+        this.permitTypeSelected = this.model.logBookType;
+
         this.form.get('typeControl')!.setValue(this.fishes.find(f => f.value === this.model.fishTypeId));
         this.form.get('countControl')!.setValue(this.model.catchCount);
         this.form.get('quantityControl')!.setValue(this.model.catchQuantity);
         this.form.get('catchTypeControl')!.setValue(this.types.find(f => f.value === this.model.catchTypeId));
         this.form.get('undersizedControl')!.setValue(this.model.undersized);
+
         this.form.get('presentationControl')!.setValue(
             this.presentations.find(f => f.value === this.model.presentationId)
             ?? this.presentations.find(f => f.code === 'WHL')
         );
+
         this.form.get('unloadedQuantityControl')!.setValue(this.model.unloadedQuantity);
         this.form.get('catchZoneControl')!.setValue(this.catchZones.find(f => f.value === this.model.catchZoneId));
-        this.form.get('shipControl')!.setValue(this.model.originShip, { emitEvent: false });
-
-        this.permitTypeSelected = this.model.logBookType;
-
+        this.form.get('shipControl')!.setValue(this.model.originShip);
         this.form.get('permitControl')!.setValue(this.permitTypes.find(f => f.value === this.model.logBookType));
 
         if (this.model.aquacultureId) {
@@ -398,29 +400,6 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         }
         else {
             this.form.get('aquacultureTextControl')!.setValue(this.model.unregisteredEntityData);
-        }
-
-        if (this.model.originShip?.shipId !== null && this.model.originShip?.shipId !== undefined
-            && this.permitTypeSelected !== null && this.permitTypeSelected !== undefined
-            && this.permitTypeSelected !== DeclarationLogBookTypeEnum.Invoice && this.permitTypeSelected !== DeclarationLogBookTypeEnum.NNN) {
-            const result = await this.service.getDeclarationLogBookPages(this.permitTypeSelected, this.model.originShip.shipId!).toPromise();
-
-            this.logBookPages = result;
-            this.declarations = result.map(f => new NomenclatureDTO({
-                value: f.id,
-                displayName: f.num,
-                isActive: true,
-            }));
-
-            const page = this.logBookPages.find(f => f.id === this.model.logBookPageId);
-            const nomPage = this.declarations.find(f => f.value === this.model.logBookPageId);
-
-            this.form.get('declarationNumberControl')!.setValue(nomPage ?? this.model.unregisteredPageNum, { emitEvent: false });
-            this.form.get('declarationDateControl')!.setValue(page?.date ?? this.model.unregisteredPageDate);
-            this.form.get('declarationDateControl')!.disable();
-        } else {
-            this.form.get('declarationNumberControl')!.setValue(this.model.unregisteredPageNum, { emitEvent: false });
-            this.form.get('declarationDateControl')!.setValue(this.model.unregisteredPageDate);
         }
     }
 
@@ -448,21 +427,23 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         this.model.originShip = this.form.get('shipControl')!.value;
         this.model.logBookType = this.form.get('permitControl')!.value?.value;
         this.model.aquacultureId = this.form.get('aquacultureControl')!.value?.value;
+
         this.model.unregisteredEntityData = this.model.logBookType === DeclarationLogBookTypeEnum.Invoice
             ? this.form.get('invoiceDataControl')!.value
             : this.form.get('aquacultureTextControl')!.value;
 
-        const permit: NomenclatureDTO<number> | string = this.form.get('declarationNumberControl')!.value;
+        const logBookPage: InspectionLogBookPageNomenclatureDTO | string = this.form.get('pageNumberControl')!.value;
 
-        if (typeof permit === 'string') {
-            this.model.unregisteredPageNum = permit;
-            this.model.unregisteredPageDate = this.form.get('declarationDateControl')!.value;
-        } else if (permit !== null && permit !== undefined) {
-            const page = this.logBookPages.find(f => f.id === permit.value);
+        if (typeof logBookPage === 'string') {
+            this.model.unregisteredPageNum = logBookPage;
+            this.model.unregisteredPageDate = this.form.get('pageDateControl')!.value;
+        }
+        else if (logBookPage !== null && logBookPage !== undefined) {
+            const page = this.declarationPages.find(f => f.value === logBookPage.value);
 
-            this.model.logBookPageId = page?.id;
-            this.model.unregisteredPageNum = page?.num;
-            this.model.unregisteredPageDate = page?.date;
+            this.model.logBookPageId = this.form.get('pageNumberControl')!.value!.value;
+            this.model.unregisteredPageNum = page?.logPageNum?.toString();
+            this.model.unregisteredPageDate = page?.logBookPageDate;
         }
     }
 
@@ -482,32 +463,124 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         return layerStyle;
     }
 
-    private pullDeclarations(): void {
-        if (this.permitTypeSelected == null || this.permitTypeSelected === DeclarationLogBookTypeEnum.Invoice || this.permitTypeSelected === DeclarationLogBookTypeEnum.NNN) {
-            return;
+    private getPageDateLabel(): void {
+        switch (this.permitTypeSelected) {
+            case DeclarationLogBookTypeEnum.AdmissionLogBook:
+                this.pageDateLabel = this.translate.getValue('inspections.market-handover-date');
+                break;
+            case DeclarationLogBookTypeEnum.FirstSaleLogBook:
+                this.pageDateLabel = this.translate.getValue('inspections.market-sale-date');
+                break;
+            case DeclarationLogBookTypeEnum.TransportationLogBook:
+                this.pageDateLabel = this.translate.getValue('inspections.market-loading-date');
+                break;
+            case DeclarationLogBookTypeEnum.ShipLogBook:
+                this.pageDateLabel = this.translate.getValue('inspections.market-declaration-date');
+                break;
+            case DeclarationLogBookTypeEnum.AquacultureLogBook:
+            default:
+                this.pageDateLabel = this.translate.getValue('inspections.market-filling-date');
+                break;
         }
+    }
 
-        const ship: number = this.form.get('shipControl')!.value?.shipId;
-        const aquaculture: number = this.form.get('aquacultureControl')!.value?.value;
+    private fillLogBookPageData(): void {
+        if (((this.model.originShip?.shipId !== null && this.model.originShip?.shipId !== undefined)
+            || (this.model.aquacultureId !== null && this.model.aquacultureId !== undefined))
+            && this.model.logBookType !== null && this.model.logBookType !== undefined
+            && this.model.logBookType !== DeclarationLogBookTypeEnum.Invoice
+            && this.model.logBookType !== DeclarationLogBookTypeEnum.NNN
+        ) {
+            this.service.getLogBookPages(this.model.logBookType, this.model.originShip?.shipId, this.model.aquacultureId).subscribe({
+                next: (pages: InspectionLogBookPageNomenclatureDTO[]) => {
+                    this.declarationPages = pages;
+                    const page: InspectionLogBookPageNomenclatureDTO | undefined = pages.find(f => f.value === this.model.logBookPageId);
 
-        if ((ship || aquaculture) && (!this.fetchData || this.fetchData.type === this.permitTypeSelected || this.fetchData.shipId === ship || this.fetchData.aquacultureId === aquaculture)) {
-            this.fetchData = {
-                type: this.permitTypeSelected,
-                aquacultureId: aquaculture,
-                shipId: ship,
-            };
+                    this.form.get('pageNumberControl')!.setValue(page);
+                    this.form.get('pageDateControl')!.setValue(page?.logBookPageDate);
+                    this.form.get('declarationNumberControl')!.setValue(page?.originDeclarationNum);
+                    this.form.get('declarationDateControl')!.setValue(page?.originDeclarationDate);
 
-            this.service.getDeclarationLogBookPages(this.permitTypeSelected, ship, aquaculture).subscribe({
-                next: (result) => {
-                    this.logBookPages = result;
-                    this.declarations = result.map(f => new NomenclatureDTO({
-                        value: f.id,
-                        displayName: f.num,
-                        isActive: true,
-                    }));
-                    this.logBookFishes = result.reduce((f, s) => f.concat(s.fishes!), [] as DeclarationLogBookPageFishDTO[]);
-                },
+                    this.disablePageControls();
+                }
             });
+        }
+        else {
+            this.form.get('pageNumberControl')!.setValue(this.model.unregisteredPageNum);
+            this.form.get('pageDateControl')!.setValue(this.model.unregisteredPageDate);
+        }
+    }
+
+    private disablePageControls(): void {
+        this.form.get('pageDateControl')!.disable();
+        this.form.get('declarationNumberControl')!.disable();
+        this.form.get('declarationDateControl')!.disable();
+    }
+
+    private pullDeclarations(vessel: VesselDuringInspectionDTO | undefined = undefined): void {
+        if (this.permitTypeSelected !== DeclarationLogBookTypeEnum.Invoice && this.permitTypeSelected !== DeclarationLogBookTypeEnum.NNN) {
+            let ship: VesselDuringInspectionDTO | undefined = this.form.get('shipControl')!.value;
+            const aquaculture: number | undefined = this.form.get('aquacultureControl')!.value?.value;
+
+            if (vessel !== undefined && vessel !== null) {
+                ship = vessel;
+            }
+
+            if ((ship !== undefined && ship !== null && ship.shipId !== undefined && ship.shipId !== null)
+                || (aquaculture !== undefined && aquaculture !== null)
+            ) {
+                this.service.getLogBookPages(this.permitTypeSelected!, ship?.shipId, aquaculture).subscribe({
+                    next: (result: InspectionLogBookPageNomenclatureDTO[]) => {
+                        if (result !== undefined && result !== null) {
+                            this.declarationPages = result;
+                            this.logBookFishes = result.reduce((f, s) => f.concat(s.logBookProducts!), [] as DeclarationLogBookPageFishDTO[]);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    private fishQuantityValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            const permit: NomenclatureDTO<number> | string = form.get('pageNumberControl')!.value;
+            const fishCatch: NomenclatureDTO<number> = form.get('typeControl')!.value;
+            const quantity: number = form.get('quantityControl')!.value;
+
+            if (typeof permit === 'object' && permit && fishCatch && quantity) {
+                this.fishErrors = [];
+                let fishes = this.logBookFishes.filter(f => f.logBookId === permit.value && f.fishId === fishCatch.value);
+
+                const presentation: NomenclatureDTO<number> = form.get('presentationControl')!.value;
+
+                if (presentation) {
+                    fishes = fishes.filter(f => f.presentationId == null || f.presentationId === presentation.value);
+                }
+
+                for (const fish of fishes) {
+                    if (fish.quantity! < quantity) {
+                        this.fishErrors.push({
+                            text: this.translate.getValue('inspections.declaration-fish-quantity-error')
+                                .replace('{0}', `${fishCatch.displayName} : ${fish.quantity!}`)
+                                .replace('{1}', (quantity - fish.quantity!).toString()),
+                            type: 'error'
+                        });
+                    }
+                    else {
+                        this.fishErrors.push({
+                            text: this.translate.getValue('inspections.declaration-fish-quantity-warning')
+                                .replace('{0}', `${fishCatch.displayName} : ${fish.quantity!}`),
+                            type: 'warn'
+                        });
+                    }
+                }
+
+                if (this.fishErrors.filter(x => x.type === 'error').length > 0) {
+                    return this.fishErrors;
+                }
+            }
+
+            return null;
         }
     }
 }

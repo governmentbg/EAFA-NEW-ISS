@@ -137,7 +137,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
             transporterCommentControl: new FormControl(undefined, Validators.maxLength(4000)),
             additionalInfoControl: new FormControl(undefined),
             filesControl: new FormControl([])
-        });
+        }, InspectionUtils.atLeastOneCatchValidator());
 
         this.form.get('generalInfoControl')!.valueChanges.subscribe({
             next: () => {

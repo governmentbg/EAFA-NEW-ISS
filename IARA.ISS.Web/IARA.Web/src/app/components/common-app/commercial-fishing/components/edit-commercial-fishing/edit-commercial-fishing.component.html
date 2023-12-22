@@ -393,14 +393,14 @@
                         </tl-autocomplete>
                     </div>
                     <div fxFLex="40" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">
-                        <button *ngIf="!isReadonly && !viewMode"
+                        <button *ngIf="!isReadonly && !viewMode && !isFishingGearsApplication"
                                 fxFlex="70"
                                 mat-raised-button
                                 color="accent"
                                 (click)="selectAllPermittedAquaticOrganisms()">
                             {{ 'commercial-fishing.select-all-permitted-aquatic-organisms' | tlTranslate }}
                         </button>
-                        <button *ngIf="!isReadonly && !viewMode"
+                        <button *ngIf="!isReadonly && !viewMode && !isFishingGearsApplication"
                                 fxFlex="30"
                                 mat-raised-button
                                 color="accent"
@@ -424,7 +424,7 @@
                         <data-template-column [flexRate]="0.1">
                             <ng-template let-row="row" ngx-datatable-cell-template>
                                 <div fxLayout="row" fxLayoutAlign="end center">
-                                    <tl-icon-button *ngIf="!isReadonly && !viewMode"
+                                    <tl-icon-button *ngIf="!isReadonly && !viewMode && !isFishingGearsApplication"
                                                     icon="delete"
                                                     iconClass="accent-color"
                                                     tooltipText="{{ 'commercial-fishing.remove-aquatic-organism-type' | tlTranslate }}"
@@ -447,7 +447,7 @@
                                    [rows]="quotaAquaticOrganisms"
                                    [isRemote]="false"
                                    [isSoftDeletable]="false"
-                                   [showAddButton]="!isReadonly && !viewMode"
+                                   [showAddButton]="!isReadonly && !viewMode && !isFishingGearsApplication"
                                    [showInactiveRecords]="false"
                                    (recordChanged)="quotaAquaticOrganismChanged($event)">
                         <data-column [flexRate]="0.5"
@@ -466,7 +466,7 @@
                                      columnName="{{ 'commercial-fishing.port-of-unloading-column' | tlTranslate }}"
                                      dataType="nomenclature">
                         </data-column>
-                        <data-column-inline [flexRate]="0.2" *ngIf="!isReadonly && !viewMode"></data-column-inline>
+                        <data-column-inline [flexRate]="0.2" *ngIf="!isReadonly && !viewMode && !isFishingGearsApplication"></data-column-inline>
                     </tl-data-table>
                     <mat-error *ngIf="form.touched && form.errors?.atLeastOneQuotaOrganism">
                         * {{ 'commercial-fishing.at-least-one-quota-organism-must-be-selected' | tlTranslate }}
@@ -503,6 +503,7 @@
                                [isApplication]="isApplication"
                                [service]="service"
                                [maxNumberOfFishingGears]="maxNumberOfFishingGears"
+                               [showInspectedGears]="isApplication"
                                [pageCode]="pageCode"
                                [ships]="ships"
                                [shipId]="shipId">

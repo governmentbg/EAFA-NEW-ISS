@@ -14,10 +14,10 @@ export class OriginDeclarationFishDTO {
     public originDeclarationId?: number;
 
     @StrictlyTyped(Number)
-    public catchRecordFishId?: number;
+    public fishId?: number;
 
     @StrictlyTyped(Number)
-    public fishId?: number;
+    public catchSizeId?: number;
 
     @StrictlyTyped(String)
     public fishName?: string;

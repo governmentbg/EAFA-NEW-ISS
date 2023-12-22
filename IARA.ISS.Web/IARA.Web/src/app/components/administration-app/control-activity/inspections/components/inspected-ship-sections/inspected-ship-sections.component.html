@@ -27,6 +27,7 @@
             <inspection-toggle-list formControlName="togglesControl"
                                     [toggles]="checkToggles">
             </inspection-toggle-list>
+
             <div fxLayout="column"
                  fxLayoutGap="1em"
                  fxLayoutAlign="start stretch">
@@ -34,11 +35,13 @@
                                    [toggle]="opMembership"
                                    [options]="opMembership?.checkType === inspectionCheckTypesEnum.BOOL ? boolOptions : tripleOptions">
                 </inspection-toggle>
+
                 <tl-autocomplete formControlName="opMembershipAssociationControl"
                                  [options]="associations"
                                  label="{{ 'inspections.op-membership-association' | tlTranslate }}">
                 </tl-autocomplete>
             </div>
+
             <div fxLayout="column"
                  fxLayoutGap="1em"
                  fxLayoutAlign="start stretch">
@@ -46,6 +49,7 @@
                                    [toggle]="preliminaryNotice"
                                    [options]="preliminaryNotice?.checkType === inspectionCheckTypesEnum.BOOL ? boolOptions : tripleOptions">
                 </inspection-toggle>
+
                 <div fxLayout="row"
                      fxLayoutGap="1em"
                      fxLayoutAlign="start stretch">
@@ -53,17 +57,21 @@
                               formControlName="preliminaryNoticeNumberControl"
                               label="{{ 'inspections.preliminary-notice-number' | tlTranslate }}">
                     </tl-input>
+
                     <tl-input fxFlex="50"
                               formControlName="preliminaryNoticePurposeControl"
                               label="{{ 'inspections.preliminary-notice-purpose' | tlTranslate }}">
                     </tl-input>
                 </div>
             </div>
+
             <inspected-permits-table formControlName="permitsControl">
             </inspected-permits-table>
+
             <inspected-permit-licenses-table formControlName="permitLicensesControl"
                                              (permitOptionPicked)="onPermitIdsChanged($event)">
             </inspected-permit-licenses-table>
+
             <inspected-log-books-table formControlName="logBooksControl">
             </inspected-log-books-table>
 
@@ -76,7 +84,8 @@
 
     <!-- Инспекция на улова -->
     <tl-expansion-panel [title]="catchLabel"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.atLeastOneCatchError !== true">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -89,6 +98,11 @@
                                      [fishSex]="fishSex"
                                      [turbotSizeGroups]="turbotSizeGroups">
             </inspected-catches-table>
+
+            <mat-error *ngIf="form.controls.catchesControl?.touched && form.errors?.atLeastOneCatchError === true">
+                * {{ 'inspections.market-catch-at-least-one-catch-error' | tlTranslate }}
+            </mat-error>
+
             <inspection-toggle-list formControlName="catchTogglesControl"
                                     [toggles]="catchToggles">
             </inspection-toggle-list>
@@ -111,6 +125,7 @@
                                            [permitIds]="permitIds"
                                            [hasAttachedAppliances]="true">
             </inspected-fishing-gears-table>
+
             <inspection-toggle-list formControlName="fishingGearTogglesControl"
                                     [toggles]="fishingGearToggles">
             </inspection-toggle-list>

@@ -77,6 +77,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     public disableSaveBtnComment: string | null = null;
 
     public maxUnder14Tickets!: number;
+    public blockAssociationsAddTicketsDate: Date | undefined;
 
     public ticketsTypes: NomenclatureDTO<number>[] = [];
     public ticketsPeriods: NomenclatureDTO<number>[] = [];
@@ -160,6 +161,10 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     public async ngOnInit(): Promise<void> {
         this.systemProperties = await this.systemPropertiesService.properties.toPromise();
         this.maxUnder14Tickets = this.systemProperties.maxNumberOfUnder14Tickets!;
+
+        if (this.isPublicApp && this.isAssociation) {
+            this.blockAssociationsAddTicketsDate = this.systemProperties.blockAssociationsAddTickets;
+        }
 
         forkJoin(
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TicketPeriods, this.service.getTicketPeriods.bind(this.service), false),

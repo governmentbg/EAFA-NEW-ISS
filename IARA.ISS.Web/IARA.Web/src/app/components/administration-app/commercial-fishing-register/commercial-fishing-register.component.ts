@@ -44,20 +44,13 @@ import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatur
 import { CommercialFishingPermitLicenseRegisterDTO } from '@app/models/generated/dtos/CommercialFishingPermitLicenseRegisterDTO';
 import { FishingGearNomenclatureDTO } from '@app/models/generated/dtos/FishingGearNomenclatureDTO';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
-import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
-import { LogbookDTO } from '@app/models/generated/dtos/LogbookDTO';
 import { EditLogBookComponent } from '@app/components/common-app/commercial-fishing/components/edit-log-book/edit-log-book.component';
-import { LogBookEditDTO } from '@app/models/generated/dtos/LogBookEditDTO';
-import { EditLogBookDialogParamsModel } from '@app/components/common-app/commercial-fishing/components/log-books/models/edit-log-book-dialog-params.model';
 import { LogBookGroupsEnum } from '@app/enums/log-book-groups.enum';
-import { CommercialFishingLogbookRegisterDTO } from '@app/models/generated/dtos/CommercialFishingLogbookRegisterDTO';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { LogBookPagePersonTypesEnum } from '@app/enums/log-book-page-person-types.enum';
 import { ChooseLogBookForRenewalComponent } from '@app/components/common-app/commercial-fishing/components/log-books/components/choose-log-book-for-renewal/choose-log-book-for-renewal.component';
-import { ChooseLogBookForRenewalDialogParams } from '@app/components/common-app/commercial-fishing/components/log-books/models/choose-log-book-for-renewal-dialog-params.model';
-import { LogBookForRenewalDTO } from '@app/models/generated/dtos/LogBookForRenewalDTO';
 import { OnActionEndedType, SimpleAuditMethod } from '@app/components/common-app/commercial-fishing/components/log-books/log-books.component';
 import { CommercialFishingRegisterCacheService } from './services/commercial-fishing-register-cache.service';
 import { SuspensionsComponent } from '@app/components/common-app/commercial-fishing/components/suspensions/suspensions.component';
@@ -416,7 +409,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
                     PageCodeEnum.RightToFishThirdCountry,
                     PageCodeEnum.RightToFishResource,
                     PageCodeEnum.PoundnetCommFishLic,
-                    PageCodeEnum.CatchQuataSpecies
+                    PageCodeEnum.CatchQuataSpecies 
                 ]
             }),
             disableDialogClose: true,

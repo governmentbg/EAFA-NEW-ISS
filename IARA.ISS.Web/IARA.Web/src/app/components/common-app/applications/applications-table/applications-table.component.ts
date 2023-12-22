@@ -93,6 +93,7 @@ import { RecreationalFishingAssociationPublicService } from '@app/services/publi
 import { AssignApplicationByUserComponent } from '../components/assign-application-by-user/assign-application-by-user.component';
 import { WaitExternalChecksToFinishComponent } from '../components/wait-external-checks-to-finish/wait-external-checks-to-finish.component';
 import { AddApplicationResultDTO } from '@app/models/generated/dtos/AddApplicationResultDTO';
+import { EditPermitLicenseFishingGearsComponent } from '@app/components/common-app/commercial-fishing/components/permit-license-fishing-gears/edit-permit-license-fishing-gears.component';
 
 const DIALOG_WIDTH: string = '1600px';
 export type ApplicationTablePageType = 'FileInPage' | 'DashboardPage' | 'ApplicationPage' | 'PublicPage' | 'OnlineApplPage';
@@ -393,6 +394,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
             case PageCodeEnum.DupRightToFishResource:
             case PageCodeEnum.DupPoundnetCommFishLic:
             case PageCodeEnum.DupCatchQuataSpecies:
+            case PageCodeEnum.FishingGearsCommFish:
                 this.navigateByUrl('/commercial-fishing-applications', application.accessCode!); break;
             case PageCodeEnum.AquaFarmReg:
             case PageCodeEnum.AquaFarmChange:
@@ -1369,6 +1371,16 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
                 editApplicationDialogTitle = this.translationService.getValue('duplicates.edit-quata-species-permit-license-application-dialog-title');
                 viewApplicationDataAndConfrimRegularityTitle = this.translationService.getValue('duplicates.view-quata-species-permit-license-appl-and-confirm-regularity-title');
             } break;
+            case PageCodeEnum.FishingGearsCommFish: {
+                editDialog = new TLMatDialog<EditPermitLicenseFishingGearsComponent>(this.matDialog);
+                editDialogTCtor = EditPermitLicenseFishingGearsComponent;
+                viewDialogTitle = this.translationService.getValue('fishing-gears.view-fishing-gears-permit-license-application-dialog-title');
+                viewRegisterTitle = this.translationService.getValue('fishing-gears.view-fishing-gears-permit-license-application-dialog-title');
+                viewRegixDataTitle = this.translationService.getValue('fishing-gears.view-fishing-gears-permit-license-application-regix-data-dialog-title');
+                editRegixDataTitle = this.translationService.getValue('fishing-gears.edit-fishing-gears-permit-license-application-regix-data-dialog-title');
+                editApplicationDialogTitle = this.translationService.getValue('fishing-gears.edit-fishing-gears-permit-license-application-dialog-title');
+                viewApplicationDataAndConfrimRegularityTitle = this.translationService.getValue('fishing-gears.view-fishing-gears-permit-license-appl-and-confirm-regularity-title');
+            } break;
             case PageCodeEnum.LE: {
                 editDialog = new TLMatDialog<EditLegalEntityComponent>(this.matDialog);
                 editDialogTCtor = EditLegalEntityComponent;
@@ -1706,7 +1718,8 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
             case PageCodeEnum.PoundnetCommFish:
             case PageCodeEnum.RightToFishResource:
             case PageCodeEnum.PoundnetCommFishLic:
-            case PageCodeEnum.CatchQuataSpecies: {
+            case PageCodeEnum.CatchQuataSpecies:
+            case PageCodeEnum.FishingGearsCommFish: {
                 if (this.pageType === 'PublicPage') {
                     service = this.injector.get(CommercialFishingPublicService);
                 }

@@ -38,7 +38,6 @@ import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclature
 import { DateUtils } from '@app/shared/utils/date.utils';
 import { DateDifference } from '@app/models/common/date-difference.model';
 import { TLDateDifferencePipe } from '@app/shared/pipes/tl-date-difference.pipe';
-import { LogBookPageStatusesEnum } from '@app/enums/log-book-page-statuses.enum';
 import { EditShipLogBookPageDialogParams } from './models/edit-ship-log-book-page-dialog-params.model';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
@@ -361,9 +360,6 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     }
 
                     this.catchRecords = this.catchRecords.slice();
-
-                    this.removeInactiveCatchRecordFishesFromOriginDeclaration(); // Да премахнем улов, ако има нужда, от декларацията за произход - ако има изтрит улов от риболовната операция
-
                     this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
                 }
             }
@@ -388,10 +384,6 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
                     this.catchRecords = this.catchRecords.slice();
                     this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
-
-                    if (row.data.catchRecordFishes !== null && row.data.catchRecordFishes !== undefined) { // Ако има улов, да се махне от декларация за разтоварване, ако го има там
-                        this.removeInactiveCatchRecordFishesFromOriginDeclaration();
-                    }
                 }
             }
         });
@@ -438,14 +430,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     }
 
     public generateOriginDeclarationFromCatchRecordFishes(): void {
-        // TODO better
         for (const declarationFish of this.declarationOfOriginCatchRecords.filter(x => x.isActive)) {
             declarationFish.isActive = false;
-
-            // Modify unloaded quantity for the catch record fish that was removed from the origin declaration
-            if (declarationFish.catchRecordFishId !== null && declarationFish.catchRecordFishId !== undefined) {
-                this.updateCatchRecordFishesUnloadedQuantityKg(declarationFish.catchRecordFishId, declarationFish.quantityKg!);
-            }
         }
 
         this.declarationOfOriginCatchRecords = this.declarationOfOriginCatchRecords.filter(x => x.id !== null && x.id !== undefined);
@@ -512,19 +498,19 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         const defaultCatchFishPreservation: NomenclatureDTO<number> | undefined = this.catchPreservations.find(x => x.code === FishPreservationCodesEnum[DEFAULT_PRESERVATION_CODE] && x.isActive);
         const defaultCatchFishState: NomenclatureDTO<number> | undefined = this.catchStates.find(x => x.code === FishCatchStateCodesEnum[DEFAULT_CATCH_STATE_CODE] && x.isActive);
 
-        const notAddedCatches: OnBoardCatchRecordFishDTO[] = this.selectedCatchesFromPreviousTrips.filter(x => !this.declarationOfOriginCatchRecords.some(y => y.isActive && y.catchRecordFishId === x.id));
+        const notAddedCatches: OnBoardCatchRecordFishDTO[] = this.selectedCatchesFromPreviousTrips.filter(x => !this.declarationOfOriginCatchRecords.some(y => y.isActive));
 
         for (const catchFish of notAddedCatches) {
             const catchQuadrant: CatchZoneNomenclatureDTO = this.catchZones.find(x => x.value === catchFish.catchQuadrantId)!;
 
             this.declarationOfOriginCatchRecords.push(
                 new OriginDeclarationFishDTO({
-                    catchRecordFishId: catchFish.id,
                     fishId: catchFish.fishId,
                     quantityKg: catchFish.quantityKg,
                     catchZone: catchQuadrant.zone?.toString(),
                     catchQuadrantId: catchFish.catchQuadrantId,
                     catchQuadrant: catchFish.catchQuadrant,
+                    catchSizeId: catchFish.catchSizeId,
                     isActive: catchFish.isActive,
                     catchFishPresentationId: defaultCatchFishPresentation?.value,
                     catchFishPreservationId: defaultCatchFishPreservation?.value,
@@ -545,11 +531,11 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     public copyDeclarationOfOriginCatchRecord(declarationOfOriginCatchRecord: OriginDeclarationFishDTO): void {
         const title: string = this.translationService.getValue('catches-and-sales.ship-page-add-origin-declaration-dialog-title');
         const declarationOfOriginCatchRecordCopy = new OriginDeclarationFishDTO({
-            catchRecordFishId: declarationOfOriginCatchRecord.id,
             fishId: declarationOfOriginCatchRecord.fishId,
             fishName: declarationOfOriginCatchRecord.fishName,
             originDeclarationId: declarationOfOriginCatchRecord.originDeclarationId,
             catchQuadrantId: declarationOfOriginCatchRecord.catchQuadrantId,
+            catchSizeId: declarationOfOriginCatchRecord.catchSizeId,
             catchQuadrant: declarationOfOriginCatchRecord.catchQuadrant,
             catchZone: declarationOfOriginCatchRecord.catchZone,
             fromPreviousTrip: declarationOfOriginCatchRecord.fromPreviousTrip,
@@ -588,35 +574,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
         this.declarationOfOriginCatchRecords = this.declarationOfOriginCatchRecords.slice();
 
-        const fishFromPreviousTripIndex: number = this.selectedCatchesFromPreviousTrips.findIndex(x => x.id === declarationOfOriginCatchRecord.catchRecordFishId);
-        if (fishFromPreviousTripIndex !== -1) {
-            this.selectedCatchesFromPreviousTrips.splice(fishFromPreviousTripIndex, 1);
-        }
-
-        // Modify unloaded quantity for the catch record fish that was removed from the origin declaration
-        if (declarationOfOriginCatchRecord.catchRecordFishId !== null && declarationOfOriginCatchRecord.catchRecordFishId !== undefined) {
-            this.updateCatchRecordFishesUnloadedQuantityKg(declarationOfOriginCatchRecord.catchRecordFishId, declarationOfOriginCatchRecord.quantityKg!);
-        }
-
         this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
-    }
-
-    private updateCatchRecordFishesUnloadedQuantityKg(catchRecordFishId: number, quantityToRemoveFromUnloadedKg: number): void {
-        const activeCatchRecordFishes = (([] as CatchRecordFishDTO[]).concat(...this.catchRecords.filter(x => x.isActive).map(x => x.catchRecordFishes ?? []))).filter(x => x.isActive);
-        const catchRecordFishToUpdate: CatchRecordFishDTO | undefined = activeCatchRecordFishes.find(x => catchRecordFishId === x.id);
-
-        if (catchRecordFishToUpdate !== null && catchRecordFishToUpdate !== undefined) {
-            if (catchRecordFishToUpdate.unloadedQuantityKg !== null && catchRecordFishToUpdate.unloadedQuantityKg !== undefined) {
-                catchRecordFishToUpdate.unloadedQuantityKg -= quantityToRemoveFromUnloadedKg;
-
-                if (catchRecordFishToUpdate.unloadedQuantityKg < (catchRecordFishToUpdate.unloadedInOtherTripQuantityKg ?? 0)) {
-                    catchRecordFishToUpdate.unloadedQuantityKg = catchRecordFishToUpdate.unloadedInOtherTripQuantityKg ?? 0;
-                }
-            }
-            else {
-                catchRecordFishToUpdate.unloadedQuantityKg = 0;
-            }
-        }
     }
 
     public getControlErrorLabelText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
@@ -818,7 +776,6 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         }, [
             this.originDeclarationFishesValidator(),
             this.delcarationOfOriginCatchRecordQuantitiesValidator(),
-            this.originDeclarationCatchRecordFishesDatesValidator(),
             this.allOriginDeclarationFishTransboardedIfMarkedValidator(),
             this.requiredOriginDeclarationIfCatchOnBoard()
         ]);
@@ -1160,7 +1117,6 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
             originDeclarationFishes.push(
                 new OriginDeclarationFishDTO({
-                    catchRecordFishId: catchRecordFish.id,
                     fishId: catchRecordFish.fishId,
                     fishName: catchRecordFish.fishName,
                     quantityKg: quantityForUnloading,
@@ -1168,6 +1124,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     catchZone: catchRecordFish.catchZone,
                     catchQuadrantId: catchRecordFish.catchQuadrantId,
                     catchQuadrant: catchRecordFish.catchQuadrant,
+                    catchSizeId: catchRecordFish.catchSizeId,
                     isActive: catchRecordFish.isActive,
                     catchFishPresentationId: defaultCatchFishPresentation?.value,
                     catchFishStateId: defaultCatchFishState?.value,
@@ -1188,7 +1145,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
         for (const catchRecordFish of fishesFlattened) { // update each quantity
             catchRecordFish.unloadedQuantityKg = this.declarationOfOriginCatchRecords
-                .filter(x => x.isActive && x.catchRecordFishId === catchRecordFish.id)
+                .filter(x => x.isActive)
                 .reduce((sum: number, current: OriginDeclarationFishDTO) => sum + (current.quantityKg ?? 0), 0);
         }
     }
@@ -1253,30 +1210,10 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     }
 
     private getPossibleCatchRecordFishesForOriginDeclaration(): CatchRecordFishDTO[] {
-        const catchRecordFishes: CatchRecordFishDTO[][] = this.catchRecords
-            .map(x => (x.catchRecordFishes ?? [])
-                .filter(x => x.isActive && ((x.quantityKg ?? 0) - (x.unloadedQuantityKg ?? 0) - (x.unloadedInOtherTripQuantityKg ?? 0)) > 0)) as CatchRecordFishDTO[][];
+        const catchRecordFishes: CatchRecordFishDTO[][] = this.catchRecords.map(x => (x.catchRecordFishes ?? []).filter(x => x.isActive));
         const fishesFlattened: CatchRecordFishDTO[] = ([] as CatchRecordFishDTO[]).concat(...catchRecordFishes);
 
         return fishesFlattened;
-    }
-
-    private removeInactiveCatchRecordFishesFromOriginDeclaration(): void {
-        const catchRecordFishes: CatchRecordFishDTO[] = this.getPossibleCatchRecordFishesForOriginDeclaration();
-
-        const catchRecordFishIds: number[] = catchRecordFishes.map(x => x.id!);
-        const declarationOfOriginCatchRecordsToDelete = this.declarationOfOriginCatchRecords.filter(x =>
-            x.catchRecordFishId !== null
-            && x.catchRecordFishId !== undefined
-            && x.fromPreviousTrip === false
-            && !catchRecordFishIds.includes(x.catchRecordFishId));
-
-        for (const originDeclarationFish of declarationOfOriginCatchRecordsToDelete) {
-            originDeclarationFish.isActive = false;
-        }
-
-        this.setDeclarationOfOriginHasCatchFromPreviousTripFlag();
-        this.declarationOfOriginCatchRecords = this.declarationOfOriginCatchRecords.slice(); // update data in table
     }
 
     private setDeclarationOfOriginHasCatchFromPreviousTripFlag(): void {
@@ -1572,45 +1509,6 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             else {
                 return { 'invalidOriginDeclarationCatchRecords': true };
             }
-        }
-    }
-
-    private originDeclarationCatchRecordFishesDatesValidator(): ValidatorFn {
-        return (control: AbstractControl): ValidationErrors | null => {
-            if (control === null || control === undefined) {
-                return null;
-            }
-
-            if (this.declarationOfOriginCatchRecords === null
-                || this.declarationOfOriginCatchRecords === undefined
-                || this.declarationOfOriginCatchRecords.length === 0
-            ) {
-                return null;
-            }
-
-            const fishesFromPreviousTrips = this.declarationOfOriginCatchRecords.filter(x => this.selectedCatchesFromPreviousTrips.some(y => y.id === x.catchRecordFishId));
-
-            if (fishesFromPreviousTrips.length === 0) {
-                return null;
-            }
-
-            const tripUnloadDateTime: Date | undefined = ((control as FormGroup).get('unloadDateTimeControl')?.value as Moment)?.toDate();
-
-            if (tripUnloadDateTime === null || tripUnloadDateTime === undefined) {
-                return null;
-            }
-
-            const previousTripFishIds: number[] = fishesFromPreviousTrips.map(x => x.catchRecordFishId!);
-
-            const hasInvalidFishRecordDates: boolean = this.selectedCatchesFromPreviousTrips.some((x: OnBoardCatchRecordFishDTO) => {
-                return previousTripFishIds.includes(x.id!) && x.tripEndDateTime!.getTime() > tripUnloadDateTime.getTime();
-            });
-
-            if (hasInvalidFishRecordDates) {
-                return { 'hasInvalidCatchRecordDates': true };
-            }
-
-            return null;
         }
     }
 

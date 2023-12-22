@@ -121,5 +121,6 @@
     AllUsers,
     PaymentStatuses,
     CheckSources,
-    InspectionVesselTypes
+    InspectionVesselTypes,
+    InspectionStates
 }

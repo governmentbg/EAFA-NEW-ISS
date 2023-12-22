@@ -13,5 +13,7 @@
     ShipHasNoValidBlackSeaPermit,
     ShipHasNoValidDanubePermit,
 
-    ShipHasNoPoundNetPermit
+    ShipHasNoPoundNetPermit,
+
+    InvalidPermitLisenseRegistrationNumber
 }

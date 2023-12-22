@@ -62,6 +62,7 @@ import { FishingGearsComponent } from './commercial-fishing/components/fishing-g
 import { GroudForUseComponent } from './commercial-fishing/components/ground-for-use/ground-for-use.component';
 import { ChooseLogBookForRenewalComponent } from './commercial-fishing/components/log-books/components/choose-log-book-for-renewal/choose-log-book-for-renewal.component';
 import { LogBooksComponent } from './commercial-fishing/components/log-books/log-books.component';
+import { EditPermitLicenseFishingGearsComponent } from './commercial-fishing/components/permit-license-fishing-gears/edit-permit-license-fishing-gears.component';
 import { EditSuspensionComponent } from './commercial-fishing/components/suspensions/components/edit-suspension/edit-suspension.component';
 import { SuspensionsComponent } from './commercial-fishing/components/suspensions/suspensions.component';
 import { DuplicateEntriesTableComponent } from './duplicates/duplicate-entires-table/duplicate-entries-table.component';
@@ -211,7 +212,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         AssignApplicationByUserComponent,
         WaitExternalChecksToFinishComponent,
         SuspensionsComponent,
-        ChoosePermitLicenseFromInspectionComponent
+        ChoosePermitLicenseFromInspectionComponent,
+        EditPermitLicenseFishingGearsComponent
     ],
     imports: [
         TLCommonModule,
@@ -319,7 +321,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         AssignApplicationByUserComponent,
         WaitExternalChecksToFinishComponent,
         SuspensionsComponent,
-       // ChoosePermitLicenseFromInspectionComponent
+        ChoosePermitLicenseFromInspectionComponent,
+        EditPermitLicenseFishingGearsComponent
     ],
     providers: [CurrencyPipe, TLDateDifferencePipe, DatePipe]
 })

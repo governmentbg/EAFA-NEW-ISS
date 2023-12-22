@@ -34,6 +34,7 @@ import { MarksRangeData } from '../models/marks-range.model';
 import { FishingGearManipulationService } from '../services/fishing-gear-manipulation.service';
 import { FishingGearUtils } from '@app/components/common-app/commercial-fishing/utils/fishing-gear.utils';
 import { PrefixInputDTO } from '@app/models/generated/dtos/PrefixInputDTO';
+import { TariffCodesEnum } from '@app/enums/tariff-codes.enum';
 
 @Component({
     selector: 'edit-fishing-gear',
@@ -94,6 +95,8 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     private nomenclatures: CommonNomenclatures;
     private pageCode: PageCodeEnum | undefined;
     private model!: FishingGearDTO;
+    private appliedTariffCodes: string[] = [];
+    private isDunabe: boolean = false;
 
     private gearManipulationServiceSub: Subscription | undefined;
 
@@ -140,6 +143,32 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
                 }
             }
 
+            //Показване само на тези риболовни уреди, за които е платено в удостоверението
+            if (this.appliedTariffCodes.length > 0) {
+                if (this.isDunabe) {
+                    if (this.appliedTariffCodes.filter(x => x === TariffCodesEnum[TariffCodesEnum.a_1805_Dunav_Ship_Nets_And_Fishing_Traps]).length === 0) {
+                        if (!this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Dunav_Ship_Nets])) {
+                            this.fishingGearTypes = this.fishingGearTypes.filter(x => !FishingGearUtils.paidDunabeNetFishingGears.includes(x.code!));
+                        }
+
+                        if (!this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Dunav_Ship_Fishing_Traps])) {
+                            this.fishingGearTypes = this.fishingGearTypes.filter(x => x.code !== FishingGearTypesEnum[FishingGearTypesEnum.FPO]);
+                        }
+                    }
+                }
+                else {
+                    if (this.shouldFilterByBlackSeaTariffCodes()) {
+                        if (!this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Ship_Till10_Longliners])) {
+                            this.fishingGearTypes = this.fishingGearTypes.filter(x => !FishingGearUtils.paidLonglinesFishingGears.includes(x.code!));
+                        }
+
+                        if (!this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Ship_Till10_Nets])) {
+                            this.fishingGearTypes = this.fishingGearTypes.filter(x => !FishingGearUtils.paidNetFishingGears.includes(x.code!) && !FishingGearUtils.paidPoleAndLineFishingGears.includes(x.code!));
+                        }
+                    }
+                }
+            }
+
             if (!this.ngControl) {
                 this.fillForm(this.model);
             }
@@ -171,6 +200,8 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     public setData(data: EditFishingGearDialogParamsModel, buttons: DialogWrapperData): void {
         this.isDisabled = data.readOnly;
         this.pageCode = data.pageCode;
+        this.appliedTariffCodes = data.appliedTariffCodes;
+        this.isDunabe = data.isDunabe;
 
         if (data.model === null || data.model === undefined) {
             this.model = new FishingGearDTO({ isActive: true });
@@ -281,7 +312,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
                 this.selectedMark.emit(mark);
             }
         }
-        
+
         this.marks = this.marks.slice();
         this.marksForm.updateValueAndValidity({ emitEvent: false });
     }
@@ -399,6 +430,10 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
                     this.form.get('hooksCountControl')!.setValidators(TLValidators.number(0, undefined, 0));
                     this.form.get('hooksCountControl')!.markAsPending();
                 }
+
+                if (this.isDisabled) {
+                    this.form.get('hooksCountControl')!.disable({ emitEvent: false });
+                }
             }
         });
 
@@ -442,7 +477,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
     private fillModel(returnNewObject: boolean): FishingGearDTO {
         let result: FishingGearDTO;
-        
+
         if (returnNewObject) {
             result = new FishingGearDTO();
         }
@@ -532,7 +567,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
     private onEditedMark(row: any): void {
         this.marks = this.getMarksFromTable();
-       
+
         if (this.isInspected) {
             this.onChanged(this.getValue());
         }
@@ -864,5 +899,12 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         }
 
         return copiedPingers;
+    }
+
+    private shouldFilterByBlackSeaTariffCodes(): boolean {
+        return !this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_ShipTill10_Fishing_Gears])
+            && !this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Ship_Between_10_And_25])
+            && !this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Ship_Between_25_And_40])
+            && !this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Ship_Between_Over40]);
     }
 }

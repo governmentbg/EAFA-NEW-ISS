@@ -125,7 +125,7 @@
                         <Frame x:DataType="cViewModels:CFCatchViewModel"
                                Padding="10">
                             <StackLayout>
-                                <tl:TLPicker Title="{rt:Translate FishType, Group=AddCatchRecord}"
+                                <tl:TLInfinitePicker Title="{rt:Translate FishType, Group=AddCatchRecord}"
                                              DisplayValue="DisplayName"
                                              ItemsSource="{Binding FishTypes}"
                                              ValidState="{Binding FishType}"

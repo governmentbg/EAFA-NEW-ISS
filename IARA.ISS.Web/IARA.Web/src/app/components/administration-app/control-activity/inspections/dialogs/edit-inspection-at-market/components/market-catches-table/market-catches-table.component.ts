@@ -139,7 +139,7 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
             translteService: this.translate,
             disableDialogClose: !readOnly,
             viewMode: readOnly
-        }, '1000px');
+        }, '1200px');
 
         dialog.subscribe((result: InspectedDeclarationCatchDTO) => {
             if (result !== undefined && result !== null) {

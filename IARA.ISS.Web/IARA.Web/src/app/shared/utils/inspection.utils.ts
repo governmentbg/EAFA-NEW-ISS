@@ -1,4 +1,5 @@
-﻿import { InspectionSubjectAddressDTO } from '@app/models/generated/dtos/InspectionSubjectAddressDTO';
+﻿import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { InspectionSubjectAddressDTO } from '@app/models/generated/dtos/InspectionSubjectAddressDTO';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { InspectionToggleTypesEnum } from '../../enums/inspection-toggle-types.enum';
 import { AddressRegistrationDTO } from '../../models/generated/dtos/AddressRegistrationDTO';
@@ -118,5 +119,22 @@ export class InspectionUtils {
                 isActive: true,
             }),
         ];
+    }
+
+    //Validators
+    public static atLeastOneCatchValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            const catchesControl = form.get('catchesControl')!;
+            
+            if (catchesControl === null || catchesControl === undefined) {
+                return null;
+            }
+
+            if (catchesControl.value !== null && catchesControl.value !== undefined && catchesControl.value.length > 0) {
+                return null;
+            }
+
+            return { 'atLeastOneCatchError': true };
+        }
     }
 }

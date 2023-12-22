@@ -62,6 +62,10 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
 
     public territoryNodes: NomenclatureDTO<number>[] = [];
     public inspectionTypes: NomenclatureDTO<number>[] = [];
+    public states: NomenclatureDTO<number>[] = [];
+    public ships: NomenclatureDTO<number>[] = [];
+    public aquacultureFacilities: NomenclatureDTO<number>[] = [];
+    public poundNets: NomenclatureDTO<number>[] = [];
 
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
     public readonly canReadRecords: boolean;
@@ -123,11 +127,10 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                     NomenclatureTypes.TerritoryUnits,
                     this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures),
                     false
-                )
-                .subscribe({
+                ).subscribe({
                     next: (result: NomenclatureDTO<number>[]) => {
                         this.territoryNodes = result;
-                    },
+                    }
                 });
 
             NomenclatureStore.instance
@@ -135,12 +138,50 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                     NomenclatureTypes.InspectionTypes,
                     this.nomenclatures.getInspectionTypes.bind(this.nomenclatures),
                     false
-                )
-                .subscribe({
+                ).subscribe({
                     next: (result: NomenclatureDTO<number>[]) => {
                         this.inspectionTypes = result;
-                    },
+                    }
                 });
+
+            NomenclatureStore.instance
+                .getNomenclature(
+                    NomenclatureTypes.InspectionStates,
+                    this.service.getInspectionStates.bind(this.service),
+                    false
+                ).subscribe({
+                    next: (result: NomenclatureDTO<number>[]) => {
+                        this.states = result;
+                    }
+                });
+
+            NomenclatureStore.instance
+                .getNomenclature(
+                    NomenclatureTypes.Ships,
+                    this.nomenclatures.getShips.bind(this.nomenclatures),
+                    false
+                ).subscribe({
+                    next: (result: NomenclatureDTO<number>[]) => {
+                        this.ships = result;
+                    }
+                });
+
+            NomenclatureStore.instance
+                .getNomenclature(
+                    NomenclatureTypes.PoundNets,
+                    this.nomenclatures.getPoundNets.bind(this.nomenclatures),
+                    false
+                ).subscribe({
+                    next: (result: NomenclatureDTO<number>[]) => {
+                        this.poundNets = result;
+                    }
+                });
+
+            this.service.getAquacultures().subscribe({
+                next: (result: NomenclatureDTO<number>[]) => {
+                    this.aquacultureFacilities = result;
+                }
+            });
 
             this.service.getIsInspector().subscribe({
                 next: (value) => {
@@ -337,8 +378,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 tableName: 'InspectionRegister'
             };
 
-            if (
-                entry.inspectionState === InspectionStatesEnum.Submitted ||
+            if (entry.inspectionState === InspectionStatesEnum.Submitted ||
                 entry.inspectionState === InspectionStatesEnum.Signed
             ) {
                 readOnly = true;
@@ -359,7 +399,10 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 );
             }
 
-            if (entry.inspectionState === InspectionStatesEnum.Submitted && this.canEditInspectionNumber) {
+            if ((this.shipId === null || this.shipId === undefined)
+                && entry.inspectionState === InspectionStatesEnum.Submitted
+                && this.canEditInspectionNumber
+            ) {
                 rightSideButtons.push({
                     id: 'more-corrections-needed',
                     color: 'primary',
@@ -435,6 +478,16 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             subjectIsLegal: filters.getValue('isLegalControl'),
             dateFrom: filters.getValue<DateRangeData>('dateRangeControl')?.start,
             dateTo: filters.getValue<DateRangeData>('dateRangeControl')?.end,
+            stateIds: filters.getValue('stateControl'),
+            shipId: filters.getValue('shipControl'),
+            aquacultureId: filters.getValue('aquacultureControl'),
+            unregisteredShipName: filters.getValue('unregisteredShipControl'),
+            poundNetId: filters.getValue('poundNetControl'),
+            fishermanName: filters.getValue('fishermanNameControl'),
+            waterObjectName: filters.getValue('waterObjectControl'),
+            firstSaleCenterName: filters.getValue('firstSaleCenterNameControl'),
+            tractorLicensePlateNumber: filters.getValue('tractorLicensePlateNumberControl'),
+            trailerLicensePlateNumber: filters.getValue('trailerLicensePlateNumberControl')
         });
 
         if (result.subjectIsLegal === true) {
@@ -621,6 +674,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         this.form = new FormGroup({
             territoryNodeControl: new FormControl(),
             inspectorNameControl: new FormControl(),
+            stateControl: new FormControl(),
             inspectionTypeControl: new FormControl(),
             reportNumberControl: new FormControl(),
             isLegalControl: new FormControl(),
@@ -629,6 +683,16 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             personNameControl: new FormControl(),
             egnControl: new FormControl(),
             dateRangeControl: new FormControl(),
+            aquacultureControl: new FormControl(),
+            shipControl: new FormControl(),
+            poundNetControl: new FormControl(),
+            unregisteredShipControl: new FormControl(),
+            firstSaleCenterControl: new FormControl(),
+            fishermanNameControl: new FormControl(),
+            waterObjectControl: new FormControl(),
+            firstSaleCenterNameControl: new FormControl(),
+            tractorLicensePlateNumberControl: new FormControl(),
+            trailerLicensePlateNumberControl: new FormControl()
         });
     }
 }

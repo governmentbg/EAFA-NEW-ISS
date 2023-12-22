@@ -336,7 +336,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             checkObservationControl: new FormControl(undefined),
             catchObservationControl: new FormControl(undefined),
             fishingGearObservationControl: new FormControl(undefined)
-        });
+        }, InspectionUtils.atLeastOneCatchValidator());
 
         form.get('opMembershipControl')!.valueChanges.subscribe({
             next: this.onOPMembershipChanged.bind(this)

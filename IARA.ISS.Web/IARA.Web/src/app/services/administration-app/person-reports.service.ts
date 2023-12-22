@@ -93,7 +93,7 @@ export class PersonReportsService extends BaseAuditService implements IPersonRep
             if (validPeopleIds.length === 0) {
                 return of(entries);
             }
-            
+
             return this.getPeopleHistory(validPeopleIds).pipe(map((history: ReportHistoryDTO[]) => {
                 for (const h of history) {
                     const found = entries.records.find((entry: PersonReportDTO) => {
@@ -145,7 +145,7 @@ export class PersonReportsService extends BaseAuditService implements IPersonRep
 
     private getHistoryDocumentName(pageCode: PageCodeEnum, isApplication: boolean = false): string {
         let documentName: string;
-        
+
         switch (pageCode) {
             case PageCodeEnum.RegVessel:
             case PageCodeEnum.DeregShip:
@@ -171,6 +171,7 @@ export class PersonReportsService extends BaseAuditService implements IPersonRep
             case PageCodeEnum.RightToFishResource:
             case PageCodeEnum.PoundnetCommFishLic:
             case PageCodeEnum.CatchQuataSpecies:
+            case PageCodeEnum.FishingGearsCommFish:
                 documentName = isApplication
                     ? this.translationService.getValue('persons-report-page.permit-licenses-appl')
                     : this.translationService.getValue('persons-report-page.permit-licenses');

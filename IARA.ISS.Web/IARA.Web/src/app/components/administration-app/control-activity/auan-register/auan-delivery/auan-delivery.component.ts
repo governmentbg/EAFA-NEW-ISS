@@ -1,9 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
-import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { AuanDeliveryDataDTO } from '@app/models/generated/dtos/AuanDeliveryDataDTO';
-import { AuanRegisterService } from '@app/services/administration-app/auan-register.service';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
 import { HttpErrorResponse } from '@angular/common/http';

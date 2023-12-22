@@ -243,7 +243,7 @@
     StatFormFishVessel,
 
     /**
-    * Риболовни уреди
+    * Маркиране на риболовни уреди
     * */
     FishingGearsCommFish,
 

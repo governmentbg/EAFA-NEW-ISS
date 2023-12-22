@@ -6,7 +6,7 @@
                    [showAddButton]="!isReadonly && !isDisabled"
                    [showInactiveRecords]="true"
                    (addButtonClicked)="addEditFishingGear()">
-        <div *ngIf="isApplication && !isReadonly && !isPublicApp"
+        <div *ngIf="showInspectedGears && !isReadonly && !isPublicApp"
              datatable-add-buttons
              fxLayout="row"
              fxLayoutGap="1em">

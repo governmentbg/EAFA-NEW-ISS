@@ -31,6 +31,8 @@ import { ISuspensionService } from '@app/interfaces/common-app/suspension.interf
 import { InspectedPermitLicenseNomenclatureDTO } from '@app/models/generated/dtos/InspectedPermitLicenseNomenclatureDTO';
 import { FishingGearForChoiceDTO } from '@app/models/generated/dtos/FishingGearForChoiceDTO';
 import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
+import { PermitLicensesNomenclatureDTO } from '@app/models/generated/dtos/PermitLicensesNomenclatureDTO';
+import { PermitLicenseFishingGearsApplicationDTO } from '@app/models/generated/dtos/PermitLicenseFishingGearsApplicationDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -212,12 +214,22 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'GetPermitLicenseApplication';
                 break;
+            case PageCodeEnum.FishingGearsCommFish:
+                serviceMethod = 'GetPermitLicenseFishingGearsApplication';
+                break;
         }
-
-        return this.requestService.get(this.area, this.controller, serviceMethod, {
-            httpParams: params,
-            responseTypeCtr: CommercialFishingApplicationEditDTO
-        });
+        if (pageCode === PageCodeEnum.FishingGearsCommFish) {
+            return this.requestService.get(this.area, this.controller, serviceMethod, {
+                httpParams: params,
+                responseTypeCtr: PermitLicenseFishingGearsApplicationDTO
+            });
+        }
+        else {
+            return this.requestService.get(this.area, this.controller, serviceMethod, {
+                httpParams: params,
+                responseTypeCtr: CommercialFishingApplicationEditDTO
+            });
+        }
     }
 
     public getPermitLicensesForRenewal(permitId: number | undefined, permitNumber: string | undefined, pageCode: PageCodeEnum): Observable<PermitLicenseForRenewalDTO[]> {
@@ -254,7 +266,7 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
         });
     }
 
-    public addApplication(application: CommercialFishingApplicationEditDTO, pageCode: PageCodeEnum): Observable<number> {
+    public addApplication(application: IApplicationRegister, pageCode: PageCodeEnum): Observable<number> {
         let serviceMethod: string = '';
 
         switch (pageCode) {
@@ -267,6 +279,9 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
             case PageCodeEnum.PoundnetCommFishLic:
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'AddPermitLicenseApplication';
+                break;
+            case PageCodeEnum.FishingGearsCommFish:
+                serviceMethod = 'AddPermitLicenseFishingGearsApplication';
                 break;
         }
 
@@ -282,7 +297,7 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
         });
     }
 
-    public editApplication(application: CommercialFishingApplicationEditDTO, pageCode: PageCodeEnum): Observable<number> {
+    public editApplication(application: IApplicationRegister, pageCode: PageCodeEnum): Observable<number> {
         let serviceMethod: string = '';
 
         switch (pageCode) {
@@ -296,10 +311,30 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
             case PageCodeEnum.CatchQuataSpecies:
                 serviceMethod = 'EditPermitLicenseApplication';
                 break;
+            case PageCodeEnum.FishingGearsCommFish:
+                serviceMethod = 'EditPermitLicenseFishingGearsApplication';
+                break;
         }
 
         return this.requestService.post(this.area, this.controller, serviceMethod, application, {
             properties: new RequestProperties({ asFormData: true, rethrowException: true, showException: false })
+        });
+    }
+
+    public getPermitLicenseFromFishingGearsApplication(applicationId: number): Observable<CommercialFishingEditDTO> {
+        throw new Error('This method should not be called from the public app');
+    }
+
+    public completePermitLicenseFishingGearsApplication(permitLicense: CommercialFishingEditDTO): Observable<void> {
+        throw new Error('This method should not be called from the public app');
+    }
+
+    public getFishingGearsByPermitLicenseRegistrationNumber(permitLicenseNumber: string, shipId: number): Observable<FishingGearDTO[]> {
+        const params: HttpParams = new HttpParams().append('permitLicenseNumber', permitLicenseNumber!.toString()).append('shipId', shipId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetCommercialFishingPermitLicenseFishingGears', {
+            httpParams: params,
+            responseTypeCtr: FishingGearDTO
         });
     }
 
@@ -358,7 +393,7 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
         return this.requestService.get(this.area, this.controller, 'GetSuspensionReasons', { responseTypeCtr: SuspensionReasonNomenclatureDTO });
     }
 
-    public getShipPermitLicensesFromInspection(shipId: number): Observable<InspectedPermitLicenseNomenclatureDTO[]> {
+    public getPermitLicensesNomenclatures(shipId: number): Observable<PermitLicensesNomenclatureDTO[]> {
         throw new Error('This method should not be called from the public app');
     }
 
@@ -370,7 +405,15 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
         throw new Error('This method should not be called from the public app');
     }
 
+    public getShipPermitLicensesFromInspection(shipId: number): Observable<InspectedPermitLicenseNomenclatureDTO[]> {
+        throw new Error('This method should not be called from the public app');
+    }
+
     public getPermitNomenclatures(shipId: number, showPastPermits: boolean, onlyPoundNet: boolean): Observable<PermitNomenclatureDTO[]> {
+        throw new Error('This method should not be called from the public app');
+    }
+
+    public getPermitLicenseFishingGears(permitLicenseId: number): Observable<FishingGearDTO[]> {
         throw new Error('This method should not be called from the public app');
     }
 }

@@ -11,11 +11,13 @@
                   label="{{ 'inspections.report-number' | tlTranslate }}">
         </tl-input>
         <tl-date-time fxFlex="25"
+                      [max]="today"
                       [disabled]="isDisabled"
                       formControlName="inspectionStartDateControl"
                       label="{{ startDateLabel }}">
         </tl-date-time>
         <tl-date-time fxFlex="25"
+                      [max]="today"
                       [disabled]="isDisabled"
                       formControlName="inspectionEndDateControl"
                       label="{{ endDateLabel }}">

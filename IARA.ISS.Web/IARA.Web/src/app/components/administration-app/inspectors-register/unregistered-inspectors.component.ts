@@ -179,7 +179,7 @@ export class UnregisteredInspectorsComponent implements AfterViewInit {
             identifierTypeControl: new FormControl(null, Validators.required),
             firstNameControl: new FormControl(null, [Validators.required, Validators.maxLength(200)]),
             lastNameControl: new FormControl(null, [Validators.required, Validators.maxLength(200)]),
-            inspectorCardNumControl: new FormControl(null, Validators.maxLength(5)),
+            inspectorCardNumControl: new FormControl(null, Validators.maxLength(7)),
             institutionIdControl: new FormControl(null, Validators.required),
             commentsControl: new FormControl(null, Validators.maxLength(4000))
         });

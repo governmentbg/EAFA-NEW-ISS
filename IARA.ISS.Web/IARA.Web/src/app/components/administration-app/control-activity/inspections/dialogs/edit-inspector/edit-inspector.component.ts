@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
@@ -239,7 +239,7 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
             this.form.get('firstNameControl')!.setValidators([Validators.required, Validators.maxLength(200)]);
             this.form.get('middleNameControl')!.setValidators([Validators.required, Validators.maxLength(200)]);
             this.form.get('lastNameControl')!.setValidators([Validators.required, Validators.maxLength(200)]);
-            this.form.get('cardNumControl')!.setValidators([Validators.required, Validators.maxLength(5)]);
+            this.form.get('cardNumControl')!.setValidators([Validators.required, Validators.maxLength(7)]);
 
             this.form.get('countryControl')!.enable();
             this.form.get('institutionControl')!.enable();

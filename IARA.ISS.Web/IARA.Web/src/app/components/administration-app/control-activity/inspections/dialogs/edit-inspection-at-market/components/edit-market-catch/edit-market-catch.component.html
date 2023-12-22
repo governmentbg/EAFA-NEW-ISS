@@ -8,12 +8,12 @@
     <tl-expansion-panel title="{{ 'inspections.market-catch-info' | tlTranslate }}"
                         [validityChecker]="form">
         <div fxLayout="column"
-             fxLayoutGap="1em"
-             fxLayoutAlign="start stretch">
+             fxLayoutGap="1em">
             <tl-autocomplete formControlName="permitControl"
                              [options]="permitTypes"
                              label="{{ 'inspections.market-declaration-type' | tlTranslate }}">
             </tl-autocomplete>
+
             <inspected-ship *ngIf="permitTypeSelected != null && permitTypeSelected !== declarationLogBookTypeEnum.Invoice && permitTypeSelected !== declarationLogBookTypeEnum.NNN && permitTypeSelected !== declarationLogBookTypeEnum.AquacultureLogBook"
                             formControlName="shipControl"
                             [hasMap]="false"
@@ -22,6 +22,7 @@
                             [countries]="countries"
                             (shipSelected)="pullDeclarations($event)">
             </inspected-ship>
+
             <div *ngIf="permitTypeSelected === declarationLogBookTypeEnum.AquacultureLogBook"
                  fxLayout="column"
                  fxLayoutGap="1em"
@@ -29,31 +30,55 @@
                 <tl-checkbox formControlName="aquacultureRegisteredControl"
                              label="{{ 'inspections.aquaculture-registered' | tlTranslate }}">
                 </tl-checkbox>
+
                 <tl-autocomplete *ngIf="aquacultureRegistered"
                                  formControlName="aquacultureControl"
                                  [options]="aquacultures"
                                  label="{{ 'inspections.aquaculture' | tlTranslate }}">
                 </tl-autocomplete>
+
                 <tl-input *ngIf="!aquacultureRegistered"
                           formControlName="aquacultureTextControl"
                           label="{{ 'inspections.aquaculture' | tlTranslate }}">
                 </tl-input>
             </div>
+
             <div *ngIf="form.controls.permitControl.value && form.controls.permitControl.value.value !== declarationLogBookTypeEnum.NNN"
                  fxLayout="row"
                  fxLayoutGap="1em"
-                 fxLayoutAlign="start center">
+                 fxLayoutAlign="space-between center">
                 <tl-autocomplete fxFlex="50"
-                                 formControlName="declarationNumberControl"
+                                 formControlName="pageNumberControl"
                                  [hasSelectedValueFromDropdownValidator]="false"
-                                 [options]="declarations"
-                                 label="{{ 'inspections.market-declaration-number' | tlTranslate }}">
+                                 [options]="declarationPages"
+                                 label="{{ 'inspections.market-page-num' | tlTranslate }}">
                 </tl-autocomplete>
+
+                <tl-date fxFlex="50"
+                         formControlName="pageDateControl"
+                         label="{{ pageDateLabel }}">
+                </tl-date>
+            </div>
+
+            <div *ngIf="hasDeclaration
+                 && form.controls.permitControl.value && form.controls.permitControl.value.value !== declarationLogBookTypeEnum.NNN
+                 && form.controls.permitControl.value.value !== declarationLogBookTypeEnum.Invoice
+                 && form.controls.permitControl.value.value !== declarationLogBookTypeEnum.ShipLogBook
+                 && permitTypeSelected !== declarationLogBookTypeEnum.AquacultureLogBook"
+                 fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="space-between center">
+                <tl-input fxFlex="50"
+                          formControlName="declarationNumberControl"
+                          label="{{ 'inspections.market-declaration-number' | tlTranslate }}">
+                </tl-input>
+
                 <tl-date fxFlex="50"
                          formControlName="declarationDateControl"
                          label="{{ 'inspections.market-declaration-date' | tlTranslate }}">
                 </tl-date>
             </div>
+
             <tl-input *ngIf="form.controls.permitControl.value && form.controls.permitControl.value.value === declarationLogBookTypeEnum.Invoice"
                       formControlName="invoiceDataControl"
                       label="{{ 'inspections.invoice-data' | tlTranslate }}">
@@ -72,38 +97,45 @@
                              [options]="fishes"
                              label="{{ 'inspections.market-catch-fish' | tlTranslate }}">
             </tl-autocomplete>
+
             <tl-input fxFlex="33"
                       formControlName="countControl"
                       type="number"
                       label="{{ 'inspections.market-catch-count' | tlTranslate }}">
             </tl-input>
+
             <tl-autocomplete *ngIf="hasCatchType"
                              fxFlex="33"
                              formControlName="catchTypeControl"
                              [options]="types"
                              label="{{ 'inspections.market-catch-type' | tlTranslate }}">
             </tl-autocomplete>
+
             <tl-checkbox *ngIf="hasUndersizedCheck"
                          fxFlex="33"
                          formControlName="undersizedControl"
                          label="{{ 'inspections.undersized-fish' | tlTranslate }}">
             </tl-checkbox>
+
             <tl-input fxFlex="33"
                       formControlName="quantityControl"
                       type="number"
                       label="{{ 'inspections.market-catch-quantity' | tlTranslate }}">
             </tl-input>
+
             <tl-input *ngIf="hasUnloadedQuantity"
                       fxFlex="33"
                       formControlName="unloadedQuantityControl"
                       type="number"
                       label="{{ 'inspections.market-catch-unloaded-quantity' | tlTranslate }}">
             </tl-input>
+
             <tl-autocomplete fxFlex="33"
                              formControlName="presentationControl"
                              [options]="presentations"
                              label="{{ 'inspections.market-catch-presentation' | tlTranslate }}">
             </tl-autocomplete>
+
             <div *ngIf="permitTypeSelected != null && permitTypeSelected !== declarationLogBookTypeEnum.Invoice && permitTypeSelected !== declarationLogBookTypeEnum.NNN && permitTypeSelected !== declarationLogBookTypeEnum.AquacultureLogBook"
                  fxFlex="33"
                  fxLayout="row"
@@ -113,6 +145,7 @@
                                  [options]="catchZones"
                                  label="{{ 'inspections.market-catch-zone' | tlTranslate }}">
                 </tl-autocomplete>
+
                 <div fxFlex="17"
                      fxLayoutAlign="start start">
                     <tl-popover-button *ngIf="readOnly === false"
@@ -124,12 +157,14 @@
                             <tl-card-title>
                                 {{ 'inspections.catch-map-popover-title' | tlTranslate }}
                             </tl-card-title>
+
                             <tl-card-content fxFlexFill>
                                 <div fxLayout="column"
                                      fxLayoutGap="1em">
                                     <div class="fixed-map-size">
                                         <tl-map-viewer [mapOptions]="mapOptions"></tl-map-viewer>
                                     </div>
+
                                     <div fxFlex="100"
                                          fxLayout="row"
                                          fxLayoutAlign="space-between center">
@@ -138,6 +173,7 @@
                                                 (click)="onMapPopoverCancelBtnClicked()">
                                             {{ 'inspections.catch-map-popover-cancel' | tlTranslate }}
                                         </button>
+
                                         <button mat-raised-button
                                                 color="accent"
                                                 (click)="onQuadrantChosenBtnClicked()">
@@ -150,6 +186,7 @@
                     </tl-popover-button>
                 </div>
             </div>
+
             <tl-error [errors]="fishErrors"
                       fxFlexFill>
             </tl-error>

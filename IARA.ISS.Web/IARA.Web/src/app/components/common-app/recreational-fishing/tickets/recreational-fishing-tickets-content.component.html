@@ -195,7 +195,7 @@
                 <button mat-raised-button
                         color="accent"
                         (click)="save(true)"
-                        [disabled]="disableSaveBtnComment !== null || ticketsSaved || !valid"
+                        [disabled]="disableSaveBtnComment !== null || ticketsSaved || !valid || blockAssociationsAddTicketsDate"
                         [matTooltip]="disableSaveBtnComment"
                         [matTooltipDisabled]="disableSaveBtnComment === null">
                     {{ 'recreational-fishing.approve-and-finish-purchase-and-print' | tlTranslate }}
@@ -204,7 +204,7 @@
                 <button mat-raised-button
                         color="accent"
                         (click)="save(false)"
-                        [disabled]="disableSaveBtnComment !== null || ticketsSaved || !valid"
+                        [disabled]="disableSaveBtnComment !== null || ticketsSaved || !valid || blockAssociationsAddTicketsDate"
                         [matTooltip]="disableSaveBtnComment"
                         [matTooltipDisabled]="disableSaveBtnComment === null">
                     {{ 'recreational-fishing.approve-and-finish-purchase' | tlTranslate }}
@@ -217,6 +217,10 @@
                         [disabled]="!ticketsSaved || !valid">
                     {{ 'recreational-fishing.issue-other-ticket' | tlTranslate }}
                 </button>
+
+                <mat-error *ngIf="blockAssociationsAddTicketsDate && blockAssociationsAddTicketsDate > currentDate" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">
+                    {{ 'recreational-fishing.association-blocked-until' | tlTranslate }} {{ blockAssociationsAddTicketsDate | date : 'dd.MM.yyyy' }}
+                </mat-error>
             </div>
 
             <span class="italic-text">* {{ 'recreational-fishing.view-and-confirm-declaration-info' | tlTranslate }}</span>
@@ -252,17 +256,21 @@
                 <button mat-raised-button
                         color="accent"
                         (click)="payAndPrint()"
-                        [disabled]="ticketsPayed">
+                        [disabled]="ticketsPayed || blockAssociationsAddTicketsDate">
                     {{ 'recreational-fishing.finish-payment-and-print' | tlTranslate }}
                 </button>
 
                 <button mat-raised-button
                         color="accent"
                         (click)="pay()"
-                        [disabled]="ticketsPayed">
+                        [disabled]="ticketsPayed || blockAssociationsAddTicketsDate">
                     {{ 'recreational-fishing.finish-payment' | tlTranslate }}
                 </button>
             </div>
+
+            <mat-error *ngIf="blockAssociationsAddTicketsDate && blockAssociationsAddTicketsDate > currentDate" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">
+                {{ 'recreational-fishing.association-blocked-until' | tlTranslate }} {{ blockAssociationsAddTicketsDate | date : 'dd.MM.yyyy' }}
+            </mat-error>
         </ng-template>
     </mat-step>
 </mat-vertical-stepper>

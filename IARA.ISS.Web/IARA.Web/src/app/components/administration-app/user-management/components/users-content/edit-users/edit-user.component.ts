@@ -476,7 +476,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             this.internalUserModel.territoryUnitId = NomenclatureStore.getValue(form.get('territorialUnitControl')!.value);
 
             if (this.roleDataTable.rows.length !== 0) {
-                this.internalUserModel.userRoles = this.roleDataTable.rows as RoleDTO[];
+                this.internalUserModel.userRoles = this.getUserRolesFromTable();
             }
 
             this.internalUserModel.mobileDevices = this.editUserForm.get('mobileDevicesControl')!.value;
@@ -500,24 +500,11 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             this.externalUserModel.territoryUnitId = NomenclatureStore.getValue(form.get('territorialUnitControl')!.value);
 
             if (this.roleDataTable.rows.length !== 0) {
-                this.externalUserModel.userRoles = this.roleDataTable.rows as RoleDTO[];
+                this.externalUserModel.userRoles = this.getUserRolesFromTable();
             }
 
             if (this.legalDataTable.rows.length !== 0) {
-                this.externalUserModel.userLegals = (this.legalDataTable.rows as UserLegalDTO[]).map(x => {
-                    const legal = this.legals.find(y => y.value == x.legalId);
-                    const role = this.roles.find(y => y.value === x.roleId);
-                    return new UserLegalDTO({
-                        legalId: legal?.value,
-                        name: legal?.displayName?.split(' - ')[0],
-                        eik: legal?.displayName?.split(' - ')[1],
-                        roleId: x.roleId,
-                        role: role?.displayName,
-                        status: x.status,
-                        isActive: x.isActive
-
-                    });
-                });
+                this.externalUserModel.userLegals = this.getUserLegalsFromTable();
             }
         }
     }
@@ -612,6 +599,70 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         }
     }
 
+    private getUserRolesFromTable(): RoleDTO[] {
+        const rows = this.roleDataTable.rows as RoleDTO[];
+
+        const roles: RoleDTO[] = rows.filter(x => (x.userRoleId !== undefined && x.userRoleId !== null) || x.isActive !== false).map(x => new RoleDTO({
+            id: x.id,
+            name: x.name,
+            userRoleId: x.userRoleId,
+            accessValidFrom: x.accessValidFrom,
+            accessValidTo: x.accessValidTo,
+            isActive: x.isActive ?? true
+        }));
+
+        const result: RoleDTO[] = [];
+
+        const max = (lhs: Date, rhs: Date) => lhs > rhs ? lhs : rhs;
+        const min = (lhs: Date, rhs: Date) => lhs < rhs ? lhs : rhs;
+
+        for (const role of roles) {
+            if (result.findIndex(x => x.id === role.id && max(x.accessValidFrom!, role.accessValidFrom!) < min(x.accessValidTo!, role.accessValidTo!)) === -1) {
+                const original = roles.filter(x => x.id === role.id && max(x.accessValidFrom!, role.accessValidFrom!) < min(x.accessValidTo!, role.accessValidTo!));
+
+                if (original.length === 1) {
+                    result.push(original[0]);
+                }
+                else {
+                    if (original.filter(x => x.userRoleId !== undefined && x.userRoleId !== null).length === 1) {
+                        const userRole: RoleDTO | undefined = original.find(x => x.userRoleId !== undefined && x.userRoleId !== null);
+                        userRole!.isActive = true;
+                        result.push(userRole!);
+                    }
+                    else {
+                        result.push(original.find(x => x.isActive)!);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private getUserLegalsFromTable(): UserLegalDTO[] {
+        const result: UserLegalDTO[] = [];
+        const userLegals: UserLegalDTO[] | undefined = (this.legalDataTable.rows as UserLegalDTO[]);
+
+        for (const userLegal of userLegals) {
+            const legal = this.legals.find(x => x.value === userLegal.legalId);
+            const role = this.roles.find(x => x.value === userLegal.roleId);
+
+            if (legal !== undefined && legal !== null) {
+                result.push(new UserLegalDTO({
+                    legalId: legal?.value,
+                    name: legal?.displayName?.split(' - ')[0],
+                    eik: legal?.displayName?.split(' - ')[1],
+                    roleId: userLegal.roleId,
+                    role: role?.displayName,
+                    status: userLegal.status,
+                    isActive: userLegal.isActive
+                }));
+            }
+        }
+
+        return result;
+    }
+
     private handleErrorResponse(errorResponse: HttpErrorResponse): void {
         const errorCode: ErrorCode | undefined = (errorResponse.error as ErrorModel)?.code;
 
@@ -636,7 +687,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
                 const id: number | undefined = control.value?.value;
                 const validFrom: Date | undefined = this.userRoleForm.get('accessValidFromControl')!.value ?? new Date();
                 const validTo: Date | undefined = this.userRoleForm.get('accessValidToControl')!.value ?? new Date(9999, 0, 1);
-                
+
                 if (id !== undefined && validFrom !== undefined && validTo !== undefined) {
                     const otherEntries: RoleDTO[] = (this.roleDataTable.rows as RoleDTO[]).filter(
                         x => x.id === id && x.isActive !== false && x.accessValidFrom !== validFrom && x.accessValidTo !== validTo

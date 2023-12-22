@@ -2,7 +2,6 @@
 import { FormControl, FormGroup } from '@angular/forms';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { IPenalDecreesService } from '@app/interfaces/administration-app/penal-decrees.interface';
 import { PenalDecreeDTO } from '@app/models/generated/dtos/PenalDecreeDTO';
 import { PenalDecreesFilters } from '@app/models/generated/filters/PenalDecreesFilters';
 import { PenalDecreesService } from '@app/services/administration-app/penal-decrees.service';

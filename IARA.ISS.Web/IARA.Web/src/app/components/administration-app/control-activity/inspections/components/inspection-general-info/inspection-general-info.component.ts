@@ -34,6 +34,8 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
     @Input()
     public inspectionType: InspectionTypesEnum | undefined;
 
+    public readonly today: Date = new Date();
+
     public numPrefix?: string;
     public startDateLabel!: string;
     public endDateLabel!: string;

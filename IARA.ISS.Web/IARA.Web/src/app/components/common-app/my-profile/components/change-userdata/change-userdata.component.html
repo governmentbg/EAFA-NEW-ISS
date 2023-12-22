@@ -15,6 +15,85 @@
                               checkboxLabel="{{ 'my-profile.permanent-address-same-as-correspondence' | tlTranslate }}">
         </address-registration>
     </tl-expansion-panel>
+
+    <tl-expansion-panel title="{{ 'my-profile.territory-unit' | tlTranslate }}"
+                        [validityChecker]="changeUserDataForm">
+        <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <tl-select fxFlex="33"
+                       label="{{ 'my-profile.territory-unit' | tlTranslate }}"
+                       formControlName="territoryUnitControl"
+                       [options]="territoryUnits"
+                       tooltipResourceName="my-profile.territorial-unit-helper">
+            </tl-select>
+
+            <div fxFlex="66"></div>
+        </div>
+    </tl-expansion-panel>
+    <!--Данни за сдружения-->
+    <tl-expansion-panel title="{{ 'my-profile.associations' | tlTranslate }}"
+                        [validityChecker]="changeUserDataForm">
+        <div fxLayout="column">
+            <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-data-table #legalDataTable
+                               fxFlexFill
+                               fxLayoutGap="1em"
+                               class="full-width-template"
+                               [showAddButton]="false"
+                               [isRemote]="false"
+                               [isSoftDeletable]="true"
+                               [showInactiveRecords]="true"
+                               [rows]="userLegals">
+                    <data-column columnName="{{ 'my-profile.legal-name' | tlTranslate }}"
+                                 propertyName="name">
+                    </data-column>
+
+                    <data-column columnName="{{ 'my-profile.role' | tlTranslate }}"
+                                 propertyName="role">
+                    </data-column>
+
+                    <data-template-column columnName="{{ 'my-profile.status' | tlTranslate }}" propertyName="StatusName">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div *ngIf="row.data.status !== undefined">
+                                <div *ngIf="row.data.status === legalStatusEnum.Blocked">
+                                    <tl-icon icon="highlight_off" iconClass="accent-color"></tl-icon>
+                                    {{ 'my-profile.blocked' | tlTranslate }}
+                                </div>
+                                <div *ngIf="row.data.status === legalStatusEnum.Approved">
+                                    <tl-icon icon="done_outline" iconClass="accent-color"></tl-icon>
+                                    {{ 'my-profile.approved' | tlTranslate }}
+                                </div>
+                                <div *ngIf="row.data.status === legalStatusEnum.Requested">
+                                    <tl-icon icon="autorenew" iconClass="accent-color"></tl-icon>
+                                    {{ 'my-profile.requested' | tlTranslate }}
+                                </div>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+
+                    <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                                icon="delete"
+                                                (buttonClicked)="deleteUserLegal(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'my-profile.delete-user-legal' | tlTranslate }}">
+                                </tl-icon-button>
+
+                                <tl-icon-button *ngIf="!row.data.isActive && !viewMode"
+                                                icon="restore"
+                                                (buttonClicked)="undoDeleteUserLegal(row)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'my-profile.restore-user-legal' | tlTranslate }}">
+                                </tl-icon-button>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+                </tl-data-table>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
     <!--Данни за парола-->
     <tl-card *ngIf="userMustChangePassword" [validityChecker]="changeUserDataForm">
         <tl-card-title>{{ 'change-password.change-password-title' | tlTranslate }}</tl-card-title>
