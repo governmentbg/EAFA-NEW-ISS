@@ -4992,6 +4992,7 @@
         'filters-fishing-gear': 'Confiscated fishing gear',
         'filters-appliance': 'Confiscated appliance',
         'filters-is-delivered': 'Delivered',
+        'filters-delivery-date': 'Sent date',
         'edit-law-section-filter': 'Free text search',
 
         'table-auan-num': 'AUAN no.',
@@ -5482,6 +5483,7 @@
         'filters-appliance': 'Confiscated appliance',
         'filters-is-delivered': 'Delivered',
         'filters-fine-amount': 'Fine amount',
+        'filters-delivery-type': 'Delivery type',
 
         'table-penal-decree-num': 'Penal decree no.',
         'table-penal-decree-name': 'Type',

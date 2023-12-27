@@ -22,6 +22,7 @@ export class PenalDecreesFilters extends BaseRequestModel {
     public issueDateTo: Date | undefined;
     public sanctionTypeIds: number[] | undefined;
     public statusTypeIds: number[] | undefined;
+    public deliveryConfirmationTypeIds: number[] | undefined;
     public fishingGearId: number | undefined;
     public fishId: number | undefined;
     public applianceId: number | undefined;
@@ -32,6 +33,5 @@ export class PenalDecreesFilters extends BaseRequestModel {
     public identifier: string | undefined;
     public fineAmountFrom: number | undefined;
     public fineAmountTo: number | undefined;
-    public isDelivered: boolean | undefined;
     public auanId: number | undefined;
 }

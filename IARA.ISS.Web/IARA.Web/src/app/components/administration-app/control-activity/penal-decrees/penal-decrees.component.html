@@ -59,7 +59,7 @@
                 </tl-input>
             </div>
 
-            <!-- Конфискувани риба, уред и приспособление, връчени/невръчени НП -->
+            <!-- Конфискувани риба, уред и приспособление, начини за потвърждение за връчване -->
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
                 <tl-autocomplete fxFlex="25"
                                  formControlName="fishControl"
@@ -83,10 +83,11 @@
                 </tl-autocomplete>
 
                 <tl-select fxFlex="25"
-                           formControlName="isDeliveredControl"
-                           [options]="deliveries"
-                           label="{{ 'penal-decrees.filters-is-delivered' | tlTranslate }}"
-                           tooltipResourceName="penal-decrees.filters-is-delivered-helper">
+                           formControlName="deliveryConfirmationTypeControl"
+                           [options]="deliveryConfirmationTypes"
+                           [isMultiple]="true"
+                           label="{{ 'penal-decrees.filters-delivery-type' | tlTranslate }}"
+                           tooltipResourceName="penal-decrees.filters-delivery-type-helper">
                 </tl-select>
             </div>
 

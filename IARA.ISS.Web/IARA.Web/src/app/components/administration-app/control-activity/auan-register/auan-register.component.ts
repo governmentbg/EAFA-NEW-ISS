@@ -49,7 +49,6 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
     public fishes: NomenclatureDTO<number>[] = [];
     public fishingGears: NomenclatureDTO<number>[] = [];
     public appliances: NomenclatureDTO<number>[] = [];
-    public deliveries: NomenclatureDTO<boolean>[] = [];
 
     public readonly canAddRecords: boolean;
     public readonly canEditRecords: boolean;
@@ -95,19 +94,6 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
         this.canEditRecords = permissions.has(PermissionsEnum.AuanRegisterEditRecords);
         this.canDeleteRecords = permissions.has(PermissionsEnum.AuanRegisterDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.AuanRegisterRestoreRecords);
-
-        this.deliveries = [
-            new NomenclatureDTO<boolean>({
-                value: true,
-                displayName: this.translate.getValue('penal-decrees.delivered'),
-                isActive: true
-            }),
-            new NomenclatureDTO<boolean>({
-                value: false,
-                displayName: this.translate.getValue('penal-decrees.not-delivered'),
-                isActive: true
-            })
-        ];
 
         this.buildForm();
     }
@@ -372,7 +358,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
             draftDateRangeControl: new FormControl(),
             inspectionTypeControl: new FormControl(),
             locationDescriptionControl: new FormControl(),
-            isDeliveredControl: new FormControl(),
+            deliveryDateRangeControl: new FormControl(),
             applianceControl: new FormControl(),
             fishingGearControl: new FormControl(),
             fishControl: new FormControl(),
@@ -392,9 +378,10 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
             territoryUnitId: filters.getValue('territoryUnitControl'),
             draftDateFrom: filters.getValue<DateRangeData>('draftDateRangeControl')?.start,
             draftDateTo: filters.getValue<DateRangeData>('draftDateRangeControl')?.end,
+            deliveryDateFrom: filters.getValue<DateRangeData>('deliveryDateRangeControl')?.start,
+            deliveryDateTo: filters.getValue<DateRangeData>('deliveryDateRangeControl')?.end,
             inspectionTypeId: filters.getValue('inspectionTypeControl'),
             locationDescription: filters.getValue('locationDescriptionControl'),
-            isDelivered: filters.getValue('isDeliveredControl'),
             applianceId: filters.getValue('applianceControl'),
             fishingGearId: filters.getValue('fishingGearControl'),
             fishId: filters.getValue('fishControl'),
