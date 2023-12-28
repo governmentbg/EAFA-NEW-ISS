@@ -2465,7 +2465,7 @@
         'unregistered-ship': 'Име на нерегистриран кораб',
         'water-object': 'Име на инспектиран воден обект',
         'fisherman-name': 'Име на правоспособен рибар',
-        'inspected-object': 'Обект на инспекция',
+        'inspected-object': 'Обект на инспекцията',
         'first-sale-center-name': 'Име на пазар/помещение',
         'tracton-license-plate-number': 'Рег. номер на транспортно средство',
         'trailer-license-plate-number': 'Рег. номер на ремарке',
@@ -5050,6 +5050,7 @@
         'filters-fishing-gear': 'Конфискуван уред',
         'filters-appliance': 'Конфискувано приспособление',
         'filters-is-delivered': 'Връчени',
+        'filters-delivery-date': 'Дата на връчване',
         'edit-law-section-filter': 'Търсене по ключова дума',
 
         'table-auan-num': '№ на АУАН',
@@ -5540,6 +5541,7 @@
         'filters-appliance': 'Конфискувано приспособление',
         'filters-is-delivered': 'Връчени',
         'filters-fine-amount': 'Размер на глобата',
+        'filters-delivery-type': 'Начини за потвърждение за връчване',
 
         'table-penal-decree-num': '№ на наказателно постановление',
         'table-penal-decree-name': 'Тип',

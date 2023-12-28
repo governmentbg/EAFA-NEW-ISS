@@ -32,7 +32,7 @@
                 </tl-date-range>
             </div>
 
-            <!-- Конфискувани риба, уред и приспособление, връчени/невръчени АУАН -->
+            <!-- Имена и ЕГН/ЛНЧ/ЕИК на нарушител -->
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
                 <tl-input fxFlex="25"
                           formControlName="inspEntityFirstNameControl"
@@ -59,7 +59,7 @@
                 </tl-input>
             </div>
 
-            <!-- Имена и ЕГН/ЛНЧ/ЕИК на нарушител -->
+            <!-- Конфискувани риба, уред и приспособление, дата на връчване -->
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
                 <tl-autocomplete fxFlex="25"
                                  formControlName="fishControl"
@@ -82,12 +82,11 @@
                                  tooltipResourceName="auan-register.filters-appliance-helper">
                 </tl-autocomplete>
 
-                <tl-select fxFlex="25"
-                           formControlName="isDeliveredControl"
-                           [options]="deliveries"
-                           label="{{ 'penal-decrees.filters-is-delivered' | tlTranslate }}"
-                           tooltipResourceName="penal-decrees.filters-is-delivered-helper">
-                </tl-select>
+                <tl-date-range fxFlex="25"
+                               formControlName="deliveryDateRangeControl"
+                               label="{{ 'auan-register.filters-delivery-date' | tlTranslate }}"
+                               tooltipResourceName="auan-register.filters-delivery-date-helper">
+                </tl-date-range>
             </div>
 
             <!-- Тип на инспекция и проверка, описание на проверяван обект -->

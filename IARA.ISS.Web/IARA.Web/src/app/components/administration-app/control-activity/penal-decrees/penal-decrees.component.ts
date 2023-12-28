@@ -38,6 +38,8 @@ import { AuanDeliveryComponent } from '../auan-register/auan-delivery/auan-deliv
 import { InspDeliveryDataDialogParams } from '../auan-register/models/insp-delivery-data-dialog-params.model';
 import { AuanDeliveryDataDTO } from '@app/models/generated/dtos/AuanDeliveryDataDTO';
 import { CommonUtils } from '@app/shared/utils/common.utils';
+import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/InspDeliveryTypesNomenclatureDTO';
+import { InspDeliveryTypeGroupsEnum } from '@app/enums/insp-delivery-type-groups.enum';
 
 @Component({
     selector: 'penal-decrees',
@@ -60,7 +62,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
     public fishes: NomenclatureDTO<number>[] = [];
     public fishingGears: NomenclatureDTO<number>[] = [];
     public appliances: NomenclatureDTO<number>[] = [];
-    public deliveries: NomenclatureDTO<boolean>[] = [];
+    public deliveryConfirmationTypes: NomenclatureDTO<number>[] = [];
 
     public readonly canAddRecords: boolean;
     public readonly canEditRecords: boolean;
@@ -137,19 +139,6 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         this.canRestoreStatusRecords = permissions.has(PermissionsEnum.PenalDecreeStatusesRestoreRecords);
 
         this.buildForm();
-
-        this.deliveries = [
-            new NomenclatureDTO<boolean>({
-                value: true,
-                displayName: this.translate.getValue('penal-decrees.delivered'),
-                isActive: true
-            }),
-            new NomenclatureDTO<boolean>({
-                value: false,
-                displayName: this.translate.getValue('penal-decrees.not-delivered'),
-                isActive: true
-            })
-        ];
     }
 
     public ngOnInit(): void {
@@ -198,6 +187,14 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         ).subscribe({
             next: (result: NomenclatureDTO<number>[]) => {
                 this.appliances = result;
+            }
+        });
+
+        NomenclatureStore.instance.getNomenclature(
+            NomenclatureTypes.InspDeliveryConfirmationTypes, this.service.getAuanDeliveryConfirmationTypes.bind(this.service), false
+        ).subscribe({
+            next: (result: InspDeliveryTypesNomenclatureDTO[]) => {
+                this.deliveryConfirmationTypes = (result as InspDeliveryTypesNomenclatureDTO[]).filter(x => x.group === InspDeliveryTypeGroupsEnum.PD);
             }
         });
 
@@ -533,7 +530,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             statusTypeControl: new FormControl(),
             locationDescriptionControl: new FormControl(),
             fineAmountControl: new FormControl(),
-            isDeliveredControl: new FormControl(),
+            deliveryConfirmationTypeControl: new FormControl(),
             applianceControl: new FormControl(),
             fishingGearControl: new FormControl(),
             fishControl: new FormControl(),
@@ -557,11 +554,11 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             sanctionTypeIds: filters.getValue('sanctionTypeControl'),
             statusTypeIds: filters.getValue('statusTypeControl'),
             locationDescription: filters.getValue('locationDescriptionControl'),
-            isDelivered: filters.getValue('isDeliveredControl'),
             applianceId: filters.getValue('applianceControl'),
             fishingGearId: filters.getValue('fishingGearControl'),
             fishId: filters.getValue('fishControl'),
             identifier: filters.getValue('identifierControl'),
+            deliveryConfirmationTypeIds: filters.getValue('deliveryConfirmationTypeControl'),
             inspectedEntityFirstName: filters.getValue('inspEntityFirstNameControl'),
             inspectedEntityMiddleName: filters.getValue('inspEntityMiddleNameControl'),
             inspectedEntityLastName: filters.getValue('inspEntityLastNameControl')

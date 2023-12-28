@@ -30,7 +30,8 @@ export class AuanRegisterFilters extends BaseRequestModel {
     public inspectedEntityMiddleName: string | undefined;
     public inspectedEntityLastName: string | undefined;
     public identifier: string | undefined;
-    public isDelivered: boolean | undefined;
+    public deliveryDateFrom: Date | undefined;
+    public deliveryDateTo: Date | undefined;
     public personId: number | undefined;
     public legalId: number | undefined;
     public inspectionId: number | undefined;
