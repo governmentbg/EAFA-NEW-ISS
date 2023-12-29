@@ -122,38 +122,57 @@
                                  tooltipResourceName="catches-and-sales.page-product-turbot-size-group-helper"
                                  [options]="turbotSizeGroups">
                 </tl-autocomplete>
-                <tl-input fxFlex="33"
-                          formControlName="unitCountControl"
-                          label="{{ 'catches-and-sales.page-product-turbot-count' | tlTranslate }}"
-                          tooltipResourceName="catches-and-sales.page-product-turbot-count-helper">
-                </tl-input>
-                <tl-input fxFlex="33"
+                <tl-input *ngIf="logBookType !== logBookTypesEnum.Aquaculture"
+                          fxFlex="33"
                           formControlName="averageUnitWeightKgControl"
                           label="{{ 'catches-and-sales.page-product-turbot-average-unit-weigth-kg' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.page-product-turbot-average-unit-weigth-kg-helper">
                 </tl-input>
+                <div fxFlex="33"></div>
             </div>
-            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
-                <tl-input fxFlex="33"
-                          formControlName="quantityKgControl"
-                          label="{{ 'catches-and-sales.page-product-quantity-kg' | tlTranslate }}"
-                          tooltipResourceName="catches-and-sales.page-product-quantity-kg-helper">
-                </tl-input>
-                <tl-input *ngIf="hasPrice"
-                          fxFlex="33"
-                          formControlName="unitPriceControl"
-                          label="{{ 'catches-and-sales.page-product-unit-price' | tlTranslate }}"
-                          tooltipResourceName="catches-and-sales.page-product-unit-price-helper">
-                </tl-input>
-                <tl-input *ngIf="hasPrice"
-                          fxFlex="33"
-                          formControlName="totalPriceControl"
-                          label="{{ 'catches-and-sales.page-product-total-price' | tlTranslate }}"
-                          tooltipResourceName="catches-and-sales.page-product-total-price-helper"
-                          [readonly]="true">
-                </tl-input>
-                <div *ngIf="!hasPrice" fxFlex="33"></div>
-                <div *ngIf="!hasPrice" fxFlex="33"></div>
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <ng-container *ngIf="hasPrice; else noPrice">
+                    <tl-input [fxFlex]="hasUnitCount ? 25 : 33"
+                              formControlName="quantityKgControl"
+                              label="{{ 'catches-and-sales.page-product-quantity-kg' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.page-product-quantity-kg-helper">
+                    </tl-input>
+                    <tl-input *ngIf="hasUnitCount"
+                              fxFlex="25"
+                              formControlName="unitCountControl"
+                              label="{{ 'catches-and-sales.page-product-count' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.page-product-count-helper">
+                    </tl-input>
+                    <tl-input [fxFlex]="hasUnitCount ? 25 : 33"
+                              formControlName="unitPriceControl"
+                              label="{{ 'catches-and-sales.page-product-unit-price' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.page-product-unit-price-helper">
+                    </tl-input>
+                    <tl-input [fxFlex]="hasUnitCount ? 25 : 33"
+                              formControlName="totalPriceControl"
+                              label="{{ 'catches-and-sales.page-product-total-price' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.page-product-total-price-helper"
+                              [readonly]="true">
+                    </tl-input>
+                </ng-container>
+
+                <ng-template #noPrice>
+                    <tl-input [fxFlex]="hasUnitCount ? 25 : 33"
+                              formControlName="quantityKgControl"
+                              label="{{ 'catches-and-sales.page-product-quantity-kg' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.page-product-quantity-kg-helper">
+                    </tl-input>
+
+                    <tl-input *ngIf="hasUnitCount"
+                              fxFlex="25"
+                              formControlName="unitCountControl"
+                              label="{{ 'catches-and-sales.page-product-count' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.page-product-count-helper">
+                    </tl-input>
+
+                    <div [fxFlex]="hasUnitCount ? 25 : 33"></div>
+                    <div [fxFlex]="hasUnitCount ? 25 : 33"></div>
+                </ng-template>
             </div>
         </tl-card-content>
     </tl-card>

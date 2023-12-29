@@ -1580,7 +1580,8 @@
         'delete-user-legal-dialog-title': 'Изтриване на достъп до сдружение',
         'delete-user-legal-dialog-message': 'Сигурни ли сте, че искате да изтриете достъпа до това сдружение?',
         'delete-user-legal-dialog-ok-btn-label': 'Изтриване',
-        'associations': 'Сдружения'
+        'associations': 'Сдружения',
+        'email-already-exists-error': 'Въведеният имейл вече съществува в системата'
     },
     'buyers-and-sales-centers': {
         'delete-buyer': 'Изтриване на купувач/ЦПП',
@@ -4434,6 +4435,7 @@
         'page-product-min-size': 'Минимален размер',
         'page-product-average-unit-weight-kg': 'Средно единично тегло (кг)',
         'page-product-purpose': 'Предназначение',
+        'page-product-unit-count': 'Брой',
         'page-product-quantity-kg': 'Количество (кг)',
         'page-product-unit-price': 'Ед. цена',
         'page-product-total-price': 'Стойност (лв)',
@@ -4444,6 +4446,7 @@
         'page-product-view-product-dialog-title': 'Преглед на продукт',
         'page-product-edit-product-dialog-title': 'Редакция на продукт',
         'page-product-add-product-dialog-title': 'Добавяне на продукт',
+        'page-product-count': 'Брой',
         'page-product-turbot-size-group': 'Размерна група',
         'page-product-turbot-count': 'Брой калкани',
         'page-product-turbot-average-unit-weigth-kg': 'Средно единично тегло на калкан',
@@ -4562,6 +4565,8 @@
         'filters-ship': 'Кораб',
         'filters-start-time': 'Дата от',
         'filters-end-time': 'Дата до',
+        'filters-request-uuid': 'UUID на съобщението',
+        'filters-errors': 'Описание на грешката',
         'filters-has-errors': 'Излети с грешки',
         'filters-has-landing': 'Излети с разтоварване',
         'uuid': 'UUID на съобщението',

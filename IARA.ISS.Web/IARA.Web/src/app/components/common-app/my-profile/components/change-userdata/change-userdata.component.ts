@@ -18,6 +18,8 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { GridRow } from '@app/shared/components/data-table/models/row.model';
 import { UserLegalStatusEnum } from '@app/enums/user-legal-status.enum';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 
 @Component({
     selector: 'change-userdata',
@@ -29,6 +31,7 @@ export class ChangeUserDataComponent implements OnInit, IDialogComponent {
     public passwordIcon: string = "fa-eye";
     public passwordConfirmationIcon: string = "fa-eye";
     public userMustChangePassword: boolean = false;
+    public hasEmailExistsError: boolean = false;
     public legalStatusEnum: typeof UserLegalStatusEnum = UserLegalStatusEnum;
 
     public documentTypes: NomenclatureDTO<number>[] = [];
@@ -104,8 +107,13 @@ export class ChangeUserDataComponent implements OnInit, IDialogComponent {
             if (this.changeUserDataForm.valid) {
                 this.userModel = this.fillModel(this.changeUserDataForm);
 
-                this.userService.updateUserData(this.userModel).subscribe(() => {
-                    dialogClose(this.userModel);
+                this.userService.updateUserData(this.userModel).subscribe({
+                    next: () => {
+                        dialogClose(this.userModel);
+                    },
+                    error: (httpErrorResponse: HttpErrorResponse) => {
+                        this.handleErrorResponse(httpErrorResponse);
+                    }
                 });
             }
         }
@@ -166,6 +174,12 @@ export class ChangeUserDataComponent implements OnInit, IDialogComponent {
                 TLValidators.confirmPasswordValidator,
                 Validators.maxLength(64),
                 TLValidators.passwordComplexityValidator()]),
+        });
+
+        this.changeUserDataForm.get('basicDataControl')!.valueChanges.subscribe({
+            next: (data: RegixPersonDataDTO) => {
+                this.hasEmailExistsError = false;
+            }
         });
     }
 
@@ -228,5 +242,16 @@ export class ChangeUserDataComponent implements OnInit, IDialogComponent {
         }));
 
         return userLegals ?? [];
+    }
+
+    private handleErrorResponse(errorResponse: HttpErrorResponse): void {
+        const errorCode: ErrorCode | undefined = (errorResponse.error as ErrorModel)?.code;
+
+        if (errorCode === ErrorCode.EmailExists) {
+            this.hasEmailExistsError = true;
+            this.changeUserDataForm.setErrors({ emailExists: true });
+            this.changeUserDataForm.markAsTouched();
+            this.validityCheckerGroup.validate();
+        }
     }
 }

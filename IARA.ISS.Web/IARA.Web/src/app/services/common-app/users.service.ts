@@ -20,7 +20,7 @@ export class UsersService {
 
     public updateUserData(userData: ChangeUserDataDTO): Observable<void> {
         return this.requestService.post(this.area, this.controller, 'UpdateAllUserData', userData, {
-            properties: RequestProperties.DEFAULT,
+            properties: new RequestProperties({ rethrowException: true, showException: true }),
             successMessage: 'succ-updated-user-profile'
         });
     }
