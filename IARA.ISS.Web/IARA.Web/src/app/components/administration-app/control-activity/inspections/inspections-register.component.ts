@@ -383,20 +383,22 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             ) {
                 readOnly = true;
 
-                rightSideButtons.push(
-                    {
-                        id: 'flux',
-                        color: 'primary',
-                        translateValue: 'common.export',
-                        isVisibleInViewMode: true
-                    },
-                    {
-                        id: 'print',
-                        color: 'primary',
-                        translateValue: 'inspections.print-inspection',
-                        isVisibleInViewMode: true,
-                    }
-                );
+                if (entry.inspectionType !== InspectionTypesEnum.OTH) {
+                    rightSideButtons.push(
+                        {
+                            id: 'flux',
+                            color: 'primary',
+                            translateValue: 'common.export',
+                            isVisibleInViewMode: true
+                        },
+                        {
+                            id: 'print',
+                            color: 'primary',
+                            translateValue: 'inspections.print-inspection',
+                            isVisibleInViewMode: true,
+                        }
+                    );
+                }
             }
 
             if ((this.shipId === null || this.shipId === undefined)

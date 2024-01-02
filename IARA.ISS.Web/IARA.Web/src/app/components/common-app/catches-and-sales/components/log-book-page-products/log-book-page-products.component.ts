@@ -121,7 +121,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
                     for (const product of value) {
                         product.totalPrice = LogBookPageProductUtils.formatTotalProductPrice(
                             this.currencyPipe,
-                            product.quantityKg,
+                            product.unitCount ?? product.quantityKg,
                             product.unitPrice
                         ) ?? undefined;
                     }

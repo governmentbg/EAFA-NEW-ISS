@@ -1,6 +1,8 @@
 ﻿<div class="dialog-padding" fxLayoutGap="1em" [formGroup]="changeUserDataForm" validityCheckerGroup>
     <tl-expansion-panel title="{{ 'my-profile.basic-information' | tlTranslate }}"
-                        [validityChecker]="changeUserDataForm">
+                        fxLayoutGap="1em"
+                        [validityChecker]="changeUserDataForm"
+                        [validityCheckerExtraCondition]="changeUserDataForm.errors?.emailExists !== true">
         <regix-data formControlName="basicDataControl"
                     [isPerson]="true"
                     [isEmailRequired]="true"
@@ -8,6 +10,11 @@
                     [hideSearchButton]="true"
                     checkboxLabel="{{ 'my-profile.has-bulgarian-address-registration' | tlTranslate }}">
         </regix-data>
+
+        <mat-error *ngIf="hasEmailExistsError && changeUserDataForm.errors?.emailExists === true">
+            * {{ 'my-profile.email-already-exists-error' | tlTranslate }}
+        </mat-error>
+
         <!--Постоянен адрес-->
         <address-registration formControlName="addressesControl"
                               addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
@@ -29,6 +36,7 @@
             <div fxFlex="66"></div>
         </div>
     </tl-expansion-panel>
+
     <!--Данни за сдружения-->
     <tl-expansion-panel title="{{ 'my-profile.associations' | tlTranslate }}"
                         [validityChecker]="changeUserDataForm">

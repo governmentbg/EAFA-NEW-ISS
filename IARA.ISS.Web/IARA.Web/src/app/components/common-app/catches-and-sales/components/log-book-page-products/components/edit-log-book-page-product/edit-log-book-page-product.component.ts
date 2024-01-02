@@ -1,5 +1,5 @@
 ﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 import { forkJoin } from 'rxjs';
 
@@ -41,11 +41,14 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
 
     public readOnly: boolean = false;
     public hasPrice: boolean = true;
+    public hasUnitCount: boolean = false;
     public showTurbotControls: boolean = false;
     public showFishCategoryControl: boolean = false;
     public isAquaculturePage: boolean = false;
     public model!: LogBookPageProductDTO;
     public logBookType!: LogBookTypesEnum;
+
+    private readonly UNIT_COUNT_PURPOSE_CODES: string[] = ['6'];
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -117,25 +120,91 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
         if (this.hasPrice) {
             this.form.get('quantityKgControl')!.valueChanges.subscribe({
                 next: (quantityKg: number | undefined) => {
-                    const unitPrice: number | undefined = this.form.get('unitPriceControl')!.value;
-                    const formattedTotalPrice: string | null = LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, quantityKg, unitPrice);
+                    const unitPrice: number | undefined = Number(this.form.get('unitPriceControl')!.value);
+                    const unitCount: number | undefined = Number(this.form.get('unitCountControl')!.value);
+
+                    const formattedTotalPrice: string | null = this.hasUnitCount
+                        ? LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(unitCount), unitPrice)
+                        : LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(quantityKg), unitPrice);
+
+                    this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);
+                }
+            });
+
+            this.form.get('unitCountControl')!.valueChanges.subscribe({
+                next: (unitCount: number | undefined) => {
+                    const averageUnitWeightKg: number | undefined = Number(this.form.get('averageUnitWeightKgControl')!.value);
+
+                    if (averageUnitWeightKg && unitCount) {
+                        this.form.get('quantityKgControl')!.setValue(averageUnitWeightKg * unitCount);
+                    }
+                    else {
+                        this.form.get('quantityKgControl')!.setValue(undefined);
+                    }
+
+                    const unitPrice: number | undefined = Number(this.form.get('unitPriceControl')!.value);
+
+                    const formattedTotalPrice: string | null = LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(unitCount), unitPrice);
                     this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);
                 }
             });
 
             this.form.get('unitPriceControl')!.valueChanges.subscribe({
                 next: (unitPrice: number | undefined) => {
-                    const quantityKg: number | undefined = this.form.get('quantityKgControl')!.value;
-                    const formattedTotalPrice: string | null = LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, quantityKg, unitPrice);
+                    const quantityKg: number | undefined = Number(this.form.get('quantityKgControl')!.value);
+                    const unitCount: number | undefined = Number(this.form.get('unitCountControl')!.value);
+
+                    const formattedTotalPrice: string | null = this.hasUnitCount
+                        ? LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(unitCount), unitPrice)
+                        : LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(quantityKg), unitPrice);
+
                     this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);
                 }
             });
+
+            this.form.get('averageUnitWeightKgControl')!.valueChanges.subscribe({
+                next: (averageUnitWeightKg: number | undefined) => {
+                    if (this.hasUnitCount) {
+                        const unitCount: number | undefined = Number(this.form.get('unitCountControl')!.value);
+
+                        if (averageUnitWeightKg && unitCount) {
+                            this.form.get('quantityKgControl')!.setValue(averageUnitWeightKg * unitCount);
+                        }
+                        else {
+                            this.form.get('quantityKgControl')!.setValue(undefined);
+                        }
+                    }
+                }
+            });
         }
+
+        this.form.get('purposeControl')!.valueChanges.subscribe({
+            next: (purpose: NomenclatureDTO<number> | undefined) => {
+                if (this.logBookType === LogBookTypesEnum.Aquaculture) {
+                    if (purpose && typeof purpose !== 'string') {
+                        if (this.UNIT_COUNT_PURPOSE_CODES.includes(purpose.code!)) {
+                            this.hasUnitCount = true;
+                        }
+                        else {
+                            this.hasUnitCount = this.hasOrganismUnitCount();
+                            this.form.get('unitCountControl')!.setValue(undefined);
+                        }
+                    }
+                    else {
+                        this.hasUnitCount = this.hasOrganismUnitCount();
+                        this.form.get('unitCountControl')!.setValue(undefined);
+                    }
+
+                    this.updateQuantityCountValidators();
+                }
+            }
+        });
 
         this.form.get('aquaticOrganismTypeControl')!.valueChanges.subscribe({
             next: (aquaticOrganism: FishNomenclatureDTO | undefined) => {
                 this.setTurbotFlagAndValidators(aquaticOrganism);
                 this.setMinCatchSize(aquaticOrganism);
+                this.updateQuantityCountValidators();
             }
         });
     }
@@ -257,16 +326,16 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
 
         if (this.hasPrice) {
             this.form.get('unitPriceControl')!.setValue(this.model.unitPrice);
-            const formattedTotalPrice: string | null = LogBookPageProductUtils.formatTotalProductPrice(
-                this.currencyPipe,
-                this.model.quantityKg,
-                this.model.unitPrice
-            );
+            const formattedTotalPrice: string | null = this.hasUnitCount
+                ? LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, this.model.unitCount, this.model.unitPrice)
+                : LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, this.model.quantityKg, this.model.unitPrice);
 
             this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);
         }
 
-        this.form.get('unitCountControl')!.setValue(this.model.unitCount);
+        if (this.hasUnitCount) {
+            this.form.get('unitCountControl')!.setValue(this.model.unitCount);
+        }
 
         if (this.model.turbotSizeGroupId !== null && this.model.turbotSizeGroupId !== undefined) {
             const turbotSizeGroup: NomenclatureDTO<number> = this.turbotSizeGroups.find(x => x.value === this.model!.turbotSizeGroupId)!;
@@ -278,7 +347,6 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
         this.model.fishId = this.form.get('aquaticOrganismTypeControl')!.value.value;
         this.model.productPresentationId = this.form.get('presentationControl')!.value.value;
         this.model.productPurposeId = this.form.get('purposeControl')!.value.value;
-        this.model.quantityKg = this.form.get('quantityKgControl')!.value;
 
         if (this.hasPrice) {
             this.model.unitPrice = this.form.get('unitPriceControl')!.value;
@@ -294,8 +362,10 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
 
         this.model.averageUnitWeightKg = this.form.get('averageUnitWeightKgControl')!.value;
 
-        this.model.unitCount = this.form.get('unitCountControl')!.value;
+        this.model.quantityKg = this.form.get('quantityKgControl')!.value;
+        this.model.unitCount = this.hasUnitCount ? this.form.get('unitCountControl')!.value : undefined;
         this.model.turbotSizeGroupId = this.form.get('turbotSizeGroupControl')!.value?.value;
+
     }
 
     private setMinCatchSize(value: FishNomenclatureDTO | undefined): void {
@@ -308,10 +378,12 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
         if (value !== null && value !== undefined) {
             if (FishCodesEnum[value.code as keyof typeof FishCodesEnum] === FishCodesEnum.TUR) {
                 this.showTurbotControls = true;
+                this.hasUnitCount = true;
                 this.showFishCategoryControl = false;
             }
             else {
                 this.showTurbotControls = false;
+                this.hasUnitCount = this.hasPurposeUnitCount();
                 if (this.logBookType !== LogBookTypesEnum.Aquaculture) {
                     this.showFishCategoryControl = true;
                 }
@@ -322,6 +394,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
         }
         else {
             this.showTurbotControls = false;
+            this.hasUnitCount = this.hasPurposeUnitCount();
             this.showFishCategoryControl = false;
         }
 
@@ -330,18 +403,57 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
 
     private setTurbotControlsValidators(): void {
         if (this.showTurbotControls === true) {
-            this.form.get('unitCountControl')!.setValidators([Validators.required, TLValidators.number(0)]);
             this.form.get('turbotSizeGroupControl')!.setValidators(Validators.required);
             this.form.get('averageUnitWeightKgControl')!.setValidators([Validators.required, TLValidators.number(0)]);
 
-            this.form.get('unitCountControl')!.markAsPending();
             this.form.get('turbotSizeGroupControl')!.markAsPending();
             this.form.get('averageUnitWeightKgControl')!.markAsPending();
         }
         else {
-            this.form.get('unitCountControl')!.setValidators(TLValidators.number(0));
             this.form.get('turbotSizeGroupControl')!.setValidators(null);
             this.form.get('averageUnitWeightKgControl')!.setValidators(TLValidators.number(0));
         }
+    }
+
+    private updateQuantityCountValidators(): void {
+        const quantityKgValidators: ValidatorFn[] = [];
+        const unitCountValidators: ValidatorFn[] = [];
+
+        quantityKgValidators.push(Validators.required, TLValidators.number(0));
+
+        if (this.hasUnitCount) {
+            unitCountValidators.push(Validators.required, TLValidators.number(0));
+        }
+
+        this.form.get('quantityKgControl')!.setValidators(quantityKgValidators);
+        this.form.get('unitCountControl')!.setValidators(unitCountValidators);
+
+        this.form.get('quantityKgControl')!.markAsPending();
+        this.form.get('unitCountControl')!.markAsPending();
+
+        this.form.get('quantityKgControl')!.updateValueAndValidity();
+        this.form.get('unitCountControl')!.updateValueAndValidity();
+    }
+
+    private hasPurposeUnitCount(): boolean {
+        const purpose: NomenclatureDTO<number> | string | undefined = this.form.get('purposeControl')!.value;
+
+        if (purpose && typeof purpose !== 'string') {
+            return this.UNIT_COUNT_PURPOSE_CODES.includes(purpose.code!);
+        }
+
+        return false;
+    }
+
+    private hasOrganismUnitCount(): boolean {
+        const organism: FishNomenclatureDTO | string | undefined = this.form.get('aquaticOrganismTypeControl')!.value;
+
+        if (organism && typeof organism !== 'string') {
+            if (FishCodesEnum[organism.code as keyof typeof FishCodesEnum] === FishCodesEnum.TUR) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
