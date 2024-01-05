@@ -54,6 +54,12 @@ export class LogBookRegisterDTO {
     public isLogBookSuspended?: boolean;
 
     @StrictlyTyped(Boolean)
+    public allowNewLogBookPages?: boolean;
+
+    @StrictlyTyped(Date)
+    public suspendedPermitLicenseValidTo?: Date;
+
+    @StrictlyTyped(Boolean)
     public isOnline?: boolean;
 
     @StrictlyTyped(Number)

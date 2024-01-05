@@ -1,5 +1,5 @@
-﻿import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
@@ -20,19 +20,38 @@ import { AssociationEditDialogParams } from '../models/association-edit-dialog-p
 import { EikUtils } from '@app/shared/utils/eik.utils';
 import { IRecreationalFishingAssociationService } from '@app/interfaces/common-app/recreational-fishing-association.interface';
 import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
+import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
+import { forkJoin } from 'rxjs';
+import { FishingAssociationUserDTO } from '@app/models/generated/dtos/FishingAssociationUserDTO';
+import { UserLegalStatusEnum } from '@app/enums/user-legal-status.enum';
+import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
+import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
+import { CommandTypes } from '@app/shared/components/data-table/enums/command-type.enum';
 
 @Component({
     selector: 'recreational-fishing-edit-association',
     templateUrl: './recreational-fishing-edit-association.component.html'
 })
-export class RecreationalFishingEditAssociationComponent implements OnInit, IDialogComponent {
+export class RecreationalFishingEditAssociationComponent implements OnInit, AfterViewInit, IDialogComponent {
     public form!: FormGroup;
+    public usersForm!: FormGroup;
     public service: IRecreationalFishingAssociationService;
     public isEditing: boolean = false;
+    public readOnly: boolean = false;
 
     public territoryUnits!: NomenclatureDTO<number>[];
+    public users!: NomenclatureDTO<number>[];
+    public associationUsers: FishingAssociationUserDTO[] = [];
 
     public readonly pageCode: PageCodeEnum = PageCodeEnum.Assocs;
+
+    public legalStatusEnum: typeof UserLegalStatusEnum = UserLegalStatusEnum;
+
+    @ViewChild(ValidityCheckerGroupDirective)
+    private validityCheckerGroup!: ValidityCheckerGroupDirective;
+
+    @ViewChild('usersTable')
+    private usersTable!: TLDataTableComponent;
 
     private model!: RecreationalFishingAssociationEditDTO;
 
@@ -41,7 +60,6 @@ export class RecreationalFishingEditAssociationComponent implements OnInit, IDia
     private annulDialog: TLMatDialog<RecreationalFishingAnnulAssociationComponent>;
     private id!: number | undefined;
     private isAdding: boolean = false;
-    private readOnly: boolean = false;
 
     public constructor(
         service: RecreationalFishingAssociationService,
@@ -61,6 +79,14 @@ export class RecreationalFishingEditAssociationComponent implements OnInit, IDia
         this.territoryUnits = await NomenclatureStore.instance.getNomenclature<number>(
             NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures), false
         ).toPromise();
+
+        const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin(
+            NomenclatureStore.instance.getNomenclature<number>(NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures), false),
+            this.service.getAssociationUsersNomenclature()
+        ).toPromise();
+
+        this.territoryUnits = nomenclatures[0];
+        this.users = nomenclatures[1];
 
         if (this.id === undefined) {
             this.model = new RecreationalFishingAssociationEditDTO();
@@ -87,6 +113,14 @@ export class RecreationalFishingEditAssociationComponent implements OnInit, IDia
         }
     }
 
+    public ngAfterViewInit(): void {
+        this.usersTable.recordChanged.subscribe({
+            next: () => {
+                this.form.updateValueAndValidity({ onlySelf: true });
+            }
+        });
+    }
+
     public saveBtnClicked(action: IActionInfo, dialogClose: DialogCloseCallback): void {
         if (action.id === 'save') {
             if (this.readOnly) {
@@ -94,6 +128,7 @@ export class RecreationalFishingEditAssociationComponent implements OnInit, IDia
             }
 
             this.form.markAllAsTouched();
+            this.validityCheckerGroup.validate();
             if (this.form.valid) {
                 this.addOrEdit(dialogClose);
             }
@@ -106,9 +141,10 @@ export class RecreationalFishingEditAssociationComponent implements OnInit, IDia
         }
     }
 
-
     public dialogButtonClicked(action: IActionInfo, dialogClose: DialogCloseCallback): void {
         this.form.markAllAsTouched();
+        this.validityCheckerGroup.validate();
+
         if (this.form.valid || this.form.disabled) {
             if (action.id === 'annul') {
                 this.openAnnulDialog(dialogClose, true);
@@ -130,12 +166,45 @@ export class RecreationalFishingEditAssociationComponent implements OnInit, IDia
         this.form.get('legalAddressesControl')!.setValue(legal.addresses);
     }
 
+    public allowUser(id: number): void {
+        const user: FishingAssociationUserDTO | undefined = this.associationUsers.find(x => x.userId === id);
+
+        if (user !== undefined && user !== null) {
+            user.status = UserLegalStatusEnum.Approved;
+            this.associationUsers = this.associationUsers.slice();
+        }
+    }
+
+    public denyUser(id: number): void {
+        const user: FishingAssociationUserDTO | undefined = this.associationUsers.find(x => x.userId === id);
+
+        if (user !== undefined && user !== null) {
+            user.status = UserLegalStatusEnum.Blocked;
+            this.associationUsers = this.associationUsers.slice();
+        }
+    }
+
+    public userLegalsChanged(recordChangedEvent: RecordChangedEventArgs<FishingAssociationUserDTO>): void {
+        if (recordChangedEvent.Command === CommandTypes.Add) {
+            if (recordChangedEvent.Record.status === null
+                || recordChangedEvent.Record.status === undefined) {
+                recordChangedEvent.Record.status = UserLegalStatusEnum.Approved;
+            }
+
+            this.form.updateValueAndValidity({ onlySelf: true });
+        }
+    }
+
     private buildForm(): void {
         this.form = new FormGroup({
             territoryUnitControl: new FormControl(null, Validators.required),
             legalRegixDataControl: new FormControl(),
             legalAddressesControl: new FormControl(),
             filesControl: new FormControl()
+        });
+
+        this.usersForm = new FormGroup({
+            userIdControl: new FormControl(null, Validators.required)
         });
     }
 
@@ -153,12 +222,17 @@ export class RecreationalFishingEditAssociationComponent implements OnInit, IDia
             this.form.get('legalRegixDataControl')!.disable();
             this.form.get('legalAddressesControl')!.disable();
         }
+
+        setTimeout(() => {
+            this.associationUsers = this.model.users ?? [];
+        });
     }
 
     private fillModel(): void {
         this.model.territoryUnitId = this.form.get('territoryUnitControl')!.value.value;
         this.model.files = this.form.get('filesControl')!.value;
         this.model.isAdding = this.isAdding;
+        this.model.users = this.getAssociationUsersFromTable();
 
         if (this.isAdding) {
             this.model.legalId = this.id;
@@ -215,6 +289,33 @@ export class RecreationalFishingEditAssociationComponent implements OnInit, IDia
                 this.addOrEdit(dialogClose);
             }
         });
+    }
+
+    private getAssociationUsersFromTable(): FishingAssociationUserDTO[] {
+        const rows = this.usersTable.rows as FishingAssociationUserDTO[];
+
+        const users: FishingAssociationUserDTO[] = rows.map(x => new FishingAssociationUserDTO({
+            userId: x.userId,
+            status: x.status,
+            isActive: x.isActive ?? true
+        }));
+
+        const result: FishingAssociationUserDTO[] = [];
+
+        for (const user of users) {
+            if (result.findIndex(x => x.userId === user.userId) === -1) {
+                const original = users.filter(x => x.userId === user.userId);
+
+                if (original.length === 1) {
+                    result.push(user);
+                }
+                else {
+                    result.push(original.find(x => x.isActive === true)!);
+                }
+            }
+        }
+
+        return result;
     }
 
     private closeAnnulDialogBtnClicked(closeFn: HeaderCloseFunction): void {

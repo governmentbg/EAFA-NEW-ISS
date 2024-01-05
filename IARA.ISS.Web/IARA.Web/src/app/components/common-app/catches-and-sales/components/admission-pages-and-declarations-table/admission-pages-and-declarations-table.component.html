@@ -55,7 +55,7 @@
     <data-template-column *ngIf="showActionButtons" [flexRate]="0.2" [cellClass]="'justify-center'">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <div fxLayout="row wrap" fxLayoutAlign="end center">
-                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
                                        && canCancelAdmissionLogBookRecords
                                        && row.data.status !== logBookPageStatusesEnum.Canceled
                                        && !row.data.consistsOriginProducts"
@@ -66,7 +66,7 @@
                                 tooltipText="{{ 'catches-and-sales.anull-admission-log-book-page' | tlTranslate }}">
                 </tl-icon-button>
 
-                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
                                        && row.data.status === logBookPageStatusesEnum.Canceled
                                        && canCancelAdmissionLogBookRecords"
                                 icon="restore"
@@ -82,7 +82,9 @@
                                 tooltipText="{{ 'catches-and-sales.view-admission-log-book-page' | tlTranslate }}">
                 </tl-icon-button>
 
-                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended && canEditAdmissionLogBookRecords && row.data.status !== logBookPageStatusesEnum.Canceled"
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished) 
+                                    && canEditAdmissionLogBookRecords 
+                                    && row.data.status !== logBookPageStatusesEnum.Canceled"
                                 icon="edit"
                                 (buttonClicked)="editAdmissionLogBookPage(row.data, false)"
                                 iconClass="accent-color"

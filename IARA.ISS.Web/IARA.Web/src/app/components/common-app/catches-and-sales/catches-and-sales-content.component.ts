@@ -61,6 +61,8 @@ import { AddShipPageDocumentDialogParamsModel } from './models/add-ship-page-doc
 import { LogBookPageDocumentTypesEnum } from './enums/log-book-page-document-types.enum';
 import { PagesPermissions } from './components/ship-pages-and-declarations-table/models/pages-permissions.model';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
+import { SystemPropertiesService } from '../../../services/common-app/system-properties.service';
+import { SystemPropertiesDTO } from '../../../models/generated/dtos/SystemPropertiesDTO';
 
 const PAGE_NUMBER_CONTROL_NAME: string = 'pageNumberControl';
 type ThreeState = 'yes' | 'no' | 'both';
@@ -128,6 +130,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     @ViewChild(SearchPanelComponent)
     private searchpanel!: SearchPanelComponent;
 
+    private systemProperties!: SystemPropertiesDTO;
+
     private gridManager!: DataTableManager<LogBookRegisterDTO, CatchesAndSalesAdministrationFilters | CatchesAndSalesPublicFilters>;
 
     private readonly nomenclatures: CommonNomenclatures;
@@ -142,6 +146,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     private readonly viewLogBookDialog: TLMatDialog<EditLogBookComponent>;
     private readonly addShipPageDocumentWizardDialog: TLMatDialog<AddShipPageDocumentWizardComponent>;
     private readonly confirmationDialog: TLConfirmDialog;
+    private readonly systemPropertiesService: SystemPropertiesService;
 
     public constructor(
         translationService: FuseTranslationLoaderService,
@@ -157,7 +162,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         cancellationDialog: TLMatDialog<JustifiedCancellationComponent>,
         viewLogBookDialog: TLMatDialog<EditLogBookComponent>,
         addShipPageDocumentWizardDialog: TLMatDialog<AddShipPageDocumentWizardComponent>,
-        confirmationDialog: TLConfirmDialog
+        confirmationDialog: TLConfirmDialog,
+        systemPropertiesService: SystemPropertiesService
     ) {
         this.translationService = translationService;
         this.nomenclatures = nomenclatures;
@@ -173,6 +179,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.viewLogBookDialog = viewLogBookDialog;
         this.addShipPageDocumentWizardDialog = addShipPageDocumentWizardDialog;
         this.confirmationDialog = confirmationDialog;
+        this.systemPropertiesService = systemPropertiesService;
 
         this.canReadShipLogBookRecords = permissions.has(PermissionsEnum.FishLogBookRead) || permissions.has(PermissionsEnum.FishLogBookPageReadAll);
         this.canAddShipLogBookRecords = permissions.has(PermissionsEnum.FishLogBookPageAdd);
@@ -236,7 +243,9 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.buildForm();
     }
 
-    public ngOnInit(): void {
+    public async ngOnInit(): Promise<void> {
+        this.systemProperties = await this.systemPropertiesService.properties.toPromise();
+
         NomenclatureStore.instance.getNomenclature(
             NomenclatureTypes.LogBookTypes, this.service.getLogBookTypes.bind(this.service)
         ).subscribe({
@@ -292,7 +301,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         const isPerson: boolean | undefined = window.history.state?.isPerson;
         const tableId: number | undefined = window.history.state?.tableId;
         const pageCode: string | undefined = window.history.state?.pageCode;
-        
+
         if (!this.isPublicApp && !CommonUtils.isNullOrEmpty(ownerId)) {
             if (isPerson === true) {
                 this.gridManager.advancedFilters = new CatchesAndSalesAdministrationFilters({ personId: ownerId });
@@ -325,13 +334,26 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.gridManager.onRequestServiceMethodCalled.subscribe({
             next: (rows: LogBookRegisterDTO[] | undefined) => {
                 if (rows !== null && rows !== undefined && rows.length > 0) {
+                    if (this.systemProperties.addLogBookPagesDaysTolerance) {
+                        for (const row of rows) {
+                            if (row.suspendedPermitLicenseValidTo !== undefined && row.suspendedPermitLicenseValidTo !== null) {
+                                const now: Date = new Date();
+                                const days: number = Math.round((now.getTime() - new Date(row.suspendedPermitLicenseValidTo).getTime()) / (1000 * 3600 * 24));
+                                row.allowNewLogBookPages = days < this.systemProperties.addLogBookPagesDaysTolerance;
+                            }
+                            else {
+                                row.allowNewLogBookPages = true;
+                            }
+                        }
+                    }
+
                     setTimeout(() => {
                         const iconButtons = this.getMainTableButtons();
                         for (const iconButton of iconButtons) {
                             const row = rows!.find(x => x.id!.toString() === iconButton.getAttribute('data-logbook-id'));
 
                             if (row !== null && row !== undefined) {
-                                if (iconButton.getAttribute('no-enable') === 'true' && (row.isShipForbiddenForPages || row.isLogBookFinished || row.isLogBookSuspended)) {
+                                if (iconButton.getAttribute('no-enable') === 'true' && (!row.allowNewLogBookPages && (row.isShipForbiddenForPages || row.isLogBookFinished || row.isLogBookSuspended))) {
                                     const button = iconButton.getElementsByTagName('button')[0];
 
                                     button.disabled = true;

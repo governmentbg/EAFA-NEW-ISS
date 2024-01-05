@@ -2,12 +2,15 @@
      fxLayoutGap="1em"
      fxFlexFill
      [formGroup]="form"
+     validityCheckerGroup
      class="dialog-padding">
     <!-- Данни за сдружение -->
-    <tl-card tooltipResourceName="recreational-fishing.association-basic-information-helper">
+    <tl-card tooltipResourceName="recreational-fishing.association-basic-information-helper"
+             [validityChecker]="form">
         <tl-card-title>{{ 'recreational-fishing.association-basic-information' | tlTranslate }}</tl-card-title>
         <tl-card-content fxLayout="column">
             <regix-data formControlName="legalRegixDataControl"
+                        validityChecker
                         [isPerson]="false"
                         [isIdReadOnly]="isEditing"
                         (downloadDataBtnClicked)="downloadedLegalData($event)"
@@ -24,6 +27,7 @@
             </div>
 
             <address-registration formControlName="legalAddressesControl"
+                                  validityChecker
                                   addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
                                   secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
                                   checkboxLabel="{{ 'recreational-fishing.permanent-address-same-as-correspondence' | tlTranslate }}">
@@ -31,8 +35,87 @@
         </tl-card-content>
     </tl-card>
 
+    <!-- Потребители с достъп до сдружението -->
+    <tl-card tooltipResourceName="recreational-fishing.association-users-helper"
+             [validityChecker]="form">
+        <tl-card-title>{{ 'recreational-fishing.association-users' | tlTranslate }}</tl-card-title>
+        <tl-card-content fxLayout="column">
+            <tl-data-table #usersTable
+                           fxFlexFill
+                           [isRemote]="false"
+                           [rows]="associationUsers"
+                           [showAddButton]="true"
+                           [isSoftDeletable]="true"
+                           [showInactiveRecords]="true"
+                           (recordChanged)=userLegalsChanged($event)>
+                <data-column propertyName="userId"
+                             [formGroup]="usersForm"
+                             [options]="users"
+                             dataType="nomenclature"
+                             columnName="{{ 'recreational-fishing.fishing-association-user' | tlTranslate }}">
+                </data-column>
+
+                <data-template-column columnName="{{ 'recreational-fishing.user-status' | tlTranslate }}" propertyName="statusName">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div *ngIf="row.data.status !== undefined">
+                            <div *ngIf="row.data.status === legalStatusEnum.Blocked">
+                                <tl-icon icon="highlight_off" iconClass="accent-color"></tl-icon>
+                                {{ 'recreational-fishing.user-status-blocked' | tlTranslate }}
+                            </div>
+                            <div *ngIf="row.data.status === legalStatusEnum.Approved">
+                                <tl-icon icon="done_outline" iconClass="accent-color"></tl-icon>
+                                {{ 'recreational-fishing.user-status-approved' | tlTranslate }}
+                            </div>
+                            <div *ngIf="row.data.status === legalStatusEnum.Requested">
+                                <tl-icon icon="autorenew" iconClass="accent-color"></tl-icon>
+                                {{ 'recreational-fishing.user-status-requested' | tlTranslate }}
+                            </div>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+
+                <data-template-column *ngIf="!readOnly" [flexRate]="0.4" flexGrow="0.5" columnName="{{'recreational-fishing.user-status-header' | tlTranslate}}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="center" *ngIf="row.data.status === legalStatusEnum.Requested">
+                            <tl-icon-button icon="done_outline"
+                                            (buttonClicked)="allowUser(row.data.userId)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'recreational-fishing.user-status-allow-access' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button icon="highlight_off"
+                                            (buttonClicked)="denyUser(row.data.userId)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'recreational-fishing.user-status-deny-access' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+
+                        <div fxLayout="row" fxLayoutAlign="center" *ngIf="row.data.status !== legalStatusEnum.Requested">
+                            <tl-icon-button *ngIf="row.data.status === legalStatusEnum.Blocked"
+                                            icon="done_outline"
+                                            iconClass="accent-color"
+                                            (buttonClicked)="allowUser(row.data.userId)"
+                                            tooltipText="{{ 'recreational-fishing.user-status-allow-access' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.data.status === legalStatusEnum.Approved"
+                                            icon="highlight_off"
+                                            iconClass="accent-color"
+                                            (buttonClicked)="denyUser(row.data.userId)"
+                                            tooltipText="{{ 'recreational-fishing.user-status-deny-access' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+
+                <data-column-inline [flexRate]="0.3" *ngIf="!readOnly"></data-column-inline>
+            </tl-data-table>
+        </tl-card-content>
+    </tl-card>
+
     <!-- Приложени файлове -->
-    <tl-card tooltipResourceName="recreational-fishing.association-files-helper">
+    <tl-card tooltipResourceName="recreational-fishing.association-files-helper"
+             [validityChecker]="form">
         <tl-card-title>{{ 'recreational-fishing.association-files' | tlTranslate }}</tl-card-title>
         <tl-card-content>
             <file-uploader-form-array formControlName="filesControl"

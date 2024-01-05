@@ -21,10 +21,13 @@ export class RecreationalFishingTicketApplicationFilters extends BaseRequestMode
     public ticketHolderEGN: string | undefined;
     public validFrom: Date | undefined;
     public validTo: Date | undefined;
+    public issueDateFrom: Date | undefined;
+    public issueDateTo: Date | undefined;
     public ticketIssuerName: string | undefined;
     public isDuplicate: boolean | undefined;
     public statusIds: number[] | undefined;
     public showOnlyNotFinished: boolean | undefined;
     public personId: number | undefined;
     public territoryUnitId: number | undefined;
+    public deliveryTerritoryUnitId: number | undefined;
 }

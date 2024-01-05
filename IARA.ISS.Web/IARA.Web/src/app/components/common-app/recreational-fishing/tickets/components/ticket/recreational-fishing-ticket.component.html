@@ -141,7 +141,7 @@
         <tl-card-content fxLayout="column">
             <tl-checkbox *ngIf="!isRegisterEntry && representativePerson !== undefined && representativePerson !== null"
                          formControlName="representativeSameAsAdultControl"
-                         label="{{ representativeSameAsAdultLabel }}"> 
+                         label="{{ representativeSameAsAdultLabel }}">
             </tl-checkbox>
 
             <regix-data fxFlex="75"
@@ -231,6 +231,23 @@
         </tl-card-content>
     </tl-card>
 
+    <!-- Териториално звено за получаване -->
+    <tl-card *ngIf="form.controls.deliveryTerritoryUnitControl.value">
+        <tl-card-title>{{ 'recreational-fishing.ticket-delivery-territory-unit-card' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="row" fxLayoutAlign="start center">
+                <tl-autocomplete fxFlex="25"
+                                 fxFlex.lt-md="100"
+                                 formControlName="deliveryTerritoryUnitControl"
+                                 [options]="territoryUnits"
+                                 label="{{ 'recreational-fishing.ticket-delivery-territory-unit-input' | tlTranslate }}"
+                                 tooltipResourceName="recreational-fishing.ticket-delivery-territory-unit-input-helper">
+                </tl-autocomplete>
+            </div>
+        </tl-card-content>
+    </tl-card>
+
     <!-- Коментари и бележки -->
     <tl-card *ngIf="!isPersonal && !dialogData?.showOnlyRegiXData"
              tooltipResourceName="recreational-fishing.comments-helper">
@@ -287,8 +304,21 @@
         </tl-card-content>
     </tl-card>
 
+    <!-- Информация за плащания -->
+    <tl-card *ngIf="!dialogData?.showOnlyRegiXData && isPaid"
+             tooltipResourceName="recreational-fishing.ticket-payment-information-helper">
+        <tl-card-title>{{ 'recreational-fishing.ticket-payment-information' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <payment-information formControlName="paymentDataControl"
+                                 [hideBasicInfo]="false"
+                                 [isOnlineApplication]="false">
+            </payment-information>
+        </tl-card-content>
+    </tl-card>
+
     <!-- Проверки -->
-    <tl-expansion-panel *ngIf="dialogData?.showOnlyRegiXData || dialogData?.showRegiXData"
+    <tl-expansion-panel *ngIf="dialogData?.showOnlyRegiXData || dialogData?.showRegiXData || dialogData?.viewMode || dialogData?.isReadonly"
                         title="{{ 'recreational-fishing.regix-checks-results' | tlTranslate }}"
                         tooltipResourceName="recreational-fishing.regix-checks-results-helper">
         <div fxLayout="column" fxLayoutGap="1em">

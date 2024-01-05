@@ -23,6 +23,7 @@ import { FishingAssociationApplicationEditDTO } from '@app/models/generated/dtos
 import { FishingAssociationRegixDataDTO } from '@app/models/generated/dtos/FishingAssociationRegixDataDTO';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -185,6 +186,12 @@ export class RecreationalFishingAssociationService extends BaseAuditService impl
     public editFishingAssociation(model: FishingAssociationEditDTO): Observable<number> {
         return this.requestService.post(this.area, this.controller, 'EditFishingAssociation', model, {
             properties: new RequestProperties({ asFormData: true })
+        });
+    }
+
+    public getAssociationUsersNomenclature(): Observable<NomenclatureDTO<number>[]> {
+        return this.requestService.get(this.area, this.controller, 'GetAllAssociationUsersNomenclatures', {
+            responseTypeCtr: NomenclatureDTO
         });
     }
 

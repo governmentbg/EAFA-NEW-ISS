@@ -19,6 +19,9 @@ export class ShipPagesAndDeclarationsTableComponent {
     public rows: ShipLogBookPageRegisterDTO[] = [];
 
     @Input()
+    public allowEditAfterFinished: boolean = false;
+
+    @Input()
     public isRemote: boolean = false;
 
     @Input()

@@ -36,6 +36,8 @@ export class HomePagePublicComponent implements OnInit {
         this.applicationsService = applicationsService;
         this.translate = translate;
 
+        this.initializeVideos();
+
         this.authService.isAuthenticatedEvent.subscribe({
             next: (result: boolean) => {
                 this.isAuthenticated = result;
@@ -72,5 +74,20 @@ export class HomePagePublicComponent implements OnInit {
 
     public toggleExpandGroup(group: { key: number, value: ApplicationTypeDTO[] }): void {
         this.table.toggleExandGroup(group);
+    }
+
+    private initializeVideos(): void {
+        this.videos = [
+            new HomePageVideoModel({
+                title: this.translate.getValue('home-page-public.tickets-video'),
+                tooltipText: this.translate.getValue('home-page-public.tickets-video'),
+                url: 'https://www.youtube.com/watch?v=Rewqa0xUgMw'
+            }),
+            new HomePageVideoModel({
+                title: this.translate.getValue('home-page-public.associations-video'),
+                tooltipText: this.translate.getValue('home-page-public.associations-video'),
+                url: 'https://www.youtube.com/watch?v=zqZLrxKBnSI'
+            })
+        ]
     }
 }

@@ -86,6 +86,10 @@ export class RecreationalFishingPublicService extends BaseAuditService implement
         return this.commonService.calculateTicketValidToDate(this.area, this.controller, params);
     }
 
+    public enterOnlineTicketOfflineNumber(id: number, ticketNum: string): Observable<boolean> {
+        throw new Error('This method should not be called from the public app');
+    }
+
     public checkEgnLncPurchaseAbility(data: RecreationalFishingTicketValidationDTO): Observable<RecreationalFishingTicketValidationResultDTO> {
         return this.requestService.post(this.area, this.controller, 'CheckEgnLncPurchaseAbility', data, {
             responseTypeCtr: RecreationalFishingTicketValidationResultDTO
@@ -201,6 +205,12 @@ export class RecreationalFishingPublicService extends BaseAuditService implement
 
     // applications
     public getAllTicketApplications(
+        request: GridRequestModel<RecreationalFishingTicketApplicationFilters>
+    ): Observable<GridResultModel<RecreationalFishingTicketApplicationDTO>> {
+        throw new Error('This method should not be called from the public app');
+    }
+
+    public getAllTicketOnlineApplications(
         request: GridRequestModel<RecreationalFishingTicketApplicationFilters>
     ): Observable<GridResultModel<RecreationalFishingTicketApplicationDTO>> {
         throw new Error('This method should not be called from the public app');

@@ -1,8 +1,9 @@
 ﻿import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { IApplicationRegister } from '../../interfaces/common-app/application-register.interface';
 import { IRecreationalFishingService } from '../../interfaces/common-app/recreational-fishing.interface';
 import { GridRequestModel } from '@app/models/common/grid-request.model';
@@ -32,6 +33,7 @@ import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dtos/RecreationalFishingAddTicketsResultDTO';
 import { RecreationalFishingTicketDuplicateDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDuplicateDTO';
 import { ReasonDTO } from '@app/models/generated/dtos/ReasonDTO';
+import { TicketStatusEnum } from '@app/enums/ticket-status.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -40,10 +42,16 @@ export class RecreationalFishingAdministrationService extends ApplicationsRegist
     protected controller: string = 'RecreationalFishingAdministration';
 
     private commonService: RecreationalFishingCommonService;
+    private translate: FuseTranslationLoaderService;
 
-    public constructor(requestService: RequestService, commonService: RecreationalFishingCommonService) {
+    public constructor(
+        requestService: RequestService,
+        translate: FuseTranslationLoaderService,
+        commonService: RecreationalFishingCommonService,
+    ) {
         super(requestService);
 
+        this.translate = translate;
         this.commonService = commonService;
     }
 
@@ -130,6 +138,16 @@ export class RecreationalFishingAdministrationService extends ApplicationsRegist
         return this.commonService.calculateTicketValidToDate(this.area, this.controller, params);
     }
 
+    public enterOnlineTicketOfflineNumber(id: number, ticketNum: string): Observable<boolean> {
+        const params = new HttpParams()
+            .append('id', id.toString())
+            .append('ticketNum', ticketNum);
+
+        return this.requestService.patch(this.area, this.controller, 'EnterOnlineTicketOfflineNumber', null, {
+            httpParams: params
+        });
+    }
+
     public checkEgnLncPurchaseAbility(data: RecreationalFishingTicketValidationDTO): Observable<RecreationalFishingTicketValidationResultDTO> {
         return this.requestService.post(this.area, this.controller, 'CheckEgnLncPurchaseAbility', data, {
             responseTypeCtr: RecreationalFishingTicketValidationResultDTO
@@ -199,6 +217,24 @@ export class RecreationalFishingAdministrationService extends ApplicationsRegist
             properties: RequestProperties.NO_SPINNER,
             responseTypeCtr: GridResultModel
         });
+    }
+
+    public getAllTicketOnlineApplications(request: GridRequestModel<RecreationalFishingTicketApplicationFilters>): Observable<GridResultModel<RecreationalFishingTicketApplicationDTO>> {
+        type Result = GridResultModel<RecreationalFishingTicketApplicationDTO>;
+        type Body = GridRequestModel<RecreationalFishingTicketApplicationFilters>;
+
+        return this.requestService.post<Result, Body>(this.area, this.controller, 'GetAllTicketOnlineApplications', request, {
+            properties: RequestProperties.NO_SPINNER,
+            responseTypeCtr: GridResultModel
+        }).pipe(switchMap((entries: Result) => {
+            for (const entry of entries.records) {
+                if (entry.ticketStatus === TicketStatusEnum.APPROVED) {
+                    entry.ticketStatusName = this.translate.getValue('recreational-fishing.ticket-status-offline-number-expected');
+                }
+            }
+
+            return of(entries);
+        }));
     }
 
     public getAllTicketStatuses(): Observable<NomenclatureDTO<number>[]> {

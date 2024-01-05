@@ -60,7 +60,7 @@
     <data-template-column *ngIf="showActionButtons" [flexRate]="0.2" [cellClass]="'justify-center'">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <div fxLayout="row wrap" fxLayoutAlign="end center">
-                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
                                        && canCancelTransportationLogBookRecords
                                        && row.data.status !== logBookPageStatusesEnum.Canceled
                                        && !row.data.consistsOriginProducts"
@@ -71,7 +71,7 @@
                                 tooltipText="{{ 'catches-and-sales.anull-transportation-log-book-page' | tlTranslate }}">
                 </tl-icon-button>
 
-                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
                                        && row.data.status === logBookPageStatusesEnum.Canceled
                                        && canCancelTransportationLogBookRecords"
                                 icon="restore"
@@ -87,7 +87,9 @@
                                 tooltipText="{{ 'catches-and-sales.view-transportation-log-book-page' | tlTranslate }}">
                 </tl-icon-button>
 
-                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended && canEditTransportationLogBookRecords && row.data.status !== logBookPageStatusesEnum.Canceled"
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished) 
+                                        && canEditTransportationLogBookRecords 
+                                        && row.data.status !== logBookPageStatusesEnum.Canceled"
                                 icon="edit"
                                 (buttonClicked)="editTransportationLogBookPage(row.data, false)"
                                 iconClass="accent-color"

@@ -127,6 +127,7 @@
                                                                    [showInactiveRecords]="!isPublicApp"
                                                                    [pagesPermissions]="pagesPermissions"
                                                                    [showDocumentActionButtons]="!isPublicApp"
+                                                                   [allowEditAfterFinished]="row.data.allowNewLogBookPages"
                                                                    (onActiveRecordChanged)="editShipLogBookPage($event.shipPage, $event.viewMode)"
                                                                    (onEditAdmissionLogBookPage)="editAdmissionLogBookPage($event, false)"
                                                                    (onViewAdmissionLogBookPage)="editAdmissionLogBookPage($event, true)"
@@ -150,6 +151,7 @@
                                                                         [showInactiveRecords]="!isPublicApp"
                                                                         [canCancelAdmissionLogBookRecords]="canCancelAdmissionLogBookRecords"
                                                                         [canEditAdmissionLogBookRecords]="canEditAdmissionLogBookRecords"
+                                                                        [allowEditAfterFinished]="row.data.allowNewLogBookPages"
                                                                         (onActiveRecordChanged)="editAdmissionLogBookPage($event.page, $event.viewMode)"
                                                                         (onEditAdmissionLogBookPage)="editAdmissionLogBookPage($event, false)"
                                                                         (onViewAdmissionLogBookPage)="editAdmissionLogBookPage($event, true)"
@@ -164,6 +166,7 @@
                                                                              [showInactiveRecords]="!isPublicApp"
                                                                              [canCancelTransportationLogBookRecords]="canCancelTransportationLogBookRecords"
                                                                              [canEditTransportationLogBookRecords]="canEditTransportationLogBookRecords"
+                                                                             [allowEditAfterFinished]="row.data.allowNewLogBookPages"
                                                                              (onActiveRecordChanged)="editTransportationLogBookPage($event.page, $event.viewMode)"
                                                                              (onEditTransportationLogBookPage)="editTransportationLogBookPage($event, false)"
                                                                              (onViewTransportationLogBookPage)="editTransportationLogBookPage($event, true)"
@@ -178,6 +181,7 @@
                                                         [showInactiveRecords]="!isPublicApp"
                                                         [canCancelFirstSaleLogBookRecords]="canCancelFirstSaleLogBookRecords"
                                                         [canEditFirstSaleLogBookRecords]="canEditFirstSaleLogBookRecords"
+                                                        [allowEditAfterFinished]="row.data.allowNewLogBookPages"
                                                         (onActiveRecordChanged)="editFirstSaleLogBookPage($event.page, $event.viewMode)"
                                                         (onEditFirstSaleLogBookPage)="editFirstSaleLogBookPage($event, false)"
                                                         (onViewFirstSaleLogBookPage)="editFirstSaleLogBookPage($event, true)"
@@ -192,6 +196,7 @@
                                                          [showInactiveRecords]="!isPublicApp"
                                                          [canCancelAquacultureLogBookRecords]="canCancelAquacultureLogBookRecords"
                                                          [canEditAquacultureLogBookRecords]="canEditAquacultureLogBookRecords"
+                                                         [allowEditAfterFinished]="row.data.allowNewLogBookPages"
                                                          (onActiveRecordChanged)="editAquacultureLogBookPage($event.page, $event.viewMode)"
                                                          (onEditAquacultureLogBookPage)="editAquacultureLogBookPage($event, false)"
                                                          (onViewAquacultureLogBookPage)="editAquacultureLogBookPage($event, true)"
@@ -258,7 +263,7 @@
                                             [attr.data-logbook-id]="row.data.id">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Admission &&  canReadAdmissionLogBookRecords"
+                            <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Admission && canReadAdmissionLogBookRecords"
                                             icon="visibility"
                                             (buttonClicked)="viewLogBook(row.data)"
                                             iconClass="accent-color"
@@ -290,14 +295,16 @@
                                                 size="1.5"
                                                 [attr.no-enable]="true"
                                                 [attr.data-logbook-id]="row.data.id"
-                                                [tooltipText]="row.data.isShipForbiddenForPages 
-                                                                ? shipForbiddenForPagesTooltip 
-                                                                : row.data.isLogBookFinished
-                                                                    ? logBookFishinedTooltip
-                                                                    : row.data.isLogBookSuspended 
-                                                                        ? logBookHasSuspendedLicenseTooltip
-                                                                        : addLogBookPageTooltip"
-                                                [disabled]="row.data.isLogBookFinished || row.data.isLogBookSuspended || row.data.isShipForbiddenForPages">
+                                                [tooltipText]="row.data.allowNewLogBookPages
+                                                                ? addLogBookPageTooltip
+                                                                : row.data.isShipForbiddenForPages
+                                                                    ? shipForbiddenForPagesTooltip
+                                                                    : row.data.isLogBookFinished
+                                                                        ? logBookFishinedTooltip
+                                                                        : row.data.isLogBookSuspended
+                                                                            ? logBookHasSuspendedLicenseTooltip
+                                                                            : addLogBookPageTooltip"
+                                                [disabled]="(!row.data.allowNewLogBookPages && (row.data.isLogBookFinished || row.data.isLogBookSuspended)) || row.data.isShipForbiddenForPages">
                                 </tl-icon-button>
 
                                 <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.FirstSale && canAddFirstSaleLogBookRecords"
@@ -307,10 +314,12 @@
                                                 size="1.5"
                                                 [attr.no-enable]="true"
                                                 [attr.data-logbook-id]="row.data.id"
-                                                [tooltipText]="row.data.isLogBookFinished
-                                                                ? logBookFishinedTooltip
-                                                                : addLogBookPageTooltip"
-                                                [disabled]="row.data.isLogBookFinished || row.data.isLogBookSuspended">
+                                                [tooltipText]="row.data.allowNewLogBookPages
+                                                                ? addLogBookPageTooltip
+                                                                : row.data.isLogBookFinished
+                                                                    ? logBookFishinedTooltip
+                                                                    : addLogBookPageTooltip"
+                                                [disabled]="!row.data.allowNewLogBookPages && (row.data.isLogBookFinished || row.data.isLogBookSuspended)">
                                 </tl-icon-button>
 
                                 <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Admission && canAddAdmissionLogBookRecords"
@@ -320,10 +329,12 @@
                                                 size="1.5"
                                                 [attr.no-enable]="true"
                                                 [attr.data-logbook-id]="row.data.id"
-                                                [tooltipText]="row.data.isLogBookFinished
-                                                                ? logBookFishinedTooltip
-                                                                : addLogBookPageTooltip"
-                                                [disabled]="row.data.isLogBookFinished || row.data.isLogBookSuspended">
+                                                [tooltipText]="row.data.allowNewLogBookPages
+                                                                ? addLogBookPageTooltip
+                                                                : row.data.isLogBookFinished
+                                                                    ? logBookFishinedTooltip
+                                                                    : addLogBookPageTooltip"
+                                                [disabled]="!row.data.allowNewLogBookPages && (row.data.isLogBookFinished || row.data.isLogBookSuspended)">
                                 </tl-icon-button>
 
                                 <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Transportation && canAddTransportationLogBookRecords"
@@ -333,10 +344,12 @@
                                                 size="1.5"
                                                 [attr.no-enable]="true"
                                                 [attr.data-logbook-id]="row.data.id"
-                                                [tooltipText]="row.data.isLogBookFinished
-                                                                ? logBookFishinedTooltip
-                                                                : addLogBookPageTooltip"
-                                                [disabled]="row.data.isLogBookFinished || row.data.isLogBookSuspended">
+                                                [tooltipText]="row.data.allowNewLogBookPages
+                                                                ? addLogBookPageTooltip
+                                                                : row.data.isLogBookFinished
+                                                                    ? logBookFishinedTooltip
+                                                                    : addLogBookPageTooltip"
+                                                [disabled]="!row.data.allowNewLogBookPages && (row.data.isLogBookFinished || row.data.isLogBookSuspended)">
                                 </tl-icon-button>
 
                                 <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.Aquaculture && canAddAquacultureLogBookRecords"
@@ -346,10 +359,12 @@
                                                 size="1.5"
                                                 [attr.no-enable]="true"
                                                 [attr.data-logbook-id]="row.data.id"
-                                                [tooltipText]="row.data.isLogBookFinished
-                                                                ? logBookFishinedTooltip
-                                                                : addLogBookPageTooltip"
-                                                [disabled]="row.data.isLogBookFinished || row.data.isLogBookSuspended">
+                                                [tooltipText]="row.data.allowNewLogBookPages
+                                                                ? addLogBookPageTooltip
+                                                                : row.data.isLogBookFinished
+                                                                    ? logBookFishinedTooltip
+                                                                    : addLogBookPageTooltip"
+                                                [disabled]="!row.data.allowNewLogBookPages && (row.data.isLogBookFinished || row.data.isLogBookSuspended)">
                                 </tl-icon-button>
                             </ng-container>
                         </div>

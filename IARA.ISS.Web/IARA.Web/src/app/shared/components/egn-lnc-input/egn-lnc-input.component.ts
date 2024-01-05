@@ -62,7 +62,6 @@ export class EgnLncInputComponent extends CustomFormControl<EgnLncDTO | undefine
         const validators = [
             TLValidators.expectedValueMatch(this.expectedValue),
             TLValidators.exactLength(10),
-            TLValidators.number(0, undefined, 0),
             TLValidators.egn
         ];
 
@@ -77,7 +76,6 @@ export class EgnLncInputComponent extends CustomFormControl<EgnLncDTO | undefine
             TLValidators.expectedValueMatch(this.expectedValue),
             Validators.required,
             TLValidators.exactLength(10),
-            TLValidators.number(0, undefined, 0),
             TLValidators.pnf
         ];
 

@@ -79,11 +79,13 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public isRegisterEntry: boolean = false;
     public isDuplicate: boolean = false;
+    public isPaid: boolean = false;
 
     public currentDate: Date = new Date();
     public validFrom: Date | undefined;
 
     public fishingAssociations!: NomenclatureDTO<number>[];
+    public territoryUnits: NomenclatureDTO<number>[] = [];
 
     public showFilesPanel: boolean = false;
     public personPhotoMethod: TLPictureRequestMethod | undefined;
@@ -165,6 +167,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
 
         this.systemProperties = await this.systemPropertiesService.properties.toPromise();
         this.getFishingAssociations().subscribe();
+        this.getTerritoryUnits().subscribe();
         this.pageCode = this.getPageCodeFromTicketType();
         this.representativeSameAsAdultLabel = this.getRepresentativeLabel();
 
@@ -198,7 +201,9 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                 });
             }
             else {
-                this.service.getTicket(this.dialogData.id, this.dialogData.showRegiXData).subscribe({
+                const showRegiXData: boolean = (this.dialogData?.showRegiXData || this.dialogData?.viewMode || this.dialogData?.isReadonly) ?? false;
+
+                this.service.getTicket(this.dialogData.id, showRegiXData).subscribe({
                     next: (result: RecreationalFishingTicketDTO) => {
                         if (this.isRenewal) {
                             result.validFrom = this.currentDate;
@@ -207,6 +212,10 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                             this.isRegisterEntry = true;
                             this.currentDate = result.issuedOn!;
                             this.form.get('validFromControl')!.clearValidators();
+                        }
+
+                        if (this.dialogData!.viewMode || this.dialogData!.isReadonly) {
+                            this.regixChecksData = new RecreationalFishingTicketBaseRegixDataDTO(result.regiXDataModel);
                         }
 
                         if (this.dialogData!.showRegiXData) {
@@ -258,14 +267,14 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
         const type: TicketTypeEnum = TicketTypeEnum[this.type.code as keyof typeof TicketTypeEnum];
 
         if (!this.isRegisterEntry && type === TicketTypeEnum.UNDER14)
-        this.form.get('representativeSameAsAdultControl')?.valueChanges.subscribe({
-            next: (checked: boolean) => {
-                if (checked) {
-                    this.form.get('representativeRegixDataControl')!.setValue(this.representativePerson);
-                    this.form.get('representativeAddressControl')!.setValue(this.representativePersonAddressRegistrations);
+            this.form.get('representativeSameAsAdultControl')?.valueChanges.subscribe({
+                next: (checked: boolean) => {
+                    if (checked) {
+                        this.form.get('representativeRegixDataControl')!.setValue(this.representativePerson);
+                        this.form.get('representativeAddressControl')!.setValue(this.representativePersonAddressRegistrations);
+                    }
                 }
-            }
-        });
+            });
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
@@ -383,11 +392,28 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                 }
             }
 
+            if (this.hasProperty(value, 'deliveryTerritoryUnitId')) {
+                this.getTerritoryUnits().subscribe({
+                    next: () => {
+                        this.form.get('deliveryTerritoryUnitControl')?.setValue(this.territoryUnits.find(x => x.value === value.deliveryTerritoryUnitId));
+                    }
+                });
+            }
+
             if (this.hasProperty(value, 'comment')) {
                 this.form.get('commentsControl')?.setValue(value.comment);
             }
             if (this.hasProperty(value, 'files')) {
                 this.form.get('filesControl')?.setValue(value.files);
+            }
+
+            if (this.hasProperty(value, 'isPaid')) {
+                this.isPaid = value.isPaid ?? false;
+
+                if (this.hasProperty(value, 'paymentInformation')) {
+                    this.form.get('paymentDataControl')?.setValue(value.paymentInformation);
+                    this.form.get('paymentDataControl')?.disable();
+                }
             }
         }
     }
@@ -576,10 +602,12 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             telkNumControl: new FormControl(null),
             telkIsIndefiniteControl: new FormControl(false),
             telkValidToControl: new FormControl(null),
+            deliveryTerritoryUnitControl: new FormControl(null),
             commentsControl: new FormControl(null, Validators.maxLength(4000)),
             filesControl: new FormControl(),
             guaranteeTrueDataControl: new FormControl(false, Validators.requiredTrue),
-            updatePersonalDataControl: new FormControl(true)
+            updatePersonalDataControl: new FormControl(true),
+            paymentDataControl: new FormControl()
         });
     }
 
@@ -595,6 +623,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             personPhoto: this.form.get('photoControl')?.value ?? undefined,
             personAddressRegistrations: this.form.get('addressControl')?.value,
             comment: this.form.get('commentsControl')?.value ?? undefined,
+            deliveryTerritoryUnitId: this.form.get('deliveryTerritoryUnitControl')?.value?.value ?? undefined,
             hasUserConfirmed: this.form.get('guaranteeTrueDataControl')?.value ?? undefined,
             files: this.form.get('filesControl')?.value ?? undefined
         });
@@ -961,6 +990,14 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             NomenclatureTypes.TicketPeriods, this.service.getTicketPeriods.bind(this.service), false
         ).pipe(map((periods: NomenclatureDTO<number>[]) => {
             this.periods = periods;
+        }));
+    }
+
+    private getTerritoryUnits(): Observable<void> {
+        return NomenclatureStore.instance.getNomenclature(
+            NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures), false
+        ).pipe(map((territoryUnits: NomenclatureDTO<number>[]) => {
+            this.territoryUnits = territoryUnits;
         }));
     }
 

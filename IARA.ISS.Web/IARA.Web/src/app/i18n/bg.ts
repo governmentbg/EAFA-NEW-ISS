@@ -1079,6 +1079,9 @@
 
         'no-person-found-snackbar-err': 'Не е открито лице с тези данни',
 
+        'offline-tickets': 'Хартиени билети',
+        'online-tickets': 'Електронни билети',
+
         'my-tickets': 'Моите билети',
         'my-ticket-status': 'Статус',
         'my-ticket-active': 'Активен',
@@ -1144,6 +1147,7 @@
         'application-is-duplicate-no': 'Покажи всички освен дубликатите',
         'application-is-duplicate-both': 'Покажи всички',
         'application-ticket-status': 'Статус',
+        'application-issue-date': 'Дата на издаване',
         'application-ticket-price': 'Цена',
         'application-delete': 'Изтрий билет',
         'application-restore': 'Възстанови билет',
@@ -1153,6 +1157,7 @@
 
         'ticket-numbers-go-forward': 'Премини напред',
         'ticket-number-already-in-use': 'Вече има издаден билет с този номер',
+        'online-ticket-number-already-in-use': 'Вече има издаден билет с този номер',
         'ticket-numbers-duplicates': 'Номерата на билетите не може да съвпадат',
         'association-ticket-print-application': 'Отпечатай декларация за подпис',
         'association-ticket-upload-application': 'Прикачи подписана декларация',
@@ -1234,6 +1239,26 @@
         'ticket-period-noperiod-resource': 'Без фиксиран срок',
 
         'association-blocked-until': 'Системата за издаване на билети към този момент не е налична. Ще можете да издавате билети след',
+
+        'online-ticket-number': 'Номер на билета',
+        'enter-online-ticket-number-button': 'Въвеждане на номер на билета',
+        'enter-online-ticket-number-dialog-title': 'Въвеждане на номер на билета',
+        'ticket-status-offline-number-expected': 'В очакване на връчване',
+        'ticket-delivery-territory-unit': 'Териториално звено за получаване',
+        'ticket-delivery-territory-unit-card': 'Териториално звено за получаване',
+        'ticket-delivery-territory-unit-input': 'Териториално звено',
+
+        'association-users': 'Потребители с достъп до сдружението',
+        'fishing-association-user': 'Потребител',
+        'user-status': 'Статус',
+        'user-status-header': 'Смяна на статус',
+        'user-status-approved': 'Одобрен',
+        'user-status-requested': 'Изчаква достъп',
+        'user-status-blocked': 'Отказан',
+        'user-status-allow-access': 'Позволи достъп',
+        'user-status-deny-access': 'Откажи достъп',
+
+        'ticket-payment-information': 'Информация за плащане'
     },
     'payment-data': {
         'tariffs-panel-title': 'Приложени тарифи',
@@ -1553,7 +1578,7 @@
         'last-name': 'Фамилия',
         'egn': 'ЕГН/ЛНЧ',
         'permanent-address-same-as-correspondence': 'Постоянният адрес съвпада с адреса за кореспонденция',
-        'has-bulgarian-address-registration': 'Притежавам българска адресна регистрация',
+        'has-bulgarian-address-registration': 'Притежава българска адресна регистрация',
         'document-type': 'Тип на документа',
         'document-number': 'Номер на документа',
         'document-issue-date': 'Издаден на',
@@ -1575,13 +1600,19 @@
         'passwords-must-match': 'Паролите трябва да съвпадат',
         'password-is-required': 'Паролата е задължителна',
         'territory-unit': 'Териториално звено',
+        'view-user-legal': 'Преглед на достъп до сдружение',
+        'edit-user-legal': 'Редакция на достъп до сдружение',
         'delete-user-legal': 'Изтриване на достъп до сдружение',
         'restore-user-legal': 'Възстановяване на достъп до сдружение',
+        'view-user-legal-dialog-title': 'Преглед на достъп до сдружение',
+        'edit-user-legal-dialog-title': 'Редакция на достъп до сдружение',
         'delete-user-legal-dialog-title': 'Изтриване на достъп до сдружение',
         'delete-user-legal-dialog-message': 'Сигурни ли сте, че искате да изтриете достъпа до това сдружение?',
         'delete-user-legal-dialog-ok-btn-label': 'Изтриване',
         'associations': 'Сдружения',
-        'email-already-exists-error': 'Въведеният имейл вече съществува в системата'
+        'email-already-exists-error': 'Въведеният имейл вече съществува в системата',
+        'user-legal-missing-properties-error': 'Има сдружения с невалидни/непопълни полета, които трябва да бъдат валидно попълнени',
+        'egn-lnc-invalid-error': 'В системата вече има валиден потребител с посоченото ЕГН/ЛНЧ'
     },
     'buyers-and-sales-centers': {
         'delete-buyer': 'Изтриване на купувач/ЦПП',
@@ -6283,6 +6314,8 @@
         'application-type-name': 'Име на услуга',
         'tickets': 'Електронен билет за любителски риболов на физическо лице',
         'associations': 'Сдружения',
+        'tickets-video': 'ИАРА - издаване на билет от сдружения',
+        'associations-video': 'ИАРА - регистрация на съществуващи сдружения',
         'welcome': 'Добре дошли в портала за електронни услуги на ИАРА',
         'log-in-paragraph': ' Входът в портала се осъществява чрез регистрация на потребител или системата за електронна автентикация. Всяко едно от средставата за автентикация ще Ви позволи да достъпите портала, но за да заявите услуга по електронен път, е необходимо да притежавате и инсталирате на Вашия компютър  квалифициран електронен подпис (КЕП).',
         'egov-paragraph': 'В случай, че желаете електронно връчване на документ е препоръчително да имате профил в системата за сигурно електронно връчване (може да се регистрирате ',
