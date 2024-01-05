@@ -1,5 +1,5 @@
-﻿import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ChangeUserDataDTO } from '@app/models/generated/dtos/ChangeUserDataDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
@@ -20,26 +20,34 @@ import { GridRow } from '@app/shared/components/data-table/models/row.model';
 import { UserLegalStatusEnum } from '@app/enums/user-legal-status.enum';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { ChangeUserDataLegalComponent } from '../change-userdata-legal/change-userdata-legal.component';
+import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
+import { ChangeUserLegalDialogParams } from '../models/change-user-legal-dialog-params';
+import { ChangeUserLegalDTO } from '@app/models/generated/dtos/ChangeUserLegalDTO';
+import { CommonUtils } from '@app/shared/utils/common.utils';
 
 @Component({
     selector: 'change-userdata',
     templateUrl: './change-userdata.component.html'
 })
-export class ChangeUserDataComponent implements OnInit, IDialogComponent {
+export class ChangeUserDataComponent implements OnInit, AfterViewInit, IDialogComponent {
     public showDistricts: boolean = false;
     public showAllDistricts: boolean = false;
     public passwordIcon: string = "fa-eye";
     public passwordConfirmationIcon: string = "fa-eye";
     public userMustChangePassword: boolean = false;
     public hasEmailExistsError: boolean = false;
+    public hasEgnLncExistsError: boolean = false;
+    public isTouched: boolean = false;
     public legalStatusEnum: typeof UserLegalStatusEnum = UserLegalStatusEnum;
+    public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
     public documentTypes: NomenclatureDTO<number>[] = [];
     public countries: NomenclatureDTO<number>[] = [];
     public genders: NomenclatureDTO<number>[] = [];
     public districts!: NomenclatureDTO<number>[];
     public territoryUnits: NomenclatureDTO<number>[] = [];
-    public userLegals: UserLegalDTO[] = [];
+    public userLegals: ChangeUserLegalDTO[] = [];
     public changeUserDataForm!: FormGroup;
 
     private userModel!: ChangeUserDataDTO;
@@ -49,6 +57,7 @@ export class ChangeUserDataComponent implements OnInit, IDialogComponent {
     private readonly nomenclaturesService: CommonNomenclatures;
     private readonly translateService: FuseTranslationLoaderService;
     private readonly confirmDialog: TLConfirmDialog;
+    private readonly userLegalDialog: TLMatDialog<ChangeUserDataLegalComponent>;
 
     @ViewChild('legalDataTable')
     private userLegalsTable!: TLDataTableComponent;
@@ -60,12 +69,14 @@ export class ChangeUserDataComponent implements OnInit, IDialogComponent {
         nomenclaturesService: CommonNomenclatures,
         translateService: FuseTranslationLoaderService,
         userService: UsersService,
-        confirmDialog: TLConfirmDialog
+        confirmDialog: TLConfirmDialog,
+        userLegalDialog: TLMatDialog<ChangeUserDataLegalComponent>
     ) {
         this.userService = userService;
         this.nomenclaturesService = nomenclaturesService;
         this.translateService = translateService;
         this.confirmDialog = confirmDialog;
+        this.userLegalDialog = userLegalDialog;
         this.buildForm();
     }
 
@@ -75,6 +86,14 @@ export class ChangeUserDataComponent implements OnInit, IDialogComponent {
         ).subscribe({
             next: (result: NomenclatureDTO<number>[]) => {
                 this.territoryUnits = result;
+            }
+        });
+    }
+
+    public ngAfterViewInit(): void {
+        this.userLegalsTable.recordChanged.subscribe({
+            next: () => {
+                this.isTouched = true;
             }
         });
     }
@@ -100,6 +119,7 @@ export class ChangeUserDataComponent implements OnInit, IDialogComponent {
 
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         if (actionInfo.id === 'save') {
+            this.isTouched = true;
             this.changeUserDataForm.markAllAsTouched();
             this.changeUserDataForm.updateValueAndValidity({ emitEvent: false });
             this.validityCheckerGroup.validate();
@@ -138,7 +158,43 @@ export class ChangeUserDataComponent implements OnInit, IDialogComponent {
         }
     }
 
-    public deleteUserLegal(userLegal: GridRow<UserLegalDTO>): void {
+    public editUserLegal(userLegal: ChangeUserLegalDTO, viewMode: boolean = false): void {
+        const title: string = viewMode
+            ? this.translateService.getValue('my-profile.view-user-legal-dialog-title')
+            : this.translateService.getValue('my-profile.edit-user-legal-dialog-title');
+
+        const data: ChangeUserLegalDialogParams = new ChangeUserLegalDialogParams({
+            model: userLegal,
+            viewMode: viewMode,
+            territoryUnits: this.territoryUnits
+        });
+
+        const dialog = this.userLegalDialog.openWithTwoButtons({
+            title: title,
+            TCtor: ChangeUserDataLegalComponent,
+            headerAuditButton: undefined,
+            headerCancelButton: {
+                cancelBtnClicked: this.closeDialogBtnClicked.bind(this)
+            },
+            componentData: data,
+            translteService: this.translateService,
+            viewMode: viewMode
+        }, '1200px');
+
+        dialog.subscribe({
+            next: (result: ChangeUserLegalDTO | undefined) => {
+                if (result !== undefined && result !== null) {
+                    userLegal = result;
+                    userLegal.hasMissingProperties = false;
+                    this.userLegals = this.userLegals.slice();
+
+                    this.changeUserDataForm.updateValueAndValidity({ emitEvent: false });
+                }
+            }
+        })
+    }
+
+    public deleteUserLegal(userLegal: GridRow<ChangeUserLegalDTO>): void {
         this.confirmDialog.open({
             title: this.translateService.getValue('my-profile.delete-user-legal-dialog-title'),
             message: this.translateService.getValue('my-profile.delete-user-legal-dialog-message'),
@@ -147,16 +203,18 @@ export class ChangeUserDataComponent implements OnInit, IDialogComponent {
             next: (ok: boolean) => {
                 if (ok) {
                     this.userLegalsTable.softDelete(userLegal);
+                    this.changeUserDataForm.updateValueAndValidity({ emitEvent: false });
                 }
             }
         });
     }
 
-    public undoDeleteUserLegal(userLegal: GridRow<UserLegalDTO>): void {
+    public undoDeleteUserLegal(userLegal: GridRow<ChangeUserLegalDTO>): void {
         this.confirmDialog.open().subscribe({
             next: (ok: boolean) => {
                 if (ok) {
                     this.userLegalsTable.softUndoDelete(userLegal);
+                    this.changeUserDataForm.updateValueAndValidity({ emitEvent: false });
                 }
             }
         });
@@ -174,7 +232,7 @@ export class ChangeUserDataComponent implements OnInit, IDialogComponent {
                 TLValidators.confirmPasswordValidator,
                 Validators.maxLength(64),
                 TLValidators.passwordComplexityValidator()]),
-        });
+        }, this.missingUserLegalPropertiesValidator());
 
         this.changeUserDataForm.get('basicDataControl')!.valueChanges.subscribe({
             next: (data: RegixPersonDataDTO) => {
@@ -189,6 +247,7 @@ export class ChangeUserDataComponent implements OnInit, IDialogComponent {
 
         setTimeout(() => {
             this.userLegals = model.userLegals ?? [];
+            this.setUserLegalMissingProperty();
         });
     }
 
@@ -229,15 +288,73 @@ export class ChangeUserDataComponent implements OnInit, IDialogComponent {
             TLValidators.passwordComplexityValidator()]);
     }
 
-    private getUserLegalsFromTable(): UserLegalDTO[] {
-        const rows = this.userLegalsTable.rows as UserLegalDTO[];
+    private missingUserLegalPropertiesValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (this.userLegals !== undefined && this.userLegals !== null && this.userLegals.length > 0) {
 
-        const userLegals: UserLegalDTO[] = rows.map(x => new UserLegalDTO({
+                for (const userLegal of this.userLegals) {
+                    if (userLegal.hasMissingProperties && userLegal.isActive) {
+                        return { 'missingProperties': true };
+                    }
+                }
+            }
+
+            return null;
+        }
+    }
+
+    private setUserLegalMissingProperty(): void {
+        if (this.userLegals.length > 0) {
+            for (const userLegal of this.userLegals) {
+                userLegal.hasMissingProperties = this.checkForMissingProperties(userLegal);
+            }
+        }
+    }
+
+    private checkForMissingProperties(userLegal: ChangeUserLegalDTO): boolean {
+        if (userLegal.legal?.eik === undefined || userLegal.legal?.eik === null) {
+            return true;
+        }
+
+        if (userLegal.legal?.eik?.includes('ЛРД') === true) {
+            return true;
+        }
+
+        if (userLegal.legal?.name === undefined || userLegal.legal?.name === null) {
+            return true;
+        }
+
+        if (userLegal.territoryUnitId === undefined || userLegal.territoryUnitId === null) {
+            return true;
+        }
+
+        if (userLegal.addresses !== undefined && userLegal.addresses !== null && userLegal.addresses.length > 0) {
+            for (const address of userLegal.addresses) {
+                if (address.countryId === undefined || address.countryId === null || address.street === undefined || address.street === null) {
+                    return true;
+                }
+            }
+        }
+        else {
+            return true;
+        }
+
+        return false;
+    }
+
+    private getUserLegalsFromTable(): ChangeUserLegalDTO[] {
+        const rows = this.userLegalsTable.rows as ChangeUserLegalDTO[];
+
+        const userLegals: UserLegalDTO[] = rows.filter(x => x.isActive !== false).map(x => new ChangeUserLegalDTO({
             legalId: x.legalId,
             roleId: x.roleId,
             eik: x.eik,
             name: x.name,
             status: x.status,
+            addresses: x.addresses,
+            legal: x.legal,
+            territoryUnitId: x.territoryUnitId,
+            associationId: x.associationId,
             isActive: x.isActive
         }));
 
@@ -253,5 +370,16 @@ export class ChangeUserDataComponent implements OnInit, IDialogComponent {
             this.changeUserDataForm.markAsTouched();
             this.validityCheckerGroup.validate();
         }
+
+        if (errorCode === ErrorCode.InvalidEgnLnch) {
+            this.hasEgnLncExistsError = true;
+            this.changeUserDataForm.setErrors({ invalidEgnLnc: true });
+            this.changeUserDataForm.markAsTouched();
+            this.validityCheckerGroup.validate();
+        }
+    }
+
+    private closeDialogBtnClicked(closeFn: DialogCloseCallback): void {
+        closeFn();
     }
 }

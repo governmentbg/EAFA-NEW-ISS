@@ -3,6 +3,7 @@
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { RegixLegalDataDTO } from './RegixLegalDataDTO';
 import { AddressRegistrationDTO } from './AddressRegistrationDTO';
+import { FishingAssociationUserDTO } from './FishingAssociationUserDTO';
 import { FileInfoDTO } from './FileInfoDTO';
 
 export class RecreationalFishingAssociationEditDTO { 
@@ -36,6 +37,9 @@ export class RecreationalFishingAssociationEditDTO {
 
     @StrictlyTyped(String)
     public cancellationReason?: string;
+
+    @StrictlyTyped(FishingAssociationUserDTO)
+    public users?: FishingAssociationUserDTO[];
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];

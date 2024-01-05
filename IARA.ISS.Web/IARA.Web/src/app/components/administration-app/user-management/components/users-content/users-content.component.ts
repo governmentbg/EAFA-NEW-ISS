@@ -309,6 +309,10 @@ export class UsersContentComponent implements OnInit, AfterViewInit {
             },
             componentData: data,
             translteService: this.translationService,
+        }).subscribe({
+            next: () => {
+                this.gridManager.editRecord(user);
+            }
         });
     }
 

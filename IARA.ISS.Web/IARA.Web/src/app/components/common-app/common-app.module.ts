@@ -80,10 +80,12 @@ import { EditLegalAssociationComponent } from './legal-associations/edit-legal-a
 import { EditAuthorizedPersonComponent } from './legals/edit-authorized-person/edit-authorized-person.component';
 import { EditLegalEntityComponent } from './legals/edit-legal-entity/edit-legal-entity.component';
 import { ChangePasswordComponent } from './my-profile/components/change-password/change-password.component';
+import { ChangeUserDataLegalComponent } from './my-profile/components/change-userdata-legal/change-userdata-legal.component';
 import { ChangeUserDataComponent } from './my-profile/components/change-userdata/change-userdata.component';
 import { MyProfileContentComponent } from './my-profile/my-profile-content.component';
 import { OnlinePaymentPageComponent } from './online-payment-page/online-payment-page.component';
 import { EditFisherComponent } from './qualified-fishers/edit-fisher.component';
+import { EnterOnlineTicketNumberComponent } from './recreational-fishing/applications/components/enter-online-ticket-number/enter-online-ticket-number.component';
 import { IssueDuplicateTicketComponent } from './recreational-fishing/applications/components/issue-duplicate-ticket/issue-duplicate-ticket.component';
 import { RecreationalFishingApplicationsContentComponent } from './recreational-fishing/applications/recreational-fishing-applications-content.component';
 import { RecreationalFishingTicketSummaryComponent } from './recreational-fishing/tickets/components/ticket-summary/recreational-fishing-ticket-summary.component';
@@ -213,7 +215,9 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         WaitExternalChecksToFinishComponent,
         SuspensionsComponent,
         ChoosePermitLicenseFromInspectionComponent,
-        EditPermitLicenseFishingGearsComponent
+        EditPermitLicenseFishingGearsComponent,
+        EnterOnlineTicketNumberComponent,
+        ChangeUserDataLegalComponent
     ],
     imports: [
         TLCommonModule,
@@ -322,7 +326,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         WaitExternalChecksToFinishComponent,
         SuspensionsComponent,
         ChoosePermitLicenseFromInspectionComponent,
-        EditPermitLicenseFishingGearsComponent
+        EditPermitLicenseFishingGearsComponent,
+        ChangeUserDataLegalComponent
     ],
     providers: [CurrencyPipe, TLDateDifferencePipe, DatePipe]
 })

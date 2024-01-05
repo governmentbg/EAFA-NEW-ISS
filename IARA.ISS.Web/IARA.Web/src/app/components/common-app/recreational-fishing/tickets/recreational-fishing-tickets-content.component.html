@@ -176,6 +176,15 @@
                 </recreational-fishing-ticket-summary>
             </div>
 
+            <div *ngIf="isPublicApp && !isAssociation" fxLayout="row" fxLayoutAlign="start center">
+                <tl-autocomplete fxFlex="25"
+                                 [formControl]="deliveryTerritoryUnitControl"
+                                 [options]="territoryUnits"
+                                 label="{{ 'recreational-fishing.ticket-delivery-territory-unit' | tlTranslate }}"
+                                 tooltipResourceName="recreational-fishing.ticket-delivery-territory-unit-helper">
+                </tl-autocomplete>
+            </div>
+
             <div *ngIf="tickets.length + childTickets.length > 1 && totalPrice > 0">
                 <b>{{ 'recreational-fishing.total-sum-price' | tlTranslate }}</b>: {{ totalPrice | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}
             </div>
@@ -195,7 +204,7 @@
                 <button mat-raised-button
                         color="accent"
                         (click)="save(true)"
-                        [disabled]="disableSaveBtnComment !== null || ticketsSaved || !valid || blockAssociationsAddTicketsDate"
+                        [disabled]="disableSaveBtnComment !== null || ticketsSaved || !valid || (blockAssociationsAddTicketsDate && blockAssociationsAddTicketsDate > currentDate)"
                         [matTooltip]="disableSaveBtnComment"
                         [matTooltipDisabled]="disableSaveBtnComment === null">
                     {{ 'recreational-fishing.approve-and-finish-purchase-and-print' | tlTranslate }}
@@ -204,7 +213,7 @@
                 <button mat-raised-button
                         color="accent"
                         (click)="save(false)"
-                        [disabled]="disableSaveBtnComment !== null || ticketsSaved || !valid || blockAssociationsAddTicketsDate"
+                        [disabled]="disableSaveBtnComment !== null || ticketsSaved || !valid || (blockAssociationsAddTicketsDate && blockAssociationsAddTicketsDate > currentDate)"
                         [matTooltip]="disableSaveBtnComment"
                         [matTooltipDisabled]="disableSaveBtnComment === null">
                     {{ 'recreational-fishing.approve-and-finish-purchase' | tlTranslate }}
@@ -256,14 +265,14 @@
                 <button mat-raised-button
                         color="accent"
                         (click)="payAndPrint()"
-                        [disabled]="ticketsPayed || blockAssociationsAddTicketsDate">
+                        [disabled]="ticketsPayed || (blockAssociationsAddTicketsDate && blockAssociationsAddTicketsDate > currentDate)">
                     {{ 'recreational-fishing.finish-payment-and-print' | tlTranslate }}
                 </button>
 
                 <button mat-raised-button
                         color="accent"
                         (click)="pay()"
-                        [disabled]="ticketsPayed || blockAssociationsAddTicketsDate">
+                        [disabled]="ticketsPayed || (blockAssociationsAddTicketsDate && blockAssociationsAddTicketsDate > currentDate)">
                     {{ 'recreational-fishing.finish-payment' | tlTranslate }}
                 </button>
             </div>

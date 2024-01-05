@@ -55,8 +55,8 @@
     <data-template-column *ngIf="showActionButtons" [flexRate]="0.2" [cellClass]="'justify-center'">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <div fxLayout="row wrap" fxLayoutAlign="end center">
-                <tl-icon-button *ngIf="!row.data.isLogBookFinished 
-                                       && canCancelFirstSaleLogBookRecords 
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinished || allowEditAfterFinished)
+                                       && canCancelFirstSaleLogBookRecords
                                        && row.data.status !== logBookPageStatusesEnum.Canceled"
                                 icon="ic-cancel"
                                 [size]="icIconSize"
@@ -65,7 +65,7 @@
                                 tooltipText="{{ 'catches-and-sales.anull-first-sale-log-book-page' | tlTranslate }}">
                 </tl-icon-button>
 
-                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
                                        && row.data.status === logBookPageStatusesEnum.Canceled
                                        && canCancelFirstSaleLogBookRecords"
                                 icon="restore"
@@ -81,7 +81,9 @@
                                 tooltipText="{{ 'catches-and-sales.view-first-sale-log-book-page' | tlTranslate }}">
                 </tl-icon-button>
 
-                <tl-icon-button *ngIf="!row.data.isLogBookFinished && canEditFirstSaleLogBookRecords && row.data.status !== logBookPageStatusesEnum.Canceled"
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinished || allowEditAfterFinished) 
+                                    && canEditFirstSaleLogBookRecords 
+                                    && row.data.status !== logBookPageStatusesEnum.Canceled"
                                 icon="edit"
                                 (buttonClicked)="editFirstSaleLogBookPage(row.data, false)"
                                 iconClass="accent-color"

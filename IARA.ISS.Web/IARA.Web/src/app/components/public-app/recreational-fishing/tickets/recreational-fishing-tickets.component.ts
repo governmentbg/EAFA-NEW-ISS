@@ -107,7 +107,7 @@ export class RecreationalFishingTicketsComponent implements OnInit, AfterViewIni
         this.showExpiredControl.valueChanges.subscribe({
             next: (checked: boolean) => {
                 if (checked === this.activeTickets) {
-                    this.ticketsPaginator.firstPage();
+                    this.ticketsPaginator?.firstPage();
                     this.pageEvent.pageIndex = 0;
                 }
 

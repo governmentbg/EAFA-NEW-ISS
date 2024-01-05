@@ -1091,6 +1091,9 @@
 
         'no-person-found-snackbar-err': 'No person found for these parameters',
 
+        'offline-tickets': 'Offline tickets',
+        'online-tickets': 'Online tickets',
+
         'my-tickets': 'My tickets',
         'my-ticket-status': 'Status',
         'my-ticket-active': 'Active',
@@ -1156,6 +1159,7 @@
         'application-is-duplicate-no': 'Show all except duplicates',
         'application-is-duplicate-both': 'Show all',
         'application-ticket-status': 'Status',
+        'application-issue-date': 'Issue date',
         'application-ticket-price': 'Price',
         'application-delete': 'Delete ticket',
         'application-restore': 'Restore ticket',
@@ -1165,6 +1169,7 @@
 
         'ticket-numbers-go-forward': 'Forward',
         'ticket-number-already-in-use': 'Ticket number already in use',
+        'online-ticket-number-already-in-use': 'Ticket number already in use',
         'ticket-numbers-duplicates': 'Ticket numbers cannot coincide',
         'association-ticket-print-application': 'Print declaration',
         'association-ticket-upload-application': 'Upload signed declaration',
@@ -1244,6 +1249,16 @@
         'ticket-period-noperiod-resource': 'Indefinite',
 
         'association-blocked-until': 'Issuing tickets at this moment is not allowed. You will be able to issue tickets after',
+
+        'online-ticket-number': 'Ticket no.',
+        'enter-online-ticket-number-button': 'Enter ticket no.',
+        'enter-online-ticket-number-dialog-title': 'Enter ticket no.',
+        'ticket-status-offline-number-expected': 'Expected delivery',
+        'ticket-delivery-territory-unit': 'Territory unit for delivery',
+        'ticket-delivery-territory-unit-card': 'Territory unit for delivery',
+        'ticket-delivery-territory-unit-input': 'Territory unit',
+
+        'ticket-payment-information': 'Payment information'
     },
     'payment-data': {
         'tariffs-panel-title': 'Applied tariffs',
@@ -1587,11 +1602,17 @@
         'territory-unit': 'Territory unit',
         'delete-user-legal': 'Delete user legal',
         'restore-user-legal': 'Restore user legal',
+        'view-user-legal': 'View user legal',
+        'edit-user-legal': 'Edit user legal',
+        'view-user-legal-dialog-title': 'View user legal',
+        'edit-user-legal-dialog-title': 'Edit user legal',
         'delete-user-legal-dialog-title': 'Delete user legal',
         'delete-user-legal-dialog-message': 'Are you sure you want to delete this user legal?',
         'delete-user-legal-dialog-ok-btn-label': 'Delete',
         'associations': 'Associations',
-        'email-already-exists-error': 'The entered email address already exists in the system'
+        'email-already-exists-error': 'The entered email address already exists in the system',
+        'user-legal-missing-properties-error': 'There are associations with invalid/empty fields, which need to be correctly filled',
+        'egn-lnc-invalid-error': 'There is already a valid user with the specified EGN/PNF'
     },
     'buyers-and-sales-centers': {
         'delete-buyer': 'Delete buyer/FSC',
@@ -2865,6 +2886,16 @@
         'view-oth-dialog-title': 'Review migrated inspection',
         'edit-oth-dialog-title': 'Edit migrated inspection',
         'add-oth-dialog-title': 'Add migrated inspection',
+
+        'association-users': 'Association users',
+        'fishing-association-user': 'User',
+        'user-status': 'Status',
+        'user-status-header': 'Status',
+        'user-status-approved': 'Approved',
+        'user-status-requested': 'Requested',
+        'user-status-blocked': 'Blocked',
+        'user-status-allow-access': 'Allow access',
+        'user-status-deny-access': 'Deny access',
     },
     'vessel': {
         'name': 'Name',
@@ -6286,6 +6317,8 @@
         'application-type-name': 'Service name',
         'tickets': 'Recreational fishing ticket',
         'associations': 'Associations',
+        'tickets-video': 'EAFA - associations ticket',
+        'associations-video': 'EAFA - associations register',
         'welcome': 'Welcome to EAFA portal',
         'log-in-paragraph': 'Login to the portal is done through user registration or the eAuth system. Any of the means of authentication will allow you to access the portal, but in order to request a service electronically, it is necessary to have and install on your computer a qualified electronic signature ',
         'egov-paragraph': 'You must have e-gov access in order to choose e-delivery as delivery type ',

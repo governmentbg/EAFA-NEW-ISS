@@ -55,8 +55,8 @@
     <data-template-column *ngIf="showActionButtons" [flexRate]="0.2" [cellClass]="'justify-center'">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <div fxLayout="row wrap" fxLayoutAlign="end center">
-                <tl-icon-button *ngIf="!row.data.isLogBookFinished 
-                                       && canCancelAquacultureLogBookRecords 
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinished || allowEditAfterFinished)
+                                       && canCancelAquacultureLogBookRecords
                                        && row.data.status !== logBookPageStatusesEnum.Canceled"
                                 icon="ic-cancel"
                                 [size]="icIconSize"
@@ -65,7 +65,7 @@
                                 tooltipText="{{ 'catches-and-sales.anull-aquaculture-log-book-page' | tlTranslate }}">
                 </tl-icon-button>
 
-                <tl-icon-button *ngIf="!row.data.isLogBookFinishedOrSuspended
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
                                        && row.data.status === logBookPageStatusesEnum.Canceled
                                        && canCancelAquacultureLogBookRecords"
                                 icon="restore"
@@ -81,7 +81,9 @@
                                 tooltipText="{{ 'catches-and-sales.view-aquaculture-log-book-page' | tlTranslate }}">
                 </tl-icon-button>
 
-                <tl-icon-button *ngIf="!row.data.isLogBookFinished && canEditAquacultureLogBookRecords && row.data.status !== logBookPageStatusesEnum.Canceled"
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinished || allowEditAfterFinished) 
+                                    && canEditAquacultureLogBookRecords 
+                                    && row.data.status !== logBookPageStatusesEnum.Canceled"
                                 icon="edit"
                                 (buttonClicked)="editAquacultureLogBookPage(row.data, false)"
                                 iconClass="accent-color"

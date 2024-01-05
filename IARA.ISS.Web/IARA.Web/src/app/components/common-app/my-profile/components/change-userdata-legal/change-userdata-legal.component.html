@@ -1,0 +1,27 @@
+﻿<div class="dialog-padding" fxLayoutGap="1em" [formGroup]="form" fxLayout="column">
+    <regix-data fxFlex="100"
+                formControlName="legalControl"
+                [isPerson]="false"
+                [showCustodianOfProperty]="false"
+                [isIdReadOnly]="isEditing"
+                checkboxLabel="{{ 'my-profile.has-bulgarian-address-registration' | tlTranslate }}">
+    </regix-data>
+
+    <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+        <tl-select fxFlex="50"
+                   label="{{ 'my-profile.territory-unit' | tlTranslate }}"
+                   formControlName="territoryUnitControl"
+                   [options]="territoryUnits"
+                   tooltipResourceName="my-profile.territorial-unit-helper">
+        </tl-select>
+
+        <div fxFlex="50"></div>
+    </div>
+
+    <address-registration fxFlex="100"
+                          formControlName="legalAddressesControl"
+                          addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
+                          secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
+                          checkboxLabel="{{ 'recreational-fishing.permanent-address-same-as-correspondence' | tlTranslate }}">
+    </address-registration>
+</div>

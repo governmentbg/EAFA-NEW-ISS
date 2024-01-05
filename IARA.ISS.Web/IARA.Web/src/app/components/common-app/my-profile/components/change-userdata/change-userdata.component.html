@@ -15,6 +15,10 @@
             * {{ 'my-profile.email-already-exists-error' | tlTranslate }}
         </mat-error>
 
+        <mat-error *ngIf="hasEgnLncExistsError && changeUserDataForm.errors?.invalidEgnLnc === true">
+            * {{ 'my-profile.egn-lnc-invalid-error' | tlTranslate }}
+        </mat-error>
+
         <!--Постоянен адрес-->
         <address-registration formControlName="addressesControl"
                               addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
@@ -26,21 +30,22 @@
     <tl-expansion-panel title="{{ 'my-profile.territory-unit' | tlTranslate }}"
                         [validityChecker]="changeUserDataForm">
         <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-            <tl-select fxFlex="33"
+            <tl-select fxFlex="50"
                        label="{{ 'my-profile.territory-unit' | tlTranslate }}"
                        formControlName="territoryUnitControl"
                        [options]="territoryUnits"
                        tooltipResourceName="my-profile.territorial-unit-helper">
             </tl-select>
 
-            <div fxFlex="66"></div>
+            <div fxFlex="50"></div>
         </div>
     </tl-expansion-panel>
 
     <!--Данни за сдружения-->
     <tl-expansion-panel title="{{ 'my-profile.associations' | tlTranslate }}"
-                        [validityChecker]="changeUserDataForm">
-        <div fxLayout="column">
+                        [validityChecker]="changeUserDataForm"
+                        [validityCheckerExtraCondition]="changeUserDataForm.errors?.missingProperties !== true">
+        <div fxLayout="column" fxLayoutGap="1em">
             <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
                 <tl-data-table #legalDataTable
                                fxFlexFill
@@ -81,14 +86,33 @@
                     <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
                         <ng-template let-row="row" ngx-datatable-cell-template>
                             <div fxLayout="row wrap" fxLayoutAlign="end center">
-                                <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                <tl-icon *ngIf="isTouched && row.data.hasMissingProperties === true"
+                                         icon="ic-exclamation"
+                                         iconClass="error-color"
+                                         [size]="icIconSize">
+                                </tl-icon>
+
+                                <tl-icon-button icon="visibility"
+                                                (buttonClicked)="editUserLegal(row.data, true)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'my-profile.view-user-legal' | tlTranslate }}">
+                                </tl-icon-button>
+
+                                <tl-icon-button *ngIf="row.data.isActive"
+                                                icon="edit"
+                                                (buttonClicked)="editUserLegal(row.data)"
+                                                iconClass="accent-color"
+                                                tooltipText="{{ 'my-profile.edit-user-legal' | tlTranslate }}">
+                                </tl-icon-button>
+
+                                <tl-icon-button *ngIf="row.data.isActive"
                                                 icon="delete"
                                                 (buttonClicked)="deleteUserLegal(row)"
                                                 iconClass="accent-color"
                                                 tooltipText="{{ 'my-profile.delete-user-legal' | tlTranslate }}">
                                 </tl-icon-button>
 
-                                <tl-icon-button *ngIf="!row.data.isActive && !viewMode"
+                                <tl-icon-button *ngIf="!row.data.isActive"
                                                 icon="restore"
                                                 (buttonClicked)="undoDeleteUserLegal(row)"
                                                 iconClass="accent-color"
@@ -99,6 +123,10 @@
                     </data-template-column>
                 </tl-data-table>
             </div>
+
+            <mat-error *ngIf="isTouched && changeUserDataForm.errors?.missingProperties === true">
+                * {{ 'my-profile.user-legal-missing-properties-error' | tlTranslate }}
+            </mat-error>
         </div>
     </tl-expansion-panel>
 

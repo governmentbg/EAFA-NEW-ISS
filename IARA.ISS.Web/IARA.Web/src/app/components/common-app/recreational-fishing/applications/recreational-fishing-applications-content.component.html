@@ -1,179 +1,384 @@
-﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
-    <search-panel [translateService]="translate">
-        <div [formGroup]="form" fxFlexFill fxLayout="column" fxLayoutAlign="space-between start" fxLayoutGap="1em">
-            <!-- Тип, срок на валидност, валиден от, валиден до -->
-            <div fxLayout="row" fxFlexFill fxLayoutAlign="start center" fxLayoutGap="1em">
-                <tl-select fxFlex="25"
-                           formControlName="typesControl"
-                           tooltipResourceName="recreational-fishing.application-ticket-type-helper"
-                           label="{{ 'recreational-fishing.application-ticket-type' | tlTranslate }}"
-                           [options]="types"
-                           [isMultiple]="true">
-                </tl-select>
-                <tl-select fxFlex="25"
-                           formControlName="periodsControl"
-                           tooltipResourceName="recreational-fishing.application-ticket-period-helper"
-                           label="{{ 'recreational-fishing.application-ticket-period' | tlTranslate }}"
-                           [options]="periods"
-                           [isMultiple]="true">
-                </tl-select>
-                <tl-date fxFlex="25"
-                         formControlName="validFromControl"
-                         tooltipResourceName="recreational-fishing.application-ticket-valid-from-helper"
-                         label="{{ 'recreational-fishing.application-ticket-valid-from' | tlTranslate }}">
-                </tl-date>
-                <tl-date fxFlex="25"
-                         formControlName="validToControl"
-                         tooltipResourceName="recreational-fishing.application-ticket-valid-to-helper"
-                         label="{{ 'recreational-fishing.application-ticket-valid-to' | tlTranslate }}">
-                </tl-date>
+﻿<ng-container *ngIf="!isAssociation && !isDashboardMode; else notTabbed">
+    <mat-tab-group mat-align-tabs="start" fxFlexFill (selectedTabChange)="tabChanged($event)">
+        <mat-tab label="{{ 'recreational-fishing.offline-tickets' | tlTranslate }}">
+            <ng-container *ngTemplateOutlet="offlineTicketsContent"></ng-container>
+        </mat-tab>
+
+        <mat-tab label="{{ 'recreational-fishing.online-tickets' | tlTranslate }}">
+            <ng-container *ngTemplateOutlet="onlineTicketsContent"></ng-container>
+        </mat-tab>
+    </mat-tab-group>
+</ng-container>
+
+<ng-template #notTabbed>
+    <ng-container *ngTemplateOutlet="offlineTicketsContent"></ng-container>
+</ng-template>
+
+<ng-template #offlineTicketsContent>
+    <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+        <search-panel #offlineSearchPanel [translateService]="translate">
+            <div [formGroup]="form" fxFlexFill fxLayout="column" fxLayoutAlign="space-between start" fxLayoutGap="1em">
+                <!-- Тип, срок на валидност, валиден от, валиден до -->
+                <div fxLayout="row" fxFlexFill fxLayoutAlign="start center" fxLayoutGap="1em">
+                    <tl-select fxFlex="25"
+                               formControlName="typesControl"
+                               tooltipResourceName="recreational-fishing.application-ticket-type-helper"
+                               label="{{ 'recreational-fishing.application-ticket-type' | tlTranslate }}"
+                               [options]="types"
+                               [isMultiple]="true">
+                    </tl-select>
+                    <tl-select fxFlex="25"
+                               formControlName="periodsControl"
+                               tooltipResourceName="recreational-fishing.application-ticket-period-helper"
+                               label="{{ 'recreational-fishing.application-ticket-period' | tlTranslate }}"
+                               [options]="periods"
+                               [isMultiple]="true">
+                    </tl-select>
+                    <tl-date fxFlex="25"
+                             formControlName="validFromControl"
+                             tooltipResourceName="recreational-fishing.application-ticket-valid-from-helper"
+                             label="{{ 'recreational-fishing.application-ticket-valid-from' | tlTranslate }}">
+                    </tl-date>
+                    <tl-date fxFlex="25"
+                             formControlName="validToControl"
+                             tooltipResourceName="recreational-fishing.application-ticket-valid-to-helper"
+                             label="{{ 'recreational-fishing.application-ticket-valid-to' | tlTranslate }}">
+                    </tl-date>
+                </div>
+
+                <!-- Номер на билет, билетодържател, ЕГН на билетодържател, билетосъздател -->
+                <div fxLayout="row" fxFlexFill fxLayoutAlign="start center" fxLayoutGap="1em">
+                    <tl-input fxFlex="25"
+                              formControlName="ticketNumControl"
+                              tooltipResourceName="recreational-fishing.application-ticket-num-helper"
+                              label="{{ 'recreational-fishing.application-ticket-num' | tlTranslate }}">
+                    </tl-input>
+                    <tl-input fxFlex="25"
+                              formControlName="holderControl"
+                              tooltipResourceName="recreational-fishing.application-ticket-holder-name-helper"
+                              label="{{ 'recreational-fishing.application-ticket-holder-name' | tlTranslate }}">
+                    </tl-input>
+                    <tl-input fxFlex="25"
+                              formControlName="holderEgnControl"
+                              tooltipResourceName="recreational-fishing.application-ticket-holder-egn-helper"
+                              label="{{ 'recreational-fishing.application-ticket-holder-egn' | tlTranslate }}">
+                    </tl-input>
+                    <tl-input fxFlex="25"
+                              formControlName="issuerControl"
+                              tooltipResourceName="recreational-fishing.application-ticket-issued-by-helper"
+                              label="{{ 'recreational-fishing.application-ticket-issued-by' | tlTranslate }}">
+                    </tl-input>
+                </div>
+
+                <!-- Дубликат, статус -->
+                <div fxLayout="row" fxFlexFill fxLayoutAlign="start center" fxLayoutGap="1em">
+                    <tl-select fxFlex="25"
+                               formControlName="isDuplicateControl"
+                               tooltipResourceName="recreational-fishing.application-duplicate-helper"
+                               label="{{ 'recreational-fishing.application-duplicate' | tlTranslate }}"
+                               [options]="isDuplicateOptions">
+                    </tl-select>
+                    <tl-select *ngIf="!isAssociation"
+                               fxFlex="25"
+                               formControlName="statusesControl"
+                               tooltipResourceName="recreational-fishing.application-ticket-status-helper"
+                               label="{{ 'recreational-fishing.application-ticket-status' | tlTranslate }}"
+                               [options]="statuses"
+                               [isMultiple]="true">
+                    </tl-select>
+                    <tl-date-range fxFlex="25"
+                                   formControlName="issueDateControl"
+                                   label="{{ 'recreational-fishing.application-issue-date' | tlTranslate }}"
+                                   tooltipResourceName="recreational-fishing.application-issue-date-helper">
+                    </tl-date-range>
+                    <div *ngIf="isAssociation" fxFlex="25"></div>
+                    <div fxFlex="25"></div>
+                </div>
             </div>
+        </search-panel>
 
-            <!-- Номер на билет, билетодържател, ЕГН на билетодържател, билетосъздател -->
-            <div fxLayout="row" fxFlexFill fxLayoutAlign="start center" fxLayoutGap="1em">
-                <tl-input fxFlex="25"
-                          formControlName="ticketNumControl"
-                          tooltipResourceName="recreational-fishing.application-ticket-num-helper"
-                          label="{{ 'recreational-fishing.application-ticket-num' | tlTranslate }}">
-                </tl-input>
-                <tl-input fxFlex="25"
-                          formControlName="holderControl"
-                          tooltipResourceName="recreational-fishing.application-ticket-holder-name-helper"
-                          label="{{ 'recreational-fishing.application-ticket-holder-name' | tlTranslate }}">
-                </tl-input>
-                <tl-input fxFlex="25"
-                          formControlName="holderEgnControl"
-                          tooltipResourceName="recreational-fishing.application-ticket-holder-egn-helper"
-                          label="{{ 'recreational-fishing.application-ticket-holder-egn' | tlTranslate }}">
-                </tl-input>
-                <tl-input fxFlex="25"
-                          formControlName="issuerControl"
-                          tooltipResourceName="recreational-fishing.application-ticket-issued-by-helper"
-                          label="{{ 'recreational-fishing.application-ticket-issued-by' | tlTranslate }}">
-                </tl-input>
+        <!-- Таблица -->
+        <mat-card>
+            <tl-data-table #offlineDatatable
+                           [showAddButton]="canAddRecords && !isDashboardMode"
+                           [showInactiveRecords]="canRestoreRecords && !isDashboardMode"
+                           (addButtonClicked)="onAddClicked()"
+                           [recordsPerPage]="recordsPerPage">
+                <data-column propertyName="ticketNum"
+                             [flexRate]="0.2"
+                             columnName="{{ 'recreational-fishing.application-ticket-num' | tlTranslate }}">
+                </data-column>
+
+                <data-column propertyName="ticketHolderName"
+                             [flexRate]="0.3"
+                             columnName="{{ 'recreational-fishing.application-ticket-holder-name' | tlTranslate }}">
+                </data-column>
+
+                <data-column propertyName="validFrom"
+                             [flexRate]="0.3"
+                             dataType="datetime"
+                             columnName="{{ 'recreational-fishing.application-ticket-valid-from' | tlTranslate }}">
+                </data-column>
+
+                <data-column propertyName="validTo"
+                             [flexRate]="0.2"
+                             dataType="date"
+                             columnName="{{ 'recreational-fishing.application-ticket-valid-to' | tlTranslate }}">
+                </data-column>
+
+                <data-column propertyName="ticketType"
+                             [flexRate]="0.3"
+                             columnName="{{ 'recreational-fishing.application-ticket-type' | tlTranslate }}">
+                </data-column>
+
+                <data-column propertyName="ticketPeriod"
+                             [flexRate]="0.3"
+                             columnName="{{ 'recreational-fishing.application-ticket-period' | tlTranslate }}">
+                </data-column>
+
+                <data-template-column propertyName="ticketPrice"
+                                      [flexRate]="0.2"
+                                      columnName="{{ 'recreational-fishing.application-ticket-price' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        {{ row.data.ticketPrice | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}
+                    </ng-template>
+                </data-template-column>
+
+                <data-column propertyName="ticketIssuedBy"
+                             [flexRate]="0.3"
+                             columnName="{{ 'recreational-fishing.application-ticket-issued-by' | tlTranslate }}">
+                </data-column>
+
+                <data-column propertyName="ticketStatusName"
+                             [flexRate]="0.3"
+                             columnName="{{ 'recreational-fishing.application-ticket-status' | tlTranslate }}">
+                </data-column>
+
+                <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div *ngIf="!isDashboardMode" fxLayout="row wrap" fxLayoutAlign="end center">
+                            <ng-container *ngIf="row.data.isActive && (row.data.createdByUserId === currentUserId || row.data.isOnlineTicket)">
+                                <ng-container *ngTemplateOutlet="applicationActions; context: { value: { row: row.data } }"></ng-container>
+                            </ng-container>
+                            <tl-icon-button icon="visibility"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'recreational-fishing.application-view-ticket' | tlTranslate }}"
+                                            (buttonClicked)="editActionClicked(row.data, true)">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.isActive && canDeleteRecords"
+                                            icon="delete"
+                                            (buttonClicked)="deleteApplication(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'recreational-fishing.application-delete' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="!row.isActive && canRestoreRecords"
+                                            icon="restore"
+                                            (buttonClicked)="restoreApplication(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'recreational-fishing.application-restore' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                        <div *ngIf="isDashboardMode" fxLayout="row" fxLayoutAlign="end center">
+                            <tl-icon-button icon="search"
+                                            (buttonClicked)="showTicket(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'applications-register.show-application' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </mat-card>
+    </div>
+</ng-template>
+
+<ng-template #onlineTicketsContent>
+    <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
+        <search-panel #onlineSearchPanel [translateService]="translate">
+            <div [formGroup]="form" fxFlexFill fxLayout="column" fxLayoutAlign="space-between start" fxLayoutGap="1em">
+                <!-- Тип, срок на валидност, валиден от, валиден до -->
+                <div fxLayout="row" fxFlexFill fxLayoutAlign="start center" fxLayoutGap="1em">
+                    <tl-select fxFlex="25"
+                               formControlName="typesControl"
+                               tooltipResourceName="recreational-fishing.application-ticket-type-helper"
+                               label="{{ 'recreational-fishing.application-ticket-type' | tlTranslate }}"
+                               [options]="types"
+                               [isMultiple]="true">
+                    </tl-select>
+                    <tl-select fxFlex="25"
+                               formControlName="periodsControl"
+                               tooltipResourceName="recreational-fishing.application-ticket-period-helper"
+                               label="{{ 'recreational-fishing.application-ticket-period' | tlTranslate }}"
+                               [options]="periods"
+                               [isMultiple]="true">
+                    </tl-select>
+                    <tl-date fxFlex="25"
+                             formControlName="validFromControl"
+                             tooltipResourceName="recreational-fishing.application-ticket-valid-from-helper"
+                             label="{{ 'recreational-fishing.application-ticket-valid-from' | tlTranslate }}">
+                    </tl-date>
+                    <tl-date fxFlex="25"
+                             formControlName="validToControl"
+                             tooltipResourceName="recreational-fishing.application-ticket-valid-to-helper"
+                             label="{{ 'recreational-fishing.application-ticket-valid-to' | tlTranslate }}">
+                    </tl-date>
+                </div>
+
+                <!-- Номер на билет, билетодържател, ЕГН на билетодържател, билетосъздател -->
+                <div fxLayout="row" fxFlexFill fxLayoutAlign="start center" fxLayoutGap="1em">
+                    <tl-input fxFlex="25"
+                              formControlName="ticketNumControl"
+                              tooltipResourceName="recreational-fishing.application-ticket-num-helper"
+                              label="{{ 'recreational-fishing.application-ticket-num' | tlTranslate }}">
+                    </tl-input>
+                    <tl-input fxFlex="25"
+                              formControlName="holderControl"
+                              tooltipResourceName="recreational-fishing.application-ticket-holder-name-helper"
+                              label="{{ 'recreational-fishing.application-ticket-holder-name' | tlTranslate }}">
+                    </tl-input>
+                    <tl-input fxFlex="25"
+                              formControlName="holderEgnControl"
+                              tooltipResourceName="recreational-fishing.application-ticket-holder-egn-helper"
+                              label="{{ 'recreational-fishing.application-ticket-holder-egn' | tlTranslate }}">
+                    </tl-input>
+                    <tl-input fxFlex="25"
+                              formControlName="issuerControl"
+                              tooltipResourceName="recreational-fishing.application-ticket-issued-by-helper"
+                              label="{{ 'recreational-fishing.application-ticket-issued-by' | tlTranslate }}">
+                    </tl-input>
+                </div>
+
+                <!-- Дубликат, статус -->
+                <div fxLayout="row" fxFlexFill fxLayoutAlign="start center" fxLayoutGap="1em">
+                    <tl-select fxFlex="25"
+                               formControlName="isDuplicateControl"
+                               tooltipResourceName="recreational-fishing.application-duplicate-helper"
+                               label="{{ 'recreational-fishing.application-duplicate' | tlTranslate }}"
+                               [options]="isDuplicateOptions">
+                    </tl-select>
+                    <tl-select *ngIf="!isAssociation"
+                               fxFlex="25"
+                               formControlName="statusesControl"
+                               tooltipResourceName="recreational-fishing.application-ticket-status-helper"
+                               label="{{ 'recreational-fishing.application-ticket-status' | tlTranslate }}"
+                               [options]="statuses"
+                               [isMultiple]="true">
+                    </tl-select>
+                    <tl-date-range fxFlex="25"
+                                   formControlName="issueDateControl"
+                                   tooltipResourceName="recreational-fishing.application-issue-date-helper"
+                                   label="{{ 'recreational-fishing.application-issue-date' | tlTranslate }}">
+                    </tl-date-range>
+                    <div *ngIf="isAssociation" fxFlex="25"></div>
+                    <div fxFlex="25"></div>
+                </div>
             </div>
+        </search-panel>
 
-            <!-- Дубликат, статус -->
-            <div fxLayout="row" fxFlexFill fxLayoutAlign="start center" fxLayoutGap="1em">
-                <tl-select fxFlex="25"
-                           formControlName="isDuplicateControl"
-                           tooltipResourceName="recreational-fishing.application-duplicate-helper"
-                           label="{{ 'recreational-fishing.application-duplicate' | tlTranslate }}"
-                           [options]="isDuplicateOptions">
-                </tl-select>
-                <tl-select *ngIf="!isAssociation"
-                           fxFlex="25"
-                           formControlName="statusesControl"
-                           tooltipResourceName="recreational-fishing.application-ticket-status-helper"
-                           label="{{ 'recreational-fishing.application-ticket-status' | tlTranslate }}"
-                           [options]="statuses"
-                           [isMultiple]="true">
-                </tl-select>
-                <div *ngIf="isAssociation" fxFlex="25"></div>
-                <div fxFlex="25"></div>
-                <div fxFlex="25"></div>
-            </div>
-        </div>
-    </search-panel>
+        <!-- Таблица -->
+        <mat-card>
+            <tl-data-table #onlineDatatable
+                           [showAddButton]="false"
+                           [showInactiveRecords]="canRestoreRecords && !isDashboardMode"
+                           [recordsPerPage]="recordsPerPage">
+                <data-column propertyName="ticketNum"
+                             [flexRate]="0.2"
+                             columnName="{{ 'recreational-fishing.application-ticket-num' | tlTranslate }}">
+                </data-column>
 
-    <!-- Таблица -->
-    <mat-card>
-        <tl-data-table [showAddButton]="canAddRecords && !isDashboardMode"
-                       [showInactiveRecords]="canRestoreRecords && !isDashboardMode"
-                       (addButtonClicked)="onAddClicked()"
-                       [recordsPerPage]="recordsPerPage">
-            <data-column propertyName="ticketNum"
-                         [flexRate]="0.2"
-                         columnName="{{ 'recreational-fishing.application-ticket-num' | tlTranslate }}">
-            </data-column>
+                <data-column propertyName="ticketHolderName"
+                             [flexRate]="0.3"
+                             columnName="{{ 'recreational-fishing.application-ticket-holder-name' | tlTranslate }}">
+                </data-column>
 
-            <data-column propertyName="ticketHolderName"
-                         [flexRate]="0.3"
-                         columnName="{{ 'recreational-fishing.application-ticket-holder-name' | tlTranslate }}">
-            </data-column>
+                <data-column propertyName="validFrom"
+                             [flexRate]="0.3"
+                             dataType="datetime"
+                             columnName="{{ 'recreational-fishing.application-ticket-valid-from' | tlTranslate }}">
+                </data-column>
 
-            <data-column propertyName="validFrom"
-                         [flexRate]="0.3"
-                         dataType="datetime"
-                         columnName="{{ 'recreational-fishing.application-ticket-valid-from' | tlTranslate }}">
-            </data-column>
+                <data-column propertyName="validTo"
+                             [flexRate]="0.2"
+                             dataType="date"
+                             columnName="{{ 'recreational-fishing.application-ticket-valid-to' | tlTranslate }}">
+                </data-column>
 
-            <data-column propertyName="validTo"
-                         [flexRate]="0.2"
-                         dataType="date"
-                         columnName="{{ 'recreational-fishing.application-ticket-valid-to' | tlTranslate }}">
-            </data-column>
+                <data-column propertyName="ticketType"
+                             [flexRate]="0.3"
+                             columnName="{{ 'recreational-fishing.application-ticket-type' | tlTranslate }}">
+                </data-column>
 
-            <data-column propertyName="ticketType"
-                         [flexRate]="0.3"
-                         columnName="{{ 'recreational-fishing.application-ticket-type' | tlTranslate }}">
-            </data-column>
+                <data-column propertyName="ticketPeriod"
+                             [flexRate]="0.3"
+                             columnName="{{ 'recreational-fishing.application-ticket-period' | tlTranslate }}">
+                </data-column>
 
-            <data-column propertyName="ticketPeriod"
-                         [flexRate]="0.3"
-                         columnName="{{ 'recreational-fishing.application-ticket-period' | tlTranslate }}">
-            </data-column>
+                <data-template-column propertyName="ticketPrice"
+                                      [flexRate]="0.2"
+                                      columnName="{{ 'recreational-fishing.application-ticket-price' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        {{ row.data.ticketPrice | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}
+                    </ng-template>
+                </data-template-column>
 
-            <data-template-column propertyName="ticketPrice"
-                                  [flexRate]="0.2"
-                                  columnName="{{ 'recreational-fishing.application-ticket-price' | tlTranslate }}">
-                <ng-template let-row="row" ngx-datatable-cell-template>
-                    {{ row.data.ticketPrice | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}
-                </ng-template>
-            </data-template-column>
+                <data-column propertyName="ticketIssuedBy"
+                             [flexRate]="0.3"
+                             columnName="{{ 'recreational-fishing.application-ticket-issued-by' | tlTranslate }}">
+                </data-column>
 
-            <data-column propertyName="ticketIssuedBy"
-                         [flexRate]="0.3"
-                         columnName="{{ 'recreational-fishing.application-ticket-issued-by' | tlTranslate }}">
-            </data-column>
+                <data-column propertyName="ticketStatusName"
+                             [flexRate]="0.3"
+                             columnName="{{ 'recreational-fishing.application-ticket-status' | tlTranslate }}">
+                </data-column>
 
-            <data-column propertyName="ticketStatusName"
-                         [flexRate]="0.3"
-                         columnName="{{ 'recreational-fishing.application-ticket-status' | tlTranslate }}">
-            </data-column>
-
-            <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
-                <ng-template let-row="row" ngx-datatable-cell-template>
-                    <div *ngIf="!isDashboardMode" fxLayout="row wrap" fxLayoutAlign="end center">
-                        <ng-container *ngIf="row.data.isActive && (row.data.createdByUserId === currentUserId || row.data.isOnlineTicket)">
-                            <ng-container *ngTemplateOutlet="applicationActions; context: { value: { row: row.data } }"></ng-container>
-                        </ng-container>
-                        <tl-icon-button icon="visibility"
-                                        iconClass="accent-color"
-                                        tooltipText="{{ 'recreational-fishing.application-view-ticket' | tlTranslate }}"
-                                        (buttonClicked)="editActionClicked(row.data, true)">
-                        </tl-icon-button>
-                        <tl-icon-button *ngIf="row.isActive && canDeleteRecords"
-                                        icon="delete"
-                                        (buttonClicked)="deleteApplication(row.data)"
-                                        iconClass="accent-color"
-                                        tooltipText="{{ 'recreational-fishing.application-delete' | tlTranslate }}">
-                        </tl-icon-button>
-                        <tl-icon-button *ngIf="!row.isActive && canRestoreRecords"
-                                        icon="restore"
-                                        (buttonClicked)="restoreApplication(row.data)"
-                                        iconClass="accent-color"
-                                        tooltipText="{{ 'recreational-fishing.application-restore' | tlTranslate }}">
-                        </tl-icon-button>
-                    </div>
-                    <div *ngIf="isDashboardMode" fxLayout="row" fxLayoutAlign="end center">
-                        <tl-icon-button icon="search"
-                                        (buttonClicked)="showTicket(row.data)"
-                                        iconClass="accent-color"
-                                        tooltipText="{{ 'applications-register.show-application' | tlTranslate }}">
-                        </tl-icon-button>
-                    </div>
-                </ng-template>
-            </data-template-column>
-        </tl-data-table>
-    </mat-card>
-</div>
-
+                <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div *ngIf="!isDashboardMode" fxLayout="row wrap" fxLayoutAlign="end center">
+                            <ng-container *ngIf="row.data.isActive && (row.data.createdByUserId === currentUserId || row.data.isOnlineTicket)">
+                                <ng-container *ngTemplateOutlet="applicationActions; context: { value: { row: row.data } }"></ng-container>
+                            </ng-container>
+                            <tl-icon-button *ngIf="canEditRecords && row.data.isActive && row.data.ticketStatus === ticketStatusEnum.APPROVED"
+                                            icon="confirmation_number"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'recreational-fishing.enter-online-ticket-number-button' | tlTranslate }}"
+                                            (buttonClicked)="enterOnlineTicketNumber(row.data)">
+                            </tl-icon-button>
+                            <tl-icon-button icon="visibility"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'recreational-fishing.application-view-ticket' | tlTranslate }}"
+                                            (buttonClicked)="editActionClicked(row.data, true, true)">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="row.isActive && canDeleteRecords"
+                                            icon="delete"
+                                            (buttonClicked)="deleteApplication(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'recreational-fishing.application-delete' | tlTranslate }}">
+                            </tl-icon-button>
+                            <tl-icon-button *ngIf="!row.isActive && canRestoreRecords"
+                                            icon="restore"
+                                            (buttonClicked)="restoreApplication(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'recreational-fishing.application-restore' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                        <div *ngIf="isDashboardMode" fxLayout="row" fxLayoutAlign="end center">
+                            <tl-icon-button icon="search"
+                                            (buttonClicked)="showTicket(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'applications-register.show-application' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+            </tl-data-table>
+        </mat-card>
+    </div>
+</ng-template>
 
 <ng-template #applicationActions let-value="value">
     <ng-container [ngSwitch]="value.row.applicationStatus">
         <ng-container *ngSwitchCase="applicationStatusEnum.FILL_BY_APPL">
-            <tl-icon-button *ngIf="canEditRecords"
+            <tl-icon-button *ngIf="canEditRecords && !value.row.isOnlineTicket"
                             icon="edit"
                             iconClass="accent-color"
                             tooltipText="{{ 'applications-register.view-and-edit-application' | tlTranslate }}"

@@ -20,6 +20,9 @@ export class SystemPropertiesDTO {
     public blockAssociationsAddTickets?: Date;
 
     @StrictlyTyped(Number)
+    public addLogBookPagesDaysTolerance?: number;
+
+    @StrictlyTyped(Number)
     public maxNumberFishingGears?: number;
 
     @StrictlyTyped(String)

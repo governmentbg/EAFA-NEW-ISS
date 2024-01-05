@@ -66,7 +66,13 @@ export class DecreeSizedFishingGearComponent extends CustomFormControl<PenalDecr
 
         this.fishingGear = nomenclatures[0];
         this.territoryUnits = nomenclatures[1];
-        this.confiscatedFishingGearActions = (nomenclatures[2] as AuanConfiscationActionsNomenclatureDTO[]).filter(x => x.actionGroup === InspConfiscationActionGroupsEnum.Gear);
+
+        if (this.isAuan) {
+            this.confiscatedFishingGearActions = (nomenclatures[2] as AuanConfiscationActionsNomenclatureDTO[]).filter(x => x.actionGroup === InspConfiscationActionGroupsEnum.AUANGear);
+        }
+        else {
+            this.confiscatedFishingGearActions = (nomenclatures[2] as AuanConfiscationActionsNomenclatureDTO[]).filter(x => x.actionGroup === InspConfiscationActionGroupsEnum.Gear);
+        }
     }
 
     public writeValue(value: PenalDecreeSeizedFishingGearDTO[]): void {

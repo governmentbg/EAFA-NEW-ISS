@@ -10,6 +10,7 @@ import { RecreationalFishingAssociationsFilters } from '@app/models/generated/fi
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { IBaseAuditService } from '../base-audit.interface';
 import { IApplicationsActionsService } from './application-actions.interface';
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 
 export interface IRecreationalFishingAssociationService extends IBaseAuditService, IApplicationsActionsService {
     getAllAssociations(request: GridRequestModel<RecreationalFishingAssociationsFilters>): Observable<GridResultModel<RecreationalFishingAssociationDTO>>;
@@ -21,6 +22,7 @@ export interface IRecreationalFishingAssociationService extends IBaseAuditServic
     deleteAssociation(id: number): Observable<void>;
     undoDeleteAssociation(id: number): Observable<void>;
     downloadAssociationFile(fileId: number, fileName: string): Observable<boolean>;
+    getAssociationUsersNomenclature(): Observable<NomenclatureDTO<number>[]>;
 
     // Applications
     getAssociationRoleName(): Observable<string>;

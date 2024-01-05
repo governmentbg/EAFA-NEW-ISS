@@ -34,6 +34,7 @@ import { RequestProperties } from '@app/shared/services/request-properties';
 import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
 
 @Component({
     selector: 'recreational-fishing-tickets-content',
@@ -64,6 +65,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
 
     public ticketTypes!: NomenclatureDTO<number>[];
     public visibleTicketPeriods!: NomenclatureDTO<number>[];
+    public territoryUnits!: NomenclatureDTO<number>[];
 
     public showValidityStep: boolean = false;
     public showPaymentStep: boolean = false;
@@ -91,6 +93,8 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     public ticketsSaved: boolean = false;
     public ticketsPayed: boolean = false;
 
+    public deliveryTerritoryUnitControl: FormControl | undefined;
+
     public paidTicketApplicationId: number | undefined;
 
     public adultTicketType: TicketTypeEnum = TicketTypeEnum.STANDARD;
@@ -110,6 +114,10 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
 
         if (this.showValidityStep) {
             result &&= (this.ticketPeriodGroup.valid || this.ticketPeriodGroup.disabled);
+        }
+
+        if (this.isPublicApp && !this.isAssociation && this.deliveryTerritoryUnitControl) {
+            result &&= (this.deliveryTerritoryUnitControl.valid || this.deliveryTerritoryUnitControl.disabled);
         }
 
         return result;
@@ -138,6 +146,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     private router: Router;
     private systemPropertiesService: SystemPropertiesService;
     private systemProperties!: SystemPropertiesDTO;
+    private nomenclatures: CommonNomenclatures;
 
     private dataSubscriptions: Subscription[] = [];
 
@@ -148,6 +157,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
         snackbar: MatSnackBar,
         translate: FuseTranslationLoaderService,
         systemPropertiesService: SystemPropertiesService,
+        nomenclatures: CommonNomenclatures,
         router: Router
     ) {
         this.buildForm();
@@ -156,6 +166,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
         this.translate = translate;
         this.router = router;
         this.systemPropertiesService = systemPropertiesService;
+        this.nomenclatures = nomenclatures;
     }
 
     public async ngOnInit(): Promise<void> {
@@ -166,13 +177,19 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
             this.blockAssociationsAddTicketsDate = this.systemProperties.blockAssociationsAddTickets;
         }
 
-        forkJoin(
+        if (this.isPublicApp && !this.isAssociation) {
+            this.deliveryTerritoryUnitControl = new FormControl(undefined, Validators.required);
+        }
+
+        forkJoin([
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TicketPeriods, this.service.getTicketPeriods.bind(this.service), false),
-            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TicketTypes, this.service.getTicketTypes.bind(this.service), false)
-        ).subscribe({
-            next: ([periods, types]: [NomenclatureDTO<number>[], NomenclatureDTO<number>[]]) => {
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TicketTypes, this.service.getTicketTypes.bind(this.service), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures), false)
+        ]).subscribe({
+            next: ([periods, types, tus]: [NomenclatureDTO<number>[], NomenclatureDTO<number>[], NomenclatureDTO<number>[]]) => {
                 this.ticketTypes = types.filter(x => x.isActive);
                 this.ticketPeriods = periods.filter(x => x.isActive);
+                this.territoryUnits = tus;
                 this.visibleTicketPeriods = periods.filter(x => !this.nonPickablePeriods.includes(TicketPeriodEnum[x.code! as keyof typeof TicketPeriodEnum]));
 
                 this.buildTicketTypeControls();
@@ -671,8 +688,16 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
             hasPaymentData = true;
         }
 
+        const tickets: RecreationalFishingTicketDTO[] = this.tickets.concat(this.childTickets);
+
+        if (this.isPublicApp && !this.isAssociation && this.deliveryTerritoryUnitControl) {
+            for (const ticket of tickets) {
+                ticket.deliveryTerritoryUnitId = this.deliveryTerritoryUnitControl.value.value;
+            }
+        }
+
         return new RecreationalFishingTicketsDTO({
-            tickets: this.tickets.concat(this.childTickets),
+            tickets: tickets,
             associationId: associationId,
             hasPaymentData: hasPaymentData,
             paymentData: payment
@@ -740,7 +765,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
             });
         }
         else {
-            if (this.isPublicApp) {
+            if (this.isPublicApp && !this.isAssociation) {
                 this.navigateToMyTickets();
             }
             else {

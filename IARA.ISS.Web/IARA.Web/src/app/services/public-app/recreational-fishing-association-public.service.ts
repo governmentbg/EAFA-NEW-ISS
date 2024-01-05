@@ -22,6 +22,7 @@ import { RecreationalFishingPossibleAssociationLegalDTO } from '@app/models/gene
 import { RecreationalFishingAssociationsFilters } from '@app/models/generated/filters/RecreationalFishingAssociationsFilters';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNomenclatureDTO';
+import { NomenclatureDTO } from '../../models/generated/dtos/GenericNomenclatureDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -71,6 +72,10 @@ export class RecreationalFishingAssociationPublicService extends BaseAuditServic
     }
 
     public getFishingAssociation(id: number): Observable<FishingAssociationEditDTO> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
+    public getAssociationUsersNomenclature(): Observable<NomenclatureDTO<number>[]> {
         throw new Error('This method should not be called from the public app.');
     }
 

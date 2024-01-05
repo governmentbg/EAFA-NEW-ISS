@@ -194,13 +194,11 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             else if (actionInfo.id === 'send-msg-for-password-change') {
                 if (this.userId !== undefined && this.userId !== null) {
                     this.service.sendChangePasswordEmail(this.userId).subscribe(result => {
-                        if (result !== null && result !== undefined) {
-                            const message: string = this.translationService.getValue('users-page.change-password-email-sent');
-                            this.snackbar.open(message, undefined, {
-                                duration: RequestProperties.DEFAULT.showExceptionDurationSucc,
-                                panelClass: RequestProperties.DEFAULT.showExceptionColorClassSucc
-                            });
-                        }
+                        const message: string = this.translationService.getValue('users-page.change-password-email-sent');
+                        this.snackbar.open(message, undefined, {
+                            duration: RequestProperties.DEFAULT.showExceptionDurationSucc,
+                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassSucc
+                        });
                     });
                 }
             }
@@ -617,20 +615,23 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         const min = (lhs: Date, rhs: Date) => lhs < rhs ? lhs : rhs;
 
         for (const role of roles) {
+
             if (result.findIndex(x => x.id === role.id && max(x.accessValidFrom!, role.accessValidFrom!) < min(x.accessValidTo!, role.accessValidTo!)) === -1) {
                 const original = roles.filter(x => x.id === role.id && max(x.accessValidFrom!, role.accessValidFrom!) < min(x.accessValidTo!, role.accessValidTo!));
 
-                if (original.length === 1) {
-                    result.push(original[0]);
-                }
-                else {
-                    if (original.filter(x => x.userRoleId !== undefined && x.userRoleId !== null).length === 1) {
-                        const userRole: RoleDTO | undefined = original.find(x => x.userRoleId !== undefined && x.userRoleId !== null);
-                        userRole!.isActive = true;
-                        result.push(userRole!);
+                if (original.length > 0) {
+                    if (original.length === 1) {
+                        result.push(original[0]);
                     }
                     else {
-                        result.push(original.find(x => x.isActive)!);
+                        if (original.filter(x => x.userRoleId !== undefined && x.userRoleId !== null).length === 1) {
+                            const userRole: RoleDTO | undefined = original.find(x => x.userRoleId !== undefined && x.userRoleId !== null);
+                            userRole!.isActive = true;
+                            result.push(userRole!);
+                        }
+                        else {
+                            result.push(original.find(x => x.isActive)!);
+                        }
                     }
                 }
             }
@@ -655,7 +656,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
                     roleId: userLegal.roleId,
                     role: role?.displayName,
                     status: userLegal.status,
-                    isActive: userLegal.isActive
+                    isActive: userLegal.isActive === undefined || userLegal.isActive === null ? true : userLegal.isActive
                 }));
             }
         }

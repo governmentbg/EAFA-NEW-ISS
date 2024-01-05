@@ -32,6 +32,8 @@ export class EditAuanInspectionPickerComponent implements OnInit, AfterViewInit,
     public users: NomenclatureDTO<number>[] = [];
     public territoryUnits: NomenclatureDTO<number>[] = [];
 
+    public readonly today: Date = new Date();
+
     private model: AuanInspectionDTO | undefined;
     private inspectionId: number | undefined;
 
@@ -108,7 +110,7 @@ export class EditAuanInspectionPickerComponent implements OnInit, AfterViewInit,
         if (this.form.valid) {
             this.fillModel();
             CommonUtils.sanitizeModelStrings(this.model);
-            
+
             if (!this.isThirdParty) {
                 this.openEditAuanDialog().subscribe({
                     next: (auan: AuanRegisterEditDTO | undefined) => {

@@ -18,6 +18,9 @@ export class TransportationPagesAndDeclarationsTableComponent {
     public isRemote: boolean = false;
 
     @Input()
+    public allowEditAfterFinished: boolean = false;
+
+    @Input()
     public isSoftDeletable: boolean = false;
 
     @Input()

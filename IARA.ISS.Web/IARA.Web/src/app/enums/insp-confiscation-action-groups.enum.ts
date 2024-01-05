@@ -2,5 +2,6 @@
     Fish,
     Gear,
     PDFish,
-    AUANFish
+    AUANFish,
+    AUANGear
 }

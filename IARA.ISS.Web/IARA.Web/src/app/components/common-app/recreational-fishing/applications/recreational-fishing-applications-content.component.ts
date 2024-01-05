@@ -1,6 +1,7 @@
 ﻿import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Observable } from 'rxjs';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
@@ -40,6 +41,12 @@ import { EditTicketDialogParams } from './models/edit-ticket-dialog-params.model
 import { TicketStatusEnum } from '@app/enums/ticket-status.enum';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { AuthService } from '@app/shared/services/auth.service';
+import { EnterOnlineTicketNumberComponent } from './components/enter-online-ticket-number/enter-online-ticket-number.component';
+import { EnterOnlineTicketNumberParams } from './models/enter-online-ticket-number-params.model';
+import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
+
+const OFFLINE_TAB_INDEX: number = 0;
+const ONLINE_TAB_INDEX: number = 1;
 
 type ThreeState = 'yes' | 'no' | 'both';
 
@@ -89,15 +96,26 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
     public readonly applicationSourceTypeEnum: typeof ApplicationHierarchyTypesEnum = ApplicationHierarchyTypesEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
-    @ViewChild(TLDataTableComponent)
-    private datatable!: TLDataTableComponent;
+    @ViewChild('offlineDatatable', { read: TLDataTableComponent })
+    private offlineDatatable!: TLDataTableComponent;
 
-    @ViewChild(SearchPanelComponent)
-    private searchpanel!: SearchPanelComponent;
+    @ViewChild('offlineSearchPanel', { read: SearchPanelComponent })
+    private offlineSearchpanel!: SearchPanelComponent;
+
+    @ViewChild('onlineDatatable', { read: TLDataTableComponent })
+    private onlineDatatable!: TLDataTableComponent;
+
+    @ViewChild('onlineSearchPanel', { read: SearchPanelComponent })
+    private onlineSearchpanel!: SearchPanelComponent;
 
     private paymentTypes!: NomenclatureDTO<number>[];
 
-    private grid!: DataTableManager<RecreationalFishingTicketApplicationDTO, RecreationalFishingTicketApplicationFilters>;
+    private selectedTab: number = 0;
+    private onlineTicketsLoaded: boolean = false;
+    private mustRefreshOfflineGrid: boolean = false;
+
+    private offlineGrid!: DataTableManager<RecreationalFishingTicketApplicationDTO, RecreationalFishingTicketApplicationFilters>;
+    private onlineGrid!: DataTableManager<RecreationalFishingTicketApplicationDTO, RecreationalFishingTicketApplicationFilters>;
     private router: Router;
     private permissions: PermissionsService;
     private nomenclatures: CommonNomenclatures;
@@ -105,6 +123,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
     private paymentDataDialog: TLMatDialog<PaymentDataComponent>;
     private statusReasonDialog: TLMatDialog<EnterReasonComponent>;
     private editDialog: TLMatDialog<RecreationalFishingTicketComponent>;
+    private enterNumberDialog: TLMatDialog<EnterOnlineTicketNumberComponent>;
     private authService: AuthService;
 
     public constructor(
@@ -116,6 +135,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         paymentDataDialog: TLMatDialog<PaymentDataComponent>,
         statusReasonDialog: TLMatDialog<EnterReasonComponent>,
         editDialog: TLMatDialog<RecreationalFishingTicketComponent>,
+        enterNumberDialog: TLMatDialog<EnterOnlineTicketNumberComponent>,
         authService: AuthService
     ) {
         this.translate = translate;
@@ -127,6 +147,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         this.statusReasonDialog = statusReasonDialog;
         this.editDialog = editDialog;
         this.authService = authService;
+        this.enterNumberDialog = enterNumberDialog;
         this.currentUserId = this.authService.userRegistrationInfo!.id!;
 
         this.buildForm();
@@ -192,35 +213,57 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         if (this.isAssociation === true) {
             const service = this.service as RecreationalFishingPublicService;
 
-            this.grid = new DataTableManager<RecreationalFishingTicketApplicationDTO, RecreationalFishingTicketApplicationFilters>({
-                tlDataTable: this.datatable,
-                searchPanel: this.searchpanel,
+            this.offlineGrid = new DataTableManager<RecreationalFishingTicketApplicationDTO, RecreationalFishingTicketApplicationFilters>({
+                tlDataTable: this.offlineDatatable,
+                searchPanel: this.offlineSearchpanel,
                 requestServiceMethod: service.getAllAssociationTicketApplications.bind(this.service, service.currentUserChosenAssociation!.value!),
                 filtersMapper: this.mapFilters.bind(this)
             });
         }
         else {
-            this.grid = new DataTableManager<RecreationalFishingTicketApplicationDTO, RecreationalFishingTicketApplicationFilters>({
-                tlDataTable: this.datatable,
-                searchPanel: this.searchpanel,
+            this.offlineGrid = new DataTableManager<RecreationalFishingTicketApplicationDTO, RecreationalFishingTicketApplicationFilters>({
+                tlDataTable: this.offlineDatatable,
+                searchPanel: this.offlineSearchpanel,
                 requestServiceMethod: this.getAllServiceMethod ?? this.service.getAllTicketApplications.bind(this.service),
                 filtersMapper: this.mapFilters.bind(this)
             });
 
+            if (!this.isDashboardMode) {
+                this.onlineGrid = new DataTableManager<RecreationalFishingTicketApplicationDTO, RecreationalFishingTicketApplicationFilters>({
+                    tlDataTable: this.onlineDatatable,
+                    searchPanel: this.onlineSearchpanel,
+                    requestServiceMethod: this.service.getAllTicketOnlineApplications.bind(this.service),
+                    filtersMapper: this.mapFilters.bind(this)
+                });
+            }
+
             const ticketNum: string | undefined = window.history.state?.ticketNum;
 
             if (!CommonUtils.isNullOrEmpty(ticketNum)) {
-                this.grid.advancedFilters = new RecreationalFishingTicketApplicationFilters({ ticketNum: ticketNum });
+                this.offlineGrid.advancedFilters = new RecreationalFishingTicketApplicationFilters({ ticketNum: ticketNum });
             }
 
             const personId: number | undefined = window.history.state?.id;
 
             if (!CommonUtils.isNullOrEmpty(personId)) {
-                this.grid.advancedFilters = new RecreationalFishingTicketApplicationFilters({ personId: personId });
+                this.offlineGrid.advancedFilters = new RecreationalFishingTicketApplicationFilters({ personId: personId });
             }
         }
 
-        this.grid.refreshData();
+        this.offlineGrid.refreshData();
+    }
+
+    public tabChanged(event: MatTabChangeEvent): void {
+        if (event.index === OFFLINE_TAB_INDEX && this.mustRefreshOfflineGrid) {
+            this.offlineGrid.refreshData();
+            this.mustRefreshOfflineGrid = false;
+        }
+        else if (event.index === ONLINE_TAB_INDEX && !this.onlineTicketsLoaded) {
+            this.onlineGrid.refreshData();
+            this.onlineTicketsLoaded = true;
+        }
+
+        this.selectedTab = event.index;
     }
 
     public onAddClicked(): void {
@@ -242,7 +285,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
                 if (ok === true) {
                     this.service.deleteApplication(ticket.id!).subscribe({
                         next: () => {
-                            this.grid.refreshData();
+                            this.refreshGrid();
                         }
                     });
                 }
@@ -256,7 +299,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
                 if (ok === true) {
                     this.service.undoDeleteApplication(ticket.id!).subscribe({
                         next: () => {
-                            this.grid.refreshData();
+                            this.refreshGrid();
                         }
                     });
                 }
@@ -285,7 +328,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
 
         dialog.subscribe((paymentData: PaymentDataDTO) => {
             if (paymentData !== null && paymentData !== undefined) {
-                this.grid.refreshData();
+                this.refreshGrid();
             }
         });
     }
@@ -307,7 +350,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         }, '800px')
             .subscribe((reasonData: ReasonData) => {
                 if (reasonData !== null && reasonData !== undefined) {
-                    this.grid.refreshData();
+                    this.refreshGrid();
                 }
             });
     }
@@ -329,7 +372,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         }, '800px')
             .subscribe((reasonData: ReasonData) => {
                 if (reasonData !== null && reasonData !== undefined) {
-                    this.grid.refreshData();
+                    this.refreshGrid();
                 }
             });
     }
@@ -351,24 +394,49 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         }, '800px')
             .subscribe((reasonData: ReasonData) => {
                 if (reasonData !== null && reasonData !== undefined) {
-                    this.grid.refreshData();
+                    this.refreshGrid();
                 }
             });
     }
 
-    public editActionClicked(ticket: RecreationalFishingTicketApplicationDTO, viewMode: boolean = false): void {
+    public enterOnlineTicketNumber(ticket: RecreationalFishingTicketApplicationDTO): void {
+        if (ticket.ticketStatus !== TicketStatusEnum.APPROVED) {
+            return;
+        }
+
+        this.enterNumberDialog.openWithTwoButtons({
+            title: this.translate.getValue('recreational-fishing.enter-online-ticket-number-dialog-title'),
+            TCtor: EnterOnlineTicketNumberComponent,
+            headerCancelButton: {
+                cancelBtnClicked: this.closeEnterOnlineNumberDialogBtnClicked.bind(this)
+            },
+            translteService: this.translate,
+            componentData: new EnterOnlineTicketNumberParams(this.service, ticket.id!),
+            disableDialogClose: false,
+            viewMode: false
+        }, '800px').subscribe({
+            next: (result: string | undefined) => {
+                if (result) {
+                    this.onlineGrid.refreshData();
+                    this.mustRefreshOfflineGrid = true;
+                }
+            }
+        });
+    }
+
+    public editActionClicked(ticket: RecreationalFishingTicketApplicationDTO, viewMode: boolean = false, isOnline: boolean = false): void {
         let status: ApplicationStatusesEnum = ticket.applicationStatus!;
 
         if (status === ApplicationStatusesEnum.CORR_BY_USR_NEEDED && !viewMode) {
             this.applicationsService.initiateApplicationCorrections(ticket.applicationId!).subscribe({
                 next: (newStatus: ApplicationStatusesEnum) => {
                     status = newStatus;
-                    this.openEditDialog(ticket, status, ticket.prevStatusCode, viewMode);
+                    this.openEditDialog(ticket, status, ticket.prevStatusCode, viewMode, isOnline);
                 }
             });
         }
         else {
-            this.openEditDialog(ticket, status, ticket.prevStatusCode, viewMode);
+            this.openEditDialog(ticket, status, ticket.prevStatusCode, viewMode, isOnline);
         }
     }
 
@@ -401,7 +469,8 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         ticket: RecreationalFishingTicketApplicationDTO,
         status: ApplicationStatusesEnum,
         prevApplicationStatus: ApplicationStatusesEnum | undefined,
-        viewMode: boolean = false
+        viewMode: boolean = false,
+        isOnline: boolean = false
     ): void {
         const params = new EditTicketDialogParams({
             id: ticket.id,
@@ -419,7 +488,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         });
 
         if (viewMode) {
-            this.openEditDialogForAll(ticket, params, this.translate.getValue('recreational-fishing.application-view-ticket-dialog-title'));
+            this.openEditDialogForAll(ticket, params, isOnline, this.translate.getValue('recreational-fishing.application-view-ticket-dialog-title'));
         }
         else {
             switch (status) {
@@ -433,7 +502,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
                         params.showRegiXData = true;
                     }
 
-                    this.openEditDialogForAll(ticket, params, this.translate.getValue('recreational-fishing.application-edit-ticket-dialog-title'));
+                    this.openEditDialogForAll(ticket, params, isOnline, this.translate.getValue('recreational-fishing.application-edit-ticket-dialog-title'));
                 } break;
             }
         }
@@ -486,30 +555,32 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             .subscribe({
                 next: (result: unknown | undefined) => {
                     if (result !== undefined) {
-                        this.grid.refreshData();
+                        this.refreshGrid();
                     }
                 }
             });
     }
 
-    private openEditDialogForAll(ticket: RecreationalFishingTicketApplicationDTO, params: EditTicketDialogParams, title: string): void {
+    private openEditDialogForAll(ticket: RecreationalFishingTicketApplicationDTO, params: EditTicketDialogParams, isOnline: boolean, title: string): void {
         const rightButtons: IActionInfo[] = [];
 
-        if (ticket.ticketStatus !== TicketStatusEnum.CANCELED) {
+        if (!isOnline) {
+            if (ticket.ticketStatus !== TicketStatusEnum.CANCELED) {
+                rightButtons.push({
+                    id: 'issue-duplicate',
+                    color: 'accent',
+                    translateValue: this.translate.getValue('recreational-fishing.issue-duplicate'),
+                    isVisibleInViewMode: true
+                });
+            }
+
             rightButtons.push({
-                id: 'issue-duplicate',
+                id: 'print',
                 color: 'accent',
-                translateValue: this.translate.getValue('recreational-fishing.issue-duplicate'),
+                translateValue: this.translate.getValue('recreational-fishing.print'),
                 isVisibleInViewMode: true
             });
         }
-
-        rightButtons.push({
-            id: 'print',
-            color: 'accent',
-            translateValue: this.translate.getValue('recreational-fishing.print'),
-            isVisibleInViewMode: true
-        });
 
         this.editDialog.openWithTwoButtons({
             title: title,
@@ -541,7 +612,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             .subscribe({
                 next: (result: unknown | undefined) => {
                     if (result !== undefined) {
-                        this.grid.refreshData();
+                        this.refreshGrid();
                     }
                 }
             });
@@ -578,7 +649,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
                 if (reasonData !== undefined) {
                     model.statusReason = reasonData.reason;
                     this.applicationsService.sendApplicationForUserCorrections(model.applicationId!, model.statusReason!).subscribe(() => {
-                        this.grid.refreshData();
+                        this.refreshGrid();
                         dialogClose();
                     });
                 }
@@ -601,6 +672,10 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         closeFn();
     }
 
+    private closeEnterOnlineNumberDialogBtnClicked(closeFn: HeaderCloseFunction): void {
+        closeFn();
+    }
+
     private buildForm(): void {
         this.form = new FormGroup({
             ticketNumControl: new FormControl(),
@@ -611,6 +686,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             validFromControl: new FormControl(),
             validToControl: new FormControl(),
             issuerControl: new FormControl(),
+            issueDateControl: new FormControl(),
             isDuplicateControl: new FormControl(),
             statusesControl: new FormControl()
         });
@@ -629,6 +705,8 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             ticketIssuerName: filters.getValue('issuerControl'),
             validFrom: filters.getValue('validFromControl'),
             validTo: filters.getValue('validToControl'),
+            issueDateFrom: filters.getValue<DateRangeData>('issueDateControl')?.start,
+            issueDateTo: filters.getValue<DateRangeData>('issueDateControl')?.end,
             statusIds: filters.getValue('statusesControl')
         });
 
@@ -647,6 +725,15 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         }
 
         return result;
+    }
+
+    private refreshGrid(): void {
+        if (this.selectedTab === OFFLINE_TAB_INDEX) {
+            this.offlineGrid.refreshData();
+        }
+        else {
+            this.onlineGrid.refreshData();
+        }
     }
 
     private navigateByUrl(url: string, ticketNum: string): void {

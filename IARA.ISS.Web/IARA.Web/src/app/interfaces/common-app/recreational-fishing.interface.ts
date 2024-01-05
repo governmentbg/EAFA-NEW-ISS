@@ -34,6 +34,7 @@ export interface IRecreationalFishingService extends IBaseAuditService {
     calculateTicketValidToDate(params: RecreationalFishingTicketValidToCalculationParamsDTO): Observable<Date>;
     checkEgnLncPurchaseAbility(data: RecreationalFishingTicketValidationDTO): Observable<RecreationalFishingTicketValidationResultDTO>;
     checkTicketNumbersAvailability(numbers: string[]): Observable<boolean[]>;
+    enterOnlineTicketOfflineNumber(id: number, ticketNum: string): Observable<boolean>;
 
     downloadFile(fileId: number, fileName: string): Observable<boolean>;
     downloadFishingTicket(ticketId: number): Observable<boolean>;
@@ -44,6 +45,7 @@ export interface IRecreationalFishingService extends IBaseAuditService {
 
     // applications
     getAllTicketApplications(request: GridRequestModel<RecreationalFishingTicketApplicationFilters>): Observable<GridResultModel<RecreationalFishingTicketApplicationDTO>>;
+    getAllTicketOnlineApplications(request: GridRequestModel<RecreationalFishingTicketApplicationFilters>): Observable<GridResultModel<RecreationalFishingTicketApplicationDTO>>;
 
     deleteApplication(id: number): Observable<void>;
     undoDeleteApplication(id: number): Observable<void>;

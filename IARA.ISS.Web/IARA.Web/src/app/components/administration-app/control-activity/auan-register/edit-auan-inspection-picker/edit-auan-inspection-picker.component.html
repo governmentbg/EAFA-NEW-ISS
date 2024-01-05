@@ -36,6 +36,7 @@
             </tl-autocomplete>
 
             <tl-date formControlName="inspectionDateControl"
+                     [max]="today"
                      label="{{ 'auan-register.picker-inspection-date' | tlTranslate }}"
                      tooltipResourceName="auan-register.picker-inspection-date-helper">
             </tl-date>
