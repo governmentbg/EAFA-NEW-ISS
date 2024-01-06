@@ -175,7 +175,7 @@
                            [showAddButton]="canAddRecords && (shipId === null || shipId === undefined)"
                            [showInactiveRecords]="canRestoreRecords && (shipId === null || shipId === undefined)"
                            (addButtonClicked)="addEditEntry(undefined, false)">
-                <row-detail>
+                <row-detail *ngIf="canReadAuanRecords">
                     <ng-template let-row="row"
                                  ngx-datatable-row-detail-template>
                         <auan-register fxFlexFill

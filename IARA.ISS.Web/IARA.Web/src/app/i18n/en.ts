@@ -4544,6 +4544,7 @@
         'filters-errors': 'Error description',
         'filters-has-errors': 'Trips with errors',
         'filters-has-landing': 'Trips with landing',
+        'filters-page-number': 'Page number',
         'uuid': 'Request UUID',
         'purpose': 'Purpose',
         'report-type': 'Report type',
@@ -4578,7 +4579,7 @@
         'has-errors-both': 'All trips',
         'has-landing-yes': 'Trips with landing',
         'has-landing-no': 'Trips without landing',
-        'has-landing-both': 'All trips',
+        'has-landing-both': 'All trips'
     },
     'aquacultures': {
         'aquaculture-dropdown-uror': 'URORR',

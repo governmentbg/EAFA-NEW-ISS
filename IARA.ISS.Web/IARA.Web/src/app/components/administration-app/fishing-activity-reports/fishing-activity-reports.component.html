@@ -56,6 +56,18 @@
                            label="{{ 'fishing-activities.filters-has-landing' | tlTranslate }}">
                 </tl-select>
             </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="pageNumberControl"
+                          tooltipResourceName="fishing-activities.filters-page-number-helper"
+                          label="{{ 'fishing-activities.filters-page-number' | tlTranslate }}">
+                </tl-input>
+
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+            </div>
         </div>
     </search-panel>
 
