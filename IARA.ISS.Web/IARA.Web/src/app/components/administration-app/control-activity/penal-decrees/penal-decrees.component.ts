@@ -74,6 +74,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
     public readonly canEditStatusRecords: boolean;
     public readonly canDeleteStatusRecords: boolean;
     public readonly canRestoreStatusRecords: boolean;
+    public readonly canReadPointsRecords: boolean;
 
     public readonly penalDecreeTypeEnum: typeof PenalDecreeTypeEnum = PenalDecreeTypeEnum;
 
@@ -137,6 +138,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         this.canEditStatusRecords = permissions.has(PermissionsEnum.PenalDecreeStatusesEditRecords);
         this.canDeleteStatusRecords = permissions.has(PermissionsEnum.PenalDecreeStatusesDeleteRecords);
         this.canRestoreStatusRecords = permissions.has(PermissionsEnum.PenalDecreeStatusesRestoreRecords);
+        this.canReadPointsRecords = permissions.hasAny(PermissionsEnum.AwardedPointsRead, PermissionsEnum.AwardedPointsReadAll);
 
         this.buildForm();
     }

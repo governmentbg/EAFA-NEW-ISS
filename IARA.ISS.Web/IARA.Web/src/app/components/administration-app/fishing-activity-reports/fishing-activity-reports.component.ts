@@ -244,6 +244,7 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
             startTimeControl: new FormControl(),
             endTimeControl: new FormControl(),
             requestUuidControl: new FormControl(),
+            pageNumberControl: new FormControl(),
             errorsControl: new FormControl(),
             hasErrorsControl: new FormControl(),
             hasLandingControl: new FormControl()
@@ -260,6 +261,7 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
             startTime: filters.getValue('startTimeControl'),
             endTime: filters.getValue('endTimeControl'),
             requestUuid: filters.getValue('requestUuidControl'),
+            pageNumber: filters.getValue('pageNumberControl'),
             errors: filters.getValue('errorsControl')
         });
 

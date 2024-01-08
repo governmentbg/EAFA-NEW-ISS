@@ -40,6 +40,7 @@ import { EditInspectionFishingGearComponent } from './dialogs/edit-inspection-fi
 import { SignInspectionComponent } from './dialogs/sign-inspection/sign-inspection.component';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { InspectionDialogParamsModel } from './models/inspection-dialog-params.model';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
 
 @Component({
     selector: 'inspections-register',
@@ -74,6 +75,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     public readonly canDeleteRecords: boolean;
     public readonly canRestoreRecords: boolean;
     public readonly canEditInspectionNumber: boolean;
+    public readonly canReadAuanRecords: boolean;
 
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
@@ -116,6 +118,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         this.canDeleteRecords = permissions.has(PermissionsEnum.InspectionsDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.InspectionsRestoreRecords);
         this.canEditInspectionNumber = permissions.has(PermissionsEnum.InspectionEditNumber);
+        this.canReadAuanRecords = permissions.hasAny(PermissionsEnum.AuanRegisterReadAll, PermissionsEnum.AuanRegisterRead);
 
         this.buildForm();
     }
@@ -418,6 +421,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 id: entry.id,
                 viewMode: readOnly,
                 canEditNumber: this.canEditInspectionNumber,
+                pageCode: entry.inspectionState === InspectionStatesEnum.Signed ? PageCodeEnum.SignInspections : PageCodeEnum.Inspections,
                 service: this.service
             });
         }

@@ -116,7 +116,7 @@
                            (addButtonClicked)="addEditAuan(undefined, false)"
                            (activeRecordChanged)="addEditAuan($event, !$event.isActive || !canEditRecords)"
                            [recordsPerPage]="recordsPerPage">
-                <row-detail>
+                <row-detail *ngIf="canReadPenalDecreeRecords">
                     <ng-template let-row="row" ngx-datatable-row-detail-template>
                         <penal-decrees fxFlexFill
                                        [auanId]="row.data.id"

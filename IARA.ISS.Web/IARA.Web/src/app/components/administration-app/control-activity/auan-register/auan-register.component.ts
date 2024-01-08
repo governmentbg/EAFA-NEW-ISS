@@ -54,6 +54,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
     public readonly canEditRecords: boolean;
     public readonly canDeleteRecords: boolean;
     public readonly canRestoreRecords: boolean;
+    public readonly canReadPenalDecreeRecords: boolean;
 
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
@@ -94,6 +95,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
         this.canEditRecords = permissions.has(PermissionsEnum.AuanRegisterEditRecords);
         this.canDeleteRecords = permissions.has(PermissionsEnum.AuanRegisterDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.AuanRegisterRestoreRecords);
+        this.canReadPenalDecreeRecords = permissions.hasAny(PermissionsEnum.PenalDecreesRead, PermissionsEnum.PenalDecreesReadAll);
 
         this.buildForm();
     }

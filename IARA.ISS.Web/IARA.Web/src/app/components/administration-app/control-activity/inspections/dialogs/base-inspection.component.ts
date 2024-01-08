@@ -23,7 +23,7 @@ import { InspectionDialogParamsModel } from '../models/inspection-dialog-params.
     template: ''
 })
 export abstract class BaseInspectionsComponent implements IDialogComponent {
-    public readonly pageCode: PageCodeEnum = PageCodeEnum.Inspections;
+    public pageCode: PageCodeEnum = PageCodeEnum.Inspections;
 
     public form!: FormGroup;
 
@@ -64,6 +64,7 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
             this.id = data.id;
             this.viewMode = data.viewMode;
             this.canEditNumber = data.canEditNumber;
+            this.pageCode = data.pageCode;
         }
     }
 

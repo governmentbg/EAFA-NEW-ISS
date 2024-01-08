@@ -4600,6 +4600,7 @@
         'filters-errors': 'Описание на грешката',
         'filters-has-errors': 'Излети с грешки',
         'filters-has-landing': 'Излети с разтоварване',
+        'filters-page-number': 'Номер на страница',
         'uuid': 'UUID на съобщението',
         'purpose': 'Причина',
         'report-type': 'Вид съобщение',
