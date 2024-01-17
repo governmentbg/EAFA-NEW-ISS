@@ -48,6 +48,7 @@ namespace IARA.Mobile.Pub.Infrastructure.Persistence
         public TLTableQuery<NGender> Genders => TLTable<NGender>();
         public TLTableQuery<NSystemParameter> SystemParameters => TLTable<NSystemParameter>();
         public TLTableQuery<NPaymentType> PaymentTypes => TLTable<NPaymentType>();
+        public TLTableQuery<NTerritorialUnit> TerritorialUnits => TLTable<NTerritorialUnit>();
 
         #endregion Nomenclatures
 

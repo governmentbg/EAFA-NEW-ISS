@@ -96,6 +96,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     public deliveryTerritoryUnitControl: FormControl | undefined;
 
     public paidTicketApplicationId: number | undefined;
+    public paidTicketPaymentRequestNum: string | undefined;
 
     public adultTicketType: TicketTypeEnum = TicketTypeEnum.STANDARD;
 
@@ -375,6 +376,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
         this.ticketsSaved = false;
         this.ticketsPayed = false;
         this.paidTicketApplicationId = undefined;
+        this.paidTicketPaymentRequestNum = undefined;
 
         this.clearTickets();
         this.tickets = [];
@@ -784,6 +786,8 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
 
     private setAddTicketsResult(result: RecreationalFishingAddTicketsResultDTO): void {
         this.paidTicketApplicationId = result.paidTicketApplicationId;
+        this.paidTicketPaymentRequestNum = result.paidTicketPaymentRequestNum;
+
         for (let i = 0; i < this.tickets.length; ++i) {
             this.tickets[i].id = result.ticketIds![i];
         }

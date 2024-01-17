@@ -1,64 +1,61 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
-             xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
-             xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
-             xmlns:controls="clr-namespace:IARA.Mobile.Pub.Views.Controls"
-             xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket"
-             xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
-             x:Class="IARA.Mobile.Pub.Views.FlyoutPages.FishingTicket.Under14SubTicketView"
-             x:DataType="viewModels:Under14SubTicketViewModel"
-             x:Name="view">
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:controls="clr-namespace:IARA.Mobile.Pub.Views.Controls"
+        xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Pub.Views.FlyoutPages.FishingTicket.Under14SubTicketView"
+        x:DataType="viewModels:Under14SubTicketViewModel"
+        x:Name="view">
     <StackLayout>
         <BoxView HeightRequest="1"
-                 HorizontalOptions="FillAndExpand"
-                 Color="{StaticResource Primary}"
-                 Margin="5,0"
-                 Opacity="0.5" />
+                HorizontalOptions="FillAndExpand"
+                Color="{StaticResource Primary}"
+                Margin="5,0"
+                Opacity="0.5" />
         <Label Text="{Binding TicketMetadata.Name}"
-               Margin="10"
-               FontSize="Large"
-               HorizontalOptions="Center"
-               FontAttributes="Bold"
-               LineBreakMode="WordWrap" />
-        <Label Text="{rt:Translate Photo,
-                                    Group=TicketPerson}"
-               HorizontalOptions="Center"
-               FontSize="20" />
+                Margin="10"
+                FontSize="Large"
+                HorizontalOptions="Center"
+                FontAttributes="Bold"
+                LineBreakMode="WordWrap" />
+        <Label Text="{rt:Translate Photo, Group=TicketPerson}"
+                HorizontalOptions="Center"
+                FontSize="20" />
         <sv:ImageUploadView Source="{Binding Photo}"
-                            Size="150"
-                            WidthRequest="150"
-                            HeightRequest="150"
-                            Command="{Binding UploadPhotoCommand}" />
+                Size="150"
+                WidthRequest="150"
+                HeightRequest="150"
+                Command="{Binding UploadPhotoCommand}" />
         <controls:FilePickerView Command="{Binding UploadBirthCertificateCommand}"
-                                 PickText="{rt:Translate BirthCertificateCopy,
-                                        Group=Under14Ticket}"
-                                 Title="{rt:Translate BirthCertificateCopy,
-                                     Group=Under14Ticket}"
-                                 FileResult="{Binding BirthCertificateFile}"
-                                 KilobytesText="{rt:Translate ShortKilobytes,
-                                             Group=Common}"
-                                 Margin="10"
-                                 BackgroundColor="{StaticResource Primary}" />
+                PickText="{rt:Translate BirthCertificateCopy, Group=Under14Ticket}"
+                Title="{rt:Translate BirthCertificateCopy, Group=Under14Ticket}"
+                FileResult="{Binding BirthCertificateFile}"
+                KilobytesText="{rt:Translate ShortKilobytes, Group=Common}"
+                Margin="10"
+                BackgroundColor="{StaticResource Primary}" />
 
-        <controls:PersonView IsEditEnabled="{Binding BindingContext.IsEditEnabled, Source={Reference page}}"
-                             BindingContext="{Binding Person}" />
-
+        <controls:PersonView IsEditEnabled="{Binding BindingContext.IsEditEnabled, Source={Reference page}}" BindingContext="{Binding Person}" />
+        <StackLayout Margin="10">
+            <sv:TLHeaderLine Text="{rt:Translate TerritorialUnitHeading, Group=TicketPerson}" ImageGlyph="{Static h:IconFont.Building}" />
+            <tl:TLPicker ItemsSource="{Binding TerritorialUnits}"
+                    ValidState="{Binding TerritorialUnit}"
+                    Title="{rt:Translate TerritorialUnitInputHeading, Group=TicketPerson}"
+                    IsEnabled="{Binding IsEditEnabled}" />
+        </StackLayout>
         <tl:TLCheckView Margin="10,5"
-                        IsVisible="false"
-                        ValidState="{Binding UpdateProfileData}"
-                        Text="{rt:Translate UpdateProfileData,
-                                    Group=FishingTicket}" />
+                IsVisible="false"
+                ValidState="{Binding UpdateProfileData}"
+                Text="{rt:Translate UpdateProfileData, Group=FishingTicket}" />
 
         <sv:TLButton Command="{Binding Command, Source={Reference view}}"
-                     CommandParameter="{Binding}"
-                     BackgroundColor="Red"
-                     Text="{rt:Translate RemoveTicketButton,
-                                    Group=FishingTicket}"
-                     Margin="5,10"
-                     ImageSource="{FontImage FontFamily=FA,
-                                        Glyph={Static h:IconFont.Trash},
-                                        Color=White}" />
+                CommandParameter="{Binding}"
+                BackgroundColor="Red"
+                Text="{rt:Translate RemoveTicketButton, Group=FishingTicket}"
+                Margin="5,10"
+                ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Color=White}" />
     </StackLayout>
 </ContentView>

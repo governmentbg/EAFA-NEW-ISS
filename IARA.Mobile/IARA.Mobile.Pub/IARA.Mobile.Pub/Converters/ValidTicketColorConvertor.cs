@@ -34,6 +34,11 @@ namespace IARA.Mobile.Pub.Converters
             {
                 return Color.Gray;
             }
+            // Check for Cyrillic E and Latin E
+            else if (values[4].ToString().ToUpper().StartsWith("E") || values[4].ToString().ToUpper().StartsWith("Е"))
+            {
+                return Color.Red;
+            }
             else if (validTo > now &&
                    (paymentStatus == PaymentStatusEnum.PaidOK || paymentStatus == PaymentStatusEnum.NotNeeded) &&
                     !needCorrections &&

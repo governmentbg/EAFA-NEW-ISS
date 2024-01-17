@@ -10,6 +10,9 @@ export class RecreationalFishingAddTicketsResultDTO {
     @StrictlyTyped(Number)
     public paidTicketApplicationId?: number;
 
+    @StrictlyTyped(String)
+    public paidTicketPaymentRequestNum?: string;
+
     @StrictlyTyped(Number)
     public ticketIds?: number[];
 

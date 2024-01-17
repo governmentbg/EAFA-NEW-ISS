@@ -35,9 +35,11 @@ import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO'
     encapsulation: ViewEncapsulation.None
 })
 export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoCheck, ControlValueAccessor, Validator, IDialogComponent {
-
     @Input()
     public applicationId!: number;
+
+    @Input()
+    public paymentRequestNum!: string;
 
     @Input()
     public okUrl: string = '';
@@ -183,6 +185,7 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
 
         this.applicationsService.getApplicationPaymentSummary(this.applicationId).subscribe({
             next: (result: PaymentSummaryDTO) => {
+                this.paymentRequestNum = result.paymentRequestNum!;
                 this.performOnlinePaymentFormGroup.get('paymentSummaryControl')!.setValue(result);
             }
         });
@@ -257,7 +260,7 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
     }
 
     public eGovBankPaymentBtnClicked(): void {
-        this.ePaymentsService!.initiateEGovBankPayment(this.applicationId).subscribe((result: string) => {
+        this.ePaymentsService!.initiateEGovBankPayment(this.paymentRequestNum).subscribe((result: string) => {
             this.paymentDataMap.set(PaymentTypesEnum.PayEGovBank, result);
             this.openOfflinePaymentDataDialog(this.paymentDataMap.get(PaymentTypesEnum.PayEGovBank) as string);
         });
@@ -280,7 +283,7 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
 
                 const paymentData = this.paymentDataMap.get(PaymentTypesEnum.ePay);
                 if (paymentData === null || paymentData === undefined) {
-                    this.ePaymentsService.initiateEPayBGPayment(this.applicationId).subscribe((result: GeneratedPaymentModel) => {
+                    this.ePaymentsService.initiateEPayBGPayment(this.paymentRequestNum).subscribe((result: GeneratedPaymentModel) => {
                         this.paymentDataMap.set(PaymentTypesEnum.ePay, result);
                     });
                 }
@@ -294,7 +297,7 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
 
                 const paymentData = this.paymentDataMap.get(PaymentTypesEnum.ePayDirect);
                 if (paymentData === null || paymentData === undefined) {
-                    this.ePaymentsService.initiateEPayDirectPayment(this.applicationId).subscribe((result: GeneratedPaymentModel) => {
+                    this.ePaymentsService.initiateEPayDirectPayment(this.paymentRequestNum).subscribe((result: GeneratedPaymentModel) => {
                         this.paymentDataMap.set(PaymentTypesEnum.ePayDirect, result);
                     });
                 }
@@ -315,7 +318,7 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
 
                 const paymentData = this.paymentDataMap.get(PaymentTypesEnum.PayEGovePayBG);
                 if (paymentData === null || paymentData === undefined) {
-                    this.ePaymentsService!.initiateEGovEPayBGPayment(this.applicationId).subscribe((result: FormDataModel) => {
+                    this.ePaymentsService!.initiateEGovEPayBGPayment(this.paymentRequestNum).subscribe((result: FormDataModel) => {
                         this.paymentDataMap.set(PaymentTypesEnum.PayEGovePayBG, result);
                     });
                 }
@@ -329,7 +332,7 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
 
                 const paymentData = this.paymentDataMap.get(PaymentTypesEnum.PayEGovePOS);
                 if (paymentData === null || paymentData === undefined) {
-                    this.ePaymentsService!.initiateEGovEPOSPayment(this.applicationId).subscribe((result: FormDataModel) => {
+                    this.ePaymentsService!.initiateEGovEPOSPayment(this.paymentRequestNum).subscribe((result: FormDataModel) => {
                         this.paymentDataMap.set(PaymentTypesEnum.PayEGovePOS, result);
                     });
                 }

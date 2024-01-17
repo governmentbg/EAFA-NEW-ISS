@@ -241,7 +241,8 @@ namespace IARA.Mobile.Pub.Application.Transactions
                             TypeId = ticket.TypeId,
                             TypeName = ticket.TypeName,
                             ValidTo = ticket.ValidTo,
-                            ValidFrom = ticket.ValidFrom
+                            ValidFrom = ticket.ValidFrom,
+                            TicketNumber = ticket.TicketNumber
                         }).ToList();
             }
         }
@@ -272,7 +273,8 @@ namespace IARA.Mobile.Pub.Application.Transactions
                             TypeId = ticket.TypeId,
                             TypeName = ticket.TypeName,
                             ValidTo = ticket.ValidTo,
-                            ValidFrom = ticket.ValidFrom
+                            ValidFrom = ticket.ValidFrom,
+                            TicketNumber = ticket.TicketNumber
                         }).ToList();
             }
         }
@@ -366,7 +368,8 @@ namespace IARA.Mobile.Pub.Application.Transactions
                             PersonFullName = ticket.PersonFullName,
                             TypeName = ticket.TypeName,
                             ValidTo = ticket.ValidTo,
-                            ValidFrom = ticket.ValidFrom
+                            ValidFrom = ticket.ValidFrom,
+                            TicketNumber = ticket.TicketNumber
                         }).ToList();
             }
         }
@@ -413,7 +416,8 @@ namespace IARA.Mobile.Pub.Application.Transactions
                             TypeId = ticket.TypeId,
                             TypeName = ticket.TypeName,
                             ValidTo = ticket.ValidTo,
-                            ValidFrom = ticket.ValidFrom
+                            ValidFrom = ticket.ValidFrom,
+                            TicketNumber = ticket.TicketNumber
                         }).Take(DEFAULT_TICKETS_SHOW_COUNT).ToList();
             }
         }

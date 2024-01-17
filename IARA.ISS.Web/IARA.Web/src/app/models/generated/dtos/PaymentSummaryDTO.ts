@@ -8,6 +8,9 @@ export class PaymentSummaryDTO {
         Object.assign(this, obj);
     }
 
+    @StrictlyTyped(String)
+    public paymentRequestNum?: string;
+
     @StrictlyTyped(PaymentTariffDTO)
     public tariffs?: PaymentTariffDTO[];
 

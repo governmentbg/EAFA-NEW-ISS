@@ -79,7 +79,12 @@ export class RecreationalFishingPublicService extends BaseAuditService implement
     }
 
     public cancelTicketRegister(id: number, reason: string): Observable<void> {
-        throw new Error('This method should not be called from the public app');
+        const params = new HttpParams().append('id', id.toString());
+        const reasonData: ReasonDTO = new ReasonDTO({ reason: reason });
+
+        return this.requestService.patch(this.area, this.controller, 'CancelTicketRegister', reasonData, {
+            httpParams: params
+        });
     }
 
     public calculateTicketValidToDate(params: RecreationalFishingTicketValidToCalculationParamsDTO): Observable<Date> {

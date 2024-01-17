@@ -256,5 +256,16 @@ namespace IARA.Mobile.Pub.Application.Transactions
                 return new List<string>();
             }
         }
+
+        public List<TerritorialUnitSelectDto> GetTerritorialUnits()
+        {
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+                return context.TerritorialUnits
+                    .OrderByDescending(x => x.Id)
+                    .Select(f => new TerritorialUnitSelectDto { Code = f.Code, Id = f.Id, Name = f.Name})
+                    .ToList();
+            }
+        }
     }
 }

@@ -177,7 +177,9 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
             }
         }
 
-        this.setValidators();
+        if (!this.readonly) {
+            this.setValidators();
+        }
     }
 
     public ngAfterViewInit(): void {
@@ -186,7 +188,7 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
                 if (!this.guidIdentifier) {
                     this.form.get('idNumberControl')!.valueChanges.subscribe({
                         next: (value: EgnLncDTO | string) => {
-                            if (value !== null && value !== undefined && typeof value !== 'string') {
+                            if (value !== null && value !== undefined && typeof value !== 'string' && !this.readonly) {
                                 this.setDateOfBirthValidators(value);
                             }
                         }
@@ -252,10 +254,13 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
 
         if (expectedResults !== null && expectedResults !== undefined) {
             this.expectedRegixResults = expectedResults;
-            this.setValidators();
+
+            if (!this.readonly) {
+                this.setValidators();
+            }
         }
 
-        if (middleNameRequired !== null && middleNameRequired !== undefined && this.isPerson) {
+        if (middleNameRequired !== null && middleNameRequired !== undefined && this.isPerson && !this.readonly) {
             this.middleNameRequired = middleNameRequired;
             this.setMiddleNameValidators();
         }

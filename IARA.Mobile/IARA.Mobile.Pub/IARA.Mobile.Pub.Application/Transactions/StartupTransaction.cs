@@ -181,13 +181,14 @@ namespace IARA.Mobile.Pub.Application.Transactions
                 {
                     HttpResult<List<MobileNomenclatureDto>> result = task.Result;
 
+                    List<(NomenclatureEnum? NomEnum, DateTime LastUpdated)> deserialisedData = result.Content
+                        .Select(f => (NomEnum: MapToNomenclatureEnum(f.NomenclatureName), f.LastUpdated))
+                        .ToList();
+
                     return result.IsSuccessful && result.Content?.Count > 0
                         ? (
-                            from mobileNom in result.Content.Select(f =>
-                                (NomEnum: MapToNomenclatureEnum(f.NomenclatureName), f.LastUpdated)
-                            )
-                            where mobileNom.NomEnum.HasValue
-                                && (
+                            from mobileNom in deserialisedData
+                            where mobileNom.NomEnum.HasValue && (
                                     !(nomenclatureDates[mobileNom.NomEnum.Value] is DateTime date)
                                     || date < mobileNom.LastUpdated
                                 )
@@ -408,6 +409,14 @@ namespace IARA.Mobile.Pub.Application.Transactions
                         Name = dto.DisplayName,
                         IsActive = dto.IsActive
                     });
+                case NomenclatureEnum.TerritorialUnit:
+                    return PullNomenclatures(nomenclatureEnum, prefix + "TerritoryUnits", lastUpdated, (NomenclatureDto dto) => new NTerritorialUnit
+                    {
+                        Id = dto.Value,
+                        Code = dto.Code,
+                        Name = dto.DisplayName,
+                        IsActive = dto.IsActive
+                    });
                 default:
                     throw new NotImplementedException($"{nameof(nomenclatureEnum)} doesn't have specified {nameof(NomenclatureEnum)} implemented");
             }
@@ -452,6 +461,8 @@ namespace IARA.Mobile.Pub.Application.Transactions
                     return NomenclatureEnum.SystemParameters;
                 case "PaymentTypes":
                     return NomenclatureEnum.PaymentTypes;
+                case "TerritoryUnits":
+                    return NomenclatureEnum.TerritorialUnit;
                 default:
                     return null;
             }

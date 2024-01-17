@@ -128,9 +128,14 @@ export class UsersContentComponent implements OnInit, AfterViewInit {
         });
 
         const personId: number | undefined = window.history.state?.id;
+        const legalId: number | undefined = window.history.state?.id;
 
         if (!CommonUtils.isNullOrEmpty(personId)) {
             this.gridManager.advancedFilters = new UserManagementFilters({ personId: personId });
+        }
+
+        if (!CommonUtils.isNullOrEmpty(legalId)) {
+            this.gridManager.advancedFilters = new UserManagementFilters({ legalId: legalId });
         }
 
         this.gridManager.refreshData();

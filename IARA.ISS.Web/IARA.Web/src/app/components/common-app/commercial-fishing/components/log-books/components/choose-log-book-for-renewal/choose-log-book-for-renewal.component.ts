@@ -16,6 +16,7 @@ import { ChooseLogBookForRenewalDialogParams } from '../../models/choose-log-boo
 export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnInit, AfterViewInit {
     public readonly filterControl: FormControl;
     public readonly showFinishedControl: FormControl;
+    public readonly showOnlySameAquaticTypesControl: FormControl;
 
     public logBooks: LogBookForRenewalDTO[] = [];
     public logBooksPerPage: number = 8;
@@ -23,6 +24,9 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
     public noLogBooksChosenValidation: boolean = true;
     public touched: boolean = false;
     public numberOfSelectedLogBooks: number = 0;
+
+    private showFinished: boolean = false;
+    private showOnlySameAquaticTypes: boolean = false;
 
     private allLogBooks: LogBookForRenewalDTO[] = [];
     private selectedLogBooks: LogBookForRenewalDTO[] = [];
@@ -34,10 +38,11 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
     public constructor() {
         this.filterControl = new FormControl();
         this.showFinishedControl = new FormControl();
+        this.showOnlySameAquaticTypesControl = new FormControl();
     }
 
     public ngOnInit(): void {
-        this.getData(false);
+        this.getData(false, false);
     }
 
     public ngAfterViewInit(): void {
@@ -49,7 +54,15 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
 
         this.showFinishedControl.valueChanges.subscribe({
             next: (showFinished: boolean | undefined) => {
-                this.getData(showFinished ?? false);
+                this.showFinished = showFinished ?? false;
+                this.getData(showFinished ?? false, this.showOnlySameAquaticTypes);
+            }
+        });
+
+        this.showOnlySameAquaticTypesControl.valueChanges.subscribe({
+            next: (showOnlySameAquaticTypes: boolean | undefined) => {
+                this.showOnlySameAquaticTypes = showOnlySameAquaticTypes ?? false;
+                this.getData(this.showFinished, showOnlySameAquaticTypes ?? false);
             }
         });
     }
@@ -58,7 +71,7 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
         this.permitLicenseId = data.permitLicenseId;
         this.service = data.service!;
         this.saveToDB = data.saveToDB;
-        
+
         if (data.permitLicenseId === undefined || data.permitLicenseId === null) {
             this.allLogBooks = data.logBooks.map(x => new LogBookForRenewalDTO({
                 logBookPermitLicenseId: x.lastLogBookLicenseId,
@@ -183,9 +196,9 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
         }
     }
 
-    private getData(showFinished: boolean): void {
+    private getData(showFinished: boolean, showOnlySameAquaticTypes: boolean): void {
         if (this.permitLicenseId !== undefined && this.permitLicenseId !== null) {
-            this.service.getLogBooksForRenewal(this.permitLicenseId!, showFinished).subscribe({
+            this.service.getLogBooksForRenewal(this.permitLicenseId!, showFinished, showOnlySameAquaticTypes).subscribe({
                 next: (results: LogBookForRenewalDTO[]) => {
                     this.allLogBooks = results;
 

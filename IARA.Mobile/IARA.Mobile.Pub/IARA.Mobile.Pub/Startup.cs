@@ -118,7 +118,7 @@ namespace IARA.Mobile.Pub
             CommonGlobalVariables.PullItemsCount = Device.Idiom == TargetIdiom.Phone ? 20 : 40;
             CommonGlobalVariables.DatabasePath = Path.Combine(FileSystem.AppDataDirectory, "IARA.db3");
 #if DEBUG
-            serverUrl.Environment = Environments.DEVELOPMENT_LOCAL;
+            serverUrl.Environment = Environments.DEVELOPMENT_INTERNAL;
 #elif PRODRELEASE
             serverUrl.Environment = Environments.PRODUCTION;
 #else

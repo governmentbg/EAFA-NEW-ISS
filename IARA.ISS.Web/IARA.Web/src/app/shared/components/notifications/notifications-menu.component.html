@@ -25,6 +25,17 @@
         </span>
 
         <ng-template #hasNotifications>
+            <!-- Header -->
+            <div class="flex shrink-0 items-center py-4 pr-4 pl-6" fxLayoutAlign="center center">
+                <button mat-raised-button 
+                        color="primary"
+                        (click)="markAllAsRead()"
+                        fxFlexFill>
+                    <tl-icon icon="fa-check-double" class="white"></tl-icon>
+                    {{ 'notifications.mark-all-as-read' | tlTranslate }}
+                </button>
+            </div>
+
             <cdk-virtual-scroll-viewport class="mat-menu-viewport"
                                          [itemSize]="recordSize"
                                          minBufferPx="500"

@@ -169,6 +169,7 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
             inspectionType: this.model.inspectionType,
             inspectorComment: this.model.inspectorComment,
             startDate: this.model.startDate,
+            reportNumber: this.model.reportNum
         });
 
         this.model.files = undefined;

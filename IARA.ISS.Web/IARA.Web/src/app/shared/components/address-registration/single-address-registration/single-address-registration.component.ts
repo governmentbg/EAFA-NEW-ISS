@@ -70,6 +70,12 @@ export class SingleAddressRegistrationComponent extends NotifyingCustomFormContr
     public ngOnInit(): void {
         this.initNotifyingCustomFormControl();
         this.loader.load();
+
+        if (this.readonly) {
+            this.form.controls.countryControl!.clearValidators();
+            this.form.controls.streetControl!.clearValidators();
+            this.form.updateValueAndValidity();
+        }
     }
 
     public ngAfterViewInit(): void {
@@ -192,41 +198,43 @@ export class SingleAddressRegistrationComponent extends NotifyingCustomFormContr
     }
 
     private setFromGroupValidators() {
-        this.form.controls.countryControl.setValidators([
-            Validators.required, TLValidators.expectedValueMatch(this.expectedAddress.countryName)
-        ]);
+        if (!this.readonly) {
+            this.form.controls.countryControl.setValidators([
+                Validators.required, TLValidators.expectedValueMatch(this.expectedAddress.countryName)
+            ]);
 
-        this.updateCountryRelatedControlsValidators(this.form.controls.countryControl.value?.code);
+            this.updateCountryRelatedControlsValidators(this.form.controls.countryControl.value?.code);
 
-        this.form.controls.regionControl.setValidators([
-            Validators.maxLength(200), TLValidators.expectedValueMatch(this.expectedAddress.region)
-        ]);
-        this.form.controls.postalCodeControl.setValidators([
-            Validators.maxLength(10), TLValidators.expectedValueMatch(this.expectedAddress.postalCode)
-        ]);
-        this.form.controls.streetControl.setValidators([
-            Validators.required, Validators.maxLength(200), TLValidators.expectedValueMatch(this.expectedAddress.street)
-        ]);
-        this.form.controls.streetNumControl.setValidators([
-            Validators.maxLength(10), TLValidators.expectedValueMatch(this.expectedAddress.streetNum)
-        ]);
-        this.form.controls.blockNumControl.setValidators([
-            Validators.maxLength(10), TLValidators.expectedValueMatch(this.expectedAddress.blockNum)
-        ]);
-        this.form.controls.entranceNumControl.setValidators([
-            Validators.maxLength(10), TLValidators.expectedValueMatch(this.expectedAddress.entranceNum)
-        ]);
-        this.form.controls.floorNumControl.setValidators([
-            Validators.maxLength(10), TLValidators.expectedValueMatch(this.expectedAddress.floorNum)
-        ]);
-        this.form.controls.apartmentNumControl.setValidators([
-            Validators.maxLength(10), TLValidators.expectedValueMatch(this.expectedAddress.apartmentNum)
-        ]);
+            this.form.controls.regionControl.setValidators([
+                Validators.maxLength(200), TLValidators.expectedValueMatch(this.expectedAddress.region)
+            ]);
+            this.form.controls.postalCodeControl.setValidators([
+                Validators.maxLength(10), TLValidators.expectedValueMatch(this.expectedAddress.postalCode)
+            ]);
+            this.form.controls.streetControl.setValidators([
+                Validators.required, Validators.maxLength(200), TLValidators.expectedValueMatch(this.expectedAddress.street)
+            ]);
+            this.form.controls.streetNumControl.setValidators([
+                Validators.maxLength(10), TLValidators.expectedValueMatch(this.expectedAddress.streetNum)
+            ]);
+            this.form.controls.blockNumControl.setValidators([
+                Validators.maxLength(10), TLValidators.expectedValueMatch(this.expectedAddress.blockNum)
+            ]);
+            this.form.controls.entranceNumControl.setValidators([
+                Validators.maxLength(10), TLValidators.expectedValueMatch(this.expectedAddress.entranceNum)
+            ]);
+            this.form.controls.floorNumControl.setValidators([
+                Validators.maxLength(10), TLValidators.expectedValueMatch(this.expectedAddress.floorNum)
+            ]);
+            this.form.controls.apartmentNumControl.setValidators([
+                Validators.maxLength(10), TLValidators.expectedValueMatch(this.expectedAddress.apartmentNum)
+            ]);
 
-        this.form.controls.countryControl!.markAsPending({ emitEvent: true });
-        this.form.controls.streetControl!.markAsPending({ emitEvent: true });
+            this.form.controls.countryControl!.markAsPending({ emitEvent: true });
+            this.form.controls.streetControl!.markAsPending({ emitEvent: true });
 
-        this.form.updateValueAndValidity();
+            this.form.updateValueAndValidity();
+        }
 
         if (this.isDisabled) {
             this.form.disable();
@@ -234,7 +242,7 @@ export class SingleAddressRegistrationComponent extends NotifyingCustomFormContr
     }
 
     private updateCountryRelatedControlsValidators(code: string | undefined): void {
-        if (this.isBGChosen()) {
+        if (this.isBGChosen() && !this.readonly) {
             this.form.controls.districtControl!.setValidators([
                 Validators.required, TLValidators.expectedValueMatch(this.expectedAddress.districtName)
             ]);

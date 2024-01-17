@@ -37,6 +37,9 @@ export class LogBookForRenewalDTO {
     @StrictlyTyped(String)
     public lastPermitLicenseNumber?: string;
 
+    @StrictlyTyped(Date)
+    public issueDate?: Date;
+
     @StrictlyTyped(Boolean)
     public isChecked?: boolean;
 }

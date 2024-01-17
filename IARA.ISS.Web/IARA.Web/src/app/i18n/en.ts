@@ -1159,6 +1159,7 @@
         'application-is-duplicate-no': 'Show all except duplicates',
         'application-is-duplicate-both': 'Show all',
         'application-ticket-status': 'Status',
+        'application-show-expired': 'Show expired',
         'application-issue-date': 'Issue date',
         'application-ticket-price': 'Price',
         'application-delete': 'Delete ticket',
@@ -4441,9 +4442,11 @@
         'choose-log-book-for-renewal-title': 'Choose log book for renewal',
         'choose-log-book-for-renewal-keyword-filter': 'Keyword search',
         'choose-log-book-for-renewal-show-finished-filter': 'Show finished',
+        'choose-log-book-for-renewal-show-only-same-aquatic-types-filter': 'Show only with same aquatic types', 
         'choose-log-book-for-renewal-no-log-books': 'There are no old log books from suspended/expired for renewal',
         'choose-log-book-for-renewal-log-book-type': 'Type',
         'choose-log-book-for-renewal-number': 'Log book number',
+        'choose-log-book-for-renewal-issue-date': 'Issue date',
         'choose-log-book-for-renewal-status-name': 'Status',
         'choose-log-book-for-renewal-start-page': 'Start page',
         'choose-log-book-for-renewal-end-page': 'End page',
@@ -4560,6 +4563,10 @@
         'replay-trip-title': 'Replay trip',
         'replay-trip-message': 'Are you sure you wish to replay all messages in this trip? This may cause changes to ship log book page(s).',
         'replay-trip-ok-btn-label': 'Replay',
+        'generate-landing': 'Generate LANDING',
+        'generate-landing-title': 'Generate LANDING',
+        'generate-landing-message': 'Generating a LANDING message is irreversible. Are you sure you wish to proceed?',
+        'generate-landing-ok-btn-label': 'Generate',
         'ship-cfr': 'CFR',
         'ship-name': 'Vessel name',
         'trip-identifier': 'trip identifier',
@@ -5361,6 +5368,7 @@
         'aqua-farm-stat-form-exist-error': 'Statistical form already exists.',
 
         'aqua-farm-fish-organism-error': 'The combination of fish type and breading material weight is already added for this installation.',
+        'aqua-farm-medicine-error': 'This type of medicine is already added.',
 
         //Rework
         'rework-requester': 'Sender',
@@ -6331,5 +6339,9 @@
         'tickets-buy': 'To purchase your ticket for recreational fishing as an individual, you only need to create an account in the public portal of EAFA.',
         'tickets-log-in': 'After login choose "Recreational fishing ticket" and follow the instructions',
         'tickets-pay': 'You must have e-pay access in order to choose e-pay as payment type for your recreational ticket('
+    },
+    'notifications': {
+        'title': 'Notifications',
+        'mark-all-as-read': 'Mark all as read'
     }
 };

@@ -31,6 +31,7 @@ import { PermitNomenclatureDTO } from '@app/models/generated/dtos/PermitNomencla
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { ShipsUtils } from '@app/shared/utils/ships.utils';
 
 @Component({
     selector: 'edit-penal-points',
@@ -153,13 +154,18 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
 
         this.form.get('shipControl')!.valueChanges.subscribe({
             next: (ship: ShipNomenclatureDTO | undefined | string) => {
-                if (ship !== null && ship !== undefined && ship instanceof NomenclatureDTO) {
-                    this.noShipSelected = false;
-                    if (this.type === PointsTypeEnum.PermitOwner) {
-                        this.getShipPermitsNomenclature(ship.value!);
-                    }
-                    else {
-                        this.getShipPermitLicensesNomenclature(ship.value!);
+                if (ship !== null && ship !== undefined) {
+                    const shipId: number | undefined = (ship as ShipNomenclatureDTO).value;
+
+                    if (shipId !== undefined && shipId !== null) {
+                        this.noShipSelected = false;
+
+                        if (this.type === PointsTypeEnum.PermitOwner) {
+                            this.getShipPermitsNomenclature(shipId);
+                        }
+                        else {
+                            this.getShipPermitLicensesNomenclature(shipId);
+                        }
                     }
                 }
                 else {
@@ -411,29 +417,30 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
     private fillForm(): void {
         this.form.get('reportNoteNumControl')!.setValue(this.model.reportNoteNum);
         this.form.get('reportNoteDateControl')!.setValue(this.model.reportNoteDate);
-
-        this.form.get('shipControl')!.setValue(this.ships.find(x => x.value === this.model.shipId));
         this.form.get('permitControl')!.setValue(this.permits.find(x => x.value === this.model.permitId));
         this.form.get('permitLicenseControl')!.setValue(this.permitLicenses.find(x => x.value === this.model.permitLicenseId));
         this.form.get('isPermitOwnerControl')!.setValue(this.model.isPermitOwner);
-
-        if (this.model.isPermitOwner === false) {
-            this.form.get('personControl')!.setValue(this.model.personOwner);
-        }
-
         this.form.get('orderNumControl')!.setValue(this.model.decreeNum);
         this.form.get('issuerControl')!.setValue(this.model.issuer);
         this.form.get('issueDateControl')!.setValue(this.model.issueDate);
         this.form.get('deliveryDateControl')!.setValue(this.model.deliveryDate);
         this.form.get('effectiveDateControl')!.setValue(this.model.effectiveDate);
         this.form.get('pointsAmountControl')!.setValue(this.model.pointsAmount);
+        this.form.get('commentsControl')!.setValue(this.model.comments);
+        this.form.get('filesControl')!.setValue(this.model.files);
+
+        if (this.model.shipId !== undefined && this.model.shipId !== null) {
+            const selectedShip: ShipNomenclatureDTO = ShipsUtils.get(this.ships, this.model.shipId);
+            this.form.get('shipControl')!.setValue(selectedShip);
+        }
+
+        if (this.model.isPermitOwner === false) {
+            this.form.get('personControl')!.setValue(this.model.personOwner);
+        }
 
         const isIncreasePoints: boolean = this.model.isIncreasePoints ?? true;
         const orderType: NomenclatureDTO<boolean> = this.orderTypes.find(x => x.value === isIncreasePoints)!;
         this.form.get('orderTypeControl')!.setValue(orderType);
-
-        this.form.get('commentsControl')!.setValue(this.model.comments);
-        this.form.get('filesControl')!.setValue(this.model.files);
 
         setTimeout(() => {
             this.complaintStatuses = this.model.appealStatuses ?? [];
@@ -487,7 +494,11 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
         this.form.get('decreeIssueDateControl')!.setValue(data.decreeIssueDate);
         this.form.get('decreeEffectiveDateControl')!.setValue(data.decreeEffectiveDate);
         this.form.get('auanInspectedEntityControl')!.setValue(data.inspectedEntity);
-        this.form.get('shipControl')!.setValue(this.ships.find(x => x.value === data.shipId));
+
+        if (data.shipId !== undefined && data.shipId !== null) {
+            const selectedShip: ShipNomenclatureDTO = ShipsUtils.get(this.ships, data.shipId);
+            this.form.get('shipControl')!.setValue(selectedShip);
+        }
     }
 
     private getComplaintStatusesFromTable(): PenalPointsAppealDTO[] {

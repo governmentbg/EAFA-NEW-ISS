@@ -112,12 +112,19 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         const nomenclatures: (NomenclatureDTO<number> | InspDeliveryTypesNomenclatureDTO)[][] = await forkJoin(
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.InspectionTypes, this.nomenclatures.getInspectionTypes.bind(this.nomenclatures), false),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures), false),
-            this.service.getInspectionDrafters(this.inspectionId)
+            this.service.getInspectionDrafters(this.inspectionId),
+            this.service.getAllDrafters()
         ).toPromise();
 
         this.inspectionTypes = nomenclatures[0];
         this.territoryUnits = nomenclatures[1];
-        this.drafters = nomenclatures[2];
+
+        if (nomenclatures[2].length > 0) {
+            this.drafters = nomenclatures[2];
+        }
+        else {
+            this.drafters = nomenclatures[3]; //списък с всички инспектори, нужно е само когато инспекцията е мигрирана
+        }
 
         this.service.getAuanReportData(this.inspectionId).subscribe({
             next: (data: AuanReportDataDTO) => {

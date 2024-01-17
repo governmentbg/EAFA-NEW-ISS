@@ -175,13 +175,16 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
                     filters.legalId = id;
                 }
             }
+
+            this.grid.advancedFilters = filters;
         }
 
-        if (this.inspectionId !== null && this.inspectionId !== undefined) {
-            filters.inspectionId = this.inspectionId;
+        if (this.inspectionId !== undefined && this.inspectionId !== null) {
+            this.grid.advancedFilters = new AuanRegisterFilters({
+                inspectionId: this.inspectionId
+            });
         }
 
-        this.grid.advancedFilters = filters;
         this.grid.refreshData();
     }
 

@@ -124,6 +124,7 @@ export class TLFileUploadComponent implements OnInit, OnChanges, DoCheck, Contro
 
         this.file = new FileInfoDTO({
             file: file,
+            recordFileId: this.file?.recordFileId,
             fileTypeId: this.file?.fileTypeId,
             size: file.size,
             contentType: file.type,

@@ -149,10 +149,11 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         });
     }
 
-    public getLogBooksForRenewal(permitLicenseRegisterId: number, showFinished: boolean): Observable<LogBookForRenewalDTO[]> {
+    public getLogBooksForRenewal(permitLicenseRegisterId: number, showFinished: boolean, showOnlySameAquaticTypes: boolean): Observable<LogBookForRenewalDTO[]> {
         const params: HttpParams = new HttpParams()
             .append('permitLicenseRegisterId', permitLicenseRegisterId.toString())
-            .append('showFinished', showFinished.toString());
+            .append('showFinished', showFinished.toString())
+            .append('showOnlySameAquaticTypes', showOnlySameAquaticTypes.toString());
 
         return this.requestService.get(this.area, this.controller, 'GetLogBooksForRenewal', {
             httpParams: params,

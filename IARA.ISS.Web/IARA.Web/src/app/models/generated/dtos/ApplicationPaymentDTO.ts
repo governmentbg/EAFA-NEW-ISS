@@ -21,6 +21,9 @@ export class ApplicationPaymentDTO {
     @StrictlyTyped(String)
     public paymentRefNumber?: string;
 
+    @StrictlyTyped(String)
+    public paymentRequestNum?: string;
+
     @StrictlyTyped(Number)
     public paymentStatus?: PaymentStatusesEnum;
 

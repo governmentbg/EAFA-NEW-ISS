@@ -114,7 +114,6 @@
             <tl-data-table [showAddButton]="canAddRecords && (inspectionId === null || inspectionId === undefined)"
                            [showInactiveRecords]="canRestoreRecords && (inspectionId === null || inspectionId === undefined)"
                            (addButtonClicked)="addEditAuan(undefined, false)"
-                           (activeRecordChanged)="addEditAuan($event, !$event.isActive || !canEditRecords)"
                            [recordsPerPage]="recordsPerPage">
                 <row-detail *ngIf="canReadPenalDecreeRecords">
                     <ng-template let-row="row" ngx-datatable-row-detail-template>

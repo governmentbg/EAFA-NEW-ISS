@@ -694,14 +694,25 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             this.form.get('partnerShipControl')!.setValue(ShipsUtils.get(this.ships, this.model.partnerShipId!));
         }
 
-        this.form.get('fishTripStartDateTimeControl')!.setValue(moment(this.model.fishTripStartDateTime));
+        if (this.model.fishTripStartDateTime !== undefined && this.model.fishTripStartDateTime !== null) {
+            this.form.get('fishTripStartDateTimeControl')!.setValue(moment(this.model.fishTripStartDateTime));
+        }
+        else {
+            if (!this.viewMode) {
+                const today: Date = new Date();
+                const fishTripStartDateTime = new Date(today.setHours(6, 0, 0));
+                this.form.get('fishTripStartDateTimeControl')!.setValue(moment(fishTripStartDateTime));
+            }
+        }
 
         if (this.model.departurePortId !== null && this.model.departurePortId !== undefined) {
             const departurePort: NomenclatureDTO<number> = this.ports.find(x => x.value === this.model.departurePortId)!;
             this.form.get('departurePortControl')!.setValue(departurePort);
         }
 
-        this.form.get('fishTripEndDateTimeControl')!.setValue(moment(this.model.fishTripEndDateTime));
+        if (this.model.fishTripEndDateTime !== undefined && this.model.fishTripEndDateTime !== null) {
+            this.form.get('fishTripEndDateTimeControl')!.setValue(moment(this.model.fishTripEndDateTime));
+        }
 
         if (this.model.arrivalPortId !== null && this.model.arrivalPortId !== undefined) {
             const arrivalPort: NomenclatureDTO<number> = this.ports.find(x => x.value === this.model.arrivalPortId)!;
@@ -717,7 +728,9 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
         this.form.get('noCatchUnloadedControl')!.setValue(this.model.hasNoUnloadedCatch ?? false);
 
-        this.form.get('unloadDateTimeControl')!.setValue(moment(this.model.unloadDateTime));
+        if (this.model.unloadDateTime !== undefined && this.model.unloadDateTime !== null) {
+            this.form.get('unloadDateTimeControl')!.setValue(moment(this.model.unloadDateTime));
+        }
 
         this.form.get('filesControl')!.setValue(this.model.files);
 
@@ -1285,13 +1298,15 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 this.form.get('daysAtSeaCountControl')!.setValue(daysAtSeaValue);
             }
             else {
-                this.form.get('daysAtSeaCountControl')!.setValue(undefined);
-                this.form.get('fishTripEndDateTimeControl')!.setValue(startDate);
+                if (!this.viewMode) {
+                    this.form.get('daysAtSeaCountControl')!.setValue(undefined);
+                    this.form.get('fishTripEndDateTimeControl')!.setValue(startDate);
+                }
             }
 
             const unloadingDateTime: Moment | null | undefined = this.form.get('unloadDateTimeControl')!.value;
             const hasNoCatch: boolean = this.form.get('noCatchUnloadedControl')!.value ?? false;
-            if (!hasNoCatch && (unloadingDateTime === null || unloadingDateTime === undefined || !unloadingDateTime.isValid())) {
+            if (!hasNoCatch && !this.viewMode && (unloadingDateTime === null || unloadingDateTime === undefined || !unloadingDateTime.isValid())) {
                 this.form.get('unloadDateTimeControl')!.setValue(startDate);
             }
         }

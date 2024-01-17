@@ -243,8 +243,11 @@
         </ng-template>
 
         <div *ngIf="isPublicApp && !isAssociation; else notPublicAppOrAssociation">
-            <online-payment-data *ngIf="paidTicketApplicationId !== undefined && paidTicketApplicationId !== null"
-                                 [applicationId]="paidTicketApplicationId">
+            <online-payment-data *ngIf="paidTicketApplicationId !== undefined && paidTicketApplicationId !== null
+                                    && paidTicketPaymentRequestNum !== undefined && paidTicketPaymentRequestNum !== null
+                                    && paidTicketPaymentRequestNum !== ''"
+                                 [applicationId]="paidTicketApplicationId"
+                                 [paymentRequestNum]="paidTicketPaymentRequestNum">
             </online-payment-data>
         </div>
 

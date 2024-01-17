@@ -32,7 +32,7 @@ export interface ILogBookService {
 
     getOverlappedLogBooks(parameters: OverlappingLogBooksParameters[]): Observable<RangeOverlappingLogBooksDTO[]>;
 
-    getLogBooksForRenewal(permitLicenseRegisterId: number, showFinished: boolean): Observable<LogBookForRenewalDTO[]>;
+    getLogBooksForRenewal(permitLicenseRegisterId: number, showFinished: boolean, showOnlySameAquaticTypes: boolean): Observable<LogBookForRenewalDTO[]>;
     getLogBooksForRenewalByIds(permitLicenseRegisterIds: number[]): Observable<CommercialFishingLogBookEditDTO[] | LogBookEditDTO[]>;
 
     getLogBookAudit(id: number): Observable<SimpleAuditDTO>;

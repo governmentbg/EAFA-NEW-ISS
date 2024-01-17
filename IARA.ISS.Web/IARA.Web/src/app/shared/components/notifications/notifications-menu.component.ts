@@ -6,8 +6,10 @@ import { UserNotification } from '@app/shared/notifications/models/user-notifica
 import { UserNotificationsList } from '@app/shared/notifications/models/user-notifications-list.model';
 import { NotificationsHubService } from '@app/shared/notifications/notifications-hub-service';
 import { Environment } from '@env/environment';
-import { NotificationTypes } from '../../notifications/notification-types.enum';
-import { PagedDatasource } from '../../utils/paged-datasource/paged-datasource';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { NotificationTypes } from '@app/shared/notifications/notification-types.enum';
+import { CommonUtils } from '@app/shared/utils/common.utils';
+import { PagedDatasource } from '@app/shared/utils/paged-datasource/paged-datasource';
 
 @Component({
     selector: 'notifications-menu',
@@ -17,18 +19,24 @@ import { PagedDatasource } from '../../utils/paged-datasource/paged-datasource';
 export class NotificationsMenuComponent implements OnInit, AfterViewInit {
     public readonly DEFAULT_RECORD_SIZE: number = 155;
     public readonly NOTIFICATIONS_GAP: number = 7;
+    public readonly faIconSize: number = CommonUtils.FA_ICON_SIZE;
 
     public readonly notificationsHub: NotificationsHubService;
-    public readonly dataSource: PagedDatasource<NotificationDTO>;
+    public dataSource: PagedDatasource<NotificationDTO>;
 
     public totalUnread: number;
     public totalRecordsCount: number;
     public pageSize: number;
     public recordSize: number;
 
-    public constructor(@Inject('INotificationSecurity') notificationsSecurity: INotificationSecurity) {
+    private readonly translate: FuseTranslationLoaderService;
+
+    public constructor(@Inject('INotificationSecurity') notificationsSecurity: INotificationSecurity,
+        translate: FuseTranslationLoaderService
+    ) {
         this.notificationsHub = new NotificationsHubService(notificationsSecurity, "/notifications", Environment.Instance.apiBaseUrl ?? '');
         this.dataSource = new PagedDatasource<NotificationDTO>(this.getNotifications.bind(this));
+        this.translate = translate;
 
         this.totalUnread = 0;
         this.totalRecordsCount = 0;
@@ -43,7 +51,9 @@ export class NotificationsMenuComponent implements OnInit, AfterViewInit {
     private subscribeOnNewDataReceived(): void {
         this.dataSource.newDataReceived.subscribe(result => {
             this.totalRecordsCount = result.totalRecordsCount;
-            this.totalUnread = (result as UserNotificationsList).totalUnread;
+
+            const unread: number = (result as UserNotificationsList).totalUnread;
+            this.totalUnread = unread > 0 ? unread : 0;
             this.resize();
         });
     }
@@ -61,11 +71,28 @@ export class NotificationsMenuComponent implements OnInit, AfterViewInit {
     }
 
     public markedAsRead(notificationId: number): void {
-        --this.totalUnread;
+        if (this.totalUnread > 0) {
+            --this.totalUnread;
+        }
+        else {
+            this.totalUnread = 0;
+        }
     }
 
     public onMenuOpened(): void {
         this.resize();
+    }
+
+    public markAllAsRead(): void {
+        this.notificationsHub.markAllNotificationsAsRead().then(result => {
+            if (result) {
+                this.totalUnread = 0;
+                this.dataSource = new PagedDatasource<NotificationDTO>(this.getNotifications.bind(this));
+                this.pageSize = this.dataSource.pageSize;
+                this.subscribeOnNewDataReceived();
+                this.dataSource.getFirstRecords();
+            }
+        });
     }
 
     private getNotifications(page: number, pageSize?: number): Promise<GridResultModel<UserNotification>> {

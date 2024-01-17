@@ -12,6 +12,9 @@ namespace IARA.Mobile.Pub.Views.Controls
 {
     public class TicketStatusBarView : Frame
     {
+        public static readonly BindableProperty TicketNumberProperty =
+           BindableProperty.Create(nameof(TicketNumber), typeof(string), typeof(TicketStatusBarView));
+
         public static readonly BindableProperty StatusCodeProperty =
            BindableProperty.Create(nameof(StatusCode), typeof(string), typeof(TicketStatusBarView));
 
@@ -40,7 +43,7 @@ namespace IARA.Mobile.Pub.Views.Controls
             BindableProperty.Create(nameof(TicketRenewCommandParameter), typeof(object), typeof(TicketStatusBarView));
 
         public static readonly BindableProperty TicketUpdateCommandProperty =
-  BindableProperty.Create(nameof(TicketUpdateCommand), typeof(ICommand), typeof(TicketStatusBarView));
+            BindableProperty.Create(nameof(TicketUpdateCommand), typeof(ICommand), typeof(TicketStatusBarView));
 
         public static readonly BindableProperty TicketUpdateCommandParameterProperty =
             BindableProperty.Create(nameof(TicketUpdateCommandParameter), typeof(object), typeof(TicketStatusBarView));
@@ -93,6 +96,9 @@ namespace IARA.Mobile.Pub.Views.Controls
                         }
                         else if (ValidFrom <= now && now < ValidTo)
                         {
+                            // Check for Cyrillic E and Latin E
+                            bool isTicketIssued = string.IsNullOrEmpty(TicketNumber) ? false :
+                                !(TicketNumber.ToUpper().StartsWith("E") || TicketNumber.ToUpper().StartsWith("Е"));
                             return new Grid()
                             {
                                 RowSpacing = 0,
@@ -109,8 +115,8 @@ namespace IARA.Mobile.Pub.Views.Controls
                                         VerticalTextAlignment = TextAlignment.Center,
                                         FontSize = 30,
                                         FontFamily = "FA",
-                                        TextColor = Color.Green,
-                                        Text = IconFont.Check,
+                                        TextColor = isTicketIssued ? Color.Green : Color.Red,
+                                        Text = isTicketIssued ? IconFont.Check : IconFont.Print,
                                     }.Row(0),
                                     new StackLayout()
                                     {
@@ -122,9 +128,10 @@ namespace IARA.Mobile.Pub.Views.Controls
                                             {
                                                 HorizontalTextAlignment = TextAlignment.Center,
                                                 FontSize = 15,
-                                                Text = TranslateExtension.Translator[nameof(GroupResourceEnum.FishingTicket) + "/Valid"],//"Валиден още:"
+                                                Text = isTicketIssued ? TranslateExtension.Translator[nameof(GroupResourceEnum.FishingTicket) + "/Valid"]//"Валиден още:"
+                                                : TranslateExtension.Translator[nameof(GroupResourceEnum.FishingTicket) + "/NotIssued"],//"Билета не е издаден"
                                                 LineBreakMode = LineBreakMode.WordWrap,
-                                                IsVisible = ValidTo.Year != 9999,
+                                                IsVisible = ValidTo.Year != 9999
                                             },
                                             new Label()
                                             {
@@ -132,6 +139,7 @@ namespace IARA.Mobile.Pub.Views.Controls
                                                 FontSize = 15,
                                                 LineBreakMode = LineBreakMode.WordWrap,
                                                 Text = HumanizeTimeLeft(),
+                                                IsVisible = isTicketIssued
                                             }
                                         }
                                     }.Row(1),
@@ -206,6 +214,12 @@ namespace IARA.Mobile.Pub.Views.Controls
             });
 
             this.Bind(TicketStatusBarView.ContentProperty, StatusCodeProperty.PropertyName, source: this, converter: statusChangedConverter);
+        }
+
+        public string TicketNumber
+        {
+            get => (string)GetValue(TicketNumberProperty);
+            set => SetValue(TicketNumberProperty, value);
         }
 
         public string StatusCode

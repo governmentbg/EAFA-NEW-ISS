@@ -12,7 +12,7 @@ using IARA.Mobile.Pub.Infrastructure.Persistence.Migrations.Interfaces;
  * 3. Make the Version{X} file inherit the IVersion interface.
  * 4. You can now implement the changes that this version will bring inside of the Version{X} class Migrate method.
  * 5. Implement those same changes in the Migrations folder / the ModelSnapshot class.
- * 6. Go to line 56 in this file and add the new Version{X} file at the end of the array with IVersion-s.
+ * 6. Go to line 61 in this file and add the new Version{X} file at the end of the array with IVersion-s.
  * NOTE: Make sure the versions in the array are ordered in ascending order using {X}.
  * ALSO NOTE: The ModelSnapshot class only gets called when creating the database for the first time, so you should only create tables in it.
  */
@@ -24,7 +24,7 @@ namespace IARA.Mobile.Pub.Infrastructure.Persistence
         /// <summary>
         /// Represents the current version of the migrations
         /// </summary>
-        private const int CURRENT_VERSION = 1;
+        private const int CURRENT_VERSION = 3;
 
         private readonly INomenclatureDatesClear nomenclatureDatesClear;
         private readonly IExceptionHandler exceptionHandler;
@@ -59,6 +59,8 @@ namespace IARA.Mobile.Pub.Infrastructure.Persistence
                     {
                         IVersion[] versions = new IVersion[]
                         {
+                            new Version2(),
+                            new Version3()
                         };
 
                         for (int i = lastVersion; i < CURRENT_VERSION; i++)

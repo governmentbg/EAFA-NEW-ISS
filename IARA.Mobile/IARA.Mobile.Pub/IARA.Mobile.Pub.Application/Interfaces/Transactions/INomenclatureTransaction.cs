@@ -8,6 +8,7 @@ namespace IARA.Mobile.Pub.Application.Interfaces.Transactions
     public interface INomenclatureTransaction
     {
         List<CountrySelectDto> GetCountries();
+        List<TerritorialUnitSelectDto> GetTerritorialUnits();
 
         List<DistrictSelectDto> GetDistricts();
 

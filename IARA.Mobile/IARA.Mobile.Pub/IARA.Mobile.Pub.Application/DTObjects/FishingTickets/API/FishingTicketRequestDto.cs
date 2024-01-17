@@ -25,5 +25,6 @@ namespace IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API
         public bool HasUserConfirmed { get; set; }
         public List<FileModel> Files { get; set; }
         public bool UpdateProfileData { get; set; }
+        public int? DeliveryTerritoryUnitId { get; set; }
     }
 }

@@ -321,6 +321,20 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             this.dateOfBirthProperties.validators = [Validators.required, this.isPersonElder()];
         }
 
+        if (type === TicketTypeEnum.ASSOCIATION || type === TicketTypeEnum.ELDERASSOCIATION) {
+            if (this.isAssociation) {
+                const associationId: number | undefined = (this.service as RecreationalFishingPublicService).currentUserChosenAssociation!.value!;
+
+                (this.service as RecreationalFishingPublicService).currentUserAssociations.subscribe({
+                    next: (associations: NomenclatureDTO<number>[]) => {
+                        this.fishingAssociations = associations;
+
+                        this.form.get('membershipCardIssuedByControl')?.setValue(this.fishingAssociations.find(x => x.value === associationId));
+                    }
+                });
+            }
+        }
+
         this.personPhotoRequired = !this.notRequiredPhotoPeriods.includes(this.period.code!);
         if (this.personPhotoRequired) {
             this.form.get('photoControl')?.setValidators(Validators.required);
@@ -976,11 +990,20 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
         const assocTypes: TicketTypeEnum[] = [TicketTypeEnum.ASSOCIATION, TicketTypeEnum.BETWEEN14AND18ASSOCIATION, TicketTypeEnum.ELDERASSOCIATION];
 
         if (assocTypes.includes(TicketTypeEnum[this.type.code as keyof typeof TicketTypeEnum])) {
-            return NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.FishingAssociations, this.service.getAllFishingAssociations.bind(this.service), false
-            ).pipe(map((associations: NomenclatureDTO<number>[]) => {
-                this.fishingAssociations = associations;
-            }));
+            if (this.isAssociation) {
+                (this.service as RecreationalFishingPublicService).currentUserAssociations.subscribe({
+                    next: (associations: NomenclatureDTO<number>[]) => {
+                        this.fishingAssociations = associations;
+                    }
+                });
+            }
+            else {
+                return NomenclatureStore.instance.getNomenclature(
+                    NomenclatureTypes.FishingAssociations, this.service.getAllFishingAssociations.bind(this.service), false
+                ).pipe(map((associations: NomenclatureDTO<number>[]) => {
+                    this.fishingAssociations = associations;
+                }));
+            }
         }
         return of();
     }

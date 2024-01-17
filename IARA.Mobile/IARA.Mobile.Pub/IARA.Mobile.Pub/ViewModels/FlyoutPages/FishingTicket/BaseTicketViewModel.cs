@@ -3,8 +3,10 @@ using IARA.Mobile.Application.DTObjects.Profile.API;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
+using IARA.Mobile.Pub.Application.DTObjects.AddressNomenclatures.LocalDb;
 using IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API;
 using IARA.Mobile.Pub.Application.Interfaces.Utilities;
+using IARA.Mobile.Pub.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Pub.Domain.Enums;
 using IARA.Mobile.Pub.Utilities;
 using IARA.Mobile.Pub.ViewModels.Base;
@@ -52,6 +54,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
             _fishingTicketsSettings = fishingTicketsSettings;
             AllowAdditionalUnder14Tickets = fishingTicketsSettings.AllowedUnder14TicketsCount > 0;
             DownloadTicket = CommandBuilder.CreateFrom(DownloadTicketPdf);
+            TerritorialUnits = NomenclaturesTransaction.GetTerritorialUnits();
         }
 
         public BaseTicketViewModel()
@@ -61,6 +64,22 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
             AddUnder14TicketCommand = CommandBuilder.CreateFrom(OnAddUnder14Ticket);
             RemoveUnder14TicketCommand = CommandBuilder.CreateFrom<Under14SubTicketViewModel>(OnRemoveUnder14Ticket);
             DownloadTicket = CommandBuilder.CreateFrom(DownloadTicketPdf);
+            TerritorialUnits = NomenclaturesTransaction.GetTerritorialUnits();
+        }
+
+        private ValidStateSelect<TerritorialUnitSelectDto> _territorialUnit;
+        [Required]
+        public ValidStateSelect<TerritorialUnitSelectDto> TerritorialUnit
+        {
+            get => _territorialUnit;
+            set => SetProperty(ref _territorialUnit, value);
+        }
+
+        private List<TerritorialUnitSelectDto> _territorialUnits;
+        public List<TerritorialUnitSelectDto> TerritorialUnits
+        {
+            get => _territorialUnits;
+            set => SetProperty(ref _territorialUnits, value);
         }
 
         public TicketMetadataModel TicketMetadata { get; set; }
@@ -118,6 +137,8 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
             get => _hasInvalidData;
             set => SetProperty(ref _hasInvalidData, value);
         }
+       // Check for Cyrillic E and Latin E
+        public bool IsTicketElectronic => TicketMetadata.TicketNumber.ToUpper().StartsWith("E") || TicketMetadata.TicketNumber.ToUpper().StartsWith("Е");
 
         public bool IsActive => TicketMetadata.Id != 0 &&
                     TicketMetadata.Action == TicketAction.View &&
@@ -125,6 +146,8 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
                    || TicketMetadata.PaymentStatus == PaymentStatusEnum.NotNeeded)
                    && TicketMetadata.ApplicationStatusCode != ApplicationStatuses.CORR_BY_USR_NEEDED
                    && TicketMetadata.ApplicationStatusCode != ApplicationStatuses.FILL_BY_APPL;
+
+        public bool CanDownload => !IsTicketElectronic && IsActive;
 
         public string OnSaveButtonLabel => (TicketMetadata.Action == TicketAction.Update ||
                 TicketMetadata.TypeCode == nameof(TicketTypeEnum.UNDER14) ||

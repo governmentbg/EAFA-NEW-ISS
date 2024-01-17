@@ -27,30 +27,30 @@ export class EPaymentsService implements IEPaymentsService {
         this.eGovPaymentSevice.RequestService = new EPaymentsRequestService(requestService, 'EGovPayments');
     }
 
-    public initiateEPayBGPayment(applicationId: number): Observable<GeneratedPaymentModel> {
+    public initiateEPayBGPayment(paymentRequestNum: string): Observable<GeneratedPaymentModel> {
 
-        let paymentRequest = new InvoicePaymentRequestModel(applicationId.toString());
+        let paymentRequest = new InvoicePaymentRequestModel(paymentRequestNum);
         paymentRequest.paymentType = EPaymentType.WebEPay;
         return from(this.ePayBgPaymentService.generatePaymentRequestById(paymentRequest));
     }
 
-    public initiateEPayDirectPayment(applicationId: number): Observable<GeneratedPaymentModel> {
+    public initiateEPayDirectPayment(paymentRequestNum: string): Observable<GeneratedPaymentModel> {
 
-        let paymentRequest = new InvoicePaymentRequestModel(applicationId.toString());
+        let paymentRequest = new InvoicePaymentRequestModel(paymentRequestNum);
         paymentRequest.paymentType = EPaymentType.DirectCreditPay;
         return from(this.ePayBgPaymentService.generatePaymentRequestById(paymentRequest));
     }
 
-    public initiateEGovBankPayment(applicationId: number): Observable<string> {
-        return from(this.eGovPaymentSevice.registerOfflinePaymentByRefNumber(applicationId.toString()));
+    public initiateEGovBankPayment(paymentRequestNum: string): Observable<string> {
+        return from(this.eGovPaymentSevice.registerOfflinePaymentByRefNumber(paymentRequestNum));
     }
 
-    public initiateEGovEPayBGPayment(applicationId: number): Observable<FormDataModel> {
-        return from(this.eGovPaymentSevice.createVPOSPaymentByRefNumber(applicationId.toString(), VPOSPaymentTypes.EPAY));
+    public initiateEGovEPayBGPayment(paymentRequestNum: string): Observable<FormDataModel> {
+        return from(this.eGovPaymentSevice.createVPOSPaymentByRefNumber(paymentRequestNum, VPOSPaymentTypes.EPAY));
     }
 
-    public initiateEGovEPOSPayment(applicationId: number): Observable<FormDataModel> {
-        return from(this.eGovPaymentSevice.createVPOSPaymentByRefNumber(applicationId.toString(), VPOSPaymentTypes.BANK));
+    public initiateEGovEPOSPayment(paymentRequestNum: string): Observable<FormDataModel> {
+        return from(this.eGovPaymentSevice.createVPOSPaymentByRefNumber(paymentRequestNum, VPOSPaymentTypes.BANK));
     }
 }
 

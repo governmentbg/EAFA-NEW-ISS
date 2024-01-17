@@ -340,7 +340,7 @@ export class TransferFishingCapacityTableComponent extends CustomFormControl<Cap
             }
         }
         else {
-            regixHolder = this.expectedResults.find(x => {
+            regixHolder = this.expectedResults?.find(x => {
                 return x.legal?.eik === holder.legal?.eik;
             });
 

@@ -269,8 +269,12 @@
                                    tooltipResourceName="recreational-fishing.application-issue-date-helper"
                                    label="{{ 'recreational-fishing.application-issue-date' | tlTranslate }}">
                     </tl-date-range>
+                    <tl-slide-toggle fxFlex="25"
+                                     formControlName="showExpiredControl"
+                                     label="{{ 'recreational-fishing.application-show-expired' | tlTranslate }}"
+                                     tooltipResourceName="recreational-fishing.application-show-expired-helper">
+                    </tl-slide-toggle>
                     <div *ngIf="isAssociation" fxFlex="25"></div>
-                    <div fxFlex="25"></div>
                 </div>
             </div>
         </search-panel>

@@ -89,6 +89,13 @@
                     </DataTemplate>
                 </sv:TLGrid.ItemTemplate>
             </sv:TLGrid>
+            <StackLayout Margin="10">
+                <sv:TLHeaderLine Text="{rt:Translate TerritorialUnitHeading, Group=TicketPerson}" ImageGlyph="{Static h:IconFont.Building}" />
+                <tl:TLPicker ItemsSource="{Binding TerritorialUnits}"
+                        ValidState="{Binding TerritorialUnit}"
+                        Title="{rt:Translate TerritorialUnitInputHeading, Group=TicketPerson}"
+                        IsEnabled="{Binding IsEditEnabled}" />
+            </StackLayout>
             <StackLayout IsVisible="{Binding IsEditEnabled}">
                 <sv:TLButton Command="{Binding AddUnder14TicketCommand}"
                         IsVisible="{Binding AllowAdditionalUnder14Tickets}"

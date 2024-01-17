@@ -18,6 +18,7 @@
         Version,
         Genders,
         SystemParameters,
-        PaymentTypes
+        PaymentTypes,
+        TerritorialUnit,
     }
 }

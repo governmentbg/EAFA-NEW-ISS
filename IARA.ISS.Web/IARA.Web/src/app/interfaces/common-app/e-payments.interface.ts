@@ -1,11 +1,11 @@
 ﻿import { FormDataModel } from '@tl/tl-egov-payments';
-import { GeneratedPaymentModel } from "@tl/tl-epay-payments";
-import { Observable } from "rxjs";
+import { GeneratedPaymentModel } from '@tl/tl-epay-payments';
+import { Observable } from 'rxjs';
 
 export interface IEPaymentsService {
-    initiateEPayBGPayment(applicationId: number): Observable<GeneratedPaymentModel>;
-    initiateEPayDirectPayment(applicationId: number): Observable<GeneratedPaymentModel>;
-    initiateEGovBankPayment(applicationId: number): Observable<string>;
-    initiateEGovEPayBGPayment(applicationId: number): Observable<FormDataModel>;
-    initiateEGovEPOSPayment(applicationId: number): Observable<FormDataModel>;
+    initiateEPayBGPayment(paymentRequestNum: string): Observable<GeneratedPaymentModel>;
+    initiateEPayDirectPayment(paymentRequestNum: string): Observable<GeneratedPaymentModel>;
+    initiateEGovBankPayment(paymentRequestNum: string): Observable<string>;
+    initiateEGovEPayBGPayment(paymentRequestNum: string): Observable<FormDataModel>;
+    initiateEGovEPOSPayment(paymentRequestNum: string): Observable<FormDataModel>;
 }

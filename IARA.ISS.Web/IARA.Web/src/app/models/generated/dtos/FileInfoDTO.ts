@@ -10,6 +10,9 @@ export class FileInfoDTO {
     @StrictlyTyped(Number)
     public id?: number;
 
+    @StrictlyTyped(Number)
+    public recordFileId?: number;
+
     @StrictlyTyped(File)
     public file?: File;
 
@@ -33,4 +36,7 @@ export class FileInfoDTO {
 
     @StrictlyTyped(Boolean)
     public deleted?: boolean;
+
+    @StrictlyTyped(Boolean)
+    public storeOriginal?: boolean;
 }
