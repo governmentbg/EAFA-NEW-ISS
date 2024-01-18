@@ -13,10 +13,11 @@
                                      label="{{ 'payment-information.payment-type' | tlTranslate }}"
                                      [options]="paymentTypes">
                     </tl-autocomplete>
-                    <tl-date fxFlex="25"
-                             formControlName="paymentDateControl"
-                             label="{{ 'payment-information.payment-date' | tlTranslate }}">
-                    </tl-date>
+                    <tl-date-time fxFlex="25"
+                                  formControlName="paymentDateControl"
+                                  label="{{ 'payment-information.payment-date' | tlTranslate }}"
+                                  [disabled]="isDisabled">
+                    </tl-date-time>
                     <tl-input fxFlex="25"
                               formControlName="totalPaidPriceControl"
                               label="{{ 'payment-information.total-paid-price' | tlTranslate }}">
@@ -33,11 +34,11 @@
                                      [options]="paymentStatuses"
                                      [readonly]="true">
                     </tl-autocomplete>
-                    <tl-date fxFlex="25"
-                             formControlName="lastUpdateDateControl"
-                             label="{{ 'payment-information.last-update-date' | tlTranslate }}"
-                             [readonly]="true">
-                    </tl-date>
+                    <tl-date-time fxFlex="25"
+                                  formControlName="lastUpdateDateControl"
+                                  label="{{ 'payment-information.last-update-date' | tlTranslate }}"
+                                  [readonly]="true">
+                    </tl-date-time>
                 </div>
             </div>
         </tl-expansion-panel>

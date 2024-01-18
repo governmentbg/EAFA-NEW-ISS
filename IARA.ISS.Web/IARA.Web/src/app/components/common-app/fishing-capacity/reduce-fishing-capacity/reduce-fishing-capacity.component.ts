@@ -81,7 +81,7 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
     public maxPower: number = 0;
     public newCertificateData: NewCertificateData | undefined;
 
-    public shipControlErrorLabelTextMethod: GetControlErrorLabelTextCallback  = this.shipControlErrorLabelText.bind(this);
+    public shipControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.shipControlErrorLabelText.bind(this);
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -231,6 +231,11 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
 
     public saveBtnClicked(action: IActionInfo, dialogClose: DialogCloseCallback): void {
         this.form.markAllAsTouched();
+
+        if (!(this.hasDelivery && !this.showOnlyRegiXData && this.willIssueCapacityCertificates)) {
+            this.form.get('deliveryDataControl')!.setErrors(null);
+        }
+
         this.validityCheckerGroup.validate();
 
         if (this.form.valid) {
@@ -262,6 +267,11 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
 
         if (!this.isReadonly && !this.viewMode && !applicationAction) {
             this.form.markAllAsTouched();
+
+            if (!(this.hasDelivery && !this.showOnlyRegiXData && this.willIssueCapacityCertificates)) {
+                this.form.get('deliveryDataControl')!.setErrors(null);
+            }
+
             this.validityCheckerGroup.validate();
 
             if (this.form.valid) {

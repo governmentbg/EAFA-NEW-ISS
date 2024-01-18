@@ -44,6 +44,7 @@ import { AuthService } from '@app/shared/services/auth.service';
 import { EnterOnlineTicketNumberComponent } from './components/enter-online-ticket-number/enter-online-ticket-number.component';
 import { EnterOnlineTicketNumberParams } from './models/enter-online-ticket-number-params.model';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
+import { PaymentStatusesEnum } from '@app/enums/payment-statuses.enum';
 
 const OFFLINE_TAB_INDEX: number = 0;
 const ONLINE_TAB_INDEX: number = 1;
@@ -94,6 +95,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
     public readonly ticketStatusEnum: typeof TicketStatusEnum = TicketStatusEnum;
     public readonly applicationStatusEnum: typeof ApplicationStatusesEnum = ApplicationStatusesEnum;
     public readonly applicationSourceTypeEnum: typeof ApplicationHierarchyTypesEnum = ApplicationHierarchyTypesEnum;
+    public readonly paymentStatusEnum: typeof PaymentStatusesEnum = PaymentStatusesEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
     @ViewChild('offlineDatatable', { read: TLDataTableComponent })
