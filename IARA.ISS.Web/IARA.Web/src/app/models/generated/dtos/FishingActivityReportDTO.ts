@@ -32,4 +32,7 @@ export class FishingActivityReportDTO {
 
     @StrictlyTyped(FishingActivityReportPageDTO)
     public pages?: FishingActivityReportPageDTO[];
+
+    @StrictlyTyped(Boolean)
+    public hasLanding?: boolean;
 }

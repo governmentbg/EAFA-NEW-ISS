@@ -234,11 +234,19 @@
                          columnName="{{ 'fishing-activities.unload-time' | tlTranslate }}">
             </data-column>
 
-            <data-template-column *ngIf="hasReplayMessagesPermission"
-                                  [flexRate]="0.05">
+            <data-template-column *ngIf="hasGenerateLandingPermission || hasReplayMessagesPermission"
+                                  [flexRate]="0.1">
                 <ng-template ngx-datatable-cell-template let-row="row">
                     <div fxLayout="row wrap" fxLayoutAlign="end center">
-                        <tl-icon-button icon="replay"
+                        <tl-icon-button *ngIf="hasGenerateLandingPermission && !row.data.hasLanding"
+                                        icon="directions_boat"
+                                        iconClass="accent-color"
+                                        (buttonClicked)="generateLanding(row.data)"
+                                        tooltipText="{{ 'fishing-activities.generate-landing' | tlTranslate }}">
+                        </tl-icon-button>
+
+                        <tl-icon-button *ngIf="hasReplayMessagesPermission"
+                                        icon="replay"
                                         iconClass="accent-color"
                                         (buttonClicked)="replayTrip(row.data)"
                                         tooltipText="{{ 'fishing-activities.replay-trip' | tlTranslate }}">

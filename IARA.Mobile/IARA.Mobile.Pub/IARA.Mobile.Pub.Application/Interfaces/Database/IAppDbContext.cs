@@ -32,6 +32,7 @@ namespace IARA.Mobile.Pub.Application.Interfaces.Database
         TLTableQuery<NGender> Genders { get; }
         TLTableQuery<NSystemParameter> SystemParameters { get; }
         TLTableQuery<NPaymentType> PaymentTypes { get; }
+        TLTableQuery<NTerritorialUnit> TerritorialUnits { get; }
 
         TLTableQuery<SFCatch> SFCatches { get; }
         TLTableQuery<SFPermit> SFPermits { get; }

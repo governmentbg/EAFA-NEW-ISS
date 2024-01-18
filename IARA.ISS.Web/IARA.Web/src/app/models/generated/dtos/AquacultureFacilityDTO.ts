@@ -15,8 +15,8 @@ export class AquacultureFacilityDTO {
     @StrictlyTyped(Number)
     public applicationId?: number;
 
-    @StrictlyTyped(String)
-    public regNum?: string;
+    @StrictlyTyped(Number)
+    public regNum?: number;
 
     @StrictlyTyped(String)
     public urorNum?: string;

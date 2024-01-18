@@ -176,6 +176,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
                 Person = Person.MapToApiPerson(),
                 PersonAddressRegistrations = Person.MapToApiAddresses(),
                 HasUserConfirmed = AcceptAgreement,
+                DeliveryTerritoryUnitId = TerritorialUnit.Value.Id,
                 PersonPhoto = photoFullPath != null ? new FileModel()
                 {
                     FullPath = photoFullPath,

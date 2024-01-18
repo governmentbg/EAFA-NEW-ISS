@@ -615,7 +615,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         const min = (lhs: Date, rhs: Date) => lhs < rhs ? lhs : rhs;
 
         for (const role of roles) {
-
+           //Ако една и съща роля с припокриващ се период на валидност съществува в активни и в неактивни записи, взимаме само активния запис и не показваме съобщение за грешка
             if (result.findIndex(x => x.id === role.id && max(x.accessValidFrom!, role.accessValidFrom!) < min(x.accessValidTo!, role.accessValidTo!)) === -1) {
                 const original = roles.filter(x => x.id === role.id && max(x.accessValidFrom!, role.accessValidFrom!) < min(x.accessValidTo!, role.accessValidTo!));
 

@@ -1,7 +1,8 @@
 ﻿
+
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 
-export class FishingTicketDTO {
+export class FishingTicketDTO { 
     public constructor(obj?: Partial<FishingTicketDTO>) {
         Object.assign(this, obj);
     }
@@ -23,6 +24,9 @@ export class FishingTicketDTO {
 
     @StrictlyTyped(String)
     public periodCode?: string;
+
+    @StrictlyTyped(String)
+    public periodName?: string;
 
     @StrictlyTyped(Number)
     public price?: number;
@@ -53,4 +57,10 @@ export class FishingTicketDTO {
 
     @StrictlyTyped(String)
     public applicationStatusReason?: string;
+
+    @StrictlyTyped(String)
+    public ticketNumber?: string;
+
+    @StrictlyTyped(String)
+    public paymentRequestNum?: string;
 }

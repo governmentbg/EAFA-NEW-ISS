@@ -1,7 +1,7 @@
 ﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { NotificationDTO } from '@app/models/generated/dtos/NotificationDTO';
-import { PageCodeEnum } from '../../../enums/page-code.enum';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { NotificationsHubService } from '../../notifications/notifications-hub-service';
 
 @Component({

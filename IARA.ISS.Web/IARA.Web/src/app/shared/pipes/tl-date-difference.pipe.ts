@@ -10,7 +10,13 @@ export class TLDateDifferencePipe implements PipeTransform {
             let hasHours: boolean = false;
 
             if (dateDifference.days !== 0 && dateDifference.days !== null && dateDifference.days !== undefined) {
-                difference = `${dateDifference.days} дена `;
+                if (dateDifference.days === 1) {
+                    difference = `${dateDifference.days} ден `;
+                }
+                else {
+                    difference = `${dateDifference.days} дни `;
+                }
+
                 hasDays = true;
             }
 

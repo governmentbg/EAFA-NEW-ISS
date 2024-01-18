@@ -196,7 +196,8 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
                     Price = ticket.Price,
                     ApplicationId = ticket.ApplicationId,
                     ApplicationStatusCode = ticket.ApplicationStatusCode,
-                    PaymentStatus = ticket.PaymentStatus
+                    PaymentStatus = ticket.PaymentStatus,
+                    TicketNumber = ticket.TicketNumber
                 };
 
                 if (action == TicketAction.Renew)

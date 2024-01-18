@@ -36,6 +36,9 @@ export class InspectionDraftDTO {
     @StrictlyTyped(String)
     public json?: string;
 
+    @StrictlyTyped(String)
+    public reportNumber?: string;
+
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
 }

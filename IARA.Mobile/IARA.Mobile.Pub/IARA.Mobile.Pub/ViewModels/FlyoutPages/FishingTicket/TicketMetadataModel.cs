@@ -17,6 +17,8 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
         public int ApplicationId { get; set; }
         public string ApplicationStatusCode { get; set; }
         public PaymentStatusEnum PaymentStatus { get; set; }
+        public string TicketNumber { get; set; }
+
     }
 
     public enum TicketAction

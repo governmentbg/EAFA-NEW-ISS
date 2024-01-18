@@ -74,6 +74,13 @@
                         Title="{rt:Translate TicketValidTo, Group=TicketPerson}" />
             </tl:TLWrapLayout>
             <controls:PersonView IsEditEnabled="{Binding BindingContext.IsEditEnabled, Source={Reference page}}" BindingContext="{Binding Person, Mode=TwoWay}" />
+            <StackLayout Margin="10">
+                <sv:TLHeaderLine Text="{rt:Translate TerritorialUnitHeading, Group=TicketPerson}" ImageGlyph="{Static h:IconFont.Building}" />
+                <tl:TLPicker ItemsSource="{Binding TerritorialUnits}"
+                        ValidState="{Binding TerritorialUnit}"
+                        Title="{rt:Translate TerritorialUnitInputHeading, Group=TicketPerson}"
+                        IsEnabled="{Binding IsEditEnabled}" />
+            </StackLayout>
             <StackLayout IsVisible="{Binding IsEditEnabled}">
                 <sv:TLGrid ItemsSource="{Binding ChildrenTickets}">
                     <sv:TLGrid.ItemTemplate>

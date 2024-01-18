@@ -85,22 +85,19 @@ export class CancellationHistoryDialogComponent implements OnInit, IDialogCompon
 
         this.form.get('reasonControl')!.valueChanges.subscribe({
             next: (reason: CancellationReasonDTO | undefined) => {
-                if (reason === undefined || reason === null) {
-                    this.showIssueOrderNum = false;
-                    this.form.get('issueOrderNumControl')!.clearValidators();
-                    this.form.get('descriptionControl')!.clearValidators();
-                }
-                else {
+                this.showIssueOrderNum = false;
+                this.form.get('issueOrderNumControl')!.clearValidators();
+                this.form.get('descriptionControl')!.clearValidators();
+
+                if (reason !== undefined && reason !== null) {
                     switch (CancellationReasonsEnum[reason.code! as keyof typeof CancellationReasonsEnum]) {
                         case CancellationReasonsEnum.IARAHeadDecision:
                         case CancellationReasonsEnum.MZHHeadDecision:
                             this.showIssueOrderNum = true;
                             this.form.get('issueOrderNumControl')!.setValidators([Validators.required, Validators.maxLength(200)]);
-                            this.form.get('descriptionControl')!.clearValidators();
                             break;
                         case CancellationReasonsEnum.Other:
                             this.showIssueOrderNum = false;
-                            this.form.get('issueOrderNumControl')!.clearValidators();
                             this.form.get('descriptionControl')!.setValidators([Validators.required, Validators.maxLength(4000)]);
                             break;
                         default:
@@ -109,13 +106,11 @@ export class CancellationHistoryDialogComponent implements OnInit, IDialogCompon
                             this.form.get('descriptionControl')!.clearValidators();
                             break;
                     }
-
-                    this.form.get('issueOrderNumControl')!.updateValueAndValidity({ emitEvent: false });
-                    this.form.get('descriptionControl')!.updateValueAndValidity({ emitEvent: false });
-
-                    this.form.get('issueOrderNumControl')!.markAsPending();
-                    this.form.get('descriptionControl')!.markAsPending();
                 }
+
+                this.form.get('issueOrderNumControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('descriptionControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('descriptionControl')!.markAsPending();
             }
         });
     }

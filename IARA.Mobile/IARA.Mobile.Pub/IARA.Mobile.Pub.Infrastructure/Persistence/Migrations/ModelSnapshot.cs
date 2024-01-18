@@ -51,6 +51,7 @@ namespace IARA.Mobile.Pub.Infrastructure.Persistence.Migrations
             context.CreateTable<NSystemParameter>();
             context.CreateTable<ErrorLog>();
             context.CreateTable<NPaymentType>();
+            context.CreateTable<NTerritorialUnit>();
         }
     }
 }

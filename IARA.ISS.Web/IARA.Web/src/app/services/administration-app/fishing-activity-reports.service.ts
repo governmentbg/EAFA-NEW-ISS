@@ -28,6 +28,11 @@ export class FishingActivityReportsService extends BaseAuditService {
         });
     }
 
+    public generateFishingActivityReportLanding(tripIdentifier: string): Observable<void> {
+        const params = new HttpParams().append('tripIdentifier', tripIdentifier);
+        return this.requestService.post(this.area, this.controller, 'GenerateFishingActivityReportLanding', null, { httpParams: params });
+    }
+
     public fishingActivityReportReplayTrip(tripIdentifier: string): Observable<void> {
         const params = new HttpParams().append('tripIdentifier', tripIdentifier);
         return this.requestService.post(this.area, this.controller, 'FishingActivityReportReplayTrip', null, { httpParams: params });

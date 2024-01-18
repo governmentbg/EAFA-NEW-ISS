@@ -294,6 +294,48 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                 });
             }
 
+            this.form.get('ersControl')!.valueChanges.subscribe({
+                next: (value: boolean) => {
+                    if (value === true) {
+                        this.form.get('hasERSExceptionControl')!.setValue(false);
+                    }
+                    else {
+                        const length: number = this.form.get('totalLengthControl')!.value;
+                        if (length !== undefined && length !== null) {
+                            if (length >= 12) {
+                                this.form.get('hasERSExceptionControl')!.setValue(true);
+                            }
+                            else {
+                                this.form.get('hasERSExceptionControl')!.setValue(false);
+                            }
+                        }
+                        else {
+                            this.form.get('hasERSExceptionControl')!.setValue(true);
+                        }
+                    }
+                }
+            });
+
+            this.form.get('totalLengthControl')!.valueChanges.subscribe({
+                next: (value: number | undefined) => {
+                    const ers: boolean = this.form.get('ersControl')!.value ?? false;
+
+                    if (value !== undefined && value !== null) {
+                        if (value >= 12) {
+                            if (ers) {
+                                this.form.get('hasERSExceptionControl')!.setValue(false);
+                            }
+                            else {
+                                this.form.get('hasERSExceptionControl')!.setValue(true);
+                            }
+                        }
+                        else {
+                            this.form.get('hasERSExceptionControl')!.setValue(false);
+                        }
+                    }
+                }
+            });
+
             this.form.get('fleetTypeControl')!.valueChanges.subscribe({
                 next: (fleet: FleetTypeNomenclatureDTO | undefined) => {
                     this.hasFishingCapacity = fleet?.hasFishingCapacity === true;

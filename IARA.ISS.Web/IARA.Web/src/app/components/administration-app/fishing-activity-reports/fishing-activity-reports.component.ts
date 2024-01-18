@@ -42,6 +42,7 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
     public hasLandingOptions: NomenclatureDTO<ThreeState>[] = [];
 
     public readonly hasFishLogBookPageReadPermission: boolean;
+    public readonly hasGenerateLandingPermission: boolean;
     public readonly hasReplayMessagesPermission: boolean;
 
     @ViewChild(TLDataTableComponent)
@@ -78,6 +79,7 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
         this.confirmDialog = confirmDialog;
 
         this.hasFishLogBookPageReadPermission = permissions.hasAny(PermissionsEnum.FishLogBookPageReadAll, PermissionsEnum.FishLogBookRead);
+        this.hasGenerateLandingPermission = permissions.has(PermissionsEnum.FishingActivityReportsGenerateLanding);
         this.hasReplayMessagesPermission = permissions.has(PermissionsEnum.FishingActivityReportsReplay);
 
         this.form = this.buildForm();
@@ -160,6 +162,24 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
         }).subscribe({
             next: () => {
                 // nothing to do
+            }
+        });
+    }
+
+    public generateLanding(trip: FishingActivityReportDTO): void {
+        this.confirmDialog.open({
+            title: this.translate.getValue('fishing-activities.generate-landing-title'),
+            message: this.translate.getValue('fishing-activities.generate-landing-message'),
+            okBtnLabel: this.translate.getValue('fishing-activities.generate-landing-ok-btn-label')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.generateFishingActivityReportLanding(trip.tripIdentifier!).subscribe({
+                        next: () => {
+                            this.grid.refreshData();
+                        }
+                    });
+                }
             }
         });
     }

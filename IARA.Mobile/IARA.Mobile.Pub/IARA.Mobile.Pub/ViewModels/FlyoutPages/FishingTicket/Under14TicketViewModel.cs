@@ -139,6 +139,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
                 RepresentativePersonAddressRegistrations = RepresentativePerson.MapToApiAddresses(),
                 ValidFrom = DateTime.Now,
                 HasUserConfirmed = AcceptAgreement,
+                DeliveryTerritoryUnitId = TerritorialUnit.Value.Id,
                 PersonPhoto = photoFullPath != null ? new FileModel()
                 {
                     FullPath = photoFullPath,

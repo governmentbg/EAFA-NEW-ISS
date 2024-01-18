@@ -219,7 +219,11 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.CatchRecords
 
                 if (tickets?.Count > 0)
                 {
-                    UserTickets.AddRange(tickets);
+                    UserTickets.AddRange(tickets
+                        .Where(t=>!(t.TicketNumber.StartsWith("E") || t.TicketNumber.StartsWith("Е")))
+                        .OrderByDescending(t=>t.ValidFrom)
+                        .ToList()
+                    );
                 }
             }
 

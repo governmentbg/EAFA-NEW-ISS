@@ -688,7 +688,8 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             issuerControl: new FormControl(),
             issueDateControl: new FormControl(),
             isDuplicateControl: new FormControl(),
-            statusesControl: new FormControl()
+            statusesControl: new FormControl(),
+            showExpiredControl: new FormControl()
         });
     }
 
@@ -707,7 +708,8 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             validTo: filters.getValue('validToControl'),
             issueDateFrom: filters.getValue<DateRangeData>('issueDateControl')?.start,
             issueDateTo: filters.getValue<DateRangeData>('issueDateControl')?.end,
-            statusIds: filters.getValue('statusesControl')
+            statusIds: filters.getValue('statusesControl'),
+            showExpired: filters.getValue('showExpiredControl') ?? false
         });
 
         const isDuplicate: ThreeState | undefined = filters.getValue<ThreeState>('isDuplicateControl');

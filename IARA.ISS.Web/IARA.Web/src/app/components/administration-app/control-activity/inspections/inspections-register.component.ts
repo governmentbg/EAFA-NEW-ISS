@@ -225,9 +225,11 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             this.gridManager.refreshData();
         }
 
-        this.gridManager.advancedFilters = new InspectionsFilters({
-            shipId: this.shipId ?? undefined,
-        });
+        if (this.shipId !== undefined && this.shipId !== null) {
+            this.gridManager.advancedFilters = new InspectionsFilters({
+                shipId: this.shipId ?? undefined,
+            });
+        }
 
         if (this.shipId === null || this.shipId === undefined) {
             this.gridManager.refreshData();

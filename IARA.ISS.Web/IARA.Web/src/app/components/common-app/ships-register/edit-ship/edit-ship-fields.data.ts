@@ -34,7 +34,7 @@ export const ENABLE_FIELD_CONTROLS = new Map<ShipEventTypeEnum, string[]>([
     [
         ShipEventTypeEnum.MOD, [
             'shipNameControl', 'vesselTypeControl', 'externalMarkControl', 'regDateControl',
-            'ircsCallSignControl', 'mmsiControl', 'uviControl', 'aisControl', 'ersControl', 'hasERSExceptionControl', 'vmsControl', 'regNumberControl',
+            'ircsCallSignControl', 'mmsiControl', 'uviControl', 'aisControl', 'ersControl', 'vmsControl', 'regNumberControl',
             'exploitationStartDateControl', 'buildYearControl', 'buildPlaceControl', 'publicAidCodeControl', 'portControl',
             'totalLengthControl', 'totalWidthControl', 'grossTonnageControl', 'netTonnageControl', 'otherTonnageControl',
             'mainEnginePowerControl', 'auxiliaryEnginePowerControl', 'mainEngineModelControl', 'mainFishingGearControl',
@@ -44,17 +44,17 @@ export const ENABLE_FIELD_CONTROLS = new Map<ShipEventTypeEnum, string[]>([
     ],
     [
         ShipEventTypeEnum.EXP, [
-            'exportCountryControl', 'exportTypeControl', 'filesControl', 'commentsControl'
+            'publicAidCodeControl', 'exportCountryControl', 'exportTypeControl', 'filesControl', 'commentsControl'
         ]
     ],
     [
         ShipEventTypeEnum.RET, [
-            'cancellationReasonControl', 'cancellationOrderNumControl', 'cancellationOrderDateControl', 'filesControl', 'commentsControl'
+            'cancellationReasonControl', 'cancellationOrderNumControl', 'cancellationOrderDateControl', 'publicAidCodeControl', 'filesControl', 'commentsControl'
         ]
     ],
     [
         ShipEventTypeEnum.DES, [
-            'destructionTypeControl', 'filesControl', 'commentsControl'
+            'destructionTypeControl', 'publicAidCodeControl', 'filesControl', 'commentsControl'
         ]
     ]
 ]);

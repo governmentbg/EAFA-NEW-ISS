@@ -30,4 +30,5 @@ export class RecreationalFishingTicketApplicationFilters extends BaseRequestMode
     public personId: number | undefined;
     public territoryUnitId: number | undefined;
     public deliveryTerritoryUnitId: number | undefined;
+    public showExpired: boolean | undefined;
 }

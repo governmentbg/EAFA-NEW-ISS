@@ -433,6 +433,10 @@
                 </tl-data-table>
             </div>
 
+            <mat-error *ngIf="form.errors?.medicineError === true">
+                * {{ 'statistical-forms.aqua-farm-medicine-error' | tlTranslate }}
+            </mat-error>
+
             <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
                 <tl-textarea fxFlex="100"
                              formControlName="medicineCommentsControl"

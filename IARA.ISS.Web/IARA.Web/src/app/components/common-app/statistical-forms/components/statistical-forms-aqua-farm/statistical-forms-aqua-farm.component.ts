@@ -54,7 +54,6 @@ import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTy
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { SubmittedByRolesEnum } from '@app/enums/submitted-by-roles.enum';
 import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
-import { AquaFarmFishOrganismReportTypeEnum } from '@app/enums/aqua-farm-fish-organism-report-type.enum';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 type YesNo = 'yes' | 'no';
@@ -452,9 +451,9 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
             });
 
             this.installationSystemFullGroup?.get('installationTypeIdControl')?.valueChanges.subscribe({
-                next: () => {
+                next: (value: number | undefined) => {
                     this.installationTypes = [...this.allInstallationTypes];
-                    const currentIds: number[] = this.systemFullTable.rows.filter(x => x.isActive).map(x => x.installationTypeId);
+                    const currentIds: number[] = this.systemFullTable.rows.filter(x => x.isActive && x.installationTypeId !== value).map(x => x.installationTypeId);
 
                     this.installationTypes = this.installationTypes.filter(x => !currentIds.includes(x.value!));
                     this.installationTypes = this.installationTypes.slice();
@@ -462,9 +461,9 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
             });
 
             this.installationSystemNotFullGroup?.get('installationTypeIdControl')?.valueChanges.subscribe({
-                next: () => {
+                next: (value: number | undefined) => {
                     this.installationTypes = [...this.allInstallationTypes];
-                    const currentIds: number[] = this.systemNotFullTable.rows.filter(x => x.isActive).map(x => x.installationTypeId);
+                    const currentIds: number[] = this.systemNotFullTable.rows.filter(x => x.isActive && x.installationTypeId !== value).map(x => x.installationTypeId);
 
                     this.installationTypes = this.installationTypes.filter(x => !currentIds.includes(x.value!));
                     this.installationTypes = this.installationTypes.slice();
@@ -544,6 +543,12 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                     if (event.Command === CommandTypes.Delete && this.broodstockTable.rows.length === 1) {
                         this.emptyBroodstock = true;
                     }
+                }
+            });
+
+            this.medicineTable.recordChanged.subscribe({
+                next: (event: RecordChangedEventArgs<StatisticalFormGivenMedicineDTO>) => {
+                    this.form.updateValueAndValidity({ onlySelf: true });
                 }
             });
         }
@@ -1166,7 +1171,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                     && (((x.oneYearBreedingMaterialWeight === undefined || x.oneYearBreedingMaterialWeight === null)
                         && (organism.oneYearBreedingMaterialWeight === undefined || organism.oneYearBreedingMaterialWeight === null))
                         || Number(x.oneYearBreedingMaterialWeight) === Number(organism.oneYearBreedingMaterialWeight)));
-                
+
                 if (original.length === 1) {
                     result.push(organism);
                 }
@@ -1466,7 +1471,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
 
     private baseFormValidators(): ValidatorFn[] {
         return [
-            this.producedFishValidator(), this.soldFishValidator(), this.unrealizedFishValidator()
+            this.producedFishValidator(), this.soldFishValidator(), this.unrealizedFishValidator(), this.givenMedicineValidator()
         ];
     }
 
@@ -1506,6 +1511,24 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         }
     }
 
+    private givenMedicineValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (this.medicineTable !== undefined && this.medicineTable !== null) {
+                const rows = this.medicineTable.rows as StatisticalFormGivenMedicineDTO[];
+
+                for (const row of rows) {
+                    const invalidRows = this.medicineTable.rows.filter(x => x.isActive !== false && x.medicineType === row.medicineType);
+
+                    if (invalidRows.length > 1) {
+                        return { 'medicineError': true };
+                    }
+                }
+            }
+
+            return null;
+        }
+    }
+
     private fishOrganismInvalid(table: TLDataTableComponent) {
         if (table !== undefined && table !== null) {
             const rows = table.rows;
@@ -1539,11 +1562,11 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                         }
 
                         if (((row.oneStripBreedingMaterialWeight == undefined
-                                || row.oneStripBreedingMaterialWeight === null
-                                || Number(row.oneStripBreedingMaterialWeight) === 0)
-                                && (x.oneStripBreedingMaterialWeight === undefined
-                                    || x.oneStripBreedingMaterialWeight === null
-                                    || Number(x.oneStripBreedingMaterialWeight) === 0))
+                            || row.oneStripBreedingMaterialWeight === null
+                            || Number(row.oneStripBreedingMaterialWeight) === 0)
+                            && (x.oneStripBreedingMaterialWeight === undefined
+                                || x.oneStripBreedingMaterialWeight === null
+                                || Number(x.oneStripBreedingMaterialWeight) === 0))
                         ) {
 
                             if (row.oneYearBreedingMaterialWeight !== undefined && row.oneYearBreedingMaterialWeight !== null

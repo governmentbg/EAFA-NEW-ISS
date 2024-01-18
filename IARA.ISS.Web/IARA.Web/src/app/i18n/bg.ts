@@ -1147,6 +1147,7 @@
         'application-is-duplicate-no': 'Покажи всички освен дубликатите',
         'application-is-duplicate-both': 'Покажи всички',
         'application-ticket-status': 'Статус',
+        'application-show-expired': 'Покажи изтекли билети',
         'application-issue-date': 'Дата на издаване',
         'application-ticket-price': 'Цена',
         'application-delete': 'Изтрий билет',
@@ -4497,9 +4498,11 @@
         'choose-log-book-for-renewal-title': 'Избор на дневник за презаверяване',
         'choose-log-book-for-renewal-keyword-filter': 'Филтър по ключова дума',
         'choose-log-book-for-renewal-show-finished-filter': 'Покажи и приключени дневници',
+        'choose-log-book-for-renewal-show-only-same-aquatic-types-filter': 'Покажи дневници със същите водни огранизми', 
         'choose-log-book-for-renewal-no-log-books': 'Няма налични стари дневници от приключени/изтекли удостоверения за презаверяване',
         'choose-log-book-for-renewal-log-book-type': 'Тип',
         'choose-log-book-for-renewal-number': 'Номер',
+        'choose-log-book-for-renewal-issue-date': 'Дата на издаване',
         'choose-log-book-for-renewal-status-name': 'Статус',
         'choose-log-book-for-renewal-start-page': 'Начална страница',
         'choose-log-book-for-renewal-end-page': 'Крайна страница',
@@ -4616,6 +4619,10 @@
         'replay-trip-title': 'Повтаряне на излет',
         'replay-trip-message': 'Сигурни ли сте, че искате да повторите всички съобщения от този излет? Това действие може да доведе до промени по страница(и) от риболовния дневник.',
         'replay-trip-ok-btn-label': 'Повтори',
+        'generate-landing': 'Генериране на LANDING',
+        'generate-landing-title': 'Генериране на LANDING',
+        'generate-landing-message': 'Генерирането на LANDING съобщение е необратимо. Сигурни ли сте, че искате да продължите?',
+        'generate-landing-ok-btn-label': 'Генерирай',
         'ship-cfr': 'CFR',
         'ship-name': 'Име на кораб',
         'trip-identifier': 'Идентификатор',
@@ -5416,6 +5423,7 @@
         'aqua-farm-stat-form-exist-error': 'Вече съществува статистически формуляр за това аквакултурно стопанство за избраната година.',
 
         'aqua-farm-fish-organism-error': 'За това съоръжение вече съществува запис за риба/воден организъм със същото средно единично тегло.',
+        'aqua-farm-medicine-error': 'Вече съществува запис за ветеринарномедицински препарат от този вид.',
 
         //Rework
         'rework-requester': 'Подател',
@@ -6328,5 +6336,9 @@
         'tickets-buy': 'За да закупите своя (или за лице под 14 години) електронен билет  за любителски риболов като физическо лице, е необходимо единствено да създадете потребител в публичния портал на ИАРА.',
         'tickets-log-in': 'След вход в системата изберете бутон от лявото меню „Билет за любителски риболов“ и следвайте стъпките.',
         'tickets-pay': 'Билетът може да бъде платен чрез системата на ePay, кредитна или дебитна карта или портала за електронни плащания за централната и местна администрация ('
+    },
+    'notifications': {
+        'title': 'Известия', 
+        'mark-all-as-read': 'Маркирай всички като прочетени'
     }
 };

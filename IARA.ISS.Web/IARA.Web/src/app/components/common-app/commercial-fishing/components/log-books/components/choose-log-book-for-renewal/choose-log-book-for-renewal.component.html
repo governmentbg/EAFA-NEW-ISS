@@ -14,6 +14,12 @@
                          label="{{ 'catches-and-sales.choose-log-book-for-renewal-show-finished-filter' | tlTranslate }}">
         </tl-slide-toggle>
     </div>
+    <div fxFlex="100" fxLayout="row">
+        <tl-slide-toggle fxFlex="50"
+                         [formControl]="showOnlySameAquaticTypesControl"
+                         label="{{ 'catches-and-sales.choose-log-book-for-renewal-show-only-same-aquatic-types-filter' | tlTranslate }}">
+        </tl-slide-toggle>
+    </div>
     <div *ngIf="logBooks.length > 0; else noLogBooks"
          fxFlex="100"
          fxLayoutGap="1em"
@@ -44,6 +50,11 @@
             <data-column propertyName="number"
                          [flexRate]="0.3"
                          columnName="{{ 'catches-and-sales.choose-log-book-for-renewal-number' | tlTranslate }}">
+            </data-column>
+            <data-column propertyName="issueDate"
+                         [flexRate]="0.2"
+                         dataType="date"
+                         columnName="{{ 'catches-and-sales.choose-log-book-for-renewal-issue-date' | tlTranslate }}">
             </data-column>
             <data-column propertyName="statusName"
                          [flexRate]="0.2"
