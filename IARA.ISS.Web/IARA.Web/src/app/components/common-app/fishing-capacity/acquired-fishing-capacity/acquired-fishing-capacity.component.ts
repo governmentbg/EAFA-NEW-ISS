@@ -44,6 +44,8 @@ export class AcquiredFishingCapacityComponent extends CustomFormControl<Acquired
     public readonly now: Date = new Date();
     public readonly manners: typeof AcquiredCapacityMannerEnum = AcquiredCapacityMannerEnum;
 
+    public licenseValidity: Record<number, boolean> = {};
+
     public types: NomenclatureDTO<AcquiredCapacityMannerEnum>[] = [];
     public licenses: FishingCapacityCertificateNomenclatureDTO[] = [];
 
@@ -390,11 +392,16 @@ export class AcquiredFishingCapacityComponent extends CustomFormControl<Acquired
                     this.allLicences = this.licenses = licences;
 
                     for (const licence of this.allLicences) {
-                        licence.isActive = licence.isActive && licence.validTo! >= this.now;
+                        this.licenseValidity[licence.value!] = this.isLicenseValid(licence);
+                        licence.isActive = licence.isActive && this.licenseValidity[licence.value!];
                     }
                 }
                 else {
                     this.allLicences = this.licenses = licences;
+
+                    for (const licence of this.allLicences) {
+                        this.licenseValidity[licence.value!] = this.isLicenseValid(licence);
+                    }
                 }
 
                 this.loader.complete();
@@ -402,5 +409,13 @@ export class AcquiredFishingCapacityComponent extends CustomFormControl<Acquired
         });
 
         return subscription;
+    }
+
+    private isLicenseValid(license: FishingCapacityCertificateNomenclatureDTO): boolean {
+        const validTo: Date = new Date(license.validTo!.getFullYear(), license.validTo!.getMonth(), license.validTo!.getDate());
+        validTo.setDate(validTo.getDate() + 1);
+        validTo.setSeconds(validTo.getSeconds() - 1);
+
+        return validTo.getTime() >= this.now.getTime();
     }
 }

@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { PaymentStatusesEnum } from '@app/enums/payment-statuses.enum';
 import { TicketStatusEnum } from '@app/enums/ticket-status.enum';
 import { ApplicationStatusesEnum } from '@app/enums/application-statuses.enum';
 
@@ -33,6 +34,12 @@ export class RecreationalFishingTicketApplicationDTO {
     @StrictlyTyped(Date)
     public validTo?: Date;
 
+    @StrictlyTyped(String)
+    public validityPeriod?: string;
+
+    @StrictlyTyped(Date)
+    public issuedOn?: Date;
+
     @StrictlyTyped(Number)
     public ticketTypeId?: number;
 
@@ -54,6 +61,12 @@ export class RecreationalFishingTicketApplicationDTO {
     @StrictlyTyped(String)
     public ticketStatusName?: string;
 
+    @StrictlyTyped(String)
+    public paymentStatusName?: string;
+
+    @StrictlyTyped(Number)
+    public paymentStatus?: PaymentStatusesEnum;
+
     @StrictlyTyped(Number)
     public ticketStatus?: TicketStatusEnum;
 
@@ -62,6 +75,9 @@ export class RecreationalFishingTicketApplicationDTO {
 
     @StrictlyTyped(Number)
     public prevStatusCode?: ApplicationStatusesEnum;
+
+    @StrictlyTyped(String)
+    public applicationStatusReason?: string;
 
     @StrictlyTyped(Boolean)
     public isActive?: boolean;

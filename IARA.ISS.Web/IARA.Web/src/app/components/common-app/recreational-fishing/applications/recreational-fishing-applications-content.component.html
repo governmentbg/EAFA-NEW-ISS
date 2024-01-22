@@ -114,16 +114,16 @@
                              columnName="{{ 'recreational-fishing.application-ticket-holder-name' | tlTranslate }}">
                 </data-column>
 
-                <data-column propertyName="validFrom"
+                <data-column propertyName="validityPeriod"
                              [flexRate]="0.3"
-                             dataType="datetime"
-                             columnName="{{ 'recreational-fishing.application-ticket-valid-from' | tlTranslate }}">
+                             [isSortable]="false"
+                             columnName="{{ 'recreational-fishing.application-ticket-validity' | tlTranslate }}">
                 </data-column>
 
-                <data-column propertyName="validTo"
-                             [flexRate]="0.2"
+                <data-column propertyName="issuedOn"
+                             [flexRate]="0.3"
                              dataType="date"
-                             columnName="{{ 'recreational-fishing.application-ticket-valid-to' | tlTranslate }}">
+                             columnName="{{ 'recreational-fishing.application-ticket-issued-on' | tlTranslate }}">
                 </data-column>
 
                 <data-column propertyName="ticketType"
@@ -140,7 +140,7 @@
                                       [flexRate]="0.2"
                                       columnName="{{ 'recreational-fishing.application-ticket-price' | tlTranslate }}">
                     <ng-template let-row="row" ngx-datatable-cell-template>
-                        {{ row.data.ticketPrice | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}
+                        <span>{{ row.data.ticketPrice | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}</span>
                     </ng-template>
                 </data-template-column>
 
@@ -149,16 +149,63 @@
                              columnName="{{ 'recreational-fishing.application-ticket-issued-by' | tlTranslate }}">
                 </data-column>
 
-                <data-column propertyName="ticketStatusName"
-                             [flexRate]="0.3"
-                             columnName="{{ 'recreational-fishing.application-ticket-status' | tlTranslate }}">
-                </data-column>
+                <data-template-column propertyName="ticketStatusName"
+                                      [flexRate]="0.3"
+                                      columnName="{{ 'recreational-fishing.application-ticket-status' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.5em">
+                            <div fxLayout="column" fxLayoutAlign="start start">
+                                <ng-container [ngSwitch]="row.ticketStatus">
+                                    <tl-icon *ngSwitchCase="ticketStatusEnum.REQUESTED"
+                                             icon="autorenew"
+                                             iconClass="accent-color">
+                                    </tl-icon>
+                                    <tl-icon *ngSwitchCase="ticketStatusEnum.ISSUED"
+                                             icon="ic-fluent-doc-question-mark-24-regular"
+                                             iconClass="accent-color"
+                                             [size]="icIconSize">
+                                    </tl-icon>
+                                    <tl-icon *ngSwitchCase="ticketStatusEnum.APPROVED"
+                                             icon="ic-fluent-document-edit-16-regular"
+                                             iconClass="accent-color"
+                                             [size]="icIconSize">
+                                    </tl-icon>
+                                    <tl-icon *ngSwitchCase="ticketStatusEnum.CANCELED"
+                                             icon="ic-fluent-doc-prohibited-24-regular"
+                                             iconClass="accent-color"
+                                             [size]="icIconSize">
+                                    </tl-icon>
+                                    <tl-icon *ngSwitchCase="ticketStatusEnum.EXPIRED"
+                                             icon="fa-hourglass-end"
+                                             iconClass="accent-color">
+                                    </tl-icon>
+                                </ng-container>
+                            </div>
+
+                            <div fxLayout="column" fxLayoutAlign="start start">
+                                <span>{{ row.data.ticketStatusName }}</span>
+                            </div>
+
+                            <div fxLayout="column" fxLayoutAlign="start start">
+                                <tl-icon *ngIf="row.data.applicationStatusReason?.length > 0"
+                                         icon="ic-fluent-warning-24-filled"
+                                         iconClass="warn-orange-color"
+                                         [matTooltip]="row.data.applicationStatusReason"
+                                         matTooltipPosition="above"
+                                         matTooltipShowDelay="250"
+                                         [size]="icIconSize">
+                                </tl-icon>
+                            </div>
+                        </div>
+                    </ng-template>
+                </data-template-column>
 
                 <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div *ngIf="!isDashboardMode" fxLayout="row wrap" fxLayoutAlign="end center">
-                            <ng-container *ngIf="row.data.isActive && (row.data.createdByUserId === currentUserId || row.data.isOnlineTicket)">
-                                <ng-container *ngTemplateOutlet="applicationActions; context: { value: { row: row.data } }"></ng-container>
+                            <ng-container *ngIf="row.data.isActive">
+                                <ng-container *ngTemplateOutlet="applicationActions; context: { value: { row: row.data } }">
+                                </ng-container>
                             </ng-container>
                             <tl-icon-button icon="visibility"
                                             iconClass="accent-color"
@@ -295,20 +342,20 @@
                              columnName="{{ 'recreational-fishing.application-ticket-holder-name' | tlTranslate }}">
                 </data-column>
 
-                <data-column propertyName="validFrom"
+                <data-column propertyName="validityPeriod"
                              [flexRate]="0.3"
-                             dataType="datetime"
-                             columnName="{{ 'recreational-fishing.application-ticket-valid-from' | tlTranslate }}">
+                             [isSortable]="false"
+                             columnName="{{ 'recreational-fishing.application-ticket-validity' | tlTranslate }}">
                 </data-column>
 
-                <data-column propertyName="validTo"
-                             [flexRate]="0.2"
+                <data-column propertyName="issuedOn"
+                             [flexRate]="0.3"
                              dataType="date"
-                             columnName="{{ 'recreational-fishing.application-ticket-valid-to' | tlTranslate }}">
+                             columnName="{{ 'recreational-fishing.application-ticket-issued-on' | tlTranslate }}">
                 </data-column>
 
                 <data-column propertyName="ticketType"
-                             [flexRate]="0.3"
+                             [flexRate]="0.4"
                              columnName="{{ 'recreational-fishing.application-ticket-type' | tlTranslate }}">
                 </data-column>
 
@@ -318,10 +365,33 @@
                 </data-column>
 
                 <data-template-column propertyName="ticketPrice"
-                                      [flexRate]="0.2"
+                                      [flexRate]="0.3"
                                       columnName="{{ 'recreational-fishing.application-ticket-price' | tlTranslate }}">
                     <ng-template let-row="row" ngx-datatable-cell-template>
-                        {{ row.data.ticketPrice | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}
+                        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.3em">
+                            <span>{{ row.data.ticketPrice | currency: 'BGN' : 'symbol' : '0.2-2' : 'bg-BG' }}</span>
+
+                            <tl-icon *ngIf="row.data.paymentStatus === paymentStatusEnum.PaymentFail"
+                                     icon="highlight_off"
+                                     iconClass="error-color"
+                                     [matTooltip]="row.data.paymentStatusName"
+                                     matTooltipPosition="above">
+                            </tl-icon>
+
+                            <tl-icon *ngIf="row.data.paymentStatus === paymentStatusEnum.PaidOK"
+                                     icon="done_outline"
+                                     iconClass="accent-color"
+                                     [matTooltip]="row.data.paymentStatusName"
+                                     matTooltipPosition="above">
+                            </tl-icon>
+
+                            <tl-icon *ngIf="row.data.paymentStatus === paymentStatusEnum.Unpaid"
+                                     icon="history"
+                                     iconClass="secondary-color"
+                                     [matTooltip]="row.data.paymentStatusName"
+                                     matTooltipPosition="above">
+                            </tl-icon>
+                        </div>
                     </ng-template>
                 </data-template-column>
 
@@ -330,16 +400,63 @@
                              columnName="{{ 'recreational-fishing.application-ticket-issued-by' | tlTranslate }}">
                 </data-column>
 
-                <data-column propertyName="ticketStatusName"
-                             [flexRate]="0.3"
-                             columnName="{{ 'recreational-fishing.application-ticket-status' | tlTranslate }}">
-                </data-column>
+                <data-template-column propertyName="ticketStatusName"
+                                      [flexRate]="0.3"
+                                      columnName="{{ 'recreational-fishing.application-ticket-status' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.5em">
+                            <div fxLayout="column" fxLayoutAlign="start start">
+                                <ng-container [ngSwitch]="row.ticketStatus">
+                                    <tl-icon *ngSwitchCase="ticketStatusEnum.REQUESTED"
+                                             icon="autorenew"
+                                             iconClass="accent-color">
+                                    </tl-icon>
+                                    <tl-icon *ngSwitchCase="ticketStatusEnum.ISSUED"
+                                             icon="ic-fluent-doc-question-mark-24-regular"
+                                             iconClass="accent-color"
+                                             [size]="icIconSize">
+                                    </tl-icon>
+                                    <tl-icon *ngSwitchCase="ticketStatusEnum.APPROVED"
+                                             icon="ic-fluent-document-edit-16-regular"
+                                             iconClass="accent-color"
+                                             [size]="icIconSize">
+                                    </tl-icon>
+                                    <tl-icon *ngSwitchCase="ticketStatusEnum.CANCELED"
+                                             icon="ic-fluent-doc-prohibited-24-regular"
+                                             iconClass="accent-color"
+                                             [size]="icIconSize">
+                                    </tl-icon>
+                                    <tl-icon *ngSwitchCase="ticketStatusEnum.EXPIRED"
+                                             icon="fa-hourglass-end"
+                                             iconClass="accent-color">
+                                    </tl-icon>
+                                </ng-container>
+                            </div>
+
+                            <div fxLayout="column" fxLayoutAlign="start start">
+                                <span>{{ row.data.ticketStatusName }}</span>
+                            </div>
+
+                            <div fxLayout="column" fxLayoutAlign="start start">
+                                <tl-icon *ngIf="row.data.applicationStatusReason?.length > 0"
+                                         icon="ic-fluent-warning-24-filled"
+                                         iconClass="warn-orange-color"
+                                         [matTooltip]="row.data.applicationStatusReason"
+                                         matTooltipPosition="above"
+                                         matTooltipShowDelay="250"
+                                         [size]="icIconSize">
+                                </tl-icon>
+                            </div>
+                        </div>
+                    </ng-template>
+                </data-template-column>
 
                 <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div *ngIf="!isDashboardMode" fxLayout="row wrap" fxLayoutAlign="end center">
-                            <ng-container *ngIf="row.data.isActive && (row.data.createdByUserId === currentUserId || row.data.isOnlineTicket)">
-                                <ng-container *ngTemplateOutlet="applicationActions; context: { value: { row: row.data } }"></ng-container>
+                            <ng-container *ngIf="row.data.isActive">
+                                <ng-container *ngTemplateOutlet="applicationActions; context: { value: { row: row.data } }">
+                                </ng-container>
                             </ng-container>
                             <tl-icon-button *ngIf="canEditRecords && row.data.isActive && row.data.ticketStatus === ticketStatusEnum.APPROVED"
                                             icon="confirmation_number"
@@ -382,7 +499,7 @@
 <ng-template #applicationActions let-value="value">
     <ng-container [ngSwitch]="value.row.applicationStatus">
         <ng-container *ngSwitchCase="applicationStatusEnum.FILL_BY_APPL">
-            <tl-icon-button *ngIf="canEditRecords && !value.row.isOnlineTicket"
+            <tl-icon-button *ngIf="canEditRecords && !value.row.isOnlineTicket && value.row.createdByUserId === currentUserId"
                             icon="edit"
                             iconClass="accent-color"
                             tooltipText="{{ 'applications-register.view-and-edit-application' | tlTranslate }}"
@@ -390,14 +507,14 @@
             </tl-icon-button>
         </ng-container>
         <ng-container *ngSwitchCase="applicationStatusEnum.WAIT_PMT_FROM_USR">
-            <tl-icon-button *ngIf="canProcessPaymentData"
+            <tl-icon-button *ngIf="canProcessPaymentData && (value.row.createdByUserId === currentUserId || value.row.isOnlineTicket)"
                             icon="ic-fluent-person-money-24-filled"
                             iconClass="accent-color"
                             [size]="icIconSize"
                             tooltipText="{{ 'applications-register.enter-payment-data' | tlTranslate }}"
                             (buttonClicked)="enterPaymentDataActionClicked(value.row)">
             </tl-icon-button>
-            <tl-icon-button *ngIf="canProcessPaymentData"
+            <tl-icon-button *ngIf="canProcessPaymentData && (value.row.createdByUserId === currentUserId || value.row.isOnlineTicket)"
                             icon="ic-fluent-person-prohibited-28-filled"
                             iconClass="accent-color"
                             [size]="icIconSize"
@@ -408,7 +525,7 @@
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"
-                            tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                            tooltipText="{{ 'recreational-fishing.cancel-application' | tlTranslate }}"
                             (buttonClicked)="cancellationActionClicked(value.row)">
             </tl-icon-button>
         </ng-container>
@@ -417,7 +534,7 @@
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"
-                            tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                            tooltipText="{{ 'recreational-fishing.cancel-application' | tlTranslate }}"
                             (buttonClicked)="cancellationActionClicked(value.row)">
             </tl-icon-button>
         </ng-container>
@@ -426,12 +543,12 @@
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"
-                            tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                            tooltipText="{{ 'recreational-fishing.cancel-application' | tlTranslate }}"
                             (buttonClicked)="cancellationActionClicked(value.row)">
             </tl-icon-button>
         </ng-container>
         <ng-container *ngSwitchCase="applicationStatusEnum.INSP_CORR_FROM_EMP">
-            <tl-icon-button *ngIf="canInspectAndCorrectRecords && !isAssociation"
+            <tl-icon-button *ngIf="canInspectAndCorrectRecords && !isAssociation && (value.row.createdByUserId === currentUserId || value.row.isOnlineTicket)"
                             icon="ic-fluent-doc-question-mark-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"
@@ -442,12 +559,12 @@
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"
-                            tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                            tooltipText="{{ 'recreational-fishing.cancel-application' | tlTranslate }}"
                             (buttonClicked)="cancellationActionClicked(value.row)">
             </tl-icon-button>
         </ng-container>
         <ng-container *ngSwitchCase="applicationStatusEnum.CORR_BY_USR_NEEDED">
-            <tl-icon-button *ngIf="canEditRecords"
+            <tl-icon-button *ngIf="canEditRecords && (value.row.createdByUserId === currentUserId || value.row.isOnlineTicket)"
                             icon="edit"
                             iconClass="accent-color"
                             tooltipText="{{ 'applications-register.view-and-edit-application' | tlTranslate }}"
@@ -457,7 +574,7 @@
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"
-                            tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                            tooltipText="{{ 'recreational-fishing.cancel-application' | tlTranslate }}"
                             (buttonClicked)="cancellationActionClicked(value.row)">
             </tl-icon-button>
         </ng-container>
@@ -466,7 +583,7 @@
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"
-                            tooltipText="{{ 'applications-register.cancel-application' | tlTranslate }}"
+                            tooltipText="{{ 'recreational-fishing.cancel-application' | tlTranslate }}"
                             (buttonClicked)="cancelTicket(value.row)">
             </tl-icon-button>
         </ng-container>

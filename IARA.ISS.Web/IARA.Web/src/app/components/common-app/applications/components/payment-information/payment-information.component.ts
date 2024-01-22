@@ -1,6 +1,6 @@
 ﻿import { CurrencyPipe } from "@angular/common";
 import { Component, Input, OnInit, Optional, Self } from "@angular/core";
-import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn, Validators } from "@angular/forms";
+import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, Validators } from "@angular/forms";
 import { forkJoin, Observable, Subscription } from 'rxjs';
 
 import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
@@ -10,7 +10,6 @@ import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO'
 import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
-import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';

@@ -53,14 +53,14 @@
                           tooltipResourceName="fishing-capacity.acquired-licence-power-helper">
                 </tl-input>
 
-                <div fxFlex="20" fxLayout="column" fxLayoutAlign="start stretch">
+                <div fxFlex="20" fxLayout="column" fxLayoutAlign="start stretch" class="valid-to-wrapper">
                     <tl-input value="{{ control.value?.validTo | date: 'dd.MM.yyyy' }}"
                               [readonly]="true"
                               label="{{ 'fishing-capacity.acquired-licence-valid-to' | tlTranslate }}"
                               tooltipResourceName="fishing-capacity.acquired-licence-valid-to-helper">
                     </tl-input>
 
-                    <span *ngIf="control.value?.validTo && control.value.validTo < now"
+                    <span *ngIf="control.value?.validTo && !licenseValidity[control.value.value]"
                           class="warn-orange-color warning">
                         {{ 'fishing-capacity.acquired-licence-expired' | tlTranslate }}
                     </span>

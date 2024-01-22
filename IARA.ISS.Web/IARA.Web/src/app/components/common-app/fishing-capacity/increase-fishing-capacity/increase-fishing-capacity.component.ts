@@ -230,6 +230,11 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
 
     public saveBtnClicked(action: IActionInfo, dialogClose: DialogCloseCallback): void {
         this.form.markAllAsTouched();
+
+        if (!(this.hasDelivery && !this.showOnlyRegiXData && this.willIssueCapacityCertificates)) {
+            this.form.get('deliveryDataControl')!.setErrors(null);
+        }
+
         this.validityCheckerGroup.validate();
 
         if (this.form.valid) {
@@ -261,6 +266,11 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
 
         if (!this.isReadonly && !this.viewMode && !applicationAction) {
             this.form.markAllAsTouched();
+
+            if (!(this.hasDelivery && !this.showOnlyRegiXData && this.willIssueCapacityCertificates)) {
+                this.form.get('deliveryDataControl')!.setErrors(null);
+            }
+
             this.validityCheckerGroup.validate();
 
             if (this.form.valid) {
@@ -437,12 +447,7 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
             this.model.acquiredCapacity = this.form.get('acquiredCapacityControl')!.value;
             this.model.files = this.form.get('filesControl')!.value;
 
-            if (this.willIssueCapacityCertificates) {
-                this.model.remainingCapacityAction = this.form.get('actionsControl')!.value;
-            }
-            else {
-                this.model.remainingCapacityAction = undefined;
-            }
+            this.model.remainingCapacityAction = this.form.get('actionsControl')!.value;
 
             if (this.hasDelivery === true && this.willIssueCapacityCertificates) {
                 this.model.deliveryData = this.form.get('deliveryDataControl')!.value;
