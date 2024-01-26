@@ -175,7 +175,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
                     Description = ticket.TypeName
                 }
             },
-            ticket.ApplicationId));
+            ticket.PaymentRequestNum));
         }
 
         private async Task NavigateToTicket(FishingTicketDto ticket, TicketAction action)
@@ -194,7 +194,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
                     TypeName = ticket.TypeName,
                     Id = ticket.Id,
                     Price = ticket.Price,
-                    ApplicationId = ticket.ApplicationId,
+                    PaymentRequestNum = ticket.PaymentRequestNum,
                     ApplicationStatusCode = ticket.ApplicationStatusCode,
                     PaymentStatus = ticket.PaymentStatus,
                     TicketNumber = ticket.TicketNumber

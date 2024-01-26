@@ -75,6 +75,8 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     public readonly canDeleteRecords: boolean;
     public readonly canRestoreRecords: boolean;
     public readonly canEditInspectionNumber: boolean;
+    public readonly canExportRecords: boolean;
+    public readonly canDownloadRecords: boolean;
     public readonly canReadAuanRecords: boolean;
 
     @ViewChild(TLDataTableComponent)
@@ -118,6 +120,8 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         this.canDeleteRecords = permissions.has(PermissionsEnum.InspectionsDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.InspectionsRestoreRecords);
         this.canEditInspectionNumber = permissions.has(PermissionsEnum.InspectionEditNumber);
+        this.canDownloadRecords = permissions.has(PermissionsEnum.InspectionDownload);
+        this.canExportRecords = permissions.has(PermissionsEnum.InspectionExport);
         this.canReadAuanRecords = permissions.hasAny(PermissionsEnum.AuanRegisterReadAll, PermissionsEnum.AuanRegisterRead);
 
         this.buildForm();
@@ -389,20 +393,16 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 readOnly = true;
 
                 if (entry.inspectionType !== InspectionTypesEnum.OTH) {
-                    rightSideButtons.push(
-                        {
-                            id: 'flux',
-                            color: 'primary',
-                            translateValue: 'common.export',
-                            isVisibleInViewMode: true
-                        },
-                        {
-                            id: 'print',
-                            color: 'primary',
-                            translateValue: 'inspections.print-inspection',
-                            isVisibleInViewMode: true,
-                        }
-                    );
+                    if (this.canDownloadRecords) {
+                        rightSideButtons.push(
+                            {
+                                id: 'print',
+                                color: 'primary',
+                                translateValue: 'inspections.print-inspection',
+                                isVisibleInViewMode: true,
+                            }
+                        ); //TODO Add export btn
+                    }
                 }
             }
 

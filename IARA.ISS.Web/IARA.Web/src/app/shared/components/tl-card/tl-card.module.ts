@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
-import { BrowserModule } from '@angular/platform-browser';
 import { TLHelpModule } from '../tl-help/tl-help.module';
 import { TLIconModule } from '../tl-icon/tl-icon.module';
 import { TLPictureUploaderModule } from '../tl-picture-uploader/tl-picture-uploader.module';
@@ -14,7 +13,6 @@ import { TLCardComponent } from './tl-card.component';
 
 @NgModule({
     imports: [
-        BrowserModule,
         CommonModule,
         MatCardModule,
         FlexLayoutModule,

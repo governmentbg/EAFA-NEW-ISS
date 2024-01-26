@@ -59,8 +59,8 @@ import { LockShipLogBookPeriodsModel } from './models/lock-ship-log-book-periods
 import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
 import { CatchesAndSalesUtils } from '@app/components/common-app/catches-and-sales/utils/catches-and-sales.utils';
 import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
-import { AuthService } from '@app/shared/services/auth.service';
 import { FishPreservationCodesEnum } from '@app/enums/fish-preservation-codes.enum';
+import { SecurityService } from '@app/services/common-app/security.service';
 
 const PERCENT_TOLERANCE: number = 10;
 const QUALITY_DIFF_VALIDATOR_NAME: string = 'quantityDifferences';
@@ -152,7 +152,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         datePipe: DatePipe,
         shipLogBookPageDataService: ShipLogBookPageDataService,
         systemParametersService: SystemParametersService,
-        authService: AuthService
+        authService: SecurityService
     ) {
         this.translationService = translate;
         this.commonNomenclaturesService = commonNomenclaturesService;
@@ -167,7 +167,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         this.confirmDialog = confirmDialog;
         this.previousTripCatchRecordsDialog = previousTripCatchRecordsDialog;
 
-        this.currentUserId = authService.userRegistrationInfo!.id!;
+        this.currentUserId = authService.User!.id;
     }
 
     public async ngOnInit(): Promise<void> {
@@ -349,7 +349,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 if (result !== undefined && result !== null) {
                     const difference: DateDifference | undefined = DateUtils.getDateDifference(result.gearEntryTime!, result.gearExitTime!);
                     result.totalTime = this.dateDifferencePipe.transform(difference);
-                    result.catchRecordFishesSummary = result.catchRecordFishes?.map(x => `${x.fishName} ${x.quantityKg}kg (${x.catchQuadrant})`).join(';') ?? '';
+                    result.catchRecordFishesSummary = result.catchRecordFishes?.map(x => `${x.fishName} ${x.quantityKg}kg (${x.catchQuadrant !== undefined && x.catchQuadrant !== null ? x.catchQuadrant : ''})`).join(';') ?? '';
 
                     if (catchRecord !== undefined) {
                         const index: number = this.catchRecords.findIndex(x => x.id === result.id);
@@ -800,6 +800,12 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         this.setUnloadDateTimeControlValidators();
 
         // value changes
+
+        this.form.get('fillDateControl')!.valueChanges.subscribe({
+            next: (fillDate: Date | undefined) => {
+                this.onFillDateTimeChanged(fillDate);
+            }
+        });
 
         this.form.get('fishingGearRegisterControl')!.valueChanges.subscribe({
             next: (value: FishingGearRegisterNomenclatureDTO | string | undefined) => {
@@ -1290,31 +1296,24 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
     private onFishTripStartDateTimeChanged(startDate: Moment | null | undefined): void {
         if (startDate !== null && startDate !== undefined && startDate.isValid()) {
-            const endDate: Moment | null | undefined = this.form.get('fishTripEndDateTimeControl')!.value;
-            if (endDate !== null && endDate !== undefined && endDate.isValid()) {
-                const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate.toDate(), endDate.toDate());
-                const daysAtSeaValue: string = this.getDaysAtSeaValue(difference);
-
-                this.form.get('daysAtSeaCountControl')!.setValue(daysAtSeaValue);
-            }
-            else {
-                if (!this.viewMode) {
-                    this.form.get('daysAtSeaCountControl')!.setValue(undefined);
-                    this.form.get('fishTripEndDateTimeControl')!.setValue(startDate);
-                }
-            }
-
-            const unloadingDateTime: Moment | null | undefined = this.form.get('unloadDateTimeControl')!.value;
-            const hasNoCatch: boolean = this.form.get('noCatchUnloadedControl')!.value ?? false;
-            if (!hasNoCatch && !this.viewMode && (unloadingDateTime === null || unloadingDateTime === undefined || !unloadingDateTime.isValid())) {
+            if (!this.viewMode) {
+                this.form.get('daysAtSeaCountControl')!.setValue(undefined);
+                this.form.get('fishTripEndDateTimeControl')!.setValue(startDate);
                 this.form.get('unloadDateTimeControl')!.setValue(startDate);
             }
         }
-        else {
-            this.form.get('daysAtSeaCountControl')!.setValue(undefined);
-        }
 
         this.form.get('fishTripEndDateTimeControl')!.updateValueAndValidity({ emitEvent: false });
+    }
+
+    private onFillDateTimeChanged(fillDate: Date | null | undefined): void {
+        if (fillDate !== null && fillDate !== undefined) {
+            if (!this.viewMode) {
+                const fishTripStartDateTime: Moment = moment(new Date(fillDate.setHours(6, 0, 0)));
+                this.form.get('fishTripStartDateTimeControl')!.setValue(fishTripStartDateTime);
+                this.form.get('fishTripStartDateTimeControl')!.updateValueAndValidity({ emitEvent: false });
+            }
+        }
     }
 
     private onDeparturePortChanged(departurePort: NomenclatureDTO<number> | string | null | undefined): void {

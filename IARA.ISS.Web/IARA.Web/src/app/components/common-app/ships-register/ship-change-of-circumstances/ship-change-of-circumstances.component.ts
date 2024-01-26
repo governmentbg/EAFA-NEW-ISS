@@ -1,45 +1,44 @@
-﻿import { AfterViewInit, Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
+﻿import { HttpErrorResponse } from '@angular/common/http';
+import { AfterViewInit, Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Observable, Subject } from 'rxjs';
-
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { ApplicationValidationErrorsEnum } from '@app/enums/application-validation-errors.enum';
+import { FileTypeEnum } from '@app/enums/file-types.enum';
+import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
-import { IShipsRegisterService } from '@app/interfaces/common-app/ships-register.interface';
-import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
-import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
-import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
 import { IApplicationsService } from '@app/interfaces/administration-app/applications.interface';
+import { IShipsRegisterService } from '@app/interfaces/common-app/ships-register.interface';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
+import { ErrorModel } from '@app/models/common/exception.model';
 import { ApplicationContentDTO } from '@app/models/generated/dtos/ApplicationContentDTO';
 import { ApplicationRegiXCheckDTO } from '@app/models/generated/dtos/ApplicationRegiXCheckDTO';
+import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { ApplicationSubmittedByRegixDataDTO } from '@app/models/generated/dtos/ApplicationSubmittedByRegixDataDTO';
 import { ApplicationSubmittedForRegixDataDTO } from '@app/models/generated/dtos/ApplicationSubmittedForRegixDataDTO';
+import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { RegixChecksWrapperDTO } from '@app/models/generated/dtos/RegixChecksWrapperDTO';
 import { ShipChangeOfCircumstancesApplicationDTO } from '@app/models/generated/dtos/ShipChangeOfCircumstancesApplicationDTO';
 import { ShipChangeOfCircumstancesRegixDataDTO } from '@app/models/generated/dtos/ShipChangeOfCircumstancesRegixDataDTO';
-import { ApplicationDialogData, ApplicationUtils } from '@app/shared/utils/application.utils';
-import { CommonUtils } from '@app/shared/utils/common.utils';
-import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
-import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
-import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
-import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
-import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
-import { ErrorModel } from '@app/models/common/exception.model';
-import { RequestProperties } from '@app/shared/services/request-properties';
-import { ApplicationValidationErrorsEnum } from '@app/enums/application-validation-errors.enum';
+import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
+import { ShipsRegisterPublicService } from '@app/services/public-app/ships-register-public.service';
+import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
+import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
+import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
+import { Notifier } from '@app/shared/directives/notifier/notifier.class';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
-import { ShipsRegisterPublicService } from '@app/services/public-app/ships-register-public.service';
-import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
-import { FileTypeEnum } from '@app/enums/file-types.enum';
-import { Notifier } from '@app/shared/directives/notifier/notifier.class';
-import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
+import { RequestProperties } from '@app/shared/services/request-properties';
+import { ApplicationDialogData, ApplicationUtils } from '@app/shared/utils/application.utils';
+import { CommonUtils } from '@app/shared/utils/common.utils';
+import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
-import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
-import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { Observable, Subject } from 'rxjs';
+
 
 @Component({
     selector: 'ship-change-of-circumstances',
@@ -81,14 +80,14 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
     private dialogRightSideActions: IActionInfo[] | undefined;
     private nomenclatures: CommonNomenclatures;
     private translate: FuseTranslationLoaderService;
-    private snackbar: MatSnackBar;
+    private snackbar: TLSnackbar;
 
     private model!: ShipChangeOfCircumstancesApplicationDTO | ShipChangeOfCircumstancesRegixDataDTO;
 
     public constructor(
         nomenclatures: CommonNomenclatures,
         translate: FuseTranslationLoaderService,
-        snackbar: MatSnackBar
+        snackbar: TLSnackbar
     ) {
         this.nomenclatures = nomenclatures;
         this.translate = translate;
@@ -408,18 +407,10 @@ export class ShipChangeOfCircumstancesComponent implements OnInit, AfterViewInit
                     const messages: string[] = response.error.messages;
 
                     if (messages.length !== 0) {
-                        this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                            data: response.error as ErrorModel,
-                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                        });
+                        this.snackbar.errorModel(response.error as ErrorModel);
                     }
                     else {
-                        this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                            data: new ErrorModel({ messages: [this.translate.getValue('service.an-error-occurred-in-the-app')] }),
-                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                        });
+                        this.snackbar.error(this.translate.getValue('service.an-error-occurred-in-the-app'));
                     }
 
                     if (messages.find(message => message === ApplicationValidationErrorsEnum[ApplicationValidationErrorsEnum.NoEDeliveryRegistration])) {

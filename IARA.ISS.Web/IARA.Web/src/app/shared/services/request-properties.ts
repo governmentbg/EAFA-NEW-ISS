@@ -3,6 +3,7 @@ export type MatSnackBarVerticalPosition = 'top' | 'bottom';
 
 export class RequestProperties {
 
+
     public static get DEFAULT(): RequestProperties {
         return new RequestProperties();
     }
@@ -15,6 +16,8 @@ export class RequestProperties {
         });
     }
 
+    public successDuration?: number = 6000;
+    public successColorClass?: string = 'snack-bar-success-color';
     public showException?: boolean = true;
     public rethrowException?: boolean = false;
     public showProgressSpinner?: boolean = true;

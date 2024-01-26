@@ -25,6 +25,7 @@ namespace IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API
         public string ApplicationStatusCode { get; set; }
         public string ApplicationStatusReason { get; set; }
         public string TicketNumber { get; set; }
+        public string PaymentRequestNum { get; set; }
 
         public void Mapping(AutoMapper.Profile profile)
         {

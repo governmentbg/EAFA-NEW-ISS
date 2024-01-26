@@ -14,15 +14,17 @@ import { UserLegalDTO } from '@app/models/generated/dtos/UserLegalDTO';
 import { UserNewsDistrictSubscriptionDTO } from '@app/models/generated/dtos/UserNewsDistrictSubscriptionDTO';
 import { UserPasswordDTO } from '@app/models/generated/dtos/UserPasswordDTO';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
+import { SecurityService } from '@app/services/common-app/security.service';
 import { DialogCloseCallback } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
 import { TLPictureRequestMethod } from '@app/shared/components/tl-picture-uploader/tl-picture-uploader.component';
-import { AuthService } from '@app/shared/services/auth.service';
 import { MessageService } from '@app/shared/services/message.service';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { forkJoin } from 'rxjs';
+import { User } from '../auth/models/auth/user.model';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { BasePageComponent } from '../base-page.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 
@@ -54,9 +56,10 @@ export class MyProfileContentComponent extends BasePageComponent implements OnIn
     public showDistricts: boolean = false;
     public showAllDistricts: boolean = false;
 
-    private authService: AuthService;
+    private authService: SecurityService;
     private nomenclaturesService: CommonNomenclatures;
     private changePasswordDialog: TLMatDialog<ChangePasswordComponent>;
+    private confirmDialog: TLConfirmDialog;
 
     private userProfileModel!: MyProfileDTO;
     private personId!: number;
@@ -67,10 +70,11 @@ export class MyProfileContentComponent extends BasePageComponent implements OnIn
 
     public constructor(
         translationService: FuseTranslationLoaderService,
-        authService: AuthService,
+        authService: SecurityService,
         messageService: MessageService,
         nomenclaturesService: CommonNomenclatures,
-        changePasswordDialog: TLMatDialog<ChangePasswordComponent>
+        changePasswordDialog: TLMatDialog<ChangePasswordComponent>,
+        confirmDialog: TLConfirmDialog
     ) {
         super(messageService);
 
@@ -78,6 +82,7 @@ export class MyProfileContentComponent extends BasePageComponent implements OnIn
         this.authService = authService;
         this.nomenclaturesService = nomenclaturesService;
         this.changePasswordDialog = changePasswordDialog;
+        this.confirmDialog = confirmDialog;
 
         this.buildForm();
         this.messageService.sendMessage(this.translationService.getValue('navigation.my-profile'));
@@ -96,10 +101,10 @@ export class MyProfileContentComponent extends BasePageComponent implements OnIn
         this.genders = nomenclatures[2];
         this.districts = nomenclatures[3];
 
-        this.authService.userRegistrationInfoEvent.subscribe({
-            next: (userInfo: UserAuthDTO | null) => {
+        this.authService.getUser().subscribe({
+            next: (userInfo: User<number> | null) => {
                 if (userInfo !== null) {
-                    this.service.getUserProfile(this.authService.userRegistrationInfo!.id!).subscribe({
+                    this.service.getUserProfile(this.authService.User!.id!).subscribe({
                         next: (result: MyProfileDTO) => {
                             this.userProfileModel = result;
 
@@ -233,6 +238,23 @@ export class MyProfileContentComponent extends BasePageComponent implements OnIn
         dialog.subscribe({
             next: (password: UserPasswordDTO | undefined) => {
                 // nothing to do
+            }
+        });
+    }
+    public deleteProfileData(): void {
+        this.confirmDialog.open({
+            title: this.translationService.getValue('my-profile.delete-my-profile-dialog-title'),
+            message: this.translationService.getValue('my-profile.delete-my-profile-dialog-message'),
+            okBtnLabel: this.translationService.getValue('my-profile.delete-my-profile-dialog-ok-btn-label')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok === true) {
+                    this.service.deactivateMyProfile().subscribe({
+                        next: () => {
+                            // nothing to do
+                        }
+                    })
+                }
             }
         });
     }

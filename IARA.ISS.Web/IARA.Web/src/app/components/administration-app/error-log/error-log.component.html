@@ -17,6 +17,7 @@
                 <tl-autocomplete fxFlex="33"
                                  formControlName="usernameControl"
                                  [options]="usernames"
+                                 [hasSelectedValueFromDropdownValidator]="false"
                                  label="{{ 'error-log.username' | tlTranslate }}"
                                  tooltipResourceName="error-log.username-helper">
                 </tl-autocomplete>
@@ -71,7 +72,7 @@
                              columnName="{{ 'error-log.id' | tlTranslate }}">
                 </data-column>
                 <data-column propertyName="logDate"
-                             [flexRate]="0.2"
+                             [flexRate]="0.3"
                              columnName="{{ 'error-log.log-date' | tlTranslate }}"
                              dataType="datetime">
                 </data-column>

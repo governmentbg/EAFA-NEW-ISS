@@ -25,5 +25,6 @@ namespace IARA.Mobile.Pub.Domain.Entities.FishingTicket
         public string ApplicationStatusCode { get; set; }
         public string ApplicationStatusReason { get; set; }
         public string TicketNumber { get; set; }
+        public string PaymentRequestNum { get; set; }
     }
 }

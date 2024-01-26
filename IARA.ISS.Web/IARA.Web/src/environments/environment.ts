@@ -2,10 +2,9 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { EnvironmentType, IEnvironmentConfig } from "./environment.interface";
 import { EnvironmentConfig } from './environment.model';
-import { AuthConfiguration } from './open-id-configuration';
-import { OpenIdConfigurationModel } from './openid-config-model';
 
 
 export const IsProduction = false;
@@ -14,14 +13,14 @@ export class Environment {
 
     public static Instance: IEnvironmentConfig = new EnvironmentConfig({
         production: IsProduction,
+        isPublicApp: IS_PUBLIC_APP,
         hmr: false,
         apiBasePath: '/api',
         servicesBaseUrl: 'http://localhost:5000',
         frontendBaseUrl: 'http://localhost:4200',
         identityServerBaseUrl: 'http://localhost:5050',
         hasPublicAccess: false,
-        environmentType: EnvironmentType.Development,
-        ClientAuthConfiguration: new OpenIdConfigurationModel(AuthConfiguration, 'internal-web-client'),
+        environmentType: EnvironmentType.Development
     });
 }
 /*

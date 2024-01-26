@@ -4,7 +4,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { BrowserModule } from '@angular/platform-browser';
 import { MaterialModule } from '../../material.module';
 import { TLPipesModule } from '../../pipes/tl-pipes.module';
 import { TLInputControlsModule } from '../input-controls/tl-input-controls.module';
@@ -18,7 +17,6 @@ import { TLAuditComponent } from './tl-audit.component';
         FlexLayoutModule,
         MatTooltipModule,
         MatCardModule,
-        BrowserModule,
         TLInputControlsModule,
         CommonModule,
         TLPopoverModule,

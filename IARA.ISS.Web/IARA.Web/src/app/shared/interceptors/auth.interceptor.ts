@@ -1,19 +1,17 @@
-﻿import { Environment } from '@env/environment';
-import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+﻿import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable, Injector } from '@angular/core';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { SECURITY_SERVICE_TOKEN } from '@app/components/common-app/auth/di/auth-di.tokens';
+import { ISecurityService } from '@app/components/common-app/auth/interfaces/security-service.interface';
+import { Environment } from '@env/environment';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-    private oidcSecurityService: OidcSecurityService;
-    private authService: AuthService;
+    private securityService: ISecurityService;
 
     constructor(private injector: Injector) {
-        this.oidcSecurityService = this.injector.get(OidcSecurityService);
-        this.authService = this.injector.get(AuthService);
+        this.securityService = this.injector.get(SECURITY_SERVICE_TOKEN);
     }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -51,22 +49,13 @@ export class AuthInterceptor implements HttpInterceptor {
             headers['Authorization'] = `Bearer ${token}`;
         }
 
-        if (this.authService.ImpersonationToken != undefined ) {
-
-            if (headers == undefined) {
-                headers = {};
-            }
-
-            headers['Impersonate'] = this.authService.ImpersonationToken;
-        }
-
         return headers;
     }
 
     private getToken(): string {
         let token = '';
-        if (this.oidcSecurityService !== undefined) {
-            token = this.oidcSecurityService.getToken();
+        if (this.securityService !== undefined) {
+            token = this.securityService.token ?? '';
         }
 
         return token;
@@ -74,8 +63,8 @@ export class AuthInterceptor implements HttpInterceptor {
 
     private errorHandler(error: HttpErrorResponse): Observable<any> {
         if (error.status === 401) {
-            if (this.oidcSecurityService != null && this.oidcSecurityService != undefined) {
-                this.oidcSecurityService.authorize();
+            if (this.securityService != null && this.securityService != undefined) {
+                this.securityService.authorize();
             }
         }
 

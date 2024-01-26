@@ -44,7 +44,7 @@
                     <tl-date [formControlName]="_formControlName" [min]="minValue" [max]="maxValue" [getControlErrorLabelText]="_getControlErrorLabelTextMethod"></tl-date>
                 </ng-container>
                 <ng-container *ngIf="_dataType=='datetime'">
-                    {{ (complexProperty ? value(row.data) : row.data[propertyName]) | date: 'dd.MM.yyyy HH:mm'}}
+                    <tl-date-time [formControlName]="_formControlName" [min]="minValue" [max]="maxValue" [getControlErrorLabelText]="_getControlErrorLabelTextMethod"></tl-date-time>
                 </ng-container>
                 <ng-container *ngIf="_dataType=='boolean'">
                     <tl-checkbox [formControlName]="_formControlName" [getControlErrorLabelText]="_getControlErrorLabelTextMethod"></tl-checkbox>

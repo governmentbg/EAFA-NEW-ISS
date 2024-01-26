@@ -157,18 +157,8 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
                 violatedRegulations: this.model.violatedRegulations,
             }));
 
-            this.form.get('shipSectionsControl')!.setValue(new InspectedShipSectionsModel({
-                catches: this.model.catchMeasures,
-                checks: this.model.checks,
-                fishingGears: this.model.fishingGears,
-                logBooks: this.model.logBooks,
-                observationTexts: this.model.observationTexts,
-                permitLicenses: this.model.permitLicenses,
-                permits: this.model.permits,
-                personnel: this.model.personnel,
-                port: this.model.lastPortVisit,
-                ship: this.model.inspectedShip,
-            }));
+            const ship: InspectedShipSectionsModel = this.mapModelToShipData();
+            this.form.get('shipSectionsControl')!.setValue(ship);
 
             this.form.get('captainCommentControl')!.setValue(this.model.captainComment);
         }
@@ -209,5 +199,22 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
                 additionalInfo?.violation,
             ].filter(f => f !== null && f !== undefined) as InspectionObservationTextDTO[],
         });
+    }
+
+    private mapModelToShipData(): InspectedShipSectionsModel {
+        const result: InspectedShipSectionsModel = new InspectedShipSectionsModel();
+
+        result.ship = this.model.inspectedShip;
+        result.port = this.model.lastPortVisit;
+        result.catches = this.model.catchMeasures ?? [];
+        result.checks = this.model.checks ?? [];
+        result.fishingGears = this.model.fishingGears ?? [];
+        result.logBooks = this.model.logBooks ?? [];
+        result.observationTexts = this.model.observationTexts ?? [];
+        result.permitLicenses = this.model.permitLicenses ?? [];
+        result.permits = this.model.permits ?? [];
+        result.personnel = this.model.personnel ?? [];
+
+        return result;
     }
 }

@@ -23,5 +23,6 @@ namespace IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API
         public TelkReviewDto TelkData { get; set; }
         public string StatusReason { get; set; }
         public List<FileModel> Files { get; set; }
+        public int DeliveryTerritoryUnitId { get; set; }
     }
 }

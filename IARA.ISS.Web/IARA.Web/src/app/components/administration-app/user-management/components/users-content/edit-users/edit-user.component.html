@@ -1,10 +1,20 @@
-﻿<div fxLayout="column" fxLayoutGap="1em" [formGroup]="editUserForm">
-    <tl-card tooltipResourceName="users-page.basic-information-helper">
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     validityCheckerGroup
+     [formGroup]="editUserForm"
+     class="dialog-padding">
+    <tl-card tooltipResourceName="users-page.basic-information-helper"
+             [validityChecker]="editUserForm"
+             [validityCheckerExtraCondition]="editUserForm.errors?.invalidEgnLnc !== true 
+                                           && editUserForm.get('usernameEmailGroup')?.errors?.emailExists !== true 
+                                           && editUserForm.get('usernameEmailGroup.emailControl')?.errors?.email !== true">
         <tl-card-title>{{ 'users-page.basic-information-title' | tlTranslate }}</tl-card-title>
         <tl-card-content fxLayout="column" fxLayoutGap="1em">
             <div fxLayout="row" fxLayoutGap="1em" fxFlex="100" fxLayoutAlign="space-between center">
                 <regix-data fxFlex="100"
                             formControlName="identificationDataControl"
+                            validityChecker
                             [isPerson]="true"
                             [isIdReadOnly]="!isAdd"
                             [isForeigner]="false"
@@ -92,7 +102,9 @@
         </tl-card-content>
     </tl-card>
 
-    <tl-card tooltipResourceName="users-page.role-helper">
+    <tl-card tooltipResourceName="users-page.role-helper"
+             [validityChecker]="editUserForm"
+             [validityCheckerExtraCondition]="editUserForm.errors?.atLeastOneRoleNeeded !== true">
         <tl-card-title fxFlex="row">{{  'users-page.role' | tlTranslate }}</tl-card-title>
         <tl-card-content fxFlex="100"
                          fxLayout="column"
@@ -117,13 +129,13 @@
                 <data-column columnName="{{ 'users-page.valid-from' | tlTranslate }}"
                              propertyName="accessValidFrom"
                              [formGroup]="userRoleForm"
-                             dataType="date"
+                             dataType="datetime"
                              [maxValue]="userRoleForm.controls.accessValidToControl.value">
                 </data-column>
                 <data-column columnName="{{ 'users-page.valid-to' | tlTranslate }}"
                              propertyName="accessValidTo"
                              [formGroup]="userRoleForm"
-                             dataType="date"
+                             dataType="datetime"
                              [minValue]="userRoleForm.controls.accessValidFromControl.value">
                 </data-column>
                 <data-column-inline [flexRate]="0.3" *ngIf="!readOnly"></data-column-inline>
@@ -136,7 +148,8 @@
     </tl-card>
 
     <tl-card *ngIf="!isInternalUser"
-             tooltipResourceName="users-page.related-organizations-helper">
+             tooltipResourceName="users-page.related-organizations-helper"
+             [validityChecker]="editUserForm">
         <tl-card-title fxFlex="row">{{ 'users-page.related-organizations' | tlTranslate }}</tl-card-title>
         <tl-card-content>
             <tl-data-table #legalDataTable fxFlexFill fxLayoutGap="1em" class="full-width-template"

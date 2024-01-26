@@ -1,40 +1,40 @@
-﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { DatePipe } from '@angular/common';
-import { MatSnackBar } from '@angular/material/snack-bar';
+﻿import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Observable, Subject } from 'rxjs';
-
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ApplicationValidationErrorsEnum } from '@app/enums/application-validation-errors.enum';
+import { FileTypeEnum } from '@app/enums/file-types.enum';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { IApplicationsService } from '@app/interfaces/administration-app/applications.interface';
 import { IFishingCapacityService } from '@app/interfaces/common-app/fishing-capacity.interface';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
+import { ErrorModel } from '@app/models/common/exception.model';
 import { ApplicationContentDTO } from '@app/models/generated/dtos/ApplicationContentDTO';
 import { ApplicationRegiXCheckDTO } from '@app/models/generated/dtos/ApplicationRegiXCheckDTO';
+import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { ApplicationSubmittedByRegixDataDTO } from '@app/models/generated/dtos/ApplicationSubmittedByRegixDataDTO';
 import { ApplicationSubmittedForRegixDataDTO } from '@app/models/generated/dtos/ApplicationSubmittedForRegixDataDTO';
+import { FishingCapacityCertificateNomenclatureDTO } from '@app/models/generated/dtos/FishingCapacityCertificateNomenclatureDTO';
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { RegixChecksWrapperDTO } from '@app/models/generated/dtos/RegixChecksWrapperDTO';
 import { TransferFishingCapacityApplicationDTO } from '@app/models/generated/dtos/TransferFishingCapacityApplicationDTO';
 import { TransferFishingCapacityRegixDataDTO } from '@app/models/generated/dtos/TransferFishingCapacityRegixDataDTO';
+import { FishingCapacityPublicService } from '@app/services/public-app/fishing-capacity-public.service';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
+import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
+import { Notifier } from '@app/shared/directives/notifier/notifier.class';
+import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
+import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
+import { RequestProperties } from '@app/shared/services/request-properties';
 import { ApplicationDialogData, ApplicationUtils } from '@app/shared/utils/application.utils';
 import { CommonUtils } from '@app/shared/utils/common.utils';
-import { FishingCapacityCertificateNomenclatureDTO } from '@app/models/generated/dtos/FishingCapacityCertificateNomenclatureDTO';
-import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
-import { FileTypeEnum } from '@app/enums/file-types.enum';
-import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
-import { FishingCapacityPublicService } from '@app/services/public-app/fishing-capacity-public.service';
-import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
-import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
-import { Notifier } from '@app/shared/directives/notifier/notifier.class';
-import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
-import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
-import { ErrorModel } from '@app/models/common/exception.model';
-import { RequestProperties } from '@app/shared/services/request-properties';
-import { ApplicationValidationErrorsEnum } from '@app/enums/application-validation-errors.enum';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { Observable, Subject } from 'rxjs';
+
 
 @Component({
     selector: 'transfer-fishing-capacity',
@@ -84,7 +84,7 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
     private dialogRightSideActions: IActionInfo[] | undefined;
 
     private translate: FuseTranslationLoaderService;
-    private snackbar: MatSnackBar;
+    private snackbar: TLSnackbar;
     private datePipe: DatePipe;
 
     private model!: TransferFishingCapacityApplicationDTO | TransferFishingCapacityRegixDataDTO;
@@ -92,7 +92,7 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
     public constructor(
         datePipe: DatePipe,
         translate: FuseTranslationLoaderService,
-        snackbar: MatSnackBar
+        snackbar: TLSnackbar
     ) {
         this.datePipe = datePipe;
         this.translate = translate;
@@ -423,18 +423,11 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
                     const messages: string[] = response.error.messages;
 
                     if (messages.length !== 0) {
-                        this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                            data: response.error as ErrorModel,
-                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                        });
+
+                        this.snackbar.errorModel(response.error as ErrorModel, RequestProperties.DEFAULT);
                     }
                     else {
-                        this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                            data: new ErrorModel({ messages: [this.translate.getValue('service.an-error-occurred-in-the-app')] }),
-                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                        });
+                        this.snackbar.error(this.translate.getValue('service.an-error-occurred-in-the-app'), RequestProperties.DEFAULT.showExceptionDurationErr, RequestProperties.DEFAULT.showExceptionColorClassErr);
                     }
 
                     if (messages.find(message => message === ApplicationValidationErrorsEnum[ApplicationValidationErrorsEnum.NoEDeliveryRegistration])) {

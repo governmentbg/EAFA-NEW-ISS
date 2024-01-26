@@ -3,14 +3,18 @@
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { EgnLncDTO } from './EgnLncDTO';
 import { LoginTypesEnum } from '@app/enums/login-types.enum';
+import { User } from '@app/components/common-app/auth/models/auth/user.model';
 
-export class UserAuthDTO { 
+export class UserAuthDTO extends User<number> {
     public constructor(obj?: Partial<UserAuthDTO>) {
-        Object.assign(this, obj);
+        if (obj != undefined) {
+            super(obj as User<number>);
+            Object.assign(this, obj);
+        }
+        else {
+            super();
+        }
     }
-
-    @StrictlyTyped(Number)
-    public id?: number;
 
     @StrictlyTyped(Number)
     public personId?: number;
@@ -20,9 +24,6 @@ export class UserAuthDTO {
 
     @StrictlyTyped(String)
     public firstName?: string;
-
-    @StrictlyTyped(String)
-    public username?: string;
 
     @StrictlyTyped(String)
     public middleName?: string;
@@ -47,7 +48,4 @@ export class UserAuthDTO {
 
     @StrictlyTyped(Boolean)
     public isInternalUser?: boolean;
-
-    @StrictlyTyped(String)
-    public permissions?: string[];
 }

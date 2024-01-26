@@ -6,7 +6,6 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
-import { BrowserModule } from '@angular/platform-browser';
 import { TLPipesModule } from '../../pipes/tl-pipes.module';
 import { TLCardModule } from '../tl-card/tl-card.module';
 import { TLIconModule } from '../tl-icon/tl-icon.module';
@@ -15,7 +14,6 @@ import { NotificationsMenuComponent } from './notifications-menu.component';
 
 @NgModule({
     imports: [
-        BrowserModule,
         CdkScrollableModule,
         CommonModule,
         FlexLayoutModule,

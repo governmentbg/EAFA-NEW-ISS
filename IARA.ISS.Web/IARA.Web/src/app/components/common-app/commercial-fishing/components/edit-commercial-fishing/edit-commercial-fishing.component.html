@@ -450,6 +450,16 @@
                                    [showAddButton]="!isReadonly && !viewMode && !isFishingGearsApplication"
                                    [showInactiveRecords]="false"
                                    (recordChanged)="quotaAquaticOrganismChanged($event)">
+                        <div *ngIf="!isReadonly && !viewMode && !isFishingGearsApplication"
+                             datatable-add-buttons
+                             fxLayout="row"
+                             fxLayoutGap="1em">
+                            <button mat-raised-button color="accent"
+                                    (click)="selectAllPermittedPorts()"
+                                    style="margin-left:auto;">
+                                {{ 'commercial-fishing.add-all-permitted-ports' | tlTranslate }}
+                            </button>
+                        </div>
                         <data-column [flexRate]="0.5"
                                      propertyName="aquaticOrganismId"
                                      [options]="quotaAquaticOrganismTypes"

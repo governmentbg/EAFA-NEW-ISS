@@ -36,4 +36,8 @@ export class MyProfileAdministrationService extends BaseAuditService implements 
     public changePassword(userPassword: UserPasswordDTO): Observable<void> {
         return this.commonService.changePassword(this.area, this.controller, userPassword);
     }
+
+    public deactivateMyProfile(): Observable<void> {
+        throw new Error('This method should not be called from the administration app.');
+    }
 }

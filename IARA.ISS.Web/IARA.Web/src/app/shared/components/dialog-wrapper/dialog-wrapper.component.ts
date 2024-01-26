@@ -1,14 +1,25 @@
-﻿import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
-import { AfterViewInit, Component, ComponentFactoryResolver, ComponentRef, ElementRef, Inject, OnInit, ReflectiveInjector, Type, ViewChild, ViewContainerRef } from '@angular/core';
+﻿import {
+    AfterViewInit,
+    Component,
+    ComponentFactoryResolver,
+    ComponentRef,
+    ElementRef,
+    Inject,
+    ReflectiveInjector,
+    Type,
+    ViewChild,
+    ViewContainerRef
+} from '@angular/core';
 import { MatDialogContent, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
+import { ITranslationService } from '@app/shared/interfaces/translate-service.interface';
 import { CommonUtils } from '../../utils/common.utils';
 import { IActionInfo } from './interfaces/action-info.interface';
 import { IDialogComponent } from './interfaces/dialog-content.interface';
 import { IDialogData } from './interfaces/dialog-data.interface';
 import { IHeaderAuditButton } from './interfaces/header-audit-button.interface';
 import { IHeaderCancelButton } from './interfaces/header-cancel-button.interface';
-import { ITranslateService } from './interfaces/translate-service.interface';
 import { DialogWrapperData } from './models/dialog-action-buttons.model';
 
 @Component({
@@ -48,19 +59,18 @@ export class DialogWrapperComponent<T extends IDialogComponent> implements After
     private overlayLeft!: string;
     public isOverlayFullScreen: boolean = false;
 
-    private translate!: ITranslateService;
+    private translate!: ITranslationService;
     private componentCtor: (new (...args: any[]) => T) | undefined;
     private componentData: any | undefined;
     private componentInstance!: T;
     private router!: Router;
 
-    constructor(
-        private componentFactoryResolver: ComponentFactoryResolver,
+    constructor(private componentFactoryResolver: ComponentFactoryResolver,
         public dialogRef: MatDialogRef<DialogWrapperComponent<T>>,
         @Inject(MAT_DIALOG_DATA)
         data: IDialogData<T>,
-        router: Router
-    ) {
+        router: Router) {
+
         if (data != undefined) {
             this.title = data.title;
             this.translate = data.translteService;

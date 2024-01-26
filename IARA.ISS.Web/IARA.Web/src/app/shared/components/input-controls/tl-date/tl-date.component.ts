@@ -22,8 +22,8 @@ export class TLDateComponent extends BaseTLControl {
     @Output()
     public yearSelected: EventEmitter<unknown> = new EventEmitter<unknown>();
 
-    public constructor(@Self() @Optional() ngControl: NgControl, fuseTranslateionService: FuseTranslationLoaderService, tlTranslatePipe: TLTranslatePipe) {
-        super(ngControl, fuseTranslateionService, tlTranslatePipe);
+    public constructor(@Self() @Optional() ngControl: NgControl, tlTranslatePipe: TLTranslatePipe) {
+        super(ngControl, tlTranslatePipe);
     }
 
     public selectedMonth<D>(date: Date, datepicker: MatDatepicker<D>): void {

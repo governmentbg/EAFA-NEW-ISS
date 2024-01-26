@@ -43,8 +43,7 @@
             <sv:TLHeaderLine Text="{rt:Translate TerritorialUnitHeading, Group=TicketPerson}" ImageGlyph="{Static h:IconFont.Building}" />
             <tl:TLPicker ItemsSource="{Binding TerritorialUnits}"
                     ValidState="{Binding TerritorialUnit}"
-                    Title="{rt:Translate TerritorialUnitInputHeading, Group=TicketPerson}"
-                    IsEnabled="{Binding IsEditEnabled}" />
+                    Title="{rt:Translate TerritorialUnitInputHeading, Group=TicketPerson}" />
         </StackLayout>
         <tl:TLCheckView Margin="10,5"
                 IsVisible="false"

@@ -20,6 +20,7 @@ export class ErrorLogFilters extends BaseRequestModel {
     public class: string | undefined;
     public errorLogId: string | undefined;
     public userId: number | undefined;
+    public username: string | undefined;
     public method: string | undefined;
     public message: string | undefined;
     public exceptionUid: string | undefined;

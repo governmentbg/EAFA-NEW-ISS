@@ -16,7 +16,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments
             Orders = new TLObservableCollection<ItemViewModel>();
             Checkout = CommandBuilder.CreateFrom(OnCheckout);
         }
-        public int ApplicationId { get; set; }
+        public string PaymentRequestNum { get; set; }
         public decimal TotalPrice { get; set; }
         public TLObservableCollection<ItemViewModel> Orders { get; }
         public ICommand Checkout { get; }
@@ -34,7 +34,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments
 
         private async Task OnCheckout()
         {
-            await MainNavigator.Current.GoToPageAsync(new ChoosePaymentTypePage(ApplicationId, TotalPrice));
+            await MainNavigator.Current.GoToPageAsync(new ChoosePaymentTypePage(PaymentRequestNum, TotalPrice));
         }
     }
 }

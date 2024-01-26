@@ -1,10 +1,9 @@
-import { TLIconModule } from '@app/shared/components/tl-icon/tl-icon.module';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
+import { TLIconModule } from '@app/shared/components/tl-icon/tl-icon.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { FuseNavHorizontalCollapsableComponent } from './horizontal/collapsable/collapsable.component';
 import { FuseNavHorizontalItemComponent } from './horizontal/item/item.component';
@@ -22,7 +21,7 @@ import { FuseNavVerticalItemComponent } from './vertical/item/item.component';
         MatIconModule,
         MatRippleModule,
         TLIconModule,
-        TranslateModule.forChild()
+        TranslateModule
     ],
     exports: [
         FuseNavigationComponent

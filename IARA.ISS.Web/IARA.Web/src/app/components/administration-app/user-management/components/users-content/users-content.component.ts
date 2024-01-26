@@ -129,6 +129,7 @@ export class UsersContentComponent implements OnInit, AfterViewInit {
 
         const personId: number | undefined = window.history.state?.id;
         const legalId: number | undefined = window.history.state?.id;
+        const tableId: number | undefined = window.history.state.tableId;
 
         if (!CommonUtils.isNullOrEmpty(personId)) {
             this.gridManager.advancedFilters = new UserManagementFilters({ personId: personId });
@@ -136,6 +137,10 @@ export class UsersContentComponent implements OnInit, AfterViewInit {
 
         if (!CommonUtils.isNullOrEmpty(legalId)) {
             this.gridManager.advancedFilters = new UserManagementFilters({ legalId: legalId });
+        }
+
+        if (!CommonUtils.isNullOrEmpty(tableId)) {
+            this.gridManager.advancedFilters = new UserManagementFilters({ id: tableId });
         }
 
         this.gridManager.refreshData();

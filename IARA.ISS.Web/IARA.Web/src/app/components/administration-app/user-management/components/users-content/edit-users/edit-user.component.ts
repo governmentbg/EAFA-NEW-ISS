@@ -1,44 +1,44 @@
-﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { forkJoin } from 'rxjs';
+﻿import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { UserLegalStatusEnum } from '@app/enums/user-legal-status.enum';
 import { IUserManagementService } from '@app/interfaces/administration-app/user-management.interface';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 import { ExternalUserDTO } from '@app/models/generated/dtos/ExternalUserDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { InternalUserDTO } from '@app/models/generated/dtos/InternalUserDTO';
 import { RegixLegalDataDTO } from '@app/models/generated/dtos/RegixLegalDataDTO';
+import { RegixPersonDataDTO } from '@app/models/generated/dtos/RegixPersonDataDTO';
 import { RoleDTO } from '@app/models/generated/dtos/RoleDTO';
 import { UserLegalDTO } from '@app/models/generated/dtos/UserLegalDTO';
 import { RolesService } from '@app/services/administration-app/roles.service';
 import { ExternalUserManagementService } from '@app/services/administration-app/user-management/external-user-management.service';
 import { InternalUserManagementService } from '@app/services/administration-app/user-management/internal-user-management.service';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
+import { SecurityService } from '@app/services/common-app/security.service';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
+import { CommandTypes } from '@app/shared/components/data-table/enums/command-type.enum';
+import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
 import { GridRow } from '@app/shared/components/data-table/models/row.model';
 import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
-import { AuthService } from '@app/shared/services/auth.service';
 import { PermissionsService } from '@app/shared/services/permissions.service';
 import { RequestProperties } from '@app/shared/services/request-properties';
+import { CommonUtils } from '@app/shared/utils/common.utils';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { CommandTypes } from '@app/shared/components/data-table/enums/command-type.enum';
-import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
+import { forkJoin } from 'rxjs';
 import { EditUserDialogParams } from '../../models/edit-user-dialog-params';
-import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
-import { CommonUtils } from '@app/shared/utils/common.utils';
-import { RegixPersonDataDTO } from '@app/models/generated/dtos/RegixPersonDataDTO';
-import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
-import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'edit-user',
@@ -75,6 +75,9 @@ export class EditUserComponent implements OnInit, IDialogComponent {
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
+    @ViewChild(ValidityCheckerGroupDirective)
+    private validityCheckerGroup!: ValidityCheckerGroupDirective;
+
     private service!: IUserManagementService;
     private rolesService: RolesService;
     private permissions: PermissionsService;
@@ -83,7 +86,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
     private internalUserModel!: InternalUserDTO;
     private externalUserModel!: ExternalUserDTO;
     private snackbar: MatSnackBar;
-    private authService: AuthService;
+    private authService: SecurityService;
 
     private hasEmailExistsError: boolean = false;
     private hasInvalidEgnLnchError: boolean = false;
@@ -97,7 +100,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         confirmDialog: TLConfirmDialog,
         permissions: PermissionsService,
         snackbar: MatSnackBar,
-        authService: AuthService
+        authService: SecurityService
     ) {
         this.translationService = translationService;
         this.rolesService = rolesService;
@@ -185,6 +188,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         }
 
         this.editUserForm.markAllAsTouched();
+        this.validityCheckerGroup.validate();
         this.userRolesTouched = true;
 
         if (this.editUserForm.valid) {
@@ -206,7 +210,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
                 if (this.userId !== undefined) {
                     this.service.impersonateUser(this.userId).subscribe(result => {
 
-                        this.authService.ImpersonationToken = result;
+                        this.authService.impersonationToken = result;
                         const message: string = this.translationService.getValue('service.successful-message');
                         this.snackbar.open(message, undefined, {
                             duration: RequestProperties.DEFAULT.showExceptionDurationSucc,
@@ -239,6 +243,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: (dialogResult?: any) => void): void {
         if (actionInfo.id === 'save') {
             this.editUserForm.markAllAsTouched();
+            this.validityCheckerGroup.validate();
             this.userRolesTouched = true;
 
             if (this.editUserForm.valid) {
@@ -615,7 +620,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         const min = (lhs: Date, rhs: Date) => lhs < rhs ? lhs : rhs;
 
         for (const role of roles) {
-           //Ако една и съща роля с припокриващ се период на валидност съществува в активни и в неактивни записи, взимаме само активния запис и не показваме съобщение за грешка
+            //Ако една и съща роля с припокриващ се период на валидност съществува в активни и в неактивни записи, взимаме само активния запис и не показваме съобщение за грешка
             if (result.findIndex(x => x.id === role.id && max(x.accessValidFrom!, role.accessValidFrom!) < min(x.accessValidTo!, role.accessValidTo!)) === -1) {
                 const original = roles.filter(x => x.id === role.id && max(x.accessValidFrom!, role.accessValidFrom!) < min(x.accessValidTo!, role.accessValidTo!));
 
@@ -671,10 +676,14 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             case ErrorCode.InvalidEgnLnch: {
                 this.hasInvalidEgnLnchError = true;
                 this.editUserForm.updateValueAndValidity({ emitEvent: false });
+                this.editUserForm.markAllAsTouched();
+                this.validityCheckerGroup.validate();
             } break;
             case ErrorCode.EmailExists: {
                 this.hasEmailExistsError = true;
                 this.editUserForm.get('usernameEmailGroup')!.updateValueAndValidity({ emitEvent: false });
+                this.editUserForm.markAllAsTouched();
+                this.validityCheckerGroup.validate();
             } break;
         }
     }

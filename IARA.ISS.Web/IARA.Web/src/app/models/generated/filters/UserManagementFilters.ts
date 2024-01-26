@@ -24,4 +24,5 @@ export class UserManagementFilters extends BaseRequestModel {
     public isRequestedAccess: boolean | undefined;
     public personId: number | undefined;
     public legalId: number | undefined;
+    public id: number | undefined;
 }

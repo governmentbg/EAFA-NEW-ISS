@@ -140,9 +140,17 @@
         </tl-card-content>
     </tl-card>
 
-    <div fxLayout="row" fxLayoutGap="1em" class="m-l">
-        <button mat-raised-button class="mat-accent" (click)="updateProfileData()">{{ 'my-profile.save' | tlTranslate }}</button>
-        <button mat-raised-button class="mat-accent" (click)="changePassword()">{{ 'my-profile.change-password' | tlTranslate }}</button>
+    <div fxLayout="row" fxLayoutAlign="space-between center" fxFlex="100" fxLayoutGap="1em" class="m-l">
+        <div fxLayout="row" fxLayoutGap="1em">
+            <button mat-raised-button class="mat-accent" (click)="updateProfileData()">{{ 'my-profile.save' | tlTranslate }}</button>
+            <button mat-raised-button class="mat-accent" (click)="changePassword()">{{ 'my-profile.change-password' | tlTranslate }}</button>
+        </div>
+
+        <div *ngIf="isPublicApp" fxLayout="row" fxLayoutGap="1em"> 
+            <button mat-raised-button class="mat-primary" (click)="deleteProfileData()">{{ 'my-profile.delete-profile' | tlTranslate }}</button>
+        </div>
+
+        <div *ngIf="!isPublicApp" fxLayout="row"></div>
     </div>
 
     <!-- Роли -->
@@ -199,4 +207,8 @@
             </tl-data-table>
         </tl-card-content>
     </tl-card>
+
+    <!--<div fxLayout="row" fxLayoutGap="1em" class="m-l">
+        <button mat-raised-button class="mat-primary" (click)="deleteProfileData()">{{ 'my-profile.delete-profile' | tlTranslate }}</button>
+    </div>-->
 </div>

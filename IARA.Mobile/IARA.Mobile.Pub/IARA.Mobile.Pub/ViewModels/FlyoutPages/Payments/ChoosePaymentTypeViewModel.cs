@@ -18,6 +18,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments
     {
         private readonly IServerUrl _urlProvider;
         private readonly IAuthTokenProvider _tokenProvider;
+        private const string EPAY_PAYMENT = "EPAY";
 
         public ChoosePaymentTypeViewModel(IServerUrl urlProvider, IAuthTokenProvider tokenProvider)
         {
@@ -26,7 +27,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments
             _urlProvider = urlProvider;
             _tokenProvider = tokenProvider;
         }
-        public int ApplicationId { get; set; }
+        public string PaymentRequestNum { get; set; }
         public decimal TotalPrice { get; set; }
         public ICommand PaymentTypeTapped { get; }
 
@@ -59,7 +60,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments
                     await HandlePayEgovBankPayment();
                     break;
                 case PaymentTypesConstants.PAY_EGOV_EPAYBG:
-                    await HandleOnlinePayment("EPAY");
+                    await HandleOnlinePayment(EPAY_PAYMENT);
                     break;
                 case PaymentTypesConstants.PAY_EGOV_EPOS:
                     await HandleOnlinePayment("CARD");
@@ -77,7 +78,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments
         private async Task HandlePayEgovBankPayment()
         {
             await TLLoadingHelper.ShowFullLoadingScreen();
-            string paymentNumber = await PaymentTransaction.RegisterOfflinePayment(ApplicationId);
+            string paymentNumber = await PaymentTransaction.RegisterOfflinePayment(PaymentRequestNum);
 
             if (!string.IsNullOrEmpty(paymentNumber))
             {
@@ -97,9 +98,10 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments
                 PaymentOkUrl = _urlProvider.BuildUrl(environment: "PAYMENT_OK").TrimEnd(new char[] { '/' }),
                 PaymentCanceledUrl = _urlProvider.BuildUrl(environment: "PAYMENT_CANCELED").TrimEnd(new char[] { '/' }),
                 PaymentInitialUrl = _urlProvider.GetEnvironmentBaseUrl() + "/online-payment",
-                ApplicationId = ApplicationId,
+                PaymentRequestNum = PaymentRequestNum,
                 Token = _tokenProvider.Token,
-                PaymentCode = paymentCode
+                PaymentCode = paymentCode,
+                IsFromEpay = paymentCode == EPAY_PAYMENT
             };
             return onlinePayment;
         }

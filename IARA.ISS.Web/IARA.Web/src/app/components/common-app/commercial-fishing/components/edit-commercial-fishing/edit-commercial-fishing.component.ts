@@ -614,6 +614,27 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         this.form.updateValueAndValidity({ onlySelf: true });
     }
 
+    public selectAllPermittedPorts(): void {
+        this.quotaAquaticOrganisms = [];
+       
+        for (const quotaOrganismType of this.quotaAquaticOrganismTypes) {
+            const ports: NomenclatureDTO<number>[] = this.filterQuotaSpiciesPortsCollection(quotaOrganismType.value);
+
+            for (const port of ports) {
+                const quotaAquaticOrganism: QuotaAquaticOrganismDTO = new QuotaAquaticOrganismDTO({
+                    aquaticOrganismId: quotaOrganismType.value,
+                    portId: port.value
+                });
+
+                this.quotaAquaticOrganisms.push(quotaAquaticOrganism);
+            }
+        }
+
+        this.quotaAquaticOrganisms = this.quotaAquaticOrganisms.slice();
+        this.form.updateValueAndValidity({ onlySelf: true });
+        this.form.markAsTouched({ onlySelf: true });
+    }
+
     public removeAquaticOrganismType(row: NomenclatureDTO<number>): void {
         const selectedWaterType: NomenclatureDTO<number> | undefined = this.form.get('waterTypeControl')!.value;
         if (selectedWaterType !== null && selectedWaterType !== undefined) {

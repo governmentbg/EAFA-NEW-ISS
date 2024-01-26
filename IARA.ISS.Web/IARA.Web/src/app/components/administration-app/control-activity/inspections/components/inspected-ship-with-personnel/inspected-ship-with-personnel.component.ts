@@ -103,9 +103,7 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
     public writeValue(value: ShipWithPersonnelModel): void {
         if (value !== undefined && value !== null) {
             this.form.get('shipControl')!.setValue(value.ship);
-
             this.form.get('togglesControl')!.setValue(value.toggles);
-
             this.form.get('portControl')!.setValue(value.port);
 
             const violation = value.observationTexts?.find(f => f.category === this.shipObservationCategory);

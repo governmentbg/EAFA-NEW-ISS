@@ -1,17 +1,17 @@
 ﻿import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
-import { error } from '@angular/compiler/src/util';
 import { EventEmitter, Injectable } from '@angular/core';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { MatSnackBarConfig } from '@angular/material/snack-bar';
 import { ErrorModel } from '@app/models/common/exception.model';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { DateUtils } from '@app/shared/utils/date.utils';
 import { Environment } from '@env/environment';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { ErrorSnackbarComponent } from '../components/error-snackbar/error-snackbar.component';
+import { TLSnackbar } from '../components/snackbar/tl.snackbar';
 import { SpinnerService } from '../components/spinner/spinner.service';
 import { AreaTypes } from '../enums/area-type.enum';
+import { IRequestService } from '../interfaces/request-service.interface';
 import { IHttpOptions } from './http-options.interface';
 import { RequestProperties } from './request-properties';
 import { IRequestServiceParams } from './request-service-params.interface';
@@ -19,24 +19,38 @@ import { IRequestServiceParams } from './request-service-params.interface';
 @Injectable({
     providedIn: 'root'
 })
-export class RequestService {
+export class RequestService implements IRequestService {
     public http: HttpClient;
-    public snackbar: MatSnackBar;
     public translator: FuseTranslationLoaderService;
     public spinner: SpinnerService;
+    private tlSnackbar: TLSnackbar;
 
     private get baseUrl(): string {
         return Environment.Instance.apiBaseUrl as string;
     }
 
-    public constructor(http: HttpClient, snackbar: MatSnackBar, translator: FuseTranslationLoaderService, spinner: SpinnerService) {
+    private _newTokenSent: Subject<string>;
+    private _errorEvent: Subject<HttpErrorResponse>;
+
+    public get newTokenSent(): Observable<string> {
+        return this._newTokenSent;
+    }
+
+    public get errorEvent(): Observable<HttpErrorResponse> {
+        return this._errorEvent;
+    }
+
+    public constructor(http: HttpClient, translator: FuseTranslationLoaderService, spinner: SpinnerService, tlSnackbar: TLSnackbar) {
         this.http = http;
-        this.snackbar = snackbar;
+        this.tlSnackbar = tlSnackbar;
         this.translator = translator;
         this.spinner = spinner;
         Date.prototype.toJSON = function () {
             return DateUtils.ToDateTimeString((this as Date));
         }
+
+        this._errorEvent = new Subject<HttpErrorResponse>();
+        this._newTokenSent = new Subject<string>();
 
         //Number.prototype.toString = function (radix?: number | undefined) {
         //    return this.toString();
@@ -152,13 +166,13 @@ export class RequestService {
             responseType: 'blob',
             observe: 'response'
         }), params).subscribe({
-                next: (response: HttpResponse<Blob>) => {
-                    this.handleDownloadResult(response, fileName, fileDownloadedEvent);
-                },
-                error: (errorResponse: HttpErrorResponse) => {
-                    fileDownloadedEvent.error(errorResponse);
-                }
-            });
+            next: (response: HttpResponse<Blob>) => {
+                this.handleDownloadResult(response, fileName, fileDownloadedEvent);
+            },
+            error: (errorResponse: HttpErrorResponse) => {
+                fileDownloadedEvent.error(errorResponse);
+            }
+        });
 
         return fileDownloadedEvent.asObservable();
     }
@@ -246,7 +260,7 @@ export class RequestService {
                         data = this.mapData(data, params.responseTypeCtr);
                     }
                 }
-                return this.afterSuccessProcessing<TResult>(data, this.snackbar, params?.successMessage, params?.properties);
+                return this.afterSuccessProcessing<TResult>(data, params?.successMessage, params?.properties);
             }),
             catchError((err: HttpErrorResponse) => {
                 if (params?.responseType === 'blob') {
@@ -343,11 +357,7 @@ export class RequestService {
             const error: ErrorModel = errorResponse.error as ErrorModel;
 
             if ((error.code === null || error.code === undefined) && properties.showException) {
-                this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                    data: error,
-                    duration: properties.showExceptionDurationErr,
-                    panelClass: properties.showExceptionColorClassErr
-                });
+                this.tlSnackbar.errorModel(error, properties);
             }
             else {
                 handledExceptionWithErrorCode = true;
@@ -357,11 +367,7 @@ export class RequestService {
                 const error = new ErrorModel();
 
                 error.messages = [this.translate('an-error-occurred-in-the-app')];
-                this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                    data: error,
-                    duration: properties.showExceptionDurationErr,
-                    panelClass: properties.showExceptionColorClassErr
-                });
+                this.tlSnackbar.errorModel(error, properties);
             }
         }
 
@@ -379,7 +385,6 @@ export class RequestService {
 
     private afterSuccessProcessing<T>(
         data: T,
-        snackBarRef: MatSnackBar,
         successMessage?: string,
         properties: Partial<RequestProperties> = RequestProperties.DEFAULT
     ): T {
@@ -390,7 +395,7 @@ export class RequestService {
             config.duration = properties.showExceptionDurationSucc;
             config.panelClass = [properties.showExceptionColorClassSucc as string];
 
-            snackBarRef.open(this.translate(successMessage as string), undefined, config);
+            this.tlSnackbar.success(this.translate(successMessage as string), undefined, undefined, config);
         }
 
         if (properties.showProgressSpinner) {

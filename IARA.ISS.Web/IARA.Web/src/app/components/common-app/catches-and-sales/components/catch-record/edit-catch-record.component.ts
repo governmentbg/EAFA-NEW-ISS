@@ -73,6 +73,14 @@ export class EditCatchRecordComponent implements AfterViewInit, IDialogComponent
                     unloadedInOtherTripQuantityKg: 0
                 })
             ]);
+
+            if (this.tripStartDateTime !== null && this.tripStartDateTime !== undefined) {
+                this.form.get('gearEntryDateTimeControl')!.setValue(moment(this.tripStartDateTime));
+            }
+
+            if (this.tripEndDateTime !== null && this.tripEndDateTime !== undefined) {
+                this.form.get('gearExitDateTimeControl')!.setValue(moment(this.tripEndDateTime));
+            }
         }
         else {
             this.fillForm();

@@ -188,14 +188,9 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
         if (value !== null && value !== undefined) {
             this.shipId = value.ship?.shipId;
 
-            this.form.get('shipControl')!.setValue(new ShipWithPersonnelModel({
-                ship: value.ship,
-                personnel: value.personnel,
-                toggles: value.checks,
-                port: value.port,
-                observationTexts: value.observationTexts
-            }));
-
+            const ship: ShipWithPersonnelModel = this.mapModelToShipWithPersonnel(value);
+            this.form.get('shipControl')!.setValue(ship);
+          
             this.form.get('permitLicensesControl')!.setValue(value.permitLicenses);
             this.form.get('permitsControl')!.setValue(value.permits);
             this.form.get('togglesControl')!.setValue(value.checks);
@@ -423,5 +418,17 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             this.form.get('preliminaryNoticeNumberControl')!.enable();
             this.form.get('preliminaryNoticePurposeControl')!.enable();
         }
+    }
+
+    private mapModelToShipWithPersonnel(model: InspectedShipSectionsModel): ShipWithPersonnelModel {
+        const result: ShipWithPersonnelModel = new ShipWithPersonnelModel();
+
+        result.ship = model.ship;
+        result.personnel = model.personnel;
+        result.port = model.port;
+        result.toggles = model.checks ?? [];
+        result.observationTexts = model.observationTexts ?? [];
+
+        return result;
     }
 }

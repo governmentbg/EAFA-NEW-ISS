@@ -1,0 +1,8 @@
+<div fxLayout="row" fxLayoutAlign="start stretch">
+    <ul fxFlex="90">
+        <li class="label-fill">{{ message }}</li>
+    </ul>
+    <div fxFlex="10" (click)="closeSnackbar()" fxLayout="row" fxLayoutAlign="end center" style="cursor:pointer;">
+        <mat-icon class="label-fill">clear</mat-icon>
+    </div>
+</div>

@@ -1,0 +1,74 @@
+.sign-out-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    align-items: center;
+    min-width: 0;
+
+    @media (min-width: 640px) {
+        justify-content: center;
+    }
+
+    .sign-out-card {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        width: 100%;
+
+        @media (min-width: 640px) {
+            padding: 3rem;
+            border-radius: 1rem;
+            width: auto;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+
+        .sign-out-card-content {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            @media (min-width: 640px) {
+                margin-left: 0;
+                margin-right: 0;
+                width: 20rem;
+            }
+
+            .logo {
+                width: 200px;
+            }
+
+            .sign-out-title {
+                margin-top: 2rem;
+                font-size: 2.25rem;
+                line-height: 2.5rem;
+                font-weight: 800;
+                letter-spacing: -0.025em;
+                line-height: 1.25;
+                text-align: center;
+            }
+
+            .redirect-message {
+                display: flex;
+                margin-top: 0.5rem;
+                justify-content: center;
+                font-weight: 500;
+            }
+
+            .sign-out-footer {
+                margin-top: 2rem;
+                font-weight: 500;
+                text-align: center;
+
+                a {
+                    margin-left: 0.25rem;
+
+                    :hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
+}

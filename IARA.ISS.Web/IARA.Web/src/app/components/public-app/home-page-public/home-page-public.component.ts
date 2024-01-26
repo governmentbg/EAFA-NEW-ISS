@@ -1,9 +1,9 @@
 ﻿import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationTypeDTO } from '@app/models/generated/dtos/ApplicationTypeDTO';
+import { SecurityService } from '@app/services/common-app/security.service';
 import { ApplicationsPublicService } from '@app/services/public-app/applications-public.service';
 import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
-import { AuthService } from '@app/shared/services/auth.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { HomePageVideoModel } from './models/home-page-video.params';
 
@@ -21,24 +21,24 @@ export class HomePagePublicComponent implements OnInit {
     private table!: TLDataTableComponent;
 
     private router: Router;
-    private authService: AuthService;
+    private securityService: SecurityService;
     private readonly applicationsService: ApplicationsPublicService;
     private readonly translate: FuseTranslationLoaderService;
 
     public constructor(
         router: Router,
-        authService: AuthService,
+        securityService: SecurityService,
         applicationsService: ApplicationsPublicService,
         translate: FuseTranslationLoaderService
     ) {
         this.router = router;
-        this.authService = authService;
+        this.securityService = securityService;
         this.applicationsService = applicationsService;
         this.translate = translate;
 
         this.initializeVideos();
 
-        this.authService.isAuthenticatedEvent.subscribe({
+        this.securityService.isAuthenticatedEvent.subscribe({
             next: (result: boolean) => {
                 this.isAuthenticated = result;
             }
@@ -55,7 +55,7 @@ export class HomePagePublicComponent implements OnInit {
 
     public login(): void {
         if (!this.isAuthenticated) {
-            this.authService.login();
+            // this.securityService.login();
         }
     }
 

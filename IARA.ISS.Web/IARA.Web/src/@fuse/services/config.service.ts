@@ -119,7 +119,7 @@ export class FuseConfigService {
     setConfig(value: any, opts = { emitEvent: true }): void {
         // Get the value from the behavior subject
         let config = this._configSubject?.getValue();
-
+        this.prevConfig = config ?? this.defaultConfig;
         // Merge the new config
         config = _.merge({}, config, value);
 
@@ -128,6 +128,32 @@ export class FuseConfigService {
             // Notify the observers
             this._configSubject?.next(config as FuseConfig);
         }
+    }
+
+
+    private prevConfig!: FuseConfig;
+    public hidePanels(): void {
+      
+        this.setConfig({
+            layout: {
+                navbar: {
+                    hidden: true
+                },
+                toolbar: {
+                    hidden: true
+                },
+                footer: {
+                    hidden: true
+                },
+                sidepanel: {
+                    hidden: true
+                }
+            }
+        });
+    }
+
+    public restoreConfig(): void {
+        this.setConfig(this.prevConfig);
     }
 
     /**

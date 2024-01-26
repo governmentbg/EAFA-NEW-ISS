@@ -90,15 +90,11 @@ namespace IARA.Mobile.Pub.Views.Controls
                     //else
                     if (status == nameof(TicketStatusEnum.APPROVED) || status == nameof(TicketStatusEnum.REQUESTED) || status == nameof(TicketStatusEnum.ISSUED))
                     {
-                        if (now < ValidFrom)
+                        // Check for Cyrillic E and Latin E
+                        bool isTicketElectronic = string.IsNullOrEmpty(TicketNumber) ? true :
+                              TicketNumber.ToUpper().StartsWith("E") || TicketNumber.ToUpper().StartsWith("Е");
+                        if (ValidFrom <= now && now < ValidTo || isTicketElectronic)
                         {
-                            return IconTextView(TranslateExtension.Translator[nameof(GroupResourceEnum.FishingTicket) + "/ActiveTicket"], IconFont.Check, Color.Green);//"Активен билет"
-                        }
-                        else if (ValidFrom <= now && now < ValidTo)
-                        {
-                            // Check for Cyrillic E and Latin E
-                            bool isTicketIssued = string.IsNullOrEmpty(TicketNumber) ? false :
-                                !(TicketNumber.ToUpper().StartsWith("E") || TicketNumber.ToUpper().StartsWith("Е"));
                             return new Grid()
                             {
                                 RowSpacing = 0,
@@ -115,8 +111,8 @@ namespace IARA.Mobile.Pub.Views.Controls
                                         VerticalTextAlignment = TextAlignment.Center,
                                         FontSize = 30,
                                         FontFamily = "FA",
-                                        TextColor = isTicketIssued ? Color.Green : Color.Red,
-                                        Text = isTicketIssued ? IconFont.Check : IconFont.Print,
+                                        TextColor = isTicketElectronic ? Color.Red : Color.Green,
+                                        Text = isTicketElectronic ? IconFont.Print : IconFont.Check,
                                     }.Row(0),
                                     new StackLayout()
                                     {
@@ -128,8 +124,8 @@ namespace IARA.Mobile.Pub.Views.Controls
                                             {
                                                 HorizontalTextAlignment = TextAlignment.Center,
                                                 FontSize = 15,
-                                                Text = isTicketIssued ? TranslateExtension.Translator[nameof(GroupResourceEnum.FishingTicket) + "/Valid"]//"Валиден още:"
-                                                : TranslateExtension.Translator[nameof(GroupResourceEnum.FishingTicket) + "/NotIssued"],//"Билета не е издаден"
+                                                Text = isTicketElectronic ? TranslateExtension.Translator[nameof(GroupResourceEnum.FishingTicket) + "/NotIssued"]//"Валиден още:"
+                                                : TranslateExtension.Translator[nameof(GroupResourceEnum.FishingTicket) + "/Valid"],//"Билета не е издаден"
                                                 LineBreakMode = LineBreakMode.WordWrap,
                                                 IsVisible = ValidTo.Year != 9999
                                             },
@@ -139,12 +135,16 @@ namespace IARA.Mobile.Pub.Views.Controls
                                                 FontSize = 15,
                                                 LineBreakMode = LineBreakMode.WordWrap,
                                                 Text = HumanizeTimeLeft(),
-                                                IsVisible = isTicketIssued
+                                                IsVisible = !isTicketElectronic
                                             }
                                         }
                                     }.Row(1),
                                 }
                             };
+                        }
+                        else if (now < ValidFrom)
+                        {
+                            return IconTextView(TranslateExtension.Translator[nameof(GroupResourceEnum.FishingTicket) + "/ActiveTicket"], IconFont.Check, Color.Green);//"Активен билет"
                         }
                         else
                         {
