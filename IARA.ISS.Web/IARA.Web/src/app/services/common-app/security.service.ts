@@ -20,11 +20,12 @@ import { IRequestService } from '@app/shared/interfaces/request-service.interfac
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { MyProfilePublicService } from '../public-app/my-profile-public.service';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
-export class SecurityService extends BaseSecurityService<number, UserAuthDTO> {
+export class SecurityService extends BaseSecurityService<string, UserAuthDTO> {
 
     private changePasswordDialog: TLMatDialog<ChangePasswordComponent>;
     private changeUserDataDialog: TLMatDialog<ChangeUserDataComponent>;
@@ -35,7 +36,7 @@ export class SecurityService extends BaseSecurityService<number, UserAuthDTO> {
     constructor(@Inject(REQUEST_SERVICE_TOKEN) requestService: IRequestService,
         @Inject(SECURITY_CONFIG_TOKEN) securityConfig: SecurityConfig,
         @Inject(PERMISSIONS_SERVICE_TOKEN) permissionsService: IPermissionsService,
-        @Inject(USER_SERVICE_TOKEN) usersService: IGenericUserService<number, UserAuthDTO>,
+        @Inject(USER_SERVICE_TOKEN) usersService: IGenericUserService<string, UserAuthDTO>,
         router: Router,
         matDialog: MatDialog,
         changePasswordDialog: TLMatDialog<ChangePasswordComponent>,
@@ -51,7 +52,7 @@ export class SecurityService extends BaseSecurityService<number, UserAuthDTO> {
 
     public async getUserRedirectPath(): Promise<string> {
         if (await this.isAuthenticated()) {
-            const user = this.User;
+            const user = this.User!;
             if (user.currentLoginType === LoginTypesEnum.PASSWORD) {
                 if (!this.openUserModal(user)) {
                     return this.redirectToHome();
@@ -79,25 +80,43 @@ export class SecurityService extends BaseSecurityService<number, UserAuthDTO> {
     public openUserModal(user: UserAuthDTO): boolean {
         if (user !== undefined && user !== null) {
             if (user.userMustChangeData) {
-                this.openChangeUserDataDialog(user);
+                this.openChangeUserDataDialog(user).subscribe({
+                    next: (userData: ChangeUserDataDTO | undefined) => {
+                        this.isDialogOpened = false;
+                        if (userData != undefined && userData.email != undefined) {
+                            this.logout().subscribe(() => {
+                                this.router.navigateByUrl('/successful-registration', { state: { email: userData.email } });
+                            });
+                        } else {
+                            this.logout().subscribe(() => {
+                                this.router.navigate(['/']);
+                            });
+                        }
+                    }
+                });
                 return true;
             } else if (user.userMustChangePassword) {
-                this.openChangePasswordDialog(user);
+                this.openChangePasswordDialog(user).subscribe({
+                    next: (password: UserPasswordDTO | undefined) => {
+                        this.isDialogOpened = false;
+                        this.logout().subscribe(() => {
+                            this.router.navigate(['/']);
+                        });
+                    }
+                });
                 return true;
             }
         }
-
         return false;
     }
 
-    public openChangeUserDataDialog(user: UserAuthDTO): void {
+    public openChangeUserDataDialog(user: UserAuthDTO): Observable<any> {
         if (!this.isDialogOpened) {
-
             const dialog = this.changeUserDataDialog.open({
                 title: this.translationService.getValue('my-profile.change-user-data-dialog-title'),
                 TCtor: ChangeUserDataComponent,
                 headerCancelButton: {
-                    cancelBtnClicked: this.logout.bind(this)
+                    cancelBtnClicked: (closeFn) => closeFn()
                 },
                 componentData: {
                     userId: user!.id!,
@@ -115,26 +134,16 @@ export class SecurityService extends BaseSecurityService<number, UserAuthDTO> {
                     color: 'primary',
                     translateValue: this.translationService.getValue('common.cancel'),
                     disabled: false,
-                    buttonData: this.logout.bind(this)
                 },
             }, '1300px');
 
-            dialog.subscribe({
-                next: (userData: ChangeUserDataDTO | undefined) => {
-                    if (userData != undefined && userData.email != undefined) {
-                        this.logout().subscribe(() => {
-                            this.router.navigateByUrl('/successful-registration');
-                        });
-                    } else {
-                        this.logout();
-                    }
-                }
-            });
             this.isDialogOpened = true;
+            return dialog;
         }
+        return of();
     }
 
-    public openChangePasswordDialog(user: UserAuthDTO): void {
+    public openChangePasswordDialog(user: UserAuthDTO): Observable<any> {
         if (!this.isDialogOpened) {
             const dialog = this.changePasswordDialog.open({
                 title: this.translationService.getValue('my-profile.change-password-dialog-title'),
@@ -162,17 +171,10 @@ export class SecurityService extends BaseSecurityService<number, UserAuthDTO> {
                 },
             }, '800px');
 
-            dialog.subscribe({
-                next: (password: UserPasswordDTO | undefined) => {
-                    this.logout();
-                    this.isDialogOpened = false;
-                    setTimeout(() => {
-                        this.router.navigate(['/']);
-                    }, 100);
-                }
-            });
             this.isDialogOpened = true;
+            return dialog;
         }
+        return of();
     }
 
     private redirectToHome(): string {

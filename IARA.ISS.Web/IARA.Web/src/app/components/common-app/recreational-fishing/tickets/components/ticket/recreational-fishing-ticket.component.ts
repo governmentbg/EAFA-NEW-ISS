@@ -266,15 +266,26 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
 
         const type: TicketTypeEnum = TicketTypeEnum[this.type.code as keyof typeof TicketTypeEnum];
 
-        if (!this.isRegisterEntry && type === TicketTypeEnum.UNDER14)
-            this.form.get('representativeSameAsAdultControl')?.valueChanges.subscribe({
-                next: (checked: boolean) => {
-                    if (checked) {
-                        this.form.get('representativeRegixDataControl')!.setValue(this.representativePerson);
-                        this.form.get('representativeAddressControl')!.setValue(this.representativePersonAddressRegistrations);
-                    }
+        if (!this.isRegisterEntry) {
+            this.form.get('validFromControl')?.valueChanges.subscribe({
+                next: (validFrom: Date | undefined) => {
+                    this.setDateOfBirthProperties(type, validFrom);
+                    this.form.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('regixDataControl')?.updateValueAndValidity({ emitEvent: false });
                 }
             });
+
+            if (type === TicketTypeEnum.UNDER14) {
+                this.form.get('representativeSameAsAdultControl')?.valueChanges.subscribe({
+                    next: (checked: boolean) => {
+                        if (checked) {
+                            this.form.get('representativeRegixDataControl')!.setValue(this.representativePerson);
+                            this.form.get('representativeAddressControl')!.setValue(this.representativePersonAddressRegistrations);
+                        }
+                    }
+                });
+            }
+        }
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
@@ -283,43 +294,8 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
         });
 
         const type: TicketTypeEnum = TicketTypeEnum[this.type.code as keyof typeof TicketTypeEnum];
-
-        if (type === TicketTypeEnum.UNDER14) {
-            const min: Date = new Date();
-            min.setFullYear(min.getFullYear() - 14);
-            min.setDate(min.getDate() + 1);
-
-            this.dateOfBirthProperties.min = min;
-            this.dateOfBirthProperties.max = this.currentDate;
-
-            this.dateOfBirthProperties.validators = [Validators.required, this.isPersonUnder14Validator()];
-
-            // always set to true because it doesn't exist in this case
-            this.form.get('guaranteeTrueDataControl')?.setValue(true);
-        }
-        else if (type === TicketTypeEnum.BETWEEN14AND18 || type === TicketTypeEnum.BETWEEN14AND18ASSOCIATION) {
-            const min: Date = new Date();
-            min.setFullYear(min.getFullYear() - 18);
-            min.setDate(min.getDate() + 1);
-
-            const max: Date = new Date();
-            max.setFullYear(max.getFullYear() - 14);
-            max.setDate(max.getDate() + 1);
-
-            this.dateOfBirthProperties.min = min;
-            this.dateOfBirthProperties.max = max;
-
-            this.dateOfBirthProperties.validators = [Validators.required, this.isPersonBetween14And18Validator()];
-        }
-        else if (type === TicketTypeEnum.ELDER || type === TicketTypeEnum.ELDERASSOCIATION) {
-            const max: Date = new Date();
-            max.setFullYear(max.getFullYear() - 60);
-            max.setDate(max.getDate() + 1);
-
-            this.dateOfBirthProperties.max = max;
-
-            this.dateOfBirthProperties.validators = [Validators.required, this.isPersonElder()];
-        }
+        const validFrom: Date | undefined = this.form.get('validFromControl')?.value;
+        this.setDateOfBirthProperties(type, validFrom);
 
         if (type === TicketTypeEnum.ASSOCIATION || type === TicketTypeEnum.ELDERASSOCIATION) {
             if (this.isAssociation) {
@@ -950,7 +926,16 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
     }
 
     private getPersonAge(birthDate: Date): number {
-        const difference: number = Date.now() - birthDate.getTime();
+        const validFrom: Date | undefined = this.form.get('validFromControl')?.value;
+        let difference: number = Date.now() - birthDate.getTime();
+
+        if (validFrom !== undefined && validFrom !== null) {
+            difference = new Date(validFrom).getTime() - birthDate.getTime();
+        }
+        else {
+            difference = Date.now() - birthDate.getTime();
+        }
+
         const age: Date = new Date(difference);
 
         return Math.abs(age.getUTCFullYear() - 1970);
@@ -988,22 +973,12 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
 
     private getFishingAssociations(): Observable<void> {
         const assocTypes: TicketTypeEnum[] = [TicketTypeEnum.ASSOCIATION, TicketTypeEnum.BETWEEN14AND18ASSOCIATION, TicketTypeEnum.ELDERASSOCIATION];
-
         if (assocTypes.includes(TicketTypeEnum[this.type.code as keyof typeof TicketTypeEnum])) {
-            if (this.isAssociation) {
-                (this.service as RecreationalFishingPublicService).currentUserAssociations.subscribe({
-                    next: (associations: NomenclatureDTO<number>[]) => {
-                        this.fishingAssociations = associations;
-                    }
-                });
-            }
-            else {
-                return NomenclatureStore.instance.getNomenclature(
-                    NomenclatureTypes.FishingAssociations, this.service.getAllFishingAssociations.bind(this.service), false
-                ).pipe(map((associations: NomenclatureDTO<number>[]) => {
-                    this.fishingAssociations = associations;
-                }));
-            }
+            return NomenclatureStore.instance.getNomenclature(
+                NomenclatureTypes.FishingAssociations, this.service.getAllFishingAssociations.bind(this.service), false
+            ).pipe(map((associations: NomenclatureDTO<number>[]) => {
+                this.fishingAssociations = associations;
+            }));
         }
         return of();
     }
@@ -1085,6 +1060,49 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                 return `${representative} ${this.translate.getValue('recreational-fishing.representative-same-as-elderassociation')}`;
             default:
                 return undefined;
+        }
+    }
+
+    private setDateOfBirthProperties(type: TicketTypeEnum, ticketValidFrom: Date | undefined): void {
+        const validFrom: Date = ticketValidFrom !== undefined && ticketValidFrom !== null ? new Date(ticketValidFrom) : new Date();
+
+        if (type === TicketTypeEnum.UNDER14) {
+            const min: Date = new Date(validFrom);
+
+            min.setFullYear(min.getFullYear() - 14);
+            min.setDate(min.getDate() + 1);
+
+            this.dateOfBirthProperties.min = min;
+            this.dateOfBirthProperties.max = this.currentDate;
+
+            this.dateOfBirthProperties.validators = [Validators.required, this.isPersonUnder14Validator()];
+
+            // always set to true because it doesn't exist in this case
+            this.form.get('guaranteeTrueDataControl')?.setValue(true);
+        }
+        else if (type === TicketTypeEnum.BETWEEN14AND18 || type === TicketTypeEnum.BETWEEN14AND18ASSOCIATION) {
+            const min: Date = new Date(validFrom);
+            const max: Date = new Date(validFrom);
+
+            min.setFullYear(min.getFullYear() - 18);
+            min.setDate(min.getDate() + 1);
+
+            max.setFullYear(max.getFullYear() - 14);
+            max.setDate(max.getDate() + 1);
+
+            this.dateOfBirthProperties.min = min;
+            this.dateOfBirthProperties.max = max;
+
+            this.dateOfBirthProperties.validators = [Validators.required, this.isPersonBetween14And18Validator()];
+        }
+        else if (type === TicketTypeEnum.ELDER || type === TicketTypeEnum.ELDERASSOCIATION) {
+            const max: Date = new Date(validFrom);
+            max.setFullYear(max.getFullYear() - 60);
+            max.setDate(max.getDate() + 1);
+
+            this.dateOfBirthProperties.max = max;
+
+            this.dateOfBirthProperties.validators = [Validators.required, this.isPersonElder()];
         }
     }
 

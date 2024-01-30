@@ -68,7 +68,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
 
     public writeValue(value: InspectorDuringInspectionDTO[]): void {
         if (value !== undefined && value !== null && value.length !== 0) {
-            const currentUserId: number | undefined = this.authService.User?.id;
+            const currentUserId: number | undefined = this.authService.User?.userId;
 
             const inspectors = value.map(f => new InspectorTableModel({
                 address: f.address,

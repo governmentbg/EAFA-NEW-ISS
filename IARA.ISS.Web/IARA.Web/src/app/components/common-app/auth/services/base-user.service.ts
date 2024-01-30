@@ -30,8 +30,12 @@ export abstract class BaseUserService<TIdentifier, TUser extends User<TIdentifie
         this.permissionsService = permissionsService;
     }
 
-    public get User(): TUser {
+    public get User(): TUser | undefined {
         return this._user!;
+    }
+
+    public set User(value: TUser | undefined) {
+        this._user = value;
     }
 
 
@@ -46,10 +50,11 @@ export abstract class BaseUserService<TIdentifier, TUser extends User<TIdentifie
     public abstract forgotPassword(email: string): Observable<void>;
 
     public getUser(): Observable<TUser> {
-       
+
         const subject: Subject<TUser> = new Subject();
         if (this._user == undefined) {
             this.requestService.get<TUser>(this.securityConfig.baseRoute, this.securityConfig.securityController, this.securityConfig.userMethodName).subscribe(user => {
+
                 if (user != undefined && user.permissions != undefined && user.permissions.length > 0) {
                     this.permissionsService.loadPermissions(user.permissions);
                 } else {

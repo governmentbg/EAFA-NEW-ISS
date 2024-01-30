@@ -4477,6 +4477,8 @@
         'log-book-price': 'Price',
         'log-book-pages-range-invalid': 'Invalid pages range. The pages overlap with the rage of another log book of the same type',
         'log-book-end-page-greater-than-start-page': 'End page must be greater than start page',
+        'log-book-page-range-number-greater-than-allowed': 'The page range must be less than ',
+        'log-book-page-range-pages': 'pages',
         'log-book-permit-license-page-range-invalid': 'The page range must be bewteen start and end date of the log book',
         'log-book-cannot-be-finished-or-reissued-error': 'The log book must not have missing/in progress pages in order to be finished/reissued',
         'log-books-for-renewal-need-attention': 'There are log books from previous permit licenses, which need user action',

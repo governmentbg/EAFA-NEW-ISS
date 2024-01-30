@@ -29,6 +29,7 @@ namespace IARA.Mobile.Pub.Application
             services.AddTransient<IUserTransaction, UserTransaction>();
             services.AddTransient<IPaymentTransaction, PaymentTransaction>();
             services.AddTransient<INewsTransaction, NewsTransaction>();
+            services.AddTransient<IAuthenticationTransaction, AuthenticationTransaction>();
             services.AddTransient<IAddressTransaction, AddressTransaction>();
             services.AddTransient<IPasswordTransaction, ProfileTransaction>();
 

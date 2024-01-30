@@ -1,30 +1,28 @@
 ﻿import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { LoginTypesEnum } from '@app/enums/login-types.enum';
-import { UserAuthDTO } from '@app/models/generated/dtos/UserAuthDTO';
 import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 import { SECURITY_SERVICE_TOKEN, USER_SERVICE_TOKEN } from '../di/auth-di.tokens';
 import { LoginResultTypes } from '../enums/login-result-types.enum';
-import { LoginTypes } from '../enums/login-types.enum';
 import { ISecurityService } from '../interfaces/security-service.interface';
-import { IGenericUserService, IUserService } from '../interfaces/user-service.interface';
+import { IGenericUserService } from '../interfaces/user-service.interface';
+import { User } from '../models/auth/user.model';
 
 @Component({
     selector: 'external-auth-redirect',
     template: '',
 })
-export class ExternalAuthRedirectComponent implements OnInit {
+export class ExternalAuthRedirectComponent<TUserIdentifier, TUser extends User<TUserIdentifier>> implements OnInit {
 
     private route: ActivatedRoute;
     private securityService: ISecurityService;
     private router: Router;
     private snackbar: TLSnackbar;
-    private userService: IGenericUserService<number, UserAuthDTO>;
+    private userService: IGenericUserService<TUserIdentifier, TUser>;
 
     public constructor(route: ActivatedRoute,
         router: Router,
         @Inject(SECURITY_SERVICE_TOKEN) securityService: ISecurityService,
-        @Inject(USER_SERVICE_TOKEN) userService: IGenericUserService<number, UserAuthDTO>,
+        @Inject(USER_SERVICE_TOKEN) userService: IGenericUserService<TUserIdentifier, TUser>,
         snackbar: TLSnackbar) {
         this.userService = userService;
         this.snackbar = snackbar;

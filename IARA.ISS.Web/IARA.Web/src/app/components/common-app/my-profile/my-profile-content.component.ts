@@ -102,9 +102,9 @@ export class MyProfileContentComponent extends BasePageComponent implements OnIn
         this.districts = nomenclatures[3];
 
         this.authService.getUser().subscribe({
-            next: (userInfo: User<number> | null) => {
+            next: (userInfo: User<string> | null) => {
                 if (userInfo !== null) {
-                    this.service.getUserProfile(this.authService.User!.id!).subscribe({
+                    this.service.getUserProfile(this.authService.User!.userId!).subscribe({
                         next: (result: MyProfileDTO) => {
                             this.userProfileModel = result;
 

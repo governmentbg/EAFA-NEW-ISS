@@ -7,7 +7,7 @@ import { User } from "../models/auth/user.model";
 
 export interface IGenericUserService<TIdentifier, TUser extends User<TIdentifier>> extends IUserService {
     getUser(): Observable<TUser>;
-    User: TUser;
+    User: TUser | undefined;
 }
 
 export interface IUserService {

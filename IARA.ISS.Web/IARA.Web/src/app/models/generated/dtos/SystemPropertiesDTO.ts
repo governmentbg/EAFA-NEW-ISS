@@ -60,4 +60,7 @@ export class SystemPropertiesDTO {
 
     @StrictlyTyped(Number)
     public lockAquacultureLogBookAfterDays?: number;
+
+    @StrictlyTyped(Number)
+    public maxNumberOfLogBookPages?: number;
 }

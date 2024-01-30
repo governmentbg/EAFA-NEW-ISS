@@ -5,12 +5,12 @@ namespace IARA.Mobile.Domain.Models
 {
     public sealed class DMSType
     {
-        public int Degrees { get; }
-        public int Minutes { get; }
-        public int Seconds { get; }
-        public int Milliseconds { get; }
+        public long Degrees { get; }
+        public long Minutes { get; }
+        public long Seconds { get; }
+        public long Milliseconds { get; }
 
-        private DMSType(int degrees, int minutes, int seconds, int milliseconds)
+        private DMSType(long degrees, long minutes, long seconds, long milliseconds)
         {
             Degrees = degrees;
             Minutes = minutes;
@@ -62,7 +62,7 @@ namespace IARA.Mobile.Domain.Models
             string[] values = degrees.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             string[] split = values[2].Replace(',', '.').Split('.');
 
-            return new DMSType(int.Parse(values[0]), int.Parse(values[1]), int.Parse(split[0]), split.Length == 1 ? 0 : int.Parse(split[1]));
+            return new DMSType(long.Parse(values[0]), long.Parse(values[1]), long.Parse(split[0]), split.Length == 1 ? 0 : long.Parse(split[1]));
         }
     }
 }

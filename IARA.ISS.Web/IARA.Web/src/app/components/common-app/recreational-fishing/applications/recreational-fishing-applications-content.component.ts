@@ -148,7 +148,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         this.statusReasonDialog = statusReasonDialog;
         this.editDialog = editDialog;
         this.enterNumberDialog = enterNumberDialog;
-        this.currentUserId = authService.User!.id;
+        this.currentUserId = authService.User!.userId;
 
         this.buildForm();
     }

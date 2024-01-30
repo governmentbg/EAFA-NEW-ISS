@@ -142,14 +142,14 @@ namespace IARA.Mobile.Pub.Application.Transactions
 
         public async Task<UserAuthDto> GetUserAuthInfo()
         {
-            HttpResult<UserAuthDto> result = await RestClient.GetAsync<UserAuthDto>("User/GetUserAuthInfo", urlExtension: "Common");
+            HttpResult<UserAuthDto> result = await RestClient.GetAsync<UserAuthDto>("Security/GetUser", urlExtension: "Common");
 
             return result.Content;
         }
 
         private async Task<bool> PullUserAuthInfo()
         {
-            HttpResult<UserAuthDto> result = await RestClient.GetAsync<UserAuthDto>("User/GetUserAuthInfo", urlExtension: "Common", alertOnException: false);
+            HttpResult<UserAuthDto> result = await RestClient.GetAsync<UserAuthDto>("Security/GetUser", urlExtension: "Common", alertOnException: false);
 
             if (result.IsSuccessful && result.Content != null)
             {
@@ -157,7 +157,7 @@ namespace IARA.Mobile.Pub.Application.Transactions
                 CurrentUser.FirstName = result.Content.FirstName;
                 CurrentUser.MiddleName = result.Content.MiddleName;
                 CurrentUser.LastName = result.Content.LastName;
-                CurrentUser.Id = result.Content.Id;
+                CurrentUser.Id = result.Content.UserId;
 
                 if (result.Content.Permissions?.Count > 0)
                 {

@@ -60,6 +60,7 @@
                 <tl-input *ngIf="selectedLogBookType !== logBookTypesEnum.Ship || !isOnline"
                           fxFlex="20"
                           formControlName="endPageNumberControl"
+                          [getControlErrorLabelText]="endPageNumberErrorLabelTextMethod"
                           label="{{ 'catches-and-sales.log-book-end-page-number' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.log-book-end-page-number-helper"
                           [readonly]="isForRenewal">
@@ -80,6 +81,9 @@
             </mat-error>
             <mat-error *ngIf="form.errors?.endPageGreaterThanStartPage">
                 * {{ 'catches-and-sales.log-book-end-page-greater-than-start-page' | tlTranslate }}
+            </mat-error>
+            <mat-error *ngIf="form.errors?.pageRangeNumberGreaterThanAllowed">
+                * {{ 'catches-and-sales.log-book-page-range-number-greater-than-allowed' | tlTranslate }} {{ maxNumberOfLogBookPages }} {{ 'catches-and-sales.log-book-page-range-pages' | tlTranslate }}
             </mat-error>
             <div fxLayout="row" fxFlex="100">
                 <tl-textarea fxFlex="100"

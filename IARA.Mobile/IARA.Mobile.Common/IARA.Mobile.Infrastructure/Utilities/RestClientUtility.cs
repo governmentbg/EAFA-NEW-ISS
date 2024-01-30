@@ -78,6 +78,11 @@ namespace IARA.Mobile.Infrastructure.Utilities
             return HandleRequest<TResult>(HttpMethod.Post, url, parameters, true, content, asFormData: true, alertOnException: alertOnException);
         }
 
+        public Task<HttpResult<TResult>> PostAsFormDataAsync<TResult>(string url, string urlExtension, bool needsAuthentication, object content, object parameters = null, bool alertOnException = true)
+        {
+            return HandleRequest<TResult>(HttpMethod.Post, url, parameters, true, content, asFormData: true, alertOnException: alertOnException, urlExtension: urlExtension, needsAuthentication: needsAuthentication);
+        }
+
         public Task<HttpResult> PutAsFormDataAsync(string url, object content, object parameters = null, bool alertOnException = true)
         {
             return HandleRequest<Unit>(HttpMethod.Put, url, parameters, true, content, asFormData: true, alertOnException: alertOnException)
@@ -87,6 +92,11 @@ namespace IARA.Mobile.Infrastructure.Utilities
         public Task<HttpResult<TResult>> PutAsFormDataAsync<TResult>(string url, object content, object parameters = null, bool alertOnException = true)
         {
             return HandleRequest<TResult>(HttpMethod.Put, url, parameters, true, content, asFormData: true, alertOnException: alertOnException);
+        }
+
+        public Task<HttpResult<TResult>> PostAsync<TResult>(string url, string urlExtension, bool needsAuthentication, object content, object parameters = null, bool alertOnException = true)
+        {
+            return HandleRequest<TResult>(HttpMethod.Post, url, parameters, true, content, alertOnException: alertOnException, urlExtension: urlExtension, needsAuthentication: needsAuthentication);
         }
 
         public Task<HttpResult<TResult>> PostAsync<TResult>(string url, object content, object parameters = null, bool alertOnException = true)
@@ -137,7 +147,7 @@ namespace IARA.Mobile.Infrastructure.Utilities
         {
             try
             {
-                CancellationTokenSource source = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                CancellationTokenSource source = new CancellationTokenSource(TimeSpan.FromSeconds(10));
                 Uri requestUri = _serverUrl.BuildUri("health");
                 HttpResponseMessage response = await _client.GetAsync(requestUri, source.Token);
 
@@ -162,7 +172,7 @@ namespace IARA.Mobile.Infrastructure.Utilities
             }
         }
 
-        private async Task<HttpResult<TResult>> HandleRequest<TResult>(HttpMethod method, string url, object parameters, bool hasContent = false, object content = null, bool asFormData = false, string urlExtension = "Services", bool alertOnException = true)
+        private async Task<HttpResult<TResult>> HandleRequest<TResult>(HttpMethod method, string url, object parameters, bool hasContent = false, object content = null, bool asFormData = false, string urlExtension = "Services", bool alertOnException = true, bool needsAuthentication = true)
         {
             try
             {
@@ -194,14 +204,26 @@ namespace IARA.Mobile.Infrastructure.Utilities
 
                 Uri requestUri = _serverUrl.BuildUri(url, parameters, urlExtension);
 
-                HttpResponseMessage response = await _client.SendAsync(new HttpRequestMessage(method, requestUri)
+                HttpResponseMessage response;
+                if (needsAuthentication)
                 {
-                    Content = httpContent,
-                    Headers =
+                    response = await _client.SendAsync(new HttpRequestMessage(method, requestUri)
                     {
-                        Authorization = new AuthenticationHeaderValue(AuthenticationScheme, _authTokenProvider.Token)
-                    }
-                });
+                        Content = httpContent,
+                        Headers =
+                        {
+                            Authorization = new AuthenticationHeaderValue(AuthenticationScheme, _authTokenProvider.Token)
+                        }
+                    });
+                }
+                else
+                {
+                    response = await _client.SendAsync(new HttpRequestMessage(method, requestUri)
+                    {
+                        Content = httpContent,
+                    });
+                }
+                
 
                 httpContent?.Dispose();
 

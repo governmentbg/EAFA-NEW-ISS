@@ -35,7 +35,6 @@ export abstract class BaseSecurityService<TIdentifier, TUser extends User<TIdent
     protected storage?: StorageService;
 
     private _isAuthenticatedEvent: BehaviorSubject<boolean>;
-    private _user: User<TIdentifier> | undefined;
     private _persistToken: boolean = false;
     private matDialog: MatDialog;
     private securityConfig: SecurityConfig;
@@ -46,7 +45,7 @@ export abstract class BaseSecurityService<TIdentifier, TUser extends User<TIdent
         return this._isAuthenticatedEvent;
     }
 
-    public get User(): TUser {
+    public get User(): TUser | undefined{
         return this.usersService.User;
     }
 
@@ -119,7 +118,7 @@ export abstract class BaseSecurityService<TIdentifier, TUser extends User<TIdent
     public clearToken(): Promise<boolean> {
 
         this._token = undefined;
-        this._user = undefined;
+        this.usersService.User = undefined;
 
         if (this.storage != undefined) {
             const persistToken = CommonUtils.toBoolean(this.storage!.get('persistToken') as string);

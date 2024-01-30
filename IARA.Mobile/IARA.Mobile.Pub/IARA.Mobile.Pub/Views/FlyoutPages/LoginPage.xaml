@@ -4,12 +4,39 @@
         xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
         xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
         xmlns:viewModels="clr-namespace:IARA.Mobile.Pub.ViewModels.FlyoutPages"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
         x:Class="IARA.Mobile.Pub.Views.FlyoutPages.LoginPage"
         x:DataType="viewModels:LoginViewModel"
         x:TypeArguments="viewModels:LoginViewModel"
         x:Name="page"
         BackgroundColor="{StaticResource BackgroundColor}">
     <StackLayout VerticalOptions="Center">
+        <sv:HomeFrameView IsVisible="{Binding ShowLogInForm}">
+            <StackLayout HorizontalOptions="Center"
+                    WidthRequest="350"
+                    VerticalOptions="Center"
+                    Orientation="Vertical"
+                    Spacing="10">
+                <StackLayout Margin="0,10"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Start"
+                        Orientation="Horizontal"
+                        Spacing="0">
+                    <Image Margin="10,0"
+                            Source="iara_logo"
+                            HeightRequest="70" />
+                    <Label Text="{rt:Translate TitleIARA, Group=CommonOffline}"
+                            LineBreakMode="WordWrap"
+                            VerticalOptions="Center"
+                            FontSize="20" />
+                </StackLayout>
+                <tl:TLEntry Title="{rt:Translate Username, Group=CommonOffline}" ValidState="{Binding Username}" />
+                <tl:TLEntry Title="{rt:Translate Password, Group=CommonOffline}" ValidState="{Binding Password}" IsPassword="True"/>
+                <tl:TLCheckView Text="{rt:Translate RememberMe, Group=CommonOffline}" ValidState="{Binding RememberMe}" />
+                <Button Text="{rt:Translate Login, Group=CommonOffline}" Command="{Binding LogIn}" />
+            </StackLayout>
+        </sv:HomeFrameView>
+
         <StackLayout HorizontalOptions="Center"
                 VerticalOptions="Center"
                 IsVisible="{Binding NoInternet}">

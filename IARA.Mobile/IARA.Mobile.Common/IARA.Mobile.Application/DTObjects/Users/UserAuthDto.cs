@@ -5,7 +5,7 @@ namespace IARA.Mobile.Application.DTObjects.Users
 {
     public class UserAuthDto
     {
-        public int Id { get; set; }
+        public int UserId { get; set; }
         public string EgnLnch { get; set; }
         public IdentifierTypeEnum IdentifierType { get; set; }
         public string FirstName { get; set; }

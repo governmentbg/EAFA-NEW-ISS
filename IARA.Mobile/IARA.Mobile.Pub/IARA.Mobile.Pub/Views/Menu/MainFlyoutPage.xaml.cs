@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using IARA.Mobile.Application.Interfaces.Transactions;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Pub.Application.Interfaces.Transactions;
 using IARA.Mobile.Pub.Application.Interfaces.Utilities;
 using IARA.Mobile.Pub.Views.FlyoutPages;
 using IARA.Mobile.Shared.Menu;
@@ -127,9 +128,12 @@ namespace IARA.Mobile.Pub.Views.Menu
             if (userAccepted)
             {
                 IAuthenticationProvider authentication = DependencyService.Resolve<IAuthenticationProvider>();
-                await authentication.Logout();
-                DependencyService.Resolve<ICommonLogout>()
-                    .DeleteLocalInfo();
+                if(await DependencyService.Resolve<IAuthenticationTransaction>().LogOut())
+                {
+                    await authentication.Logout();
+                    DependencyService.Resolve<ICommonLogout>()
+                        .DeleteLocalInfo();
+                }
             }
         }
 

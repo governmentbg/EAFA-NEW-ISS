@@ -32,6 +32,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
             _ticketsState = LayoutState.Loading;
 
             Navigate = CommandBuilder.CreateFrom<string>(OnNavigate);
+            RefreshTickets = CommandBuilder.CreateFrom(OnRefreshTickets);
             _backButton = backButton;
             MyTickets = new MyTicketsViewModel();
 
@@ -65,6 +66,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
         }
 
         public ICommand Navigate { get; }
+        public ICommand RefreshTickets { get; }
 
         public override GroupResourceEnum[] GetPageIndexes()
         {
@@ -83,11 +85,19 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
 
         public override async Task Initialize(object sender)
         {
+            await GetHomeTickets();
+
+            Translator.Current.PropertyChanged += OnTranslatorPropertyChanged;
+        }
+
+        private async Task GetHomeTickets()
+        {
+            TicketsState = LayoutState.Loading;
             List<FishingTicketDto> tickets = await FishingTicketsTransaction.GetHomePageTickets();
 
             if (tickets != null)
             {
-                MyTickets.Tickets.AddRange(NomenclatureTranslator.UpdateTicketTranslation(tickets, FishingTicketsTransaction));
+                MyTickets.Tickets.ReplaceRange(NomenclatureTranslator.UpdateTicketTranslation(tickets, FishingTicketsTransaction));
                 TicketsHomePageDto result = FishingTicketsTransaction.GetTicketsHomePageMetadata();
                 TotalTicketsCount = result.TotalCount.ToString();
                 HasMoreTickets = result.HasMore;
@@ -100,14 +110,17 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
             {
                 TicketsState = LayoutState.Empty;
             }
-
-            Translator.Current.PropertyChanged += OnTranslatorPropertyChanged;
         }
 
         private void OnTranslatorPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (MyTickets.Tickets.Count > 0)
                 MyTickets.Tickets.ReplaceRange(NomenclatureTranslator.UpdateTicketTranslation(MyTickets.Tickets.ToList(), FishingTicketsTransaction));
+        }
+
+        private Task OnRefreshTickets()
+        {
+            return GetHomeTickets();
         }
 
         private Task OnNavigate(string path)

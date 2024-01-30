@@ -26,7 +26,6 @@ import { AdmissionLogBookPageRegisterDTO } from '@app/models/generated/dtos/Admi
 import { TransportationLogBookPageRegisterDTO } from '@app/models/generated/dtos/TransportationLogBookPageRegisterDTO';
 import { AquacultureLogBookPageRegisterDTO } from '@app/models/generated/dtos/AquacultureLogBookPageRegisterDTO';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
-import { ICatchesAndSalesService } from '@app/interfaces/common-app/catches-and-sales.interface';
 import { ILogBookService } from './interfaces/log-book.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
@@ -36,6 +35,10 @@ import { OverlappingLogBooksComponent } from '@app/shared/components/overlapping
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
 import { RequestProperties } from '@app/shared/services/request-properties';
+import { SystemParametersService } from '@app/services/common-app/system-parameters.service';
+import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { TLError } from '../../../../../shared/components/input-controls/models/tl-error.model';
 
 
 @Component({
@@ -63,6 +66,8 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
     public isOnline: boolean = false;
     public isForRenewal: boolean = false;
     public ignoreLogBookConflicts: boolean = false;
+    public maxNumberOfLogBookPages: number | undefined;
+    public maxEndPageNumber: number | undefined;
 
     /**
      * Indicates whether the dialog is opened from a permit license entry
@@ -74,6 +79,8 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
     public ownerType: LogBookPagePersonTypesEnum | undefined;
     public selectedLogBookType: LogBookTypesEnum | undefined;
 
+    public endPageNumberErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.endPageNumberErrorLabelText.bind(this);
+
     private model!: LogBookEditDTO | CommercialFishingLogBookEditDTO;
     private registerId: number | undefined;
     private logBookPermitLicenseId: number | undefined;
@@ -81,6 +88,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
 
     private readonly translate: FuseTranslationLoaderService;
     private readonly nomenclaturesService: CommonNomenclatures;
+    private readonly systemParametersService: SystemParametersService;
     private readonly overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
     private readonly snackbar: MatSnackBar;
 
@@ -94,10 +102,12 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
         nomenclaturesService: CommonNomenclatures,
         translate: FuseTranslationLoaderService,
         overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>,
-        snackbar: MatSnackBar
+        snackbar: MatSnackBar,
+        systemParametersService: SystemParametersService
     ) {
         this.nomenclaturesService = nomenclaturesService;
         this.translate = translate;
+        this.systemParametersService = systemParametersService;
         this.overlappingLogBooksDialog = overlappingLogBooksDialog;
         this.snackbar = snackbar;
 
@@ -107,6 +117,9 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
     }
 
     public async ngOnInit(): Promise<void> {
+        const systemParameters: SystemPropertiesDTO = await this.systemParametersService.systemParameters();
+        this.maxNumberOfLogBookPages = systemParameters.maxNumberOfLogBookPages;
+
         this.logBookTypes = await NomenclatureStore.instance.getNomenclature<number>(
             NomenclatureTypes.LogBookTypes, this.nomenclaturesService.getLogBookTypes.bind(this.nomenclaturesService), false
         ).toPromise();
@@ -324,6 +337,24 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                     this.form.get('finishDateControl')!.updateValueAndValidity({ emitEvent: false });
                 }
             });
+
+            if (!this.isOnline && !this.isForRenewal) {
+                this.form.get('startPageNumberControl')!.valueChanges.subscribe({
+                    next: (value: number | undefined) => {
+                        if (value !== null && value !== undefined) {
+                            if (this.maxNumberOfLogBookPages !== null && this.maxNumberOfLogBookPages !== undefined) {
+                                this.maxEndPageNumber = Number(value) + Number(this.maxNumberOfLogBookPages);
+                            }
+                        }
+                        else {
+                            this.maxEndPageNumber = undefined;
+                        }
+
+                        this.form.get('endPageNumberControl')!.updateValueAndValidity({ emitEvent: false });
+                        this.form.get('endPageNumberControl')!.markAsTouched();
+                    }
+                });
+            }
         }
 
         this.fillForm();
@@ -518,6 +549,17 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
         dialogClose();
     }
 
+    public endPageNumberErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+        if (controlName === 'endPageNumberControl') {
+            if (errorCode === 'maxNumberError' && error === true) {
+                return new TLError({
+                    type: 'error', text: `${this.translate.getValue('validation.max')}: ${this.maxEndPageNumber}`
+                });
+            }
+        }
+        return undefined;
+    }
+
     private buildForm(): void {
         this.form = new FormGroup({
             typeControl: new FormControl(undefined, Validators.required),
@@ -529,7 +571,10 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             endPageNumberControl: new FormControl(undefined, [TLValidators.number(0)]),
             priceControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
             notesControl: new FormControl(undefined, Validators.maxLength(4000))
-        }, [EditLogBookComponent.endPageGreaterThanStartPageValidator]);
+        }, [
+            EditLogBookComponent.endPageGreaterThanStartPageValidator,
+            this.pageRangeNumberValidator()
+        ]);
 
         if (this.logBookGroup === LogBookGroupsEnum.Ship) {
             this.form.addControl('isOnlineControl', new FormControl({ value: false, disabled: true }));
@@ -544,7 +589,8 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
 
             this.form.setValidators([
                 EditLogBookComponent.endPageGreaterThanStartPageValidator,
-                this.permitLicensePageRangeValidator
+                this.permitLicensePageRangeValidator,
+                this.pageRangeNumberValidator()
             ]);
         }
     }
@@ -630,7 +676,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             this.model.permitLicenseStartPageNumber = this.form.get('permitLicenseStartPageNumberControl')!.value;
             this.model.permitLicenseEndPageNumber = this.form.get('permitLicenseEndPageNumberControl')!.value;
             this.model.isOnline = this.form.get('isOnlineControl')!.value;
-            
+
             if (this.model.startPageNumber !== undefined && this.model.startPageNumber !== null
                 && this.model.permitLicenseStartPageNumber !== undefined && this.model.permitLicenseStartPageNumber !== null
             ) {
@@ -779,6 +825,12 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
      * */
     private clearMissingOrInProgressPagesValidator(): void {
         this.form.clearValidators();
+
+        this.form.setValidators([
+            EditLogBookComponent.endPageGreaterThanStartPageValidator,
+            this.pageRangeNumberValidator()
+        ])
+
         this.form.updateValueAndValidity({ emitEvent: false });
     }
 
@@ -811,6 +863,45 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
 
         return { endPageGreaterThanStartPage: true };
     };
+
+    private pageRangeNumberValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (!form) {
+                return null;
+            }
+
+            const startPageNumberControl = form.get('startPageNumberControl');
+            const endPageNumberControl = form.get('endPageNumberControl');
+
+            if (!startPageNumberControl || !endPageNumberControl) {
+                return null;
+            }
+
+            if (this.isOnline || this.isForRenewal) {
+                return null;
+            }
+
+            if (startPageNumberControl.value === null
+                || startPageNumberControl.value === undefined
+                || endPageNumberControl.value === null
+                || endPageNumberControl.value === undefined
+                || this.maxNumberOfLogBookPages === null
+                || this.maxNumberOfLogBookPages === undefined
+            ) {
+                return null
+            }
+
+            const startPageNumber = Number(startPageNumberControl.value);
+            const endPageNumber = Number(endPageNumberControl.value);
+
+            if (endPageNumber - startPageNumber > this.maxNumberOfLogBookPages) {
+                this.form.get('endPageNumberControl')!.setErrors({ 'maxNumberError': true });
+                return { pageRangeNumberGreaterThanAllowed: true };
+            }
+
+            return null;
+        };
+    }
 
     private permitLicensePageRangeValidator(): ValidatorFn {
         return (form: AbstractControl): ValidationErrors | null => {
