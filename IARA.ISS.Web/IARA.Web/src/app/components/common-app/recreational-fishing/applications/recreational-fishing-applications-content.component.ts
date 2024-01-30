@@ -40,9 +40,9 @@ import { RecreationalFishingTicketComponent } from '../tickets/components/ticket
 import { EditTicketDialogParams } from './models/edit-ticket-dialog-params.model';
 import { TicketStatusEnum } from '@app/enums/ticket-status.enum';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
-import { AuthService } from '@app/shared/services/auth.service';
 import { EnterOnlineTicketNumberComponent } from './components/enter-online-ticket-number/enter-online-ticket-number.component';
 import { EnterOnlineTicketNumberParams } from './models/enter-online-ticket-number-params.model';
+import { SecurityService } from '@app/services/common-app/security.service';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { PaymentStatusesEnum } from '@app/enums/payment-statuses.enum';
 
@@ -126,7 +126,6 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
     private statusReasonDialog: TLMatDialog<EnterReasonComponent>;
     private editDialog: TLMatDialog<RecreationalFishingTicketComponent>;
     private enterNumberDialog: TLMatDialog<EnterOnlineTicketNumberComponent>;
-    private authService: AuthService;
 
     public constructor(
         translate: FuseTranslationLoaderService,
@@ -138,7 +137,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         statusReasonDialog: TLMatDialog<EnterReasonComponent>,
         editDialog: TLMatDialog<RecreationalFishingTicketComponent>,
         enterNumberDialog: TLMatDialog<EnterOnlineTicketNumberComponent>,
-        authService: AuthService
+        authService: SecurityService
     ) {
         this.translate = translate;
         this.confirmDialog = confirmDialog;
@@ -148,9 +147,8 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         this.paymentDataDialog = paymentDataDialog;
         this.statusReasonDialog = statusReasonDialog;
         this.editDialog = editDialog;
-        this.authService = authService;
         this.enterNumberDialog = enterNumberDialog;
-        this.currentUserId = this.authService.userRegistrationInfo!.id!;
+        this.currentUserId = authService.User!.id;
 
         this.buildForm();
     }

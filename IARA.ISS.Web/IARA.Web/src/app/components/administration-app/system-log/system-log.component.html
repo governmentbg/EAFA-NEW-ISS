@@ -19,6 +19,7 @@
                                  formControlName="userControl"
                                  label="{{ 'system-log.user-id' | tlTranslate }}"
                                  [options]="users"
+                                 [hasSelectedValueFromDropdownValidator]="false"
                                  tooltipResourceName="system-log.user-helper">
                 </tl-autocomplete>
             </div>
@@ -92,7 +93,7 @@
                                                  propertyName="id">
                                     </data-column>
 
-                                    <data-column [flexRate]="0.4"
+                                    <data-column [flexRate]="0.45"
                                                  columnName="{{ 'system-log.table-date-time' | tlTranslate }}"
                                                  propertyName="logDate"
                                                  dataType="datetime">
@@ -103,25 +104,46 @@
                                                  propertyName="actionType">
                                     </data-column>
 
-                                    <data-column [flexRate]="0.8"
-                                                 columnName="{{ 'system-log.table-application' | tlTranslate }}"
-                                                 propertyName="application">
-                                    </data-column>
+                                    <data-template-column [flexRate]="0.5"
+                                                          columnName="{{ 'system-log.table-application' | tlTranslate }}"
+                                                          propertyName="application">
+                                        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                            <div fxLayout="row" fxLayoutAlign="start center">
+                                                <span class="break-all-words">
+                                                    {{ row.data.application }}
+                                                </span>
+                                            </div>
+                                        </ng-template>
+                                    </data-template-column>
 
                                     <data-column [flexRate]="0.3"
                                                  columnName="{{ 'system-log.table-module' | tlTranslate }}"
                                                  propertyName="module">
                                     </data-column>
 
-                                    <data-column [flexRate]="0.5"
-                                                 columnName="{{ 'system-log.table-action' | tlTranslate }}"
-                                                 propertyName="action">
-                                    </data-column>
+                                    <data-template-column [flexRate]="0.6"
+                                                          columnName="{{ 'system-log.table-action' | tlTranslate }}"
+                                                          propertyName="action">
+                                        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                            <div fxLayout="row" fxLayoutAlign="start center">
+                                                <span class="break-all-words">
+                                                    {{ row.data.action }}
+                                                </span>
+                                            </div>
+                                        </ng-template>
+                                    </data-template-column>
 
-                                    <data-column [flexRate]="0.5"
-                                                 columnName="{{ 'system-log.table-object' | tlTranslate }}"
-                                                 propertyName="tableName">
-                                    </data-column>
+                                    <data-template-column [flexRate]="0.6"
+                                                          columnName="{{ 'system-log.table-name' | tlTranslate }}"
+                                                          propertyName="tableName">
+                                        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                            <div fxLayout="row" fxLayoutAlign="start center">
+                                                <span class="break-all-words">
+                                                    {{ row.data.tableName }}
+                                                </span>
+                                            </div>
+                                        </ng-template>
+                                    </data-template-column>
 
                                     <data-column [flexRate]="0.3"
                                                  columnName="{{ 'system-log.table-id' | tlTranslate }}"
@@ -159,16 +181,23 @@
                     </ng-template>
                 </row-detail>
 
-                <data-column [flexRate]="0.2"
+                <data-column [flexRate]="0.3"
                              columnName="{{ 'system-log.table-date-time' | tlTranslate }}"
                              propertyName="logDate"
                              dataType="datetime">
                 </data-column>
 
-                <data-column [flexRate]="0.5"
-                             columnName="{{ 'system-log.table-application' | tlTranslate }}"
-                             propertyName="application">
-                </data-column>
+                <data-template-column [flexRate]="0.5"
+                                      columnName="{{ 'system-log.table-application' | tlTranslate }}"
+                                      propertyName="application">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="start center">
+                            <span class="break-all-words">
+                                {{ row.data.application }}
+                            </span>
+                        </div>
+                    </ng-template>
+                </data-template-column>
 
                 <data-column [flexRate]="0.2"
                              columnName="{{ 'system-log.table-module' | tlTranslate }}"

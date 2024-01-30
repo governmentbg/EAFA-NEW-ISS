@@ -1,0 +1,33 @@
+﻿<div class="sign-out-wrapper">
+    <div class="sign-out-card">
+        <div class="sign-out-card-content">
+            <!-- Logo -->
+            <div class="logo">
+                <img src="assets/images/logos/logo.svg">
+            </div>
+
+            <!-- Title -->
+            <div class="sign-out-title">{{ 'auth.signed-out' | tlTranslate }}</div>
+            <div class="redirect-message">
+                <!-- Redirect countdown -->
+                <ng-container *ngIf="countdown > 0">
+                    {{ 'auth.redirecting-in' | tlTranslate }} {{countdown | i18nPlural: countdownMapping }}
+                </ng-container>
+
+                <!-- Redirect message -->
+                <ng-container *ngIf="countdown === 0">
+                    {{ 'auth.you-are-being-redirected' | tlTranslate }}
+                </ng-container>
+            </div>
+
+            <!-- Form footer -->
+            <div class="sign-out-footer">
+                <span>{{ 'common.go-to' | tlTranslate }}</span>
+                <a class="ml-1 text-primary-500 hover:underline"
+                   [routerLink]="['/account/sign-in']">
+                    {{ 'auth.sign-in' | tlTranslate }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

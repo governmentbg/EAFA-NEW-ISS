@@ -11,9 +11,9 @@ namespace IARA.Mobile.Pub.Application.Transactions
         {
         }
 
-        public async Task<string> RegisterOfflinePayment(int applicationId)
+        public async Task<string> RegisterOfflinePayment(string paymentRequestNum)
         {
-            HttpResult<string> result = await RestClient.GetAsync<string>("EGovPayments/RegisterOfflinePayment", "Integration", new { paymentRefNumber = applicationId });
+            HttpResult<string> result = await RestClient.GetAsync<string>("EGovPayments/RegisterOfflinePayment", "Integration", new { paymentRefNumber = paymentRequestNum });
 
             if (result.IsSuccessful)
             {
@@ -23,7 +23,7 @@ namespace IARA.Mobile.Pub.Application.Transactions
             return null;
         }
 
-        public Task MarkPaymentForProcessing(int paymentId, bool isPaymentCanceled, bool isFromEPay)
+        public Task MarkPaymentForProcessing(string paymentId, bool isPaymentCanceled, bool isFromEPay)
         {
             return RestClient.GetAsync<string>("PaymentsPublic/GetApplicationOriginType", "Public", new { paymentId, isPaymentCanceled, isFromEPay });
         }

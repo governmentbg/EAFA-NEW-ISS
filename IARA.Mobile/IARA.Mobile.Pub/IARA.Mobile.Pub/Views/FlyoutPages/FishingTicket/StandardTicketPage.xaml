@@ -29,11 +29,18 @@
                 <Span Text=": " />
                 <Span Text="{Binding TicketNum}" />
             </tl:TLRichLabel>
+            <tl:TLRichLabel Margin="0,5,0,0"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    IsVisible="{Binding IsTicketElectronic}"
+                    TextColor="Red">
+                <Span Text="{rt:Translate MustIssueTicket, Group=FishingTicket}" />
+            </tl:TLRichLabel>
             <sv:TLButton Command="{Binding DownloadTicket}"
                     Text="{rt:Translate DownloadAsPdf, Group=FishingTicket}"
                     Margin="5"
                     WidthRequest="250"
-                    IsVisible="{Binding IsActive}"
+                    IsVisible="{Binding CanDownload}"
                     HorizontalOptions="CenterAndExpand"
                     ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.FilePdf}, Color=White}" />
             <Label FontSize="20"

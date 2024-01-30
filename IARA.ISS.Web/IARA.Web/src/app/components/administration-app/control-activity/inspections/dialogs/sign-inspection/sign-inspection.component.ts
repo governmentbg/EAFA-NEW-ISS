@@ -32,9 +32,13 @@ export class SignInspectionComponent implements IDialogComponent {
     }
 
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
-        this.service.sign(this.inspection.id!, this.filesControl.value).subscribe(() => {
-            dialogClose(this.inspection);
-        });
+        this.filesControl.markAsTouched();
+
+        if (this.filesControl.valid) {
+            this.service.sign(this.inspection.id!, this.filesControl.value).subscribe(() => {
+                dialogClose(this.inspection);
+            });
+        }
     }
 
     public cancelBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {

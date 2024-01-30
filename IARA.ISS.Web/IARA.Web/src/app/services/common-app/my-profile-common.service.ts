@@ -50,4 +50,10 @@ export class MyProfileCommonService {
             successMessage: 'succ-updated-password'
         });
     }
+
+    public deactivateMyProfile(area: AreaTypes, controller: string): Observable<void> {
+        return this.requestService.post(area, controller, 'DeactivateMyProfile', null, {
+            successMessage: 'succ-applied-deactivated-profile'
+        });
+    }
 }

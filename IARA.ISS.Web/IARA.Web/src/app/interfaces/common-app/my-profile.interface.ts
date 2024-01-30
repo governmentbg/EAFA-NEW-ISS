@@ -10,4 +10,6 @@ export interface IMyProfileService {
     updateUserProfile(profileData: MyProfileDTO): Observable<void>;
 
     changePassword(userPassword: UserPasswordDTO): Observable<void>;
+
+    deactivateMyProfile(): Observable<void>;
 }

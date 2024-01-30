@@ -140,7 +140,6 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
             actionTypeId: filters.getValue('actionTypeControl'),
             registeredDateFrom: filters.getValue<DateRangeData>('dateRangeControl')?.start,
             registeredDateTo: filters.getValue<DateRangeData>('dateRangeControl')?.end,
-            userId: filters.getValue('userControl'),
             application: filters.getValue('applicationControl'),
             action: filters.getValue('actionControl'),
             tableName: filters.getValue('tableNameControl'),
@@ -149,6 +148,16 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
             newValue: filters.getValue('newValueControl'),
             showRelatedLogs: filters.getValue('showRelatedLogsControl') ?? false
         });
+
+        const user: number | string | undefined = filters.getValue('userControl');
+        if (user !== undefined && user !== null) {
+            if (typeof user === 'number') {
+                result.userId = user;
+            }
+            else {
+                result.username = user;
+            }
+        }
 
         return result;
     }

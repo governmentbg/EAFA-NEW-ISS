@@ -1,27 +1,26 @@
-﻿import { AreaTypes } from '@app/shared/enums/area-type.enum';
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
+import { ShipNomenclatureChangeFlags } from '@app/enums/ship-nomenclature-change-flags.enum';
+import { ApplicationDeliveryTypeDTO } from '@app/models/generated/dtos/ApplicationDeliveryTypeDTO';
+import { CancellationReasonDTO } from '@app/models/generated/dtos/CancellationReasonDTO';
+import { ChangeOfCircumstancesTypeDTO } from '@app/models/generated/dtos/ChangeOfCircumstancesTypeDTO';
+import { FishingGearNomenclatureDTO } from '@app/models/generated/dtos/FishingGearNomenclatureDTO';
+import { FishNomenclatureDTO } from '@app/models/generated/dtos/FishNomenclatureDTO';
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { InspectionObservationToolNomenclatureDTO } from '@app/models/generated/dtos/InspectionObservationToolNomenclatureDTO';
+import { InspectionVesselActivityNomenclatureDTO } from '@app/models/generated/dtos/InspectionVesselActivityNomenclatureDTO';
+import { MunicipalityNomenclatureExtendedDTO } from '@app/models/generated/dtos/MunicipalityNomenclatureExtendedDTO';
+import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
+import { PopulatedAreaNomenclatureExtendedDTO } from '@app/models/generated/dtos/PopulatedAreaNomenclatureExtendedDTO';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
+import { SubmittedByRoleNomenclatureDTO } from '@app/models/generated/dtos/SubmittedByRoleNomenclatureDTO';
+import { TariffNomenclatureDTO } from '@app/models/generated/dtos/TariffNomenclatureDTO';
+import { AreaTypes } from '@app/shared/enums/area-type.enum';
+import { RequestService } from '@app/shared/services/request.service';
+import { ShipsUtils } from '@app/shared/utils/ships.utils';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
-import { SubmittedByRoleNomenclatureDTO } from '@app/models/generated/dtos/SubmittedByRoleNomenclatureDTO';
-import { RequestService } from '@app/shared/services/request.service';
-import { CancellationReasonDTO } from '@app/models/generated/dtos/CancellationReasonDTO';
-import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
-import { ApplicationDeliveryTypeDTO } from '@app/models/generated/dtos/ApplicationDeliveryTypeDTO';
-import { ChangeOfCircumstancesTypeDTO } from '@app/models/generated/dtos/ChangeOfCircumstancesTypeDTO';
-import { MunicipalityNomenclatureExtendedDTO } from '@app/models/generated/dtos/MunicipalityNomenclatureExtendedDTO';
-import { PopulatedAreaNomenclatureExtendedDTO } from '@app/models/generated/dtos/PopulatedAreaNomenclatureExtendedDTO';
-import { FishingGearNomenclatureDTO } from '@app/models/generated/dtos/FishingGearNomenclatureDTO';
-import { FishNomenclatureDTO } from '@app/models/generated/dtos/FishNomenclatureDTO';
-import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
-import { TariffNomenclatureDTO } from '@app/models/generated/dtos/TariffNomenclatureDTO';
-import { InspectionObservationToolNomenclatureDTO } from '@app/models/generated/dtos/InspectionObservationToolNomenclatureDTO';
-import { InspectionVesselActivityNomenclatureDTO } from '@app/models/generated/dtos/InspectionVesselActivityNomenclatureDTO';
-import { ShipsUtils } from '@app/shared/utils/ships.utils';
-import { ShipNomenclatureFlags } from '@app/enums/ship-nomenclature-flags.enum';
-import { ShipNomenclatureChangeFlags } from '@app/enums/ship-nomenclature-change-flags.enum';
 
 @Injectable({
     providedIn: 'root'

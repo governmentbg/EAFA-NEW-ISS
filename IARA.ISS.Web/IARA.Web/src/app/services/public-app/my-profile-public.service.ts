@@ -36,4 +36,8 @@ export class MyProfilePublicService extends BaseAuditService implements IMyProfi
     public changePassword(userPassword: UserPasswordDTO): Observable<void> {
         return this.commonService.changePassword(this.area, this.controller, userPassword);
     }
+
+    public deactivateMyProfile(): Observable<void> {
+        return this.commonService.deactivateMyProfile(this.area, this.controller);
+    }
 }

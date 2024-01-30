@@ -29,8 +29,8 @@ export const MY_FORMATS = {
     ]
 })
 export class TLDateYearComponent extends TLDateComponent {
-    public constructor(@Self() @Optional() ngControl: NgControl, fuseTranslateionService: FuseTranslationLoaderService, tlTranslatePipe: TLTranslatePipe) {
-        super(ngControl, fuseTranslateionService, tlTranslatePipe);
+    public constructor(@Self() @Optional() ngControl: NgControl, tlTranslatePipe: TLTranslatePipe) {
+        super(ngControl, tlTranslatePipe);
 
         this.startView = 'multi-year';
     }

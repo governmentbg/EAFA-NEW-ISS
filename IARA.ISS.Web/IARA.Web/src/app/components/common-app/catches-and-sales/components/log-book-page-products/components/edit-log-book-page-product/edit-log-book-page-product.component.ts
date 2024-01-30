@@ -45,6 +45,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
     public showTurbotControls: boolean = false;
     public showFishCategoryControl: boolean = false;
     public isAquaculturePage: boolean = false;
+    public isContinentalCatch: boolean = false;
     public model!: LogBookPageProductDTO;
     public logBookType!: LogBookTypesEnum;
 
@@ -123,7 +124,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
                     const unitPrice: number | undefined = Number(this.form.get('unitPriceControl')!.value);
                     const unitCount: number | undefined = Number(this.form.get('unitCountControl')!.value);
 
-                    const formattedTotalPrice: string | null = this.hasUnitCount
+                    const formattedTotalPrice: string | null = this.hasUnitCount && !this.showTurbotControls
                         ? LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(unitCount), unitPrice)
                         : LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(quantityKg), unitPrice);
 
@@ -144,7 +145,9 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
 
                     const unitPrice: number | undefined = Number(this.form.get('unitPriceControl')!.value);
 
-                    const formattedTotalPrice: string | null = LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(unitCount), unitPrice);
+                    const formattedTotalPrice: string | null = this.showTurbotControls
+                        ? LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(this.form.get('quantityKgControl')!.value), unitPrice)
+                        : LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(unitCount), unitPrice);
                     this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);
                 }
             });
@@ -154,7 +157,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
                     const quantityKg: number | undefined = Number(this.form.get('quantityKgControl')!.value);
                     const unitCount: number | undefined = Number(this.form.get('unitCountControl')!.value);
 
-                    const formattedTotalPrice: string | null = this.hasUnitCount
+                    const formattedTotalPrice: string | null = this.hasUnitCount && !this.showTurbotControls
                         ? LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(unitCount), unitPrice)
                         : LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(quantityKg), unitPrice);
 
@@ -227,6 +230,10 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
 
             this.model = data.model;
             this.model.logBookType = this.logBookType;
+           
+            if (CommonUtils.isNullOrEmpty(this.model.catchLocation)) {
+                this.isContinentalCatch = true;
+            }
         }
     }
 

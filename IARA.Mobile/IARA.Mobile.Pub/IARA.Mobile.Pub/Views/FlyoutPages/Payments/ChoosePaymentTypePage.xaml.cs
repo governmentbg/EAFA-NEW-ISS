@@ -7,9 +7,9 @@ namespace IARA.Mobile.Pub.Views.FlyoutPages.Payments
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ChoosePaymentTypePage : BasePage<ChoosePaymentTypeViewModel>
     {
-        public ChoosePaymentTypePage(int applicationId, decimal totalPrice)
+        public ChoosePaymentTypePage(string paymentRequestNum, decimal totalPrice)
         {
-            ViewModel.ApplicationId = applicationId;
+            ViewModel.PaymentRequestNum = paymentRequestNum;
             ViewModel.TotalPrice = totalPrice;
             InitializeComponent();
         }

@@ -1,4 +1,6 @@
 import { Inject } from '@angular/core';
+import { SECURITY_SERVICE_TOKEN } from '@app/components/common-app/auth/di/auth-di.tokens';
+import { ISecurityService } from '@app/components/common-app/auth/interfaces/security-service.interface';
 import {
     HubConnection,
     HubConnectionBuilder,
@@ -8,17 +10,16 @@ import {
 } from '@microsoft/signalr';
 import { Subject } from 'rxjs';
 import { BaseNotification } from './models/base-notification';
-import { INotificationSecurity } from './models/notification-security.interface';
 
 export abstract class SignalRHubService {
 
     private connection!: HubConnection;
     private _newDataArrived: Subject<BaseNotification>;
-    protected securityService: INotificationSecurity;
+    protected securityService: ISecurityService;
     private startedListening: boolean = false;
     private url!: string;
 
-    constructor(@Inject("INotificationSecurity") securityService: INotificationSecurity, hubPath: string, apiBaseUrl: string) {
+    constructor(@Inject(SECURITY_SERVICE_TOKEN) securityService: ISecurityService, hubPath: string, apiBaseUrl: string) {
         this._newDataArrived = new Subject<BaseNotification>();
         this.securityService = securityService;
         if (apiBaseUrl == undefined) {
@@ -31,7 +32,7 @@ export abstract class SignalRHubService {
     }
 
     protected getToken(): string | Promise<string> {
-        return this.securityService.getToken() ?? '';
+        return this.securityService.token ?? '';
     }
 
     public get newNotificationArrived(): Subject<BaseNotification> {

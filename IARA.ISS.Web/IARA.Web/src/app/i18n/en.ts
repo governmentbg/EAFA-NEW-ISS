@@ -191,7 +191,8 @@
         'succ-change-permit-suspensions': 'Successfully changed suspensions data for commercial fishing permit',
         'succ-change-permit-license-suspensions': 'Successfully changed suspensions data form commercial fishing permit license',
         'send-history-to-flux-success': 'The events were sent to FLUX',
-        'send-event-to-flux-success': 'The event was sent to FLUX'
+        'send-event-to-flux-success': 'The event was sent to FLUX',
+        'succ-applied-deactivated-profile': 'Successufully applied to delete your profile. Your profile should be deactivated by an administrator.'
     },
     'navigation': {
         'applications': 'Applications',
@@ -1616,7 +1617,11 @@
         'associations': 'Associations',
         'email-already-exists-error': 'The entered email address already exists in the system',
         'user-legal-missing-properties-error': 'There are associations with invalid/empty fields, which need to be correctly filled',
-        'egn-lnc-invalid-error': 'There is already a valid user with the specified EGN/PNF'
+        'egn-lnc-invalid-error': 'There is already a valid user with the specified EGN/PNF',
+        'delete-profile': 'delete-profile',
+        'delete-my-profile-dialog-title': 'Delete profile',
+        'delete-my-profile-dialog-message': 'Are you sure you want to delete your profile? Be aware that an application for deactivation of your profile will be sent to the administrators.',
+        'delete-my-profile-dialog-ok-btn-label': 'Apply to delete your profile'
     },
     'buyers-and-sales-centers': {
         'delete-buyer': 'Delete buyer/FSC',
@@ -3141,6 +3146,7 @@
         'remove-aquatic-organism-type': 'Remove aquatic organism type',
         'at-least-one-aquatic-organism-must-be-selected': 'At least one aquatic organism must be selected',
         'port-of-unloading-column': 'Port of unloading',
+        'add-all-permitted-ports': 'Add all permitted',
         'unloader-phone-number': 'Unloader phone number',
         'at-least-one-quota-organism-must-be-selected': 'At least one quota aquatic organism must be selected',
         'unique-quota-fish-and-port-combination-error': 'The combination of quota aquatic organism and port must be uniue. This combination is not unique',
@@ -3874,6 +3880,8 @@
         'log-book-page-number': 'Page number from paper log book',
         'log-book-type': 'Log book type',
         'document-number': 'Document number',
+        'start-page-num': 'Start page',
+        'end-page-num': 'End page',
         'show-existing-pages': 'Show existing pages',
         'show-only-existing-pages-yes': 'Only log books with pages',
         'show-only-existing-pages-no': 'Only log books with no pages',
@@ -4445,7 +4453,7 @@
         'choose-log-book-for-renewal-title': 'Choose log book for renewal',
         'choose-log-book-for-renewal-keyword-filter': 'Keyword search',
         'choose-log-book-for-renewal-show-finished-filter': 'Show finished',
-        'choose-log-book-for-renewal-show-only-same-aquatic-types-filter': 'Show only with same aquatic types', 
+        'choose-log-book-for-renewal-show-only-same-aquatic-types-filter': 'Show only with same aquatic types',
         'choose-log-book-for-renewal-no-log-books': 'There are no old log books from suspended/expired for renewal',
         'choose-log-book-for-renewal-log-book-type': 'Type',
         'choose-log-book-for-renewal-number': 'Log book number',

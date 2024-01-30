@@ -1,10 +1,8 @@
-import { MainNavigation } from '@app/shared/navigation/base/main.navigation';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { NgxPermissionsService } from 'ngx-permissions';
+import { FuseConfig, FuseNavigation } from '@fuse/types';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { FuseConfig, FuseNavigation } from '@fuse/types';
 
 @Component({
     selector: 'horizontal-layout-1',

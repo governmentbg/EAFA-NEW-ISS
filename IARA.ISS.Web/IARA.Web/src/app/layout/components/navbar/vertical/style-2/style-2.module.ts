@@ -6,6 +6,7 @@ import { FuseNavigationModule } from '@fuse/components';
 import { FuseSharedModule } from '@fuse/fuse-shared.module';
 
 import { NavbarVerticalStyle2Component } from '@app/layout/components/navbar/vertical/style-2/style-2.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     declarations: [
@@ -14,7 +15,7 @@ import { NavbarVerticalStyle2Component } from '@app/layout/components/navbar/ver
     imports: [
         MatButtonModule,
         MatIconModule,
-
+        TranslateModule.forChild(),
         FuseSharedModule,
         FuseNavigationModule
     ],

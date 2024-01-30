@@ -1,22 +1,21 @@
-import { ITLNavigation } from '@app/shared/navigation/base/tl-navigation.interface';
-import { AuthService } from '@app/shared/services/auth.service';
-import { LocalStorageService } from '@app/shared/services/local-storage.service';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivationEnd, Router } from '@angular/router';
+import { SECURITY_SERVICE_TOKEN } from '@app/components/common-app/auth/di/auth-di.tokens';
+import { ISecurityService } from '@app/components/common-app/auth/interfaces/security-service.interface';
+import { StorageTypes } from '@app/shared/enums/storage-types.enum';
+import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
+import { ITLNavigation } from '@app/shared/navigation/base/tl-navigation.interface';
+import { StorageService } from '@app/shared/services/local-storage.service';
+import { MessageService } from '@app/shared/services/message.service';
+import { CommonUtils } from '@app/shared/utils/common.utils';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { FuseNavigation } from '@fuse/types/fuse-navigation';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { FuseNavigation } from '@fuse/types/fuse-navigation';
-import { UserAuthDTO } from '@app/models/generated/dtos/UserAuthDTO';
-import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
-import { MessageService } from '@app/shared/services/message.service';
-import { CommonUtils } from '@app/shared/utils/common.utils';
-import { PermissionsService } from '@app/shared/services/permissions.service';
-import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 
 @Component({
     selector: 'toolbar',
@@ -55,13 +54,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         private fuseSidebarService: FuseSidebarService,
         private translateService: TranslateService,
         private translationLoader: FuseTranslationLoaderService,
-        private localStorageService: LocalStorageService,
         private router: Router,
-        private authService: AuthService,
-        private messageService: MessageService,
-        private permissions: PermissionsService
-    ) {
-        this.authService.isAuthenticatedEvent.subscribe((result: boolean) => {
+        @Inject(SECURITY_SERVICE_TOKEN) private securityService: ISecurityService,
+        private messageService: MessageService) {
+        this.securityService.isAuthenticatedEvent.subscribe((result: boolean) => {
             this.isAuthenticated = result;
         });
 
@@ -152,31 +148,31 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         // Set the selected language from default languages
         this.selectedLanguage = _.find(this.languages, { id: this.translateService.currentLang });
 
-        this.authService.userRegistrationInfoEvent.subscribe({
-            next: (userInfo: UserAuthDTO | null) => {
-                if (userInfo !== null) {
-                    if (userInfo.id) {
-                        this.showUserTickets = IS_PUBLIC_APP && this.permissions.has(PermissionsEnum.TicketsPublicRead);
+        //this.authService.userRegistrationInfoEvent.subscribe({
+        //    next: (userInfo: UserAuthDTO | null) => {
+        //        if (userInfo !== null) {
+        //            if (userInfo.id) {
+        //                this.showUserTickets = IS_PUBLIC_APP && this.permissions.has(PermissionsEnum.TicketsPublicRead);
 
-                        this.authService.getUserPhoto(userInfo.id).subscribe((photo: string) => {
-                            if (photo) {
-                                this.userPhoto = photo;
-                            }
-                        });
-                    }
+        //                this.authService.getUserPhoto(userInfo.id).subscribe((photo: string) => {
+        //                    if (photo) {
+        //                        this.userPhoto = photo;
+        //                    }
+        //                });
+        //            }
 
-                    this.usernames = `${userInfo.firstName} ${userInfo.lastName}`;
-                }
-            }
-        });
+        //            this.usernames = `${userInfo.firstName} ${userInfo.lastName}`;
+        //        }
+        //    }
+        //});
     }
 
     public logout(): void {
-        this.authService.logout();
+        this.router.navigate(['/account/sign-out']);
     }
 
     public login(): void {
-        this.authService.login();
+        //this.securityService.login();
     }
 
     public goToMyProfile(): void {
@@ -223,7 +219,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     async setLanguage(lang: { id: string; title: string; flag: string }): Promise<void> {
         // Set the selected language
         this.selectedLanguage = lang;
-        this.localStorageService.addOrUpdate('lang', this.selectedLanguage.id);
+        StorageService.getStorage(StorageTypes.Local).addOrUpdate('lang', this.selectedLanguage.id);
         location.reload();
         // Use the selected language for translations
         //const web = new WebTranslateLoader(this.requestService);

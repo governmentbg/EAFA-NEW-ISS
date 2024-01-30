@@ -81,9 +81,11 @@ export class InspectionToggleListComponent extends CustomFormControl<InspectionC
             for (const check of value) {
                 const index = this.toggles.findIndex(f => f.value === check.checkTypeId);
 
-                if (index >= 0 && this.form.controls[index.toString()] !== undefined) {
-                    this.form.controls[index.toString()].setValue(check);
-                    foundIndexex.push(index);
+                if (index !== undefined && index !== null) {
+                    if (index >= 0 && this.form.controls[index.toString()] !== undefined) {
+                        this.form.controls[index.toString()].setValue(check);
+                        foundIndexex.push(index);
+                    }
                 }
             }
 

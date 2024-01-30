@@ -19,4 +19,8 @@ export class NomenclatureDTO<T> {
 
     @StrictlyTyped(Boolean)
     public isActive?: boolean;
-} 
+}
+
+export class NumberNomenclatureDTO extends NomenclatureDTO<number>{
+
+}

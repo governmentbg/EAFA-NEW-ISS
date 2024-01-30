@@ -1,0 +1,45 @@
+﻿<public-page>
+
+    <public-page-header>{{ 'auth.sign-in' | tlTranslate }}</public-page-header>
+    <!-- Sign in form -->
+    <form [formGroup]="signInForm" #signInNgForm="ngForm">
+        <!-- Email field -->
+        <tl-username label="{{ 'auth.username' | tlTranslate }}"
+                     formControlName="username"
+                     appearance="outline">
+        </tl-username>
+        <!-- Password field -->
+        <tl-password-input label="{{ 'auth.password' | tlTranslate }}"
+                           formControlName="password"
+                           appearance="outline">
+        </tl-password-input>
+        <!-- Actions -->
+        <div class="actions">
+            <tl-checkbox label="{{ 'auth.remember-me' | tlTranslate }}"
+                         color="primary"
+                         formControlName="rememberMe">
+            </tl-checkbox>
+            <a [routerLink]="['/account/forgot-password']">
+                {{ 'auth.forgotten-password' | tlTranslate }}
+            </a>
+        </div>
+        <!-- Submit buttons -->
+        <div class="buttons-wrapper">
+            <button class="fuse-mat-button-large"
+                    mat-flat-button
+                    [color]="'primary'"
+                    [disabled]="signInForm.disabled"
+                    (tlDebounceClick)="signIn()">
+                {{ 'auth.sign-in' | tlTranslate }}
+            </button>
+            <button class="fuse-mat-button-large"
+                    mat-flat-button
+                    [color]="'accent'"
+                    [disabled]="signInForm.disabled"
+                    (tlDebounceClick)="goToEAuth()">
+                {{ 'auth.e-auth-login' | tlTranslate }}
+            </button>
+        </div>
+    </form>
+
+</public-page>

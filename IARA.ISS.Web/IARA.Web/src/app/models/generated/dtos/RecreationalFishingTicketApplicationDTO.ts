@@ -28,12 +28,6 @@ export class RecreationalFishingTicketApplicationDTO {
     @StrictlyTyped(String)
     public ticketHolderName?: string;
 
-    @StrictlyTyped(Date)
-    public validFrom?: Date;
-
-    @StrictlyTyped(Date)
-    public validTo?: Date;
-
     @StrictlyTyped(String)
     public validityPeriod?: string;
 

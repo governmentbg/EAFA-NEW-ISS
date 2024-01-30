@@ -18,6 +18,7 @@ export class SystemLogFilters extends BaseRequestModel {
     public registeredDateFrom: Date | undefined;
     public registeredDateTo: Date | undefined;
     public userId: number | undefined;
+    public username: string | undefined;
     public tableId: string | undefined;
     public tableName: string | undefined;
     public action: string | undefined;

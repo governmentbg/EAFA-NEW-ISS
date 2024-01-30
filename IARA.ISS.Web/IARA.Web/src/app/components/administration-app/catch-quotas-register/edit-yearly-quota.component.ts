@@ -17,11 +17,11 @@ import { TLValidators } from '@app/shared/utils/tl-validators';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { forkJoin } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
+import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 
 @Component({
     selector: 'edit-yearly-quota-component',
@@ -49,13 +49,13 @@ export class EditYearlyQuotaComponent implements OnInit, IDialogComponent {
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
 
     private readonly commonNomenclatureService: CommonNomenclatures;
-    private readonly snackbar: MatSnackBar;
+    private readonly snackbar: TLSnackbar;
 
     public constructor(
         service: YearlyQuotasService,
         translationService: FuseTranslationLoaderService,
         commonNomenclatureService: CommonNomenclatures,
-        snackbar: MatSnackBar
+        snackbar: TLSnackbar
     ) {
         this.service = service;
         this.commonNomenclatureService = commonNomenclatureService;
@@ -107,6 +107,7 @@ export class EditYearlyQuotaComponent implements OnInit, IDialogComponent {
                 this.service.edit(this.model).subscribe({
                     next: () => {
                         NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ports);
+                        NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Fishes);
                         dialogClose(this.model);
                     }
                 });
@@ -119,6 +120,7 @@ export class EditYearlyQuotaComponent implements OnInit, IDialogComponent {
                         this.model.id = id;
 
                         NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Ports);
+                        NomenclatureStore.instance.clearNomenclature(NomenclatureTypes.Fishes);
                         dialogClose(this.model);
                     },
                     error: (response: HttpErrorResponse) => {
@@ -184,18 +186,10 @@ export class EditYearlyQuotaComponent implements OnInit, IDialogComponent {
             const messages: string[] = response.error.messages;
 
             if (messages.length !== 0) {
-                this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                    data: response.error as ErrorModel,
-                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                });
+                this.snackbar.errorModel(response.error as ErrorModel, RequestProperties.DEFAULT);
             }
             else {
-                this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                    data: new ErrorModel({ messages: [this.translationService.getValue('service.an-error-occurred-in-the-app')] }),
-                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                });
+                this.snackbar.error(this.translationService.getValue('service.an-error-occurred-in-the-app'), RequestProperties.DEFAULT.showExceptionDurationErr, RequestProperties.DEFAULT.showExceptionColorClassErr);
             }
         }
 

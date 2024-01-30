@@ -1,7 +1,6 @@
-﻿import { Component, Input, OnInit, Optional, Self } from '@angular/core';
+﻿import { Component, Input, Optional, Self } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { TLTranslatePipe } from '../../../pipes/tl-translate.pipe';
 import { BaseTLControl } from '../base-tl-control';
 
@@ -28,7 +27,7 @@ export class TLTextareaComponent extends BaseTLControl {
     @Input()
     public value: string | undefined;
 
-    constructor(@Self() @Optional() ngControl: NgControl, fuseTranslationService: FuseTranslationLoaderService, tlTranslatePipe: TLTranslatePipe) {
-        super(ngControl, fuseTranslationService, tlTranslatePipe);
+    constructor(@Self() @Optional() ngControl: NgControl, tlTranslatePipe: TLTranslatePipe) {
+        super(ngControl, tlTranslatePipe);
     }
 }

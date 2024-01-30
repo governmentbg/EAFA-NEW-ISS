@@ -14,7 +14,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
         public string PeriodCode { get; set; }
         public TicketAction Action { get; set; }
         public decimal Price { get; set; }
-        public int ApplicationId { get; set; }
+        public string PaymentRequestNum { get; set; }
         public string ApplicationStatusCode { get; set; }
         public PaymentStatusEnum PaymentStatus { get; set; }
         public string TicketNumber { get; set; }

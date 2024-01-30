@@ -1,9 +1,8 @@
 ﻿import { Component, Input, OnChanges, Optional, Self, SimpleChanges } from '@angular/core';
 import { NgControl } from '@angular/forms';
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { FloatLabelType, MatFormFieldAppearance } from '@angular/material/form-field';
 import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
 import { BaseTLControl } from '../base-tl-control';
-import { FloatLabelType, MatFormFieldAppearance } from '@angular/material/form-field';
 
 export type HTMLInputTypes = 'button' | 'checkbox' | 'color' | 'date' | 'datetime-local' | 'email' | 'file' | 'hidden' | 'image'
     | 'month' | 'number' | 'password' | 'radio' | 'range' | 'reset' | 'search' | 'submit' | 'tel' | 'text' | 'time' | 'url' | 'week';
@@ -33,10 +32,9 @@ export class TLInputComponent extends BaseTLControl implements OnChanges {
 
     public constructor(
         @Self() @Optional() ngControl: NgControl,
-        fuseTranslationService: FuseTranslationLoaderService,
         tlTranslatePipe: TLTranslatePipe
     ) {
-        super(ngControl, fuseTranslationService, tlTranslatePipe);
+        super(ngControl, tlTranslatePipe);
     }
 
     public ngOnChanges(changes: SimpleChanges): void {

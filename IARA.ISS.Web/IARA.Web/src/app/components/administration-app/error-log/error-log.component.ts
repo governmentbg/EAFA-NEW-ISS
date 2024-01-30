@@ -132,7 +132,6 @@ export class ErrorLogComponent implements AfterViewInit, OnInit {
 
             errorLogDateFrom: filters.getValue<DateRangeData>('errorLogDateRangeControl')?.start,
             errorLogDateTo: filters.getValue<DateRangeData>('errorLogDateRangeControl')?.end,
-            userId: filters.getValue('usernameControl'),
             class: filters.getValue('classControl'),
             errorLogId: filters.getValue('idControl'),
             method: filters.getValue('methodControl'),
@@ -145,6 +144,16 @@ export class ErrorLogComponent implements AfterViewInit, OnInit {
             result.severity = severityTypes.map((type: ErrorLogSeverityEnum) => {
                 return ErrorLogSeverityEnum[type];
             })
+        }
+
+        const user: number | string | undefined = filters.getValue('usernameControl');
+        if (user !== undefined && user !== null) {
+            if (typeof user === 'number') {
+                result.userId = user;
+            }
+            else {
+                result.username = user;
+            }
         }
 
         return result;

@@ -28,14 +28,14 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments
             set => SetProperty(ref _paymentInitialUrl, value);
         }
         public string PaymentCode { get; set; }
-        public int ApplicationId { get; set; }
+        public string PaymentRequestNum { get; set; }
         public string Token { get; set; }
+        public bool IsFromEpay { get; set; }
         public ICommand Navigating { get; }
         public ICommand Navigated { get; }
         public WebView WebView { get; set; }
         private async Task OnNavigating(WebNavigatingEventArgs args)
         {
-
             if (args != null && WebView != null)
             {
                 if (args.Url == PaymentOkUrl)
@@ -46,7 +46,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments
                     await PopupNavigation.Instance.PushAsync(new SuccessfulPaymentPopup());
 
                     await DependencyService.Resolve<IPaymentTransaction>()
-                        .MarkPaymentForProcessing(ApplicationId, false, true);
+                        .MarkPaymentForProcessing(PaymentRequestNum, false, IsFromEpay);
                 }
                 else if (args.Url == PaymentCanceledUrl)
                 {
@@ -54,7 +54,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments
 
                     await PopupNavigation.Instance.PopAllAsync();
                     await DependencyService.Resolve<IPaymentTransaction>()
-                        .MarkPaymentForProcessing(ApplicationId, true, true);
+                        .MarkPaymentForProcessing(PaymentRequestNum, true, IsFromEpay);
                 }
             }
         }
@@ -75,7 +75,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.Payments
                         tryCount++;
                     }
                     scriptEvaluated = true;
-                    string setPaymentParametersScript = $"document.onlinePayment.setPaymentParams('{ApplicationId}','{PaymentCode}','{Token}');";
+                    string setPaymentParametersScript = $"document.onlinePayment.setPaymentParams('{PaymentRequestNum}','{PaymentCode}','{Token}');";
                     Debug.WriteLine(setPaymentParametersScript);
                     string result = await WebView.EvaluateJavaScriptAsync(setPaymentParametersScript);
                     Debug.WriteLine($"EvaluateJavaScriptAsync Result:{result}");

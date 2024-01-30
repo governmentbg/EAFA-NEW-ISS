@@ -1,7 +1,7 @@
 ﻿import { FuseNavigation } from '@/@fuse/types';
 import { Routes } from '@angular/router';
-import { NgxPermissionsService } from 'ngx-permissions';
-import { AuthorizationGuard } from '../../guards/authorization.guard';
+import { AuthGuard } from '@app/components/common-app/auth/guards/auth.guard';
+import { IPermissionsService } from '@app/components/common-app/auth/interfaces/permissions-service.interface';
 import { Navigation } from '../tl-navigation';
 import { ITLNavigation } from './tl-navigation.interface';
 
@@ -13,8 +13,8 @@ export class MainNavigation {
         return routes;
     }
 
-    public static async getFuseNavigation(ngxPermissionsService: NgxPermissionsService, isAuthenticated: boolean): Promise<FuseNavigation[]> {
-        return await MainNavigation.getRecursiveFuseNavigation(Navigation.Menu, isAuthenticated, ngxPermissionsService) as FuseNavigation[];
+    public static async getFuseNavigation(permissionsService: IPermissionsService, isAuthenticated: boolean): Promise<FuseNavigation[]> {
+        return await MainNavigation.getRecursiveFuseNavigation(Navigation.Menu, isAuthenticated, permissionsService) as FuseNavigation[];
     }
 
     private static buildRoutesFromNavigation(menu: ITLNavigation[], routes: Routes) {
@@ -41,7 +41,7 @@ export class MainNavigation {
                     } else {
                         routes.push({
                             path: path,
-                            canActivate: [AuthorizationGuard],
+                            canActivate: [AuthGuard],
                             component: item.component,
                             data: {
                                 translate: item.translate,
@@ -61,15 +61,15 @@ export class MainNavigation {
         }
     }
 
-    private static async getRecursiveFuseNavigation(menu: ITLNavigation[], isAuthenticated: boolean, ngxPermissionsService: NgxPermissionsService): Promise<FuseNavigation[] | undefined> {
+    private static async getRecursiveFuseNavigation(menu: ITLNavigation[], isAuthenticated: boolean, permissionsService: IPermissionsService): Promise<FuseNavigation[] | undefined> {
         let navigation: FuseNavigation[] | undefined = [];
-   
+
         if (menu !== undefined) {
             navigation = [];
             for (const item of menu) {
 
                 if ((!isAuthenticated && item.isPublic)
-                    || (isAuthenticated && await MainNavigation.hasPermissions(item.permissions, ngxPermissionsService) && (!item.exceptPermissions || !(await MainNavigation.hasPermissions(item.exceptPermissions, ngxPermissionsService))))) {
+                    || (isAuthenticated && await MainNavigation.hasPermissions(item.permissions, permissionsService) && (!item.exceptPermissions || !(await MainNavigation.hasPermissions(item.exceptPermissions, permissionsService))))) {
 
                     let iconTypeCode: 'IC_ICON' | 'FA_ICON' | 'MAT_ICON';
                     if (item.icon?.startsWith('ic-')) {
@@ -96,7 +96,7 @@ export class MainNavigation {
                     };
 
                     if (item.children !== undefined && item.children.length > 0) {
-                        fuseItem.children = await this.getRecursiveFuseNavigation(item.children, isAuthenticated, ngxPermissionsService);
+                        fuseItem.children = await this.getRecursiveFuseNavigation(item.children, isAuthenticated, permissionsService);
                     }
 
                     if ((item.type == 'group' || item.type == 'collapsable') && fuseItem.children != undefined && fuseItem.children.length > 0) {
@@ -111,12 +111,12 @@ export class MainNavigation {
         return navigation;
     }
 
-    private static async hasPermissions(permissions: string[] | undefined, ngxPermissionsService: NgxPermissionsService): Promise<boolean> {
+    private static async hasPermissions(permissions: string[] | undefined, permissionsService: IPermissionsService): Promise<boolean> {
 
         let hasPermission: boolean = false;
         if (permissions != undefined && permissions != null && permissions.length > 0) {
             for (const permission of permissions) {
-                const result: boolean = await ngxPermissionsService.hasPermission(permission);
+                const result: boolean = await permissionsService.has(permission);
 
                 if (result) {
                     hasPermission = true;

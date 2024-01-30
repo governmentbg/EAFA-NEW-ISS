@@ -1,9 +1,28 @@
 ﻿import { Component, EventEmitter, Injector, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-
+import { AquacultureChangeOfCircumstancesComponent } from '@app/components/common-app/aquaculture-facilities/aquaculture-change-of-circumstances/aquaculture-change-of-circumstances.component';
+import { AquacultureDeregistrationComponent } from '@app/components/common-app/aquaculture-facilities/aquaculture-deregistration/aquaculture-deregistration.component';
+import { EditAquacultureFacilityComponent } from '@app/components/common-app/aquaculture-facilities/edit-aquaculture-facility/edit-aquaculture-facility.component';
+import { BuyerChangeOfCircumstancesComponent } from '@app/components/common-app/buyers/buyer-change-of-circumstances/buyer-change-of-circumstances.component';
+import { BuyerTerminationComponent } from '@app/components/common-app/buyers/buyer-termination/buyer-termination.component';
+import { EditBuyersComponent } from '@app/components/common-app/buyers/edit-buyers.component';
+import { EditCommercialFishingComponent } from '@app/components/common-app/commercial-fishing/components/edit-commercial-fishing/edit-commercial-fishing.component';
+import { EditPermitLicenseFishingGearsComponent } from '@app/components/common-app/commercial-fishing/components/permit-license-fishing-gears/edit-permit-license-fishing-gears.component';
+import { DuplicatesApplicationComponent } from '@app/components/common-app/duplicates/duplicates-application.component';
+import { CapacityCertificateDuplicateComponent } from '@app/components/common-app/fishing-capacity/capacity-certificate-duplicate/capacity-certificate-duplicate.component';
+import { IncreaseFishingCapacityComponent } from '@app/components/common-app/fishing-capacity/increase-fishing-capacity/increase-fishing-capacity.component';
+import { ReduceFishingCapacityComponent } from '@app/components/common-app/fishing-capacity/reduce-fishing-capacity/reduce-fishing-capacity.component';
+import { TransferFishingCapacityComponent } from '@app/components/common-app/fishing-capacity/transfer-fishing-capacity/transfer-fishing-capacity.component';
+import { EditLegalAssociationComponent } from '@app/components/common-app/legal-associations/edit-legal-association/edit-legal-association.component';
+import { EditLegalEntityComponent } from '@app/components/common-app/legals/edit-legal-entity/edit-legal-entity.component';
+import { EditFisherComponent } from '@app/components/common-app/qualified-fishers/edit-fisher.component';
 import { EditScientificPermitComponent } from '@app/components/common-app/scientific-fishing/components/edit-scientific-permit/edit-scientific-permit.component';
+import { EditShipComponent } from '@app/components/common-app/ships-register/edit-ship/edit-ship.component';
+import { ShipChangeOfCircumstancesComponent } from '@app/components/common-app/ships-register/ship-change-of-circumstances/ship-change-of-circumstances.component';
+import { StatisticalFormsAquaFarmComponent } from '@app/components/common-app/statistical-forms/components/statistical-forms-aqua-farm/statistical-forms-aqua-farm.component';
+import { StatisticalFormsFishVesselComponent } from '@app/components/common-app/statistical-forms/components/statistical-forms-fish-vessel/statistical-forms-fish-vessel.component';
+import { StatisticalFormsReworkComponent } from '@app/components/common-app/statistical-forms/components/statistical-forms-rework/statistical-forms-rework.component';
 import { ApplicationHierarchyTypesEnum } from '@app/enums/application-hierarchy-types.enum';
 import { ApplicationStatusesEnum } from '@app/enums/application-statuses.enum';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
@@ -16,22 +35,36 @@ import { IApplicationRegister } from '@app/interfaces/common-app/application-reg
 import { ApplicationsRegisterData } from '@app/models/common/applications-register-data.model';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { ReasonData } from '@app/models/common/reason-data.model';
+import { AddApplicationResultDTO } from '@app/models/generated/dtos/AddApplicationResultDTO';
 import { ApplicationRegisterDTO } from '@app/models/generated/dtos/ApplicationRegisterDTO';
 import { ApplicationsChangeHistoryDTO } from '@app/models/generated/dtos/ApplicationsChangeHistoryDTO';
 import { ApplicationTypeDTO } from '@app/models/generated/dtos/ApplicationTypeDTO';
 import { AssignedApplicationInfoDTO } from '@app/models/generated/dtos/AssignedApplicationInfoDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { PaymentDataDTO } from '@app/models/generated/dtos/PaymentDataDTO';
+import { AquacultureFacilitiesAdministrationService } from '@app/services/administration-app/aquaculture-facilities-administration.service';
 import { BuyersAdministrationService } from '@app/services/administration-app/buyers-administration.service';
 import { CommercialFishingAdministrationService } from '@app/services/administration-app/commercial-fishing-administration.service';
+import { DuplicatesRegisterAdministrationService } from '@app/services/administration-app/duplicates-register-administration.service';
+import { FishingCapacityAdministrationService } from '@app/services/administration-app/fishing-capacity-administration.service';
 import { LegalEntitiesAdministrationService } from '@app/services/administration-app/legal-entities-administration.service';
 import { QualifiedFishersService } from '@app/services/administration-app/qualified-fishers.service';
+import { RecreationalFishingAssociationService } from '@app/services/administration-app/recreational-fishing-association.service';
 import { ScientificFishingAdministrationService } from '@app/services/administration-app/scientific-fishing-administration.service';
 import { ShipsRegisterAdministrationService } from '@app/services/administration-app/ships-register-administration.service';
+import { StatisticalFormsAdministrationService } from '@app/services/administration-app/statistical-forms-administration.service';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
+import { AquacultureFacilitiesPublicService } from '@app/services/public-app/aquaculture-facilities-public.service';
+import { BuyersPublicService } from '@app/services/public-app/buyers-public.service';
+import { CommercialFishingPublicService } from '@app/services/public-app/commercial-fishing-public.service';
+import { DuplicatesRegisterPublicService } from '@app/services/public-app/duplicates-register-public.service';
+import { FishingCapacityPublicService } from '@app/services/public-app/fishing-capacity-public.service';
 import { LegalEntitiesPublicService } from '@app/services/public-app/legal-entities-public.service';
+import { QualifiedFishersPublicService } from '@app/services/public-app/qualified-fishers-public.service';
+import { RecreationalFishingAssociationPublicService } from '@app/services/public-app/recreational-fishing-association-public.service';
 import { ScientificFishingPublicService } from '@app/services/public-app/scientific-fishing-public.service';
 import { ShipsRegisterPublicService } from '@app/services/public-app/ships-register-public.service';
+import { StatisticalFormsPublicService } from '@app/services/public-app/statistical-forms-public.service';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
@@ -39,61 +72,27 @@ import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/di
 import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
+import { OnlinePaymentDataDialogParams } from '@app/shared/components/online-payment-data/egov-offline-payment-data/models/online-payment-data-dialog-params.model';
+import { OnlinePaymentDataComponent } from '@app/shared/components/online-payment-data/online-payment-data.component';
+import { PaymentDataInfo } from '@app/shared/components/payment-data/models/payment-data-info.model';
 import { PaymentDataComponent } from '@app/shared/components/payment-data/payment-data.component';
 import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
-import { AuthService } from '@app/shared/services/auth.service';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { CommercialFishingPublicService } from '@app/services/public-app/commercial-fishing-public.service';
-import { OnlinePaymentDataDialogParams } from '@app/shared/components/online-payment-data/egov-offline-payment-data/models/online-payment-data-dialog-params.model';
-import { OnlinePaymentDataComponent } from '@app/shared/components/online-payment-data/online-payment-data.component';
-import { EditBuyersComponent } from '@app/components/common-app/buyers/edit-buyers.component';
-import { EditCommercialFishingComponent } from '@app/components/common-app/commercial-fishing/components/edit-commercial-fishing/edit-commercial-fishing.component';
-import { EditLegalEntityComponent } from '@app/components/common-app/legals/edit-legal-entity/edit-legal-entity.component';
-import { EditFisherComponent } from '@app/components/common-app/qualified-fishers/edit-fisher.component';
-import { EditShipComponent } from '@app/components/common-app/ships-register/edit-ship/edit-ship.component';
-import { ShipChangeOfCircumstancesComponent } from '@app/components/common-app/ships-register/ship-change-of-circumstances/ship-change-of-circumstances.component';
+import { Observable } from 'rxjs';
 import { AssignApplicationByAccessCodeComponent } from '../components/assign-application-by-access-code/assign-application-by-access-code.component';
+import { AssignApplicationByUserComponent } from '../components/assign-application-by-user/assign-application-by-user.component';
 import { ChooseApplicationTypeComponent } from '../components/choose-application-type/choose-application-type.component';
 import { EnterReasonComponent } from '../components/enter-reason/enter-reason.component';
 import { ReasonDialogParams } from '../components/enter-reason/models/reason-dialog-params.model';
 import { FileInApplicationStepperComponent } from '../components/file-in-application-stepper/file-in-application-stepper.component';
 import { FileInApplicationDialogParams } from '../components/file-in-application-stepper/models/file-in-application-stepper-dialog-params.model';
 import { UploadFileDialogComponent } from '../components/upload-file-dialog/upload-file-dialog.component';
+import { WaitExternalChecksToFinishComponent } from '../components/wait-external-checks-to-finish/wait-external-checks-to-finish.component';
 import { ApplicationProcessingHasPermissions } from '../models/application-processing-has-permissions.model';
 import { EditDialogInfo } from '../models/edit-dialog-info.model';
-import { FishingCapacityPublicService } from '@app/services/public-app/fishing-capacity-public.service';
-import { FishingCapacityAdministrationService } from '@app/services/administration-app/fishing-capacity-administration.service';
-import { IncreaseFishingCapacityComponent } from '@app/components/common-app/fishing-capacity/increase-fishing-capacity/increase-fishing-capacity.component';
-import { ReduceFishingCapacityComponent } from '@app/components/common-app/fishing-capacity/reduce-fishing-capacity/reduce-fishing-capacity.component';
-import { TransferFishingCapacityComponent } from '@app/components/common-app/fishing-capacity/transfer-fishing-capacity/transfer-fishing-capacity.component';
-import { EditAquacultureFacilityComponent } from '@app/components/common-app/aquaculture-facilities/edit-aquaculture-facility/edit-aquaculture-facility.component';
-import { AquacultureChangeOfCircumstancesComponent } from '@app/components/common-app/aquaculture-facilities/aquaculture-change-of-circumstances/aquaculture-change-of-circumstances.component';
-import { AquacultureDeregistrationComponent } from '@app/components/common-app/aquaculture-facilities/aquaculture-deregistration/aquaculture-deregistration.component';
-import { BuyersPublicService } from '@app/services/public-app/buyers-public.service';
-import { QualifiedFishersPublicService } from '@app/services/public-app/qualified-fishers-public.service';
-import { StatisticalFormsAquaFarmComponent } from '@app/components/common-app/statistical-forms/components/statistical-forms-aqua-farm/statistical-forms-aqua-farm.component';
-import { StatisticalFormsReworkComponent } from '@app/components/common-app/statistical-forms/components/statistical-forms-rework/statistical-forms-rework.component';
-import { StatisticalFormsFishVesselComponent } from '@app/components/common-app/statistical-forms/components/statistical-forms-fish-vessel/statistical-forms-fish-vessel.component';
-import { StatisticalFormsAdministrationService } from '@app/services/administration-app/statistical-forms-administration.service';
-import { StatisticalFormsPublicService } from '@app/services/public-app/statistical-forms-public.service';
-import { AquacultureFacilitiesAdministrationService } from '@app/services/administration-app/aquaculture-facilities-administration.service';
-import { AquacultureFacilitiesPublicService } from '@app/services/public-app/aquaculture-facilities-public.service';
-import { BuyerChangeOfCircumstancesComponent } from '@app/components/common-app/buyers/buyer-change-of-circumstances/buyer-change-of-circumstances.component';
-import { PaymentDataInfo } from '@app/shared/components/payment-data/models/payment-data-info.model';
-import { BuyerTerminationComponent } from '@app/components/common-app/buyers/buyer-termination/buyer-termination.component';
-import { DuplicatesRegisterPublicService } from '@app/services/public-app/duplicates-register-public.service';
-import { DuplicatesRegisterAdministrationService } from '@app/services/administration-app/duplicates-register-administration.service';
-import { DuplicatesApplicationComponent } from '@app/components/common-app/duplicates/duplicates-application.component';
-import { CapacityCertificateDuplicateComponent } from '@app/components/common-app/fishing-capacity/capacity-certificate-duplicate/capacity-certificate-duplicate.component';
-import { EditLegalAssociationComponent } from '@app/components/common-app/legal-associations/edit-legal-association/edit-legal-association.component';
-import { RecreationalFishingAssociationService } from '@app/services/administration-app/recreational-fishing-association.service';
-import { RecreationalFishingAssociationPublicService } from '@app/services/public-app/recreational-fishing-association-public.service';
-import { AssignApplicationByUserComponent } from '../components/assign-application-by-user/assign-application-by-user.component';
-import { WaitExternalChecksToFinishComponent } from '../components/wait-external-checks-to-finish/wait-external-checks-to-finish.component';
-import { AddApplicationResultDTO } from '@app/models/generated/dtos/AddApplicationResultDTO';
-import { EditPermitLicenseFishingGearsComponent } from '@app/components/common-app/commercial-fishing/components/permit-license-fishing-gears/edit-permit-license-fishing-gears.component';
+
 
 const DIALOG_WIDTH: string = '1600px';
 export type ApplicationTablePageType = 'FileInPage' | 'DashboardPage' | 'ApplicationPage' | 'PublicPage' | 'OnlineApplPage';
@@ -177,9 +176,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
         matDialog: MatDialog,
         injector: Injector,
         tlTranslatePipe: TLTranslatePipe,
-        router: Router,
-        authService: AuthService
-    ) {
+        router: Router) {
         this.confirmDialog = confirmDialog;
         this.translationService = translationService;
         this.nomenclaturesService = nomenclaturesService;
@@ -197,7 +194,6 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
         this.injector = injector;
         this.tlTranslatePipe = tlTranslatePipe;
         this.router = router;
-        this.userId = authService.userRegistrationInfo!.id!;
     }
 
     public ngOnInit(): void {

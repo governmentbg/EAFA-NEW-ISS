@@ -137,9 +137,28 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
             get => _hasInvalidData;
             set => SetProperty(ref _hasInvalidData, value);
         }
-       // Check for Cyrillic E and Latin E
-        public bool IsTicketElectronic => TicketMetadata.TicketNumber.ToUpper().StartsWith("E") || TicketMetadata.TicketNumber.ToUpper().StartsWith("Е");
-
+        // Check for Cyrillic E and Latin E
+        public bool IsTicketElectronic 
+        {
+            get
+            {
+                if(IsActive)
+                {
+                    if (TicketMetadata == null || TicketMetadata.TicketNumber == null)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return TicketMetadata.TicketNumber.ToUpper().StartsWith("E") || TicketMetadata.TicketNumber.ToUpper().StartsWith("Е");
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
         public bool IsActive => TicketMetadata.Id != 0 &&
                     TicketMetadata.Action == TicketAction.View &&
                    (TicketMetadata.PaymentStatus == PaymentStatusEnum.PaidOK
@@ -357,7 +376,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
                                 });
                             }
                             await MainNavigator.Current.GoToPageAsync(nameof(HomePage));
-                            await MainNavigator.Current.GoToPageAsync(new ProceedToPaymentPage(items, response.PaidTicketApplicationId.GetValueOrDefault()));
+                            await MainNavigator.Current.GoToPageAsync(new ProceedToPaymentPage(items, response.PaidTicketPaymentRequestNum));
                         }
                         else
                         {
@@ -393,7 +412,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
                                 Price = TicketMetadata.Price,
                             };
                             await MainNavigator.Current.GoToPageAsync(nameof(HomePage));
-                            await MainNavigator.Current.GoToPageAsync(new ProceedToPaymentPage(new List<ItemViewModel> { item }, TicketMetadata.ApplicationId));
+                            await MainNavigator.Current.GoToPageAsync(new ProceedToPaymentPage(new List<ItemViewModel> { item }, TicketMetadata.PaymentRequestNum));
                         }
                     }
                     else
@@ -445,10 +464,10 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages.FishingTicket
         protected async Task<FishingTicketResponseDto> LoadTicketBaseData(int ticketId)
         {
             FishingTicketResponseDto ticket = await FishingTicketsTransaction.GetTicketById(ticketId);
-
             if (ticket != null)
             {
                 TicketNum = ticket.TicketNum;
+                TerritorialUnit.Value = TerritorialUnits.Find(f => f.Id == ticket.DeliveryTerritoryUnitId);
                 FillPersonData(Person, ticket.Person, ticket.PersonAddressRegistrations);
 
                 if (ticket.PersonPhoto != null && ticket.PersonPhoto.Id != 0)

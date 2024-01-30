@@ -8,32 +8,40 @@ import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterModule, Routes } from '@angular/router';
+import { ExtraOptions, NoPreloading, RouterModule, Routes } from '@angular/router';
 import { AppComponent } from '@app/app.component';
 import { fuseConfig } from '@app/fuse-config';
 import { LayoutModule } from '@app/layout/layout.module';
 import { Environment } from '@env/environment';
 import { FuseProgressBarModule, FuseSidebarModule, FuseThemeOptionsModule } from '@fuse/components';
+import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { FuseSharedModule } from '@fuse/fuse-shared.module';
 import { FuseModule } from '@fuse/fuse.module';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { AuthModule } from 'angular-auth-oidc-client';
+import { TranslateModule } from '@ngx-translate/core';
 import { NgxPermissionsModule } from 'ngx-permissions';
-import { IConfiguration } from '../environments/environment.interface';
+import { AccountModule } from './components/common-app/auth/account.module';
+import { ACCOUNT_ROUTES } from './components/common-app/auth/account.routing';
+import { IPermissionsService } from './components/common-app/auth/interfaces/permissions-service.interface';
+import { SecurityConfig } from './components/common-app/auth/interfaces/security-config.interface';
+import { IGenericSecurityService, ISecurityService } from './components/common-app/auth/interfaces/security-service.interface';
+import { User } from './components/common-app/auth/models/auth/user.model';
+import { AuthRedirectComponent } from './components/common-app/auth/redirects/auth-redirect.component';
+import { AuthenticationUtils } from './components/common-app/auth/utils/authentication.utils';
 import { OnlinePaymentPageComponent } from './components/common-app/online-payment-page/online-payment-page.component';
-import { ChangePasswordPageComponent } from './components/common-app/user-registration/change-password/change-password-page.component';
-import { CreateProfileComponent } from './components/common-app/user-registration/create-profile/create-profile.component';
-import { MergeProfilesComponent } from './components/common-app/user-registration/merge-profiles/merge-profiles.component';
-import { RedirectPageComponent } from './components/common-app/user-registration/redirect-page/redirect-page.component';
-import { SuccessfulEmailConfirmationComponent } from './components/common-app/user-registration/success-pages/successful-email-confrimation/successful-email-confirmation.component';
-import { SuccessfulPasswordChangeComponent } from './components/common-app/user-registration/success-pages/successful-password-change/successful-password-change.component';
-import { SuccessfulRegistrationComponent } from './components/common-app/user-registration/success-pages/successful-registration/successful-registration.component';
-import { TermsAndConditionsComponent } from './components/common-app/user-registration/terms-and-conditions/terms-and-conditions.component';
+import { USER_REGISTRATION_ROUTES } from './components/common-app/user-registration/user-registration.routing';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
+import { GlobalVariables } from './globals';
+import { UserAuthDTO } from './models/generated/dtos/UserAuthDTO';
+import { SecurityService } from './services/common-app/security.service';
+import { UsersService } from './services/common-app/users.service';
+import { ENVIRONMENT_CONFIG_TOKEN } from './shared/di/shared-di.tokens';
+import { StorageTypes } from './shared/enums/storage-types.enum';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 import { IARA_APPLICATION_MODULE } from './shared/modules/application.modules';
-import { AuthService } from './shared/services/auth.service';
-import { LocalStorageService } from './shared/services/local-storage.service';
+import { MainNavigation } from './shared/navigation/base/main.navigation';
+import { StorageService } from './shared/services/local-storage.service';
+import { PermissionsService } from './shared/services/permissions.service';
+import { RequestService } from './shared/services/request.service';
 import { CustomMatPaginatorIntl } from './shared/utils/custom.paginator';
 import { TLDateAdapter } from './shared/utils/date.adapter';
 import { DateUtils } from './shared/utils/date.utils';
@@ -44,118 +52,82 @@ import { TranslationUtils } from './shared/utils/translation-utils';
 
 const appRoutes: Routes = [
     {
-        path: 'unauthorized',
-        component: UnauthorizedComponent
-    },
-    {
-        path: 'registration',
-        component: CreateProfileComponent
-    },
-    {
-        path: 'merge-profiles',
-        component: MergeProfilesComponent
-    },
-    {
-        path: 'terms-and-conditions',
-        component: TermsAndConditionsComponent
-    },
-    {
-        path: 'change-password',
-        component: ChangePasswordPageComponent
-    },
-    {
-        path: 'successful-change',
-        component: SuccessfulPasswordChangeComponent
-    },
-    {
-        path: 'successful-registration',
-        component: SuccessfulRegistrationComponent
-    },
-    {
-        path: 'successful-email-confirmation',
-        component: SuccessfulEmailConfirmationComponent
-    },
-    {
-        path: 'redirect',
-        component: RedirectPageComponent
+        path: '',
+        pathMatch: 'full',
+        component: AuthRedirectComponent,
     },
     {
         path: 'online-payment',
         component: OnlinePaymentPageComponent
     },
     {
-        path: '',
-        component: RedirectPageComponent
+        path: 'account',
+        children: ACCOUNT_ROUTES
     },
     {
+        path: 'administration',
+        children: MainNavigation.getRoutes()
+    },
+    ...USER_REGISTRATION_ROUTES,
+    {
         path: '**',
-        redirectTo: 'redirect'
-    }
+        //redirectTo: 'landing-page'
+        component: AuthRedirectComponent
+    },
+
 ];
 
-export let AppInjector: Injector;
-
-
 export function initializeApplication(translationLoad: FuseTranslationLoaderService,
-    localStorageService: LocalStorageService,
-    authService: AuthService,
-    httpClient: HttpClient): () => void {
-
-    authService.buildNavigation();
+    securityService: IGenericSecurityService<number, UserAuthDTO>,
+    permissionsService: IPermissionsService,
+    fuseNavigationService: FuseNavigationService): () => void {
 
     return async () => {
+        await loadTranslationResources(translationLoad).then(async () => {
+            await AuthenticationUtils.initApplicationSecurity((securityService as IGenericSecurityService<number, User<number>>)).then(isAuthenticated => {
 
-        await httpClient.get<IConfiguration>(`${Environment.Instance.frontendBaseUrl}/assets/endpoints.json`)
-            .toPromise().then(config => {
+                AuthenticationUtils.initNavigation(permissionsService, fuseNavigationService, isAuthenticated);
 
-                if (config.servicesBaseUrl != '') {
-                    Environment.Instance.servicesBaseUrl = config.servicesBaseUrl;
-                }
-                if (config.identityServerBaseUrl != '') {
-                    Environment.Instance.identityServerBaseUrl = config.identityServerBaseUrl;
-                }
+                securityService.isAuthenticatedEvent.subscribe(async (isAuthenticated) => {
+                    if (isAuthenticated) {
+                        await securityService.getUser().toPromise();
+                    }
 
-                if (config.apiBasePath != '') {
-                    Environment.Instance.apiBasePath = config.apiBasePath;
-                }
-
-                if (config.appBaseHref != undefined) {
-                    Environment.Instance.appBaseHref = config.appBaseHref;
-                }
-
-                authService.configureAuth().then(result => {
-                    authService.checkAuthentication().then(isAuthenticated => {
-                        if (isAuthenticated) {
-                            authService.getUserAuthInfo();
-                        }
-                    });
+                    AuthenticationUtils.initNavigation(permissionsService, fuseNavigationService, isAuthenticated);
                 });
             });
-
-        await loadTranslationResources(translationLoad, localStorageService);
+        });
     };
 }
 
-export async function loadTranslationResources(translationLoad: FuseTranslationLoaderService, localStorageService: LocalStorageService): Promise<void> {
-    let language: string;
-    if (localStorageService.hasItem('lang')) {
-        language = localStorageService.get('lang');
+export async function loadTranslationResources(translationLoad: FuseTranslationLoaderService): Promise<void> {
+    let language: string = 'bg';
+
+    const storage: StorageService = StorageService.getStorage(StorageTypes.Local)
+    if (storage.hasItem('lang')) {
+        language = await storage.get('lang') ?? 'bg';
     }
     else {
-        localStorageService.addOrUpdate('lang', 'bg');
-        language = 'bg';
+        storage.addOrUpdate('lang', 'bg');
     }
 
     const backupTranslation = TranslationUtils.getLocalTranslations(language);
     translationLoad.loadTranslations(backupTranslation);
 
-    let translationLoader: TranslateLoader = TranslationUtils.getWebTranslationLoader();
-    let translation = await TranslationUtils.getTranslationsFromLoader(translationLoader, language);
+    //const translationLoader: TranslateLoader = TranslationUtils.getWebTranslationLoader();
+    //const translation = await TranslationUtils.getTranslationsFromLoader(translationLoader, language);
 
-    if (translation !== null && translation !== undefined) {
-        translationLoad.loadTranslations(translation);
-    }
+    //if (translation !== null && translation !== undefined) {
+    //    translationLoad.loadTranslations(translation);
+    //}
 }
+
+const routerConfig: ExtraOptions = {
+    preloadingStrategy: NoPreloading,
+    scrollPositionRestoration: 'enabled',
+    onSameUrlNavigation: 'ignore',
+    urlUpdateStrategy: 'deferred'
+};
 
 @NgModule({
     declarations: [
@@ -165,8 +137,9 @@ export async function loadTranslationResources(translationLoad: FuseTranslationL
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
+        //NoopAnimationsModule,
         HttpClientModule,
-        RouterModule.forRoot(appRoutes),
+        RouterModule.forRoot(appRoutes, routerConfig),
 
         TranslateModule.forRoot(),
 
@@ -182,24 +155,21 @@ export async function loadTranslationResources(translationLoad: FuseTranslationL
         //IARAApplicationModule,
         //PublicApplicationModule,
         //AdministrationApplicationModule,
-        AuthModule.forRoot(),
         NgxPermissionsModule.forRoot(),
+        AccountModule.forRoot(SecurityService, RequestService, {
+            loginMethodName: 'SignIn',
+        } as SecurityConfig, FuseTranslationLoaderService, UsersService, PermissionsService),
         ...IARA_APPLICATION_MODULE
     ],
     bootstrap: [
         AppComponent
     ],
     providers: [
-        AuthService,
-        {
-            provide: 'INotificationSecurity',
-            useExisting: AuthService,
-        },
         {
             provide: APP_INITIALIZER,
             useFactory: initializeApplication,
             multi: true,
-            deps: [FuseTranslationLoaderService, LocalStorageService, AuthService, HttpClient]
+            deps: [FuseTranslationLoaderService, SecurityService, PermissionsService, FuseNavigationService]
         },
         {
             provide: APP_BASE_HREF,
@@ -229,12 +199,17 @@ export async function loadTranslationResources(translationLoad: FuseTranslationL
         {
             provide: LOCALE_ID,
             useValue: 'bg-BG'
+        },
+        {
+            provide: ENVIRONMENT_CONFIG_TOKEN,
+            useValue: Environment.Instance
         }
     ]
 })
 export class AppModule {
     constructor(private injector: Injector) {
-        AppInjector = this.injector;
+
+        GlobalVariables.AppInjector = this.injector;
 
         registerLocaleData(localeBg);
     }
