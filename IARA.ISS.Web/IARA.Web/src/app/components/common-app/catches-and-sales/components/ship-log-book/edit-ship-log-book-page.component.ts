@@ -167,7 +167,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         this.confirmDialog = confirmDialog;
         this.previousTripCatchRecordsDialog = previousTripCatchRecordsDialog;
 
-        this.currentUserId = authService.User!.id;
+        this.currentUserId = authService.User!.userId;
     }
 
     public async ngOnInit(): Promise<void> {

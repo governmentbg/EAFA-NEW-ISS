@@ -23,6 +23,7 @@ import { LogBookPageProductUtils } from '../../utils/log-book-page-product.utils
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 
 const DEFAULT_SIZE_CATEGORY_CODE: string = 'N/A'; // TODO this as a parameter or enum ???
+const DEFAULT_DUNABE_LOCATION: string = 'р. Дунав';
 
 @Component({
     selector: 'edit-log-book-page-product',
@@ -84,6 +85,10 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             this.form.get('catchLocationControl')!.setValidators([Validators.required, Validators.maxLength(500)]);
             this.form.get('catchLocationControl')!.markAsPending({ emitEvent: false });
             this.form.get('catchLocationControl')!.updateValueAndValidity({ emitEvent: false });
+
+            if (this.isContinentalCatch) {
+                this.form.get('catchLocationControl')!.setValue(DEFAULT_DUNABE_LOCATION);
+            }
 
             this.form.get('freshnessControl')!.setValidators(Validators.required);
             this.form.get('freshnessControl')!.markAsPending({ emitEvent: false });
@@ -230,7 +235,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
 
             this.model = data.model;
             this.model.logBookType = this.logBookType;
-           
+
             if (CommonUtils.isNullOrEmpty(this.model.catchLocation)) {
                 this.isContinentalCatch = true;
             }
@@ -298,7 +303,9 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
         }
 
         if (this.logBookType !== LogBookTypesEnum.Aquaculture) {
-            this.form.get('catchLocationControl')!.setValue(this.model.catchLocation);
+            if (!this.isContinentalCatch) {
+                this.form.get('catchLocationControl')!.setValue(this.model.catchLocation);
+            }
 
             if (this.model.productFreshnessId !== null && this.model.productFreshnessId !== undefined) {
                 const freshness: NomenclatureDTO<number> = this.freshnessCategories.find(x => x.value === this.model.productFreshnessId)!;

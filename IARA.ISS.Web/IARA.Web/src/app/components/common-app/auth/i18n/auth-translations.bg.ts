@@ -5,7 +5,7 @@
         'suvr': 'СУВР',
         'suvr-full-name': 'Система за управление на влаковата работа',
         'nric': 'ДП НКЖИ',
-        'missing-account': 'Нямате профил?',
+        'missing-account': 'Нова регистрация?',
         'forgotten-password': 'Забравена парола?',
         'email-address': 'Имейл адрес',
         'password': 'Парола',

@@ -49,12 +49,12 @@ namespace IARA.Mobile.Pub.Utilities
                     if (await restfulClient.HealthCheckAsync().IsSuccessfulResult())
                     {
                         CommonGlobalVariables.InternetStatus = InternetStatus.Connected;
+                        await CheckForOutdatedVersion();
+                        await PostOfflineData();
                         // Events have to execute on the main thread
                         await Device.InvokeOnMainThreadAsync(
                             () => ConnectivityChanged?.Invoke(this, InternetStatus.Connected)
                         );
-                        await CheckForOutdatedVersion();
-                        await PostOfflineData();
                         await Device.InvokeOnMainThreadAsync(
                             () => OfflineDataPosted?.Invoke(this, EventArgs.Empty)
                         );

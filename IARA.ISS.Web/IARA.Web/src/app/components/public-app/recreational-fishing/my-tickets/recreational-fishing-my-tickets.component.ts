@@ -6,6 +6,7 @@ import { PaymentStatusesEnum } from '@app/enums/payment-statuses.enum';
 import { TicketPeriodEnum } from '@app/enums/ticket-period.enum';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { RecreationalFishingTicketViewDTO } from '@app/models/generated/dtos/RecreationalFishingTicketViewDTO';
+import { UserAuthDTO } from '@app/models/generated/dtos/UserAuthDTO';
 import { SecurityService } from '@app/services/common-app/security.service';
 import { RecreationalFishingPublicService } from '@app/services/public-app/recreational-fishing-public.service';
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
@@ -42,7 +43,7 @@ export class RecreationalFishingMyTicketsComponent implements OnInit {
 
     public ngOnInit(): void {
         this.authService.getUser().subscribe({
-            next: (userInfo: User<number>) => {
+            next: (userInfo: UserAuthDTO) => {
                 if (userInfo !== null) {
                     this.service.currentUserTickets.subscribe({
                         next: async (tickets: RecreationalFishingTicketViewDTO[]) => {

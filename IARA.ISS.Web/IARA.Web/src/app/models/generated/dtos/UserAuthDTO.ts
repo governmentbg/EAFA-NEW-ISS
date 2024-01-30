@@ -1,20 +1,23 @@
 ﻿
 
+import { User } from '@app/components/common-app/auth/models/auth/user.model';
+import { LoginTypesEnum } from '@app/enums/login-types.enum';
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { EgnLncDTO } from './EgnLncDTO';
-import { LoginTypesEnum } from '@app/enums/login-types.enum';
-import { User } from '@app/components/common-app/auth/models/auth/user.model';
 
-export class UserAuthDTO extends User<number> {
+export class UserAuthDTO extends User<string> {
     public constructor(obj?: Partial<UserAuthDTO>) {
         if (obj != undefined) {
-            super(obj as User<number>);
+            super(obj as User<string>);
             Object.assign(this, obj);
         }
         else {
             super();
         }
     }
+
+    @StrictlyTyped(Number)
+    public userId!: number;
 
     @StrictlyTyped(Number)
     public personId?: number;

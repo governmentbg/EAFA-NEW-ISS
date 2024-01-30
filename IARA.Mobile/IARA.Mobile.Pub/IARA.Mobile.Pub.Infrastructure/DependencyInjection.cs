@@ -30,8 +30,9 @@ namespace IARA.Mobile.Pub.Infrastructure
             builder.AddUrl(Environments.PRODUCTION, "https://iara-iss.egov.bg/api/");
             builder.AddExternalUrl(Environments.PRODUCTION, "PAY_EGOV", "https://pay.egov.bg/Home/AccessByCode");
             builder.AddExternalUrl(Environments.PRODUCTION, "IARA_IDENTITY", "https://iara-iss.egov.bg/identity");
-
-            builder.AddUrl(Environments.STAGING, "https://iara-iss-staging-internal.egov.bg/api/");
+            //https://iara-iss-staging-internal.egov.bg/api/ 
+            //https://n67xzpc0-5000.euw.devtunnels.ms/api/
+            builder.AddUrl(Environments.STAGING, "https://n67xzpc0-5000.euw.devtunnels.ms/api/");
             builder.AddExternalUrl(Environments.STAGING, "PAY_EGOV", "https://pay-test.egov.bg/Home/AccessByCode");
             builder.AddExternalUrl(Environments.STAGING, "IARA_IDENTITY", "https://iara-iss-staging-internal.egov.bg/identity");
 

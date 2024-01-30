@@ -80,7 +80,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
             Translator.Current.PropertyChanged += OnTranslatorPropertyChanged;
         }
 
-        private async Task GetStateTickets(string lastOpenedState, bool local = false)
+        public async Task GetStateTickets(string lastOpenedState, bool local = false)
         {
             SelectedState = null;//Required to show the loading screen
             IsBusy = true;//Required to show the loading screen

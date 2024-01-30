@@ -53,11 +53,11 @@ namespace IARA.Mobile.Pub
             if (isInitialCall)
             {
                 // Initializes global variables and which server the app will use and font size
-                builder.Call<IServerUrl, ISettings>(Init);
+                builder.Call<IServerUrl, ISettings>(Init, true);
             }
 
             // Health check
-            builder.Call<IStartupTransaction>(HealthCheck);
+            builder.Call<IStartupTransaction>(HealthCheck, true);
 
             // Checks if app is outdated
             builder.EndWhen<IStartupTransaction, ICommonLogout>(CheckAppOutdated);

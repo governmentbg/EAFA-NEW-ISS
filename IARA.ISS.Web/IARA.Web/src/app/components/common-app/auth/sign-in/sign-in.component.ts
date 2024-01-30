@@ -16,6 +16,7 @@ import { AuthCredentials } from '../models/auth/auth-credentials.model';
 import { LoginResult } from '../models/auth/login-result.model';
 import { TFAuthenticationModel } from '../models/auth/tf-authentication.model';
 import { User } from '../models/auth/user.model';
+import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 
 type ShowFormType = 'login' | 'roles' | 'authentication';
 
@@ -34,6 +35,8 @@ export class AuthSignInComponent<TIdentifier, TUser extends User<TIdentifier>> i
     public authenticationData!: TFAuthenticationModel;
     public showAlert: boolean = false;
     public formToShow: ShowFormType = 'login';
+
+    public isPublic = IS_PUBLIC_APP;
 
     private readonly router: Router;
     private readonly securityService: IGenericSecurityService<TIdentifier, TUser>;

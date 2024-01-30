@@ -20,8 +20,8 @@ import { Observable } from 'rxjs';
 @Injectable({
     providedIn: 'root'
 })
-export class UsersService extends BaseUserService<number, UserAuthDTO> implements IGenericUserService<number, UserAuthDTO> {
-    
+export class UsersService extends BaseUserService<string, UserAuthDTO> implements IGenericUserService<string, UserAuthDTO> {
+
     public getUserData(): Observable<ChangeUserDataDTO> {
         return this.requestService.get(this.securityConfig.baseRoute, this.securityConfig.userController, 'GetAllUserData');
     }

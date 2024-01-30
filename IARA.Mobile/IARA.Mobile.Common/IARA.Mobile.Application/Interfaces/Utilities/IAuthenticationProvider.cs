@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using IARA.Mobile.Domain.Models;
+using IARA.Mobile.Pub.Domain.Models;
+using System.Threading.Tasks;
 
 namespace IARA.Mobile.Application.Interfaces.Utilities
 {
@@ -10,5 +12,7 @@ namespace IARA.Mobile.Application.Interfaces.Utilities
         Task<bool> RefreshToken();
         bool ShouldRefreshToken();
         void Dispose(bool navigateToLogin = false);
+        void SetAuthenticationProvider(JwtToken token);
+        bool CheckTokenValidity();
     }
 }

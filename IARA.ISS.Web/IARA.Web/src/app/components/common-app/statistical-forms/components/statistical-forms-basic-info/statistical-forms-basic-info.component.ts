@@ -38,7 +38,7 @@ export class StatisticalFormsBasicInfoComponent extends CustomFormControl<Statis
         this.initCustomFormControl();
 
         this.loader.load(() => {
-            this.form.get('processUserControl')!.setValue(this.processUsers.find(x => x.value === this.authService.User!.id));
+            this.form.get('processUserControl')!.setValue(this.processUsers.find(x => x.value === this.authService.User!.userId));
         });
     }
 

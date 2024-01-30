@@ -78,13 +78,13 @@ const appRoutes: Routes = [
 ];
 
 export function initializeApplication(translationLoad: FuseTranslationLoaderService,
-    securityService: IGenericSecurityService<number, UserAuthDTO>,
+    securityService: IGenericSecurityService<string, UserAuthDTO>,
     permissionsService: IPermissionsService,
     fuseNavigationService: FuseNavigationService): () => void {
 
     return async () => {
         await loadTranslationResources(translationLoad).then(async () => {
-            await AuthenticationUtils.initApplicationSecurity((securityService as IGenericSecurityService<number, User<number>>)).then(isAuthenticated => {
+            await AuthenticationUtils.initApplicationSecurity((securityService as IGenericSecurityService<string, User<string>>)).then(isAuthenticated => {
 
                 AuthenticationUtils.initNavigation(permissionsService, fuseNavigationService, isAuthenticated);
 

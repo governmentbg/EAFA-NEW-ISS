@@ -161,5 +161,7 @@ namespace IARA.Mobile.Application.Interfaces.Utilities
         /// </summary>
         /// <returns>Returns Okay status if the server is healthy</returns>
         Task<HttpResult> HealthCheckAsync();
+        Task<HttpResult<TResult>> PostAsFormDataAsync<TResult>(string url, string urlExtension, bool needsAuthentication, object content, object parameters = null, bool alertOnException = true);
+        Task<HttpResult<TResult>> PostAsync<TResult>(string url, string urlExtension, bool needsAuthentication, object content, object parameters = null, bool alertOnException = true);
     }
 }

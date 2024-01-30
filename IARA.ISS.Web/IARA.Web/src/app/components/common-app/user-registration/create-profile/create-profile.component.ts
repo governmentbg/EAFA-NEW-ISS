@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { LoginTypesEnum } from '@app/enums/login-types.enum';
 import { ErrorCode, ErrorModel, ErrorType } from '@app/models/common/exception.model';
@@ -11,7 +10,6 @@ import { UsersService } from '@app/services/common-app/users.service';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
-import { RequestProperties } from '@app/shared/services/request-properties';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { fuseAnimations } from '@fuse/animations';
@@ -92,7 +90,7 @@ export class CreateProfileComponent implements OnInit, OnDestroy {
                 this.registerForm.get('passwordConfirmation')!.updateValueAndValidity();
             });
 
-        const userAuth = this.userService.User;
+        const userAuth = this.userService.User!;
 
         if (this.isFromMergeProfilePage) {
             this.setupFirstTimeEAuthSettings(userAuth);

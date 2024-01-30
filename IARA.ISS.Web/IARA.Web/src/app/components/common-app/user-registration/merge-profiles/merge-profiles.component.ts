@@ -47,7 +47,7 @@ export class MergeProfilesComponent {
         this.translationService = translationService;
         this.snackbar = snackbar;
         this.model = new UserRegistrationDTO();
-        this.isInternalUser = this.userService.User.isInternalUser ?? false;
+        this.isInternalUser = this.userService.User!.isInternalUser ?? false;
         this.buildForm();
     }
 

@@ -96,7 +96,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
         this.confirmDialog = confirmDialog;
         this.systemParametersService = systemParametersService;
 
-        this.currentUserId = authService.User!.id;
+        this.currentUserId = authService.User!.userId;
     }
 
     public async ngOnInit(): Promise<void> {

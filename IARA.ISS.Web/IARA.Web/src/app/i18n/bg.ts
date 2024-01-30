@@ -4537,6 +4537,8 @@
         'log-book-price': 'Цена',
         'log-book-pages-range-invalid': 'Невалиден диапазон от страници. Вече съществува дневник от същия тип с този или част от този диапазон от страници',
         'log-book-end-page-greater-than-start-page': 'Крайната страница трябва да бъде по-голяма от началната',
+        'log-book-page-range-number-greater-than-allowed': 'Диапазонът от страници на хартиените дневници трябва да не надвишава ',
+        'log-book-page-range-pages': ' броя страници',
         'log-book-permit-license-page-range-invalid': 'Диапазонът от страници трябва да бъде в рамките на страниците на дневника',
         'log-book-cannot-be-finished-or-reissued-error': 'Дневникът не трябва да липсващи/неприключени страници, за да бъде приключен/презаверен',
         'log-books-has-overlapping-ranges-error': 'Има дневници с невалидни/припокриващи се диапазони',

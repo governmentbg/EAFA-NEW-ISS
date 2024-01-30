@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Common;
@@ -22,6 +23,7 @@ namespace IARA.Mobile.Pub.Application.Transactions
     public class CatchRecordsTransaction : BaseTransaction, ICatchRecordsTransaction
     {
         private readonly IOfflineFiles _files;
+        private static volatile bool _isPostingData = false;
 
         public CatchRecordsTransaction(BaseTransactionProvider provider, IOfflineFiles files)
             : base(provider)
@@ -432,7 +434,11 @@ namespace IARA.Mobile.Pub.Application.Transactions
 
                     if (suceeded)
                     {
-                        _files.DeleteFiles(entity.Identifier);
+                        try
+                        {
+                            _files.DeleteFiles(entity.Identifier);
+                        }
+                        catch (Exception) { }
                         context.CatchRecords.Delete(f => f.Id == entity.Id);
                         context.CatchRecordFishes.Delete(f => f.CatchRecordId == entity.Id);
                     }

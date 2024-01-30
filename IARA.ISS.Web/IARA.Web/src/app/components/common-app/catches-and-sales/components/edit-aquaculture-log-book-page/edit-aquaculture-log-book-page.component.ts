@@ -74,7 +74,7 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
         this.confirmDialog = confirmDialog;
         this.systemParametersService = systemParametersService;
 
-        this.currentUserId = authService.User!.id;
+        this.currentUserId = authService.User!.userId;
 
         this.dateTimeControlHint = this.translationService.getValue('common.date-time-control-format-hint');
     }

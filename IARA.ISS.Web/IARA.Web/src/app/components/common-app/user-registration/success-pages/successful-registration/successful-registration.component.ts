@@ -18,7 +18,7 @@ import { UsersService } from '@app/services/common-app/users.service';
 })
 export class SuccessfulRegistrationComponent {
     public homeUrl: string;
-    public userEmail: string;
+    public userEmail: string = '';
 
     private authService: UsersService;
     private snackbar: MatSnackBar;
@@ -28,11 +28,13 @@ export class SuccessfulRegistrationComponent {
         snackbar: MatSnackBar,
         translationService: FuseTranslationLoaderService) {
 
+        if (window.history.state !== undefined && window.history.state.email !== undefined) {
+            this.userEmail = window.history.state.email;
+        }
         this.authService = userService;
         this.snackbar = snackbar;
         this.translationService = translationService;
         this.homeUrl = Environment.Instance.frontendBaseUrl;
-        this.userEmail = this.authService.User.email ?? '';
     }
 
     public resendConfirmationEmail(): void {

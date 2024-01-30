@@ -86,7 +86,9 @@ namespace IARA.Mobile.Pub.Helpers
 
         public static void DeleteFiles(string inspectionId)
         {
-            Directory.Delete(Path.Combine(FileSystem.AppDataDirectory, CatchRecordDirectory + inspectionId), true);
+            string path = Path.Combine(FileSystem.AppDataDirectory, CatchRecordDirectory + inspectionId);
+            if (Directory.Exists(path))
+                Directory.Delete(path, true);
         }
     }
 }

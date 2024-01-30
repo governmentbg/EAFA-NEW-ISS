@@ -1,7 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using IARA.Mobile.Application.Interfaces.Utilities;
+using IARA.Mobile.Domain.Models;
+using IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API;
+using IARA.Mobile.Pub.Application.Interfaces.Transactions;
+using IARA.Mobile.Pub.Application.Transactions;
+using IARA.Mobile.Pub.Application.Transactions.Base;
+using IARA.Mobile.Pub.Domain.Models;
 using IdentityModel.OidcClient;
 using IdentityModel.OidcClient.Results;
 
@@ -40,16 +47,38 @@ namespace IARA.Mobile.Shared.Utilities
             return successLogin;
         }
 
+        public bool CheckTokenValidity()
+        {
+            if (string.IsNullOrEmpty(_authTokenProvider.Token))
+            {
+                return false;
+            }
+            else if (_authTokenProvider.AccessTokenExpiration < DateTime.Now)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public void SetAuthenticationProvider(JwtToken token)
+        {
+            _authTokenProvider.Clear();
+            _authTokenProvider.Token = token.Token;
+            _authTokenProvider.RefreshToken = token.RefreshToken;
+            _authTokenProvider.AccessTokenExpiration = token.ValidTo;
+        }
+
         public async Task Logout()
         {
-            await _identityServer.Logout(_authTokenProvider.Token);
+            //await _identityServer.Logout(_authTokenProvider.Token);
             await Task.Delay(400);
             Dispose();
         }
 
         public async Task SoftLogout()
         {
-            await _identityServer.Logout(_authTokenProvider.Token);
+            //await _identityServer.Logout(_authTokenProvider.Token);
             _authTokenProvider.Clear();
             await Task.Delay(400);
         }
