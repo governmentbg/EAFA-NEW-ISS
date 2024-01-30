@@ -51,7 +51,6 @@ export class ChangeUserDataComponent implements OnInit, AfterViewInit, IDialogCo
     public changeUserDataForm!: FormGroup;
 
     private userModel!: ChangeUserDataDTO;
-
     private userService!: UsersService;
 
     private readonly nomenclaturesService: CommonNomenclatures;
@@ -98,7 +97,7 @@ export class ChangeUserDataComponent implements OnInit, AfterViewInit, IDialogCo
         });
     }
 
-    public setData(data: { userId: number, userMustChangePassword: boolean }, wrapperData: DialogWrapperData): void {
+    public setData(data: { userId: number, userMustChangePassword: boolean; }, wrapperData: DialogWrapperData): void {
         this.userMustChangePassword = data.userMustChangePassword;
 
         if (this.userMustChangePassword) {
@@ -125,6 +124,19 @@ export class ChangeUserDataComponent implements OnInit, AfterViewInit, IDialogCo
             this.validityCheckerGroup.validate();
 
             if (this.changeUserDataForm.valid) {
+                if (this.userMustChangePassword === false
+                    && this.userModel.email !== this.changeUserDataForm.get('basicDataControl')!.value.email
+                ) {
+                    this.userMustChangePassword = true;
+                    this.setPasswordFieldsValidators();
+                    setTimeout(() => {
+                        this.changeUserDataForm.markAllAsTouched();
+                        this.changeUserDataForm.updateValueAndValidity({ emitEvent: false });
+                        this.validityCheckerGroup.validate();
+                    }, 1);
+
+                    return;
+                }
                 this.userModel = this.fillModel(this.changeUserDataForm);
 
                 this.userService.updateUserData(this.userModel).subscribe({
@@ -191,7 +203,7 @@ export class ChangeUserDataComponent implements OnInit, AfterViewInit, IDialogCo
                     this.changeUserDataForm.updateValueAndValidity({ emitEvent: false });
                 }
             }
-        })
+        });
     }
 
     public deleteUserLegal(userLegal: GridRow<ChangeUserLegalDTO>): void {
@@ -300,7 +312,7 @@ export class ChangeUserDataComponent implements OnInit, AfterViewInit, IDialogCo
             }
 
             return null;
-        }
+        };
     }
 
     private setUserLegalMissingProperty(): void {

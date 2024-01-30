@@ -1,19 +1,19 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
-import { UnregisteredPersonDTO } from './UnregisteredPersonDTO';
+import { UnregisteredPersonDTO } from './UnregisteredPersonDTO'; 
 
 export class InspectorDTO extends UnregisteredPersonDTO {
     public constructor(obj?: Partial<InspectorDTO>) {
         if (obj != undefined) {
             super(obj as UnregisteredPersonDTO);
             Object.assign(this, obj);
-        }
+        } 
         else {
             super();
         }
     }
-
+  
     @StrictlyTyped(String)
     public cardNum?: string;
 

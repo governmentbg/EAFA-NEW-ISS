@@ -4544,6 +4544,7 @@
         'log-books-has-overlapping-ranges-error': 'Има дневници с невалидни/припокриващи се диапазони',
         'more-than-one-active-log-book-present-warn': 'Има повече от един активен хартиен дневник от еднакъв тип',
         'more-than-one-active-online-log-book-present-error': 'Към записа не може да има повече от един активен онлайн дневник от еднакъв тип',
+        'more-than-one-active-ship-log-book-present-error': 'Към записа не може да има повече от един активен риболовен дневник',
         'log-books-for-renewal-need-attention': 'Имате дневници от предишни удостоверения, които очакват потребителско действие',
         'edit-log-book': 'Редакция на дневник',
         'delete-log-book': 'Изтриване на дневник',

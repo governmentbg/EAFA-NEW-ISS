@@ -13,11 +13,13 @@ export class AuthRedirectComponent implements OnInit {
     private securityService!: ISecurityService;
 
     public constructor(router: Router, @Inject(SECURITY_SERVICE_TOKEN) securityService: ISecurityService) {
+        
         this.router = router;
         this.securityService = securityService;
     }
 
     public async ngOnInit(): Promise<void> {
+        
         const path: string = await this.securityService.getUserRedirectPath();
         const skip: boolean = this.router.url === '/';
         this.router.navigate([path], { skipLocationChange: skip });

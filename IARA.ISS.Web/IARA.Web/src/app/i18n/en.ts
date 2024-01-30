@@ -4485,6 +4485,7 @@
         'log-books-has-overlapping-ranges-error': 'There are log books with invalid/overlapping page ranges',
         'more-than-one-active-log-book-present-warn': 'There is more than one active paper log book of the same type',
         'more-than-one-active-online-log-book-present-error': 'There must be only one active online log book of the same type',
+        'more-than-one-active-ship-log-book-present-error': 'There must be only one active ship log book',
         'edit-log-book': 'Edit log book',
         'delete-log-book': 'Delete log book',
         'cannot-delete-log-book-with-pages': 'Cannot delete a log book with related pages',

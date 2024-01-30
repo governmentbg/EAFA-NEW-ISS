@@ -38,7 +38,7 @@ import { RequestProperties } from '@app/shared/services/request-properties';
 import { SystemParametersService } from '@app/services/common-app/system-parameters.service';
 import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
-import { TLError } from '../../../../../shared/components/input-controls/models/tl-error.model';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 
 
 @Component({
@@ -345,13 +345,13 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                             if (this.maxNumberOfLogBookPages !== null && this.maxNumberOfLogBookPages !== undefined) {
                                 this.maxEndPageNumber = Number(value) + Number(this.maxNumberOfLogBookPages);
                             }
+
+                            this.form.get('endPageNumberControl')!.updateValueAndValidity({ emitEvent: false });
+                            this.form.get('endPageNumberControl')!.markAsTouched();
                         }
                         else {
                             this.maxEndPageNumber = undefined;
                         }
-
-                        this.form.get('endPageNumberControl')!.updateValueAndValidity({ emitEvent: false });
-                        this.form.get('endPageNumberControl')!.markAsTouched();
                     }
                 });
             }
@@ -445,8 +445,11 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                     ) {
                         this.handleInvalidLogBookLicensePagesRangeError(error.messages[0], dialogClose);
                     }
+                    else if (error?.code === ErrorCode.MoreThanOneActiveShipLogBook) {
+                        this.handleMoreThanOneActiveLogBookError(true);
+                    }
                     else if (error?.code === ErrorCode.MoreThanOneActiveOnlineLogBook) {
-                        this.handleMoreThanOneActiveOnlineLogBookError();
+                        this.handleMoreThanOneActiveLogBookError();
                     }
                 }
             });
@@ -463,16 +466,22 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                     ) {
                         this.handleInvalidLogBookLicensePagesRangeError(error.messages[0], dialogClose);
                     }
+                    else if (error?.code === ErrorCode.MoreThanOneActiveShipLogBook) {
+                        this.handleMoreThanOneActiveLogBookError(true);
+                    }
                     else if (error?.code === ErrorCode.MoreThanOneActiveOnlineLogBook) {
-                        this.handleMoreThanOneActiveOnlineLogBookError();
+                        this.handleMoreThanOneActiveLogBookError();
                     }
                 }
             });
         }
     }
 
-    private handleMoreThanOneActiveOnlineLogBookError(): void {
-        const errorMsg: string = this.translate.getValue('catches-and-sales.more-than-one-active-online-log-book-present-error');
+    private handleMoreThanOneActiveLogBookError(isShipLogBook: boolean = false): void {
+        const errorMsg: string = isShipLogBook
+            ? this.translate.getValue('catches-and-sales.more-than-one-active-ship-log-book-present-error')
+            : this.translate.getValue('catches-and-sales.more-than-one-active-online-log-book-present-error');
+
         this.snackbar.open(errorMsg, undefined, {
             duration: RequestProperties.DEFAULT.showExceptionDurationErr,
             panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
@@ -589,7 +598,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
 
             this.form.setValidators([
                 EditLogBookComponent.endPageGreaterThanStartPageValidator,
-                this.permitLicensePageRangeValidator,
+                this.permitLicensePageRangeValidator(),
                 this.pageRangeNumberValidator()
             ]);
         }
@@ -829,7 +838,15 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
         this.form.setValidators([
             EditLogBookComponent.endPageGreaterThanStartPageValidator,
             this.pageRangeNumberValidator()
-        ])
+        ]);
+
+        if (this.logBookGroup === LogBookGroupsEnum.Ship) {
+            this.form.setValidators([
+                EditLogBookComponent.endPageGreaterThanStartPageValidator,
+                this.pageRangeNumberValidator(),
+                this.permitLicensePageRangeValidator()
+            ]);
+        }
 
         this.form.updateValueAndValidity({ emitEvent: false });
     }
@@ -952,6 +969,10 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             const permitLicenseEndPageNumber = Number(permitLicenseEndPageNumberControl.value);
 
             if (permitLicenseStartPageNumber >= startPageNumber && permitLicenseEndPageNumber <= endPageNumber) {
+                if (permitLicenseStartPageNumber > permitLicenseEndPageNumber) {
+                    return { permitLicensePageEndPageGreaterThanStartPage: true };
+                }
+
                 return null;
             }
 

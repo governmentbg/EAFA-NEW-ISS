@@ -79,6 +79,7 @@ export class NoAuthGuard implements CanActivate, CanActivateChild, CanLoad {
     private check(): Promise<boolean> {
         // Check the authentication status
         return this.securityService.isAuthenticated().then(authenticated => {
+            
             // If the user is authenticated...
             if (authenticated) {
                 // Redirect to the root

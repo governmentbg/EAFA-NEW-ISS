@@ -1,33 +1,55 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <sv:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
-             xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.LoginPage"
-             x:Class="IARA.Mobile.Insp.FlyoutPages.LoginPage.LoginPage"
-             x:DataType="local:LoginViewModel"
-             x:TypeArguments="local:LoginViewModel"
-             x:Name="page"
-             BackgroundColor="{StaticResource BackgroundColor}">
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.LoginPage"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.LoginPage.LoginPage"
+        x:DataType="local:LoginViewModel"
+        x:TypeArguments="local:LoginViewModel"
+        x:Name="page"
+        BackgroundColor="{StaticResource BackgroundColor}">
     <StackLayout VerticalOptions="Center">
+        <sv:HomeFrameView IsVisible="{Binding ShowLogInForm}">
+            <StackLayout HorizontalOptions="Center"
+                    WidthRequest="350"
+                    VerticalOptions="Center"
+                    Orientation="Vertical"
+                    Spacing="10">
+                <StackLayout Margin="0,10"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Start"
+                        Orientation="Horizontal"
+                        Spacing="0">
+                    <Image Margin="10,0"
+                            Source="iara_logo"
+                            HeightRequest="70" />
+                    <Label Text="IARA"
+                            LineBreakMode="WordWrap"
+                            VerticalOptions="Center"
+                            FontSize="20" />
+                </StackLayout>
+                <tl:TLEntry Title="Username" ValidState="{Binding UsernameState}" />
+                <tl:TLEntry Title="Password"
+                        ValidState="{Binding PasswordState}"
+                        IsPassword="True" />
+                <tl:TLCheckView Text="{rt:Translate RememberMe, Group=CommonOffline}" ValidState="{Binding RememberMeState}" />
+                <Button Text="LogIn" Command="{Binding LogIn}" />
+            </StackLayout>
+        </sv:HomeFrameView>
+
         <StackLayout HorizontalOptions="Center"
-                     VerticalOptions="Center"
-                     IsVisible="{Binding NoInternet}">
+                VerticalOptions="Center"
+                IsVisible="{Binding NoInternet}">
             <Label Text="Нямате връзка с интернет!" />
-            <Button Text="Опитайте отново"
-                    Command="{Binding Retry}" />
+            <Button Text="Опитайте отново" Command="{Binding Retry}" />
         </StackLayout>
         <StackLayout HorizontalOptions="Center"
-                     VerticalOptions="Center"
-                     IsVisible="{Binding NoServerConnection}">
+                VerticalOptions="Center"
+                IsVisible="{Binding NoServerConnection}">
             <Label Text="Проблем при връзка със сървъра." />
-            <Button Text="Опитайте отново"
-                    Command="{Binding Retry}" />
-        </StackLayout>
-        <StackLayout HorizontalOptions="Center"
-                     VerticalOptions="Center"
-                     IsVisible="{Binding BrowserClosed}">
-            <Button Text="Вход"
-                    Command="{Binding Retry}" />
+            <Button Text="Опитайте отново" Command="{Binding Retry}" />
         </StackLayout>
     </StackLayout>
 </sv:BasePage>

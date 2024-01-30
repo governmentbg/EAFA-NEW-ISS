@@ -47,6 +47,7 @@ import { FishingGearPingerStatusesEnum } from '@app/enums/fishing-gear-pinger-st
 import { PermitLicensesNomenclatureDTO } from '@app/models/generated/dtos/PermitLicensesNomenclatureDTO';
 import { WaterTypesEnum } from '@app/enums/water-types.enum';
 import { CommercialFishingValidationErrorsEnum } from '@app/enums/commercial-fishing-validation-errors.enum';
+import { ShipsUtils } from '@app/shared/utils/ships.utils';
 
 @Component({
     selector: 'edit-permit-license-fishing-gears',
@@ -279,7 +280,7 @@ export class EditPermitLicenseFishingGearsComponent implements OnInit, AfterView
 
             const shipId: number | undefined = this.model.shipId;
             if (shipId !== undefined && shipId !== null) {
-                const selectedShip: ShipNomenclatureDTO | undefined = this.ships.find(x => x.value === shipId);
+                const selectedShip: ShipNomenclatureDTO = ShipsUtils.get(this.ships, shipId);
                 this.shipId = shipId;
                 this.form.get('shipControl')!.setValue(selectedShip);
 
@@ -414,10 +415,12 @@ export class EditPermitLicenseFishingGearsComponent implements OnInit, AfterView
                     this.shipId = undefined;
 
                     if (!this.isPublicApp && !this.showOnlyRegiXData) {
-                        if (ship !== undefined && ship !== null && ship instanceof NomenclatureDTO) {
+                        const shipId: number | undefined = (ship as ShipNomenclatureDTO)?.value;
+
+                        if (shipId !== undefined && shipId !== null) {
                             this.noShipSelected = false;
-                            this.shipId = ship.value;
-                            this.getShipPermitLicenses(ship.value!);
+                            this.shipId = shipId;
+                            this.getShipPermitLicenses(shipId);
                         }
                         else {
                             this.permitLicenses = [];

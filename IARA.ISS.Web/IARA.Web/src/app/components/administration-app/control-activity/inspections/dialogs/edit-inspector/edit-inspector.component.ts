@@ -265,13 +265,11 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
     }
 
     private async onInspectorChanged(value: NomenclatureDTO<number> | undefined): Promise<void> {
-        if (value === null || value === undefined) {
-            return;
+        if (value !== undefined && value !== null && value.value !== undefined && value.value !== null) {
+            this.selectedInspector = await this.service.getInspector(value.value).toPromise();
+
+            this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === this.selectedInspector!.citizenshipId));
+            this.form.get('institutionControl')!.setValue(this.institutions.find(f => f.value === this.selectedInspector!.institutionId));
         }
-
-        this.selectedInspector = await this.service.getInspector(value.value!).toPromise();
-
-        this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === this.selectedInspector!.citizenshipId));
-        this.form.get('institutionControl')!.setValue(this.institutions.find(f => f.value === this.selectedInspector!.institutionId));
     }
 }

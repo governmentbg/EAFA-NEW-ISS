@@ -38,7 +38,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
      * @param state
      */
     public async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
-
+     
         let permissions: string[] | undefined = undefined;
 
         if (route.data != undefined && route.data.permissions != undefined && route.data.permissions.only != undefined) {
@@ -105,6 +105,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
             const hasPermision = await this.permissionsService.hasAnyWait(...permissions);
 
             if (!hasPermision) {
+                
                 const path = await this.securityService.getUserRedirectPath();
 
                 return this.router.navigate([path]).then(() => {
