@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { fuseConfig } from '@app/fuse-config';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig, FuseNavigation } from '@fuse/types';
 import { Subject } from 'rxjs';
@@ -11,7 +12,7 @@ import { takeUntil } from 'rxjs/operators';
     encapsulation: ViewEncapsulation.None
 })
 export class HorizontalLayout1Component implements OnInit, OnDestroy {
-    fuseConfig?: FuseConfig = undefined;
+    public fuseConfig: FuseConfig = fuseConfig;
     navigation: FuseNavigation[];
 
     // Private

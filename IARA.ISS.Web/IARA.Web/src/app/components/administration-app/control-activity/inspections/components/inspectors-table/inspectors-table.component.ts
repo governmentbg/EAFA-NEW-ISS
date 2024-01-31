@@ -28,15 +28,16 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
     @Output()
     public headInspectorChanged = new EventEmitter<string[]>();
 
+    public inspectors: InspectorTableModel[] = [];
+
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
 
-    public inspectors: InspectorTableModel[] = [];
+    private userId: number | undefined;
 
     private readonly translate: FuseTranslationLoaderService;
     private readonly confirmDialog: TLConfirmDialog;
     private readonly editEntryDialog: TLMatDialog<EditInspectorComponent>;
-    private readonly authService: SecurityService;
     private readonly service: InspectionsService;
 
     public constructor(
@@ -52,9 +53,8 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
         this.translate = translate;
         this.confirmDialog = confirmDialog;
         this.editEntryDialog = editEntryDialog;
-        this.authService = authService;
         this.service = service;
-
+        const currentUserId: number | undefined = authService.User?.userId;
         this.onMarkAsTouched.subscribe({
             next: () => {
                 this.control.updateValueAndValidity();
@@ -68,8 +68,6 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
 
     public writeValue(value: InspectorDuringInspectionDTO[]): void {
         if (value !== undefined && value !== null && value.length !== 0) {
-            const currentUserId: number | undefined = this.authService.User?.userId;
-
             const inspectors = value.map(f => new InspectorTableModel({
                 address: f.address,
                 cardNum: f.cardNum,
@@ -92,7 +90,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
                 id: f.id,
                 institution: this.institutions.find(s => s.value === f.institutionId)?.displayName,
                 isInCharge: f.isInCharge,
-                isCurrentUser: f.userId === currentUserId,
+                isCurrentUser: f.userId === this.userId,
                 isActive: f.isActive,
             }));
 
@@ -109,9 +107,11 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
                 if (this.inspectors.length === 0) {
                     return;
                 }
-
-                this.inspectors[0].isInCharge = true;
-                this.changeReportNumber(this.inspectors[0]);
+                else {
+                    this.inspectors[0].isInCharge = true;
+                    this.inspectors[0].userId = this.userId;
+                    this.changeReportNumber(this.inspectors[0]);
+                }
             });
         }
     }
@@ -253,11 +253,13 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
 
     private changeReportNumber(inspector: InspectorTableModel): void {
         if (!this.isDisabled) {
-            this.service.getNextReportNumber(inspector.userId!).subscribe({
-                next: (value) => {
-                    this.headInspectorChanged.emit([inspector.territoryCode!, inspector.cardNum!, value!.num]);
-                }
-            });
+            if (inspector.userId !== undefined && inspector.userId !== null) {
+                this.service.getNextReportNumber(inspector.userId).subscribe({
+                    next: (value) => {
+                        this.headInspectorChanged.emit([inspector.territoryCode!, inspector.cardNum!, value!.num]);
+                    }
+                });
+            }
         }
     }
 

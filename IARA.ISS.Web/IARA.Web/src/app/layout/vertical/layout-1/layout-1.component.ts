@@ -5,6 +5,8 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { Subject } from 'rxjs';
 import { takeUntil, pairwise, filter } from 'rxjs/operators';
+import { FuseConfig } from '@fuse/types';
+import { fuseConfig } from '@app/fuse-config';
 
 @Component({
     selector: 'vertical-layout-1',
@@ -13,7 +15,7 @@ import { takeUntil, pairwise, filter } from 'rxjs/operators';
     encapsulation: ViewEncapsulation.None
 })
 export class VerticalLayout1Component implements OnInit, OnDestroy {
-    fuseConfig: any;
+    public fuseConfig: FuseConfig = fuseConfig;
     navigation: any;
 
     public isUserRegistrationModulePage: boolean = false;

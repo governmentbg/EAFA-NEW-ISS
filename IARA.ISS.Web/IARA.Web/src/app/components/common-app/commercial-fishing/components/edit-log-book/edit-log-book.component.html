@@ -135,8 +135,8 @@
                     </tl-input>
                     <div fxFlex="33"></div>
                 </div>
-                <mat-error *ngIf="pagesRangeError">
-                    * {{ 'catches-and-sales.log-book-pages-range-invalid' | tlTranslate }}
+                <mat-error *ngIf="form.errors?.permitLicensePageEndPageGreaterThanStartPage">
+                    * {{ 'catches-and-sales.log-book-end-page-greater-than-start-page' | tlTranslate }}
                 </mat-error>
                 <mat-error *ngIf="form.errors?.permitLicensePageRangeInvalid">
                     * {{ 'catches-and-sales.log-book-permit-license-page-range-invalid' | tlTranslate }}

@@ -18,6 +18,7 @@ namespace IARA.Mobile.Insp.Application
         {
             services.AddTransient<IProfileTransaction, ProfileTransaction>();
             services.AddTransient<IStartupTransaction, StartupTransaction>();
+            services.AddTransient<IAuthenticationTransaction, AuthenticationTransaction>();
             services.AddTransient<ITranslationTransaction, TranslationTransaction>();
             services.AddTransient<INomenclatureTransaction, NomenclatureTransaction>();
             services.AddTransient<IInspectionsTransaction, InspectionsTransaction>();

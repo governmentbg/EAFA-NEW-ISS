@@ -41,6 +41,7 @@ import { SignInspectionComponent } from './dialogs/sign-inspection/sign-inspecti
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { InspectionDialogParamsModel } from './models/inspection-dialog-params.model';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { SecurityService } from '@app/services/common-app/security.service';
 
 @Component({
     selector: 'inspections-register',
@@ -54,6 +55,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     public reloadData: boolean = false;
 
     public isInspector: boolean = false;
+    public userId: number | undefined;
 
     public translate: FuseTranslationLoaderService;
     public form!: FormGroup;
@@ -101,9 +103,10 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         translate: FuseTranslationLoaderService,
         matDialog: MatDialog,
         confirmDialog: TLConfirmDialog,
-        permissions: PermissionsService,
         addDialog: TLMatDialog<InspectionSelectionComponent>,
-        signDialog: TLMatDialog<SignInspectionComponent>
+        signDialog: TLMatDialog<SignInspectionComponent>,
+        permissions: PermissionsService,
+        authService: SecurityService
     ) {
         this.service = service;
         this.nomenclatures = nomenclatures;
@@ -123,6 +126,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         this.canDownloadRecords = permissions.has(PermissionsEnum.InspectionDownload);
         this.canExportRecords = permissions.has(PermissionsEnum.InspectionExport);
         this.canReadAuanRecords = permissions.hasAny(PermissionsEnum.AuanRegisterReadAll, PermissionsEnum.AuanRegisterRead);
+        this.userId = authService.User!.userId!;
 
         this.buildForm();
     }

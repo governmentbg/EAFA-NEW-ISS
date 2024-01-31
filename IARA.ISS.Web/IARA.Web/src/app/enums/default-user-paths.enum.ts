@@ -1,5 +1,5 @@
 ﻿export enum DefaultUserPaths {
-    External = 'external',
+    External = 'news',
     Internal = '/dashboard',
     Unauthorized = 'account'
 }

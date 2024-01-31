@@ -74,7 +74,7 @@ export class SecurityService extends BaseSecurityService<string, UserAuthDTO> {
             }
         }
 
-        return DefaultUserPaths.Unauthorized;
+        return IS_PUBLIC_APP ? '/home' : DefaultUserPaths.Unauthorized;
     }
 
     public openUserModal(user: UserAuthDTO): boolean {

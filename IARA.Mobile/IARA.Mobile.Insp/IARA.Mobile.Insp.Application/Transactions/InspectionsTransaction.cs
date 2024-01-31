@@ -274,18 +274,24 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
                     Inspection MapInspectionDto(InspectionApiDto dto)
                     {
+                        int inspectionStateId = inspectionStates.Find(s => s.Code == dto.InspectionState.ToString()).Id;
+                        int inspectionTypeId = inspectionTypes.Find(s => s.Code == dto.InspectionType.ToString()).Id;
+                        IEnumerable<string> inspectionSubjects = string.IsNullOrEmpty(dto.InspectionSubjects)
+                            ? new List<string>()
+                            : dto.InspectionSubjects.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries).Distinct();
+
                         return new Inspection
                         {
                             Id = dto.Id,
                             InspectionState = dto.InspectionState,
-                            InspectionStateId = inspectionStates.Find(s => s.Code == dto.InspectionState.ToString()).Id,
+                            InspectionStateId = inspectionStateId,
                             InspectionType = dto.InspectionType,
-                            InspectionTypeId = inspectionTypes.Find(s => s.Code == dto.InspectionType.ToString()).Id,
+                            InspectionTypeId = inspectionTypeId,
                             IsLocal = false,
                             ReportNr = dto.ReportNumber,
                             StartDate = dto.StartDate,
                             SubmitType = dto.InspectionState == InspectionState.Draft ? SubmitType.Draft : SubmitType.Finish,
-                            InspectionSubjects = string.Join(", ", dto.InspectionSubjects.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries).Distinct()),
+                            InspectionSubjects = string.Join(", ", inspectionSubjects),
                             Inspectors = dto.Inspectors,
                             LastUpdatedDate = dto.LastUpdateDate,
                             CreatedByCurrentUser = dto.CreatedByCurrentUser,

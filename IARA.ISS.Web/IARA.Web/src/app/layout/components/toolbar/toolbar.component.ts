@@ -172,7 +172,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     }
 
     public login(): void {
-        //this.securityService.login();
+        this.router.navigate(['account']);
     }
 
     public goToMyProfile(): void {

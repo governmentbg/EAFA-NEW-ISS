@@ -228,14 +228,22 @@
                                             tooltipText="{{ 'inspections.view-inspection-dialog-title' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.data.isActive && row.data.inspectionState === inspectionStatesEnum.Draft && canEditRecords && (shipId === null || shipId === undefined) && isInspector"
+                            <tl-icon-button *ngIf="row.data.isActive  && row.data.inspectionState === inspectionStatesEnum.Draft
+                                                   && canEditRecords
+                                                   && (shipId === null || shipId === undefined)
+                                                   && isInspector
+                                                   && (row.data.createdByUserId === userId || canEditInspectionNumber)"
                                             icon="edit"
                                             (buttonClicked)="addEditEntry(row.data, false)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'inspections.edit-inspection-dialog-title' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.data.isActive && row.data.inspectionState === inspectionStatesEnum.Submitted && canEditRecords && (shipId === null || shipId === undefined) && isInspector"
+                            <tl-icon-button *ngIf="row.data.isActive && row.data.inspectionState === inspectionStatesEnum.Submitted
+                                                    && canEditRecords
+                                                    && (shipId === null || shipId === undefined)
+                                                    && isInspector
+                                                    && (row.data.createdByUserId === userId || canEditInspectionNumber)"
                                             icon="fa-signature"
                                             (buttonClicked)="signEntry(row.data)"
                                             iconClass="accent-color"

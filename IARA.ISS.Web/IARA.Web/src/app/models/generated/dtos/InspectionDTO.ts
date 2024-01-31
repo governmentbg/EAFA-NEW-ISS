@@ -1,7 +1,6 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
-import { AuanRegisterDTO } from './AuanRegisterDTO';
 import { InspectionTypesEnum } from '@app/enums/inspection-types.enum';
 import { InspectionStatesEnum } from '@app/enums/inspection-states.enum';
 
@@ -40,11 +39,11 @@ export class InspectionDTO {
     @StrictlyTyped(Date)
     public lastUpdateDate?: Date;
 
-    @StrictlyTyped(AuanRegisterDTO)
-    public auaNs?: AuanRegisterDTO[];
-
     @StrictlyTyped(Boolean)
     public createdByCurrentUser?: boolean;
+
+    @StrictlyTyped(Number)
+    public createdByUserId?: number;
 
     @StrictlyTyped(Boolean)
     public isActive?: boolean;

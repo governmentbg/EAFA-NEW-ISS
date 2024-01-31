@@ -20,7 +20,7 @@ import { FuseModule } from '@fuse/fuse.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { AccountModule } from './components/common-app/auth/account.module';
-import { ACCOUNT_ROUTES } from './components/common-app/auth/account.routing';
+import { ACCOUNT_ROUTES, GetAccountRoutes } from './components/common-app/auth/account.routing';
 import { IPermissionsService } from './components/common-app/auth/interfaces/permissions-service.interface';
 import { SecurityConfig } from './components/common-app/auth/interfaces/security-config.interface';
 import { IGenericSecurityService, ISecurityService } from './components/common-app/auth/interfaces/security-service.interface';
@@ -48,12 +48,14 @@ import { DateUtils } from './shared/utils/date.utils';
 import { TranslationUtils } from './shared/utils/translation-utils';
 
 
+const securityConfig: SecurityConfig = new SecurityConfig({
+    loginMethodName: 'SignIn'
+});
 
 
 const appRoutes: Routes = [
     {
         path: '',
-        pathMatch: 'full',
         component: AuthRedirectComponent,
     },
     {
@@ -61,20 +63,16 @@ const appRoutes: Routes = [
         component: OnlinePaymentPageComponent
     },
     {
-        path: 'account',
-        children: ACCOUNT_ROUTES
-    },
-    {
         path: 'administration',
         children: MainNavigation.getRoutes()
     },
     ...USER_REGISTRATION_ROUTES,
+    GetAccountRoutes(securityConfig),
     {
         path: '**',
         //redirectTo: 'landing-page'
         component: AuthRedirectComponent
-    },
-
+    }
 ];
 
 export function initializeApplication(translationLoad: FuseTranslationLoaderService,
@@ -122,6 +120,7 @@ export async function loadTranslationResources(translationLoad: FuseTranslationL
     //}
 }
 
+
 const routerConfig: ExtraOptions = {
     preloadingStrategy: NoPreloading,
     scrollPositionRestoration: 'enabled',
@@ -156,14 +155,17 @@ const routerConfig: ExtraOptions = {
         //PublicApplicationModule,
         //AdministrationApplicationModule,
         NgxPermissionsModule.forRoot(),
-        AccountModule.forRoot(SecurityService, RequestService, {
-            loginMethodName: 'SignIn',
-        } as SecurityConfig, FuseTranslationLoaderService, UsersService, PermissionsService),
+        AccountModule.forRoot(SecurityService,
+                              RequestService,
+                              securityConfig,
+                              FuseTranslationLoaderService,
+                              UsersService,
+                              PermissionsService),
         ...IARA_APPLICATION_MODULE
     ],
-    bootstrap: [
-        AppComponent
-    ],
+bootstrap: [
+    AppComponent
+],
     providers: [
         {
             provide: APP_INITIALIZER,

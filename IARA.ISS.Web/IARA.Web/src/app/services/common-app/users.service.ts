@@ -79,6 +79,13 @@ export class UsersService extends BaseUserService<string, UserAuthDTO> implement
         });
     }
 
+    public confirmEmail(token: string): Observable<void> {
+        const params = new HttpParams().append('token', token);
+        return this.requestService.get(this.securityConfig.baseRoute, this.securityConfig.userController, 'EmailConfirmation', {
+            httpParams: params
+        });
+    }
+
     public confirmEmailAndPassword(user: UserLoginDTO): Observable<boolean> {
 
         return this.requestService.post(this.securityConfig.baseRoute, this.securityConfig.userController, 'ConfirmEmailAndPassword', user, {
