@@ -14,6 +14,7 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { UsersService } from '@app/services/common-app/users.service';
+import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 
 @Component({
     selector: 'merge-profiles',
@@ -52,9 +53,10 @@ export class MergeProfilesComponent {
     }
 
     public deactivateOldAccount(): void {
-        this.userService.deactivateUserPasswordAccount(this.mergeProfilesForm.get('egnControl')!.value).subscribe({
+        const egnObject: EgnLncDTO = this.mergeProfilesForm.get('egnControl')!.value;
+        this.userService.deactivateUserPasswordAccount(egnObject.egnLnc!).subscribe({
             next: () => {
-                this.navigateToRegistrationPage();
+                this.navigateToHomePage();
             }
         });
     }

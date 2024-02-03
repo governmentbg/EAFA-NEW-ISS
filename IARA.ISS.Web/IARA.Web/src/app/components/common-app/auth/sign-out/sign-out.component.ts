@@ -6,6 +6,7 @@ import { Subject, Subscription, timer } from 'rxjs';
 import { finalize, takeUntil, takeWhile, tap } from 'rxjs/operators';
 import { SECURITY_SERVICE_TOKEN } from '../di/auth-di.tokens';
 import { ISecurityService } from '../interfaces/security-service.interface';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
 
 @Component({
@@ -15,11 +16,8 @@ import { ISecurityService } from '../interfaces/security-service.interface';
     encapsulation: ViewEncapsulation.None
 })
 export class AuthSignOutComponent implements OnInit, OnDestroy {
-    countdown: number = 5;
-    countdownMapping: any = {
-        '=1': '# секунда',
-        'other': '# секунди'
-    };
+    public countdown: number = 5;
+    public countdownMapping: any;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -30,10 +28,17 @@ export class AuthSignOutComponent implements OnInit, OnDestroy {
 
     public constructor(@Inject(SECURITY_SERVICE_TOKEN) securityService: ISecurityService,
         router: Router,
-        fuseConfigService: FuseConfigService) {
+        fuseConfigService: FuseConfigService,
+        translateService: FuseTranslationLoaderService) {
         this.securityService = securityService;
         this.fuseConfigService = fuseConfigService;
         this.router = router;
+
+        this.countdownMapping =
+        {
+            '=1': `# ${translateService.getValue('common.second')}`,
+            'other': `# ${translateService.getValue('common.seconds')}`
+        }
     }
 
     public ngOnInit(): void {

@@ -26,6 +26,14 @@ export class UsersService extends BaseUserService<string, UserAuthDTO> implement
         return this.requestService.get(this.securityConfig.baseRoute, this.securityConfig.userController, 'GetAllUserData');
     }
 
+    public getUserPhoto(id: number): Observable<string> {
+        const params = new HttpParams().append('id', id.toString());
+        return this.requestService.get(this.securityConfig.baseRoute, this.securityConfig.userController, 'GetUserPhoto', {
+            httpParams: params,
+            responseType: 'text',
+        });
+    }
+
     public changeUserPassword(data: ChangeUserPasswordModel): Observable<void> {
         return this.requestService.post(this.securityConfig.baseRoute, this.securityConfig.userController, 'ChangePassword', data);
     }

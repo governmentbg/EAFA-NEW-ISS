@@ -9,7 +9,6 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { MyProfileDTO } from '@app/models/generated/dtos/MyProfileDTO';
 import { PersonDocumentDTO } from '@app/models/generated/dtos/PersonDocumentDTO';
 import { RoleDTO } from '@app/models/generated/dtos/RoleDTO';
-import { UserAuthDTO } from '@app/models/generated/dtos/UserAuthDTO';
 import { UserLegalDTO } from '@app/models/generated/dtos/UserLegalDTO';
 import { UserNewsDistrictSubscriptionDTO } from '@app/models/generated/dtos/UserNewsDistrictSubscriptionDTO';
 import { UserPasswordDTO } from '@app/models/generated/dtos/UserPasswordDTO';
