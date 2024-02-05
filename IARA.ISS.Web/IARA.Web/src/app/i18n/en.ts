@@ -21,7 +21,7 @@
         'horizontal-layout-1': 'horizontal layout #1',
         'vetical-layout-1': 'vertical layout #1',
         'vetical-layout-2': 'vertical layout #2',
-        'vetical-layout-3': 'vertial laytout #3',
+        'vetical-layout-3': 'vertical layout #3',
         'layout-width': 'layout width',
         'full-width': 'full width',
         'boxed-like': 'boxed',
@@ -41,10 +41,12 @@
         'below-fixed': 'below fixed',
         'use-different-background-color': 'use custom background color',
         'background-color': 'background color',
-        'footer': 'Тази Информационно-статистическа система е създадена по проект BG14MFOP001-3.001-0026'
-            + '„Разширяване на програмния обхват и надграждане на Информационно-статистическата система ИАРА,'
-            + 'съгласно национални и европейски изисквания, както и въвеждане на електронни административни услуги“'
-            + ' процедура BG14MFOP001-3.001 „Контрол и изпълнение“ по ПМДР 2014-2020',
+        'footer': 'This Information and Statistics System was created under'
+            + ' project BG14MFOP001-3.001-0026 "Expansion of the program scope'
+            + ' and upgrade of the Information and Statistics System IARA,'
+            + ' according to national and European requirements, as well as'
+            + ' introduction of electronic administrative services" procedure'
+            + ' BG14MFOP001-3.001 "Control and implementation " under PMF 2014-2020',
         'color': 'color',
         'side-panel': 'side panel',
         'variant': 'variant',
@@ -673,6 +675,7 @@
         'mobile-devices-mat-card-title-label': 'Mobile devices',
         'mobile-devices-save-button-tooltip': 'Save',
         'mobile-devices-undo-button-tooltip': 'Undo',
+        'unique-mobile-device-imei-error': 'The imei of the mobile devices should be unique',
         'change-password-email-sent': 'Successfully sent password reset email',
         'impersonate-user': 'Impersonate user',
         'change-user-status': 'Make this user internal',
@@ -1506,6 +1509,7 @@
         'capacity-certificates': 'Capacity certificates register',
         'fishing-associations': 'Fishing association members',
         'fishing-tickets': 'Fishing tickets',
+        'online-fishing-tickets': 'Online fishing tickets',
         'inspected-people': 'Inspected people',
         'log-books': 'Log books',
         'permit-licenses': 'Permit licenses register',
@@ -2761,6 +2765,7 @@
         'permit-year': 'Permit license year',
         'confirm-need-for-corrections': 'Return for corrections',
         'market-catch-at-least-one-catch-error': 'At least one catch measure needed',
+        'permit-license-nomenclature-captain': 'Captain',
 
         'add-catch-ship-dialog-title': 'Add ship',
         'edit-catch-ship-dialog-title': 'Edit ship',
@@ -3893,6 +3898,7 @@
         'show-only-existing-pages-no': 'Only log books with no pages',
         'show-only-existing-pages-all': 'All log books',
         'ship': 'Ship',
+        'aquaculture-facility-holder': 'Aquaculture holder',
         'aquaculture-facility': 'Aquaculture facility',
         'registered-buyer': 'Registered buyer',
         'owner-egn-eik': 'not registered buyer PIN/UIC',

@@ -24,6 +24,7 @@ export class CatchesAndSalesAdministrationFilters extends BaseRequestModel {
     public aquacultureId: number | undefined;
     public registeredBuyerId: number | undefined;
     public ownerEngEik: string | undefined;
+    public aquacultureHolderName: string | undefined;
     public logBookStatusIds: number[] | undefined;
     public logBookValidityStartDate: Date | undefined;
     public logBookValidityEndDate: Date | undefined;

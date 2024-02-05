@@ -58,9 +58,9 @@ export class EditFluxAcdrRequestsComponent implements IDialogComponent {
     }
 
     private fillModel(): void {
-        const fromDate: Date = this.monthControl.value;
+        const date: Date = this.monthControl.value;
 
-        this.model.fromDate = fromDate;
-        this.model.toDate = new Date(fromDate.getFullYear(), fromDate.getMonth() + 1, 0);
+        this.model.month = date.getMonth() + 1;
+        this.model.year = date.getFullYear();
     }
 }

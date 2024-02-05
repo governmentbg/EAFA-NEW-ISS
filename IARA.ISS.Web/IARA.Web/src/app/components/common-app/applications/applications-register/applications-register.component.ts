@@ -181,6 +181,12 @@ export class ApplicationsRegisterComponent<T extends IDialogComponent> implement
 
                 }
             }
+
+            const typeId: number | undefined = Number(window.history.state?.typeId);
+
+            if (!CommonUtils.isNumberNullOrNaN(typeId)) {
+                this.grid.advancedFilters = new ApplicationsRegisterFilters({ applicationTypeId: typeId, showOnlyNotFinished: true });
+            }
         }
 
         this.grid.refreshData();

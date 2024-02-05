@@ -30,6 +30,7 @@
                                 [validityChecker]="form">
                 <edit-fishing-gear formControlName="inspectedGearControl"
                                    [isInspected]="true"
+                                   [isNewInspectedGear]="isAddInspectedGear"
                                    [filterTypes]="false"
                                    [listenToService]="true">
                 </edit-fishing-gear>
@@ -53,6 +54,7 @@
                             [validityChecker]="form">
             <edit-fishing-gear formControlName="inspectedGearControl"
                                [isInspected]="true"
+                               [isNewInspectedGear]="true"
                                [filterTypes]="false"
                                [listenToService]="true"
                                (selectedMark)="onMarkSelected($event)">

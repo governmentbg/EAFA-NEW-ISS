@@ -39,6 +39,7 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
     public isRegistered: boolean = false;
     public canEditInspectedGear: boolean = true;
     public hasAttachedAppliances: boolean = false;
+    public isAddInspectedGear: boolean = false;
 
     private readOnly: boolean = false;
 
@@ -119,7 +120,20 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
 
     public onMarkSelected(mark: FishingGearMarkDTO): void {
         this.gearManipulationService.markAdded.emit(mark);
-        this.inspectedMarks.push(mark);
+        const inspectedGear: FishingGearDTO = this.form.get('inspectedGearControl')!.value;
+
+        if (inspectedGear !== undefined && inspectedGear !== null) {
+            if (inspectedGear.marks !== undefined && inspectedGear.marks !== null && inspectedGear.marks.length > 0) {
+                inspectedGear.marks.push(mark);
+            }
+            else {
+                inspectedGear.marks = [mark];
+            }
+
+            this.inspectedMarks = inspectedGear.marks;
+        }
+
+        this.form.get('inspectedGearControl')!.setValue(inspectedGear);
     }
 
     protected buildForm(): void {
@@ -142,10 +156,12 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
                         let gear: FishingGearDTO = new FishingGearDTO();
 
                         if (this.model.gear.inspectedFishingGear !== null && this.model.gear.inspectedFishingGear !== undefined) {
+                            this.isAddInspectedGear = false;
                             gear = this.remap(this.model.gear.inspectedFishingGear);
                             this.inspectedMarks = gear.marks ?? [];
                         }
                         else {
+                            this.isAddInspectedGear = true;
                             gear = this.remap(this.model.gear.permittedFishingGear);
                             gear.id = undefined;
                         }
@@ -153,6 +169,8 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
                         this.form.get('inspectedGearControl')!.setValue(gear);
                     }, 100);
                 }
+
+                this.form.get('permittedGearControl')!.updateValueAndValidity({ emitEvent: false });
             }
         });
 
@@ -167,8 +185,9 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
 
     protected fillForm(): void {
         setTimeout(() => {
-            this.form.get('permittedGearControl')!.setValue(this.remap(this.model.gear.permittedFishingGear));
-        }, 100);
+            const gear: FishingGearDTO = this.remap(this.model.gear.permittedFishingGear);
+            this.form.get('permittedGearControl')!.setValue(gear);
+        }, 500);
 
         const checkValue = this.mapToCheckValue(this.model.gear.checkInspectedMatchingRegisteredGear);
         if (checkValue !== null && checkValue !== undefined) {
@@ -218,7 +237,7 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
                     gear = this.remap(this.model.gear.permittedFishingGear);
                     gear.id = undefined;
                 }
-               
+
                 this.form.get('inspectedGearControl')!.setValue(gear);
             }, 500);
         }
@@ -331,7 +350,7 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
             cordThickness: gear.cordThickness,
             count: gear.count,
             description: gear.description,
-            hasPingers: gear.hasPingers,
+            hasPingers: gear.hasPingers ?? false,
             height: gear.height,
             hookCount: gear.hookCount,
             houseLength: gear.houseLength,

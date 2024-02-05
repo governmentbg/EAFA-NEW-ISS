@@ -1,16 +1,20 @@
 ﻿<div fxLayout="column" fxLayoutGap="1em" fxFlexFill fxLayoutAlign="space-between stretch">
     <tl-card>
         <tl-card-title>{{ matCardTitleLabel }}</tl-card-title>
-        <tl-card-content>
+        <tl-card-content fxLayout="column" fxLayoutGap="1em">
             <tl-data-table fxFlexFill class="full-width-template"
                            [isRemote]="false"
                            [rows]="userDevices"
                            [showInactiveRecords]="false"
                            [inlineEditing]="true"
                            [showAddButton]="!readOnly"
+                           [recordsPerPage]="10"
+                           (addButtonClicked)="onAddRecord()"
+                           (activeRecordChanged)="onAddRecord()"
                            (recordChanged)="userDevicesChanged($event)">
                 <data-column columnName="{{ 'users-page.device-number' | tlTranslate }}"
                              propertyName="imei"
+                             [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                              [formGroup]="userMobileDevicesForm">
                 </data-column>
                 <data-column columnName="{{ 'users-page.description' | tlTranslate }}"

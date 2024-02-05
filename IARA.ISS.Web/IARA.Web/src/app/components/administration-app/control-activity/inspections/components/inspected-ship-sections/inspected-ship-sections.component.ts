@@ -1,4 +1,4 @@
-﻿import { Component, ElementRef, Input, OnChanges, OnInit, Self, SimpleChanges } from '@angular/core';
+﻿import { Component, Input, OnChanges, OnInit, Self, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
@@ -190,7 +190,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
 
             const ship: ShipWithPersonnelModel = this.mapModelToShipWithPersonnel(value);
             this.form.get('shipControl')!.setValue(ship);
-          
+
             this.form.get('permitLicensesControl')!.setValue(value.permitLicenses);
             this.form.get('permitsControl')!.setValue(value.permits);
             this.form.get('togglesControl')!.setValue(value.checks);
@@ -203,7 +203,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             this.permitIds = value.permitLicenses
                 ?.filter(f => f.checkValue === InspectionToggleTypesEnum.Y || f.checkValue === InspectionToggleTypesEnum.N)
                 .map(f => f.permitLicenseId!) ?? [];
-
+            
             const checks = value.checks ?? [];
             const membership = checks.find(f => f.checkTypeId === this.opMembership!.value);
             const notice = checks.find(f => f.checkTypeId === this.preliminaryNotice!.value);
@@ -266,43 +266,52 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
                 const fishingGears: FishingGearDTO[] = result[3];
 
                 if (permits.length > 0) {
-                    this.form.get('permitsControl')!.setValue(permits.map(f => new InspectionPermitDTO({
-                        from: f.validFrom,
-                        to: f.validTo,
-                        permitNumber: f.permitNumber,
-                        permitLicenseId: f.id,
-                        typeId: f.typeId,
-                        typeName: f.typeName,
-                    })));
+                    const shipPermits: InspectionPermitDTO[] = permits.map(x => new InspectionPermitDTO({
+                        from: x.validFrom,
+                        to: x.validTo,
+                        permitNumber: x.permitNumber,
+                        permitLicenseId: x.value,
+                        typeId: x.typeId,
+                        typeName: x.typeName
+                    }));
+
+                    this.form.get('permitsControl')!.setValue(shipPermits);
                 }
 
                 if (permitLicenses.length > 0) {
-                    this.form.get('permitLicensesControl')!.setValue(permitLicenses.map(f => new InspectionPermitDTO({
-                        from: f.validFrom,
-                        to: f.validTo,
-                        licenseNumber: f.licenseNumber,
-                        permitNumber: f.permitNumber,
-                        permitLicenseId: f.id,
-                        typeId: f.typeId,
-                        typeName: f.typeName,
-                    })));
+                    const shipPermitLicenses: InspectionPermitDTO[] = permitLicenses.map(x => new InspectionPermitDTO({
+                        from: x.validFrom,
+                        to: x.validTo,
+                        licenseNumber: x.licenseNumber,
+                        permitNumber: x.permitNumber,
+                        permitLicenseId: x.value,
+                        typeId: x.typeId,
+                        typeName: x.typeName
+                    }));
+                    
+                    this.permitIds = shipPermitLicenses.filter(x => x.permitLicenseId !== undefined && x.permitLicenseId !== null).map(x => x.permitLicenseId!);
+                    this.form.get('permitLicensesControl')!.setValue(shipPermitLicenses);
                 }
 
                 if (logBooks.length > 0) {
-                    this.form.get('logBooksControl')!.setValue(logBooks.map(f => new InspectionLogBookDTO({
-                        endPage: f.endPage,
-                        from: f.issuedOn,
-                        logBookId: f.id,
-                        number: f.number,
-                        pages: f.pages,
-                        startPage: f.startPage,
-                    })));
+                    const shipLogBooks: InspectionShipLogBookDTO[] = logBooks.map(x => new InspectionLogBookDTO({
+                        endPage: x.endPage,
+                        from: x.issuedOn,
+                        logBookId: x.id,
+                        number: x.number,
+                        pages: x.pages,
+                        startPage: x.startPage
+                    }));
+
+                    this.form.get('logBooksControl')!.setValue(shipLogBooks);
                 }
 
                 if (fishingGears.length > 0) {
-                    this.form.get('fishingGearsControl')!.setValue(fishingGears.map(f => new InspectedFishingGearDTO({
-                        permittedFishingGear: f,
-                    })));
+                    const permitFishingGears: InspectedFishingGearDTO[] = fishingGears.map(x => new InspectedFishingGearDTO({
+                        permittedFishingGear: x
+                    }));
+                    
+                    this.form.get('fishingGearsControl')!.setValue(permitFishingGears);
                 }
             }
         }

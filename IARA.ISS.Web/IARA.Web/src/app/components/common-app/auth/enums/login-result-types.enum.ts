@@ -1,6 +1,6 @@
 export enum LoginResultTypes {
-    Success = 0,
-    Fail = 1,
+    Fail = 0,
+    Success = 1,
     Locked = 2,
     EmailNotConfirmed = 4,
     Blocked = 8,

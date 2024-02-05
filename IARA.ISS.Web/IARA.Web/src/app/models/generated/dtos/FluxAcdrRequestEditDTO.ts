@@ -7,9 +7,9 @@ export class FluxAcdrRequestEditDTO {
         Object.assign(this, obj);
     }
 
-    @StrictlyTyped(Date)
-    public fromDate?: Date;
+    @StrictlyTyped(Number)
+    public month?: number;
 
-    @StrictlyTyped(Date)
-    public toDate?: Date;
+    @StrictlyTyped(Number)
+    public year?: number;
 }

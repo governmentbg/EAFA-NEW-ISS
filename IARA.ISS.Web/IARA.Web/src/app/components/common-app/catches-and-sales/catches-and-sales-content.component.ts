@@ -336,13 +336,23 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
                 if (rows !== null && rows !== undefined && rows.length > 0) {
                     if (this.systemProperties.addLogBookPagesDaysTolerance) {
                         for (const row of rows) {
-                            if (row.suspendedPermitLicenseValidTo !== undefined && row.suspendedPermitLicenseValidTo !== null) {
-                                const now: Date = new Date();
-                                const days: number = Math.round((now.getTime() - new Date(row.suspendedPermitLicenseValidTo).getTime()) / (1000 * 3600 * 24));
-                                row.allowNewLogBookPages = days < this.systemProperties.addLogBookPagesDaysTolerance;
+                            if (row.isLogBookFinished || row.isLogBookSuspended) {
+                                if (row.suspendedPermitLicenseValidTo !== undefined && row.suspendedPermitLicenseValidTo !== null) {
+                                    const now: Date = new Date();
+                                    const days: number = Math.round((now.getTime() - new Date(row.suspendedPermitLicenseValidTo).getTime()) / (1000 * 3600 * 24));
+                                    row.allowNewLogBookPages = days < this.systemProperties.addLogBookPagesDaysTolerance;
+                                }
+                                else if (row.finishDate !== undefined && row.finishDate !== null) {
+                                    const now: Date = new Date();
+                                    const days: number = Math.round((now.getTime() - new Date(row.finishDate).getTime()) / (1000 * 3600 * 24));
+                                    row.allowNewLogBookPages = days < this.systemProperties.addLogBookPagesDaysTolerance;
+                                }
+                                else {
+                                    row.allowNewLogBookPages = false;
+                                }
                             }
                             else {
-                                row.allowNewLogBookPages = true;
+                                row.allowNewLogBookPages = false;
                             }
                         }
                     }
@@ -1143,6 +1153,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         if (!this.isPublicApp) {
             this.formGroup.addControl('shipControl', new FormControl());
             this.formGroup.addControl('aquacultureFacilityControl', new FormControl());
+            this.formGroup.addControl('aquacultureHolderNameControl', new FormControl());
             this.formGroup.addControl('registeredBuyerControl', new FormControl());
             this.formGroup.addControl('ownerEgnEikControl', new FormControl());
         }
@@ -1192,6 +1203,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
 
                 if (this.canReadAquacultureLogBookRecords) {
                     result.aquacultureId = filters.getValue('aquacultureFacilityControl');
+                    result.aquacultureHolderName = filters.getValue('aquacultureHolderNameControl');
                 }
 
                 if (this.canReadFirstSaleLogBookRecords || this.canReadAdmissionLogBookRecords || this.canReadTransportationLogBookRecords) {

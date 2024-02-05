@@ -11,11 +11,9 @@ import { ApplicationRegiXCheckDTO } from '@app/models/generated/dtos/Application
 import { ICommercialFishingService } from '@app/interfaces/common-app/commercial-fishing.interface';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { IApplicationsService } from '@app/interfaces/administration-app/applications.interface';
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { ApplicationSubmittedByRegixDataDTO } from '@app/models/generated/dtos/ApplicationSubmittedByRegixDataDTO';
 import { ApplicationSubmittedForRegixDataDTO } from '@app/models/generated/dtos/ApplicationSubmittedForRegixDataDTO';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { PermitLicenseFishingGearsApplicationDTO } from '@app/models/generated/dtos/PermitLicenseFishingGearsApplicationDTO';
 import { ApplicationContentDTO } from '@app/models/generated/dtos/ApplicationContentDTO';
 import { CommonUtils } from '@app/shared/utils/common.utils';

@@ -413,12 +413,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                 const permits = await this.service.getShipPermitLicenses(value.shipId).toPromise();
 
                 if (permits !== null && permits !== undefined) {
-                    this.permits = permits.map(f => new NomenclatureDTO({
-                        value: f.id,
-                        displayName: f.licenseNumber + ' (' + f.typeName + ')',
-                        code: f.typeName,
-                        isActive: true,
-                    }));
+                    this.permits = permits;
                 }
                 else {
                     this.permits = [];
@@ -462,13 +457,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             const permits = await this.service.getPoundNetPermitLicenses(value.value!).toPromise();
 
             if (permits !== null && permits !== undefined) {
-                this.permits = permits.map(f => new NomenclatureDTO({
-                    value: f.id,
-                    displayName: f.licenseNumber + ' (' + f.typeName + ')',
-                    code: f.typeName,
-                    isActive: true,
-                }));
-
+                this.permits = permits;
                 this.selectedPermitIds = [value.value!];
             }
             else {

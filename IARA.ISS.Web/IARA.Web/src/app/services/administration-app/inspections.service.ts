@@ -28,6 +28,8 @@ import { BaseAuditService } from '../common-app/base-audit.service';
 import { InspectorDuringInspectionDTO } from '@app/models/generated/dtos/InspectorDuringInspectionDTO';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { InspectionLogBookPageNomenclatureDTO } from '@app/models/generated/dtos/InspectionLogBookPageNomenclatureDTO';
+import { map } from 'rxjs/operators';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
 
 @Injectable({
@@ -35,9 +37,11 @@ import { InspectionLogBookPageNomenclatureDTO } from '@app/models/generated/dtos
 })
 export class InspectionsService extends BaseAuditService {
     protected controller: string = 'Inspections';
+    private translate: FuseTranslationLoaderService;
 
-    public constructor(requestService: RequestService) {
+    public constructor(requestService: RequestService, translate: FuseTranslationLoaderService) {
         super(requestService, AreaTypes.Administrative);
+        this.translate = translate;
     }
 
     public getIsInspector(): Observable<boolean> {
@@ -119,28 +123,40 @@ export class InspectionsService extends BaseAuditService {
     public getShipPermitLicenses(shipId: number): Observable<InspectionPermitLicenseDTO[]> {
         const params = new HttpParams().append('shipId', shipId.toString());
 
-        return this.requestService.get(this.area, this.controller, 'GetShipPermitLicenses', {
+        return this.requestService.get<InspectionPermitLicenseDTO[]>(this.area, this.controller, 'GetShipPermitLicenses', {
             httpParams: params,
             responseTypeCtr: InspectionPermitLicenseDTO,
-        });
+        }).pipe(map((licenses: InspectionPermitLicenseDTO[]) => {
+            this.setPermitLicensesDisplayNames(licenses);
+
+            return licenses;
+        }));
     }
 
     public getPoundNetPermitLicenses(poundNetId: number): Observable<InspectionPermitLicenseDTO[]> {
         const params = new HttpParams().append('poundNetId', poundNetId.toString());
 
-        return this.requestService.get(this.area, this.controller, 'GetPoundNetPermitLicenses', {
+        return this.requestService.get<InspectionPermitLicenseDTO[]>(this.area, this.controller, 'GetPoundNetPermitLicenses', {
             httpParams: params,
             responseTypeCtr: InspectionPermitLicenseDTO,
-        });
+        }).pipe(map((licenses: InspectionPermitLicenseDTO[]) => {
+            this.setPermitLicensesDisplayNames(licenses);
+
+            return licenses;
+        }));
     }
 
     public getShipPermits(shipId: number): Observable<InspectionPermitLicenseDTO[]> {
         const params = new HttpParams().append('shipId', shipId.toString());
 
-        return this.requestService.get(this.area, this.controller, 'GetShipPermits', {
+        return this.requestService.get<InspectionPermitLicenseDTO[]>(this.area, this.controller, 'GetShipPermits', {
             httpParams: params,
             responseTypeCtr: InspectionPermitLicenseDTO,
-        });
+        }).pipe(map((licenses: InspectionPermitLicenseDTO[]) => {
+            this.setPermitLicensesDisplayNames(licenses);
+
+            return licenses;
+        }));
     }
 
     public getShipLogBooks(shipId: number): Observable<InspectionShipLogBookDTO[]> {
@@ -376,5 +392,18 @@ export class InspectionsService extends BaseAuditService {
             httpParams: params,
             responseTypeCtr: SimpleAuditDTO
         });
+    }
+
+    private setPermitLicensesDisplayNames(licenses: InspectionPermitLicenseDTO[]): void {
+        for (const license of licenses) {
+            const captain: string = this.translate.getValue('inspections.permit-license-nomenclature-captain');
+
+            if (license.displayName !== null && license.displayName !== undefined && license.displayName!.length > 0) {
+                license.displayName += ` | ${license.waterType} | ${captain}: ${license.captainName}`;
+            }
+            else {
+                license.displayName = `${license.waterType} | ${captain}: ${license.captainName}`;
+            }
+        }
     }
 }
