@@ -1,8 +1,9 @@
 ﻿
+
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 
-export class TypesCountReportDTO {
+export class TypesCountReportDTO { 
     public constructor(obj?: Partial<TypesCountReportDTO>) {
         Object.assign(this, obj);
     }
@@ -18,4 +19,7 @@ export class TypesCountReportDTO {
 
     @StrictlyTyped(Number)
     public count?: number;
+
+    @StrictlyTyped(Number)
+    public typeId?: number;
 }

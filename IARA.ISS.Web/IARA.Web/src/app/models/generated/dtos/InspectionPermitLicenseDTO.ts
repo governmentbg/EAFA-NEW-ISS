@@ -1,15 +1,19 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { NomenclatureDTO } from './GenericNomenclatureDTO'; 
 
-export class InspectionPermitLicenseDTO { 
+export class InspectionPermitLicenseDTO extends NomenclatureDTO<number> {
     public constructor(obj?: Partial<InspectionPermitLicenseDTO>) {
-        Object.assign(this, obj);
+        if (obj != undefined) {
+            super(obj as NomenclatureDTO<number>);
+            Object.assign(this, obj);
+        } 
+        else {
+            super();
+        }
     }
-
-    @StrictlyTyped(Number)
-    public id?: number;
-
+  
     @StrictlyTyped(String)
     public permitNumber?: string;
 
@@ -21,6 +25,12 @@ export class InspectionPermitLicenseDTO {
 
     @StrictlyTyped(Number)
     public typeId?: number;
+
+    @StrictlyTyped(String)
+    public waterType?: string;
+
+    @StrictlyTyped(String)
+    public captainName?: string;
 
     @StrictlyTyped(Date)
     public validFrom?: Date;

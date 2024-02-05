@@ -18,12 +18,12 @@
                              [formGroup]="permitsFormGroup"
                              columnName="{{ 'inspections.permit-number' | tlTranslate }}">
                 </data-column>
-                <data-column [flexRate]="0.2"
+                <data-column [flexRate]="0.3"
                              propertyName="typeName"
                              [formGroup]="permitsFormGroup"
                              columnName="{{ 'inspections.permit-type' | tlTranslate }}">
                 </data-column>
-                <data-template-column [flexRate]="0.2"
+                <data-template-column [flexRate]="0.3"
                                       columnName="{{ 'inspections.permit-valid-range' | tlTranslate }}">
                     <ng-template let-row="row"
                                  ngx-datatable-cell-template>
@@ -34,12 +34,12 @@
                         </div>
                     </ng-template>
                 </data-template-column>
-                <data-column [flexRate]="0.15"
+                <data-column [flexRate]="0.2"
                              propertyName="description"
                              [formGroup]="permitsFormGroup"
                              columnName="{{ 'inspections.permit-description' | tlTranslate }}">
                 </data-column>
-                <data-template-column [flexRate]="0.2"
+                <data-template-column [flexRate]="0.3"
                                       columnName="{{ 'inspections.permit-check' | tlTranslate }}">
                     <ng-template [formGroup]="permitsFormGroup"
                                  let-row="row"

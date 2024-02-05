@@ -241,12 +241,22 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
 
             if (!CommonUtils.isNullOrEmpty(ticketNum)) {
                 this.offlineGrid.advancedFilters = new RecreationalFishingTicketApplicationFilters({ ticketNum: ticketNum });
+                this.onlineGrid.advancedFilters = new RecreationalFishingTicketApplicationFilters({ ticketNum: ticketNum });
             }
 
             const personId: number | undefined = window.history.state?.id;
 
             if (!CommonUtils.isNullOrEmpty(personId)) {
                 this.offlineGrid.advancedFilters = new RecreationalFishingTicketApplicationFilters({ personId: personId });
+                this.onlineGrid.advancedFilters = new RecreationalFishingTicketApplicationFilters({ personId: personId });
+            }
+
+            const ticketTypeId: number | undefined = window.history.state?.ticketTypeId;
+
+            if (!CommonUtils.isNullOrEmpty(ticketTypeId)) {
+                const typeIds: number[] = [ticketTypeId!];
+                this.offlineGrid.advancedFilters = new RecreationalFishingTicketApplicationFilters({ typeIds: typeIds, showOnlyNotFinished: true });
+                this.onlineGrid.advancedFilters = new RecreationalFishingTicketApplicationFilters({ typeIds: typeIds, showOnlyNotFinished: true });
             }
         }
 

@@ -42,8 +42,8 @@
         'use-different-background-color': 'използване на различен цвят за фон',
         'background-color': 'цвят на фона',
         'footer': 'Тази Информационно-статистическа система е създадена по проект BG14MFOP001-3.001-0026'
-            + '„Разширяване на програмния обхват и надграждане на Информационно-статистическата система ИАРА,'
-            + 'съгласно национални и европейски изисквания, както и въвеждане на електронни административни услуги“'
+            + ' „Разширяване на програмния обхват и надграждане на Информационно-статистическата система ИАРА,'
+            + ' съгласно национални и европейски изисквания, както и въвеждане на електронни административни услуги“'
             + ' процедура BG14MFOP001-3.001 „Контрол и изпълнение“ по ПМДР 2014-2020',
         'color': 'цвят',
         'side-panel': 'страничен панел',
@@ -165,7 +165,7 @@
         'succ-updated-user': 'Успешно редактиран потребител',
         'succ-deleted-user': 'Успешно изтрит потребител',
         'succ-undo-delete-user': 'Успешно възобновен потребител',
-        'succ-updated-user-devices': 'Успешно редактирани устройтва на потребител',
+        'succ-updated-user-devices': 'Успешно редактирани устройства на потребител',
         'succ-user-made-internal': 'Потребителят е направен вътрешен',
         'succ-filed-in-application': 'Успешно входирано заявление',
         'succ-updated-appl-draft-content': 'Успешно обновена чернова на заявление',
@@ -255,7 +255,7 @@
         'documents': 'Документи',
         'reports': 'Справки',
         'report-definition': 'Дефиниция на справки',
-        'report-parameter-definition': 'Параметери за справки',
+        'report-parameter-definition': 'Параметри за справки',
         'cross-checks': 'Кръстосани проверки',
         'cross-checks-checks': 'Кръстосани проверки',
         'cross-check-results': 'Резултати от кръстосани проверки',
@@ -338,7 +338,7 @@
         'confirm-your-email': 'Потвърдете имейл адреса си',
         'an-email-will-be-send-to': 'В рамките на 15 минути ще Ви бъде изпратен имейл за потвърждение на',
         'check-your-email-to-confirm': 'Проверете входящата си поща и кликнете върху връзката „Потвърдете имейла ми“, за да потвърдите имейл адреса си.',
-        'go-back-to-login-page': 'Връщане към логин страницата',
+        'go-back-to-login-page': 'Връщане към входна страницата',
         'have-not-received-an-email': 'Не сте получили имейл? Натиснете',
         'here': 'тук',
         'for-resend-email': 'за повторно изпращане на имейл за потвърждение.',
@@ -347,12 +347,12 @@
     'successful-password-change': {
         'successful-password-change-small-title': 'Успешна смяна на парола',
         'you-will-be-navigated-to-login': 'След няколко секунди ще бъдете автоматично пренасочени към страницата за вход.',
-        'redirect-to-login': 'Пренасочване към логин'
+        'redirect-to-login': 'Пренасочване към вход'
     },
     'successful-email-confirmation': {
         'successful-email-confirmation-small-title': 'Успешно потвърден имейл',
         'you-will-be-navigated-to-login': 'След няколко секунди ще бъдете автоматично пренасочени към страницата за вход.',
-        'redirect-to-login': 'Пренасочване към логин',
+        'redirect-to-login': 'Пренасочване към вход',
         'failed-email-confirmation-small-title': 'Изтекъл ключ за активиране на профил',
         'resend-confirmation-email': 'Изпрати повторно имейл за потвърждение',
         'you-can-ask-for-new-activation-token': 'Можете да заявите нов ключ за активация на същия профил. Имейлът ще бъде изпратен на подадения от Вас имейл при регистрация.'
@@ -466,7 +466,7 @@
         'date-of-validity': 'Валидност',
         'permit-outings-count': 'Брой излети',
 
-        'permit-reasons': 'Основания за заявяване на рарешителното',
+        'permit-reasons': 'Основания за заявяване на разрешителното',
         'permit-reason': 'Основание за заявяване на разрешителното',
         'permit-legal-reasons': 'Основания за издаване',
         'permit-legal-reason': 'Основание за издаване',
@@ -670,6 +670,7 @@
         'mobile-devices-mat-card-title-label': 'Мобилни устройства',
         'mobile-devices-save-button-tooltip': 'Запази',
         'mobile-devices-undo-button-tooltip': 'Отказ',
+        'unique-mobile-device-imei-error': 'Устройството е вече въведено',
         'change-password-email-sent': 'Успешно изпратен имейл за смяна на парола',
         'impersonate-user': 'Симулирай потребител',
         'change-user-status': 'Направи вътрешен потребител',
@@ -1516,6 +1517,7 @@
         'fishing-associations': 'Членство в сдружения',
         'assoc-appl': 'Заявление за членство в сдружения',
         'fishing-tickets': 'Билети за любителски риболов',
+        'online-fishing-tickets': 'Електронни билети за любителски риболов',
         'inspected-people': 'Инспектирани хора',
         'log-books': 'Риболовни дневници',
         'permit-licenses': 'Удостоверения за стопански риболов',
@@ -2821,6 +2823,7 @@
         'permit-year': 'Година на УСР',
         'confirm-need-for-corrections': 'Върни за корекции',
         'market-catch-at-least-one-catch-error': 'Трябва да бъдат въведени данни за поне един улов',
+        'permit-license-nomenclature-captain': 'Капитан',
 
         'add-catch-ship-dialog-title': 'Добави кораб',
         'edit-catch-ship-dialog-title': 'Редактирай кораб',
@@ -3949,6 +3952,7 @@
         'show-only-existing-pages-no': 'Дневници без никакви страници',
         'show-only-existing-pages-all': 'Всички дневници',
         'ship': 'Кораб',
+        'aquaculture-facility-holder': 'Собственик на аквакултурно стопанство',
         'aquaculture-facility': 'Аквакултурно стопанство',
         'registered-buyer': 'Регистриран купувач',
         'owner-egn-eik': 'ЕГН/ЕИК на нерегистран купувач',

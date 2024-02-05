@@ -76,7 +76,13 @@
                                  [options]="aquacultureFacilities"
                                  [templateOptions]="true">
                 </tl-autocomplete>
-                <tl-autocomplete *ngIf="canReadShipLogBookRecords"
+                <tl-input *ngIf="canReadAquacultureLogBookRecords"
+                          fxFlex="25"
+                          formControlName="aquacultureHolderNameControl"
+                          label="{{ 'catches-and-sales.aquaculture-facility-holder' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.aquaculture-facility-holder-helper">
+                </tl-input>
+                <tl-autocomplete *ngIf="canReadShipLogBookRecords && (!canReadFirstSaleLogBookRecords || !canReadAdmissionLogBookRecords || !canReadTransportationLogBookRecords || !canReadAquacultureLogBookRecords)"
                                  fxFlex="25"
                                  formControlName="shipControl"
                                  label="{{ 'catches-and-sales.ship' | tlTranslate }}"
@@ -84,15 +90,25 @@
                                  [autoMatchTextToOption]="true"
                                  [options]="ships">
                 </tl-autocomplete>
-                <div *ngIf="!canReadShipLogBookRecords" 
+                <div *ngIf="!canReadShipLogBookRecords"
                      fxFlex="25">
                 </div>
                 <div *ngIf="!canReadFirstSaleLogBookRecords && !canReadAdmissionLogBookRecords && !canReadTransportationLogBookRecords"
                      fxFlex="25">
                 </div>
                 <div *ngIf="!canReadAquacultureLogBookRecords"
-                     fxFlex="25">
+                     fxFlex="50">
                 </div>
+            </div>
+            <div *ngIf="!isPublicApp" fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-autocomplete *ngIf="canReadShipLogBookRecords && canReadFirstSaleLogBookRecords && canReadAdmissionLogBookRecords && canReadTransportationLogBookRecords && canReadAquacultureLogBookRecords"
+                                 fxFlex="25"
+                                 formControlName="shipControl"
+                                 label="{{ 'catches-and-sales.ship' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.ship-helper"
+                                 [autoMatchTextToOption]="true"
+                                 [options]="ships">
+                </tl-autocomplete>
             </div>
         </div>
     </search-panel>

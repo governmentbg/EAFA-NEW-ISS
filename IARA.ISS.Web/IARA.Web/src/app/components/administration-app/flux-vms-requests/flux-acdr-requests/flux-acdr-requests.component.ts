@@ -248,8 +248,8 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
         this.confirmDialog.open().toPromise().then(result => {
             if (result) {
                 const request: FluxAcdrRequestEditDTO = new FluxAcdrRequestEditDTO({
-                    fromDate: acdr.periodStart,
-                    toDate: acdr.periodEnd
+                    month: acdr.periodMonth,
+                    year: acdr.periodYear
                 });
 
                 this.service.addAcdrQueryRequest(request).subscribe({

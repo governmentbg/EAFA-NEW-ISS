@@ -118,6 +118,7 @@
                            [showInactiveRecords]="true"
                            [showAddButton]="!readOnly"
                            [rows]="userRoles"
+                           [recordsPerPage]="10"
                            (recordChanged)="userRoleChanged($event)">
                 <data-column columnName="{{ 'users-page.role' | tlTranslate }}"
                              propertyName="id"
@@ -158,6 +159,7 @@
                            [isRemote]="false"
                            [isSoftDeletable]="true"
                            [rows]="userLegals"
+                           [recordsPerPage]="10"
                            (recordChanged)="userLegalsChanged($event)">
                 <data-column columnName="{{ 'users-page.legal-name' | tlTranslate }}"
                              propertyName="legalId"

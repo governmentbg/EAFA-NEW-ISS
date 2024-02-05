@@ -239,6 +239,9 @@ export class PersonReportsService extends BaseAuditService implements IPersonRep
             case PageCodeEnum.RecFish:
                 documentName = this.translationService.getValue('persons-report-page.fishing-tickets');
                 break;
+            case PageCodeEnum.OnlineRecFishStd:
+                documentName = this.translationService.getValue('persons-report-page.online-fishing-tickets');
+                break;
             case PageCodeEnum.Assocs:
             case PageCodeEnum.LE:
                 documentName = isApplication

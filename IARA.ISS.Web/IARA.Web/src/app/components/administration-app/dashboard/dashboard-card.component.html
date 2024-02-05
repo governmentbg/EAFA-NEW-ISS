@@ -3,10 +3,12 @@
         <tl-card-content>
             <div class="card-content-height" fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                 <div fxFlex="13" fxLayoutAlign="center center">
-                    <tl-icon icon="{{ data.icon }}"
-                             iconClass="accent-color"
-                             size="3">
-                    </tl-icon>
+                    <tl-icon-button icon="{{ data.icon }}"
+                                    iconClass="accent-color"
+                                    (buttonClicked)="navigateToApplicationPageByType()"
+                                    tooltipText="{{ 'applications-register.show-application' | tlTranslate }}"
+                                    [size]="3">
+                    </tl-icon-button>
                 </div>
 
                 <div fxLayoutAlign="start center" fxFlex="75">

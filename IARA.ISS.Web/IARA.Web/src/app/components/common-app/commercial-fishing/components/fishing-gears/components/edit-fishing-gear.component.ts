@@ -68,6 +68,9 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     @Input()
     public listenToService: boolean = false;
 
+    @Input()
+    public isNewInspectedGear: boolean = false;
+
     @Output()
     public selectedMark = new EventEmitter<FishingGearMarkDTO>();
 
@@ -143,10 +146,10 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
                 }
             }
 
-            //Показване само на тези риболовни уреди, за които е платено в удостоверението
+            //Показване само на тези риболовни уреди, за които е платено в удостоверението, за да не може да се добавят в заявлението за маркиране на уреди
             if (this.appliedTariffCodes.length > 0) {
                 if (this.isDunabe) {
-                    if (this.appliedTariffCodes.filter(x => x === TariffCodesEnum[TariffCodesEnum.a_1805_Dunav_Ship_Nets_And_Fishing_Traps]).length === 0) {
+                    if (this.shouldFilterByDanubeTariffCodes()) {
                         if (!this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Dunav_Ship_Nets])) {
                             this.fishingGearTypes = this.fishingGearTypes.filter(x => !FishingGearUtils.paidDunabeNetFishingGears.includes(x.code!));
                         }
@@ -344,7 +347,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             }
         }
 
-        return this.fillModel(false);
+        return this.fillModel(!this.isNewInspectedGear);
     }
 
     protected buildForm(): AbstractControl {
@@ -901,10 +904,17 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         return copiedPingers;
     }
 
+    //Тарифи, при които не се доплаща за добавяне на уреди
     private shouldFilterByBlackSeaTariffCodes(): boolean {
         return !this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_ShipTill10_Fishing_Gears])
             && !this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Ship_Between_10_And_25])
             && !this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Ship_Between_25_And_40])
-            && !this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Ship_Between_Over40]);
+            && !this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Ship_Between_Over40])
+            && !this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_977_1]);
+    }
+
+    private shouldFilterByDanubeTariffCodes(): boolean {
+        return !this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Dunav_Ship_Nets_And_Fishing_Traps])
+            && !this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_977_1]);
     }
 }
