@@ -6,7 +6,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
-import { UserAuthDTO } from '@app/models/generated/dtos/UserAuthDTO';
 import { TLInputControlsModule } from '@app/shared/components/input-controls/tl-input-controls.module';
 import { REQUEST_SERVICE_TOKEN, TRANSLATE_SERVICE_TOKEN } from '@app/shared/di/shared-di.tokens';
 import { IRequestService } from '@app/shared/interfaces/request-service.interface';

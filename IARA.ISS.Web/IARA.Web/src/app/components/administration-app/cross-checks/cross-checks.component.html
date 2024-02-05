@@ -48,6 +48,26 @@
                        [showInactiveRecords]="canRestoreRecords"
                        (addButtonClicked)="createEditCrossCheck(undefined, false)"
                        (activeRecordChanged)="createEditCrossCheck($event, !$event.isActive)">
+            <div *ngIf="canExecuteRecords" datatable-add-buttons fxLayout="row" fxLayoutGap="1em">
+                <button mat-raised-button
+                        color="primary"
+                        (click)="executeCrossChecks('Monthly')">
+                    <tl-icon icon="fa-play-circle"></tl-icon>
+                    {{ 'cross-check.execute-monthly' | tlTranslate }}
+                </button>
+                <button mat-raised-button
+                        color="primary"
+                        (click)="executeCrossChecks('Weekly')">
+                    <tl-icon icon="fa-play-circle"></tl-icon>
+                    {{ 'cross-check.execute-weekly' | tlTranslate }}
+                </button>
+                <button mat-raised-button
+                        color="primary"
+                        (click)="executeCrossChecks('Daily')">
+                    <tl-icon icon="fa-play-circle"></tl-icon>
+                    {{ 'cross-check.execute-daily' | tlTranslate }}
+                </button>
+            </div>
             <data-column propertyName="code"
                          [flexRate]="0.2"
                          columnName="{{ 'cross-check.code' | tlTranslate }}">

@@ -134,6 +134,8 @@
         'paginator-prev-page': 'Предишна страница',
         'export': 'Експорт',
         'go-to': 'Отиди към',
+        'second': 'секунда',
+        'seconds': 'секунди',
     },
     'validation': {
         'min': 'полето има минимална стойност',
@@ -196,7 +198,8 @@
         'succ-change-permit-license-suspensions': 'Успешно направени промени по прекратявания на УСР',
         'send-history-to-flux-success': 'Събитията са изпратени към FLUX',
         'send-event-to-flux-success': 'Събитието е изпратено към FLUX',
-        'succ-applied-deactivated-profile':'Успешно заявихте деактивиране на профила си. Вашата заявка трябва да бъде одобрена от администратор.'
+        'succ-applied-deactivated-profile':'Успешно заявихте деактивиране на профила си. Вашата заявка трябва да бъде одобрена от администратор.',
+        'succ-exec-cross-checks': 'Успешно изпълнени кръстосани проверки'
     },
     'navigation': {
         'applications': 'Приложения',
@@ -4513,7 +4516,7 @@
         'choose-log-book-for-renewal-title': 'Избор на дневник за презаверяване',
         'choose-log-book-for-renewal-keyword-filter': 'Филтър по ключова дума',
         'choose-log-book-for-renewal-show-finished-filter': 'Покажи и приключени дневници',
-        'choose-log-book-for-renewal-show-only-same-aquatic-types-filter': 'Покажи дневници със същите водни огранизми', 
+        'choose-log-book-for-renewal-show-only-same-aquatic-types-filter': 'Покажи дневници със същите водни огранизми',
         'choose-log-book-for-renewal-no-log-books': 'Няма налични стари дневници от приключени/изтекли удостоверения за презаверяване',
         'choose-log-book-for-renewal-log-book-type': 'Тип',
         'choose-log-book-for-renewal-number': 'Номер',
@@ -5072,7 +5075,10 @@
         'access-management-selected-users': 'Избрани потребители',
         'access-management-selected-roles': 'Избрани роли',
         'execute-cross-check-btn': 'Изпълни кръстосана проверка',
-        'execute-cross-check-success-message': 'Успешно изпълнена кръстосана проверка'
+        'execute-cross-check-success-message': 'Успешно изпълнена кръстосана проверка',
+        'execute-daily': 'Изпълни дневни',
+        'execute-weekly': 'Изпълни седмични',
+        'execute-monthly': 'Изпълни месечни',
     },
     'common-document': {
         'document-issue-date': 'Дата на издаване',
@@ -6356,7 +6362,7 @@
         'tickets-pay': 'Билетът може да бъде платен чрез системата на ePay, кредитна или дебитна карта или портала за електронни плащания за централната и местна администрация ('
     },
     'notifications': {
-        'title': 'Известия', 
+        'title': 'Известия',
         'mark-all-as-read': 'Маркирай всички като прочетени'
     }
 };

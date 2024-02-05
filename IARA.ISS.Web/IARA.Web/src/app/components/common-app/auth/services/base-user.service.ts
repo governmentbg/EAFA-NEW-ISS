@@ -22,6 +22,8 @@ export abstract class BaseUserService<TIdentifier, TUser extends User<TIdentifie
     protected readonly permissionsService: IPermissionsService;
     private _user?: TUser;
 
+    private subject: Subject<TUser> | undefined = undefined;
+
     public constructor(@Inject(SECURITY_CONFIG_TOKEN) securityConfig: SecurityConfig,
         @Inject(REQUEST_SERVICE_TOKEN) requestService: IRequestService,
         @Inject(PERMISSIONS_SERVICE_TOKEN) permissionsService: IPermissionsService) {
@@ -51,8 +53,11 @@ export abstract class BaseUserService<TIdentifier, TUser extends User<TIdentifie
 
     public getUser(): Observable<TUser> {
 
-        const subject: Subject<TUser> = new Subject();
         if (this._user == undefined) {
+            if (this.subject) {
+                return this.subject;
+            }
+            this.subject = new Subject<TUser>();
             this.requestService.get<TUser>(this.securityConfig.baseRoute, this.securityConfig.securityController, this.securityConfig.userMethodName).subscribe(user => {
 
                 if (user != undefined && user.permissions != undefined && user.permissions.length > 0) {
@@ -62,13 +67,13 @@ export abstract class BaseUserService<TIdentifier, TUser extends User<TIdentifie
                 }
 
                 this._user = user;
-                subject.next(user);
-                subject.complete();
+                this.subject!.next(user);
+                this.subject!.complete();
+                this.subject = undefined;
             });
+            return this.subject;
         } else {
             return of(this._user);
         }
-
-        return subject;
     }
 }

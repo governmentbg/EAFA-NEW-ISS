@@ -41,7 +41,10 @@
         'below-fixed': 'below fixed',
         'use-different-background-color': 'use custom background color',
         'background-color': 'background color',
-        'footer': 'footer',
+        'footer': 'Тази Информационно-статистическа система е създадена по проект BG14MFOP001-3.001-0026'
+            + '„Разширяване на програмния обхват и надграждане на Информационно-статистическата система ИАРА,'
+            + 'съгласно национални и европейски изисквания, както и въвеждане на електронни административни услуги“'
+            + ' процедура BG14MFOP001-3.001 „Контрол и изпълнение“ по ПМДР 2014-2020',
         'color': 'color',
         'side-panel': 'side panel',
         'variant': 'variant',
@@ -129,7 +132,10 @@
         'yes': 'Yes',
         'no': 'No',
         'not-applicable': 'Not applicable',
-        'date': 'Date'
+        'date': 'Date',
+        'go-to': 'Go to',
+        'second': 'second',
+        'seconds': 'seconds',
     },
     'validation': {
         'min': 'field has minimum value',
@@ -5010,7 +5016,10 @@
         'access-management-selected-users': 'Selected users',
         'access-management-selected-roles': 'Selected roles',
         'execute-cross-check-btn': 'Execute cross check',
-        'execute-cross-check-success-message': 'Cross check executed successfully'
+        'execute-cross-check-success-message': 'Cross check executed successfully',
+        'execute-daily': 'Execute daily',
+        'execute-weekly': 'Execute weekly',
+        'execute-monthly': 'Execute monthly',
     },
     'common-document': {
         'document-issue-date': 'Issue date',

@@ -66,6 +66,13 @@ export class CrossChecksService extends BaseAuditService {
         return this.requestService.post(this.area, this.controller, 'ExecuteCrossCheck', id);
     }
 
+    public executeCrossChecks(execFrequency: string): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'ExecuteCrossChecks', null, {
+            httpParams: new HttpParams().append('execFrequency', execFrequency),
+            successMessage: 'succ-exec-cross-checks'
+        });
+    }
+
     // Cross check results
     public getAllCrossCheckResults(request: GridRequestModel<CrossCheckResultsFilters>): Observable<GridResultModel<CrossCheckResultDTO>> {
         return this.requestService.post(this.area, this.controller, 'GetAllCrossCheckResults', request, {
