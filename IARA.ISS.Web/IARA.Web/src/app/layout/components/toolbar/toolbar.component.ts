@@ -2,6 +2,7 @@ import { Component, Inject, OnDestroy, OnInit, ViewEncapsulation } from '@angula
 import { ActivationEnd, Router } from '@angular/router';
 import { SECURITY_SERVICE_TOKEN } from '@app/components/common-app/auth/di/auth-di.tokens';
 import { ISecurityService } from '@app/components/common-app/auth/interfaces/security-service.interface';
+import { UserAuthDTO } from '@app/models/generated/dtos/UserAuthDTO';
 import { UsersService } from '@app/services/common-app/users.service';
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 import { StorageTypes } from '@app/shared/enums/storage-types.enum';
@@ -154,17 +155,22 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this.securityService.isAuthenticatedEvent.pipe(takeUntil(this._unsubscribeAll))
             .subscribe((result: boolean) => {
                 if (result) {
-                    const user = this.userService.User!;
-
-                    this.showUserTickets = IS_PUBLIC_APP && user.permissions.includes(PermissionsEnum.TicketsPublicRead);
-                    this.userService.getUserPhoto(user.userId).subscribe((photo: string) => {
-                        if (photo) {
-                            this.userPhoto = photo;
-                        }
+                    this.userService.getUser().subscribe(user => {
+                        this.populateToolbar(user as UserAuthDTO);
                     });
-                    this.usernames = `${user.firstName} ${user.lastName}`;
                 }
             });
+    }
+
+    private populateToolbar(user: UserAuthDTO) {
+        this.showUserTickets = IS_PUBLIC_APP && user.permissions.includes(PermissionsEnum.TicketsPublicRead);
+        this.userService.getUserPhoto(user.userId).subscribe((photo: string) => {
+            if (photo) {
+                this.userPhoto = photo;
+            }
+        });
+
+        this.usernames = `${user.firstName} ${user.lastName}`;
     }
 
     public logout(): void {
