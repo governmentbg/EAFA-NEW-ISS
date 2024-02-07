@@ -63,4 +63,7 @@ export class SystemPropertiesDTO {
 
     @StrictlyTyped(Number)
     public maxNumberOfLogBookPages?: number;
+
+    @StrictlyTyped(Number)
+    public addInspectionDaysTollerance?: number;
 }

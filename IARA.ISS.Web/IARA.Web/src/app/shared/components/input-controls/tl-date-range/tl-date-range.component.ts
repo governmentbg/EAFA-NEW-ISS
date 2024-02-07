@@ -149,11 +149,10 @@ export class TLDateRangeComponent implements OnInit, DoCheck, ControlValueAccess
     }
 
     private buildErrorsCollection(): void {
-        this.errors = TLUtils.buildErrorsCollection(this.ngControl?.control, this.getControlErrorLabelText, this.translatePipe);
+        this.errors = TLUtils.buildErrorsCollection(this.ngControl?.control, this.getControlErrorLabelText, this.translate, this.translatePipe);
     }
 
     private overrideUpdateValueAndValidity(): void {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
         const originalMethod = this.ngControl.control!.updateValueAndValidity;
         this.ngControl.control!.updateValueAndValidity = function (a: any) {
@@ -163,7 +162,6 @@ export class TLDateRangeComponent implements OnInit, DoCheck, ControlValueAccess
     }
 
     private overrideMarkAsTouched(): void {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
         const originalMethod = this.ngControl.control!.markAsTouched;
         this.ngControl.control!.markAsTouched = function (a: any) {

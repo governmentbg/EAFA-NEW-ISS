@@ -1,3 +1,4 @@
+import { MainNavigation } from '@app/shared/navigation/base/main.navigation';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { NgxPermissionsService } from 'ngx-permissions';
@@ -22,9 +23,10 @@ export class VerticalLayout3Component implements OnInit, OnDestroy {
      *
      * @param {FuseConfigService} _fuseConfigService
      */
-    constructor(private _fuseConfigService: FuseConfigService,
-        private ngxPermissionsService: NgxPermissionsService) {
-
+    constructor(
+        private _fuseConfigService: FuseConfigService,
+        private ngxPermissionsService: NgxPermissionsService
+    ) {
         // Set the defaults
         this.navigation = [];
 

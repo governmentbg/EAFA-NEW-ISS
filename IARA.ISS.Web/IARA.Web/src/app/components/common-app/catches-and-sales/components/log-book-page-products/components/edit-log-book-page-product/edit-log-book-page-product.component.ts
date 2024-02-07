@@ -108,10 +108,6 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             this.isAquaculturePage = false;
         }
         else {
-            this.form.get('averageUnitWeightKgControl')!.setValidators([Validators.required, TLValidators.number(0)]);
-            this.form.get('averageUnitWeightKgControl')!.markAsPending({ emitEvent: false });
-            this.form.get('averageUnitWeightKgControl')!.updateValueAndValidity({ emitEvent: false });
-
             this.isAquaculturePage = true;
         }
 
@@ -134,18 +130,31 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
                         : LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(quantityKg), unitPrice);
 
                     this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);
+
+                    if (this.hasUnitCount) {
+                        const unitCount: number | undefined = Number(this.form.get('unitCountControl')!.value);
+
+                        if (quantityKg && unitCount && unitCount > 0) {
+                            const averageUnitWeightKg: string | undefined = (quantityKg / unitCount).toFixed(3);
+                            this.form.get('averageUnitWeightKgControl')!.setValue(averageUnitWeightKg);
+                        }
+                        else {
+                            this.form.get('averageUnitWeightKgControl')!.setValue(undefined);
+                        }
+                    }
                 }
             });
 
             this.form.get('unitCountControl')!.valueChanges.subscribe({
                 next: (unitCount: number | undefined) => {
-                    const averageUnitWeightKg: number | undefined = Number(this.form.get('averageUnitWeightKgControl')!.value);
+                    const quantityKg: number | undefined = Number(this.form.get('quantityKgControl')!.value);
 
-                    if (averageUnitWeightKg && unitCount) {
-                        this.form.get('quantityKgControl')!.setValue(averageUnitWeightKg * unitCount);
+                    if (quantityKg && unitCount && unitCount > 0) {
+                        const averageUnitWeightKg: string | undefined = (Number(quantityKg) / Number(unitCount)).toFixed(3);
+                        this.form.get('averageUnitWeightKgControl')!.setValue(averageUnitWeightKg);
                     }
                     else {
-                        this.form.get('quantityKgControl')!.setValue(undefined);
+                        this.form.get('averageUnitWeightKgControl')!.setValue(undefined);
                     }
 
                     const unitPrice: number | undefined = Number(this.form.get('unitPriceControl')!.value);
@@ -167,21 +176,6 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
                         : LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(quantityKg), unitPrice);
 
                     this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);
-                }
-            });
-
-            this.form.get('averageUnitWeightKgControl')!.valueChanges.subscribe({
-                next: (averageUnitWeightKg: number | undefined) => {
-                    if (this.hasUnitCount) {
-                        const unitCount: number | undefined = Number(this.form.get('unitCountControl')!.value);
-
-                        if (averageUnitWeightKg && unitCount) {
-                            this.form.get('quantityKgControl')!.setValue(averageUnitWeightKg * unitCount);
-                        }
-                        else {
-                            this.form.get('quantityKgControl')!.setValue(undefined);
-                        }
-                    }
                 }
             });
         }
@@ -272,7 +266,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             catchLocationControl: new FormControl(undefined, [Validators.maxLength(500)]),
 
             minimumSizeControl: new FormControl(undefined, [TLValidators.number(0)]),
-            averageUnitWeightKgControl: new FormControl(undefined, [TLValidators.number(0)]),
+            averageUnitWeightKgControl: new FormControl(undefined),
 
             presentationControl: new FormControl(undefined, Validators.required),
             sizeCategoryControl: new FormControl(),
@@ -418,14 +412,10 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
     private setTurbotControlsValidators(): void {
         if (this.showTurbotControls === true) {
             this.form.get('turbotSizeGroupControl')!.setValidators(Validators.required);
-            this.form.get('averageUnitWeightKgControl')!.setValidators([Validators.required, TLValidators.number(0)]);
-
             this.form.get('turbotSizeGroupControl')!.markAsPending();
-            this.form.get('averageUnitWeightKgControl')!.markAsPending();
         }
         else {
             this.form.get('turbotSizeGroupControl')!.setValidators(null);
-            this.form.get('averageUnitWeightKgControl')!.setValidators(TLValidators.number(0));
         }
     }
 

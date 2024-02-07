@@ -9,20 +9,20 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { MyProfileDTO } from '@app/models/generated/dtos/MyProfileDTO';
 import { PersonDocumentDTO } from '@app/models/generated/dtos/PersonDocumentDTO';
 import { RoleDTO } from '@app/models/generated/dtos/RoleDTO';
+import { UserAuthDTO } from '@app/models/generated/dtos/UserAuthDTO';
 import { UserLegalDTO } from '@app/models/generated/dtos/UserLegalDTO';
 import { UserNewsDistrictSubscriptionDTO } from '@app/models/generated/dtos/UserNewsDistrictSubscriptionDTO';
 import { UserPasswordDTO } from '@app/models/generated/dtos/UserPasswordDTO';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
-import { SecurityService } from '@app/services/common-app/security.service';
 import { DialogCloseCallback } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
 import { TLPictureRequestMethod } from '@app/shared/components/tl-picture-uploader/tl-picture-uploader.component';
+import { AuthService } from '@app/shared/services/auth.service';
 import { MessageService } from '@app/shared/services/message.service';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { forkJoin } from 'rxjs';
-import { User } from '../auth/models/auth/user.model';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { BasePageComponent } from '../base-page.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
@@ -55,7 +55,7 @@ export class MyProfileContentComponent extends BasePageComponent implements OnIn
     public showDistricts: boolean = false;
     public showAllDistricts: boolean = false;
 
-    private authService: SecurityService;
+    private authService: AuthService;
     private nomenclaturesService: CommonNomenclatures;
     private changePasswordDialog: TLMatDialog<ChangePasswordComponent>;
     private confirmDialog: TLConfirmDialog;
@@ -69,7 +69,7 @@ export class MyProfileContentComponent extends BasePageComponent implements OnIn
 
     public constructor(
         translationService: FuseTranslationLoaderService,
-        authService: SecurityService,
+        authService: AuthService,
         messageService: MessageService,
         nomenclaturesService: CommonNomenclatures,
         changePasswordDialog: TLMatDialog<ChangePasswordComponent>,
@@ -100,10 +100,10 @@ export class MyProfileContentComponent extends BasePageComponent implements OnIn
         this.genders = nomenclatures[2];
         this.districts = nomenclatures[3];
 
-        this.authService.getUser().subscribe({
-            next: (userInfo: User<string> | null) => {
+        this.authService.userRegistrationInfoEvent.subscribe({
+            next: (userInfo: UserAuthDTO | null) => {
                 if (userInfo !== null) {
-                    this.service.getUserProfile(this.authService.User!.userId!).subscribe({
+                    this.service.getUserProfile(this.authService.userRegistrationInfo!.id!).subscribe({
                         next: (result: MyProfileDTO) => {
                             this.userProfileModel = result;
 

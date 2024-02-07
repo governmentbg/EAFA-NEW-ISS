@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { BrowserModule } from '@angular/platform-browser';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { MaterialModule } from '../../material.module';
 import { NomenclatureDisplayPipe } from '../../pipes/nomenclature-display.pipe';
@@ -26,6 +27,7 @@ import { TLDataTableComponent } from './tl-data-table.component';
 
 @NgModule({
     imports: [
+        BrowserModule,
         CommonModule,
         FlexLayoutModule,
         FormsModule,

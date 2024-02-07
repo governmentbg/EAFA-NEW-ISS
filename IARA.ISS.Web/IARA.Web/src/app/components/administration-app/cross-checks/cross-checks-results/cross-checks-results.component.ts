@@ -25,6 +25,7 @@ import { CrossCheckResultsAssignedUserComponent } from '../cross-check-results-a
 import { CrossCheckResultsResolutionComponent } from '../cross-check-results-resolution/cross-check-results-resolution.component';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { Router } from '@angular/router';
+import { CommonUtils } from '@app/shared/utils/common.utils';
 
 @Component({
     selector: 'cross-checks-results',
@@ -48,8 +49,9 @@ export class CrossChecksResultsComponent implements AfterViewInit {
     public readonly canReadScientificFishingRegister: boolean;
     public readonly canReadShipCatchQuotaRegister: boolean;
 
-    public resolutions: NomenclatureDTO<number>[];
-    public assignedUsers: NomenclatureDTO<number>[];
+    public resolutions: NomenclatureDTO<number>[] = [];
+    public assignedUsers: NomenclatureDTO<number>[] = [];
+    public reportGroups: NomenclatureDTO<number>[] = [];
 
     private readonly commonNomenclaturesService: CommonNomenclatures;
 
@@ -99,22 +101,21 @@ export class CrossChecksResultsComponent implements AfterViewInit {
         this.canReadScientificFishingRegister = permissions.has(PermissionsEnum.ScientificFishingRead) || permissions.has(PermissionsEnum.ScientificFishingReadAll);
         this.canReadShipCatchQuotaRegister = permissions.has(PermissionsEnum.ShipQuotasRead);
 
-        this.resolutions = [];
-        this.assignedUsers = [];
-
         this.buildForm();
     }
 
     public async ngAfterViewInit(): Promise<void> {
         const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin(
             NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CheckResolutionTypes, this.service.getCheckResolutionTypes.bind(this.service)
+                NomenclatureTypes.CheckResolutionTypes, this.service.getCheckResolutionTypes.bind(this.service),
             ),
-            this.commonNomenclaturesService.getUserNames()
+            this.commonNomenclaturesService.getUserNames(),
+            this.service.getAllReportGroups(),
         ).toPromise();
 
         this.resolutions = nomenclatures[0];
         this.assignedUsers = nomenclatures[1];
+        this.reportGroups = nomenclatures[2];
 
         this.grid = new DataTableManager<CrossCheckResultDTO, CrossCheckResultsFilters>({
             tlDataTable: this.datatable,
@@ -122,6 +123,12 @@ export class CrossChecksResultsComponent implements AfterViewInit {
             requestServiceMethod: this.service.getAllCrossCheckResults.bind(this.service),
             filtersMapper: this.mapFilters.bind(this)
         });
+
+        const tableId: number | undefined = window.history.state.tableId;
+
+        if (!CommonUtils.isNullOrEmpty(tableId)) {
+            this.grid.advancedFilters = new CrossCheckResultsFilters({ crossCheckResultId: tableId });
+        }
 
         this.grid.refreshData();
     }
@@ -270,6 +277,7 @@ export class CrossChecksResultsComponent implements AfterViewInit {
             assignedUserControl: new FormControl(),
             tableIdControl: new FormControl(),
             errorDescriptionControl: new FormControl(),
+            groupsControl: new FormControl()
         });
     }
 
@@ -285,7 +293,8 @@ export class CrossChecksResultsComponent implements AfterViewInit {
             validTo: filters.getValue<DateRangeData>('validityControl')?.end,
             assignedUserId: filters.getValue('assignedUserControl'),
             tableId: filters.getValue('tableIdControl'),
-            errorDescription: filters.getValue('errorDescriptionControl')
+            errorDescription: filters.getValue('errorDescriptionControl'),
+            groupIds: filters.getValue('groupsControl')
         });
 
         return result;

@@ -1,5 +1,6 @@
 ﻿import { Component, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { TLTranslatePipe } from '../../../pipes/tl-translate.pipe';
 import { BaseTLControl } from '../base-tl-control';
@@ -10,8 +11,8 @@ import { BaseTLControl } from '../base-tl-control';
 })
 export class TLSelectComponent<T> extends BaseTLControl {
 
-    constructor(@Self() @Optional() ngControl: NgControl, tlTranslatePipe: TLTranslatePipe) {
-        super(ngControl, tlTranslatePipe);
+    constructor(@Self() @Optional() ngControl: NgControl, fuseTranslationService: FuseTranslationLoaderService, tlTranslatePipe: TLTranslatePipe) {
+        super(ngControl, fuseTranslationService, tlTranslatePipe);
         this.ngControlInitialized.subscribe(() => {
             if (this._selectedValue !== undefined && this._selectedValue !== null && this.formControl !== undefined && this.formControl !== null) {
                 this.formControl.setValue(this._selectedValue);

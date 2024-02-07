@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TLDirectivesModule } from '@app/shared/directives/tl-directives.module';
+import { BrowserModule } from '@angular/platform-browser';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import filterRemove from '@iconify/icons-mdi/filter-remove';
 import groupAdd from '@iconify/icons-mdi/group-add';
@@ -19,8 +19,10 @@ import home from '@iconify/icons-mdi/home';
 import { TranslateModule } from '@ngx-translate/core';
 import { IconModule, IconService } from '@visurel/iconify-angular';
 import { TLPipesModule } from '../../pipes/tl-pipes.module';
-import { TLIconButtonModule } from '../tl-icon-button/tl-icon-button.module';
 import { SearchPanelComponent } from './search-panel.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { TLIconButtonModule } from '../tl-icon-button/tl-icon-button.module';
+import { TLDirectivesModule } from '@app/shared/directives/tl-directives.module';
 
 export const appIcons = {
     home,
@@ -30,6 +32,7 @@ export const appIcons = {
 
 @NgModule({
     imports: [
+        BrowserModule,
         CommonModule,
         FlexLayoutModule,
         FontAwesomeModule,

@@ -260,6 +260,7 @@
     InspectionEditNumber = 'InspectionEditNumber',
     InspectionDownload = 'InspectionDownload',
     InspectionExport = 'InspectionExport',
+    InspectionResolveCrossCheck = 'InspectionResolveCrossCheck',
 
     // Commercial Fishing
     CommercialFishingPermitRegisterReadAll = 'CommercialFishingPermitRegisterReadAll',
@@ -471,7 +472,7 @@
     LogBookPageEditExceptionsRestoreRecords = 'LogBookPageEditExceptionsRestoreRecords',
 
     // Fishing activity reports
-    FishingActivityReportsRead = 'FishingActivityReportsRead', 
+    FishingActivityReportsRead = 'FishingActivityReportsRead',
     FishingActivityReportsGenerateLanding = 'FishingActivityReportsGenerateLanding',
     FishingActivityReportsReplay = 'FishingActivityReportsReplay',
 

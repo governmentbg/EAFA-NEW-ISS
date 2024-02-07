@@ -9,12 +9,11 @@ import { LoginTypesEnum } from "@app/enums/login-types.enum";
 import { UserAuthDTO } from "@app/models/generated/dtos/UserAuthDTO";
 import { UserLoginDTO } from "@app/models/generated/dtos/UserLoginDTO";
 import { UserRegistrationDTO } from "@app/models/generated/dtos/UserRegistrationDTO";
+import { AuthService } from "@app/shared/services/auth.service";
 import { RequestProperties } from "@app/shared/services/request-properties";
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
-import { UsersService } from '@app/services/common-app/users.service';
-import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 
 @Component({
     selector: 'merge-profiles',
@@ -33,30 +32,30 @@ export class MergeProfilesComponent {
     private model: UserRegistrationDTO;
     private isInternalUser: boolean;
     private router: Router;
-    private userService: UsersService;
+    private authService: AuthService;
     private translationService: FuseTranslationLoaderService;
     private snackbar: MatSnackBar;
 
     public constructor(
         router: Router,
-        userService: UsersService,
+        authService: AuthService,
         translationService: FuseTranslationLoaderService,
         snackbar: MatSnackBar
     ) {
         this.router = router;
-        this.userService = userService;
+        this.authService = authService;
         this.translationService = translationService;
         this.snackbar = snackbar;
         this.model = new UserRegistrationDTO();
-        this.isInternalUser = this.userService.User!.isInternalUser ?? false;
+        this.isInternalUser = this.authService.userRegistrationInfo?.isInternalUser ?? false;
+
         this.buildForm();
     }
 
     public deactivateOldAccount(): void {
-        const egnObject: EgnLncDTO = this.mergeProfilesForm.get('egnControl')!.value;
-        this.userService.deactivateUserPasswordAccount(egnObject.egnLnc!).subscribe({
+        this.authService.deactivateUserPasswordAccount(this.mergeProfilesForm.get('egnControl')!.value).subscribe({
             next: () => {
-                this.navigateToHomePage();
+                this.navigateToRegistrationPage();
             }
         });
     }
@@ -74,7 +73,7 @@ export class MergeProfilesComponent {
                 lastName: this.mergeProfilesForm.get('lastNameControl')!.value
             });
 
-            this.userService.confirmEmailAndPassword(loginModel).subscribe({
+            this.authService.confirmEmailAndPassword(loginModel).subscribe({
                 next: (value: boolean) => {
                     if (value) {
                         this.navigateToHomePage();
@@ -146,7 +145,7 @@ export class MergeProfilesComponent {
     }
 
     private buildForm(): void {
-        const userRegistrationInfo = this.userService.User;
+        const userRegistrationInfo = this.authService.userRegistrationInfo;
 
         this.mergeProfilesForm = new FormGroup({
             firstNameControl: new FormControl(userRegistrationInfo?.firstName ?? undefined, [Validators.required, Validators.maxLength(100)]),
@@ -194,6 +193,7 @@ export class MergeProfilesComponent {
     }
 
     private navigateToRegistrationPage(): void {
+        this.authService.userRegistrationInfo = this.mapFromToAuthModel(false);
         this.router.navigate(['/registration'], { state: { isFromMergeProfilesPage: true } });
     }
 

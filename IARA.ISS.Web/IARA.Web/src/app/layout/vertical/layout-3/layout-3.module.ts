@@ -18,6 +18,7 @@ import { VerticalLayout3Component } from '@app/layout/vertical/layout-3/layout-3
     ],
     imports: [
         RouterModule,
+        // TranslateModule,
 
         FuseSharedModule,
         FuseSidebarModule,

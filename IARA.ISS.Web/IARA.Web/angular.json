@@ -24,7 +24,7 @@
               }
             ],
             "styles": [
-              "src/styles.scss",
+              "src/styles.scss"
             ],
             "scripts": [],
             "showCircularDependencies": true,
@@ -312,7 +312,7 @@
               }
             ],
             "styles": [
-              "src/styles.scss",
+              "src/styles.scss"
             ],
             "scripts": []
           }

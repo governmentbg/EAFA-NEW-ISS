@@ -61,8 +61,9 @@ import { AddShipPageDocumentDialogParamsModel } from './models/add-ship-page-doc
 import { LogBookPageDocumentTypesEnum } from './enums/log-book-page-document-types.enum';
 import { PagesPermissions } from './components/ship-pages-and-declarations-table/models/pages-permissions.model';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
-import { SystemPropertiesService } from '../../../services/common-app/system-properties.service';
-import { SystemPropertiesDTO } from '../../../models/generated/dtos/SystemPropertiesDTO';
+import { SystemPropertiesService } from '@app/services/common-app/system-properties.service';
+import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
+import { LogBookStatusesEnum } from '@app/enums/log-book-statuses.enum';
 
 const PAGE_NUMBER_CONTROL_NAME: string = 'pageNumberControl';
 type ThreeState = 'yes' | 'no' | 'both';
@@ -121,6 +122,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     public registeredBuyers: NomenclatureDTO<number>[] = [];
     public logBookStatuses: NomenclatureDTO<number>[] = [];
     public showExistingPages: NomenclatureDTO<ThreeState>[] = [];
+    public allowAddDeclarationsAfterFinished: boolean = false;
 
     public pagesPermissions!: PagesPermissions;
 
@@ -259,6 +261,9 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         ).subscribe({
             next: (result: NomenclatureDTO<number>[]) => {
                 this.logBookStatuses = result;
+
+                const activeStatus: NomenclatureDTO<number> = result.find(x => x.code === LogBookStatusesEnum[LogBookStatusesEnum.New])!;
+                this.formGroup.get('logBookStatusesControl')!.setValue([activeStatus]);
             }
         });
 
@@ -334,7 +339,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.gridManager.onRequestServiceMethodCalled.subscribe({
             next: (rows: LogBookRegisterDTO[] | undefined) => {
                 if (rows !== null && rows !== undefined && rows.length > 0) {
-                    if (this.systemProperties.addLogBookPagesDaysTolerance) {
+                    if (this.systemProperties.addLogBookPagesDaysTolerance) { 
                         for (const row of rows) {
                             if (row.isLogBookFinished || row.isLogBookSuspended) {
                                 if (row.suspendedPermitLicenseValidTo !== undefined && row.suspendedPermitLicenseValidTo !== null) {
@@ -1157,9 +1162,6 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             this.formGroup.addControl('registeredBuyerControl', new FormControl());
             this.formGroup.addControl('ownerEgnEikControl', new FormControl());
         }
-
-        const showOnlyExistingPages: NomenclatureDTO<ThreeState> = this.showExistingPages.find(x => x.value === 'yes')!;
-        this.formGroup.get('showExistingPagesControl')!.setValue(showOnlyExistingPages);
     }
 
     private mapFilters(filters: FilterEventArgs): CatchesAndSalesAdministrationFilters | CatchesAndSalesPublicFilters {

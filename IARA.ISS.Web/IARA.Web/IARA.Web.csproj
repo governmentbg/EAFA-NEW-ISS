@@ -58,8 +58,4 @@
     <None Remove="IARA.Web.csproj.vspscc" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="src\app\shared\models\" />
-  </ItemGroup>
-
 </Project>

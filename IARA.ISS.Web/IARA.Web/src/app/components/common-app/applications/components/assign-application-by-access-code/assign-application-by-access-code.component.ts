@@ -1,16 +1,18 @@
 ﻿import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { IApplicationsRegisterService } from '@app/interfaces/administration-app/applications-register.interface';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
-import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { AssignedApplicationInfoDTO } from '@app/models/generated/dtos/AssignedApplicationInfoDTO';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
-import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
+import { RequestProperties } from '@app/shared/services/request-properties';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-
 
 @Component({
     selector: 'assign-application-by-access-code',
@@ -22,9 +24,9 @@ export class AssignApplicationByAccessCodeComponent implements IDialogComponent 
 
     private service!: IApplicationsRegisterService;
     private readonly translate: FuseTranslationLoaderService;
-    private readonly snackbar: TLSnackbar;
+    private readonly snackbar: MatSnackBar;
 
-    public constructor(snackbar: TLSnackbar, translate: FuseTranslationLoaderService) {
+    public constructor(snackbar: MatSnackBar, translate: FuseTranslationLoaderService) {
         this.snackbar = snackbar;
         this.translate = translate;
 
@@ -52,7 +54,11 @@ export class AssignApplicationByAccessCodeComponent implements IDialogComponent 
                 error: (errorResponse: HttpErrorResponse) => {
                     const error = errorResponse?.error as ErrorModel;
                     if (error !== null && error !== undefined && error.code === ErrorCode.InvalidStateMachineTransitionOperation) {
-                        this.snackbar.error(this.translate.getValue('applications-register.assign-invalid-state-machine-transition-operation-error'));
+                        this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                            data: new ErrorModel({ messages: [this.translate.getValue('applications-register.assign-invalid-state-machine-transition-operation-error')] }),
+                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                        });
                     }
                 }
             });

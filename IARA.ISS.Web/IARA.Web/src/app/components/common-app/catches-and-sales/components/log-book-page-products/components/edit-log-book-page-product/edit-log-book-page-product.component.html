@@ -41,7 +41,8 @@
                     <tl-input fxFlex="33"
                               formControlName="averageUnitWeightKgControl"
                               label="{{ 'catches-and-sales.page-product-average-unit-weight-kg' | tlTranslate }}"
-                              tooltipResourceName="catches-and-sales.page-product-average-unit-weight-kg-helper">
+                              tooltipResourceName="catches-and-sales.page-product-average-unit-weight-kg-helper"
+                              [readonly]="true">
                     </tl-input>
                     <tl-autocomplete fxFlex="33"
                                      formControlName="presentationControl"
@@ -126,7 +127,8 @@
                           fxFlex="33"
                           formControlName="averageUnitWeightKgControl"
                           label="{{ 'catches-and-sales.page-product-turbot-average-unit-weigth-kg' | tlTranslate }}"
-                          tooltipResourceName="catches-and-sales.page-product-turbot-average-unit-weigth-kg-helper">
+                          tooltipResourceName="catches-and-sales.page-product-turbot-average-unit-weigth-kg-helper"
+                          [readonly]="true">
                 </tl-input>
                 <div fxFlex="33"></div>
             </div>

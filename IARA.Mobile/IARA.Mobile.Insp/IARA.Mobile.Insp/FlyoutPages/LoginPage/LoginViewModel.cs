@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Security;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application;
+﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Users;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
@@ -13,7 +7,11 @@ using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Application.Interfaces.Utilities;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Pub.Domain.Models;
-using IARA.Mobile.Shared.ResourceTranslator;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Enums;
@@ -132,7 +130,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.LoginPage
                 }
                 else
                 {
-                    await TLSnackbar.Show(/*TranslateExtension.Translator[nameof(GroupResourceEnum.CommonOffline) + "/LoginError"]*/"Error", App.GetResource<Color>("ErrorColor"));
+                    await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.CommonOffline) + "/LoginError"], App.GetResource<Color>("ErrorColor"));
                 }
             }
         }

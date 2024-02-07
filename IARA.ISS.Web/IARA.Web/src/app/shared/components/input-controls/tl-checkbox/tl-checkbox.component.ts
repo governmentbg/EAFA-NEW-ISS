@@ -27,8 +27,8 @@ export class TLCheckboxComponent extends BaseTLControl implements OnInit {
 
     public isIndeterminate: boolean = false;
 
-    public constructor(@Self() @Optional() ngControl: NgControl, tlTranslatePipe: TLTranslatePipe) {
-        super(ngControl, tlTranslatePipe);
+    public constructor(@Self() @Optional() ngControl: NgControl, fuseTranslationService: FuseTranslationLoaderService, tlTranslatePipe: TLTranslatePipe) {
+        super(ngControl, fuseTranslationService, tlTranslatePipe);
     }
 
     public ngOnInit(): void {

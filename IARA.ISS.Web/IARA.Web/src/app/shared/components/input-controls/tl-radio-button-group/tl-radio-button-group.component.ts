@@ -29,8 +29,11 @@ export class TLRadioButtonGroupComponent<T> extends BaseTLControl {
     @Input()
     public readonly: boolean = false;
 
-    constructor(@Self() @Optional() ngControl: NgControl,
-        tlTranslatePipe: TLTranslatePipe) {
-        super(ngControl, tlTranslatePipe);
+    constructor(
+        @Self() @Optional() ngControl: NgControl,
+        fuseTranslationService: FuseTranslationLoaderService,
+        tlTranslatePipe: TLTranslatePipe
+    ) {
+        super(ngControl, fuseTranslationService, tlTranslatePipe);
     }
 }

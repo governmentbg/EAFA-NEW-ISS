@@ -1,18 +1,18 @@
-﻿import { HttpParams } from '@angular/common/http';
+﻿import { AreaTypes } from '@app/shared/enums/area-type.enum';
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+import { IPoundnetRegisterService } from '../../interfaces/administration-app/poundnet-register.interface';
 import { GridRequestModel } from '@app/models/common/grid-request.model';
 import { GridResultModel } from '@app/models/common/grid-result.model';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { PoundNetDTO } from '@app/models/generated/dtos/PoundNetDTO';
 import { PoundnetRegisterDTO } from '@app/models/generated/dtos/PoundnetRegisterDTO';
 import { PoundNetRegisterFilters } from '@app/models/generated/filters/PoundNetRegisterFilters';
-import { AreaTypes } from '@app/shared/enums/area-type.enum';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { RequestService } from '@app/shared/services/request.service';
-import { Observable } from 'rxjs';
-import { IPoundnetRegisterService } from '../../interfaces/administration-app/poundnet-register.interface';
 import { BaseAuditService } from '../common-app/base-audit.service';
-
 
 @Injectable({
     providedIn: 'root'

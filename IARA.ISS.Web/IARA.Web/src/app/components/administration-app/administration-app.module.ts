@@ -191,7 +191,6 @@ import { OnlineApplicationsComponent } from './applications-processing/online-ap
 import { MatBadgeModule } from '@angular/material/badge';
 import { AuanDeliveryDataComponent } from './control-activity/auan-register/auan-delivery-data/auan-delivery-data.component';
 import { AuanDeliveryComponent } from './control-activity/auan-register/auan-delivery/auan-delivery.component';
-import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
 
 @NgModule({
     declarations: [
@@ -563,9 +562,6 @@ import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
         OnlineApplicationsComponent,
         AuanDeliveryDataComponent,
         AuanDeliveryComponent
-    ],
-    providers: [
-        TLTranslatePipe
     ]
 })
 export class IARAApplicationModule {

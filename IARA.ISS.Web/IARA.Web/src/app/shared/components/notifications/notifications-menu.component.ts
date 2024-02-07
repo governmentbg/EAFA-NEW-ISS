@@ -1,8 +1,7 @@
 ﻿import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
-import { SECURITY_SERVICE_TOKEN } from '@app/components/common-app/auth/di/auth-di.tokens';
-import { ISecurityService } from '@app/components/common-app/auth/interfaces/security-service.interface';
 import { GridResultModel } from '@app/models/common/grid-result.model';
 import { NotificationDTO } from '@app/models/generated/dtos/NotificationDTO';
+import { INotificationSecurity } from '@app/shared/notifications/models/notification-security.interface';
 import { UserNotification } from '@app/shared/notifications/models/user-notification.model';
 import { UserNotificationsList } from '@app/shared/notifications/models/user-notifications-list.model';
 import { NotificationsHubService } from '@app/shared/notifications/notifications-hub-service';
@@ -30,9 +29,14 @@ export class NotificationsMenuComponent implements OnInit, AfterViewInit {
     public pageSize: number;
     public recordSize: number;
 
-    public constructor(@Inject(SECURITY_SERVICE_TOKEN) securityService: ISecurityService) {
-        this.notificationsHub = new NotificationsHubService(securityService, "/notifications", Environment.Instance.apiBaseUrl ?? '');
+    private readonly translate: FuseTranslationLoaderService;
+
+    public constructor(@Inject('INotificationSecurity') notificationsSecurity: INotificationSecurity,
+        translate: FuseTranslationLoaderService
+    ) {
+        this.notificationsHub = new NotificationsHubService(notificationsSecurity, "/notifications", Environment.Instance.apiBaseUrl ?? '');
         this.dataSource = new PagedDatasource<NotificationDTO>(this.getNotifications.bind(this));
+        this.translate = translate;
 
         this.totalUnread = 0;
         this.totalRecordsCount = 0;

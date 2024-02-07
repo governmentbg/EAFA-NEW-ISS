@@ -15,30 +15,31 @@ import { InspectionShipLogBookDTO } from "@app/models/generated/dtos/InspectionS
 import { InspectionPermitLicenseDTO } from "@app/models/generated/dtos/InspectionPermitLicenseDTO";
 
 export interface IInspectionsService extends IBaseAuditService {
-  getAll(
-    request: GridRequestModel<InspectionsFilters>
-  ): Observable<GridResultModel<InspectionDTO>>;
-  delete(id: number): Observable<void>;
-  restore(id: number): Observable<void>;
+    getAll(
+        request: GridRequestModel<InspectionsFilters>
+    ): Observable<GridResultModel<InspectionDTO>>;
+    delete(id: number): Observable<void>;
+    restore(id: number): Observable<void>;
 
-  downloadFile(fileId: number, fileName: string): Observable<boolean>;
+    downloadFile(fileId: number, fileName: string): Observable<boolean>;
 
-  getCurrentInspector(): Observable<InspectorDTO>;
-  getInspector(id: number): Observable<InspectorDTO>;
-  getInspectors(): Observable<NomenclatureDTO<number>[]>;
-  getPatrolVehicles(
-    isWaterVehicle: boolean
-  ): Observable<NomenclatureDTO<number>[]>;
-  getPatrolVehicle(id: number): Observable<VesselDTO>;
-  getShip(id: number): Observable<VesselDTO>;
-  getShipPersonnel(
-    shipId: number
-  ): Observable<InspectionShipSubjectNomenclatureDTO[]>;
-  getCheckTypesForInspection(
-    inspectionType: InspectionTypesEnum
-  ): Observable<InspectionCheckTypeNomenclatureDTO[]>;
-  getShipPermitLicenses(
-    shipId: number
-  ): Observable<InspectionPermitLicenseDTO[]>;
-  getShipLogBooks(shipId: number): Observable<InspectionShipLogBookDTO[]>;
+    getCurrentInspector(): Observable<InspectorDTO>;
+    getInspector(id: number): Observable<InspectorDTO>;
+    getInspectors(): Observable<NomenclatureDTO<number>[]>;
+    getPatrolVehicles(
+        isWaterVehicle: boolean
+    ): Observable<NomenclatureDTO<number>[]>;
+    getPatrolVehicle(id: number): Observable<VesselDTO>;
+    getShip(id: number): Observable<VesselDTO>;
+    getShipPersonnel(
+        shipId: number
+    ): Observable<InspectionShipSubjectNomenclatureDTO[]>;
+    getCheckTypesForInspection(
+        inspectionType: InspectionTypesEnum
+    ): Observable<InspectionCheckTypeNomenclatureDTO[]>;
+    getShipPermitLicenses(
+        shipId: number
+    ): Observable<InspectionPermitLicenseDTO[]>;
+    getShipLogBooks(shipId: number): Observable<InspectionShipLogBookDTO[]>;
+    canResolveCrossChecks(): Observable<boolean>;
 }

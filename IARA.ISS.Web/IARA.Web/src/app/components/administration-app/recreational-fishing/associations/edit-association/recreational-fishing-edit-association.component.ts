@@ -145,11 +145,12 @@ export class RecreationalFishingEditAssociationComponent implements OnInit, Afte
         this.form.markAllAsTouched();
         this.validityCheckerGroup.validate();
 
+        if (action.id === 'annul') {
+            this.openAnnulDialog(dialogClose, true);
+        }
+
         if (this.form.valid || this.form.disabled) {
-            if (action.id === 'annul') {
-                this.openAnnulDialog(dialogClose, true);
-            }
-            else if (action.id === 'activate') {
+            if (action.id === 'activate') {
                 this.openAnnulDialog(dialogClose, false);
             }
         }
@@ -245,8 +246,10 @@ export class RecreationalFishingEditAssociationComponent implements OnInit, Afte
         CommonUtils.sanitizeModelStrings(this.model);
     }
 
-    private addOrEdit(dialogClose: DialogCloseCallback): void {
-        this.fillModel();
+    private addOrEdit(dialogClose: DialogCloseCallback, isAnnul: boolean = false): void {
+        if (!isAnnul) {
+            this.fillModel();
+        }
 
         if (this.id !== undefined && !this.isAdding) {
             this.service.editAssociation(this.model).subscribe({
@@ -285,8 +288,9 @@ export class RecreationalFishingEditAssociationComponent implements OnInit, Afte
                 this.model.isCanceled = result.canceled;
                 this.model.cancellationDate = result.canceled ? result.date : undefined;
                 this.model.cancellationReason = result.canceled ? result.reason : undefined;
+                this.model.isAdding = this.isAdding;
 
-                this.addOrEdit(dialogClose);
+                this.addOrEdit(dialogClose, true);
             }
         });
     }

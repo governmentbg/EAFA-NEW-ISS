@@ -2,21 +2,21 @@
 import { AfterViewInit, Component, DoCheck, EventEmitter, Input, OnInit, Optional, Output, Self, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, ControlValueAccessor, FormControl, FormGroup, NgControl, ValidationErrors, Validator, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { IdentifierTypeEnum } from '@app/enums/identifier-type.enum';
+
+import { FormDataModel } from '@tl/tl-egov-payments';
+import { GeneratedPaymentModel } from '@tl/tl-epay-payments';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
 import { IApplicationsService } from '@app/interfaces/administration-app/applications.interface';
 import { IEPaymentsService } from '@app/interfaces/common-app/e-payments.interface';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
-import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
 import { EPaymentsService } from '@app/services/common-app/e-payments.service';
-import { UsersService } from '@app/services/common-app/users.service';
 import { ApplicationsPublicService } from '@app/services/public-app/applications-public.service';
-import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { FormDataModel } from '@tl/tl-egov-payments';
-import { GeneratedPaymentModel } from '@tl/tl-epay-payments';
+import { IdentifierTypeEnum } from '@app/enums/identifier-type.enum';
+import { AuthService } from '@app/shared/services/auth.service';
+import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { DialogWrapperComponent } from '../dialog-wrapper/dialog-wrapper.component';
 import { IActionInfo } from '../dialog-wrapper/interfaces/action-info.interface';
 import { DialogCloseCallback, IDialogComponent } from '../dialog-wrapper/interfaces/dialog-content.interface';
@@ -26,7 +26,7 @@ import { TLMatDialog } from '../dialog-wrapper/tl-mat-dialog';
 import { EGovOfflinePaymenDataComponent } from './egov-offline-payment-data/egov-offline-payment-data.component';
 import { EGovOfflinePaymentDataDialogParams } from './egov-offline-payment-data/models/egov-offline-payment-data-dialog-params.model';
 import { OnlinePaymentDataDialogParams } from './egov-offline-payment-data/models/online-payment-data-dialog-params.model';
-
+import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO';
 
 @Component({
     selector: 'online-payment-data',
@@ -90,7 +90,8 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
         translationService: FuseTranslationLoaderService,
         commonNomenclaturesService: CommonNomenclatures,
         currencyPipe: CurrencyPipe,
-        userService: UsersService) {
+        authService: AuthService
+    ) {
         this.ngControl = ngControl;
         this.matDialogRef = matDialogRef;
 
@@ -104,7 +105,7 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
         this.translationService = translationService;
         this.commonNomenclaturesService = commonNomenclaturesService;
         this.currencyPipe = currencyPipe;
-        this.isForeignPerson = userService.User?.egnLnc?.identifierType === IdentifierTypeEnum.FORID;
+        this.isForeignPerson = authService.userRegistrationInfo?.egnLnc?.identifierType === IdentifierTypeEnum.FORID;
         this.onChanged = (value: NomenclatureDTO<number>) => { return; };
         this.onTouched = (value: NomenclatureDTO<number>) => { return; };
 

@@ -59,8 +59,8 @@ import { LockShipLogBookPeriodsModel } from './models/lock-ship-log-book-periods
 import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
 import { CatchesAndSalesUtils } from '@app/components/common-app/catches-and-sales/utils/catches-and-sales.utils';
 import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
+import { AuthService } from '@app/shared/services/auth.service';
 import { FishPreservationCodesEnum } from '@app/enums/fish-preservation-codes.enum';
-import { SecurityService } from '@app/services/common-app/security.service';
 
 const PERCENT_TOLERANCE: number = 10;
 const QUALITY_DIFF_VALIDATOR_NAME: string = 'quantityDifferences';
@@ -152,7 +152,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         datePipe: DatePipe,
         shipLogBookPageDataService: ShipLogBookPageDataService,
         systemParametersService: SystemParametersService,
-        authService: SecurityService
+        authService: AuthService
     ) {
         this.translationService = translate;
         this.commonNomenclaturesService = commonNomenclaturesService;
@@ -167,7 +167,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         this.confirmDialog = confirmDialog;
         this.previousTripCatchRecordsDialog = previousTripCatchRecordsDialog;
 
-        this.currentUserId = authService.User!.userId;
+        this.currentUserId = authService.userRegistrationInfo!.id!;
     }
 
     public async ngOnInit(): Promise<void> {

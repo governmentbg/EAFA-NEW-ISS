@@ -1,27 +1,29 @@
-﻿import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { NomenclatureTypes } from '@app/enums/nomenclature.types';
+import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
-import { PenalDecreeTypeEnum } from '@app/enums/penal-decree-type.enum';
 import { IPenalDecreesService } from '@app/interfaces/administration-app/penal-decrees.interface';
-import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
-import { AuanViolatedRegulationDTO } from '@app/models/generated/dtos/AuanViolatedRegulationDTO';
-import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
-import { PenalDecreeAuanDataDTO } from '@app/models/generated/dtos/PenalDecreeAuanDataDTO';
 import { PenalDecreeEditDTO } from '@app/models/generated/dtos/PenalDecreeEditDTO';
 import { PenalDecreesService } from '@app/services/administration-app/penal-decrees.service';
-import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
-import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
-import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
-import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
-import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
-import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
-import { CommonUtils } from '@app/shared/utils/common.utils';
-import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { forkJoin } from 'rxjs';
 import { EditPenalDecreeDialogParams } from '../models/edit-penal-decree-params.model';
+import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
+import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
+import { CommonUtils } from '@app/shared/utils/common.utils';
+import { PenalDecreeAuanDataDTO } from '@app/models/generated/dtos/PenalDecreeAuanDataDTO';
+import { PenalDecreeTypeEnum } from '@app/enums/penal-decree-type.enum';
+import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
+import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
+import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
+import { NomenclatureTypes } from '@app/enums/nomenclature.types';
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { forkJoin } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { RequestProperties } from '@app/shared/services/request-properties';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuanViolatedRegulationDTO } from '@app/models/generated/dtos/AuanViolatedRegulationDTO';
 
 @Component({
     selector: 'edit-decree-warning',
@@ -56,13 +58,13 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
 
     private readonly nomenclatures: CommonNomenclatures;
     private readonly translate: FuseTranslationLoaderService;
-    private readonly snackbar: TLSnackbar;
+    private readonly snackbar: MatSnackBar;
 
     public constructor(
         service: PenalDecreesService,
         nomenclatures: CommonNomenclatures,
         translate: FuseTranslationLoaderService,
-        snackbar: TLSnackbar
+        snackbar: MatSnackBar
     ) {
         this.service = service;
         this.nomenclatures = nomenclatures;
@@ -367,10 +369,18 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
             const messages: string[] = response.error.messages;
 
             if (messages.length !== 0) {
-                this.snackbar.errorModel(response.error as ErrorModel);
+                this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                    data: response.error as ErrorModel,
+                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                });
             }
             else {
-                this.snackbar.error(this.translate.getValue('service.an-error-occurred-in-the-app'));
+                this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                    data: new ErrorModel({ messages: [this.translate.getValue('service.an-error-occurred-in-the-app')] }),
+                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                });
             }
         }
 

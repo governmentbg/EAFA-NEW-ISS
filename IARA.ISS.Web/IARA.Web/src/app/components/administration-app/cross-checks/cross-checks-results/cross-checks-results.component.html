@@ -48,6 +48,16 @@
                           tooltipResourceName="cross-check-results.check-error-description-helper">
                 </tl-input>
             </div>
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
+                <tl-select fxFlex="25"
+                           label="{{ 'cross-check-results.report-group' | tlTranslate }}"
+                           formControlName="groupsControl"
+                           [options]="reportGroups"
+                           [isMultiple]="true"
+                           tooltipResourceName="cross-check-results.groups-helper">
+                </tl-select>
+                <div fxFlex="75"></div>
+            </div>
         </div>
     </search-panel>
     <!-- Таблица -->

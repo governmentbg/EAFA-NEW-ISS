@@ -21,7 +21,7 @@
         'horizontal-layout-1': 'horizontal layout #1',
         'vetical-layout-1': 'vertical layout #1',
         'vetical-layout-2': 'vertical layout #2',
-        'vetical-layout-3': 'vertical layout #3',
+        'vetical-layout-3': 'vertial laytout #3',
         'layout-width': 'layout width',
         'full-width': 'full width',
         'boxed-like': 'boxed',
@@ -41,12 +41,7 @@
         'below-fixed': 'below fixed',
         'use-different-background-color': 'use custom background color',
         'background-color': 'background color',
-        'footer': 'This Information and Statistics System was created under'
-            + ' project BG14MFOP001-3.001-0026 "Expansion of the program scope'
-            + ' and upgrade of the Information and Statistics System IARA,'
-            + ' according to national and European requirements, as well as'
-            + ' introduction of electronic administrative services" procedure'
-            + ' BG14MFOP001-3.001 "Control and implementation " under PMF 2014-2020',
+        'footer': 'footer',
         'color': 'color',
         'side-panel': 'side panel',
         'variant': 'variant',
@@ -134,10 +129,7 @@
         'yes': 'Yes',
         'no': 'No',
         'not-applicable': 'Not applicable',
-        'date': 'Date',
-        'go-to': 'Go to',
-        'second': 'second',
-        'seconds': 'seconds',
+        'date': 'Date'
     },
     'validation': {
         'min': 'field has minimum value',
@@ -2740,6 +2732,8 @@
         'user-not-inspector-title': 'You haven\'t been added as an inspector',
         'user-not-inspector-msg': 'You must be added to the list of inspectors (Administration -> Inspectors), in order to begin an inspection.',
         'okay': 'Okay',
+        'user-has-unresolved-cross-checks-title': 'There are unresolved cross checks assigned to you.',
+        'user-has-unresolved-cross-checks-message': 'You cannot add an inspection when there are unresolved cross checks assigned to you.',
         'catches-match': 'There are identical catches',
         'inspectors-match': 'There are identical inspectors',
         'permits': 'Permits on ship',
@@ -4181,6 +4175,7 @@
         'confirm-delete-catch-record-message': 'Are you sure that you want to delete this catch record?',
         'delete-catch-record-btn-label': 'Delete',
         'ship-page-declaration-of-origin-catch-record-add-from-external-catch': 'Add catch from previous trip',
+        'ship-page-unique-catch-record-gear-entry-time': 'Cannot add catches with same gear entry times',
         'ship-page-declaration-of-origin-panel': 'Declaration of origin',
         'ship-page-declaration-of-origin-catch-record-catch-zone': 'Catch zone',
         'ship-page-declaration-of-origin-catch-record-quadrant': 'Quadrant',
@@ -5022,10 +5017,7 @@
         'access-management-selected-users': 'Selected users',
         'access-management-selected-roles': 'Selected roles',
         'execute-cross-check-btn': 'Execute cross check',
-        'execute-cross-check-success-message': 'Cross check executed successfully',
-        'execute-daily': 'Execute daily',
-        'execute-weekly': 'Execute weekly',
-        'execute-monthly': 'Execute monthly',
+        'execute-cross-check-success-message': 'Cross check executed successfully'
     },
     'common-document': {
         'document-issue-date': 'Issue date',
@@ -5222,6 +5214,7 @@
         'valid-to': 'Valid to',
         'valid': 'Valid',
         'assigned-user': 'Assigned user',
+        'report-group': 'Cross check group',
 
         'assigned-user-cross-check-result': 'Assigned user cross check results',
         'edit-cross-check-resolution': 'Edit cross check resolution',

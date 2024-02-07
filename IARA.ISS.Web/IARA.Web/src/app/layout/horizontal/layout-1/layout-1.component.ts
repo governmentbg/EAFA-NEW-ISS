@@ -1,9 +1,10 @@
+import { MainNavigation } from '@app/shared/navigation/base/main.navigation';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { fuseConfig } from '@app/fuse-config';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig, FuseNavigation } from '@fuse/types';
+import { NgxPermissionsService } from 'ngx-permissions';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { FuseConfig, FuseNavigation } from '@fuse/types';
 
 @Component({
     selector: 'horizontal-layout-1',
@@ -12,7 +13,7 @@ import { takeUntil } from 'rxjs/operators';
     encapsulation: ViewEncapsulation.None
 })
 export class HorizontalLayout1Component implements OnInit, OnDestroy {
-    public fuseConfig: FuseConfig = fuseConfig;
+    fuseConfig?: FuseConfig = undefined;
     navigation: FuseNavigation[];
 
     // Private

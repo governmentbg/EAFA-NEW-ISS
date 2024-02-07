@@ -46,7 +46,7 @@
                 </mat-menu>
             </div>
 
-            <button mat-raised-button class="login-button" *ngIf="!isAuthenticated" (click)="login()">
+            <button mat-raised-button style="margin-top:10px;margin-bottom:10px" *ngIf="!isAuthenticated" (click)="login()">
                 <tl-icon icon="fa-sign-in"></tl-icon>
                 <span>{{ 'common.login' | tlTranslate: 'cap' }}</span>
             </button>

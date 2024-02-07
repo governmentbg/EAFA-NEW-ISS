@@ -48,6 +48,10 @@ export class InspectionsService extends BaseAuditService {
         return this.requestService.get(this.area, this.controller, 'GetIsInspector');
     }
 
+    public canResolveCrossChecks(): Observable<boolean> {
+        return this.requestService.get(this.area, this.controller, 'CanResolveCrossChecks');
+    }
+
     public getInspectors(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetInspectors', {
             responseTypeCtr: NomenclatureDTO,

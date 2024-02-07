@@ -31,8 +31,8 @@ import { SystemParametersService } from '@app/services/common-app/system-paramet
 import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { AuthService } from '@app/shared/services/auth.service';
 import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
-import { SecurityService } from '@app/services/common-app/security.service';
 
 @Component({
     selector: 'edit-admission-log-book-page',
@@ -83,14 +83,14 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
         snackbar: MatSnackBar,
         confirmDialog: TLConfirmDialog,
         systemParametersService: SystemParametersService,
-        authService: SecurityService
+        authService: AuthService
     ) {
         this.translationService = translationService;
         this.snackbar = snackbar;
         this.confirmDialog = confirmDialog;
         this.systemParametersService = systemParametersService;
 
-        this.currentUserId = authService.User!.userId;
+        this.currentUserId = authService.userRegistrationInfo!.id!;
     }
 
     public async ngOnInit(): Promise<void> {
