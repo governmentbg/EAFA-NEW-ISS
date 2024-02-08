@@ -1,10 +1,11 @@
-﻿import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+﻿import { AbstractControl, ValidationErrors, Validator, ValidatorFn } from '@angular/forms';
 import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
 import { DateUtils } from '@app/shared/utils/date.utils';
 import { GetControlErrorLabelTextCallback } from './base-tl-control';
+import { ITranslateService } from './interfaces/translate-service.interface';
 import { TLError } from './models/tl-error.model';
 
-const NO_VALIDATION_TRANSLATION: string = `No ITranslationService instance is present. In order to translate validation errors one must pass getControlErrorLabelText with all error translations or tlTranslationService with all codes in "validation" section.`
+const NO_VALIDATION_TRANSLATION: string = `No ITranslateService instance is present. In order to translate validation errors one must pass getControlErrorLabelText with all error translations or tlTranslationService with all codes in "validation" section.`
 
 export class TLUtils {
     public static hasControlRequiredValidator(validator: ValidatorFn | null | undefined): boolean {
@@ -38,6 +39,7 @@ export class TLUtils {
     public static buildErrorsCollection(
         control: AbstractControl | null,
         getControlErrorLabelText: GetControlErrorLabelTextCallback | undefined,
+        tlTranslateService: ITranslateService | undefined,
         tlTranslatePipe: TLTranslatePipe
     ): TLError[] {
         const errors: TLError[] = [];
@@ -52,13 +54,13 @@ export class TLUtils {
 
                         if (innerControlErrors !== undefined && innerControlErrors !== null) {
                             for (const innerKey of Object.keys(innerControlErrors)) {
-                                errors.push(...this.buildErrors(key, innerControlErrors, innerKey, getControlErrorLabelText, tlTranslatePipe));
+                                errors.push(...this.buildErrors(key, innerControlErrors, innerKey, getControlErrorLabelText, tlTranslateService, tlTranslatePipe));
                             }
                         }
                     }
                     else {
                         if (controlErrors !== undefined && controlErrors !== null) {
-                            errors.push(...this.buildErrors(TLUtils.getFormControlName(control), controlErrors, key, getControlErrorLabelText, tlTranslatePipe));
+                            errors.push(...this.buildErrors(TLUtils.getFormControlName(control), controlErrors, key, getControlErrorLabelText, tlTranslateService, tlTranslatePipe));
                         }
                     }
                 }
@@ -73,6 +75,7 @@ export class TLUtils {
         controlErrors: ValidationErrors,
         key: string,
         getControlErrorLabelText: GetControlErrorLabelTextCallback | undefined,
+        tlTranslateService: ITranslateService | undefined,
         tlTranslatePipe: TLTranslatePipe
     ): TLError[] {
         const errors: TLError[] = [];
@@ -83,12 +86,12 @@ export class TLUtils {
                 errors.push(errorInfo);
             }
             else {
-                const errorMessage = this.getDefaultTranslatedErrorMessage(controlErrors[key], key, tlTranslatePipe);
+                const errorMessage = this.getDefaultTranslatedErrorMessage(controlErrors[key], key, tlTranslateService, tlTranslatePipe);
                 this.splitMultilineError(errorMessage as string, errors);
             }
         }
         else {
-            const errorMessage = this.getDefaultTranslatedErrorMessage(controlErrors[key], key, tlTranslatePipe);
+            const errorMessage = this.getDefaultTranslatedErrorMessage(controlErrors[key], key, tlTranslateService, tlTranslatePipe);
             this.splitMultilineError(errorMessage as string, errors);
         }
         return errors;
@@ -110,6 +113,7 @@ export class TLUtils {
     private static getDefaultTranslatedErrorMessage(
         error: Record<string, unknown>,
         errorCode: string,
+        tlTranslationService: ITranslateService | undefined, // not needed
         tlTranslatePipe: TLTranslatePipe
     ): string {
         let message: string = '';

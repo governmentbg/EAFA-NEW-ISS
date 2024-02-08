@@ -41,7 +41,7 @@ import { SignInspectionComponent } from './dialogs/sign-inspection/sign-inspecti
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { InspectionDialogParamsModel } from './models/inspection-dialog-params.model';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
-import { SecurityService } from '@app/services/common-app/security.service';
+import { AuthService } from '@app/shared/services/auth.service';
 
 @Component({
     selector: 'inspections-register',
@@ -81,6 +81,8 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     public readonly canDownloadRecords: boolean;
     public readonly canReadAuanRecords: boolean;
 
+    public canResolveCrossChecks: boolean = false;
+
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
 
@@ -106,7 +108,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         addDialog: TLMatDialog<InspectionSelectionComponent>,
         signDialog: TLMatDialog<SignInspectionComponent>,
         permissions: PermissionsService,
-        authService: SecurityService
+        authService: AuthService
     ) {
         this.service = service;
         this.nomenclatures = nomenclatures;
@@ -126,7 +128,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         this.canDownloadRecords = permissions.has(PermissionsEnum.InspectionDownload);
         this.canExportRecords = permissions.has(PermissionsEnum.InspectionExport);
         this.canReadAuanRecords = permissions.hasAny(PermissionsEnum.AuanRegisterReadAll, PermissionsEnum.AuanRegisterRead);
-        this.userId = authService.User!.userId!;
+        this.userId = authService.userRegistrationInfo!.id!;
 
         this.buildForm();
     }
@@ -199,6 +201,13 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                     this.isInspector = value ?? false;
                 }
             });
+
+            //добавяне на инспекция след периода за разрешаване на кръстосани проверки 
+            this.service.canResolveCrossChecks().subscribe({
+                next: (value: boolean) => {
+                    this.canResolveCrossChecks = value;
+                }
+            });
         }
         else {
             this.isInspector = true;
@@ -256,9 +265,21 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             return;
         }
 
+        if (!this.canResolveCrossChecks) {
+            this.confirmDialog.open({
+                title: this.translate.getValue('inspections.user-has-unresolved-cross-checks-title'),
+                message: this.translate.getValue('inspections.user-has-unresolved-cross-checks-message'),
+                okBtnLabel: this.translate.getValue('inspections.okay'),
+                hasCancelButton: false
+            }).subscribe();
+
+            return;
+        }
+
         if (entry === null || entry === undefined) {
             this.openAddSelectionDialog();
-        } else {
+        }
+        else {
             const dialogInfo: EditDialogInfo = this.getEditDialogInfo(entry.inspectionType!, false, viewMode);
             this.openEditDialog(dialogInfo, entry, viewMode);
         }

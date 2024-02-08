@@ -1,12 +1,13 @@
-﻿import { AfterViewInit, Component, forwardRef, Input, OnInit } from '@angular/core';
+﻿import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { AfterViewInit, Component, forwardRef, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ValidatorFn } from '@angular/forms';
-import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { combineLatest, Observable } from 'rxjs';
 import { GetControlErrorLabelTextCallback } from '../../input-controls/base-tl-control';
-import { TLError } from '../../input-controls/models/tl-error.model';
 import { BaseDataColumn } from '../base-data-column';
 import { DataType } from '../enums/data-type.enum';
 import { GridRow } from '../models/row.model';
+import { isString } from 'lodash';
+import { TLError } from '../../input-controls/models/tl-error.model';
 
 export type CallbackFunction = ((row: any) => any);
 

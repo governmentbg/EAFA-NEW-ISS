@@ -72,9 +72,12 @@ export class TLInputAutocompleteComponent<T> extends BaseTLControl implements On
 
     private activeOptions: NomenclatureDTO<T>[] | string[] = [];
 
-    public constructor(@Self() @Optional() ngControl: NgControl,
-        tlTranslatePipe: TLTranslatePipe) {
-        super(ngControl, tlTranslatePipe);
+    public constructor(
+        @Self() @Optional() ngControl: NgControl,
+        fuseTranslationService: FuseTranslationLoaderService,
+        tlTranslatePipe: TLTranslatePipe
+    ) {
+        super(ngControl, fuseTranslationService, tlTranslatePipe);
     }
 
     public ngOnInit(): void {
@@ -158,7 +161,7 @@ export class TLInputAutocompleteComponent<T> extends BaseTLControl implements On
         if (this.ngControl && this.ngControl.control) {
             const errors: ValidationErrors | null = this.noOptionsValidator()(this.ngControl.control);
             if (errors && errors['novaluesindropdown'] === true) {
-                this.warningHint = this.translatePipe.transform('validation.novaluesindropdown', 'cap');
+                this.warningHint = this.tlTranslatePipe.transform('validation.novaluesindropdown', 'cap');
             }
             else {
                 this.warningHint = undefined;
@@ -424,7 +427,6 @@ export class TLInputAutocompleteComponent<T> extends BaseTLControl implements On
 
     private overrideSetValidators(): void {
         if (this.ngControl && this.ngControl.control) {
-            // eslint-disable-next-line @typescript-eslint/no-this-alias
             const self = this;
 
             const setValidators = this.ngControl.control.setValidators;

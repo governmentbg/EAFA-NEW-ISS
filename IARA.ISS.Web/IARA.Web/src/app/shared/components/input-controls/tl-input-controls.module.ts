@@ -1,4 +1,4 @@
-﻿import { NgxMatDateFormats, NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
+﻿import { NgxMatDateFormats, NgxMatDatetimePickerModule, NgxMatTimepickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
@@ -16,6 +16,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { BrowserModule } from '@angular/platform-browser';
 import { TLPipesModule } from '../../pipes/tl-pipes.module';
 import { TLHelpModule } from '../tl-help/tl-help.module';
 import { TLIconButtonModule } from '../tl-icon-button/tl-icon-button.module';
@@ -33,7 +34,6 @@ import { TLDateYearComponent } from './tl-date-year/tl-date-year.component';
 import { TLDateComponent } from './tl-date/tl-date.component';
 import { TLInputStepperComponent } from './tl-input-stepper/tl-input-stepper.component';
 import { TLInputComponent } from './tl-input/tl-input.component';
-import { TLPasswordComponent } from './tl-password-input/tl-password-input.component';
 import { TLPrefixInputComponent } from './tl-prefix-input/tl-prefix-input.component';
 import { TLRadioButtonGroupComponent } from './tl-radio-button-group/tl-radio-button-group.component';
 import { TLRadioButtonTemplateComponent } from './tl-radio-button-group/tl-radio-button-template/tl-radio-button-template.component';
@@ -43,7 +43,6 @@ import { TLRangeInputModule } from './tl-range-input/tl-range-input.module';
 import { TLSelectComponent } from './tl-select/tl-select.component';
 import { TLSlideToggleComponent } from './tl-slide-toggle/tl-slide-toggle.component';
 import { TLTextareaComponent } from './tl-textarea/tl-textarea.component';
-import { TLUsernameComponent } from './tl-username/tl-username.component';
 
 
 const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
@@ -62,6 +61,7 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
     imports: [
         CommonModule,
         FormsModule,
+        BrowserModule,
         FlexLayoutModule,
         MatButtonModule,
         MatDatepickerModule,
@@ -106,9 +106,7 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
         TLRadioButtonComponent,
         TLRangeInputComponent,
         TLCheckboxTemplateComponent,
-        TLPrefixInputComponent,
-        TLPasswordComponent,
-        TLUsernameComponent
+        TLPrefixInputComponent
     ],
     declarations: [
         TLDateComponent,
@@ -129,9 +127,7 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
         TLRadioButtonTemplateComponent,
         TLRadioButtonComponent,
         TLCheckboxTemplateComponent,
-        TLPrefixInputComponent,
-        TLPasswordComponent,
-        TLUsernameComponent
+        TLPrefixInputComponent
     ]
 })
 export class TLInputControlsModule {

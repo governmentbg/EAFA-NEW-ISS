@@ -9,8 +9,7 @@ import { FuseConfig, FuseNavigation } from '@fuse/types';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { StorageTypes } from './shared/enums/storage-types.enum';
-import { StorageService } from './shared/services/local-storage.service';
+import { LocalStorageService } from './shared/services/local-storage.service';
 
 @Component({
     selector: 'app',
@@ -37,14 +36,26 @@ export class AppComponent implements OnInit, OnDestroy {
      * @param {TranslateService} translateService
      * @param {LocalStorageService} localStorageService
      */
-    constructor(@Inject(DOCUMENT) private document: any,
+    constructor(
+        @Inject(DOCUMENT) private document: any,
         private fuseConfigService: FuseConfigService,
         private fuseSidebarService: FuseSidebarService,
         private fuseSplashScreenService: FuseSplashScreenService,
         private translateService: TranslateService,
-        private platform: Platform) {
-
+        private localStorageService: LocalStorageService,
+        private platform: Platform
+    ) {
         this.fuseSplashScreenService._init();
+
+        // Add languages
+        this.translateService.addLangs(['en', 'bg']);
+
+        // Set the default language
+        const language: string = this.localStorageService.get('lang');
+        this.translateService.setDefaultLang(language);
+
+        // Use a language
+        this.translateService.use(language);
 
         /**
          * ----------------------------------------------------------------------------------------------------
@@ -95,18 +106,7 @@ export class AppComponent implements OnInit, OnDestroy {
     /**
      * On init
      */
-    public async ngOnInit(): Promise<void> {
-
-        // Add languages
-        this.translateService.addLangs(['en', 'bg']);
-
-        // Set the default language
-        const language: string = await StorageService.getStorage(StorageTypes.Local).get('lang') ?? 'bg';
-        this.translateService.setDefaultLang(language);
-
-        // Use a language
-        this.translateService.use(language);
-
+    ngOnInit(): void {
         // Subscribe to config changes
         this.fuseConfigService.config
             .pipe(takeUntil(this.unsubscribeAll))

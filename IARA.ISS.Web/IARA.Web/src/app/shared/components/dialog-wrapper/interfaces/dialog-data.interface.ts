@@ -1,7 +1,7 @@
-﻿import { ITranslationService } from '@app/shared/interfaces/translate-service.interface';
-import { IActionInfo } from './action-info.interface';
+﻿import { IActionInfo } from './action-info.interface';
 import { IHeaderAuditButton } from './header-audit-button.interface';
 import { IHeaderCancelButton } from './header-cancel-button.interface';
+import { ITranslateService } from './translate-service.interface';
 
 export interface IDialogData<T> {
     TCtor: new (...args: any[]) => T;
@@ -18,5 +18,5 @@ export interface IDialogData<T> {
     closeBtn?: IActionInfo;
     leftSideActionsCollection?: Array<IActionInfo>;
     rightSideActionsCollection?: Array<IActionInfo>;
-    translteService: ITranslationService;
+    translteService: ITranslateService;
 }

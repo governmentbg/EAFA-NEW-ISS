@@ -1,15 +1,15 @@
-﻿import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
+﻿import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Params, Router } from "@angular/router";
-import { UsersService } from '@app/services/common-app/users.service';
-import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { UserChangePasswordDTO } from "@app/models/generated/dtos/UserChangePasswordDTO";
 import { TLError } from "@app/shared/components/input-controls/models/tl-error.model";
 import { CommonUtils } from "@app/shared/components/search-panel/utils";
+import { AuthService } from "@app/shared/services/auth.service";
 import { TLValidators } from "@app/shared/utils/tl-validators";
 import { fuseAnimations } from "@fuse/animations";
 import { FuseConfigService } from "@fuse/services/config.service";
 import { FuseTranslationLoaderService } from "@fuse/services/translation-loader.service";
-import { ChangeUserPasswordModel } from '../../auth/models/auth/update-user-password.model';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 
 @Component({
@@ -19,7 +19,7 @@ import { ChangeUserPasswordModel } from '../../auth/models/auth/update-user-pass
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
 })
-export class ChangePasswordPageComponent implements OnInit, OnDestroy {
+export class ChangePasswordPageComponent implements OnInit {
     public changePasswordForm!: FormGroup;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
@@ -28,21 +28,38 @@ export class ChangePasswordPageComponent implements OnInit, OnDestroy {
     private translationService: FuseTranslationLoaderService;
     private fuseConfigService: FuseConfigService;
     private route: ActivatedRoute;
+    private authService: AuthService;
     private token!: string;
-    private securityService: UsersService;
 
     public constructor(router: Router,
         translationService: FuseTranslationLoaderService,
         fuseConfigService: FuseConfigService,
         route: ActivatedRoute,
-        securityService: UsersService) {
+        authService: AuthService
+    ) {
         this.router = router;
         this.translationService = translationService;
         this.fuseConfigService = fuseConfigService;
         this.route = route;
-        this.securityService = securityService;
+        this.authService = authService;
 
-        this.fuseConfigService.hidePanels();
+        // Configure the layout
+        this.fuseConfigService.setConfig({
+            layout: {
+                navbar: {
+                    hidden: true
+                },
+                toolbar: {
+                    hidden: true
+                },
+                footer: {
+                    hidden: true
+                },
+                sidepanel: {
+                    hidden: true
+                }
+            }
+        });
 
         this.changePasswordForm = new FormGroup({
             password: new FormControl('', [
@@ -62,11 +79,8 @@ export class ChangePasswordPageComponent implements OnInit, OnDestroy {
         });
     }
 
-    public ngOnDestroy(): void {
-        this.fuseConfigService.restoreConfig();
-    }
-
     public ngOnInit(): void {
+        this.authService.checkAuthentication();
         this.route.queryParams.subscribe({
             next: (params: Params) => {
                 this.token = params['token'] as string;
@@ -84,8 +98,7 @@ export class ChangePasswordPageComponent implements OnInit, OnDestroy {
 
         if (this.changePasswordForm.valid) {
             const model = this.mapFormToModel();
-
-            this.securityService.changeUserPassword(model).subscribe(() => {
+            this.authService.changePassword(model).subscribe(() => {
                 this.navigateToSuccessfulChange();
             });
         }
@@ -115,8 +128,8 @@ export class ChangePasswordPageComponent implements OnInit, OnDestroy {
         }
     }
 
-    private mapFormToModel(): ChangeUserPasswordModel {
-        const userChangePassword: ChangeUserPasswordModel = new ChangeUserPasswordModel({
+    private mapFormToModel(): UserChangePasswordDTO {
+        const userChangePassword: UserChangePasswordDTO = new UserChangePasswordDTO({
             token: this.token,
             password: this.changePasswordForm.controls.password.value
         });
@@ -125,7 +138,7 @@ export class ChangePasswordPageComponent implements OnInit, OnDestroy {
     }
 
     private navigateToRedirect(): void {
-        this.router.navigateByUrl('/');
+        this.router.navigateByUrl('/redirect');
     }
 
     private navigateToSuccessfulChange(): void {

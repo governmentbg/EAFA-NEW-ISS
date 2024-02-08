@@ -1,37 +1,40 @@
-﻿import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ApplicationValidationErrorsEnum } from '@app/enums/application-validation-errors.enum';
-import { FileTypeEnum } from '@app/enums/file-types.enum';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Observable, Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
+import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
+import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { IApplicationsService } from '@app/interfaces/administration-app/applications.interface';
 import { IAquacultureFacilitiesService } from '@app/interfaces/common-app/aquaculture-facilities.interface';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
-import { ErrorModel } from '@app/models/common/exception.model';
 import { ApplicationContentDTO } from '@app/models/generated/dtos/ApplicationContentDTO';
 import { ApplicationRegiXCheckDTO } from '@app/models/generated/dtos/ApplicationRegiXCheckDTO';
-import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { ApplicationSubmittedByRegixDataDTO } from '@app/models/generated/dtos/ApplicationSubmittedByRegixDataDTO';
 import { ApplicationSubmittedForRegixDataDTO } from '@app/models/generated/dtos/ApplicationSubmittedForRegixDataDTO';
 import { AquacultureDeregistrationApplicationDTO } from '@app/models/generated/dtos/AquacultureDeregistrationApplicationDTO';
 import { AquacultureDeregistrationRegixDataDTO } from '@app/models/generated/dtos/AquacultureDeregistrationRegixDataDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
-import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { RegixChecksWrapperDTO } from '@app/models/generated/dtos/RegixChecksWrapperDTO';
-import { AquacultureFacilitiesPublicService } from '@app/services/public-app/aquaculture-facilities-public.service';
-import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
-import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
-import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
-import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
-import { Notifier } from '@app/shared/directives/notifier/notifier.class';
-import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
-import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { ApplicationDialogData, ApplicationUtils } from '@app/shared/utils/application.utils';
 import { CommonUtils } from '@app/shared/utils/common.utils';
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { Observable, Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
-
+import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
+import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
+import { ErrorModel } from '@app/models/common/exception.model';
+import { RequestProperties } from '@app/shared/services/request-properties';
+import { ApplicationValidationErrorsEnum } from '@app/enums/application-validation-errors.enum';
+import { FileTypeEnum } from '@app/enums/file-types.enum';
+import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
+import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
+import { AquacultureFacilitiesPublicService } from '@app/services/public-app/aquaculture-facilities-public.service';
+import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
+import { Notifier } from '@app/shared/directives/notifier/notifier.class';
+import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 
 @Component({
     selector: 'aquaculture-deregistration',
@@ -71,11 +74,11 @@ export class AquacultureDeregistrationComponent implements OnInit, AfterViewInit
     private applicationsService: IApplicationsService | undefined;
     private dialogRightSideActions: IActionInfo[] | undefined;
     private translate: FuseTranslationLoaderService;
-    private snackbar: TLSnackbar;
+    private snackbar: MatSnackBar;
 
     private model!: AquacultureDeregistrationApplicationDTO | AquacultureDeregistrationRegixDataDTO;
 
-    public constructor(translate: FuseTranslationLoaderService, snackbar: TLSnackbar) {
+    public constructor(translate: FuseTranslationLoaderService, snackbar: MatSnackBar) {
         this.translate = translate;
         this.snackbar = snackbar;
 
@@ -370,10 +373,18 @@ export class AquacultureDeregistrationComponent implements OnInit, AfterViewInit
                     const messages: string[] = response.error.messages;
 
                     if (messages.length !== 0) {
-                        this.snackbar.errorModel(response.error as ErrorModel);
+                        this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                            data: response.error as ErrorModel,
+                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                        });
                     }
                     else {
-                        this.snackbar.error(this.translate.getValue('service.an-error-occurred-in-the-app'));
+                        this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                            data: new ErrorModel({ messages: [this.translate.getValue('service.an-error-occurred-in-the-app')] }),
+                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                        });
                     }
 
                     if (messages.find(message => message === ApplicationValidationErrorsEnum[ApplicationValidationErrorsEnum.NoEDeliveryRegistration])) {

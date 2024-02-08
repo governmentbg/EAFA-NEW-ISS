@@ -1,23 +1,25 @@
-﻿import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
-import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
-import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { ShipQuotaEditDTO } from '@app/models/generated/dtos/ShipQuotaEditDTO';
 import { ShipQuotasService } from '@app/services/administration-app/ship-quotas.service';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
-import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
-import { ShipsUtils } from '@app/shared/utils/ships.utils';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { TLValidators } from '@app/shared/utils/tl-validators';
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { forkJoin } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { RequestProperties } from '@app/shared/services/request-properties';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ShipsUtils } from '@app/shared/utils/ships.utils';
 
 @Component({
     selector: 'edit-ship-quota-component',
@@ -39,13 +41,13 @@ export class EditShipQuotaComponent implements IDialogComponent, OnInit {
 
     public service: ShipQuotasService;
     private readonly commonNomenclatureService: CommonNomenclatures;
-    private readonly snackbar: TLSnackbar;
+    private readonly snackbar: MatSnackBar;
 
     public constructor(
         service: ShipQuotasService,
         translationService: FuseTranslationLoaderService,
         commonNomenclatureService: CommonNomenclatures,
-        snackbar: TLSnackbar
+        snackbar: MatSnackBar
     ) {
         this.service = service;
         this.commonNomenclatureService = commonNomenclatureService;
@@ -170,10 +172,18 @@ export class EditShipQuotaComponent implements IDialogComponent, OnInit {
             const messages: string[] = response.error.messages;
 
             if (messages.length !== 0) {
-                this.snackbar.errorModel(response.error as ErrorModel);
+                this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                    data: response.error as ErrorModel,
+                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                });
             }
             else {
-                this.snackbar.error(this.translationService.getValue('service.an-error-occurred-in-the-app'));
+                this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                    data: new ErrorModel({ messages: [this.translationService.getValue('service.an-error-occurred-in-the-app')] }),
+                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                });
             }
         }
 

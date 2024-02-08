@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { ITranslationService } from '@app/shared/interfaces/translate-service.interface';
-
 import { TranslateService } from '@ngx-translate/core';
 
 export interface Locale {
@@ -12,7 +10,7 @@ export interface Locale {
 @Injectable({
     providedIn: 'root'
 })
-export class FuseTranslationLoaderService implements ITranslationService {
+export class FuseTranslationLoaderService {
     /**
      * Constructor
      *

@@ -79,10 +79,12 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
     @ViewChild('stepper')
     private stepper!: MatStepper;
 
-    public constructor(translate: FuseTranslationLoaderService,
+    public constructor(
+        translate: FuseTranslationLoaderService,
         firstSaleLogBookPageDialog: TLMatDialog<EditFirstSaleLogBookPageComponent>,
         admissionLogBookPageDialog: TLMatDialog<EditAdmissionLogBookPageComponent>,
-        transportationLogBookPageDialog: TLMatDialog<EditTransportationLogBookPageComponent>) {
+        transportationLogBookPageDialog: TLMatDialog<EditTransportationLogBookPageComponent>
+    ) {
         this.translationService = translate;
         this.firstSaleLogBookPageDialog = firstSaleLogBookPageDialog;
         this.admissionLogBookPageDialog = admissionLogBookPageDialog;

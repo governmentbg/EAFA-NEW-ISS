@@ -2,6 +2,7 @@
 import { Component, ContentChild, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { TLCardTitleComponent } from './components/tl-card-title/tl-card-title.component';
+import { ITranslationService } from './interfaces/translation-service.interface';
 
 @Component({
     selector: 'tl-card',
@@ -63,8 +64,11 @@ export class TLCardComponent implements OnInit, OnChanges {
         }
     }
 
+    private tlTranslationService: ITranslationService;
 
-    public constructor() {
+    public constructor(translationService: FuseTranslationLoaderService) {
+        this.tlTranslationService = translationService;
+
         this.pictureUploaderControl = new FormControl();
     }
 

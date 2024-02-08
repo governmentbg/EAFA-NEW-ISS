@@ -13,7 +13,7 @@
     canLoad?: any[] | undefined;
     canActivate?: any[] | undefined;
     hideInMenu?: boolean;
-    isPublic?: boolean;
+    isPublic: boolean;
 }
 
 export class TLNavigation implements ITLNavigation {

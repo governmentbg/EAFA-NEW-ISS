@@ -24,8 +24,8 @@ export class TLRangeInputComponent extends BaseTLControl implements OnInit {
 
     @Input() public appearance: MatFormFieldAppearance = 'legacy';
 
-    public constructor(@Self() @Optional() ngControl: NgControl, tlTranslatePipe: TLTranslatePipe) {
-        super(ngControl, tlTranslatePipe);
+    public constructor(@Self() @Optional() ngControl: NgControl, fuseTranslationService: FuseTranslationLoaderService, tlTranslatePipe: TLTranslatePipe) {
+        super(ngControl, fuseTranslationService, tlTranslatePipe);
 
         this.getControlErrorLabelText = this.getControlErrorLabelTextHelper.bind(this);
     }

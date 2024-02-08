@@ -150,7 +150,7 @@
                 </data-column>
 
                 <data-template-column propertyName="ticketStatusName"
-                                      [flexRate]="0.3"
+                                      [flexRate]="0.4"
                                       columnName="{{ 'recreational-fishing.application-ticket-status' | tlTranslate }}">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.5em">
@@ -401,7 +401,7 @@
                 </data-column>
 
                 <data-template-column propertyName="ticketStatusName"
-                                      [flexRate]="0.3"
+                                      [flexRate]="0.4"
                                       columnName="{{ 'recreational-fishing.application-ticket-status' | tlTranslate }}">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.5em">
@@ -504,6 +504,13 @@
                             iconClass="accent-color"
                             tooltipText="{{ 'applications-register.view-and-edit-application' | tlTranslate }}"
                             (buttonClicked)="editActionClicked(value.row)">
+            </tl-icon-button>
+            <tl-icon-button *ngIf="canCancelRecords"
+                            icon="ic-fluent-doc-prohibited-24-regular"
+                            iconClass="accent-color"
+                            [size]="icIconSize"
+                            tooltipText="{{ 'recreational-fishing.cancel-application' | tlTranslate }}"
+                            (buttonClicked)="cancellationActionClicked(value.row)">
             </tl-icon-button>
         </ng-container>
         <ng-container *ngSwitchCase="applicationStatusEnum.WAIT_PMT_FROM_USR">

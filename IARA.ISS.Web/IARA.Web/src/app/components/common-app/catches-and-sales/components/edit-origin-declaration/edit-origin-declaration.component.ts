@@ -48,6 +48,7 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
     public ships: ShipNomenclatureDTO[] = [];
 
     public isAllCatchMarkedAsTransboarded: boolean = false;
+    public isProcessedOnBoard: boolean = false;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
@@ -191,9 +192,13 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
             }
         }
 
+        this.isProcessedOnBoard = this.model.isProcessedOnBoard ?? false;
         this.form.get('isProcessedOnBoardControl')!.setValue(this.model.isProcessedOnBoard ?? false);
         this.form.get('quantityKgControl')!.setValue(this.model.quantityKg);
-        this.form.get('unloadedProcessedQuantityKgControl')!.setValue(this.model.unloadedProcessedQuantityKg);
+
+        if (this.model.isProcessedOnBoard === true) {
+            this.form.get('unloadedProcessedQuantityKgControl')!.setValue(this.model.unloadedProcessedQuantityKg);
+        }
 
         this.form.get('transboardDateTimeControl')!.setValue(this.model.transboradDateTime);
 
@@ -280,6 +285,12 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
                 }
             }
         });
+
+        this.form.get('isProcessedOnBoardControl')!.valueChanges.subscribe({
+            next: (value: boolean | undefined) => {
+                this.isProcessedOnBoard = value ?? false;
+            }
+        });
     }
 
     private fillModel(): void {
@@ -294,7 +305,10 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
         this.model.catchFishPreservationId = preservation?.value;
         this.model.isProcessedOnBoard = this.form.get('isProcessedOnBoardControl')!.value ?? false;
         this.model.quantityKg = this.form.get('quantityKgControl')!.value;
-        this.model.unloadedProcessedQuantityKg = this.form.get('unloadedProcessedQuantityKgControl')!.value;
+
+        if (this.form.get('isProcessedOnBoardControl')!.value) {
+            this.model.unloadedProcessedQuantityKg = this.form.get('unloadedProcessedQuantityKgControl')!.value;
+        }
 
         if (this.form.get('isTransboardedControl')!.value) {
             this.model.transboradDateTime = this.form.get('transboardDateTimeControl')!.value;

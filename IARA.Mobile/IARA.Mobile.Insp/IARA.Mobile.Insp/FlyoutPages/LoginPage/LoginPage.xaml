@@ -25,17 +25,17 @@
                     <Image Margin="10,0"
                             Source="iara_logo"
                             HeightRequest="70" />
-                    <Label Text="IARA"
+                    <Label Text="{rt:Translate TitleIARA, Group=CommonOffline}"
                             LineBreakMode="WordWrap"
                             VerticalOptions="Center"
                             FontSize="20" />
                 </StackLayout>
-                <tl:TLEntry Title="Username" ValidState="{Binding UsernameState}" />
-                <tl:TLEntry Title="Password"
+                <tl:TLEntry Title="{rt:Translate Username, Group=CommonOffline}" ValidState="{Binding UsernameState}" />
+                <tl:TLEntry Title="{rt:Translate Password, Group=CommonOffline}"
                         ValidState="{Binding PasswordState}"
                         IsPassword="True" />
                 <tl:TLCheckView Text="{rt:Translate RememberMe, Group=CommonOffline}" ValidState="{Binding RememberMeState}" />
-                <Button Text="LogIn" Command="{Binding LogIn}" />
+                <Button Text="{rt:Translate Login, Group=CommonOffline}" Command="{Binding LogIn}" />
             </StackLayout>
         </sv:HomeFrameView>
 

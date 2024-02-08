@@ -10,13 +10,13 @@ import { PnfUtils } from './pnf.utils';
 export class TLValidators {
 
     /**
-     * Includes:
+     * Includes: 
      * - At least 8 characters in length both cyrilic or latin;
      * - Lowercase letters or Uppercase letters;
      * - Numbers;
      * - Special characters;
      * */
-    public static COMPLEXITY_PATTERN = `(?=.*[a-zA-Z\u0401\u0451\u0410-\u044f])(?=.*[0-9])(?=.*[$@!%*?&])(?=.*[^a-zA-Z0-9\u0401\u0451\u0410-\u044f]).{8,}`;
+    public static COMPLEXITY_PATTERN = `(?=.*[a-zA-Z\u0401\u0451\u0410-\u044f])(?=.*[0-9])(?=.*[^a-zA-Z0-9\u0401\u0451\u0410-\u044f]).{8,}`;
 
     public static number(min?: number, max?: number, fractionDigits?: number): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
@@ -279,7 +279,7 @@ export class TLValidators {
                         else {
                             minDateToCompare = minDateControlValue.toDate();
                         }
-
+                        
                     }
                 }
                 else if (minDate !== null && minDate !== undefined) {
@@ -393,82 +393,5 @@ export class TLValidators {
 
             return null;
         }
-    }
-
-
-    public static specialSymbol: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-        return TLValidators.regexValidation(/^(?=.*[$@!%*?&.])/, control.value) ? { specialsymbol: true } : null;
-    };
-
-    public static lowercaseLetters: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-        return TLValidators.regexValidation(/^(?=.*[a-z])/, control.value) ? { lowercaseletters: true } : null;
-    };
-
-    public static capitalLetters: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-        return TLValidators.regexValidation(/^(?=.*[A-Z])/, control.value) ? { capitalletters: true } : null;
-    };
-
-    public static digits: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-        return TLValidators.regexValidation(/^(?=.*[0-9])/, control.value) ? { digits: true } : null;
-    };
-
-    public static digitsOnly: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-        return TLValidators.regexValidation(/(?=^[0-9]*$)/, control.value) ? { digitsonly: true } : null;
-    };
-
-    private static regexValidation(pattern: RegExp, value: string): boolean {
-        if (value === undefined || value === null || value.length === 0) {
-            return false;
-        }
-
-        if (pattern.test(value)) {
-            return false;
-        }
-        return true;
-    };
-
-    private static isEmptyInputValue(value: any): boolean {
-        return value == null || value.length === 0;
-    }
-
-    /**
-     * Must match validator
-     *
-     * @param controlPath A dot-delimited string values that define the path to the control.
-     * @param matchingControlPath A dot-delimited string values that define the path to the matching control.
-     */
-    public static mustMatch(controlPath: string, matchingControlPath: string): ValidatorFn {
-        return (formGroup: AbstractControl): ValidationErrors | null => {
-
-            // Get the control and matching control
-            const control = formGroup.get(controlPath);
-            const matchingControl = formGroup.get(matchingControlPath);
-
-            // Return if control or matching control doesn't exist
-            if (!control || !matchingControl) {
-                return null;
-            }
-
-            // Delete the mustMatch error to reset the error on the matching control
-            if (matchingControl.hasError('mustMatch')) {
-                delete matchingControl.errors?.mustMatch;
-                matchingControl.updateValueAndValidity();
-            }
-
-            // Don't validate empty values on the matching control
-            // Don't validate if values are matching
-            if (TLValidators.isEmptyInputValue(matchingControl.value) || control.value === matchingControl.value) {
-                return null;
-            }
-
-            // Prepare the validation errors
-            const errors = { mustMatch: true };
-
-            // Set the validation error on the matching control
-            matchingControl.setErrors(errors);
-
-            // Return the errors
-            return errors;
-        };
     }
 }

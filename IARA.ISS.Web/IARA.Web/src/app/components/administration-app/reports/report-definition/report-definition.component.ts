@@ -24,6 +24,7 @@ import { ExecutionReportInfoDTO } from '@app/models/generated/dtos/ExecutionRepo
 import { ExecutionParamDTO } from '@app/models/generated/dtos/ExecutionParamDTO';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { IReportService } from '@app/interfaces/administration-app/report.interface';
@@ -35,7 +36,6 @@ import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-c
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { EditReportParamsModel } from '@app/components/common-app/reports/models/edit-report-params.model';
 import { MenuService } from '@app/shared/services/menu.service';
-import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 
 @Component({
     selector: 'report-definition',
@@ -90,7 +90,7 @@ export class ReportDefinitionComponent implements OnInit, AfterViewInit {
     private readonly reportService: IReportService;
     private readonly editDialog: TLMatDialog<EditReportDefinitionComponent>;
     private readonly confirmDialog: TLConfirmDialog;
-    private readonly snackbar: TLSnackbar;
+    private readonly snackbar: MatSnackBar;
     private menuService: MenuService;
 
     private allUsers!: NomenclatureDTO<number>[];
@@ -103,7 +103,7 @@ export class ReportDefinitionComponent implements OnInit, AfterViewInit {
         reportDefinitionService: ReportAdministrationService,
         editDialog: TLMatDialog<EditReportDefinitionComponent>,
         confirmDialog: TLConfirmDialog,
-        snackbar: TLSnackbar,
+        snackbar: MatSnackBar,
         menuService: MenuService,
         host: ElementRef
     ) {
@@ -492,10 +492,18 @@ export class ReportDefinitionComponent implements OnInit, AfterViewInit {
             if (response.error.messages !== null && response.error.messages !== undefined) {
                 const messages: string[] = response.error.messages;
                 if (messages.length !== 0) {
-                    this.snackbar.errorModel(response.error as ErrorModel, RequestProperties.DEFAULT);
+                    this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                        data: response.error as ErrorModel,
+                        duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                        panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                    });
                 }
                 else {
-                    this.snackbar.error(this.translateService.getValue('service.an-error-occurred-in-the-app'), RequestProperties.DEFAULT.showExceptionDurationErr, RequestProperties.DEFAULT.showExceptionColorClassErr);
+                    this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                        data: new ErrorModel({ messages: [this.translateService.getValue('service.an-error-occurred-in-the-app')] }),
+                        duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                        panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                    });
                 }
             }
 

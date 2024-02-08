@@ -18,7 +18,7 @@
                 {{ 'common.upload-file-from-button' | tlTranslate: 'cap' }}
             </mat-hint>
             <ng-template #fileInfoHint>
-                <mat-hint class="full-width" fxLayout="row" fxLayoutAlign="space-between center">
+                <mat-hint *ngIf="!isDisabled" class="full-width" fxLayout="row" fxLayoutAlign="space-between center">
                     <span *ngIf="file?.uploadedOn">
                         {{ 'common.file-uploaded-on' | tlTranslate: 'cap' }}: {{ file?.uploadedOn | date: 'dd.MM.yyyy HH:mm' }}
                     </span>

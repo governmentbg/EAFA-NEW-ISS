@@ -35,7 +35,7 @@ import { CatchesAndSalesUtils } from '@app/components/common-app/catches-and-sal
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
-import { SecurityService } from '@app/services/common-app/security.service';
+import { AuthService } from '@app/shared/services/auth.service';
 
 @Component({
     selector: 'edit-first-sale-log-book-page',
@@ -88,7 +88,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
         snackbar: MatSnackBar,
         confirmDialog: TLConfirmDialog,
         systemParametersService: SystemParametersService,
-        authService: SecurityService
+        authService: AuthService
     ) {
         this.translationService = translationService;
         this.currencyPipe = currencyPipe;
@@ -96,7 +96,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
         this.confirmDialog = confirmDialog;
         this.systemParametersService = systemParametersService;
 
-        this.currentUserId = authService.User!.userId;
+        this.currentUserId = authService.userRegistrationInfo!.id!;
     }
 
     public async ngOnInit(): Promise<void> {
@@ -267,7 +267,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
 
     public getControlErrorLabelText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'saleDateControl') {
-            if (errorCode === 'logBookPageDateLocked') {
+            if (errorCode === 'logBookPageDateLocked') { 
                 const message: string = this.translationService.getValue('catches-and-sales.first-sale-date-cannot-be-chosen-error');
                 if (this.isLogBookPageDateLockedError) {
                     return new TLError({ text: message, type: 'error' });
@@ -286,7 +286,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
             logBookNumberControl: new FormControl(),
             pageNumberControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
             statusControl: new FormControl(),
-            saleDateControl: new FormControl(undefined, [Validators.required, this.checkDateValidityVsLockPeriodsValidator()]),
+            saleDateControl: new FormControl(undefined, [Validators.required, this.checkDateValidityVsLockPeriodsValidator()]), 
             saleContractNumberControl: new FormControl(undefined, Validators.maxLength(100)),
             saleLocationControl: new FormControl(undefined, [Validators.maxLength(500), Validators.required]),
             saleContractDateControl: new FormControl(),

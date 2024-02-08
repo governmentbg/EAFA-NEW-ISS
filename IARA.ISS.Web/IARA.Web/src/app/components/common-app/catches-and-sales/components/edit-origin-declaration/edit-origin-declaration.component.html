@@ -42,11 +42,13 @@
                           label="{{ 'catches-and-sales.ship-page-origin-declaration-quantity-kg' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.ship-page-origin-declaration-quantity-kg-helper">
                 </tl-input>
-                <tl-input fxFlex="32"
+                <tl-input *ngIf="isProcessedOnBoard"
+                          fxFlex="32"
                           formControlName="unloadedProcessedQuantityKgControl"
                           label="{{ 'catches-and-sales.ship-page-origin-declaration-unloaded-processed-quantity-kg' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.ship-page-origin-declaration-unloaded-processed-quantity-kg-helper">
                 </tl-input>
+                <div *ngIf="!isProcessedOnBoard" fxFlex="32"></div>
             </div>
             <div fxFlex="100" fxLayout="column" fxLayoutGap="1em">
                 <div fxFlex="100" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">

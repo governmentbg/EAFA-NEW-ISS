@@ -10,8 +10,8 @@ import { BaseTLControl } from "../base-tl-control";
 })
 export class TLCoordinatesComponents extends BaseTLControl {
 
-    constructor(@Self() @Optional() ngControl: NgControl, tlTranslatePipe: TLTranslatePipe) {
-        super(ngControl, tlTranslatePipe);
+    constructor(@Self() @Optional() ngControl: NgControl, fuseTranslationService: FuseTranslationLoaderService, tlTranslatePipe: TLTranslatePipe) {
+        super(ngControl, fuseTranslationService, tlTranslatePipe);
     }
 
 

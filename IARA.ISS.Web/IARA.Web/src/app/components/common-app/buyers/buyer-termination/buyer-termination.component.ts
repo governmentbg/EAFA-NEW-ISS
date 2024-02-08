@@ -2,6 +2,9 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Observable, Subject } from 'rxjs';
+
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { ApplicationValidationErrorsEnum } from '@app/enums/application-validation-errors.enum';
 import { FileTypeEnum } from '@app/enums/file-types.enum';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
@@ -10,6 +13,7 @@ import { IBuyersService } from '@app/interfaces/common-app/buyers.interface';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { ApplicationContentDTO } from '@app/models/generated/dtos/ApplicationContentDTO';
+import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
 import { ApplicationRegiXCheckDTO } from '@app/models/generated/dtos/ApplicationRegiXCheckDTO';
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { ApplicationSubmittedByRegixDataDTO } from '@app/models/generated/dtos/ApplicationSubmittedByRegixDataDTO';
@@ -17,22 +21,19 @@ import { ApplicationSubmittedForRegixDataDTO } from '@app/models/generated/dtos/
 import { BuyerTerminationApplicationDTO } from '@app/models/generated/dtos/BuyerTerminationApplicationDTO';
 import { BuyerTerminationRegixDataDTO } from '@app/models/generated/dtos/BuyerTerminationRegixDataDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
-import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { RegixChecksWrapperDTO } from '@app/models/generated/dtos/RegixChecksWrapperDTO';
 import { BuyersPublicService } from '@app/services/public-app/buyers-public.service';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
-import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
+import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { Notifier } from '@app/shared/directives/notifier/notifier.class';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { ApplicationDialogData, ApplicationUtils } from '@app/shared/utils/application.utils';
 import { CommonUtils } from '@app/shared/utils/common.utils';
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { Observable, Subject } from 'rxjs';
-
+import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 
 @Component({
     selector: 'buyer-termination',
@@ -72,11 +73,11 @@ export class BuyerTerminationComponent implements OnInit, AfterViewInit, IDialog
     private applicationsService: IApplicationsService | undefined;
     private dialogRightSideActions: IActionInfo[] | undefined;
     private translate: FuseTranslationLoaderService;
-    private snackbar: TLSnackbar;
+    private snackbar: MatSnackBar;
 
     private model!: BuyerTerminationApplicationDTO | BuyerTerminationRegixDataDTO;
 
-    public constructor(translate: FuseTranslationLoaderService, snackbar: TLSnackbar) {
+    public constructor(translate: FuseTranslationLoaderService, snackbar: MatSnackBar) {
         this.translate = translate;
         this.snackbar = snackbar;
 
@@ -413,7 +414,11 @@ export class BuyerTerminationComponent implements OnInit, AfterViewInit, IDialog
 
                     if (error !== null && error !== undefined) {
                         if (messages.length !== 0) {
-                            this.snackbar.errorModel(response.error as ErrorModel);
+                            this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                                data: response.error as ErrorModel,
+                                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                            });
                         }
 
                         if (messages.find(message => message === ApplicationValidationErrorsEnum[ApplicationValidationErrorsEnum.NoEDeliveryRegistration])) {
@@ -425,7 +430,11 @@ export class BuyerTerminationComponent implements OnInit, AfterViewInit, IDialog
                         }
                     }
                     else {
-                        this.snackbar.error(this.translate.getValue('service.an-error-occurred-in-the-app'));
+                        this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                            data: new ErrorModel({ messages: [this.translate.getValue('service.an-error-occurred-in-the-app')] }),
+                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                        });
                     }
                 }
             }

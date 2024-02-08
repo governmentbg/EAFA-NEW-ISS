@@ -19,6 +19,7 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { RegixChecksWrapperDTO } from '@app/models/generated/dtos/RegixChecksWrapperDTO';
 import { ApplicationDialogData, ApplicationUtils } from '@app/shared/utils/application.utils';
 import { CommonUtils } from '@app/shared/utils/common.utils';
+import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { ApplicationValidationErrorsEnum } from '@app/enums/application-validation-errors.enum';
@@ -32,7 +33,6 @@ import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-c
 import { BuyersPublicService } from '@app/services/public-app/buyers-public.service';
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
-import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 
 @Component({
     selector: 'buyer-change-of-circumstances',
@@ -73,11 +73,11 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
     private applicationsService: IApplicationsService | undefined;
     private dialogRightSideActions: IActionInfo[] | undefined;
     private translate: FuseTranslationLoaderService;
-    private snackbar: TLSnackbar;
+    private snackbar: MatSnackBar;
 
     private model!: BuyerChangeOfCircumstancesApplicationDTO | BuyerChangeOfCircumstancesRegixDataDTO;
 
-    public constructor(translate: FuseTranslationLoaderService, snackbar: TLSnackbar) {
+    public constructor(translate: FuseTranslationLoaderService, snackbar: MatSnackBar) {
         this.translate = translate;
         this.snackbar = snackbar;
 
@@ -233,7 +233,7 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         this.form.markAllAsTouched();
         this.validityCheckerGroup.validate();
-
+     
         if (this.form.valid) {
             this.saveApplication(dialogClose);
         }
@@ -262,7 +262,7 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
                 this.validityCheckerGroup.validate();
             }
         }));
-
+        
         if (!this.isReadonly && !this.viewMode && !applicationAction) {
             this.form.markAllAsTouched();
             this.validityCheckerGroup.validate();
@@ -421,7 +421,11 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
 
                     if (error !== null && error !== undefined) {
                         if (messages.length !== 0) {
-                            this.snackbar.errorModel(response.error as ErrorModel);
+                            this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                                data: response.error as ErrorModel,
+                                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                            });
                         }
 
                         if (messages.find(message => message === ApplicationValidationErrorsEnum[ApplicationValidationErrorsEnum.NoEDeliveryRegistration])) {
@@ -433,7 +437,11 @@ export class BuyerChangeOfCircumstancesComponent implements OnInit, AfterViewIni
                         }
                     }
                     else {
-                        this.snackbar.error(this.translate.getValue('service.an-error-occurred-in-the-app'));
+                        this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                            data: new ErrorModel({ messages: [this.translate.getValue('service.an-error-occurred-in-the-app')] }),
+                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                        });
                     }
                 }
             }

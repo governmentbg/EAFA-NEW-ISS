@@ -1,18 +1,18 @@
-﻿import { CdkStep, StepperSelectionEvent } from '@angular/cdk/stepper';
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+﻿import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
+import { forkJoin, Subscription } from 'rxjs';
+import { CdkStep, StepperSelectionEvent } from '@angular/cdk/stepper';
+
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
-import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
 import { TicketPeriodEnum } from '@app/enums/ticket-period.enum';
 import { TicketTypeEnum } from '@app/enums/ticket-type.enum';
 import { IRecreationalFishingService } from '@app/interfaces/common-app/recreational-fishing.interface';
-import { ErrorModel } from '@app/models/common/exception.model';
-import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { PaymentDataDTO } from '@app/models/generated/dtos/PaymentDataDTO';
-import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dtos/RecreationalFishingAddTicketsResultDTO';
 import { RecreationalFishingTicketDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDTO';
 import { RecreationalFishingTicketPriceDTO } from '@app/models/generated/dtos/RecreationalFishingTicketPriceDTO';
 import { RecreationalFishingTicketsDTO } from '@app/models/generated/dtos/RecreationalFishingTicketsDTO';
@@ -21,18 +21,20 @@ import { RecreationalFishingTicketValidationResultDTO } from '@app/models/genera
 import { RecreationalFishingTicketViewDTO } from '@app/models/generated/dtos/RecreationalFishingTicketViewDTO';
 import { RecreationalFishingUserTicketDataDTO } from '@app/models/generated/dtos/RecreationalFishingUserTicketDataDTO';
 import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
-import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
 import { SystemPropertiesService } from '@app/services/common-app/system-properties.service';
 import { RecreationalFishingPublicService } from '@app/services/public-app/recreational-fishing-public.service';
-import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
-import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
-import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
-import { RequestProperties } from '@app/shared/services/request-properties';
+import { AuthService } from '@app/shared/services/auth.service';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { TLValidators } from '@app/shared/utils/tl-validators';
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { forkJoin, Subscription } from 'rxjs';
-
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dtos/RecreationalFishingAddTicketsResultDTO';
+import { ErrorModel } from '@app/models/common/exception.model';
+import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
+import { RequestProperties } from '@app/shared/services/request-properties';
+import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
+import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
 
 @Component({
     selector: 'recreational-fishing-tickets-content',
@@ -140,7 +142,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     private cannotPurchase: boolean = false;
     private cannotPurchaseUnder14: boolean = false;
 
-    private snackbar: TLSnackbar;
+    private snackbar: MatSnackBar;
     private translate: FuseTranslationLoaderService;
     private router: Router;
     private systemPropertiesService: SystemPropertiesService;
@@ -151,7 +153,9 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
 
     private readonly nonPickablePeriods: TicketPeriodEnum[] = [TicketPeriodEnum.DISABILITY, TicketPeriodEnum.UNTIL14, TicketPeriodEnum.NOPERIOD];
 
-    public constructor(tlsnackbar: TLSnackbar,
+    public constructor(
+        authService: AuthService,
+        snackbar: MatSnackBar,
         translate: FuseTranslationLoaderService,
         systemPropertiesService: SystemPropertiesService,
         nomenclatures: CommonNomenclatures,
@@ -159,7 +163,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     ) {
         this.buildForm();
 
-        this.snackbar = tlsnackbar;
+        this.snackbar = snackbar;
         this.translate = translate;
         this.router = router;
         this.systemPropertiesService = systemPropertiesService;
@@ -911,7 +915,12 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
                     if (this.disableSaveBtnComment) {
                         const errors: ErrorModel = new ErrorModel();
                         errors.messages = [this.disableSaveBtnComment];
-                        this.snackbar.errorModel(errors, RequestProperties.DEFAULT);
+
+                        this.snackbar.openFromComponent(ErrorSnackbarComponent, {
+                            data: errors,
+                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                        });
                     }
                 }
             });

@@ -3,9 +3,6 @@ import { isObject } from 'util';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { TLError } from '../components/input-controls/models/tl-error.model';
 import { DateUtils } from './date.utils';
-import { HttpErrorResponse } from '@angular/common/http';
-import { TLSnackbar } from '../components/snackbar/tl.snackbar';
-import { ErrorModel, ErrorType } from '@app/models/common/exception.model';
 
 export class CommonUtils {
 
@@ -48,7 +45,7 @@ export class CommonUtils {
     }
 
     public static toBoolean(value: string): boolean {
-        value = value?.toLowerCase();
+        value = value.toLowerCase();
         return value == 'true' ? true : false;
     }
 
@@ -377,24 +374,6 @@ export class CommonUtils {
         }
         else {
             return undefined;
-        }
-    }
-
-    public static handleResponseError(errorResponse: HttpErrorResponse,
-        snackbar: TLSnackbar,
-        handleServerError: (error: ErrorModel) => void): void {
-
-        const error: ErrorModel | undefined = errorResponse.error as ErrorModel;
-        if (error !== null && error !== undefined) {
-            if (error.type === ErrorType.Unhandled) {
-                snackbar.errorResource('common.an-error-occurred-during-action');
-            }
-            else {
-                handleServerError(error);
-            }
-        }
-        else {
-            snackbar.errorResource('common.an-error-occurred-in-the-app');
         }
     }
 }

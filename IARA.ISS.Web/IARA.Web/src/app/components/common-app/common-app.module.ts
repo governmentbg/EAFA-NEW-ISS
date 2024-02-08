@@ -327,8 +327,7 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         SuspensionsComponent,
         ChoosePermitLicenseFromInspectionComponent,
         EditPermitLicenseFishingGearsComponent,
-        ChangeUserDataLegalComponent,
-        UserRegistrationModule
+        ChangeUserDataLegalComponent
     ],
     providers: [CurrencyPipe, TLDateDifferencePipe, DatePipe]
 })

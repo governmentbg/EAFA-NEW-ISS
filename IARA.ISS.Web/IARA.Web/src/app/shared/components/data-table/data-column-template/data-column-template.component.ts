@@ -1,6 +1,6 @@
 ﻿import { AfterViewInit, Component, ContentChild, forwardRef, Input, TemplateRef } from '@angular/core';
-import { ITranslationService } from '@app/shared/interfaces/translate-service.interface';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { ITranslateService } from '../../dialog-wrapper/interfaces/translate-service.interface';
 import { BaseDataColumn } from '../base-data-column';
 
 @Component({
@@ -20,7 +20,7 @@ export class TLDataColumnTemplateComponent extends BaseDataColumn implements Aft
 
     public cellTemplate!: TemplateRef<any>;
     public headerTemplate!: TemplateRef<any>;
-    public tlTranslate: ITranslationService;
+    public tlTranslate: ITranslateService;
 
     constructor(tlTranslateService: FuseTranslationLoaderService) {
         super();

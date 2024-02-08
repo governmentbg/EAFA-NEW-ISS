@@ -18,6 +18,7 @@ import { TranslateModule } from '@ngx-translate/core';
     imports: [
         CommonModule,
         TranslateModule,
+
         FlexLayoutModule,
 
         MatButtonModule,

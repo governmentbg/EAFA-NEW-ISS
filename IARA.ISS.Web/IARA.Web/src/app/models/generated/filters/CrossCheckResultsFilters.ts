@@ -23,4 +23,6 @@ export class CrossCheckResultsFilters extends BaseRequestModel {
     public validFrom: Date | undefined;
     public validTo: Date | undefined;
     public assignedUserId: number | undefined;
+    public crossCheckResultId: number | undefined;
+    public groupIds: number[] | undefined;
 }
