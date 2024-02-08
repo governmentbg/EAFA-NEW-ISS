@@ -10,11 +10,11 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { ReportParameterTypeEnum } from '@app/enums/report-parameter-type.enum';
 import { IReportService } from '@app/interfaces/administration-app/report.interface';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 
 @Component({
     selector: 'edit-report-parameter-definition',
@@ -26,7 +26,7 @@ export class EditReportParameterDefinitionComponent implements IDialogComponent 
 
     private readonly reportService: IReportService;
     private readonly translate: FuseTranslationLoaderService;
-    private readonly snackbar: MatSnackBar;
+    private readonly snackbar: TLSnackbar;
 
     private model!: NReportParameterEditDTO;
     private isAddDialog: boolean;
@@ -34,7 +34,7 @@ export class EditReportParameterDefinitionComponent implements IDialogComponent 
     public constructor(
         reportService: ReportAdministrationService,
         translate: FuseTranslationLoaderService,
-        snackbar: MatSnackBar
+        snackbar: TLSnackbar
     ) {
         this.reportService = reportService;
         this.isAddDialog = false;
@@ -162,18 +162,10 @@ export class EditReportParameterDefinitionComponent implements IDialogComponent 
             if (response.error.messages !== null && response.error.messages !== undefined) {
                 const messages: string[] = response.error.messages;
                 if (messages.length !== 0) {
-                    this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                        data: response.error as ErrorModel,
-                        duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                        panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                    });
+                    this.snackbar.errorModel(response.error as ErrorModel, RequestProperties.DEFAULT);
                 }
                 else {
-                    this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                        data: new ErrorModel({ messages: [this.translate.getValue('service.an-error-occurred-in-the-app')] }),
-                        duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                        panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                    });
+                    this.snackbar.error(this.translate.getValue('service.an-error-occurred-in-the-app'), RequestProperties.DEFAULT.showExceptionDurationErr, RequestProperties.DEFAULT.showExceptionColorClassErr);
                 }
             }
             if ((response.error as ErrorModel).code === ErrorCode.InvalidSqlQuery) {

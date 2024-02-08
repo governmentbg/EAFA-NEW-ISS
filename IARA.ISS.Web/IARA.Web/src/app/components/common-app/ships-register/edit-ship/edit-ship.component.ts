@@ -54,7 +54,6 @@ import { FishingGearNomenclatureDTO } from '@app/models/generated/dtos/FishingGe
 import { RegixPersonDataDTO } from '@app/models/generated/dtos/RegixPersonDataDTO';
 import { RegixLegalDataDTO } from '@app/models/generated/dtos/RegixLegalDataDTO';
 import { RequestProperties } from '@app/shared/services/request-properties';
-import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { ErrorModel } from '@app/models/common/exception.model';
 import { ApplicationValidationErrorsEnum } from '@app/enums/application-validation-errors.enum';
 import { FleetTypeNomenclatureDTO } from '@app/models/generated/dtos/FleetTypeNomenclatureDTO';
@@ -78,6 +77,7 @@ import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTy
 import { DateUtils } from '@app/shared/utils/date.utils';
 import { NewCertificateData } from '../../fishing-capacity/acquired-fishing-capacity/acquired-fishing-capacity.component';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 
 @Component({
     selector: 'edit-ship',
@@ -176,7 +176,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
     private applicationsService: IApplicationsService | undefined;
     private confirmDialog: TLConfirmDialog;
     private editOwnerDialog: TLMatDialog<EditShipOwnerComponent>;
-    private snackbar: MatSnackBar;
+    private snackbar: TLSnackbar;
 
     private model!: ShipRegisterEditDTO | ShipRegisterApplicationEditDTO | ShipRegisterRegixDataDTO;
 
@@ -191,7 +191,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
         permissions: PermissionsService,
         confirmDialog: TLConfirmDialog,
         editOwnerDialog: TLMatDialog<EditShipOwnerComponent>,
-        snackbar: MatSnackBar,
+        snackbar: TLSnackbar,
         injector: Injector
     ) {
         super(ngControl);
@@ -1957,18 +1957,10 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                     const messages: string[] = response.error.messages;
 
                     if (messages.length !== 0) {
-                        this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                            data: response.error as ErrorModel,
-                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                        });
+                        this.snackbar.errorModel(response.error as ErrorModel);
                     }
                     else {
-                        this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                            data: new ErrorModel({ messages: [this.translate.getValue('service.an-error-occurred-in-the-app')] }),
-                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                        });
+                        this.snackbar.error(this.translate.getValue('service.an-error-occurred-in-the-app'));
                     }
 
                     if (messages.find(message => message === ApplicationValidationErrorsEnum[ApplicationValidationErrorsEnum.NoEDeliveryRegistration])) {

@@ -24,8 +24,8 @@ import { CatchesAndSalesUtils } from '@app/components/common-app/catches-and-sal
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
-import { AuthService } from '@app/shared/services/auth.service';
 import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
+import { SecurityService } from '@app/services/common-app/security.service';
 
 @Component({
     selector: 'edit-aquaculture-log-book-page',
@@ -67,14 +67,14 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
         snackbar: MatSnackBar,
         confirmDialog: TLConfirmDialog,
         systemParametersService: SystemParametersService,
-        authService: AuthService
+        authService: SecurityService
     ) {
         this.translationService = translationService;
         this.snackbar = snackbar;
         this.confirmDialog = confirmDialog;
         this.systemParametersService = systemParametersService;
 
-        this.currentUserId = authService.userRegistrationInfo!.id!;
+        this.currentUserId = authService.User!.userId;
 
         this.dateTimeControlHint = this.translationService.getValue('common.date-time-control-format-hint');
     }

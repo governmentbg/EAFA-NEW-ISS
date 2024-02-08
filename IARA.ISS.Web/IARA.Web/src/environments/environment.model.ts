@@ -1,5 +1,4 @@
-﻿import { OpenIdConfiguration } from "angular-auth-oidc-client";
-import { EnvironmentType, IEnvironmentConfig } from './environment.interface';
+﻿import { EnvironmentType, IEnvironmentConfig } from './environment.interface';
 
 
 export class EnvironmentConfig implements IEnvironmentConfig {
@@ -12,18 +11,14 @@ export class EnvironmentConfig implements IEnvironmentConfig {
         this._identityServerBaseUrl = env.identityServerBaseUrl;
         this._serviceBaseUrl = env.servicesBaseUrl;
         this._apiBasePath = env.apiBasePath;
+        this.isPublicApp = env.isPublicApp;
 
         if (env.appBaseHref != undefined) {
             this.appBaseHref = env.appBaseHref;
         }
-
-        this.ClientAuthConfiguration = env.ClientAuthConfiguration;
-        this.ClientAuthConfiguration.authWellknownEndpoint = this.buildUrlFromParts([this.identityServerBaseUrl, this.ClientAuthConfiguration?.authWellknownEndpoint]);
-        this.ClientAuthConfiguration.postLogoutRedirectUri = this.buildUrlFromParts([this.identityServerBaseUrl, this.ClientAuthConfiguration.postLogoutRedirectUri]);
-        this.ClientAuthConfiguration.redirectUrl = this.buildUrlFromParts([this.frontendBaseUrl, this.ClientAuthConfiguration.redirectUrl]);
-        this.ClientAuthConfiguration.silentRenewUrl = this.buildUrlFromParts([this.frontendBaseUrl, this.ClientAuthConfiguration.silentRenewUrl]);
-        this.ClientAuthConfiguration.stsServer = this.identityServerBaseUrl;
     }
+
+    isPublicApp: boolean;
 
     public get production(): boolean {
         return this.environmentType == EnvironmentType.Production;
@@ -92,9 +87,6 @@ export class EnvironmentConfig implements IEnvironmentConfig {
     public set identityServerBaseUrl(value: string) {
         this._identityServerBaseUrl = value;
     }
-
-    public ClientAuthConfiguration!: OpenIdConfiguration;
-
 
     private buildUrlFromParts(urlParts: (string | undefined)[]): string {
         let url: string = '';

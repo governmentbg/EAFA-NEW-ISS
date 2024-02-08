@@ -1,10 +1,10 @@
 ﻿import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 import { ActivatedRoute, Params, Router } from "@angular/router";
+import { AccountActivationStatusesEnum } from "@app/enums/account-activation-statuses.enum";
+import { UsersService } from '@app/services/common-app/users.service';
+import { CommonUtils } from "@app/shared/utils/common.utils";
 import { fuseAnimations } from "@fuse/animations";
 import { FuseConfigService } from "@fuse/services/config.service";
-import { AccountActivationStatusesEnum } from "@app/enums/account-activation-statuses.enum";
-import { AuthService } from "@app/shared/services/auth.service";
-import { CommonUtils } from "@app/shared/utils/common.utils";
 
 const TIME_TO_WAIT = 5000; // ms
 
@@ -22,17 +22,17 @@ export class SuccessfulEmailConfirmationComponent implements OnInit {
     private route: ActivatedRoute;
     private fuseConfigService: FuseConfigService;
     private token!: string;
-    private authService: AuthService;
+    private userService: UsersService;
 
     public constructor(router: Router,
         route: ActivatedRoute,
         fuseConfigService: FuseConfigService,
-        authService: AuthService
+        userService: UsersService
     ) {
         this.router = router;
         this.route = route;
         this.fuseConfigService = fuseConfigService;
-        this.authService = authService;
+        this.userService = userService;
 
         // Configure the layout
         this.fuseConfigService.setConfig({
@@ -63,7 +63,7 @@ export class SuccessfulEmailConfirmationComponent implements OnInit {
                     return;
                 }
 
-                this.authService.activateUserAccount(this.token!).subscribe({
+                this.userService.activateUserAccount(this.token!).subscribe({
                     next: (status: AccountActivationStatusesEnum) => {
                         switch (status) {
                             case AccountActivationStatusesEnum.Successful: {
@@ -93,7 +93,7 @@ export class SuccessfulEmailConfirmationComponent implements OnInit {
     }
 
     public resendConfirmationEmail(): void {
-        this.authService.resendConfirmationEmailForToken(this.token).subscribe(() => {
+        this.userService.resendConfirmationEmailForToken(this.token).subscribe(() => {
             this.navigateToSuccessfulRegistrationPage();
         });
     }

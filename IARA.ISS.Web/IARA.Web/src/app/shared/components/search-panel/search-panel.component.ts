@@ -2,6 +2,7 @@
 import { AfterViewInit, Component, ContentChild, ContentChildren, EventEmitter, HostListener, Input, QueryList, ViewChild } from '@angular/core';
 import { AbstractControl, ControlContainer, FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
+import { ITranslationService } from '@app/shared/interfaces/translate-service.interface';
 import { faFilter, faRedo } from '@fortawesome/free-solid-svg-icons';
 import moment, { Moment } from 'moment';
 import { TLDateAdapter } from '../../utils/date.adapter';
@@ -9,7 +10,6 @@ import { FilterEventArgs } from '../data-table/models/filter-event-args.model';
 import { DateRangeData } from '../input-controls/tl-date-range/tl-date-range.component';
 import { RangeInputData } from '../input-controls/tl-range-input/range-input.component';
 import { TLSlideToggleComponent } from '../input-controls/tl-slide-toggle/tl-slide-toggle.component';
-import { ITranslateService } from './interfaces/translate-service.interface';
 import { MatChipFilterModel } from './models/mat-chip-filter.model';
 import { CommonUtils } from './utils';
 import { DateUtils } from './utils/date.utils';
@@ -27,7 +27,7 @@ export class SearchPanelComponent implements AfterViewInit {
     public searchString: string;
 
     @Input()
-    public translateService!: ITranslateService;
+    public translateService!: ITranslationService;
 
     @ContentChild(ControlContainer)
     set advancedSerachFormGroupDirective(value: FormGroupDirective) {

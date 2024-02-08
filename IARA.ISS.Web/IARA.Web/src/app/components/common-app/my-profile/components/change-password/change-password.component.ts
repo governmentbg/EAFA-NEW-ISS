@@ -10,11 +10,11 @@ import { UserPasswordDTO } from '@app/models/generated/dtos/UserPasswordDTO';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
-import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 
 @Component({
     selector: 'change-password',
@@ -34,9 +34,9 @@ export class ChangePasswordComponent implements IDialogComponent {
     private userPasswordModel: UserPasswordDTO = new UserPasswordDTO();
     private service!: IMyProfileService;
     private personId!: number;
-    private snackbar: MatSnackBar;
+    private snackbar: TLSnackbar;
 
-    constructor(translationService: FuseTranslationLoaderService, snackbar: MatSnackBar) {
+    constructor(translationService: FuseTranslationLoaderService, snackbar: TLSnackbar) {
         this.translationService = translationService;
         this.snackbar = snackbar;
         this.buildForm();
@@ -54,7 +54,7 @@ export class ChangePasswordComponent implements IDialogComponent {
     }
 
     public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
-            dialogClose();
+        dialogClose();
     }
 
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
@@ -71,14 +71,7 @@ export class ChangePasswordComponent implements IDialogComponent {
                     error: (errorResponse: HttpErrorResponse) => {
                         const error: ErrorModel = errorResponse.error as ErrorModel;
                         if (error.type === ErrorType.Unhandled) {
-                            const error = new ErrorModel();
-                            error.messages = [this.translationService.getValue('my-profile.an-error-occurred')];
-
-                            this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                                data: error,
-                                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                            });
+                            this.snackbar.error(this.translationService.getValue('my-profile.an-error-occurred'));
                         }
                         else {
                             if (error.code === ErrorCode.WrongPassword) {

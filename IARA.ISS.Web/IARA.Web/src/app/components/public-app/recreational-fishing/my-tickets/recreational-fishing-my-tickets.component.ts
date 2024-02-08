@@ -1,16 +1,17 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { User } from '@app/components/common-app/auth/models/auth/user.model';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { PaymentStatusesEnum } from '@app/enums/payment-statuses.enum';
 import { TicketPeriodEnum } from '@app/enums/ticket-period.enum';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { RecreationalFishingTicketViewDTO } from '@app/models/generated/dtos/RecreationalFishingTicketViewDTO';
 import { UserAuthDTO } from '@app/models/generated/dtos/UserAuthDTO';
+import { SecurityService } from '@app/services/common-app/security.service';
 import { RecreationalFishingPublicService } from '@app/services/public-app/recreational-fishing-public.service';
-import { AuthService } from '@app/shared/services/auth.service';
-import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 import { PermissionsService } from '@app/shared/services/permissions.service';
+import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 
 @Component({
     selector: 'recreational-fishing-my-tickets',
@@ -23,12 +24,12 @@ export class RecreationalFishingMyTicketsComponent implements OnInit {
     public canBuyTickets: boolean = false;
     public showWarningBadge: boolean = false;
 
-    private authService: AuthService;
+    private authService: SecurityService;
     private service: RecreationalFishingPublicService;
     private router: Router;
 
     public constructor(
-        authService: AuthService,
+        authService: SecurityService,
         service: RecreationalFishingPublicService,
         router: Router,
         permissions: PermissionsService
@@ -41,8 +42,8 @@ export class RecreationalFishingMyTicketsComponent implements OnInit {
     }
 
     public ngOnInit(): void {
-        this.authService.userRegistrationInfoEvent.subscribe({
-            next: (userInfo: UserAuthDTO | null) => {
+        this.authService.getUser().subscribe({
+            next: (userInfo: UserAuthDTO) => {
                 if (userInfo !== null) {
                     this.service.currentUserTickets.subscribe({
                         next: async (tickets: RecreationalFishingTicketViewDTO[]) => {

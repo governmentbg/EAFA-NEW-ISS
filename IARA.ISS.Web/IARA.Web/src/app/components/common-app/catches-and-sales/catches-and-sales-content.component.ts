@@ -262,8 +262,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             next: (result: NomenclatureDTO<number>[]) => {
                 this.logBookStatuses = result;
 
-                const activeStatus: NomenclatureDTO<number> = result.find(x => x.code === LogBookStatusesEnum[LogBookStatusesEnum.New])!;
-                this.formGroup.get('logBookStatusesControl')!.setValue([activeStatus]);
+                const defaultStatuses: NomenclatureDTO<number>[] = result.filter(x => x.code === LogBookStatusesEnum[LogBookStatusesEnum.New] || x.code === LogBookStatusesEnum[LogBookStatusesEnum.Renewed])!;
+                this.formGroup.get('logBookStatusesControl')!.setValue(defaultStatuses);
             }
         });
 
@@ -339,7 +339,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.gridManager.onRequestServiceMethodCalled.subscribe({
             next: (rows: LogBookRegisterDTO[] | undefined) => {
                 if (rows !== null && rows !== undefined && rows.length > 0) {
-                    if (this.systemProperties.addLogBookPagesDaysTolerance) { 
+                    if (this.systemProperties.addLogBookPagesDaysTolerance) {
                         for (const row of rows) {
                             if (row.isLogBookFinished || row.isLogBookSuspended) {
                                 if (row.suspendedPermitLicenseValidTo !== undefined && row.suspendedPermitLicenseValidTo !== null) {

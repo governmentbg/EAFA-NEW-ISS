@@ -1,15 +1,14 @@
-﻿import { OpenIdConfiguration } from "angular-auth-oidc-client";
-
+﻿
 export interface IEnvironmentConfig {
     production: boolean;
     hmr: boolean;
     apiBaseUrl?: string;
     apiBasePath: string;
     hasPublicAccess: boolean;
+    isPublicApp: boolean;
     servicesBaseUrl: string;
     frontendBaseUrl: string;
     identityServerBaseUrl: string;
-    ClientAuthConfiguration: OpenIdConfiguration;
     environmentType: EnvironmentType;
     appBaseHref?: string;
 }

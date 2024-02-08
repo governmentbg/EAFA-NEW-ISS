@@ -99,7 +99,7 @@ export class TLDateTimeComponent extends BaseTLControl {
 
     public fieldIsRequired: boolean = false;
 
-    constructor(@Self() @Optional() ngControl: NgControl, fuseTranslationService: FuseTranslationLoaderService, translatePipe: TLTranslatePipe) {
-        super(ngControl, fuseTranslationService, translatePipe)
+    constructor(@Self() @Optional() ngControl: NgControl, translatePipe: TLTranslatePipe) {
+        super(ngControl, translatePipe)
     }
 }

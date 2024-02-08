@@ -1,14 +1,14 @@
 ﻿import { Component, OnInit, Self } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl } from '@angular/forms';
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { StatisticalFormBasicInfoDTO } from '@app/models/generated/dtos/StatisticalFormBasicInfoDTO';
+import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
+import { SecurityService } from '@app/services/common-app/security.service';
+import { CustomFormControl } from '@app/shared/utils/custom-form-control';
+import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
 import { Subscription } from 'rxjs';
 
-import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
-import { AuthService } from '@app/shared/services/auth.service';
-import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
-import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
-import { StatisticalFormBasicInfoDTO } from '@app/models/generated/dtos/StatisticalFormBasicInfoDTO';
-import { CustomFormControl } from '@app/shared/utils/custom-form-control';
-import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 
 @Component({
     selector: 'statistical-forms-basic-info',
@@ -18,14 +18,14 @@ export class StatisticalFormsBasicInfoComponent extends CustomFormControl<Statis
     public processUsers: NomenclatureDTO<number>[] = [];
 
     private nomenclatures: CommonNomenclatures;
-    private authService: AuthService;
+    private authService: SecurityService;
 
     private readonly loader: FormControlDataLoader;
 
     public constructor(
         @Self() ngControl: NgControl,
         nomenclatures: CommonNomenclatures,
-        authService: AuthService
+        authService: SecurityService
     ) {
         super(ngControl);
         this.nomenclatures = nomenclatures;
@@ -38,7 +38,7 @@ export class StatisticalFormsBasicInfoComponent extends CustomFormControl<Statis
         this.initCustomFormControl();
 
         this.loader.load(() => {
-            this.form.get('processUserControl')!.setValue(this.processUsers.find(x => x.value === this.authService.userRegistrationInfo!.id));
+            this.form.get('processUserControl')!.setValue(this.processUsers.find(x => x.value === this.authService.User!.userId));
         });
     }
 
