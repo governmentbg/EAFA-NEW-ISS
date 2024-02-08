@@ -50,6 +50,7 @@ export class CrossChecksResultsComponent implements AfterViewInit {
     public readonly canReadShipCatchQuotaRegister: boolean;
 
     public resolutions: NomenclatureDTO<number>[] = [];
+    public resolutionTypes: NomenclatureDTO<number>[] = [];
     public assignedUsers: NomenclatureDTO<number>[] = [];
     public reportGroups: NomenclatureDTO<number>[] = [];
 
@@ -106,16 +107,16 @@ export class CrossChecksResultsComponent implements AfterViewInit {
 
     public async ngAfterViewInit(): Promise<void> {
         const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin(
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CheckResolutionTypes, this.service.getCheckResolutionTypes.bind(this.service),
-            ),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CheckResolutions, this.service.getCheckResolutions.bind(this.service)),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CheckResolutionTypes, this.service.getCheckResolutionTypes.bind(this.service)),
             this.commonNomenclaturesService.getUserNames(),
             this.service.getAllReportGroups(),
         ).toPromise();
 
         this.resolutions = nomenclatures[0];
-        this.assignedUsers = nomenclatures[1];
-        this.reportGroups = nomenclatures[2];
+        this.resolutionTypes = nomenclatures[1];
+        this.assignedUsers = nomenclatures[2];
+        this.reportGroups = nomenclatures[3];
 
         this.grid = new DataTableManager<CrossCheckResultDTO, CrossCheckResultsFilters>({
             tlDataTable: this.datatable,
@@ -273,6 +274,7 @@ export class CrossChecksResultsComponent implements AfterViewInit {
             checkNameControl: new FormControl(),
             checkTableNameControl: new FormControl(),
             resolutionControl: new FormControl(),
+            resolutionTypeControl: new FormControl(),
             validityControl: new FormControl(),
             assignedUserControl: new FormControl(),
             tableIdControl: new FormControl(),
@@ -289,6 +291,7 @@ export class CrossChecksResultsComponent implements AfterViewInit {
             checkName: filters.getValue('checkNameControl'),
             checkTableName: filters.getValue('checkTableNameControl'),
             resolutionIds: filters.getValue('resolutionControl'),
+            resolutionTypeId: filters.getValue('resolutionTypeControl'),
             validFrom: filters.getValue<DateRangeData>('validityControl')?.start,
             validTo: filters.getValue<DateRangeData>('validityControl')?.end,
             assignedUserId: filters.getValue('assignedUserControl'),

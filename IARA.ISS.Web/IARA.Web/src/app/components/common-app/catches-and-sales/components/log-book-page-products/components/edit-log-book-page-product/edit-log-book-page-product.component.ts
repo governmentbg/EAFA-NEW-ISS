@@ -108,6 +108,10 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             this.isAquaculturePage = false;
         }
         else {
+            this.form.get('averageUnitWeightKgControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+            this.form.get('averageUnitWeightKgControl')!.markAsPending({ emitEvent: false });
+            this.form.get('averageUnitWeightKgControl')!.updateValueAndValidity({ emitEvent: false });
+
             this.isAquaculturePage = true;
         }
 
@@ -134,12 +138,14 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
                     if (this.hasUnitCount) {
                         const unitCount: number | undefined = Number(this.form.get('unitCountControl')!.value);
 
-                        if (quantityKg && unitCount && unitCount > 0) {
-                            const averageUnitWeightKg: string | undefined = (quantityKg / unitCount).toFixed(3);
-                            this.form.get('averageUnitWeightKgControl')!.setValue(averageUnitWeightKg);
-                        }
-                        else {
-                            this.form.get('averageUnitWeightKgControl')!.setValue(undefined);
+                        if (!this.isAquaculturePage) {
+                            if (quantityKg && unitCount && unitCount > 0) {
+                                const averageUnitWeightKg: string | undefined = (quantityKg / unitCount).toFixed(3);
+                                this.form.get('averageUnitWeightKgControl')!.setValue(averageUnitWeightKg);
+                            }
+                            else {
+                                this.form.get('averageUnitWeightKgControl')!.setValue(undefined);
+                            }
                         }
                     }
                 }
@@ -149,12 +155,14 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
                 next: (unitCount: number | undefined) => {
                     const quantityKg: number | undefined = Number(this.form.get('quantityKgControl')!.value);
 
-                    if (quantityKg && unitCount && unitCount > 0) {
-                        const averageUnitWeightKg: string | undefined = (Number(quantityKg) / Number(unitCount)).toFixed(3);
-                        this.form.get('averageUnitWeightKgControl')!.setValue(averageUnitWeightKg);
-                    }
-                    else {
-                        this.form.get('averageUnitWeightKgControl')!.setValue(undefined);
+                    if (!this.isAquaculturePage) {
+                        if (quantityKg && unitCount && unitCount > 0) {
+                            const averageUnitWeightKg: string | undefined = (Number(quantityKg) / Number(unitCount)).toFixed(3);
+                            this.form.get('averageUnitWeightKgControl')!.setValue(averageUnitWeightKg);
+                        }
+                        else {
+                            this.form.get('averageUnitWeightKgControl')!.setValue(undefined);
+                        }
                     }
 
                     const unitPrice: number | undefined = Number(this.form.get('unitPriceControl')!.value);

@@ -43,7 +43,7 @@
                                          fxLayoutAlign="center start"
                                          *ngIf="group.value.length === 1"
                                          class="appl-type"
-                                         (click)="login()">
+                                         (tlDebounceClick)="login()">
                                         <span class="overflow">{{ group.value[0].data.displayName }}</span>
                                     </div>
                                 </div>
@@ -53,7 +53,7 @@
                         <data-template-column [isSortable]="false"
                                               columnName="{{ 'home-page-public.application-type-name' | tlTranslate }}">
                             <ng-template let-row="row" ngx-datatable-cell-template>
-                                <div fxLayout="row" fxFlex="100" class="appl-type" (click)="login()">
+                                <div fxLayout="row" fxFlex="100" class="appl-type" (tlDebounceClick)="login()">
                                     <span>{{ row.data.displayName }}</span>
                                 </div>
                             </ng-template>
@@ -109,7 +109,7 @@
                     <div *ngIf="!isAuthenticated" fxLayout="row" fxLayoutAlign="center center">
                         <button mat-raised-button
                                 color="accent"
-                                (click)="login()">
+                                (tlDebounceClick)="login()">
                             <tl-icon icon="fa-sign-in"></tl-icon>
                             <span>{{ 'common.login' | tlTranslate : 'cap' }}</span>
                         </button>
@@ -130,7 +130,7 @@
                     <div *ngIf="!isAuthenticated" fxLayout="row" fxLayoutAlign="center center">
                         <button mat-raised-button
                                 color="accent"
-                                (click)="login()">
+                                (tlDebounceClick)="login()">
                             <tl-icon icon="fa-sign-in"></tl-icon>
                             <span>{{ 'common.login' | tlTranslate : 'cap' }}</span>
                         </button>
@@ -143,7 +143,7 @@
                     <div *ngIf="!isAuthenticated" fxLayout="row" fxLayoutAlign="center center">
                         <button mat-raised-button
                                 color="accent"
-                                (click)="redirectToRegistration()">
+                                (tlDebounceClick)="redirectToRegistration()">
                             {{ 'home-page-public.registration' | tlTranslate }}
                         </button>
                     </div>

@@ -32,6 +32,12 @@
                            tooltipResourceName="cross-check-results.resolution-helper">
                 </tl-select>
                 <tl-autocomplete fxFlex="25"
+                                 label="{{ 'cross-check-results.resolution-types' | tlTranslate }}"
+                                 formControlName="resolutionTypeControl"
+                                 [options]="resolutionTypes"
+                                 tooltipResourceName="cross-check-results.resolution-types-helper">
+                </tl-autocomplete>
+                <tl-autocomplete fxFlex="25"
                                  label="{{ 'cross-check-results.assigned-user' | tlTranslate }}"
                                  formControlName="assignedUserControl"
                                  [options]="assignedUsers"
@@ -42,13 +48,13 @@
                           label="{{ 'cross-check-results.check-table-id' | tlTranslate }}"
                           tooltipResourceName="cross-check-results.check-table-id-helper">
                 </tl-input>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
                 <tl-input fxFlex="25"
                           formControlName="errorDescriptionControl"
                           label="{{ 'cross-check-results.check-error-description' | tlTranslate }}"
                           tooltipResourceName="cross-check-results.check-error-description-helper">
                 </tl-input>
-            </div>
-            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
                 <tl-select fxFlex="25"
                            label="{{ 'cross-check-results.report-group' | tlTranslate }}"
                            formControlName="groupsControl"
@@ -56,7 +62,7 @@
                            [isMultiple]="true"
                            tooltipResourceName="cross-check-results.groups-helper">
                 </tl-select>
-                <div fxFlex="75"></div>
+                <div fxFlex="50"></div>
             </div>
         </div>
     </search-panel>

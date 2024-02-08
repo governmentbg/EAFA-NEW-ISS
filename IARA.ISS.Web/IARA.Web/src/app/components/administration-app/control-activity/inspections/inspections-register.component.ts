@@ -42,6 +42,7 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { InspectionDialogParamsModel } from './models/inspection-dialog-params.model';
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { SecurityService } from '@app/services/common-app/security.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'inspections-register',
@@ -93,6 +94,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
 
     private readonly service: InspectionsService;
     private readonly nomenclatures: CommonNomenclatures;
+    private readonly router: Router;
 
     private readonly confirmDialog: TLConfirmDialog;
     private readonly matDialog: MatDialog;
@@ -108,13 +110,15 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         addDialog: TLMatDialog<InspectionSelectionComponent>,
         signDialog: TLMatDialog<SignInspectionComponent>,
         permissions: PermissionsService,
-        authService: SecurityService
+        authService: SecurityService,
+        router: Router
     ) {
         this.service = service;
         this.nomenclatures = nomenclatures;
         this.translate = translate;
         this.matDialog = matDialog;
         this.confirmDialog = confirmDialog;
+        this.router = router;
 
         this.addDialog = addDialog;
         this.signDialog = signDialog;
@@ -269,9 +273,15 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             this.confirmDialog.open({
                 title: this.translate.getValue('inspections.user-has-unresolved-cross-checks-title'),
                 message: this.translate.getValue('inspections.user-has-unresolved-cross-checks-message'),
-                okBtnLabel: this.translate.getValue('inspections.okay'),
-                hasCancelButton: false
-            }).subscribe();
+                okBtnLabel: this.translate.getValue('inspections.user-has-unresolved-cross-checks-ok-btn'),
+                hasCancelButton: true
+            }).subscribe({
+                next: (ok: boolean) => {
+                    if (ok) {
+                        this.router.navigateByUrl('/cross-checks-results');
+                    }
+                }
+            });
 
             return;
         }

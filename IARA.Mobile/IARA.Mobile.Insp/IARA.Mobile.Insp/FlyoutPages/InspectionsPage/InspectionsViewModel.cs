@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application;
+﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
@@ -30,6 +25,11 @@ using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.ViewModels.Models;
 using IARA.Mobile.Shared.Helpers;
 using IARA.Mobile.Shared.Menu;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -139,7 +139,16 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
             }
 
             IsBusy = true;
-            List<InspectionDto> inspections = await InspectionsTransaction.GetAll(page);
+            List<InspectionDto> inspections = null;
+            try
+            {
+                inspections = await InspectionsTransaction.GetAll(page);
+            }
+            catch (Exception ex)
+            {
+                await TLSnackbar.Show(ex.Message, App.GetResource<Color>("ErrorColor"));
+            }
+
             if (inspections == null)
             {
                 return;

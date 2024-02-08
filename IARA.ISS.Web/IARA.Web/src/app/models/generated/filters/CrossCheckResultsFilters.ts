@@ -20,6 +20,7 @@ export class CrossCheckResultsFilters extends BaseRequestModel {
     public tableId: string | undefined;
     public errorDescription: string | undefined;
     public resolutionIds: number[] | undefined;
+    public resolutionTypeId: number | undefined;
     public validFrom: Date | undefined;
     public validTo: Date | undefined;
     public assignedUserId: number | undefined;

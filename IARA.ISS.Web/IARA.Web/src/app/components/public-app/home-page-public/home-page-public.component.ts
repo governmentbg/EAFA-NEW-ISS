@@ -15,7 +15,7 @@ import { HomePageVideoModel } from './models/home-page-video.params';
 export class HomePagePublicComponent implements OnInit {
     public isAuthenticated: boolean = false;
     public applicationTypes: ApplicationTypeDTO[] = [];
-    public videos: HomePageVideoModel[] = []; //TODO
+    public videos: HomePageVideoModel[] = [];
 
     @ViewChild('table')
     private table!: TLDataTableComponent;
@@ -55,7 +55,7 @@ export class HomePagePublicComponent implements OnInit {
 
     public login(): void {
         if (!this.isAuthenticated) {
-            // this.securityService.login();
+            this.router.navigate(['/account/sign-in']);
         }
     }
 
