@@ -1,25 +1,23 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-
 import { LoginTypesEnum } from '@app/enums/login-types.enum';
 import { ErrorCode, ErrorModel, ErrorType } from '@app/models/common/exception.model';
 import { UserAuthDTO } from '@app/models/generated/dtos/UserAuthDTO';
 import { UserRegistrationDTO } from '@app/models/generated/dtos/UserRegistrationDTO';
-import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
+import { UsersService } from '@app/services/common-app/users.service';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
-import { AuthService } from '@app/shared/services/auth.service';
-import { RequestProperties } from '@app/shared/services/request-properties';
+import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 
 @Component({
     selector: 'create-profile',
@@ -40,23 +38,23 @@ export class CreateProfileComponent implements OnInit, OnDestroy {
 
     private unsubscribeAll: Subject<unknown>;
     private fuseConfigService: FuseConfigService;
-    private authService: AuthService;
+    private userService: UsersService;
     private router: Router;
     private translationService: FuseTranslationLoaderService;
     private model: UserRegistrationDTO;
-    private snackbar: MatSnackBar;
+    private snackbar: TLSnackbar;
     private isFromMergeProfilePage: boolean;
 
     public readonly useMultilineErrors = true;
 
     public constructor(fuseConfigService: FuseConfigService,
-                       authService: AuthService,
-                       router: Router,
-                       translationService: FuseTranslationLoaderService,
-                       snackbar: MatSnackBar) {
+        userService: UsersService,
+        router: Router,
+        translationService: FuseTranslationLoaderService,
+        snackbar: TLSnackbar) {
 
         this.fuseConfigService = fuseConfigService;
-        this.authService = authService;
+        this.userService = userService;
         this.router = router;
         this.translationService = translationService;
         this.snackbar = snackbar;
@@ -86,14 +84,13 @@ export class CreateProfileComponent implements OnInit, OnDestroy {
     }
 
     public ngOnInit(): void {
-        this.authService.checkAuthentication();
         this.registerForm.get('password')!.valueChanges // Update the validity of the 'passwordConfirmation' field when the 'password' field changes
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(() => {
                 this.registerForm.get('passwordConfirmation')!.updateValueAndValidity();
             });
 
-        const userAuth = this.authService.userRegistrationInfo as UserAuthDTO;
+        const userAuth = this.userService.User!;
 
         if (this.isFromMergeProfilePage) {
             this.setupFirstTimeEAuthSettings(userAuth);
@@ -125,38 +122,27 @@ export class CreateProfileComponent implements OnInit, OnDestroy {
             }
 
             if (this.isFromMergeProfilePage) {
-                this.authService.updateUserRegistration(this.model).subscribe({
+                this.userService.updateUserRegistration(this.model).subscribe({
                     next: (id: number) => {
-                        this.authService.userEmail = this.model.email;
                         this.navigateToSuccessfulRegistrationPage();
                     },
                     error: (errorResponse: HttpErrorResponse) => {
                         const message: string = this.translationService.getValue('user-registration.error-while-updating-user-registration-info');
-                        this.snackbar.open(message, undefined, {
-                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                        });
+                        this.snackbar.error(message);
                     }
                 });
             }
             else {
-                this.authService.registerUser(this.model).subscribe({
+                this.userService.registerUser(this.model).subscribe({
                     next: (id: number) => {
-                        this.authService.userEmail = this.model.email;
                         this.navigateToSuccessfulRegistrationPage();
                     },
                     error: (errorResponse: HttpErrorResponse) => {
                         const error: ErrorModel | undefined = errorResponse.error as ErrorModel;
                         if (error !== null && error !== undefined) {
                             if (error.type === ErrorType.Unhandled) {
-                                const error = new ErrorModel();
-                                error.messages = [this.translationService.getValue('user-registration.an-error-occurred-during-registration')];
-
-                                this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                                    data: error,
-                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                                });
+                                const errorMessage = this.translationService.getValue('user-registration.an-error-occurred-during-registration');
+                                this.snackbar.error(errorMessage);
                             }
                             else {
                                 if (error.code === ErrorCode.InvalidEgnLnch) {
@@ -186,11 +172,7 @@ export class CreateProfileComponent implements OnInit, OnDestroy {
                             }
                         }
                         else {
-                            this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                                data: new ErrorModel({ messages: [this.translationService.getValue('service.an-error-occurred-in-the-app')] }),
-                                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                            });
+                            this.snackbar.error(this.translationService.getValue('service.an-error-occurred-in-the-app'));
                         }
                     }
                 });

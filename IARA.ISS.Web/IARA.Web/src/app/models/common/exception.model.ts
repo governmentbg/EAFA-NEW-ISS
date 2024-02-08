@@ -15,6 +15,9 @@ export enum ErrorType {
     Validation = 2
 }
 
+
+
+
 export enum ErrorCode {
     InvalidEmail = 0,
     InvalidEgnLnch = 1,
@@ -72,5 +75,7 @@ export enum ErrorCode {
     PatrolVehicleAlreadyExists = 53,
     InspectionReportNumAlreadyExists = 54,
     InvalidPermitLicenseNumber = 55,
-    MoreThanOneActiveShipLogBook = 56
+    InvalidPassword = 56,
+    OldPasswordFound = 57,
+    MoreThanOneActiveShipLogBook = 58
 }

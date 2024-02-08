@@ -14,6 +14,7 @@ export class DataLoadParams {
 }
 
 export class NomenclatureStore {
+
     public static get instance(): NomenclatureStore {
         if (NomenclatureStore._instance === null || NomenclatureStore._instance === undefined) {
             this._instance = new NomenclatureStore();
@@ -99,6 +100,11 @@ export class NomenclatureStore {
         else {
             throw new Error(`Nomeclature ${type} not loaded.`);
         }
+    }
+
+    public clearAllNomenclatures() {
+        this.loadParams.clear();
+        this.nomenclatures.clear();
     }
 
     public refreshNomenclature<T>(type: NomenclatureTypes, requestService: () => Observable<NomenclatureDTO<T>[]>): Observable<NomenclatureDTO<T>[]> {

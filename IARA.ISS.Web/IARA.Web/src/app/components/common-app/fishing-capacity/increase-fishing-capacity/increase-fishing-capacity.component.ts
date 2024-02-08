@@ -35,7 +35,6 @@ import { TLValidators } from '@app/shared/utils/tl-validators';
 import { FishingCapacityFreedActionsRegixDataDTO } from '@app/models/generated/dtos/FishingCapacityFreedActionsRegixDataDTO';
 import { NewCertificateData } from '../acquired-fishing-capacity/acquired-fishing-capacity.component';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
-import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { ApplicationValidationErrorsEnum } from '@app/enums/application-validation-errors.enum';
@@ -44,6 +43,7 @@ import { FishingCapacityRemainderActionEnum } from '@app/enums/fishing-capacity-
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 
 @Component({
     selector: 'increase-fishing-capacity',
@@ -94,13 +94,11 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
     private model!: IncreaseFishingCapacityApplicationDTO | IncreaseFishingCapacityRegixDataDTO;
 
     private translate: FuseTranslationLoaderService;
-    private snackbar: MatSnackBar;
+    private snackbar: TLSnackbar;
 
-    public constructor(
-        nomenclatures: CommonNomenclatures,
+    public constructor(nomenclatures: CommonNomenclatures,
         translate: FuseTranslationLoaderService,
-        snackbar: MatSnackBar
-    ) {
+        snackbar: TLSnackbar) {
         this.nomenclatures = nomenclatures;
         this.translate = translate;
         this.snackbar = snackbar;
@@ -485,18 +483,10 @@ export class IncreaseFishingCapacityComponent implements OnInit, IDialogComponen
                     const messages: string[] = response.error.messages;
 
                     if (messages.length !== 0) {
-                        this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                            data: response.error as ErrorModel,
-                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                        });
+                        this.snackbar.errorModel(response.error as ErrorModel, RequestProperties.DEFAULT);
                     }
                     else {
-                        this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                            data: new ErrorModel({ messages: [this.translate.getValue('service.an-error-occurred-in-the-app')] }),
-                            duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                            panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                        });
+                        this.snackbar.error(this.translate.getValue('service.an-error-occurred-in-the-app'), RequestProperties.DEFAULT.showExceptionDurationErr, RequestProperties.DEFAULT.showExceptionColorClassErr);
                     }
 
                     if (messages.find(message => message === ApplicationValidationErrorsEnum[ApplicationValidationErrorsEnum.NoEDeliveryRegistration])) {

@@ -1,4 +1,6 @@
 ﻿import { Inject, Injectable } from '@angular/core';
+import { SECURITY_SERVICE_TOKEN } from '@app/components/common-app/auth/di/auth-di.tokens';
+import { ISecurityService } from '@app/components/common-app/auth/interfaces/security-service.interface';
 import { Subject } from 'rxjs';
 import { WebNotification } from './models/notification';
 import { INotificationSecurity } from './models/notification-security.interface';
@@ -12,7 +14,7 @@ export abstract class BaseNotificationsHubService extends SignalRHubService {
 
     private listeningForCheck: Map<NotificationTypes, boolean>;
 
-    constructor(@Inject("INotificationSecurity") securityService: INotificationSecurity, hubPath: string, apiBaseUrl: string) {
+    constructor(@Inject(SECURITY_SERVICE_TOKEN) securityService: ISecurityService, hubPath: string, apiBaseUrl: string) {
         super(securityService, hubPath, apiBaseUrl);
         this.listeningForCheck = new Map<NotificationTypes, boolean>();
         this.securityService = securityService;
@@ -20,7 +22,7 @@ export abstract class BaseNotificationsHubService extends SignalRHubService {
 
     public subscribeFor<T>(type: NotificationTypes, handler: (result: T) => void): Promise<boolean> {
         const subject: Subject<boolean> = new Subject<boolean>();
-        this.securityService.isAuthenticated().subscribe((isAuthenticated: boolean | undefined) => {
+        this.securityService.isAuthenticated().then((isAuthenticated: boolean | undefined) => {
 
             if (isAuthenticated) {
                 this.listenFor<T>(type, handler).then(result => {

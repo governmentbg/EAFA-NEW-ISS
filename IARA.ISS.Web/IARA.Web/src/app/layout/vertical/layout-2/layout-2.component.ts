@@ -23,10 +23,9 @@ export class VerticalLayout2Component implements OnInit, OnDestroy {
      *
      * @param {FuseConfigService} _fuseConfigService
      */
-    constructor(
-        private _fuseConfigService: FuseConfigService,
-        private ngxPermissionsService: NgxPermissionsService
-    ) {
+    constructor(private _fuseConfigService: FuseConfigService,
+        private ngxPermissionsService: NgxPermissionsService) {
+
         // Set the defaults
         this.navigation = [];
 

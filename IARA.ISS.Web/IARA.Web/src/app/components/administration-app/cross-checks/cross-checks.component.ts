@@ -135,11 +135,11 @@ export class CrossChecksComponent implements AfterViewInit {
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
                 tableName: 'CrossCheck'
             };
-            
+
             title = viewMode
                 ? this.translate.getValue('cross-check.view-cross-check-dialog-title')
                 : this.translate.getValue('cross-check.edit-cross-check-dialog-title');
-            
+
             if (this.canExecuteRecords) {
                 rightButtons.push({
                     id: 'execute-cross-check',
@@ -189,6 +189,10 @@ export class CrossChecksComponent implements AfterViewInit {
                 }
             }
         });
+    }
+
+    public executeCrossChecks(execFrequency: string): void {
+        this.service.executeCrossChecks(execFrequency).subscribe();
     }
 
     public restoreCrossCheck(crossCheck: CrossCheckDTO): void {

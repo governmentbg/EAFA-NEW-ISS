@@ -21,7 +21,6 @@ import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { AuanViolatedRegulationDTO } from '@app/models/generated/dtos/AuanViolatedRegulationDTO';
 import { AuanObjectionResolutionTypesEnum } from '@app/enums/auan-objection-resolution-types.enum';
 import { AuanDeliveryDataDTO } from '@app/models/generated/dtos/AuanDeliveryDataDTO';
-import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { InspDeliveryConfirmationTypesEnum } from '@app/enums/insp-delivery-confirmation-types.enum';
@@ -31,6 +30,7 @@ import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/Ins
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 
 @Component({
     selector: 'edit-auan',
@@ -76,13 +76,13 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
     private readonly nomenclatures: CommonNomenclatures;
     private readonly translate: FuseTranslationLoaderService;
-    private readonly snackbar: MatSnackBar;
+    private readonly snackbar: TLSnackbar;
 
     public constructor(
         service: AuanRegisterService,
         nomenclatures: CommonNomenclatures,
         translate: FuseTranslationLoaderService,
-        snackbar: MatSnackBar
+        snackbar: TLSnackbar
     ) {
         this.service = service;
         this.nomenclatures = nomenclatures;
@@ -584,18 +584,9 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             const messages: string[] = response.error.messages;
 
             if (messages.length !== 0) {
-                this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                    data: response.error as ErrorModel,
-                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                });
-            }
-            else {
-                this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                    data: new ErrorModel({ messages: [this.translate.getValue('service.an-error-occurred-in-the-app')] }),
-                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                });
+                this.snackbar.errorModel(response.error as ErrorModel);
+            } else {
+                this.snackbar.error(this.translate.getValue('service.an-error-occurred-in-the-app'));
             }
         }
 

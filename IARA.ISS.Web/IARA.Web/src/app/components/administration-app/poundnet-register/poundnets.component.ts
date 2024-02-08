@@ -1,30 +1,30 @@
 ﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
+import { PoundNetStatusesEnum } from '@app/enums/pound-net-statuses.enum';
+import { IPoundnetRegisterService } from '@app/interfaces/administration-app/poundnet-register.interface';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { PoundNetDTO } from '@app/models/generated/dtos/PoundNetDTO';
 import { PoundNetRegisterFilters } from '@app/models/generated/filters/PoundNetRegisterFilters';
 import { PoundnetRegisterService } from '@app/services/administration-app/poundnet-register.service';
+import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { IRemoteTLDatatableComponent } from '@app/shared/components/data-table/interfaces/tl-remote-datatable.interface';
 import { FilterEventArgs } from '@app/shared/components/data-table/models/filter-event-args.model';
 import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
 import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
+import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
+import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { SearchPanelComponent } from '@app/shared/components/search-panel/search-panel.component';
+import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
+import { PermissionsService } from '@app/shared/services/permissions.service';
 import { DataTableManager } from '@app/shared/utils/data-table.manager';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
-import { IPoundnetRegisterService } from '@app/interfaces/administration-app/poundnet-register.interface';
-import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { EditPoundnetComponent } from './edit-poundnet.component';
-import { PermissionsService } from '@app/shared/services/permissions.service';
-import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
-import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
-import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
-import { PoundNetStatusesEnum } from '@app/enums/pound-net-statuses.enum';
+
 
 @Component({
     selector: 'poundnets',

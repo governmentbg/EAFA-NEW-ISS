@@ -12,7 +12,6 @@ import { PenalDecreesService } from '@app/services/administration-app/penal-decr
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
-import { ErrorSnackbarComponent } from '@app/shared/components/error-snackbar/error-snackbar.component';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { PenalDecreeAuanDataDTO } from '@app/models/generated/dtos/PenalDecreeAuanDataDTO';
@@ -31,6 +30,7 @@ import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-
 import { PenalDecreeFishCompensationDTO } from '@app/models/generated/dtos/PenalDecreeFishCompensationDTO';
 import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
 import { AuanViolatedRegulationDTO } from '@app/models/generated/dtos/AuanViolatedRegulationDTO';
+import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 
 @Component({
     selector: 'edit-penal-decree',
@@ -76,13 +76,13 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
     private model!: PenalDecreeEditDTO;
     private readonly nomenclatures: CommonNomenclatures;
     private readonly translate: FuseTranslationLoaderService;
-    private readonly snackbar: MatSnackBar;
+    private readonly snackbar: TLSnackbar;
 
     public constructor(
         service: PenalDecreesService,
         translate: FuseTranslationLoaderService,
         nomenclatures: CommonNomenclatures,
-        snackbar: MatSnackBar
+        snackbar: TLSnackbar
     ) {
         this.service = service;
         this.nomenclatures = nomenclatures;
@@ -485,18 +485,10 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             const messages: string[] = response.error.messages;
 
             if (messages.length !== 0) {
-                this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                    data: response.error as ErrorModel,
-                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                });
+                this.snackbar.errorModel(response.error as ErrorModel, RequestProperties.DEFAULT);
             }
             else {
-                this.snackbar.openFromComponent(ErrorSnackbarComponent, {
-                    data: new ErrorModel({ messages: [this.translate.getValue('service.an-error-occurred-in-the-app')] }),
-                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                });
+                this.snackbar.errorModel(new ErrorModel({ messages: [this.translate.getValue('service.an-error-occurred-in-the-app')] }), RequestProperties.DEFAULT);
             }
         }
 

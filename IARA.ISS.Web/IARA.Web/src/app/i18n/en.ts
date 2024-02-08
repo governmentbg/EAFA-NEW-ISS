@@ -21,7 +21,7 @@
         'horizontal-layout-1': 'horizontal layout #1',
         'vetical-layout-1': 'vertical layout #1',
         'vetical-layout-2': 'vertical layout #2',
-        'vetical-layout-3': 'vertial laytout #3',
+        'vetical-layout-3': 'vertical layout #3',
         'layout-width': 'layout width',
         'full-width': 'full width',
         'boxed-like': 'boxed',
@@ -41,7 +41,12 @@
         'below-fixed': 'below fixed',
         'use-different-background-color': 'use custom background color',
         'background-color': 'background color',
-        'footer': 'footer',
+        'footer': 'This Information and Statistics System was created under'
+            + ' project BG14MFOP001-3.001-0026 "Expansion of the program scope'
+            + ' and upgrade of the Information and Statistics System IARA,'
+            + ' according to national and European requirements, as well as'
+            + ' introduction of electronic administrative services" procedure'
+            + ' BG14MFOP001-3.001 "Control and implementation " under PMF 2014-2020',
         'color': 'color',
         'side-panel': 'side panel',
         'variant': 'variant',
@@ -129,7 +134,10 @@
         'yes': 'Yes',
         'no': 'No',
         'not-applicable': 'Not applicable',
-        'date': 'Date'
+        'date': 'Date',
+        'go-to': 'Go to',
+        'second': 'second',
+        'seconds': 'seconds',
     },
     'validation': {
         'min': 'field has minimum value',
@@ -5017,7 +5025,10 @@
         'access-management-selected-users': 'Selected users',
         'access-management-selected-roles': 'Selected roles',
         'execute-cross-check-btn': 'Execute cross check',
-        'execute-cross-check-success-message': 'Cross check executed successfully'
+        'execute-cross-check-success-message': 'Cross check executed successfully',
+        'execute-daily': 'Execute daily',
+        'execute-weekly': 'Execute weekly',
+        'execute-monthly': 'Execute monthly',
     },
     'common-document': {
         'document-issue-date': 'Issue date',

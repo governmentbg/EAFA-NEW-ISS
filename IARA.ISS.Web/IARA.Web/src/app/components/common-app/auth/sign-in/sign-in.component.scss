@@ -1,0 +1,31 @@
+.actions {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 2rem;
+    padding-left: .5rem;
+    padding-right: .5rem;
+
+    .action-links {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        align-items: flex-end;
+        margin-top: 5px;
+    }
+}
+
+.buttons-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    button {
+        width: 95%;
+        margin-bottom: 1rem;
+    }
+}

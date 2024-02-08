@@ -4,7 +4,6 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDividerModule } from '@angular/material/divider';
-import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
@@ -32,7 +31,6 @@ import { DateRangeIndefiniteComponent } from './components/date-range-indefinite
 import { DeliveryDataComponent } from './components/delivery-data/delivery-data.component';
 import { DialogWrapperComponent } from './components/dialog-wrapper/dialog-wrapper.component';
 import { EgnLncInputComponent } from './components/egn-lnc-input/egn-lnc-input.component';
-import { ErrorSnackbarComponent } from './components/error-snackbar/error-snackbar.component';
 import { FileUploadFormArrayComponent } from './components/file-upload-form-array/file-upload-form-array.component';
 import { FileUploadFormComponent } from './components/file-upload-form/file-upload-form.component';
 import { TLFileUploadModule } from './components/file-upload/file-upload.module';
@@ -51,6 +49,8 @@ import { RegixChecksResultsComponent } from './components/regix-checks-results/r
 import { RegixDataComponent } from './components/regix-data/regix-data.component';
 import { SearchPanelModule } from './components/search-panel/search-panel.module';
 import { SimpleSelectTableComponent } from './components/simple-select-table/simple-select-table.component';
+import { ErrorSnackbarComponent } from './components/snackbar/error-snackbar/error-snackbar.component';
+import { WarningSnackbarComponent } from './components/snackbar/warning-snackbar/warning-snackbar.component';
 import { SpinnerModule } from './components/spinner/spinner.module';
 import { TLAuditModule } from './components/tl-audit/tl-audit.module';
 import { TLCardModule } from './components/tl-card/tl-card.module';
@@ -69,7 +69,6 @@ import { TLPipesModule } from './pipes/tl-pipes.module';
 
 @NgModule({
     imports: [
-        BrowserModule,
         CommonModule,
         TLFileUploadModule,
         FlexLayoutModule,
@@ -98,7 +97,7 @@ import { TLPipesModule } from './pipes/tl-pipes.module';
         TLBoricaPaymentsModule,
         TLEPayPaymentsModule,
         NgxTextDiffModule,
-        MatDividerModule, 
+        MatDividerModule,
         TLDirectivesModule,
         QuillModule.forRoot()
     ],
@@ -106,7 +105,6 @@ import { TLPipesModule } from './pipes/tl-pipes.module';
         NgxDatatableModule,
         NgxPermissionsModule,
         RouterModule,
-        BrowserModule,
         CommonModule,
         TLFileUploadModule,
         FlexLayoutModule,
@@ -167,7 +165,8 @@ import { TLPipesModule } from './pipes/tl-pipes.module';
         PaymentTariffsComponent,
         PaymentTariffComponent,
         CancellationHistoryDialogComponent,
-        OverlappingLogBooksComponent
+        OverlappingLogBooksComponent,
+        WarningSnackbarComponent
     ],
     declarations: [
         CheckboxListComponent,
@@ -203,7 +202,8 @@ import { TLPipesModule } from './pipes/tl-pipes.module';
         PaymentTariffsComponent,
         PaymentTariffComponent,
         CancellationHistoryDialogComponent,
-        OverlappingLogBooksComponent
+        OverlappingLogBooksComponent,
+        WarningSnackbarComponent
     ],
     providers: [CurrencyPipe, DecimalPipe]
 })

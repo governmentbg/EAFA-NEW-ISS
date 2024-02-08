@@ -1,8 +1,8 @@
-import { Component, ViewEncapsulation } from '@angular/core';
-import { AbstractControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-
-import { FuseConfigService } from '@fuse/services/config.service';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { fuseAnimations } from '@fuse/animations';
+import { FuseConfigService } from '@fuse/services/config.service';
+
 
 
 @Component({
@@ -12,7 +12,21 @@ import { fuseAnimations } from '@fuse/animations';
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
 })
-export class UserRegistrationLayoutComponent { }
+export class UserRegistrationLayoutComponent implements OnInit, OnDestroy {
+
+    private fuseConfigService: FuseConfigService;
+    constructor(fuseConfigService: FuseConfigService) {
+        this.fuseConfigService = fuseConfigService;
+    }
+
+    public ngOnInit(): void {
+        this.fuseConfigService.hidePanels();
+    }
+
+    public ngOnDestroy(): void {
+        this.fuseConfigService.restoreConfig();
+    }
+}
 
 /**
  * Confirm password validator

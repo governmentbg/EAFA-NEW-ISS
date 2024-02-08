@@ -1,8 +1,7 @@
 ﻿import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AbstractControl, ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { TLTranslatePipe } from '../../pipes/tl-translate.pipe';
-import { ITranslateService } from './interfaces/translate-service.interface';
+import { AbstractControl, ControlValueAccessor, FormControl, NgControl, ValidatorFn } from '@angular/forms';
+import { FloatLabelType, MatFormFieldAppearance } from '@angular/material/form-field';
+import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
 import { TLError } from './models/tl-error.model';
 import { TLUtils } from './utils';
 
@@ -28,6 +27,18 @@ export abstract class BaseTLControl implements OnInit {
     }
 
     @Input()
+    public disableTooltip: boolean = false;
+
+    @Output()
+    public focusout: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
+
+    public readonly TOOLTIP_SHOW_DELAY_MS: number = 1000;
+    public readonly TOOLTIP_POSITION: string = 'above';
+
+    @Input()
+    public appearance: MatFormFieldAppearance = 'standard';
+
+    @Input()
     public multilineError: boolean = false;
 
     @Input()
@@ -46,13 +57,22 @@ export abstract class BaseTLControl implements OnInit {
     public tooltipResourceName: string = '';
 
     @Input()
-    public disableTooltip: boolean = false;
+    public showTooltip: string = '';
 
-    @Output()
-    public focusout: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
+    @Input()
+    public floatLabel: FloatLabelType = 'auto';
 
-    public readonly TOOLTIP_SHOW_DELAY_MS: number = 1000;
-    public readonly TOOLTIP_POSITION: string = 'above';
+    @Input()
+    public spellcheck: boolean = false;
+
+    @Input()
+    public autocorrect: string = 'off';
+
+    @Input()
+    public autocomplete: string = 'off';
+
+    @Input()
+    public autocapitalize: string = 'off';
 
     public set ngControl(value: NgControl) {
         this._ngControl = value;
@@ -63,22 +83,20 @@ export abstract class BaseTLControl implements OnInit {
         return this._ngControl as NgControl;
     }
 
-    public tlTranslatePipe: TLTranslatePipe;
     public _showLabel: boolean = true;
-    public tlTranslationService: ITranslateService | undefined;
     public fieldIsRequired: boolean = false;
     public errors: TLError[] = new Array<TLError>();
     public _ngControl: NgControl | undefined;
 
     protected formControl: FormControl | undefined;
     protected ngControlInitialized: EventEmitter<void>;
+    protected translatePipe: TLTranslatePipe;
 
-    constructor(ngControl: NgControl, fuseTranslateionService: FuseTranslationLoaderService, tlTranslatePipe: TLTranslatePipe) {
+    public constructor(ngControl: NgControl, translatePipe: TLTranslatePipe) {
         this.ngControlInitialized = new EventEmitter<void>();
         this._ngControl = ngControl;
 
-        this.tlTranslationService = fuseTranslateionService;
-        this.tlTranslatePipe = tlTranslatePipe;
+        this.translatePipe = translatePipe;
 
         if (this._ngControl) {
             this.formControl = ngControl.control as FormControl;
@@ -94,8 +112,9 @@ export abstract class BaseTLControl implements OnInit {
             const validator = this._ngControl?.control?.validator;
             this.formControl = this._ngControl.control as FormControl;
 
-            this.fieldIsRequired = TLUtils.hasControlRequiredValidator(validator);
+            this.fieldIsRequired = this.hasControlRequiredValidator(validator);
 
+            // eslint-disable-next-line @typescript-eslint/no-this-alias
             const self = this;
             const originalMethod = this._ngControl?.control?.markAsTouched;
             (this._ngControl.control as AbstractControl).markAsTouched = function (a: any) {
@@ -106,17 +125,39 @@ export abstract class BaseTLControl implements OnInit {
             const originalPendingMethod = this._ngControl?.control?.markAsPending;
             (this._ngControl.control as AbstractControl).markAsPending = function (a: any) {
                 originalPendingMethod?.apply(this, a);
-                self.fieldIsRequired = TLUtils.hasControlRequiredValidator(self._ngControl?.control?.validator);
+                self.fieldIsRequired = self.hasControlRequiredValidator(self._ngControl?.control?.validator);
                 self.formControl?.updateValueAndValidity(a);
             };
+
+            (this._ngControl.control as AbstractControl).statusChanges.subscribe({
+                next: (status: string) => {
+                    if (status === 'INVALID') {
+                        this.buildErrorsCollection();
+                    }
+                }
+            });
         }
+    }
+
+    protected buildErrorsCollection(): void {
+        this.errors = TLUtils.buildErrorsCollection(this.ngControl?.control, this.getControlErrorLabelText, this.translatePipe);
+    }
+
+    private hasControlRequiredValidator(validator: ValidatorFn | null | undefined): boolean {
+        let hasRequiredValidator = false;
+        if (validator) {
+            const validation = validator({} as AbstractControl);
+            if (validation?.required) {
+                hasRequiredValidator = true;
+            }
+            else {
+                hasRequiredValidator = false;
+            }
+        }
+        return hasRequiredValidator;
     }
 
     public onFocusOut(event: FocusEvent): void {
         this.focusout.emit(event);
-    }
-
-    protected buildErrorsCollection(): void {
-        this.errors = TLUtils.buildErrorsCollection(this.ngControl?.control, this.getControlErrorLabelText, this.tlTranslationService, this.tlTranslatePipe);
     }
 }

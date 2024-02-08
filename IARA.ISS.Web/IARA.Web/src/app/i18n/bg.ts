@@ -41,7 +41,10 @@
         'below-fixed': 'отдолу (фиксиран)',
         'use-different-background-color': 'използване на различен цвят за фон',
         'background-color': 'цвят на фона',
-        'footer': 'футър',
+        'footer': 'Тази Информационно-статистическа система е създадена по проект BG14MFOP001-3.001-0026'
+            + ' „Разширяване на програмния обхват и надграждане на Информационно-статистическата система ИАРА,'
+            + ' съгласно национални и европейски изисквания, както и въвеждане на електронни административни услуги“'
+            + ' процедура BG14MFOP001-3.001 „Контрол и изпълнение“ по ПМДР 2014-2020',
         'color': 'цвят',
         'side-panel': 'страничен панел',
         'variant': 'променлив',
@@ -129,7 +132,10 @@
         'paginator-per-page': 'на страница',
         'paginator-next-page': 'Следваща страница',
         'paginator-prev-page': 'Предишна страница',
-        'export': 'Експорт'
+        'export': 'Експорт',
+        'go-to': 'Отиди към',
+        'second': 'секунда',
+        'seconds': 'секунди',
     },
     'validation': {
         'min': 'полето има минимална стойност',
@@ -145,7 +151,7 @@
         'selectedvaluefromdropdown': 'трябва да бъде избрана стойност от падащия списък',
         'novaluesindropdown': 'няма стойности в падащия списък',
         'default': 'полето е невалидно',
-        'passwordcomplexity': 'Паролата трябва да съдържа поне 8 символа. \nПаролата трябва да съдържа поне една цифра. \nПаролата трябва да съдържа поне един специален символ: $ @ ! % * ? &.',
+        'passwordcomplexity': 'Паролата трябва да съдържа поне 8 символа. \nПаролата трябва да съдържа поне една цифра. \nПаролата трябва да съдържа поне един от специалните символи: $ @ ! % * ? &.',
         'requiredfile': 'файлът е задължителен',
         'matDatepickerMax': 'полето има максимална дата',
         'matDatepickerMin': 'полето има минимална дата',
@@ -159,7 +165,7 @@
         'succ-updated-user': 'Успешно редактиран потребител',
         'succ-deleted-user': 'Успешно изтрит потребител',
         'succ-undo-delete-user': 'Успешно възобновен потребител',
-        'succ-updated-user-devices': 'Успешно редактирани устройтва на потребител',
+        'succ-updated-user-devices': 'Успешно редактирани устройства на потребител',
         'succ-user-made-internal': 'Потребителят е направен вътрешен',
         'succ-filed-in-application': 'Успешно входирано заявление',
         'succ-updated-appl-draft-content': 'Успешно обновена чернова на заявление',
@@ -192,7 +198,8 @@
         'succ-change-permit-license-suspensions': 'Успешно направени промени по прекратявания на УСР',
         'send-history-to-flux-success': 'Събитията са изпратени към FLUX',
         'send-event-to-flux-success': 'Събитието е изпратено към FLUX',
-        'succ-applied-deactivated-profile':'Успешно заявихте деактивиране на профила си. Вашата заявка трябва да бъде одобрена от администратор.'
+        'succ-applied-deactivated-profile':'Успешно заявихте деактивиране на профила си. Вашата заявка трябва да бъде одобрена от администратор.',
+        'succ-exec-cross-checks': 'Успешно изпълнени кръстосани проверки'
     },
     'navigation': {
         'applications': 'Приложения',
@@ -248,7 +255,7 @@
         'documents': 'Документи',
         'reports': 'Справки',
         'report-definition': 'Дефиниция на справки',
-        'report-parameter-definition': 'Параметери за справки',
+        'report-parameter-definition': 'Параметри за справки',
         'cross-checks': 'Кръстосани проверки',
         'cross-checks-checks': 'Кръстосани проверки',
         'cross-check-results': 'Резултати от кръстосани проверки',
@@ -331,7 +338,7 @@
         'confirm-your-email': 'Потвърдете имейл адреса си',
         'an-email-will-be-send-to': 'В рамките на 15 минути ще Ви бъде изпратен имейл за потвърждение на',
         'check-your-email-to-confirm': 'Проверете входящата си поща и кликнете върху връзката „Потвърдете имейла ми“, за да потвърдите имейл адреса си.',
-        'go-back-to-login-page': 'Връщане към логин страницата',
+        'go-back-to-login-page': 'Връщане към входна страницата',
         'have-not-received-an-email': 'Не сте получили имейл? Натиснете',
         'here': 'тук',
         'for-resend-email': 'за повторно изпращане на имейл за потвърждение.',
@@ -340,12 +347,12 @@
     'successful-password-change': {
         'successful-password-change-small-title': 'Успешна смяна на парола',
         'you-will-be-navigated-to-login': 'След няколко секунди ще бъдете автоматично пренасочени към страницата за вход.',
-        'redirect-to-login': 'Пренасочване към логин'
+        'redirect-to-login': 'Пренасочване към вход'
     },
     'successful-email-confirmation': {
         'successful-email-confirmation-small-title': 'Успешно потвърден имейл',
         'you-will-be-navigated-to-login': 'След няколко секунди ще бъдете автоматично пренасочени към страницата за вход.',
-        'redirect-to-login': 'Пренасочване към логин',
+        'redirect-to-login': 'Пренасочване към вход',
         'failed-email-confirmation-small-title': 'Изтекъл ключ за активиране на профил',
         'resend-confirmation-email': 'Изпрати повторно имейл за потвърждение',
         'you-can-ask-for-new-activation-token': 'Можете да заявите нов ключ за активация на същия профил. Имейлът ще бъде изпратен на подадения от Вас имейл при регистрация.'
@@ -356,7 +363,7 @@
         'new-password-confirm': 'Нова парола (потвърждение)',
         'change-password-button': 'Потвърди смяната',
 
-        'new-password-helper': 'Паролата трябва да съдържа:\n   • поне 8 символа;\n   • малки букви;\n   • поне една главна буква;\n   • поне една цифра;\n   • поне един специален символ($@$!%*?&);'
+        'new-password-helper': 'Паролата трябва да съдържа:\n   • поне 8 символа;\n   • малки букви;\n   • поне една главна буква;\n   • поне една цифра;\n   • поне един от специалните символи: $@!%*?&;'
     },
     'permissions': {
         'no-access': 'Нямате достъп до поискания ресурс'
@@ -459,7 +466,7 @@
         'date-of-validity': 'Валидност',
         'permit-outings-count': 'Брой излети',
 
-        'permit-reasons': 'Основания за заявяване на рарешителното',
+        'permit-reasons': 'Основания за заявяване на разрешителното',
         'permit-reason': 'Основание за заявяване на разрешителното',
         'permit-legal-reasons': 'Основания за издаване',
         'permit-legal-reason': 'Основание за издаване',
@@ -4516,7 +4523,7 @@
         'choose-log-book-for-renewal-title': 'Избор на дневник за презаверяване',
         'choose-log-book-for-renewal-keyword-filter': 'Филтър по ключова дума',
         'choose-log-book-for-renewal-show-finished-filter': 'Покажи и приключени дневници',
-        'choose-log-book-for-renewal-show-only-same-aquatic-types-filter': 'Покажи дневници със същите водни огранизми', 
+        'choose-log-book-for-renewal-show-only-same-aquatic-types-filter': 'Покажи дневници със същите водни огранизми',
         'choose-log-book-for-renewal-no-log-books': 'Няма налични стари дневници от приключени/изтекли удостоверения за презаверяване',
         'choose-log-book-for-renewal-log-book-type': 'Тип',
         'choose-log-book-for-renewal-number': 'Номер',
@@ -5075,7 +5082,10 @@
         'access-management-selected-users': 'Избрани потребители',
         'access-management-selected-roles': 'Избрани роли',
         'execute-cross-check-btn': 'Изпълни кръстосана проверка',
-        'execute-cross-check-success-message': 'Успешно изпълнена кръстосана проверка'
+        'execute-cross-check-success-message': 'Успешно изпълнена кръстосана проверка',
+        'execute-daily': 'Изпълни дневни',
+        'execute-weekly': 'Изпълни седмични',
+        'execute-monthly': 'Изпълни месечни',
     },
     'common-document': {
         'document-issue-date': 'Дата на издаване',
@@ -6360,7 +6370,7 @@
         'tickets-pay': 'Билетът може да бъде платен чрез системата на ePay, кредитна или дебитна карта или портала за електронни плащания за централната и местна администрация ('
     },
     'notifications': {
-        'title': 'Известия', 
+        'title': 'Известия',
         'mark-all-as-read': 'Маркирай всички като прочетени'
     }
 };

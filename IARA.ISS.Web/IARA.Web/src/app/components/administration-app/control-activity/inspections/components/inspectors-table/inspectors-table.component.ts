@@ -1,21 +1,21 @@
 ﻿import { Component, EventEmitter, Input, OnInit, Output, Self, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, NgControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-
-import { CustomFormControl } from '@app/shared/utils/custom-form-control';
-import { GridRow } from '@app/shared/components/data-table/models/row.model';
-import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
-import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
-import { InspectorTableParams } from './models/inspector-table-params';
-import { EditInspectorComponent } from '../../dialogs/edit-inspector/edit-inspector.component';
-import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
-import { InspectorTableModel } from '../../models/inspector-table-model';
-import { InspectorDuringInspectionDTO } from '@app/models/generated/dtos/InspectorDuringInspectionDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
-import { AuthService } from '@app/shared/services/auth.service';
+import { InspectorDuringInspectionDTO } from '@app/models/generated/dtos/InspectorDuringInspectionDTO';
 import { InspectionsService } from '@app/services/administration-app/inspections.service';
+import { SecurityService } from '@app/services/common-app/security.service';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
+import { GridRow } from '@app/shared/components/data-table/models/row.model';
+import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
 import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
+import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
+import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
+import { CustomFormControl } from '@app/shared/utils/custom-form-control';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { EditInspectorComponent } from '../../dialogs/edit-inspector/edit-inspector.component';
+import { InspectorTableModel } from '../../models/inspector-table-model';
+import { InspectorTableParams } from './models/inspector-table-params';
+
 
 @Component({
     selector: 'inspectors-table',
@@ -45,7 +45,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
         translate: FuseTranslationLoaderService,
         confirmDialog: TLConfirmDialog,
         editEntryDialog: TLMatDialog<EditInspectorComponent>,
-        authService: AuthService,
+        authService: SecurityService,
         service: InspectionsService
     ) {
         super(ngControl);
@@ -54,8 +54,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
         this.confirmDialog = confirmDialog;
         this.editEntryDialog = editEntryDialog;
         this.service = service;
-        this.userId = authService.userRegistrationInfo?.id;
-
+        const currentUserId: number | undefined = authService.User?.userId;
         this.onMarkAsTouched.subscribe({
             next: () => {
                 this.control.updateValueAndValidity();

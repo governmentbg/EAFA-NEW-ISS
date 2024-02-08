@@ -131,24 +131,14 @@
     </tl-expansion-panel>
 
     <!--Данни за парола-->
-    <tl-card *ngIf="userMustChangePassword" [validityChecker]="changeUserDataForm">
-        <tl-card-title>{{ 'change-password.change-password-title' | tlTranslate }}</tl-card-title>
-        <tl-card-content fxLayout="column" fxLayoutGap="2em">
-            <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-                <tl-input *ngIf="passwordIcon == 'fa-eye'; else textTypePass"
-                          fxFlex="100"
-                          type="password"
-                          formControlName="passwordControl"
-                          label="{{ 'my-profile.password' | tlTranslate }}"
-                          [multilineError]="true">
-                    <tl-icon-button icon="{{passwordIcon}}"
-                                    iconClass="accent-color"
-                                    (buttonClicked)="showOrHidePassword('password')">
-                    </tl-icon-button>
-                </tl-input>
-                <ng-template #textTypePass>
-                    <tl-input fxFlex="100"
-                              type="text"
+    <div style="margin-top: 1em;">
+        <tl-card *ngIf="userMustChangePassword" [validityChecker]="changeUserDataForm">
+            <tl-card-title>{{ 'change-password.change-password-title' | tlTranslate }}</tl-card-title>
+            <tl-card-content fxLayout="column" fxLayoutGap="2em">
+                <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-input *ngIf="passwordIcon == 'fa-eye'; else textTypePass"
+                              fxFlex="100"
+                              type="password"
                               formControlName="passwordControl"
                               label="{{ 'my-profile.password' | tlTranslate }}"
                               [multilineError]="true">
@@ -157,22 +147,21 @@
                                         (buttonClicked)="showOrHidePassword('password')">
                         </tl-icon-button>
                     </tl-input>
-                </ng-template>
-
-                <tl-input *ngIf="passwordConfirmationIcon == 'fa-eye'; else textTypePassConf"
-                          fxFlex="100"
-                          type="password"
-                          formControlName="passwordConfirmationControl"
-                          label="{{ 'my-profile.verify-password' | tlTranslate }}"
-                          [multilineError]="true">
-                    <tl-icon-button icon="{{passwordConfirmationIcon}}"
-                                    iconClass="accent-color"
-                                    (buttonClicked)="showOrHidePassword('passwordConfirmation')">
-                    </tl-icon-button>
-                </tl-input>
-                <ng-template #textTypePassConf>
-                    <tl-input fxFlex="100"
-                              type="text"
+                    <ng-template #textTypePass>
+                        <tl-input fxFlex="100"
+                                  type="text"
+                                  formControlName="passwordControl"
+                                  label="{{ 'my-profile.password' | tlTranslate }}"
+                                  [multilineError]="true">
+                            <tl-icon-button icon="{{passwordIcon}}"
+                                            iconClass="accent-color"
+                                            (buttonClicked)="showOrHidePassword('password')">
+                            </tl-icon-button>
+                        </tl-input>
+                    </ng-template>
+                    <tl-input *ngIf="passwordConfirmationIcon == 'fa-eye'; else textTypePassConf"
+                              fxFlex="100"
+                              type="password"
                               formControlName="passwordConfirmationControl"
                               label="{{ 'my-profile.verify-password' | tlTranslate }}"
                               [multilineError]="true">
@@ -181,10 +170,22 @@
                                         (buttonClicked)="showOrHidePassword('passwordConfirmation')">
                         </tl-icon-button>
                     </tl-input>
-                </ng-template>
-            </div>
-            <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-            </div>
-        </tl-card-content>
-    </tl-card>
+                    <ng-template #textTypePassConf>
+                        <tl-input fxFlex="100"
+                                  type="text"
+                                  formControlName="passwordConfirmationControl"
+                                  label="{{ 'my-profile.verify-password' | tlTranslate }}"
+                                  [multilineError]="true">
+                            <tl-icon-button icon="{{passwordConfirmationIcon}}"
+                                            iconClass="accent-color"
+                                            (buttonClicked)="showOrHidePassword('passwordConfirmation')">
+                            </tl-icon-button>
+                        </tl-input>
+                    </ng-template>
+                </div>
+                <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                </div>
+            </tl-card-content>
+        </tl-card>
+    </div>
 </div>

@@ -1,49 +1,83 @@
-﻿import { Injectable } from '@angular/core';
+﻿import { EventEmitter, Injectable } from '@angular/core';
+import { IPermissionsService } from '@app/components/common-app/auth/interfaces/permissions-service.interface';
 import { NgxPermissionsObject, NgxPermissionsService } from 'ngx-permissions';
-import { NgxPermission } from 'ngx-permissions/lib/model/permission.model';
-import { PermissionsEnum } from '../enums/permissions.enum';
+import { BehaviorSubject, Subject } from 'rxjs';
+
 
 @Injectable({
     providedIn: 'root'
 })
-export class PermissionsService {
-    private ngxPermissionsService: NgxPermissionsService;
+export class PermissionsService implements IPermissionsService {
 
-    public constructor(ngxPermissionsService: NgxPermissionsService) {
-        this.ngxPermissionsService = ngxPermissionsService;
+    private permissionsService: NgxPermissionsService;
+    private allPermissions: Set<string> = new Set<string>();
+    private permissionsLoadedInternal: BehaviorSubject<boolean>;
+
+    private _permissionsLoaded: EventEmitter<void>;
+
+    public get permissionsLoaded(): Subject<void> {
+        return this._permissionsLoaded;
     }
 
-    public has(permission: PermissionsEnum): boolean {
-        const ngxPermission: NgxPermission = this.ngxPermissionsService.getPermission(permission);
-        return ngxPermission !== null && ngxPermission !== undefined;
+    public constructor(permissionsService: NgxPermissionsService) {
+        this.permissionsService = permissionsService;
+        this._permissionsLoaded = new EventEmitter();
+        this.permissionsLoadedInternal = new BehaviorSubject<boolean>(false);
     }
 
-    public hasAny(...permissions: PermissionsEnum[]): boolean {
-        const allPermissions: string[] = this.getAllPermissions();
+    public has(permission: string): boolean {
+        return this.allPermissions.has(permission);
+    }
+
+    public hasAnyWait(...permissions: string[]): Promise<boolean> {
+        if (this.permissionsLoadedInternal.value) {
+            const result = this.hasAny(...permissions);
+            return Promise.resolve(result);
+        } else {
+            return this.permissionsLoadedInternal.toPromise().then(result => {
+                if (result) {
+                    return this.hasAny(...permissions);
+                }
+
+                return false;
+            });
+        }
+    }
+
+    public hasAny(...permissions: string[]): boolean {
         for (const permission of permissions) {
-            if (allPermissions.includes(permission)) {
+            if (this.allPermissions.has(permission)) {
                 return true;
             }
         }
         return false;
     }
 
-    public hasAll(...permissions: PermissionsEnum[]): boolean {
-        const allPermissions: string[] = this.getAllPermissions();
+    public hasAll(...permissions: string[]): boolean {
         for (const permission of permissions) {
-            if (!allPermissions.includes(permission)) {
+            if (!this.allPermissions.has(permission)) {
                 return false;
             }
         }
         return true;
     }
 
-    public hasNone(...permissions: PermissionsEnum[]): boolean {
+    public hasNone(...permissions: string[]): boolean {
         return !this.hasAny(...permissions);
     }
 
+    public loadPermissions(permissions: string[]): void {
+        this.permissionsService.loadPermissions(permissions);
+        this.allPermissions = new Set<string>(this.getAllPermissions());
+        this._permissionsLoaded.emit();
+
+        this.permissionsLoadedInternal.next(true);
+        this.permissionsLoadedInternal.complete();
+        this.permissionsLoadedInternal = new BehaviorSubject<boolean>(true);
+    }
+
     private getAllPermissions(): string[] {
-        const ngxPermissions: NgxPermissionsObject = this.ngxPermissionsService.getPermissions();
+        const ngxPermissions: NgxPermissionsObject = this.permissionsService.getPermissions();
         return Object.keys(ngxPermissions).map((key: string) => {
             return ngxPermissions[key].name;
         });
