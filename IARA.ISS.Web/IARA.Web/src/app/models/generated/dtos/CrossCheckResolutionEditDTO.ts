@@ -21,4 +21,7 @@ export class CrossCheckResolutionEditDTO {
 
     @StrictlyTyped(Number)
     public resolutionTypeId?: number;
+
+    @StrictlyTyped(Date)
+    public assignedOn?: Date;
 }

@@ -36,16 +36,16 @@ export abstract class BaseSecurityService<TIdentifier, TUser extends User<TIdent
 
     private _isAuthenticatedEvent: BehaviorSubject<boolean>;
     private _persistToken: boolean = false;
-    private matDialog: MatDialog;
-    private securityConfig: SecurityConfig;
-    private permissionsService: IPermissionsService;
-    private usersService: IGenericUserService<TIdentifier, TUser>;
+    protected matDialog: MatDialog;
+    protected securityConfig: SecurityConfig;
+    protected readonly permissionsService: IPermissionsService;
+    protected readonly usersService: IGenericUserService<TIdentifier, TUser>;
 
     public get isAuthenticatedEvent(): Observable<boolean> {
         return this._isAuthenticatedEvent;
     }
 
-    public get User(): TUser | undefined{
+    public get User(): TUser | undefined {
         return this.usersService.User;
     }
 
@@ -150,12 +150,13 @@ export abstract class BaseSecurityService<TIdentifier, TUser extends User<TIdent
     }
 
     public get token(): string | undefined {
+
         if (this._token == undefined) {
             this._token = this.getTokenFromStorage();
         }
 
         if (this._token != undefined) {
-            if (this._token.validTo > new Date()) {
+            if (this.getDate(this._token.validTo) > new Date()) {
                 return this._token.token;
             } else {
                 this.clearToken();
@@ -163,6 +164,15 @@ export abstract class BaseSecurityService<TIdentifier, TUser extends User<TIdent
         }
 
         return undefined;
+    }
+
+    private getDate(date: Date): Date {
+
+        if (typeof date == 'string') {
+            return new Date(date);
+        }
+
+        return date;
     }
 
     public get isTempToken(): boolean {
@@ -225,7 +235,7 @@ export abstract class BaseSecurityService<TIdentifier, TUser extends User<TIdent
         }
     }
 
-    private tokenSuccessHandler(token: JwtToken, rememberMe: boolean, subject?: Subject<LoginResult | undefined>, shouldEmit?: boolean) {
+    protected tokenSuccessHandler(token: JwtToken, rememberMe: boolean, subject?: Subject<LoginResult | undefined>, shouldEmit?: boolean) {
         this._token = token;
 
         let result: LoginResult;
@@ -253,7 +263,7 @@ export abstract class BaseSecurityService<TIdentifier, TUser extends User<TIdent
         }
     }
 
-    private tokenErrorHandler(error: HttpErrorResponse, subject?: Subject<LoginResult | undefined>) {
+    protected tokenErrorHandler(error: HttpErrorResponse, subject?: Subject<LoginResult | undefined>) {
         let result: LoginResult | undefined = new LoginResult(LoginResultTypes.Fail);
         if (error.status == 0 || error.status == HttpStatusCode.InternalServerError) {
             result = undefined;

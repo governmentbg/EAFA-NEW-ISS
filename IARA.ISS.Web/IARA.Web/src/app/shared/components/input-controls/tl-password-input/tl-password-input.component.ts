@@ -5,7 +5,8 @@ import { BaseTLControl } from '../base-tl-control';
 
 @Component({
     selector: 'tl-password-input',
-    templateUrl: './tl-password-input.component.html'
+    templateUrl: './tl-password-input.component.html',
+    styleUrls: ['./tl-password-input.component.scss']
 })
 export class TLPasswordComponent extends BaseTLControl {
 

@@ -98,6 +98,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     public catchPresentations: NomenclatureDTO<number>[] = [];
     public catchPreservations: NomenclatureDTO<number>[] = [];
     public catchZones: CatchZoneNomenclatureDTO[] = [];
+    public catchRecordQuantities: Map<number, number> = new Map<number, number>();
+    public declarationOfOriginCatchRecordsQuantities: Map<number, number> = new Map<number, number>();
 
     public showHooksCountField: boolean = false;
     public showPartnerShipField: boolean = false;
@@ -360,6 +362,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     }
 
                     this.catchRecords = this.catchRecords.slice();
+                    this.recalculateCatchRecordsQuantitySums();
                     this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
                 }
             }
@@ -383,6 +386,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     }
 
                     this.catchRecords = this.catchRecords.slice();
+                    this.recalculateCatchRecordsQuantitySums();
                     this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
                 }
             }
@@ -396,6 +400,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     this.catchRecordsTable.softUndoDelete(row);
                     this.catchRecords = this.catchRecordsTable.rows;
                     this.catchRecords = this.catchRecords.slice();
+                    this.recalculateCatchRecordsQuantitySums();
                     this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
                 }
             }
@@ -424,6 +429,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 if (selectedCatches !== null && selectedCatches !== undefined) {
                     this.selectedCatchesFromPreviousTrips = selectedCatches.slice();
                     this.addOriginDeclarationFishesFromPreviousTripCatches();
+                    this.recalculateCatchRecordsQuantitySums();
                 }
             }
         });
@@ -440,6 +446,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         this.declarationOfOriginCatchRecords = [...this.declarationOfOriginCatchRecords, ...this.getOriginDeclarationCatchRecords(possibleCatchRecordFishes)];
         this.setDeclarationOfOriginHasCatchFromPreviousTripFlag();
         this.selectedCatchesFromPreviousTrips = [];
+        this.recalculateDeclarationOfOriginCatchRecordsQuantitySums();
 
         this.form.markAsTouched();
         this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
@@ -485,6 +492,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
                     this.declarationOfOriginCatchRecords = this.declarationOfOriginCatchRecords.slice();
                     this.recalculateUnloadedQuantities();
+                    this.recalculateDeclarationOfOriginCatchRecordsQuantitySums();
 
                     this.form.markAsTouched();
                     this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
@@ -524,6 +532,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
         this.setDeclarationOfOriginHasCatchFromPreviousTripFlag();
         this.declarationOfOriginCatchRecords = this.declarationOfOriginCatchRecords.slice();
+        this.recalculateDeclarationOfOriginCatchRecordsQuantitySums();
 
         this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
     }
@@ -555,6 +564,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 if (result !== undefined) {
                     this.declarationOfOriginCatchRecords.push(result);
                     this.declarationOfOriginCatchRecords = this.declarationOfOriginCatchRecords.slice();
+                    this.recalculateDeclarationOfOriginCatchRecordsQuantitySums();
+
                     this.form.markAsTouched();
                     this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
                 }
@@ -573,6 +584,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         }
 
         this.declarationOfOriginCatchRecords = this.declarationOfOriginCatchRecords.slice();
+        this.recalculateDeclarationOfOriginCatchRecordsQuantitySums();
 
         this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
     }
@@ -754,6 +766,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             }
 
             this.declarationOfOriginCatchRecords = this.declarationOfOriginCatchRecords.slice();
+            this.recalculateDeclarationOfOriginCatchRecordsQuantitySums();
+            this.recalculateCatchRecordsQuantitySums();
         });
 
         this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
@@ -790,7 +804,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             this.originDeclarationFishesValidator(),
             this.delcarationOfOriginCatchRecordQuantitiesValidator(),
             this.allOriginDeclarationFishTransboardedIfMarkedValidator(),
-            this.requiredOriginDeclarationIfCatchOnBoard()
+            this.requiredOriginDeclarationIfCatchOnBoard(),
+            this.gearEntryTimeValidator()
         ]);
 
         // set validators
@@ -1678,6 +1693,73 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             }
 
             return null;
+        }
+    }
+
+    private gearEntryTimeValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === null || control === undefined) {
+                return null;
+            }
+
+            if (this.form === null || this.form === undefined) {
+                return null;
+            }
+
+            if (control.value === null || control.value === undefined) {
+                return null;
+            }
+
+            if (this.catchRecords === null || this.catchRecords === undefined || this.catchRecords.length === 0) {
+                return null;
+            }
+
+            for (const catchRecord of this.catchRecords) {
+                const invalidRows = this.catchRecords.filter(x => {
+                    if (x.isActive !== false
+                        && x.gearEntryTime?.getFullYear() === catchRecord.gearEntryTime?.getFullYear()
+                        && x.gearEntryTime?.getDate() === catchRecord.gearEntryTime?.getDate()
+                        && x.gearEntryTime?.getHours() === catchRecord.gearEntryTime?.getHours()
+                        && x.gearEntryTime?.getMinutes() === catchRecord.gearEntryTime?.getMinutes()
+                    ) {
+                        return true;
+                    }
+
+                    return false;
+                });
+
+                if (invalidRows.length > 1) {
+                    return { 'uniqueGearEntryTime': true };
+                }
+            }
+
+            return null;
+        }
+    }
+
+    private recalculateDeclarationOfOriginCatchRecordsQuantitySums(): void {
+        const recordsGroupedByFishType: Record<number, OriginDeclarationFishDTO[]> = CommonUtils.groupBy(this.declarationOfOriginCatchRecords.filter(x => x.isActive), x => x.fishId!);
+        this.declarationOfOriginCatchRecordsQuantities.clear();
+
+        for (const fishGroupId in recordsGroupedByFishType) {
+            const quantity = recordsGroupedByFishType[fishGroupId].reduce((sum, current) => sum + current.quantityKg!, 0);
+            this.declarationOfOriginCatchRecordsQuantities.set(Number(fishGroupId), quantity);
+        }
+    }
+
+    private recalculateCatchRecordsQuantitySums(): void {
+        const catchRecordFishes: CatchRecordFishDTO[] = [];
+
+        for (const catchRecord of this.catchRecords.filter(x => x.isActive)) {
+            catchRecord.catchRecordFishes?.map(x => catchRecordFishes.push(x));
+        }
+
+        const recordsGroupedByFishType: Record<number, CatchRecordFishDTO[]> = CommonUtils.groupBy(catchRecordFishes, x => x.fishId!);
+        this.catchRecordQuantities.clear();
+
+        for (const fishGroupId in recordsGroupedByFishType) {
+            const quantity = recordsGroupedByFishType[fishGroupId].reduce((sum, current) => sum + current.quantityKg!, 0);
+            this.catchRecordQuantities.set(Number(fishGroupId), quantity);
         }
     }
 

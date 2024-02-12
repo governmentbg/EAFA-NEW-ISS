@@ -1,10 +1,12 @@
-﻿import { Inject, Injectable } from '@angular/core';
+﻿import { HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { PERMISSIONS_SERVICE_TOKEN, SECURITY_CONFIG_TOKEN, USER_SERVICE_TOKEN } from '@app/components/common-app/auth/di/auth-di.tokens';
 import { IPermissionsService } from '@app/components/common-app/auth/interfaces/permissions-service.interface';
 import { SecurityConfig } from '@app/components/common-app/auth/interfaces/security-config.interface';
 import { IGenericUserService } from '@app/components/common-app/auth/interfaces/user-service.interface';
+import { JwtToken } from '@app/components/common-app/auth/models/auth/jwt-token.model';
 import { BaseSecurityService } from '@app/components/common-app/auth/services/base-security.service';
 import { ChangePasswordComponent } from '@app/components/common-app/my-profile/components/change-password/change-password.component';
 import { ChangeUserDataComponent } from '@app/components/common-app/my-profile/components/change-userdata/change-userdata.component';
@@ -17,10 +19,11 @@ import { UserPasswordDTO } from '@app/models/generated/dtos/UserPasswordDTO';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
 import { REQUEST_SERVICE_TOKEN } from '@app/shared/di/shared-di.tokens';
 import { IRequestService } from '@app/shared/interfaces/request-service.interface';
+import { LoginResult } from '@app/shared/models/auth/login-result.model';
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { Observable, of, Subject } from 'rxjs';
 import { MyProfilePublicService } from '../public-app/my-profile-public.service';
-import { Observable, of } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -175,6 +178,36 @@ export class SecurityService extends BaseSecurityService<string, UserAuthDTO> {
             return dialog;
         }
         return of();
+    }
+
+    public impersonateUser(username: string): Promise<void> {
+        return this.getImpersonatedUser(username).toPromise().then(async () => {
+            this.matDialog.closeAll();
+             await this.router.navigateByUrl('/', { skipLocationChange: false });
+        });
+    }
+
+    private getImpersonatedUser(username: string): Observable<any> {
+        const params = new HttpParams().append('username', username);
+        const subject = new Subject<LoginResult | undefined>();
+        const innerSubject = new Subject<UserAuthDTO>();
+
+        this.requestService.get<JwtToken>(this.securityConfig.baseRoute,
+            this.securityConfig.securityController, 'Impersonate', { httpParams: params }).subscribe((token: JwtToken) => {
+                this.clearToken();
+                this.tokenSuccessHandler(token, false, subject, true);
+            });
+
+        subject.subscribe(() => {
+            this.usersService.User = undefined;
+            this.getUser().subscribe((user: UserAuthDTO) => {
+                this.permissionsService.loadPermissions(user.permissions);
+                innerSubject.next(user);
+                innerSubject.complete();
+            });
+        });
+
+        return innerSubject;
     }
 
     private redirectToHome(): string {
