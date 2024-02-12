@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
-using System.Text.Json;
-using System.Threading.Tasks;
-using IARA.Mobile.Application;
+﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.Extensions;
@@ -24,6 +16,12 @@ using IARA.Mobile.Insp.Application.Transactions.Base;
 using IARA.Mobile.Insp.Domain.Entities.Inspections;
 using IARA.Mobile.Insp.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Insp.Domain.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace IARA.Mobile.Insp.Application.Transactions
 {
@@ -330,16 +328,16 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                 }
                                 else if (dbInsp.LastUpdatedDate < inspection.LastUpdateDate && inspection.IsActive)
                                 {
-                                    if(dbInsp.InspectionState != inspection.InspectionState)
+                                    if (dbInsp.InspectionState != inspection.InspectionState)
                                     {
                                         dbInsp.InspectionState = inspection.InspectionState;
                                         dbInsp.InspectionStateId = inspectionStates.Find(s => s.Code == inspection.InspectionState.ToString()).Id;
                                         dbInsp.IsStatusChanged = true;
-                                        if(dbInsp.InspectionState == InspectionState.Submitted || dbInsp.InspectionState == InspectionState.Signed)
+                                        if (dbInsp.InspectionState == InspectionState.Submitted || dbInsp.InspectionState == InspectionState.Signed)
                                         {
                                             dbInsp.SubmitType = SubmitType.Finish;
                                         }
-                                        else if(dbInsp.InspectionState == InspectionState.Draft)
+                                        else if (dbInsp.InspectionState == InspectionState.Draft)
                                         {
                                             dbInsp.SubmitType = SubmitType.Edit;
                                         }
@@ -348,7 +346,9 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                     dbInsp.InspectionTypeId = inspectionTypes.Find(s => s.Code == inspection.InspectionType.ToString()).Id;
                                     dbInsp.ReportNr = inspection.ReportNumber;
                                     dbInsp.StartDate = inspection.StartDate;
-                                    dbInsp.InspectionSubjects = string.Join(", ", inspection.InspectionSubjects.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries).Distinct());
+                                    dbInsp.InspectionSubjects = string.IsNullOrEmpty(inspection.InspectionSubjects)
+                                        ? ""
+                                        : string.Join(", ", inspection.InspectionSubjects.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries).Distinct());
                                     dbInsp.Inspectors = inspection.Inspectors;
                                     dbInsp.LastUpdatedDate = inspection.LastUpdateDate;
 
@@ -496,7 +496,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     dto
                 );
             }
-            else if(submitType == SubmitType.ReturnForEdit)
+            else if (submitType == SubmitType.ReturnForEdit)
             {
                 taskResult = RestClient.PostAsFormDataAsync<int>(UrlPrefix + "SendForFurtherCorrections", MapToDraftDto(dto));
             }
@@ -1145,7 +1145,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
-            var draftDTO =  new InspectionDraftDto
+            var draftDTO = new InspectionDraftDto
             {
                 ActionsTaken = dto.ActionsTaken,
                 AdministrativeViolation = dto.AdministrativeViolation,

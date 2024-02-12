@@ -160,7 +160,6 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
 
     private tlTranslatePipe: TLTranslatePipe;
     private router: Router;
-    private authService: SecurityService;
 
     public constructor(
         confirmDialog: TLConfirmDialog,
@@ -199,16 +198,10 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
         this.injector = injector;
         this.tlTranslatePipe = tlTranslatePipe;
         this.router = router;
-        this.authService = authService;
+        this.userId = authService.User!.userId;
     }
 
     public ngOnInit(): void {
-        this.authService.getUser().subscribe({
-            next: (user: UserAuthDTO) => {
-                this.userId = Number(user.userId);
-            }
-        });
-
         if (this.pageType === 'ApplicationPage') {
             NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.OfflinePaymentTypes, this.nomenclaturesService.getOfflinePaymentTypes.bind(this.nomenclaturesService), false

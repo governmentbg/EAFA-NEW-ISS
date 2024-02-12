@@ -75,7 +75,7 @@
     BuyerTypes,
     BuyerStatuses,
     UsageDocumentTypes,
-    CheckResolutionTypes,
+    CheckResolutions,
     CatchZones,
     Ships,
     LogBookTypes,
@@ -122,5 +122,6 @@
     PaymentStatuses,
     CheckSources,
     InspectionVesselTypes,
-    InspectionStates
+    InspectionStates,
+    CheckResolutionTypes,
 }

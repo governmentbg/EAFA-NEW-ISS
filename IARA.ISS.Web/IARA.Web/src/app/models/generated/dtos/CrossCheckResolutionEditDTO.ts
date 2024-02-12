@@ -18,4 +18,7 @@ export class CrossCheckResolutionEditDTO {
 
     @StrictlyTyped(String)
     public resolutionDetails?: string;
+
+    @StrictlyTyped(Number)
+    public resolutionTypeId?: number;
 }

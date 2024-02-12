@@ -42,7 +42,7 @@
                               formControlName="averageUnitWeightKgControl"
                               label="{{ 'catches-and-sales.page-product-average-unit-weight-kg' | tlTranslate }}"
                               tooltipResourceName="catches-and-sales.page-product-average-unit-weight-kg-helper"
-                              [readonly]="true">
+                              [readonly]="!isAquaculturePage">
                     </tl-input>
                     <tl-autocomplete fxFlex="33"
                                      formControlName="presentationControl"

@@ -15,6 +15,14 @@
         </tl-date>
     </div>
     <div fxLayout="row">
+        <tl-autocomplete fxFlexFill
+                         formControlName="resolutionTypeControl"
+                         [options]="resolutionTypes"
+                         label="{{ 'cross-check-results.resolution-type' | tlTranslate }}"
+                         tooltipResourceName="cross-check-results.resolution-type-helper">
+        </tl-autocomplete>
+    </div>
+    <div fxLayout="row">
         <tl-textarea fxFlexFill
                      formControlName="resolutionDetailsControl"
                      label="{{ 'cross-check-results.resolution-details' | tlTranslate }}"

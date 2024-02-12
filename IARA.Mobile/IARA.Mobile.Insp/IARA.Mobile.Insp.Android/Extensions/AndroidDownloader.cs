@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Android.App;
-using Android.Content;
+﻿using Android.App;
 using IARA.Mobile.Application.Interfaces.Utilities;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 
 namespace IARA.Mobile.Insp.Droid.Extensions
@@ -20,22 +20,23 @@ namespace IARA.Mobile.Insp.Droid.Extensions
 
         public async Task<bool> DownloadFile(string fileName, string contentType, string url, object parameters)
         {
-            PermissionStatus status = await Permissions.RequestAsync<Permissions.StorageWrite>();
-            if (status != PermissionStatus.Granted)
+            if (await Permissions.RequestAsync<Permissions.StorageWrite>() != PermissionStatus.Granted ||
+                await Permissions.CheckStatusAsync<Permissions.StorageRead>() != PermissionStatus.Granted)
             {
                 return false;
             }
 
             try
             {
-                DownloadManager.Request request = new DownloadManager.Request(Android.Net.Uri.Parse(_serverUrl.BuildUrl(url, parameters, "Services")));
+                var manager = DownloadManager.FromContext(Android.App.Application.Context);
+                var request = new DownloadManager.Request(Android.Net.Uri.Parse(_serverUrl.BuildUrl(url, parameters, "Services")));
                 request.AddRequestHeader("Authorization", "Bearer " + _authTokenProvider.Token);
-                request.SetDestinationInExternalPublicDir(Android.OS.Environment.DirectoryDownloads, fileName);
                 request.SetNotificationVisibility(DownloadVisibility.VisibleNotifyCompleted);
-                request.SetMimeType(contentType);
+                request.SetDestinationInExternalPublicDir(Android.OS.Environment.DirectoryDownloads, fileName);
+                request.SetTitle(fileName);
 
-                DownloadManager manager = (DownloadManager)MainActivity.Current.GetSystemService(Context.DownloadService);
-                manager.Enqueue(request);
+                long downloadId = manager.Enqueue(request);
+                Debug.WriteLine($"Download manager successfully started the download.");
                 return true;
             }
             catch
