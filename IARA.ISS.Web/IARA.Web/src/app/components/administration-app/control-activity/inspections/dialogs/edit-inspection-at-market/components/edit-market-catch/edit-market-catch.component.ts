@@ -533,7 +533,6 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
                     next: (result: InspectionLogBookPageNomenclatureDTO[]) => {
                         if (result !== undefined && result !== null) {
                             this.declarationPages = result;
-                            this.logBookFishes = result.reduce((f, s) => f.concat(s.logBookProducts!), [] as DeclarationLogBookPageFishDTO[]);
                         }
                     }
                 });
@@ -546,10 +545,10 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             const permit: NomenclatureDTO<number> | string = form.get('pageNumberControl')!.value;
             const fishCatch: NomenclatureDTO<number> = form.get('typeControl')!.value;
             const quantity: number = form.get('quantityControl')!.value;
-
+          
             if (typeof permit === 'object' && permit && fishCatch && quantity) {
                 this.fishErrors = [];
-                let fishes = this.logBookFishes.filter(f => f.logBookId === permit.value && f.fishId === fishCatch.value);
+                let fishes = this.declarationPages.find(x => x.value === permit.value)?.logBookProducts ?? [];
 
                 const presentation: NomenclatureDTO<number> = form.get('presentationControl')!.value;
 
@@ -557,30 +556,33 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
                     fishes = fishes.filter(f => f.presentationId == null || f.presentationId === presentation.value);
                 }
 
-                for (const fish of fishes) {
-                    if (fish.quantity! < quantity) {
+                if (fishes.length > 0) {
+                    const fishQuantities: number[] = fishes.filter(f => f.fishId === fishCatch.value).map(f => f.quantity!);
+                    const quantitiesSum: number = this.sum(fishQuantities);
+
+                    if (quantitiesSum < quantity) {
                         this.fishErrors.push({
                             text: this.translate.getValue('inspections.declaration-fish-quantity-error')
-                                .replace('{0}', `${fishCatch.displayName} : ${fish.quantity!}`)
-                                .replace('{1}', (quantity - fish.quantity!).toString()),
-                            type: 'error'
+                                .replace('{0}', `${fishCatch.displayName} : ${quantitiesSum}`)
+                                .replace('{1}', (quantity - quantitiesSum).toString()),
+                            type: 'warn'
                         });
                     }
                     else {
                         this.fishErrors.push({
                             text: this.translate.getValue('inspections.declaration-fish-quantity-warning')
-                                .replace('{0}', `${fishCatch.displayName} : ${fish.quantity!}`),
+                                .replace('{0}', `${fishCatch.displayName} : ${quantitiesSum}`),
                             type: 'warn'
                         });
                     }
-                }
-
-                if (this.fishErrors.filter(x => x.type === 'error').length > 0) {
-                    return this.fishErrors;
                 }
             }
 
             return null;
         }
+    }
+
+    private sum(nums: number[]): number {
+        return nums.reduce((sum: number, current: number) => { return sum + current; }, 0);
     }
 }

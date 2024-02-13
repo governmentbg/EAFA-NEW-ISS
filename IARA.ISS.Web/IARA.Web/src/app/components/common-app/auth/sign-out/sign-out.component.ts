@@ -48,7 +48,7 @@ export class AuthSignOutComponent implements OnInit, OnDestroy {
                 .pipe(
                     finalize(() => {
                         NomenclatureStore.instance.clearAllNomenclatures();
-                        this.router.navigateByUrl('/');
+                        this.router.navigateByUrl('/account/sign-in');
                     }),
                     takeWhile(() => this.countdown > 0),
                     takeUntil(this._unsubscribeAll),

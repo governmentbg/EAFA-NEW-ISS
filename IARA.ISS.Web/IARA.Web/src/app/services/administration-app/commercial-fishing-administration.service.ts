@@ -52,6 +52,8 @@ import { FishingGearForChoiceDTO } from '@app/models/generated/dtos/FishingGearF
 import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 import { PermitLicenseFishingGearsApplicationDTO } from '@app/models/generated/dtos/PermitLicenseFishingGearsApplicationDTO';
 import { PermitLicensesNomenclatureDTO } from '@app/models/generated/dtos/PermitLicensesNomenclatureDTO';
+import { IdentifierTypeEnum } from '@app/enums/identifier-type.enum';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -1092,6 +1094,17 @@ export class CommercialFishingAdministrationService extends ApplicationsRegister
         return this.requestService.get(this.area, this.controller, 'GetCommercialFishingPermitLicenseFishingGears', {
             httpParams: params,
             responseTypeCtr: FishingGearDTO
+        });
+    }
+
+    public tryGetQualifiedFisher(identifierType: IdentifierTypeEnum, identifier: string): Observable<PersonFullDataDTO | undefined> {
+        const params = new HttpParams()
+            .append('identifierType', identifierType.toString())
+            .append('identifier', identifier);
+
+        return this.requestService.get(this.area, this.controller, 'TryGetQualifiedFisher', {
+            httpParams: params,
+            responseTypeCtr: PersonFullDataDTO
         });
     }
 

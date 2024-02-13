@@ -24,6 +24,8 @@ import { InspectedPermitLicenseNomenclatureDTO } from '@app/models/generated/dto
 import { FishingGearForChoiceDTO } from '@app/models/generated/dtos/FishingGearForChoiceDTO';
 import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 import { PermitLicensesNomenclatureDTO } from '@app/models/generated/dtos/PermitLicensesNomenclatureDTO';
+import { IdentifierTypeEnum } from '@app/enums/identifier-type.enum';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 
 export interface ICommercialFishingService extends IApplicationsActionsService, ISuspensionService {
     getAllPermits(request: GridRequestModel<CommercialFishingRegisterFilters>): Observable<GridResultModel<CommercialFishingPermitRegisterDTO>>;
@@ -80,6 +82,7 @@ export interface ICommercialFishingService extends IApplicationsActionsService, 
     getPermitLicensesNomenclatures(shipId: number): Observable<PermitLicensesNomenclatureDTO[]>;
     getPermitLicenseFishingGears(permitLicenseId: number): Observable<FishingGearDTO[]>;
     getFishingGearsByPermitLicenseRegistrationNumber(permitLicenseNumber: string, shipId: number): Observable<FishingGearDTO[]>;
+    tryGetQualifiedFisher(identifierType: IdentifierTypeEnum, identifier: string): Observable<PersonFullDataDTO | undefined>;
 
     getSimpleAudit(id: number): Observable<SimpleAuditDTO>;
     getPermitLicenseSimpleAudit(id: number): Observable<SimpleAuditDTO>;
