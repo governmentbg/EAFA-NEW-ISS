@@ -1,20 +1,30 @@
 ﻿import { HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { AreaTypes } from '@app/shared/enums/area-type.enum';
-import { RequestService } from '@app/shared/services/request.service';
-import { BaseAuditService } from '../../common-app/base-audit.service';
 import { IUserManagementService } from '@app/interfaces/administration-app/user-management.interface';
 import { GridRequestModel } from '@app/models/common/grid-request.model';
 import { GridResultModel } from '@app/models/common/grid-result.model';
 import { UserDTO } from '@app/models/generated/dtos/UserDTO';
 import { UserManagementFilters } from '@app/models/generated/filters/UserManagementFilters';
+import { SecurityService } from '@app/services/common-app/security.service';
+import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
+import { AreaTypes } from '@app/shared/enums/area-type.enum';
+import { RequestService } from '@app/shared/services/request.service';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { Observable } from 'rxjs';
+import { BaseAuditService } from '../../common-app/base-audit.service';
 
 export abstract class BaseUserManagementService extends BaseAuditService implements IUserManagementService {
 
     protected controller: string = 'UserManagement';
+    protected securityService: SecurityService;
+    protected translationService: FuseTranslationLoaderService;
+    protected snackbar: TLSnackbar;
 
-    public constructor(requestService: RequestService) {
+    public constructor(requestService: RequestService, securityService: SecurityService,
+        translationService: FuseTranslationLoaderService, snackbar: TLSnackbar) {
         super(requestService, AreaTypes.Administrative);
+        this.securityService = securityService;
+        this.translationService = translationService;
+        this.snackbar = snackbar;
     }
 
     public abstract getAll(request: GridRequestModel<UserManagementFilters>): Observable<GridResultModel<UserDTO>>;
@@ -42,8 +52,10 @@ export abstract class BaseUserManagementService extends BaseAuditService impleme
         return this.requestService.patch(this.area, this.controller, 'SendChangePasswordEmail', null, { httpParams: params });
     }
 
-    public impersonateUser(userId: number): Observable<string> {
-        const params = new HttpParams().append('userId', userId.toString());
-        return this.requestService.get(this.area, this.controller, 'Impersonate', { httpParams: params, responseType: 'text' });
+    public impersonateUser(username: string): void {
+        this.securityService.impersonateUser(username).then(result => {
+            const message: string = this.translationService.getValue('service.successful-message');
+            this.snackbar.success(message);
+        });
     }
 }

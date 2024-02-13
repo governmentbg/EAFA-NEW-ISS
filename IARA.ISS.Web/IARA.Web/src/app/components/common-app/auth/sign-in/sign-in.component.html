@@ -6,11 +6,13 @@
         <!-- Email field -->
         <tl-username label="{{ 'auth.username' | tlTranslate }}"
                      formControlName="username"
+                     [autocomplete]="'username'"
                      appearance="outline">
         </tl-username>
         <!-- Password field -->
         <tl-password-input label="{{ 'auth.password' | tlTranslate }}"
                            formControlName="password"
+                           [autocomplete]="'current-password'"
                            appearance="outline">
         </tl-password-input>
         <!-- Actions -->

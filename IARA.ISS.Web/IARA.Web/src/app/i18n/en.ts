@@ -2665,6 +2665,7 @@
         'catch-fish-sex': 'Gender',
         'legal-entity': 'Legal entity',
         'fisherman-comment': 'Comment from an the fisherman',
+        'fisherman-data': 'Fisherman',
         'has-ticket': 'The person has a ticket',
         'fishing-ticket-number': 'Ticket number',
         'fishing-gears-count': 'Fishing gears count',
@@ -4252,6 +4253,8 @@
         'ship-log-book-page-generate-missing-pages-permission-no-pages-first-message': 'There are no added pages for the current log book. The start page of this log book is',
         'ship-log-book-page-qualified-fisher': 'Qualified fisher',
         'ship-log-book-page-water-type': 'Water type',
+        'ship-page-catch-record-quantity-sums': 'Quantities: ',
+        'ship-page-declaration-kg': 'kg',
 
         'previous-trip-catch-records-page-number': 'Page number',
         'previous-trip-catch-records-trip-start-date': 'Trip start date and time',
@@ -5071,6 +5074,7 @@
         'filters-is-delivered': 'Delivered',
         'filters-delivery-date': 'Sent date',
         'edit-law-section-filter': 'Free text search',
+        'edit-auan-inspected-person': 'Inspected person',
 
         'table-auan-num': 'AUAN no.',
         'table-drafter': 'Drafter',

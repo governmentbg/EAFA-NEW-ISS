@@ -7,8 +7,11 @@ import { InternalUserDTO } from '@app/models/generated/dtos/InternalUserDTO';
 import { MobileDeviceDTO } from '@app/models/generated/dtos/MobileDeviceDTO';
 import { UserDTO } from '@app/models/generated/dtos/UserDTO';
 import { UserManagementFilters } from '@app/models/generated/filters/UserManagementFilters';
+import { SecurityService } from '@app/services/common-app/security.service';
+import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { RequestService } from '@app/shared/services/request.service';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { Observable } from 'rxjs';
 import { BaseUserManagementService } from './base-user-management.service';
 
@@ -19,8 +22,8 @@ import { BaseUserManagementService } from './base-user-management.service';
 export class InternalUserManagementService extends BaseUserManagementService implements IUserManagementService {
     protected controller: string = 'UserManagement';
 
-    public constructor(requestService: RequestService) {
-        super(requestService);
+    public constructor(requestService: RequestService, securityService: SecurityService, translationService: FuseTranslationLoaderService, snackbar: TLSnackbar) {
+        super(requestService, securityService, translationService, snackbar);
     }
 
     public getAll(request: GridRequestModel<UserManagementFilters>): Observable<GridResultModel<UserDTO>> {

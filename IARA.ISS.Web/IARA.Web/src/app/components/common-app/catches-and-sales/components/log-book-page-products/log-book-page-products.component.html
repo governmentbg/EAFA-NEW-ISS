@@ -113,6 +113,18 @@
         </data-template-column>
     </tl-data-table>
 
+    <div *ngIf="fishQuantities !== undefined && fishQuantities !== null && fishQuantities.size > 0"
+         fxLayout="row"
+         fxFlex="100"
+         fxLayoutAlign="end center">
+        <mat-hint fxFlex="100">
+            {{ 'catches-and-sales.ship-page-catch-record-quantity-sums' | tlTranslate }}
+            <span *ngFor="let fishQuantity of fishQuantities | keyvalue">
+                {{ fishQuantity.key | nomenclatureDisplay: fishTypes }}: {{ fishQuantity.value | number: '1.2-2' }} {{ 'catches-and-sales.ship-page-declaration-kg' | tlTranslate }};
+            </span>
+        </mat-hint>
+    </div>
+
     <mat-error *ngIf="isTouched && form.errors?.missingProperties === true">
         * {{ 'catches-and-sales.page-product-missing-properties' | tlTranslate }}
     </mat-error>

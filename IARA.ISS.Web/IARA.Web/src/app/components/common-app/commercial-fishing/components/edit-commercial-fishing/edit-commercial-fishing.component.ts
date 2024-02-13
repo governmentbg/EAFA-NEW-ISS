@@ -167,6 +167,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public isSuspended: boolean = false;
     public canReadSuspensions: boolean = false;
     public isFishingGearsApplication: boolean = false;
+    public isRegisterEntry: boolean = false;
 
     public submittedByRole: SubmittedByRolesEnum | undefined;
     public readonly submittedByRoles: typeof SubmittedByRolesEnum = SubmittedByRolesEnum;
@@ -1242,6 +1243,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     // извличане на данни за регистров запис
                     this.isEditing = true;
                     this.isEditingSubmittedBy = true;
+                    this.isRegisterEntry = true;
 
                     this.service.getRecord(this.id, this.pageCode).subscribe({
                         next: (commercialFishingRecord: CommercialFishingEditDTO) => {

@@ -44,6 +44,7 @@ import { TLSelectComponent } from './tl-select/tl-select.component';
 import { TLSlideToggleComponent } from './tl-slide-toggle/tl-slide-toggle.component';
 import { TLTextareaComponent } from './tl-textarea/tl-textarea.component';
 import { TLUsernameComponent } from './tl-username/tl-username.component';
+import { TLIconModule } from '../tl-icon/tl-icon.module';
 
 
 const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
@@ -78,6 +79,7 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
         ReactiveFormsModule,
         TLPipesModule,
         TLIconButtonModule,
+        TLIconModule,
         MatSlideToggleModule,
         MatCheckboxModule,
         ScrollingModule,

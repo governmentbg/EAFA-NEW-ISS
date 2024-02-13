@@ -198,7 +198,7 @@
         'succ-change-permit-license-suspensions': 'Успешно направени промени по прекратявания на УСР',
         'send-history-to-flux-success': 'Събитията са изпратени към FLUX',
         'send-event-to-flux-success': 'Събитието е изпратено към FLUX',
-        'succ-applied-deactivated-profile':'Успешно заявихте деактивиране на профила си. Вашата заявка трябва да бъде одобрена от администратор.',
+        'succ-applied-deactivated-profile': 'Успешно заявихте деактивиране на профила си. Вашата заявка трябва да бъде одобрена от администратор.',
         'succ-exec-cross-checks': 'Успешно изпълнени кръстосани проверки'
     },
     'navigation': {
@@ -2719,7 +2719,8 @@
         'other-fishing-gear': 'С какви спомагателни материали и технически средства се извършва риболов',
         'catch-fish-sex': 'Пол (Есетров вид)',
         'legal-entity': 'Юридическо лице',
-        'fisherman-comment': 'Коментар на лице извършващо любителски риболов',
+        'fisherman-comment': 'Коментар на лице, извършващо любителски риболов',
+        'fisherman-data': 'Данни за лицето, извършващо любителски риболов',
         'has-ticket': 'Лицето притежава билет',
         'fishing-ticket-number': 'Номер на билета',
         'fishing-gears-count': 'Брой въдици',
@@ -4307,6 +4308,8 @@
         'ship-log-book-page-generate-missing-pages-permission-no-pages-first-message': 'За текущия дневник няма въведени страници в системата. Началната му страница е',
         'ship-log-book-page-qualified-fisher': 'Правоспособен рибар',
         'ship-log-book-page-water-type': 'Тип на водите',
+        'ship-page-catch-record-quantity-sums': 'Общи количества: ',
+        'ship-page-declaration-kg': 'кг',
 
         'previous-trip-catch-records-page-number': 'Номер на стр. от дневник',
         'previous-trip-catch-records-trip-start-date': 'Дата и час на тръгване',
@@ -5128,6 +5131,7 @@
         'filters-is-delivered': 'Връчени',
         'filters-delivery-date': 'Дата на връчване',
         'edit-law-section-filter': 'Търсене по ключова дума',
+        'edit-auan-inspected-person': 'Нарушител',
 
         'table-auan-num': '№ на АУАН',
         'table-drafter': 'Актосъставител',

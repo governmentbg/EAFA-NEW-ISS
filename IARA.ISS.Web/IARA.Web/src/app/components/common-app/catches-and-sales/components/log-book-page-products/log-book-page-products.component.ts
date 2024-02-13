@@ -61,6 +61,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
     public productPurposes: NomenclatureDTO<number>[] = [];
 
     public products: LogBookPageProductDTO[] = [];
+    public fishQuantities: Map<number, number> = new Map<number, number>();
 
     @ViewChild('productsTable')
     private productsTable!: TLDataTableComponent;
@@ -129,12 +130,14 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
 
                 setTimeout(() => {
                     this.products = value.slice();
+                    this.recalculateFishQuantitySums();
                 });
             });
         }
         else {
             setTimeout(() => {
                 this.products = [];
+                this.recalculateFishQuantitySums();
             });
         }
     }
@@ -152,8 +155,8 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
             newProduct.hasMissingProperties = true;
             this.products.push(newProduct);
         }
-
         this.onChanged(this.products);
+        this.recalculateFishQuantitySums();
 
         this.isTouched = true;
         this.control.updateValueAndValidity({ emitEvent: false, onlySelf: true });
@@ -204,16 +207,17 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
                 next: (result: LogBookPageProductDTO | null | undefined) => {
                     if (result !== null && result !== undefined) {
                         result.hasMissingProperties = false;
-                        
+
                         if (product !== null && product !== undefined) {
                             product = result;
                         }
                         else {
                             this.products.push(result);
                         }
-                        
+
                         this.products = this.products.slice();
                         this.onChanged(this.products);
+                        this.recalculateFishQuantitySums();
 
                         this.isTouched = true;
                         this.control.updateValueAndValidity({ emitEvent: false, onlySelf: true });
@@ -256,6 +260,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
 
                         this.products = this.products.slice();
                         this.onChanged(this.products);
+                        this.recalculateFishQuantitySums();
 
                         this.isTouched = true;
                         this.control.updateValueAndValidity({ emitEvent: false, onlySelf: true });
@@ -294,6 +299,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
         const indexToDelete: number = this.products.findIndex(x => x === row.data);
         this.products.splice(indexToDelete, 1);
         this.products = this.products.slice();
+        this.recalculateFishQuantitySums();
 
         this.isTouched = true;
         this.control.updateValueAndValidity({ emitEvent: false, onlySelf: true });
@@ -339,6 +345,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
     private handleChangedProductsTable(): void {
         this.products = this.productsTable.rows;
         this.onChanged(this.products);
+        this.recalculateFishQuantitySums();
 
         this.isTouched = true;
         this.control.updateValueAndValidity({ emitEvent: false, onlySelf: true });
@@ -433,6 +440,16 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
             }
 
             return null;
+        }
+    }
+
+    private recalculateFishQuantitySums(): void {
+        const productsGroupedByFishType: Record<number, LogBookPageProductDTO[]> = CommonUtils.groupBy(this.products.filter(x => x.isActive), x => x.fishId!);
+        this.fishQuantities.clear();
+
+        for (const fishTypeId in productsGroupedByFishType) {
+            const quantity: number = productsGroupedByFishType[fishTypeId].reduce((sum, current) => sum + current.quantityKg!, 0);
+            this.fishQuantities.set(Number(fishTypeId), quantity);
         }
     }
 

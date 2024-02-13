@@ -28,6 +28,12 @@ export class DateRangeIndefiniteComponent extends CustomFormControl<DateRangeInd
 
     public constructor(@Self() ngControl: NgControl) {
         super(ngControl);
+
+        this.onMarkAsTouched.subscribe({
+            next: () => {
+                this.form.updateValueAndValidity();
+            }
+        });
     }
 
     public ngOnInit(): void {
@@ -64,9 +70,20 @@ export class DateRangeIndefiniteComponent extends CustomFormControl<DateRangeInd
 
             if (value.indefinite === true) {
                 this.form.get('dateControl')!.setValue(value.range?.start);
+
+                this.form.get('rangeControl')!.setValue(undefined);
+                this.form.get('rangeControl')!.clearValidators();
+                this.form.get('rangeControl')!.setErrors(null);
+
+                this.form.get('dateControl')!.setValidators(Validators.required);
+                this.form.get('dateControl')!.markAsPending({ emitEvent: false });
+                this.form.get('dateControl')!.updateValueAndValidity({ emitEvent: false });
             }
             else {
                 this.form.get('rangeControl')!.setValue(value.range);
+
+                this.form.get('rangeControl')!.setValidators(Validators.required);
+                this.form.get('rangeControl')!.updateValueAndValidity({ emitEvent: false });
             }
         }
         else {

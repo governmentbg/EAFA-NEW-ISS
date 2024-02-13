@@ -197,109 +197,125 @@
                      tooltipResourceName="catches-and-sales.ship-page-catch-records-panel-helper"
                      validityChecker>
                 <tl-card-title>{{ 'catches-and-sales.ship-page-catch-records-panel' | tlTranslate }}</tl-card-title>
-                <tl-card-content>
-                    <tl-data-table fxFlexFill
-                                   #catchRecordsTable
-                                   [rows]="catchRecords"
-                                   [isRemote]="false"
-                                   [isSoftDeletable]="true"
-                                   [showAddButton]="!viewMode"
-                                   [showInactiveRecords]="!viewMode"
-                                   (addButtonClicked)="addEditCatchRecord()"
-                                   (activeRecordChanged)="addEditCatchRecord($event, !$event.isActive || viewMode)">
-                        <row-detail>
-                            <ng-template let-row="row" ngx-datatable-row-detail-template>
-                                <tl-card>
-                                    <tl-card-title>{{ 'catches-and-sales.ship-page-catch-records-fishes-card-title' | tlTranslate }}</tl-card-title>
-                                    <tl-card-content>
-                                        <tl-data-table [isRemote]="false"
-                                                       [isSoftDeletable]="false"
-                                                       [showInactiveRecords]="false"
-                                                       [showAddButton]="false"
-                                                       [rows]="row.data.catchRecordFishes">
-                                            <data-column propertyName="catchZone"
-                                                         [flexRate]="0.2"
-                                                         columnName="{{ 'catches-and-sales.ship-page-catch-record-catch-zone' | tlTranslate }}">
-                                            </data-column>
-                                            <data-column propertyName="catchQuadrant"
-                                                         [flexRate]="0.2"
-                                                         columnName="{{ 'catches-and-sales.ship-page-catch-record-quadrant' | tlTranslate }}">
-                                            </data-column>
-                                            <data-column propertyName="fishName"
-                                                         [flexRate]="0.4"
-                                                         columnName="{{ 'catches-and-sales.ship-page-catch-record-fish' | tlTranslate }}">
-                                            </data-column>
-                                            <data-column propertyName="quantityKg"
-                                                         [flexRate]="0.2"
-                                                         columnName="{{ 'catches-and-sales.ship-page-catch-record-quantity-kg' | tlTranslate }}">
-                                            </data-column>
-                                            <data-column propertyName="isDetainedOnBoard"
-                                                         [flexRate]="0.2"
-                                                         dataType="boolean"
-                                                         columnName="{{ 'catches-and-sales.ship-page-catch-record-is-detained-on-board' | tlTranslate }}">
-                                            </data-column>
-                                        </tl-data-table>
-                                    </tl-card-content>
-                                </tl-card>
-                            </ng-template>
-                        </row-detail>
+                <tl-card-content fxLayout="column">
+                    <div fxLayout="column" fxLayoutGap="1em">
+                        <tl-data-table fxFlexFill
+                                       #catchRecordsTable
+                                       [rows]="catchRecords"
+                                       [isRemote]="false"
+                                       [isSoftDeletable]="true"
+                                       [showAddButton]="!viewMode"
+                                       [showInactiveRecords]="!viewMode"
+                                       (addButtonClicked)="addEditCatchRecord()"
+                                       (activeRecordChanged)="addEditCatchRecord($event, !$event.isActive || viewMode)">
+                            <row-detail>
+                                <ng-template let-row="row" ngx-datatable-row-detail-template>
+                                    <tl-card>
+                                        <tl-card-title>{{ 'catches-and-sales.ship-page-catch-records-fishes-card-title' | tlTranslate }}</tl-card-title>
+                                        <tl-card-content>
+                                            <tl-data-table [isRemote]="false"
+                                                           [isSoftDeletable]="false"
+                                                           [showInactiveRecords]="false"
+                                                           [showAddButton]="false"
+                                                           [rows]="row.data.catchRecordFishes">
+                                                <data-column propertyName="catchZone"
+                                                             [flexRate]="0.2"
+                                                             columnName="{{ 'catches-and-sales.ship-page-catch-record-catch-zone' | tlTranslate }}">
+                                                </data-column>
+                                                <data-column propertyName="catchQuadrant"
+                                                             [flexRate]="0.2"
+                                                             columnName="{{ 'catches-and-sales.ship-page-catch-record-quadrant' | tlTranslate }}">
+                                                </data-column>
+                                                <data-column propertyName="fishName"
+                                                             [flexRate]="0.4"
+                                                             columnName="{{ 'catches-and-sales.ship-page-catch-record-fish' | tlTranslate }}">
+                                                </data-column>
+                                                <data-column propertyName="quantityKg"
+                                                             [flexRate]="0.2"
+                                                             columnName="{{ 'catches-and-sales.ship-page-catch-record-quantity-kg' | tlTranslate }}">
+                                                </data-column>
+                                                <data-column propertyName="isDetainedOnBoard"
+                                                             [flexRate]="0.2"
+                                                             dataType="boolean"
+                                                             columnName="{{ 'catches-and-sales.ship-page-catch-record-is-detained-on-board' | tlTranslate }}">
+                                                </data-column>
+                                            </tl-data-table>
+                                        </tl-card-content>
+                                    </tl-card>
+                                </ng-template>
+                            </row-detail>
 
-                        <data-column [flexRate]="0.1"
-                                     propertyName="catchOperationsCount"
-                                     columnName="{{ 'catches-and-sales.ship-page-catch-operations-count' | tlTranslate }}">
-                        </data-column>
-                        <data-column [flexRate]="0.1"
-                                     propertyName="depth"
-                                     columnName="{{ 'catches-and-sales.ship-page-catch-fishing-gear-depth' | tlTranslate }}">
-                        </data-column>
-                        <data-column [flexRate]="0.3"
-                                     propertyName="gearEntryTime"
-                                     dataType="datetime"
-                                     columnName="{{ 'catches-and-sales.ship-page-gear-entry-time' | tlTranslate }}">
-                        </data-column>
-                        <data-column [flexRate]="0.3"
-                                     propertyName="gearExitTime"
-                                     dataType="datetime"
-                                     columnName="{{ 'catches-and-sales.ship-page-gear-exit-time' | tlTranslate }}">
-                        </data-column>
-                        <data-column [flexRate]="0.3"
-                                     propertyName="totalTime"
-                                     columnName="{{ 'catches-and-sales.ship-page-total-time' | tlTranslate }}">
-                        </data-column>
-                        <data-column [flexRate]="0.4"
-                                     propertyName="catchRecordFishesSummary"
-                                     columnName="{{ 'catches-and-sales.ship-page-catch-summary' | tlTranslate }}"></data-column>
-                        <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
-                            <ng-template let-row="row" ngx-datatable-cell-template>
-                                <div fxLayout="row wrap" fxLayoutAlign="end center">
-                                    <tl-icon-button *ngIf="row.data.isActive"
-                                                    icon="visibility"
-                                                    (buttonClicked)="addEditCatchRecord(row.data, true)"
-                                                    iconClass="accent-color"
-                                                    tooltipText="{{ 'catches-and-sales.view-ship-page-catch-record' | tlTranslate }}">
-                                    </tl-icon-button>
-                                    <tl-icon-button *ngIf="row.data.isActive && !viewMode"
-                                                    icon="edit"
-                                                    (buttonClicked)="addEditCatchRecord(row.data, false)"
-                                                    iconClass="accent-color"
-                                                    tooltipText="{{ 'catches-and-sales.edit-ship-page-catch-record' | tlTranslate }}">
-                                    </tl-icon-button>
-                                    <tl-icon-button *ngIf="row.data.isActive && !viewMode"
-                                                    icon="delete"
-                                                    (buttonClicked)="deleteCatchRecord(row)"
-                                                    iconClass="accent-color"
-                                                    tooltipText="{{ 'catches-and-sales.delete-ship-page-catch-record' | tlTranslate }}">
-                                    </tl-icon-button>
-                                    <tl-icon-button *ngIf="!row.data.isActive && !viewMode"
-                                                    icon="restore"
-                                                    (buttonClicked)="undoDeleteCatchRecord(row)"
-                                                    iconClass="accent-color"
-                                                    tooltipText="{{ 'catches-and-sales.restore-ship-page-catch-record' | tlTranslate }}">
-                                    </tl-icon-button>
-                                </div>
-                            </ng-template>
-                        </data-template-column>
-                    </tl-data-table>
+                            <data-column [flexRate]="0.1"
+                                         propertyName="catchOperationsCount"
+                                         columnName="{{ 'catches-and-sales.ship-page-catch-operations-count' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.1"
+                                         propertyName="depth"
+                                         columnName="{{ 'catches-and-sales.ship-page-catch-fishing-gear-depth' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.3"
+                                         propertyName="gearEntryTime"
+                                         dataType="datetime"
+                                         columnName="{{ 'catches-and-sales.ship-page-gear-entry-time' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.3"
+                                         propertyName="gearExitTime"
+                                         dataType="datetime"
+                                         columnName="{{ 'catches-and-sales.ship-page-gear-exit-time' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.3"
+                                         propertyName="totalTime"
+                                         columnName="{{ 'catches-and-sales.ship-page-total-time' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.4"
+                                         propertyName="catchRecordFishesSummary"
+                                         columnName="{{ 'catches-and-sales.ship-page-catch-summary' | tlTranslate }}"></data-column>
+                            <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                        <tl-icon-button *ngIf="row.data.isActive"
+                                                        icon="visibility"
+                                                        (buttonClicked)="addEditCatchRecord(row.data, true)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'catches-and-sales.view-ship-page-catch-record' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                                        icon="edit"
+                                                        (buttonClicked)="addEditCatchRecord(row.data, false)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'catches-and-sales.edit-ship-page-catch-record' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                                        icon="delete"
+                                                        (buttonClicked)="deleteCatchRecord(row)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'catches-and-sales.delete-ship-page-catch-record' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="!row.data.isActive && !viewMode"
+                                                        icon="restore"
+                                                        (buttonClicked)="undoDeleteCatchRecord(row)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'catches-and-sales.restore-ship-page-catch-record' | tlTranslate }}">
+                                        </tl-icon-button>
+                                    </div>
+                                </ng-template>
+                            </data-template-column>
+                        </tl-data-table>
+                        <div *ngIf="catchRecordQuantities !== undefined && catchRecordQuantities !== null && catchRecordQuantities.size > 0"
+                             fxLayout="row"
+                             fxFlex="100"
+                             fxLayoutAlign="end center">
+                            <mat-hint fxFlex="100">
+                                {{ 'catches-and-sales.ship-page-catch-record-quantity-sums' | tlTranslate }}
+                                <span *ngFor="let fishQuantity of catchRecordQuantities | keyvalue">
+                                    {{ fishQuantity.key | nomenclatureDisplay: aquaticOrganisms }}: {{ fishQuantity.value | number: '1.2-2' }} {{ 'catches-and-sales.ship-page-declaration-kg' | tlTranslate }};
+                                </span>
+                            </mat-hint>
+                        </div>
+                        <mat-error *ngIf="form.touched && form.errors?.uniqueGearEntryTime">
+                            * {{ 'catches-and-sales.ship-page-unique-catch-record-gear-entry-time' | tlTranslate }}
+                        </mat-error>
+                    </div>
                 </tl-card-content>
             </tl-card>
             <!-- Декларация за произход -->
@@ -408,6 +424,17 @@
                                     </ng-template>
                                 </data-template-column>
                             </tl-data-table>
+                            <div *ngIf="declarationOfOriginCatchRecordsQuantities !== undefined && declarationOfOriginCatchRecordsQuantities !== null && declarationOfOriginCatchRecordsQuantities.size > 0" 
+                                 fxLayout="row" 
+                                 fxFlex="100" 
+                                 fxLayoutAlign="end center">
+                                <mat-hint fxFlex="100">
+                                    {{ 'catches-and-sales.ship-page-catch-record-quantity-sums' | tlTranslate }}
+                                    <span *ngFor="let fishQuantity of declarationOfOriginCatchRecordsQuantities | keyvalue">
+                                        {{ fishQuantity.key | nomenclatureDisplay: aquaticOrganisms }}: {{ fishQuantity.value | number: '1.2-2' }} {{ 'catches-and-sales.ship-page-declaration-kg' | tlTranslate }};
+                                    </span>
+                                </mat-hint>
+                            </div>
                             <mat-error *ngIf="form.touched && form.errors?.hasInvalidCatchRecordDates">
                                 * {{ 'catches-and-sales.ship-page-invalid-declaration-of-origin-catch-records-dates' | tlTranslate }}
                             </mat-error>

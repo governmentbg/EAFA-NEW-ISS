@@ -241,7 +241,7 @@
                                                 fxFlex="10"
                                                 class="regix-data-search-button"
                                                 icon="fa-search-icon"
-                                                [disabled]="isEditing"
+                                                [disabled]="isEditing && !isRegisterEntry"
                                                 (buttonClicked)="qualifiedFisherSearchBtnClicked()"
                                                 iconClass="accent-color"
                                                 tooltipText="{{ 'regix-data.search' | tlTranslate }}">
@@ -392,16 +392,16 @@
                                          tooltipResourceName="commercial-fishing.aquatic-organism-types-helper">
                         </tl-autocomplete>
                     </div>
-                    <div fxFLex="40" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">
+                    <div fxFLex="40" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
                         <button *ngIf="!isReadonly && !viewMode && !isFishingGearsApplication"
-                                fxFlex="70"
+                                fxFlex="60"
                                 mat-raised-button
                                 color="accent"
                                 (click)="selectAllPermittedAquaticOrganisms()">
                             {{ 'commercial-fishing.select-all-permitted-aquatic-organisms' | tlTranslate }}
                         </button>
                         <button *ngIf="!isReadonly && !viewMode && !isFishingGearsApplication"
-                                fxFlex="30"
+                                fxFlex="40"
                                 mat-raised-button
                                 color="accent"
                                 (click)="deselectAllAquaticOrganisms()">

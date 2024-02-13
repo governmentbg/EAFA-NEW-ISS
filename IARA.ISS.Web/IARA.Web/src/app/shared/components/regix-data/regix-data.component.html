@@ -36,7 +36,7 @@
                                 fxFlex="10"
                                 class="regix-data-search-button"
                                 icon="fa-search-icon"
-                                [disabled]="isIdReadOnly || readonly"
+                                [disabled]="readonly"
                                 (buttonClicked)="searchBtnClicked()"
                                 iconClass="accent-color"
                                 tooltipText="{{ 'regix-data.search' | tlTranslate }}">
@@ -178,7 +178,7 @@
                 <tl-icon-button *ngIf="showSearchButton && !isDisabled && !hideSearchButton"
                                 class="regix-data-search-button"
                                 icon="fa-search-icon"
-                                [disabled]="isIdReadOnly || readonly"
+                                [disabled]="readonly"
                                 (buttonClicked)="searchBtnClicked()"
                                 iconClass="accent-color"
                                 tooltipText="{{ 'regix-data.search' | tlTranslate }}">
@@ -228,7 +228,7 @@
                 <tl-icon-button *ngIf="showSearchButton && !isDisabled && !hideSearchButton"
                                 class="regix-data-search-button"
                                 icon="fa-search-icon"
-                                [disabled]="isIdReadOnly || readonly"
+                                [disabled]="readonly"
                                 (buttonClicked)="searchBtnClicked()"
                                 iconClass="accent-color"
                                 tooltipText="{{ 'regix-data.search' | tlTranslate }}">

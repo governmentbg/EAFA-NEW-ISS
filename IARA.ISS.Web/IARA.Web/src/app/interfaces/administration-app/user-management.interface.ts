@@ -11,5 +11,5 @@ export interface IUserManagementService extends IBaseAuditService {
     delete(id: number): Observable<void>;
     undoDelete(id: number): Observable<void>;
     sendChangePasswordEmail(userId: number): Observable<void>;
-    impersonateUser(userId: number): Observable<string>;
+    impersonateUser(username: string): void;
 }
