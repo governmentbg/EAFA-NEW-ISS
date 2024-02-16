@@ -1014,8 +1014,10 @@
         'data': 'Nomenclature data',
     },
     'recreational-fishing': {
-        'person-already-has-ticket-in-range': 'The person already has a valid ticket for this period',
+        'person-already-has-ticket-from-date': 'The person already has a valid ticket from',
         'person-already-has-child-tickets': 'The person already has the following number of child tickets',
+        'person-already-has-indefinite-ticket': 'The person already has a valid indefinite ticket from',
+        'to-date': 'to',
         'wizard-title-ticket-validity': 'Ticket validity',
         'wizard-title-ticket-type': 'Ticket type',
         'wizard-title-ticket-num': 'Ticket number',
@@ -1271,6 +1273,7 @@
         'ticket-delivery-territory-unit': 'Territory unit for delivery',
         'ticket-delivery-territory-unit-card': 'Territory unit for delivery',
         'ticket-delivery-territory-unit-input': 'Territory unit',
+        'ticket-status-duplicate': 'Duplicate',
 
         'ticket-payment-information': 'Payment information'
     },
@@ -4071,6 +4074,8 @@
         'add-log-book-page-wizard-confirm-preliminary-data': 'Continue to confirmation',
         'add-log-book-page-wizard-confirm-additional-data': 'Data confirmation',
         'add-log-book-page-wizard-confirm-and-go-to-add-dialog': 'Confirm and continue to adding',
+        'add-log-book-page-wizard-ship': 'Ship, uploading the products',
+        'origin-declaration-is-readonly-info': 'A ship must be chosen in order to chosee an origin declaration',
         'add-log-book-page-wizard-origin-declaration-number': 'Declaration of origin number, from which products will be taken',
         'add-log-book-page-wizard-transportation-document-number': 'Transportation document number, from which products will be taken',
         'add-log-book-page-wizard-admission-document-number': 'Admission document number, from which products will be taken',
@@ -4090,6 +4095,8 @@
         'add-log-book-page-wizard-page-registered-buyer': 'Registered buyer',
         'add-log-book-page-wizard-page-registered-buyer-number': 'Reg. number',
         'add-log-book-page-wizard-page-registered-buyer-urorr': 'URORR',
+        'add-log-book-page-wizard-transportation-log-book-owner': 'Transportation log book owner',
+        'add-log-book-page-wizard-admission-log-book-owner': 'Admission log book owner',
 
         'common-log-book-page-data-origin-delcaration-number': 'Declaration of origin number',
         'common-log-book-page-data-origin-declaration-date': 'Declaration of origin date',
@@ -4310,6 +4317,9 @@
         'first-sale-page-generate-missing-pages-permission-fifth-message': 'Please confirm the generation of',
         'first-sale-page-generate-missing-pages-permission-sixth-message': 'pages for the current log book with status Missing',
         'first-sale-page-generate-missing-pages-permission-no-pages-first-message': 'There are no added pages for the current log book. The start page of this log book is',
+        'first-sale-page-cannot-add-page-for-chosen-locked-fill-date-error': 'You cannot add page with this fill date because',
+        'first-sale-page-because-days-have-past-since-pervious-month': 'days have past since previous month',
+        'first-sale-page-to-add-page-after-locked-period-contanct-admin': 'In order to add a page for the locked period, please contact an administrator',
 
         'add-admission-log-book-page-dialog-title': 'Add admission log book page',
         'edit-admission-log-book-page-dialog-title': 'Edit admission log book page',
@@ -4350,7 +4360,9 @@
         'admission-page-generate-missing-pages-permission-fifth-message': 'Please confirm the generation of',
         'admission-page-generate-missing-pages-permission-sixth-message': 'pages for the current log book with status Missing',
         'admission-page-generate-missing-pages-permission-no-pages-first-message': 'There are no added pages for the current log book. The start page of this log book is',
-
+        'admission-page-cannot-add-page-for-chosen-locked-fill-date-error': 'You cannot add page with this fill date because',
+        'admission-page-because-days-have-past-since-pervious-month': 'days have past since previous month',
+       
         'add-transportation-log-book-page-dialog-title': 'Add transporation log book page',
         'edit-transportation-log-book-page-dialog-title': 'Edit transporation log book page',
         'view-transportation-log-book-page-dialog-title': 'View transporation log book page',
@@ -4389,6 +4401,9 @@
         'transportation-page-generate-missing-pages-permission-fifth-message': 'Please confirm the generation of',
         'transportation-page-generate-missing-pages-permission-sixth-message': 'pages for the current log book with status Missing',
         'transportation-page-generate-missing-pages-permission-no-pages-first-message': 'There are no added pages for the current log book. The start page of this log book is',
+        'transportation-page-cannot-add-page-for-chosen-locked-fill-date-error': 'You cannot add page with this fill date because',
+        'transportation-page-because-days-have-past-since-pervious-month': 'days have past since previous month',
+        'transportation-page-to-add-page-after-locked-period-contanct-admin': 'In order to add a page for the locked period, please contact an administrator',
 
         'add-aquaculture-log-book-page-dialog-title': 'Add aquaculture log book page',
         'edit-aquaculture-log-book-page-dialog-title': 'Edit aquaculture log book page',

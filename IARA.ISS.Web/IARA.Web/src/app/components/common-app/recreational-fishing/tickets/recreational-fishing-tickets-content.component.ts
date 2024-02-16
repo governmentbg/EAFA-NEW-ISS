@@ -1,4 +1,5 @@
 ﻿import { CdkStep, StepperSelectionEvent } from '@angular/cdk/stepper';
+import { DatePipe } from '@angular/common';
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
@@ -8,7 +9,6 @@ import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
 import { TicketPeriodEnum } from '@app/enums/ticket-period.enum';
 import { TicketTypeEnum } from '@app/enums/ticket-type.enum';
 import { IRecreationalFishingService } from '@app/interfaces/common-app/recreational-fishing.interface';
-import { ErrorModel } from '@app/models/common/exception.model';
 import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { PaymentDataDTO } from '@app/models/generated/dtos/PaymentDataDTO';
@@ -26,8 +26,6 @@ import { SystemPropertiesService } from '@app/services/common-app/system-propert
 import { RecreationalFishingPublicService } from '@app/services/public-app/recreational-fishing-public.service';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
-import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
-import { RequestProperties } from '@app/shared/services/request-properties';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
@@ -74,7 +72,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     public validityPeriodComment: string | null = null;
     public ticketNumsComment: string | null = null;
     public ticketNumsLabels: string[] = [];
-    public disableSaveBtnComment: string | null = null;
+    public ticketPeriodsOverlapComment: string | null = null;
 
     public maxUnder14Tickets!: number;
     public blockAssociationsAddTicketsDate: Date | undefined;
@@ -140,30 +138,31 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     private cannotPurchase: boolean = false;
     private cannotPurchaseUnder14: boolean = false;
 
-    private snackbar: TLSnackbar;
     private translate: FuseTranslationLoaderService;
     private router: Router;
     private systemPropertiesService: SystemPropertiesService;
     private systemProperties!: SystemPropertiesDTO;
     private nomenclatures: CommonNomenclatures;
+    private datePipe: DatePipe;
 
     private dataSubscriptions: Subscription[] = [];
 
     private readonly nonPickablePeriods: TicketPeriodEnum[] = [TicketPeriodEnum.DISABILITY, TicketPeriodEnum.UNTIL14, TicketPeriodEnum.NOPERIOD];
 
-    public constructor(tlsnackbar: TLSnackbar,
+    public constructor(
         translate: FuseTranslationLoaderService,
         systemPropertiesService: SystemPropertiesService,
         nomenclatures: CommonNomenclatures,
+        datePipe: DatePipe,
         router: Router
     ) {
         this.buildForm();
 
-        this.snackbar = tlsnackbar;
         this.translate = translate;
         this.router = router;
         this.systemPropertiesService = systemPropertiesService;
         this.nomenclatures = nomenclatures;
+        this.datePipe = datePipe;
     }
 
     public async ngOnInit(): Promise<void> {
@@ -363,7 +362,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
         this.showValidityStep = false;
         this.showPaymentStep = false;
         this.showDeclarationFileValidation = false;
-        this.disableSaveBtnComment = null;
+        this.ticketPeriodsOverlapComment = null;
 
         this.paymentDataControl.reset();
         this.paymentDataControl.enable();
@@ -845,14 +844,14 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     }
 
     private checkPurchaseAbility(): void {
-        this.disableSaveBtnComment = null;
+        this.ticketPeriodsOverlapComment = null;
 
         let data: RecreationalFishingTicketValidationDTO | undefined;
 
         if (this.tickets.length > 0) {
             const ticket: RecreationalFishingTicketDTO = this.tickets[0];
 
-            if (ticket.person && ticket.person.egnLnc && ticket.person.egnLnc.egnLnc && ticket.person.egnLnc.identifierType) {
+            if (ticket.person && ticket.person.egnLnc && ticket.person.egnLnc.egnLnc && ticket.person.egnLnc.identifierType !== undefined && ticket.person.egnLnc.identifierType !== null) {
                 data = new RecreationalFishingTicketValidationDTO({
                     personEgnLnc: ticket.person!.egnLnc,
                     ticketType: TicketTypeEnum[this.ticketTypes.find(x => x.value === ticket.typeId)!.code as keyof typeof TicketTypeEnum],
@@ -866,7 +865,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
         else if (this.childTickets.length > 0) {
             const ticket: RecreationalFishingTicketDTO = this.childTickets[0];
 
-            if (ticket.person && ticket.person.egnLnc && ticket.person.egnLnc.egnLnc && ticket.person.egnLnc.identifierType) {
+            if (ticket.person && ticket.person.egnLnc && ticket.person.egnLnc.egnLnc && ticket.person.egnLnc.identifierType !== undefined && ticket.person.egnLnc.identifierType !== null) {
                 data = new RecreationalFishingTicketValidationDTO({
                     personEgnLnc: ticket.person!.egnLnc,
                     representativePersonEgnLnc: ticket.representativePerson!.egnLnc,
@@ -881,7 +880,13 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
                     this.cannotPurchase = result.cannotPurchaseTicket ?? false;
 
                     if (this.cannotPurchase) {
-                        this.disableSaveBtnComment = `${this.translate.getValue('recreational-fishing.person-already-has-ticket-in-range')}`;
+                        const validFrom: string = this.datePipe.transform(result.ticketValidFrom!, 'dd.MM.yyyy')!;
+                        const validTo: string = this.datePipe.transform(result.ticketValidTo!, 'dd.MM.yyyy')!;
+                        const isIndefinite: boolean = result.telkisIndefinite ?? false;
+
+                        this.ticketPeriodsOverlapComment = isIndefinite
+                            ? `${this.translate.getValue('recreational-fishing.person-already-has-indefinite-ticket')} ${validFrom}`
+                            : `${this.translate.getValue('recreational-fishing.person-already-has-ticket-from-date')} ${validFrom} ${this.translate.getValue('recreational-fishing.to-date')} ${validTo}`;
                     }
                     else {
                         if (result.representativeCount) {
@@ -896,22 +901,16 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
                             this.cannotPurchaseUnder14 = current + attempted > this.maxUnder14Tickets;
 
                             if (this.cannotPurchaseUnder14) {
-                                this.disableSaveBtnComment = `${this.translate.getValue('recreational-fishing.person-already-has-child-tickets')}: ${current}`;
+                                this.ticketPeriodsOverlapComment = `${this.translate.getValue('recreational-fishing.person-already-has-child-tickets')}: ${current}`;
                             }
                             else {
-                                this.disableSaveBtnComment = null;
+                                this.ticketPeriodsOverlapComment = null;
                             }
                         }
                         else {
                             this.cannotPurchaseUnder14 = false;
-                            this.disableSaveBtnComment = null;
+                            this.ticketPeriodsOverlapComment = null;
                         }
-                    }
-
-                    if (this.disableSaveBtnComment) {
-                        const errors: ErrorModel = new ErrorModel();
-                        errors.messages = [this.disableSaveBtnComment];
-                        this.snackbar.errorModel(errors, RequestProperties.DEFAULT);
                     }
                 }
             });

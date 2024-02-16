@@ -1,7 +1,7 @@
 import { FuseTranslationLoaderService } from '@/@fuse/services/translation-loader.service';
 import { NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
 import { APP_BASE_HREF, registerLocaleData } from '@angular/common';
-import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import localeBg from '@angular/common/locales/bg';
 import { APP_INITIALIZER, Injector, LOCALE_ID, NgModule } from '@angular/core';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
@@ -20,7 +20,7 @@ import { FuseModule } from '@fuse/fuse.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { AccountModule } from './components/common-app/auth/account.module';
-import { ACCOUNT_ROUTES, GetAccountRoutes } from './components/common-app/auth/account.routing';
+import { GetAccountRoutes } from './components/common-app/auth/account.routing';
 import { IPermissionsService } from './components/common-app/auth/interfaces/permissions-service.interface';
 import { SecurityConfig } from './components/common-app/auth/interfaces/security-config.interface';
 import { IGenericSecurityService, ISecurityService } from './components/common-app/auth/interfaces/security-service.interface';
@@ -46,6 +46,8 @@ import { CustomMatPaginatorIntl } from './shared/utils/custom.paginator';
 import { TLDateAdapter } from './shared/utils/date.adapter';
 import { DateUtils } from './shared/utils/date.utils';
 import { TranslationUtils } from './shared/utils/translation-utils';
+import { CheckVersionService } from './services/common-app/check-version.service';
+import { NotificationsHubService } from './shared/notifications/notifications-hub-service';
 
 
 const securityConfig: SecurityConfig = new SecurityConfig({
@@ -78,7 +80,8 @@ const appRoutes: Routes = [
 export function initializeApplication(translationLoad: FuseTranslationLoaderService,
     securityService: IGenericSecurityService<string, UserAuthDTO>,
     permissionsService: IPermissionsService,
-    fuseNavigationService: FuseNavigationService): () => void {
+    fuseNavigationService: FuseNavigationService,
+    versionService: CheckVersionService): () => void {
 
     return async () => {
         await loadTranslationResources(translationLoad).then(async () => {
@@ -94,14 +97,16 @@ export function initializeApplication(translationLoad: FuseTranslationLoaderServ
                     AuthenticationUtils.initNavigation(permissionsService, fuseNavigationService, isAuthenticated);
                 });
             });
+            versionService.initialize();
         });
+
     };
 }
 
 export async function loadTranslationResources(translationLoad: FuseTranslationLoaderService): Promise<void> {
     let language: string = 'bg';
 
-    const storage: StorageService = StorageService.getStorage(StorageTypes.Local)
+    const storage: StorageService = StorageService.getStorage(StorageTypes.Local);
     if (storage.hasItem('lang')) {
         language = await storage.get('lang') ?? 'bg';
     }
@@ -156,22 +161,33 @@ const routerConfig: ExtraOptions = {
         //AdministrationApplicationModule,
         NgxPermissionsModule.forRoot(),
         AccountModule.forRoot(SecurityService,
-                              RequestService,
-                              securityConfig,
-                              FuseTranslationLoaderService,
-                              UsersService,
-                              PermissionsService),
+            RequestService,
+            securityConfig,
+            FuseTranslationLoaderService,
+            UsersService,
+            PermissionsService),
         ...IARA_APPLICATION_MODULE
     ],
-bootstrap: [
-    AppComponent
-],
+    bootstrap: [
+        AppComponent
+    ],
     providers: [
+        {
+            provide: 'ISecurityService',
+            useExisting: SecurityService,
+        },
         {
             provide: APP_INITIALIZER,
             useFactory: initializeApplication,
             multi: true,
-            deps: [FuseTranslationLoaderService, SecurityService, PermissionsService, FuseNavigationService]
+            deps: [
+                FuseTranslationLoaderService,
+                SecurityService,
+                PermissionsService,
+                FuseNavigationService,
+                CheckVersionService,
+                // NotificationsHubService
+            ]
         },
         {
             provide: APP_BASE_HREF,
@@ -205,6 +221,14 @@ bootstrap: [
         {
             provide: ENVIRONMENT_CONFIG_TOKEN,
             useValue: Environment.Instance
+        },
+        {
+            provide: NotificationsHubService,
+            useFactory: (securityService: ISecurityService) => {
+                const baseUrl = `${Environment.Instance.servicesBaseUrl}${Environment.Instance.apiBasePath}`;
+                return new NotificationsHubService(securityService, '/notifications', baseUrl);
+            },
+            deps: ['ISecurityService']
         }
     ]
 })

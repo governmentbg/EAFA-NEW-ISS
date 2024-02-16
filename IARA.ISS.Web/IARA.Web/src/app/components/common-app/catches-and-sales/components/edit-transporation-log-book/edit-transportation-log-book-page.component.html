@@ -45,6 +45,11 @@
                           tooltipResourceName="catches-and-sales.transportation-page-delivery-location-helper">
                 </tl-input>
             </div>
+            <div *ngIf="!viewMode && form.get('loadingDateControl')?.errors?.logBookPageDateLocked" fxFlex="100" fxLayout="row">
+                <mat-error>
+                    * {{ 'catches-and-sales.transportation-page-cannot-add-page-for-chosen-locked-fill-date-error' | tlTranslate }} {{ form.get('loadingDateControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.transportation-page-because-days-have-past-since-pervious-month' | tlTranslate }}. {{ 'catches-and-sales.transportation-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                </mat-error>
+            </div>
         </tl-card-content>
     </tl-card>
 

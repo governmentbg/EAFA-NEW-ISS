@@ -38,11 +38,21 @@
                              fxLayout="column"
                              fxLayoutGap="1em">
                             <div fxFlex="100" fxLayout="row">
-                                <tl-input fxFlex="70"
-                                          formControlName="originDeclarationNumberControl"
-                                          label="{{ 'catches-and-sales.add-log-book-page-wizard-origin-declaration-number' | tlTranslate }}"
-                                          tooltipResourceName="catches-and-sales.add-log-book-page-wizard-origin-declaration-number-helper">
-                                </tl-input>
+                                <tl-autocomplete fxFlex="70"
+                                                 [options]="ships"
+                                                 formControlName="shipControl"
+                                                 label="{{ 'catches-and-sales.add-log-book-page-wizard-ship' | tlTranslate }}"
+                                                 tooltipResourceName="catches-and-sales.add-log-book-page-wizard-ship-helper">
+                                </tl-autocomplete>
+                            </div>
+                            <div fxFlex="100" fxLayout="row">
+                                <tl-autocomplete fxFlex="70"
+                                                 [options]="originDeclarationsForShip"
+                                                 [readonly]="noShipSelected"
+                                                 formControlName="originDeclarationControl"
+                                                 label="{{ 'catches-and-sales.add-log-book-page-wizard-origin-declaration-number' | tlTranslate }}"
+                                                 tooltipResourceName="catches-and-sales.add-log-book-page-wizard-origin-declaration-number-helper">
+                                </tl-autocomplete>
                             </div>
                             <mat-error *ngIf="preliminaryDataFormGroup.errors?.invalidOriginDeclaratioNumber">
                                 {{ 'catches-and-sales.add-log-book-page-wizard-origin-declaration-does-not-exist-error' | tlTranslate }} *
@@ -64,11 +74,21 @@
                         <div fxFlexFill fxLayout="column">
                             <div *ngIf="originDeclarationTypeSelected === true" fxLayout="column" fxLayoutGap="1em">
                                 <div fxFlex="100" fxLayout="row">
-                                    <tl-input fxFlex="70"
-                                              formControlName="originDeclarationNumberControl"
-                                              label="{{ 'catches-and-sales.add-log-book-page-wizard-origin-declaration-number' | tlTranslate }}"
-                                              tooltipResourceName="catches-and-sales.add-log-book-page-wizard-origin-declaration-number-helper">
-                                    </tl-input>
+                                    <tl-autocomplete fxFlex="70"
+                                                     [options]="ships"
+                                                     formControlName="shipControl"
+                                                     label="{{ 'catches-and-sales.add-log-book-page-wizard-ship' | tlTranslate }}"
+                                                     tooltipResourceName="catches-and-sales.add-log-book-page-wizard-ship-helper">
+                                    </tl-autocomplete>
+                                </div>
+                                <div fxFlex="100" fxLayout="row">
+                                    <tl-autocomplete fxFlex="70"
+                                                     [options]="originDeclarationsForShip"
+                                                     [readonly]="noShipSelected"
+                                                     formControlName="originDeclarationControl"
+                                                     label="{{ 'catches-and-sales.add-log-book-page-wizard-origin-declaration-number' | tlTranslate }}"
+                                                     tooltipResourceName="catches-and-sales.add-log-book-page-wizard-origin-declaration-number-helper">
+                                    </tl-autocomplete>
                                 </div>
                                 <mat-error *ngIf="preliminaryDataFormGroup.errors?.invalidOriginDeclaratioNumber">
                                     {{ 'catches-and-sales.add-log-book-page-wizard-origin-declaration-does-not-exist-error' | tlTranslate }} *
@@ -77,11 +97,22 @@
 
                             <div *ngIf="transportationDocumentTypeSelected === true" fxLayout="column" fxLayoutGap="1em">
                                 <div fxFlex="100" fxLayout="row">
-                                    <tl-input fxFlex="70"
-                                              formControlName="transportationDocumentNumberControl"
-                                              label="{{ 'catches-and-sales.add-log-book-page-wizard-transportation-document-number' | tlTranslate }}"
-                                              tooltipResourceName="catches-and-sales.add-log-book-page-wizard-transportation-document-number-helper">
-                                    </tl-input>
+                                    <tl-autocomplete fxFlex="70"
+                                                     [options]="transportationLogBookOwners"
+                                                     [templateOptions]="true"
+                                                     formControlName="transportationLogBookOwnerControl"
+                                                     label="{{ 'catches-and-sales.add-log-book-page-wizard-transportation-log-book-owner' | tlTranslate }}"
+                                                     tooltipResourceName="catches-and-sales.add-log-book-page-wizard-transportation-log-book-owner-helper">
+                                    </tl-autocomplete>
+                                </div>
+                                <div fxFlex="100" fxLayout="row">
+                                    <tl-autocomplete fxFlex="70"
+                                                     [readonly]="noTransportationLogBookOwnerSelected"
+                                                     [options]="transportationDocumentsForOwner"
+                                                     formControlName="transportationDocumentControl"
+                                                     label="{{ 'catches-and-sales.add-log-book-page-wizard-transportation-document-number' | tlTranslate }}"
+                                                     tooltipResourceName="catches-and-sales.add-log-book-page-wizard-transportation-document-number-helper">
+                                    </tl-autocomplete>
                                 </div>
                                 <mat-error *ngIf="preliminaryDataFormGroup.errors?.invalidTransportationDocNumber">
                                     {{ 'catches-and-sales.add-log-book-page-wizard-transportation-doc-does-not-exist-error' | tlTranslate }} *
@@ -90,10 +121,22 @@
 
                             <div *ngIf="admissionDocumentTypeSelected === true" fxLayout="column" fxLayoutGap="1em">
                                 <div fxFlex="100" fxLayout="row">
-                                    <tl-input fxFlex="70"
-                                              formControlName="admissionDocumentNumberControl"
-                                              label="{{ 'catches-and-sales.add-log-book-page-wizard-admission-document-number' | tlTranslate }}">
-                                    </tl-input>
+                                    <tl-autocomplete fxFlex="70"
+                                                     [options]="admissionLogBookOwners"
+                                                     [templateOptions]="true"
+                                                     formControlName="admissionLogBookOwnerControl"
+                                                     label="{{ 'catches-and-sales.add-log-book-page-wizard-admission-log-book-owner' | tlTranslate }}"
+                                                     tooltipResourceName="catches-and-sales.add-log-book-page-wizard-admission-log-book-owner-helper">
+                                    </tl-autocomplete>
+                                </div>
+                                <div fxFlex="100" fxLayout="row">
+                                    <tl-autocomplete fxFlex="70"
+                                                     [readonly]="noAdmissionLogBookOwnerSelected"
+                                                     [options]="admissionDocumentsForOwner"
+                                                     formControlName="admissionDocumentControl"
+                                                     label="{{ 'catches-and-sales.add-log-book-page-wizard-admission-document-number' | tlTranslate }}"
+                                                     tooltipResourceName="catches-and-sales.add-log-book-page-wizard-admission-document-number-helper">
+                                    </tl-autocomplete>
                                 </div>
                                 <mat-error *ngIf="preliminaryDataFormGroup.errors?.invalidAdmissionDocNumber">
                                     {{ 'catches-and-sales.add-log-book-page-wizard-admission-doc-does-not-exist-error' | tlTranslate }} *

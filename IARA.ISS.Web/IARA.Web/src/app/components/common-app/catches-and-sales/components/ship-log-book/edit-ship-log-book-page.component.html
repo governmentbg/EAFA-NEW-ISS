@@ -190,12 +190,14 @@
                                                          && form.errors?.invalidOriginDeclarationCatchRecords !== true
                                                          && form.errors?.noTransboardDataForTransboardedCatch !== true
                                                          && form.errors?.originDeclarationFishesRequired !== true
-                                                         && form.errors?.originDeclarationFishesNotNeeded !== true">
+                                                         && form.errors?.originDeclarationFishesNotNeeded !== true
+                                                         && form.errors?.uniqueGearEntryTime !== true">
         <div fxLayout="column" fxLayoutGap="1em">
             <!-- Улов -->
             <tl-card fxLayout="row"
                      tooltipResourceName="catches-and-sales.ship-page-catch-records-panel-helper"
-                     validityChecker>
+                     validityChecker
+                     [validityCheckerExtraCondition]="form.errors?.uniqueGearEntryTime !== true">
                 <tl-card-title>{{ 'catches-and-sales.ship-page-catch-records-panel' | tlTranslate }}</tl-card-title>
                 <tl-card-content fxLayout="column">
                     <div fxLayout="column" fxLayoutGap="1em">

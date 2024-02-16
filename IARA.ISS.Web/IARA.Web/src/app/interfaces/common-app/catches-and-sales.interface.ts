@@ -27,6 +27,8 @@ import { LogBookPageDocumentTypesEnum } from '@app/components/common-app/catches
 import { OnBoardCatchRecordFishDTO } from '@app/models/generated/dtos/OnBoardCatchRecordFishDTO';
 import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
+import { LogBookOwnerNomenclatureDTO } from '@app/models/generated/dtos/LogBookOwnerNomenclatureDTO';
+import { LogBookPageNomenclatureDTO } from '@app/models/generated/dtos/LogBookPageNomenclatureDTO';
 
 export interface ICatchesAndSalesService {
     getAllCatchesAndSales(request: GridRequestModel<CatchesAndSalesAdministrationFilters | CatchesAndSalesPublicFilters>): Observable<GridResultModel<LogBookRegisterDTO>>;
@@ -70,6 +72,10 @@ export interface ICatchesAndSalesService {
     getCatchTypes(): Observable<NomenclatureDTO<number>[]>;
     getFishingGearsRegister(permitLicenseId: number): Observable<FishingGearRegisterNomenclatureDTO[]>;
     getLogBookPageEditExceptions(): Observable<LogBookPageEditExceptionDTO[]>;
+    getShipLogBookPagesByShipId(shipId: number): Observable<LogBookPageNomenclatureDTO[]>;
+    getLogBookPageOwners(): Observable<LogBookOwnerNomenclatureDTO[]>;
+    getAdmissionPagesByOwnerId(buyerId: number | undefined, legalId: number | undefined, personId: number | undefined): Observable<LogBookPageNomenclatureDTO[]>;
+    getTransportationPagesByOwnerId(buyerId: number | undefined, legalId: number | undefined, personId: number | undefined): Observable<LogBookPageNomenclatureDTO[]>;
 
     addShipLogBookPage(model: ShipLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number>;
     editShipLogBookPage(model: ShipLogBookPageEditDTO): Observable<void>;

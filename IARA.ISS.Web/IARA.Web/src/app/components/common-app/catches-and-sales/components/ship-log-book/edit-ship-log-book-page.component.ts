@@ -108,7 +108,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     public isAdd: boolean = false;
 
     public allCatchIsTransboardedValue: boolean = false;
-    public isLogBookPageDateLockedError: boolean = false;
+    public isLogBookPageDateLockedError: boolean = true;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 

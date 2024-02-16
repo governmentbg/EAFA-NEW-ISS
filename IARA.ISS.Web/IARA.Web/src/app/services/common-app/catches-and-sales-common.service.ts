@@ -40,10 +40,12 @@ import { LogBookPageProductDTO } from '@app/models/generated/dtos/LogBookPagePro
 import { LogBookPageDocumentTypesEnum } from '@app/components/common-app/catches-and-sales/enums/log-book-page-document-types.enum';
 import { LogBookNomenclatureDTO } from '@app/models/generated/dtos/LogBookNomenclatureDTO';
 import { LogBookPagePersonTypesEnum } from '@app/enums/log-book-page-person-types.enum';
-import { CatchRecordFishDTO } from '@app/models/generated/dtos/CatchRecordFishDTO';
 import { OnBoardCatchRecordFishDTO } from '@app/models/generated/dtos/OnBoardCatchRecordFishDTO';
 import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
+import { LogBookOwnerNomenclatureDTO } from '@app/models/generated/dtos/LogBookOwnerNomenclatureDTO';
+import { LogBookPageNomenclatureDTO } from '@app/models/generated/dtos/LogBookPageNomenclatureDTO';
+import { DatePipe } from '@angular/common';
 
 type FiltersUnion = CatchesAndSalesAdministrationFilters | CatchesAndSalesPublicFilters;
 
@@ -54,11 +56,13 @@ export class CatchesAndSalesCommonService {
     private readonly http: RequestService;
     private readonly translate: FuseTranslationLoaderService;
     private readonly permissions: PermissionsService;
+    private datePipe: DatePipe;
 
-    public constructor(requestService: RequestService, translate: FuseTranslationLoaderService, permissions: PermissionsService) {
+    public constructor(requestService: RequestService, translate: FuseTranslationLoaderService, permissions: PermissionsService, datePipe: DatePipe) {
         this.http = requestService;
         this.translate = translate;
         this.permissions = permissions;
+        this.datePipe = datePipe;
     }
 
     public getAllCatchesAndSales(area: AreaTypes, controller: string, request: GridRequestModel<FiltersUnion>): Observable<GridResultModel<LogBookRegisterDTO>> {
@@ -268,18 +272,7 @@ export class CatchesAndSalesCommonService {
                 entry.displayName = `${entry.displayName} (${logBookOwnerLabel}: ${entry.ownerName})`;
                 if (entry.ownerType !== null && entry.ownerType !== undefined) {
                     const logBookOwnerTypeLabel: string = this.translate.getValue('catches-and-sales.add-ship-page-document-wizard-log-book-owner-type');
-                    let logBookOwnerType: string;
-                    switch (entry.ownerType) {
-                        case LogBookPagePersonTypesEnum.RegisteredBuyer:
-                            logBookOwnerType = this.translate.getValue('catches-and-sales.log-book-page-person-registered-buyer-type');
-                            break;
-                        case LogBookPagePersonTypesEnum.Person:
-                            logBookOwnerType = this.translate.getValue('catches-and-sales.log-book-page-person-person-type');
-                            break;
-                        case LogBookPagePersonTypesEnum.LegalPerson:
-                            logBookOwnerType = this.translate.getValue('catches-and-sales.log-book-page-person-person-legal-type');
-                            break;
-                    }
+                    const logBookOwnerType: string = this.getLogBookOwnerTypeTranslation(entry.ownerType);
 
                     if (entry.logBookPermitLicenseId !== null && entry.logBookPermitLicenseId !== undefined) {
                         entry.description = `${logBookOwnerTypeLabel}: ${logBookOwnerType}; 
@@ -677,6 +670,100 @@ export class CatchesAndSalesCommonService {
         });
     }
 
+    public getShipLogBookPagesByShipId(area: AreaTypes, controller: string, shipId: number): Observable<LogBookPageNomenclatureDTO[]> {
+        const params: HttpParams = new HttpParams().append('shipId', shipId.toString());
+
+        return this.http.get<LogBookPageNomenclatureDTO[]>(area, controller, 'GetShipLogBookPagesByShipId', {
+            httpParams: params,
+            responseTypeCtr: NomenclatureDTO
+        }).pipe(map((entries: LogBookPageNomenclatureDTO[]) => {
+            const pageNum: string = this.translate.getValue('catches-and-sales.ship-page');
+            const pageDate: string = this.translate.getValue('catches-and-sales.common-log-book-page-data-origin-declaration-date');
+
+            for (const entry of entries) {
+                entry.displayName = `${pageNum}: ${entry.displayName} | ${pageDate}: ${this.datePipe.transform(entry.fillDate, 'dd.MM.yyyy')}`;
+            }
+
+            return entries;
+        }));
+    }
+
+    public getLogBookPageOwners(area: AreaTypes, controller: string): Observable<LogBookOwnerNomenclatureDTO[]> {
+        return this.http.get<LogBookOwnerNomenclatureDTO[]>(area, controller, 'GetLogBookPageOwners', {
+            responseTypeCtr: LogBookNomenclatureDTO
+        }).pipe(map((entries: LogBookOwnerNomenclatureDTO[]) => {
+            for (const entry of entries) {
+                const logBookOwnerTypeLabel: string = this.translate.getValue('catches-and-sales.add-ship-page-document-wizard-log-book-owner-type');
+                const logBookOwnerType: string = this.getLogBookOwnerTypeTranslation(entry.ownerType!);
+
+                entry.displayName = `${entry.ownerName} | ${entry.logBookNumber}`;
+                entry.description = `${logBookOwnerTypeLabel}: ${logBookOwnerType}`;
+            }
+
+            return entries;
+        }));
+    }
+
+    public getAdmissionPagesByOwnerId(area: AreaTypes, controller: string, buyerId: number | undefined, legalId: number | undefined, personId: number | undefined): Observable<LogBookPageNomenclatureDTO[]> {
+        let params: HttpParams = new HttpParams();
+
+        if (buyerId !== null && buyerId !== undefined) {
+            params = params.append('buyerId', buyerId.toString());
+        }
+
+        if (legalId !== null && legalId !== undefined) {
+            params = params.append('legalId', legalId.toString());
+        }
+
+        if (personId !== null && personId !== undefined) {
+            params = params.append('personId', personId.toString());
+        }
+
+        return this.http.get<LogBookPageNomenclatureDTO[]>(area, controller, 'GetAdmissionPagesByOwnerId', {
+            httpParams: params,
+            responseTypeCtr: LogBookPageNomenclatureDTO
+        }).pipe(map((entries: LogBookPageNomenclatureDTO[]) => {
+            const pageNum: string = this.translate.getValue('catches-and-sales.admission-page');
+            const pageDate: string = this.translate.getValue('admission-handover-date');
+
+            for (const entry of entries) {
+                entry.displayName = `${pageNum}: ${entry.displayName} | ${pageDate}: ${this.datePipe.transform(entry.fillDate, 'dd.MM.yyyy')}`;
+            }
+
+            return entries;
+        }));
+    }
+
+    public getTransportationPagesByOwnerId(area: AreaTypes, controller: string, buyerId: number | undefined, legalId: number | undefined, personId: number | undefined): Observable<LogBookPageNomenclatureDTO[]> {
+        let params: HttpParams = new HttpParams();
+
+        if (buyerId !== null && buyerId !== undefined) {
+            params = params.append('buyerId', buyerId.toString());
+        }
+
+        if (legalId !== null && legalId !== undefined) {
+            params = params.append('legalId', legalId.toString());
+        }
+
+        if (personId !== null && personId !== undefined) {
+            params = params.append('personId', personId.toString());
+        }
+
+        return this.http.get<LogBookPageNomenclatureDTO[]>(area, controller, 'GetTransportationPagesByOwnerId', {
+            httpParams: params,
+            responseTypeCtr: LogBookPageNomenclatureDTO
+        }).pipe(map((entries: LogBookPageNomenclatureDTO[]) => {
+            const pageNum: string = this.translate.getValue('catches-and-sales.transportation-page');
+            const pageDate: string = this.translate.getValue('catches-and-sales.transportation-loading-date');
+
+            for (const entry of entries) {
+                entry.displayName = `${pageNum}: ${entry.displayName} | ${pageDate}: ${this.datePipe.transform(entry.fillDate, 'dd.MM.yyyy')}`; 
+            }
+
+            return entries;
+        }));
+    }
+
     // Helpers
     public getPageStatusTranslation(status: LogBookPageStatusesEnum): string {
         switch (status) {
@@ -707,6 +794,17 @@ export class CatchesAndSalesCommonService {
         });
 
         return found;
+    }
+
+    private getLogBookOwnerTypeTranslation(ownerType: LogBookPagePersonTypesEnum): string {
+        switch (ownerType) {
+            case LogBookPagePersonTypesEnum.RegisteredBuyer:
+                return this.translate.getValue('catches-and-sales.log-book-page-person-registered-buyer-type');
+            case LogBookPagePersonTypesEnum.Person:
+                return this.translate.getValue('catches-and-sales.log-book-page-person-person-type');
+            case LogBookPagePersonTypesEnum.LegalPerson:
+                return this.translate.getValue('catches-and-sales.log-book-page-person-person-legal-type');
+        }
     }
 }
 

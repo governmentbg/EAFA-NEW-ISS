@@ -44,7 +44,7 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
     public model!: AquacultureLogBookPageEditDTO;
     public service!: ICatchesAndSalesService;
     public isAdd: boolean = false;
-    public isLogBookPageDateLockedError: boolean = false;
+    public isLogBookPageDateLockedError: boolean = true;
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;

@@ -2,4 +2,5 @@
     User,
     ReportDownload,
     ReportExecution,
+    Version
 }

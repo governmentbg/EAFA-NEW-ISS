@@ -60,8 +60,6 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
         this.form.get('deliveryTypeControl')!.valueChanges.subscribe({
             next: (type: NomenclatureDTO<number> | undefined) => {
                 if (type !== undefined && type !== null) {
-                    this.form.get('deliveryDateControl')!.setValidators(Validators.required);
-                    this.form.get('deliveryDateControl')!.updateValueAndValidity();
                     this.form.get('deliverySentDateControl')!.clearValidators();
 
                     this.deliveryType = InspDeliveryTypesEnum[type.code as keyof typeof InspDeliveryTypesEnum];
