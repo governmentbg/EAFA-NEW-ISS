@@ -18,7 +18,7 @@ export class TLUsernameComponent extends BaseTLControl {
     public type: HTMLInputTypes = 'text';
 
     /**
-     * This Input should be passed only when there is NO formControl 
+     * This Input should be passed only when there is NO formControl
      * (use only for readonly <input> cases with no direct UI user interaction)
      **/
     @Input()
@@ -39,6 +39,8 @@ export class TLUsernameComponent extends BaseTLControl {
 
     @Output()
     public onClicked: EventEmitter<void> = new EventEmitter<void>();
+
+    public autocompleteValue: string = 'username';
 
     @HostListener('click')
     private clicked(): void {

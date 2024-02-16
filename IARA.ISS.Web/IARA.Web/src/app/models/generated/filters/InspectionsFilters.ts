@@ -34,6 +34,11 @@ export class InspectionsFilters extends BaseRequestModel {
     public firstSaleCenterName: string | undefined;
     public tractorLicensePlateNumber: string | undefined;
     public trailerLicensePlateNumber: string | undefined;
+    public shipLogBookPageId: number | undefined;
+    public addmissionLogBookPageId: number | undefined;
+    public transportationLogBookPageId: number | undefined;
+    public firstSaleLogBookPageId: number | undefined;
+    public aquacultureLogBookPageId: number | undefined;
     public inspectedPersonId: number | undefined;
     public inspectedLegalId: number | undefined;
 }

@@ -770,7 +770,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         if (!this.isPublicApp) {
             const identifier: EgnLncDTO = this.form.get('qualifiedFisherIdNumberControl')!.value;
             const cached: PersonFullDataDTO | null | undefined = this.fisherCache.get(`${identifier.identifierType}|${identifier.egnLnc}`);
-
+            
             if (cached !== undefined) {
                 if (cached !== null) {
                     this.form.get('qualifiedFisherIdNumberControl')!.setValue(cached.person!.egnLnc);
@@ -780,7 +780,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 }
             }
             else {
-                this.personLegalExtractor.tryGetPerson(identifier.identifierType!, identifier.egnLnc!).subscribe({
+                this.service.tryGetQualifiedFisher(identifier.identifierType!, identifier.egnLnc!).subscribe({
                     next: (person: PersonFullDataDTO | undefined) => {
                         if (person) {
                             this.form.get('qualifiedFisherIdNumberControl')!.setValue(person.person!.egnLnc);

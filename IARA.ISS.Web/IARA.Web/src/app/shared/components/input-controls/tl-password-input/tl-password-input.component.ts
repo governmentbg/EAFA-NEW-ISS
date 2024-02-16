@@ -29,5 +29,5 @@ export class TLPasswordComponent extends BaseTLControl {
 
     public visible: boolean;
 
-    public autocompleteValue: string = 'new-password';
+    public autocompleteValue: string = 'current-password';
 }

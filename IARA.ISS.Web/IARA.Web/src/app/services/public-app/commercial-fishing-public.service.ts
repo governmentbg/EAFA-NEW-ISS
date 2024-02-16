@@ -33,6 +33,8 @@ import { FishingGearForChoiceDTO } from '@app/models/generated/dtos/FishingGearF
 import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 import { PermitLicensesNomenclatureDTO } from '@app/models/generated/dtos/PermitLicensesNomenclatureDTO';
 import { PermitLicenseFishingGearsApplicationDTO } from '@app/models/generated/dtos/PermitLicenseFishingGearsApplicationDTO';
+import { IdentifierTypeEnum } from '@app/enums/identifier-type.enum';
+import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -414,6 +416,10 @@ export class CommercialFishingPublicService extends ApplicationsRegisterPublicBa
     }
 
     public getPermitLicenseFishingGears(permitLicenseId: number): Observable<FishingGearDTO[]> {
+        throw new Error('This method should not be called from the public app');
+    }
+
+    public tryGetQualifiedFisher(identifierType: IdentifierTypeEnum, identifier: string): Observable<PersonFullDataDTO | undefined> {
         throw new Error('This method should not be called from the public app');
     }
 }
