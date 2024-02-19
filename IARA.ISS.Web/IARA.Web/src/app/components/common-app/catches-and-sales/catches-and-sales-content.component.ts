@@ -84,6 +84,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
 
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
     public readonly logBookTypesEnum: typeof LogBookTypesEnum = LogBookTypesEnum;
+    public readonly logBookStatusesEnum: typeof LogBookStatusesEnum = LogBookStatusesEnum;
     public readonly logBookPageStatusesEnum: typeof LogBookPageStatusesEnum = LogBookPageStatusesEnum;
 
     public readonly canReadShipLogBookRecords: boolean;

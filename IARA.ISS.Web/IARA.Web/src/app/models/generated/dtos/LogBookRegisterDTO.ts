@@ -7,6 +7,7 @@ import { TransportationLogBookPageRegisterDTO } from './TransportationLogBookPag
 import { FirstSaleLogBookPageRegisterDTO } from './FirstSaleLogBookPageRegisterDTO';
 import { AquacultureLogBookPageRegisterDTO } from './AquacultureLogBookPageRegisterDTO';
 import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
+import { LogBookStatusesEnum } from '@app/enums/log-book-statuses.enum';
 import { LogBookPagePersonTypesEnum } from '@app/enums/log-book-page-person-types.enum';
 
 export class LogBookRegisterDTO { 
@@ -28,6 +29,9 @@ export class LogBookRegisterDTO {
 
     @StrictlyTyped(Number)
     public typeCode?: LogBookTypesEnum;
+
+    @StrictlyTyped(Number)
+    public status?: LogBookStatusesEnum;
 
     @StrictlyTyped(String)
     public name?: string;

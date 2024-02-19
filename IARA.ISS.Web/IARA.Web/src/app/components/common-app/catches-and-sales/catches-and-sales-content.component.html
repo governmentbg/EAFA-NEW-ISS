@@ -266,11 +266,43 @@
                              columnName="{{ 'catches-and-sales.fishing-date' | tlTranslate }}">
                 </data-column>
 
-                <data-column propertyName="statusName"
-                             [flexRate]="0.3"
-                             [isSortable]="false"
-                             columnName="{{ 'catches-and-sales.log-book-status' | tlTranslate }}">
-                </data-column>
+                <data-template-column propertyName="statusName"
+                                      [flexRate]="0.4"
+                                      [isSortable]="false"
+                                      columnName="{{ 'catches-and-sales.log-book-status' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.5em">
+                            <div fxLayout="column" fxLayoutAlign="start start">
+                                <ng-container [ngSwitch]="row.status">
+                                    <tl-icon *ngSwitchCase="logBookStatusesEnum.Finished"
+                                             icon="highlight_off"
+                                             iconClass="accent-color">
+                                    </tl-icon>
+
+                                    <tl-icon *ngSwitchCase="logBookStatusesEnum.New"
+                                             icon="done_outline"
+                                             iconClass="accent-color">
+                                    </tl-icon>
+
+                                    <tl-icon *ngSwitchCase="logBookStatusesEnum.Renewed"
+                                             icon="fa-check-double"
+                                             iconClass="accent-color">
+                                    </tl-icon>
+
+                                    <tl-icon *ngSwitchCase="logBookStatusesEnum.SuspLic"
+                                             icon="ic-calendar-cancel-16-filled"
+                                             [size]="icIconSize"
+                                             iconClass="accent-color">
+                                    </tl-icon>
+                                </ng-container>
+                            </div>
+
+                            <div fxLayout="column" fxLayoutAlign="start start">
+                                <span>{{ row.data.statusName }}</span>
+                            </div>
+                        </div>
+                    </ng-template>
+                </data-template-column>
 
                 <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'" [isSortable]="false">
                     <ng-template let-row="row" ngx-datatable-cell-template>

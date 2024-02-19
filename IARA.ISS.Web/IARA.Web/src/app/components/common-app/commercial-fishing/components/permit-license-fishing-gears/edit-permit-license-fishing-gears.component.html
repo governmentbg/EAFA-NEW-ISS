@@ -48,6 +48,7 @@
                 <tl-autocomplete fxFlex="70"
                                  formControlName="permitLicenseControl"
                                  [options]="permitLicenses"
+                                 [readonly]="noShipSelected"
                                  [templateOptions]="true"
                                  tooltipResourceName="fishing-gears.application-permit-license-helper"
                                  label="{{ 'fishing-gears.application-permit-license-register' | tlTranslate }}">

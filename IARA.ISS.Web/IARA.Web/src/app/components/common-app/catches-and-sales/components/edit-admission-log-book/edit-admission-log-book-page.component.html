@@ -44,6 +44,12 @@
                         * {{ 'catches-and-sales.admission-page-cannot-add-page-after-error' | tlTranslate }} {{ form.get('handoverDateControl')?.errors?.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.admission-page-hours-after-the-admission' | tlTranslate }} {{ 'catches-and-sales.admission-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
                     </mat-error>
                 </div>
+
+                <div *ngIf="!viewMode && form.get('handoverDateControl')?.errors?.logBookPageDatePeriodLocked" fxFlex="100" fxLayout="row">
+                    <mat-error>
+                        * {{ 'catches-and-sales.admission-page-cannot-add-page-for-chosen-locked-fill-date-error' | tlTranslate }} {{ form.get('handoverDateControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.admission-page-because-days-have-past-since-pervious-month' | tlTranslate }}. {{ 'catches-and-sales.admission-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                    </mat-error>
+                </div>
             </div>
         </tl-card-content>
     </tl-card>

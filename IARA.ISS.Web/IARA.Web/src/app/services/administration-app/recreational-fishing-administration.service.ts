@@ -213,10 +213,21 @@ export class RecreationalFishingAdministrationService extends ApplicationsRegist
 
     // applications
     public getAllTicketApplications(request: GridRequestModel<RecreationalFishingTicketApplicationFilters>): Observable<GridResultModel<RecreationalFishingTicketApplicationDTO>> {
-        return this.requestService.post(this.area, this.controller, 'GetAllTicketApplications', request, {
+        type Result = GridResultModel<RecreationalFishingTicketApplicationDTO>;
+        type Body = GridRequestModel<RecreationalFishingTicketApplicationFilters>;
+
+        return this.requestService.post<Result, Body>(this.area, this.controller, 'GetAllTicketApplications', request, {
             properties: RequestProperties.NO_SPINNER,
             responseTypeCtr: GridResultModel
-        });
+        }).pipe(switchMap((entries: Result) => {
+            for (const entry of entries.records) {
+                if (entry.isDuplicate) {
+                    entry.ticketType += ` - ${this.translate.getValue('recreational-fishing.ticket-status-duplicate')}`;
+                }
+            }
+
+            return of(entries);
+        }));
     }
 
     public getAllTicketOnlineApplications(request: GridRequestModel<RecreationalFishingTicketApplicationFilters>): Observable<GridResultModel<RecreationalFishingTicketApplicationDTO>> {
@@ -230,6 +241,10 @@ export class RecreationalFishingAdministrationService extends ApplicationsRegist
             for (const entry of entries.records) {
                 if (entry.ticketStatus === TicketStatusEnum.APPROVED) {
                     entry.ticketStatusName = this.translate.getValue('recreational-fishing.ticket-status-offline-number-expected');
+                }
+
+                if (entry.isDuplicate) {
+                    entry.ticketType += ` - ${this.translate.getValue('recreational-fishing.ticket-status-duplicate')}`;
                 }
             }
 

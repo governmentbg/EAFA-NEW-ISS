@@ -66,4 +66,19 @@ export class SystemPropertiesDTO {
 
     @StrictlyTyped(Number)
     public addInspectionDaysTollerance?: number;
+
+    @StrictlyTyped(Number)
+    public addShipPagesDaysTolerance?: number;
+
+    @StrictlyTyped(Number)
+    public addAquaculturePagesDaysTolerance?: number;
+
+    @StrictlyTyped(Number)
+    public addAdmissionPagesDaysTolerance?: number;
+
+    @StrictlyTyped(Number)
+    public addFirstSalePagesDaysTolerance?: number;
+
+    @StrictlyTyped(Number)
+    public addTransportationPagesDaysTolerance?: number;
 }

@@ -33,6 +33,8 @@ import { LogBookNomenclatureDTO } from '@app/models/generated/dtos/LogBookNomenc
 import { OnBoardCatchRecordFishDTO } from '@app/models/generated/dtos/OnBoardCatchRecordFishDTO';
 import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
+import { LogBookOwnerNomenclatureDTO } from '@app/models/generated/dtos/LogBookOwnerNomenclatureDTO';
+import { LogBookPageNomenclatureDTO } from '@app/models/generated/dtos/LogBookPageNomenclatureDTO';
 
 
 @Injectable({
@@ -244,6 +246,22 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
 
     public getLogBookPageEditExceptions(): Observable<LogBookPageEditExceptionDTO[]> {
         return this.commonService.getLogBookPageEditExceptions(this.area, this.controller);
+    }
+
+    public getShipLogBookPagesByShipId(shipId: number): Observable<LogBookPageNomenclatureDTO[]> {
+        return this.commonService.getShipLogBookPagesByShipId(this.area, this.controller, shipId);
+    }
+
+    public getLogBookPageOwners(): Observable<LogBookOwnerNomenclatureDTO[]> {
+        return this.commonService.getLogBookPageOwners(this.area, this.controller);
+    }
+
+    public getAdmissionPagesByOwnerId(buyerId: number | undefined, legalId: number | undefined, personId: number | undefined): Observable<LogBookPageNomenclatureDTO[]> {
+        return this.commonService.getAdmissionPagesByOwnerId(this.area, this.controller, buyerId, legalId, personId);
+    }
+
+    public getTransportationPagesByOwnerId(buyerId: number | undefined, legalId: number | undefined, personId: number | undefined): Observable<LogBookPageNomenclatureDTO[]> {
+        return this.commonService.getTransportationPagesByOwnerId(this.area, this.controller, buyerId, legalId, personId);
     }
 
     // Simple audit

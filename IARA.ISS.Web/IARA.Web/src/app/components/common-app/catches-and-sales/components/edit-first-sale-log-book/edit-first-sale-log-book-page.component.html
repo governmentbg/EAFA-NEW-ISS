@@ -71,6 +71,11 @@
                         * {{ 'catches-and-sales.first-sale-cannot-add-page-turnover-below-limit-error' | tlTranslate }} {{ form.get('saleDateControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.first-sale-hours-after-sale' | tlTranslate }}. {{ 'catches-and-sales.first-sale-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
                     </mat-error>
                 </div>
+                <div *ngIf="!viewMode && form.get('saleDateControl')?.errors?.logBookPageDatePeriodLocked" fxFlex="100" fxLayout="row">
+                    <mat-error>
+                        * {{ 'catches-and-sales.first-sale-page-cannot-add-page-for-chosen-locked-fill-date-error' | tlTranslate }} {{ form.get('saleDateControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.first-sale-page-because-days-have-past-since-pervious-month' | tlTranslate }}. {{ 'catches-and-sales.first-sale-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                    </mat-error>
+                </div>
             </div>
         </tl-card-content>
     </tl-card>

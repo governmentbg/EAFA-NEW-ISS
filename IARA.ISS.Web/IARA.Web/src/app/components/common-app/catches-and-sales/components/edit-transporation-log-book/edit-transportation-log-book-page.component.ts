@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -24,6 +24,11 @@ import { RequestProperties } from '@app/shared/services/request-properties';
 import { LogBookPageDocumentTypesEnum } from '../../enums/log-book-page-document-types.enum';
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
+import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
+import { SystemParametersService } from '@app/services/common-app/system-parameters.service';
+import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
+import { SecurityService } from '@app/services/common-app/security.service';
+import { CatchesAndSalesUtils } from '../../utils/catches-and-sales.utils';
 
 @Component({
     selector: 'edit-transportation-log-book-page',
@@ -40,6 +45,10 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
     public originPossibleProducts: LogBookPageProductDTO[] = [];
     public isAdd: boolean = false;
     public canAddProducts: boolean = false;
+
+    private lockTransportationLogBookPeriod!: number;
+    private logBookPageEditExceptions: LogBookPageEditExceptionDTO[] = [];
+    private currentUserId: number;
 
     public noAvailableProducts: boolean = false;
 
@@ -59,14 +68,31 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
     private snackbar: MatSnackBar;
     private confirmDialog: TLConfirmDialog;
     private hasMissingPagesRangePermission: boolean = false;
+    private readonly systemParametersService: SystemParametersService;
 
-    public constructor(translationService: FuseTranslationLoaderService, snackbar: MatSnackBar, confirmDialog: TLConfirmDialog) {
+    public constructor(
+        translationService: FuseTranslationLoaderService,
+        snackbar: MatSnackBar,
+        confirmDialog: TLConfirmDialog,
+        systemParametersService: SystemParametersService,
+        authService: SecurityService
+    ) {
         this.translationService = translationService;
         this.snackbar = snackbar;
         this.confirmDialog = confirmDialog;
+        this.systemParametersService = systemParametersService;
+
+        this.currentUserId = authService.User!.userId;
     }
 
-    public ngOnInit(): void {
+    public async ngOnInit(): Promise<void> {
+        const systemParameters: SystemPropertiesDTO = await this.systemParametersService.systemParameters();
+        this.lockTransportationLogBookPeriod = systemParameters.addTransportationPagesDaysTolerance!;
+
+        if (!this.viewMode) {
+            this.logBookPageEditExceptions = await this.service.getLogBookPageEditExceptions().toPromise();
+        }
+
         if (this.id !== null && this.id !== undefined) {
             this.service.getTransportationLogBookPage(this.id).subscribe({
                 next: (result: TransportationLogBookPageEditDTO) => {
@@ -232,7 +258,7 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
             vehicleIdentificationControl: new FormControl(undefined, [Validators.required, Validators.maxLength(50)]),
             statusControl: new FormControl(),
             loadingLocationControl: new FormControl(undefined, [Validators.required, Validators.maxLength(500)]),
-            loadingDateControl: new FormControl(undefined, Validators.required),
+            loadingDateControl: new FormControl(undefined, [Validators.required, this.checkDateValidityVsLockPeriodsValidator()]),
             deliveryLocationControl: new FormControl(undefined, Validators.required),
 
             commonLogBookPageDataControl: new FormControl(),
@@ -391,5 +417,43 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
                 }
             }
         });
+    }
+
+    private checkDateValidityVsLockPeriodsValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === null || control === undefined) {
+                return null;
+            }
+
+            if (this.model === null || this.model === undefined) {
+                return null;
+            }
+
+            const fillDate: Date | undefined = control.value;
+
+            if (fillDate === null || fillDate === undefined) {
+                return null;
+            }
+
+            const now: Date = new Date();
+
+            const logBookTypeId: number = this.model.logBookTypeId!;
+            const logBookId: number = this.model.logBookId!;
+
+            if (CatchesAndSalesUtils.checkIfPageDateIsUnlocked(this.logBookPageEditExceptions, this.currentUserId, logBookTypeId, logBookId, fillDate, now)) {
+                return null;
+            }
+
+            if (CatchesAndSalesUtils.pageHasLogBookPageDateLockedViaDaysAfterMonth(fillDate, now, this.lockTransportationLogBookPeriod)) {
+                return {
+                    logBookPageDateLocked: {
+                        lockedPeriod: this.lockTransportationLogBookPeriod,
+                        periodType: 'days-after-month'
+                    }
+                };
+            }
+
+            return null;
+        }
     }
 }

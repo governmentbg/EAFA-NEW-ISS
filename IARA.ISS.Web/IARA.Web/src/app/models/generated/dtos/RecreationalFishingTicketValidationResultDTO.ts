@@ -11,6 +11,15 @@ export class RecreationalFishingTicketValidationResultDTO {
     @StrictlyTyped(Boolean)
     public cannotPurchaseTicket?: boolean;
 
+    @StrictlyTyped(Date)
+    public ticketValidFrom?: Date;
+
+    @StrictlyTyped(Date)
+    public ticketValidTo?: Date;
+
+    @StrictlyTyped(Boolean)
+    public telkisIndefinite?: boolean;
+
     @StrictlyTyped(RecreationalFishingRepresentativeCountDTO)
     public representativeCount?: RecreationalFishingRepresentativeCountDTO;
 }

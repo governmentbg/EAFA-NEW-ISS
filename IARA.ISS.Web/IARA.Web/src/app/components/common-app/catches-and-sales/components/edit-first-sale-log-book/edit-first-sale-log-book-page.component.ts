@@ -54,7 +54,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
     public isAdd: boolean = false;
 
     public noAvailableProducts: boolean = false;
-    public isLogBookPageDateLockedError: boolean = false;
+    public isLogBookPageDateLockedError: boolean = true;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
@@ -109,7 +109,8 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
         const systemParameters: SystemPropertiesDTO = await this.systemParametersService.systemParameters();
         this.lockFirstSaleLogBookPeriods = new LockFirstSaleLogBookPeriodsModel({
             lockFirstSaleBelow200KLogBookAfterHours: systemParameters.lockFirstSaleBelow200KLogBookAfterHours,
-            lockFirstSaleAbove200KLogBookAfterHours: systemParameters.lockFirstSaleAbove200KLogBookAfterHours
+            lockFirstSaleAbove200KLogBookAfterHours: systemParameters.lockFirstSaleAbove200KLogBookAfterHours,
+            lockFirstSaleLogBookPeriod: systemParameters.addFirstSalePagesDaysTolerance
         });
 
         if (this.id !== null && this.id !== undefined) {
@@ -552,6 +553,15 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
                         }
                     };
                 }
+            }
+
+            if (CatchesAndSalesUtils.pageHasLogBookPageDateLockedViaDaysAfterMonth(saleDate, now, this.lockFirstSaleLogBookPeriods.lockFirstSaleLogBookPeriod)) {
+                return {
+                    logBookPageDatePeriodLocked: {
+                        lockedPeriod: this.lockFirstSaleLogBookPeriods.lockFirstSaleLogBookPeriod,
+                        periodType: 'days-after-month'
+                    }
+                };
             }
 
             return null;

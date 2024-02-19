@@ -50,7 +50,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
     public isAdd: boolean = false;
 
     public noAvailableProducts: boolean = false;
-    public isLogBookPageDateLockedError: boolean = false;
+    public isLogBookPageDateLockedError: boolean = true;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
@@ -70,6 +70,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
     private hasMissingPagesRangePermission: boolean = false;
 
     private lockAdmissionLogBookPeriod!: number;
+    private lockAdmissionLogBookDaysPeriod!: number;
     private logBookPageEditExceptions: LogBookPageEditExceptionDTO[] = [];
     private currentUserId: number;
 
@@ -96,6 +97,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
     public async ngOnInit(): Promise<void> {
         const systemParameters: SystemPropertiesDTO = await this.systemParametersService.systemParameters();
         this.lockAdmissionLogBookPeriod = systemParameters.lockAdmissionLogBookAfterHours!;
+        this.lockAdmissionLogBookDaysPeriod = systemParameters.addAdmissionPagesDaysTolerance!;
 
         if (!this.viewMode) {
             this.logBookPageEditExceptions = await this.service.getLogBookPageEditExceptions().toPromise();
@@ -482,6 +484,15 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
                     logBookPageDateLocked: {
                         lockedPeriod: this.lockAdmissionLogBookPeriod,
                         periodType: 'hours'
+                    }
+                };
+            }
+
+            if (CatchesAndSalesUtils.pageHasLogBookPageDateLockedViaDaysAfterMonth(admissionDate, now, this.lockAdmissionLogBookDaysPeriod)) {
+                return {
+                    logBookPageDatePeriodLocked: {
+                        lockedPeriod: this.lockAdmissionLogBookDaysPeriod,
+                        periodType: 'days-after-month'
                     }
                 };
             }

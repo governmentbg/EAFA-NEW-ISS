@@ -123,9 +123,9 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
     }
 
     public ngAfterViewInit(): void {
-        if (this.hasPrice) {
-            this.form.get('quantityKgControl')!.valueChanges.subscribe({
-                next: (quantityKg: number | undefined) => {
+        this.form.get('quantityKgControl')!.valueChanges.subscribe({
+            next: (quantityKg: number | undefined) => {
+                if (this.hasPrice) {
                     const unitPrice: number | undefined = Number(this.form.get('unitPriceControl')!.value);
                     const unitCount: number | undefined = Number(this.form.get('unitCountControl')!.value);
 
@@ -134,37 +134,39 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
                         : LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(quantityKg), unitPrice);
 
                     this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);
-
-                    if (this.hasUnitCount) {
-                        const unitCount: number | undefined = Number(this.form.get('unitCountControl')!.value);
-
-                        if (!this.isAquaculturePage) {
-                            if (quantityKg && unitCount && unitCount > 0) {
-                                const averageUnitWeightKg: string | undefined = (quantityKg / unitCount).toFixed(3);
-                                this.form.get('averageUnitWeightKgControl')!.setValue(averageUnitWeightKg);
-                            }
-                            else {
-                                this.form.get('averageUnitWeightKgControl')!.setValue(undefined);
-                            }
-                        }
-                    }
                 }
-            });
 
-            this.form.get('unitCountControl')!.valueChanges.subscribe({
-                next: (unitCount: number | undefined) => {
-                    const quantityKg: number | undefined = Number(this.form.get('quantityKgControl')!.value);
+                if (this.hasUnitCount) {
+                    const unitCount: number | undefined = Number(this.form.get('unitCountControl')!.value);
 
                     if (!this.isAquaculturePage) {
                         if (quantityKg && unitCount && unitCount > 0) {
-                            const averageUnitWeightKg: string | undefined = (Number(quantityKg) / Number(unitCount)).toFixed(3);
+                            const averageUnitWeightKg: string | undefined = (quantityKg / unitCount).toFixed(3);
                             this.form.get('averageUnitWeightKgControl')!.setValue(averageUnitWeightKg);
                         }
                         else {
                             this.form.get('averageUnitWeightKgControl')!.setValue(undefined);
                         }
                     }
+                }
+            }
+        });
 
+        this.form.get('unitCountControl')!.valueChanges.subscribe({
+            next: (unitCount: number | undefined) => {
+                const quantityKg: number | undefined = Number(this.form.get('quantityKgControl')!.value);
+
+                if (!this.isAquaculturePage) {
+                    if (quantityKg && unitCount && unitCount > 0) {
+                        const averageUnitWeightKg: string | undefined = (Number(quantityKg) / Number(unitCount)).toFixed(3);
+                        this.form.get('averageUnitWeightKgControl')!.setValue(averageUnitWeightKg);
+                    }
+                    else {
+                        this.form.get('averageUnitWeightKgControl')!.setValue(undefined);
+                    }
+                }
+
+                if (this.hasPrice) {
                     const unitPrice: number | undefined = Number(this.form.get('unitPriceControl')!.value);
 
                     const formattedTotalPrice: string | null = this.showTurbotControls
@@ -172,8 +174,10 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
                         : LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(unitCount), unitPrice);
                     this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);
                 }
-            });
+            }
+        });
 
+        if (this.hasPrice) {
             this.form.get('unitPriceControl')!.valueChanges.subscribe({
                 next: (unitPrice: number | undefined) => {
                     const quantityKg: number | undefined = Number(this.form.get('quantityKgControl')!.value);

@@ -74,5 +74,8 @@ export class RecreationalFishingTicketApplicationDTO {
     public applicationStatusReason?: string;
 
     @StrictlyTyped(Boolean)
+    public isDuplicate?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isActive?: boolean;
 }

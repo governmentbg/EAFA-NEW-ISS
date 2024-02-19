@@ -193,9 +193,7 @@
                 <button mat-raised-button
                         color="accent"
                         (click)="save(false)"
-                        [disabled]="disableSaveBtnComment !== null || ticketsSaved || !valid"
-                        [matTooltip]="disableSaveBtnComment"
-                        [matTooltipDisabled]="disableSaveBtnComment === null">
+                        [disabled]="ticketsSaved || !valid">
                     {{ 'recreational-fishing.approve-and-go-to-payment' | tlTranslate }}
                 </button>
             </div>
@@ -204,18 +202,14 @@
                 <button mat-raised-button
                         color="accent"
                         (click)="save(true)"
-                        [disabled]="disableSaveBtnComment !== null || ticketsSaved || !valid || (blockAssociationsAddTicketsDate && blockAssociationsAddTicketsDate > currentDate)"
-                        [matTooltip]="disableSaveBtnComment"
-                        [matTooltipDisabled]="disableSaveBtnComment === null">
+                        [disabled]="ticketsSaved || !valid || (blockAssociationsAddTicketsDate && blockAssociationsAddTicketsDate > currentDate)">
                     {{ 'recreational-fishing.approve-and-finish-purchase-and-print' | tlTranslate }}
                 </button>
 
                 <button mat-raised-button
                         color="accent"
                         (click)="save(false)"
-                        [disabled]="disableSaveBtnComment !== null || ticketsSaved || !valid || (blockAssociationsAddTicketsDate && blockAssociationsAddTicketsDate > currentDate)"
-                        [matTooltip]="disableSaveBtnComment"
-                        [matTooltipDisabled]="disableSaveBtnComment === null">
+                        [disabled]="ticketsSaved || !valid || (blockAssociationsAddTicketsDate && blockAssociationsAddTicketsDate > currentDate)">
                     {{ 'recreational-fishing.approve-and-finish-purchase' | tlTranslate }}
                 </button>
 
@@ -231,6 +225,10 @@
                     {{ 'recreational-fishing.association-blocked-until' | tlTranslate }} {{ blockAssociationsAddTicketsDate | date : 'dd.MM.yyyy' }}
                 </mat-error>
             </div>
+
+            <mat-error *ngIf="ticketPeriodsOverlapComment !== null" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" class="warn-orange-color">
+                {{ ticketPeriodsOverlapComment }}
+            </mat-error>
 
             <span class="italic-text">* {{ 'recreational-fishing.view-and-confirm-declaration-info' | tlTranslate }}</span>
         </div>

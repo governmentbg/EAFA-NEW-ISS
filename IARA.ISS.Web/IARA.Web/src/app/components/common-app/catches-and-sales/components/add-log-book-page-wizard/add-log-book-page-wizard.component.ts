@@ -33,6 +33,12 @@ import { TLError } from '@app/shared/components/input-controls/models/tl-error.m
 import { PossibleLogBooksForPageDTO } from '@app/models/generated/dtos/PossibleLogBooksForPageDTO';
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
+import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
+import { NomenclatureTypes } from '@app/enums/nomenclature.types';
+import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
+import { LogBookOwnerNomenclatureDTO } from '@app/models/generated/dtos/LogBookOwnerNomenclatureDTO';
+import { LogBookPageNomenclatureDTO } from '@app/models/generated/dtos/LogBookPageNomenclatureDTO';
 
 @Component({
     selector: 'add-log-book-page-wizard',
@@ -52,6 +58,12 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
 
     public documentTypes: NomenclatureDTO<LogBookPageDocumentTypesEnum>[] = [];
     public possibleLogBooksForPage: NomenclatureDTO<number>[] = [];
+    public ships: ShipNomenclatureDTO[] = [];
+    public admissionLogBookOwners: LogBookOwnerNomenclatureDTO[] = [];
+    public transportationLogBookOwners: LogBookOwnerNomenclatureDTO[] = [];
+    public originDeclarationsForShip: LogBookPageNomenclatureDTO[] = [];
+    public transportationDocumentsForOwner: LogBookPageNomenclatureDTO[] = [];
+    public admissionDocumentsForOwner: LogBookPageNomenclatureDTO[] = [];
 
     public originDeclarationTypeSelected: boolean = false;
     public transportationDocumentTypeSelected: boolean = false;
@@ -63,11 +75,15 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
     public hasPageNotInLogBookError: boolean = false;
     public hasPageAlreadySubmittedError: boolean = false;
     public hasPageAlreadySubmittedOtherLogBookError: boolean = false;
+    public noShipSelected: boolean = true;
+    public noAdmissionLogBookOwnerSelected: boolean = true;
+    public noTransportationLogBookOwnerSelected: boolean = true;
     public pageAlreadySubmittedOtherLogBook: string = '';
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
     private translationService: FuseTranslationLoaderService;
+    private nomenclatures: CommonNomenclatures;
     private dialogRef: MatDialogRef<DialogWrapperComponent<IDialogComponent>> | undefined;
     private service!: ICatchesAndSalesService;
     private pageNumber: number | undefined;
@@ -80,10 +96,12 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
     private stepper!: MatStepper;
 
     public constructor(translate: FuseTranslationLoaderService,
+        nomenclatures: CommonNomenclatures,
         firstSaleLogBookPageDialog: TLMatDialog<EditFirstSaleLogBookPageComponent>,
         admissionLogBookPageDialog: TLMatDialog<EditAdmissionLogBookPageComponent>,
         transportationLogBookPageDialog: TLMatDialog<EditTransportationLogBookPageComponent>) {
         this.translationService = translate;
+        this.nomenclatures = nomenclatures;
         this.firstSaleLogBookPageDialog = firstSaleLogBookPageDialog;
         this.admissionLogBookPageDialog = admissionLogBookPageDialog;
         this.transportationLogBookPageDialog = transportationLogBookPageDialog;
@@ -111,10 +129,49 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
                 isActive: true
             })
         ];
+
+        NomenclatureStore.instance.getNomenclature(
+            NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false
+        ).subscribe({
+            next: (ships: ShipNomenclatureDTO[]) => {
+                this.ships = ships;
+            }
+        });
+
+        if (this.logBookType === LogBookTypesEnum.FirstSale || this.logBookType === LogBookTypesEnum.Admission) {
+            this.service.getLogBookPageOwners().subscribe({
+                next: (owners: LogBookOwnerNomenclatureDTO[]) => {
+                    this.transportationLogBookOwners = owners.filter(x => x.logBookType === LogBookTypesEnum.Transportation);
+                    this.admissionLogBookOwners = owners.filter(x => x.logBookType === LogBookTypesEnum.Admission);
+                }
+            });
+        }
     }
 
     public ngAfterViewInit(): void {
-        this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.valueChanges.subscribe({
+        this.preliminaryDataFormGroup.get('shipControl')!.valueChanges.subscribe({
+            next: (ship: ShipNomenclatureDTO | undefined) => {
+                this.hasInvalidOriginDeclarationNumber = false;
+                const shipId: number | undefined = ship?.value;
+
+                if (shipId !== undefined && shipId !== null) {
+                    this.noShipSelected = false;
+
+                    this.service.getShipLogBookPagesByShipId(shipId).subscribe({
+                        next: (pages: LogBookPageNomenclatureDTO[]) => {
+                            this.originDeclarationsForShip = pages;
+                        }
+                    });
+                }
+                else {
+                    this.preliminaryDataFormGroup.get('originDeclarationControl')!.setValue(undefined);
+                    this.preliminaryDataFormGroup.get('originDeclarationControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.noShipSelected = true;
+                }
+            }
+        });
+
+        this.preliminaryDataFormGroup.get('originDeclarationControl')!.valueChanges.subscribe({
             next: () => {
                 this.hasInvalidOriginDeclarationNumber = false;
                 this.preliminaryDataFormGroup.updateValueAndValidity({ emitEvent: false });
@@ -146,7 +203,26 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
                 }
             });
 
-            this.preliminaryDataFormGroup.get('transportationDocumentNumberControl')!.valueChanges.subscribe({
+            this.preliminaryDataFormGroup.get('transportationLogBookOwnerControl')!.valueChanges.subscribe({
+                next: (owner: LogBookOwnerNomenclatureDTO | undefined) => {
+                    if (owner !== undefined && owner !== null) {
+                        this.noTransportationLogBookOwnerSelected = false;
+
+                        this.service.getTransportationPagesByOwnerId(owner.buyerId, owner.legalId, owner.personId).subscribe({
+                            next: (pages: LogBookPageNomenclatureDTO[]) => {
+                                this.transportationDocumentsForOwner = pages;
+                            }
+                        });
+                    }
+                    else {
+                        this.preliminaryDataFormGroup.get('transportationDocumentControl')!.setValue(undefined);
+                        this.preliminaryDataFormGroup.get('transportationDocumentControl')!.updateValueAndValidity({ emitEvent: false });
+                        this.noTransportationLogBookOwnerSelected = true;
+                    }
+                }
+            });
+
+            this.preliminaryDataFormGroup.get('transportationDocumentControl')!.valueChanges.subscribe({
                 next: () => {
                     this.hasInvalidTransportationDocNumber = false;
                     this.preliminaryDataFormGroup.updateValueAndValidity({ emitEvent: false });
@@ -157,7 +233,26 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
                 this.documentTypes = this.documentTypes.filter(x => x.value !== LogBookPageDocumentTypesEnum.AdmissionDocument);
             }
             else {
-                this.preliminaryDataFormGroup.get('admissionDocumentNumberControl')!.valueChanges.subscribe({
+                this.preliminaryDataFormGroup.get('admissionLogBookOwnerControl')!.valueChanges.subscribe({
+                    next: (owner: LogBookOwnerNomenclatureDTO | undefined) => {
+                        if (owner !== undefined && owner !== null) {
+                            this.noAdmissionLogBookOwnerSelected = false;
+                            
+                            this.service.getAdmissionPagesByOwnerId(owner.buyerId, owner.legalId, owner.personId).subscribe({
+                                next: (pages: LogBookPageNomenclatureDTO[]) => {
+                                    this.admissionDocumentsForOwner = pages;
+                                }
+                            });
+                        }
+                        else {
+                            this.preliminaryDataFormGroup.get('admissionDocumentControl')!.setValue(undefined);
+                            this.preliminaryDataFormGroup.get('admissionDocumentControl')!.updateValueAndValidity({ emitEvent: false });
+                            this.noAdmissionLogBookOwnerSelected = true;
+                        }
+                    }
+                });
+
+                this.preliminaryDataFormGroup.get('admissionDocumentControl')!.valueChanges.subscribe({
                     next: () => {
                         this.hasInvalidAdmissionDocNumber = false;
                         this.preliminaryDataFormGroup.updateValueAndValidity({ emitEvent: false });
@@ -167,8 +262,11 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
         }
         else if (this.logBookType === LogBookTypesEnum.Transportation) {
             this.selectedDocumentType = LogBookTypesEnum.Ship;
-            this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.setValidators(Validators.required);
-            this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.markAsPending();
+            this.preliminaryDataFormGroup.get('shipControl')!.setValidators(Validators.required);
+            this.preliminaryDataFormGroup.get('shipControl')!.markAsPending();
+
+            this.preliminaryDataFormGroup.get('originDeclarationControl')!.setValidators(Validators.required);
+            this.preliminaryDataFormGroup.get('originDeclarationControl')!.markAsPending();
 
             this.preliminaryDataFormGroup.get('isImportNotByShipControl')!.valueChanges.subscribe({
                 next: (value: boolean | undefined) => {
@@ -176,8 +274,11 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
                         this.preliminaryDataFormGroup.get('placeOfImportControl')!.setValidators([Validators.maxLength(500), Validators.required]);
                         this.preliminaryDataFormGroup.get('placeOfImportControl')!.markAsPending();
 
-                        this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.clearValidators();
-                        this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.reset();
+                        this.preliminaryDataFormGroup.get('shipControl')!.clearValidators();
+                        this.preliminaryDataFormGroup.get('shipControl')!.reset();
+
+                        this.preliminaryDataFormGroup.get('originDeclarationControl')!.clearValidators();
+                        this.preliminaryDataFormGroup.get('originDeclarationControl')!.reset();
 
                         this.selectedDocumentType = undefined;
                     }
@@ -185,8 +286,11 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
                         this.preliminaryDataFormGroup.get('placeOfImportControl')!.clearValidators();
                         this.preliminaryDataFormGroup.get('placeOfImportControl')!.reset();
 
-                        this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.setValidators(Validators.required);
-                        this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.markAsPending();
+                        this.preliminaryDataFormGroup.get('shipControl')!.setValidators(Validators.required);
+                        this.preliminaryDataFormGroup.get('shipControl')!.markAsPending();
+
+                        this.preliminaryDataFormGroup.get('originDeclarationControl')!.setValidators(Validators.required);
+                        this.preliminaryDataFormGroup.get('originDeclarationControl')!.markAsPending();
 
                         this.selectedDocumentType = LogBookTypesEnum.Ship;
                     }
@@ -383,8 +487,14 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
             documentTypeControl: new FormControl(null),
             placeOfImportControl: new FormControl(null, Validators.maxLength(500)),
             originDeclarationNumberControl: new FormControl(),
+            originDeclarationControl: new FormControl(),
             transportationDocumentNumberControl: new FormControl(),
-            admissionDocumentNumberControl: new FormControl()
+            transportationDocumentControl: new FormControl(),
+            admissionDocumentNumberControl: new FormControl(),
+            admissionDocumentControl: new FormControl(),
+            shipControl: new FormControl(),
+            transportationLogBookOwnerControl: new FormControl(),
+            admissionLogBookOwnerControl: new FormControl()
         }, this.documentNumberExistanceValidator());
 
         this.confirmationDataFormGroup = new FormGroup({
@@ -506,26 +616,26 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
             case LogBookTypesEnum.FirstSale: {
                 const documentType: LogBookPageDocumentTypesEnum = this.preliminaryDataFormGroup.get('documentTypeControl')!.value!.value;
                 if (documentType === LogBookPageDocumentTypesEnum.OriginDeclaration) {
-                    parameters.originDeclarationNumber = this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.value;
+                    parameters.originDeclarationNumber = this.preliminaryDataFormGroup.get('originDeclarationControl')!.value!.code;
                 }
                 else if (documentType === LogBookPageDocumentTypesEnum.TransportationDocument) {
-                    parameters.transportationDocumentNumber = Number(this.preliminaryDataFormGroup.get('transportationDocumentNumberControl')!.value);
+                    parameters.transportationDocumentNumber = Number(this.preliminaryDataFormGroup.get('transportationDocumentControl')!.value?.pageNumber);
                 }
                 else if (documentType === LogBookPageDocumentTypesEnum.AdmissionDocument) {
-                    parameters.admissionDocumentNumber = Number(this.preliminaryDataFormGroup.get('admissionDocumentNumberControl')!.value);
+                    parameters.admissionDocumentNumber = Number(this.preliminaryDataFormGroup.get('admissionDocumentControl')!.value?.pageNumber);
                 }
             } break;
             case LogBookTypesEnum.Admission: {
                 const documentType: LogBookPageDocumentTypesEnum = this.preliminaryDataFormGroup.get('documentTypeControl')!.value!.value;
                 if (documentType === LogBookPageDocumentTypesEnum.OriginDeclaration) {
-                    parameters.originDeclarationNumber = this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.value;
+                    parameters.originDeclarationNumber = this.preliminaryDataFormGroup.get('originDeclarationControl')!.value!.code;
                 }
                 else if (documentType === LogBookPageDocumentTypesEnum.TransportationDocument) {
-                    parameters.transportationDocumentNumber = Number(this.preliminaryDataFormGroup.get('transportationDocumentNumberControl')!.value);
+                    parameters.transportationDocumentNumber = Number(this.preliminaryDataFormGroup.get('transportationDocumentControl')!.value?.pageNumber);
                 }
             } break;
             case LogBookTypesEnum.Transportation: {
-                parameters.originDeclarationNumber = this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.value;
+                parameters.originDeclarationNumber = this.preliminaryDataFormGroup.get('originDeclarationControl')!.value!.code;
             }
         }
 
@@ -538,59 +648,98 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
             this.transportationDocumentTypeSelected = false;
             this.admissionDocumentTypeSelected = false;
 
-            this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.reset();
-            this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.setValidators(Validators.required);
-            this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.markAsPending();
+            this.preliminaryDataFormGroup.get('shipControl')!.reset();
+            this.preliminaryDataFormGroup.get('shipControl')!.setValidators(Validators.required);
+            this.preliminaryDataFormGroup.get('shipControl')!.markAsPending();
 
-            this.preliminaryDataFormGroup.get('transportationDocumentNumberControl')!.clearValidators();
-            this.preliminaryDataFormGroup.get('transportationDocumentNumberControl')!.reset();
+            this.preliminaryDataFormGroup.get('originDeclarationControl')!.reset();
+            this.preliminaryDataFormGroup.get('originDeclarationControl')!.setValidators(Validators.required);
+            this.preliminaryDataFormGroup.get('originDeclarationControl')!.markAsPending();
 
-            this.preliminaryDataFormGroup.get('admissionDocumentNumberControl')!.clearValidators();
-            this.preliminaryDataFormGroup.get('admissionDocumentNumberControl')!.reset();
+            this.preliminaryDataFormGroup.get('transportationLogBookOwnerControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('transportationLogBookOwnerControl')!.reset();
+
+            this.preliminaryDataFormGroup.get('transportationDocumentControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('transportationDocumentControl')!.reset();
+
+            this.preliminaryDataFormGroup.get('admissionLogBookOwnerControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('admissionLogBookOwnerControl')!.reset();
+
+            this.preliminaryDataFormGroup.get('admissionDocumentControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('admissionDocumentControl')!.reset();
         }
         else if (documentType?.value === LogBookPageDocumentTypesEnum.TransportationDocument) {
             this.transportationDocumentTypeSelected = true;
             this.originDeclarationTypeSelected = false;
             this.admissionDocumentTypeSelected = false;
 
-            this.preliminaryDataFormGroup.get('transportationDocumentNumberControl')!.reset();
-            this.preliminaryDataFormGroup.get('transportationDocumentNumberControl')!.setValidators([Validators.required, TLValidators.number(0)]);
-            this.preliminaryDataFormGroup.get('transportationDocumentNumberControl')!.markAsPending();
+            this.preliminaryDataFormGroup.get('transportationLogBookOwnerControl')!.reset();
+            this.preliminaryDataFormGroup.get('transportationLogBookOwnerControl')!.setValidators(Validators.required);
+            this.preliminaryDataFormGroup.get('transportationLogBookOwnerControl')!.markAsPending();
 
-            this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.clearValidators();
-            this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.reset();
+            this.preliminaryDataFormGroup.get('transportationDocumentControl')!.reset();
+            this.preliminaryDataFormGroup.get('transportationDocumentControl')!.setValidators(Validators.required);
+            this.preliminaryDataFormGroup.get('transportationDocumentControl')!.markAsPending();
 
-            this.preliminaryDataFormGroup.get('admissionDocumentNumberControl')!.clearValidators();
-            this.preliminaryDataFormGroup.get('admissionDocumentNumberControl')!.reset();
+            this.preliminaryDataFormGroup.get('shipControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('shipControl')!.reset();
+
+            this.preliminaryDataFormGroup.get('originDeclarationControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('originDeclarationControl')!.reset();
+
+            this.preliminaryDataFormGroup.get('admissionLogBookOwnerControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('admissionLogBookOwnerControl')!.reset();
+
+            this.preliminaryDataFormGroup.get('admissionDocumentControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('admissionDocumentControl')!.reset();
         }
         else if (documentType?.value === LogBookPageDocumentTypesEnum.AdmissionDocument) {
             this.admissionDocumentTypeSelected = true;
             this.originDeclarationTypeSelected = false;
             this.transportationDocumentTypeSelected = false;
 
-            this.preliminaryDataFormGroup.get('admissionDocumentNumberControl')!.reset();
-            this.preliminaryDataFormGroup.get('admissionDocumentNumberControl')!.setValidators([Validators.required, TLValidators.number(0)]);
-            this.preliminaryDataFormGroup.get('admissionDocumentNumberControl')!.markAsPending();
+            this.preliminaryDataFormGroup.get('admissionLogBookOwnerControl')!.reset();
+            this.preliminaryDataFormGroup.get('admissionLogBookOwnerControl')!.setValidators(Validators.required);
+            this.preliminaryDataFormGroup.get('admissionLogBookOwnerControl')!.markAsPending();
 
-            this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.clearValidators();
-            this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.reset();
+            this.preliminaryDataFormGroup.get('admissionDocumentControl')!.reset();
+            this.preliminaryDataFormGroup.get('admissionDocumentControl')!.setValidators(Validators.required);
+            this.preliminaryDataFormGroup.get('admissionDocumentControl')!.markAsPending();
 
-            this.preliminaryDataFormGroup.get('transportationDocumentNumberControl')!.clearValidators();
-            this.preliminaryDataFormGroup.get('transportationDocumentNumberControl')!.reset();
+            this.preliminaryDataFormGroup.get('shipControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('shipControl')!.reset();
+
+            this.preliminaryDataFormGroup.get('originDeclarationControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('originDeclarationControl')!.reset();
+
+            this.preliminaryDataFormGroup.get('transportationLogBookOwnerControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('transportationLogBookOwnerControl')!.reset();
+
+            this.preliminaryDataFormGroup.get('transportationDocumentControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('transportationDocumentControl')!.reset();
         }
         else {
             this.originDeclarationTypeSelected = false;
             this.transportationDocumentTypeSelected = false;
             this.admissionDocumentTypeSelected = false;
 
-            this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.clearValidators();
-            this.preliminaryDataFormGroup.get('originDeclarationNumberControl')!.reset();
+            this.preliminaryDataFormGroup.get('shipControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('shipControl')!.reset();
 
-            this.preliminaryDataFormGroup.get('transportationDocumentNumberControl')!.clearValidators();
-            this.preliminaryDataFormGroup.get('transportationDocumentNumberControl')!.reset();
+            this.preliminaryDataFormGroup.get('originDeclarationControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('originDeclarationControl')!.reset();
 
-            this.preliminaryDataFormGroup.get('admissionDocumentNumberControl')!.clearValidators();
-            this.preliminaryDataFormGroup.get('admissionDocumentNumberControl')!.reset();
+            this.preliminaryDataFormGroup.get('transportationLogBookOwnerControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('transportationLogBookOwnerControl')!.reset();
+
+            this.preliminaryDataFormGroup.get('transportationDocumentControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('transportationDocumentControl')!.reset();
+
+            this.preliminaryDataFormGroup.get('admissionLogBookOwnerControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('admissionLogBookOwnerControl')!.reset();
+
+            this.preliminaryDataFormGroup.get('admissionDocumentControl')!.clearValidators();
+            this.preliminaryDataFormGroup.get('admissionDocumentControl')!.reset();
         }
     }
 

@@ -1,7 +1,7 @@
 ﻿import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { IRecreationalFishingService } from '../../interfaces/common-app/recreational-fishing.interface';
 import { GridRequestModel } from '@app/models/common/grid-request.model';
@@ -25,10 +25,11 @@ import { RequestProperties } from '@app/shared/services/request-properties';
 import { RequestService } from '@app/shared/services/request.service';
 import { BaseAuditService } from '../common-app/base-audit.service';
 import { RecreationalFishingCommonService } from '../common-app/recreational-fishing-common.service';
-import { RecreationalFishingTicketDeclarationParametersDTO } from '../../models/generated/dtos/RecreationalFishingTicketDeclarationParametersDTO';
+import { RecreationalFishingTicketDeclarationParametersDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDeclarationParametersDTO';
 import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dtos/RecreationalFishingAddTicketsResultDTO';
 import { RecreationalFishingTicketDuplicateDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDuplicateDTO';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
 @Injectable({
     providedIn: 'root'
@@ -41,11 +42,17 @@ export class RecreationalFishingPublicService extends BaseAuditService implement
     protected controller: string = 'RecreationalFishingPublic';
 
     private commonService: RecreationalFishingCommonService;
+    private translate: FuseTranslationLoaderService;
 
-    public constructor(requestService: RequestService, commonService: RecreationalFishingCommonService) {
+    public constructor(
+        requestService: RequestService,
+        commonService: RecreationalFishingCommonService,
+        translate: FuseTranslationLoaderService
+    ) {
         super(requestService, AreaTypes.Public);
 
         this.commonService = commonService;
+        this.translate = translate;
     }
 
     public getTicket(id: number, getRegiXData: boolean): Observable<RecreationalFishingTicketDTO> {
@@ -227,11 +234,22 @@ export class RecreationalFishingPublicService extends BaseAuditService implement
     ): Observable<GridResultModel<RecreationalFishingTicketApplicationDTO>> {
         const params = new HttpParams().append('associationId', associationId.toString());
 
-        return this.requestService.post(this.area, this.controller, 'GetAllAssociationTicketApplications', request, {
+        type Result = GridResultModel<RecreationalFishingTicketApplicationDTO>;
+        type Body = GridRequestModel<RecreationalFishingTicketApplicationFilters>;
+
+        return this.requestService.post<Result, Body>(this.area, this.controller, 'GetAllAssociationTicketApplications', request, {
             properties: RequestProperties.NO_SPINNER,
             httpParams: params,
             responseTypeCtr: GridResultModel
-        });
+        }).pipe(switchMap((entries: Result) => {
+            for (const entry of entries.records) {
+                if (entry.isDuplicate) {
+                    entry.ticketType += ` - ${this.translate.getValue('recreational-fishing.ticket-status-duplicate')}`;
+                }
+            }
+
+            return of(entries);
+        }));
     }
 
     public deleteApplication(id: number): Observable<void> {
