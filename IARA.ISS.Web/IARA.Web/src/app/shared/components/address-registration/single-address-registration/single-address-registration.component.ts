@@ -37,6 +37,9 @@ export class SingleAddressRegistrationComponent extends NotifyingCustomFormContr
     @Input()
     public readonly: boolean = false;
 
+    @Input()
+    public showExpectedResults: boolean = false;
+
     public countries: NomenclatureDTO<number>[] = [];
     public districts: NomenclatureDTO<number>[] = [];
     public municipalities: MunicipalityNomenclatureExtendedDTO[] = [];
@@ -71,7 +74,7 @@ export class SingleAddressRegistrationComponent extends NotifyingCustomFormContr
         this.initNotifyingCustomFormControl();
         this.loader.load();
 
-        if (this.readonly) {
+        if (this.readonly && !this.showExpectedResults) {
             this.form.controls.countryControl!.clearValidators();
             this.form.controls.streetControl!.clearValidators();
             this.form.updateValueAndValidity();
@@ -198,7 +201,7 @@ export class SingleAddressRegistrationComponent extends NotifyingCustomFormContr
     }
 
     private setFromGroupValidators() {
-        if (!this.readonly) {
+        if (!this.readonly || this.showExpectedResults) {
             this.form.controls.countryControl.setValidators([
                 Validators.required, TLValidators.expectedValueMatch(this.expectedAddress.countryName)
             ]);
@@ -242,7 +245,7 @@ export class SingleAddressRegistrationComponent extends NotifyingCustomFormContr
     }
 
     private updateCountryRelatedControlsValidators(code: string | undefined): void {
-        if (this.isBGChosen() && !this.readonly) {
+        if (this.isBGChosen() && (!this.readonly || this.showExpectedResults)) {
             this.form.controls.districtControl!.setValidators([
                 Validators.required, TLValidators.expectedValueMatch(this.expectedAddress.districtName)
             ]);

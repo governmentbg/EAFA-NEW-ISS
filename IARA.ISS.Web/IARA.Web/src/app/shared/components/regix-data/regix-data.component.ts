@@ -112,6 +112,12 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
     @Input()
     public isIdentityRequired: boolean = true;
 
+    @Input()
+    public isAssociation: boolean = false;
+
+    @Input()
+    public showExpectedResults: boolean = false;
+
     @Output()
     public downloadDataBtnClicked: EventEmitter<PersonFullDataDTO | LegalFullDataDTO> = new EventEmitter<PersonFullDataDTO | LegalFullDataDTO>();
 
@@ -153,7 +159,7 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
         this.translate = translate;
         this.personLegalExtractor = personLegalExtractor;
 
-        this.showSearchButton = true;
+        this.showSearchButton = !IS_PUBLIC_APP || this.isAssociation;
 
         this.loader = new FormControlDataLoader(this.getNomenclatures.bind(this));
     }
@@ -177,7 +183,7 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
             }
         }
 
-        if (!this.readonly) {
+        if (!this.readonly || this.showExpectedResults) {
             this.setValidators();
         }
     }
@@ -188,7 +194,7 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
                 if (!this.guidIdentifier) {
                     this.form.get('idNumberControl')!.valueChanges.subscribe({
                         next: (value: EgnLncDTO | string) => {
-                            if (value !== null && value !== undefined && typeof value !== 'string' && !this.readonly) {
+                            if (value !== null && value !== undefined && typeof value !== 'string' && (!this.readonly || this.showExpectedResults)) {
                                 this.setDateOfBirthValidators(value);
                             }
                         }
@@ -255,12 +261,12 @@ export class RegixDataComponent extends NotifyingCustomFormControl<RegixPersonDa
         if (expectedResults !== null && expectedResults !== undefined) {
             this.expectedRegixResults = expectedResults;
 
-            if (!this.readonly) {
+            if ((!this.readonly || this.showExpectedResults)) {
                 this.setValidators();
             }
         }
 
-        if (middleNameRequired !== null && middleNameRequired !== undefined && this.isPerson && !this.readonly) {
+        if (middleNameRequired !== null && middleNameRequired !== undefined && this.isPerson && (!this.readonly || this.showExpectedResults)) {
             this.middleNameRequired = middleNameRequired;
             this.setMiddleNameValidators();
         }

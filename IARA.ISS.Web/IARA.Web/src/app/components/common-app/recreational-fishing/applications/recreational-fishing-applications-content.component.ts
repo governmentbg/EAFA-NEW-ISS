@@ -498,6 +498,18 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         });
 
         if (viewMode) {
+            switch (status) {
+                case ApplicationStatusesEnum.INSP_CORR_FROM_EMP: {
+                    params.showOnlyRegiXData = true;
+                } break;
+                case ApplicationStatusesEnum.FILL_BY_APPL: {
+                    // Ако не сме в RegiX режим И предишният статус на заявлението е бил Стартирани проверки
+                    if (prevApplicationStatus === ApplicationStatusesEnum.EXT_CHK_STARTED) {
+                        params.showRegiXData = true;
+                    } break;
+                }
+            }
+
             this.openEditDialogForAll(ticket, params, isOnline, this.translate.getValue('recreational-fishing.application-view-ticket-dialog-title'));
         }
         else {

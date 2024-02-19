@@ -124,7 +124,7 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
             firstNameControl: new FormControl(undefined, Validators.maxLength(200)),
             middleNameControl: new FormControl(undefined, Validators.maxLength(200)),
             lastNameControl: new FormControl(undefined, Validators.maxLength(200)),
-            cardNumControl: new FormControl(undefined),
+            cardNumControl: new FormControl(undefined, Validators.maxLength(7)),
             countryControl: new FormControl({ value: undefined, disabled: true }, Validators.required),
             institutionControl: new FormControl({ value: undefined, disabled: true }, Validators.required),
             headOfInspectionControl: new FormControl(false),
@@ -218,9 +218,7 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
 
             this.form.get('inspectorControl')!.setValidators(Validators.required);
             this.form.get('firstNameControl')!.clearValidators();
-            this.form.get('middleNameControl')!.clearValidators();
             this.form.get('lastNameControl')!.clearValidators();
-            this.form.get('cardNumControl')!.clearValidators();
 
             this.form.get('countryControl')!.disable();
             this.form.get('institutionControl')!.disable();
@@ -237,17 +235,13 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
 
             this.form.get('inspectorControl')!.clearValidators();
             this.form.get('firstNameControl')!.setValidators([Validators.required, Validators.maxLength(200)]);
-            this.form.get('middleNameControl')!.setValidators([Validators.required, Validators.maxLength(200)]);
             this.form.get('lastNameControl')!.setValidators([Validators.required, Validators.maxLength(200)]);
-            this.form.get('cardNumControl')!.setValidators([Validators.required, Validators.maxLength(7)]);
 
             this.form.get('countryControl')!.enable();
             this.form.get('institutionControl')!.enable();
 
             this.form.get('firstNameControl')!.markAsPending();
-            this.form.get('middleNameControl')!.markAsPending();
             this.form.get('lastNameControl')!.markAsPending();
-            this.form.get('cardNumControl')!.markAsPending();
         }
 
         if (this.readOnly) {
@@ -259,9 +253,7 @@ export class EditInspectorComponent implements OnInit, IDialogComponent {
 
         this.form.get('inspectorControl')!.updateValueAndValidity({ emitEvent: false });
         this.form.get('firstNameControl')!.updateValueAndValidity({ emitEvent: false });
-        this.form.get('middleNameControl')!.updateValueAndValidity({ emitEvent: false });
         this.form.get('lastNameControl')!.updateValueAndValidity({ emitEvent: false });
-        this.form.get('cardNumControl')!.updateValueAndValidity({ emitEvent: false });
     }
 
     private async onInspectorChanged(value: NomenclatureDTO<number> | undefined): Promise<void> {

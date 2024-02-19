@@ -32,7 +32,7 @@
                                (keydown.enter)="onIdNumberEnterDown()">
                 </egn-lnc-input>
 
-                <tl-icon-button *ngIf="showSearchButton && !isDisabled && !hideSearchButton"
+                <tl-icon-button *ngIf="(showSearchButton || isAssociation) && !isDisabled && !hideSearchButton"
                                 fxFlex="10"
                                 class="regix-data-search-button"
                                 icon="fa-search-icon"
@@ -175,7 +175,7 @@
                           [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-input>
 
-                <tl-icon-button *ngIf="showSearchButton && !isDisabled && !hideSearchButton"
+                <tl-icon-button *ngIf="(showSearchButton || isAssociation) && !isDisabled && !hideSearchButton"
                                 class="regix-data-search-button"
                                 icon="fa-search-icon"
                                 [disabled]="readonly"
@@ -225,7 +225,7 @@
                           [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                 </tl-input>
 
-                <tl-icon-button *ngIf="showSearchButton && !isDisabled && !hideSearchButton"
+                <tl-icon-button *ngIf="(showSearchButton || isAssociation) && !isDisabled && !hideSearchButton"
                                 class="regix-data-search-button"
                                 icon="fa-search-icon"
                                 [disabled]="readonly"
@@ -276,7 +276,7 @@
                                            (keydown.enter)="onCustodianEgnEnterDown()">
                             </egn-lnc-input>
 
-                            <tl-icon-button *ngIf="showSearchButton && !isDisabled && !hideSearchButton"
+                            <tl-icon-button *ngIf="(showSearchButton || isAssociation) && !isDisabled && !hideSearchButton"
                                             fxFlex="10"
                                             class="regix-data-search-button"
                                             icon="fa-search-icon"

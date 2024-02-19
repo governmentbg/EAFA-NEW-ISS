@@ -99,6 +99,7 @@
                             notifier
                             [isPerson]="true"
                             [includeForeigner]="true"
+                            [isAssociation]="isAssociation"
                             [isIdReadOnly]="(type.code !== 'UNDER14' && !isEgnEditable) || isRenewal"
                             [hideDocument]="type.code === 'UNDER14'"
                             [allDocumentFieldsRequired]="true"
@@ -106,6 +107,8 @@
                             [dateOfBirthRequiredForLncAndForId]="dateOfBirthRequiredTicketTypes.includes(type.code!)"
                             [expectedResults]="regixChecksData?.person"
                             [showGender]="type.code === 'ELDER' || type.code === 'ELDERASSOCIATION'"
+                            [readonly]="dialogData?.viewMode || dialogData?.isReadonly"
+                            [showExpectedResults]="!isAssociation && !isPersonal"
                             (downloadDataBtnClicked)="downloadPersonalData($event, false)"
                             checkboxLabel="{{ 'recreational-fishing.has-bulgarian-address-registration' | tlTranslate }}">
                 </regix-data>
@@ -118,6 +121,7 @@
                                      formControlName="photoControl"
                                      [options]="{ validations: { isRequired: true } }"
                                      [requestMethod]="personPhotoMethod"
+                                     [readonly]="dialogData?.viewMode || dialogData?.isReadonly"
                                      label="{{ 'recreational-fishing.attached-photo' | tlTranslate }}">
                 </tl-picture-uploader>
             </div>
@@ -128,6 +132,8 @@
                                   addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
                                   secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
                                   checkboxLabel="{{ 'recreational-fishing.permanent-address-same-as-correspondence' | tlTranslate }}"
+                                  [readonly]="dialogData?.viewMode || dialogData?.isReadonly"
+                                  [showExpectedResults]="!isAssociation && !isPersonal"
                                   [expectedResults]="regixChecksData?.personAddressRegistrations">
             </address-registration>
         </tl-card-content>
@@ -149,9 +155,12 @@
                         notifier
                         [isPerson]="true"
                         [includeForeigner]="true"
+                        [isAssociation]="isAssociation"
                         [isIdReadOnly]="!isEgnEditable || isRenewal"
                         [allDocumentFieldsRequired]="true"
                         [expectedResults]="regixChecksData?.representativePerson"
+                        [readonly]="dialogData?.viewMode || dialogData?.isReadonly"
+                        [showExpectedResults]="!isAssociation && !isPersonal"
                         (downloadDataBtnClicked)="downloadPersonalData($event, true)"
                         checkboxLabel="{{ 'recreational-fishing.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
@@ -162,6 +171,8 @@
                                   addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
                                   secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
                                   checkboxLabel="{{ 'recreational-fishing.permanent-address-same-as-correspondence' | tlTranslate }}"
+                                  [readonly]="dialogData?.viewMode || dialogData?.isReadonly"
+                                  [showExpectedResults]="!isAssociation && !isPersonal"
                                   [expectedResults]="regixChecksData?.representativePersonAddressRegistrations">
             </address-registration>
         </tl-card-content>
@@ -177,6 +188,7 @@
                 <tl-input fxFlex="25"
                           fxFlex.lt-md="100"
                           formControlName="membershipCardNumberControl"
+                          [readonly]="dialogData?.viewMode || dialogData?.isReadonly"
                           tooltipResourceName="recreational-fishing.membership-card-number-helper"
                           label="{{ 'recreational-fishing.membership-card-number' | tlTranslate }}">
                 </tl-input>
@@ -184,6 +196,7 @@
                          fxFlex.lt-md="100"
                          formControlName="membershipCardIssueDateControl"
                          [max]="currentDate"
+                         [readonly]="dialogData?.viewMode || dialogData?.isReadonly"
                          tooltipResourceName="recreational-fishing.membership-card-issued-on-helper"
                          label="{{ 'recreational-fishing.membership-card-issued-on' | tlTranslate }}">
                 </tl-date>
@@ -191,6 +204,7 @@
                                  fxFlex.lt-md="100"
                                  formControlName="membershipCardIssuedByControl"
                                  [options]="fishingAssociations"
+                                 [readonly]="dialogData?.viewMode || dialogData?.isReadonly"
                                  tooltipResourceName="recreational-fishing.membership-card-issued-by-helper"
                                  label="{{ 'recreational-fishing.membership-card-issued-by' | tlTranslate }}">
                 </tl-autocomplete>
@@ -210,6 +224,7 @@
                           formControlName="telkNumControl"
                           tooltipResourceName="recreational-fishing.telk-num-helper"
                           label="{{ 'recreational-fishing.telk-num' | tlTranslate }}"
+                          [readonly]="dialogData?.viewMode || dialogData?.isReadonly"
                           [getControlErrorLabelText]="getControlErrorLabelText">
                 </tl-input>
                 <tl-date fxFlex="25"
@@ -218,6 +233,7 @@
                          tooltipResourceName="recreational-fishing.telk-valid-to-helper"
                          label="{{ 'recreational-fishing.telk-valid-to' | tlTranslate }}"
                          [min]="currentDate"
+                         [readonly]="dialogData?.viewMode || dialogData?.isReadonly"
                          [getControlErrorLabelText]="getControlErrorLabelText">
                 </tl-date>
                 <tl-checkbox fxFlex="25"
@@ -225,6 +241,7 @@
                              formControlName="telkIsIndefiniteControl"
                              tooltipResourceName="recreational-fishing.telk-indefinite-helper"
                              label="{{ 'recreational-fishing.telk-indefinite' | tlTranslate }}"
+                             [readonly]="dialogData?.viewMode || dialogData?.isReadonly"
                              [getControlErrorLabelText]="getControlErrorLabelText">
                 </tl-checkbox>
             </div>
@@ -241,6 +258,7 @@
                                  fxFlex.lt-md="100"
                                  formControlName="deliveryTerritoryUnitControl"
                                  [options]="territoryUnits"
+                                 [readonly]="dialogData?.viewMode || dialogData?.isReadonly"
                                  label="{{ 'recreational-fishing.ticket-delivery-territory-unit-input' | tlTranslate }}"
                                  tooltipResourceName="recreational-fishing.ticket-delivery-territory-unit-input-helper">
                 </tl-autocomplete>
@@ -255,6 +273,7 @@
 
         <tl-card-content>
             <tl-textarea formControlName="commentsControl"
+                         [readonly]="dialogData?.viewMode || dialogData?.isReadonly"
                          tooltipResourceName="recreational-fishing.comments-text-helper"
                          label="{{ 'recreational-fishing.comments-text' | tlTranslate }}">
             </tl-textarea>

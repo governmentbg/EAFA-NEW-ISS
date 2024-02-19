@@ -34,6 +34,9 @@ export class AddressRegistrationComponent extends NotifyingCustomFormControl<Add
     @Input()
     public readonly: boolean = false;
 
+    @Input()
+    public showExpectedResults: boolean = false;
+
     public notifierGroup: Notifier = new Notifier();
 
     public expectedAddressResult?: AddressRegistrationDTO;

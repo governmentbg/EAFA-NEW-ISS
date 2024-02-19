@@ -13,8 +13,13 @@
     min-width: 200px !important;
 
     .mat-menu-content {
+        padding-top: 0 !important;
         height: 100%;
         max-width: 500px !important;
+
+        .notifications-title {
+            font-size: larger;
+        }
 
         .mat-menu-viewport {
             width: 400px;

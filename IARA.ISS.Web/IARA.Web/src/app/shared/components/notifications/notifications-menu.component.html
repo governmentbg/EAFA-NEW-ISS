@@ -26,14 +26,21 @@
 
         <ng-template #hasNotifications>
             <!-- Header -->
-            <div class="flex shrink-0 items-center py-4 pr-4 pl-6" fxLayoutAlign="center center">
-                <button mat-raised-button 
-                        color="primary"
-                        (click)="markAllAsRead()"
-                        fxFlexFill>
-                    <tl-icon icon="fa-check-double" class="white"></tl-icon>
-                    {{ 'notifications.mark-all-as-read' | tlTranslate }}
-                </button>
+            <div class="py-4 pr-4 pl-4 iara-blue-500" fxLayoutAlign="space-between center">
+                <div class="notifications-title" fxFlexOffset="5">
+                    {{ 'notifications.title' | tlTranslate }}
+                </div>
+                <div fxLayout="row">
+                    <tl-icon-button icon="fa-check-double"
+                                    size="1.3"
+                                    (buttonClicked)="markAllAsRead()"
+                                    tooltipText="{{ 'notifications.mark-all-as-read' | tlTranslate }}">
+                    </tl-icon-button>
+                    <tl-icon-button [icon]="isConnected ? 'wifi' : 'wifi_off'"
+                                    size="2"
+                                    tooltipText="{{ isConnected ? ('notifications.connected' | tlTranslate) : 'notifications.disconnected' | tlTranslate }}">
+                    </tl-icon-button>
+                </div>
             </div>
 
             <cdk-virtual-scroll-viewport class="mat-menu-viewport"
