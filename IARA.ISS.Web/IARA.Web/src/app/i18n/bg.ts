@@ -6396,6 +6396,8 @@
     },
     'notifications': {
         'title': 'Известия',
-        'mark-all-as-read': 'Маркирай всички като прочетени'
+        'mark-all-as-read': 'Маркирай всички като прочетени',
+        'connected': 'Свързан',
+        'disconnected': 'Няма връзка',
     }
 };

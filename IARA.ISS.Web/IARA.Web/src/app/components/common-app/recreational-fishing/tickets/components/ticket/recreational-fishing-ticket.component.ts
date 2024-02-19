@@ -195,7 +195,13 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                         this.setRegiXData();
 
                         if (this.dialogData!.viewMode) {
-                            this.setDisabledState(true);
+                            if (this.isAssociation || this.isPersonal) {
+                                this.setDisabledState(true);
+                            }
+                            else {
+                                this.form.markAllAsTouched();
+                                this.form.get('photoControl')?.disable();
+                            }
                         }
                     }
                 });
@@ -245,7 +251,13 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                         }
 
                         if (this.dialogData!.viewMode) {
-                            this.setDisabledState(true);
+                            if (this.isAssociation || this.isPersonal || !this.dialogData?.showRegiXData) {
+                                this.setDisabledState(true);
+                            }
+                            else {
+                                this.form.get('photoControl')?.disable();
+                                this.form.get('filesControl')?.disable();
+                            }
                         }
                     }
                 });
@@ -253,7 +265,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
         }
 
         if (this.isDisabled) {
-            this.form.disable();
+         //   this.form.disable();
         }
     }
 

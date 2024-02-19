@@ -29,6 +29,7 @@ export class NotificationsMenuComponent implements OnInit, AfterViewInit {
     public totalRecordsCount: number;
     public pageSize: number;
     public recordSize: number;
+    public isConnected: boolean;
 
     public constructor(@Inject(SECURITY_SERVICE_TOKEN) securityService: ISecurityService) {
         this.notificationsHub = new NotificationsHubService(securityService, "/notifications", Environment.Instance.apiBaseUrl ?? '');
@@ -38,10 +39,15 @@ export class NotificationsMenuComponent implements OnInit, AfterViewInit {
         this.totalRecordsCount = 0;
         this.pageSize = this.dataSource.pageSize;
         this.recordSize = this.DEFAULT_RECORD_SIZE;
+        this.isConnected = this.notificationsHub.isConnected;
     }
 
     public ngOnInit(): void {
         this.subscribeOnNewDataReceived();
+        this.isConnected = this.notificationsHub.isConnected;
+        this.notificationsHub.isConnectedEvent.subscribe(isConnected => {
+            this.isConnected = isConnected;
+        });
     }
 
     private subscribeOnNewDataReceived(): void {

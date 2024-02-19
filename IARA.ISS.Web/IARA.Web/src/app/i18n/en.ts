@@ -138,6 +138,8 @@
         'go-to': 'Go to',
         'second': 'second',
         'seconds': 'seconds',
+        'version-title': 'New version available',
+        'version-message': 'A new version of the application is available. Do you want to update?',
     },
     'validation': {
         'min': 'field has minimum value',
@@ -4362,7 +4364,7 @@
         'admission-page-generate-missing-pages-permission-no-pages-first-message': 'There are no added pages for the current log book. The start page of this log book is',
         'admission-page-cannot-add-page-for-chosen-locked-fill-date-error': 'You cannot add page with this fill date because',
         'admission-page-because-days-have-past-since-pervious-month': 'days have past since previous month',
-       
+
         'add-transportation-log-book-page-dialog-title': 'Add transporation log book page',
         'edit-transportation-log-book-page-dialog-title': 'Edit transporation log book page',
         'view-transportation-log-book-page-dialog-title': 'View transporation log book page',
@@ -6397,6 +6399,8 @@
     },
     'notifications': {
         'title': 'Notifications',
-        'mark-all-as-read': 'Mark all as read'
+        'mark-all-as-read': 'Mark all as read',
+        'connected': 'Connected',
+        'disconnected': 'Disconnected',
     }
 };

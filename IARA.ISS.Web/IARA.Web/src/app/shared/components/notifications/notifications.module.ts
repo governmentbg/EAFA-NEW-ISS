@@ -11,6 +11,7 @@ import { TLCardModule } from '../tl-card/tl-card.module';
 import { TLIconModule } from '../tl-icon/tl-icon.module';
 import { NotificationComponent } from './notification.component';
 import { NotificationsMenuComponent } from './notifications-menu.component';
+import { TLIconButtonModule } from '../tl-icon-button/tl-icon-button.module';
 
 @NgModule({
     imports: [
@@ -21,6 +22,7 @@ import { NotificationsMenuComponent } from './notifications-menu.component';
         ScrollingModule,
         TLCardModule,
         TLIconModule,
+        TLIconButtonModule,
         MatMenuModule,
         MatButtonModule,
         MatBadgeModule,
