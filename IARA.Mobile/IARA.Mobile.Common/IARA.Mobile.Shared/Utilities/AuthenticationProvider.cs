@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using IARA.Mobile.Application.Interfaces.Utilities;
-using IARA.Mobile.Domain.Models;
-using IARA.Mobile.Pub.Application.DTObjects.FishingTickets.API;
-using IARA.Mobile.Pub.Application.Interfaces.Transactions;
-using IARA.Mobile.Pub.Application.Transactions;
-using IARA.Mobile.Pub.Application.Transactions.Base;
 using IARA.Mobile.Pub.Domain.Models;
 using IdentityModel.OidcClient;
 using IdentityModel.OidcClient.Results;
