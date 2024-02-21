@@ -3,11 +3,34 @@
                [showInactiveRecords]="showInactiveRecords"
                [showAddButton]="showAddButton"
                [recordsPerPage]="recordsPerPage"
-               (activeRecordChanged)="editAdmissionLogBookPage($event, !$event.isActive 
+               (activeRecordChanged)="editAdmissionLogBookPage($event, !$event.isActive
                                                                          || $event.status === logBookPageStatusesEnum.Canceled
                                                                          || $event.isLogBookFinishedOrSuspended
                                                                          || !canEditAdmissionLogBookRecords)"
                [rows]="rows">
+    <row-detail *ngIf="canReadInspections">
+        <ng-template let-row="row" ngx-datatable-row-detail-template>
+            <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+                <tl-card *ngIf="row.data.hasInspections">
+                    <tl-card-title>{{ 'catches-and-sales.inspected-pages' | tlTranslate }}</tl-card-title>
+                    <tl-card-content fxFlexFill>
+                        <inspections-register [logBookPageId]="row.data.id"
+                                              [logBookType]="logBookTypesEnum.Admission">
+                        </inspections-register>
+                    </tl-card-content>
+                </tl-card>
+
+                <div fxFlexFill *ngIf="!row.data.hasInspections">
+                    <div fxFlex="100" fxLayout="row">
+                        <h2>
+                            {{ 'catches-and-sales.no-inspections-attached-to-admission-page' | tlTranslate }}
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </row-detail>
+
     <data-template-column propertyName="PageNumber"
                           [flexRate]="0.2"
                           [cellClass]="'justify-center'"
@@ -82,8 +105,8 @@
                                 tooltipText="{{ 'catches-and-sales.view-admission-log-book-page' | tlTranslate }}">
                 </tl-icon-button>
 
-                <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished) 
-                                    && canEditAdmissionLogBookRecords 
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
+                                    && canEditAdmissionLogBookRecords
                                     && row.data.status !== logBookPageStatusesEnum.Canceled"
                                 icon="edit"
                                 (buttonClicked)="editAdmissionLogBookPage(row.data, false)"

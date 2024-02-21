@@ -54,7 +54,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
     public isAdd: boolean = false;
 
     public noAvailableProducts: boolean = false;
-    public isLogBookPageDateLockedError: boolean = true;
+    public isLogBookPageDateLockedError: boolean = false;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
@@ -268,9 +268,9 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
 
     public getControlErrorLabelText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'saleDateControl') {
-            if (errorCode === 'logBookPageDateLocked') {
+            if (errorCode === 'logBookPageDateLocked' || errorCode === 'logBookPageDatePeriodLocked') {
                 const message: string = this.translationService.getValue('catches-and-sales.first-sale-date-cannot-be-chosen-error');
-                if (this.isLogBookPageDateLockedError) {
+                if (this.isLogBookPageDateLockedError || errorCode === 'logBookPageDatePeriodLocked') {
                     return new TLError({ text: message, type: 'error' });
                 }
                 else {
@@ -532,38 +532,40 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
 
             const hoursDifference: number = CatchesAndSalesUtils.convertDateDifferenceToHours(difference);
 
-            if (this.model.hasAbove200KAnnualTurnover === true) {
-                if (hoursDifference > this.lockFirstSaleLogBookPeriods.lockFirstSaleAbove200KLogBookAfterHours) {
-                    return {
-                        logBookPageDateLocked: {
-                            hasAboveLimitAnnualTurnOver: true,
-                            lockedPeriod: this.lockFirstSaleLogBookPeriods.lockFirstSaleAbove200KLogBookAfterHours,
-                            periodType: 'hours'
-                        }
-                    };
-                }
-            }
-            else {
-                if (hoursDifference > this.lockFirstSaleLogBookPeriods.lockFirstSaleBelow200KLogBookAfterHours) {
-                    return {
-                        logBookPageDateLocked: {
-                            hasAboveLimitAnnualTurnOver: false,
-                            lockedPeriod: this.lockFirstSaleLogBookPeriods.lockFirstSaleBelow200KLogBookAfterHours,
-                            periodType: 'hours'
-                        }
-                    };
-                }
-            }
-
             if (CatchesAndSalesUtils.pageHasLogBookPageDateLockedViaDaysAfterMonth(saleDate, now, this.lockFirstSaleLogBookPeriods.lockFirstSaleLogBookPeriod)) {
                 return {
                     logBookPageDatePeriodLocked: {
+                        hasAboveLimitAnnualTurnOver: false,
                         lockedPeriod: this.lockFirstSaleLogBookPeriods.lockFirstSaleLogBookPeriod,
                         periodType: 'days-after-month'
                     }
                 };
             }
 
+            if (this.isLogBookPageDateLockedError) {
+                if (this.model.hasAbove200KAnnualTurnover === true) {
+                    if (hoursDifference > this.lockFirstSaleLogBookPeriods.lockFirstSaleAbove200KLogBookAfterHours) {
+                        return {
+                            logBookPageDateLocked: {
+                                hasAboveLimitAnnualTurnOver: true,
+                                lockedPeriod: this.lockFirstSaleLogBookPeriods.lockFirstSaleAbove200KLogBookAfterHours,
+                                periodType: 'hours'
+                            }
+                        };
+                    }
+                }
+                else {
+                    if (hoursDifference > this.lockFirstSaleLogBookPeriods.lockFirstSaleBelow200KLogBookAfterHours) {
+                        return {
+                            logBookPageDateLocked: {
+                                hasAboveLimitAnnualTurnOver: false,
+                                lockedPeriod: this.lockFirstSaleLogBookPeriods.lockFirstSaleBelow200KLogBookAfterHours,
+                                periodType: 'hours'
+                            }
+                        };
+                    }
+                }
+            }
             return null;
         }
     }
@@ -577,9 +579,18 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
 
             for (const key of Object.keys(this.form.controls)) {
                 if (key === 'saleDateControl' && !this.isLogBookPageDateLockedError) {
-                    for (const error in this.form.controls[key].errors) {
-                        if (error !== 'logBookPageDateLocked') {
-                            errors[key] = this.form.controls[key].errors![error];
+                    if (!this.isLogBookPageDateLockedError) {
+                        for (const error in this.form.controls[key].errors) {
+                            if (error !== 'logBookPageDateLocked') {
+                                errors[key] = this.form.controls[key].errors![error];
+                            }
+                        }
+                    }
+                    else {
+                        for (const error in this.form.controls[key].errors) {
+                            if (error !== 'logBookPageDatePeriodLocked') {
+                                errors[key] = this.form.controls[key].errors![error];
+                            }
                         }
                     }
                 }

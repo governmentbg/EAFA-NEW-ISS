@@ -21,6 +21,10 @@
             font-size: larger;
         }
 
+        .connected-icon {
+            pointer-events: none;
+        }
+
         .mat-menu-viewport {
             width: 400px;
             max-height: 80vh;

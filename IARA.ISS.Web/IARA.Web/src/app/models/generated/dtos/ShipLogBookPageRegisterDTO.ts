@@ -48,6 +48,9 @@ export class ShipLogBookPageRegisterDTO {
     public cancellationReason?: string;
 
     @StrictlyTyped(Boolean)
+    public hasInspections?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isActive?: boolean;
 
     @StrictlyTyped(AdmissionLogBookPageRegisterDTO)

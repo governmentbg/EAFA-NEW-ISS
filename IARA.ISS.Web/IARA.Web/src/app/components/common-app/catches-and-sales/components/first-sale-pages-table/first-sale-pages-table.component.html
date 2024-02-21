@@ -4,10 +4,33 @@
                [showInactiveRecords]="showInactiveRecords"
                [showAddButton]="showAddButton"
                [recordsPerPage]="recordsPerPage"
-               (activeRecordChanged)="editFirstSaleLogBookPage($event, !$event.isActive 
+               (activeRecordChanged)="editFirstSaleLogBookPage($event, !$event.isActive
                                                                          || $event.status === logBookPageStatusesEnum.Canceled
                                                                          || $event.isLogBookFinished
                                                                          || !canEditFirstSaleLogBookRecords)">
+    <row-detail *ngIf="canReadInspections">
+        <ng-template let-row="row" ngx-datatable-row-detail-template>
+            <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+                <tl-card *ngIf="row.data.hasInspections">
+                    <tl-card-title>{{ 'catches-and-sales.inspected-pages' | tlTranslate }}</tl-card-title>
+                    <tl-card-content fxFlexFill>
+                        <inspections-register [logBookPageId]="row.data.id"
+                                              [logBookType]="logBookTypesEnum.FirstSale">
+                        </inspections-register>
+                    </tl-card-content>
+                </tl-card>
+
+                <div fxFlexFill *ngIf="!row.data.hasInspections">
+                    <div fxFlex="100" fxLayout="row">
+                        <h2>
+                            {{ 'catches-and-sales.no-inspections-attached-to-first-sale-page' | tlTranslate }}
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </row-detail>
+
     <data-template-column propertyName="PageNumber"
                           [flexRate]="0.2"
                           [cellClass]="'justify-center'"
@@ -81,8 +104,8 @@
                                 tooltipText="{{ 'catches-and-sales.view-first-sale-log-book-page' | tlTranslate }}">
                 </tl-icon-button>
 
-                <tl-icon-button *ngIf="(!row.data.isLogBookFinished || allowEditAfterFinished) 
-                                    && canEditFirstSaleLogBookRecords 
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinished || allowEditAfterFinished)
+                                    && canEditFirstSaleLogBookRecords
                                     && row.data.status !== logBookPageStatusesEnum.Canceled"
                                 icon="edit"
                                 (buttonClicked)="editFirstSaleLogBookPage(row.data, false)"

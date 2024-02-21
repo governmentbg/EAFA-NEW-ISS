@@ -3,6 +3,7 @@
 import { LogBookPageStatusesEnum } from '@app/enums/log-book-page-statuses.enum';
 import { AdmissionLogBookPageRegisterDTO } from '@app/models/generated/dtos/AdmissionLogBookPageRegisterDTO';
 import { CommonUtils } from '@app/shared/utils/common.utils';
+import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 import { AdmissionPageRecordChanged } from './models/admission-page-record-change.model';
 
 
@@ -41,6 +42,9 @@ export class AdmissionPagesAndDeclarationsTableComponent {
     @Input()
     public recordsPerPage: number = 10;
 
+    @Input()
+    public canReadInspections: boolean = false;
+
     @Output()
     public onActiveRecordChanged: EventEmitter<AdmissionPageRecordChanged> = new EventEmitter<AdmissionPageRecordChanged>();
 
@@ -57,6 +61,7 @@ export class AdmissionPagesAndDeclarationsTableComponent {
     public onRestoreAnnulledAdmissionLogBookPage: EventEmitter<AdmissionLogBookPageRegisterDTO> = new EventEmitter<AdmissionLogBookPageRegisterDTO>();
 
     public readonly logBookPageStatusesEnum: typeof LogBookPageStatusesEnum = LogBookPageStatusesEnum;
+    public readonly logBookTypesEnum: typeof LogBookTypesEnum = LogBookTypesEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
     public activeRecordChangedEvent(page: AdmissionLogBookPageRegisterDTO, viewMode: boolean = false): void {

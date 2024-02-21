@@ -32,7 +32,6 @@ import { TranslationLabelsComponent } from '@app/components/administration-app/t
 import { PermissionsEnum } from '../enums/permissions.enum';
 import { ITLNavigation } from './base/tl-navigation.interface';
 import { EditShipRegisterComponent } from '@app/components/administration-app/ships-register/edit-ship-register/edit-ship-register.component';
-import { InspectionsComponent } from '@app/components/administration-app/control-activity/inspections/inspections-register.component';
 import { CommercialFishingApplicationsComponent } from '@app/components/administration-app/commercial-fishing-register/applications/commercial-fishing-applications.component';
 import { CommercialFishingRegisterComponent } from '@app/components/administration-app/commercial-fishing-register/commercial-fishing-register.component';
 import { ReportDefinitionComponent } from '@app/components/administration-app/reports/report-definition/report-definition.component';
@@ -49,17 +48,18 @@ import { FishingCapacityAnalysisComponent } from '@app/components/administration
 import { ReportParameterDefinitionComponent } from '@app/components/administration-app/reports/report-parameter-definition/report-parameter-definition.component';
 import { CrossChecksComponent } from '@app/components/administration-app/cross-checks/cross-checks.component';
 import { CrossChecksResultsComponent } from '@app/components/administration-app/cross-checks/cross-checks-results/cross-checks-results.component';
-import { AuanRegisterComponent } from '@app/components/administration-app/control-activity/auan-register/auan-register.component';
 import { StatisticalFormsComponent } from '@app/components/administration-app/statistical-forms/statistical-forms.component';
-import { PenalDecreesComponent } from '@app/components/administration-app/control-activity/penal-decrees/penal-decrees.component';
 import { StatisticalFormsApplicationsComponent } from '@app/components/administration-app/statistical-forms/applications/statistical-forms-applications.component';
 import { ReportViewComponent } from '@app/components/administration-app/reports/report-view/report-view.component';
 import { FluxVmsRequestsComponent } from '@app/components/administration-app/flux-vms-requests/flux-vms-requests.component';
 import { ApplicationRegixChecksComponent } from '@app/components/administration-app/applications-regix-checks/application-regix-checks.component';
-import { PenalPointsComponent } from '@app/components/administration-app/control-activity/awarded-points/penal-points.component';
 import { PrintConfigurationsComponent } from '@app/components/administration-app/print-configurations/print-configurations.component';
 import { LogBookPageEditExceptionsComponent } from '@app/components/administration-app/catches-and-sales/log-book-page-edit-exceptions/log-book-page-edit-exceptions.component';
 import { FishingActivityReportsComponent } from '@app/components/administration-app/fishing-activity-reports/fishing-activity-reports.component';
+import { InspectionsComponent } from '@app/components/common-app/control-activity/inspections/inspections-register.component';
+import { AuanRegisterComponent } from '@app/components/common-app/control-activity/auan-register/auan-register.component';
+import { PenalDecreesComponent } from '@app/components/common-app/control-activity/penal-decrees/penal-decrees.component';
+import { PenalPointsComponent } from '@app/components/common-app/control-activity/awarded-points/penal-points.component';
 
 export class Navigation {
     public static getMenu(isPublic: boolean): ITLNavigation[] {

@@ -44,7 +44,8 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
     public model!: AquacultureLogBookPageEditDTO;
     public service!: ICatchesAndSalesService;
     public isAdd: boolean = false;
-    public isLogBookPageDateLockedError: boolean = true;
+    public isLogBookPageDateLockedError: boolean = false;
+    public logBookPageDateLockedViaDaysAfterMonth: boolean = false;
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -168,7 +169,7 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
         if (controlName === 'fillDateControl') {
             if (errorCode === 'logBookPageDateLocked') {
                 const message: string = this.translationService.getValue('catches-and-sales.aquaculture-page-date-cannot-be-chosen-error');
-                if (this.isLogBookPageDateLockedError) {
+                if (this.isLogBookPageDateLockedError || this.logBookPageDateLockedViaDaysAfterMonth) {
                     return new TLError({ text: message, type: 'error' });
                 }
                 else {
@@ -352,6 +353,8 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
             }
 
             if (CatchesAndSalesUtils.pageHasLogBookPageDateLockedViaDaysAfterMonth(fillDate, now, this.lockAquacultureLogBookPeriod)) {
+                this.logBookPageDateLockedViaDaysAfterMonth = true;
+
                 return {
                     logBookPageDateLocked: {
                         lockedPeriod: this.lockAquacultureLogBookPeriod,
@@ -360,6 +363,7 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
                 };
             }
 
+            this.logBookPageDateLockedViaDaysAfterMonth = false;
             return null;
         }
     }
@@ -372,7 +376,7 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
             const errors: ValidationErrors = {};
 
             for (const key of Object.keys(this.form.controls)) {
-                if (key === 'fillDateControl' && !this.isLogBookPageDateLockedError) {
+                if (key === 'fillDateControl' && !this.isLogBookPageDateLockedError && !this.logBookPageDateLockedViaDaysAfterMonth) {
                     for (const error in this.form.controls[key].errors) {
                         if (error !== 'logBookPageDateLocked') {
                             errors[key] = this.form.controls[key].errors![error];

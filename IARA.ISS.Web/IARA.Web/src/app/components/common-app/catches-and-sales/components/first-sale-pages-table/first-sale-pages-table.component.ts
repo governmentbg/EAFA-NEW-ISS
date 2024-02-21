@@ -4,6 +4,7 @@ import { LogBookPageStatusesEnum } from '@app/enums/log-book-page-statuses.enum'
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { FirstSaleLogBookPageRegisterDTO } from '@app/models/generated/dtos/FirstSaleLogBookPageRegisterDTO';
 import { FirstSalePageRecordChanged } from './models/first-sale-page-record-changed.model';
+import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 
 
 @Component({
@@ -41,6 +42,9 @@ export class FirstSalePagesTableComponent {
     @Input()
     public recordsPerPage: number = 10;
 
+    @Input()
+    public canReadInspections: boolean = false;
+
     @Output()
     public onActiveRecordChanged: EventEmitter<FirstSalePageRecordChanged> = new EventEmitter<FirstSalePageRecordChanged>();
 
@@ -57,6 +61,7 @@ export class FirstSalePagesTableComponent {
     public onRestoreAnnulledFirstSaleLogBookPage: EventEmitter<FirstSaleLogBookPageRegisterDTO> = new EventEmitter<FirstSaleLogBookPageRegisterDTO>();
 
     public readonly logBookPageStatusesEnum: typeof LogBookPageStatusesEnum = LogBookPageStatusesEnum;
+    public readonly logBookTypesEnum: typeof LogBookTypesEnum = LogBookTypesEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
     public activeRecordChangedEvent(page: FirstSaleLogBookPageRegisterDTO, viewMode: boolean = false): void {

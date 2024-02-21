@@ -4,6 +4,7 @@ import { LogBookPageStatusesEnum } from '@app/enums/log-book-page-statuses.enum'
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { TransportationLogBookPageRegisterDTO } from '@app/models/generated/dtos/TransportationLogBookPageRegisterDTO';
 import { TransportationPageRecordChanged } from './models/transportation-page-record-changed.model';
+import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 
 
 @Component({
@@ -41,6 +42,9 @@ export class TransportationPagesAndDeclarationsTableComponent {
     @Input()
     public recordsPerPage: number = 10;
 
+    @Input()
+    public canReadInspections: boolean = false;
+
     @Output()
     public onActiveRecordChanged: EventEmitter<TransportationPageRecordChanged> = new EventEmitter<TransportationPageRecordChanged>();
 
@@ -57,6 +61,7 @@ export class TransportationPagesAndDeclarationsTableComponent {
     public onRestoreAnnulledTransportationLogBookPage: EventEmitter<TransportationLogBookPageRegisterDTO> = new EventEmitter<TransportationLogBookPageRegisterDTO>();
 
     public readonly logBookPageStatusesEnum: typeof LogBookPageStatusesEnum = LogBookPageStatusesEnum;
+    public readonly logBookTypesEnum: typeof LogBookTypesEnum = LogBookTypesEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
     public activeRecordChangedEvent(page: TransportationLogBookPageRegisterDTO, viewMode: boolean = false): void {

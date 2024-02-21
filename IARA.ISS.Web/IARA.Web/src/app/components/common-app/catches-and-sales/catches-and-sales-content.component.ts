@@ -112,6 +112,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     public readonly canEditAquacultureLogBookRecords: boolean;
     public readonly canCancelAquacultureLogBookRecords: boolean;
 
+    public readonly canReadInspections: boolean;
+
     public readonly shipForbiddenForPagesTooltip: string;
     public readonly addLogBookPageTooltip: string;
     public readonly logBookFishinedTooltip: string;
@@ -208,6 +210,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.canAddAquacultureLogBookRecords = permissions.has(PermissionsEnum.AquacultureLogBookPageAdd);
         this.canEditAquacultureLogBookRecords = permissions.has(PermissionsEnum.AquacultureLogBookPageEdit);
         this.canCancelAquacultureLogBookRecords = permissions.has(PermissionsEnum.AquacultureLogBookPageCancel);
+
+        this.canReadInspections = permissions.has(PermissionsEnum.InspectionsRead) || permissions.has(PermissionsEnum.InspectionsReadAll);
 
         this.pagesPermissions = new PagesPermissions({
             canAddAdmissionLogBookRecords: this.canAddAdmissionLogBookRecords,
