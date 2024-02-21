@@ -18,7 +18,6 @@ import { TransferYearlyQuotaComponent } from './catch-quotas-register/transfer-y
 import { YearlyQuotasComponent } from './catch-quotas-register/yearly-quotas-register.component';
 import { CommercialFishingApplicationsComponent } from './commercial-fishing-register/applications/commercial-fishing-applications.component';
 import { CommercialFishingRegisterComponent } from './commercial-fishing-register/commercial-fishing-register.component';
-import { InspectionsComponent } from './control-activity/inspections/inspections-register.component';
 import { DashboardCardComponent } from './dashboard/dashboard-card.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ErrorLogComponent } from './error-log/error-log.component';
@@ -89,13 +88,11 @@ import { EditCrossCheckComponent } from './cross-checks/edit-cross-check/edit-cr
 import { IconPickerModule } from 'ngx-icon-picker';
 import { ReportSqlComponent } from './reports/report-definition/report-sql.component';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
-import { AuanRegisterComponent } from './control-activity/auan-register/auan-register.component';
 import { EditAuanComponent } from './control-activity/auan-register/edit-auan/edit-auan.component';
 import { EditAuanInspectionPickerComponent } from './control-activity/auan-register/edit-auan-inspection-picker/edit-auan-inspection-picker.component';
 import { CrossCheckResultsAssignedUserComponent } from './cross-checks/cross-check-results-assigned-user/cross-check-results-assigned-user.component';
 import { CrossCheckResultsResolutionComponent } from './cross-checks/cross-check-results-resolution/cross-check-results-resolution.component';
 import { StatisticalFormsComponent } from './statistical-forms/statistical-forms.component';
-import { PenalDecreesComponent } from './control-activity/penal-decrees/penal-decrees.component';
 import { EditPenalDecreeComponent } from './control-activity/penal-decrees/edit-penal-decree/edit-penal-decree.component';
 import { EditPenalDecreeAuanPickerComponent } from './control-activity/penal-decrees/edit-penal-decree-auan-picker/edit-penal-decree-auan-picker.component';
 import { StatisticalFormsApplicationsComponent } from './statistical-forms/applications/statistical-forms-applications.component';
@@ -130,11 +127,9 @@ import { InspectionToggleListComponent } from './control-activity/inspections/co
 import { InspectionToggleComponent } from './control-activity/inspections/components/inspection-toggle/inspection-toggle.component';
 import { InspectedShipSectionsComponent } from './control-activity/inspections/components/inspected-ship-sections/inspected-ship-sections.component';
 import { PermitLicensesTableComponent } from './control-activity/inspections/components/permit-licenses-table/permit-licenses-table.component';
-import { DecreeStatusesTableComponent } from './control-activity/penal-decrees/decree-statuses-table/decree-statuses-table.component';
 import { ReviewOldInspectionComponent } from './control-activity/inspections/dialogs/review-old-inspection/review-old-inspection.component';
 import { InspectedPermitLicensesTableComponent } from './control-activity/inspections/components/inspected-permit-licenses-table/inspected-permit-licenses-table.component';
 import { InspectedLogBooksTableComponent } from './control-activity/inspections/components/inspected-log-books-table/inspected-log-books-table.component';
-import { PenalPointsComponent } from './control-activity/awarded-points/penal-points.component';
 import { EditPenalPointsComponent } from './control-activity/awarded-points/edit-penal-points/edit-penal-points.component';
 import { EditPenalPointsDecreePickerComponent } from './control-activity/awarded-points/edit-penal-points-decree-picker/edit-penal-points-decree-picker.component';
 import { EditPenalPointsComplaintStatusComponent } from './control-activity/awarded-points/edit-penal-points-complaint-status/edit-penal-points-complaint-status.component';
@@ -252,7 +247,6 @@ import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
         DashboardCardComponent,
         CommercialFishingApplicationsComponent,
         CommercialFishingRegisterComponent,
-        InspectionsComponent,
         InspectorsTableComponent,
         InspectionMapViewerComponent,
         InspectedShipComponent,
@@ -296,14 +290,12 @@ import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
         CrossChecksResultsComponent,
         EditCrossCheckComponent,
         ReportSqlComponent,
-        AuanRegisterComponent,
         EditAuanComponent,
         EditAuanInspectionPickerComponent,
         CrossCheckResultsAssignedUserComponent,
         CrossCheckResultsResolutionComponent,
         StatisticalFormsComponent,
         StatisticalFormsApplicationsComponent,
-        PenalDecreesComponent,
         EditPenalDecreeComponent,
         EditPenalDecreeAuanPickerComponent,
         ReportViewComponent,
@@ -319,8 +311,6 @@ import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
         EditDecreeWarningComponent,
         EditPenalDecreeStatusComponent,
         DecreeAuanBasicInfoComponent,
-        DecreeStatusesTableComponent,
-        PenalPointsComponent,
         EditPenalPointsComponent,
         EditPenalPointsDecreePickerComponent,
         EditPenalPointsComplaintStatusComponent,
@@ -442,7 +432,6 @@ import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
         DashboardCardComponent,
         CommercialFishingApplicationsComponent,
         CommercialFishingRegisterComponent,
-        InspectionsComponent,
         InspectorsTableComponent,
         InspectionMapViewerComponent,
         InspectedShipComponent,
@@ -486,14 +475,12 @@ import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
         CrossChecksResultsComponent,
         EditCrossCheckComponent,
         ReportSqlComponent,
-        AuanRegisterComponent,
         EditAuanComponent,
         EditAuanInspectionPickerComponent,
         CrossCheckResultsAssignedUserComponent,
         CrossCheckResultsResolutionComponent,
         StatisticalFormsComponent,
         StatisticalFormsApplicationsComponent,
-        PenalDecreesComponent,
         EditPenalDecreeComponent,
         EditPenalDecreeAuanPickerComponent,
         ReportViewComponent,
@@ -509,8 +496,6 @@ import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
         EditDecreeWarningComponent,
         EditPenalDecreeStatusComponent,
         DecreeAuanBasicInfoComponent,
-        DecreeStatusesTableComponent,
-        PenalPointsComponent,
         EditPenalPointsComponent,
         EditPenalPointsDecreePickerComponent,
         EditPenalPointsComplaintStatusComponent,

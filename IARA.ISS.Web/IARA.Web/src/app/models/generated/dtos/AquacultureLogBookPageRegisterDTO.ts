@@ -48,5 +48,8 @@ export class AquacultureLogBookPageRegisterDTO {
     public legalBuyerId?: number;
 
     @StrictlyTyped(Boolean)
+    public hasInspections?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isActive?: boolean;
 }

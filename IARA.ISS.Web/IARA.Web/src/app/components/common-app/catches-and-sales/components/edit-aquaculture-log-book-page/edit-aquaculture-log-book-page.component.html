@@ -49,7 +49,11 @@
                 </tl-input>
             </div>
             <div *ngIf="!viewMode && form.get('fillDateControl')?.errors?.logBookPageDateLocked" fxFlex="100" fxLayout="row">
-                <mat-error>
+                <mat-error *ngIf="!isLogBookPageDateLockedError && !logBookPageDateLockedViaDaysAfterMonth" class="warn-orange-color">
+                    * {{ 'catches-and-sales.aquaculture-page-cannot-add-page-for-chosen-locked-fill-date-error' | tlTranslate }} {{ form.get('fillDateControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.aquaculture-page-because-days-have-past-since-pervious-month' | tlTranslate }}. {{ 'catches-and-sales.aquaculture-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                </mat-error>
+
+                <mat-error *ngIf="isLogBookPageDateLockedError || logBookPageDateLockedViaDaysAfterMonth">
                     * {{ 'catches-and-sales.aquaculture-page-cannot-add-page-for-chosen-locked-fill-date-error' | tlTranslate }} {{ form.get('fillDateControl').errors.logBookPageDateLocked.lockedPeriod }} {{ 'catches-and-sales.aquaculture-page-because-days-have-past-since-pervious-month' | tlTranslate }}. {{ 'catches-and-sales.aquaculture-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
                 </mat-error>
             </div>

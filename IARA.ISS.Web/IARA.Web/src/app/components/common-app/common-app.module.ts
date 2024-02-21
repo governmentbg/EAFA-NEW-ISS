@@ -65,6 +65,11 @@ import { LogBooksComponent } from './commercial-fishing/components/log-books/log
 import { EditPermitLicenseFishingGearsComponent } from './commercial-fishing/components/permit-license-fishing-gears/edit-permit-license-fishing-gears.component';
 import { EditSuspensionComponent } from './commercial-fishing/components/suspensions/components/edit-suspension/edit-suspension.component';
 import { SuspensionsComponent } from './commercial-fishing/components/suspensions/suspensions.component';
+import { AuanRegisterComponent } from './control-activity/auan-register/auan-register.component';
+import { PenalPointsComponent } from './control-activity/awarded-points/penal-points.component';
+import { InspectionsComponent } from './control-activity/inspections/inspections-register.component';
+import { DecreeStatusesTableComponent } from './control-activity/penal-decrees/decree-statuses-table/decree-statuses-table.component';
+import { PenalDecreesComponent } from './control-activity/penal-decrees/penal-decrees.component';
 import { DuplicateEntriesTableComponent } from './duplicates/duplicate-entires-table/duplicate-entries-table.component';
 import { DuplicatesApplicationComponent } from './duplicates/duplicates-application.component';
 import { AcquiredFishingCapacityComponent } from './fishing-capacity/acquired-fishing-capacity/acquired-fishing-capacity.component';
@@ -217,7 +222,12 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         ChoosePermitLicenseFromInspectionComponent,
         EditPermitLicenseFishingGearsComponent,
         EnterOnlineTicketNumberComponent,
-        ChangeUserDataLegalComponent
+        ChangeUserDataLegalComponent,
+        DecreeStatusesTableComponent,
+        PenalDecreesComponent,
+        InspectionsComponent,
+        PenalPointsComponent,
+        AuanRegisterComponent
     ],
     imports: [
         TLCommonModule,
@@ -328,7 +338,12 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         ChoosePermitLicenseFromInspectionComponent,
         EditPermitLicenseFishingGearsComponent,
         ChangeUserDataLegalComponent,
-        UserRegistrationModule
+        UserRegistrationModule,
+        DecreeStatusesTableComponent,
+        PenalDecreesComponent,
+        InspectionsComponent,
+        PenalPointsComponent,
+        AuanRegisterComponent
     ],
     providers: [CurrencyPipe, TLDateDifferencePipe, DatePipe]
 })

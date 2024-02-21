@@ -4,6 +4,7 @@ import { LogBookPageStatusesEnum } from '@app/enums/log-book-page-statuses.enum'
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { AquacultureLogBookPageRegisterDTO } from '@app/models/generated/dtos/AquacultureLogBookPageRegisterDTO';
 import { AquaculturePageRecordChanged } from './models/aquaculture-page-record-changed.model';
+import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 
 
 @Component({
@@ -41,6 +42,9 @@ export class AquaculturePagesTableComponent {
     @Input()
     public recordsPerPage: number = 10;
 
+    @Input()
+    public canReadInspections: boolean = false;
+
     @Output()
     public onActiveRecordChanged: EventEmitter<AquaculturePageRecordChanged> = new EventEmitter<AquaculturePageRecordChanged>();
 
@@ -57,6 +61,7 @@ export class AquaculturePagesTableComponent {
     public onRestoreAnnulledAquacultureLogBookPage: EventEmitter<AquacultureLogBookPageRegisterDTO> = new EventEmitter<AquacultureLogBookPageRegisterDTO>();
 
     public readonly logBookPageStatusesEnum: typeof LogBookPageStatusesEnum = LogBookPageStatusesEnum;
+    public readonly logBookTypesEnum: typeof LogBookTypesEnum = LogBookTypesEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
     public activeRecordChangedEvent(page: AquacultureLogBookPageRegisterDTO, viewMode: boolean = false): void {

@@ -8,6 +8,7 @@ import { TransportationLogBookPageRegisterDTO } from '@app/models/generated/dtos
 import { ShipPageRecordChanged } from './models/ship-page-record-changed.model';
 import { PagesPermissions } from './models/pages-permissions.model';
 import { CommonUtils } from '@app/shared/utils/common.utils';
+import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 
 
 @Component({
@@ -41,6 +42,9 @@ export class ShipPagesAndDeclarationsTableComponent {
 
     @Input()
     public recordsPerPage: number = 10;
+
+    @Input()
+    public canReadInspections: boolean = false;
 
     @Input()
     public set pagesPermissions(value: PagesPermissions | undefined) {
@@ -95,6 +99,7 @@ export class ShipPagesAndDeclarationsTableComponent {
     public onAddFirstSaleDocument: EventEmitter<ShipLogBookPageRegisterDTO> = new EventEmitter<ShipLogBookPageRegisterDTO>();
 
     public readonly logBookPageStatusesEnum: typeof LogBookPageStatusesEnum = LogBookPageStatusesEnum;
+    public readonly logBookTypesEnum: typeof LogBookTypesEnum = LogBookTypesEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
     public _pagesPermissions: PagesPermissions = new PagesPermissions();

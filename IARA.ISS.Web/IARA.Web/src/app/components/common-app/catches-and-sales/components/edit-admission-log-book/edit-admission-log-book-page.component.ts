@@ -50,7 +50,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
     public isAdd: boolean = false;
 
     public noAvailableProducts: boolean = false;
-    public isLogBookPageDateLockedError: boolean = true;
+    public isLogBookPageDateLockedError: boolean = false;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
@@ -479,7 +479,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
 
             const hoursDifference: number = CatchesAndSalesUtils.convertDateDifferenceToHours(difference);
 
-            if (hoursDifference > this.lockAdmissionLogBookPeriod) {
+            if (hoursDifference > this.lockAdmissionLogBookPeriod && this.isLogBookPageDateLockedError) {
                 return {
                     logBookPageDateLocked: {
                         lockedPeriod: this.lockAdmissionLogBookPeriod,
