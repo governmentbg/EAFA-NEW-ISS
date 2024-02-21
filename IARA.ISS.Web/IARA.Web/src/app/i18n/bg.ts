@@ -4188,7 +4188,7 @@
         'ship-page-status': 'Статус',
         'ship-page-ship-and-fishing-gear-panel': 'Кораб и риболовен уред',
         'ship-page-ship': 'Кораб',
-        'ship-page-permit-license': 'Удостоверение за стопански риболов',
+        'ship-page-permit-license': 'Име на капитана',
         'ship-page-fishing-gear': 'Вид риболовен уред',
         'ship-page-fishing-gear-count': 'Брой риболовни уреди',
         'ship-page-fishing-gear-hook-count': 'Брой куки на риболовния уред',

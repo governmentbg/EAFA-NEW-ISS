@@ -180,6 +180,19 @@
                     </span>
                 </mat-error>
             </div>
+
+            <!-- Невъзможност за добавяне/редактиране на каквито и да е декларации след като са минали 10 дена от края на предходния месец -->
+            <div *ngIf="!viewMode && form.get('unloadDateTimeControl')?.errors?.logBookPageDatePeriodLocked" fxFlex="100" fxLayout="row">
+                <mat-error>
+                    * {{ 'catches-and-sales.ship-page-cannot-add-for-chosen-unloading-date' | tlTranslate }} {{ form.get('unloadDateTimeControl').errors.logBookPageDatePeriodLocked.lockedPeriod }} {{ 'catches-and-sales.ship-page-days-have-past-from-previous-month' | tlTranslate }}. {{ 'catches-and-sales.ship-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                </mat-error>
+            </div>
+
+            <div *ngIf="!viewMode && form.get('fishTripEndDateTimeControl')?.errors?.logBookPageDatePeriodLocked" fxFlex="100" fxLayout="row">
+                <mat-error>
+                    * {{ 'catches-and-sales.ship-page-cannot-add-for-chosen-trip-end-date' | tlTranslate }} {{ form.get('fishTripEndDateTimeControl').errors.logBookPageDatePeriodLocked.lockedPeriod }} {{ 'catches-and-sales.ship-page-days-have-past-from-previous-month' | tlTranslate }}. {{ 'catches-and-sales.ship-page-to-add-page-after-locked-period-contanct-admin' | tlTranslate }}.
+                </mat-error>
+            </div>
         </div>
     </tl-expansion-panel>
     <!-- Улов и информация за разтоварване -->
@@ -426,9 +439,9 @@
                                     </ng-template>
                                 </data-template-column>
                             </tl-data-table>
-                            <div *ngIf="declarationOfOriginCatchRecordsQuantities !== undefined && declarationOfOriginCatchRecordsQuantities !== null && declarationOfOriginCatchRecordsQuantities.size > 0" 
-                                 fxLayout="row" 
-                                 fxFlex="100" 
+                            <div *ngIf="declarationOfOriginCatchRecordsQuantities !== undefined && declarationOfOriginCatchRecordsQuantities !== null && declarationOfOriginCatchRecordsQuantities.size > 0"
+                                 fxLayout="row"
+                                 fxFlex="100"
                                  fxLayoutAlign="end center">
                                 <mat-hint fxFlex="100">
                                     {{ 'catches-and-sales.ship-page-catch-record-quantity-sums' | tlTranslate }}
