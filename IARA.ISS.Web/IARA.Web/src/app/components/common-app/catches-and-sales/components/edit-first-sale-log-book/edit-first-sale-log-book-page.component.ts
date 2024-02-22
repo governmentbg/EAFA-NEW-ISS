@@ -516,10 +516,6 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
             const logBookTypeId: number = this.model.logBookTypeId!;
             const logBookId: number = this.model.logBookId!;
 
-            if (CatchesAndSalesUtils.checkIfPageDateIsUnlocked(this.logBookPageEditExceptions, this.currentUserId, logBookTypeId, logBookId, saleDate, now)) {
-                return null;
-            }
-
             const difference: DateDifference | undefined = DateUtils.getDateDifference(saleDate, now);
 
             if (difference === null || difference === undefined) {
@@ -532,7 +528,9 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
 
             const hoursDifference: number = CatchesAndSalesUtils.convertDateDifferenceToHours(difference);
 
-            if (CatchesAndSalesUtils.pageHasLogBookPageDateLockedViaDaysAfterMonth(saleDate, now, this.lockFirstSaleLogBookPeriods.lockFirstSaleLogBookPeriod)) {
+            if (CatchesAndSalesUtils.pageHasLogBookPageDateLockedViaDaysAfterMonth(saleDate, now, this.lockFirstSaleLogBookPeriods.lockFirstSaleLogBookPeriod)
+                && !CatchesAndSalesUtils.checkIfPageDateIsUnlocked(this.logBookPageEditExceptions, this.currentUserId, logBookTypeId, logBookId, saleDate, now)
+            ) {
                 return {
                     logBookPageDatePeriodLocked: {
                         hasAboveLimitAnnualTurnOver: false,
@@ -542,28 +540,27 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
                 };
             }
 
-            if (this.isLogBookPageDateLockedError) {
-                if (this.model.hasAbove200KAnnualTurnover === true) {
-                    if (hoursDifference > this.lockFirstSaleLogBookPeriods.lockFirstSaleAbove200KLogBookAfterHours) {
-                        return {
-                            logBookPageDateLocked: {
-                                hasAboveLimitAnnualTurnOver: true,
-                                lockedPeriod: this.lockFirstSaleLogBookPeriods.lockFirstSaleAbove200KLogBookAfterHours,
-                                periodType: 'hours'
-                            }
-                        };
-                    }
+            //предупреждения
+            if (this.model.hasAbove200KAnnualTurnover === true) {
+                if (hoursDifference > this.lockFirstSaleLogBookPeriods.lockFirstSaleAbove200KLogBookAfterHours) {
+                    return {
+                        logBookPageDateLocked: {
+                            hasAboveLimitAnnualTurnOver: true,
+                            lockedPeriod: this.lockFirstSaleLogBookPeriods.lockFirstSaleAbove200KLogBookAfterHours,
+                            periodType: 'hours'
+                        }
+                    };
                 }
-                else {
-                    if (hoursDifference > this.lockFirstSaleLogBookPeriods.lockFirstSaleBelow200KLogBookAfterHours) {
-                        return {
-                            logBookPageDateLocked: {
-                                hasAboveLimitAnnualTurnOver: false,
-                                lockedPeriod: this.lockFirstSaleLogBookPeriods.lockFirstSaleBelow200KLogBookAfterHours,
-                                periodType: 'hours'
-                            }
-                        };
-                    }
+            }
+            else {
+                if (hoursDifference > this.lockFirstSaleLogBookPeriods.lockFirstSaleBelow200KLogBookAfterHours) {
+                    return {
+                        logBookPageDateLocked: {
+                            hasAboveLimitAnnualTurnOver: false,
+                            lockedPeriod: this.lockFirstSaleLogBookPeriods.lockFirstSaleBelow200KLogBookAfterHours,
+                            periodType: 'hours'
+                        }
+                    };
                 }
             }
             return null;

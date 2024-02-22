@@ -108,7 +108,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     public isAdd: boolean = false;
 
     public allCatchIsTransboardedValue: boolean = false;
-    public isLogBookPageDateLockedError: boolean = true;
+    public isLogBookPageDateLockedError: boolean = false;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
@@ -212,7 +212,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         this.lockShipLogBookPeriods = new LockShipLogBookPeriodsModel({
             lockShipUnder10MLogBookAfterDays: systemParameters.lockShipUnder10MLogBookAfterDays,
             lockShip10M12MLogBookAfterHours: systemParameters.lockShip10M12MLogBookAfterHours,
-            lockShipOver12MLogBookAfterHours: systemParameters.lockShipOver12MLogBookAfterHours
+            lockShipOver12MLogBookAfterHours: systemParameters.lockShipOver12MLogBookAfterHours,
+            lockPageAfterDays: systemParameters.addShipPagesDaysTolerance
         });
 
         if (this.id !== null && this.id !== undefined) {
@@ -1640,10 +1641,6 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             const logBookId: number = this.model.logBookId!;
             const logBookTypeId: number = this.model.logBookTypeId!;
 
-            if (CatchesAndSalesUtils.checkIfPageDateIsUnlocked(this.logBookPageEditExceptions, this.currentUserId, logBookTypeId, logBookId, date, now)) { // този дневник го има в изключение за избраната дата за потребител и/или тип дневник, и/или дневник
-                return null;
-            }
-
             const difference: DateDifference | undefined = DateUtils.getDateDifference(date, now);
 
             if (difference === null || difference === undefined) {
@@ -1656,6 +1653,20 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
             const ship = ShipsUtils.get(this.ships, this.model.shipId!);
 
+            if (CatchesAndSalesUtils.pageHasLogBookPageDateLockedViaDaysAfterMonth(date, now, this.lockShipLogBookPeriods.lockPageAfterDays)
+                && !CatchesAndSalesUtils.checkIfPageDateIsUnlocked(this.logBookPageEditExceptions, this.currentUserId, logBookTypeId, logBookId, date, now)
+            ) { // този дневник го няма в изключение за избраната дата за потребител и/или тип дневник, и/или дневник
+
+                return {
+                    logBookPageDatePeriodLocked: {
+                        shipLength: ship.totalLength!,
+                        lockedPeriod: this.lockShipLogBookPeriods.lockShipUnder10MLogBookAfterDays,
+                        periodType: 'days-after-month'
+                    }
+                };
+            }
+
+            //само предупреждения
             if (ship.totalLength! < 10) { // При кораби под 10 метра
                 if (CatchesAndSalesUtils.pageHasLogBookPageDateLockedViaDaysAfterMonth(date, now, this.lockShipLogBookPeriods.lockShipUnder10MLogBookAfterDays)) {
                     return {
