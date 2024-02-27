@@ -125,8 +125,8 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     public readonly logBookGroupsEnum: typeof LogBookGroupsEnum = LogBookGroupsEnum;
 
     public logBooks: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[] = [];
-    public renewalLogBooks: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[] = []; 
-    public allRenewalLogBooks: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[] = []; 
+    public renewalLogBooks: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[] = [];
+    public allRenewalLogBooks: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[] = [];
     public logBookStatuses: NomenclatureDTO<number>[] = [];
     public logBookTypes: NomenclatureDTO<number>[] = [];
 
@@ -231,7 +231,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     public writeValue(value: LogBookEditDTO[] | CommercialFishingLogBookEditDTO[]): void {
         if (value !== null && value !== undefined) {
             this.loader.load(() => {
-                
+
                 if (this.isRegister || (this.permitLicenseId !== undefined && this.permitLicenseId !== null)) {
                     this.logBooks = value.slice();
 
@@ -385,7 +385,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                                                 this.handleInvalidLogBookLicensePagesRangeError(logBook, false, logBook, error.messages[0], results);
                                             }
                                             else if (error?.code === ErrorCode.MoreThanOneActiveOnlineLogBook) {
-                                                this.handleMoreThanOneActiveOnlineLogBookError();
+                                                this.handleMoreThanOneActiveOnlineLogBookError(error?.messages);
                                             }
                                         }
                                     });
@@ -883,7 +883,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
         logBookNumber: string,
         logBookForRenew: CommercialFishingLogBookEditDTO[] | undefined
     ): void {
-        let ranges: OverlappingLogBooksParameters[] = [];
+        const ranges: OverlappingLogBooksParameters[] = [];
         let ignoreLogBookConflicts = false;
 
         if (model instanceof CommercialFishingLogBookEditDTO) {
@@ -954,8 +954,15 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
         });
     }
 
-    private handleMoreThanOneActiveOnlineLogBookError(): void {
-        const errorMsg: string = this.translate.getValue('catches-and-sales.more-than-one-active-online-log-book-present-error');
+    private handleMoreThanOneActiveOnlineLogBookError(messages: string[]): void {
+        let errorMsg: string = this.isForPermitLicense
+            ? this.translate.getValue('catches-and-sales.more-than-one-active-online-log-book-present-permit-license-error')
+            : this.translate.getValue('catches-and-sales.more-than-one-active-online-log-book-present-error');
+
+        if (messages !== null && messages !== undefined && messages.length > 0) {
+            errorMsg += messages.join(', ');
+        }
+
         this.snackbar.open(errorMsg, undefined, {
             duration: RequestProperties.DEFAULT.showExceptionDurationErr,
             panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
@@ -1002,7 +1009,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                         this.handleInvalidLogBookLicensePagesRangeError(logBook, isEdit, model, error.messages[0], undefined);
                     }
                     else if (error?.code === ErrorCode.MoreThanOneActiveOnlineLogBook) {
-                        this.handleMoreThanOneActiveOnlineLogBookError();
+                        this.handleMoreThanOneActiveOnlineLogBookError(error?.messages);
                     }
                 }
             });

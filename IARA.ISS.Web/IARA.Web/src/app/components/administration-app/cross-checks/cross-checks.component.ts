@@ -26,7 +26,7 @@ import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/ac
     selector: 'cross-checks',
     templateUrl: './cross-checks.component.html'
 })
-export class CrossChecksComponent implements AfterViewInit {
+export class CrossChecksComponent implements OnInit, AfterViewInit {
     public translate: FuseTranslationLoaderService;
     public form!: FormGroup;
 
@@ -36,9 +36,11 @@ export class CrossChecksComponent implements AfterViewInit {
     public readonly canRestoreRecords: boolean;
     public readonly canExecuteRecords: boolean;
 
-    public levels: NomenclatureDTO<number>[];
+    public levels: NomenclatureDTO<number>[] = [];
+    public groups: NomenclatureDTO<number>[] = [];
+
     public execFrequencies: typeof CrossChecksAutoExecFrequencyEnum = CrossChecksAutoExecFrequencyEnum;
-    public autoExecFrequencyCodes: NomenclatureDTO<CrossChecksAutoExecFrequencyEnum>[];
+    public autoExecFrequencyCodes: NomenclatureDTO<CrossChecksAutoExecFrequencyEnum>[] = [];
 
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
@@ -69,8 +71,6 @@ export class CrossChecksComponent implements AfterViewInit {
         this.canDeleteRecords = permissions.has(PermissionsEnum.CrossChecksDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.CrossChecksRestoreRecords);
         this.canExecuteRecords = permissions.has(PermissionsEnum.CrossChecksExecuteRecords);
-
-        this.levels = [];
 
         for (let i = 1; i < 6; ++i) {
             this.levels.push(new NomenclatureDTO<number>({
@@ -109,6 +109,14 @@ export class CrossChecksComponent implements AfterViewInit {
         ];
 
         this.buildForm();
+    }
+
+    public ngOnInit(): void {
+        this.service.getAllReportGroups().subscribe({
+            next: (groups: NomenclatureDTO<number>[]) => {
+                this.groups = groups;
+            }
+        });
     }
 
     public ngAfterViewInit(): void {
@@ -214,7 +222,7 @@ export class CrossChecksComponent implements AfterViewInit {
             nameControl: new FormControl(),
             checkedTableControl: new FormControl(),
             executionDataSourceControl: new FormControl(),
-            reportGroupNameControl: new FormControl(),
+            reportGroupControl: new FormControl(),
             levelControl: new FormControl(),
             autoExecFrequencyCodesControl: new FormControl()
         });
@@ -228,7 +236,7 @@ export class CrossChecksComponent implements AfterViewInit {
             name: filters.getValue('nameControl'),
             checkedTable: filters.getValue('checkedTableControl'),
             dataSource: filters.getValue('executionDataSourceControl'),
-            reportGroupName: filters.getValue('reportGroupNameControl'),
+            groupIds: filters.getValue('reportGroupControl'),
             errorLevels: filters.getValue('levelControl')
         });
 

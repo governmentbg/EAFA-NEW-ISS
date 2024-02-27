@@ -1,17 +1,21 @@
 ﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
     <search-panel [translateService]="translate">
         <div [formGroup]="form">
+            <!-- Код, име, таблица, валидност -->
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
                 <tl-input fxFlex="25"
                           formControlName="checkCodeControl"
                           label="{{ 'cross-check-results.check-code' | tlTranslate }}"
                           tooltipResourceName="cross-check-results.check-code-helper">
                 </tl-input>
-                <tl-input fxFlex="25"
-                          formControlName="checkNameControl"
-                          label="{{ 'cross-check-results.check-name' | tlTranslate }}"
-                          tooltipResourceName="cross-check-results.check-name-helper">
-                </tl-input>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="checkNameControl"
+                                 [options]="checkNames"
+                                 [templateOptions]="true"
+                                 [hasSelectedValueFromDropdownValidator]="false"
+                                 label="{{ 'cross-check-results.check-name' | tlTranslate }}"
+                                 tooltipResourceName="cross-check-results.check-name-helper">
+                </tl-autocomplete>
                 <tl-input fxFlex="25"
                           formControlName="checkTableNameControl"
                           label="{{ 'cross-check-results.check-table-name' | tlTranslate }}"
@@ -23,24 +27,25 @@
                                tooltipResourceName="cross-check-results.valid-helper">
                 </tl-date-range>
             </div>
+            <!-- Статус, основание за приключване на резултата, назначен потребител, идентификатор на записа -->
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
                 <tl-select fxFlex="25"
-                           label="{{ 'cross-check-results.resolution' | tlTranslate }}"
                            formControlName="resolutionControl"
                            [options]="resolutions"
                            [isMultiple]="true"
+                           label="{{ 'cross-check-results.resolution' | tlTranslate }}"
                            tooltipResourceName="cross-check-results.resolution-helper">
                 </tl-select>
                 <tl-autocomplete fxFlex="25"
-                                 label="{{ 'cross-check-results.resolution-types' | tlTranslate }}"
-                                 formControlName="resolutionTypeControl"
                                  [options]="resolutionTypes"
+                                 formControlName="resolutionTypeControl"
+                                 label="{{ 'cross-check-results.resolution-types' | tlTranslate }}"
                                  tooltipResourceName="cross-check-results.resolution-types-helper">
                 </tl-autocomplete>
                 <tl-autocomplete fxFlex="25"
-                                 label="{{ 'cross-check-results.assigned-user' | tlTranslate }}"
-                                 formControlName="assignedUserControl"
                                  [options]="assignedUsers"
+                                 formControlName="assignedUserControl"
+                                 label="{{ 'cross-check-results.assigned-user' | tlTranslate }}"
                                  tooltipResourceName="cross-check-results.assigned-user-helper">
                 </tl-autocomplete>
                 <tl-input fxFlex="25"
@@ -49,6 +54,7 @@
                           tooltipResourceName="cross-check-results.check-table-id-helper">
                 </tl-input>
             </div>
+            <!-- Описание на грешката, група на кръстосани проверки -->
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" fxFlexFill>
                 <tl-input fxFlex="25"
                           formControlName="errorDescriptionControl"
@@ -56,10 +62,10 @@
                           tooltipResourceName="cross-check-results.check-error-description-helper">
                 </tl-input>
                 <tl-select fxFlex="25"
-                           label="{{ 'cross-check-results.report-group' | tlTranslate }}"
-                           formControlName="groupsControl"
                            [options]="reportGroups"
                            [isMultiple]="true"
+                           formControlName="groupsControl"
+                           label="{{ 'cross-check-results.report-group' | tlTranslate }}"
                            tooltipResourceName="cross-check-results.groups-helper">
                 </tl-select>
                 <div fxFlex="50"></div>

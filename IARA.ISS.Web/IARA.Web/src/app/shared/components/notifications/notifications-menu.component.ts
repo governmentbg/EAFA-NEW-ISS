@@ -7,7 +7,6 @@ import { UserNotification } from '@app/shared/notifications/models/user-notifica
 import { UserNotificationsList } from '@app/shared/notifications/models/user-notifications-list.model';
 import { NotificationsHubService } from '@app/shared/notifications/notifications-hub-service';
 import { Environment } from '@env/environment';
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { NotificationTypes } from '@app/shared/notifications/notification-types.enum';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { PagedDatasource } from '@app/shared/utils/paged-datasource/paged-datasource';

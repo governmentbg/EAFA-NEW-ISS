@@ -817,12 +817,6 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
         // value changes
 
-        this.form.get('fillDateControl')!.valueChanges.subscribe({
-            next: (fillDate: Date | undefined) => {
-                this.onFillDateTimeChanged(fillDate);
-            }
-        });
-
         this.form.get('fishingGearRegisterControl')!.valueChanges.subscribe({
             next: (value: FishingGearRegisterNomenclatureDTO | string | undefined) => {
                 this.onFishingGearRegisterChanged(value);
@@ -855,7 +849,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         });
 
         this.form.get('unloadDateTimeControl')!.valueChanges.subscribe({
-            next: (value: Moment | undefined) => {
+            next: (unloadDate: Moment | null | undefined) => {
+                this.onUnloadDateTimeChanged(unloadDate);
                 this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
             }
         });
@@ -1322,12 +1317,12 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         this.form.get('fishTripEndDateTimeControl')!.updateValueAndValidity({ emitEvent: false });
     }
 
-    private onFillDateTimeChanged(fillDate: Date | null | undefined): void {
-        if (fillDate !== null && fillDate !== undefined) {
-            if (!this.viewMode) {
-                const fishTripStartDateTime: Moment = moment(new Date(fillDate.setHours(6, 0, 0)));
-                this.form.get('fishTripStartDateTimeControl')!.setValue(fishTripStartDateTime);
-                this.form.get('fishTripStartDateTimeControl')!.updateValueAndValidity({ emitEvent: false });
+    private onUnloadDateTimeChanged(unloadDate: Moment | null | undefined): void {
+        if (!this.viewMode) {
+            if (unloadDate !== null && unloadDate !== undefined && unloadDate.isValid()) {
+                const fillDate: Date = new Date(unloadDate.toDate());
+                this.form.get('fillDateControl')!.setValue(fillDate);
+                this.form.get('fillDateControl')!.updateValueAndValidity({ emitEvent: false });
             }
         }
     }
