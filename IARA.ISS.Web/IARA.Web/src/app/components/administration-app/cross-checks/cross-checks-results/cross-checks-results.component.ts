@@ -53,6 +53,7 @@ export class CrossChecksResultsComponent implements AfterViewInit {
     public resolutionTypes: NomenclatureDTO<number>[] = [];
     public assignedUsers: NomenclatureDTO<number>[] = [];
     public reportGroups: NomenclatureDTO<number>[] = [];
+    public checkNames: NomenclatureDTO<number>[] = [];
 
     private readonly commonNomenclaturesService: CommonNomenclatures;
 
@@ -111,12 +112,14 @@ export class CrossChecksResultsComponent implements AfterViewInit {
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CheckResolutionTypes, this.service.getCheckResolutionTypes.bind(this.service)),
             this.commonNomenclaturesService.getUserNames(),
             this.service.getAllReportGroups(),
+            this.service.getCrossCheckNames()
         ).toPromise();
 
         this.resolutions = nomenclatures[0];
         this.resolutionTypes = nomenclatures[1];
         this.assignedUsers = nomenclatures[2];
         this.reportGroups = nomenclatures[3];
+        this.checkNames = nomenclatures[4];
 
         this.grid = new DataTableManager<CrossCheckResultDTO, CrossCheckResultsFilters>({
             tlDataTable: this.datatable,
@@ -288,7 +291,6 @@ export class CrossChecksResultsComponent implements AfterViewInit {
             freeTextSearch: filters.searchText,
             showInactiveRecords: filters.showInactiveRecords,
             checkCode: filters.getValue('checkCodeControl'),
-            checkName: filters.getValue('checkNameControl'),
             checkTableName: filters.getValue('checkTableNameControl'),
             resolutionIds: filters.getValue('resolutionControl'),
             resolutionTypeId: filters.getValue('resolutionTypeControl'),
@@ -299,6 +301,16 @@ export class CrossChecksResultsComponent implements AfterViewInit {
             errorDescription: filters.getValue('errorDescriptionControl'),
             groupIds: filters.getValue('groupsControl')
         });
+
+        const check: number | string | undefined = filters.getValue('checkNameControl');
+        if (check !== undefined && check !== null) {
+            if (typeof check === 'number') {
+                result.checkId = check;
+            }
+            else {
+                result.checkName = check;
+            }
+        }
 
         return result;
     }

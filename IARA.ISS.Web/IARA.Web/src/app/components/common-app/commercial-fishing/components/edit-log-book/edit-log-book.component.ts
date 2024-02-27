@@ -446,10 +446,10 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                         this.handleInvalidLogBookLicensePagesRangeError(error.messages[0], dialogClose);
                     }
                     else if (error?.code === ErrorCode.MoreThanOneActiveShipLogBook) {
-                        this.handleMoreThanOneActiveLogBookError(true);
+                        this.handleMoreThanOneActiveLogBookError(true, error.messages);
                     }
                     else if (error?.code === ErrorCode.MoreThanOneActiveOnlineLogBook) {
-                        this.handleMoreThanOneActiveLogBookError();
+                        this.handleMoreThanOneActiveLogBookError(false, error.messages);
                     }
                 }
             });
@@ -467,20 +467,31 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                         this.handleInvalidLogBookLicensePagesRangeError(error.messages[0], dialogClose);
                     }
                     else if (error?.code === ErrorCode.MoreThanOneActiveShipLogBook) {
-                        this.handleMoreThanOneActiveLogBookError(true);
+                        this.handleMoreThanOneActiveLogBookError(true, error?.messages);
                     }
                     else if (error?.code === ErrorCode.MoreThanOneActiveOnlineLogBook) {
-                        this.handleMoreThanOneActiveLogBookError();
+                        this.handleMoreThanOneActiveLogBookError(false, error?.messages);
                     }
                 }
             });
         }
     }
 
-    private handleMoreThanOneActiveLogBookError(isShipLogBook: boolean = false): void {
-        const errorMsg: string = isShipLogBook
-            ? this.translate.getValue('catches-and-sales.more-than-one-active-ship-log-book-present-error')
-            : this.translate.getValue('catches-and-sales.more-than-one-active-online-log-book-present-error');
+    private handleMoreThanOneActiveLogBookError(isShipLogBook: boolean = false, messages: string[]): void {
+        let errorMsg: string;
+
+        if (this.isForPermitLicense) {
+            errorMsg = isShipLogBook
+                ? this.translate.getValue('catches-and-sales.more-than-one-active-ship-log-book-present-permit-license-error')
+                : this.translate.getValue('catches-and-sales.more-than-one-active-online-log-book-present-permit-license-error');
+        }
+        else {
+            errorMsg = this.translate.getValue('catches-and-sales.more-than-one-active-online-log-book-present-error');
+        }
+
+        if (messages !== undefined && messages !== null && messages.length > 0) {
+            errorMsg += messages.join(', ');
+        }
 
         this.snackbar.open(errorMsg, undefined, {
             duration: RequestProperties.DEFAULT.showExceptionDurationErr,

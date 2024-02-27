@@ -15,6 +15,7 @@ export class CrossCheckResultsFilters extends BaseRequestModel {
 
     
     public checkCode: string | undefined;
+    public checkId: number | undefined;
     public checkName: string | undefined;
     public checkTableName: string | undefined;
     public tableId: string | undefined;

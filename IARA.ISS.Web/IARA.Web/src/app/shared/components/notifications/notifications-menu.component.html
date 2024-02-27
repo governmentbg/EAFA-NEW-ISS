@@ -18,6 +18,27 @@
               class="notifications-menu-panel"
               [overlapTrigger]="false"
               xPosition="before">
+        <!-- Header -->
+        <div class="notifications-header iara-blue-500" fxLayoutAlign="space-between center">
+            <div class="notifications-title" fxFlexOffset="5">
+                {{ 'notifications.title' | tlTranslate }}
+            </div>
+            <div fxLayout="row"
+                 fxLayoutGap="2px">
+                <tl-icon-button *ngIf="totalRecordsCount > 0"
+                                icon="fa-check-double"
+                                size="1.3"
+                                (buttonClicked)="markAllAsRead()"
+                                tooltipText="{{ 'notifications.mark-all-as-read' | tlTranslate }}">
+                </tl-icon-button>
+                <tl-icon-button [icon]="isConnected ? 'wifi' : 'wifi_off'"
+                                [disableRipple]="true"
+                                size="2"
+                                tooltipText="{{ isConnected ? ('notifications.connected' | tlTranslate) : 'notifications.disconnected' | tlTranslate }}">
+                </tl-icon-button>
+            </div>
+        </div>
+
         <span *ngIf="totalRecordsCount === 0; else hasNotifications"
               class="no-notifications-message"
               (click)="$event.stopPropagation(); $event.preventDefault()">
@@ -25,25 +46,6 @@
         </span>
 
         <ng-template #hasNotifications>
-            <!-- Header -->
-            <div class="py-4 pr-4 pl-4 iara-blue-500" fxLayoutAlign="space-between center">
-                <div class="notifications-title" fxFlexOffset="5">
-                    {{ 'notifications.title' | tlTranslate }}
-                </div>
-                <div fxLayout="row">
-                    <tl-icon-button icon="fa-check-double"
-                                    size="1.3"
-                                    (buttonClicked)="markAllAsRead()"
-                                    tooltipText="{{ 'notifications.mark-all-as-read' | tlTranslate }}">
-                    </tl-icon-button>
-                    <tl-icon-button [icon]="isConnected ? 'wifi' : 'wifi_off'"
-                                    size="2"
-                                    class="connected-icon"
-                                    tooltipText="{{ isConnected ? ('notifications.connected' | tlTranslate) : 'notifications.disconnected' | tlTranslate }}">
-                    </tl-icon-button>
-                </div>
-            </div>
-
             <cdk-virtual-scroll-viewport class="mat-menu-viewport"
                                          [itemSize]="recordSize"
                                          minBufferPx="500"

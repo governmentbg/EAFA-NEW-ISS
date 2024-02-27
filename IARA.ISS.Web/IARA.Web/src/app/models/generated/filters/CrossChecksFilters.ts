@@ -17,7 +17,7 @@ export class CrossChecksFilters extends BaseRequestModel {
     public name: string | undefined;
     public checkedTable: string | undefined;
     public dataSource: string | undefined;
-    public reportGroupName: string | undefined;
+    public groupIds: number[] | undefined;
     public errorLevels: number[] | undefined;
     public autoExecFrequencyCodes: string[] | undefined;
 }

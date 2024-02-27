@@ -134,6 +134,10 @@ export class CrossChecksService extends BaseAuditService {
         return this.requestService.get(this.area, this.controller, 'GetCheckResolutionTypes', { responseTypeCtr: NomenclatureDTO });
     }
 
+    public getCrossCheckNames(): Observable<NomenclatureDTO<number>[]> {
+        return this.requestService.get(this.area, this.controller, 'GetCrossCheckNames', { responseTypeCtr: NomenclatureDTO });
+    }
+
     public getActiveRoles(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetAllActiveRoles', { responseTypeCtr: NomenclatureDTO });
     }

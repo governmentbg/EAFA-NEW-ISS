@@ -19,6 +19,7 @@ export class TLIconButtonComponent {
     @Input() public iconClass: string | undefined;
     @Input() public iconColor: string | undefined;
     @Input() public disabled: boolean = false;
+    @Input() public disableRipple: boolean = false;
 
     @Output() public buttonClicked: EventEmitter<Event> = new EventEmitter<Event>();
     @Output() public mouseOver: EventEmitter<void> = new EventEmitter<void>();

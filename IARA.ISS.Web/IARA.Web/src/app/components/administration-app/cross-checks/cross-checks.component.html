@@ -1,6 +1,7 @@
 ﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFill>
     <search-panel [translateService]="translate">
         <div [formGroup]="form" fxLayout="column" fxLayoutGap="1em">
+            <!-- Име, проверявана таблица, източник на данни -->
             <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
                 <tl-input fxFlex="33"
                           formControlName="nameControl"
@@ -18,13 +19,15 @@
                           tooltipResourceName="cross-check.execution-data-source-helper">
                 </tl-input>
             </div>
-
+            <!-- Име на група, ниво, честота на автоматично изпълнение -->
             <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-                <tl-input fxFlex="33"
-                          formControlName="reportGroupNameControl"
-                          label="{{ 'cross-check.group-name' | tlTranslate }}"
-                          tooltipResourceName="cross-check.group-name-helper">
-                </tl-input>
+                <tl-select fxFlex="33"
+                           [options]="groups"
+                           [isMultiple]="true"
+                           formControlName="reportGroupControl"
+                           label="{{ 'cross-check.group-name' | tlTranslate }}"
+                           tooltipResourceName="cross-check.group-name-helper">
+                </tl-select>
                 <tl-select fxFlex="33"
                            label="{{ 'cross-check.level' | tlTranslate }}"
                            formControlName="levelControl"
