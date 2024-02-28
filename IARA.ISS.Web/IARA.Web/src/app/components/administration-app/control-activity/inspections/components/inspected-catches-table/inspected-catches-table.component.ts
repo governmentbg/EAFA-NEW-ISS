@@ -295,9 +295,9 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
         this.catchesFormGroup = new FormGroup({
             fishIdControl: new FormControl(undefined, [Validators.required]),
             catchInspectionTypeIdControl: new FormControl(undefined, [Validators.required]),
-            catchCountControl: new FormControl(undefined, [TLValidators.number(1, undefined, 0)]),
-            catchQuantityControl: new FormControl(undefined, [Validators.required, TLValidators.number(1)]),
-            unloadedQuantityControl: new FormControl(undefined, [TLValidators.number(1)]),
+            catchCountControl: new FormControl(undefined, [TLValidators.number(0, undefined, 0)]),
+            catchQuantityControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
+            unloadedQuantityControl: new FormControl(undefined, [TLValidators.number(0)]),
             allowedDeviationControl: new FormControl(undefined, [TLValidators.number(0, 100)]),
             catchZoneControl: new FormControl(undefined),
             shipControl: new FormControl(undefined),
