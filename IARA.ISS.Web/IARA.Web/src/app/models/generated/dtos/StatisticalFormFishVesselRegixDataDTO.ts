@@ -22,6 +22,12 @@ export class StatisticalFormFishVesselRegixDataDTO extends BaseRegixChecksDTO {
     @StrictlyTyped(Number)
     public applicationId?: number;
 
+    @StrictlyTyped(Number)
+    public shipId?: number;
+
+    @StrictlyTyped(Number)
+    public year?: number;
+
     @StrictlyTyped(ApplicationSubmittedByRegixDataDTO)
     public submittedBy?: ApplicationSubmittedByRegixDataDTO;
 

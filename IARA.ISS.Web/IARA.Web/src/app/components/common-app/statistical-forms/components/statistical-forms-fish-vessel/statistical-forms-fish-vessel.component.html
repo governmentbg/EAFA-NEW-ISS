@@ -42,8 +42,7 @@
     </application-submitted-for>
 
     <!--Основна информация за кораба-->
-    <tl-expansion-panel *ngIf="!showOnlyRegiXData"
-                        title="{{ 'statistical-forms.fish-vessel-basic-information-title' | tlTranslate }}"
+    <tl-expansion-panel title="{{ 'statistical-forms.fish-vessel-basic-information-title' | tlTranslate }}"
                         tooltipResourceName="statistical-forms.fish-vessel-basic-information-title-helper"
                         [validityChecker]="form"
                         [validityCheckerExtraCondition]="form.controls.shipNameControl.errors?.statFormExists !== true">
@@ -53,6 +52,7 @@
                               formControlName="yearControl"
                               tooltipResourceName="statistical-forms.fish-vessel-year-helper"
                               label="{{ 'statistical-forms.fish-vessel-year' | tlTranslate }}"
+                              [readonly]="showOnlyRegiXData"
                               [max]="currentDate">
                 </tl-date-year>
                 <tl-autocomplete fxFlex="50"
@@ -61,6 +61,7 @@
                                  [options]="ships"
                                  [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                                  [templateOptions]="true"
+                                 [readonly]="showOnlyRegiXData"
                                  label="{{ 'statistical-forms.ship-name' | tlTranslate }}">
                 </tl-autocomplete>
                 <div fxFlex="25"></div>
@@ -128,7 +129,7 @@
                         [title]="seaDaysTitle"
                         tooltipResourceName="statistical-forms.sea-days-title-helper"
                         [validityChecker]="form">
-        <div fxFlexFill fxLayout="column" fxLayoutGap="1em"> 
+        <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
             <tl-data-table fxFlexFill
                            #seaDaysTable
                            [rows]="gearSeaDays"

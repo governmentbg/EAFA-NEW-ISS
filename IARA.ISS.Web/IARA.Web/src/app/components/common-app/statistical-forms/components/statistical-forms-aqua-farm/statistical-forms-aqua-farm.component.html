@@ -39,7 +39,7 @@
                                [expectedResults]="expectedResults.submittedFor"
                                [hideRelation]="showOnlyRegiXData || !isApplication">
         <!-- Основна информация -->
-        <tl-expansion-panel *ngIf="!showOnlyRegiXData && showBasicInfo" 
+        <tl-expansion-panel *ngIf="showOnlyRegiXData || showBasicInfo" 
                             middle
                             title=" {{ 'statistical-forms.aqua-farm-basic-information-title' | tlTranslate }}"
                             tooltipResourceName="statistical-forms.aqua-farm-basic-information-title-helper"
@@ -50,6 +50,7 @@
                               formControlName="yearControl"
                               tooltipResourceName="statistical-forms.aqua-farm-year-helper"
                               [max]="today"
+                              [readonly]="showOnlyRegiXData"
                               label="{{ 'statistical-forms.aqua-farm-year' | tlTranslate }}">
                 </tl-date-year>
                 <tl-autocomplete fxFlex="75"
@@ -58,6 +59,7 @@
                                  tooltipResourceName="statistical-forms.aqua-farm-aquaculture-facilities-helper"
                                  [options]="aquacultures"
                                  [filterFn]="aquaculturesFilterFnRef"
+                                 [readonly]="showOnlyRegiXData"
                                  [getControlErrorLabelText]="aquacultureFacilityErrorLabelTextMethod">
                 </tl-autocomplete>
             </div>

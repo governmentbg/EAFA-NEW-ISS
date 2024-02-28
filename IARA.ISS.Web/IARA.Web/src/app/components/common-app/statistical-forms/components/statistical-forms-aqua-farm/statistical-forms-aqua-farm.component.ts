@@ -206,9 +206,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
     }
 
     public async ngOnInit(): Promise<void> {
-        if (!this.showOnlyRegiXData) {
-            this.aquacultures = await this.service.getAllAquacultureNomenclatures().toPromise();
-        }
+        this.aquacultures = await this.service.getAllAquacultureNomenclatures().toPromise();
 
         // извличане на исторически данни за заявление
         if (this.isApplicationHistoryMode && this.applicationId !== undefined) {
@@ -338,16 +336,16 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
     }
 
     public ngAfterViewInit(): void {
-        if (!this.showOnlyRegiXData) {
-            this.form.controls.aquacultureFacilityControl.valueChanges.subscribe({
-                next: (value: NomenclatureDTO<number> | string | undefined) => {
-                    if (value !== undefined && value !== null && typeof value !== 'string') {
-                        const year: number | undefined = (this.form.get('yearControl')!.value as Date)?.getFullYear();
+        this.form.controls.aquacultureFacilityControl.valueChanges.subscribe({
+            next: (value: NomenclatureDTO<number> | string | undefined) => {
+                if (value !== undefined && value !== null && typeof value !== 'string') {
+                    const year: number | undefined = (this.form.get('yearControl')!.value as Date)?.getFullYear();
 
-                        if (this.chosenAquacultureFacilityId !== value!.value) {
-                            this.checkIfStatFormAlreadyExists(value!.value, year);
-                        }
+                    if (this.chosenAquacultureFacilityId !== value!.value) {
+                        this.checkIfStatFormAlreadyExists(value!.value, year);
+                    }
 
+                    if (!this.showOnlyRegiXData) {
                         this.service.getStatisticalFormAquaculture(value.value!).subscribe({
                             next: (aquaculture: StatisticalFormAquacultureDTO) => {
                                 if (this.chosenAquacultureFacilityId !== aquaculture.aquacultureId) {
@@ -359,6 +357,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                                     if (this.systemFullTable !== undefined && this.systemFullTable.rows.length === 0) {
                                         this.systemFullTable.rows = [];
                                     }
+
                                     if (this.systemNotFullTable !== undefined && this.systemNotFullTable.rows.length === 0) {
                                         this.systemNotFullTable.rows = [];
                                     }
@@ -411,25 +410,37 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                             }
                         });
                     }
-                    else {
-                        if (this.isPerson) {
-                            this.form.controls.submittedForControl.reset();
-                            this.showBasicInfo = false;
-                        }
-
-                        this.form.controls.submittedForControl.setValue(new ApplicationSubmittedForDTO({
-                            legal: new RegixLegalDataDTO({
-                                eik: undefined,
-                                name: undefined
-                            }),
-                            addresses: this.form.controls.submittedForControl.value?.addresses,
-                            submittedByLetterOfAttorney: this.form.controls.submittedForControl.value?.submittedByLetterOfAttorney,
-                            submittedByRole: this.form.controls.submittedForControl.value?.submittedByRole
-                        }));
-                    }
                 }
-            });
+                else {
+                    if (this.isPerson) {
+                        this.form.controls.submittedForControl.reset();
+                        this.showBasicInfo = false;
+                    }
 
+                    this.form.controls.submittedForControl.setValue(new ApplicationSubmittedForDTO({
+                        legal: new RegixLegalDataDTO({
+                            eik: undefined,
+                            name: undefined
+                        }),
+                        addresses: this.form.controls.submittedForControl.value?.addresses,
+                        submittedByLetterOfAttorney: this.form.controls.submittedForControl.value?.submittedByLetterOfAttorney,
+                        submittedByRole: this.form.controls.submittedForControl.value?.submittedByRole
+                    }));
+                }
+            }
+        });
+
+        this.form.controls.yearControl!.valueChanges.subscribe({
+            next: (value: Date | undefined) => {
+                if (value !== undefined && value !== null) {
+                    const aquacultureId: number | undefined = this.form.get('aquacultureFacilityControl')!.value?.value;
+                    this.checkIfStatFormAlreadyExists(aquacultureId, value.getFullYear());
+                    this.form.get('aquacultureFacilityControl')!.updateValueAndValidity({ onlySelf: true });
+                }
+            }
+        });
+
+        if (!this.showOnlyRegiXData) {
             if (!this.isPerson) {
                 this.form.controls.submittedForControl!.valueChanges.subscribe({
                     next: (value: ApplicationSubmittedForDTO | undefined) => {
@@ -439,16 +450,6 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                     }
                 });
             }
-
-            this.form.controls.yearControl!.valueChanges.subscribe({
-                next: (value: Date | undefined) => {
-                    if (value !== undefined && value !== null) {
-                        const aquacultureId: number | undefined = this.form.get('aquacultureFacilityControl')!.value?.value;
-                        this.checkIfStatFormAlreadyExists(aquacultureId, value.getFullYear());
-                        this.form.get('aquacultureFacilityControl')!.updateValueAndValidity({ onlySelf: true });
-                    }
-                }
-            });
 
             this.installationSystemFullGroup?.get('installationTypeIdControl')?.valueChanges.subscribe({
                 next: (value: number | undefined) => {
@@ -587,22 +588,24 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         let applicationAction: boolean = false;
 
         if (this.model instanceof StatisticalFormAquaFarmApplicationEditDTO || this.model instanceof StatisticalFormAquaFarmRegixDataDTO) {
-            this.fillModel();
-            CommonUtils.sanitizeModelStrings(this.model);
+            if (actionInfo.id !== 'no-corrections-needed' || this.form.valid) {
+                this.fillModel();
+                CommonUtils.sanitizeModelStrings(this.model);
 
-            applicationAction = ApplicationUtils.applicationDialogButtonClicked(new ApplicationDialogData({
-                action: actionInfo,
-                dialogClose: dialogClose,
-                applicationId: this.applicationId,
-                model: this.model,
-                readOnly: this.isReadonly,
-                viewMode: this.viewMode,
-                editForm: this.form,
-                saveFn: this.saveAquaFarmForm.bind(this),
-                onMarkAsTouched: () => {
-                    this.validityCheckerGroup.validate();
-                }
-            }));
+                applicationAction = ApplicationUtils.applicationDialogButtonClicked(new ApplicationDialogData({
+                    action: actionInfo,
+                    dialogClose: dialogClose,
+                    applicationId: this.applicationId,
+                    model: this.model,
+                    readOnly: this.isReadonly,
+                    viewMode: this.viewMode,
+                    editForm: this.form,
+                    saveFn: this.saveAquaFarmForm.bind(this),
+                    onMarkAsTouched: () => {
+                        this.validityCheckerGroup.validate();
+                    }
+                }));
+            }
         }
 
         if (!this.isReadonly && !this.viewMode && !applicationAction) {
@@ -704,7 +707,9 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         if (this.showOnlyRegiXData) {
             this.form = new FormGroup({
                 submittedByControl: new FormControl(),
-                submittedForControl: new FormControl()
+                submittedForControl: new FormControl(),
+                aquacultureFacilityControl: new FormControl(null, Validators.required),
+                yearControl: new FormControl(null, Validators.required)
             });
 
         }
@@ -782,6 +787,8 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
     private fillFormRegiX(model: StatisticalFormAquaFarmRegixDataDTO | StatisticalFormAquaFarmApplicationEditDTO): void {
         if (model.applicationRegiXChecks !== undefined && model.applicationRegiXChecks) {
             const applicationRegiXChecks: ApplicationRegiXCheckDTO[] = model.applicationRegiXChecks;
+            this.form.get('aquacultureFacilityControl')!.setValue(this.aquacultures.find(x => x.value === this.model.aquacultureFacilityId));
+            this.form.get('yearControl')!.setValue(new Date(this.model.year!, 0, 1));
 
             setTimeout(() => {
                 this.regixChecks = applicationRegiXChecks;
