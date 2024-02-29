@@ -361,7 +361,7 @@ export class StatisticalFormsAdministrationService extends ApplicationsRegisterA
                 break;
             default: throw new Error(`Invalid page code (${pageCode}) for confirm no error and fill adm act for statistical form`);
         }
-
+       
         return this.requestService.post(this.area, this.controller, serviceMethod, model, {
             httpParams: params
         });

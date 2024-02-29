@@ -203,19 +203,17 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
     }
 
     public async ngOnInit(): Promise<void> {
-        if (!this.showOnlyRegiXData) {
-            const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin([
-                NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false),
-                NomenclatureStore.instance.getNomenclature(NomenclatureTypes.GrossTonnageIntervals, this.service.getGrossTonnageIntervals.bind(this.service), false),
-                NomenclatureStore.instance.getNomenclature(NomenclatureTypes.ShipLengthIntervals, this.service.getVesselLengthIntervals.bind(this.service), false),
-                NomenclatureStore.instance.getNomenclature(NomenclatureTypes.FuelTypes, this.service.getFuelTypes.bind(this.service), false)
-            ]).toPromise();
+        const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin([
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.GrossTonnageIntervals, this.service.getGrossTonnageIntervals.bind(this.service), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.ShipLengthIntervals, this.service.getVesselLengthIntervals.bind(this.service), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.FuelTypes, this.service.getFuelTypes.bind(this.service), false)
+        ]).toPromise();
 
-            this.ships = nomenclatures[0];
-            this.grossTonnageIntervals = nomenclatures[1];
-            this.shipLengthIntervals = nomenclatures[2];
-            this.fuelTypes = nomenclatures[3];
-        }
+        this.ships = nomenclatures[0];
+        this.grossTonnageIntervals = nomenclatures[1];
+        this.shipLengthIntervals = nomenclatures[2];
+        this.fuelTypes = nomenclatures[3];
 
         // извличане на исторически данни за заявление
         if (this.isApplicationHistoryMode && this.applicationId !== undefined) {
@@ -339,26 +337,24 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
     }
 
     public ngAfterViewInit(): void {
-        if (!this.showOnlyRegiXData) {
-            this.form!.get('shipNameControl')!.valueChanges.subscribe({
-                next: (value: NomenclatureDTO<number> | string | undefined) => {
-                    if (value !== undefined && value !== null && typeof value !== 'string') {
-                        const year: number | undefined = (this.form.get('yearControl')!.value as Date)?.getFullYear();
-                        this.checkIfStatFormAlreadyExists(value!.value, year);
-                    }
+        this.form!.get('shipNameControl')!.valueChanges.subscribe({
+            next: (value: NomenclatureDTO<number> | string | undefined) => {
+                if (value !== undefined && value !== null && typeof value !== 'string') {
+                    const year: number | undefined = (this.form.get('yearControl')!.value as Date)?.getFullYear();
+                    this.checkIfStatFormAlreadyExists(value!.value, year);
                 }
-            });
+            }
+        });
 
-            this.form.get('yearControl')!.valueChanges.subscribe({
-                next: (value: Date | undefined) => {
-                    if (value !== undefined && value !== null) {
-                        const shipId: number | undefined = this.form.get('shipNameControl')!.value?.value;
-                        this.checkIfStatFormAlreadyExists(shipId, value.getFullYear());
-                        this.form.get('shipNameControl')!.updateValueAndValidity({ onlySelf: true });
-                    }
+        this.form.get('yearControl')!.valueChanges.subscribe({
+            next: (value: Date | undefined) => {
+                if (value !== undefined && value !== null) {
+                    const shipId: number | undefined = this.form.get('shipNameControl')!.value?.value;
+                    this.checkIfStatFormAlreadyExists(shipId, value.getFullYear());
+                    this.form.get('shipNameControl')!.updateValueAndValidity({ onlySelf: true });
                 }
-            });
-        }
+            }
+        });
     }
 
     public setData(data: DialogParamsModel, buttons: DialogWrapperData): void {
@@ -395,22 +391,24 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         let applicationAction: boolean = false;
 
         if (this.model instanceof StatisticalFormFishVesselApplicationEditDTO || this.model instanceof StatisticalFormFishVesselRegixDataDTO) {
-            this.fillModel();
-            CommonUtils.sanitizeModelStrings(this.model);
+            if (actionInfo.id !== 'no-corrections-needed' || this.form.valid) {
+                this.fillModel();
+                CommonUtils.sanitizeModelStrings(this.model);
 
-            applicationAction = ApplicationUtils.applicationDialogButtonClicked(new ApplicationDialogData({
-                action: actionInfo,
-                dialogClose: dialogClose,
-                applicationId: this.applicationId,
-                model: this.model,
-                readOnly: this.readOnly,
-                viewMode: this.viewMode,
-                editForm: this.form,
-                saveFn: this.saveFishVesselForm.bind(this),
-                onMarkAsTouched: () => {
-                    this.validityCheckerGroup.validate();
-                }
-            }));
+                applicationAction = ApplicationUtils.applicationDialogButtonClicked(new ApplicationDialogData({
+                    action: actionInfo,
+                    dialogClose: dialogClose,
+                    applicationId: this.applicationId,
+                    model: this.model,
+                    readOnly: this.readOnly,
+                    viewMode: this.viewMode,
+                    editForm: this.form,
+                    saveFn: this.saveFishVesselForm.bind(this),
+                    onMarkAsTouched: () => {
+                        this.validityCheckerGroup.validate();
+                    }
+                }));
+            }
         }
 
         if (!this.readOnly && !this.viewMode && !applicationAction) {
@@ -523,6 +521,14 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
     private fillFormRegiX(model: StatisticalFormFishVesselRegixDataDTO) {
         if (model.applicationRegiXChecks !== undefined && model.applicationRegiXChecks) {
             const applicationRegiXChecks: ApplicationRegiXCheckDTO[] = model.applicationRegiXChecks;
+
+            if (model.shipId !== undefined && model.shipId !== null) {
+                this.form.get('shipNameControl')!.setValue(ShipsUtils.get(this.ships, model.shipId));
+            }
+
+            if (model.year !== null && model.year !== undefined) {
+                this.form.get('yearControl')!.setValue(new Date(model.year, 0, 1));
+            }
 
             setTimeout(() => {
                 this.regixChecks = applicationRegiXChecks;
@@ -698,7 +704,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         this.form.get('shipTonnageControl')!.setValue(this.grossTonnageIntervals.find(x => x.value === ship.grossTonnageId!));
         this.form.get('hasEngineControl')!.setValue(ship.hasEngine);
         this.form.get('fuelTypeControl')!.setValue(this.fuelTypes.find(x => x.value === ship.fuelTypeId!));
-        
+
         this.allGearSeaDays = ship.fishingGearSeaDays ?? [];
         this.shipSeaDays = ship.shipSeaDays ?? [];
 
@@ -805,7 +811,9 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         if (this.showOnlyRegiXData) {
             this.form = new FormGroup({
                 submittedByControl: new FormControl(),
-                submittedForControl: new FormControl()
+                submittedForControl: new FormControl(),
+                shipNameControl: new FormControl(undefined, [Validators.required, this.shipValidator()]),
+                yearControl: new FormControl(undefined, Validators.required)
             });
         }
         else if (this.isApplication || this.isApplicationHistoryMode) {
