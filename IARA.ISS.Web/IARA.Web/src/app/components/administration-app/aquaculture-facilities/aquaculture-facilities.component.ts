@@ -544,7 +544,7 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
 
     public gotToApplication(aquaculture: AquacultureFacilityDTO): void {
         if (this.canReadApplications) {
-            this.router.navigate(['aquaculture-farms-applications'], { state: { applicationId: aquaculture.applicationId } });
+            this.router.navigate(['aquaculture-farms-applications'], { state: { applicationId: aquaculture.applicationId, aquacultureId: aquaculture.id } });
         }
     }
 
