@@ -154,9 +154,31 @@ export class ApplicationsRegisterComponent<T extends IDialogComponent> implement
             // check for filter by application id
 
             const applicationId: number | undefined = Number(window.history.state?.applicationId);
+            const permitId: number | undefined = Number(window.history.state?.permitId);
+            const permitLicenseId: number | undefined = Number(window.history.state?.permitLicenseId);
+            const shipId: number | undefined = Number(window.history.state?.shipId);
+            const buyerId: number | undefined = Number(window.history.state?.buyerId);
+            const aquacultureId: number | undefined = Number(window.history.state?.aquacultureId);
 
             if (!CommonUtils.isNumberNullOrNaN(applicationId)) {
-                this.grid.advancedFilters = new ApplicationsRegisterFilters({ applicationId: applicationId });
+                if (!CommonUtils.isNumberNullOrNaN(permitId)) {
+                    this.grid.advancedFilters = new ApplicationsRegisterFilters({ applicationId: applicationId, permitId: permitId });
+                }
+                else if (!CommonUtils.isNumberNullOrNaN(permitLicenseId)) {
+                    this.grid.advancedFilters = new ApplicationsRegisterFilters({ applicationId: applicationId, permitLicenseId: permitLicenseId });
+                }
+                else if (!CommonUtils.isNumberNullOrNaN(shipId)) {
+                    this.grid.advancedFilters = new ApplicationsRegisterFilters({ applicationId: applicationId, shipId: shipId });
+                }
+                else if (!CommonUtils.isNumberNullOrNaN(buyerId)) {
+                    this.grid.advancedFilters = new ApplicationsRegisterFilters({ applicationId: applicationId, buyerId: buyerId });
+                }
+                else if (!CommonUtils.isNumberNullOrNaN(aquacultureId)) {
+                    this.grid.advancedFilters = new ApplicationsRegisterFilters({ applicationId: applicationId, aquacultureFacilityId: aquacultureId });
+                }
+                else {
+                    this.grid.advancedFilters = new ApplicationsRegisterFilters({ applicationId: applicationId });
+                }
             }
 
             if (this.pageType === 'FileInPage') {

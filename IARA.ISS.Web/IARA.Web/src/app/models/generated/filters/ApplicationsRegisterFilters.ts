@@ -32,4 +32,10 @@ export class ApplicationsRegisterFilters extends BaseRequestModel {
     public submittedByPersonId: number | undefined;
     public submittedForPersonId: number | undefined;
     public submittedForLegalId: number | undefined;
+    public shipId: number | undefined;
+    public permitId: number | undefined;
+    public permitLicenseId: number | undefined;
+    public aquacultureFacilityId: number | undefined;
+    public buyerId: number | undefined;
+    public fishermanId: number | undefined;
 }

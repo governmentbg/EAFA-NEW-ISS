@@ -782,13 +782,13 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
 
     public gotToPermitApplication(permit: CommercialFishingPermitRegisterDTO): void {
         if (this.canReadPermitApplications) {
-            this.router.navigate(['commercial-fishing-applications'], { state: { applicationId: permit.applicationId } });
+            this.router.navigate(['commercial-fishing-applications'], { state: { applicationId: permit.applicationId, permitId: permit.id } });
         }
     }
 
     public gotToPermitLicenseApplication(permitLicense: CommercialFishingPermitLicenseRegisterDTO): void {
         if (this.canReadPermitApplications) {
-            this.router.navigate(['commercial-fishing-applications'], { state: { applicationId: permitLicense.applicationId } });
+            this.router.navigate(['commercial-fishing-applications'], { state: { applicationId: permitLicense.applicationId, permitLicenseId: permitLicense.id } });
         }
     }
 

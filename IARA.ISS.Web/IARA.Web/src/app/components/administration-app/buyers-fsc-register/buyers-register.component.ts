@@ -492,7 +492,7 @@ export class BuyersComponent implements OnInit, AfterViewInit {
 
     public gotToApplication(buyer: BuyerDTO): void {
         if (this.canReadApplications) {
-            this.router.navigate(['sales-centers-applications'], { state: { applicationId: buyer.applicationId } });
+            this.router.navigate(['sales-centers-applications'], { state: { applicationId: buyer.applicationId, buyerId: buyer.id } });
         }
     }
 

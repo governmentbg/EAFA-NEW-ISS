@@ -354,7 +354,7 @@ export class ShipsRegisterComponent implements OnInit, AfterViewInit {
 
     public gotToApplication(ship: ShipRegisterDTO): void {
         if (this.canReadApplications) {
-            this.router.navigate(['fishing-vessels-applications'], { state: { applicationId: ship.applicationId } });
+            this.router.navigate(['fishing-vessels-applications'], { state: { applicationId: ship.applicationId, shipId: ship.id } });
         }
     }
 
