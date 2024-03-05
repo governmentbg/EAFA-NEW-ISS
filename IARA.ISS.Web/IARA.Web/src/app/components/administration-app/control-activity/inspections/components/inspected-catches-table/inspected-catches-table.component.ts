@@ -19,6 +19,7 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
 import { CatchSizeCodesEnum } from '@app/enums/catch-size-codes.enum';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 
 function groupBy(array: any[], f: any): any[][] {
     const groups: any = {};
@@ -65,7 +66,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     public hasCatchType: boolean = true;
 
     @Input()
-    public ships: NomenclatureDTO<number>[] = [];
+    public ships: ShipNomenclatureDTO[] = [];
 
     @Input()
     public fishes: NomenclatureDTO<number>[] = [];

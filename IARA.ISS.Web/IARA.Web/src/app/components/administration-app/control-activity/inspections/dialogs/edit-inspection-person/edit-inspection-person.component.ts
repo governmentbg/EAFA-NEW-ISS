@@ -20,6 +20,7 @@ import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { TLValidators } from '@app/shared/utils/tl-validators';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 
 @Component({
     selector: 'edit-inspection-person',
@@ -30,7 +31,7 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
 
     public institutions: NomenclatureDTO<number>[] = [];
     public countries: NomenclatureDTO<number>[] = [];
-    public ships: NomenclatureDTO<number>[] = [];
+    public ships: ShipNomenclatureDTO[] = [];
     public fishes: NomenclatureDTO<number>[] = [];
     public catchTypes: NomenclatureDTO<number>[] = [];
     public catchZones: NomenclatureDTO<number>[] = [];

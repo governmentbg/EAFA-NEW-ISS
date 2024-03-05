@@ -17,7 +17,7 @@ import { FuseProgressBarModule, FuseSidebarModule, FuseThemeOptionsModule } from
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { FuseSharedModule } from '@fuse/fuse-shared.module';
 import { FuseModule } from '@fuse/fuse.module';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { AccountModule } from './components/common-app/auth/account.module';
 import { GetAccountRoutes } from './components/common-app/auth/account.routing';
@@ -117,12 +117,12 @@ export async function loadTranslationResources(translationLoad: FuseTranslationL
     const backupTranslation = TranslationUtils.getLocalTranslations(language);
     translationLoad.loadTranslations(backupTranslation);
 
-    //const translationLoader: TranslateLoader = TranslationUtils.getWebTranslationLoader();
-    //const translation = await TranslationUtils.getTranslationsFromLoader(translationLoader, language);
+    const translationLoader: TranslateLoader = TranslationUtils.getWebTranslationLoader();
+    const translation = await TranslationUtils.getTranslationsFromLoader(translationLoader, language);
 
-    //if (translation !== null && translation !== undefined) {
-    //    translationLoad.loadTranslations(translation);
-    //}
+    if (translation !== null && translation !== undefined) {
+        translationLoad.loadTranslations(translation);
+    }
 }
 
 

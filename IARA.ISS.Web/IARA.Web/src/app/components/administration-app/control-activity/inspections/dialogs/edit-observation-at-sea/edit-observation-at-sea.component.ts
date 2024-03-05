@@ -22,6 +22,7 @@ import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuri
 import { InspectionObservationToolDTO } from '@app/models/generated/dtos/InspectionObservationToolDTO';
 import { InspectionVesselActivityNomenclatureDTO } from '@app/models/generated/dtos/InspectionVesselActivityNomenclatureDTO';
 import { InspectionObservationTextDTO } from '@app/models/generated/dtos/InspectionObservationTextDTO';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 
 @Component({
     selector: 'edit-observation-at-sea',
@@ -34,7 +35,7 @@ export class EditObservationAtSeaComponent extends BaseInspectionsComponent impl
     public centerObservationTools: InspectionObservationToolNomenclatureDTO[] = [];
     public onBoardActivities: InspectionVesselActivityNomenclatureDTO[] = [];
     public fishingActivities: InspectionVesselActivityNomenclatureDTO[] = [];
-    public ships: NomenclatureDTO<number>[] = [];
+    public ships: ShipNomenclatureDTO[] = [];
     public institutions: NomenclatureDTO<number>[] = [];
     public vesselTypes: NomenclatureDTO<number>[] = [];
     public countries: NomenclatureDTO<number>[] = [];

@@ -19,6 +19,7 @@ import { InspectionObservationTextDTO } from '@app/models/generated/dtos/Inspect
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 
 @Component({
     selector: 'edit-inspection-at-sea',
@@ -28,7 +29,7 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
     protected model: InspectionAtSeaDTO = new InspectionAtSeaDTO();
 
     public institutions: NomenclatureDTO<number>[] = [];
-    public ships: NomenclatureDTO<number>[] = [];
+    public ships: ShipNomenclatureDTO[] = [];
     public fishes: NomenclatureDTO<number>[] = [];
     public catchTypes: NomenclatureDTO<number>[] = [];
     public catchZones: NomenclatureDTO<number>[] = [];

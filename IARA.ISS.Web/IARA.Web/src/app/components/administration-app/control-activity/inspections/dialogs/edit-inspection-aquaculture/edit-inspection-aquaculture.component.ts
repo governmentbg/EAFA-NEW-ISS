@@ -19,6 +19,7 @@ import { InspectionObservationTextDTO } from '@app/models/generated/dtos/Inspect
 import { InspectionAquacultureDTO } from '@app/models/generated/dtos/InspectionAquacultureDTO';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 
 @Component({
     selector: 'edit-inspection-aquaculture',
@@ -31,7 +32,7 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
 
     public institutions: NomenclatureDTO<number>[] = [];
     public countries: NomenclatureDTO<number>[] = [];
-    public ships: NomenclatureDTO<number>[] = [];
+    public ships: ShipNomenclatureDTO[] = [];
     public fishes: NomenclatureDTO<number>[] = [];
     public catchTypes: NomenclatureDTO<number>[] = [];
     public catchZones: NomenclatureDTO<number>[] = [];
