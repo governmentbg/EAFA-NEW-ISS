@@ -456,7 +456,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             });
         }
         else if (action.id === 'issue-duplicate') {
-            if (this.personPhotoRequired && this.form.get('photoControl')!.value) {
+            if ((this.personPhotoRequired && this.form.get('photoControl')!.value) || !this.personPhotoRequired) {
                 this.openIssueDuplicateDialog().subscribe({
                     next: (success: boolean) => {
                         if (success === true) {

@@ -23,6 +23,7 @@ import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 import { InspectedFishingGearDTO } from '@app/models/generated/dtos/InspectedFishingGearDTO';
 import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
 import { InspectionShipSubjectNomenclatureDTO } from '@app/models/generated/dtos/InspectionShipSubjectNomenclatureDTO';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 
 enum InspectionPermitTypeEnum {
     Registered,
@@ -48,7 +49,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
 
     public institutions: NomenclatureDTO<number>[] = [];
     public owners: NomenclatureDTO<number>[] = [];
-    public ships: NomenclatureDTO<number>[] = [];
+    public ships: ShipNomenclatureDTO[] = [];
     public dalyans: NomenclatureDTO<number>[] = [];
     public markReasons: NomenclatureDTO<number>[] = [];
     public remarkReasons: NomenclatureDTO<number>[] = [];

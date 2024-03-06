@@ -24,6 +24,7 @@ import { InspectionObservationTextDTO } from '@app/models/generated/dtos/Inspect
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
 import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 
 @Component({
     selector: 'inspected-ship-sections',
@@ -74,7 +75,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
     public associations: NomenclatureDTO<number>[] = [];
 
     @Input()
-    public ships: NomenclatureDTO<number>[] = [];
+    public ships: ShipNomenclatureDTO[] = [];
 
     @Input()
     public fishes: NomenclatureDTO<number>[] = [];

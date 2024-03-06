@@ -11,6 +11,8 @@ import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/di
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
 import { InspectedShipParams } from './models/inspected-ship-params.model';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
+import { ShipsUtils } from '@app/shared/utils/ships.utils';
 
 @Component({
     selector: 'inspected-ship',
@@ -25,7 +27,7 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
     public hasMap: boolean = true;
 
     @Input()
-    public ships: NomenclatureDTO<number>[] = [];
+    public ships: ShipNomenclatureDTO[] = [];
 
     @Input()
     public vesselTypes: NomenclatureDTO<number>[] = [];
@@ -158,7 +160,10 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
                 setTimeout(() => {
                     // Кода стига до тук преди angular да построи своя UI,
                     // карайки [options]="ship" да не се е случило и стойността да не се покаже.
-                    this.form.get('shipControl')!.setValue(this.ships.find(x => x.value === value.shipId));
+                    if (value.shipId !== undefined && value.shipId !== null) {
+                        const ship: ShipNomenclatureDTO = ShipsUtils.get(this.ships, value.shipId)
+                        this.form.get('shipControl')!.setValue(ship);
+                    }
                 });
             }
             else {

@@ -22,6 +22,7 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 
 @Component({
     selector: 'edit-inspection-transshipment',
@@ -31,7 +32,7 @@ export class EditInspectionTransshipmentComponent extends BaseInspectionsCompone
     protected model: InspectionTransboardingDTO = new InspectionTransboardingDTO();
 
     public institutions: NomenclatureDTO<number>[] = [];
-    public ships: NomenclatureDTO<number>[] = [];
+    public ships: ShipNomenclatureDTO[] = [];
     public fishes: NomenclatureDTO<number>[] = [];
     public catchTypes: NomenclatureDTO<number>[] = [];
     public catchZones: NomenclatureDTO<number>[] = [];

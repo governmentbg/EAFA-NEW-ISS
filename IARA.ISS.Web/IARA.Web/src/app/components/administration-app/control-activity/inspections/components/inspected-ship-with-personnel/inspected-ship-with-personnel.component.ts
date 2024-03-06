@@ -15,6 +15,7 @@ import { InspectionCheckDTO } from '@app/models/generated/dtos/InspectionCheckDT
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 
 @Component({
     selector: 'inspected-ship-with-personnel',
@@ -43,7 +44,7 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
     public shipObservationCategory: InspectionObservationCategoryEnum = InspectionObservationCategoryEnum.ShipData;
 
     @Input()
-    public ships: NomenclatureDTO<number>[] = [];
+    public ships: ShipNomenclatureDTO[] = [];
 
     @Input()
     public countries: NomenclatureDTO<number>[] = [];
