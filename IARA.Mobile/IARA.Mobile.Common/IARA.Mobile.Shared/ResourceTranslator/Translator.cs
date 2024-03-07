@@ -1,8 +1,8 @@
-﻿using System;
+﻿using IARA.Mobile.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using IARA.Mobile.Domain.Enums;
 using TechnoLogica.Xamarin.ResourceTranslator;
 
 namespace IARA.Mobile.Shared.ResourceTranslator
@@ -15,7 +15,15 @@ namespace IARA.Mobile.Shared.ResourceTranslator
         private Translator()
         {
             resources = new Dictionary<GroupResourceEnum, IReadOnlyDictionary<string, string>>();
-            safePageResources = new List<GroupResourceEnum>();
+            safePageResources = new List<GroupResourceEnum>
+            {
+                GroupResourceEnum.ChangePassword,
+                GroupResourceEnum.CommonOffline,
+                GroupResourceEnum.Common,
+                GroupResourceEnum.Register,
+                GroupResourceEnum.Validation,
+                GroupResourceEnum.Menu
+            };
         }
 
         /// <summary>

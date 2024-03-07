@@ -3,7 +3,5 @@
     public interface ITranslator
     {
         void ClearResources();
-
-        void LoadOfflineResources();
     }
 }

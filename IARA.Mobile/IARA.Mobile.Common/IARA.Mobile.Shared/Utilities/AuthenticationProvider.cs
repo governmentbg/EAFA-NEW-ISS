@@ -1,10 +1,12 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using IARA.Mobile.Application.Interfaces.Utilities;
+﻿using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Pub.Domain.Models;
+using IARA.Mobile.Shared.Helpers;
+using IARA.Mobile.Shared.ResourceTranslator;
 using IdentityModel.OidcClient;
 using IdentityModel.OidcClient.Results;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace IARA.Mobile.Shared.Utilities
 {
@@ -106,8 +108,9 @@ namespace IARA.Mobile.Shared.Utilities
         public void Dispose(bool navigateToLogin = false)
         {
             _translator.ClearResources();
-            _translator.LoadOfflineResources();
             _authTokenProvider.Clear();
+            Translator.Current.LoadOfflineResources();
+
             if (navigateToLogin)
             {
                 _commonNavigator.ToLogin();

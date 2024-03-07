@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using IARA.Mobile.Application.Interfaces.Transactions;
+﻿using IARA.Mobile.Application.Interfaces.Transactions;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.FlyoutPages.LoadingPage;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Shared.ResourceTranslator;
 using IARA.Mobile.Shared.Views;
+using System.Collections.Generic;
+using System.ComponentModel;
 using TechnoLogica.Xamarin.Controls;
 using TechnoLogica.Xamarin.ResourceTranslator;
 using Xamarin.Forms;
@@ -75,8 +75,8 @@ namespace IARA.Mobile.Insp
                 DependencyService.Resolve<ITranslationTransaction>()
                     .GetPagesTranslations(safeResources);
 
-            Translator.Current.Remove(safeResources);
-            Translator.Current.SafeResources(safeResources);
+            //Translator.Current.Remove(safeResources);
+            //Translator.Current.SafeResources(safeResources);
             Translator.Current.Add(resources);
 
             // Set resources after load
