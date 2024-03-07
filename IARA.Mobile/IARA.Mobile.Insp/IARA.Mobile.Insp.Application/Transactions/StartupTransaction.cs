@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using IARA.Mobile.Application;
+﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Exceptions;
 using IARA.Mobile.Application.DTObjects.Users;
 using IARA.Mobile.Application.DTObjects.Versions;
@@ -22,6 +18,12 @@ using IARA.Mobile.Insp.Domain.Entities.Inspections;
 using IARA.Mobile.Insp.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Domain.Interfaces;
+using IARA.Mobile.Pub.Domain.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace IARA.Mobile.Insp.Application.Transactions
 {
@@ -54,9 +56,30 @@ namespace IARA.Mobile.Insp.Application.Transactions
             return false;
         }
 
-        public Task<bool> IsDeviceAllowed(string imei)
+        public async Task<bool?> IsDeviceAllowed(string imei, IAuthTokenProvider tokenProvider)
         {
-            return RestClient.GetAsync<bool>("InspectionData/IsDeviceAllowed", new { imei }).GetHttpContent();
+            HttpResult<bool> result = await RestClient.GetAsync<bool>("InspectionData/IsDeviceAllowed", new { imei });
+            if (result.IsSuccessful)
+            {
+                return result.Content;
+            }
+            else if (result.StatusCode == HttpStatusCode.Unauthorized && !string.IsNullOrEmpty(tokenProvider.RefreshToken))
+            {
+                JwtToken oldToken = new JwtToken
+                {
+                    Token = tokenProvider.RefreshToken
+                };
+                HttpResult<JwtToken> newToken = await RestClient.PostAsync<JwtToken>("Security/RefreshToken", "Common", false, oldToken);
+
+                if (newToken.IsSuccessful)
+                {
+                    tokenProvider.Token = newToken.Content.Token;
+                    tokenProvider.RefreshToken = newToken.Content.RefreshToken;
+                    tokenProvider.AccessTokenExpiration = newToken.Content.ValidTo;
+                    return await RestClient.GetAsync<bool>("InspectionData/IsDeviceAllowed", new { imei }).GetHttpContent();
+                }
+            }
+            return null;
         }
 
         public async Task<UserAuthDto> GetUserAuthInfo()

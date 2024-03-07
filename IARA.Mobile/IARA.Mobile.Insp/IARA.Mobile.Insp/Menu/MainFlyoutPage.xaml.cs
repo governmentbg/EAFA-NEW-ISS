@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using IARA.Mobile.Application.Interfaces.Utilities;
+﻿using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.FlyoutPages.InspectionsPage;
@@ -10,6 +7,9 @@ using IARA.Mobile.Insp.FlyoutPages.SettingsPage;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Shared.Menu;
 using IARA.Mobile.Shared.Views;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.ResourceTranslator;
 using Xamarin.Essentials;

@@ -1,6 +1,7 @@
-﻿using System;
+﻿using IARA.Mobile.Application.DTObjects.Users;
+using IARA.Mobile.Application.Interfaces.Utilities;
+using System;
 using System.Threading.Tasks;
-using IARA.Mobile.Application.DTObjects.Users;
 
 namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 {
@@ -10,7 +11,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 
         Task<bool> IsAppOutdated(int version, string platform);
 
-        Task<bool> IsDeviceAllowed(string imei);
+        Task<bool?> IsDeviceAllowed(string imei, IAuthTokenProvider tokenProvider);
 
         Task<UserAuthDto> GetUserAuthInfo();
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using IARA.Mobile.Application;
+﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Users;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
@@ -22,6 +19,9 @@ using IARA.Mobile.Shared.ResourceTranslator;
 using IARA.Mobile.Shared.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Rg.Plugins.Popup.Services;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Core;
 using TechnoLogica.Xamarin.ResourceTranslator;
 using Xamarin.Essentials;
@@ -101,7 +101,7 @@ namespace IARA.Mobile.Insp
             builder.Call(LoadInitialResources);
 
             // Check if device is allowed
-            builder.Call<IStartupTransaction, IApplicationInstance, ISettings>(CheckIfDeviceAllowed);
+            builder.Call<IStartupTransaction, IApplicationInstance, ISettings, IAuthTokenProvider>(CheckIfDeviceAllowed);
 
             if (state != CommonConstants.NewLogin)
             {
@@ -286,7 +286,7 @@ namespace IARA.Mobile.Insp
             App.Current.LoadInitialResources();
         }
 
-        private async Task CheckIfDeviceAllowed(IStartupTransaction startUp, IApplicationInstance appInstance, ISettings settings)
+        private async Task CheckIfDeviceAllowed(IStartupTransaction startUp, IApplicationInstance appInstance, ISettings settings, IAuthTokenProvider authenticationProvider)
         {
             string imei = appInstance.Id;
 
@@ -297,12 +297,25 @@ namespace IARA.Mobile.Insp
 
             settings.IsDeviceAllowed = false;
 
-            while (!await startUp.IsDeviceAllowed(imei))
+            while (true)
             {
-                await ShowDeviceNotAllowed(imei);
+                bool? result = await startUp.IsDeviceAllowed(imei, authenticationProvider);
+                if (result is null)
+                {
+                    await MainNavigator.Current.GoToPageAsync(nameof(LoginPage));
+                    return;
+                }
+                else if (!result.Value)
+                {
+                    await ShowDeviceNotAllowed(imei);
+                }
+                else
+                {
+                    settings.IsDeviceAllowed = true;
+                    return;
+                }
             }
 
-            settings.IsDeviceAllowed = true;
         }
 
         private async Task PostOfflineData(IStartupTransaction startUp, IInspectionsTransaction inspections)

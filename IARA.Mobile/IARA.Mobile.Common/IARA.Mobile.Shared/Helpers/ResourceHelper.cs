@@ -1,12 +1,12 @@
-﻿using System;
+﻿using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Shared.ResourceTranslator;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
-using IARA.Mobile.Domain.Enums;
-using IARA.Mobile.Shared.ResourceTranslator;
 
 namespace IARA.Mobile.Shared.Helpers
 {
