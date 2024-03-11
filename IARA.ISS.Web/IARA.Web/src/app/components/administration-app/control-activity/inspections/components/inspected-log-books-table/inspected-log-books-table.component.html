@@ -42,7 +42,7 @@
                                  ngx-datatable-cell-template>
                         <tl-autocomplete *ngIf="row.editMode === true"
                                          formControlName="pageControl"
-                                         [options]="row.data.pages"
+                                         [options]="logBookPages"
                                          [hasSelectedValueFromDropdownValidator]="false">
                         </tl-autocomplete>
                         <span *ngIf="row.editMode === false">

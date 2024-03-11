@@ -103,6 +103,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     public isMapPopoverOpened: boolean = false;
 
     public catches: InspectedCatchTableModel[] = [];
+    public catchQuantities: Map<number, number> = new Map<number, number>();
 
     private temporarySelectedGridSector: NomenclatureDTO<number> | undefined;
 
@@ -177,10 +178,12 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
 
             setTimeout(() => {
                 this.catches = catches;
+                this.recalculateCatchQuantitySums();
             });
         } else {
             setTimeout(() => {
                 this.catches = [];
+                this.recalculateCatchQuantitySums();
             });
         }
     }
@@ -188,6 +191,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     public onEditRecord(row: GridRow<InspectedCatchTableModel>): void {
         if (row !== null && row !== undefined) {
             this.catchesFormGroup.get('catchZoneControl')!.setValue(row.data.catchZone);
+            this.recalculateCatchQuantitySums();
         }
     }
 
@@ -200,6 +204,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
         this.control.updateValueAndValidity();
 
         this.catchesFormGroup.get('catchZoneControl')!.setValue(null);
+        this.recalculateCatchQuantitySums();
     }
 
     public onPopoverToggled(isOpened: boolean): void {
@@ -362,5 +367,15 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
             }
             return null;
         };
+    }
+
+    private recalculateCatchQuantitySums(): void {
+        const recordsGroupedByFish: Record<number, InspectedCatchTableModel[]> = CommonUtils.groupBy(this.catches, x => x.fishId!);
+        this.catchQuantities.clear();
+
+        for (const fishGroupId in recordsGroupedByFish) {
+            const quantity: number = recordsGroupedByFish[fishGroupId].reduce((sum, current) => Number(sum) + Number(current.catchQuantity!), 0);
+            this.catchQuantities.set(Number(fishGroupId), quantity);
+        }
     }
 }

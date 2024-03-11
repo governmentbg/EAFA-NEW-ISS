@@ -140,6 +140,7 @@
         'seconds': 'seconds',
         'version-title': 'New version available',
         'version-message': 'A new version of the application is available. Do you want to update?',
+        'toolbar-color': '',
     },
     'validation': {
         'min': 'field has minimum value',
@@ -2591,6 +2592,8 @@
         'catch-map-popover-cancel': 'Cancel',
         'catch-map-popover-save': 'Save',
         'catch-map-popover-helper': 'To select a quadrant from the map, click on the corresponding square.',
+        'catch-record-quantity-sums': 'Quantities: ',
+        'catch-quantity-kg': 'kg',
         'inspector-comment': 'Inspector\'s comment',
         'actions-taken': 'Actions taken',
         'administrative-violation': 'An administrative violation has been established',
@@ -4005,6 +4008,9 @@
         'add-ship-admission-document-title': 'Steps for starting admission document for origin declaration',
         'add-ship-transportation-document-title': 'Steps for starting transportation document for origin declaration',
         'add-ship-first-sale-document-title': 'Steps for starting first sale document for origin declaration',
+        'add-transportation-admission-document-title': 'Steps for starting admission document for transportation document',
+        'add-transportation-first-sale-document-title': 'Steps for starting first sale document for transportation document',
+        'add-admission-first-sale-document-title': 'Steps for starting first sale document for admission-document',
 
         'with-pattern': 'with pattern',
 

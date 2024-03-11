@@ -138,6 +138,7 @@
         'seconds': 'секунди',
         'version-title': 'Нова версия',
         'version-message': 'Качена е по-нова версия на приложението! Искате ли да обновите?',
+        'toolbar-color': '',
     },
     'validation': {
         'min': 'полето има минимална стойност',
@@ -2646,6 +2647,8 @@
         'catch-map-popover-cancel': 'Отказ',
         'catch-map-popover-save': 'Запази',
         'catch-map-popover-helper': 'За да изберете квадрант от картата, натиснете върху съответния квадрат.',
+        'catch-record-quantity-sums': 'Общи количества: ',
+        'catch-quantity-kg': 'кг',
         'inspector-comment': 'Коментар на инспектора',
         'actions-taken': 'Предприети действия',
         'administrative-violation': 'Установено административно нарушение',
@@ -3401,7 +3404,7 @@
         'mark-numbers-range-from': 'От',
         'mark-numbers-range-to': 'До',
         'generate-mark-numbers-btn-label': 'Генерирай марки',
-        'generate-mark-numbers-hint': 'Можете да генериране марки чрез попълване на диапазон и натискане на бутон "Генерирай марки".',
+        'generate-mark-numbers-hint': 'Можете да генериране марки чрез попълване на диапазон и натискане на бутон „Генерирай марк.“',
 
         'generate-marks-from-range-confirm-dialog-title': 'Потвърждение за генериране на голям диапазон от марки',
         'generate-marks-from-range-confirm-message': 'Сигурни ли сте, че искате да генерирате следния брой марки',
@@ -4059,6 +4062,9 @@
         'add-ship-admission-document-title': 'Стъпки за стартиране на документ за приемане към декларация за произход',
         'add-ship-transportation-document-title': 'Стъпки за стартиране на документ за превоз към декларация за произход',
         'add-ship-first-sale-document-title': 'Стъпки за стартиране на документ за първа продажба към декларация за произход',
+        'add-transportation-admission-document-title': 'Стъпки за стартиране на документ за приемане към документ за превоз',
+        'add-transportation-first-sale-document-title': 'Стъпки за стартиране на документ за първа продажба към документ за превоз',
+        'add-admission-first-sale-document-title': 'Стъпки за стартиране на документ за първа продажба към документ за приемане',
 
         'with-pattern': 'с формат',
 
@@ -4296,7 +4302,7 @@
         'ship-page-differs-by': 'се разминава с',
         'ship-page-quantities-can-have-max-10-percent-difference': 'Количествата на улова могат да имат допустимо отклонение от най-много 10',
         'ship-page-no-transboard-data-for-transboarded-catch-error': 'Има данни за разтоварване, за които липсва информация за трансбордиране. Не може да има такива случаи, когато целият улов е маркиран като трансбордиран на ниво страница',
-        'ship-page-must-have-origin-declaration-fishes-error': 'При наличие на улов трябва да има попълнена декларация за произход с информацията за разтоварването на рибата. Можете да направите това чрез бутон "Генерирай от улов" над таблицата',
+        'ship-page-must-have-origin-declaration-fishes-error': 'При наличие на улов трябва да има попълнена декларация за произход с информацията за разтоварването на рибата. Можете да направите това чрез бутон „Генерирай от улов“ над таблицата',
         'ship-page-must-not-have-origin-declaration-fishes-error': 'Не може да има разтоварена риба, когато е отбелязано, че няма разтоварване',
         'ship-page-catch-records-and-unloading-panel': 'Улов и разтоварване',
         'ship-page-invalid-declaration-of-origin-catch-records-dates': 'Налично е разтоварване на улов от друг рейс с дата на улов, която е след текущата дата на разтоварване',
@@ -5752,7 +5758,7 @@
         'edit-resolution-num': '№ на резолюция',
 
         'edit-drafter': 'Административнонаказващ орган',
-        'edit-issuer-position': 'Длъжност на съставител',
+        'edit-issuer-position': 'Длъжност на АНО',
         'edit-decree-issue-date': 'Дата на издаване',
         'edit-decree-effective-date': 'Дата на влизане в сила',
         'edit-territory-unit': 'Териториално звено',

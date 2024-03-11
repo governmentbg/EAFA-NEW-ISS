@@ -45,7 +45,7 @@
                          columnName="{{ 'recreational-fishing.association-name' | tlTranslate }}">
             </data-column>
             <data-column propertyName="territoryUnit"
-                         [flexRate]="0.5"
+                         [flexRate]="0.4"
                          columnName="{{ 'recreational-fishing.association-territory-unit' | tlTranslate }}">
             </data-column>
             <data-column propertyName="eik"
@@ -62,7 +62,7 @@
             </data-column>
 
             <data-template-column propertyName="isCanceled"
-                                  [flexRate]="0.2"
+                                  [flexRate]="0.3"
                                   [cellClass]="'justify-center'"
                                   columnName="{{ 'recreational-fishing.association-status' | tlTranslate }}">
                 <ng-template let-row="row" ngx-datatable-cell-template>

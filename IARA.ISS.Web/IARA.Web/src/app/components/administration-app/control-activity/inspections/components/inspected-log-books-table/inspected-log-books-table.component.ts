@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, Self, ViewChild } from '@angular/core';
+﻿import { AfterViewInit, Component, OnInit, Self, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
@@ -12,12 +12,15 @@ import { InspectionCheckDTO } from '@app/models/generated/dtos/InspectionCheckDT
 import { InspectedLogBookTableModel } from '../../models/inspected-log-book-table.model';
 import { InspectionLogBookDTO } from '@app/models/generated/dtos/InspectionLogBookDTO';
 import { GridRow } from '@app/shared/components/data-table/models/row.model';
+import { InspectionsService } from '@app/services/administration-app/inspections.service';
+import { DeclarationLogBookTypeEnum } from '@app/enums/declaration-log-book-type.enum';
+import { InspectionLogBookPageNomenclatureDTO } from '@app/models/generated/dtos/InspectionLogBookPageNomenclatureDTO';
 
 @Component({
     selector: 'inspected-log-books-table',
     templateUrl: './inspected-log-books-table.component.html'
 })
-export class InspectedLogBooksTableComponent extends CustomFormControl<InspectionLogBookDTO[]> implements OnInit {
+export class InspectedLogBooksTableComponent extends CustomFormControl<InspectionLogBookDTO[]> implements OnInit, AfterViewInit {
     public logBooksFormGroup!: FormGroup;
 
     @ViewChild(TLDataTableComponent)
@@ -25,17 +28,21 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
 
     public logBooks: InspectedLogBookTableModel[] = [];
 
+    public logBookPages: InspectionLogBookPageNomenclatureDTO[] = [];
     public readonly options: NomenclatureDTO<InspectionToggleTypesEnum>[];
 
+    private readonly service: InspectionsService;
     private readonly translate: FuseTranslationLoaderService;
 
     public constructor(
         @Self() ngControl: NgControl,
         translate: FuseTranslationLoaderService,
+        service: InspectionsService
     ) {
         super(ngControl);
 
         this.translate = translate;
+        this.service = service;
 
         this.options = InspectionUtils.getToggleCheckOptions(translate);
 
@@ -48,6 +55,20 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
 
     public ngOnInit(): void {
         this.initCustomFormControl();
+    }
+
+    public ngAfterViewInit(): void {
+        this.logBooksFormGroup.get('numberControl')!.valueChanges.subscribe({
+            next: (value: string) => {
+                if (value !== null && value !== undefined) {
+                    this.service.getLogBookPagesByLogBookNum(DeclarationLogBookTypeEnum.ShipLogBook, value).subscribe({
+                        next: (pages: InspectionLogBookPageNomenclatureDTO[]) => {
+                            this.logBookPages = pages;
+                        }
+                    });
+                }
+            }
+        });
     }
 
     public writeValue(value: InspectionLogBookDTO[]): void {
@@ -119,7 +140,7 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
 
         if (record) {
             this.logBooksFormGroup.get('optionsControl')!.setValue(this.options.find(f => f.value === record.checkDTO?.checkValue));
-            this.logBooksFormGroup.get('pageControl')!.setValue(record.page ?? record.pageNum);
+            this.logBooksFormGroup.get('pageControl')!.setValue(record.page ?? record.pageNum); 
         }
     }
 
@@ -132,7 +153,7 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
         }) : undefined;
         event.Record.checkValue = nom?.value;
 
-        const page: NomenclatureDTO<number> | string = this.logBooksFormGroup.get('pageControl')!.value;
+        const page: NomenclatureDTO<number> | string = this.logBooksFormGroup.get('pageControl')!.value; 
 
         if (typeof page === 'string') {
             event.Record.pageNum = page;
@@ -178,7 +199,7 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
             from: f.from,
             logBookId: f.logBookId,
             number: f.number,
-            pageId: f.pageId,
+            pageId: f.page?.value,
             pageNum: f.pageNum,
             startPage: f.startPage,
         }));
