@@ -19,7 +19,8 @@ export class Environment {
         frontendBaseUrl: '',
         identityServerBaseUrl: '',
         hasPublicAccess: true,
-        environmentType: EnvironmentType.Production
+        environmentType: EnvironmentType.Production,
+        egovPaymentHref: 'https://pay.egov.bg/Home/AccessByCode'
     });
 
     public static get Instance(): IEnvironmentConfig {

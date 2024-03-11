@@ -19,7 +19,8 @@ export class Environment {
         frontendBaseUrl: '',
         identityServerBaseUrl: 'https://172.31.12.168',
         hasPublicAccess: false,
-        environmentType: EnvironmentType.Development
+        environmentType: EnvironmentType.Development,
+        egovPaymentHref: 'https://pay-test.egov.bg/Home/AccessByCode'
     });
 
     public static get Instance(): IEnvironmentConfig {

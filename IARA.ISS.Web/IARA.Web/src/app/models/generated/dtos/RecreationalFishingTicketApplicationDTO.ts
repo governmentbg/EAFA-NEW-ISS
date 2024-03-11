@@ -56,6 +56,9 @@ export class RecreationalFishingTicketApplicationDTO {
     public ticketStatusName?: string;
 
     @StrictlyTyped(String)
+    public applicationStatusName?: string;
+
+    @StrictlyTyped(String)
     public paymentStatusName?: string;
 
     @StrictlyTyped(Number)

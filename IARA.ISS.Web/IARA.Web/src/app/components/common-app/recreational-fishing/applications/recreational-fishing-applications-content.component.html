@@ -183,7 +183,8 @@
                             </div>
 
                             <div fxLayout="column" fxLayoutAlign="start start">
-                                <span>{{ row.data.ticketStatusName }}</span>
+                                <span *ngIf="!isAssociation">{{ row.data.applicationStatusName }}</span>
+                                <span *ngIf="isAssociation">{{ row.data.ticketStatusName }}</span>
                             </div>
 
                             <div fxLayout="column" fxLayoutAlign="start start">
@@ -434,7 +435,7 @@
                             </div>
 
                             <div fxLayout="column" fxLayoutAlign="start start">
-                                <span>{{ row.data.ticketStatusName }}</span>
+                                <span>{{ row.data.applicationStatusName }}</span>
                             </div>
 
                             <div fxLayout="column" fxLayoutAlign="start start">

@@ -13,12 +13,14 @@ export class EnvironmentConfig implements IEnvironmentConfig {
         this._apiBasePath = env.apiBasePath;
         this.isPublicApp = env.isPublicApp;
         this.environmentType = env.environmentType;
+        this.egovPaymentHref = env.egovPaymentHref;
 
         if (env.appBaseHref != undefined) {
             this.appBaseHref = env.appBaseHref;
         }
     }
 
+    egovPaymentHref: string;
     isPublicApp: boolean;
 
     public get production(): boolean {
