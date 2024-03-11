@@ -12,6 +12,7 @@ export class EnvironmentConfig implements IEnvironmentConfig {
         this._serviceBaseUrl = env.servicesBaseUrl;
         this._apiBasePath = env.apiBasePath;
         this.isPublicApp = env.isPublicApp;
+        this.environmentType = env.environmentType;
 
         if (env.appBaseHref != undefined) {
             this.appBaseHref = env.appBaseHref;

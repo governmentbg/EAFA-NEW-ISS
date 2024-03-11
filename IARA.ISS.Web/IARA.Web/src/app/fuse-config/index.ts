@@ -1,3 +1,4 @@
+import { Environment } from '@env/environment';
 import { FuseConfig } from '@fuse/types';
 
 /**
@@ -7,6 +8,8 @@ import { FuseConfig } from '@fuse/types';
  * changed per component basis. See `app/main/pages/authentication/login/login.component.ts`
  * constructor method to learn more about changing these options per component basis.
  */
+
+const envType = Environment.Instance.environmentType;
 
 export const fuseConfig: FuseConfig = {
     // Color themes can be defined in src/app/app.theme.scss

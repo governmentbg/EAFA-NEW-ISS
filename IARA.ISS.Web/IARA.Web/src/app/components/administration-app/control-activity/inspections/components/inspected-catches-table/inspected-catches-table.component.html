@@ -170,6 +170,18 @@
                             *ngIf="!isDisabled"></data-column-inline>
     </tl-data-table>
 
+    <div *ngIf="catchQuantities !== undefined && catchQuantities !== null && catchQuantities.size > 0"
+         fxLayout="row"
+         fxFlex="100"
+         fxLayoutAlign="end center">
+        <mat-hint fxFlex="100">
+            {{ 'inspections.catch-record-quantity-sums' | tlTranslate }}
+            <span *ngFor="let fishQuantity of catchQuantities | keyvalue">
+                {{ fishQuantity.key | nomenclatureDisplay: fishes }}: {{ fishQuantity.value | number: '1.2-2' }} {{ 'inspections.catch-quantity-kg' | tlTranslate }};
+            </span>
+        </mat-hint>
+    </div>
+
     <mat-error *ngIf="control.errors?.catchesMatch === true">
         * {{ 'inspections.catches-match' | tlTranslate }}
     </mat-error>

@@ -11,6 +11,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { StorageTypes } from './shared/enums/storage-types.enum';
 import { StorageService } from './shared/services/local-storage.service';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
 @Component({
     selector: 'app',
@@ -42,6 +43,7 @@ export class AppComponent implements OnInit, OnDestroy {
         private fuseSidebarService: FuseSidebarService,
         private fuseSplashScreenService: FuseSplashScreenService,
         private translateService: TranslateService,
+        private fuseTranslate: FuseTranslationLoaderService,
         private platform: Platform) {
 
         this.fuseSplashScreenService._init();
@@ -111,6 +113,10 @@ export class AppComponent implements OnInit, OnDestroy {
         this.fuseConfigService.config
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((config) => {
+                const toolbarColor = this.fuseTranslate.getValue('common.toolbar-color');
+                if (toolbarColor.length > 0 && toolbarColor !== 'default') {
+                    config.layout.toolbar.background = toolbarColor;
+                }
                 this.fuseConfig = config;
 
                 // Boxed

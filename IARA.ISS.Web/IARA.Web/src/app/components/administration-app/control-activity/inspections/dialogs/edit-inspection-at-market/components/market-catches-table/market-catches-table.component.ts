@@ -13,6 +13,7 @@ import { EditMarketCatchComponent } from '../edit-market-catch/edit-market-catch
 import { MarketCatchTableParams } from './models/market-catch-table-params';
 import { InspectedDeclarationCatchDTO } from '@app/models/generated/dtos/InspectedDeclarationCatchDTO';
 import { InspectedCatchTableModel } from '../../../../models/inspected-catch-table.model';
+import { CommonUtils } from '@app/shared/utils/common.utils';
 
 function groupBy(array: any[], f: any): any[][] {
     const groups: any = {};
@@ -55,6 +56,8 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
     @Input()
     public presentations: NomenclatureDTO<number>[] = [];
 
+    public catchQuantities: Map<number, number> = new Map<number, number>();
+
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
 
@@ -83,10 +86,12 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
         if (value !== undefined && value !== null && value.length !== 0) {
             setTimeout(() => {
                 this.catches = value;
+                this.recalculateCatchQuantitySums();
             });
         }
         else {
             this.catches = [];
+            this.recalculateCatchQuantitySums();
         }
     }
 
@@ -151,6 +156,7 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
                 }
 
                 this.catches = this.catches.slice();
+                this.recalculateCatchQuantitySums();
                 this.onChanged(this.getValue());
             }
         });
@@ -167,6 +173,7 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
                     this.datatable.softDelete(inspectedCatch);
                     this.catches.splice(this.catches.indexOf(inspectedCatch.data), 1);
                     this.onChanged(this.getValue());
+                    this.recalculateCatchQuantitySums();
                 }
             }
         });
@@ -202,5 +209,15 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
             }
             return null;
         };
+    }
+
+    private recalculateCatchQuantitySums(): void {
+        const recordsGroupedByFish: Record<number, InspectedDeclarationCatchDTO[]> = CommonUtils.groupBy(this.catches, x => x.fishTypeId!);
+        this.catchQuantities.clear();
+
+        for (const fishGroupId in recordsGroupedByFish) {
+            const quantity: number = recordsGroupedByFish[fishGroupId].reduce((sum, current) => Number(sum) + Number(current.catchQuantity!), 0);
+            this.catchQuantities.set(Number(fishGroupId), quantity);
+        }
     }
 }

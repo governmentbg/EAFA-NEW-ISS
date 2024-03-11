@@ -172,6 +172,15 @@ export class InspectionsService extends BaseAuditService {
         });
     }
 
+    public getLogBookPagesByLogBookNum(type: DeclarationLogBookTypeEnum, logBookNum: string): Observable<InspectionLogBookPageNomenclatureDTO[]> {
+        const params = new HttpParams().append('type', type.toString()).append('logBookNum', logBookNum);
+
+        return this.requestService.get(this.area, this.controller, 'GetLogBookPagesByLogBookNum', {
+            httpParams: params,
+            responseTypeCtr: InspectionLogBookPageNomenclatureDTO
+        });
+    }
+
     public getShipFishingGears(shipId: number): Observable<FishingGearDTO[]> {
         const params = new HttpParams().append('shipId', shipId.toString());
 
