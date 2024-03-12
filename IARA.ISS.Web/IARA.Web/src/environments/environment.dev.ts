@@ -19,7 +19,8 @@ export class Environment {
         frontendBaseUrl: 'http://localhost:4200',
         identityServerBaseUrl: 'http://localhost:5050',
         environmentType: EnvironmentType.Development,
-        hasPublicAccess: false
+        hasPublicAccess: false,
+        egovPaymentHref: 'https://pay-test.egov.bg/Home/AccessByCode'
     });
 
     public static get Instance(): IEnvironmentConfig {

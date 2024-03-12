@@ -10,6 +10,7 @@ export interface IEnvironmentConfig {
     frontendBaseUrl: string;
     identityServerBaseUrl: string;
     environmentType: EnvironmentType;
+    egovPaymentHref: string;
     appBaseHref?: string;
 }
 

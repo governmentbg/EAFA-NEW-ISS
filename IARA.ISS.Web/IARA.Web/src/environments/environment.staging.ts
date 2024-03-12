@@ -20,7 +20,8 @@ export class Environment {
         servicesBaseUrl: '',
         frontendBaseUrl: '',
         identityServerBaseUrl: '',
-        environmentType: EnvironmentType.InternalStaging
+        environmentType: EnvironmentType.InternalStaging,
+        egovPaymentHref: 'https://pay-test.egov.bg/Home/AccessByCode'
     });
 
     public static get Instance(): IEnvironmentConfig {

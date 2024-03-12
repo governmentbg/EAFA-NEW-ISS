@@ -20,7 +20,8 @@ export class Environment {
         frontendBaseUrl: 'http://localhost:4200',
         identityServerBaseUrl: 'http://localhost:5050',
         hasPublicAccess: false,
-        environmentType: EnvironmentType.Development
+        environmentType: EnvironmentType.Development,
+        egovPaymentHref: 'https://pay-test.egov.bg/Home/AccessByCode'
     });
 }
 /*
