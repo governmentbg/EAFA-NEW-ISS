@@ -5088,6 +5088,7 @@
         'source': 'Източник',
         'checked-table': 'Проверявана таблица',
         'level': 'Ниво',
+        'description': 'Описание',
         'has-automatic-execution': 'Честота на автоматично изпълнение',
 
         'view-cross-check': 'Преглед на кръстосана проверка',

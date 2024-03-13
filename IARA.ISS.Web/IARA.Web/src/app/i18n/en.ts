@@ -5031,6 +5031,7 @@
         'source': 'Source',
         'checked-table': 'Checked table',
         'level': 'Level',
+        'description': 'Description',
         'has-automatic-execution': 'Auto execution frequency',
 
         'view-cross-check': 'View cross check',

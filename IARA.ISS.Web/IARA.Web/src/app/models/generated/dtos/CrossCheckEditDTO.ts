@@ -48,6 +48,9 @@ export class CrossCheckEditDTO {
     @StrictlyTyped(String)
     public purpose?: string;
 
+    @StrictlyTyped(String)
+    public description?: string;
+
     @StrictlyTyped(Number)
     public sourceId?: number;
 
