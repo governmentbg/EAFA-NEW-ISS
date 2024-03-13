@@ -664,10 +664,14 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
         this.totalPrice = 0;
 
         for (const ticket of this.tickets) {
-            this.totalPrice += ticket.price!;
+            if (ticket.price !== undefined && ticket.price !== null) {
+                this.totalPrice += ticket.price;
+            }
         }
         for (const ticket of this.childTickets) {
-            this.totalPrice += ticket.price!;
+            if (ticket.price !== undefined && ticket.price !== null) {
+                this.totalPrice += ticket.price;
+            }
         }
     }
 

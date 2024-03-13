@@ -203,6 +203,7 @@ export class EditCrossCheckComponent implements OnInit, IDialogComponent, AfterV
             dataSourceCheckControl: new FormControl(null, Validators.maxLength(500)),
             dataFieldsCheckControl: new FormControl(null, Validators.maxLength(1000)),
             purposeControl: new FormControl(null, Validators.maxLength(1000)),
+            descriptionControl: new FormControl(null, Validators.maxLength(1000)),
             sourceControl: new FormControl(null, Validators.required),
             hasAutomaticExecutionControl: new FormControl(null, Validators.required),
             checkTableNameControl: new FormControl(null, [Validators.required, Validators.maxLength(255)]),
@@ -222,6 +223,7 @@ export class EditCrossCheckComponent implements OnInit, IDialogComponent, AfterV
         this.form.get('dataSourceCheckControl')!.setValue(this.model.checkSource);
         this.form.get('dataFieldsCheckControl')!.setValue(this.model.checkSourceColumns);
         this.form.get('purposeControl')!.setValue(this.model.purpose);
+        this.form.get('descriptionControl')!.setValue(this.model.description);
         this.form.get('sourceControl')!.setValue(this.sources.find(x => x.value === this.model.sourceId));
         this.form.get('hasAutomaticExecutionControl')!.setValue(this.autoExecFrequencyCodes.find(x => x.value === this.model.autoExecFrequency));
         this.form.get('checkTableNameControl')!.setValue(this.model.checkTableName);
@@ -239,6 +241,7 @@ export class EditCrossCheckComponent implements OnInit, IDialogComponent, AfterV
         this.model.checkSource = this.form.get('dataSourceCheckControl')!.value;
         this.model.checkSourceColumns = this.form.get('dataFieldsCheckControl')!.value;
         this.model.purpose = this.form.get('purposeControl')!.value;
+        this.model.description = this.form.get('descriptionControl')!.value;
         this.model.sourceId = this.form.get('sourceControl')!.value!.value;
         this.model.autoExecFrequency = this.form.get('hasAutomaticExecutionControl')!.value.value;
         this.model.checkTableName = this.form.get('checkTableNameControl')!.value;

@@ -587,7 +587,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         const rightButtons: IActionInfo[] = [];
 
         if (!isOnline) {
-            if (ticket.ticketStatus !== TicketStatusEnum.CANCELED) {
+            if (ticket.ticketStatus !== TicketStatusEnum.CANCELED && ticket.applicationStatus !== ApplicationStatusesEnum.INSP_CORR_FROM_EMP) {
                 rightButtons.push({
                     id: 'issue-duplicate',
                     color: 'accent',
