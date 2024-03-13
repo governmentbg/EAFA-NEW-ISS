@@ -20,6 +20,7 @@ export class NotificationsHubService extends BaseNotificationsHubService {
         request.pageSize = pageSize;
 
         try {
+            console.log('getUserNotifications was called');
             return this.sendDataToHub<UserNotificationsList>('GetUserNotifications', request);
         } catch (e) {
             return Promise.reject(e);
