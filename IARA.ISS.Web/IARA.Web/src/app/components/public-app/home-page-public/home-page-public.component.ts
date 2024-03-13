@@ -5,7 +5,9 @@ import { SecurityService } from '@app/services/common-app/security.service';
 import { ApplicationsPublicService } from '@app/services/public-app/applications-public.service';
 import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { HomePageVideoModel } from './models/home-page-video.params';
+import { HomePageCardModel } from './models/home-page-card.params';
+
+const USER_MANUAL_URL: string = '../../../assets/user-manual/IARA_ISS_Public_User_Manual.pdf';
 
 @Component({
     selector: 'home-page-public',
@@ -15,7 +17,7 @@ import { HomePageVideoModel } from './models/home-page-video.params';
 export class HomePagePublicComponent implements OnInit {
     public isAuthenticated: boolean = false;
     public applicationTypes: ApplicationTypeDTO[] = [];
-    public videos: HomePageVideoModel[] = [];
+    public cards: HomePageCardModel[] = [];
 
     @ViewChild('table')
     private table!: TLDataTableComponent;
@@ -36,7 +38,7 @@ export class HomePagePublicComponent implements OnInit {
         this.applicationsService = applicationsService;
         this.translate = translate;
 
-        this.initializeVideos();
+        this.initializeFooterCards();
 
         this.securityService.isAuthenticatedEvent.subscribe({
             next: (result: boolean) => {
@@ -76,17 +78,24 @@ export class HomePagePublicComponent implements OnInit {
         this.table.toggleExandGroup(group);
     }
 
-    private initializeVideos(): void {
-        this.videos = [
-            new HomePageVideoModel({
+    private initializeFooterCards(): void {
+        this.cards = [
+            new HomePageCardModel({
                 title: this.translate.getValue('home-page-public.tickets-video'),
                 tooltipText: this.translate.getValue('home-page-public.tickets-video'),
                 url: 'https://www.youtube.com/watch?v=Rewqa0xUgMw'
             }),
-            new HomePageVideoModel({
+            new HomePageCardModel({
                 title: this.translate.getValue('home-page-public.associations-video'),
                 tooltipText: this.translate.getValue('home-page-public.associations-video'),
                 url: 'https://www.youtube.com/watch?v=zqZLrxKBnSI'
+            }),
+            new HomePageCardModel({
+                title: this.translate.getValue('home-page-public.user-manual-pdf'),
+                tooltipText: this.translate.getValue('home-page-public.user-manual-pdf'),
+                url: USER_MANUAL_URL,
+                icon: 'fa-file-alt',
+                shouldDownload: true
             })
         ]
     }

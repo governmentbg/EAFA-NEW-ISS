@@ -192,7 +192,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
             }
             else
             {
-                return false;
+                //return false;
             }
 
             HashSet<int> personsToPull = new HashSet<int>();

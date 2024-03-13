@@ -1,12 +1,15 @@
 ﻿using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
+using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
+using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
+using Xamarin.Forms;
 
 namespace IARA.Mobile.Insp.Base
 {
@@ -58,6 +61,15 @@ namespace IARA.Mobile.Insp.Base
         public virtual void Dispose()
         {
             InspectionHelper.Dispose(this);
+        }
+
+        protected async Task OnGetStartupData()
+        {
+            await TLLoadingHelper.ShowFullLoadingScreen();
+            IStartupTransaction starup = DependencyService.Resolve<IStartupTransaction>();
+            await starup.GetInitialData(false, null, null);
+            //await OnReload();
+            await TLLoadingHelper.HideFullLoadingScreen();
         }
     }
 }
