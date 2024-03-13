@@ -20,7 +20,7 @@ import { CatchesAndSalesPublicComponent } from './catches-and-sales/catches-and-
 import { StatisticalFormsComponent } from './statistical-forms/statistical-forms.component';
 import { ReportViewComponent } from './reports/report-view.component';
 import { HomePagePublicComponent } from './home-page-public/home-page-public.component';
-import { HomePageVideoComponent } from './home-page-public/home-page-video.component';
+import { HomePageCardComponent } from './home-page-public/home-page-card.component';
 
 @NgModule({
     declarations: [
@@ -39,7 +39,7 @@ import { HomePageVideoComponent } from './home-page-public/home-page-video.compo
         StatisticalFormsComponent,
         ReportViewComponent,
         HomePagePublicComponent,
-        HomePageVideoComponent
+        HomePageCardComponent
     ],
     imports: [
         TLCommonModule,
@@ -64,7 +64,7 @@ import { HomePageVideoComponent } from './home-page-public/home-page-video.compo
         StatisticalFormsComponent,
         ReportViewComponent,
         HomePagePublicComponent,
-        HomePageVideoComponent
+        HomePageCardComponent
     ]
 })
 export class IARAApplicationModule {

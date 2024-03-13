@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
@@ -16,6 +11,11 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
 using IARA.Mobile.Shared.Views;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
@@ -149,6 +149,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
 
         public override async Task Initialize(object sender)
         {
+            OnGetStartupData();
             InspectionHelper.Initialize(this, Edit);
             InspectionHelper.InitShip(InspectedShip, ShipChecks, ShipFishingGears.FishingGears);
 

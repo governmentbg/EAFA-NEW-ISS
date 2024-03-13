@@ -6409,7 +6409,9 @@
         'assotiations-paragraph': 'Associations with existing users with rights to issue recreational fishing tickets in the old EAFA system, need to log into the current portal with their username and password and update their profile data. After the update, the username will be replaced with the specified e-mail, and the password will remain the same (unless the user changes it in the "My Profile" menu)',
         'tickets-buy': 'To purchase your ticket for recreational fishing as an individual, you only need to create an account in the public portal of EAFA.',
         'tickets-log-in': 'After login choose "Recreational fishing ticket" and follow the instructions',
-        'tickets-pay': 'You must have e-pay access in order to choose e-pay as payment type for your recreational ticket('
+        'tickets-pay': 'You must have e-pay access in order to choose e-pay as payment type for your recreational ticket(',
+        'user-manual-pdf': 'EAFA User manual',
+        'user-manual-pdf-tooltip': 'Download'
     },
     'notifications': {
         'title': 'Notifications',
