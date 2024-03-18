@@ -50,6 +50,7 @@ export class CheckVersionService {
 
     private subscribeForReconnect(): void {
         this.notificationsHub.reconnectedEvent.subscribe((connectionId) => {
+            console.log('Reconnected to notifications hub');
             this.checkVersion().pipe(map(result => result.version)).subscribe(this.handleVersionChange.bind(this));
         });
     }
@@ -59,6 +60,7 @@ export class CheckVersionService {
     }
 
     private handleVersionChange(version: string): void {
+        console.log(`Current version: ${this.Version}\nVersion returned from backend: ${version}`);
         if (this.Version != version) {
             this._version = version;
             this.refreshPage();
