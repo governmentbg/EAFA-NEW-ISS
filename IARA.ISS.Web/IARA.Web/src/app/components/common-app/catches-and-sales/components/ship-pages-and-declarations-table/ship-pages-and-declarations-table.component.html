@@ -42,15 +42,23 @@
                                       label="{{ 'catches-and-sales.admission-storage-location' | tlTranslate }}">
                             </tl-input>
 
-                            <tl-input [fxFlex]="admissionDeclaration.status === logBookPageStatusesEnum.Canceled ? 39 : 34"
+                            <tl-input [fxFlex]="admissionDeclaration.status === logBookPageStatusesEnum.Canceled ? 35 : 30"
                                       [readonly]="true"
                                       [value]="admissionDeclaration.productsInformation"
                                       label="{{ 'catches-and-sales.admission-products-information' | tlTranslate }}">
                             </tl-input>
 
                             <div *ngIf="showDocumentActionButtons && admissionDeclaration.status !== logBookPageStatusesEnum.Canceled"
-                                 fxFlex="5"
-                                 fxLayout="row">
+                                 [fxFlex]="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished) ? 11 : 7"
+                                 fxLayout="row wrap">
+                                <button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished) && _pagesPermissions.canEditFirstSaleLogBookRecords"
+                                        mat-icon-button
+                                        color="accent"
+                                        (click)="onAddFirstSaleDocumentFromAdmissionDeclarationBtnClicked(admissionDeclaration)"
+                                        matTooltip="{{ 'catches-and-sales.first-sale-document-attachment' | tlTranslate }}">
+                                    <tl-icon icon="fa-plus-circle" size="1.5" iconColor="accent"></tl-icon>
+                                </button>
+
                                 <tl-icon-button icon="visibility"
                                                 (buttonClicked)="editAdmissionLogBookPage(admissionDeclaration, true)"
                                                 iconClass="accent-color"
@@ -105,15 +113,35 @@
                                       label="{{ 'catches-and-sales.transportation-delivery-location' | tlTranslate }}">
                             </tl-input>
 
-                            <tl-input [fxFlex]="transportationDocument.status === logBookPageStatusesEnum.Canceled ? 39 : 34"
+                            <tl-input [fxFlex]="transportationDocument.status === logBookPageStatusesEnum.Canceled ? 35 : 30"
                                       [readonly]="true"
                                       [value]="transportationDocument.productsInformation"
                                       label="{{ 'catches-and-sales.transportation-products-information' | tlTranslate }}">
                             </tl-input>
 
                             <div *ngIf="showDocumentActionButtons && transportationDocument.status !== logBookPageStatusesEnum.Canceled"
-                                 fxFlex="5"
-                                 fxLayout="row">
+                                 [fxFlex]="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished) ? 11 : 7"
+                                 fxLayout="row wrap">
+                                <button *ngIf="!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished"
+                                        mat-icon-button
+                                        color="accent"
+                                        matTooltip="{{ 'catches-and-sales.document-attachment' | tlTranslate }}"
+                                        [matMenuTriggerFor]="transportationMenu">
+                                    <tl-icon icon="fa-plus-circle" size="1.5" iconColor="accent"></tl-icon>
+                                </button>
+                                <mat-menu #transportationMenu="matMenu">
+                                    <button mat-menu-item
+                                            *ngIf="_pagesPermissions.canAddAdmissionLogBookRecords"
+                                            (click)="onAddAdmissionDocumentFromTransportationDocumentBtnClicked(transportationDocument)">
+                                        <span>{{ 'catches-and-sales.admission-declaration' | tlTranslate }}</span>
+                                    </button>
+                                    <button mat-menu-item
+                                            *ngIf="_pagesPermissions.canAddFirstSaleLogBookRecords"
+                                            (click)="onAddFirstSaleDocumentFromTransportationDocumentBtnClicked(transportationDocument)">
+                                        <span>{{ 'catches-and-sales.first-sale-document' | tlTranslate }}</span>
+                                    </button>
+                                </mat-menu>
+
                                 <tl-icon-button icon="visibility"
                                                 (buttonClicked)="editTransportationLogBookPage(transportationDocument, true)"
                                                 iconClass="accent-color"

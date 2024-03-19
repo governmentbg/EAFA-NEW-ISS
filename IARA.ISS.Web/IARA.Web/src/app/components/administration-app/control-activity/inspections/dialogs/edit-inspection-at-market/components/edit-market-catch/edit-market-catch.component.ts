@@ -117,7 +117,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             }),
             new NomenclatureDTO({
                 value: DeclarationLogBookTypeEnum.Invoice,
-                displayName: translate.getValue('inspections.market-ship-invoice'),
+                displayName: translate.getValue('inspections.market-other'),
                 isActive: true,
             }),
             new NomenclatureDTO({
@@ -485,25 +485,31 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     }
 
     private fillLogBookPageData(): void {
-        if (((this.model.originShip?.shipId !== null && this.model.originShip?.shipId !== undefined)
-            || (this.model.aquacultureId !== null && this.model.aquacultureId !== undefined))
-            && this.model.logBookType !== null && this.model.logBookType !== undefined
-            && this.model.logBookType !== DeclarationLogBookTypeEnum.Invoice
-            && this.model.logBookType !== DeclarationLogBookTypeEnum.NNN
-        ) {
-            this.service.getLogBookPages(this.model.logBookType, this.model.originShip?.shipId, this.model.aquacultureId).subscribe({
-                next: (pages: InspectionLogBookPageNomenclatureDTO[]) => {
-                    this.declarationPages = pages;
-                    const page: InspectionLogBookPageNomenclatureDTO | undefined = pages.find(f => f.value === this.model.logBookPageId);
+        if (this.model.logBookPageId !== undefined && this.model.logBookPageId !== null) {
+            if (((this.model.originShip?.shipId !== null && this.model.originShip?.shipId !== undefined)
+                || (this.model.aquacultureId !== null && this.model.aquacultureId !== undefined))
+                && this.model.logBookType !== null && this.model.logBookType !== undefined
+                && this.model.logBookType !== DeclarationLogBookTypeEnum.Invoice
+                && this.model.logBookType !== DeclarationLogBookTypeEnum.NNN
+            ) {
+                this.service.getLogBookPages(this.model.logBookType, this.model.originShip?.shipId, this.model.aquacultureId).subscribe({
+                    next: (pages: InspectionLogBookPageNomenclatureDTO[]) => {
+                        this.declarationPages = pages;
+                        const page: InspectionLogBookPageNomenclatureDTO | undefined = pages.find(f => f.value === this.model.logBookPageId);
 
-                    this.form.get('pageNumberControl')!.setValue(page);
-                    this.form.get('pageDateControl')!.setValue(page?.logBookPageDate);
-                    this.form.get('declarationNumberControl')!.setValue(page?.originDeclarationNum);
-                    this.form.get('declarationDateControl')!.setValue(page?.originDeclarationDate);
+                        this.form.get('pageNumberControl')!.setValue(page);
+                        this.form.get('pageDateControl')!.setValue(page?.logBookPageDate);
+                        this.form.get('declarationNumberControl')!.setValue(page?.originDeclarationNum);
+                        this.form.get('declarationDateControl')!.setValue(page?.originDeclarationDate);
 
-                    this.disablePageControls();
-                }
-            });
+                        this.disablePageControls();
+                    }
+                });
+            }
+            else {
+                this.form.get('pageNumberControl')!.setValue(this.model.unregisteredPageNum);
+                this.form.get('pageDateControl')!.setValue(this.model.unregisteredPageDate);
+            }
         }
         else {
             this.form.get('pageNumberControl')!.setValue(this.model.unregisteredPageNum);
@@ -545,7 +551,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             const permit: NomenclatureDTO<number> | string = form.get('pageNumberControl')!.value;
             const fishCatch: NomenclatureDTO<number> = form.get('typeControl')!.value;
             const quantity: number = form.get('quantityControl')!.value;
-          
+
             if (typeof permit === 'object' && permit && fishCatch && quantity) {
                 this.fishErrors = [];
                 let fishes = this.declarationPages.find(x => x.value === permit.value)?.logBookProducts ?? [];

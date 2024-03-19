@@ -55,6 +55,7 @@ import { TLError } from '@app/shared/components/input-controls/models/tl-error.m
 import { SubmittedByRolesEnum } from '@app/enums/submitted-by-roles.enum';
 import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { CancellationHistoryEntryDTO } from '@app/models/generated/dtos/CancellationHistoryEntryDTO';
 
 type YesNo = 'yes' | 'no';
 
@@ -169,6 +170,8 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
     private employeeStatsLabels: string[] = [];
     private employeeInfoLabels: string[] = [];
     private financialInfoGroupNames: string[] = [];
+    private cancellations: CancellationHistoryEntryDTO[] = [];
+    private firstCancellationDate: Date | undefined;
 
     private readonly employeeGroupTypes: NumericStatTypeGroupsEnum[] = [NumericStatTypeGroupsEnum.FreeLabor, NumericStatTypeGroupsEnum.NumHours];
 
@@ -367,6 +370,9 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
 
                                 this.allInstallationTypes = this.installationTypes = aquaculture.facilityInstalations ?? [];
                                 this.allFishTypes = this.fishTypes = aquaculture.fishTypes ?? [];
+                                this.cancellations = aquaculture.cancellations ?? [];
+                                this.firstCancellationDate = aquaculture.cancellationDate;
+                                this.checkIfAquacultureIsCanceledForChosenYear(year);
 
                                 if (aquaculture.systemType === AquacultureSystemEnum.FullSystem) {
                                     this.isSystemFull = true;
@@ -434,7 +440,10 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
             next: (value: Date | undefined) => {
                 if (value !== undefined && value !== null) {
                     const aquacultureId: number | undefined = this.form.get('aquacultureFacilityControl')!.value?.value;
+
                     this.checkIfStatFormAlreadyExists(aquacultureId, value.getFullYear());
+                    this.checkIfAquacultureIsCanceledForChosenYear(value.getFullYear());
+
                     this.form.get('aquacultureFacilityControl')!.updateValueAndValidity({ onlySelf: true });
                 }
             }
@@ -646,6 +655,9 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         if (controlName === 'aquacultureFacilityControl') {
             if (errorCode === 'statFormExists' && error === true) {
                 return new TLError({ type: 'error', text: this.translate.getValue('statistical-forms.aqua-farm-stat-form-exist-error') });
+            }
+            else if (errorCode === 'aquacultureCanceled' && error === true) {
+                return new TLError({ type: 'error', text: this.translate.getValue('statistical-forms.aqua-farm-aquaculture-canceled-error') });
             }
         }
         return undefined;
@@ -1472,6 +1484,21 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                         }
                     }
                 });
+            }
+        }
+    }
+
+    private checkIfAquacultureIsCanceledForChosenYear(year: number | undefined): void {
+        if (year !== undefined && year !== null) {
+            if (this.firstCancellationDate !== undefined && this.firstCancellationDate !== null && this.firstCancellationDate.getFullYear() < year) {
+                if (this.cancellations !== undefined && this.cancellations !== null && this.cancellations.length > 0) {
+                    const isActiveForYear: boolean = this.cancellations.filter(x => x.isCancelled === false && x.dateOfChange?.getFullYear() === year).length > 0;
+
+                    if (!isActiveForYear) {
+                        this.form.get('aquacultureFacilityControl')!.setErrors({ aquacultureCanceled: true });
+                        this.form.get('aquacultureFacilityControl')!.markAsTouched();
+                    }
+                }
             }
         }
     }

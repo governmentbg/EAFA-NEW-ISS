@@ -74,7 +74,7 @@
                     {{ 'catches-and-sales.add-ship-page-document-wizard-confirm-additional-data' | tlTranslate }}
                 </span>
             </ng-template>
-            <div fxLayout="row" fxFlex="100" fxLayoutGap="1em">
+            <div *ngIf="startPageType === logBookTypesEnum.Ship" fxLayout="row" fxFlex="100" fxLayoutGap="1em">
                 <tl-input fxFlex="49"
                           formControlName="documentNumberControl"
                           label="{{ 'catches-and-sales.add-ship-page-document-wizard-document-number' | tlTranslate }}"
@@ -96,7 +96,7 @@
                                            [isReadonly]="true">
                 </common-log-book-page-data>
             </div>
-            <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center">
+            <div *ngIf="startPageType === logBookTypesEnum.Ship" fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center">
                 <log-book-page-person fxFlex="100"
                                       formControlName="personDataControl"
                                       [service]="service"

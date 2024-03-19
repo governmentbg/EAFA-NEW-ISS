@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog;
 using IARA.Mobile.Insp.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -18,7 +18,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class FishingGearsViewModel : ViewModel
     {
-        public FishingGearsViewModel(InspectionPageViewModel inspection, bool hasPingers = false)
+        public FishingGearsViewModel(InspectionPageViewModel inspection, bool hasPingers = true)
         {
             Inspection = inspection;
             HasPingers = hasPingers;

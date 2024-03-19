@@ -1,13 +1,13 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using IARA.Mobile.Insp.Application.DTObjects.Inspections;
+﻿using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Attributes;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
@@ -90,8 +90,15 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
                 if (CanEditReportNumber.Value)
                 {
-                    ReportNrStart = "";
-                    ReportNr.Value = dto.ReportNum;
+                    if (dto.ReportNum.Split('-').Count() == 1)
+                    {
+                        ReportNr.Value = string.Join("-", ReportNr.Value.Split('-').Take(2)) + "-" + dto.ReportNum;
+                    }
+                    else
+                    {
+                        ReportNrStart = "";
+                        ReportNr.Value = dto.ReportNum;
+                    }
                 }
                 else
                 {

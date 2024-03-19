@@ -1,4 +1,4 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Insp.Domain.Enums;
 
 namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
 {
@@ -7,6 +7,6 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public int? Id { get; set; }
         public string Number { get; set; }
         public int StatusId { get; set; }
-        public NomenclatureDto SelectedStatus { get; set; }
+        public FishingGearPingerStatusesEnum SelectedStatus { get; set; }
     }
 }

@@ -89,9 +89,9 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
                     logBookId: f.logBookId,
                     number: f.number,
                     pageNum: f.pageNum,
-                    page: f.logBookId !== null && f.logBookId !== undefined && f.pageNum !== undefined
+                    page: f.pageId !== null && f.pageId !== undefined && f.pageNum !== undefined
                         ? new NomenclatureDTO<number>({
-                            value: f.logBookId,
+                            value: f.pageId,
                             displayName: f.pageNum,
                             isActive: true
                         }) : undefined,

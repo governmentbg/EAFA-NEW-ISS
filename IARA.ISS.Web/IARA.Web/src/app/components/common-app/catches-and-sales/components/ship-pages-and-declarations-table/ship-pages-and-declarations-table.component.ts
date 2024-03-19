@@ -98,6 +98,15 @@ export class ShipPagesAndDeclarationsTableComponent {
     @Output()
     public onAddFirstSaleDocument: EventEmitter<ShipLogBookPageRegisterDTO> = new EventEmitter<ShipLogBookPageRegisterDTO>();
 
+    @Output()
+    public onAddAdmissionDocumentFromTransportation: EventEmitter<TransportationLogBookPageRegisterDTO> = new EventEmitter<TransportationLogBookPageRegisterDTO>();
+
+    @Output()
+    public onAddFirstSaleDocumentFromTransportation: EventEmitter<TransportationLogBookPageRegisterDTO> = new EventEmitter<TransportationLogBookPageRegisterDTO>();
+
+    @Output()
+    public onAddFirstSaleDocumentFromAdmission: EventEmitter<AdmissionLogBookPageRegisterDTO> = new EventEmitter<AdmissionLogBookPageRegisterDTO>();
+
     public readonly logBookPageStatusesEnum: typeof LogBookPageStatusesEnum = LogBookPageStatusesEnum;
     public readonly logBookTypesEnum: typeof LogBookTypesEnum = LogBookTypesEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
@@ -167,5 +176,17 @@ export class ShipPagesAndDeclarationsTableComponent {
 
     public onAddFirstSaleDocumentBtnClicked(shipPage: ShipLogBookPageRegisterDTO): void {
         this.onAddFirstSaleDocument.emit(shipPage);
+    }
+
+    public onAddAdmissionDocumentFromTransportationDocumentBtnClicked(transportationLogBookPage: TransportationLogBookPageRegisterDTO): void {
+        this.onAddAdmissionDocumentFromTransportation.emit(transportationLogBookPage);
+    }
+
+    public onAddFirstSaleDocumentFromTransportationDocumentBtnClicked(transportationLogBookPage: TransportationLogBookPageRegisterDTO): void {
+        this.onAddFirstSaleDocumentFromTransportation.emit(transportationLogBookPage);
+    }
+
+    public onAddFirstSaleDocumentFromAdmissionDeclarationBtnClicked(admissionLogBookPage: AdmissionLogBookPageRegisterDTO): void {
+        this.onAddFirstSaleDocumentFromAdmission.emit(admissionLogBookPage);
     }
 }

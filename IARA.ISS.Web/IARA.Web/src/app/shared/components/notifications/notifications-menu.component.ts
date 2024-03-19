@@ -48,6 +48,10 @@ export class NotificationsMenuComponent implements OnInit, AfterViewInit {
             console.log('isConnectedEvent emitted:', isConnected);
             this.isConnected = isConnected;
         });
+        this.notificationsHub.reconnectedEvent.subscribe(() => {
+            console.log('Reconnected to notifications hub');
+            this.isConnected = true;
+        });
     }
 
     private subscribeOnNewDataReceived(): void {
