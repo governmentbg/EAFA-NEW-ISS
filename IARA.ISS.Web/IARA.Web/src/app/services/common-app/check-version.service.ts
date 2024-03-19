@@ -53,10 +53,16 @@ export class CheckVersionService {
             console.log('Reconnected to notifications hub');
             this.checkVersion().pipe(map(result => result.version)).subscribe(this.handleVersionChange.bind(this));
         });
+        this.notificationsHub.isConnectedEvent.subscribe((isConnected) => {
+            console.log('isConnectedEvent emitted:', isConnected);
+            if (isConnected) {
+                this.checkVersion().pipe(map(result => result.version)).subscribe(this.handleVersionChange.bind(this));
+            }
+        });
     }
 
-    private checkVersion(): Observable<{ version: string }> {
-        return this.requestService.get<{ version: string }>(AreaTypes.Common, 'Version', 'Get');
+    private checkVersion(): Observable<{ version: string; }> {
+        return this.requestService.get<{ version: string; }>(AreaTypes.Common, 'Version', 'Get');
     }
 
     private handleVersionChange(version: string): void {

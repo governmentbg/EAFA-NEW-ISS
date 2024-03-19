@@ -797,8 +797,9 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.openAddShipPageDocumentWizardDialog(
             shipLogBookPage.id!,
             title,
-            LogBookPageDocumentTypesEnum.AdmissionDocument
-        );
+            LogBookPageDocumentTypesEnum.AdmissionDocument,
+            LogBookTypesEnum.Ship,
+            undefined);
     }
 
     public onAddTransportationDocumentBtnClicked(shipLogBookPage: ShipLogBookPageRegisterDTO): void {
@@ -806,15 +807,47 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.openAddShipPageDocumentWizardDialog(
             shipLogBookPage.id!,
             title,
-            LogBookPageDocumentTypesEnum.TransportationDocument);
+            LogBookPageDocumentTypesEnum.TransportationDocument,
+            LogBookTypesEnum.Ship,
+            undefined);
     }
 
     public onAddFirstSaleDocumentBtnClicked(shipLogBookPage: ShipLogBookPageRegisterDTO): void {
         const title: string = this.translationService.getValue('catches-and-sales.add-ship-first-sale-document-title');
-        this.openAddShipPageDocumentWizardDialog(shipLogBookPage.id!, title, LogBookPageDocumentTypesEnum.FirstSaleDocument);
+        this.openAddShipPageDocumentWizardDialog(shipLogBookPage.id!, title, LogBookPageDocumentTypesEnum.FirstSaleDocument, LogBookTypesEnum.Ship, undefined);
     }
 
-    private openAddShipPageDocumentWizardDialog(shipLogBookPageId: number, title: string, selectedDocumentType: LogBookPageDocumentTypesEnum): void {
+    public onAddAdmissionDocumentFromTransportationBtnClicked(transportationLogBookPage: TransportationLogBookPageRegisterDTO): void {
+        const title: string = this.translationService.getValue('catches-and-sales.add-transportation-admission-document-title');
+        this.openAddShipPageDocumentWizardDialog(
+            transportationLogBookPage.id!,
+            title,
+            LogBookPageDocumentTypesEnum.AdmissionDocument,
+            LogBookTypesEnum.Transportation,
+            transportationLogBookPage.pageNumber);
+    }
+
+    public onAddFirstSaleDocumentFromTransportationBtnClicked(transportationLogBookPage: TransportationLogBookPageRegisterDTO): void {
+        const title: string = this.translationService.getValue('catches-and-sales.add-transportation-first-sale-document-title');
+        this.openAddShipPageDocumentWizardDialog(
+            transportationLogBookPage.id!,
+            title,
+            LogBookPageDocumentTypesEnum.FirstSaleDocument,
+            LogBookTypesEnum.Transportation,
+            transportationLogBookPage.pageNumber);
+    }
+
+    public onAddFirstSaleDocumentFromAdmissionBtnClicked(admissionLogBookPage: AdmissionLogBookPageRegisterDTO): void {
+        const title: string = this.translationService.getValue('catches-and-sales.add-admission-first-sale-document-title');
+        this.openAddShipPageDocumentWizardDialog(
+            admissionLogBookPage.id!,
+            title,
+            LogBookPageDocumentTypesEnum.FirstSaleDocument,
+            LogBookTypesEnum.Admission,
+            admissionLogBookPage.pageNumber);
+    }
+
+    private openAddShipPageDocumentWizardDialog(logBookPageId: number, title: string, selectedDocumentType: LogBookPageDocumentTypesEnum, logBookType: LogBookTypesEnum, logBookPageNum: number | undefined): void {
         this.addShipPageDocumentWizardDialog.open({
             title: title,
             TCtor: AddShipPageDocumentWizardComponent,
@@ -836,7 +869,9 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             componentData: new AddShipPageDocumentDialogParamsModel({
                 service: this.service,
                 documentType: selectedDocumentType,
-                shipLogBookPageId: shipLogBookPageId
+                logBookPageId: logBookPageId,
+                logBookType: logBookType,
+                documentNumber: logBookPageNum
             }),
             disableDialogClose: true
         }, '1500px').subscribe({

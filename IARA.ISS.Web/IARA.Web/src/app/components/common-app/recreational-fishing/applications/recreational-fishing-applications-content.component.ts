@@ -498,15 +498,17 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         });
 
         if (viewMode) {
-            switch (status) {
-                case ApplicationStatusesEnum.INSP_CORR_FROM_EMP: {
-                    params.showOnlyRegiXData = true;
-                } break;
-                case ApplicationStatusesEnum.FILL_BY_APPL: {
-                    // Ако не сме в RegiX режим И предишният статус на заявлението е бил Стартирани проверки
-                    if (prevApplicationStatus === ApplicationStatusesEnum.EXT_CHK_STARTED) {
-                        params.showRegiXData = true;
+            if (!this.isAssociation) {
+                switch (status) {
+                    case ApplicationStatusesEnum.INSP_CORR_FROM_EMP: {
+                        params.showOnlyRegiXData = true;
                     } break;
+                    case ApplicationStatusesEnum.FILL_BY_APPL: {
+                        // Ако не сме в RegiX режим И предишният статус на заявлението е бил Стартирани проверки
+                        if (prevApplicationStatus === ApplicationStatusesEnum.EXT_CHK_STARTED) {
+                            params.showRegiXData = true;
+                        } break;
+                    }
                 }
             }
 
@@ -587,7 +589,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         const rightButtons: IActionInfo[] = [];
 
         if (!isOnline) {
-            if (ticket.ticketStatus !== TicketStatusEnum.CANCELED && ticket.applicationStatus !== ApplicationStatusesEnum.INSP_CORR_FROM_EMP) {
+            if (ticket.ticketStatus !== TicketStatusEnum.CANCELED) {
                 rightButtons.push({
                     id: 'issue-duplicate',
                     color: 'accent',

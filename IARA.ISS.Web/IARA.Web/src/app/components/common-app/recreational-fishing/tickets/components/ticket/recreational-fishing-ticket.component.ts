@@ -184,7 +184,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
         }
 
         if (this.dialogData) {
-            if (this.dialogData.showOnlyRegiXData) {
+            if (this.dialogData.showOnlyRegiXData && !this.dialogData.isAssociation) {
                 (this.service as RecreationalFishingAdministrationService).getRegixData(this.dialogData.id).subscribe({
                     next: (result: RegixChecksWrapperDTO<RecreationalFishingTicketBaseRegixDataDTO>) => {
                         this.regixChecksData = result.regiXDataModel;

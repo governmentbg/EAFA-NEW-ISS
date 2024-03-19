@@ -149,7 +149,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
 
         public override async Task Initialize(object sender)
         {
-            OnGetStartupData();
+            await OnGetStartupData();
             InspectionHelper.Initialize(this, Edit);
             InspectionHelper.InitShip(InspectedShip, ShipChecks, ShipFishingGears.FishingGears);
 

@@ -163,14 +163,17 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     }
 
     private populateToolbar(user: UserAuthDTO) {
-        this.showUserTickets = IS_PUBLIC_APP && user.permissions.includes(PermissionsEnum.TicketsPublicRead);
-        this.userService.getUserPhoto(user.userId).subscribe((photo: string) => {
-            if (photo) {
-                this.userPhoto = photo;
-            }
-        });
+        if (user !== undefined && user !== null) {
+            this.showUserTickets = IS_PUBLIC_APP && user.permissions.includes(PermissionsEnum.TicketsPublicRead);
 
-        this.usernames = `${user.firstName} ${user.lastName}`;
+            this.userService.getUserPhoto(user.userId).subscribe((photo: string) => {
+                if (photo) {
+                    this.userPhoto = photo;
+                }
+            });
+
+            this.usernames = `${user.firstName} ${user.lastName}`;
+        }
     }
 
     public logout(): void {

@@ -619,6 +619,10 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 const message: string = `${this.translationService.getValue('validation.required')} (${this.translationService.getValue('catches-and-sales.with-pattern')}: ${this.translationService.getValue('common.date-time-control-format-hint')})`;
                 return new TLError({ text: message });
             }
+            else if (errorCode === 'endDateSameAsStartDate') {
+                const message: string = `${this.translationService.getValue('catches-and-sales.end-date-should-be-different-from-start-date')}`;
+                return new TLError({ text: message });
+            }
             else if (errorCode === 'matDatetimePickerMin') {
                 if (this.form.get('fishTripStartDateTimeControl')!.value !== null && this.form.get('fishTripStartDateTimeControl')!.value !== undefined) {
                     const minDate: Date = (this.form.get('fishTripStartDateTimeControl')!.value as Moment).toDate();
@@ -1389,7 +1393,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     private setFishTripEndDateTimeControlInitialValidators(): void {
         this.form.get('fishTripEndDateTimeControl')!.setValidators([
             Validators.required,
-            TLValidators.minDate(this.form.get('fishTripStartDateTimeControl')!)
+            TLValidators.minDate(this.form.get('fishTripStartDateTimeControl')!),
+            this.endDateDifferentFromStartDateValidator()
         ]);
 
         this.form.get('fishTripEndDateTimeControl')!.markAsPending({ emitEvent: false });
@@ -1736,6 +1741,25 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
                 if (invalidRows.length > 1) {
                     return { 'uniqueGearEntryTime': true };
+                }
+            }
+
+            return null;
+        }
+    }
+
+    private endDateDifferentFromStartDateValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control.value !== null && control.value !== undefined) {
+
+                const startDate: Moment | null | undefined = this.form.get('fishTripStartDateTimeControl')!.value;
+
+                if (startDate !== null && startDate !== undefined && startDate.isValid) {
+                    const endDate: Moment = control.value;
+
+                    if (endDate.isSame(startDate)) {
+                        return { 'endDateSameAsStartDate': true };
+                    }
                 }
             }
 

@@ -26,8 +26,6 @@ import { BasicLogBookPageDocumentDataDTO } from '@app/models/generated/dtos/Basi
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { LogBookPagePersonTypesEnum } from '@app/enums/log-book-page-person-types.enum';
 import { TLValidators } from '@app/shared/utils/tl-validators';
-import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
-import { CommonUtils } from '@app/shared/utils/common.utils';
 import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 import { BasicLogBookPageDocumentParameters } from './models/basic-log-book-page-document-parameters.model';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
@@ -35,6 +33,8 @@ import { LogBookNomenclatureDTO } from '@app/models/generated/dtos/LogBookNomenc
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RequestProperties } from '@app/shared/services/request-properties';
+import { CommonLogBookPageDataParameters } from '../add-log-book-page-wizard/models/common-log-book-page-data-parameteres.model';
+import { CommonLogBookPageDataDTO } from '@app/models/generated/dtos/CommonLogBookPageDataDTO';
 
 @Component({
     selector: 'add-ship-page-document-wizard',
@@ -43,6 +43,7 @@ import { RequestProperties } from '@app/shared/services/request-properties';
 export class AddShipPageDocumentWizardComponent implements OnInit, IDialogComponent {
     public readonly documentTypesEnum: typeof LogBookPageDocumentTypesEnum = LogBookPageDocumentTypesEnum;
     public readonly logBookPagePersonTypesEnum: typeof LogBookPagePersonTypesEnum = LogBookPagePersonTypesEnum;
+    public readonly logBookTypesEnum: typeof LogBookTypesEnum = LogBookTypesEnum;
 
     public preliminaryDataFormGroup!: FormGroup;
     public confirmLogBookAndOwnerFormGroup!: FormGroup;
@@ -51,6 +52,9 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
     public documentType!: LogBookPageDocumentTypesEnum;
     public ownerType: NomenclatureDTO<LogBookPagePersonTypesEnum> | undefined;
     public logBookType: LogBookTypesEnum | undefined;
+
+    public startPageNumber: number | undefined; //номер на документа, към който се добавя нова страница
+    public startPageType: LogBookTypesEnum | undefined; //тип на документа, към който се добавя нова страница
 
     public registeredBuyers: NomenclatureDTO<number>[] = [];
     public logBookOwnerTypes: NomenclatureDTO<LogBookPagePersonTypesEnum>[] = [];
@@ -115,7 +119,9 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
 
     public setData(data: AddShipPageDocumentDialogParamsModel, buttons: DialogWrapperData): void {
         this.documentType = data.documentType;
-        this.shipLogBookPageId = data.shipLogBookPageId;
+        this.shipLogBookPageId = data.logBookPageId;
+        this.startPageType = data.logBookType;
+        this.startPageNumber = data.documentNumber;
         this.service = data.service;
 
         this.dialogRef = buttons.dialogRef;
@@ -189,44 +195,81 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
         }
         else if (stepperSelectionEvent.previouslySelectedIndex === 1 && stepperSelectionEvent.selectedIndex === 2) {
             if (this.preliminaryDataFormGroup.valid && this.confirmLogBookAndOwnerFormGroup.valid) {
-                const parameters: BasicLogBookPageDocumentParameters = new BasicLogBookPageDocumentParameters({
-                    documentType: this.documentType,
-                    shipLogBookPageId: this.shipLogBookPageId,
-                    documentNumber: Number(this.preliminaryDataFormGroup.get('documentNumberControl')!.value),
-                    logBookId: this.confirmLogBookAndOwnerFormGroup.get('possibleLogBookControl')!.value.value
-                });
+                if (this.startPageType === LogBookTypesEnum.Ship) {
+                    const parameters: BasicLogBookPageDocumentParameters = new BasicLogBookPageDocumentParameters({
+                        documentType: this.documentType,
+                        shipLogBookPageId: this.shipLogBookPageId,
+                        documentNumber: Number(this.preliminaryDataFormGroup.get('documentNumberControl')!.value),
+                        logBookId: this.confirmLogBookAndOwnerFormGroup.get('possibleLogBookControl')!.value.value
+                    });
 
-                this.service.getLogBookPageDocumentData(parameters).subscribe({
-                    next: (result: BasicLogBookPageDocumentDataDTO) => {
-                        this.logBookPageDocumentData = result;
-                        this.fillConfirmationForm();
-                    },
-                    error: (errorResponse: HttpErrorResponse) => {
-                        const error = errorResponse?.error as ErrorModel;
-                        if (error?.code === ErrorCode.PageNumberNotInLogBookLicense) {
-                            this.confirmLogBookAndOwnerFormGroup.setErrors({ 'pageNumberNotInLogBookLicense': true });
-                            this.stepper.previous();
-                        }
-                        else if (error?.code === ErrorCode.LogBookPageAlreadySubmitted) {
-                            this.confirmLogBookAndOwnerFormGroup.setErrors({ 'pageNumberAlreadySubmitted': true });
-                            this.stepper.previous();
-                        }
-                        else if (error?.code === ErrorCode.LogBookPageAlreadySubmittedOtherLogBook) {
-                            this.confirmLogBookAndOwnerFormGroup.setErrors({ 'pageNumberAlreadySubmittedOtherLogBook': true });
-                            this.pageAlreadySubmittedOtherLogbook = error.messages[0];
-                            this.stepper.previous();
-                        }
-                        else if (error?.code === ErrorCode.LogBookNotFound) {
-                            const message: string = this.translationService.getValue('catches-and-sales.log-book-page-person-cannot-find-log-book-error');
-                            this.snackbar.open(message, undefined, {
-                                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                            });
+                    this.service.getLogBookPageDocumentData(parameters).subscribe({
+                        next: (result: BasicLogBookPageDocumentDataDTO) => {
+                            this.logBookPageDocumentData = result;
+                            this.fillConfirmationForm();
+                        },
+                        error: (errorResponse: HttpErrorResponse) => {
+                            const error = errorResponse?.error as ErrorModel;
+                            if (error?.code === ErrorCode.PageNumberNotInLogBookLicense) {
+                                this.confirmLogBookAndOwnerFormGroup.setErrors({ 'pageNumberNotInLogBookLicense': true });
+                                this.stepper.previous();
+                            }
+                            else if (error?.code === ErrorCode.LogBookPageAlreadySubmitted) {
+                                this.confirmLogBookAndOwnerFormGroup.setErrors({ 'pageNumberAlreadySubmitted': true });
+                                this.stepper.previous();
+                            }
+                            else if (error?.code === ErrorCode.LogBookPageAlreadySubmittedOtherLogBook) {
+                                this.confirmLogBookAndOwnerFormGroup.setErrors({ 'pageNumberAlreadySubmittedOtherLogBook': true });
+                                this.pageAlreadySubmittedOtherLogbook = error.messages[0];
+                                this.stepper.previous();
+                            }
+                            else if (error?.code === ErrorCode.LogBookNotFound) {
+                                const message: string = this.translationService.getValue('catches-and-sales.log-book-page-person-cannot-find-log-book-error');
+                                this.snackbar.open(message, undefined, {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
 
-                            this.stepper.previous();
+                                this.stepper.previous();
+                            }
                         }
-                    }
-                });
+                    });
+                }
+                else {
+                    this.service.getCommonLogBookPageData(this.getCommonLogBookPageParameters()).subscribe({
+                        next: (result: CommonLogBookPageDataDTO) => {
+                            this.confirmationDataFormGroup.get('sourceDataControl')!.setValue(result);
+                        },
+                        error: (errorResponse: HttpErrorResponse) => {
+                            const error = errorResponse?.error as ErrorModel;
+                            if (error?.code === ErrorCode.PageNumberNotInLogbook) {
+                                this.confirmLogBookAndOwnerFormGroup.setErrors({ 'pageNumberNotInLogBook': true });
+                                this.stepper.previous();
+                            }
+                            else if (error?.code === ErrorCode.LogBookPageAlreadySubmitted) {
+                                this.confirmLogBookAndOwnerFormGroup.setErrors({ 'pageNumberAlreadySubmitted': true });
+                                this.stepper.previous();
+                            }
+                            else if (error?.code === ErrorCode.LogBookPageAlreadySubmittedOtherLogBook) {
+                                this.confirmLogBookAndOwnerFormGroup.setErrors({ 'pageNumberAlreadySubmittedOtherLogBook': true });
+                                this.pageAlreadySubmittedOtherLogbook = error.messages[0];
+                                this.stepper.previous();
+                            }
+                            else if (error?.code === ErrorCode.InvalidOriginDeclarationNumber) {
+                                this.confirmLogBookAndOwnerFormGroup.setErrors({ 'invalidOriginDeclarationNumber': true }); //TODO
+                                this.stepper.previous();
+                            }
+                            else if (error?.code === ErrorCode.InvalidTransportationDocNumber) {
+                                this.confirmLogBookAndOwnerFormGroup.setErrors({ 'invalidTransportationDocNumber': true });
+                                this.stepper.previous();
+                            }
+                            else if (error?.code === ErrorCode.InvalidAdmissionDocNumber) {
+                                this.confirmLogBookAndOwnerFormGroup.setErrors({ 'invalidAdmissionDocNumber': true });
+                                this.stepper.previous();
+                            }
+                        }
+                    });
+                }
             }
             else {
                 setTimeout(() => {
@@ -258,8 +301,12 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
             documentNumberControl: new FormControl(),
             logBookOwnerTypeControl: new FormControl(),
             sourceDataControl: new FormControl(undefined, Validators.required),
-            personDataControl: new FormControl(undefined, Validators.required)
+            personDataControl: new FormControl(undefined)
         });
+
+        if (this.startPageType === LogBookTypesEnum.Ship) {
+            this.confirmationDataFormGroup.get('personDataControl')!.setValidators(Validators.required);
+        }
 
         this.confirmLogBookAndOwnerFormGroup.get('possibleLogBookControl')!.valueChanges.subscribe({
             next: () => {
@@ -284,6 +331,21 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
 
     private openAddFirstSaleLogBookPageDialog(): void {
         const logBook: LogBookNomenclatureDTO = this.confirmLogBookAndOwnerFormGroup.get('possibleLogBookControl')!.value;
+        const componentData: CatchesAndSalesDialogParamsModel = new CatchesAndSalesDialogParamsModel({
+            service: this.service,
+            logBookId: logBook.value!,
+            logBookTypeId: logBook.logBookTypeId!,
+            viewMode: false
+        });
+
+        if (this.startPageType === LogBookTypesEnum.Ship) {
+            componentData.shipPageDocumentData = this.logBookPageDocumentData;
+            componentData.logBookPermitLicenseId = this.confirmLogBookAndOwnerFormGroup.get('possibleLogBookControl')!.value?.logBookPermitLicenseId
+        }
+        else {
+            componentData.pageNumber = Number(this.preliminaryDataFormGroup.get('documentNumberControl')!.value);
+            componentData.commonData = this.confirmationDataFormGroup.get('sourceDataControl')!.value;
+        }
 
         this.firstSaleLogBookPageDialog.openWithTwoButtons({
             title: this.translationService.getValue('catches-and-sales.add-first-sale-log-book-page-dialog-title'),
@@ -293,13 +355,7 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
             headerCancelButton: {
                 cancelBtnClicked: this.closeAddFirstSaleLogBookPageDialogBtnClicked.bind(this)
             },
-            componentData: new CatchesAndSalesDialogParamsModel({
-                shipPageDocumentData: this.logBookPageDocumentData,
-                logBookId: logBook.value!,
-                logBookTypeId: logBook.logBookTypeId!,
-                service: this.service,
-                viewMode: false
-            }),
+            componentData: componentData,
             disableDialogClose: true
         }, '1300px').subscribe({
             next: (result: FirstSaleLogBookPageEditDTO | undefined) => {
@@ -312,6 +368,21 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
 
     private openAddAdmissionLogBookPageDialog(): void {
         const logBook: LogBookNomenclatureDTO = this.confirmLogBookAndOwnerFormGroup.get('possibleLogBookControl')!.value;
+        const componentData: CatchesAndSalesDialogParamsModel = new CatchesAndSalesDialogParamsModel({
+            service: this.service,
+            logBookId: logBook.value!,
+            logBookTypeId: logBook.logBookTypeId!,
+            viewMode: false
+        });
+
+        if (this.startPageType === LogBookTypesEnum.Ship) {
+            componentData.shipPageDocumentData = this.logBookPageDocumentData;
+            componentData.logBookPermitLicenseId = this.confirmLogBookAndOwnerFormGroup.get('possibleLogBookControl')!.value?.logBookPermitLicenseId
+        }
+        else {
+            componentData.pageNumber = Number(this.preliminaryDataFormGroup.get('documentNumberControl')!.value);
+            componentData.commonData = this.confirmationDataFormGroup.get('sourceDataControl')!.value;
+        }
 
         this.admissionLogBookPageDialog.openWithTwoButtons({
             title: this.translationService.getValue('catches-and-sales.add-admission-log-book-page-dialog-title'),
@@ -321,14 +392,7 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
             headerCancelButton: {
                 cancelBtnClicked: this.closeAddAdmissionLogBookPageDialogBtnClicked.bind(this)
             },
-            componentData: new CatchesAndSalesDialogParamsModel({
-                shipPageDocumentData: this.logBookPageDocumentData,
-                service: this.service,
-                logBookId: logBook.value!,
-                logBookTypeId: logBook.logBookTypeId!,
-                logBookPermitLicenseId: this.confirmLogBookAndOwnerFormGroup.get('possibleLogBookControl')!.value?.logBookPermitLicenseId,
-                viewMode: false
-            }),
+            componentData: componentData,
             disableDialogClose: true
         }, '1300px').subscribe({
             next: (result: AdmissionLogBookPageEditDTO | undefined) => {
@@ -380,6 +444,32 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
         }
 
         this.preliminaryDataFormGroup.get('documentTypeControl')!.setValue(documentTypeValue);
+    }
+
+    private getCommonLogBookPageParameters(): CommonLogBookPageDataParameters {
+        const logBook: LogBookNomenclatureDTO = this.confirmLogBookAndOwnerFormGroup.get('possibleLogBookControl')!.value;
+
+        const parameters: CommonLogBookPageDataParameters = new CommonLogBookPageDataParameters({
+            logBookId: logBook.value!,
+            logBookType: this.logBookType!
+        });
+
+        if (this.preliminaryDataFormGroup.get('documentNumberControl')!.value !== undefined && this.preliminaryDataFormGroup.get('documentNumberControl')!.value !== null) {
+            parameters.pageNumberToAdd = Number(this.preliminaryDataFormGroup.get('documentNumberControl')!.value);
+
+            if (isNaN(parameters.pageNumberToAdd)) {
+                parameters.pageNumberToAdd = undefined;
+            }
+        }
+
+        if (this.startPageType === LogBookTypesEnum.Transportation) {
+            parameters.transportationDocumentNumber = this.startPageNumber;
+        }
+        else if (this.startPageType === LogBookTypesEnum.Admission) {
+            parameters.admissionDocumentNumber = this.startPageNumber;
+        }
+
+        return parameters;
     }
 
     private closeAddFirstSaleLogBookPageDialogBtnClicked(closeFn: HeaderCloseFunction): void {

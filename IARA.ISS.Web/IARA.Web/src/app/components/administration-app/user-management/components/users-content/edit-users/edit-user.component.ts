@@ -208,7 +208,11 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             }
             else if (actionInfo.id === 'impersonate-user') {
                 if (this.userId !== undefined) {
-                    this.service.impersonateUser(this.internalUserModel.email as string);
+                    const email: string | undefined = this.isInternalUser ? this.internalUserModel.email : this.externalUserModel.email;
+
+                    if (email !== undefined && email !== null) {
+                        this.service.impersonateUser(email);
+                    }
                 }
             }
             else if (actionInfo.id === 'change-user-status') {

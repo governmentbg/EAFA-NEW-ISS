@@ -2731,6 +2731,7 @@
         'market-aquaculture-log-book': 'Aquaculture Declaration',
         'market-ship-invoice': 'Invoice',
         'market-ship-nnn': 'No documents',
+        'market-other': 'Other document',
         'market-declaration-number': 'Number of the document of origin',
         'market-declaration-date': 'Date of the document of origin',
         'market-declaration-type': 'Type of document of origin',
@@ -3988,6 +3989,7 @@
         'admission-number': 'Number',
         'transportation-number': 'Number',
         'first-sale-number': 'Number',
+        'first-sale-document-attachment': 'Attach first sale document',
 
         'anull-ship-log-book-page': 'Log book page annulment',
         'restore-annulled-ship-log-book-page': 'Restore annulled log book page',
@@ -4276,6 +4278,7 @@
         'ship-log-book-page-water-type': 'Water type',
         'ship-page-catch-record-quantity-sums': 'Quantities: ',
         'ship-page-declaration-kg': 'kg',
+        'end-date-should-be-different-from-start-date': 'Trip end date should be different from trip start date',
 
         'previous-trip-catch-records-page-number': 'Page number',
         'previous-trip-catch-records-trip-start-date': 'Trip start date and time',
@@ -5437,6 +5440,7 @@
         'aqua-farm-count-error': 'The sum of the values by ​columns ​does not match the sum from the previous table',
         'aqua-farm-costs-error': 'The value in the field of staff costs cannot be zero when there are men or women with pay.',
         'aqua-farm-stat-form-exist-error': 'Statistical form already exists.',
+        'aqua-farm-aquaculture-canceled-error': 'Aquaculture is cancelled.',
 
         'aqua-farm-fish-organism-error': 'The combination of fish type and breading material weight is already added for this installation.',
         'aqua-farm-medicine-error': 'This type of medicine is already added.',
@@ -5897,7 +5901,7 @@
     'flux-vms-requests': {
         'common': 'Common',
         'flap-domain': 'FLAP requests',
-        'acdr-domain': 'ACDR requests',
+        'acdr-domain': 'ECR requests',
         'resend': 'Resend',
         'filters-is-outgoing': 'Outgoing requests',
         'filters-web-service-name': 'Service name',
@@ -6044,7 +6048,7 @@
         'request-copied-successfully': 'Request copied successfully',
         'request-copy-failed': 'Request copy failed',
         'acdr-request-history-records': 'Historic data',
-        'send-acdr-queries': 'Send ACDR query',
+        'send-acdr-queries': 'Send ECR query',
         'acdr-query-data': 'Query data',
         'acdr-query-request-title': 'Query parameters',
         'acdr-query-month': 'Month',
@@ -6053,7 +6057,7 @@
         'acdr-query-file': 'Request query file',
         'send-btn-label': 'Send',
         'download-acdr-query-file': 'Download request',
-        'generate-acdr-for-month': 'Generate new ACDR for month',
+        'generate-acdr-for-month': 'Generate new ECR for month',
 
         'acdr-report-status-generated': 'Generated',
         'acdr-report-status-manual': 'Manual',

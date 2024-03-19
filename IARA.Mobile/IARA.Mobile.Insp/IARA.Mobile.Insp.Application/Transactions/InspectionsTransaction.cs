@@ -1,6 +1,5 @@
 ﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Common;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.Extensions;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
@@ -866,13 +865,9 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             Id = fishingGearPinger.Id,
                             Number = fishingGearPinger.Number,
                             StatusId = fishingGearPinger.StatusId,
-                            SelectedStatus = new NomenclatureDto
-                            {
-                                Value = status.Id,
-                                Code = status.Code,
-                                DisplayName = status.Name,
-                                IsActive = status.IsActive,
-                            }
+                            SelectedStatus = Enum.TryParse(status.Code, out FishingGearPingerStatusesEnum markStatus)
+                                ? markStatus
+                                : FishingGearPingerStatusesEnum.NEW,
                         },
                         fishingGearPinger.FishingGearId
                     }
@@ -957,13 +952,9 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             Id = fishingGearPinger.Id,
                             Number = fishingGearPinger.Number,
                             StatusId = fishingGearPinger.StatusId,
-                            SelectedStatus = new NomenclatureDto
-                            {
-                                Value = status.Id,
-                                Code = status.Code,
-                                DisplayName = status.Name,
-                                IsActive = status.IsActive,
-                            }
+                            SelectedStatus = Enum.TryParse(status.Code, out FishingGearPingerStatusesEnum markStatus)
+                                ? markStatus
+                                : FishingGearPingerStatusesEnum.NEW,
                         },
                         fishingGearPinger.FishingGearId
                     }

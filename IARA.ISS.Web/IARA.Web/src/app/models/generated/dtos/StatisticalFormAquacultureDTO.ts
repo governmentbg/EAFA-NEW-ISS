@@ -2,6 +2,7 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { NomenclatureDTO } from './GenericNomenclatureDTO';
+import { CancellationHistoryEntryDTO } from './CancellationHistoryEntryDTO';
 import { IdentifierTypeEnum } from '@app/enums/identifier-type.enum';
 import { AquacultureSystemEnum } from '@app/enums/aquaculture-system.enum';
 
@@ -37,11 +38,17 @@ export class StatisticalFormAquacultureDTO {
     @StrictlyTyped(Boolean)
     public isPerson?: boolean;
 
+    @StrictlyTyped(Date)
+    public cancellationDate?: Date;
+
     @StrictlyTyped(NomenclatureDTO)
     public facilityInstalations?: NomenclatureDTO<number>[];
 
     @StrictlyTyped(NomenclatureDTO)
     public fishTypes?: NomenclatureDTO<number>[];
+
+    @StrictlyTyped(CancellationHistoryEntryDTO)
+    public cancellations?: CancellationHistoryEntryDTO[];
 
     @StrictlyTyped(Number)
     public systemType?: AquacultureSystemEnum;
