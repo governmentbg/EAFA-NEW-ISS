@@ -210,7 +210,7 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
     }
 
     public uploadRequest(acdr: FluxAcdrRequestDTO): void {
-        const title: string = `${this.translate.getValue('flux-vms-requests.acdr-query-request-title')} ${this.datePipe.transform(acdr.periodEnd, 'MM.yyyy')}`;
+        const title: string = `${this.translate.getValue('flux-vms-requests.ecr-query-request-title')} ${this.datePipe.transform(acdr.periodEnd, 'MM.yyyy')}`;
 
         this.uploadDialog.open({
             title: title,
@@ -223,7 +223,7 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
             saveBtn: {
                 id: 'save',
                 color: 'accent',
-                translateValue: this.translate.getValue('flux-vms-requests.send-btn-label')
+                translateValue: this.translate.getValue('flux-vms-requests.generate-btn-label')
             },
             cancelBtn: {
                 id: 'cancel',
@@ -236,9 +236,7 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
         }, '600px').subscribe({
             next: (result: boolean | undefined) => {
                 if (result) {
-                    setTimeout(() => {
-                        this.grid.refreshData();
-                    }, 2000);
+                    this.grid.refreshData();
                 }
             }
         });
@@ -265,7 +263,7 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
 
     public openAcdrQueryDialog(): void {
         this.queryDialog.open({
-            title: this.translate.getValue('flux-vms-requests.acdr-query-request-title'),
+            title: this.translate.getValue('flux-vms-requests.ecr-query-request-title'),
             TCtor: EditFluxAcdrRequestsComponent,
             headerAuditButton: undefined,
             headerCancelButton: {
@@ -276,7 +274,7 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
             saveBtn: {
                 id: 'save',
                 color: 'accent',
-                translateValue: this.translate.getValue('flux-vms-requests.send-btn-label')
+                translateValue: this.translate.getValue('flux-vms-requests.generate-btn-label')
             },
             cancelBtn: {
                 id: 'cancel',

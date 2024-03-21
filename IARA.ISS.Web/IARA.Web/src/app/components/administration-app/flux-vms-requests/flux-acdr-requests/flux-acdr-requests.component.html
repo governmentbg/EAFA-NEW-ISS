@@ -97,14 +97,14 @@
                 <button mat-raised-button
                         color="accent"
                         (click)="openAcdrQueryDialog()">
-                    <tl-icon icon="fa-plus-circle"></tl-icon> {{ 'flux-vms-requests.send-acdr-queries' | tlTranslate }}
+                    <tl-icon icon="fa-plus-circle"></tl-icon> {{ 'flux-vms-requests.send-ecr-queries' | tlTranslate }}
                 </button>
             </div>
 
             <row-detail>
                 <ng-template let-row="row" ngx-datatable-row-detail-template>
-                    <tl-card tooltipResourceName="flux-fms-requests.acdr-request-history-records-helper">
-                        <tl-card-title>{{ 'flux-vms-requests.acdr-request-history-records' | tlTranslate }} {{ row.data.periodEnd | date: 'MM.yyyy' }}</tl-card-title>
+                    <tl-card tooltipResourceName="flux-fms-requests.ecr-request-history-records-helper">
+                        <tl-card-title>{{ 'flux-vms-requests.ecr-request-history-records' | tlTranslate }} {{ row.data.periodEnd | date: 'MM.yyyy' }}</tl-card-title>
                         <tl-card-content>
                             <tl-data-table [isRemote]="false"
                                            [showAddButton]="false"
@@ -228,7 +228,7 @@
                                             <tl-icon-button icon="send"
                                                             iconClass="accent-color"
                                                             (buttonClicked)="replayRequest(row.data)"
-                                                            tooltipText="{{ 'flux-vms-requests.resend' | tlTranslate }}">
+                                                            tooltipText="{{ (row.data.reportStatus === fluxAcdrReportStatusEnum.SENT || row.data.reportStatus === fluxAcdrReportStatusEnum.GENERATED ? 'flux-vms-requests.resend' : 'flux-vms-requests.send') | tlTranslate }}">
                                             </tl-icon-button>
                                         </div>
                                     </ng-template>
