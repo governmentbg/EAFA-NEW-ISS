@@ -26,7 +26,7 @@ export class EditPatrolVehicleComponent implements OnInit, IDialogComponent {
     public form!: FormGroup;
 
     public isFromRegister: boolean = true;
-    public isWaterVehicle: boolean | undefined = true;
+    public isWaterVehicle: boolean | undefined;
     public hasCoordinates: boolean = true;
 
     public patrolVehicles: NomenclatureDTO<number>[] = [];

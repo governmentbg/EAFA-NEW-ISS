@@ -414,6 +414,15 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             return;
         }
 
+        const rightButtons: IActionInfo[] = [];
+
+        rightButtons.push({
+            id: 'save-and-print',
+            color: 'accent',
+            translateValue: this.translate.getValue('recreational-fishing.save-and-print'),
+            isVisibleInViewMode: true
+        });
+
         this.enterNumberDialog.openWithTwoButtons({
             title: this.translate.getValue('recreational-fishing.enter-online-ticket-number-dialog-title'),
             TCtor: EnterOnlineTicketNumberComponent,
@@ -421,6 +430,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
                 cancelBtnClicked: this.closeEnterOnlineNumberDialogBtnClicked.bind(this)
             },
             translteService: this.translate,
+            rightSideActionsCollection: rightButtons,
             componentData: new EnterOnlineTicketNumberParams(this.service, ticket.id!),
             disableDialogClose: false,
             viewMode: false

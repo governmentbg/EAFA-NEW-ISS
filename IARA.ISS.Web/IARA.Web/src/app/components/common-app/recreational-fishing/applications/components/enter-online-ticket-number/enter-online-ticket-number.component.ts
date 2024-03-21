@@ -38,23 +38,7 @@ export class EnterOnlineTicketNumberComponent implements IDialogComponent {
     }
 
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
-        this.control.markAsTouched();
-
-        if (this.control.valid) {
-            const ticketNum: string = this.control.value;
-
-            this.service.enterOnlineTicketOfflineNumber(this.ticketId, ticketNum).subscribe({
-                next: (result: boolean) => {
-                    if (result) {
-                        dialogClose(ticketNum);
-                    }
-                    else {
-                        this.control.setErrors({ alreadyInUse: true });
-                        this.control.markAsTouched();
-                    }
-                }
-            });
-        }
+        this.saveTicket(false, dialogClose);
     }
 
     public cancelBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
@@ -62,7 +46,12 @@ export class EnterOnlineTicketNumberComponent implements IDialogComponent {
     }
 
     public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
-        dialogClose();
+        if (actionInfo.id === 'save-and-print') {
+            this.saveTicket(true, dialogClose);
+        }
+        else {
+            dialogClose();
+        }
     }
 
     public getControlErrorLabelTextMethod(controlName: string, error: unknown, errorCode: string): TLError | undefined {
@@ -73,5 +62,34 @@ export class EnterOnlineTicketNumberComponent implements IDialogComponent {
             });
         }
         return undefined;
+    }
+
+    private saveTicket(print: boolean = false, dialogClose: DialogCloseCallback): void {
+        this.control.markAsTouched();
+
+        if (this.control.valid) {
+            const ticketNum: string = this.control.value;
+
+            this.service.enterOnlineTicketOfflineNumber(this.ticketId, ticketNum).subscribe({
+                next: (result: boolean) => {
+                    if (result) {
+                        if (print) {
+                            this.service.downloadFishingTicket(this.ticketId).subscribe({  
+                                next: () => {
+                                    dialogClose(ticketNum);
+                                }
+                            });
+                        }
+                        else {
+                            dialogClose(ticketNum);
+                        }
+                    }
+                    else {
+                        this.control.setErrors({ alreadyInUse: true });
+                        this.control.markAsTouched();
+                    }
+                }
+            });
+        }
     }
 }

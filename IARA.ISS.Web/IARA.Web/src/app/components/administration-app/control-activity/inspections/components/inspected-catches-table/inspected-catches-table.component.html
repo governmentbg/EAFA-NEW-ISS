@@ -40,7 +40,7 @@
         <data-column [flexRate]="0.1"
                      propertyName="catchQuantity"
                      [formGroup]="catchesFormGroup"
-                     columnName="{{ 'inspections.catch-quantity' | tlTranslate }}">
+                     columnName="{{ 'inspections.catch-record-quantity' | tlTranslate }}">
         </data-column>
         <data-column *ngIf="hasUnloadedQuantity === true"
                      [flexRate]="0.1"
@@ -175,7 +175,14 @@
          fxFlex="100"
          fxLayoutAlign="end center">
         <mat-hint fxFlex="100">
-            {{ 'inspections.catch-record-quantity-sums' | tlTranslate }}
+            <span *ngIf="hasUnloadedQuantity">
+                {{ 'inspections.catch-record-unloaded-quantity-sums' | tlTranslate }}
+            </span>
+
+            <span *ngIf="!hasUnloadedQuantity">
+                {{ 'inspections.catch-record-quantity-sums' | tlTranslate }}
+            </span>
+
             <span *ngFor="let fishQuantity of catchQuantities | keyvalue">
                 {{ fishQuantity.key | nomenclatureDisplay: fishes }}: {{ fishQuantity.value | number: '1.2-2' }} {{ 'inspections.catch-quantity-kg' | tlTranslate }};
             </span>
