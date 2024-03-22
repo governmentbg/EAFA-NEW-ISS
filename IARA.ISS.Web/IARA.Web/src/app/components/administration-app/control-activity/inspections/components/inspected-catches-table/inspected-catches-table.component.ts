@@ -189,6 +189,10 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     }
 
     public onEditRecord(row: GridRow<InspectedCatchTableModel>): void {
+        if (this.hasUnloadedQuantity) {
+            this.catchesFormGroup.get('unloadedQuantityControl')!.setValidators([Validators.required, TLValidators.number(0)]); 
+        }
+
         if (row !== null && row !== undefined) {
             this.catchesFormGroup.get('catchZoneControl')!.setValue(row.data.catchZone);
             this.recalculateCatchQuantitySums();
@@ -374,7 +378,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
         this.catchQuantities.clear();
 
         for (const fishGroupId in recordsGroupedByFish) {
-            const quantity: number = recordsGroupedByFish[fishGroupId].reduce((sum, current) => Number(sum) + Number(current.catchQuantity!), 0);
+            const quantity: number = recordsGroupedByFish[fishGroupId].reduce((sum, current) => Number(sum) + (this.hasUnloadedQuantity ? Number(current.unloadedQuantity!) : Number(current.catchQuantity!)), 0);
             this.catchQuantities.set(Number(fishGroupId), quantity);
         }
     }

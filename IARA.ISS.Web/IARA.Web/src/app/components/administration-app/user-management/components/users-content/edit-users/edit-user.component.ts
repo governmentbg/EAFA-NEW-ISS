@@ -648,15 +648,17 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             const role = this.roles.find(x => x.value === userLegal.roleId);
 
             if (legal !== undefined && legal !== null) {
-                result.push(new UserLegalDTO({
-                    legalId: legal?.value,
-                    name: legal?.displayName?.split(' - ')[0],
-                    eik: legal?.displayName?.split(' - ')[1],
-                    roleId: userLegal.roleId,
-                    role: role?.displayName,
-                    status: userLegal.status,
-                    isActive: userLegal.isActive === undefined || userLegal.isActive === null ? true : userLegal.isActive
-                }));
+                if (result.findIndex(x => x.legalId === userLegal.legalId && x.roleId === userLegal.roleId) === -1) {
+                    result.push(new UserLegalDTO({
+                        legalId: legal?.value,
+                        name: legal?.displayName?.split(' - ')[0],
+                        eik: legal?.displayName?.split(' - ')[1],
+                        roleId: userLegal.roleId,
+                        role: role?.displayName,
+                        status: userLegal.status,
+                        isActive: userLegal.isActive === undefined || userLegal.isActive === null ? true : userLegal.isActive
+                    }));
+                }
             }
         }
 

@@ -17,13 +17,15 @@
                                      [inspectionType]="inspectionTypesEnum.OFS"
                                      [reportNumAlreadyExists]="reportNumAlreadyExistsError">
             </inspection-general-info>
-            <patrol-vehicles-table formControlName="patrolVehiclesControl"
-                                   [isWaterVehicle]="undefined">
+
+            <patrol-vehicles-table formControlName="patrolVehiclesControl">
             </patrol-vehicles-table>
+
             <check-box-list formControlName="onBoardObservationToolsControl"
                             [checks]="onBoardObservationTools"
                             label="{{ 'inspections.on-board-observation-tools' | tlTranslate }}">
             </check-box-list>
+
             <tl-input *ngIf="hasOnBoardOtherSelected"
                       formControlName="otherOnBoardObservationToolsControl"
                       label="{{ 'inspections.other-on-board-observation-tools' | tlTranslate }}">

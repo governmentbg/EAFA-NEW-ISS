@@ -16,11 +16,13 @@
                                      [canEditNumber]="canEditNumber"
                                      [reportNumAlreadyExists]="reportNumAlreadyExistsError">
             </inspection-general-info>
-            <patrol-vehicles-table formControlName="patrolVehiclesControl"
-                                   [isWaterVehicle]="false">
+
+            <patrol-vehicles-table formControlName="patrolVehiclesControl">
             </patrol-vehicles-table>
+
             <inspection-map-viewer formControlName="mapControl">
             </inspection-map-viewer>
+
             <tl-input formControlName="addressControl"
                       label="{{ 'inspections.address' | tlTranslate }}">
             </tl-input>
@@ -38,12 +40,15 @@
                               [personType]="inspectedPersonTypeEnum.CaptFshmn"
                               title="{{ 'inspections.inspected-person' | tlTranslate }}">
             </inspected-person>
+
             <tl-checkbox formControlName="hasTicketControl"
                          label="{{ 'inspections.has-ticket' | tlTranslate }}">
             </tl-checkbox>
+
             <tl-input formControlName="ticketControl"
                       label="{{ 'inspections.fishing-ticket-number' | tlTranslate }}">
             </tl-input>
+
             <div fxLayout="row"
                  fxLayoutGap="1em"
                  fxLayoutAlign="start center">
@@ -52,6 +57,7 @@
                           type="number"
                           label="{{ 'inspections.fishing-gears-count' | tlTranslate }}">
                 </tl-input>
+
                 <tl-input fxFlex="50"
                           formControlName="hookCountControl"
                           type="number"
@@ -82,6 +88,7 @@
                                      [hasCatchType]="false"
                                      [hasUndersizedCheck]="true">
             </inspected-catches-table>
+
             <inspection-toggle-list formControlName="catchTogglesControl"
                                     [toggles]="catchToggles">
             </inspection-toggle-list>
