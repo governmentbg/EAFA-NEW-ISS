@@ -25,7 +25,11 @@ namespace IARA.Mobile.Insp.Controls
                 Padding = new Thickness(15, 0),
             }.BindTranslation(Button.TextProperty, "Print", group)
                 .Bind(Button.CommandProperty, nameof(InspectionPageViewModel.Print))
-                .Bind(Button.IsVisibleProperty, nameof(InspectionPageViewModel.InspectionState), convert: (InspectionState state) => state != InspectionState.Draft));
+                .Bind(Button.IsVisibleProperty, nameof(InspectionPageViewModel.InspectionState), convert:
+                (InspectionState state) =>
+                {
+                    return state == InspectionState.Submitted || state == InspectionState.Signed;
+                }));
 
             Children.Add(new Button
             {

@@ -21,8 +21,6 @@ import { ISuspensionService } from '@app/interfaces/common-app/suspension.interf
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
-import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
-import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { GridRow } from '@app/shared/components/data-table/models/row.model';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { SuspensionsDialogParams } from './models/suspensions-dialog-params.model';

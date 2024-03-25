@@ -140,21 +140,42 @@ export class EditSuspensionComponent implements OnInit, AfterViewInit, IDialogCo
 
         this.form.get('suspensionReasonControl')!.valueChanges.subscribe({
             next: (value: SuspensionReasonNomenclatureDTO) => {
+                const enactmentDate: Date | undefined = this.form.get('enactmentDateControl')!.value;
+                let validFrom: Date;
+                let validTo: Date | undefined = (this.form.get('suspensionDateRangeControl')!.value as DateRangeData)?.end;
+
+                if (enactmentDate !== null && enactmentDate !== undefined) {
+                    validFrom = new Date(enactmentDate);
+                }
+                else {
+                    validFrom = new Date();
+                }
+
                 if (value !== null && value !== undefined) {
                     if (value.monthsDuration !== null && value.monthsDuration !== undefined) { // TODO при случай на окончателно прекратяване - не знам кога настъпва ???
-                        const now: Date = new Date();
-                        const validTo = new Date();
-                        validTo.setMonth(now.getMonth() + value.monthsDuration);
-                        this.form.get('suspensionDateRangeControl')!.setValue(new DateRangeData({ start: now, end: validTo }));
+                        validTo = new Date(validFrom);
+                        validTo.setMonth(validFrom.getMonth() + value.monthsDuration);
+
+                        this.form.get('suspensionDateRangeControl')!.setValue(new DateRangeData({ start: validFrom, end: validTo }));
                         this.form.get('suspensionDateRangeControl')!.disable();
                     }
                     else {
+                        if (validFrom !== undefined && validFrom !== null && validTo !== undefined && validTo !== null) {
+                            this.form.get('suspensionDateRangeControl')!.setValue(new DateRangeData({ start: validFrom, end: validTo }));
+                        }
+
                         this.form.get('suspensionDateRangeControl')!.enable();
                     }
                 }
                 else {
                     if (this.form.get('suspensionDateRangeControl')!.disabled) {
-                        this.form.get('suspensionDateRangeControl')!.reset();
+                        if (validFrom !== undefined && validFrom !== null && validTo !== undefined && validTo !== null) {
+                            this.form.get('suspensionDateRangeControl')!.setValue(new DateRangeData({ start: validFrom, end: validTo }));
+                        }
+                        else {
+                            this.form.get('suspensionDateRangeControl')!.reset();
+                        }
+
                         this.form.get('suspensionDateRangeControl')!.enable();
                     }
                 }
@@ -162,6 +183,12 @@ export class EditSuspensionComponent implements OnInit, AfterViewInit, IDialogCo
                 if (this.readOnly) {
                     this.form.get('suspensionDateRangeControl')!.disable();
                 }
+            }
+        });
+
+        this.form.get('enactmentDateControl')!.valueChanges.subscribe({
+            next: (value: Date | undefined) => {
+                this.form.get('suspensionReasonControl')!.updateValueAndValidity();
             }
         });
     }
@@ -276,11 +303,34 @@ export class EditSuspensionComponent implements OnInit, AfterViewInit, IDialogCo
         this.model.reasonId = selectedReason.value;
         this.model.reasonName = selectedReason.displayName;
 
-        this.model.validFrom = (this.form.get('suspensionDateRangeControl')!.value as DateRangeData)?.start;
-        this.model.validTo = (this.form.get('suspensionDateRangeControl')!.value as DateRangeData)?.end;
-
         this.model.orderNumber = this.form.get('orderNumberControl')!.value;
-        this.model.enactmentDate = this.form.get('enactmentDateControl')!.value;
+
+        if (selectedSuspensionType.code === CommercialFishingSuspensionTypesEnum[CommercialFishingSuspensionTypesEnum.OwnerRequest]) {
+            this.model.validFrom = undefined;
+            this.model.validTo = undefined;
+            this.model.enactmentDate = undefined;
+        }
+        else if (selectedSuspensionType.code === CommercialFishingSuspensionTypesEnum[CommercialFishingSuspensionTypesEnum.PermenentWithdrawalPermit]
+            || selectedSuspensionType.code === CommercialFishingSuspensionTypesEnum[CommercialFishingSuspensionTypesEnum.PermanentLicense]
+        ) {
+            this.model.validFrom = undefined;
+            this.model.validTo = undefined;
+            this.model.enactmentDate = this.form.get('enactmentDateControl')!.value;
+        }
+        else if (selectedSuspensionType.code === CommercialFishingSuspensionTypesEnum[CommercialFishingSuspensionTypesEnum.TemporaryPermit]
+            || selectedSuspensionType.code === CommercialFishingSuspensionTypesEnum[CommercialFishingSuspensionTypesEnum.TemporaryWithdrawalPermit]
+            || selectedSuspensionType.code === CommercialFishingSuspensionTypesEnum[CommercialFishingSuspensionTypesEnum.TemporaryLicense]
+            || selectedSuspensionType.code === CommercialFishingSuspensionTypesEnum[CommercialFishingSuspensionTypesEnum.PermitSuspendedLicense]
+        ) {
+            this.model.validFrom = (this.form.get('suspensionDateRangeControl')!.value as DateRangeData)?.start;
+            this.model.validTo = (this.form.get('suspensionDateRangeControl')!.value as DateRangeData)?.end;
+
+            const enactmentDate: Date = this.form.get('enactmentDateControl')!.value;
+            if (enactmentDate !== undefined && enactmentDate !== null) {
+                this.model.validFrom = enactmentDate;
+                this.model.enactmentDate = enactmentDate;
+            }
+        }
     }
 
     private uniqueValidToValidator(): ValidatorFn {

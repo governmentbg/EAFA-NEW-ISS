@@ -241,7 +241,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
             InspectionsFilters filters = new InspectionsFilters
             {
                 UpdatedAfter = lastFetchDate,
-                ShowBothActiveAndInactive = lastFetchDate.HasValue,
+                ShowBothActiveAndInactive = lastFetchDate.HasValue
             };
             GridRequest<InspectionsFilters> gridRequest = new GridRequest<InspectionsFilters>(filters)
             {

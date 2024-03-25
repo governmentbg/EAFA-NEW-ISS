@@ -74,12 +74,23 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             if (CanEditReportNumber.Value)
             {
                 ReportNrStart = "";
-                ReportNr.Value = $"{HandleNumber(territoryCode)}-{HandleNumber(cardNum)}-" + nextReportNum ?? "001";
+                if (string.IsNullOrEmpty(ReportNr.Value))
+                {
+                    ReportNr.Value = $"{HandleNumber(territoryCode)}-{HandleNumber(cardNum)}-" + nextReportNum ?? "001";
+                }
+                else
+                {
+                    ReportNr.Value = $"{HandleNumber(territoryCode)}-{HandleNumber(cardNum)}-" + ReportNr.Value;
+                }
             }
             else
             {
                 ReportNrStart = $"{HandleNumber(territoryCode)}-{HandleNumber(cardNum)}-";
-                ReportNr.Value = nextReportNum ?? "001";
+
+                if (string.IsNullOrEmpty(ReportNr.Value))
+                {
+                    ReportNr.Value = nextReportNum ?? "001";
+                }
             }
         }
 
