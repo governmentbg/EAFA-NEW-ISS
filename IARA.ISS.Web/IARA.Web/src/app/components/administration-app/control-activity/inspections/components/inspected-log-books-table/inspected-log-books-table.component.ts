@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, OnInit, Self, ViewChild } from '@angular/core';
+﻿import { AfterViewInit, Component, EventEmitter, OnInit, Output, Self, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
@@ -23,8 +23,8 @@ import { InspectionLogBookPageNomenclatureDTO } from '@app/models/generated/dtos
 export class InspectedLogBooksTableComponent extends CustomFormControl<InspectionLogBookDTO[]> implements OnInit, AfterViewInit {
     public logBooksFormGroup!: FormGroup;
 
-    @ViewChild(TLDataTableComponent)
-    private datatable!: TLDataTableComponent;
+    @Output()
+    public logBookPageIdChanged: EventEmitter<number | undefined> = new EventEmitter<number | undefined>();
 
     public logBooks: InspectedLogBookTableModel[] = [];
 
@@ -33,6 +33,9 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
 
     private readonly service: InspectionsService;
     private readonly translate: FuseTranslationLoaderService;
+
+    @ViewChild(TLDataTableComponent)
+    private datatable!: TLDataTableComponent;
 
     public constructor(
         @Self() ngControl: NgControl,
@@ -140,32 +143,43 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
 
         if (record) {
             this.logBooksFormGroup.get('optionsControl')!.setValue(this.options.find(f => f.value === record.checkDTO?.checkValue));
-            this.logBooksFormGroup.get('pageControl')!.setValue(record.page ?? record.pageNum); 
+            this.logBooksFormGroup.get('pageControl')!.setValue(record.page ?? record.pageNum);
         }
     }
 
     public logBookRecordChanged(event: RecordChangedEventArgs<InspectedLogBookTableModel>): void {
         const nom: NomenclatureDTO<InspectionToggleTypesEnum> = this.logBooksFormGroup.get('optionsControl')!.value;
-
+        
         event.Record.checkDTO = nom ? new InspectionCheckDTO({
             id: event.Record.checkDTO?.id,
             checkValue: nom.value,
         }) : undefined;
+
         event.Record.checkValue = nom?.value;
+        const page: NomenclatureDTO<number> | string | undefined = this.logBooksFormGroup.get('pageControl')!.value;
 
-        const page: NomenclatureDTO<number> | string = this.logBooksFormGroup.get('pageControl')!.value; 
-
-        if (typeof page === 'string') {
-            event.Record.pageNum = page;
+        if (page !== undefined && page !== null) {
+            if (typeof page === 'string') {
+                event.Record.pageNum = page;
+                event.Record.page = undefined;
+                event.Record.pageId = undefined;
+            }
+            else {
+                event.Record.page = page;
+                event.Record.pageId = page.value;
+                event.Record.pageNum = page.displayName;
+            }
         }
         else {
-            event.Record.page = page;
-            event.Record.pageNum = page?.displayName;
+            event.Record.page = undefined;
+            event.Record.pageNum = undefined;
+            event.Record.pageId = undefined;
         }
 
         this.logBooks = this.datatable.rows;
         this.control.updateValueAndValidity();
         this.onChanged(this.getValue());
+        this.logBookPageIdChanged.emit(event.Record.pageId);
     }
 
     public hideDeleteButtonWhen(row: GridRow<InspectedLogBookTableModel>): boolean {

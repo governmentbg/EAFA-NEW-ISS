@@ -1,6 +1,6 @@
-﻿using System;
+﻿using IARA.Mobile.Insp.Application.Interfaces.Utilities;
+using System;
 using System.Linq;
-using IARA.Mobile.Insp.Application.Interfaces.Utilities;
 using Xamarin.Essentials;
 
 namespace IARA.Mobile.Insp.Utilities
@@ -58,6 +58,11 @@ namespace IARA.Mobile.Insp.Utilities
         {
             get => Preferences.Get(nameof(LastVersion), VersionTracking.CurrentVersion, SharedName);
             set => Preferences.Set(nameof(LastVersion), value, SharedName);
+        }
+        public bool IsInspectorAllowed
+        {
+            get => Preferences.Get(nameof(IsInspectorAllowed), false, SharedName);
+            set => Preferences.Set(nameof(IsInspectorAllowed), value, SharedName);
         }
 
         public void Clear()

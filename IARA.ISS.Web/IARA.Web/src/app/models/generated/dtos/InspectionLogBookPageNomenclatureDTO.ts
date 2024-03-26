@@ -2,7 +2,8 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { NomenclatureDTO } from './GenericNomenclatureDTO';
-import { DeclarationLogBookPageFishDTO } from './DeclarationLogBookPageFishDTO'; 
+import { DeclarationLogBookPageFishDTO } from './DeclarationLogBookPageFishDTO';
+import { LogBookPageStatusesEnum } from '@app/enums/log-book-page-statuses.enum'; 
 
 export class InspectionLogBookPageNomenclatureDTO extends NomenclatureDTO<number> {
     public constructor(obj?: Partial<InspectionLogBookPageNomenclatureDTO>) {
@@ -24,8 +25,14 @@ export class InspectionLogBookPageNomenclatureDTO extends NomenclatureDTO<number
     @StrictlyTyped(Number)
     public logPageNum?: number;
 
+    @StrictlyTyped(String)
+    public logBookNum?: string;
+
     @StrictlyTyped(Date)
     public logBookPageDate?: Date;
+
+    @StrictlyTyped(Number)
+    public status?: LogBookPageStatusesEnum;
 
     @StrictlyTyped(DeclarationLogBookPageFishDTO)
     public logBookProducts?: DeclarationLogBookPageFishDTO[];

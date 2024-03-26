@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
@@ -10,6 +8,8 @@ using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Models;
+using System.Collections.Generic;
+using System.Linq;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -206,10 +206,20 @@ namespace IARA.Mobile.Insp.Helpers
                     fishingShip.ShipOwner.People = shipUsers
                         .FindAll(f => f.Type == InspectedPersonType.OwnerPers || f.Type == InspectedPersonType.OwnerLegal);
                     fishingShip.ShipOwner.InRegister.Value = fishingShip.ShipOwner.People.Count > 0;
+                    if (fishingShip.ShipOwner.People.Count == 1)
+                    {
+                        fishingShip.ShipOwner.Person.Value = fishingShip.ShipOwner.People[0];
+                        fishingShip.ShipOwner.PersonChosen.Execute(fishingShip.ShipOwner.People[0]);
+                    }
 
                     fishingShip.ShipUser.People = shipUsers
                         .FindAll(f => f.Type == InspectedPersonType.LicUsrPers || f.Type == InspectedPersonType.LicUsrLgl);
                     fishingShip.ShipUser.InRegister.Value = fishingShip.ShipUser.People.Count > 0;
+                    if (fishingShip.ShipUser.People.Count == 1)
+                    {
+                        fishingShip.ShipUser.Person.Value = fishingShip.ShipUser.People[0];
+                        fishingShip.ShipUser.PersonChosen.Execute(fishingShip.ShipUser.People[0]);
+                    }
 
                     fishingShip.ShipRepresentative.People = shipUsers
                         .Where(f => f.Type != InspectedPersonType.OwnerLegal && f.Type != InspectedPersonType.LicUsrLgl)
@@ -252,10 +262,20 @@ namespace IARA.Mobile.Insp.Helpers
                         })
                         .ToList();
                     fishingShip.ShipRepresentative.InRegister.Value = fishingShip.ShipRepresentative.People.Count > 0;
+                    if (fishingShip.ShipRepresentative.People.Count == 1)
+                    {
+                        fishingShip.ShipRepresentative.Person.Value = fishingShip.ShipRepresentative.People[0];
+                        fishingShip.ShipRepresentative.PersonChosen.Execute(fishingShip.ShipRepresentative.People[0]);
+                    }
 
                     fishingShip.ShipCaptain.People = shipUsers
                         .FindAll(f => f.Type == InspectedPersonType.CaptFshmn);
                     fishingShip.ShipCaptain.InRegister.Value = fishingShip.ShipCaptain.People.Count > 0;
+                    if (fishingShip.ShipCaptain.People.Count == 1)
+                    {
+                        fishingShip.ShipCaptain.Person.Value = fishingShip.ShipCaptain.People[0];
+                        fishingShip.ShipCaptain.PersonChosen.Execute(fishingShip.ShipCaptain.People[0]);
+                    }
 
                     await TLLoadingHelper.HideFullLoadingScreen();
                 }

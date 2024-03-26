@@ -1,8 +1,7 @@
 ﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
@@ -22,7 +21,6 @@ import { AuanViolatedRegulationDTO } from '@app/models/generated/dtos/AuanViolat
 import { AuanObjectionResolutionTypesEnum } from '@app/enums/auan-objection-resolution-types.enum';
 import { AuanDeliveryDataDTO } from '@app/models/generated/dtos/AuanDeliveryDataDTO';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
-import { RequestProperties } from '@app/shared/services/request-properties';
 import { InspDeliveryConfirmationTypesEnum } from '@app/enums/insp-delivery-confirmation-types.enum';
 import { InspDeliveryTypesEnum } from '@app/enums/insp-delivery-types.enum';
 import { EditAuanDialogParams } from '../models/edit-auan-dialog-params.model';
@@ -31,6 +29,7 @@ import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-c
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 
 @Component({
     selector: 'edit-auan',
@@ -76,17 +75,20 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
     private readonly nomenclatures: CommonNomenclatures;
     private readonly translate: FuseTranslationLoaderService;
+    private readonly confirmDialog: TLConfirmDialog;
     private readonly snackbar: TLSnackbar;
 
     public constructor(
         service: AuanRegisterService,
         nomenclatures: CommonNomenclatures,
         translate: FuseTranslationLoaderService,
+        confirmDialog: TLConfirmDialog,
         snackbar: TLSnackbar
     ) {
         this.service = service;
         this.nomenclatures = nomenclatures;
         this.translate = translate;
+        this.confirmDialog = confirmDialog;
         this.snackbar = snackbar;
 
         this.buildForm();
@@ -279,30 +281,36 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         this.validityCheckerGroup.validate();
 
         if (this.form.valid) {
-            this.fillModel();
-            CommonUtils.sanitizeModelStrings(this.model);
+            this.openConfirmDialog().subscribe({
+                next: (ok: boolean) => {
+                    if (ok) {
+                        this.fillModel();
+                        CommonUtils.sanitizeModelStrings(this.model);
 
-            if (this.auanId !== undefined && this.auanId !== null) {
-                this.service.editAuan(this.model).subscribe({
-                    next: () => {
-                        dialogClose(this.model);
-                    },
-                    error: (response: HttpErrorResponse) => {
-                        this.handleAddEditErrorResponse(response);
+                        if (this.auanId !== undefined && this.auanId !== null) {
+                            this.service.editAuan(this.model).subscribe({
+                                next: () => {
+                                    dialogClose(this.model);
+                                },
+                                error: (response: HttpErrorResponse) => {
+                                    this.handleAddEditErrorResponse(response);
+                                }
+                            });
+                        }
+                        else {
+                            this.service.addAuan(this.model).subscribe({
+                                next: (id: number) => {
+                                    this.model.id = id;
+                                    dialogClose(this.model);
+                                },
+                                error: (response: HttpErrorResponse) => {
+                                    this.handleAddEditErrorResponse(response);
+                                }
+                            });
+                        }
                     }
-                });
-            }
-            else {
-                this.service.addAuan(this.model).subscribe({
-                    next: (id: number) => {
-                        this.model.id = id;
-                        dialogClose(this.model);
-                    },
-                    error: (response: HttpErrorResponse) => {
-                        this.handleAddEditErrorResponse(response);
-                    }
-                });
-            }
+                }
+            });
         }
     }
 
@@ -327,36 +335,42 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                     this.fillModel();
                     CommonUtils.sanitizeModelStrings(this.model);
 
-                    if (this.auanId !== undefined && this.auanId !== null) {
-                        this.service.editAuan(this.model).subscribe({
-                            next: () => {
-                                this.service.downloadAuan(this.auanId!).subscribe({
-                                    next: () => {
-                                        dialogClose(this.model);
-                                    }
-                                });
-                            },
-                            error: (response: HttpErrorResponse) => {
-                                this.handleAddEditErrorResponse(response);
-                            }
-                        });
-                    }
-                    else {
-                        this.service.addAuan(this.model).subscribe({
-                            next: (id: number) => {
-                                this.model.id = id;
+                    this.openConfirmDialog().subscribe({
+                        next: (ok: boolean) => {
+                            if (ok) {
+                                if (this.auanId !== undefined && this.auanId !== null) {
+                                    this.service.editAuan(this.model).subscribe({
+                                        next: () => {
+                                            this.service.downloadAuan(this.auanId!).subscribe({
+                                                next: () => {
+                                                    dialogClose(this.model);
+                                                }
+                                            });
+                                        },
+                                        error: (response: HttpErrorResponse) => {
+                                            this.handleAddEditErrorResponse(response);
+                                        }
+                                    });
+                                }
+                                else {
+                                    this.service.addAuan(this.model).subscribe({
+                                        next: (id: number) => {
+                                            this.model.id = id;
 
-                                this.service.downloadAuan(id).subscribe({
-                                    next: () => {
-                                        dialogClose(this.model);
-                                    }
-                                });
-                            },
-                            error: (response: HttpErrorResponse) => {
-                                this.handleAddEditErrorResponse(response);
+                                            this.service.downloadAuan(id).subscribe({
+                                                next: () => {
+                                                    dialogClose(this.model);
+                                                }
+                                            });
+                                        },
+                                        error: (response: HttpErrorResponse) => {
+                                            this.handleAddEditErrorResponse(response);
+                                        }
+                                    });
+                                }
                             }
-                        });
-                    }
+                        }
+                    });
                 }
             }
         }
@@ -577,6 +591,18 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         this.form.markAllAsTouched();
 
         this.violatedRegulationsTouched = true;
+    }
+
+    private openConfirmDialog(): Observable<boolean> {
+        const message: string = this.auanId !== undefined && this.auanId !== null
+            ? this.translate.getValue('auan-register.complete-edit-auan-confirm-dialog-message')
+            : this.translate.getValue('auan-register.complete-add-auan-confirm-dialog-message');
+
+        return this.confirmDialog.open({
+            title: this.translate.getValue('auan-register.complete-auan-confirm-dialog-title'),
+            message: message,
+            okBtnLabel: this.translate.getValue('auan-register.complete-auan-confirm-dialog-ok-btn-label')
+        });
     }
 
     private handleAddEditErrorResponse(response: HttpErrorResponse): void {

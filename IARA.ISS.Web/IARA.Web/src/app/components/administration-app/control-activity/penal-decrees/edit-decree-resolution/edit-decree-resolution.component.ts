@@ -9,10 +9,9 @@ import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-c
 import { PenalDecreeEditDTO } from '@app/models/generated/dtos/PenalDecreeEditDTO';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { PenalDecreesService } from '@app/services/administration-app/penal-decrees.service';
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { EditPenalDecreeDialogParams } from '../models/edit-penal-decree-params.model';
@@ -21,10 +20,10 @@ import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/ac
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
-import { RequestProperties } from '@app/shared/services/request-properties';
 import { PenalDecreeAuanDataDTO } from '@app/models/generated/dtos/PenalDecreeAuanDataDTO';
 import { PenalDecreeResolutionDTO } from '@app/models/generated/dtos/PenalDecreeResolutionDTO';
 import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 
 @Component({
     selector: 'edit-decree-resolution',
@@ -59,17 +58,20 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
     private model!: PenalDecreeEditDTO;
     private readonly nomenclatures: CommonNomenclatures;
     private readonly translate: FuseTranslationLoaderService;
+    private readonly confirmDialog: TLConfirmDialog;
     private readonly snackbar: TLSnackbar;
 
     public constructor(
         service: PenalDecreesService,
         translate: FuseTranslationLoaderService,
         nomenclatures: CommonNomenclatures,
+        confirmDialog: TLConfirmDialog,
         snackbar: TLSnackbar
     ) {
         this.service = service;
         this.nomenclatures = nomenclatures;
         this.translate = translate;
+        this.confirmDialog = confirmDialog;
         this.snackbar = snackbar;
 
         this.buildForm();
@@ -150,27 +152,33 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
             this.fillModel();
             CommonUtils.sanitizeModelStrings(this.model);
 
-            if (this.penalDecreeId !== undefined && this.penalDecreeId !== null) {
-                this.service.editPenalDecree(this.model).subscribe({
-                    next: () => {
-                        dialogClose(this.model);
-                    },
-                    error: (response: HttpErrorResponse) => {
-                        this.handleAddEditErrorResponse(response);
+            this.openConfirmDialog().subscribe({
+                next: (ok: boolean) => {
+                    if (ok) {
+                        if (this.penalDecreeId !== undefined && this.penalDecreeId !== null) {
+                            this.service.editPenalDecree(this.model).subscribe({
+                                next: () => {
+                                    dialogClose(this.model);
+                                },
+                                error: (response: HttpErrorResponse) => {
+                                    this.handleAddEditErrorResponse(response);
+                                }
+                            });
+                        }
+                        else {
+                            this.service.addPenalDecree(this.model).subscribe({
+                                next: (id: number) => {
+                                    this.model.id = id;
+                                    dialogClose(this.model);
+                                },
+                                error: (response: HttpErrorResponse) => {
+                                    this.handleAddEditErrorResponse(response);
+                                }
+                            });
+                        }
                     }
-                });
-            }
-            else {
-                this.service.addPenalDecree(this.model).subscribe({
-                    next: (id: number) => {
-                        this.model.id = id;
-                        dialogClose(this.model);
-                    },
-                    error: (response: HttpErrorResponse) => {
-                        this.handleAddEditErrorResponse(response);
-                    }
-                });
-            }
+                }
+            });
         }
     }
 
@@ -195,36 +203,42 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
                     this.fillModel();
                     CommonUtils.sanitizeModelStrings(this.model);
 
-                    if (this.penalDecreeId !== undefined && this.penalDecreeId !== null) {
-                        this.service.editPenalDecree(this.model).subscribe({
-                            next: () => {
-                                this.service.downloadPenalDecree(this.penalDecreeId!).subscribe({
-                                    next: () => {
-                                        dialogClose(this.model);
-                                    }
-                                });
-                            },
-                            error: (response: HttpErrorResponse) => {
-                                this.handleAddEditErrorResponse(response);
-                            }
-                        });
-                    }
-                    else {
-                        this.service.addPenalDecree(this.model).subscribe({
-                            next: (id: number) => {
-                                this.model.id = id;
+                    this.openConfirmDialog().subscribe({
+                        next: (ok: boolean) => {
+                            if (ok) {
+                                if (this.penalDecreeId !== undefined && this.penalDecreeId !== null) {
+                                    this.service.editPenalDecree(this.model).subscribe({
+                                        next: () => {
+                                            this.service.downloadPenalDecree(this.penalDecreeId!).subscribe({
+                                                next: () => {
+                                                    dialogClose(this.model);
+                                                }
+                                            });
+                                        },
+                                        error: (response: HttpErrorResponse) => {
+                                            this.handleAddEditErrorResponse(response);
+                                        }
+                                    });
+                                }
+                                else {
+                                    this.service.addPenalDecree(this.model).subscribe({
+                                        next: (id: number) => {
+                                            this.model.id = id;
 
-                                this.service.downloadPenalDecree(id).subscribe({
-                                    next: () => {
-                                        dialogClose(this.model);
-                                    }
-                                });
-                            },
-                            error: (response: HttpErrorResponse) => {
-                                this.handleAddEditErrorResponse(response);
+                                            this.service.downloadPenalDecree(id).subscribe({
+                                                next: () => {
+                                                    dialogClose(this.model);
+                                                }
+                                            });
+                                        },
+                                        error: (response: HttpErrorResponse) => {
+                                            this.handleAddEditErrorResponse(response);
+                                        }
+                                    });
+                                }
                             }
-                        });
-                    }
+                        }
+                    });
                 }
             }
         }
@@ -385,6 +399,18 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
         this.form.markAllAsTouched();
 
         this.violatedRegulationsTouched = true;
+    }
+
+    private openConfirmDialog(): Observable<boolean> {
+        const message: string = this.isAdding
+            ? this.translate.getValue('penal-decrees.complete-add-resolution-confirm-dialog-message')
+            : this.translate.getValue('penal-decrees.complete-edit-resolution-confirm-dialog-message');
+
+        return this.confirmDialog.open({
+            title: this.translate.getValue('penal-decrees.complete-resolution-confirm-dialog-title'),
+            message: message,
+            okBtnLabel: this.translate.getValue('penal-decrees.complete-resolution-confirm-dialog-ok-btn-label')
+        });
     }
 
     private handleAddEditErrorResponse(response: HttpErrorResponse): void {

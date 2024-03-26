@@ -154,7 +154,7 @@
         'selectedvaluefromdropdown': 'трябва да бъде избрана стойност от падащия списък',
         'novaluesindropdown': 'няма стойности в падащия списък',
         'default': 'полето е невалидно',
-        'passwordcomplexity': 'Паролата трябва да съдържа поне 8 символа. \nПаролата трябва да съдържа поне една цифра. \nПаролата трябва да съдържа поне един от специалните символи: $ @ ! % * ? &.',
+        'passwordcomplexity': 'Паролата трябва да съдържа поне 8 символа. \nПаролата трябва да съдържа поне една цифра и една буква. \nПаролата трябва да съдържа поне един от специалните символи: $ @ ! % * ? &.',
         'requiredfile': 'файлът е задължителен',
         'matDatepickerMax': 'полето има максимална дата',
         'matDatepickerMin': 'полето има минимална дата',
@@ -680,7 +680,7 @@
         'change-user-message': 'Сигурни ли сте, че искате да направите потребителя вътрешен?',
         'change-user-ok-btn-label': '',
         'change-user-cancel-btn-label': 'Отказ',
-        'user-must-change-password': 'Смяна на паролата на потребителя',
+        'user-must-change-password': 'Смяна на паролата от потребителя',
         'unlock-user': 'Потребителят е заключен',
         'position': 'Длъжност',
         'title': 'Титла',
@@ -2650,6 +2650,8 @@
         'catch-map-popover-helper': 'За да изберете квадрант от картата, натиснете върху съответния квадрат.',
         'catch-record-quantity-sums': 'Общи количества: ',
         'catch-record-unloaded-quantity-sums': 'Общи количества на разтоварване: ',
+        'catches-missing-catch-inspection-type-error': 'За всеки ред трябва да бъде избран вид на улова',
+        'catches-missing-unloaded-quantity-error': 'За всеки улов трябва да бъде попълнено разтоварено количество',
         'catch-quantity-kg': 'кг',
         'inspector-comment': 'Коментар на инспектора',
         'actions-taken': 'Предприети действия',
@@ -2800,6 +2802,7 @@
         'market-handover-date': 'Дата на предаване',
         'market-filling-date': 'Дата на попълване',
         'market-page-num': 'Номер на страница',
+        'market-log-book-num': 'Номер на дневник',
         'fishing-gear-net-eye-size': 'Размер на окото',
         'fishing-gear-storage-location': 'Място за съхранение / дарение / унищожение',
         'has-importer': 'Има вносител',
@@ -2839,6 +2842,10 @@
         'confirm-need-for-corrections': 'Върни за корекции',
         'market-catch-at-least-one-catch-error': 'Трябва да бъдат въведени данни за поне един улов',
         'permit-license-nomenclature-captain': 'Капитан',
+        'log-book-page-status-in-progress': 'В процес на попълване',
+        'log-book-page-status-submitted': 'Попълнена',
+        'date-of-page': 'Дата',
+        'log-book': 'Номер на дневник',
 
         'add-catch-ship-dialog-title': 'Добави кораб',
         'edit-catch-ship-dialog-title': 'Редактирай кораб',
@@ -2978,7 +2985,13 @@
         'oth': 'Мигриран констативен протокол',
         'view-oth-dialog-title': 'Преглед на мигриран констативен протокол',
         'edit-oth-dialog-title': 'Редакция на мигриран констативен протокол',
-        'add-oth-dialog-title': 'Добавяне на мигриран констативен протокол'
+        'add-oth-dialog-title': 'Добавяне на мигриран констативен протокол',
+
+        'submit-inspection-confirm-dialog-message': 'Сигурни ли сте, че искате да приключите тази инспекция?',
+        'submit-inspection-confirm-dialog-title': 'Потвърждение за приключване на инспекция',
+        'submit-report-confirm-dialog-message': 'Сигурни ли сте, че искате да приключите този доклад?',
+        'submit-report-confirm-dialog-title': 'Потвърждение за приключване на доклад',
+        'submit-inspection-confirm-dialog-ok-btn-label': 'Приключи'
     },
     'vessel': {
         'name': 'Име',
@@ -5307,7 +5320,12 @@
 
         'edit-auan-files': 'Файлове',
         'delivery-dialog-title': 'Информация за връчване',
-        'delivery-data': 'Начин на получаване на издаден от ИАРА документ'
+        'delivery-data': 'Начин на получаване на издаден от ИАРА документ',
+
+        'complete-edit-auan-confirm-dialog-message': 'Сигурни ли сте, че сте приключили с всички промени по този АУАН?',
+        'complete-add-auan-confirm-dialog-message': 'Сигурни ли сте, че искате да приключите този АУАН?',
+        'complete-auan-confirm-dialog-title': 'Потвърждение за приключване на АУАН',
+        'complete-auan-confirm-dialog-ok-btn-label': 'Приключи',
     },
     'cross-check-results': {
         'check-code': 'Код',
@@ -5765,7 +5783,7 @@
         'edit-resolution-num': '№ на резолюция',
 
         'edit-drafter': 'Административнонаказващ орган',
-        'edit-issuer-position': 'Длъжност на АНО',
+        'edit-drafter-position': 'Длъжност на АНО',
         'edit-decree-issue-date': 'Дата на издаване',
         'edit-decree-effective-date': 'Дата на влизане в сила',
         'edit-territory-unit': 'Териториално звено',
@@ -5898,7 +5916,27 @@
 
         'edit-decree-files': 'Файлове',
         'delivery-dialog-title': 'Информация за връчване',
-        'delivery-data': 'Начин на получаване на издаден от ИАРА документ'
+        'delivery-data': 'Начин на получаване на издаден от ИАРА документ',
+
+        'complete-edit-penal-decree-confirm-dialog-message': 'Сигурни ли сте, че сте приключили с всички промени по това наказателно постановление?',
+        'complete-add-penal-decree-confirm-dialog-message': 'Сигурни ли сте, че искате да приключите това наказателно постановление?',
+        'complete-penal-decree-confirm-dialog-title': 'Потвърждение за приключване на наказателно постановление',
+        'complete-penal-decree-confirm-dialog-ok-btn-label': 'Приключи',
+
+        'complete-edit-warning-confirm-dialog-message': 'Сигурни ли сте, че сте приключили с всички промени по това предупреждение?',
+        'complete-add-warning-confirm-dialog-message': 'Сигурни ли сте, че искате да приключите това предупреждение?',
+        'complete-warning-confirm-dialog-title': 'Потвърждение за приключване на предупреждение',
+        'complete-warning-confirm-dialog-ok-btn-label': 'Приключи',
+
+        'complete-edit-agreement-confirm-dialog-message': 'Сигурни ли сте, че сте приключили с всички промени по това споразумение?',
+        'complete-add-agreement-confirm-dialog-message': 'Сигурни ли сте, че искате да приключите това споразумение?',
+        'complete-agreement-confirm-dialog-title': 'Потвърждение за приключване на споразумение',
+        'complete-agreement-confirm-dialog-ok-btn-label': 'Приключи',
+
+        'complete-edit-resolution-confirm-dialog-message': 'Сигурни ли сте, че сте приключили с всички промени по тази резолюция?',
+        'complete-add-resolution-confirm-dialog-message': 'Сигурни ли сте, че искате да приключите тази резолюция?',
+        'complete-resolution-confirm-dialog-title': 'Потвърждение за приключване на резолюция',
+        'complete-resolution-confirm-dialog-ok-btn-label': 'Приключи'
     },
     'flux-vms-requests': {
         'common': 'Общи',

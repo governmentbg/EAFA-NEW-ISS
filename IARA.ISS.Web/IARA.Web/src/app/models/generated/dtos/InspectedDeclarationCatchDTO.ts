@@ -57,6 +57,9 @@ export class InspectedDeclarationCatchDTO {
     @StrictlyTyped(String)
     public unregisteredPageNum?: string;
 
+    @StrictlyTyped(String)
+    public unregisteredLogBookNum?: string;
+
     @StrictlyTyped(Date)
     public unregisteredPageDate?: Date;
 }

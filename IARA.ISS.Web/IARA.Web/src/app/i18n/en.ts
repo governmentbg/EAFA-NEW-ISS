@@ -156,7 +156,7 @@
         'selectedvaluefromdropdown': 'selected value must be one among the dropdown list',
         'novaluesindropdown': 'no values in the dropdown list',
         'default': 'field is invalid',
-        'passwordcomplexity': 'Password must contain minimum of 8 symbols. \nPassword must contain atleast one digit. \nPassword must contain atleast one special character: $ @ ! % * ? &.',
+        'passwordcomplexity': 'Password must contain minimum of 8 symbols. \nPassword must contain at least one digit and one letter. \nPassword must contain at least one special character: $ @ ! % * ? &.',
         'requiredfile': 'this file is required',
         'matDatepickerMax': 'field has max date',
         'matDatepickerMin': 'field has min date',
@@ -682,7 +682,7 @@
         'change-password-email-sent': 'Successfully sent password reset email',
         'impersonate-user': 'Impersonate user',
         'change-user-status': 'Make this user internal',
-        'user-must-change-password': 'Reset password',
+        'user-must-change-password': 'User must change password',
         'unlock-user': 'User is locked',
         'position': 'Position',
         'Title': 'Title',
@@ -2595,6 +2595,8 @@
         'catch-map-popover-helper': 'To select a quadrant from the map, click on the corresponding square.',
         'catch-record-quantity-sums': 'Quantities: ',
         'catch-record-unloaded-quantity-sums': 'Unloaded quantities: ',
+        'catches-missing-catch-inspection-type-error': 'Catch type is missing',
+        'catches-missing-unloaded-quantity-error': 'Unloaded quantity is missing',
         'catch-quantity-kg': 'kg',
         'inspector-comment': 'Inspector\'s comment',
         'actions-taken': 'Actions taken',
@@ -2742,6 +2744,7 @@
         'market-handover-date': 'Handover date',
         'market-filling-date': 'Filling date',
         'market-page-num': 'Page number',
+        'market-log-book-num': 'Log book number',
         'fishing-gear-net-eye-size': 'Net eye size',
         'fishing-gear-storage-location': 'Place for storage / donation / destruction',
         'has-importer': 'Has importer',
@@ -2781,6 +2784,10 @@
         'confirm-need-for-corrections': 'Return for corrections',
         'market-catch-at-least-one-catch-error': 'At least one catch measure needed',
         'permit-license-nomenclature-captain': 'Captain',
+        'log-book-page-status-in-progress': 'In progress',
+        'log-book-page-status-submitted': 'Submitted',
+        'date-of-page': 'Date',
+        'log-book': 'Log book num',
 
         'add-catch-ship-dialog-title': 'Add ship',
         'edit-catch-ship-dialog-title': 'Edit ship',
@@ -2931,6 +2938,12 @@
         'user-status-blocked': 'Blocked',
         'user-status-allow-access': 'Allow access',
         'user-status-deny-access': 'Deny access',
+
+        'submit-inspection-confirm-dialog-message': 'Are you sure that you are done with the changes for this inspection?',
+        'submit-inspection-confirm-dialog-title': 'Submit inspection',
+        'submit-report-confirm-dialog-message': 'Are you sure that you are done with the changes for this report?',
+        'submit-report-confirm-dialog-title': 'Submit report',
+        'submit-inspection-confirm-dialog-ok-btn-label': 'Submit'
     },
     'vessel': {
         'name': 'Name',
@@ -5253,7 +5266,12 @@
 
         'edit-auan-confiscated-appliances-table': 'Confiscated appliances',
         'delivery-dialog-title': 'Delivery data',
-        'delivery-data': 'Delivery data'
+        'delivery-data': 'Delivery data',
+
+        'complete-edit-auan-confirm-dialog-message': 'Are you sure that you are done with the changes for this AUAN?',
+        'complete-add-auan-confirm-dialog-message': 'Are you sure that you are done with the changes for this AUAN?',
+        'complete-auan-confirm-dialog-title': 'Complete AUAN',
+        'complete-auan-confirm-dialog-ok-btn-label': 'Complete',
     },
     'cross-check-results': {
         'check-code': 'Code',
@@ -5698,7 +5716,7 @@
         'edit-decree-auan': 'AUAN',
         'edit-auan-num': 'AUAN no.',
         'edit-drafter': 'Drafter',
-        'edit-issuer-position': 'Issuer position',
+        'edit-drafter-position': 'Issuer position',
         'edit-auan-draft-date': 'Draft date',
         'edit-auan-drafter': 'Drafter',
         'edit-auan-location-description': 'Location description',
@@ -5841,7 +5859,27 @@
         'delete-status': 'Delete status',
         'restore-status': 'Restore status',
         'delivery-dialog-title': 'Delivery data',
-        'delivery-data': 'Delivery data'
+        'delivery-data': 'Delivery data',
+
+        'complete-edit-penal-decree-confirm-dialog-message': 'Are you sure that you are done with the changes for this penal decree?',
+        'complete-add-penal-decree-confirm-dialog-message': 'Are you sure that you are done with the changes for this penal decree?',
+        'complete-penal-decree-confirm-dialog-title': 'Complete penal decree',
+        'complete-penal-decree-confirm-dialog-ok-btn-label': 'Complete',
+
+        'complete-edit-warning-confirm-dialog-message': 'Are you sure that you are done with the changes for this warning?',
+        'complete-add-warning-confirm-dialog-message': 'Are you sure that you are done with the changes for this warning?',
+        'complete-warning-confirm-dialog-title': 'Complete warning',
+        'complete-warning-confirm-dialog-ok-btn-label': 'Complete',
+
+        'complete-edit-agreement-confirm-dialog-message': 'Are you sure that you are done with the changes for this agreement?',
+        'complete-add-agreement-confirm-dialog-message': 'Are you sure that you are done with the changes for this agreement?',
+        'complete-agreement-confirm-dialog-title': 'Complete agreement',
+        'complete-agreement-confirm-dialog-ok-btn-label': 'Complete',
+
+        'complete-edit-resolution-confirm-dialog-message': 'Are you sure that you are done with the changes for this resolution?',
+        'complete-add-resolution-confirm-dialog-message': 'Are you sure that you are done with the changes for this resolution?',
+        'complete-resolution-confirm-dialog-title': 'Complete resolution',
+        'complete-resolution-confirm-dialog-ok-btn-label': 'Complete'
     },
     'catch-quotas': {
         'ship': 'Ship',

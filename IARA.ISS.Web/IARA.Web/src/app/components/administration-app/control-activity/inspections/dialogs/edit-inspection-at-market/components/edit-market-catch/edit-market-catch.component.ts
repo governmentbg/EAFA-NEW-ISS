@@ -269,6 +269,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             invoiceDataControl: new FormControl(undefined, Validators.maxLength(4000)),
             undersizedControl: new FormControl(false),
             pageNumberControl: new FormControl(undefined),
+            logBookNumberControl: new FormControl(undefined),
             pageDateControl: new FormControl(undefined)
         }, this.fishQuantityValidator());
 
@@ -315,10 +316,12 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
                 if (value !== undefined && value !== null) {
                     if (typeof value === 'string') {
                         this.form.get('pageDateControl')!.enable();
+                        this.form.get('logBookNumberControl')!.enable();
                     }
                     else if (value instanceof InspectionLogBookPageNomenclatureDTO) {
                         this.hasDeclaration = true;
                         this.form.get('pageDateControl')!.setValue(value.logBookPageDate);
+                        this.form.get('logBookNumberControl')!.setValue(value.logBookNum);
                         this.form.get('declarationNumberControl')!.setValue(value.originDeclarationNum);
                         this.form.get('declarationDateControl')!.setValue(value.originDeclarationDate);
 
@@ -327,6 +330,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
                 }
                 else {
                     this.form.get('pageDateControl')!.setValue(undefined);
+                    this.form.get('logBookNumberControl')!.setValue(undefined);
                     this.form.get('declarationNumberControl')!.setValue(undefined);
                     this.form.get('declarationDateControl')!.setValue(undefined);
                 }
@@ -349,12 +353,14 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
                     this.form.get('aquacultureControl')!.enable();
                     this.form.get('aquacultureTextControl')!.disable();
                     this.form.get('pageDateControl')!.disable();
+                    this.form.get('logBookNumberControl')!.disable();
                 }
                 else {
                     this.declarationPages = [];
                     this.form.get('aquacultureControl')!.disable();
                     this.form.get('aquacultureTextControl')!.enable();
                     this.form.get('pageDateControl')!.enable();
+                    this.form.get('logBookNumberControl')!.enable();
                 }
             }
         });
@@ -436,7 +442,9 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
 
         if (typeof logBookPage === 'string') {
             this.model.unregisteredPageNum = logBookPage;
+            this.model.unregisteredLogBookNum = this.form.get('logBookNumberControl')!.value;
             this.model.unregisteredPageDate = this.form.get('pageDateControl')!.value;
+            this.model.logBookPageId = undefined;
         }
         else if (logBookPage !== null && logBookPage !== undefined) {
             const page = this.declarationPages.find(f => f.value === logBookPage.value);
@@ -444,6 +452,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             this.model.logBookPageId = this.form.get('pageNumberControl')!.value!.value;
             this.model.unregisteredPageNum = page?.logPageNum?.toString();
             this.model.unregisteredPageDate = page?.logBookPageDate;
+            this.model.unregisteredLogBookNum = page?.logBookNum;
         }
     }
 
@@ -498,6 +507,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
                         const page: InspectionLogBookPageNomenclatureDTO | undefined = pages.find(f => f.value === this.model.logBookPageId);
 
                         this.form.get('pageNumberControl')!.setValue(page);
+                        this.form.get('logBookNumberControl')!.setValue(page?.logBookNum);
                         this.form.get('pageDateControl')!.setValue(page?.logBookPageDate);
                         this.form.get('declarationNumberControl')!.setValue(page?.originDeclarationNum);
                         this.form.get('declarationDateControl')!.setValue(page?.originDeclarationDate);
@@ -508,16 +518,19 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             }
             else {
                 this.form.get('pageNumberControl')!.setValue(this.model.unregisteredPageNum);
+                this.form.get('logBookNumberControl')!.setValue(this.model.unregisteredLogBookNum);
                 this.form.get('pageDateControl')!.setValue(this.model.unregisteredPageDate);
             }
         }
         else {
             this.form.get('pageNumberControl')!.setValue(this.model.unregisteredPageNum);
+            this.form.get('logBookNumberControl')!.setValue(this.model.unregisteredLogBookNum);
             this.form.get('pageDateControl')!.setValue(this.model.unregisteredPageDate);
         }
     }
 
     private disablePageControls(): void {
+        this.form.get('logBookNumberControl')!.disable();
         this.form.get('pageDateControl')!.disable();
         this.form.get('declarationNumberControl')!.disable();
         this.form.get('declarationDateControl')!.disable();

@@ -23,6 +23,7 @@ import { InspectionObservationToolDTO } from '@app/models/generated/dtos/Inspect
 import { InspectionVesselActivityNomenclatureDTO } from '@app/models/generated/dtos/InspectionVesselActivityNomenclatureDTO';
 import { InspectionObservationTextDTO } from '@app/models/generated/dtos/InspectionObservationTextDTO';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 
 @Component({
     selector: 'edit-observation-at-sea',
@@ -50,9 +51,10 @@ export class EditObservationAtSeaComponent extends BaseInspectionsComponent impl
         service: InspectionsService,
         translate: FuseTranslationLoaderService,
         nomenclatures: CommonNomenclatures,
+        confirmDialog: TLConfirmDialog,
         snackbar: MatSnackBar
     ) {
-        super(service, translate, nomenclatures, snackbar);
+        super(service, translate, nomenclatures, confirmDialog, snackbar);
         this.inspectionCode = InspectionTypesEnum.OFS;
     }
 

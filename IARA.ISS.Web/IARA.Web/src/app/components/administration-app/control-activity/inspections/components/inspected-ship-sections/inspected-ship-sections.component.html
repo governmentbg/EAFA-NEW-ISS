@@ -72,7 +72,8 @@
                                              (permitOptionPicked)="onPermitIdsChanged($event)">
             </inspected-permit-licenses-table>
 
-            <inspected-log-books-table formControlName="logBooksControl">
+            <inspected-log-books-table formControlName="logBooksControl"
+                                       (logBookPageIdChanged)="onLogBookPageIdChanged($event)">
             </inspected-log-books-table>
 
             <tl-textarea formControlName="checkObservationControl"

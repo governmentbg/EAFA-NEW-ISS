@@ -4,7 +4,8 @@ import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { BaseRegixChecksDTO } from './BaseRegixChecksDTO';
 import { RegixPersonDataDTO } from './RegixPersonDataDTO';
 import { AddressRegistrationDTO } from './AddressRegistrationDTO';
-import { RecreationalFishingTelkDTO } from './RecreationalFishingTelkDTO'; 
+import { RecreationalFishingTelkDTO } from './RecreationalFishingTelkDTO';
+import { FileInfoDTO } from './FileInfoDTO'; 
 
 export class RecreationalFishingTicketBaseRegixDataDTO extends BaseRegixChecksDTO {
     public constructor(obj?: Partial<RecreationalFishingTicketBaseRegixDataDTO>) {
@@ -34,4 +35,7 @@ export class RecreationalFishingTicketBaseRegixDataDTO extends BaseRegixChecksDT
 
     @StrictlyTyped(RecreationalFishingTelkDTO)
     public telkData?: RecreationalFishingTelkDTO;
+
+    @StrictlyTyped(FileInfoDTO)
+    public files?: FileInfoDTO[];
 }
