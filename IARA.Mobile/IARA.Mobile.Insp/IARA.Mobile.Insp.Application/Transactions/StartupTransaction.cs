@@ -82,6 +82,16 @@ namespace IARA.Mobile.Insp.Application.Transactions
             return null;
         }
 
+        public async Task<bool> IsInspectorAllowed()
+        {
+            HttpResult<bool> result = await RestClient.GetAsync<bool>("InspectionData/IsInspectorAllowed");
+            if (result.IsSuccessful)
+            {
+                return result.Content;
+            }
+            return false;
+        }
+
         public async Task<UserAuthDto> GetUserAuthInfo()
         {
             HttpResult<UserAuthDto> result = await RestClient.GetAsync<UserAuthDto>("Security/GetUser", urlExtension: "Common");

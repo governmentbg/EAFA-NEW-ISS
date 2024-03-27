@@ -13,18 +13,12 @@
         Title="{rt:Translate PermitsTitle, Group=ShipChecks}"
         ValidState="{Binding Permits}">
     <tl:TLResponsiveTable.TableColumns>
-        <tl:TLTableColumn Text="{rt:Translate PermitNumber, Group=ShipChecks}"
-                Width="125" />
-        <tl:TLTableColumn Text="{rt:Translate Type, Group=ShipChecks}"
-                Width="200" />
-        <tl:TLTableColumn Text="{rt:Translate From, Group=ShipChecks}"
-                Width="150" />
-        <tl:TLTableColumn Text="{rt:Translate To, Group=ShipChecks}"
-                Width="150" />
-        <tl:TLTableColumn Text="{rt:Translate Inspected, Group=ShipChecks}"
-                Width="350" />
-        <tl:TLTableColumn Text="{rt:Translate Description, Group=ShipChecks}"
-                Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate PermitNumber, Group=ShipChecks}" Width="125" />
+        <tl:TLTableColumn Text="{rt:Translate Type, Group=ShipChecks}" Width="200" />
+        <tl:TLTableColumn Text="{rt:Translate From, Group=ShipChecks}" Width="150" />
+        <tl:TLTableColumn Text="{rt:Translate To, Group=ShipChecks}" Width="150" />
+        <tl:TLTableColumn Text="{rt:Translate Inspected, Group=ShipChecks}" Width="350" />
+        <tl:TLTableColumn Text="{rt:Translate Description, Group=ShipChecks}" Width="*" />
         <tl:TLTableColumn Width="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource ReviewToWidth}, ConverterParameter=40, Source={Reference view}}" />
     </tl:TLResponsiveTable.TableColumns>
     <tl:TLResponsiveTable.DefaultItemTemplate>
@@ -72,8 +66,7 @@
                                             FontFamily="FA"
                                             Text="{Static h:IconFont.Xmark}"
                                             TextColor="Red" />
-                                    <Label LineBreakMode="WordWrap"
-                                            Text="{rt:Translate Unregistered, Group=ShipChecks}" />
+                                    <Label LineBreakMode="WordWrap" Text="{rt:Translate Unregistered, Group=ShipChecks}" />
                                 </StackLayout>
                             </Setter>
                         </DataTrigger>
@@ -121,16 +114,14 @@
                             Binding="{Binding AddedByInspector}"
                             Value="True">
                         <Setter Property="Content">
-                            <tl:TLFlex GrowUnit="300"
-                                    MeasureColumnsHeightEqually="True">
+                            <tl:TLFlex GrowUnit="300" MeasureColumnsHeightEqually="True">
                                 <tl:TLEntry Title="{rt:Translate PermitNumber, Group=ShipChecks}"
                                         ValidState="{Binding Number}"
                                         IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                                 <tl:TLEntry Title="{rt:Translate Description, Group=ShipChecks}"
                                         ValidState="{Binding Description}"
                                         IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
-                                <StackLayout Orientation="Horizontal"
-                                        VerticalOptions="End">
+                                <StackLayout Orientation="Horizontal" VerticalOptions="End">
                                     <StackLayout Orientation="Horizontal"
                                             HorizontalOptions="FillAndExpand"
                                             VerticalOptions="Center">
@@ -138,8 +129,7 @@
                                                 FontFamily="FA"
                                                 Text="{Static h:IconFont.Xmark}"
                                                 TextColor="Red" />
-                                        <Label LineBreakMode="WordWrap"
-                                                Text="{rt:Translate Unregistered, Group=ShipChecks}" />
+                                        <Label LineBreakMode="WordWrap" Text="{rt:Translate Unregistered, Group=ShipChecks}" />
                                     </StackLayout>
                                     <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
                                             Padding="10"
@@ -157,35 +147,38 @@
                         <Setter Property="Content">
                             <StackLayout>
                                 <tl:TLAutoGrid DefaultMinWidth="450">
-                                    <tl:TLRichLabel LineBreakMode="WordWrap"
-                                            VerticalOptions="Center">
+                                    <tl:TLRichLabel LineBreakMode="WordWrap" VerticalOptions="Center">
                                         <Span Text="{rt:Translate PermitNumber, Group=ShipChecks}" />
                                         <Span Text=": " />
                                         <Span Text="{Binding Dto.PermitNumber}" />
                                     </tl:TLRichLabel>
-                                    <tl:TLRichLabel LineBreakMode="WordWrap"
-                                            VerticalOptions="Center">
+                                    <tl:TLRichLabel LineBreakMode="WordWrap" VerticalOptions="Center">
                                         <Span Text="{rt:Translate Type, Group=ShipChecks}" />
                                         <Span Text=": " />
                                         <Span Text="{Binding Dto.TypeName}" />
                                     </tl:TLRichLabel>
-                                    <tl:TLRichLabel LineBreakMode="WordWrap"
-                                            VerticalOptions="Center">
+                                    <tl:TLRichLabel LineBreakMode="WordWrap" VerticalOptions="Center">
                                         <Span Text="{rt:Translate From, Group=ShipChecks}" />
                                         <Span Text=": " />
                                         <Span Text="{Binding Dto.From, Converter={StaticResource DateToString}}" />
                                     </tl:TLRichLabel>
-                                    <tl:TLRichLabel LineBreakMode="WordWrap"
-                                            VerticalOptions="Center">
+                                    <tl:TLRichLabel LineBreakMode="WordWrap" VerticalOptions="Center">
                                         <Span Text="{rt:Translate To, Group=ShipChecks}" />
                                         <Span Text=": " />
                                         <Span Text="{Binding Dto.To, Converter={StaticResource DateToString}}" />
                                     </tl:TLRichLabel>
+
                                     <tl:TLMultiToggleView Text="{rt:Translate Inspected, Group=ShipChecks}"
                                             Buttons="{Static lh:InspectionTogglesHelper.CoincidesMultiToggles}"
                                             ValidState="{Binding Corresponds}"
                                             Command="{Binding BindingContext.ActionSelected, Source={Reference view}}"
                                             IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                                    <tl:TLRichLabel LineBreakMode="WordWrap"
+                                            VerticalOptions="Center"
+                                            TextColor="Red"
+                                            IsVisible="{Binding ShowError}">
+                                        <Span Text="{rt:Translate Required, Group=Validation}" />
+                                    </tl:TLRichLabel>
                                 </tl:TLAutoGrid>
                                 <tl:TLEntry Title="{rt:Translate Description, Group=ShipChecks}"
                                         ValidState="{Binding Description}"
@@ -198,8 +191,7 @@
         </DataTemplate>
     </tl:TLResponsiveTable.DefaultSectionItemTemplate>
     <tl:TLResponsivleTableChild TableLayout="Table" />
-    <tl:TLResponsivleTableChild TableLayout="Sections"
-            QueryWidth="1500" />
+    <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="1500" />
     <tl:TLResponsiveTable.FooterView>
         <Button Text="{rt:Translate AddPermit, Group=ShipChecks}"
                 Command="{Binding Add}"
@@ -208,7 +200,6 @@
                 IsVisible="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
     </tl:TLResponsiveTable.FooterView>
     <tl:TLResponsiveTable.EmptyView>
-        <Label Text="{rt:Translate NoInformation, Group=Common}"
-                Margin="20,10" />
+        <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
     </tl:TLResponsiveTable.EmptyView>
 </tl:TLResponsiveTable>

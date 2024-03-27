@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using IARA.Mobile.Domain.Enums;
+﻿using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
+using IARA.Mobile.Insp.Models;
 using IARA.Mobile.Shared.Menu;
 using IARA.Mobile.Shared.Views;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Controls.Base;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -39,6 +40,8 @@ namespace IARA.Mobile.Insp.Helpers
 
             if (!validation.IsValid)
             {
+                PermitModel.ForceError();
+                PermitLicenseModel.ForceError();
                 SectionView firstInvalidSection = null;
 
                 foreach (SectionView section in sectionList)

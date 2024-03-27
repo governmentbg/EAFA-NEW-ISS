@@ -1,12 +1,13 @@
 ﻿using IARA.Mobile.Application.Interfaces.Utilities;
+using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Pub.Domain.Models;
 using IARA.Mobile.Shared.Helpers;
 using IARA.Mobile.Shared.ResourceTranslator;
 using IdentityModel.OidcClient;
-using IdentityModel.OidcClient.Results;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace IARA.Mobile.Shared.Utilities
 {
@@ -81,18 +82,21 @@ namespace IARA.Mobile.Shared.Utilities
 
         public async Task<bool> RefreshToken()
         {
-            RefreshTokenResult result = await _identityServer.RefreshToken(_authTokenProvider.RefreshToken);
-            bool successLogin = !string.IsNullOrEmpty(result?.AccessToken);
-            Debug.WriteLine($"Refreshed success: {successLogin}");
-            if (successLogin)
+            HttpResult<JwtToken> result = await DependencyService.Resolve<IRestClient>().PostAsync<JwtToken>("Security/RefreshToken", "Common", false, new JwtToken()
             {
-                Debug.WriteLine($"Refreshed Access TOKEN: {result.AccessToken}");
-                _authTokenProvider.Clear();
-                _authTokenProvider.Token = result.AccessToken;
-                _authTokenProvider.RefreshToken = result.RefreshToken;
-                _authTokenProvider.AccessTokenExpiration = result.AccessTokenExpiration.UtcDateTime;
+                RefreshToken = _authTokenProvider.RefreshToken,
+                Token = _authTokenProvider.Token,
+                ValidTo = _authTokenProvider.AccessTokenExpiration
+            });
+
+            if (result.IsSuccessful)
+            {
+                SetAuthenticationProvider(result.Content);
+
+                return true;
             }
-            return successLogin;
+
+            return false;
         }
 
         public bool ShouldRefreshToken()

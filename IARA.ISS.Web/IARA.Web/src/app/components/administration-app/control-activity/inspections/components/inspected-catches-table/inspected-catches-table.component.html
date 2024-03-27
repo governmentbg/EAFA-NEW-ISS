@@ -131,6 +131,7 @@
                 </span>
             </ng-template>
         </data-template-column>
+
         <data-template-column *ngIf="hasShip === true"
                               [flexRate]="0.2"
                               columnName="{{ 'inspections.origin-ship' | tlTranslate }}">
@@ -156,6 +157,7 @@
                         </tl-icon-button>
                     </div>
                 </div>
+
                 <div *ngIf="row.editMode === false">
                     <div *ngIf="row.data.originShip !== null && row.data.originShip !== undefined">
                         <span>{{ row.data.originShip.name }}</span>
@@ -166,8 +168,10 @@
                 </div>
             </ng-template>
         </data-template-column>
+
         <data-column-inline [flexRate]="0.1"
-                            *ngIf="!isDisabled"></data-column-inline>
+                            *ngIf="!isDisabled">
+        </data-column-inline>
     </tl-data-table>
 
     <div *ngIf="catchQuantities !== undefined && catchQuantities !== null && catchQuantities.size > 0"
@@ -191,5 +195,13 @@
 
     <mat-error *ngIf="control.errors?.catchesMatch === true">
         * {{ 'inspections.catches-match' | tlTranslate }}
+    </mat-error>
+
+    <mat-error *ngIf="control.errors?.missingCatchInspectionType === true">
+        * {{ 'inspections.catches-missing-catch-inspection-type-error' | tlTranslate }}
+    </mat-error>
+
+    <mat-error *ngIf="control.errors?.missingUnloadedQuantity === true">
+        * {{ 'inspections.catches-missing-unloaded-quantity-error' | tlTranslate }}
     </mat-error>
 </div>

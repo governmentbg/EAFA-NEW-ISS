@@ -60,6 +60,18 @@
                 </tl-date>
             </div>
 
+            <div *ngIf="form.controls.permitControl.value && form.controls.permitControl.value.value !== declarationLogBookTypeEnum.NNN"
+                 fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="space-between center">
+                <tl-input fxFlex="50"
+                          formControlName="logBookNumberControl"
+                          label="{{ 'inspections.market-log-book-num' | tlTranslate }}">
+                </tl-input>
+
+                <div fxFlex="50"></div>
+            </div>
+
             <div *ngIf="hasDeclaration
                  && form.controls.permitControl.value && form.controls.permitControl.value.value !== declarationLogBookTypeEnum.NNN
                  && form.controls.permitControl.value.value !== declarationLogBookTypeEnum.Invoice

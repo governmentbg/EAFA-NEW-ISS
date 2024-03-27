@@ -13,6 +13,8 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 
         Task<bool?> IsDeviceAllowed(string imei, IAuthTokenProvider tokenProvider);
 
+        Task<bool> IsInspectorAllowed();
+
         Task<UserAuthDto> GetUserAuthInfo();
 
         Task SendUserDeviceInfo(PublicMobileDeviceDto info);

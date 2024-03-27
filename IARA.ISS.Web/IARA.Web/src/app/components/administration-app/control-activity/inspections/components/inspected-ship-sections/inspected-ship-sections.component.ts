@@ -25,6 +25,7 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
 import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
+import { InspectionCatchMeasureDTO } from '@app/models/generated/dtos/InspectionCatchMeasureDTO';
 
 @Component({
     selector: 'inspected-ship-sections',
@@ -117,6 +118,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
     public permitIds: number[] = [];
 
     private shipId: number | undefined;
+    private currentLogBookPageIds: number[] = [];
 
     private readonly service: InspectionsService;
 
@@ -204,7 +206,9 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             this.permitIds = value.permitLicenses
                 ?.filter(f => f.checkValue === InspectionToggleTypesEnum.Y || f.checkValue === InspectionToggleTypesEnum.N)
                 .map(f => f.permitLicenseId!) ?? [];
-            
+
+            this.currentLogBookPageIds = this.getCurrentLogBookPageIds(value.logBooks ?? []);
+
             const checks = value.checks ?? [];
             const membership = checks.find(f => f.checkTypeId === this.opMembership!.value);
             const notice = checks.find(f => f.checkTypeId === this.preliminaryNotice!.value);
@@ -241,6 +245,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
         else {
             this.form.reset();
             this.permitIds = [];
+            this.currentLogBookPageIds = [];
             this.shipId = undefined;
         }
     }
@@ -289,7 +294,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
                         typeId: x.typeId,
                         typeName: x.typeName
                     }));
-                    
+
                     this.permitIds = shipPermitLicenses.filter(x => x.permitLicenseId !== undefined && x.permitLicenseId !== null).map(x => x.permitLicenseId!);
                     this.form.get('permitLicensesControl')!.setValue(shipPermitLicenses);
                 }
@@ -300,7 +305,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
                         from: x.issuedOn,
                         logBookId: x.id,
                         number: x.number,
-                        pages: x.pages,
+                        pages: x.pages ?? [],
                         startPage: x.startPage
                     }));
 
@@ -311,15 +316,53 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
                     const permitFishingGears: InspectedFishingGearDTO[] = fishingGears.map(x => new InspectedFishingGearDTO({
                         permittedFishingGear: x
                     }));
-                    
+
                     this.form.get('fishingGearsControl')!.setValue(permitFishingGears);
                 }
             }
         }
+
+        this.updateLogBookCatchRecords();
     }
 
     public onPermitIdsChanged(permitIds: number[]): void {
         this.permitIds = permitIds;
+    }
+
+    public onLogBookPageIdChanged(logBookPageId: number | undefined): void {
+        const currentCatches: InspectionCatchMeasureDTO[] = this.form.get('catchesControl')!.value ?? [];
+        const logBooks: InspectionShipLogBookDTO[] = this.form.get('logBooksControl')!.value ?? [];
+        const currentLogBookPageIds: number[] = this.getCurrentLogBookPageIds(logBooks);
+
+        const result: InspectionCatchMeasureDTO[] = [];
+
+        if (currentCatches.length > 0) {
+            for (const record of currentCatches) {
+                if (record.shipLogBookPageId === undefined || record.shipLogBookPageId === null || currentLogBookPageIds.includes(record.shipLogBookPageId)) {
+                    result.push(record);
+                }
+            }
+        }
+
+        this.form.get('catchesControl')!.setValue(result);
+
+        if (logBookPageId !== undefined && logBookPageId !== null) {
+            if (!this.currentLogBookPageIds.includes(logBookPageId)) {
+                this.currentLogBookPageIds = currentLogBookPageIds;
+
+                this.service.getCatchRecordsByShipLogBookPageId(logBookPageId).subscribe({
+                    next: (catches: InspectionCatchMeasureDTO[]) => {
+                        if (catches.length > 0) {
+                            for (const record of catches) {
+                                result.push(record);
+                            }
+                        }
+
+                        this.form.get('catchesControl')!.setValue(result);
+                    }
+                });
+            }
+        }
     }
 
     protected buildForm(): AbstractControl {
@@ -373,11 +416,15 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             notice.description = this.form.get('preliminaryNoticePurposeControl')!.value;
         }
 
+        const toggles: InspectionCheckDTO[] = this.form.get('togglesControl')!.value ?? [];
+        const catchToggles: InspectionCheckDTO[] = this.form.get('catchTogglesControl')!.value ?? [];
+        const fishingGearToggles: InspectionCheckDTO[] = this.form.get('fishingGearTogglesControl')!.value ?? [];
+
         const checks: InspectionCheckDTO[] = [
             ...(ship.toggles ?? []),
-            ...(this.form.get('togglesControl')!.value ?? []),
-            ...(this.form.get('catchTogglesControl')!.value ?? []),
-            ...(this.form.get('fishingGearTogglesControl')!.value ?? []),
+            ...toggles,
+            ...catchToggles,
+            ...fishingGearToggles,
             opMembership,
             notice
         ].filter(f => f !== null && f !== undefined);
@@ -440,5 +487,29 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
         result.observationTexts = model.observationTexts ?? [];
 
         return result;
+    }
+
+    private getCurrentLogBookPageIds(logBooks: InspectionLogBookDTO[]): number[] {
+        const result: number[] = [];
+
+        if (logBooks !== undefined && logBooks !== null && logBooks.length > 0) {
+            for (const logBook of logBooks) {
+                if (logBook.pageId !== null && logBook.pageId !== undefined) {
+                    result.push(logBook.pageId);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private updateLogBookCatchRecords(): void {
+        const currentCatches: InspectionCatchMeasureDTO[] = this.form.get('catchesControl')!.value ?? [];
+
+        const logBooks: InspectionShipLogBookDTO[] = this.form.get('logBooksControl')!.value ?? [];
+        this.currentLogBookPageIds = this.getCurrentLogBookPageIds(logBooks);
+
+        const catchRecords: InspectionCatchMeasureDTO[] = currentCatches.filter(x => x.shipLogBookPageId === undefined || x.shipLogBookPageId === null || this.currentLogBookPageIds.includes(x.shipLogBookPageId));
+        this.form.get('catchesControl')!.setValue(catchRecords);
     }
 }

@@ -8,6 +8,8 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Utilities
 
         bool IsDeviceAllowed { get; set; }
 
+        bool IsInspectorAllowed { get; set; }
+
         double FontSize { get; set; }
 
         DateTime? LastInspectionFetchDate { get; set; }

@@ -16,7 +16,7 @@ export class TLValidators {
      * - Numbers;
      * - Special characters;
      * */
-    public static COMPLEXITY_PATTERN = `(?=.*[a-zA-Z\u0401\u0451\u0410-\u044f])(?=.*[0-9])(?=.*[$@!%*?&])(?=.*[^a-zA-Z0-9\u0401\u0451\u0410-\u044f]).{8,}`;
+    public static COMPLEXITY_PATTERN = `(?=.*[a-zA-ZЁёА-я])(?=.*[0-9])(?=.*[$@!%*?&])(?=.*[^a-zA-Z0-9ЁёА-я]).{8,}`;
 
     public static number(min?: number, max?: number, fractionDigits?: number): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {

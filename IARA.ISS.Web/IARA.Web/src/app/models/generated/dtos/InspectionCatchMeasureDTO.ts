@@ -54,6 +54,9 @@ export class InspectionCatchMeasureDTO {
     @StrictlyTyped(Number)
     public catchCount?: number;
 
+    @StrictlyTyped(Number)
+    public shipLogBookPageId?: number;
+
     @StrictlyTyped(VesselDuringInspectionDTO)
     public originShip?: VesselDuringInspectionDTO;
 }

@@ -30,6 +30,9 @@ import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { InspectionLogBookPageNomenclatureDTO } from '@app/models/generated/dtos/InspectionLogBookPageNomenclatureDTO';
 import { map } from 'rxjs/operators';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { InspectionCatchMeasureDTO } from '@app/models/generated/dtos/InspectionCatchMeasureDTO';
+import { LogBookPageStatusesEnum } from '@app/enums/log-book-page-statuses.enum';
+import { DatePipe } from '@angular/common';
 
 
 @Injectable({
@@ -38,10 +41,12 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 export class InspectionsService extends BaseAuditService {
     protected controller: string = 'Inspections';
     private translate: FuseTranslationLoaderService;
+    private datePipe: DatePipe;
 
-    public constructor(requestService: RequestService, translate: FuseTranslationLoaderService) {
+    public constructor(requestService: RequestService, translate: FuseTranslationLoaderService, datePipe: DatePipe) {
         super(requestService, AreaTypes.Administrative);
         this.translate = translate;
+        this.datePipe = datePipe;
     }
 
     public getIsInspector(): Observable<boolean> {
@@ -104,9 +109,7 @@ export class InspectionsService extends BaseAuditService {
         });
     }
 
-    public getCheckTypesForInspection(
-        inspectionType: InspectionTypesEnum
-    ): Observable<InspectionCheckTypeNomenclatureDTO[]> {
+    public getCheckTypesForInspection(inspectionType: InspectionTypesEnum): Observable<InspectionCheckTypeNomenclatureDTO[]> {
         const params = new HttpParams().append('inspectionType', inspectionType.toString());
 
         return this.requestService.get(this.area, this.controller, 'GetCheckTypesForInspection', {
@@ -175,9 +178,31 @@ export class InspectionsService extends BaseAuditService {
     public getLogBookPagesByLogBookNum(type: DeclarationLogBookTypeEnum, logBookNum: string): Observable<InspectionLogBookPageNomenclatureDTO[]> {
         const params = new HttpParams().append('type', type.toString()).append('logBookNum', logBookNum);
 
-        return this.requestService.get(this.area, this.controller, 'GetLogBookPagesByLogBookNum', {
+        return this.requestService.get<InspectionLogBookPageNomenclatureDTO[]>(this.area, this.controller, 'GetLogBookPagesByLogBookNum', {
             httpParams: params,
             responseTypeCtr: InspectionLogBookPageNomenclatureDTO
+        }).pipe(map((pages: InspectionLogBookPageNomenclatureDTO[]) => {
+            for (const page of pages) {
+                const status: string = this.getLogBookPageStatusName(page.status!);
+
+                if (page.logBookPageDate !== null && page.logBookPageDate !== undefined) {
+                    page.description = `${this.datePipe.transform(page.logBookPageDate, 'dd.MM.yyyy')} | ${status}`;
+                }
+                else {
+                    page.description = `${status}`;
+                }
+            }
+
+            return pages;
+        }));
+    }
+
+    public getCatchRecordsByShipLogBookPageId(shipLogBookPageId: number): Observable<InspectionCatchMeasureDTO[]> {
+        const params = new HttpParams().append('shipLogBookPageId', shipLogBookPageId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetCatchRecordsByShipLogBookPageId', {
+            httpParams: params,
+            responseTypeCtr: InspectionCatchMeasureDTO
         });
     }
 
@@ -234,10 +259,20 @@ export class InspectionsService extends BaseAuditService {
             params = params.append('aquacultureId', aquacultureId.toString());
         }
 
-        return this.requestService.get(this.area, this.controller, 'GetLogBookPages', {
+        return this.requestService.get<InspectionLogBookPageNomenclatureDTO[]>(this.area, this.controller, 'GetLogBookPages', {
             httpParams: params,
             responseTypeCtr: InspectionLogBookPageNomenclatureDTO
-        });
+        }).pipe(map((pages: InspectionLogBookPageNomenclatureDTO[]) => {
+            for (const page of pages) {
+                const status: string = this.getLogBookPageStatusName(page.status!);
+                const logBook: string = this.translate.getValue('inspections.log-book');
+                const pageNum: string = page.displayName!;
+
+                page.displayName = `${pageNum} | ${status}`;
+            }
+
+            return pages;
+        }));;
     }
 
     public getAquacultureOwner(aquacultureId: number): Observable<InspectionSubjectPersonnelDTO> {
@@ -417,6 +452,17 @@ export class InspectionsService extends BaseAuditService {
             else {
                 license.displayName = `${license.waterType} | ${captain}: ${license.captainName}`;
             }
+        }
+    }
+
+    private getLogBookPageStatusName(status: LogBookPageStatusesEnum): string {
+        switch (status) {
+            case LogBookPageStatusesEnum.InProgress:
+                return this.translate.getValue('inspections.log-book-page-status-in-progress');
+            case LogBookPageStatusesEnum.Submitted:
+                return this.translate.getValue('inspections.log-book-page-status-submitted');
+            default:
+                return '';
         }
     }
 }

@@ -22,6 +22,7 @@ import { InspectionTransportVehicleDTO } from '@app/models/generated/dtos/Inspec
 import { InspectedBuyerNomenclatureDTO } from '@app/models/generated/dtos/InspectedBuyerNomenclatureDTO';
 import { InspectionSubjectPersonnelDTO } from '@app/models/generated/dtos/InspectionSubjectPersonnelDTO';
 import { InspectionUtils } from '@app/shared/utils/inspection.utils';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 
 @Component({
     selector: 'edit-inspection-vehicle',
@@ -50,9 +51,10 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
         service: InspectionsService,
         translate: FuseTranslationLoaderService,
         nomenclatures: CommonNomenclatures,
+        confirmDialog: TLConfirmDialog,
         snackbar: MatSnackBar
     ) {
-        super(service, translate, nomenclatures, snackbar);
+        super(service, translate, nomenclatures, confirmDialog, snackbar);
         this.inspectionCode = InspectionTypesEnum.IVH;
     }
 

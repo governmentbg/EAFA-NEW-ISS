@@ -203,6 +203,8 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                                 this.form.get('photoControl')?.disable();
                             }
                         }
+
+                        this.form.get('filesControl')?.disable();
                     }
                 });
             }

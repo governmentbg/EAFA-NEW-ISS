@@ -61,9 +61,6 @@ export class RecreationalFishingTicketDTO extends RecreationalFishingTicketBaseR
     public deliveryTerritoryUnitId?: number;
 
     @StrictlyTyped(FileInfoDTO)
-    public files?: FileInfoDTO[];
-
-    @StrictlyTyped(FileInfoDTO)
     public declarationFile?: FileInfoDTO;
 
     @StrictlyTyped(RecreationalFishingTicketBaseRegixDataDTO)

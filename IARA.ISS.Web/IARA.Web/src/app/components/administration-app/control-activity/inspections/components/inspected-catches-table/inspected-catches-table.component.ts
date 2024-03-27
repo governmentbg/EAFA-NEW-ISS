@@ -134,7 +134,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     public ngOnChanges(changes: SimpleChanges): void {
         if ('requiresFish' in changes) {
             if (!this.requiresFish) {
-                this.control.setValidators(this.catchesValidator());
+                this.control.setValidators([this.catchesValidator(), this.missingCatchInspectionTypeValidator(), this.missingUnloadedQuantityValidator()]);
             }
         }
 
@@ -165,6 +165,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
                 fishId: f.fishId,
                 fishSexId: f.fishSexId,
                 id: f.id,
+                shipLogBookPageId: f.shipLogBookPageId,
                 undersized: f.undersized,
                 originShip: f.originShip,
                 storageLocation: f.storageLocation,
@@ -190,7 +191,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
 
     public onEditRecord(row: GridRow<InspectedCatchTableModel>): void {
         if (this.hasUnloadedQuantity) {
-            this.catchesFormGroup.get('unloadedQuantityControl')!.setValidators([Validators.required, TLValidators.number(0)]); 
+            this.catchesFormGroup.get('unloadedQuantityControl')!.setValidators([Validators.required, TLValidators.number(0)]);
         }
 
         if (row !== null && row !== undefined) {
@@ -316,7 +317,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
             undersizedControl: new FormControl(false)
         });
 
-        return new FormControl(undefined, [this.catchesValidator()]);
+        return new FormControl(undefined, [this.catchesValidator(), this.missingCatchInspectionTypeValidator(), this.missingUnloadedQuantityValidator()]);
     }
 
     protected getValue(): InspectionCatchMeasureDTO[] {
@@ -336,6 +337,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
             fishId: f.fishId,
             fishSexId: f.fishSexId,
             id: f.id,
+            shipLogBookPageId: f.shipLogBookPageId,
             originShip: f.originShip,
             storageLocation: f.storageLocation,
             unloadedQuantity: f.unloadedQuantity,
@@ -371,6 +373,34 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
             }
             return null;
         };
+    }
+
+    private missingCatchInspectionTypeValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (this.hasCatchType && this.catches !== undefined && this.catches !== null && this.catches.length > 0) {
+                for (const catchRecord of this.catches) {
+                    if (catchRecord.catchInspectionTypeId === undefined || catchRecord.catchInspectionTypeId === null) {
+                        return { 'missingCatchInspectionType': true };
+                    }
+                }
+            }
+
+            return null;
+        }
+    }
+
+    private missingUnloadedQuantityValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (this.hasUnloadedQuantity && this.catches !== undefined && this.catches !== null && this.catches.length > 0) {
+                for (const catchRecord of this.catches) {
+                    if (catchRecord.unloadedQuantity === undefined || catchRecord.unloadedQuantity === null) {
+                        return { 'missingUnloadedQuantity': true };
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 
     private recalculateCatchQuantitySums(): void {

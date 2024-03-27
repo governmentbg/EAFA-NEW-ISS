@@ -17,7 +17,6 @@ export interface IBaseReportService extends IBaseAuditService {
     getReportNodes(): Observable<ReportNodeDTO[]>;
     getExecuteReport(id: number): Observable<ExecuteReportDTO>;
     getExecuteReportParameters(id: number): Observable<ReportParameterExecuteDTO>;
-    executeQuery(report: ExecutionReportInfoDTO): Observable<ResultType[]>;
     getColumnNames(reportInfo: ExecutionReportInfoDTO): Observable<ReportSchema[]>;
 
     executeQuery(report: ExecutionReportInfoDTO): Observable<ResultType[]>;

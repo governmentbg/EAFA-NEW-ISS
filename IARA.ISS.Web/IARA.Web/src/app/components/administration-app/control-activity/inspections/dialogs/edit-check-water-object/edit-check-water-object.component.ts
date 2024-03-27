@@ -19,6 +19,7 @@ import { InspectedPersonTypeEnum } from '@app/enums/inspected-person-type.enum';
 import { InspectionCheckModel } from '../../models/inspection-check.model';
 import { InspectionObservationTextDTO } from '@app/models/generated/dtos/InspectionObservationTextDTO';
 import { InspectionCheckWaterObjectDTO } from '@app/models/generated/dtos/InspectionCheckWaterObjectDTO';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 
 @Component({
     selector: 'edit-check-water-object',
@@ -39,9 +40,10 @@ export class EditCheckWaterObjectComponent extends BaseInspectionsComponent impl
         service: InspectionsService,
         translate: FuseTranslationLoaderService,
         nomenclatures: CommonNomenclatures,
+        confirmDialog: TLConfirmDialog,
         snackbar: MatSnackBar
     ) {
-        super(service, translate, nomenclatures, snackbar);
+        super(service, translate, nomenclatures, confirmDialog, snackbar);
         this.inspectionCode = InspectionTypesEnum.CWO;
     }
 

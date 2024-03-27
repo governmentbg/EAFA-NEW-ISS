@@ -13,7 +13,7 @@
                            (addButtonClicked)="onAddRecord()"
                            (activeRecordChanged)="onEditRecord($event?.data)"
                            (recordChanged)="logBookRecordChanged($event)">
-                <data-column [flexRate]="0.15"
+                <data-column [flexRate]="0.2"
                              propertyName="number"
                              [formGroup]="logBooksFormGroup"
                              columnName="{{ 'inspections.log-book-number' | tlTranslate }}">
@@ -35,7 +35,7 @@
                         </div>
                     </ng-template>
                 </data-template-column>
-                <data-template-column [flexRate]="0.2"
+                <data-template-column [flexRate]="0.25"
                                       columnName="{{ 'inspections.log-book-page' | tlTranslate }}">
                     <ng-template [formGroup]="logBooksFormGroup"
                                  let-row="row"
@@ -43,6 +43,7 @@
                         <tl-autocomplete *ngIf="row.editMode === true"
                                          formControlName="pageControl"
                                          [options]="logBookPages"
+                                         [templateOptions]="true"
                                          [hasSelectedValueFromDropdownValidator]="false">
                         </tl-autocomplete>
                         <span *ngIf="row.editMode === false">
@@ -55,7 +56,7 @@
                              [formGroup]="logBooksFormGroup"
                              columnName="{{ 'inspections.permit-description' | tlTranslate }}">
                 </data-column>
-                <data-template-column [flexRate]="0.2"
+                <data-template-column [flexRate]="0.15"
                                       columnName="{{ 'inspections.permit-license-check' | tlTranslate }}">
                     <ng-template [formGroup]="logBooksFormGroup"
                                  let-row="row"
@@ -67,13 +68,12 @@
                         <span *ngIf="row.editMode === false && row.data.isRegistered === true">
                             {{ findOption(row.data.checkDTO) }}
                         </span>
-                        <span
-                              *ngIf="row.data.isRegistered === null || row.data.isRegistered === undefined || row.data.isRegistered === false">
+                        <span *ngIf="row.data.isRegistered === null || row.data.isRegistered === undefined || row.data.isRegistered === false">
                             {{ 'inspections.toggle-unregistered' | tlTranslate }}
                         </span>
                     </ng-template>
                 </data-template-column>
-                <data-column-inline [flexRate]="0.07"
+                <data-column-inline [flexRate]="0.1"
                                     [hideDeleteBtnWhen]="hideDeleteButtonWhen.bind(this)"
                                     *ngIf="!isDisabled">
                 </data-column-inline>

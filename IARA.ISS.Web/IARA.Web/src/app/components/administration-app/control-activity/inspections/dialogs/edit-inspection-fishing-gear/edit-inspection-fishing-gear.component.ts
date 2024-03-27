@@ -24,6 +24,7 @@ import { InspectedFishingGearDTO } from '@app/models/generated/dtos/InspectedFis
 import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
 import { InspectionShipSubjectNomenclatureDTO } from '@app/models/generated/dtos/InspectionShipSubjectNomenclatureDTO';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 
 enum InspectionPermitTypeEnum {
     Registered,
@@ -65,9 +66,10 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
         service: InspectionsService,
         translate: FuseTranslationLoaderService,
         nomenclatures: CommonNomenclatures,
+        confirmDialog: TLConfirmDialog,
         snackbar: MatSnackBar
     ) {
-        super(service, translate, nomenclatures, snackbar);
+        super(service, translate, nomenclatures, confirmDialog, snackbar);
         this.inspectionCode = InspectionTypesEnum.IGM;
 
         this.inspectedTypes = [

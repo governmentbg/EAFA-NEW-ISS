@@ -18,6 +18,7 @@ import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-c
 import { Component, ViewChild } from '@angular/core';
 import { InspectionTypesEnum } from '@app/enums/inspection-types.enum';
 import { InspectionDialogParamsModel } from '../models/inspection-dialog-params.model';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 
 @Component({
     template: ''
@@ -38,6 +39,7 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
 
     protected translate: FuseTranslationLoaderService;
     protected nomenclatures: CommonNomenclatures;
+    protected confirmDialog: TLConfirmDialog;
     protected snackbar: MatSnackBar;
 
     protected id: number | undefined;
@@ -49,11 +51,13 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
         service: InspectionsService,
         translate: FuseTranslationLoaderService,
         nomenclatures: CommonNomenclatures,
+        confirmDialog: TLConfirmDialog,
         snackbar: MatSnackBar
     ) {
         this.service = service;
         this.translate = translate;
         this.nomenclatures = nomenclatures;
+        this.confirmDialog = confirmDialog;
         this.snackbar = snackbar;
 
         this.buildForm();
@@ -86,14 +90,36 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
             this.fillModel();
             CommonUtils.sanitizeModelStrings(this.model);
 
-            this.service.submit(this.model).subscribe({
-                next: (id: number) => {
-                    this.id = id;
-                    this.model.id = id;
-                    dialogClose(dialogClose);
-                },
-                error: (err: HttpErrorResponse) => {
-                    this.handleErrorResponse(err);
+            let title: string = '';
+            let message: string = '';
+
+            if (this.inspectionCode === this.inspectionTypesEnum.CWO || this.inspectionCode === this.inspectionTypesEnum.OFS) { 
+                title = this.translate.getValue('inspections.submit-report-confirm-dialog-title');
+                message = this.translate.getValue('inspections.submit-report-confirm-dialog-message');
+            }
+            else {
+                title = this.translate.getValue('inspections.submit-inspection-confirm-dialog-title');
+                message = this.translate.getValue('inspections.submit-inspection-confirm-dialog-message');
+            }
+
+            this.confirmDialog.open({
+                title: title,
+                message: message,
+                okBtnLabel: this.translate.getValue('inspections.submit-inspection-confirm-dialog-ok-btn-label')
+            }).subscribe({
+                next: (ok: boolean) => {
+                    if (ok) {
+                        this.service.submit(this.model).subscribe({
+                            next: (id: number) => {
+                                this.id = id;
+                                this.model.id = id;
+                                dialogClose(dialogClose);
+                            },
+                            error: (err: HttpErrorResponse) => {
+                                this.handleErrorResponse(err);
+                            }
+                        });
+                    }
                 }
             });
         }
