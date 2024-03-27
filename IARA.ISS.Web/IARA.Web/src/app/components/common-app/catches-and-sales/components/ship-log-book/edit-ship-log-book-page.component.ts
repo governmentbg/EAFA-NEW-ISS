@@ -270,19 +270,29 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             this.model = this.fillModel();
             this.model = CommonUtils.sanitizeModelStrings(this.model);
 
-            if (this.id === null || this.id === undefined) {
-                this.addShipLogBookPage(dialogClose);
-            }
-            else {
-                this.service.editShipLogBookPage(this.model).subscribe({
-                    next: () => {
-                        dialogClose(this.model);
-                    },
-                    error: (response: HttpErrorResponse) => {
-                        this.addOrEditShipLogBookPageErrorResponseHandler(response);
+            this.confirmDialog.open({
+                title: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-title'),
+                message: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-message'),
+                okBtnLabel: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-ok-btn-label')
+            }).subscribe({
+                next: (ok: boolean) => {
+                    if (ok) {
+                        if (this.id === null || this.id === undefined) {
+                            this.addShipLogBookPage(dialogClose);
+                        }
+                        else {
+                            this.service.editShipLogBookPage(this.model).subscribe({
+                                next: () => {
+                                    dialogClose(this.model);
+                                },
+                                error: (response: HttpErrorResponse) => {
+                                    this.addOrEditShipLogBookPageErrorResponseHandler(response);
+                                }
+                            });
+                        }
                     }
-                });
-            }
+                }
+            });
         }
     }
 
@@ -352,10 +362,13 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 if (result !== undefined && result !== null) {
                     const difference: DateDifference | undefined = DateUtils.getDateDifference(result.gearEntryTime!, result.gearExitTime!);
                     result.totalTime = this.dateDifferencePipe.transform(difference);
-                    result.catchRecordFishesSummary = result.catchRecordFishes?.map(x => `${x.fishName} ${x.quantityKg}kg (${x.catchQuadrant !== undefined && x.catchQuadrant !== null ? x.catchQuadrant : ''})`).join(';') ?? '';
+
+                    result.catchRecordFishesSummary = result.catchRecordFishes
+                        ?.filter(x => !x.isDiscarded)
+                        ?.map(x => `${x.fishName} ${x.quantityKg}kg (${x.catchQuadrant !== undefined && x.catchQuadrant !== null ? x.catchQuadrant : ''})`).join(';') ?? '';
 
                     if (catchRecord !== undefined) {
-                        const index: number = this.catchRecords.findIndex(x => x.id === result.id);
+                        const index: number = this.catchRecords.findIndex(x => x === catchRecord);
                         this.catchRecords[index] = result;
                     }
                     else {
@@ -516,7 +529,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 new OriginDeclarationFishDTO({
                     fishId: catchFish.fishId,
                     quantityKg: catchFish.quantityKg,
-                    catchZone: catchQuadrant.zone?.toString(),
+                    catchZone: catchQuadrant?.zone?.toString(),
                     catchQuadrantId: catchFish.catchQuadrantId,
                     catchQuadrant: catchFish.catchQuadrant,
                     catchSizeId: catchFish.catchSizeId,
@@ -1244,7 +1257,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     }
 
     private getPossibleCatchRecordFishesForOriginDeclaration(): CatchRecordFishDTO[] {
-        const catchRecordFishes: CatchRecordFishDTO[][] = this.catchRecords.map(x => (x.catchRecordFishes ?? []).filter(x => x.isActive));
+        const catchRecordFishes: CatchRecordFishDTO[][] = this.catchRecords.map(x => (x.catchRecordFishes ?? []).filter(x => x.isActive && !x.isDiscarded));
         const fishesFlattened: CatchRecordFishDTO[] = ([] as CatchRecordFishDTO[]).concat(...catchRecordFishes);
 
         return fishesFlattened;
@@ -1497,8 +1510,16 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
         const quantitiesMapCatchRecords: Map<number, number> = new Map<number, number>();
         for (const fishGroupId in catchRecordsGroupedByFishType) {
-            const quantity: number = catchRecordsGroupedByFishType[fishGroupId].reduce((sum, current) => sum + (current.quantityKg! - (current.unloadedInOtherTripQuantityKg ?? 0)), 0);
-            quantitiesMapCatchRecords.set(Number(fishGroupId), quantity);
+            const quantity: number = catchRecordsGroupedByFishType[fishGroupId].reduce((sum, current) => {
+                if (!current.isDiscarded) {
+                    sum += (current.quantityKg! - (current.unloadedInOtherTripQuantityKg ?? 0))
+                }
+                return sum;
+            }, 0);
+
+            if (quantity > 0) {
+                quantitiesMapCatchRecords.set(Number(fishGroupId), quantity);
+            }
         }
 
         for (const [key, value] of quantitiesMapCatchRecords) {
@@ -1788,8 +1809,16 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         this.catchRecordQuantities.clear();
 
         for (const fishGroupId in recordsGroupedByFishType) {
-            const quantity = recordsGroupedByFishType[fishGroupId].reduce((sum, current) => sum + current.quantityKg!, 0);
-            this.catchRecordQuantities.set(Number(fishGroupId), quantity);
+            const quantity = recordsGroupedByFishType[fishGroupId].reduce((sum, current) => {
+                if (!current.isDiscarded) {
+                    sum += current.quantityKg!
+                }
+                return sum;
+            }, 0);
+
+            if (quantity > 0) {
+                this.catchRecordQuantities.set(Number(fishGroupId), quantity);
+            }
         }
     }
 

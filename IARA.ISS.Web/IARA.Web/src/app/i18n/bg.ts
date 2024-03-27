@@ -4258,6 +4258,7 @@
         'ship-page-catch-record-fish-not-in-permit-license-warn': 'Избраният воден организъм не присъства в списъка с водни организми към УСР',
         'ship-page-catch-record-quantity-kg': 'Количество (кг)',
         'ship-page-catch-record-is-detained-on-board': 'Задържан на борда',
+        'ship-page-catch-record-is-discarded': 'Изхвърлен',
         'ship-page-catch-record-basic-information-panel': 'Основна информация',
         'ship-page-catch-aquatic-organisms-panel': 'Информация за улови',
         'ship-page-catch-record-sturgeon-gender': 'Пол',
@@ -4632,7 +4633,11 @@
         'delete-log-book-btn-label': 'Изтриване',
         'cannot-delete-log-book-with-submitted-pages': 'Не можете да изтриете дневник, към който има вече въведени страници',
         'overlapping-log-books-dialog-title': 'Припокриващи се диапазони от страници на текущи дневници с други, въведени в системата',
-        'overlapping-log-books-save-despite-conflicts': 'Запази въпреки конфликтите'
+        'overlapping-log-books-save-despite-conflicts': 'Запази въпреки конфликтите',
+
+        'complete-page-confirm-dialog-title': 'Потвърждение за приключване на страница',
+        'complete-page-confirm-dialog-message': 'Сигурни ли сте, че сте приключили с всички промени по тази страница?',
+        'complete-page-confirm-dialog-ok-btn-label': 'Приключи'
     },
     'log-book-page-edit-exceptions': {
         'user-name-filter': 'Потребител',
@@ -4699,6 +4704,14 @@
         'replay-trip-title': 'Повтаряне на излет',
         'replay-trip-message': 'Сигурни ли сте, че искате да повторите всички съобщения от този излет? Това действие може да доведе до промени по страница(и) от риболовния дневник.',
         'replay-trip-ok-btn-label': 'Повтори',
+        'send-message': 'Изпращане на съобщението към FLUX',
+        'send-message-title': 'Изпращане на съобщение към FLUX',
+        'send-message-message': 'Сигурни ли сте, че искате да изпратите съобщението към FLUX?',
+        'send-message-ok-btn-label': 'Изпращане',
+        'send-trip': 'Изпращане на целия рейс към FLUX',
+        'send-trip-title': 'Изпращане на целия рейс към FLUX',
+        'send-trip-message': 'Сигурни ли сте, че искате да изпратите целия рейс към FLUX?',
+        'send-trip-ok-btn-label': 'Изпращане',
         'generate-landing': 'Генериране на LANDING',
         'generate-landing-title': 'Генериране на LANDING',
         'generate-landing-message': 'Генерирането на LANDING съобщение е необратимо. Сигурни ли сте, че искате да продължите?',

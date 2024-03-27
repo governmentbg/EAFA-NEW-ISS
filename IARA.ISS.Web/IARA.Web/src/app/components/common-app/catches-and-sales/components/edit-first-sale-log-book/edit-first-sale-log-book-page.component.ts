@@ -242,19 +242,27 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
             this.fillModel();
             this.model = CommonUtils.sanitizeModelStrings(this.model);
 
-            if (this.id === null || this.id === undefined) {
-                this.addFirstSaleLogBookPage(dialogClose);
-            }
-            else {
-                this.service.editFirstSaleLogBookPage(this.model).subscribe({
-                    next: () => {
-                        dialogClose(this.model);
-                    },
-                    error: (response: HttpErrorResponse) => {
-                        this.addOrEditFirstSaleLogBookPageErrorHandle(response, dialogClose);
+            this.confirmDialog.open({
+                title: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-title'),
+                message: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-message'),
+                okBtnLabel: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-ok-btn-label')
+            }).subscribe({
+                next: (ok: boolean) => {
+                    if (this.id === null || this.id === undefined) {
+                        this.addFirstSaleLogBookPage(dialogClose);
                     }
-                });
-            }
+                    else {
+                        this.service.editFirstSaleLogBookPage(this.model).subscribe({
+                            next: () => {
+                                dialogClose(this.model);
+                            },
+                            error: (response: HttpErrorResponse) => {
+                                this.addOrEditFirstSaleLogBookPageErrorHandle(response, dialogClose);
+                            }
+                        });
+                    }
+                }
+            });
         }
     }
 

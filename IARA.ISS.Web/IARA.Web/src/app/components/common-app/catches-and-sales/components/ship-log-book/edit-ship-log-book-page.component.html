@@ -213,7 +213,7 @@
                      [validityCheckerExtraCondition]="form.errors?.uniqueGearEntryTime !== true">
                 <tl-card-title>{{ 'catches-and-sales.ship-page-catch-records-panel' | tlTranslate }}</tl-card-title>
                 <tl-card-content fxLayout="column">
-                    <div fxLayout="column" fxLayoutGap="1em">
+                    <div fxLayout="column" fxLayoutGap="1em"> 
                         <tl-data-table fxFlexFill
                                        #catchRecordsTable
                                        [rows]="catchRecords"
@@ -248,6 +248,11 @@
                                                 <data-column propertyName="quantityKg"
                                                              [flexRate]="0.2"
                                                              columnName="{{ 'catches-and-sales.ship-page-catch-record-quantity-kg' | tlTranslate }}">
+                                                </data-column>
+                                                <data-column propertyName="isDiscarded"
+                                                             [flexRate]="0.2"
+                                                             dataType="boolean"
+                                                             columnName="{{ 'catches-and-sales.ship-page-catch-record-is-discarded' | tlTranslate }}">
                                                 </data-column>
                                                 <data-column propertyName="isDetainedOnBoard"
                                                              [flexRate]="0.2"
@@ -345,10 +350,10 @@
                 <tl-card-title>{{ 'catches-and-sales.ship-page-declaration-of-origin-panel' | tlTranslate }}</tl-card-title>
                 <tl-card-content fxLayout="column">
                     <div fxLayout="column" fxLayoutGap="1em">
-                        <div fxLayout="column" fxLayoutGap="1em">
+                        <div fxLayout="column" fxLayoutGap="1em"> 
                             <tl-data-table fxFlexFill
                                            #declarationOfOriginCatchRecordsTable
-                                           [rows]="declarationOfOriginCatchRecords"
+                                           [rows]="declarationOfOriginCatchRecords" 
                                            [isRemote]="false"
                                            [isSoftDeletable]="true"
                                            [showInactiveRecords]="false"

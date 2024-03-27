@@ -357,9 +357,12 @@ export class CatchAquaticOrganismTypeComponent extends CustomFormControl<CatchRe
 
         if (catchType !== null && catchType !== undefined) {
             this.model.isDetainedOnBoard = CatchTypeCodesEnum[catchType.code! as keyof typeof CatchTypeCodesEnum] === CatchTypeCodesEnum.TAKEN_ONBOARD;
+            this.model.isDiscarded = CatchTypeCodesEnum[catchType.code! as keyof typeof CatchTypeCodesEnum] === CatchTypeCodesEnum.DISCARDED
+                || CatchTypeCodesEnum[catchType.code! as keyof typeof CatchTypeCodesEnum] === CatchTypeCodesEnum.DEMINIMIS;
         }
         else {
             this.model.isDetainedOnBoard = false;
+            this.model.isDiscarded = false;
         }
 
         return this.model;

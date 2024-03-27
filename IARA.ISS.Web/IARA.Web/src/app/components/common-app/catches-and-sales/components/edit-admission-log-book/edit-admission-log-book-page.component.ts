@@ -223,19 +223,29 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
             this.fillModel();
             this.model = CommonUtils.sanitizeModelStrings(this.model);
 
-            if (this.id === null || this.id === undefined) {
-                this.addAdmissionLogBookPage(dialogClose);
-            }
-            else {
-                this.service.editAdmissionLogBookPage(this.model).subscribe({
-                    next: () => {
-                        dialogClose(this.model);
-                    },
-                    error: (response: HttpErrorResponse) => {
-                        this.addOrEditAdmissionLogBookPageErrorHandle(response, dialogClose);
+            this.confirmDialog.open({
+                title: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-title'),
+                message: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-message'),
+                okBtnLabel: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-ok-btn-label')
+            }).subscribe({
+                next: (ok: boolean | undefined) => {
+                    if (ok) {
+                        if (this.id === null || this.id === undefined) {
+                            this.addAdmissionLogBookPage(dialogClose);
+                        }
+                        else {
+                            this.service.editAdmissionLogBookPage(this.model).subscribe({
+                                next: () => {
+                                    dialogClose(this.model);
+                                },
+                                error: (response: HttpErrorResponse) => {
+                                    this.addOrEditAdmissionLogBookPageErrorHandle(response, dialogClose);
+                                }
+                            });
+                        }
                     }
-                });
-            }
+                }
+            });
         }
     }
 

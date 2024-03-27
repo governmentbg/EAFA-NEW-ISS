@@ -97,12 +97,12 @@
                                 </data-column>
 
                                 <data-column propertyName="purpose"
-                                             [flexRate]="0.15"
+                                             [flexRate]="0.11"
                                              columnName="{{ 'fishing-activities.purpose' | tlTranslate }}">
                                 </data-column>
 
                                 <data-column propertyName="reportType"
-                                             [flexRate]="0.15"
+                                             [flexRate]="0.1"
                                              columnName="{{ 'fishing-activities.report-type' | tlTranslate }}">
                                 </data-column>
 
@@ -111,7 +111,7 @@
                                              columnName="{{ 'fishing-activities.fa-type' | tlTranslate }}">
                                 </data-column>
 
-                                <data-template-column [flexRate]="0.15"
+                                <data-template-column [flexRate]="0.1"
                                                       propertyName="status"
                                                       columnName="{{ 'fishing-activities.fa-status' | tlTranslate }}">
                                     <ng-template ngx-datatable-cell-template let-row="row">
@@ -127,9 +127,16 @@
                                     </ng-template>
                                 </data-template-column>
 
-                                <data-template-column [flexRate]="0.1">
+                                <data-template-column [flexRate]="0.2">
                                     <ng-template ngx-datatable-cell-template let-row="row">
                                         <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                            <tl-icon-button *ngIf="hasSendToFluxPermission"
+                                                            icon="send"
+                                                            iconClass="accent-color"
+                                                            (buttonClicked)="sendMessage(row.data)"
+                                                            tooltipText="{{ 'fishing-activities.send-message' | tlTranslate }}">
+                                            </tl-icon-button>
+
                                             <tl-icon-button *ngIf="hasReplayMessagesPermission"
                                                             icon="replay"
                                                             iconClass="accent-color"
@@ -234,10 +241,17 @@
                          columnName="{{ 'fishing-activities.unload-time' | tlTranslate }}">
             </data-column>
 
-            <data-template-column *ngIf="hasGenerateLandingPermission || hasReplayMessagesPermission"
-                                  [flexRate]="0.1">
+            <data-template-column *ngIf="hasGenerateLandingPermission || hasReplayMessagesPermission || hasSendToFluxPermission"
+                                  [flexRate]="0.15">
                 <ng-template ngx-datatable-cell-template let-row="row">
                     <div fxLayout="row wrap" fxLayoutAlign="end center">
+                        <tl-icon-button *ngIf="hasSendToFluxPermission"
+                                        icon="send"
+                                        iconClass="accent-color"
+                                        (buttonClicked)="sendTrip(row.data)"
+                                        tooltipText="{{ 'fishing-activities.send-trip' | tlTranslate }}">
+                        </tl-icon-button>
+
                         <tl-icon-button *ngIf="hasGenerateLandingPermission && !row.data.hasLanding"
                                         icon="directions_boat"
                                         iconClass="accent-color"

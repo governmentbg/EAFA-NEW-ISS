@@ -217,30 +217,40 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
             this.fillModel();
             this.model = CommonUtils.sanitizeModelStrings(this.model);
 
-            if (this.id === null || this.id === undefined) {
-                this.addTransportationLogBookPage(dialogClose);
-            }
-            else {
-                this.service.editTransportationLogBookPage(this.model).subscribe({
-                    next: () => {
-                        dialogClose(this.model);
-                    },
-                    error: (errorResponse: HttpErrorResponse) => {
-                        const error: ErrorModel | undefined = errorResponse.error;
+            this.confirmDialog.open({
+                title: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-title'),
+                message: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-message'),
+                okBtnLabel: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-ok-btn-label')
+            }).subscribe({
+                next: (ok: boolean) => {
+                    if (ok) {
+                        if (this.id === null || this.id === undefined) {
+                            this.addTransportationLogBookPage(dialogClose);
+                        }
+                        else {
+                            this.service.editTransportationLogBookPage(this.model).subscribe({
+                                next: () => {
+                                    dialogClose(this.model);
+                                },
+                                error: (errorResponse: HttpErrorResponse) => {
+                                    const error: ErrorModel | undefined = errorResponse.error;
 
-                        if (error?.code === ErrorCode.SendFLUXSalesFailed) {
-                            if (!IS_PUBLIC_APP) { // show snackbar only when not public app
-                                this.snackbar.open(this.translationService.getValue('catches-and-sales.transportation-page-send-to-flux-sales-error'), undefined, {
-                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
-                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
-                                });
-                            }
+                                    if (error?.code === ErrorCode.SendFLUXSalesFailed) {
+                                        if (!IS_PUBLIC_APP) { // show snackbar only when not public app
+                                            this.snackbar.open(this.translationService.getValue('catches-and-sales.transportation-page-send-to-flux-sales-error'), undefined, {
+                                                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                            });
+                                        }
 
-                            dialogClose();
+                                        dialogClose();
+                                    }
+                                }
+                            });
                         }
                     }
-                });
-            }
+                }
+            });
         }
     }
 
