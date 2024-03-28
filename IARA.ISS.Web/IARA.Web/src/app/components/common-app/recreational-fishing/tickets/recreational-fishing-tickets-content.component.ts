@@ -390,6 +390,24 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
             ++firstIdx;
         }
 
+        let shouldUpdateTicketPrices: boolean = false;
+        if (this.ticketPrices === undefined || this.ticketPrices === null || this.ticketPrices.length === 0) {
+            shouldUpdateTicketPrices = true;
+
+            this.service.getTicketPrices().subscribe({
+                next: (prices: RecreationalFishingTicketPriceDTO[]) => {
+                    for (const price of prices) {
+                        const periodId: number | undefined = this.ticketPeriods.find(x => TicketPeriodEnum[x.code as keyof typeof TicketPeriodEnum] === price.ticketPeriod)?.value;
+                        const typeId: number | undefined = this.ticketTypes.find(x => TicketTypeEnum[x.code as keyof typeof TicketTypeEnum] === price.ticketType)?.value;
+
+                        if (periodId !== undefined && typeId !== undefined && price.price !== undefined) {
+                            this.ticketPrices.push([periodId, typeId, price.price]);
+                        }
+                    }
+                }
+            });
+        }
+
         if (this.showPaymentStep === true && step.selectedStep === this.paymentStep) {
             const payment: PaymentDataDTO | undefined = this.paymentDataControl.value;
             if (payment) {
@@ -425,6 +443,11 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
 
                     if (i < this.tickets.length) {
                         this.tickets[i].ticketNum = ticketNum;
+
+                        if(shouldUpdateTicketPrices) {
+                            this.tickets[i].price = this.calculateTicketPrice(this.tickets[i]);
+                            this.calculateTotalPrice();
+                        }
                     }
                     else {
                         this.childTickets[i - this.tickets.length].ticketNum = ticketNum;

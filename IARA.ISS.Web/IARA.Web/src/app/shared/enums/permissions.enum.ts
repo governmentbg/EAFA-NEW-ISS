@@ -475,6 +475,7 @@
     FishingActivityReportsRead = 'FishingActivityReportsRead',
     FishingActivityReportsGenerateLanding = 'FishingActivityReportsGenerateLanding',
     FishingActivityReportsReplay = 'FishingActivityReportsReplay',
+    FishingActivityReportsSendToFlux = 'FishingActivityReportsSendToFlux',
 
     // AUANs
     AuanRegisterReadAll = 'AuanRegisterReadAll',

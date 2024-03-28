@@ -141,19 +141,27 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
             this.fillModel();
             this.model = CommonUtils.sanitizeModelStrings(this.model);
 
-            if (this.id === null || this.id === undefined) {
-                this.addAquacultureLogBookPage(dialogClose);
-            }
-            else {
-                this.service.editAquacultureLogBookPage(this.model).subscribe({
-                    next: () => {
-                        dialogClose(this.model);
-                    },
-                    error: (response: HttpErrorResponse) => {
-                        this.addOrEditAquacultureLogBookPageErrorHandle(response, dialogClose);
+            this.confirmDialog.open({
+                title: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-title'),
+                message: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-message'),
+                okBtnLabel: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-ok-btn-label')
+            }).subscribe({
+                next: (ok: boolean) => {
+                    if (this.id === null || this.id === undefined) {
+                        this.addAquacultureLogBookPage(dialogClose);
                     }
-                });
-            }
+                    else {
+                        this.service.editAquacultureLogBookPage(this.model).subscribe({
+                            next: () => {
+                                dialogClose(this.model);
+                            },
+                            error: (response: HttpErrorResponse) => {
+                                this.addOrEditAquacultureLogBookPageErrorHandle(response, dialogClose);
+                            }
+                        });
+                    }
+                }
+            });
         }
     }
 

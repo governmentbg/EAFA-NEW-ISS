@@ -44,6 +44,7 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
     public readonly hasFishLogBookPageReadPermission: boolean;
     public readonly hasGenerateLandingPermission: boolean;
     public readonly hasReplayMessagesPermission: boolean;
+    public readonly hasSendToFluxPermission: boolean;
 
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
@@ -81,6 +82,7 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
         this.hasFishLogBookPageReadPermission = permissions.hasAny(PermissionsEnum.FishLogBookPageReadAll, PermissionsEnum.FishLogBookRead);
         this.hasGenerateLandingPermission = permissions.has(PermissionsEnum.FishingActivityReportsGenerateLanding);
         this.hasReplayMessagesPermission = permissions.has(PermissionsEnum.FishingActivityReportsReplay);
+        this.hasSendToFluxPermission = permissions.has(PermissionsEnum.FishingActivityReportsSendToFlux);
 
         this.form = this.buildForm();
     }
@@ -213,6 +215,42 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
                     this.service.fishingActivityReportReplayMessage(report.id!).subscribe({
                         next: () => {
                             this.grid.refreshData();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public sendTrip(trip: FishingActivityReportDTO): void {
+        this.confirmDialog.open({
+            title: this.translate.getValue('fishing-activities.send-trip-title'),
+            message: this.translate.getValue('fishing-activities.send-trip-message'),
+            okBtnLabel: this.translate.getValue('fishing-activities.send-trip-ok-btn-label')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.sendFishingActivityTripToFlux(trip.tripIdentifier!).subscribe({
+                        next: () => {
+                            // nothing
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public sendMessage(report: FishingActivityReportItemDTO): void {
+        this.confirmDialog.open({
+            title: this.translate.getValue('fishing-activities.send-message-title'),
+            message: this.translate.getValue('fishing-activities.send-message-message'),
+            okBtnLabel: this.translate.getValue('fishing-activities.send-message-ok-btn-label')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.sendFishingActivityReportToFlux(report.id!).subscribe({
+                        next: () => {
+                            // nothing
                         }
                     });
                 }

@@ -66,5 +66,8 @@ export class CatchRecordFishDTO {
     public isDetainedOnBoard?: boolean;
 
     @StrictlyTyped(Boolean)
+    public isDiscarded?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isActive?: boolean;
 }

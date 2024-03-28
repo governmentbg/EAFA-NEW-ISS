@@ -4199,6 +4199,7 @@
         'ship-page-catch-record-fish-not-in-permit-license-warn': 'The chosen aquatic organism is not an organism from the permit license',
         'ship-page-catch-record-quantity-kg': 'Quantity (kg)',
         'ship-page-catch-record-is-detained-on-board': 'Detained on board',
+        'ship-page-catch-record-is-discarded': 'Discarded',
         'ship-page-catch-record-basic-information-panel': 'Basic information',
         'ship-page-catch-aquatic-organisms-panel': 'Catch information',
         'ship-page-catch-record-sturgeon-gender': 'Gender',
@@ -4577,7 +4578,11 @@
         'delete-log-book-btn-label': 'Delete',
         'cannot-delete-log-book-with-submitted-pages': 'You cannot delete a log book with already submitted pages',
         'overlapping-log-books-dialog-title': 'Overlapping log book page ranges',
-        'overlapping-log-books-save-despite-conflicts': 'Save despite the conflicts'
+        'overlapping-log-books-save-despite-conflicts': 'Save despite the conflicts',
+
+        'complete-page-confirm-dialog-title': 'Complete page confirmation',
+        'complete-page-confirm-dialog-message': 'Are you sure that you are done with your changes for this page?',
+        'complete-page-confirm-dialog-ok-btn-label': 'Complete'
     },
     'log-book-page-edit-exceptions': {
         'user-name-filter': 'User',
@@ -4644,6 +4649,14 @@
         'replay-trip-title': 'Replay trip',
         'replay-trip-message': 'Are you sure you wish to replay all messages in this trip? This may cause changes to ship log book page(s).',
         'replay-trip-ok-btn-label': 'Replay',
+        'send-message': 'Send message to FLUX',
+        'send-message-title': 'Send message to FLUX',
+        'send-message-message': 'Are you sure you wish to send this message to FLUX?',
+        'send-message-ok-btn-label': 'Send',
+        'send-trip': 'Send entire trip to FLUX',
+        'send-trip-title': 'Send the entire trip to FLUX',
+        'send-trip-message': 'Are you sure you wish to send the entire trip to FLUX?',
+        'send-trip-ok-btn-label': 'Send',
         'generate-landing': 'Generate LANDING',
         'generate-landing-title': 'Generate LANDING',
         'generate-landing-message': 'Generating a LANDING message is irreversible. Are you sure you wish to proceed?',

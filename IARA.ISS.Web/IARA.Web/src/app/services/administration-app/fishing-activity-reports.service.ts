@@ -42,4 +42,14 @@ export class FishingActivityReportsService extends BaseAuditService {
         const params = new HttpParams().append('id', id.toString());
         return this.requestService.post(this.area, this.controller, 'FishingActivityReportReplayMessage', null, { httpParams: params });
     }
+
+    public sendFishingActivityTripToFlux(tripIdentifier: string): Observable<void> {
+        const params = new HttpParams().append('tripIdentifier', tripIdentifier);
+        return this.requestService.post(this.area, this.controller, 'SendFishingActivityTripToFlux', null, { httpParams: params });
+    }
+
+    public sendFishingActivityReportToFlux(id: number): Observable<void> {
+        const params = new HttpParams().append('id', id.toString());
+        return this.requestService.post(this.area, this.controller, 'SendFishingActivityReportToFlux', null, { httpParams: params });
+    }
 }
