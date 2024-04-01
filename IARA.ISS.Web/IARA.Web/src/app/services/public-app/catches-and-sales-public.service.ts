@@ -191,6 +191,14 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
         return this.commonService.annulLogBookPage(this.area, this.controller, reasonData, logBookType);
     }
 
+    public getPreviousRelatedLogBookPages(logBookPageId: number): Observable<NomenclatureDTO<number>[]> {
+        return this.commonService.getPreviousRelatedLogBookPages(this.area, this.controller, logBookPageId);
+    }
+
+    public addRelatedDeclaration(logBookPageId: number, relatedLogBookPageId: number): Observable<void> {
+        return this.commonService.addRelatedDeclaration(this.area, this.controller, logBookPageId, relatedLogBookPageId);
+    }
+
     public downloadFile(fileId: number, fileName: string): Observable<boolean> {
         return this.commonService.downloadFile(this.area, this.controller, fileId, fileName);
     }

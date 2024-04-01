@@ -306,7 +306,20 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
     }
 
     public validate(control: AbstractControl): ValidationErrors | null {
-        return this.control.errors;
+        const errors: ValidationErrors = {};
+
+        //productsQuantityNotMatch is warning
+        if (this.control.errors !== null && this.control.errors !== undefined) {
+            if (this.control.errors['missingProperties']) {
+                errors['missingProperties'] = this.control.errors['missingProperties'];
+            }
+
+            if (this.control.errors['noProducts']) {
+                errors['noProducts'] = this.control.errors['noProducts'];
+            }
+        }
+
+        return Object.keys(errors).length === 0 ? null : errors;
     }
 
     protected buildForm(): AbstractControl {

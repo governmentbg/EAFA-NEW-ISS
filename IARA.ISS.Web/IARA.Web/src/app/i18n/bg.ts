@@ -637,6 +637,7 @@
         'deactivate-user-tooltip': 'Деактивиране на потребител',
         'restore-user-tooltip': 'Активиране на потребител',
         'basic-information-title': 'Основна информация',
+        'access-data-title': 'Данни за достъп',
         'edit-internal-user-dialog-title': 'Редакция на вътрешен потребител',
         'add-internal-user-dialog-title': 'Добавяне на вътрешен потребител',
         'edit-external-user-dialog-title': 'Редакция на външен потребител',
@@ -680,6 +681,8 @@
         'change-user-message': 'Сигурни ли сте, че искате да направите потребителя вътрешен?',
         'change-user-ok-btn-label': '',
         'change-user-cancel-btn-label': 'Отказ',
+        'generate': 'Генерирай',
+        'generate-password': 'Генерирай парола',
         'user-must-change-password': 'Смяна на паролата от потребителя',
         'unlock-user': 'Потребителят е заключен',
         'position': 'Длъжност',
@@ -4017,7 +4020,9 @@
         'no-inspections-attached-to-ship-page': 'Няма инспекции на тази страница от риболовен дневник',
         'transportaion-document': 'Документ за превоз',
         'first-sale-document': 'Документ за първа продажба',
+        'related-declaration': 'Свързана декларация',
         'document-attachment': 'Прикачване на документ',
+        'declaration': 'Декларация',
         'document-type': 'Тип дневник',
         'name': 'Име',
         'issue-date': 'Дата  на издаване',
@@ -4060,6 +4065,11 @@
         'first-sale-number': 'Номер',
         'first-sale-document-attachment': 'Прикачване на документ за първа продажба',
 
+        'related-log-book-page-card': 'Свързана декларация',
+        'related-log-book-page-number': 'Номер на страница',
+        'related-log-book-page-fill-date': 'Дата на попълване',
+        'view-related-log-book-page': 'Преглед',
+
         'anull-ship-log-book-page': 'Анулиране на страница',
         'restore-annulled-ship-log-book-page': 'Възстановяване на анулирана страница',
 
@@ -4076,6 +4086,7 @@
         'restore-annulled-aquaculture-log-book-page': 'Възстановяване на анулирана страница',
 
         'no-documents-or-declarations-attached-to-ship-page': 'Не са налични свързани декларации и документи към страницата',
+        'add-related-declaration-title': 'Добавяне на свързана декларация',
         'add-ship-admission-document-title': 'Стъпки за стартиране на документ за приемане към декларация за произход',
         'add-ship-transportation-document-title': 'Стъпки за стартиране на документ за превоз към декларация за произход',
         'add-ship-first-sale-document-title': 'Стъпки за стартиране на документ за първа продажба към декларация за произход',

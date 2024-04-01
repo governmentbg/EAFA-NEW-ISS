@@ -64,6 +64,8 @@ import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-c
 import { SystemPropertiesService } from '@app/services/common-app/system-properties.service';
 import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
 import { LogBookStatusesEnum } from '@app/enums/log-book-statuses.enum';
+import { AddRelatedDeclarationComponent } from './components/add-related-declaration/add-related-declaration.component';
+import { AddRelatedDeclarationDialogParams } from './models/add-related-declaration-dialog-params.model';
 
 const PAGE_NUMBER_CONTROL_NAME: string = 'pageNumberControl';
 type ThreeState = 'yes' | 'no' | 'both';
@@ -142,6 +144,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     private readonly nomenclatures: CommonNomenclatures;
     private readonly addShipLogBookPageWizardDialog: TLMatDialog<AddShipPageWizardComponent>;
     private readonly editShipLogBookPageDialog: TLMatDialog<EditShipLogBookPageComponent>;
+    private readonly addRelatedDeclarationDialog: TLMatDialog<AddRelatedDeclarationComponent>;
     private readonly addLogBookPageWizardDialog: TLMatDialog<AddLogBookPageWizardComponent>;
     private readonly editFirstSaleLogBookPageDialog: TLMatDialog<EditFirstSaleLogBookPageComponent>;
     private readonly editAdmissionLogBookPageDialog: TLMatDialog<EditAdmissionLogBookPageComponent>;
@@ -159,6 +162,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         permissions: PermissionsService,
         addShipLogBookPageWizardDialog: TLMatDialog<AddShipPageWizardComponent>,
         editShipLogBookPageDialog: TLMatDialog<EditShipLogBookPageComponent>,
+        addRelatedDeclarationDialog: TLMatDialog<AddRelatedDeclarationComponent>,
         addLogBookPageWizardDialog: TLMatDialog<AddLogBookPageWizardComponent>,
         editFirstSaleLogBookPageDialog: TLMatDialog<EditFirstSaleLogBookPageComponent>,
         editAdmissionLogBookPageDialog: TLMatDialog<EditAdmissionLogBookPageComponent>,
@@ -175,6 +179,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
 
         this.addShipLogBookPageWizardDialog = addShipLogBookPageWizardDialog;
         this.editShipLogBookPageDialog = editShipLogBookPageDialog;
+        this.addRelatedDeclarationDialog = addRelatedDeclarationDialog;
         this.addLogBookPageWizardDialog = addLogBookPageWizardDialog;
         this.editFirstSaleLogBookPageDialog = editFirstSaleLogBookPageDialog;
         this.editAdmissionLogBookPageDialog = editAdmissionLogBookPageDialog;
@@ -815,6 +820,28 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     public onAddFirstSaleDocumentBtnClicked(shipLogBookPage: ShipLogBookPageRegisterDTO): void {
         const title: string = this.translationService.getValue('catches-and-sales.add-ship-first-sale-document-title');
         this.openAddShipPageDocumentWizardDialog(shipLogBookPage.id!, title, LogBookPageDocumentTypesEnum.FirstSaleDocument, LogBookTypesEnum.Ship, undefined);
+    }
+
+    public onAddRelatedDeclarationBtnClicked(shipLogBookPage: ShipLogBookPageEditDTO): void {
+        this.addRelatedDeclarationDialog.openWithTwoButtons({
+            title: this.translationService.getValue('catches-and-sales.add-related-declaration-title'),
+            TCtor: AddRelatedDeclarationComponent,
+            translteService: this.translationService,
+            viewMode: false,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => {
+                    closeFn();
+                }
+            },
+            componentData: new AddRelatedDeclarationDialogParams(this.service, shipLogBookPage),
+            disableDialogClose: false
+        }, '500px').subscribe({
+            next: (success: boolean | undefined) => {
+                if (success === true) {
+                    this.gridManager.refreshData();
+                }
+            }
+        });
     }
 
     public onAddAdmissionDocumentFromTransportationBtnClicked(transportationLogBookPage: TransportationLogBookPageRegisterDTO): void {

@@ -635,6 +635,7 @@
         'deactivate-user-tooltip': 'Deactivate user',
         'restore-user-tooltip': 'Restore user',
         'basic-information-title': 'Basic information',
+        'access-data-title': 'Access data',
         'edit-internal-user-dialog-title': 'Edit internal user',
         'add-internal-user-dialog-title': 'Add internal user',
         'edit-external-user-dialog-title': 'Edit external user',
@@ -682,6 +683,8 @@
         'change-password-email-sent': 'Successfully sent password reset email',
         'impersonate-user': 'Impersonate user',
         'change-user-status': 'Make this user internal',
+        'generate': 'Generate',
+        'generate-password': 'Generate password',
         'user-must-change-password': 'User must change password',
         'unlock-user': 'User is locked',
         'position': 'Position',
@@ -3963,8 +3966,10 @@
         'no-inspections-attached-to-ship-page': 'There are no inspections and checks of this ship page',
         'transportaion-document': 'Transportation document',
         'first-sale-document': 'First sale document',
+        'related-declaration': 'Related declaration',
         'document-attachment': 'Attach document',
         'document-type': 'Document type',
+        'declaration': 'Declaration',
         'name': 'Name',
         'issue-date': 'Issue date',
         'fishing-date': 'Finish date',
@@ -4006,6 +4011,11 @@
         'first-sale-number': 'Number',
         'first-sale-document-attachment': 'Attach first sale document',
 
+        'related-log-book-page-card': 'Related declaration',
+        'related-log-book-page-number': 'Page number',
+        'related-log-book-page-fill-date': 'Fill date',
+        'view-related-log-book-page': 'View',
+
         'anull-ship-log-book-page': 'Log book page annulment',
         'restore-annulled-ship-log-book-page': 'Restore annulled log book page',
 
@@ -4022,6 +4032,7 @@
         'restore-annulled-aquaculture-log-book-page': 'Restore annulled log book page',
 
         'no-documents-or-declarations-attached-to-ship-page': 'No declarations and documents attached to this page',
+        'add-related-declaration-title': 'Add related declaration',
         'add-ship-admission-document-title': 'Steps for starting admission document for origin declaration',
         'add-ship-transportation-document-title': 'Steps for starting transportation document for origin declaration',
         'add-ship-first-sale-document-title': 'Steps for starting first sale document for origin declaration',

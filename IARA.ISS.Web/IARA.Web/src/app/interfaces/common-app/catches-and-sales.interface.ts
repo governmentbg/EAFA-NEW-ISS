@@ -99,6 +99,9 @@ export interface ICatchesAndSalesService {
 
     annulLogBookPage(reasonData: LogBookPageCancellationReasonDTO, logBookType: LogBookTypesEnum): Observable<void>;
 
+    getPreviousRelatedLogBookPages(logBookPageId: number): Observable<NomenclatureDTO<number>[]>;
+    addRelatedDeclaration(logBookPageId: number, relatedLogBookPageId: number): Observable<void>;
+
     getShipLogBookPageSimpleAudit(id: number): Observable<SimpleAuditDTO>;
     getCatchRecordSimpleAudit(id: number): Observable<SimpleAuditDTO>;
     getOriginDeclarationFishSimpleAudit(id: number): Observable<SimpleAuditDTO>;

@@ -248,18 +248,20 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
                 okBtnLabel: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-ok-btn-label')
             }).subscribe({
                 next: (ok: boolean) => {
-                    if (this.id === null || this.id === undefined) {
-                        this.addFirstSaleLogBookPage(dialogClose);
-                    }
-                    else {
-                        this.service.editFirstSaleLogBookPage(this.model).subscribe({
-                            next: () => {
-                                dialogClose(this.model);
-                            },
-                            error: (response: HttpErrorResponse) => {
-                                this.addOrEditFirstSaleLogBookPageErrorHandle(response, dialogClose);
-                            }
-                        });
+                    if (ok) {
+                        if (this.id === null || this.id === undefined) {
+                            this.addFirstSaleLogBookPage(dialogClose);
+                        }
+                        else {
+                            this.service.editFirstSaleLogBookPage(this.model).subscribe({
+                                next: () => {
+                                    dialogClose(this.model);
+                                },
+                                error: (response: HttpErrorResponse) => {
+                                    this.addOrEditFirstSaleLogBookPageErrorHandle(response, dialogClose);
+                                }
+                            });
+                        }
                     }
                 }
             });

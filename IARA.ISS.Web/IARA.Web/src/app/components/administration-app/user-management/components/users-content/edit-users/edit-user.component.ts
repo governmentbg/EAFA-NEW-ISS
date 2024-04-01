@@ -39,6 +39,7 @@ import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { forkJoin } from 'rxjs';
 import { EditUserDialogParams } from '../../models/edit-user-dialog-params';
+import { TLValidators } from '@app/shared/utils/tl-validators';
 
 @Component({
     selector: 'edit-user',
@@ -69,6 +70,9 @@ export class EditUserComponent implements OnInit, IDialogComponent {
     public userFullName!: string;
     public legalStatusEnum: typeof UserLegalStatusEnum = UserLegalStatusEnum;
     public userRolesTouched: boolean = false;
+
+    public passwordIcon: string = 'fa-eye';
+    public passwordConfirmationIcon: string = 'fa-eye';
 
     public canRestoreRecords!: boolean;
     public isAdd: boolean = false;
@@ -398,6 +402,39 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         return undefined;
     }
 
+    public showOrHidePassword(formControlName: string): void {
+        if (formControlName === 'password') {
+            this.passwordIcon === 'fa-eye'
+                ? this.passwordIcon = 'fa-eye-slash'
+                : this.passwordIcon = 'fa-eye';
+        } else if (formControlName === 'passwordConfirmation') {
+            this.passwordConfirmationIcon === 'fa-eye'
+                ? this.passwordConfirmationIcon = 'fa-eye-slash'
+                : this.passwordConfirmationIcon = 'fa-eye';
+        }
+    }
+
+    public generatePassword(): void {
+        const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$@!%*?&';
+        const isValid = (password: string) => {
+            return /[a-z]/.test(password)
+                && /[A-Z]/.test(password)
+                && /\d/.test(password)
+                && /[$@!%*?&]/.test(password);
+        };
+
+        let password: string;
+        do {
+            password = Array.from(
+                { length: 8 },
+                () => characters[Math.floor(Math.random() * characters.length)]
+            ).join('');
+        } while (!isValid(password));
+
+        this.editUserForm.get('password')!.setValue(password);
+        this.editUserForm.get('passwordConfirmation')!.setValue(password);
+    }
+
     private fillForm(model: InternalUserDTO | ExternalUserDTO): void {
         const simpleRegixData: RegixPersonDataDTO = new RegixPersonDataDTO({
             egnLnc: model.egnLnc,
@@ -463,6 +500,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             this.internalUserModel.email = form.get('usernameEmailGroup.emailControl')!.value;
 
             this.internalUserModel.phone = form.get('phoneNumberControl')!.value;
+            this.internalUserModel.password = form.get('passwordConfirmation')!.value;
             this.internalUserModel.userMustChangePassword = form.get('userMustChangePasswordControl')!.value;
             this.internalUserModel.isLocked = form.get('isLockedControl')!.value ?? false;
             this.internalUserModel.position = form.get('positionControl')!.value;
@@ -488,6 +526,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             this.externalUserModel.email = form.get('usernameEmailGroup.emailControl')!.value;
 
             this.externalUserModel.phone = form.get('phoneNumberControl')!.value;
+            this.externalUserModel.password = form.get('passwordConfirmation')!.value;
             this.externalUserModel.userMustChangePassword = form.get('userMustChangePasswordControl')!.value;
             this.externalUserModel.isLocked = form.get('isLockedControl')!.value ?? false;
             this.externalUserModel.position = form.get('positionControl')!.value;
@@ -515,6 +554,11 @@ export class EditUserComponent implements OnInit, IDialogComponent {
                 emailControl: new FormControl(null, [Validators.required, Validators.email, Validators.maxLength(200)])
             }, this.uniqueEmailValidator()),
             phoneNumberControl: new FormControl(null, Validators.maxLength(50)),
+            password: new FormControl(null, [Validators.maxLength(200), TLValidators.passwordComplexityValidator()]),
+            passwordConfirmation: new FormControl(null, [
+                TLValidators.confirmPasswordValidator.bind(this),
+                Validators.maxLength(200),
+                TLValidators.passwordComplexityValidator()]),
             userMustChangePasswordControl: new FormControl(false),
             isLockedControl: new FormControl(),
             territorialUnitControl: new FormControl(),
@@ -721,7 +765,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             }
 
             return null;
-        }
+        };
     }
 
     private uniqueValidEgnLncValidator(): ValidatorFn {
@@ -735,7 +779,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             }
 
             return null;
-        }
+        };
     }
 
     private userRolesValidator(): ValidatorFn {
@@ -746,6 +790,6 @@ export class EditUserComponent implements OnInit, IDialogComponent {
                 }
             }
             return null;
-        }
+        };
     }
 }

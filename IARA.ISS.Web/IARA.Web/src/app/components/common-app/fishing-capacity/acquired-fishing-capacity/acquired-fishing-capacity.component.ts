@@ -323,7 +323,10 @@ export class AcquiredFishingCapacityComponent extends CustomFormControl<Acquired
                     const tonnageSum: number = licences.map(x => x.grossTonnage!).reduce((a: number, b: number) => a + b, 0);
                     const powerSum: number = licences.map(x => x.power!).reduce((a: number, b: number) => a + b, 0);
 
-                    if (tonnageSum < this.minGrossTonnage || powerSum < this.minPower) {
+                    const tonnageEqual: boolean = Math.abs(tonnageSum - this.minGrossTonnage) < 0.001;
+                    const powerEqual: boolean = Math.abs(powerSum - this.minPower) < 0.001;
+
+                    if ((tonnageSum < this.minGrossTonnage && !tonnageEqual) || (powerSum < this.minPower && !powerEqual)) {
                         return { 'licencesCapacityNotEnough': true };
                     }
                 }

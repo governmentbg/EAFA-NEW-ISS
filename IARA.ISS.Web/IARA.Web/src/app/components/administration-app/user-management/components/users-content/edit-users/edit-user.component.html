@@ -6,8 +6,8 @@
      class="dialog-padding">
     <tl-card tooltipResourceName="users-page.basic-information-helper"
              [validityChecker]="editUserForm"
-             [validityCheckerExtraCondition]="editUserForm.errors?.invalidEgnLnc !== true 
-                                           && editUserForm.get('usernameEmailGroup')?.errors?.emailExists !== true 
+             [validityCheckerExtraCondition]="editUserForm.errors?.invalidEgnLnc !== true
+                                           && editUserForm.get('usernameEmailGroup')?.errors?.emailExists !== true
                                            && editUserForm.get('usernameEmailGroup.emailControl')?.errors?.email !== true">
         <tl-card-title>{{ 'users-page.basic-information-title' | tlTranslate }}</tl-card-title>
         <tl-card-content fxLayout="column" fxLayoutGap="1em">
@@ -29,7 +29,8 @@
                 </mat-error>
             </div>
             <div fxLayout="row" fxLayoutGap="1em" fxFlex="100" fxLayoutAlign="space-between center">
-                <div fxLayout="row" fxLayoutGap="1em" fxFlex="33" formGroupName="usernameEmailGroup" fxLayoutAlign="space-between center">
+                <div fxLayout="row" fxLayoutGap="1em" fxFlex="33" formGroupName="usernameEmailGroup"
+                     fxLayoutAlign="space-between center">
                     <tl-input fxFlex="100"
                               formControlName="emailControl"
                               label="{{ 'users-page.email' | tlTranslate }}"
@@ -84,20 +85,78 @@
                           label="{{ 'users-page.title' | tlTranslate }}"
                           tooltipResourceName="users-page.title-helper">
                 </tl-input>
+            </div>
+        </tl-card-content>
+    </tl-card>
 
-                <tl-slide-toggle fxFlex="33"
+    <tl-card [validityChecker]="editUserForm">
+        <tl-card-title>{{ 'users-page.access-data-title' | tlTranslate }}</tl-card-title>
+        <tl-card-content fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutGap="1em" fxFlex="100" fxLayoutAlign="space-between center">
+                <tl-input *ngIf="passwordIcon === 'fa-eye'; else textTypePass"
+                          fxFlex="40"
+                          type="password"
+                          formControlName="password"
+                          label="{{ 'my-profile.password' | tlTranslate }}"
+                          [autocomplete]="'new-password'"
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod"
+                          [multilineError]="useMultilineErrors">
+                    <tl-icon-button icon="{{ passwordIcon }}" iconClass="accent-color"
+                                    (buttonClicked)="showOrHidePassword('password')"></tl-icon-button>
+                </tl-input>
+                <ng-template #textTypePass>
+                    <tl-input fxFlex="40"
+                              type="text"
+                              formControlName="password"
+                              label="{{ 'my-profile.password' | tlTranslate }}"
+                              [autocomplete]="'new-password'"
+                              [getControlErrorLabelText]="getControlErrorLabelTextMethod"
+                              [multilineError]="useMultilineErrors">
+                        <tl-icon-button icon="{{ passwordIcon }}" iconClass="accent-color"
+                                        (buttonClicked)="showOrHidePassword('password')"></tl-icon-button>
+                    </tl-input>
+                </ng-template>
+
+                <tl-input *ngIf="passwordConfirmationIcon === 'fa-eye'; else textTypePassConf"
+                          fxFlex="40"
+                          type="password"
+                          formControlName="passwordConfirmation"
+                          label="{{ 'my-profile.verify-password' | tlTranslate }}"
+                          [autocomplete]="'new-password'"
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod">
+                    <tl-icon-button icon="{{ passwordConfirmationIcon }}" iconClass="accent-color"
+                                    (buttonClicked)="showOrHidePassword('passwordConfirmation')"></tl-icon-button>
+                </tl-input>
+                <ng-template #textTypePassConf>
+                    <tl-input fxFlex="40"
+                              type="text"
+                              formControlName="passwordConfirmation"
+                              label="{{ 'my-profile.verify-password' | tlTranslate }}"
+                              [autocomplete]="'new-password'"
+                              [getControlErrorLabelText]="getControlErrorLabelTextMethod">
+                        <tl-icon-button icon="{{ passwordConfirmationIcon }}" iconClass="accent-color"
+                                        (buttonClicked)="showOrHidePassword('passwordConfirmation')"></tl-icon-button>
+                    </tl-input>
+                </ng-template>
+
+                <button mat-raised-button color="accent"
+                        title="{{ 'users-page.generate-password' | tlTranslate }}"
+                        (click)="generatePassword()">
+                    {{ 'users-page.generate' | tlTranslate }}
+                </button>
+            </div>
+            <div fxLayout="row" fxLayoutGap="2em" fxFlex="100" fxLayoutAlign="space-between center">
+                <tl-slide-toggle fxFlex="40"
                                  label="{{ 'users-page.user-must-change-password' | tlTranslate }}"
                                  formControlName="userMustChangePasswordControl"
                                  tooltipResourceName="users-page.user-must-change-password-helper">
                 </tl-slide-toggle>
 
-                <tl-slide-toggle fxFlex="33"
+                <tl-slide-toggle fxFlex="60"
                                  label="{{ 'users-page.unlock-user' | tlTranslate }}"
                                  formControlName="isLockedControl"
                                  tooltipResourceName="users-page.unlock-user-helper">
                 </tl-slide-toggle>
-
-                <div *ngIf="!isInternalUser" fxFlex="33"></div>
             </div>
         </tl-card-content>
     </tl-card>
@@ -105,7 +164,7 @@
     <tl-card tooltipResourceName="users-page.role-helper"
              [validityChecker]="editUserForm"
              [validityCheckerExtraCondition]="editUserForm.errors?.atLeastOneRoleNeeded !== true">
-        <tl-card-title fxFlex="row">{{  'users-page.role' | tlTranslate }}</tl-card-title>
+        <tl-card-title fxFlex="row">{{ 'users-page.role' | tlTranslate }}</tl-card-title>
         <tl-card-content fxFlex="100"
                          fxLayout="column"
                          fxLayoutGap="1em">
@@ -191,19 +250,26 @@
                         </div>
                     </ng-template>
                 </data-template-column>
-                <data-template-column *ngIf="!readOnly" [flexRate]="0.4" flexGrow="0.5" columnName="{{'users-page.status-header' | tlTranslate}}">
+                <data-template-column *ngIf="!readOnly" [flexRate]="0.4" flexGrow="0.5"
+                                      columnName="{{'users-page.status-header' | tlTranslate}}">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row" fxLayoutAlign="center" *ngIf="row.data.status === legalStatusEnum.Requested">
-                            <tl-icon-button icon="done_outline" (buttonClicked)="allowLegal(row.data.legalId)" iconClass="accent-color"
+                            <tl-icon-button icon="done_outline" (buttonClicked)="allowLegal(row.data.legalId)"
+                                            iconClass="accent-color"
                                             tooltipText="{{ 'users-page.allow-access' | tlTranslate }}"></tl-icon-button>
-                            <tl-icon-button icon="highlight_off" (buttonClicked)="denyLegal(row.data.legalId)" iconClass="accent-color"
+                            <tl-icon-button icon="highlight_off" (buttonClicked)="denyLegal(row.data.legalId)"
+                                            iconClass="accent-color"
                                             tooltipText="{{ 'users-page.deny-access' | tlTranslate }}"></tl-icon-button>
                         </div>
                         <div fxLayout="row" fxLayoutAlign="center" *ngIf="row.data.status !== legalStatusEnum.Requested">
-                            <tl-icon-button *ngIf="row.data.status === legalStatusEnum.Blocked" icon="done_outline" iconClass="accent-color"
-                                            (buttonClicked)="allowLegal(row.data.legalId)" tooltipText="{{ 'users-page.allow-access' | tlTranslate }}"></tl-icon-button>
-                            <tl-icon-button *ngIf="row.data.status === legalStatusEnum.Approved" icon="highlight_off" iconClass="accent-color"
-                                            (buttonClicked)="denyLegal(row.data.legalId)" tooltipText="{{ 'users-page.deny-access' | tlTranslate }}"></tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.status === legalStatusEnum.Blocked" icon="done_outline"
+                                            iconClass="accent-color"
+                                            (buttonClicked)="allowLegal(row.data.legalId)"
+                                            tooltipText="{{ 'users-page.allow-access' | tlTranslate }}"></tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.status === legalStatusEnum.Approved" icon="highlight_off"
+                                            iconClass="accent-color"
+                                            (buttonClicked)="denyLegal(row.data.legalId)"
+                                            tooltipText="{{ 'users-page.deny-access' | tlTranslate }}"></tl-icon-button>
                         </div>
                     </ng-template>
                 </data-template-column>

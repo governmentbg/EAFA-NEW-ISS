@@ -131,7 +131,7 @@
     <mat-error *ngIf="isTouched && form.errors?.noProducts === true">
         * {{ 'catches-and-sales.page-product-no-products' | tlTranslate }}
     </mat-error>
-    <mat-error *ngIf="isTouched && form.errors?.productsQuantityNotMatch === true">
+    <mat-error *ngIf="isTouched && form.errors?.productsQuantityNotMatch === true" class="warn-orange-color">
         * {{ 'catches-and-sales.page-product-products-quantities-greater-than-original-possible-products' | tlTranslate }}
     </mat-error>
 </div>

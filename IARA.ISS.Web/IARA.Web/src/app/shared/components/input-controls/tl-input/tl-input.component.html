@@ -14,6 +14,7 @@
                [type]="type"
                [formControl]="ngControl.control"
                [required]="fieldIsRequired"
+               [autocomplete]="autocomplete"
                [readonly]="readonly"
                (focusout)="onFocusOut($event)" />
     </div>
@@ -26,6 +27,7 @@
                    [type]="type"
                    [value]="value"
                    [required]="fieldIsRequired"
+                   [autocomplete]="autocomplete"
                    [readonly]="readonly" />
         </div>
     </ng-template>

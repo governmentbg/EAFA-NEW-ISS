@@ -1162,25 +1162,27 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 catchRecordFish.unloadedQuantityKg = catchRecordFish.unloadedInOtherTripQuantityKg ?? 0;
             }
 
-            originDeclarationFishes.push(
-                new OriginDeclarationFishDTO({
-                    fishId: catchRecordFish.fishId,
-                    fishName: catchRecordFish.fishName,
-                    quantityKg: quantityForUnloading,
-                    unloadedProcessedQuantityKg: quantityForUnloading,
-                    catchZone: catchRecordFish.catchZone,
-                    catchQuadrantId: catchRecordFish.catchQuadrantId,
-                    catchQuadrant: catchRecordFish.catchQuadrant,
-                    catchSizeId: catchRecordFish.catchSizeId,
-                    isActive: catchRecordFish.isActive,
-                    catchFishPresentationId: defaultCatchFishPresentation?.value,
-                    catchFishStateId: defaultCatchFishState?.value,
-                    catchFishPreservationId: defaultCatchFishPreservation?.value,
-                    isProcessedOnBoard: false,
-                    fromPreviousTrip: false,
-                    isValid: true
-                })
-            );
+            if (catchRecordFish.quantityKg !== undefined && catchRecordFish.quantityKg !== null && catchRecordFish.quantityKg > 0) {
+                originDeclarationFishes.push(
+                    new OriginDeclarationFishDTO({
+                        fishId: catchRecordFish.fishId,
+                        fishName: catchRecordFish.fishName,
+                        quantityKg: quantityForUnloading,
+                        unloadedProcessedQuantityKg: quantityForUnloading,
+                        catchZone: catchRecordFish.catchZone,
+                        catchQuadrantId: catchRecordFish.catchQuadrantId,
+                        catchQuadrant: catchRecordFish.catchQuadrant,
+                        catchSizeId: catchRecordFish.catchSizeId,
+                        isActive: catchRecordFish.isActive,
+                        catchFishPresentationId: defaultCatchFishPresentation?.value,
+                        catchFishStateId: defaultCatchFishState?.value,
+                        catchFishPreservationId: defaultCatchFishPreservation?.value,
+                        isProcessedOnBoard: false,
+                        fromPreviousTrip: false,
+                        isValid: true
+                    })
+                );
+            }
         }
 
         return originDeclarationFishes;
@@ -1257,10 +1259,41 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     }
 
     private getPossibleCatchRecordFishesForOriginDeclaration(): CatchRecordFishDTO[] {
-        const catchRecordFishes: CatchRecordFishDTO[][] = this.catchRecords.map(x => (x.catchRecordFishes ?? []).filter(x => x.isActive && !x.isDiscarded));
-        const fishesFlattened: CatchRecordFishDTO[] = ([] as CatchRecordFishDTO[]).concat(...catchRecordFishes);
+        const result: CatchRecordFishDTO[] = [];
 
-        return fishesFlattened;
+        for (const catchRecord of this.catchRecords) {
+            const catchRecordFishes: CatchRecordFishDTO[] = [];
+
+            if (catchRecord.catchRecordFishes !== null && catchRecord.catchRecordFishes !== undefined && catchRecord.catchRecordFishes.length > 0) {
+                for (const catchRecordFish of catchRecord.catchRecordFishes.filter(x => x.isActive)) {
+                    if (catchRecordFishes.findIndex(x => x.fishId === catchRecordFish.fishId) !== -1) {
+                        const index: number = catchRecordFishes.findIndex(x => x.fishId === catchRecordFish.fishId);
+
+                        if (!catchRecordFish.isDiscarded) {
+                            catchRecordFishes[index].quantityKg! += (catchRecordFish.quantityKg ?? 0);
+                        }
+                        else {
+                            catchRecordFishes[index].quantityKg! -= (catchRecordFish.quantityKg ?? 0);
+                        }
+                    }
+                    else {
+                        const fish: CatchRecordFishDTO = new CatchRecordFishDTO(catchRecordFish);
+
+                        if (catchRecordFish.isDiscarded) {
+                            fish.quantityKg = -(catchRecordFish.quantityKg ?? 0);
+                        }
+
+                        catchRecordFishes.push(fish);
+                    }
+                }
+            }
+
+            for (const fish of catchRecordFishes) {
+                result.push(fish);
+            }
+        }
+
+        return result;
     }
 
     private setDeclarationOfOriginHasCatchFromPreviousTripFlag(): void {
@@ -1511,7 +1544,10 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         const quantitiesMapCatchRecords: Map<number, number> = new Map<number, number>();
         for (const fishGroupId in catchRecordsGroupedByFishType) {
             const quantity: number = catchRecordsGroupedByFishType[fishGroupId].reduce((sum, current) => {
-                if (!current.isDiscarded) {
+                if (current.isDiscarded) {
+                    sum -= current.quantityKg!;
+                }
+                else {
                     sum += (current.quantityKg! - (current.unloadedInOtherTripQuantityKg ?? 0))
                 }
                 return sum;
@@ -1810,8 +1846,11 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
         for (const fishGroupId in recordsGroupedByFishType) {
             const quantity = recordsGroupedByFishType[fishGroupId].reduce((sum, current) => {
-                if (!current.isDiscarded) {
-                    sum += current.quantityKg!
+                if (current.isDiscarded) {
+                    sum -= current.quantityKg!;
+                }
+                else {
+                    sum += current.quantityKg!;
                 }
                 return sum;
             }, 0);
