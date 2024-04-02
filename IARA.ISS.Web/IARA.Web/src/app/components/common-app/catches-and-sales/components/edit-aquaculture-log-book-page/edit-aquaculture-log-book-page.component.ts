@@ -147,18 +147,20 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
                 okBtnLabel: this.translationService.getValue('catches-and-sales.complete-page-confirm-dialog-ok-btn-label')
             }).subscribe({
                 next: (ok: boolean) => {
-                    if (this.id === null || this.id === undefined) {
-                        this.addAquacultureLogBookPage(dialogClose);
-                    }
-                    else {
-                        this.service.editAquacultureLogBookPage(this.model).subscribe({
-                            next: () => {
-                                dialogClose(this.model);
-                            },
-                            error: (response: HttpErrorResponse) => {
-                                this.addOrEditAquacultureLogBookPageErrorHandle(response, dialogClose);
-                            }
-                        });
+                    if (ok) {
+                        if (this.id === null || this.id === undefined) {
+                            this.addAquacultureLogBookPage(dialogClose);
+                        }
+                        else {
+                            this.service.editAquacultureLogBookPage(this.model).subscribe({
+                                next: () => {
+                                    dialogClose(this.model);
+                                },
+                                error: (response: HttpErrorResponse) => {
+                                    this.addOrEditAquacultureLogBookPageErrorHandle(response, dialogClose);
+                                }
+                            });
+                        }
                     }
                 }
             });

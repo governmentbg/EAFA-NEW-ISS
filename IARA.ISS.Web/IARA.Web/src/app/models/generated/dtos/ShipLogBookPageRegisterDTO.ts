@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { ShipLogBookPageEditDTO } from './ShipLogBookPageEditDTO';
 import { AdmissionLogBookPageRegisterDTO } from './AdmissionLogBookPageRegisterDTO';
 import { TransportationLogBookPageRegisterDTO } from './TransportationLogBookPageRegisterDTO';
 import { FirstSaleLogBookPageRegisterDTO } from './FirstSaleLogBookPageRegisterDTO';
@@ -51,7 +52,13 @@ export class ShipLogBookPageRegisterDTO {
     public hasInspections?: boolean;
 
     @StrictlyTyped(Boolean)
+    public needRelatedLogBookPage?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isActive?: boolean;
+
+    @StrictlyTyped(ShipLogBookPageEditDTO)
+    public relatedLogBookPage?: ShipLogBookPageEditDTO;
 
     @StrictlyTyped(AdmissionLogBookPageRegisterDTO)
     public admissionDeclarations?: AdmissionLogBookPageRegisterDTO[];

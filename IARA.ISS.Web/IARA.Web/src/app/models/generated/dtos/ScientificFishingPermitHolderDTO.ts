@@ -18,8 +18,8 @@ export class ScientificFishingPermitHolderDTO extends ScientificFishingPermitHol
     @StrictlyTyped(Number)
     public requestNumber?: number;
 
-    @StrictlyTyped(Number)
-    public permitNumber?: number;
+    @StrictlyTyped(String)
+    public permitNumber?: string;
 
     @StrictlyTyped(String)
     public scientificPosition?: string;

@@ -556,6 +556,23 @@ export class CatchesAndSalesCommonService {
         });
     }
 
+    public getPreviousRelatedLogBookPages(area: AreaTypes, controller: string, logBookPageId: number): Observable<NomenclatureDTO<number>[]> {
+        const params = new HttpParams().append('logBookPageId', logBookPageId.toString());
+
+        return this.http.get(area, controller, 'GetPreviousRelatedLogBookPages', {
+            httpParams: params,
+            responseTypeCtr: NomenclatureDTO
+        });
+    }
+
+    public addRelatedDeclaration(area: AreaTypes, controller: string, logBookPageId: number, relatedLogBookPageId: number): Observable<void> {
+        const params = new HttpParams()
+            .append('logBookPageId', logBookPageId.toString())
+            .append('relatedLogBookPageId', relatedLogBookPageId.toString());
+
+        return this.http.put(area, controller, 'AddRelatedDeclaration', null, { httpParams: params });
+    }
+
     public downloadFile(area: AreaTypes, controller: string, fileId: number, fileName: string): Observable<boolean> {
         const params = new HttpParams().append('id', fileId.toString());
         return this.http.download(area, controller, 'DownloadFile', fileName, { httpParams: params });
@@ -757,7 +774,7 @@ export class CatchesAndSalesCommonService {
             const pageDate: string = this.translate.getValue('catches-and-sales.transportation-loading-date');
 
             for (const entry of entries) {
-                entry.displayName = `${pageNum}: ${entry.displayName} | ${pageDate}: ${this.datePipe.transform(entry.fillDate, 'dd.MM.yyyy')}`; 
+                entry.displayName = `${pageNum}: ${entry.displayName} | ${pageDate}: ${this.datePipe.transform(entry.fillDate, 'dd.MM.yyyy')}`;
             }
 
             return entries;

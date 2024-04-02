@@ -187,6 +187,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { AuanDeliveryDataComponent } from './control-activity/auan-register/auan-delivery-data/auan-delivery-data.component';
 import { AuanDeliveryComponent } from './control-activity/auan-register/auan-delivery/auan-delivery.component';
 import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
     declarations: [
@@ -379,7 +380,8 @@ import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
         IconPickerModule,
         MonacoEditorModule.forRoot(),
         NgxJsonViewerModule,
-        MatBadgeModule
+        MatBadgeModule,
+        MatButtonModule,
     ],
     exports: [
         ApplicationsProcessingComponent,

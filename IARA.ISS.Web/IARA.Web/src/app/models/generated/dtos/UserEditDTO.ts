@@ -4,7 +4,7 @@ import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { EgnLncDTO } from './EgnLncDTO';
 import { RoleDTO } from './RoleDTO';
 
-export class UserEditDTO { 
+export class UserEditDTO {
     public constructor(obj?: Partial<UserEditDTO>) {
         Object.assign(this, obj);
     }
@@ -38,6 +38,9 @@ export class UserEditDTO {
 
     @StrictlyTyped(RoleDTO)
     public userRoles?: RoleDTO[];
+
+    @StrictlyTyped(String)
+    public password?: string;
 
     @StrictlyTyped(Boolean)
     public userMustChangePassword?: boolean;

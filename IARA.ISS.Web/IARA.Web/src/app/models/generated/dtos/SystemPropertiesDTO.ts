@@ -81,4 +81,7 @@ export class SystemPropertiesDTO {
 
     @StrictlyTyped(Number)
     public addTransportationPagesDaysTolerance?: number;
+
+    @StrictlyTyped(Number)
+    public nextScientificPermitOwnersRegistrationNum?: number;
 }

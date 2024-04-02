@@ -10,7 +10,30 @@
                                                                         || !_pagesPermissions.canEditShipLogBookRecords)">
     <row-detail>
         <ng-template let-row="row" ngx-datatable-row-detail-template>
-            <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+            <div fxFlexFill fxLayout="column" fxLayoutGap="0.5em">
+                <tl-card *ngIf="row.data.relatedLogBookPage">
+                    <tl-card-title>{{ 'catches-and-sales.related-log-book-page-card' | tlTranslate }}</tl-card-title>
+                    <tl-card-content fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                        <tl-input fxFlex="13"
+                                  [readonly]="true"
+                                  [value]="row.data.relatedLogBookPage.pageNumber"
+                                  label="{{ 'catches-and-sales.related-log-book-page-number' | tlTranslate }}">
+                        </tl-input>
+
+                        <tl-input fxFlex="13"
+                                  [readonly]="true"
+                                  [value]="row.data.relatedLogBookPage.fillDate | date: 'dd.MM.yyyy'"
+                                  label="{{ 'catches-and-sales.related-log-book-page-fill-date' | tlTranslate }}">
+                        </tl-input>
+
+                        <tl-icon-button icon="visibility"
+                                        (buttonClicked)="editShipLogBookPage(row.data.relatedLogBookPage, true)"
+                                        iconClass="accent-color"
+                                        tooltipText="{{ 'catches-and-sales.view-related-log-book-page' | tlTranslate }}">
+                        </tl-icon-button>
+                    </tl-card-content>
+                </tl-card>
+
                 <tl-card *ngIf="row.data.admissionDeclarations !== null && row.data.admissionDeclarations !== undefined && row.data.admissionDeclarations.length > 0">
                     <tl-card-title>{{ 'catches-and-sales.admission-declarations-card' | tlTranslate }}</tl-card-title>
                     <tl-card-content fxFlexFill fxLayout="column" fxLayoutGap="1em">
@@ -217,7 +240,8 @@
                     </tl-card-content>
                 </tl-card>
 
-                <div fxFlexFill *ngIf="(!row.data.firstSaleDocuments || row.data.firstSaleDocuments.length === 0)
+                <div fxFlexFill *ngIf="!row.data.relatedLogBookPage
+                                        && (!row.data.firstSaleDocuments || row.data.firstSaleDocuments.length === 0)
                                         && (!row.data.transportationDocuments || row.data.transportationDocuments.length === 0)
                                         && (!row.data.admissionDeclarations || row.data.admissionDeclarations.length === 0)">
                     <div fxFlex="100" fxLayout="row">
@@ -341,6 +365,11 @@
                             *ngIf="_pagesPermissions.canAddFirstSaleLogBookRecords"
                             (click)="onAddFirstSaleDocumentBtnClicked(row.data)">
                         <span>{{ 'catches-and-sales.first-sale-document' | tlTranslate }}</span>
+                    </button>
+                    <button mat-menu-item
+                            *ngIf="_pagesPermissions.canEditShipLogBookRecords && row.data.needRelatedLogBookPage"
+                            (click)="onAddRelatedDeclarationBtnClicked(row.data)">
+                        <span>{{ 'catches-and-sales.related-declaration' | tlTranslate }}</span>
                     </button>
                 </mat-menu>
 

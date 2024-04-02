@@ -29,6 +29,7 @@ import { BuyerTerminationComponent } from './buyers/buyer-termination/buyer-term
 import { EditBuyersComponent } from './buyers/edit-buyers.component';
 import { CatchesAndSalesContent } from './catches-and-sales/catches-and-sales-content.component';
 import { AddLogBookPageWizardComponent } from './catches-and-sales/components/add-log-book-page-wizard/add-log-book-page-wizard.component';
+import { AddRelatedDeclarationComponent } from './catches-and-sales/components/add-related-declaration/add-related-declaration.component';
 import { AddShipPageDocumentWizardComponent } from './catches-and-sales/components/add-ship-page-document-wizard/add-ship-page-document-wizard.component';
 import { AddShipPageWizardComponent } from './catches-and-sales/components/add-ship-page-wizard/add-ship-page-wizard.component';
 import { AdmissionPagesAndDeclarationsTableComponent } from './catches-and-sales/components/admission-pages-and-declarations-table/admission-pages-and-declarations-table.component';
@@ -121,6 +122,7 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         AcquiredFishingCapacityComponent,
         AddLogBookPageWizardComponent,
         AddShipPageDocumentWizardComponent,
+        AddRelatedDeclarationComponent,
         AddShipPageWizardComponent,
         ApplicationsRegisterComponent,
         ApplicationsTableComponent,
@@ -307,6 +309,7 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         LogBooksComponent,
         CommonLogBookPageDataComponent,
         AddShipPageDocumentWizardComponent,
+        AddRelatedDeclarationComponent,
         AddShipPageWizardComponent,
         StatisticalFormsContentComponent,
         StatisticalFormsBasicInfoComponent,
