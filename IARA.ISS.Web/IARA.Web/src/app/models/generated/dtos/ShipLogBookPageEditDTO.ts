@@ -108,6 +108,9 @@ export class ShipLogBookPageEditDTO {
     @StrictlyTyped(Boolean)
     public hasNoUnloadedCatch?: boolean;
 
+    @StrictlyTyped(Boolean)
+    public needRelatedLogBookPage?: boolean;
+
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
 }

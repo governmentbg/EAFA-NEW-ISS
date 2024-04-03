@@ -394,6 +394,12 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
         return (control: AbstractControl): ValidationErrors | null => {
             if (this.products !== undefined && this.products !== null) {
 
+                const zeroQuantityProducts: LogBookPageProductDTO[] = this.products.filter(x => x.isActive && x.quantityKg === 0);
+                if (zeroQuantityProducts.length > 0) {
+                    return { 'missingProperties': true };
+                }
+
+
                 for (const product of this.products) {
                     if (product.hasMissingProperties) {
                         return { 'missingProperties': true };
@@ -462,7 +468,10 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
 
         for (const fishTypeId in productsGroupedByFishType) {
             const quantity: number = productsGroupedByFishType[fishTypeId].reduce((sum, current) => sum + current.quantityKg!, 0);
-            this.fishQuantities.set(Number(fishTypeId), quantity);
+
+            if (quantity > 0) {
+                this.fishQuantities.set(Number(fishTypeId), quantity);
+            }
         }
     }
 
