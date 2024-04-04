@@ -29,6 +29,9 @@ import { SystemParametersService } from '@app/services/common-app/system-paramet
 import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
 import { SecurityService } from '@app/services/common-app/security.service';
 import { CatchesAndSalesUtils } from '../../utils/catches-and-sales.utils';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { DatePipe } from '@angular/common';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'edit-transportation-log-book-page',
@@ -45,6 +48,8 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
     public originPossibleProducts: LogBookPageProductDTO[] = [];
     public isAdd: boolean = false;
     public canAddProducts: boolean = false;
+
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
     private lockTransportationLogBookPeriod!: number;
     private logBookPageEditExceptions: LogBookPageEditExceptionDTO[] = [];
@@ -68,18 +73,21 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
     private snackbar: MatSnackBar;
     private confirmDialog: TLConfirmDialog;
     private hasMissingPagesRangePermission: boolean = false;
+    private readonly datePipe: DatePipe;
     private readonly systemParametersService: SystemParametersService;
 
     public constructor(
         translationService: FuseTranslationLoaderService,
         snackbar: MatSnackBar,
         confirmDialog: TLConfirmDialog,
+        datePipe: DatePipe,
         systemParametersService: SystemParametersService,
         authService: SecurityService
     ) {
         this.translationService = translationService;
         this.snackbar = snackbar;
         this.confirmDialog = confirmDialog;
+        this.datePipe = datePipe;
         this.systemParametersService = systemParametersService;
 
         this.currentUserId = authService.User!.userId;
@@ -105,6 +113,9 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
 
                     this.originPossibleProducts = this.model.originalPossibleProducts?.slice() ?? [];
                     this.model.originalPossibleProducts = []; // за да не се мапират обратно към бекенда
+
+                    this.commonLogBookPageData = this.model.commonData;
+                    this.setMinLoadingDateControlValidators();
 
                     if (this.model.commonData!.originDeclarationId === null || this.model.commonData!.originDeclarationId === undefined) {
                         this.canAddProducts = true;
@@ -262,13 +273,32 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
         dialogClose();
     }
 
+    public getControlErrorLabelText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
+        if (controlName === 'loadingDateControl') {
+            if (errorCode === 'logBookPageDateLocked') {
+                const message: string = this.translationService.getValue('catches-and-sales.transportation-page-date-cannot-be-chosen-error');
+                return new TLError({ text: message, type: 'error' });
+            }
+            else if (errorCode === 'mindate') {
+                const minDate: Date | undefined = this.getMinLoadingDate(this.commonLogBookPageData);
+                if (minDate !== undefined && minDate !== null) {
+                    const dateString: string = this.datePipe.transform(minDate, 'dd.MM.YYYY') ?? "";
+                    let messageText: string = this.translationService.getValue('validation.min');
+                    messageText = messageText[0].toUpperCase() + messageText.substr(1);
+                    return new TLError({ text: `${messageText}: ${dateString}` });
+                }
+            }
+        }
+        return undefined;
+    }
+
     private buildForm(): void {
         this.form = new FormGroup({
             pageNumberControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
             vehicleIdentificationControl: new FormControl(undefined, [Validators.required, Validators.maxLength(50)]),
             statusControl: new FormControl(),
             loadingLocationControl: new FormControl(undefined, [Validators.required, Validators.maxLength(500)]),
-            loadingDateControl: new FormControl(undefined, [Validators.required, this.checkDateValidityVsLockPeriodsValidator()]),
+            loadingDateControl: new FormControl(undefined),
             deliveryLocationControl: new FormControl(undefined, Validators.required),
 
             commonLogBookPageDataControl: new FormControl(),
@@ -277,6 +307,8 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
 
             filesControl: new FormControl()
         });
+
+        this.setMinLoadingDateControlValidators(); 
     }
 
     private fillModel(): void {
@@ -427,6 +459,29 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
                 }
             }
         });
+    }
+
+    private setMinLoadingDateControlValidators(): void {
+        this.form.get('loadingDateControl')!.setValidators([
+            Validators.required,
+            TLValidators.minDate(undefined, this.getMinLoadingDate(this.commonLogBookPageData)),
+            this.checkDateValidityVsLockPeriodsValidator()
+        ]);
+
+        this.form.get('loadingDateControl')!.markAsPending({ emitEvent: false });
+        this.form.get('loadingDateControl')!.updateValueAndValidity({ emitEvent: false });
+    }
+
+    private getMinLoadingDate(commonData: CommonLogBookPageDataDTO | undefined): Date | undefined {
+        let result: Date | undefined;
+
+        if (commonData !== undefined && commonData !== null) {
+            if (commonData.originDeclarationDate !== undefined && commonData.originDeclarationDate !== null) {
+                result = commonData.originDeclarationDate;
+            }
+        }
+
+        return result;
     }
 
     private checkDateValidityVsLockPeriodsValidator(): ValidatorFn {

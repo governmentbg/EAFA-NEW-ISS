@@ -36,6 +36,7 @@
                 <tl-date fxFlex="33"
                          formControlName="loadingDateControl"
                          [max]="currentDate"
+                         [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                          label="{{ 'catches-and-sales.transportation-page-loading-date' | tlTranslate }}"
                          tooltipResourceName="catches-and-sales.transportation-page-loading-date-helper">
                 </tl-date>

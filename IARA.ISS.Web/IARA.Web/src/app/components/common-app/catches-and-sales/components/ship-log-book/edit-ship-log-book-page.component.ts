@@ -413,6 +413,12 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 if (ok) {
                     this.catchRecordsTable.softUndoDelete(row);
                     this.catchRecords = this.catchRecordsTable.rows;
+
+                    const catchRecord: CatchRecordDTO = this.catchRecords.find(x => x === row.data)!;
+                    for (const catchRecordFish of catchRecord.catchRecordFishes!) {
+                        catchRecordFish.isActive = true;
+                    }
+
                     this.catchRecords = this.catchRecords.slice();
                     this.recalculateCatchRecordsQuantitySums();
                     this.form.updateValueAndValidity({ onlySelf: true, emitEvent: false });
@@ -613,7 +619,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 const message: string = `${this.translationService.getValue('validation.required')} (${this.translationService.getValue('catches-and-sales.with-pattern')}: ${this.translationService.getValue('common.date-time-control-format-hint')})`;
                 return new TLError({ text: message });
             }
-            else if (errorCode === 'matDatetimePickerMax') {
+            else if (errorCode === 'maxdate') {
                 if (this.form.get('fishTripEndDateTimeControl')!.value !== null && this.form.get('fishTripEndDateTimeControl')!.value !== undefined) {
                     const maxDate: Date = (this.form.get('fishTripEndDateTimeControl')!.value as Moment).toDate();
                     const dateString: string = this.datePipe.transform(maxDate, 'dd.MM.YYYY HH:mm') ?? "";
@@ -636,7 +642,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 const message: string = `${this.translationService.getValue('catches-and-sales.end-date-should-be-different-from-start-date')}`;
                 return new TLError({ text: message });
             }
-            else if (errorCode === 'matDatetimePickerMin') {
+            else if (errorCode === 'mindate') {
                 if (this.form.get('fishTripStartDateTimeControl')!.value !== null && this.form.get('fishTripStartDateTimeControl')!.value !== undefined) {
                     const minDate: Date = (this.form.get('fishTripStartDateTimeControl')!.value as Moment).toDate();
                     const dateString: string = this.datePipe.transform(minDate, 'dd.MM.YYYY HH:mm') ?? "";
@@ -664,7 +670,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 const message: string = `${this.translationService.getValue('validation.required')} (${this.translationService.getValue('catches-and-sales.with-pattern')}: ${this.translationService.getValue('common.date-time-control-format-hint')})`;
                 return new TLError({ text: message });
             }
-            else if (errorCode === 'matDatetimePickerMin') {
+            else if (errorCode === 'mindate') {
                 if (this.form.get('fishTripEndDateTimeControl')!.value !== null && this.form.get('fishTripEndDateTimeControl')!.value !== undefined) {
                     const minDate: Date = (this.form.get('fishTripEndDateTimeControl')!.value as Moment).toDate();
                     const dateString: string = this.datePipe.transform(minDate, 'dd.MM.YYYY HH:mm') ?? "";
@@ -823,7 +829,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             this.delcarationOfOriginCatchRecordQuantitiesValidator(),
             this.allOriginDeclarationFishTransboardedIfMarkedValidator(),
             this.requiredOriginDeclarationIfCatchOnBoard(),
-            this.gearEntryTimeValidator()
+            this.gearEntryTimeValidator(),
+            this.needRelatedLogBookPageValidator()
         ]);
 
         // set validators
@@ -958,6 +965,12 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     const logBookPageDateLocked: string | undefined = errorKeys.find((key: string) => key === 'logBookPageDateLocked');
                     if (logBookPageDateLocked !== undefined && logBookPageDateLocked !== null && !this.isLogBookPageDateLockedError) {
                         errorKeys.splice(errorKeys.indexOf(logBookPageDateLocked), 1);
+                        errorKeys = errorKeys.slice();
+                    }
+
+                    const needRelatedLogBookPage: string | undefined = errorKeys.find((key: string) => key === 'needRelatedLogBookPage');
+                    if (needRelatedLogBookPage !== undefined && needRelatedLogBookPage !== null) {
+                        errorKeys.splice(errorKeys.indexOf(needRelatedLogBookPage), 1);
                         errorKeys = errorKeys.slice();
                     }
 
@@ -1266,7 +1279,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
             if (catchRecord.catchRecordFishes !== null && catchRecord.catchRecordFishes !== undefined && catchRecord.catchRecordFishes.length > 0) {
                 for (const catchRecordFish of catchRecord.catchRecordFishes.filter(x => x.isActive)) {
-                    if (catchRecordFishes.findIndex(x => x.fishId === catchRecordFish.fishId) !== -1) {
+                    if (catchRecordFishes.findIndex(x => x.fishId === catchRecordFish.fishId) !== -1) { //TODO catchQuadrantId?
                         const index: number = catchRecordFishes.findIndex(x => x.fishId === catchRecordFish.fishId);
 
                         if (!catchRecordFish.isDiscarded) {
@@ -1627,7 +1640,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             }
 
             const noCatchUnloaded: boolean = form.get('noCatchUnloadedControl')!.value ?? false;
-
+            
             if (noCatchUnloaded === true) {
                 const hasUnloadedFishesInfo: boolean =
                     this.declarationOfOriginCatchRecords !== null
@@ -1785,6 +1798,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             for (const catchRecord of this.catchRecords) {
                 const invalidRows = this.catchRecords.filter(x => {
                     if (x.isActive !== false
+                        && x.gearEntryTime !== null
+                        && x.gearEntryTime !== undefined
                         && x.gearEntryTime?.getFullYear() === catchRecord.gearEntryTime?.getFullYear()
                         && x.gearEntryTime?.getDate() === catchRecord.gearEntryTime?.getDate()
                         && x.gearEntryTime?.getHours() === catchRecord.gearEntryTime?.getHours()
@@ -1817,6 +1832,36 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     if (endDate.isSame(startDate)) {
                         return { 'endDateSameAsStartDate': true };
                     }
+                }
+            }
+
+            return null;
+        }
+    }
+
+    private needRelatedLogBookPageValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === null || control === undefined) {
+                return null;
+            }
+
+            if (this.form === null || this.form === undefined) {
+                return null;
+            }
+
+            if (control.value === null || control.value === undefined) {
+                return null;
+            }
+
+            if (this.catchRecords === null || this.catchRecords === undefined || this.catchRecords.length === 0) {
+                return null;
+            }
+            
+            if (this.model.needRelatedLogBookPage) {
+                const tripHasRecordWithoutGearEntryTime: boolean = this.catchRecords.some(x => x.isActive !== false && (x.gearEntryTime === undefined || x.gearEntryTime === null || !x.hasGearEntry));
+
+                if (tripHasRecordWithoutGearEntryTime) {
+                    return { 'needRelatedLogBookPage': true };
                 }
             }
 

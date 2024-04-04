@@ -342,7 +342,9 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             this.form.get('purposeControl')!.setValue(purpose);
         }
 
-        this.form.get('quantityKgControl')!.setValue(this.model.quantityKg);
+        if (this.model.quantityKg !== undefined && this.model.quantityKg !== null && this.model.quantityKg > 0) {
+            this.form.get('quantityKgControl')!.setValue(this.model.quantityKg);
+        }
 
         if (this.hasPrice) {
             this.form.get('unitPriceControl')!.setValue(this.model.unitPrice);

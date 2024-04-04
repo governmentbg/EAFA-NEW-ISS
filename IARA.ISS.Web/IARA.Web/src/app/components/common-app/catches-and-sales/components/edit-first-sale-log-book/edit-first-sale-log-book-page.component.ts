@@ -1,6 +1,6 @@
 ﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -80,6 +80,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
     private readonly translationService: FuseTranslationLoaderService;
     private readonly snackbar: MatSnackBar;
     private readonly confirmDialog: TLConfirmDialog;
+    private readonly datePipe: DatePipe;
     private readonly systemParametersService: SystemParametersService;
 
     public constructor(
@@ -87,6 +88,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
         currencyPipe: CurrencyPipe,
         snackbar: MatSnackBar,
         confirmDialog: TLConfirmDialog,
+        datePipe: DatePipe,
         systemParametersService: SystemParametersService,
         authService: SecurityService
     ) {
@@ -94,6 +96,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
         this.currencyPipe = currencyPipe;
         this.snackbar = snackbar;
         this.confirmDialog = confirmDialog;
+        this.datePipe = datePipe;
         this.systemParametersService = systemParametersService;
 
         this.currentUserId = authService.User!.userId;
@@ -121,6 +124,9 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
 
                     this.originPossibleProducts = this.model.originalPossibleProducts ?? [];
                     this.model.originalPossibleProducts = []; // за да не се мапират обратно към бекенда
+
+                    this.commonLogBookPageData = this.model.commonData;
+                    this.setSaleDateControlValidators();
 
                     this.fillForm();
                 }
@@ -287,6 +293,15 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
                     return new TLError({ text: message, type: 'warn' });
                 }
             }
+            else if (errorCode === 'mindate') {
+                const minDate: Date | undefined = this.getMinSaleDate();
+                if (minDate !== undefined && minDate !== null) {
+                    const dateString: string = this.datePipe.transform(minDate, 'dd.MM.YYYY') ?? "";
+                    let messageText: string = this.translationService.getValue('validation.min');
+                    messageText = messageText[0].toUpperCase() + messageText.substr(1);
+                    return new TLError({ text: `${messageText}: ${dateString}` });
+                }
+            }
         }
 
         return undefined;
@@ -297,7 +312,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
             logBookNumberControl: new FormControl(),
             pageNumberControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
             statusControl: new FormControl(),
-            saleDateControl: new FormControl(undefined, [Validators.required, this.checkDateValidityVsLockPeriodsValidator()]),
+            saleDateControl: new FormControl(undefined),
             saleContractNumberControl: new FormControl(undefined, Validators.maxLength(100)),
             saleLocationControl: new FormControl(undefined, [Validators.maxLength(500), Validators.required]),
             saleContractDateControl: new FormControl(),
@@ -309,6 +324,8 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
 
             filesControl: new FormControl()
         });
+
+        this.setSaleDateControlValidators();
     }
 
     private fillForm(): void {
@@ -575,6 +592,35 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
             }
             return null;
         }
+    }
+
+    private setSaleDateControlValidators(): void {
+        this.form.get('saleDateControl')!.setValidators([
+            Validators.required,
+            TLValidators.minDate(undefined, this.getMinSaleDate()),
+            this.checkDateValidityVsLockPeriodsValidator()
+        ]);
+
+        this.form.get('saleDateControl')!.markAsPending({ emitEvent: false });
+        this.form.get('saleDateControl')!.updateValueAndValidity({ emitEvent: false });
+    }
+
+    private getMinSaleDate(): Date | undefined {
+        let result: Date | undefined;
+
+        if (this.commonLogBookPageData !== undefined && this.commonLogBookPageData !== null) {
+            if (this.commonLogBookPageData.admissionHandoverDate !== undefined && this.commonLogBookPageData.admissionHandoverDate !== null) {
+                result = this.commonLogBookPageData.admissionHandoverDate;
+            }
+            else if (this.commonLogBookPageData.transportationDocumentDate !== undefined && this.commonLogBookPageData.transportationDocumentDate !== null) {
+                result = this.commonLogBookPageData.transportationDocumentDate;
+            }
+            else if (this.commonLogBookPageData.originDeclarationDate !== undefined && this.commonLogBookPageData.originDeclarationDate !== null) {
+                result = this.commonLogBookPageData.originDeclarationDate;
+            }
+        }
+
+        return result;
     }
 
     private isFormValid(): boolean {

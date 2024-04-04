@@ -12,6 +12,10 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { CommonUtils } from '@app/shared/components/search-panel/utils';
 import { InspectionTypesEnum } from '@app/enums/inspection-types.enum';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { TLValidators } from '@app/shared/utils/tl-validators';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { DatePipe } from '@angular/common';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'inspection-general-info',
@@ -40,22 +44,27 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
     public startDateLabel!: string;
     public endDateLabel!: string;
 
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
+
     private numberWritten: boolean = false;
     private skipDisabledCheck: boolean = false;
     private codes: string[] = [];
 
     private readonly service: InspectionsService;
     private readonly translate: FuseTranslationLoaderService;
+    private readonly datePipe: DatePipe;
 
     public constructor(
         @Self() ngControl: NgControl,
         service: InspectionsService,
-        translate: FuseTranslationLoaderService
+        translate: FuseTranslationLoaderService,
+        datePipe: DatePipe
     ) {
         super(ngControl);
 
         this.service = service;
         this.translate = translate;
+        this.datePipe = datePipe;
 
         this.onMarkAsTouched.subscribe({
             next: () => {
@@ -134,6 +143,22 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
         }
     }
 
+    public getControlErrorLabelText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
+        if (controlName === 'inspectionEndDateControl') {
+            if (errorCode === 'mindate') {
+                if (this.form.get('inspectionStartDateControl')!.value !== undefined && this.form.get('inspectionStartDateControl')!.value !== null) {
+                    const minDate: Date = this.form.get('inspectionStartDateControl')!.value;
+                    const dateString: string = this.datePipe.transform(minDate, 'dd.MM.YYYY HH:mm') ?? "";
+                    let messageText: string = this.translate.getValue('validation.min');
+
+                    messageText = messageText[0].toUpperCase() + messageText.substr(1);
+                    return new TLError({ text: `${messageText}: ${dateString}` });
+                }
+            }
+        }
+        return undefined;
+    }
+
     protected buildForm(): AbstractControl {
         const form: FormGroup = new FormGroup({
             reportNumberControl: new FormControl(undefined, [Validators.required, Validators.maxLength(50)]),
@@ -142,6 +167,14 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
             emergencySignalControl: new FormControl(false),
             inspectorsControl: new FormControl(undefined)
         });
+
+        form.get('inspectionEndDateControl')!.setValidators([
+            Validators.required,
+            TLValidators.minDate(form.get('inspectionStartDateControl')!)
+        ]);
+
+        form.get('inspectionEndDateControl')!.markAsPending({ emitEvent: false });
+        form.get('inspectionEndDateControl')!.updateValueAndValidity({ emitEvent: false });
 
         return form;
     }

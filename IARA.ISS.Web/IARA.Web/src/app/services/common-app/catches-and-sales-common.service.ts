@@ -741,7 +741,7 @@ export class CatchesAndSalesCommonService {
             responseTypeCtr: LogBookPageNomenclatureDTO
         }).pipe(map((entries: LogBookPageNomenclatureDTO[]) => {
             const pageNum: string = this.translate.getValue('catches-and-sales.admission-page');
-            const pageDate: string = this.translate.getValue('admission-handover-date');
+            const pageDate: string = this.translate.getValue('catches-and-sales.admission-handover-date');
 
             for (const entry of entries) {
                 entry.displayName = `${pageNum}: ${entry.displayName} | ${pageDate}: ${this.datePipe.transform(entry.fillDate, 'dd.MM.yyyy')}`;

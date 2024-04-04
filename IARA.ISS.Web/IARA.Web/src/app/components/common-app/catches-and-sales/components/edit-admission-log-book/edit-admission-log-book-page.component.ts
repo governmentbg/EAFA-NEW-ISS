@@ -33,6 +33,7 @@ import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-c
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
 import { SecurityService } from '@app/services/common-app/security.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
     selector: 'edit-admission-log-book-page',
@@ -77,18 +78,21 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
     private readonly translationService: FuseTranslationLoaderService;
     private readonly snackbar: MatSnackBar;
     private readonly confirmDialog: TLConfirmDialog;
+    private readonly datePipe: DatePipe;
     private readonly systemParametersService: SystemParametersService;
 
     public constructor(
         translationService: FuseTranslationLoaderService,
         snackbar: MatSnackBar,
         confirmDialog: TLConfirmDialog,
+        datePipe: DatePipe,
         systemParametersService: SystemParametersService,
         authService: SecurityService
     ) {
         this.translationService = translationService;
         this.snackbar = snackbar;
         this.confirmDialog = confirmDialog;
+        this.datePipe = datePipe;
         this.systemParametersService = systemParametersService;
 
         this.currentUserId = authService.User!.userId;
@@ -111,6 +115,9 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
 
                     this.originPossibleProducts = this.model.originalPossibleProducts ?? [];
                     this.model.originalPossibleProducts = []; // за да не се мапират обратно към бекенда
+
+                    this.commonLogBookPageData = this.model.commonData;
+                    this.setHandoverDateControlValidators();
 
                     this.fillForm();
                 }
@@ -259,13 +266,22 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
 
     public getControlErrorLabelText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'handoverDateControl') {
-            if (errorCode === 'logBookPageDateLocked') {
+            if (errorCode === 'logBookPageDateLocked' || errorCode === 'logBookPageDatePeriodLocked') {
                 const message: string = this.translationService.getValue('catches-and-sales.admission-page-date-cannot-be-chosen-error');
                 if (this.isLogBookPageDateLockedError) {
                     return new TLError({ text: message, type: 'error' });
                 }
                 else {
                     return new TLError({ text: message, type: 'warn' });
+                }
+            }
+            else if (errorCode === 'mindate') {
+                const minDate: Date | undefined = this.getMinHandoverDate();
+                if (minDate !== undefined && minDate !== null) {
+                    const dateString: string = this.datePipe.transform(minDate, 'dd.MM.YYYY') ?? "";
+                    let messageText: string = this.translationService.getValue('validation.min');
+                    messageText = messageText[0].toUpperCase() + messageText.substr(1);
+                    return new TLError({ text: `${messageText}: ${dateString}` });
                 }
             }
         }
@@ -286,6 +302,8 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
 
             filesControl: new FormControl()
         });
+
+        this.setHandoverDateControlValidators();
     }
 
     private fillModel(): void {
@@ -510,6 +528,33 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
             return null;
         }
     }
+
+    private setHandoverDateControlValidators(): void {
+        this.form.get('handoverDateControl')!.setValidators([
+            Validators.required,
+            TLValidators.minDate(undefined, this.getMinHandoverDate()),
+            this.checkDateValidityVsLockPeriodsValidator()
+        ]);
+
+        this.form.get('handoverDateControl')!.markAsPending({ emitEvent: false });
+        this.form.get('handoverDateControl')!.updateValueAndValidity({ emitEvent: false });
+    }
+
+    private getMinHandoverDate(): Date | undefined {
+        let result: Date | undefined;
+
+        if (this.commonLogBookPageData !== undefined && this.commonLogBookPageData !== null) {
+            if (this.commonLogBookPageData.transportationDocumentDate !== undefined && this.commonLogBookPageData.transportationDocumentDate !== null) {
+                result = this.commonLogBookPageData.transportationDocumentDate;
+            }
+            else if (this.commonLogBookPageData.originDeclarationDate !== undefined && this.commonLogBookPageData.originDeclarationDate !== null) {
+                result = this.commonLogBookPageData.originDeclarationDate;
+            }
+        }
+
+        return result;
+    }
+
 
     private isFormValid(): boolean {
         if (this.form.valid) {

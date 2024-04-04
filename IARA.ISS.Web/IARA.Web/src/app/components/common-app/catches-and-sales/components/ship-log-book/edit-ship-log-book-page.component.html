@@ -213,7 +213,7 @@
                      [validityCheckerExtraCondition]="form.errors?.uniqueGearEntryTime !== true">
                 <tl-card-title>{{ 'catches-and-sales.ship-page-catch-records-panel' | tlTranslate }}</tl-card-title>
                 <tl-card-content fxLayout="column">
-                    <div fxLayout="column" fxLayoutGap="1em"> 
+                    <div fxLayout="column" fxLayoutGap="1em">
                         <tl-data-table fxFlexFill
                                        #catchRecordsTable
                                        [rows]="catchRecords"
@@ -334,6 +334,9 @@
                         </div>
                         <mat-error *ngIf="form.touched && form.errors?.uniqueGearEntryTime">
                             * {{ 'catches-and-sales.ship-page-unique-catch-record-gear-entry-time' | tlTranslate }}
+                        </mat-error>
+                        <mat-error *ngIf="form.touched && form.errors?.needRelatedLogBookPage" class="warn-orange-color">
+                            * {{ 'catches-and-sales.ship-page-need-related-log-book-page' | tlTranslate }}
                         </mat-error>
                     </div>
                 </tl-card-content>
