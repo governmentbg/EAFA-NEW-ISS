@@ -162,7 +162,7 @@ export class EditCatchRecordComponent implements AfterViewInit, IDialogComponent
                 const message: string = `${this.translationService.getValue('validation.required')} (${this.translationService.getValue('catches-and-sales.with-pattern')}: ${this.translationService.getValue('common.date-time-control-format-hint')})`;
                 return new TLError({ text: message });
             }
-            else if (errorCode === 'matDatetimePickerMax') {
+            else if (errorCode === 'maxdate') {
                 if (this.form.get('gearExitDateTimeControl')!.value !== null && this.form.get('gearExitDateTimeControl')!.value !== undefined) {
                     const maxDate: Date = (this.form.get('gearExitDateTimeControl')!.value as Moment).toDate();
                     const dateString: string = this.datePipe.transform(maxDate, 'dd.MM.YYYY HH:mm') ?? "";
@@ -179,7 +179,7 @@ export class EditCatchRecordComponent implements AfterViewInit, IDialogComponent
                 const message: string = `${this.translationService.getValue('validation.required')} (${this.translationService.getValue('catches-and-sales.with-pattern')}: ${this.translationService.getValue('common.date-time-control-format-hint')})`;
                 return new TLError({ text: message });
             }
-            else if (errorCode === 'matDatetimePickerMin') {
+            else if (errorCode === 'mindate') {
                 if (this.form.get('gearEntryDateTimeControl')!.value !== null && this.form.get('gearEntryDateTimeControl')!.value !== undefined) {
                     const maxDate: Date = (this.form.get('gearEntryDateTimeControl')!.value as Moment).toDate();
                     const dateString: string = this.datePipe.transform(maxDate, 'dd.MM.YYYY HH:mm') ?? "";

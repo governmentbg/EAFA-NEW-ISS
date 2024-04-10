@@ -48,6 +48,9 @@ export class LogBookRegisterDTO {
     @StrictlyTyped(Date)
     public finishDate?: Date;
 
+    @StrictlyTyped(Date)
+    public logBookPermitLicenseValidFrom?: Date;
+
     @StrictlyTyped(String)
     public statusName?: string;
 
@@ -74,6 +77,9 @@ export class LogBookRegisterDTO {
 
     @StrictlyTyped(Boolean)
     public isShipForbiddenForPages?: boolean;
+
+    @StrictlyTyped(Boolean)
+    public hasLogBookPermitLicenses?: boolean;
 
     @StrictlyTyped(AdmissionLogBookPageRegisterDTO)
     public admissionPages?: AdmissionLogBookPageRegisterDTO[];

@@ -29,6 +29,9 @@ export class TLPictureUploaderComponent implements OnInit, OnChanges, DoCheck, O
     @Input()
     public label: string | undefined;
 
+    @Input()
+    public showTicketRegixData: boolean = false;
+
     public inputId: string;
 
     public photo!: FileInfoDTO;
@@ -97,7 +100,7 @@ export class TLPictureUploaderComponent implements OnInit, OnChanges, DoCheck, O
     }
 
     public ngDoCheck(): void {
-        if (this.ngControl?.control?.touched) {
+        if (this.ngControl?.control?.touched && !this.showTicketRegixData) {
             this.ngControl.control.updateValueAndValidity();
             this.isTouched = true;
         }

@@ -274,7 +274,7 @@ export class SingleAddressRegistrationComponent extends NotifyingCustomFormContr
     }
 
     private getNomenclatures(): Subscription {
-        const subscription: Subscription = forkJoin(
+        const subscription: Subscription = forkJoin([
             NomenclatureStore.instance.getNomenclature<number>(
                 NomenclatureTypes.Countries, this.nomenclaturesService.getCountries.bind(this.nomenclaturesService), false
             ),
@@ -287,7 +287,7 @@ export class SingleAddressRegistrationComponent extends NotifyingCustomFormContr
             NomenclatureStore.instance.getNomenclature<number>(
                 NomenclatureTypes.PopulatedAreas, this.nomenclaturesService.getPopulatedAreas.bind(this.nomenclaturesService), false
             )
-        ).subscribe({
+        ]).subscribe({
             next: (nomenclatures: NomenclatureDTO<number>[][]) => {
                 this.allCountries = this.countries = nomenclatures[0];
                 this.allDistricts = this.districts = nomenclatures[1];

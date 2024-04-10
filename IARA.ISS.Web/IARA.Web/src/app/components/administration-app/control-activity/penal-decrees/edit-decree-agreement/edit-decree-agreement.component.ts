@@ -253,6 +253,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
             finePercentControl: new FormControl({ value: null, disabled: true }),
             commentsControl: new FormControl(null, Validators.maxLength(4000)),
             constatationCommentsControl: new FormControl(null, Validators.maxLength(4000)),
+            evidenceCommentsControl: new FormControl(null, Validators.maxLength(4000)),
             seizedFishingGearControl: new FormControl(null),
             seizedFishControl: new FormControl(null),
             seizedApplianceControl: new FormControl(null),
@@ -271,6 +272,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         this.form.get('fineControl')!.setValue(this.model.fineAmount?.toFixed(2));
         this.form.get('commentsControl')!.setValue(this.model.comments);
         this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
+        this.form.get('evidenceCommentsControl')!.setValue(this.model.evidenceComments);
 
         this.form.get('auanViolatedRegulationsControl')!.setValue(this.model.auanViolatedRegulations);
         this.form.get('violatedRegulationsControl')!.setValue(this.model.decreeViolatedRegulations);
@@ -306,6 +308,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         this.model.fineAmount = this.form.get('fineControl')!.value;
         this.model.comments = this.form.get('commentsControl')!.value;
         this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
+        this.model.evidenceComments = this.form.get('evidenceCommentsControl')!.value;
 
         this.model.seizedFish = this.form.get('seizedFishControl')!.value;
         this.model.seizedFishingGear = this.form.get('seizedFishingGearControl')!.value;

@@ -54,6 +54,9 @@ export class ApplicationRegisterDTO {
     @StrictlyTyped(Number)
     public assignedUserId?: number;
 
+    @StrictlyTyped(String)
+    public errorDescription?: string;
+
     @StrictlyTyped(Boolean)
     public isActive?: boolean;
 

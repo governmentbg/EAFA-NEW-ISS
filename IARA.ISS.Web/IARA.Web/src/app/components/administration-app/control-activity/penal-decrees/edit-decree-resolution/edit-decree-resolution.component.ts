@@ -265,6 +265,7 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
 
             auanControl: new FormControl(null),
             constatationCommentsControl: new FormControl(null, Validators.maxLength(4000)),
+            evidenceCommentsControl: new FormControl(null, Validators.maxLength(4000)),
             auanViolatedRegulationsControl: new FormControl(null),
 
             isRecurrentViolationControl: new FormControl(false),
@@ -293,6 +294,7 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
         this.form.get('isRecurrentViolationControl')!.setValue(this.model.isRecurrentViolation);
         this.form.get('commentsControl')!.setValue(this.model.comments);
         this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
+        this.form.get('evidenceCommentsControl')!.setValue(this.model.evidenceComments);
         this.form.get('auanViolatedRegulationsControl')!.setValue(this.model.auanViolatedRegulations);
         this.form.get('violatedRegulationsControl')!.setValue(this.model.decreeViolatedRegulations);
 
@@ -342,6 +344,7 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
         this.model.isRecurrentViolation = this.form.get('isRecurrentViolationControl')!.value;
         this.model.comments = this.form.get('commentsControl')!.value;
         this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
+        this.model.evidenceComments = this.form.get('evidenceCommentsControl')!.value;
         this.model.deliveryData = this.form.get('deliveryControl')!.value;
         this.model.files = this.form.get('filesControl')!.value;
         this.model.seizedFish = this.form.get('seizedFishControl')!.value;

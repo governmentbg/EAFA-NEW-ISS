@@ -259,6 +259,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
 
             commentsControl: new FormControl(null, Validators.maxLength(4000)),
             constatationCommentsControl: new FormControl(null, Validators.maxLength(4000)),
+            evidenceCommentsControl: new FormControl(null, Validators.maxLength(4000)),
 
             seizedFishingGearControl: new FormControl(null),
             seizedFishControl: new FormControl(null),
@@ -286,6 +287,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         this.form.get('commentsControl')!.setValue(this.model.comments);
         this.form.get('minorCircumstancesDescriptionControl')!.setValue(this.model.minorCircumstancesDescription);
         this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
+        this.form.get('evidenceCommentsControl')!.setValue(this.model.evidenceComments);
 
         this.form.get('auanViolatedRegulationsControl')!.setValue(this.model.auanViolatedRegulations);
         this.form.get('violatedRegulationsControl')!.setValue(this.model.decreeViolatedRegulations);
@@ -327,6 +329,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         this.model.isRecurrentViolation = this.form.get('isRecurrentViolationControl')!.value;
         this.model.comments = this.form.get('commentsControl')!.value;
         this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
+        this.model.evidenceComments = this.form.get('evidenceCommentsControl')!.value;
         this.model.minorCircumstancesDescription = this.form.get('minorCircumstancesDescriptionControl')!.value;
 
         this.model.seizedFish = this.form.get('seizedFishControl')!.value;

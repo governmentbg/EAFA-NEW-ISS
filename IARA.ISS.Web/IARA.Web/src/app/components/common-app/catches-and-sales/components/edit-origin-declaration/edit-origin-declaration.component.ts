@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, ViewChild } from '@angular/core';
+﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { Moment } from 'moment';
@@ -27,13 +27,14 @@ import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { FishQuotaDTO } from '@app/models/generated/dtos/FishQuotaDTO';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { FishPreservationCodesEnum } from '@app/enums/fish-preservation-codes.enum';
+import { FishCodesEnum } from '@app/enums/fish-codes.enum';
 
 
 @Component({
     selector: 'edit-origin-declaration',
     templateUrl: './edit-origin-declaration.component.html'
 })
-export class EditOriginDeclarationComponent implements OnInit, IDialogComponent {
+export class EditOriginDeclarationComponent implements OnInit, AfterViewInit, IDialogComponent {
     public form!: FormGroup;
     private viewMode!: boolean;
     public model!: OriginDeclarationFishDTO;
@@ -46,9 +47,11 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
     public allPorts: NomenclatureDTO<number>[] = [];
     public ports: NomenclatureDTO<number>[] = [];
     public ships: ShipNomenclatureDTO[] = [];
+    public turbotSizeGroups: NomenclatureDTO<number>[] = [];
 
     public isAllCatchMarkedAsTransboarded: boolean = false;
     public isProcessedOnBoard: boolean = false;
+    public showTurbotControls: boolean = false;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
@@ -81,7 +84,9 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
             NomenclatureStore.instance.getNomenclature<number>(
                 NomenclatureTypes.Ports, this.commonNomenclaturesService.getPorts.bind(this.commonNomenclaturesService), false),
             NomenclatureStore.instance.getNomenclature<number>(
-                NomenclatureTypes.Ships, this.commonNomenclaturesService.getShips.bind(this.commonNomenclaturesService), false)
+                NomenclatureTypes.Ships, this.commonNomenclaturesService.getShips.bind(this.commonNomenclaturesService), false),
+            NomenclatureStore.instance.getNomenclature<number>(
+                NomenclatureTypes.TurbotSizeGroups, this.commonNomenclaturesService.getTurbotSizeGroups.bind(this.commonNomenclaturesService), false)
         ).toPromise();
 
         this.aquaticOrganismTypes = nomenclatures[0] as FishNomenclatureDTO[];
@@ -95,7 +100,22 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
 
         this.ships = nomenclatures[5] as ShipNomenclatureDTO[];
 
+        this.turbotSizeGroups = nomenclatures[6] as NomenclatureDTO<number>[];
+
         this.fillForm();
+    }
+
+    public ngAfterViewInit(): void {
+        this.form.get('aquaticOrganismTypeControl')!.valueChanges.subscribe({
+            next: (value: FishNomenclatureDTO | undefined | string) => {
+                if (value === undefined || value === null || value instanceof NomenclatureDTO) {
+                    this.setTurbotFlagsAndValidators(value);
+                }
+                else {
+                    this.setTurbotFlagsAndValidators(undefined);
+                }
+            }
+        });
     }
 
     public setData(data: OriginDeclarationDialogParamsModel, buttons: DialogWrapperData): void {
@@ -157,6 +177,7 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
         if (this.model.fishId !== null && this.model.fishId !== undefined) {
             const aquaticOrganism: FishNomenclatureDTO = this.aquaticOrganismTypes.find(x => x.value === this.model.fishId)!;
             this.form.get('aquaticOrganismTypeControl')!.setValue(aquaticOrganism);
+            this.setTurbotFlagsAndValidators(aquaticOrganism);
         }
 
         if (this.model.catchFishStateId !== null && this.model.catchFishStateId !== undefined) {
@@ -221,6 +242,13 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
             this.form.get('isTransboardedControl')!.setValue(true);
         }
 
+        this.form.get('turbotCountControl')!.setValue(this.model.turbotCount);
+
+        if (this.model.turbotSizeGroupId !== null && this.model.turbotSizeGroupId !== undefined) {
+            const turbotSizeGroup: NomenclatureDTO<number> = this.turbotSizeGroups.find(x => x.value === this.model!.turbotSizeGroupId)!;
+            this.form.get('turbotSizeGroupControl')!.setValue(turbotSizeGroup);
+        }
+
         this.form.get('commentsControl')!.setValue(this.model.comments);
     }
 
@@ -240,6 +268,9 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
             transboardTargetPortControl: new FormControl(),
             //transboardNationalityControl: new FormControl(),
             transboardingShipControl: new FormControl(),
+
+            turbotCountControl: new FormControl(undefined, TLValidators.number(0, undefined, 0)),
+            turbotSizeGroupControl: new FormControl(undefined),
 
             commentsControl: new FormControl(undefined, Validators.maxLength(4000))
         });
@@ -317,6 +348,9 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
             this.model.transboardTargetPortId = transboardingPort?.value;
         }
 
+        this.model.turbotSizeGroupId = this.form.get('turbotSizeGroupControl')!.value?.value;
+        this.model.turbotCount = this.form.get('turbotCountControl')!.value;
+
         this.model.comments = this.form.get('commentsControl')!.value;
 
         this.model.isValid = true;
@@ -351,6 +385,24 @@ export class EditOriginDeclarationComponent implements OnInit, IDialogComponent 
         this.form.get('transboardingShipControl')!.updateValueAndValidity();
     }
 
+    private setTurbotFlagsAndValidators(value: FishNomenclatureDTO | undefined): void {
+        if (value !== undefined && value !== null) {
+            if (FishCodesEnum[value.code as keyof typeof FishCodesEnum] === FishCodesEnum.TUR) {
+                this.showTurbotControls = true;
+
+                if (this.viewMode) {
+                    this.form.get('turbotCountControl')!.disable();
+                    this.form.get('turbotSizeGroupControl')!.disable();
+                }
+            }
+            else {
+                this.showTurbotControls = false;
+            }
+        }
+        else {
+            this.showTurbotControls = false;
+        }
+    }
 
     // helpers
 

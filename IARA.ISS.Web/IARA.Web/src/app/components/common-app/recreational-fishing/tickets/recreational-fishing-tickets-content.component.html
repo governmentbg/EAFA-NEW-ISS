@@ -243,13 +243,14 @@
         <div *ngIf="isPublicApp && !isAssociation; else notPublicAppOrAssociation">
             <online-payment-data *ngIf="paidTicketApplicationId !== undefined && paidTicketApplicationId !== null
                                     && paidTicketPaymentRequestNum !== undefined && paidTicketPaymentRequestNum !== null
-                                    && paidTicketPaymentRequestNum !== ''"
+                                    && paidTicketPaymentRequestNum !== ''
+                                    && canProcessOnlinePaymentData"
                                  [applicationId]="paidTicketApplicationId"
                                  [paymentRequestNum]="paidTicketPaymentRequestNum">
             </online-payment-data>
         </div>
 
-        <ng-template #notPublicAppOrAssociation>
+        <ng-template #notPublicAppOrAssociation>    
             <payment-data [formControl]="paymentDataControl"
                           [paymentDateMax]="currentDate"
                           [defaultDate]="currentDate">

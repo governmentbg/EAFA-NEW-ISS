@@ -179,6 +179,14 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
                         this.model = application;
                         this.isDraft = application.isDraft!;
                         this.fillForm();
+
+                        if (!this.isPublicApp && content.latestRegiXChecks !== undefined && content.latestRegiXChecks !== null && content.latestRegiXChecks.length > 0) {
+                            this.showRegiXData = true;
+
+                            setTimeout(() => {
+                                this.regixChecks = content.latestRegiXChecks!;
+                            }, 100);
+                        }
                     }
                 });
             }

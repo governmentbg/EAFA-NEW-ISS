@@ -30,6 +30,8 @@ import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { forkJoin, Subscription } from 'rxjs';
+import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
+import { PermissionsService } from '@app/shared/services/permissions.service';
 
 
 @Component({
@@ -67,6 +69,8 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     public showPaymentStep: boolean = false;
     public showDeclarationFileValidation: boolean = false;
     public ticketNumsApproved: boolean = false;
+
+    public canProcessOnlinePaymentData: boolean;
 
     public ticketTypeComment: string | null = null;
     public validityPeriodComment: string | null = null;
@@ -153,6 +157,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
         translate: FuseTranslationLoaderService,
         systemPropertiesService: SystemPropertiesService,
         nomenclatures: CommonNomenclatures,
+        permissions: PermissionsService,
         datePipe: DatePipe,
         router: Router
     ) {
@@ -163,6 +168,8 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
         this.systemPropertiesService = systemPropertiesService;
         this.nomenclatures = nomenclatures;
         this.datePipe = datePipe;
+
+        this.canProcessOnlinePaymentData = permissions.has(PermissionsEnum.OnlineSubmittedApplicationsProcessPaymentData);
     }
 
     public async ngOnInit(): Promise<void> {
@@ -444,7 +451,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
                     if (i < this.tickets.length) {
                         this.tickets[i].ticketNum = ticketNum;
 
-                        if(shouldUpdateTicketPrices) {
+                        if (shouldUpdateTicketPrices) {
                             this.tickets[i].price = this.calculateTicketPrice(this.tickets[i]);
                             this.calculateTotalPrice();
                         }
@@ -777,7 +784,12 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     }
 
     private ticketsSavedHandler(print: boolean): void {
-        this.showPaymentStep = this.totalPrice > 0;
+        if (this.isPublicApp && !this.isAssociation && !this.canProcessOnlinePaymentData) {
+            this.showPaymentStep = false
+        }
+        else {
+            this.showPaymentStep = this.totalPrice > 0;
+        }
 
         this.ticketsSaved = true;
         this.unsubscribeOnDataChange();

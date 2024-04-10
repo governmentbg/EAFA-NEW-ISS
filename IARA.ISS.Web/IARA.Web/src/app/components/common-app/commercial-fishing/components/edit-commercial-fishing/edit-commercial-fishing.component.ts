@@ -1085,6 +1085,14 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                                 this.isOnlineApplication = this.model.isOnlineApplication!;
                             }
                             this.fillForm();
+
+                            if (!this.isPublicApp && content.latestRegiXChecks !== undefined && content.latestRegiXChecks !== null && content.latestRegiXChecks.length > 0) {
+                                this.showRegiXData = true;
+
+                                setTimeout(() => {
+                                    this.regixChecks = content.latestRegiXChecks!;
+                                }, 100);
+                            }
                         }
                     });
                 }

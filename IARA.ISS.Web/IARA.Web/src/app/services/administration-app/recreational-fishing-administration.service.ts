@@ -277,6 +277,8 @@ export class RecreationalFishingAdministrationService extends ApplicationsRegist
     }
 
     public editApplicationDataAndStartRegixChecks(model: IApplicationRegister): Observable<void> {
-        return this.requestService.put(this.area, this.controller, 'EditTicketRegixData', model);
+        return this.requestService.post(this.area, this.controller, 'EditTicketRegixData', model, {
+            properties: new RequestProperties({ asFormData: true })
+        });
     }
 }

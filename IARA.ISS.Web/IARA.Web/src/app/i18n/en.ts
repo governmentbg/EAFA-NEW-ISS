@@ -5747,6 +5747,7 @@
         'edit-auan-drafter': 'Drafter',
         'edit-auan-location-description': 'Location description',
         'edit-auan-constatation-comments': 'Constatation comments',
+        'edit-evidence-comments': 'Evidence comments',
         'edit-auan-offender-comments': 'Offender comments',
         'edit-minor-circumstances': 'Minor circumstances',
         'edit-minor-circumstances-description': 'Minor circumstances description',

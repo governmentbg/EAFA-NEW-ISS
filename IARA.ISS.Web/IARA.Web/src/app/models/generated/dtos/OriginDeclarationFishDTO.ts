@@ -67,6 +67,12 @@ export class OriginDeclarationFishDTO {
     @StrictlyTyped(Boolean)
     public isActive?: boolean;
 
+    @StrictlyTyped(Number)
+    public turbotSizeGroupId?: number;
+
+    @StrictlyTyped(Number)
+    public turbotCount?: number;
+
     @StrictlyTyped(Boolean)
     public isValid?: boolean;
 }

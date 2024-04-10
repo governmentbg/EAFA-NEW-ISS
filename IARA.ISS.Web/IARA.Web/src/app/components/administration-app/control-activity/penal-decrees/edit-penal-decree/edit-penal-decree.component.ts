@@ -304,6 +304,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             fineAmountControl: new FormControl(null, TLValidators.number(0, undefined, 2)),
             commentsControl: new FormControl(null, Validators.maxLength(4000)),
             constatationCommentsControl: new FormControl(null, Validators.maxLength(4000)),
+            evidenceCommentsControl: new FormControl(null, Validators.maxLength(4000)),
 
             seizedFishingGearControl: new FormControl(null),
             seizedFishControl: new FormControl(null),
@@ -351,6 +352,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.form.get('violatedRegulationsControl')!.setValue(this.model.decreeViolatedRegulations);
         this.form.get('fishCompensationViolatedRegulationsControl')!.setValue(this.model.fishCompensationViolatedRegulations);
         this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
+        this.form.get('evidenceCommentsControl')!.setValue(this.model.evidenceComments);
 
         if (this.model.seizedFish !== undefined && this.model.seizedFish !== null) {
             this.form.get('seizedFishControl')!.setValue(this.model.seizedFish);
@@ -408,6 +410,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.model.fineAmount = this.form.get('fineAmountControl')!.value;
         this.model.comments = this.form.get('commentsControl')!.value;
         this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
+        this.model.evidenceComments = this.form.get('evidenceCommentsControl')!.value;
         this.model.deliveryData = this.form.get('deliveryControl')!.value;
 
         this.model.files = this.form.get('filesControl')!.value;

@@ -232,6 +232,14 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
 
                         this.model = fishVesselForm;
                         this.fillForm();
+
+                        if (!this.isPublicApp && content.latestRegiXChecks !== undefined && content.latestRegiXChecks !== null && content.latestRegiXChecks.length > 0) {
+                            this.showRegiXData = true;
+
+                            setTimeout(() => {
+                                this.regixChecks = content.latestRegiXChecks!;
+                            }, 100);
+                        }
                     }
                 });
             }

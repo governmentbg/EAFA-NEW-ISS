@@ -131,7 +131,7 @@ export abstract class BaseTLControl implements OnInit {
 
             (this._ngControl.control as AbstractControl).statusChanges.subscribe({
                 next: (status: string) => {
-                    if (status === 'INVALID') {
+                    if (status === 'INVALID' && (this._ngControl?.control as AbstractControl)?.touched) {
                         this.buildErrorsCollection();
                     }
                 }
