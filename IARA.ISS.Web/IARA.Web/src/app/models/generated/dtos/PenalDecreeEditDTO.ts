@@ -91,6 +91,9 @@ export class PenalDecreeEditDTO {
     @StrictlyTyped(String)
     public minorCircumstancesDescription?: string;
 
+    @StrictlyTyped(String)
+    public evidenceComments?: string;
+
     @StrictlyTyped(AuanDeliveryDataDTO)
     public deliveryData?: AuanDeliveryDataDTO;
 

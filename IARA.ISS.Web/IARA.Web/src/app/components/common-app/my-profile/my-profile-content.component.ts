@@ -88,12 +88,12 @@ export class MyProfileContentComponent extends BasePageComponent implements OnIn
     }
 
     public async ngOnInit(): Promise<void> {
-        const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin(
+        const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin([
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Countries, this.nomenclaturesService.getCountries.bind(this.nomenclaturesService), false),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.DocumentTypes, this.nomenclaturesService.getDocumentTypes.bind(this.nomenclaturesService), false),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Genders, this.nomenclaturesService.getGenders.bind(this.nomenclaturesService), true),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Districts, this.nomenclaturesService.getDistricts.bind(this.nomenclaturesService), false)
-        ).toPromise();
+        ]).toPromise();
 
         this.countries = nomenclatures[0];
         this.documentTypes = nomenclatures[1];
@@ -135,7 +135,7 @@ export class MyProfileContentComponent extends BasePageComponent implements OnIn
                                 });
                             }, 1000);
                         }
-                    })
+                    });
                 }
             }
         });
@@ -252,7 +252,7 @@ export class MyProfileContentComponent extends BasePageComponent implements OnIn
                         next: () => {
                             // nothing to do
                         }
-                    })
+                    });
                 }
             }
         });

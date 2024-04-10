@@ -488,7 +488,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
             admissionDate.setSeconds(now.getSeconds());
             admissionDate.setMilliseconds(now.getMilliseconds());
 
-            const logBookTypeId: number = this.model.logBookTypeId!;
+            const logBookTypeId: number = this.logBookTypeId!;
             const logBookId: number = this.model.logBookId!;
 
             if (CatchesAndSalesUtils.checkIfPageDateIsUnlocked(this.logBookPageEditExceptions, this.currentUserId, logBookTypeId, logBookId, admissionDate, now)) {

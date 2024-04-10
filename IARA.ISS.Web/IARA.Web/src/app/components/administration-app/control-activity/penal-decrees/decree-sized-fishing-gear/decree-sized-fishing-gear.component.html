@@ -52,14 +52,14 @@
                      columnName="{{ 'penal-decrees.edit-sized-fishing-gear-storrage-territory-unit' | tlTranslate }}">
         </data-column>
 
-        <data-column [flexRate]="0.5"
+        <data-column [flexRate]="0.4"
                      [formGroup]="seizedFishingGearForm"
                      propertyName="comments"
                      columnName="{{ 'penal-decrees.edit-sized-fishing-gear-comments' | tlTranslate }}">
         </data-column>
 
         <data-column-inline *ngIf="!viewMode"
-                            [flexRate]="0.2">
+                            [flexRate]="0.3">
         </data-column-inline>
     </tl-data-table>
 </div>

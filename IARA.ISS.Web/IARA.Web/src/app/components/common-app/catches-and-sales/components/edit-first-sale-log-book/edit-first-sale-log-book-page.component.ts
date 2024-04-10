@@ -67,6 +67,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
     private pageStatus: LogBookPageStatusesEnum | undefined;
 
     private logBookId!: number;
+    private logBookTypeId!: number;
     private commonLogBookPageData: CommonLogBookPageDataDTO | undefined;
     /** Has value when the component is open from a declaration of a ship log book page */
     private shipPageDocumentData: BasicLogBookPageDocumentDataDTO | undefined;
@@ -220,6 +221,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
         this.pageNumber = data.pageNumber;
         this.pageStatus = data.pageStatus;
         this.shipPageDocumentData = data.shipPageDocumentData;
+        this.logBookTypeId = data.logBookTypeId;
 
         if (this.pageStatus === LogBookPageStatusesEnum.Missing) {
             this.isAdd = false;
@@ -540,7 +542,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
             saleDate.setSeconds(now.getSeconds());
             saleDate.setMilliseconds(now.getMilliseconds());
 
-            const logBookTypeId: number = this.model.logBookTypeId!;
+            const logBookTypeId: number = this.logBookTypeId!;
             const logBookId: number = this.model.logBookId!;
 
             const difference: DateDifference | undefined = DateUtils.getDateDifference(saleDate, now);
@@ -554,7 +556,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
             }
 
             const hoursDifference: number = CatchesAndSalesUtils.convertDateDifferenceToHours(difference);
-
+           
             if (CatchesAndSalesUtils.pageHasLogBookPageDateLockedViaDaysAfterMonth(saleDate, now, this.lockFirstSaleLogBookPeriods.lockFirstSaleLogBookPeriod)
                 && !CatchesAndSalesUtils.checkIfPageDateIsUnlocked(this.logBookPageEditExceptions, this.currentUserId, logBookTypeId, logBookId, saleDate, now)
             ) {

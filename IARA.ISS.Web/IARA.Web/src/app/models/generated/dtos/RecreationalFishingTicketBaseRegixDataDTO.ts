@@ -5,7 +5,8 @@ import { BaseRegixChecksDTO } from './BaseRegixChecksDTO';
 import { RegixPersonDataDTO } from './RegixPersonDataDTO';
 import { AddressRegistrationDTO } from './AddressRegistrationDTO';
 import { RecreationalFishingTelkDTO } from './RecreationalFishingTelkDTO';
-import { FileInfoDTO } from './FileInfoDTO'; 
+import { FileInfoDTO } from './FileInfoDTO';
+import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformationDTO'; 
 
 export class RecreationalFishingTicketBaseRegixDataDTO extends BaseRegixChecksDTO {
     public constructor(obj?: Partial<RecreationalFishingTicketBaseRegixDataDTO>) {
@@ -35,6 +36,18 @@ export class RecreationalFishingTicketBaseRegixDataDTO extends BaseRegixChecksDT
 
     @StrictlyTyped(RecreationalFishingTelkDTO)
     public telkData?: RecreationalFishingTelkDTO;
+
+    @StrictlyTyped(FileInfoDTO)
+    public personPhoto?: FileInfoDTO;
+
+    @StrictlyTyped(Number)
+    public deliveryTerritoryUnitId?: number;
+
+    @StrictlyTyped(Boolean)
+    public isPaid?: boolean;
+
+    @StrictlyTyped(ApplicationPaymentInformationDTO)
+    public paymentInformation?: ApplicationPaymentInformationDTO;
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];

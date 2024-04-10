@@ -183,10 +183,10 @@
                     <span>{{ row.statusName }}</span>
                 </div>
                 <div fxLayout="column" fxLayoutAlign="start center">
-                    <tl-icon *ngIf="row.statusReason?.length > 0"
+                    <tl-icon *ngIf="row.errorDescription?.length > 0 || row.statusReason?.length > 0"
                              icon="ic-fluent-warning-24-filled"
                              iconClass="warn-orange-color"
-                             [matTooltip]="row.statusReason"
+                             [matTooltip]="row.errorDescription?.length > 0 ? row.errorDescription : row.statusReason"
                              matTooltipPosition="above"
                              matTooltipShowDelay="250"
                              [size]="icIconSize">

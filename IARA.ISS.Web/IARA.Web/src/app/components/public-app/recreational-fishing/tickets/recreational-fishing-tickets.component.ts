@@ -23,6 +23,8 @@ import { ReasonDialogParams } from '@app/components/common-app/applications/comp
 import { EditTicketDialogParams } from '@app/components/common-app/recreational-fishing/applications/models/edit-ticket-dialog-params.model';
 import { RecreationalFishingTicketComponent } from '@app/components/common-app/recreational-fishing/tickets/components/ticket/recreational-fishing-ticket.component';
 import { TicketStatusEnum } from '@app/enums/ticket-status.enum';
+import { PermissionsService } from '@app/shared/services/permissions.service';
+import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 
 @Component({
     selector: 'recreational-fishing-tickets',
@@ -38,6 +40,7 @@ export class RecreationalFishingTicketsComponent implements OnInit, AfterViewIni
     public readonly ticketStatuses: typeof TicketStatusEnum = TicketStatusEnum;
     public readonly paymentStatuses: typeof PaymentStatusesEnum = PaymentStatusesEnum;
     public readonly applicationStatuses: typeof ApplicationStatusesEnum = ApplicationStatusesEnum;
+    public readonly canProcessPaymentData: boolean;
 
     public readonly defaultPageSize: number = 5;
     public readonly pageSizeOptions: number[] = [2, 3, 4, 5, 10];
@@ -69,6 +72,7 @@ export class RecreationalFishingTicketsComponent implements OnInit, AfterViewIni
         editDialog: TLMatDialog<RecreationalFishingTicketComponent>,
         statusReasonDialog: TLMatDialog<EnterReasonComponent>,
         paymentDialog: TLMatDialog<OnlinePaymentDataComponent>,
+        permissions: PermissionsService,
         route: ActivatedRoute
     ) {
         this.service = service;
@@ -84,6 +88,8 @@ export class RecreationalFishingTicketsComponent implements OnInit, AfterViewIni
         this.pageEvent.pageIndex = 0;
         this.pageEvent.pageSize = this.defaultPageSize;
         this.pageEvent.length = 0;
+
+        this.canProcessPaymentData = permissions.has(PermissionsEnum.OnlineSubmittedApplicationsProcessPaymentData);
 
         const state: { buyTicket: boolean } = window.history.state;
         this.showBuyTicketScreen = state.buyTicket === true || route.snapshot.url.join('/') === 'recreational-fishing/purchase-ticket';

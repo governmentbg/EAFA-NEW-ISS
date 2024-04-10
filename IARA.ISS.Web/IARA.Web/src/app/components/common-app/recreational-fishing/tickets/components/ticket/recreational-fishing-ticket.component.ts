@@ -189,8 +189,11 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                     next: (result: RegixChecksWrapperDTO<RecreationalFishingTicketBaseRegixDataDTO>) => {
                         this.regixChecksData = result.regiXDataModel;
                         this.setupValidators();
-
                         this.writeValue(result.dialogDataModel!);
+
+                        if (result.dialogDataModel!.personPhoto !== null && result.dialogDataModel!.personPhoto !== undefined) {
+                            this.personPhotoMethod = this.service.getPhoto.bind(this.service, result.dialogDataModel!.personPhoto.id!);
+                        }
 
                         this.setRegiXData();
 
@@ -205,6 +208,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                         }
 
                         this.form.get('filesControl')?.disable();
+                        this.form.get('deliveryTerritoryUnitControl')?.disable();
                     }
                 });
             }
@@ -264,10 +268,6 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                     }
                 });
             }
-        }
-
-        if (this.isDisabled) {
-         //   this.form.disable();
         }
     }
 
@@ -437,7 +437,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             // always set to true because it doesn't exist in this case
             this.form.get('guaranteeTrueDataControl')?.setValue(true);
         }
-
+        
         this.personPhotoRequired = !this.notRequiredPhotoPeriods.includes(this.period.code!);
         if (this.personPhotoRequired) {
             this.form.get('photoControl')?.setValidators(Validators.required);
@@ -815,7 +815,8 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             id: this.dialogData!.id,
             applicationId: this.dialogData!.applicationId,
             person: this.form.get('regixDataControl')?.value,
-            personAddressRegistrations: this.form.get('addressControl')?.value
+            personAddressRegistrations: this.form.get('addressControl')?.value,
+            personPhoto: this.form.get('photoControl')?.value ?? undefined
         });
 
         const type: TicketTypeEnum = TicketTypeEnum[this.type.code as keyof typeof TicketTypeEnum];

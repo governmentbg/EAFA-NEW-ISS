@@ -31,6 +31,20 @@
                                  [options]="catchPreservations">
                 </tl-autocomplete>
             </div>
+            <div *ngIf="showTurbotControls" fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="turbotSizeGroupControl"
+                                 label="{{ 'catches-and-sales.ship-page-catch-record-turbot-size-group' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.ship-page-catch-record-turbot-size-group-helper"
+                                 [options]="turbotSizeGroups">
+                </tl-autocomplete>
+                <tl-input fxFlex="25"
+                          formControlName="turbotCountControl"
+                          label="{{ 'catches-and-sales.ship-page-catch-record-turbot-count' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.ship-page-catch-record-turbot-count-helper">
+                </tl-input>
+                <div *ngIf="!showStrugeonControls" fxFlex="50"></div>
+            </div>
             <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
                 <tl-checkbox fxFlex="32"
                              formControlName="isProcessedOnBoardControl"

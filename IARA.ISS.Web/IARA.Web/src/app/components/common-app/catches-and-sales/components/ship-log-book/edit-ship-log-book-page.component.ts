@@ -1192,6 +1192,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                         catchFishPreservationId: defaultCatchFishPreservation?.value,
                         isProcessedOnBoard: false,
                         fromPreviousTrip: false,
+                        turbotCount: catchRecordFish.turbotCount,
+                        turbotSizeGroupId: catchRecordFish.turbotSizeGroupId,
                         isValid: true
                     })
                 );

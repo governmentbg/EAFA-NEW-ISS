@@ -174,6 +174,14 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
                         this.isOnlineApplication = application.isOnlineApplication!;
                         this.refreshFileTypes.next();
                         this.fillForm();
+
+                        if (!this.isPublicApp && content.latestRegiXChecks !== undefined && content.latestRegiXChecks !== null && content.latestRegiXChecks.length > 0) {
+                            this.showRegiXData = true;
+
+                            setTimeout(() => {
+                                this.regixChecks = content.latestRegiXChecks!;
+                            }, 100);
+                        }
                     }
                 });
             }

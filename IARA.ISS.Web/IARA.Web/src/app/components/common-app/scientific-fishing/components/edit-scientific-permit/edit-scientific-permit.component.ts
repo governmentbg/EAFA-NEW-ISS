@@ -208,6 +208,14 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
 
                         this.model = permit;
                         this.fillForm(this.model);
+
+                        if (!this.isPublicApp && content.latestRegiXChecks !== undefined && content.latestRegiXChecks !== null && content.latestRegiXChecks.length > 0) {
+                            this.showRegiXData = true;
+
+                            setTimeout(() => {
+                                this.regixChecks = content.latestRegiXChecks!;
+                            }, 100);
+                        }
                     }
                 });
             }

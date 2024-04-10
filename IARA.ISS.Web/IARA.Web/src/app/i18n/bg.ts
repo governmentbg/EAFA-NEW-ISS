@@ -5825,6 +5825,7 @@
         'edit-auan-drafter': 'Актосъставител',
         'edit-auan-location-description': 'Място',
         'edit-auan-constatation-comments': 'Описание на нарушението',
+        'edit-evidence-comments': 'Обстоятелства, при които е извършено и доказвателства, които го потвърждават',
         'edit-auan-offender-comments': 'Обяснения от посочения за нарушител',
         'edit-minor-circumstances': 'Обстоятелства, които сочат за маловажен случай',
         'edit-minor-circumstances-description': 'Описание на обстоятелствата, които сочат за маловажен случай',

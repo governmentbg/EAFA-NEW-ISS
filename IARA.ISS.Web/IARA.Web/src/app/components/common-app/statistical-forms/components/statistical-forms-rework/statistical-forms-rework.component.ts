@@ -188,6 +188,14 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
 
                         this.model = statisticalForm;
                         this.fillForm();
+
+                        if (!this.isPublicApp && content.latestRegiXChecks !== undefined && content.latestRegiXChecks !== null && content.latestRegiXChecks.length > 0) {
+                            this.showRegiXData = true;
+
+                            setTimeout(() => {
+                                this.regixChecks = content.latestRegiXChecks!;
+                            }, 100);
+                        }
                     }
                 });
             }

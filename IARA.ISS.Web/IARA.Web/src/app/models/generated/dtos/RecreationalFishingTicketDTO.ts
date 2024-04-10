@@ -2,10 +2,9 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { RecreationalFishingTicketBaseRegixDataDTO } from './RecreationalFishingTicketBaseRegixDataDTO';
-import { FileInfoDTO } from './FileInfoDTO';
 import { RecreationalFishingMembershipCardDTO } from './RecreationalFishingMembershipCardDTO';
 import { RecreationalFishingTicketDuplicateTableDTO } from './RecreationalFishingTicketDuplicateTableDTO';
-import { ApplicationPaymentInformationDTO } from './ApplicationPaymentInformationDTO'; 
+import { FileInfoDTO } from './FileInfoDTO';
 
 export class RecreationalFishingTicketDTO extends RecreationalFishingTicketBaseRegixDataDTO {
     public constructor(obj?: Partial<RecreationalFishingTicketDTO>) {
@@ -42,9 +41,6 @@ export class RecreationalFishingTicketDTO extends RecreationalFishingTicketBaseR
     @StrictlyTyped(Date)
     public issuedOn?: Date;
 
-    @StrictlyTyped(FileInfoDTO)
-    public personPhoto?: FileInfoDTO;
-
     @StrictlyTyped(RecreationalFishingMembershipCardDTO)
     public membershipCard?: RecreationalFishingMembershipCardDTO;
 
@@ -57,18 +53,9 @@ export class RecreationalFishingTicketDTO extends RecreationalFishingTicketBaseR
     @StrictlyTyped(Boolean)
     public hasUserConfirmed?: boolean;
 
-    @StrictlyTyped(Number)
-    public deliveryTerritoryUnitId?: number;
-
     @StrictlyTyped(FileInfoDTO)
     public declarationFile?: FileInfoDTO;
 
     @StrictlyTyped(RecreationalFishingTicketBaseRegixDataDTO)
     public regiXDataModel?: RecreationalFishingTicketBaseRegixDataDTO;
-
-    @StrictlyTyped(Boolean)
-    public isPaid?: boolean;
-
-    @StrictlyTyped(ApplicationPaymentInformationDTO)
-    public paymentInformation?: ApplicationPaymentInformationDTO;
 }

@@ -65,6 +65,7 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
     private commonLogBookPageData: CommonLogBookPageDataDTO | undefined;
     private shipPageDocumentData: BasicLogBookPageDocumentDataDTO | undefined;
     private logBookId!: number;
+    private logBookTypeId!: number;
     /** Needed only for Transportation log book pages, when the log book is for Person/Legal */
     public logBookPermitLicenseId: number | undefined;
     private pageNumber: number | undefined;
@@ -195,8 +196,9 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
         this.viewMode = data.viewMode;
         this.commonLogBookPageData = data.commonData;
         this.logBookId = data.logBookId;
+        this.logBookTypeId = data.logBookTypeId;
         this.logBookPermitLicenseId = data.logBookPermitLicenseId;
-
+       
         this.pageNumber = data.pageNumber;
         this.pageStatus = data.pageStatus;
         this.shipPageDocumentData = data.shipPageDocumentData;
@@ -502,7 +504,7 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
 
             const now: Date = new Date();
 
-            const logBookTypeId: number = this.model.logBookTypeId!;
+            const logBookTypeId: number = this.logBookTypeId!;
             const logBookId: number = this.model.logBookId!;
 
             if (CatchesAndSalesUtils.checkIfPageDateIsUnlocked(this.logBookPageEditExceptions, this.currentUserId, logBookTypeId, logBookId, fillDate, now)) {

@@ -341,9 +341,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                     translateValue: this.translate.getValue('common.cancel'),
                 },
                 viewMode: false,
-            },
-            '120em'
-        );
+            }, '120em');
 
         dialog.subscribe({
             next: (result: InspectionDTO | undefined) => {
@@ -466,7 +464,8 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             }
 
             if ((this.shipId === null || this.shipId === undefined)
-                && entry.inspectionState === InspectionStatesEnum.Submitted
+                && entry.inspectionState !== InspectionStatesEnum.Draft
+                && entry.inspectionType !== InspectionTypesEnum.OTH
                 && this.canEditInspectionNumber
             ) {
                 rightSideButtons.push({
