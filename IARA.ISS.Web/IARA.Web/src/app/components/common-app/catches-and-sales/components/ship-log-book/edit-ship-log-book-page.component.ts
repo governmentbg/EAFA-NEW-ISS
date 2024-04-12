@@ -543,6 +543,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     catchFishPresentationId: defaultCatchFishPresentation?.value,
                     catchFishPreservationId: defaultCatchFishPreservation?.value,
                     catchFishStateId: defaultCatchFishState?.value,
+                    turbotCount: catchFish.turbotCount,
+                    turbotSizeGroupId: catchFish.turbotSizeGroupId,
                     isProcessedOnBoard: false,
                     fromPreviousTrip: true,
                     isValid: true
@@ -931,7 +933,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             model.partnerShipId = this.form.get('partnerShipControl')!.value!.value;
         }
 
-        model.catchRecords = this.catchRecords;
+        model.catchRecords = this.getCatchRecordsFromTable();
         model.originDeclarationFishes = this.declarationOfOriginCatchRecords;
 
         return model;
@@ -1642,7 +1644,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             }
 
             const noCatchUnloaded: boolean = form.get('noCatchUnloadedControl')!.value ?? false;
-            
+
             if (noCatchUnloaded === true) {
                 const hasUnloadedFishesInfo: boolean =
                     this.declarationOfOriginCatchRecords !== null
@@ -1858,7 +1860,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             if (this.catchRecords === null || this.catchRecords === undefined || this.catchRecords.length === 0) {
                 return null;
             }
-            
+
             if (this.model.needRelatedLogBookPage) {
                 const tripHasRecordWithoutGearEntryTime: boolean = this.catchRecords.some(x => x.isActive !== false && (x.gearEntryTime === undefined || x.gearEntryTime === null || !x.hasGearEntry));
 
@@ -1906,6 +1908,40 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 this.catchRecordQuantities.set(Number(fishGroupId), quantity);
             }
         }
+    }
+
+    private getCatchRecordsFromTable(): CatchRecordDTO[] {
+        const catchRecords: CatchRecordDTO[] = this.catchRecords;
+
+        const result: CatchRecordDTO[] = [];
+
+        for (const catchRecord of catchRecords) {
+            if (catchRecord.gearEntryTime !== undefined && catchRecord.gearEntryTime !== null) {
+                if (result.findIndex(x => x.gearEntryTime?.getFullYear() === catchRecord.gearEntryTime?.getFullYear()
+                    && x.gearEntryTime?.getDate() === catchRecord.gearEntryTime?.getDate()
+                    && x.gearEntryTime?.getHours() === catchRecord.gearEntryTime?.getHours()
+                    && x.gearEntryTime?.getMinutes() === catchRecord.gearEntryTime?.getMinutes()) === -1
+                ) {
+                    const original = catchRecords.filter(x => x.gearEntryTime?.getFullYear() === catchRecord.gearEntryTime?.getFullYear()
+                        && x.gearEntryTime?.getDate() === catchRecord.gearEntryTime?.getDate()
+                        && x.gearEntryTime?.getHours() === catchRecord.gearEntryTime?.getHours()
+                        && x.gearEntryTime?.getMinutes() === catchRecord.gearEntryTime?.getMinutes());
+
+                    if (original.length === 1) {
+                        result.push(catchRecord);
+                    }
+                    else {
+                        result.push(original.find(x => x.isActive === true)!);
+                    }
+                }
+
+            }
+            else {
+                result.push(catchRecord);
+            }
+        }
+
+        return result;
     }
 
     private closeEditCatchRecordDialogBtnClicked(closeFn: HeaderCloseFunction): void {

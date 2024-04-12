@@ -500,12 +500,14 @@
 <ng-template #applicationActions let-value="value">
     <ng-container [ngSwitch]="value.row.applicationStatus">
         <ng-container *ngSwitchCase="applicationStatusEnum.FILL_BY_APPL">
-            <tl-icon-button *ngIf="canEditRecords && !value.row.isOnlineTicket && value.row.createdByUserId === currentUserId"
+            <tl-icon-button *ngIf="canEditRecords && (value.row.createdByUserId === currentUserId 
+                                                    || (value.row.isOnlineTicket && value.row.prevStatusCode === applicationStatusEnum.EXT_CHK_STARTED))"
                             icon="edit"
                             iconClass="accent-color"
                             tooltipText="{{ 'applications-register.view-and-edit-application' | tlTranslate }}"
                             (buttonClicked)="editActionClicked(value.row)">
             </tl-icon-button>
+
             <tl-icon-button *ngIf="canCancelRecords"
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"
