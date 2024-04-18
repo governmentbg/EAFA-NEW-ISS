@@ -188,10 +188,10 @@
                             </div>
 
                             <div fxLayout="column" fxLayoutAlign="start start">
-                                <tl-icon *ngIf="row.data.applicationStatusReason?.length > 0"
+                                <tl-icon *ngIf="row.data.ticketStatus !== ticketStatusEnum.APPROVED && (row.data.regixErrorDescription?.length > 0 || row.data.applicationStatusReason?.length > 0)"
                                          icon="ic-fluent-warning-24-filled"
                                          iconClass="warn-orange-color"
-                                         [matTooltip]="row.data.applicationStatusReason"
+                                         [matTooltip]="row.data.regixErrorDescription?.length > 0 ? row.data.regixErrorDescription : row.data.applicationStatusReason"
                                          matTooltipPosition="above"
                                          matTooltipShowDelay="250"
                                          [size]="icIconSize">
@@ -439,10 +439,10 @@
                             </div>
 
                             <div fxLayout="column" fxLayoutAlign="start start">
-                                <tl-icon *ngIf="row.data.applicationStatusReason?.length > 0"
+                                <tl-icon *ngIf="row.data.ticketStatus !== ticketStatusEnum.APPROVED && (row.data.regixErrorDescription?.length > 0 || row.data.applicationStatusReason?.length > 0)"
                                          icon="ic-fluent-warning-24-filled"
                                          iconClass="warn-orange-color"
-                                         [matTooltip]="row.data.applicationStatusReason"
+                                         [matTooltip]="row.data.regixErrorDescription?.length > 0 ? row.data.regixErrorDescription : row.data.applicationStatusReason"
                                          matTooltipPosition="above"
                                          matTooltipShowDelay="250"
                                          [size]="icIconSize">
@@ -500,7 +500,7 @@
 <ng-template #applicationActions let-value="value">
     <ng-container [ngSwitch]="value.row.applicationStatus">
         <ng-container *ngSwitchCase="applicationStatusEnum.FILL_BY_APPL">
-            <tl-icon-button *ngIf="canEditRecords && (value.row.createdByUserId === currentUserId 
+            <tl-icon-button *ngIf="canEditRecords && (value.row.createdByUserId === currentUserId
                                                     || (value.row.isOnlineTicket && value.row.prevStatusCode === applicationStatusEnum.EXT_CHK_STARTED))"
                             icon="edit"
                             iconClass="accent-color"

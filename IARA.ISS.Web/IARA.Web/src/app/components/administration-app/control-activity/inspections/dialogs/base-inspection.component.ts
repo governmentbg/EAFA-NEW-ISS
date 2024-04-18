@@ -32,6 +32,7 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
     public viewMode: boolean = false;
     public canEditNumber: boolean = false;
     public reportNumAlreadyExistsError: boolean = false;
+    public isInspectionLockedError: boolean = false;
     public inspectionTypesEnum: typeof InspectionTypesEnum = InspectionTypesEnum;
 
     @ViewChild(ValidityCheckerGroupDirective)
@@ -69,6 +70,9 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
             this.viewMode = data.viewMode;
             this.canEditNumber = data.canEditNumber;
             this.pageCode = data.pageCode;
+
+            //Съобщението за грешка да се показва само за инспекции, създадени от същия инспектор, които не са подписани
+            this.isInspectionLockedError = data.isReportLocked && !data.canEditLockedInspections && data.userIsSameAsInspector && data.pageCode !== PageCodeEnum.SignInspections;
         }
     }
 
@@ -93,7 +97,7 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
             let title: string = '';
             let message: string = '';
 
-            if (this.inspectionCode === this.inspectionTypesEnum.CWO || this.inspectionCode === this.inspectionTypesEnum.OFS) { 
+            if (this.inspectionCode === this.inspectionTypesEnum.CWO || this.inspectionCode === this.inspectionTypesEnum.OFS) {
                 title = this.translate.getValue('inspections.submit-report-confirm-dialog-title');
                 message = this.translate.getValue('inspections.submit-report-confirm-dialog-message');
             }
@@ -169,10 +173,11 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
         else if (actionInfo.id === 'flux') {
             this.service.downloadFluxXml(this.id!, this.model.inspectionType!).subscribe();
         }
-        else if (actionInfo.id === 'more-corrections-needed' && this.canEditNumber) {
+        else if (actionInfo.id === 'more-corrections-needed') { 
             this.model.id = this.id;
+            const draft: InspectionDraftDTO = this.mapToDraft();
 
-            this.service.sendForFurtherCorrections(this.mapToDraft()).subscribe({
+            this.service.sendForFurtherCorrections(draft).subscribe({
                 next: () => {
                     dialogClose(this.model);
                 }

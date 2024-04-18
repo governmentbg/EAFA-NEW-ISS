@@ -2787,6 +2787,7 @@
         'market-catch-quantity': 'Количество (кг)',
         'market-catch-count': 'Брой',
         'market-catch-unloaded-quantity': 'Разтоварено количество (кг)',
+        'market-catch-turbot-size-group': 'Размерна група',
         'market-catch-presentation': 'Представяне',
         'market-catch-zone': 'Зона на улов',
         'market-first-sale-log-book': 'Декларация за първа продажба',
@@ -2861,6 +2862,8 @@
         'undo-delete': 'Връщане на изтрита инспекция',
         'view-inspection-dialog-title': 'Преглед на инспекция',
         'edit-inspection-dialog-title': 'Редактиране на инспекция',
+        'cannot-edit-inspection-locked-error': 'Докладът от инспекция не може да бъде коригиран, тъй като са минали',
+        'hours-have-passed-error': ' часа от създаването му. За редактиране/приключване след този срок се свържете с администратор.',
 
         'delete-inspection-dialog-title': 'Премахване на инспекция',
         'delete-inspection-dialog-message': 'Сигурен ли сте, че искате да премахнете инспекцията?',

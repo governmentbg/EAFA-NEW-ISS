@@ -134,7 +134,7 @@
                            [recordsPerPage]="recordsPerPage">
                 <row-detail *ngIf="canReadPointsRecords">
                     <ng-template let-row="row" ngx-datatable-row-detail-template>
-                        <div fxLayout="column" fxLayoutGap="1em">
+                        <div fxLayout="column" fxLayoutGap="0.5em">
                             <decree-statuses-table *ngIf="(auanId === null || auanId === undefined) && canReadStatusRecords"
                                                    fxFlexFill
                                                    [rows]="row.data.statuses"

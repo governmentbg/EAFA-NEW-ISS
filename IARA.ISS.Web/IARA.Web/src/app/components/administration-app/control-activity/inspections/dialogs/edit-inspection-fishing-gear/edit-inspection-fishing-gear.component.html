@@ -7,7 +7,7 @@
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true">
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -15,7 +15,8 @@
                                      [institutions]="institutions"
                                      [canEditNumber]="canEditNumber"
                                      [hasEmergencySignal]="false"
-                                     [reportNumAlreadyExists]="reportNumAlreadyExistsError">
+                                     [reportNumAlreadyExists]="reportNumAlreadyExistsError"
+                                     [isReportLocked]="isInspectionLockedError">
             </inspection-general-info>
         </div>
     </tl-expansion-panel>
@@ -40,7 +41,6 @@
                 <inspected-ship formControlName="shipControl"
                                 [ships]="ships"
                                 [hasMap]="false"
-                                [ships]="ships"
                                 [vesselTypes]="vesselTypes"
                                 [countries]="countries"
                                 (shipSelected)="onShipChanged($event)">

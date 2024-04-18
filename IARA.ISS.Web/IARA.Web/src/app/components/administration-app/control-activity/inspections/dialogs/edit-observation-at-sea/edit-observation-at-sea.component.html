@@ -7,7 +7,7 @@
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true">
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -15,7 +15,8 @@
                                      [institutions]="institutions"
                                      [canEditNumber]="canEditNumber"
                                      [inspectionType]="inspectionTypesEnum.OFS"
-                                     [reportNumAlreadyExists]="reportNumAlreadyExistsError">
+                                     [reportNumAlreadyExists]="reportNumAlreadyExistsError"
+                                     [isReportLocked]="isInspectionLockedError">
             </inspection-general-info>
 
             <patrol-vehicles-table formControlName="patrolVehiclesControl">
@@ -45,6 +46,7 @@
                             [countries]="countries"
                             formControlName="shipControl">
             </inspected-ship>
+
             <div fxLayout="row"
                  fxLayoutGap="1em"
                  fxLayoutAlign="start center">
@@ -52,39 +54,48 @@
                           formControlName="courseControl"
                           label="{{ 'inspections.course' | tlTranslate }}">
                 </tl-input>
+
                 <tl-input fxFlex="50"
                           formControlName="speedControl"
                           type="number"
                           label="{{ 'inspections.speed' | tlTranslate }}">
                 </tl-input>
             </div>
+
             <check-box-list formControlName="centerObservationToolsControl"
                             [checks]="centerObservationTools"
                             label="{{ 'inspections.center-observation-tools' | tlTranslate }}">
             </check-box-list>
+
             <tl-input *ngIf="hasCenterOtherSelected"
                       formControlName="otherCenterObservationToolsControl"
                       label="{{ 'inspections.other-center-observation-tools' | tlTranslate }}">
             </tl-input>
+
             <tl-checkbox formControlName="hasShipContactControl"
                          label="{{ 'inspections.has-ship-contact' | tlTranslate }}">
             </tl-checkbox>
+
             <tl-checkbox formControlName="hasShipCommunicationControl"
                          label="{{ 'inspections.has-ship-communication' | tlTranslate }}">
             </tl-checkbox>
+
             <check-box-list formControlName="onBoardActivitiesControl"
                             [checks]="onBoardActivities"
                             label="{{ 'inspections.on-board-activities' | tlTranslate }}">
             </check-box-list>
+
             <tl-input *ngIf="otherActivitySelected"
                       formControlName="otherOnBoardActivitiesControl"
                       label="{{ 'inspections.other-on-board-activities' | tlTranslate }}">
             </tl-input>
+
             <check-box-list *ngIf="fishingActivitySelected"
                             formControlName="fishingActivitiesControl"
                             [checks]="fishingActivities"
                             label="{{ 'inspections.fishing-activities' | tlTranslate }}">
             </check-box-list>
+
             <tl-input *ngIf="fishingActivitySelected && otherFishingActivitySelected"
                       formControlName="otherFishingActivitiesControl"
                       label="{{ 'inspections.other-fishing-activities' | tlTranslate }}">

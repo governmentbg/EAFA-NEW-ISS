@@ -261,6 +261,7 @@
     InspectionDownload = 'InspectionDownload',
     InspectionExport = 'InspectionExport',
     InspectionResolveCrossCheck = 'InspectionResolveCrossCheck',
+    InspectionLockedEdit = 'InspectionLockedEdit',
 
     // Commercial Fishing
     CommercialFishingPermitRegisterReadAll = 'CommercialFishingPermitRegisterReadAll',

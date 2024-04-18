@@ -89,6 +89,8 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     @Input()
     public requiresFish: boolean = true;
 
+    public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
+
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
 
@@ -154,27 +156,28 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
 
     public writeValue(value: InspectionCatchMeasureDTO[]): void {
         if (value !== undefined && value !== null) {
-            const catches: InspectedCatchTableModel[] = value.map(f => new InspectedCatchTableModel({
-                action: f.action,
-                allowedDeviation: f.allowedDeviation,
-                averageSize: f.averageSize,
-                catchCount: f.catchCount,
-                catchInspectionTypeId: f.catchInspectionTypeId,
-                catchQuantity: f.catchQuantity,
-                catchZoneId: f.catchZoneId,
-                fishId: f.fishId,
-                fishSexId: f.fishSexId,
-                id: f.id,
-                shipLogBookPageId: f.shipLogBookPageId,
-                undersized: f.undersized,
-                originShip: f.originShip,
-                storageLocation: f.storageLocation,
-                unloadedQuantity: f.unloadedQuantity,
-                fish: this.fishes.find(s => s.value === f.fishId),
-                type: this.types.find(s => s.value === f.catchInspectionTypeId),
-                catchZone: this.catchZones.find(s => s.value === f.catchZoneId),
-                turbotSizeGroup: this.turbotSizeGroups.find(s => s.value === f.turbotSizeGroupId),
-                turbotSizeGroupId: f.turbotSizeGroupId,
+            const catches: InspectedCatchTableModel[] = value.map(x => new InspectedCatchTableModel({
+                action: x.action,
+                allowedDeviation: x.allowedDeviation,
+                averageSize: x.averageSize,
+                catchCount: x.catchCount,
+                catchInspectionTypeId: x.catchInspectionTypeId,
+                catchQuantity: x.catchQuantity,
+                catchZoneId: x.catchZoneId,
+                fishId: x.fishId,
+                fishSexId: x.fishSexId,
+                id: x.id,
+                shipLogBookPageId: x.shipLogBookPageId,
+                undersized: x.undersized,
+                originShip: x.originShip,
+                storageLocation: x.storageLocation,
+                unloadedQuantity: x.unloadedQuantity,
+                fish: this.fishes.find(s => s.value === x.fishId),
+                type: this.types.find(s => s.value === x.catchInspectionTypeId),
+                catchZone: this.catchZones.find(s => s.value === x.catchZoneId),
+                turbotSizeGroup: this.turbotSizeGroups.find(s => s.value === x.turbotSizeGroupId),
+                turbotSizeGroupId: x.turbotSizeGroupId,
+                hasMissingProperties: this.checkIfCatchHasMissingProperties(x)
             }));
 
             setTimeout(() => {
@@ -203,6 +206,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     public catchRecordChanged(event: RecordChangedEventArgs<InspectedCatchTableModel>): void {
         event.Record.catchZoneId = this.catchesFormGroup.get('catchZoneControl')!.value?.value;
         event.Record.catchZone = this.catchesFormGroup.get('catchZoneControl')!.value;
+        event.Record.hasMissingProperties = false;
 
         this.catches = this.datatable.rows;
         this.onChanged(this.getValue());
@@ -220,7 +224,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
                 this.mapViewer.selectedGridSectorsChangeEvent.subscribe({
                     next: (selectedGridSectors: string[] | undefined) => {
                         if (!CommonUtils.isNullOrEmpty(selectedGridSectors)) {
-                            this.temporarySelectedGridSector = this.catchZones.find(f => f.code === selectedGridSectors![0])!;
+                            this.temporarySelectedGridSector = this.catchZones.find(x => x.code === selectedGridSectors![0])!;
                         }
                     }
                 });
@@ -309,6 +313,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
             catchCountControl: new FormControl(undefined, [TLValidators.number(0, undefined, 0)]),
             catchQuantityControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
             unloadedQuantityControl: new FormControl(undefined, [TLValidators.number(0)]),
+            averageSizeControl: new FormControl(undefined, [TLValidators.number(0)]),
             allowedDeviationControl: new FormControl(undefined, [TLValidators.number(0, 100)]),
             catchZoneControl: new FormControl(undefined),
             shipControl: new FormControl(undefined),
@@ -321,28 +326,41 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     }
 
     protected getValue(): InspectionCatchMeasureDTO[] {
-        const bms = this.types.find(f => f.code === CatchSizeCodesEnum[CatchSizeCodesEnum.BMS])?.value;
-        const lsc = this.types.find(f => f.code === CatchSizeCodesEnum[CatchSizeCodesEnum.LSC])?.value;
+        const bms = this.types.find(x => x.code === CatchSizeCodesEnum[CatchSizeCodesEnum.BMS])?.value;
+        const lsc = this.types.find(x => x.code === CatchSizeCodesEnum[CatchSizeCodesEnum.LSC])?.value;
 
-        return this.catches.map(f => new InspectionCatchMeasureDTO({
-            action: f.action,
-            allowedDeviation: f.allowedDeviation,
-            averageSize: f.averageSize,
-            catchCount: f.catchCount,
+        return this.catches.map(x => new InspectionCatchMeasureDTO({
+            action: x.action,
+            allowedDeviation: x.allowedDeviation,
+            averageSize: x.averageSize,
+            catchCount: x.catchCount,
             catchInspectionTypeId: this.hasUndersizedCheck
-                ? (f.undersized === true ? bms : lsc)
-                : f.catchInspectionTypeId,
-            catchQuantity: f.catchQuantity,
-            catchZoneId: f.catchZoneId,
-            fishId: f.fishId,
-            fishSexId: f.fishSexId,
-            id: f.id,
-            shipLogBookPageId: f.shipLogBookPageId,
-            originShip: f.originShip,
-            storageLocation: f.storageLocation,
-            unloadedQuantity: f.unloadedQuantity,
-            turbotSizeGroupId: f.turbotSizeGroupId,
+                ? (x.undersized === true ? bms : lsc)
+                : x.catchInspectionTypeId,
+            catchQuantity: x.catchQuantity,
+            catchZoneId: x.catchZoneId,
+            fishId: x.fishId,
+            fishSexId: x.fishSexId,
+            id: x.id,
+            shipLogBookPageId: x.shipLogBookPageId,
+            originShip: x.originShip,
+            storageLocation: x.storageLocation,
+            unloadedQuantity: x.unloadedQuantity,
+            turbotSizeGroupId: x.turbotSizeGroupId,
+            hasMissingProperties: this.checkIfCatchHasMissingProperties(x)
         }));
+    }
+
+    private checkIfCatchHasMissingProperties(catchRecord: InspectionCatchMeasureDTO): boolean {
+        if (this.hasUnloadedQuantity && (catchRecord.unloadedQuantity === undefined || catchRecord.unloadedQuantity === null)) {
+            return true;
+        }
+
+        if (this.hasCatchType && (catchRecord.catchInspectionTypeId === undefined || catchRecord.catchInspectionTypeId === null)) {
+            return true;
+        }
+
+        return false;
     }
 
     private createCustomGridLayerStyle(): SimplePolygonStyleDef {

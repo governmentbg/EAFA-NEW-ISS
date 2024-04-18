@@ -84,4 +84,7 @@ export class SystemPropertiesDTO {
 
     @StrictlyTyped(Number)
     public nextScientificPermitOwnersRegistrationNum?: number;
+
+    @StrictlyTyped(Number)
+    public lockInspectionAfterHours?: number;
 }

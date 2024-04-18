@@ -25,6 +25,7 @@ import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-c
 import { InspectionLogBookPageNomenclatureDTO } from '@app/models/generated/dtos/InspectionLogBookPageNomenclatureDTO';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
+import { FishCodesEnum } from '@app/enums/fish-codes.enum';
 
 @Component({
     selector: 'edit-market-catch',
@@ -45,6 +46,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     public hasDeclaration: boolean = false;
     public readOnly: boolean = false;
     public aquacultureRegistered: boolean = true;
+    public showTurbotControl: boolean = false;
     public permitTypeSelected: DeclarationLogBookTypeEnum | undefined;
     public pageDateLabel: string | undefined;
 
@@ -59,6 +61,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     public presentations: NomenclatureDTO<number>[] = [];
     public permitTypes: NomenclatureDTO<DeclarationLogBookTypeEnum>[] = [];
     public aquacultures: NomenclatureDTO<number>[] = [];
+    public turbotSizeGroups: NomenclatureDTO<number>[] = [];
     public declarationPages: InspectionLogBookPageNomenclatureDTO[] = [];
     public fishErrors: TLError[] = [];
 
@@ -148,13 +151,17 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.VesselTypes, this.nomenclatures.getVesselTypes.bind(this.nomenclatures), false
             ),
+            NomenclatureStore.instance.getNomenclature(
+                NomenclatureTypes.TurbotSizeGroups, this.nomenclatures.getTurbotSizeGroups.bind(this.nomenclatures), false
+            ),
             this.service.getAquacultures()
         ]).toPromise();
 
         this.ships = nomenclatureTables[0];
         this.countries = nomenclatureTables[1];
         this.vesselTypes = nomenclatureTables[2];
-        this.aquacultures = nomenclatureTables[3];
+        this.turbotSizeGroups = nomenclatureTables[3];
+        this.aquacultures = nomenclatureTables[4];
 
         if (this.model !== undefined && this.model !== null) {
             this.fillLogBookPageData();
@@ -260,6 +267,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             presentationControl: new FormControl(undefined, [Validators.required]),
             unloadedQuantityControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
             catchZoneControl: new FormControl(undefined, [Validators.required]),
+            turbotSizeGroupControl: new FormControl(undefined),
             shipControl: new FormControl(undefined),
             aquacultureRegisteredControl: new FormControl(true),
             aquacultureControl: new FormControl(undefined, [Validators.required]),
@@ -372,16 +380,33 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
                 }
             }
         });
+
+        this.form.get('typeControl')?.valueChanges.subscribe({
+            next: (value: NomenclatureDTO<number> | undefined) => {
+                if (value === undefined || value === null || value instanceof NomenclatureDTO) {
+                    this.setTurbotFlag(value);
+                }
+                else {
+                    this.setTurbotFlag(undefined);
+                }
+            }
+        });
     }
 
     protected fillForm(): void {
         this.permitTypeSelected = this.model.logBookType;
 
-        this.form.get('typeControl')!.setValue(this.fishes.find(f => f.value === this.model.fishTypeId));
+        if (this.model.fishTypeId !== undefined && this.model.fishTypeId !== null) {
+            const fish: NomenclatureDTO<number> = this.fishes.find(x => x.value === this.model.fishTypeId)!;
+            this.form.get('typeControl')!.setValue(fish);
+            this.setTurbotFlag(fish);
+        }
+
         this.form.get('countControl')!.setValue(this.model.catchCount);
         this.form.get('quantityControl')!.setValue(this.model.catchQuantity);
         this.form.get('catchTypeControl')!.setValue(this.types.find(f => f.value === this.model.catchTypeId));
         this.form.get('undersizedControl')!.setValue(this.model.undersized);
+        this.form.get('turbotSizeGroupControl')!.setValue(this.turbotSizeGroups.find(f => f.value === this.model.turbotSizeGroupId));
 
         this.form.get('presentationControl')!.setValue(
             this.presentations.find(f => f.value === this.model.presentationId)
@@ -433,6 +458,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         this.model.originShip = this.form.get('shipControl')!.value;
         this.model.logBookType = this.form.get('permitControl')!.value?.value;
         this.model.aquacultureId = this.form.get('aquacultureControl')!.value?.value;
+        this.model.turbotSizeGroupId = this.form.get('turbotSizeGroupControl')?.value?.value;
 
         this.model.unregisteredEntityData = this.model.logBookType === DeclarationLogBookTypeEnum.Invoice
             ? this.form.get('invoiceDataControl')!.value
@@ -556,6 +582,24 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
                     }
                 });
             }
+        }
+    }
+
+    private setTurbotFlag(value: NomenclatureDTO<number> | undefined): void {
+        if (value !== undefined && value !== null) {
+            if (FishCodesEnum[value.code as keyof typeof FishCodesEnum] === FishCodesEnum.TUR) {
+                this.showTurbotControl = true;
+
+                if (this.readOnly) {
+                    this.form.get('turbotSizeGroupControl')!.disable();
+                }
+            }
+            else {
+                this.showTurbotControl = false;
+            }
+        }
+        else {
+            this.showTurbotControl = false;
         }
     }
 

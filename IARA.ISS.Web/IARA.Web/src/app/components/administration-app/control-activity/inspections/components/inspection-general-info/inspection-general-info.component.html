@@ -45,6 +45,10 @@
         * {{ 'inspections.report-num-already-exists-error' | tlTranslate }}
     </mat-error>
 
+    <mat-error *ngIf="isReportLocked" class="warn-orange-color">
+        * {{ 'inspections.cannot-edit-inspection-locked-error' | tlTranslate }} {{ lockInspectionHours }} {{ 'inspections.hours-have-passed-error' | tlTranslate }}
+    </mat-error>
+
     <inspectors-table formControlName="inspectorsControl"
                       [institutions]="institutions"
                       (headInspectorChanged)="onReportNumChanged($event)">

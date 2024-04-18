@@ -74,7 +74,7 @@
                             <div *ngIf="showDocumentActionButtons && admissionDeclaration.status !== logBookPageStatusesEnum.Canceled"
                                  [fxFlex]="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished) ? 11 : 7"
                                  fxLayout="row wrap">
-                                <button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished) && _pagesPermissions.canEditFirstSaleLogBookRecords"
+                                <button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished) && _pagesPermissions.canAddFirstSaleLogBookRecords"
                                         mat-icon-button
                                         color="accent"
                                         (click)="onAddFirstSaleDocumentFromAdmissionDeclarationBtnClicked(admissionDeclaration)"
@@ -145,7 +145,8 @@
                             <div *ngIf="showDocumentActionButtons && transportationDocument.status !== logBookPageStatusesEnum.Canceled"
                                  [fxFlex]="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished) ? 11 : 7"
                                  fxLayout="row wrap">
-                                <button *ngIf="!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished"
+                                <button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
+                                            && (_pagesPermissions.canAddAdmissionLogBookRecords || _pagesPermissions.canAddFirstSaleLogBookRecords)"
                                         mat-icon-button
                                         color="accent"
                                         matTooltip="{{ 'catches-and-sales.document-attachment' | tlTranslate }}"
@@ -343,7 +344,11 @@
                                && row.data.status !== logBookPageStatusesEnum.Canceled
                                && row.data.status !== logBookPageStatusesEnum.Missing
                                && row.data.hasOriginDeclaration
-                               && showDocumentActionButtons"
+                               && showDocumentActionButtons
+                               && (_pagesPermissions.canAddAdmissionLogBookRecords
+                                 || _pagesPermissions.canAddFirstSaleLogBookRecords
+                                 || _pagesPermissions.canAddTransportationLogBookRecords
+                                 || _pagesPermissions.canEditShipLogBookRecords)"
                         mat-icon-button
                         color="accent"
                         matTooltip="{{ 'catches-and-sales.document-attachment' | tlTranslate }}"

@@ -175,7 +175,7 @@
                            [showAddButton]="canAddRecords && (shipId === null || shipId === undefined) && (logBookPageId === null || logBookPageId === undefined)"
                            [showInactiveRecords]="canRestoreRecords && (shipId === null || shipId === undefined)"
                            (addButtonClicked)="addEditEntry(undefined, false)">
-                <row-detail *ngIf="canReadAuanRecords 
+                <row-detail *ngIf="canReadAuanRecords
                                    && (logBookPageId === null || logBookPageId === undefined)">
                     <ng-template let-row="row"
                                  ngx-datatable-row-detail-template>
@@ -231,9 +231,9 @@
 
                             <tl-icon-button *ngIf="row.data.isActive  && row.data.inspectionState === inspectionStatesEnum.Draft
                                                    && canEditRecords
-                                                   && (shipId === null || shipId === undefined)
                                                    && isInspector
-                                                   && (row.data.createdByUserId === userId || canEditInspectionNumber)"
+                                                   && (shipId === null || shipId === undefined)
+                                                   && ((row.data.createdByUserId === userId && !row.data.isReportLocked) || canEditLockedInspections)"
                                             icon="edit"
                                             (buttonClicked)="addEditEntry(row.data, false)"
                                             iconClass="accent-color"
@@ -242,8 +242,8 @@
 
                             <tl-icon-button *ngIf="row.data.isActive && row.data.inspectionState === inspectionStatesEnum.Submitted
                                                     && canEditRecords
-                                                    && (shipId === null || shipId === undefined)
                                                     && isInspector
+                                                    && (shipId === null || shipId === undefined)
                                                     && (row.data.createdByUserId === userId || canEditInspectionNumber)"
                                             icon="fa-signature"
                                             (buttonClicked)="signEntry(row.data)"
@@ -251,22 +251,22 @@
                                             tooltipText="{{ 'inspections.sign-inspection' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.data.isActive 
-                                                   && row.data.createdByCurrentUser 
-                                                   && canDeleteRecords 
-                                                   && (shipId === null || shipId === undefined) 
-                                                   && isInspector"
+                            <tl-icon-button *ngIf="row.data.isActive
+                                                   && row.data.createdByCurrentUser
+                                                   && canDeleteRecords
+                                                   && isInspector
+                                                   && (shipId === null || shipId === undefined)"
                                             icon="delete"
                                             (buttonClicked)="deleteEntry(row.data)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'inspections.delete' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="!row.data.isActive 
-                                                   && row.data.createdByCurrentUser 
-                                                   && canRestoreRecords 
-                                                   && (shipId === null || shipId === undefined) 
-                                                   && isInspector"
+                            <tl-icon-button *ngIf="!row.data.isActive
+                                                   && row.data.createdByCurrentUser
+                                                   && canRestoreRecords
+                                                   && isInspector
+                                                   && (shipId === null || shipId === undefined)"
                                             icon="restore"
                                             (buttonClicked)="restoreEntry(row.data)"
                                             iconClass="accent-color"
