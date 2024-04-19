@@ -7,14 +7,15 @@
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true">
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
             <inspection-general-info formControlName="generalInfoControl"
                                      [institutions]="institutions"
                                      [canEditNumber]="canEditNumber"
-                                     [reportNumAlreadyExists]="reportNumAlreadyExistsError">
+                                     [reportNumAlreadyExists]="reportNumAlreadyExistsError"
+                                     [isReportLocked]="isInspectionLockedError">
             </inspection-general-info>
 
             <inspected-port formControlName="portControl"

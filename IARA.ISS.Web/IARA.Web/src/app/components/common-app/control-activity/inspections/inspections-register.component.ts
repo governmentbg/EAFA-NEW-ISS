@@ -88,6 +88,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     public readonly canExportRecords: boolean;
     public readonly canDownloadRecords: boolean;
     public readonly canReadAuanRecords: boolean;
+    public readonly canEditLockedInspections: boolean;
 
     public canResolveCrossChecks: boolean = false;
 
@@ -139,6 +140,8 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         this.canDownloadRecords = permissions.has(PermissionsEnum.InspectionDownload);
         this.canExportRecords = permissions.has(PermissionsEnum.InspectionExport);
         this.canReadAuanRecords = permissions.hasAny(PermissionsEnum.AuanRegisterReadAll, PermissionsEnum.AuanRegisterRead);
+        this.canEditLockedInspections = permissions.has(PermissionsEnum.InspectionLockedEdit);
+
         this.userId = authService.User!.userId!;
 
         this.buildForm();
@@ -237,7 +240,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
 
             this.gridManager.refreshData();
         }
-        
+
         if (this.logBookPageId !== undefined && this.logBookPageId !== null && this.logBookType !== undefined && this.logBookType !== null) {
             switch (this.logBookType) {
                 case LogBookTypesEnum.Admission:
@@ -463,10 +466,11 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 }
             }
 
+            //ако няма правото за връщане за редакция, може да коригира само своите инспекции, ако не са минали 48 часа от създаването им
             if ((this.shipId === null || this.shipId === undefined)
                 && entry.inspectionState !== InspectionStatesEnum.Draft
                 && entry.inspectionType !== InspectionTypesEnum.OTH
-                && this.canEditInspectionNumber
+                && (this.canEditLockedInspections || (!entry.isReportLocked && entry.createdByUserId === this.userId)) 
             ) {
                 rightSideButtons.push({
                     id: 'more-corrections-needed',
@@ -476,11 +480,14 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                     isVisibleInViewMode: true,
                 });
             }
-
+            
             data = new InspectionDialogParamsModel({
                 id: entry.id,
                 viewMode: readOnly,
                 canEditNumber: this.canEditInspectionNumber,
+                canEditLockedInspections: this.canEditLockedInspections,
+                isReportLocked: entry.isReportLocked,
+                userIsSameAsInspector: entry.createdByUserId === this.userId,
                 pageCode: entry.inspectionState === InspectionStatesEnum.Signed ? PageCodeEnum.SignInspections : PageCodeEnum.Inspections,
                 service: this.service
             });

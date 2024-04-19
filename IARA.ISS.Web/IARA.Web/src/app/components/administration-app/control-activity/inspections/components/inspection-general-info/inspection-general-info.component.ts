@@ -16,6 +16,8 @@ import { TLValidators } from '@app/shared/utils/tl-validators';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { DatePipe } from '@angular/common';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
+import { SystemParametersService } from '@app/services/common-app/system-parameters.service';
 
 @Component({
     selector: 'inspection-general-info',
@@ -36,6 +38,9 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
     public reportNumAlreadyExists: boolean = false;
 
     @Input()
+    public isReportLocked: boolean = false;
+
+    @Input()
     public inspectionType: InspectionTypesEnum | undefined;
 
     public readonly today: Date = new Date();
@@ -49,21 +54,25 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
     private numberWritten: boolean = false;
     private skipDisabledCheck: boolean = false;
     private codes: string[] = [];
+    private lockInspectionHours: number | undefined;
 
     private readonly service: InspectionsService;
     private readonly translate: FuseTranslationLoaderService;
+    private readonly systemParametersService: SystemParametersService;
     private readonly datePipe: DatePipe;
 
     public constructor(
         @Self() ngControl: NgControl,
         service: InspectionsService,
         translate: FuseTranslationLoaderService,
+        systemParametersService: SystemParametersService,
         datePipe: DatePipe
     ) {
         super(ngControl);
 
         this.service = service;
         this.translate = translate;
+        this.systemParametersService = systemParametersService;
         this.datePipe = datePipe;
 
         this.onMarkAsTouched.subscribe({
@@ -73,10 +82,13 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
         });
     }
 
-    public ngOnInit(): void {
+    public async ngOnInit(): Promise<void> {
         this.initCustomFormControl();
 
         this.setDateLabels();
+
+        const systemParameters: SystemPropertiesDTO = await this.systemParametersService.systemParameters();
+        this.lockInspectionHours = systemParameters.lockInspectionAfterHours;
 
         if (!this.canEditNumber) {
             this.form.get('reportNumberControl')!.setValidators([Validators.required, this.formatUserNumber()]);

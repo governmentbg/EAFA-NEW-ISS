@@ -59,4 +59,7 @@ export class InspectionCatchMeasureDTO {
 
     @StrictlyTyped(VesselDuringInspectionDTO)
     public originShip?: VesselDuringInspectionDTO;
+
+    @StrictlyTyped(Boolean)
+    public hasMissingProperties?: boolean;
 }

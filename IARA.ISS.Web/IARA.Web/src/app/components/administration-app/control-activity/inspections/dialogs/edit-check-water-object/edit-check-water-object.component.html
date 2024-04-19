@@ -7,7 +7,7 @@
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true">
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -15,8 +15,10 @@
                                      [institutions]="institutions"
                                      [canEditNumber]="canEditNumber"
                                      [inspectionType]="inspectionTypesEnum.CWO"
-                                     [reportNumAlreadyExists]="reportNumAlreadyExistsError">
+                                     [reportNumAlreadyExists]="reportNumAlreadyExistsError"
+                                     [isReportLocked]="isInspectionLockedError">
             </inspection-general-info>
+
             <patrol-vehicles-table formControlName="patrolVehiclesControl"
                                    [hasCoordinates]="false">
             </patrol-vehicles-table>
@@ -36,23 +38,30 @@
                           formControlName="nameControl"
                           label="{{ 'inspections.water-object-name' | tlTranslate }}">
                 </tl-input>
+
                 <tl-autocomplete fxFlex="50"
                                  formControlName="typeControl"
                                  [options]="waterBodyTypes"
                                  label="{{ 'inspections.water-object-type' | tlTranslate }}">
                 </tl-autocomplete>
             </div>
+
             <inspection-toggle-list formControlName="togglesControl"
                                     [toggles]="toggles">
             </inspection-toggle-list>
+
             <inspection-map-viewer formControlName="mapControl">
             </inspection-map-viewer>
+
             <water-fishing-gears-table formControlName="fishingGearsControl">
             </water-fishing-gears-table>
+
             <water-vessels-table formControlName="vesselsControl">
             </water-vessels-table>
+
             <water-engines-table formControlName="enginesControl">
             </water-engines-table>
+
             <water-catches-table formControlName="catchesControl"
                                  [fishes]="fishes">
             </water-catches-table>

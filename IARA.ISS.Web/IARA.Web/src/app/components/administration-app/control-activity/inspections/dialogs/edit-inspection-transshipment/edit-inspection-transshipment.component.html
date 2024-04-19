@@ -7,15 +7,17 @@
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true">
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
             <inspection-general-info formControlName="generalInfoControl"
                                      [institutions]="institutions"
                                      [canEditNumber]="canEditNumber"
-                                     [reportNumAlreadyExists]="reportNumAlreadyExistsError">
+                                     [reportNumAlreadyExists]="reportNumAlreadyExistsError"
+                                     [isReportLocked]="isInspectionLockedError">
             </inspection-general-info>
+
             <patrol-vehicles-table formControlName="patrolVehiclesControl"
                                    [isWaterVehicle]="true">
             </patrol-vehicles-table>
@@ -86,6 +88,7 @@
                                      [fishSex]="fishSex"
                                      [turbotSizeGroups]="turbotSizeGroups">
             </inspected-catches-table>
+
             <tl-textarea formControlName="transshipmentCatchViolationControl"
                          [minRows]="3"
                          label="{{ 'inspections.violation' | tlTranslate }}">
@@ -100,6 +103,7 @@
                      [minRows]="3"
                      label="{{ 'inspections.sending-ship-captain-comment' | tlTranslate }}">
         </tl-textarea>
+
         <tl-textarea formControlName="receivingShipcaptainCommentControl"
                      [minRows]="3"
                      label="{{ 'inspections.receiving-ship-captain-comment' | tlTranslate }}">

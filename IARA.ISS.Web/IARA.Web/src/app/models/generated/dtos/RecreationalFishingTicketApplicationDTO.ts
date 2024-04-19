@@ -59,6 +59,9 @@ export class RecreationalFishingTicketApplicationDTO {
     public applicationStatusName?: string;
 
     @StrictlyTyped(String)
+    public regixErrorDescription?: string;
+
+    @StrictlyTyped(String)
     public paymentStatusName?: string;
 
     @StrictlyTyped(Number)

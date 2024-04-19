@@ -142,6 +142,14 @@
                       label="{{ 'inspections.market-catch-unloaded-quantity' | tlTranslate }}">
             </tl-input>
 
+            <tl-autocomplete *ngIf="showTurbotControl"
+                             fxFlex="33"
+                             formControlName="turbotSizeGroupControl"
+                             label="{{ 'inspections.market-catch-turbot-size-group' | tlTranslate }}"
+                             tooltipResourceName="inspections.market-catch-turbot-size-group-helper"
+                             [options]="turbotSizeGroups">
+            </tl-autocomplete>
+
             <tl-autocomplete fxFlex="33"
                              formControlName="presentationControl"
                              [options]="presentations"

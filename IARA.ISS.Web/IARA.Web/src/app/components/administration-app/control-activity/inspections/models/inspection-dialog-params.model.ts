@@ -3,6 +3,9 @@ import { PageCodeEnum } from '@app/enums/page-code.enum';
 
 export class InspectionDialogParamsModel extends DialogParamsModel {
     public canEditNumber: boolean = false;
+    public canEditLockedInspections: boolean = false;
+    public isReportLocked: boolean = false;
+    public userIsSameAsInspector: boolean = false;  
     public pageCode: PageCodeEnum = PageCodeEnum.Inspections;
 
     public constructor(params?: Partial<InspectionDialogParamsModel>) {

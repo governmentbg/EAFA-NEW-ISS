@@ -7,18 +7,21 @@
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true">
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
             <inspection-general-info formControlName="generalInfoControl"
                                      [institutions]="institutions"
                                      [canEditNumber]="canEditNumber"
-                                     [reportNumAlreadyExists]="reportNumAlreadyExistsError">
+                                     [reportNumAlreadyExists]="reportNumAlreadyExistsError"
+                                     [isReportLocked]="isInspectionLockedError">
             </inspection-general-info>
+
             <patrol-vehicles-table formControlName="patrolVehiclesControl"
                                    [isWaterVehicle]="false">
             </patrol-vehicles-table>
+
             <inspection-map-viewer formControlName="mapControl">
             </inspection-map-viewer>
         </div>
@@ -34,11 +37,13 @@
                              [options]="aquacultures"
                              label="{{ 'inspections.aquaculture' | tlTranslate }}">
             </tl-autocomplete>
+
             <inspected-legal formControlName="ownerControl"
                              [countries]="countries"
                              [legalType]="inspectedPersonTypeEnum.OwnerLegal"
                              title="{{ 'inspections.legal-entity' | tlTranslate }}">
             </inspected-legal>
+
             <inspected-person formControlName="representerControl"
                               [countries]="countries"
                               [personType]="inspectedPersonTypeEnum.ReprsPers"
@@ -68,9 +73,11 @@
                                      [hasTurbotSizeGroups]="false"
                                      [hasCatchType]="false">
             </inspected-catches-table>
+
             <inspection-toggle-list formControlName="catchTogglesControl"
                                     [toggles]="catchToggles">
             </inspection-toggle-list>
+
             <tl-input formControlName="otherFishingGearControl"
                       label="{{ 'inspections.other-fishing-gear' | tlTranslate }}">
             </tl-input>

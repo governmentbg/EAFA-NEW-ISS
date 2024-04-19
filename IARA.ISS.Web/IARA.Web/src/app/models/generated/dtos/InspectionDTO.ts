@@ -46,5 +46,8 @@ export class InspectionDTO {
     public createdByUserId?: number;
 
     @StrictlyTyped(Boolean)
+    public isReportLocked?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isActive?: boolean;
 }

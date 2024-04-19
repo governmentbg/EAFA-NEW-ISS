@@ -452,6 +452,13 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
                 next: (newStatus: ApplicationStatusesEnum) => {
                     status = newStatus;
                     this.openEditDialog(ticket, status, ticket.prevStatusCode, viewMode, isOnline);
+
+                    if (isOnline) {
+                        this.onlineGrid.refreshData();
+                    }
+                    else {
+                        this.offlineGrid.refreshData();
+                    }
                 }
             });
         }

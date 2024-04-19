@@ -39,6 +39,9 @@ export class InspectedDeclarationCatchDTO {
     @StrictlyTyped(Number)
     public catchZoneId?: number;
 
+    @StrictlyTyped(Number)
+    public turbotSizeGroupId?: number;
+
     @StrictlyTyped(VesselDuringInspectionDTO)
     public originShip?: VesselDuringInspectionDTO;
 

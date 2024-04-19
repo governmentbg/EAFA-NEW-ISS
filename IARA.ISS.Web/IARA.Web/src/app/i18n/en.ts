@@ -2729,6 +2729,7 @@
         'market-catch-quantity': 'Quantity (kg)',
         'market-catch-count': 'Count',
         'market-catch-unloaded-quantity': 'Unloaded quantity (kg)',
+        'market-catch-turbot-size-group': 'Size group',
         'market-catch-presentation': 'Presentation',
         'market-catch-zone': 'Catch zone',
         'market-first-sale-log-book': 'First sale declaration',
@@ -2803,6 +2804,8 @@
         'undo-delete': 'Return the deleted inspection',
         'view-inspection-dialog-title': 'Review inspection',
         'edit-inspection-dialog-title': 'Edit inspection',
+        'cannot-edit-inspection-locked-error': 'You cannot edit inspection',
+        'hours-have-passed-error': ' hours after it was created. In order to edit inspection for the locked period, please contact an administrator',
 
         'delete-inspection-dialog-title': 'Remove inspection',
         'delete-inspection-dialog-message': 'Are you sure you want to remove the inspection?',
