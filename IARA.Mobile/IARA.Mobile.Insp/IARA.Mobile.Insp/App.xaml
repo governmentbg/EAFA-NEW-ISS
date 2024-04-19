@@ -12,8 +12,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <!--  CONVERTERS  -->
-            <xct:VariableMultiValueConverter x:Key="All"
-                    ConditionType="All" />
+            <xct:VariableMultiValueConverter x:Key="All" ConditionType="All" />
             <converters:ReviewToWidthConverter x:Key="ReviewToWidth" />
             <converters:ReviewDialogToWidthConverter x:Key="ReviewDialogToWidth" />
             <tlConverters:IsNotNullConverter x:Key="IsNotNull" />
@@ -40,108 +39,85 @@
             <Color x:Key="GrayColor">#e2e2e2</Color>
             <Color x:Key="ErrorColor">#ff5252</Color>
             <Color x:Key="DisabledColor">#e1e1e2</Color>
-            <SolidColorBrush x:Key="PrimaryBrush"
-                    Color="{StaticResource Primary}" />
+            <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}" />
             <!--  END COLORS  -->
             <!--  GLOBAL STYLES  -->
-            <Style x:Name="tlTable"
-                    TargetType="tl:TLTable">
+            <Style x:Name="tlTable" TargetType="tl:TLTable">
                 <Setter Property="TitleFontSize" Value="22" />
                 <Setter Property="BorderColor" Value="{StaticResource GrayColor}" />
             </Style>
-            <Style x:Name="tlResponsiveTable"
-                    TargetType="tl:TLResponsiveTable">
+            <Style x:Name="tlResponsiveTable" TargetType="tl:TLResponsiveTable">
                 <Setter Property="TitleFontSize" Value="22" />
                 <Setter Property="BorderColor" Value="{StaticResource GrayColor}" />
             </Style>
-            <Style x:Name="waterFishingGearsView"
-                    TargetType="lc:WaterFishingGearsView">
+            <Style x:Name="waterFishingGearsView" TargetType="lc:WaterFishingGearsView">
                 <Setter Property="TitleFontSize" Value="22" />
                 <Setter Property="BorderColor" Value="{StaticResource GrayColor}" />
             </Style>
-            <Style x:Name="waterVesselsView"
-                    TargetType="lc:WaterVesselsView">
+            <Style x:Name="waterVesselsView" TargetType="lc:WaterVesselsView">
                 <Setter Property="TitleFontSize" Value="22" />
                 <Setter Property="BorderColor" Value="{StaticResource GrayColor}" />
             </Style>
-            <Style x:Name="waterCatchesView"
-                    TargetType="lc:WaterCatchesView">
+            <Style x:Name="waterCatchesView" TargetType="lc:WaterCatchesView">
                 <Setter Property="TitleFontSize" Value="22" />
                 <Setter Property="BorderColor" Value="{StaticResource GrayColor}" />
             </Style>
-            <Style x:Name="enginesView"
-                    TargetType="lc:EnginesView">
+            <Style x:Name="enginesView" TargetType="lc:EnginesView">
                 <Setter Property="TitleFontSize" Value="22" />
                 <Setter Property="BorderColor" Value="{StaticResource GrayColor}" />
             </Style>
-            <Style x:Name="permitLicensesView"
-                    TargetType="lc:PermitLicensesView">
+            <Style x:Name="permitLicensesView" TargetType="lc:PermitLicensesView">
                 <Setter Property="TitleFontSize" Value="22" />
                 <Setter Property="BorderColor" Value="{StaticResource GrayColor}" />
             </Style>
-            <Style x:Name="logBooksView"
-                    TargetType="lc:LogBooksView">
+            <Style x:Name="logBooksView" TargetType="lc:LogBooksView">
                 <Setter Property="TitleFontSize" Value="22" />
                 <Setter Property="BorderColor" Value="{StaticResource GrayColor}" />
             </Style>
-            <Style x:Name="inspectorsView"
-                    TargetType="lc:InspectorsView">
+            <Style x:Name="inspectorsView" TargetType="lc:InspectorsView">
                 <Setter Property="TitleFontSize" Value="22" />
                 <Setter Property="BorderColor" Value="{StaticResource GrayColor}" />
             </Style>
-            <Style x:Name="patrolVehiclesView"
-                    TargetType="lc:PatrolVehiclesView">
+            <Style x:Name="patrolVehiclesView" TargetType="lc:PatrolVehiclesView">
                 <Setter Property="TitleFontSize" Value="22" />
                 <Setter Property="BorderColor" Value="{StaticResource GrayColor}" />
             </Style>
-            <Style x:Name="catchInspectionsView"
-                    TargetType="lc:CatchInspectionsView">
+            <Style x:Name="catchInspectionsView" TargetType="lc:CatchInspectionsView">
                 <Setter Property="TitleFontSize" Value="22" />
                 <Setter Property="BorderColor" Value="{StaticResource GrayColor}" />
             </Style>
-            <Style x:Name="fishingGearsView"
-                    TargetType="lc:FishingGearsView">
+            <Style x:Name="fishingGearsView" TargetType="lc:FishingGearsView">
                 <Setter Property="TitleFontSize" Value="22" />
                 <Setter Property="BorderColor" Value="{StaticResource GrayColor}" />
             </Style>
-            <Style x:Name="extendedLocationView"
-                    TargetType="lc:ExtendedLocationView">
+            <Style x:Name="extendedLocationView" TargetType="lc:ExtendedLocationView">
                 <Setter Property="TitleFontSize" Value="18" />
             </Style>
-            <Style x:Name="tlLocationView"
-                    TargetType="lc:TLLocationView">
+            <Style x:Name="tlLocationView" TargetType="lc:TLLocationView">
                 <Setter Property="TitleFontSize" Value="18" />
             </Style>
-            <Style x:Name="sectionView"
-                    TargetType="sv:SectionView">
+            <Style x:Name="sectionView" TargetType="sv:SectionView">
                 <Setter Property="FontSize" Value="18" />
             </Style>
-            <Style x:Name="fishingShipView"
-                    TargetType="lc:FishingShipView">
+            <Style x:Name="fishingShipView" TargetType="lc:FishingShipView">
                 <Setter Property="FontSize" Value="18" />
             </Style>
-            <Style x:Name="shipChecksView"
-                    TargetType="lc:ShipChecksView">
+            <Style x:Name="shipChecksView" TargetType="lc:ShipChecksView">
                 <Setter Property="FontSize" Value="18" />
             </Style>
-            <Style x:Name="shipCatchesView"
-                    TargetType="lc:ShipCatchesView">
+            <Style x:Name="shipCatchesView" TargetType="lc:ShipCatchesView">
                 <Setter Property="FontSize" Value="18" />
             </Style>
-            <Style x:Name="shipFishingGearsView"
-                    TargetType="lc:ShipFishingGearsView">
+            <Style x:Name="shipFishingGearsView" TargetType="lc:ShipFishingGearsView">
                 <Setter Property="FontSize" Value="18" />
             </Style>
-            <Style x:Name="signaturesView"
-                    TargetType="lc:SignaturesView">
+            <Style x:Name="signaturesView" TargetType="lc:SignaturesView">
                 <Setter Property="FontSize" Value="18" />
             </Style>
-            <Style x:Name="additionalInfoView"
-                    TargetType="lc:AdditionalInfoView">
+            <Style x:Name="additionalInfoView" TargetType="lc:AdditionalInfoView">
                 <Setter Property="FontSize" Value="18" />
             </Style>
-            <Style x:Name="inspectionFiles"
-                    TargetType="lc:InspectionFilesView">
+            <Style x:Name="inspectionFiles" TargetType="lc:InspectionFilesView">
                 <Setter Property="FontSize" Value="18" />
             </Style>
             <Style TargetType="Frame">
@@ -152,27 +128,23 @@
             <Style TargetType="ActivityIndicator">
                 <Setter Property="Color" Value="{StaticResource Primary}" />
             </Style>
-            <Style x:Name="label"
-                    TargetType="Label">
+            <Style x:Name="label" TargetType="Label">
                 <Setter Property="LineBreakMode" Value="NoWrap" />
                 <Setter Property="TextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
                 <Setter Property="FontSize" Value="16" />
             </Style>
-            <Style x:Name="radioButton"
-                    TargetType="RadioButton">
+            <Style x:Name="radioButton" TargetType="RadioButton">
                 <Setter Property="TextColor" Value="Black" />
                 <Setter Property="FontSize" Value="16" />
             </Style>
-            <Style x:Name="button"
-                    TargetType="Button">
+            <Style x:Name="button" TargetType="Button">
                 <Setter Property="HeightRequest" Value="40" />
                 <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
                 <Setter Property="TextColor" Value="White" />
                 <Setter Property="CornerRadius" Value="3" />
                 <Setter Property="FontSize" Value="16" />
             </Style>
-            <Style x:Name="tlMenuTextButton"
-                    TargetType="sv:TLMenuTextButton">
+            <Style x:Name="tlMenuTextButton" TargetType="sv:TLMenuTextButton">
                 <Setter Property="HeightRequest" Value="40" />
                 <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
                 <Setter Property="TextColor" Value="White" />
@@ -195,77 +167,67 @@
             <Style TargetType="sv:TLHeaderLine">
                 <Setter Property="ImageColor" Value="{StaticResource Primary}" />
             </Style>
-            <Style x:Name="tlButton"
-                    TargetType="sv:TLButton">
+            <Style x:Name="tlButton" TargetType="sv:TLButton">
                 <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
                 <Setter Property="TextColor" Value="White" />
                 <Setter Property="CornerRadius" Value="3" />
                 <Setter Property="FontSize" Value="16" />
             </Style>
-            <Style x:Name="tlRichLabel"
-                    TargetType="tl:TLRichLabel">
+            <Style x:Name="tlRichLabel" TargetType="tl:TLRichLabel">
                 <Setter Property="LineBreakMode" Value="WordWrap" />
                 <Setter Property="TextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
                 <Setter Property="FontSize" Value="16" />
             </Style>
-            <Style x:Name="tlEntry"
-                    TargetType="tl:TLEntry">
+            <Style x:Name="tlEntry" TargetType="tl:TLEntry">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
                 <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
                 <Setter Property="FontSize" Value="16" />
             </Style>
-            <Style x:Name="tlCheckBoxWithEntry"
-                    TargetType="lc:TLCheckBoxWithEntry">
+            <Style x:Name="tlCheckBoxWithEntry" TargetType="lc:TLCheckBoxWithEntry">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
                 <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
                 <Setter Property="FontSize" Value="16" />
             </Style>
-            <Style x:Name="tlCheckBoxWithPicker"
-                    TargetType="lc:TLCheckBoxWithPicker">
+            <Style x:Name="tlCheckBoxWithPicker" TargetType="lc:TLCheckBoxWithPicker">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
                 <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
                 <Setter Property="FontSize" Value="16" />
             </Style>
-            <Style x:Name="tlMultiToggleWithEntry"
-                    TargetType="lc:TLMultiToggleWithEntry">
+            <Style x:Name="tlMultiToggleWithEntry" TargetType="lc:TLMultiToggleWithEntry">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
                 <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
                 <Setter Property="FontSize" Value="16" />
             </Style>
-            <Style x:Name="tlEntryWithType"
-                    TargetType="sv:TLEntryWithType">
+            <Style x:Name="tlEntryWithType" TargetType="sv:TLEntryWithType">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
                 <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
                 <Setter Property="FontSize" Value="16" />
             </Style>
-            <Style x:Name="tlEditor"
-                    TargetType="tl:TLEditor">
+            <Style x:Name="tlEditor" TargetType="tl:TLEditor">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
                 <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
                 <Setter Property="FontSize" Value="16" />
             </Style>
-            <Style x:Name="BlankPickerStyle"
-                    TargetType="tl:TLBlankPicker">
+            <Style x:Name="BlankPickerStyle" TargetType="tl:TLBlankPicker">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
                 <Setter Property="IconColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
                 <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
             </Style>
-            <Style x:Name="PickerStyle"
-                    TargetType="tl:TLPicker">
+            <Style x:Name="PickerStyle" TargetType="tl:TLPicker">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
@@ -275,9 +237,9 @@
                 <Setter Property="DialogCancelButtonColor" Value="SlateGray" />
                 <Setter Property="DialogSeparatorColor" Value="LightGray" />
                 <Setter Property="DialogHasLatinToCyrillic" Value="False" />
+                <Setter Property="SmartSearch" Value="False" />
             </Style>
-            <Style x:Name="MultiPickerStyle"
-                    TargetType="tl:TLMultiPicker">
+            <Style x:Name="MultiPickerStyle" TargetType="tl:TLMultiPicker">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
@@ -289,9 +251,9 @@
                 <Setter Property="DialogHasLatinToCyrillic" Value="False" />
                 <Setter Property="ChipColor" Value="{StaticResource Primary}" />
                 <Setter Property="ChipTextColor" Value="White" />
+                <Setter Property="SmartSearch" Value="False" />
             </Style>
-            <Style x:Name="InfinitePickerStyle"
-                    TargetType="tl:TLInfinitePicker">
+            <Style x:Name="InfinitePickerStyle" TargetType="tl:TLInfinitePicker">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
@@ -302,8 +264,7 @@
                 <Setter Property="DialogSeparatorColor" Value="LightGray" />
                 <Setter Property="DialogHasLatinToCyrillic" Value="False" />
             </Style>
-            <Style x:Name="CustomInfinitePickerStyle"
-                    TargetType="lc:CustomInfinitePicker">
+            <Style x:Name="CustomInfinitePickerStyle" TargetType="lc:CustomInfinitePicker">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
@@ -315,8 +276,7 @@
                 <Setter Property="DialogHasLatinToCyrillic" Value="False" />
                 <Setter Property="DialogAddButtonColor" Value="{StaticResource Primary}" />
             </Style>
-            <Style x:Name="CustomCheckBoxInfinitePickerStyle"
-                    TargetType="lc:CustomCheckBoxWithPicker">
+            <Style x:Name="CustomCheckBoxInfinitePickerStyle" TargetType="lc:CustomCheckBoxWithPicker">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
@@ -327,16 +287,14 @@
                 <Setter Property="DialogSeparatorColor" Value="LightGray" />
                 <Setter Property="DialogHasLatinToCyrillic" Value="False" />
             </Style>
-            <Style x:Name="tlNativePicker"
-                    TargetType="tl:TLNativePicker">
+            <Style x:Name="tlNativePicker" TargetType="tl:TLNativePicker">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
                 <Setter Property="IconColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
                 <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
             </Style>
-            <Style x:Name="tlDatePicker"
-                    TargetType="tl:TLDatePicker">
+            <Style x:Name="tlDatePicker" TargetType="tl:TLDatePicker">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
@@ -344,8 +302,7 @@
                 <Setter Property="DateToStringConverter" Value="{StaticResource DateToString}" />
                 <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
             </Style>
-            <Style x:Name="DateTimePickerStyle"
-                    TargetType="tl:TLDateTimePicker">
+            <Style x:Name="DateTimePickerStyle" TargetType="tl:TLDateTimePicker">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
@@ -374,43 +331,37 @@
                 <Setter Property="DialogMinutesText" Value="Minutes" />
                 <Setter Property="FontSize" Value="16" />
             </Style>
-            <Style x:Name="tlTimePicker"
-                    TargetType="tl:TLTimePicker">
+            <Style x:Name="tlTimePicker" TargetType="tl:TLTimePicker">
                 <Setter Property="ErrorColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="DisabledBackgroundColor" Value="{StaticResource DisabledColor}" />
                 <Setter Property="BorderColor" Value="Gray" />
                 <Setter Property="IconColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
                 <Setter Property="TitleTextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
             </Style>
-            <Style x:Name="tlCheckView"
-                    TargetType="tl:TLCheckView">
+            <Style x:Name="tlCheckView" TargetType="tl:TLCheckView">
                 <Setter Property="TextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
                 <Setter Property="Color" Value="{StaticResource Primary}" />
                 <Setter Property="DisabledColor" Value="Gray" />
             </Style>
-            <Style x:Name="tlSwitchView"
-                    TargetType="tl:TLSwitchView">
+            <Style x:Name="tlSwitchView" TargetType="tl:TLSwitchView">
                 <Setter Property="TextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
                 <Setter Property="OnColor" Value="{StaticResource PrimaryLight}" />
                 <Setter Property="ThumbColor" Value="{StaticResource Primary}" />
                 <Setter Property="DisabledOnColor" Value="LightGray" />
                 <Setter Property="DisabledThumbColor" Value="Gray" />
             </Style>
-            <Style x:Name="tlCheckListView"
-                    TargetType="tl:TLCheckListView">
+            <Style x:Name="tlCheckListView" TargetType="tl:TLCheckListView">
                 <Setter Property="ButtonSpacing" Value="5" />
                 <Setter Property="LabelMargin" Value="5,0,0,0" />
                 <Setter Property="LabelSelectIndex" Value="-1" />
             </Style>
-            <Style x:Name="tlRadioButtonListView"
-                    TargetType="tl:TLRadioButtonListView">
+            <Style x:Name="tlRadioButtonListView" TargetType="tl:TLRadioButtonListView">
                 <Setter Property="ButtonSpacing" Value="10" />
                 <Setter Property="LabelMargin" Value="5,0,0,0" />
                 <Setter Property="LabelSelectIndex" Value="-1" />
                 <Setter Property="ButtonColor" Value="{StaticResource Primary}" />
             </Style>
-            <Style x:Name="tlMultiToggleView"
-                    TargetType="tl:TLMultiToggleView">
+            <Style x:Name="tlMultiToggleView" TargetType="tl:TLMultiToggleView">
                 <Setter Property="ClearButtonPlacement" Value="Right" />
             </Style>
             <!--  END GLOBAL STYLES  -->

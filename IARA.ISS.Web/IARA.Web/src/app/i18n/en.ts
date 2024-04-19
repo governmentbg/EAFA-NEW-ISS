@@ -4309,6 +4309,7 @@
         'ship-log-book-page-water-type': 'Water type',
         'ship-page-catch-record-quantity-sums': 'Quantities: ',
         'ship-page-declaration-kg': 'kg',
+        'ship-page-declaration-count': 'count',
         'end-date-should-be-different-from-start-date': 'Trip end date should be different from trip start date',
 
         'previous-trip-catch-records-page-number': 'Page number',

@@ -30,6 +30,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
         private List<SelectNomenclatureDto> _countries;
         private InspectionTransboardingDto _edit;
 
+        public static HarbourInspectionViewModel Static { get; set; }
         public HarbourInspectionViewModel()
         {
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
@@ -76,6 +77,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
             TransshippedCatches.Validation.GlobalGroups = new List<string> { Group.IS_REQUIRED };
 
             TransshipmentObservation.Category = InspectionObservationCategory.Transshipment;
+
+            Static = this;
         }
 
         public InspectionTransboardingDto Edit
@@ -234,7 +237,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                             .Select(f => f.PermitLicenseId.Value)
                             .ToList()
                     );
-                    InspectedShip.OnEdit(Edit.ReceivingShipInspection, Edit.ReceivingShipInspection.LastPortVisit);
+                    await InspectedShip.OnEdit(Edit.ReceivingShipInspection, Edit.ReceivingShipInspection.LastPortVisit);
                     ShipCatches.OnEdit(Edit.ReceivingShipInspection);
                     //ShipFishingGears.Toggles.AssignFrom(Edit.ReceivingShipInspection.Checks);
 
@@ -277,13 +280,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
             await TLLoadingHelper.HideFullLoadingScreen();
         }
 
-        private void OnShipSelected(ShipSelectNomenclatureDto nom)
+        private Task OnShipSelected(ShipSelectNomenclatureDto nom)
         {
             ShipDto chosenShip = NomenclaturesTransaction.GetShip(nom.Id);
 
             if (chosenShip == null)
             {
-                return;
+                return Task.CompletedTask;
             }
 
             TransshippedShip.InspectedShip = chosenShip;
@@ -296,6 +299,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
             TransshippedShip.UVI.AssignFrom(chosenShip.UVI);
             TransshippedShip.Flag.AssignFrom(chosenShip.FlagId, TransshippedShip.Flags);
             TransshippedShip.ShipType.AssignFrom(chosenShip.ShipTypeId, TransshippedShip.ShipTypes);
+
+            return Task.CompletedTask;
         }
 
         private Task OnSaveDraft()

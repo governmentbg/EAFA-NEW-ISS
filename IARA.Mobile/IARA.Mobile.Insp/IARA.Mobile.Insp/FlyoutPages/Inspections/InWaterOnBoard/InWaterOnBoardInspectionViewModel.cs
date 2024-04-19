@@ -181,7 +181,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
                 await InspectionGeneralInfo.OnEdit(Edit);
                 PatrolVehicles.OnEdit(Edit.PatrolVehicles);
                 InspectionFiles.OnEdit(Edit);
-                InspectedShip.OnEdit(Edit, Edit.LastPortVisit);
+                await InspectedShip.OnEdit(Edit, Edit.LastPortVisit);
                 ShipCatches.OnEdit(Edit);
                 //ShipFishingGears.Toggles.AssignFrom(Edit.Checks);
                 ShipFishingGears.FishingGears.OnEdit(Edit.FishingGears,

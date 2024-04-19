@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Windows.Input;
-using IARA.Mobile.Application;
+﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
@@ -11,6 +7,10 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Shared.Attributes;
 using IARA.Mobile.Shared.ViewModels.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
@@ -179,18 +179,9 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                     Eik = subject.Eik,
                 };
 
-                Person.Value = new ShipPersonnelDto
-                {
-                    Id = subject.Id.Value,
-                    Code = subject.EgnLnc?.EgnLnc ?? subject.Eik,
-                    Name = subject.FirstName
-                        + (subject.MiddleName == null ? string.Empty : " " + subject.MiddleName)
-                        + (subject.LastName == null ? string.Empty : " " + subject.LastName),
-                    Type = subject.Type,
-                    EntryId = subject.EntryId,
-                };
-                InRegister.Value = true;
+                Person.Value = _people.Find(x => x.Id == subject.Id.Value);
 
+                InRegister.Value = true;
                 Address.Value = subject.RegisteredAddress != null
                     ? subject.RegisteredAddress.BuildAddress()
                     : subject.Address;

@@ -15,18 +15,15 @@
         <converters:CatchAreaToGridLengthConverter x:Key="CatchAreaToGridLength" />
     </tl:TLResponsiveTable.Resources>
     <tl:TLResponsiveTable.TableColumns>
-        <tl:TLTableColumn Text="{rt:Translate FishType, Group=CatchInspection}"
-                Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate FishType, Group=CatchInspection}" Width="*" />
         <tl:TLTableColumn Text="{rt:Translate CatchType, Group=CatchInspection}"
                 Width="300"
                 IsVisible="{Binding BindingContext.ShowType, Source={Reference view}}" />
         <tl:TLTableColumn Text="{rt:Translate UndersizedFish, Group=CatchInspection}"
                 Width="300"
                 IsVisible="{Binding BindingContext.ShowUndersizedCheck, Source={Reference view}}" />
-        <tl:TLTableColumn Text="{rt:Translate CatchCount, Group=CatchInspection}"
-                Width="100" />
-        <tl:TLTableColumn Text="{rt:Translate CatchQuantity, Group=CatchInspection}"
-                Width="150" />
+        <tl:TLTableColumn Text="{rt:Translate CatchCount, Group=CatchInspection}" Width="100" />
+        <tl:TLTableColumn Text="{rt:Translate CatchQuantity, Group=CatchInspection}" Width="150" />
         <tl:TLTableColumn Text="{rt:Translate UnloadedQuantity, Group=CatchInspection}"
                 Width="150"
                 IsVisible="{Binding BindingContext.ShowUnloadedQuantity, Source={Reference view}}" />
@@ -122,8 +119,7 @@
                     BorderColor="LightGray"
                     Padding="10"
                     CornerRadius="5">
-                <tl:TLFlex GrowUnit="250"
-                        MeasureColumnsHeightEqually="True">
+                <tl:TLFlex GrowUnit="250" MeasureColumnsHeightEqually="True">
                     <tl:TLPicker Title="{rt:Translate FishType, Group=CatchInspection}"
                             ValidState="{Binding FishType}"
                             Command="{Binding FishTypeChosen}"
@@ -194,8 +190,7 @@
         </DataTemplate>
     </tl:TLResponsiveTable.DefaultSectionItemTemplate>
     <tl:TLResponsivleTableChild TableLayout="Table" />
-    <tl:TLResponsivleTableChild TableLayout="Sections"
-            QueryWidth="1400" />
+    <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="1400" />
     <tl:TLResponsiveTable.FooterView>
         <Button Text="{rt:Translate AddCatch, Group=CatchInspection}"
                 Command="{Binding AddCatch}"
@@ -204,7 +199,6 @@
                 IsVisible="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
     </tl:TLResponsiveTable.FooterView>
     <tl:TLResponsiveTable.EmptyView>
-        <Label Text="{rt:Translate NoInformation, Group=Common}"
-                Margin="20,10" />
+        <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
     </tl:TLResponsiveTable.EmptyView>
 </tl:TLResponsiveTable>

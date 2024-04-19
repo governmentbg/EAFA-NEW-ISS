@@ -25,6 +25,7 @@ import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loade
 import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
 import { FishNomenclatureDTO } from '@app/models/generated/dtos/FishNomenclatureDTO';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
+import { FishGroupedQuantitiesModel } from '../../models/fish-grouped-quantities.model';
 
 @Component({
     selector: 'log-book-page-products',
@@ -59,9 +60,11 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
     public productPresentations: NomenclatureDTO<number>[] = [];
     public productFreshness: NomenclatureDTO<number>[] = [];
     public productPurposes: NomenclatureDTO<number>[] = [];
+    public turbotSizeGroups: NomenclatureDTO<number>[] = [];
 
     public products: LogBookPageProductDTO[] = [];
-    public fishQuantities: Map<number, number> = new Map<number, number>();
+    public fishQuantities: Map<string, string> = new Map<string, string>();
+    public fishQuantityText: string | undefined;
 
     @ViewChild('productsTable')
     private productsTable!: TLDataTableComponent;
@@ -377,6 +380,9 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
             ),
             NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.FishPurposes, this.service.getFishPurposes.bind(this.service), false
+            ),
+            NomenclatureStore.instance.getNomenclature(
+                NomenclatureTypes.TurbotSizeGroups, this.service.getTurbotSizeGroups.bind(this.service), false
             )
         ).subscribe({
             next: (nomenclatures: NomenclatureDTO<number>[][]) => {
@@ -384,6 +390,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
                 this.productPresentations = nomenclatures[1];
                 this.productFreshness = nomenclatures[2];
                 this.productPurposes = nomenclatures[3];
+                this.turbotSizeGroups = nomenclatures[4];
 
                 this.loader.complete();
             }
@@ -439,18 +446,18 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
                 return null;
             }
 
-            const activeProducts: LogBookPageProductDTO[] = this.products.filter(x => x.isActive);
+            const originalProductsGrouped: FishGroupedQuantitiesModel[] = this.getProductQuantitiesGrouped(this.originProducts);
+            const productsGrouped: FishGroupedQuantitiesModel[] = this.getProductQuantitiesGrouped(this.products.filter(x => x.isActive));
 
-            const groupedProductsByFish: Record<number, LogBookPageProductDTO[]> = CommonUtils.groupBy(activeProducts, x => x.fishId!);
-            const groupedOriginalProductsByFish: Record<number, LogBookPageProductDTO[]> = CommonUtils.groupBy(this.originProducts, x => x.fishId!);
+            for (const product of productsGrouped) {
+                const fishId: number = Number(product.fishId);
+                const productQuantity: number = Number(product.quantity);
 
-            const productsMap: Map<number, LogBookPageProductDTO[]> = new Map<number, LogBookPageProductDTO[]>();
-            for (const productKey of Object.keys(groupedProductsByFish)) {
-                const fishId: number = Number(productKey);
-                const productQuantity: number = groupedProductsByFish[fishId].reduce((sum, current) => sum + current.quantityKg!, 0);
+                const originalProduct: FishGroupedQuantitiesModel | undefined = originalProductsGrouped.find(x => x.fishId === fishId
+                    && (((x.turbotSizeGroupId === undefined || x.turbotSizeGroupId === null) && (product.turbotSizeGroupId === undefined || product.turbotSizeGroupId === null)) || Number(x.turbotSizeGroupId) === Number(product.turbotSizeGroupId)));
 
-                if (groupedOriginalProductsByFish[fishId] !== null && groupedOriginalProductsByFish[fishId] !== undefined) {
-                    const originalProductQuantity = groupedOriginalProductsByFish[fishId].reduce((sum, current) => sum + current.quantityKg!, 0);
+                if (originalProduct !== null && originalProduct !== undefined) {
+                    const originalProductQuantity: number = Number(originalProduct.quantity);
 
                     if (productQuantity > originalProductQuantity) {
                         return { 'productsQuantityNotMatch': true };
@@ -463,16 +470,60 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
     }
 
     private recalculateFishQuantitySums(): void {
-        const productsGroupedByFishType: Record<number, LogBookPageProductDTO[]> = CommonUtils.groupBy(this.products.filter(x => x.isActive), x => x.fishId!);
+        const count: string = this.translate.getValue('catches-and-sales.ship-page-declaration-count');
+        const quantityKg: string = this.translate.getValue('catches-and-sales.ship-page-declaration-kg');
+        const continentalCatch: string = this.translate.getValue('catches-and-sales.ship-page-catch-record-is-continental-catch');
+
+        const productsGroupedByCatchZone: Record<number, LogBookPageProductDTO[]> = CommonUtils.groupBy(this.products.filter(x => x.isActive), x => (x.catchLocation!));
         this.fishQuantities.clear();
 
-        for (const fishTypeId in productsGroupedByFishType) {
-            const quantity: number = productsGroupedByFishType[fishTypeId].reduce((sum, current) => sum + current.quantityKg!, 0);
+        for (const catchZone in productsGroupedByCatchZone) {
+            const productsGrouped: FishGroupedQuantitiesModel[] = this.getProductQuantitiesGrouped(productsGroupedByCatchZone[catchZone]).filter(x => x.quantity! > 0);
 
-            if (quantity > 0) {
-                this.fishQuantities.set(Number(fishTypeId), quantity);
+            if (productsGrouped.length > 0) {
+                const catchLocation: string = CommonUtils.isNullOrEmpty(catchZone) ? continentalCatch : catchZone;
+
+                const fishQuantityText: string = productsGrouped.map(x =>
+                    `${x.fishName}
+                     ${x.turbotSizeGroupName !== undefined && x.turbotSizeGroupName !== null ? ` - ${x.turbotSizeGroupName}` : ''}:
+                     ${x.turbotCount !== undefined && x.turbotCount !== null ? ` ${x.turbotCount} ${count} - ` : ''}
+                     ${x.quantity?.toFixed(2)} ${quantityKg}`
+                ).join('; ');
+
+                this.fishQuantities.set(catchLocation, fishQuantityText);
             }
         }
+    }
+
+    private getProductQuantitiesGrouped(fishes: LogBookPageProductDTO[]): FishGroupedQuantitiesModel[] {
+        const result: FishGroupedQuantitiesModel[] = [];
+
+        for (const fish of fishes) {
+            const index: number = result.findIndex(x => x.fishId === fish.fishId
+                && (((x.turbotSizeGroupId === undefined || x.turbotSizeGroupId === null) && (fish.turbotSizeGroupId === undefined || fish.turbotSizeGroupId === null)) || Number(x.turbotSizeGroupId) === Number(fish.turbotSizeGroupId)));
+
+            if (index !== -1) {
+                result[index].quantity! += (fish.quantityKg ?? 0);
+
+                if (fish.unitCount !== undefined && fish.unitCount !== null) {
+                    result[index].turbotCount! += (fish.unitCount ?? 0);
+                }
+            }
+            else {
+                const product: FishGroupedQuantitiesModel = new FishGroupedQuantitiesModel({
+                    fishId: fish.fishId,
+                    turbotSizeGroupId: fish.turbotSizeGroupId,
+                    turbotCount: fish.unitCount,
+                    quantity: (fish.quantityKg ?? 0),
+                    fishName: this.fishTypes.find(x => x.value === fish.fishId)!.displayName,
+                    turbotSizeGroupName: this.turbotSizeGroups.find(x => x.value === fish.turbotSizeGroupId)?.displayName
+                });
+
+                result.push(product);
+            }
+        }
+
+        return result.filter(x => x.quantity !== undefined && x.quantity !== null);
     }
 
     private closeEditLogBookPageProductDialogBtnClicked(closeFn: HeaderCloseFunction): void {

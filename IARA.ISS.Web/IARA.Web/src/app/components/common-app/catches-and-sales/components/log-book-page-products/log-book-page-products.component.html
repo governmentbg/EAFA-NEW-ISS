@@ -117,10 +117,10 @@
          fxLayout="row"
          fxFlex="100"
          fxLayoutAlign="end center">
-        <mat-hint fxFlex="100">
+        <mat-hint fxFlex="100" fxLayout="column">
             {{ 'catches-and-sales.ship-page-catch-record-quantity-sums' | tlTranslate }}
-            <span *ngFor="let fishQuantity of fishQuantities | keyvalue">
-                {{ fishQuantity.key | nomenclatureDisplay: fishTypes }}: {{ fishQuantity.value | number: '1.2-2' }} {{ 'catches-and-sales.ship-page-declaration-kg' | tlTranslate }};
+            <span *ngFor="let fishQuantity of fishQuantities | keyvalue" fxLayout="row">
+                {{ fishQuantity.key }}: {{ fishQuantity.value }};
             </span>
         </mat-hint>
     </div>

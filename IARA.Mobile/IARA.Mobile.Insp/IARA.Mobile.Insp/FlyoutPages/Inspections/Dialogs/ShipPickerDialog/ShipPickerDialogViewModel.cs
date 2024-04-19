@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application.Interfaces.Transactions;
+﻿using IARA.Mobile.Application.Interfaces.Transactions;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
@@ -11,6 +7,10 @@ using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Shared.ResourceTranslator;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Base;
@@ -78,7 +78,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ShipPickerDialog
             return HideDialog((Ship.GetShortName(), Ship));
         }
 
-        private void OnShipSelected(ShipSelectNomenclatureDto ship)
+        private Task OnShipSelected(ShipSelectNomenclatureDto ship)
         {
             INomenclatureTransaction nomTransaction = DependencyService.Resolve<INomenclatureTransaction>();
 
@@ -86,7 +86,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ShipPickerDialog
 
             if (chosenShip == null)
             {
-                return;
+                return Task.CompletedTask;
             }
 
             Ship.InspectedShip = chosenShip;
@@ -99,6 +99,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ShipPickerDialog
             Ship.UVI.AssignFrom(chosenShip.UVI);
             Ship.Flag.AssignFrom(chosenShip.FlagId, Ship.Flags);
             Ship.ShipType.AssignFrom(chosenShip.ShipTypeId, Ship.ShipTypes);
+
+            return Task.CompletedTask;
         }
     }
 }
