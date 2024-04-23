@@ -30,10 +30,8 @@
             IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}">
         <tl:TLRadioButtonListView.IsVisible>
             <MultiBinding Converter="{StaticResource All}">
-                <Binding Path="LegalType"
-                        Converter="{StaticResource IsNotNull}" />
-                <Binding Path="InRegister.Value"
-                        Converter="{StaticResource OppositeBool}" />
+                <Binding Path="LegalType" Converter="{StaticResource IsNotNull}" />
+                <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
             </MultiBinding>
         </tl:TLRadioButtonListView.IsVisible>
     </tl:TLRadioButtonListView>
@@ -50,8 +48,7 @@
                     <Binding Path="Action.Code"
                             Converter="{StaticResource Equal}"
                             ConverterParameter="Person" />
-                    <Binding Path="InRegister.Value"
-                            Converter="{StaticResource OppositeBool}" />
+                    <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
                 </MultiBinding>
             </tl:TLEntry.IsVisible>
         </tl:TLEntry>
@@ -63,20 +60,17 @@
                     <Binding Path="Action.Code"
                             Converter="{StaticResource Equal}"
                             ConverterParameter="Person" />
-                    <Binding Path="InRegister.Value"
-                            Converter="{StaticResource OppositeBool}" />
+                    <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
                 </MultiBinding>
             </tl:TLEntry.IsVisible>
         </tl:TLEntry>
-        <sv:TLEntryWithType ValidState="{Binding Egn}"
-                IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}">
+        <sv:TLEntryWithType ValidState="{Binding Egn}" IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}">
             <sv:TLEntryWithType.IsVisible>
                 <MultiBinding Converter="{StaticResource All}">
                     <Binding Path="Action.Code"
                             Converter="{StaticResource Equal}"
                             ConverterParameter="Person" />
-                    <Binding Path="InRegister.Value"
-                            Converter="{StaticResource OppositeBool}" />
+                    <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
                 </MultiBinding>
             </sv:TLEntryWithType.IsVisible>
         </sv:TLEntryWithType>
@@ -88,19 +82,15 @@
                     <Binding Path="Action.Code"
                             Converter="{StaticResource Equal}"
                             ConverterParameter="Legal" />
-                    <Binding Path="InRegister.Value"
-                            Converter="{StaticResource OppositeBool}" />
+                    <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
                 </MultiBinding>
             </tl:TLEntry.IsVisible>
         </tl:TLEntry>
-        <tl:TLEntry Title="{rt:Translate Address, Group=Common}"
-                ValidState="{Binding Address}">
+        <tl:TLEntry Title="{rt:Translate Address, Group=Common}" ValidState="{Binding Address}">
             <tl:TLEntry.IsEnabled>
                 <MultiBinding Converter="{StaticResource All}">
-                    <Binding Path="Inspection.ActivityType"
-                            Converter="{StaticResource IsNotReview}" />
-                    <Binding Path="InRegister.Value"
-                            Converter="{StaticResource OppositeBool}" />
+                    <Binding Path="Inspection.ActivityType" Converter="{StaticResource IsNotReview}" />
+                    <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
                 </MultiBinding>
             </tl:TLEntry.IsEnabled>
         </tl:TLEntry>
@@ -109,10 +99,8 @@
                 ItemsSource="{Binding Nationalities}">
             <tl:TLPicker.IsEnabled>
                 <MultiBinding Converter="{StaticResource All}">
-                    <Binding Path="Inspection.ActivityType"
-                            Converter="{StaticResource IsNotReview}" />
-                    <Binding Path="InRegister.Value"
-                            Converter="{StaticResource OppositeBool}" />
+                    <Binding Path="Inspection.ActivityType" Converter="{StaticResource IsNotReview}" />
+                    <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
                 </MultiBinding>
             </tl:TLPicker.IsEnabled>
         </tl:TLPicker>

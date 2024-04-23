@@ -392,7 +392,7 @@ Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 13
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://tfstl:8080/tfs/defaultcollection
+		SccTeamFoundationServer = http://tfstlint.technologica.com:8080/tfs/defaultcollection
 		SccLocalPath0 = .
 		SccProjectUniqueName1 = IARA.Mobile.Insp.Android\\IARA.Mobile.Insp.Android.csproj
 		SccProjectTopLevelParentUniqueName1 = IARA.Mobile.Insp.sln

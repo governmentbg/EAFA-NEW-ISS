@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Interfaces.Dtos;
@@ -9,6 +6,10 @@ using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
@@ -90,13 +91,13 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             LastHarbour?.Init(nationalities);
         }
 
-        public void OnEdit(IFishingShipInspection fishingShipInspection, PortVisitDto port = null)
+        public async Task OnEdit(IFishingShipInspection fishingShipInspection, PortVisitDto port = null)
         {
             ShipData.OnEdit(fishingShipInspection.InspectedShip);
 
             if (Inspection.ActivityType != ViewActivityType.Review && ShipData.Ship.Value != null)
             {
-                ShipData.ShipSelected.Execute(ShipData.Ship.Value);
+                await ShipData.ShipSelected.ExecuteAsync(ShipData.Ship.Value);
             }
 
             Toggles.AssignFrom(fishingShipInspection.Checks);

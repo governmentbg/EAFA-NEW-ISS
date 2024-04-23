@@ -84,14 +84,13 @@ namespace IARA.Mobile.Shared.Utilities
         {
             HttpResult<JwtToken> result = await DependencyService.Resolve<IRestClient>().PostAsync<JwtToken>("Security/RefreshToken", "Common", false, new JwtToken()
             {
-                RefreshToken = _authTokenProvider.RefreshToken,
-                Token = _authTokenProvider.Token,
-                ValidTo = _authTokenProvider.AccessTokenExpiration
+                Token = _authTokenProvider.RefreshToken
             });
 
             if (result.IsSuccessful)
             {
-                SetAuthenticationProvider(result.Content);
+                _authTokenProvider.Token = result.Content.Token;
+                _authTokenProvider.AccessTokenExpiration = result.Content.ValidTo;
 
                 return true;
             }

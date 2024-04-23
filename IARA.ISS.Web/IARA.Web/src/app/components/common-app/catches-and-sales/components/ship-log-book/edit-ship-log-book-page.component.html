@@ -321,15 +321,15 @@
                                 </ng-template>
                             </data-template-column>
                         </tl-data-table>
-                        <div *ngIf="catchRecordQuantities !== undefined && catchRecordQuantities !== null && catchRecordQuantities.size > 0"
+                        <div *ngIf="catchQuadrantQuantityTexts !== undefined && catchQuadrantQuantityTexts !== null && catchQuadrantQuantityTexts.size > 0"
                              fxLayout="row"
                              fxFlex="100"
                              fxLayoutAlign="end center">
-                            <mat-hint fxFlex="100">
+                            <mat-hint fxFlex="100" fxLayout="column">
                                 {{ 'catches-and-sales.ship-page-catch-record-quantity-sums' | tlTranslate }}
-                                <span *ngFor="let fishQuantity of catchRecordQuantities | keyvalue">
-                                    {{ fishQuantity.key | nomenclatureDisplay: aquaticOrganisms }}: {{ fishQuantity.value | number: '1.2-2' }} {{ 'catches-and-sales.ship-page-declaration-kg' | tlTranslate }};
-                                </span>
+                                <div *ngFor="let fishQuantity of catchQuadrantQuantityTexts | keyvalue" fxLayout="row" fxFlex="100">
+                                    {{ (fishQuantity.key !== undefined && fishQuantity.key !== null && fishQuantity.key > 0) ? ( fishQuantity.key | nomenclatureDisplay: catchZones ) : ('catches-and-sales.ship-page-catch-record-is-continental-catch' | tlTranslate) }}: {{ fishQuantity.value }};
+                                </div>
                             </mat-hint>
                         </div>
                         <mat-error *ngIf="form.touched && form.errors?.uniqueGearEntryTime">
@@ -353,10 +353,10 @@
                 <tl-card-title>{{ 'catches-and-sales.ship-page-declaration-of-origin-panel' | tlTranslate }}</tl-card-title>
                 <tl-card-content fxLayout="column">
                     <div fxLayout="column" fxLayoutGap="1em">
-                        <div fxLayout="column" fxLayoutGap="1em"> 
+                        <div fxLayout="column" fxLayoutGap="1em">
                             <tl-data-table fxFlexFill
                                            #declarationOfOriginCatchRecordsTable
-                                           [rows]="declarationOfOriginCatchRecords" 
+                                           [rows]="declarationOfOriginCatchRecords"
                                            [isRemote]="false"
                                            [isSoftDeletable]="true"
                                            [showInactiveRecords]="false"
@@ -447,15 +447,15 @@
                                     </ng-template>
                                 </data-template-column>
                             </tl-data-table>
-                            <div *ngIf="declarationOfOriginCatchRecordsQuantities !== undefined && declarationOfOriginCatchRecordsQuantities !== null && declarationOfOriginCatchRecordsQuantities.size > 0"
+                            <div *ngIf="declarationOfOriginCatchRecordsQuantityTexts !== undefined && declarationOfOriginCatchRecordsQuantityTexts !== null && declarationOfOriginCatchRecordsQuantityTexts.size > 0"
                                  fxLayout="row"
                                  fxFlex="100"
                                  fxLayoutAlign="end center">
-                                <mat-hint fxFlex="100">
+                                <mat-hint fxFlex="100" fxLayout="column">
                                     {{ 'catches-and-sales.ship-page-catch-record-quantity-sums' | tlTranslate }}
-                                    <span *ngFor="let fishQuantity of declarationOfOriginCatchRecordsQuantities | keyvalue">
-                                        {{ fishQuantity.key | nomenclatureDisplay: aquaticOrganisms }}: {{ fishQuantity.value | number: '1.2-2' }} {{ 'catches-and-sales.ship-page-declaration-kg' | tlTranslate }};
-                                    </span>
+                                    <div *ngFor="let fishQuantity of declarationOfOriginCatchRecordsQuantityTexts | keyvalue" fxLayout="row" fxFlex="100">
+                                        {{ (fishQuantity.key !== undefined && fishQuantity.key !== null && fishQuantity.key > 0) ? ( fishQuantity.key | nomenclatureDisplay: catchZones ) : ('catches-and-sales.ship-page-catch-record-is-continental-catch' | tlTranslate) }}: {{ fishQuantity.value }};
+                                    </div>
                                 </mat-hint>
                             </div>
                             <mat-error *ngIf="form.touched && form.errors?.hasInvalidCatchRecordDates">
@@ -467,7 +467,9 @@
                             <mat-error class="warn-orange-color" *ngIf="form.errors?.quantityDifferences">
                                 <div fxLayout="row" fxFlexFill *ngFor="let fishQuantity of form.errors?.quantityDifferences | keyvalue">
                                     <span fxLayot="row" fxFlex="100">
-                                        * {{ 'catches-and-sales.ship-page-catch-quantity-for' | tlTranslate }} {{ fishQuantity.key | nomenclatureDisplay: aquaticOrganisms }} {{ 'catches-and-sales.ship-page-differs-by' | tlTranslate }} {{ fishQuantity.value | number: '1.2-2' }}%
+                                        * {{ 'catches-and-sales.ship-page-catch-quantity-for' | tlTranslate }} {{ fishQuantity.key | nomenclatureDisplay: aquaticOrganisms }}
+                                        {{ (fishQuantity.value.turbotSizeGroupId !== undefined) ? ' - ' + (fishQuantity.value.turbotSizeGroupId | nomenclatureDisplay: turbotSizeGroups) : '' }}
+                                        {{ 'catches-and-sales.ship-page-differs-by' | tlTranslate }} {{ fishQuantity.value.quantity | number: '1.2-2' }}%
                                     </span>
                                 </div>
                                 <div fxLayout="row" fxFlexFill>

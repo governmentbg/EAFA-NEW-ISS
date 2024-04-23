@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
@@ -15,6 +11,10 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
 using IARA.Mobile.Shared.Views;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
@@ -215,7 +215,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
 
                 if (Edit.SendingShipInspection != null)
                 {
-                    InspectedShip.OnEdit(Edit.SendingShipInspection);
+                    await InspectedShip.OnEdit(Edit.SendingShipInspection);
                     InspectedShipCatches.OnEdit(Edit.SendingShipInspection);
                     InspectedShipCaptainComment.AssignFrom(Edit.SendingShipInspection.CaptainComment);
 
@@ -224,7 +224,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
 
                 if (Edit.ReceivingShipInspection != null)
                 {
-                    InspectedShip.OnEdit(Edit.ReceivingShipInspection);
+                    await InspectedShip.OnEdit(Edit.ReceivingShipInspection);
                     InspectedShipCatches.OnEdit(Edit.ReceivingShipInspection);
                     AcceptingShipCaptainComment.AssignFrom(Edit.ReceivingShipInspection.CaptainComment);
 

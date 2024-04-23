@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application;
+﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
@@ -15,12 +9,17 @@ using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.Controls.ViewModels;
-using IARA.Mobile.Insp.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
 using IARA.Mobile.Insp.ViewModels.Models;
 using IARA.Mobile.Shared.Views;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
@@ -388,13 +387,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             FishingGears.FishingGears.Value.Clear();
         }
 
-        private void OnShipChosen(ShipSelectNomenclatureDto nomenclatureDto)
+        private Task OnShipChosen(ShipSelectNomenclatureDto nomenclatureDto)
         {
             ShipDto chosenShip = NomenclaturesTransaction.GetShip(nomenclatureDto.Id);
 
             if (chosenShip == null)
             {
-                return;
+                return Task.CompletedTask;
             }
 
             Permit.Value = null;
@@ -422,6 +421,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             Owner.InRegister.Value = Owner.People.Count > 0;
 
             FishingGears.FishingGears.Value.Clear();
+
+            return Task.CompletedTask;
         }
 
         private void OnPoundNetChosen(SelectNomenclatureDto nomenclatureDto)

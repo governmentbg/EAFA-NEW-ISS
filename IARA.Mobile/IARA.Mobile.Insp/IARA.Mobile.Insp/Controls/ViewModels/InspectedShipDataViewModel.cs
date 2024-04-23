@@ -1,22 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Windows.Input;
-using IARA.Mobile.Application;
+﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.ViewModels.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
+using Xamarin.CommunityToolkit.ObjectModel;
 
 namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class InspectedShipDataViewModel : ViewModel
     {
-        private ICommand _shipSelected;
+        private IAsyncCommand<ShipSelectNomenclatureDto> _shipSelected;
         private ICommand _inRegisterChecked;
         private List<SelectNomenclatureDto> _flags;
         private List<SelectNomenclatureDto> _shipTypes;
@@ -103,7 +104,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             private set => SetProperty(ref _shipTypes, value);
         }
 
-        public ICommand ShipSelected
+        public IAsyncCommand<ShipSelectNomenclatureDto> ShipSelected
         {
             get => _shipSelected;
             set => SetProperty(ref _shipSelected, value);
@@ -148,6 +149,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                     ShipTypeId = dto.VesselTypeId,
                     UVI = dto.UVI,
                     Id = dto.ShipId.Value,
+                    Uid = NomenclaturesTransaction.GetShip(dto.ShipId.Value).Uid,
                 };
 
                 Ship.Value = new ShipSelectNomenclatureDto
@@ -156,7 +158,9 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                     Name = dto.Name,
                     ExtMarkings = dto.ExternalMark,
                     Code = dto.CFR,
+                    Uid = NomenclaturesTransaction.GetShip(dto.ShipId.Value).Uid,
                 };
+
 
                 if (dto.ShipAssociationId.HasValue)
                 {

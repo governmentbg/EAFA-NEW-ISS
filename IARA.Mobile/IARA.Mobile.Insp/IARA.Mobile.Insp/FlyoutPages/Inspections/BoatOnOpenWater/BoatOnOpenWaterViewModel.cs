@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using IARA.Mobile.Application;
+﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
@@ -18,6 +14,10 @@ using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Shared.Views;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
@@ -278,7 +278,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
             await TLLoadingHelper.HideFullLoadingScreen();
         }
 
-        private void OnShipSelected(ShipSelectNomenclatureDto ship)
+        private Task OnShipSelected(ShipSelectNomenclatureDto ship)
         {
             if (ActivityType == ViewActivityType.Add)
             {
@@ -286,7 +286,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
 
                 if (chosenShip == null)
                 {
-                    return;
+                    return Task.CompletedTask;
                 }
 
                 ObservedVessel.InspectedShip = chosenShip;
@@ -300,6 +300,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
                 ObservedVessel.Flag.AssignFrom(chosenShip.FlagId, ObservedVessel.Flags);
                 ObservedVessel.ShipType.AssignFrom(chosenShip.ShipTypeId, ObservedVessel.ShipTypes);
             }
+
+            return Task.CompletedTask;
         }
 
         private Task OnSaveDraft()

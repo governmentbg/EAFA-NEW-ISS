@@ -4364,6 +4364,7 @@
         'ship-log-book-page-water-type': 'Тип на водите',
         'ship-page-catch-record-quantity-sums': 'Общи количества: ',
         'ship-page-declaration-kg': 'кг',
+        'ship-page-declaration-count': 'бр.',
         'end-date-should-be-different-from-start-date': 'Датата и часът на връщане трябва да бъдат различни от тези на тръгване',
 
         'previous-trip-catch-records-page-number': 'Номер на стр. от дневник',
