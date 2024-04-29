@@ -30,5 +30,8 @@ export class AuthorizedPersonRegixDataDTO {
     public email?: string;
 
     @StrictlyTyped(Boolean)
+    public isEmailConfirmed?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isActive?: boolean;
 }

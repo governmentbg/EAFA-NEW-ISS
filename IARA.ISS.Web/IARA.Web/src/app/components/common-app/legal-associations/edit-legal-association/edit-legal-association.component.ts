@@ -494,11 +494,15 @@ export class EditLegalAssociationComponent implements OnInit, IDialogComponent {
 
         let result: PermittedFileTypeDTO[] = options;
 
-        if (this.isApplication || !this.isOnlineApplication) {
+        if (!this.isOnlineApplication) {
             result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 
         if (this.isOnlineApplication) {
+            if (this.isApplication && !this.isReadonly) {
+                result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
+            }
+
             result = result.filter(x => !offlines.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 
@@ -567,8 +571,10 @@ export class EditLegalAssociationComponent implements OnInit, IDialogComponent {
             this.form.get('submittedForControl')!.setValue(this.model.submittedFor);
             this.form.get('submittedForAddressesControl')!.setValue(this.model.submittedForAddresses);
 
-            const territoryUnitId: number | undefined = this.model.territoryUnitId;
-            this.form.get('territoryUnitControl')!.setValue(this.territoryUnits.find(x => x.value === territoryUnitId));
+            if (this.isRegister) {
+                const territoryUnitId: number | undefined = this.model.territoryUnitId;
+                this.form.get('territoryUnitControl')!.setValue(this.territoryUnits.find(x => x.value === territoryUnitId));
+            }
 
             this.form.get('filesControl')!.setValue(this.model.files);
         }

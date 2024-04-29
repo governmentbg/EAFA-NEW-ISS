@@ -116,6 +116,9 @@
             <mat-error *ngIf="form.touched && form.get('fishingGearsGroup')!.errors?.duplicatedMarkNumbers">
                 * {{ 'commercial-fishing.permit-license-has-duplicated-mark-numbers' | tlTranslate }}: {{ form.get('fishingGearsGroup')!.errors!.duplicatedMarkNumbers | tlJoin : ';' }}
             </mat-error>
+            <mat-error *ngIf="hasUnpaidTariffs" class="warn-orange-color">
+                * {{ 'commercial-fishing.permit-license-has-unpaid-tariffs' | tlTranslate }}
+            </mat-error>
         </div>
     </tl-expansion-panel>
 

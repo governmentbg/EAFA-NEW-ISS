@@ -88,6 +88,9 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     public showPingersTable: boolean = false;
     public selectedGearTypeIsPoundNet: boolean = false;
 
+    public permitLicenseFishingGears: FishingGearNomenclatureDTO[] = [];
+    public selectedGearNotPaidInPermitLicense: boolean = false;
+
     @ViewChild('marksTable')
     private marksTable!: TLDataTableComponent;
 
@@ -144,31 +147,9 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
                 else {
                     this.fishingGearTypes = this.fishingGearTypes.filter(x => x.type !== FishingGearParameterTypesEnum.PoundNet).slice();
                 }
-            }
 
-            //Показване само на тези риболовни уреди, за които е платено в удостоверението, за да не може да се добавят в заявлението за маркиране на уреди
-            if (this.appliedTariffCodes.length > 0) {
-                if (this.isDunabe) {
-                    if (this.shouldFilterByDanubeTariffCodes()) {
-                        if (!this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Dunav_Ship_Nets])) {
-                            this.fishingGearTypes = this.fishingGearTypes.filter(x => !FishingGearUtils.paidDunabeNetFishingGears.includes(x.code!));
-                        }
-
-                        if (!this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Dunav_Ship_Fishing_Traps])) {
-                            this.fishingGearTypes = this.fishingGearTypes.filter(x => x.code !== FishingGearTypesEnum[FishingGearTypesEnum.FPO]);
-                        }
-                    }
-                }
-                else {
-                    if (this.shouldFilterByBlackSeaTariffCodes()) {
-                        if (!this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Ship_Till10_Longliners])) {
-                            this.fishingGearTypes = this.fishingGearTypes.filter(x => !FishingGearUtils.paidLonglinesFishingGears.includes(x.code!));
-                        }
-
-                        if (!this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Ship_Till10_Nets])) {
-                            this.fishingGearTypes = this.fishingGearTypes.filter(x => !FishingGearUtils.paidNetFishingGears.includes(x.code!) && !FishingGearUtils.paidPoleAndLineFishingGears.includes(x.code!));
-                        }
-                    }
+                if (this.appliedTariffCodes !== null && this.appliedTariffCodes !== undefined && this.appliedTariffCodes.length > 0) {
+                    this.permitLicenseFishingGears = this.getPermitLicenseTariffFishingGears();
                 }
             }
 
@@ -434,6 +415,10 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
                     this.form.get('hooksCountControl')!.markAsPending();
                 }
 
+                if (this.appliedTariffCodes !== null && this.appliedTariffCodes !== undefined && this.appliedTariffCodes.length > 0) {
+                    this.validateSelectedGearType();
+                }
+
                 if (this.isDisabled) {
                     this.form.get('hooksCountControl')!.disable({ emitEvent: false });
                 }
@@ -450,6 +435,10 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
             if (type instanceof NomenclatureDTO) {
                 this.setCountAndQuotaGearLength(type);
+            }
+
+            if (this.appliedTariffCodes !== null && this.appliedTariffCodes !== undefined && this.appliedTariffCodes.length > 0) {
+                this.validateSelectedGearType();
             }
 
             if (type?.code !== FishingGearTypesEnum[FishingGearTypesEnum.DLN]) {
@@ -902,6 +891,54 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         }
 
         return copiedPingers;
+    }
+
+    private validateSelectedGearType(): void {
+        const selectedGear: FishingGearNomenclatureDTO | string | undefined = this.form.get('typeControl')!.value;
+
+        if (selectedGear === undefined || selectedGear === null || typeof selectedGear === 'string') {
+            this.selectedGearNotPaidInPermitLicense = false;
+        }
+        else if (selectedGear instanceof NomenclatureDTO) {
+            if (!this.permitLicenseFishingGears.find(x => x.value === selectedGear.value)) {
+                this.selectedGearNotPaidInPermitLicense = true;
+            }
+            else {
+                this.selectedGearNotPaidInPermitLicense = false;
+            }
+        }
+    }
+
+    private getPermitLicenseTariffFishingGears(): FishingGearNomenclatureDTO[] {
+        let fishingGearTypes: FishingGearNomenclatureDTO[] = this.fishingGearTypes.filter(x => x.isActive);
+
+        //Показване само на тези риболовни уреди, за които е платено в удостоверението, за да не може да се добавят в заявлението за маркиране на уреди
+        if (this.appliedTariffCodes.length > 0) {
+            if (this.isDunabe) {
+                if (this.shouldFilterByDanubeTariffCodes()) {
+                    if (!this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Dunav_Ship_Nets])) {
+                        fishingGearTypes = fishingGearTypes.filter(x => !FishingGearUtils.paidDunabeNetFishingGears.includes(x.code!));
+                    }
+
+                    if (!this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Dunav_Ship_Fishing_Traps])) {
+                        fishingGearTypes = fishingGearTypes.filter(x => x.code !== FishingGearTypesEnum[FishingGearTypesEnum.FPO]);
+                    }
+                }
+            }
+            else {
+                if (this.shouldFilterByBlackSeaTariffCodes()) {
+                    if (!this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Ship_Till10_Longliners])) {
+                        fishingGearTypes = fishingGearTypes.filter(x => !FishingGearUtils.paidLonglinesFishingGears.includes(x.code!));
+                    }
+
+                    if (!this.appliedTariffCodes.includes(TariffCodesEnum[TariffCodesEnum.a_1805_Ship_Till10_Nets])) {
+                        fishingGearTypes = fishingGearTypes.filter(x => !FishingGearUtils.paidNetFishingGears.includes(x.code!) && !FishingGearUtils.paidPoleAndLineFishingGears.includes(x.code!));
+                    }
+                }
+            }
+        }
+
+        return fishingGearTypes;
     }
 
     //Тарифи, при които не се доплаща за добавяне на уреди

@@ -310,11 +310,15 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
 
         let result: PermittedFileTypeDTO[] = options;
 
-        if (this.isApplication || !this.isOnlineApplication) {
+        if (!this.isOnlineApplication) {
             result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 
         if (this.isOnlineApplication) {
+            if (this.isApplication && !this.isReadonly) {
+                result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
+            }
+
             result = result.filter(x => !offlines.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 

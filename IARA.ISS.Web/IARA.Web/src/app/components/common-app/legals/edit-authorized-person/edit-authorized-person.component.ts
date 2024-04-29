@@ -36,6 +36,7 @@ export class EditAuthorizedPersonComponent implements OnInit, AfterViewInit, IDi
     public readOnly!: boolean;
     public showOnlyRegixData: boolean = false;
     public isEditing!: boolean;
+    public showConfirmEmailControl: boolean = false;
 
     public roles: NomenclatureDTO<number>[] = [];
     public allRoles: NomenclatureDTO<number>[] = [];
@@ -147,6 +148,8 @@ export class EditAuthorizedPersonComponent implements OnInit, AfterViewInit, IDi
         }
 
         if (data.model === undefined) {
+            this.showConfirmEmailControl = true;
+
             if (this.showOnlyRegixData) {
                 this.model = new AuthorizedPersonRegixDataDTO({ isActive: true });
             }
@@ -157,6 +160,10 @@ export class EditAuthorizedPersonComponent implements OnInit, AfterViewInit, IDi
         else {
             if (this.readOnly) {
                 this.form.disable();
+            }
+
+            if (data.model.userId === undefined || data.model.userId === null || data.model.id === undefined || data.model.id === null) {
+                this.showConfirmEmailControl = true;
             }
 
             this.model = data.model;
@@ -211,7 +218,8 @@ export class EditAuthorizedPersonComponent implements OnInit, AfterViewInit, IDi
 
     private buildForm(): void {
         this.form = new FormGroup({
-            personControl: new FormControl()
+            personControl: new FormControl(),
+            isEmailConfirmedControl: new FormControl(false)
         }, this.rolesValidator());
 
         this.rolesForm = new FormGroup({
@@ -223,6 +231,10 @@ export class EditAuthorizedPersonComponent implements OnInit, AfterViewInit, IDi
 
     private fillForm(): void {
         this.form.get('personControl')!.setValue(this.model.person);
+
+        if (this.showConfirmEmailControl) {
+            this.form.get('isEmailConfirmedControl')!.setValue(this.model.isEmailConfirmed);
+        }
 
         if (!this.showOnlyRegixData) {
             if (this.model.roles !== undefined && this.model.roles !== null) {
@@ -236,6 +248,13 @@ export class EditAuthorizedPersonComponent implements OnInit, AfterViewInit, IDi
 
     private fillModel(): void {
         this.model.person = this.form.get('personControl')!.value;
+
+        if (this.showConfirmEmailControl) {
+            this.model.isEmailConfirmed = this.form.get('isEmailConfirmedControl')!.value ?? false;
+        }
+        else {
+            this.model.isEmailConfirmed = true;
+        }
 
         if (!this.showOnlyRegixData) {
             if (this.rolesForm.valid && this.rolesTable.rows.length !== 0) {

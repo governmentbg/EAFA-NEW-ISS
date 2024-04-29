@@ -1,4 +1,4 @@
-﻿import { Component, Input, OnInit, Self } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnInit, Output, Self } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
 
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
@@ -16,7 +16,6 @@ import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO'
     templateUrl: './inspected-person.component.html'
 })
 export class InspectedPersonComponent extends CustomFormControl<InspectionSubjectPersonnelDTO | undefined> implements OnInit {
-
     @Input()
     public title!: string;
 
@@ -26,7 +25,18 @@ export class InspectedPersonComponent extends CustomFormControl<InspectionSubjec
     @Input()
     public countries: NomenclatureDTO<number>[] = [];
 
+    @Input()
+    public isArray: boolean = false;
+
+    @Input()
+    public orderNum: number | undefined;
+
+    @Output()
+    public deletePanelBtnClicked: EventEmitter<void> = new EventEmitter<void>();
+
     private readonly translate: FuseTranslationLoaderService;
+
+    private id: number | undefined;
 
     public constructor(
         @Self() ngControl: NgControl,
@@ -51,6 +61,8 @@ export class InspectedPersonComponent extends CustomFormControl<InspectionSubjec
 
     public writeValue(value: InspectionSubjectPersonnelDTO | undefined): void {
         if (value !== undefined && value !== null) {
+            this.id = value.id;
+
             this.form.get('personControl')!.setValue(
                 new RegixPersonDataDTO({
                     egnLnc: value.egnLnc,
@@ -86,6 +98,10 @@ export class InspectedPersonComponent extends CustomFormControl<InspectionSubjec
         }
     }
 
+    public deletePanel(): void {
+        this.deletePanelBtnClicked.emit();
+    }
+
     protected buildForm(): AbstractControl {
         const form = new FormGroup({
             personControl: new FormControl(),
@@ -104,6 +120,7 @@ export class InspectedPersonComponent extends CustomFormControl<InspectionSubjec
         }
 
         return new InspectionSubjectPersonnelDTO({
+            id: this.id,
             isRegistered: false,
             address: this.form.get('addressControl')!.value,
             citizenshipId: this.form.get('countryControl')!.value?.value,
@@ -112,7 +129,7 @@ export class InspectedPersonComponent extends CustomFormControl<InspectionSubjec
             firstName: person.firstName,
             middleName: person.middleName,
             lastName: person.lastName,
-            type: this.personType,
+            type: this.personType
         });
     }
 }

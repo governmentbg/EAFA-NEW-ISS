@@ -761,7 +761,8 @@
         'role': 'Право',
         'valid-from': 'Валидно от',
         'valid-to': 'Валидно до',
-        'at-least-one-role-needed': 'Трябва да има поне едно право'
+        'at-least-one-role-needed': 'Трябва да има поне едно право',
+        'is-email-confirmed': 'Имейлът е потвърден'
     },
     'legal-association': {
         'association-register-title': 'Регистрация на сдружение за любителски риболов',
@@ -2746,6 +2747,11 @@
         'water-inspection-taken': 'Изземване',
         'water-inspection-stored': 'Съхранение',
         'storage-location': 'Място на съхранение',
+        'edit-inspection-offenders': 'Установени нарушители',
+        'has-no-offenders': 'Няма установени нарушители',
+        'offender': 'Нарушител',
+        'edit-person-no': '№',
+        'add-inspected-person': 'Добави',
         'full-storage-location': 'Място на съхранение / дарение / унищожение',
         'check-water-object-fishing-gears': 'Риболовни уреди',
         'water-vessel-number': 'Номер',
@@ -3266,6 +3272,7 @@
 
         'permit-license-has-duplicated-mark-numbers': 'Следните номера на нови марки са дублирани',
         'permit-license-has-duplicated-pinger-numbers': 'Следните номера на нови пингъри са дублирани',
+        'permit-license-has-unpaid-tariffs': 'Добавен е уред, за който не е платено в удостоверението',
 
         'add-permit-is-second-ship-event-error': 'Разрешителното не може да бъде добавено към избрания кораб днес, защото това би предизвикало второ различно събитие за деня, а само един тип е позволено за даден кораб за един ден.',
         'suspend-resume-is-second-event-for-ship-error': 'Разрешителното не може да бъде прекратено или възстановено днес, защото това би предизвикало второ различно събитие за деня, а само един тип е позволено за даден кораб за един ден.',
@@ -3416,6 +3423,7 @@
         'nets-in-fleet-count': 'Брой мрежи във флота',
         'trawl-model': 'Модел на трал (ако е приложимо)',
         'length-or-trawl-model-is-required-for-selected-type-of-gear-error': 'За избрания тип уред трябва да се попълни периметър на отваряне (в поле за дължина) или модел на трал',
+        'selected-gear-not-paid-in-permit-license': 'Тарифата за избрания тип уред не е платена в удостоверението',
 
         'gear-has-duplicated-mark-number': 'Не може да имате марки с повтарящи се номера',
         'gear-has-duplicated-pinger-number': 'Не може да имате пингъри с повтаращи се номера',

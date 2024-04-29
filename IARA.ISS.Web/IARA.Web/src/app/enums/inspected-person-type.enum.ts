@@ -10,4 +10,5 @@
     Driver = 8,
     Importer = 9,
     OwnerBuyer = 10,
+    Offender = 11
 }

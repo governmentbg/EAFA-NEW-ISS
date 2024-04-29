@@ -768,6 +768,7 @@
         'valid-to': 'Valid to',
         'at-least-one-role-needed': 'At least one permission is needed',
         'are-you-sure-you-want-to-delete': 'Are you sure you want to delete this legal entity?',
+        'is-email-confirmed': 'Email is confirmed',
 
         'go-to-application-tooltip': 'Go to application'
 
@@ -2689,6 +2690,11 @@
         'water-object-name': 'Object name',
         'water-object-type': 'Object type',
         'water-inspection-taken': 'Taken',
+        'edit-inspection-offenders': 'Offender',
+        'has-no-offenders': 'There is no offender',
+        'offender': 'Offender',
+        'edit-person-no': '#',
+        'add-inspected-person': 'Add',
         'water-inspection-stored': 'Stored',
         'storage-location': 'Place of storage',
         'full-storage-location': 'Place of storage / donation / destruction',
@@ -3213,6 +3219,7 @@
 
         'permit-license-has-duplicated-mark-numbers': 'The following new mark numbers are duplicated',
         'permit-license-has-duplicated-pinger-numbers': 'The following new pinger numbers are duplicated',
+        'permit-license-has-unpaid-tariffs': 'There are gears with unpaid tariffs',
 
         'add-permit-is-second-ship-event-error': 'The permit cannot be added for to the chosen ship today, because this would trigger a second type event for the ship and that ship already has one type of event for today.',
         'suspend-resume-is-second-event-for-ship-error': 'The permit cannot be suspended or resumed, because this would trigger a second type event for the ship and that ship already has one type of event for today.',
@@ -3362,6 +3369,7 @@
         'nets-in-fleet-count': 'Number of nets in the fleet',
         'trawl-model': 'Trawl model',
         'length-or-trawl-model-is-required-for-selected-type-of-gear-error': 'For the chosen gear type perimeter of opening (in the length field) or model of trawl must be provided',
+        'selected-gear-not-paid-in-permit-license': 'The tariff for the chosen gear type is not paid in the permit license',
 
         'gear-has-duplicated-mark-number': 'Mark numbers must not be duplicated',
         'gear-has-duplicated-pinger-number': 'Pinger numbers must not be duplicated',

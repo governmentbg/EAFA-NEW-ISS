@@ -18,5 +18,5 @@ export class PermitLicensesNomenclatureDTO extends PermitNomenclatureDTO {
     public waterTypeCode?: string;
 
     @StrictlyTyped(String)
-    public tariffs?: string[];
+    public tariffCodes?: string[];
 }

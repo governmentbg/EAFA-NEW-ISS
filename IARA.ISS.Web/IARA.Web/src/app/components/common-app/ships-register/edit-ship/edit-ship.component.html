@@ -922,7 +922,7 @@
     </tl-expansion-panel>
 
     <!-- Информация за плащане -->
-    <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData"
+    <tl-expansion-panel *ngIf="isPaid && isApplication && !showOnlyRegiXData && !hidePaymentInformation"
                         title="{{ 'ships-register.payment-information' | tlTranslate }}"
                         tooltipResourceName="ships-register.payment-information-helper">
         <payment-information formControlName="applicationPaymentInformationControl"

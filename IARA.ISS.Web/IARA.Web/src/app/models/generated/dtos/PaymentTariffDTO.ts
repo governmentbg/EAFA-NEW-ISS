@@ -14,6 +14,9 @@ export class PaymentTariffDTO {
     public tariffName?: string;
 
     @StrictlyTyped(String)
+    public tariffCode?: string;
+
+    @StrictlyTyped(String)
     public tariffDescription?: string;
 
     @StrictlyTyped(String)
