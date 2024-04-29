@@ -188,6 +188,7 @@ import { AuanDeliveryDataComponent } from './control-activity/auan-register/auan
 import { AuanDeliveryComponent } from './control-activity/auan-register/auan-delivery/auan-delivery.component';
 import { TLTranslatePipe } from '@app/shared/pipes/tl-translate.pipe';
 import { MatButtonModule } from '@angular/material/button';
+import { InspectedPersonsArrayComponent } from './control-activity/inspections/components/inspected-persons-array/inspected-persons-array.component';
 
 @NgModule({
     declarations: [
@@ -365,7 +366,8 @@ import { MatButtonModule } from '@angular/material/button';
         FishingActivityReportsComponent,
         OnlineApplicationsComponent,
         AuanDeliveryDataComponent,
-        AuanDeliveryComponent
+        AuanDeliveryComponent,
+        InspectedPersonsArrayComponent
     ],
     imports: [
         TLCommonModule,
@@ -549,7 +551,8 @@ import { MatButtonModule } from '@angular/material/button';
         FishingActivityReportsComponent,
         OnlineApplicationsComponent,
         AuanDeliveryDataComponent,
-        AuanDeliveryComponent
+        AuanDeliveryComponent,
+        InspectedPersonsArrayComponent
     ],
     providers: [
         TLTranslatePipe

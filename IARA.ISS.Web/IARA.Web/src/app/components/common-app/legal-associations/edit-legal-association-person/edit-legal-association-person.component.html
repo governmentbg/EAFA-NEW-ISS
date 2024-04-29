@@ -11,4 +11,9 @@
                 [expectedResults]="expectedResults.person"
                 (downloadDataBtnClicked)="downloadedPersonData($event)">
     </regix-data>
+
+    <tl-slide-toggle *ngIf="showConfirmEmailControl" 
+                     formControlName="isEmailConfirmedControl"
+                     label="{{ 'legal-entities-page.is-email-confirmed' | tlTranslate }}">
+    </tl-slide-toggle>
 </div>

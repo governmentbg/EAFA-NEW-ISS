@@ -402,11 +402,15 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
 
         let result: PermittedFileTypeDTO[] = options;
 
-        if (this.modeApplication || !this.isOnlineApplication) {
+        if (!this.isOnlineApplication) {
             result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 
         if (this.isOnlineApplication) {
+            if (this.modeApplication && !this.modeReadOnly) {
+                result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
+            }
+
             result = result.filter(x => !offlines.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 

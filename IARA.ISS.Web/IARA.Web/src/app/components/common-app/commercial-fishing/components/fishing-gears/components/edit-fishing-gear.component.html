@@ -7,13 +7,18 @@
              fxLayout="column"
              fxLayoutGap="1em">
             <div fxFlex="100"
-                 fxLayout="row">
+                 fxLayout="column"
+                 fxLayoutGap="1em">
                 <tl-autocomplete fxFlex="100"
                                  formControlName="typeControl"
                                  label="{{ 'fishing-gears.type' | tlTranslate }}"
                                  tooltipResourceName="fishing-gears.type-helper"
                                  [options]="fishingGearTypes">
                 </tl-autocomplete>
+
+                <mat-error *ngIf="selectedGearNotPaidInPermitLicense" class="warn-orange-color" fxFlex="100">
+                    * {{ 'fishing-gears.selected-gear-not-paid-in-permit-license' | tlTranslate }}
+                </mat-error>
             </div>
             <div fxFlex="100"
                  fxLayout="row"

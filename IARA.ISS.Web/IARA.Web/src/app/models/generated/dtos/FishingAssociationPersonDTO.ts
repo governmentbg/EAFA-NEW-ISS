@@ -30,5 +30,8 @@ export class FishingAssociationPersonDTO {
     public email?: string;
 
     @StrictlyTyped(Boolean)
+    public isEmailConfirmed?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isActive?: boolean;
 }

@@ -46,6 +46,7 @@ import { PermitLicensesNomenclatureDTO } from '@app/models/generated/dtos/Permit
 import { WaterTypesEnum } from '@app/enums/water-types.enum';
 import { CommercialFishingValidationErrorsEnum } from '@app/enums/commercial-fishing-validation-errors.enum';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
+import { TariffCodesEnum } from '@app/enums/tariff-codes.enum';
 
 @Component({
     selector: 'edit-permit-license-fishing-gears',
@@ -84,6 +85,7 @@ export class EditPermitLicenseFishingGearsComponent implements OnInit, AfterView
 
     public shipId: number | undefined;
     public noShipSelected: boolean = true;
+    public hasUnpaidTariffs: boolean = false;
     public hasInvalidPermitLicenseRegistrationNumber: boolean = false;
     public maxNumberOfFishingGears: number = 0;
 
@@ -298,7 +300,9 @@ export class EditPermitLicenseFishingGearsComponent implements OnInit, AfterView
                 && !this.isReadonly
                 && !this.viewMode
             ) {
-                this.updateAppliedTariffs();
+                setTimeout(() => {
+                    this.updateAppliedTariffs();
+                });
             }
 
             if (this.hasDelivery === true) {
@@ -358,7 +362,7 @@ export class EditPermitLicenseFishingGearsComponent implements OnInit, AfterView
             if (this.hasDelivery === true) {
                 this.model.deliveryData = this.form.get('deliveryDataControl')!.value;
             }
-
+         
             if (this.isPaid === true) {
                 this.model.paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
             }
@@ -453,8 +457,8 @@ export class EditPermitLicenseFishingGearsComponent implements OnInit, AfterView
                         if (permitLicense !== undefined && permitLicense !== null) {
                             this.permitLicensePageCode = this.getPermitLicensePageCodeByType(permitLicense.type!); //filter fishing gears nomenclature by permit license page code
                             this.isDunabe = permitLicense.waterTypeCode === WaterTypesEnum[WaterTypesEnum.DANUBE]; //filter fishing gears nomenclature by permit license applied tariffs and water type
-                            this.permitLicenseAppliedTariffs = permitLicense.tariffs ?? [];
-
+                            this.permitLicenseAppliedTariffs = permitLicense.tariffCodes ?? [];
+                         
                             if (this.permitLicenseId !== permitLicense.value) {
                                 this.permitLicenseId = permitLicense.value;
 
@@ -630,21 +634,25 @@ export class EditPermitLicenseFishingGearsComponent implements OnInit, AfterView
 
         this.service.calculatePermitLicenseAppliedTariffs(parameters).subscribe({
             next: (tariffs: PaymentTariffDTO[]) => {
+                //тарифите, за които не е платено в УСР
+                const newTariffs: PaymentTariffDTO[] = tariffs.filter(x => !this.permitLicenseAppliedTariffs.find(y => x.tariffCode === y));
+
                 if ((this.model as PermitLicenseFishingGearsApplicationDTO).paymentInformation!.paymentSummary !== null
                     && (this.model as PermitLicenseFishingGearsApplicationDTO).paymentInformation!.paymentSummary !== undefined
                 ) {
-                    (this.model as PermitLicenseFishingGearsApplicationDTO).paymentInformation!.paymentSummary!.tariffs = tariffs;
-                    (this.model as PermitLicenseFishingGearsApplicationDTO).paymentInformation!.paymentSummary!.totalPrice = this.calculateAppliedTariffsTotalPrice(tariffs);
+                    (this.model as PermitLicenseFishingGearsApplicationDTO).paymentInformation!.paymentSummary!.tariffs = newTariffs;
+                    (this.model as PermitLicenseFishingGearsApplicationDTO).paymentInformation!.paymentSummary!.totalPrice = this.calculateAppliedTariffsTotalPrice(newTariffs);
                 }
                 else {
                     (this.model as PermitLicenseFishingGearsApplicationDTO).paymentInformation!.paymentSummary = new PaymentSummaryDTO({
-                        tariffs: tariffs,
-                        totalPrice: this.calculateAppliedTariffsTotalPrice(tariffs)
+                        tariffs: newTariffs,
+                        totalPrice: this.calculateAppliedTariffsTotalPrice(newTariffs)
                     });
                 }
-                
+
                 this.form.get('applicationPaymentInformationControl')!.setValue((this.model as PermitLicenseFishingGearsApplicationDTO).paymentInformation);
                 this.hideBasicPaymentInfo = this.shouldHideBasicPaymentInfo();
+                this.hasUnpaidTariffs = this.hasNewTariffsDifferentFromMarkGear(newTariffs);
             }
         });
     }
@@ -666,10 +674,12 @@ export class EditPermitLicenseFishingGearsComponent implements OnInit, AfterView
             excludedTariffsIds = paymentIntormation.paymentSummary.tariffs.filter(x => !x.isChecked).map(x => x.tariffId!);
         }
 
+        const permirLicenseType: CommercialFishingTypesEnum | undefined = this.isPublicApp ? undefined : this.form.get('permitLicenseControl')!.value?.type; //TODO public app
+
         const parameters: PermitLicenseTariffCalculationParameters = new PermitLicenseTariffCalculationParameters({
             applicationId: this.applicationId,
-            pageCode: this.pageCode,
-            shipId: undefined,
+            pageCode: permirLicenseType !== undefined ? this.getPermitLicensePageCodeByType(permirLicenseType) : this.pageCode,
+            shipId: this.form.get('shipControl')!.value?.value,
             waterTypeCode: this.isPublicApp ? undefined : this.form.get('permitLicenseControl')!.value?.waterTypeCode,
             aquaticOrganismTypeIds: undefined,
             fishingGears: this.form.get('fishingGearsGroup.fishingGearsControl')!.value,
@@ -779,5 +789,15 @@ export class EditPermitLicenseFishingGearsComponent implements OnInit, AfterView
         return (this.model as PermitLicenseFishingGearsApplicationDTO)?.paymentInformation?.paymentType === null
             || (this.model as PermitLicenseFishingGearsApplicationDTO)?.paymentInformation?.paymentType === undefined
             || (this.model as PermitLicenseFishingGearsApplicationDTO)?.paymentInformation?.paymentType === '';
+    }
+
+    private hasNewTariffsDifferentFromMarkGear(tariffs: PaymentTariffDTO[]): boolean {
+        const newTariffsCount: number = tariffs.filter(x => x.tariffCode !== TariffCodesEnum[TariffCodesEnum.Mark_Gear_100m]).length;
+
+        if (newTariffsCount > 0) {
+            return true;
+        }
+
+        return false;
     }
 }

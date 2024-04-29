@@ -1,0 +1,20 @@
+﻿<div fxFlexFill fxLayout="column" fxLayoutGap="1em" validityCheckerGroup>
+    <div *ngFor="let personControl of form.controls; let i = index" fxFlex="100" fxLayout="column" fxLayoutGap="1em">
+        <inspected-person [formControl]="personControl"
+                          [countries]="countries"
+                          [personType]="personType"
+                          [isArray]="true"
+                          [orderNum]="i"
+                          [title]="title"
+                          (deletePanelBtnClicked)="deletePersonControl(personControl, i)">
+        </inspected-person>
+        <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">
+            <button *ngIf="!viewMode"
+                    mat-raised-button
+                    color="accent"
+                    (click)="addPersonControl()">
+                {{ 'inspections.add-inspected-person' | tlTranslate }}
+            </button>
+        </div>
+    </div>
+</div>

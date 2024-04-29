@@ -116,6 +116,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
     public hasFitnessCertificate: boolean = false;
     public willIssueCapacityCertificates: boolean = false;
     public hideBasicPaymentInfo: boolean = false;
+    public hidePaymentInformation: boolean = false;
     public dialogRightSideActions: IActionInfo[] | undefined;
 
     public notifier: Notifier = new Notifier();
@@ -723,11 +724,15 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
 
         let result: PermittedFileTypeDTO[] = options;
 
-        if (this.isApplication || !this.isOnlineApplication) {
+        if (!this.isOnlineApplication) {
             result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 
         if (this.isOnlineApplication) {
+            if (this.isApplication && !this.isReadonly) {
+                result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
+            }
+
             result = result.filter(x => !offlines.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 
@@ -802,11 +807,13 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
 
                         this.isPaid = ship.isPaid!;
                         this.hasDelivery = ship.hasDelivery!;
-                        this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                         this.isOnlineApplication = ship.isOnlineApplication!;
                         this.refreshFileTypes.next();
 
                         this.model = ship;
+                        this.hidePaymentInformation = this.shouldHidePaymentInformation();
+                        this.hideBasicPaymentInfo = this.shouldHidePaymentData();
+
                         this.fillForm();
 
                         if (!this.isPublicApp && content.latestRegiXChecks !== undefined && content.latestRegiXChecks !== null && content.latestRegiXChecks.length > 0) {
@@ -887,7 +894,6 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                             this.isOnlineApplication = ship.isOnlineApplication!;
                             this.isPaid = ship.isPaid!;
                             this.hasDelivery = ship.hasDelivery!;
-                            this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                             this.refreshFileTypes.next();
 
                             if (this.showRegiXData) {
@@ -905,8 +911,10 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                                     next: (submittedBy: ApplicationSubmittedByDTO) => {
                                         ship.submittedBy = submittedBy;
                                         this.model = ship;
+                                        this.hidePaymentInformation = this.shouldHidePaymentInformation();
+                                        this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                                         this.isDraft = this.isDraftMode();
-
+                                        
                                         this.fillForm();
                                     }
                                 });
@@ -914,6 +922,8 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                             else {
                                 this.model = ship;
                                 this.isDraft = this.isDraftMode();
+                                this.hidePaymentInformation = this.shouldHidePaymentInformation();
+                                this.hideBasicPaymentInfo = this.shouldHidePaymentData();
 
                                 this.fillForm();
                             }
@@ -1165,7 +1175,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
         this.fillFormTechnicalData();
         this.fillFormOtherData();
         this.fillCancellationFormData();
-
+     
         if (this.model.owners !== undefined && this.model.owners !== null) {
             const owners: ShipOwnerDTO[] | ShipOwnerRegixDataDTO[] = this.model.owners;
 
@@ -1469,7 +1479,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                     this.form.get('deliveryDataControl')!.setValue(this.model.deliveryData);
                 }
 
-                if (this.isPaid === true) {
+                if (this.isPaid === true && !this.hidePaymentInformation) {
                     this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
                 }
             }
@@ -1694,7 +1704,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                     model.deliveryData = undefined;
                 }
 
-                if (this.isPaid === true) {
+                if (this.isPaid === true && !this.hidePaymentInformation) {
                     (this.model as ShipRegisterApplicationEditDTO).paymentInformation = this.form.get('applicationPaymentInformationControl')!.value;
                 }
             }
@@ -2102,5 +2112,10 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
         return (this.model as ShipRegisterApplicationEditDTO)?.paymentInformation?.paymentType === null
             || (this.model as ShipRegisterApplicationEditDTO)?.paymentInformation?.paymentType === undefined
             || (this.model as ShipRegisterApplicationEditDTO)?.paymentInformation?.paymentType === '';
+    }
+
+    private shouldHidePaymentInformation(): boolean {
+        return (this.model as ShipRegisterApplicationEditDTO)?.paymentInformation === null
+            || (this.model as ShipRegisterApplicationEditDTO)?.paymentInformation === undefined;
     }
 }

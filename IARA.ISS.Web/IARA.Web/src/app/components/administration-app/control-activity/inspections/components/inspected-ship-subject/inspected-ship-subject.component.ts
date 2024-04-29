@@ -91,20 +91,23 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
         if (subjects !== null && subjects !== undefined && !this.isDisabled) {
             if (!subjects.firstChange) {
                 if ((subjects.currentValue as InspectionShipSubjectNomenclatureDTO[]).length === 0) {
-                    this.form.get('personRegisteredControl')!.setValue(false);
-                    this.form.get('subjectControl')!.setValue(null);
                     this.hasSubjects = false;
+                    this.form.get('personRegisteredControl')!.setValue(false); 
+                    this.form.get('subjectControl')!.setValue(null);
                 }
                 else {
-                    this.form.get('personRegisteredControl')!.setValue(true);
-                    this.form.get('personControl')!.setValue(null);
-                    this.form.get('legalControl')!.setValue(null);
                     this.hasSubjects = true;
+                    this.form.get('personRegisteredControl')!.setValue(this.isFromRegister);
 
-                    this.form.get('personControl')!.clearValidators();
-                    this.form.get('legalControl')!.clearValidators();
+                    if (this.isFromRegister) {
+                        this.form.get('personControl')!.setValue(null);
+                        this.form.get('legalControl')!.setValue(null);
+                        this.form.get('personControl')!.clearValidators();
+                        this.form.get('legalControl')!.clearValidators();
+                    }
                 }
 
+                this.form.get('personRegisteredControl')!.updateValueAndValidity({ emitEvent: false });
                 this.form.get('personControl')!.updateValueAndValidity({ emitEvent: false });
                 this.form.get('legalControl')!.updateValueAndValidity({ emitEvent: false });
             }

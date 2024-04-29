@@ -10,6 +10,7 @@ import { FishingAssociationPersonDTO } from '@app/models/generated/dtos/FishingA
 import { EditLegalAssociationPersonDialogParams } from '../models/edit-legal-association-person-dialog-params.model';
 import { EditLegalAssociationPersonResult } from '../models/edit-legal-association-person-result.model';
 import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
 @Component({
     selector: 'edit-legal-association-person',
@@ -23,10 +24,11 @@ export class EditLegalAssociationPersonComponent implements AfterViewInit, IDial
     public readOnly!: boolean;
     public showOnlyRegixData: boolean = false;
     public isEditing!: boolean;
+    public showConfirmEmailControl: boolean = false;
 
     private isTouched: boolean = false;
 
-    public constructor() {
+    public constructor(translate: FuseTranslationLoaderService) {
         this.expectedResults = new FishingAssociationPersonDTO({
             person: new RegixPersonDataDTO()
         });
@@ -54,11 +56,16 @@ export class EditLegalAssociationPersonComponent implements AfterViewInit, IDial
         }
 
         if (data.model === undefined) {
+            this.showConfirmEmailControl = true;
             this.model = new FishingAssociationPersonDTO({ isActive: true });
         }
         else {
             if (this.readOnly) {
                 this.form.disable();
+            }
+
+            if (data.model.userId === undefined || data.model.userId === null || data.model.id === undefined || data.model.id === null) {
+                this.showConfirmEmailControl = true;
             }
 
             this.model = data.model;
@@ -99,15 +106,27 @@ export class EditLegalAssociationPersonComponent implements AfterViewInit, IDial
 
     private buildForm(): void {
         this.form = new FormGroup({
-            personControl: new FormControl()
+            personControl: new FormControl(),
+            isEmailConfirmedControl: new FormControl(false)
         });
     }
 
     private fillForm(): void {
         this.form.get('personControl')!.setValue(this.model.person);
+
+        if (this.showConfirmEmailControl) {
+            this.form.get('isEmailConfirmedControl')!.setValue(this.model.isEmailConfirmed);
+        }
     }
 
     private fillModel(): void {
         this.model.person = this.form.get('personControl')!.value;
+
+        if (this.showConfirmEmailControl) {
+            this.model.isEmailConfirmed = this.form.get('isEmailConfirmedControl')!.value ?? false;
+        }
+        else {
+            this.model.isEmailConfirmed = true;
+        }
     }
 }

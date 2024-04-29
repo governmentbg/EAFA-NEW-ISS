@@ -13,6 +13,11 @@
                 (downloadDataBtnClicked)="downloadedPersonData($event)">
     </regix-data>
 
+    <tl-slide-toggle *ngIf="showConfirmEmailControl"
+                     formControlName="isEmailConfirmedControl"
+                     label="{{ 'legal-entities-page.is-email-confirmed' | tlTranslate }}">
+    </tl-slide-toggle>
+
     <tl-card *ngIf="!showOnlyRegixData">
         <tl-card-title fxFlex="row">{{ 'legal-entities-page.roles-title' | tlTranslate }}</tl-card-title>
         <tl-card-content fxLayout="column" fxLayoutGap="1em">
@@ -20,6 +25,7 @@
                            fxFlexFill
                            [isRemote]="false"
                            [showInactiveRecords]="false"
+                           [isSoftDeletable]="true"
                            [showAddButton]="!readOnly"
                            [rows]="personRoles">
                 <data-column columnName="{{ 'legal-entities-page.role' | tlTranslate }}"

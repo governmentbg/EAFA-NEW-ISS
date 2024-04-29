@@ -137,6 +137,14 @@ export class EditLegalEntityComponent implements OnInit, IDialogComponent {
 
                         this.model = legal;
                         this.fillForm();
+
+                        if (!this.isPublicApp && content.latestRegiXChecks !== undefined && content.latestRegiXChecks !== null && content.latestRegiXChecks.length > 0) {
+                            this.showRegiXData = true;
+
+                            setTimeout(() => {
+                                this.regixChecks = content.latestRegiXChecks!;
+                            }, 100);
+                        }
                     }
                 });
             }
@@ -458,11 +466,15 @@ export class EditLegalEntityComponent implements OnInit, IDialogComponent {
 
         let result: PermittedFileTypeDTO[] = options;
 
-        if (this.isApplication || !this.isOnlineApplication) {
+        if (!this.isOnlineApplication) {
             result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 
         if (this.isOnlineApplication) {
+            if (this.isApplication && !this.isReadonly) {
+                result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
+            }
+
             result = result.filter(x => !offlines.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
 

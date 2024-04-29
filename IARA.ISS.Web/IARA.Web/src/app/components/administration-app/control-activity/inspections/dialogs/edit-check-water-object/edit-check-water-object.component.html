@@ -6,6 +6,7 @@
      class="dialog-padding">
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
+                        tooltipResourceName="inspections.general-info-helper"
                         [validityChecker]="form"
                         [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
         <div fxLayout="column"
@@ -27,6 +28,7 @@
 
     <!-- Данни от извършената проверка -->
     <tl-expansion-panel title="{{ 'inspections.check-water-object-data' | tlTranslate }}"
+                        tooltipResourceName="inspections.check-water-object-data-helper"
                         [validityChecker]="form">
         <div fxLayout="column"
              fxLayoutGap="1em"
@@ -36,13 +38,15 @@
                  fxLayoutAlign="start center">
                 <tl-input fxFlex="50"
                           formControlName="nameControl"
-                          label="{{ 'inspections.water-object-name' | tlTranslate }}">
+                          label="{{ 'inspections.water-object-name' | tlTranslate }}"
+                          tooltipResourceName="inspections.water-object-name-helper">
                 </tl-input>
 
                 <tl-autocomplete fxFlex="50"
                                  formControlName="typeControl"
                                  [options]="waterBodyTypes"
-                                 label="{{ 'inspections.water-object-type' | tlTranslate }}">
+                                 label="{{ 'inspections.water-object-type' | tlTranslate }}"
+                                 tooltipResourceName="inspections.water-object-type-helper">
                 </tl-autocomplete>
             </div>
 
@@ -73,8 +77,30 @@
                                 [validityChecker]="form">
     </inspection-additional-info>
 
+    <tl-expansion-panel title="{{ 'inspections.edit-inspection-offender' | tlTranslate }}"
+                        tooltipResourceName="inspections.edit-inspection-files-helper"
+                        [validityChecker]="form">
+        <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
+            <tl-checkbox fxFlex="100"
+                         formControlName="hasNoOffenderControl"
+                         label="{{ 'inspections.has-no-offender' | tlTranslate }}">
+            </tl-checkbox>
+
+            <div *ngIf="hasOffender">
+                <inspected-persons-array formControlName="offendersControl"
+                                         [countries]="countries"
+                                         [viewMode]="viewMode"
+                                         validityChecker
+                                         [personType]="inspectedPersonTypeEnum.Offender"
+                                         title="{{ 'inspections.offender' | tlTranslate }}">
+                </inspected-persons-array>
+            </div>
+        </div>
+    </tl-expansion-panel>
+
     <!-- Файлове -->
     <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}"
+                        tooltipResourceName="inspections.edit-inspection-files-helper"
                         [validityChecker]="form">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
