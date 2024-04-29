@@ -102,6 +102,7 @@ namespace IARA.Mobile.Insp
 
             // Check if device is allowed
             builder.Call<IStartupTransaction, IApplicationInstance, ISettings, IAuthTokenProvider>(CheckIfDeviceAllowed);
+            //.Call<IStartupTransaction, ISettings, ICurrentUser>(CheckIfInspectorAllowed);
 
             if (state != CommonConstants.NewLogin)
             {
@@ -130,7 +131,7 @@ namespace IARA.Mobile.Insp
                 ? "MobileInspections"
                 : "Inspections";
 #if DEBUG
-            serverUrl.Environment = Environments.STAGING;
+            serverUrl.Environment = Environments.DEVELOPMENT_INTERNAL;
 #elif PRODRELEASE
             serverUrl.Environment =  Environments.PRODUCTION;
 #else
@@ -315,7 +316,36 @@ namespace IARA.Mobile.Insp
                     return;
                 }
             }
+        }
 
+
+        private async Task CheckIfInspectorAllowed(IStartupTransaction startUp, ISettings settings, ICurrentUser currentUser)
+        {
+            if (CommonGlobalVariables.InternetStatus == InternetStatus.Disconnected && settings.IsDeviceAllowed)
+            {
+                return;
+            }
+
+            settings.IsInspectorAllowed = false;
+
+            while (true)
+            {
+                bool? result = await startUp.IsInspectorAllowed();
+                if (result is null)
+                {
+                    await MainNavigator.Current.GoToPageAsync(nameof(LoginPage));
+                    return;
+                }
+                else if (!result.Value)
+                {
+                    await ShowInspecorNotAllowed(string.Concat(currentUser.FirstName, " ", currentUser.LastName));
+                }
+                else
+                {
+                    settings.IsInspectorAllowed = true;
+                    return;
+                }
+            }
         }
 
         private async Task PostOfflineData(IStartupTransaction startUp, IInspectionsTransaction inspections)
@@ -342,6 +372,17 @@ namespace IARA.Mobile.Insp
             return App.Current.MainPage.DisplayAlert(
                 TranslateExtension.Translator[group + "/DeviceNotAllowedTitle"],
                 string.Format(TranslateExtension.Translator[group + "/DeviceNotAllowedMessage"], imei),
+                TranslateExtension.Translator[group + "/Okay"]
+            );
+        }
+
+        private Task ShowInspecorNotAllowed(string inspectorName)
+        {
+            const string group = nameof(GroupResourceEnum.Common);
+
+            return App.Current.MainPage.DisplayAlert(
+                TranslateExtension.Translator[group + "/InspectorNotAllowedTitle"],
+                string.Format(TranslateExtension.Translator[group + "/InspectorNotAllowedMessage"], inspectorName),
                 TranslateExtension.Translator[group + "/Okay"]
             );
         }

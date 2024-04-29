@@ -5,6 +5,7 @@ using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
+using IARA.Mobile.Insp.Application.Filters;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
@@ -33,6 +34,7 @@ using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
+using TechnoLogica.Xamarin.ViewModels.Models;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -40,6 +42,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
 {
     public class InspectionsViewModel : MainPageViewModel
     {
+        private InspectionsFilters _inspectionsFilters = null;
         public InspectionsViewModel()
         {
             IsBusy = false;
@@ -52,6 +55,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
             OpenInspection = CommandBuilder.CreateFrom<InspectionDto>(OnOpenInspection);
             DeleteInspection = CommandBuilder.CreateFrom<InspectionDto>(OnDeleteInspection);
             Inspections.GoToPage = CommandBuilder.CreateFrom<int>(OnGoToPage);
+
+            Filter = CommandBuilder.CreateFrom(OnFilter);
+            ClearFilters = CommandBuilder.CreateFrom(OnClearFilters);
+
+            this.AddValidation();
         }
 
         public TLPagedCollection<InspectionDto> Inspections { get; }
@@ -62,11 +70,16 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
         public ICommand DeleteInspection { get; }
         public ICommand Reload { get; }
         public ICommand GetStartupData { get; }
+        public ICommand Filter { get; }
+        public ICommand ClearFilters { get; }
 
         public override GroupResourceEnum[] GetPageIndexes()
         {
             return new[] { GroupResourceEnum.Inspections, GroupResourceEnum.GeneralInfo };
         }
+
+        public ValidStateDate StartDate { get; set; }
+        public ValidStateDate EndDate { get; set; }
 
         public override async void OnAppearing()
         {
@@ -142,7 +155,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
             List<InspectionDto> inspections = null;
             try
             {
-                inspections = await InspectionsTransaction.GetAll(page);
+                inspections = await InspectionsTransaction.GetAll(page, _inspectionsFilters);
             }
             catch (Exception ex)
             {
@@ -154,7 +167,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
                 return;
             }
 
-            int pageCount = InspectionsTransaction.GetPageCount();
+            int pageCount = InspectionsTransaction.GetPageCount(_inspectionsFilters);
 
             Inspections.PageCount = pageCount;
             Inspections.Page = pageCount >= page ? page : pageCount;
@@ -176,6 +189,32 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
             {
                 Inspections.Remove(dto);
             }
+        }
+
+        private Task OnFilter()
+        {
+            _inspectionsFilters = new InspectionsFilters();
+            if (StartDate.Value != null)
+            {
+                _inspectionsFilters.DateFrom = StartDate.Value.Value;
+            }
+            if (EndDate.Value != null)
+            {
+                _inspectionsFilters.DateTo = EndDate.Value.Value;
+            }
+            Inspections.Page = 1;
+
+            return OnReload();
+        }
+
+        private Task OnClearFilters()
+        {
+            _inspectionsFilters = null;
+            StartDate.Value = null;
+            EndDate.Value = null;
+            Inspections.Page = 1;
+
+            return OnReload();
         }
 
         private async Task OnOpenInspection(InspectionDto dto)
