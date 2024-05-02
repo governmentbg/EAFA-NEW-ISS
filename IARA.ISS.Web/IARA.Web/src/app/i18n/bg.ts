@@ -2748,7 +2748,9 @@
         'water-inspection-stored': 'Съхранение',
         'storage-location': 'Място на съхранение',
         'edit-inspection-offenders': 'Установени нарушители',
+        'edit-inspection-offender': 'Установени нарушители',
         'has-no-offenders': 'Няма установени нарушители',
+        'has-no-offender': 'Няма установени нарушители',
         'offender': 'Нарушител',
         'edit-person-no': '№',
         'add-inspected-person': 'Добави',
@@ -5346,6 +5348,10 @@
         'edit-auan-objection-resolution-date': 'Дата на резолюция',
         'edit-auan-objection-resolution-num': 'Номер на резолюция',
         'edit-auan-sent-date': 'Дата на изпращане',
+
+        'status-draft': 'Чернова',
+        'status-submitted': 'Подаден',
+        'status-canceled': 'Анулиран',
 
         'edit-auan-penal-decrees': 'Свързани наказателни постановления, споразумения, предупреждения и резолюции',
         'edit-penal-decree-num': '№ на наказателно постановление',

@@ -48,19 +48,19 @@
                         <xct:Expander Margin="7">
                             <xct:Expander.Header>
                                 <Frame>
-                                    <Label Text="Филтри" HorizontalOptions="Start" />
+                                    <Label Text="{rt:Translate Filters, Group=Inspections}" HorizontalOptions="Start" />
                                 </Frame>
                             </xct:Expander.Header>
                             <Frame Margin="0,4">
                                 <tl:TLFlex GrowUnit="200">
-                                    <tl:TLDatePicker Title="Начаалнда дата" ValidState="{Binding StartDate}" />
-                                    <tl:TLDatePicker Title="Крайна Дата" ValidState="{Binding EndDate}" />
+                                    <tl:TLDatePicker Title="{rt:Translate StarDate, Group=Inspections}" ValidState="{Binding StartDate}" />
+                                    <tl:TLDatePicker Title="{rt:Translate EndDate, Group=Inspections}" ValidState="{Binding EndDate}" />
                                     <StackLayout Orientation="Horizontal">
-                                        <Button Text="Филтрирай"
+                                        <Button Text="{rt:Translate Filter, Group=Inspections}"
                                                 WidthRequest="130"
                                                 Command="{Binding Filter}" />
                                         <BoxView HorizontalOptions="FillAndExpand" />
-                                        <Button Text="Изчисти"
+                                        <Button Text="{rt:Translate Clear, Group=Inspections}"
                                                 WidthRequest="130"
                                                 Command="{Binding ClearFilters}" />
                                     </StackLayout>

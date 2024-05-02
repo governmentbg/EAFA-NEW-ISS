@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Domain.Enums;
+using System.Collections.Generic;
 
 namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 {

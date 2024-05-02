@@ -2691,7 +2691,9 @@
         'water-object-type': 'Object type',
         'water-inspection-taken': 'Taken',
         'edit-inspection-offenders': 'Offender',
+        'edit-inspection-offender': 'Offender',
         'has-no-offenders': 'There is no offender',
+        'has-no-offender': 'There is no offender',
         'offender': 'Offender',
         'edit-person-no': '#',
         'add-inspected-person': 'Add',
@@ -5289,6 +5291,10 @@
         'edit-auan-objection-resolution-date': 'Date of resolution',
         'edit-auan-objection-resolution-num': 'Resolution no.',
         'edit-auan-sent-date': 'Sent date',
+
+        'status-draft': 'Draft',
+        'status-submitted': 'Submitted',
+        'status-canceled': 'Canceled',
 
         'edit-auan-penal-decrees': 'Penal decrees, agreements and warnings',
         'edit-penal-decree-num': 'Decree num',
