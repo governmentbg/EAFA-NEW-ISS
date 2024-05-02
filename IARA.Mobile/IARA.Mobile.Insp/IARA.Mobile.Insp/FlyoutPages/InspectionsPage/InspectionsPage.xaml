@@ -20,7 +20,7 @@
     <ContentPage.Resources>
         <commonConverters:BoolToSuccessLayoutStateConverter x:Key="BoolToSuccessLayoutState" />
     </ContentPage.Resources>
-    <sv:BasePage.TitleViews>
+    <!--<sv:BasePage.TitleViews>
         <Label FontSize="{OnPlatform Android=34, UWP=28}"
                 FontFamily="FA"
                 Text="{Static h:IconFont.Rotate}"
@@ -30,12 +30,11 @@
                 <TapGestureRecognizer Command="{Binding GetStartupData}" />
             </Label.GestureRecognizers>
         </Label>
-    </sv:BasePage.TitleViews>
+    </sv:BasePage.TitleViews>-->
     <tl:TLFillLayout>
         <Grid xct:StateLayout.CurrentState="{Binding IsBusy, Converter={StaticResource BoolToSuccessLayoutState}}">
             <xct:StateLayout.StateViews>
-                <xct:StateView StateKey="Loading"
-                        VerticalOptions="FillAndExpand">
+                <xct:StateView StateKey="Loading" VerticalOptions="FillAndExpand">
                     <ActivityIndicator HeightRequest="150"
                             HorizontalOptions="Center"
                             IsRunning="{Binding IsBusy}"
@@ -45,16 +44,105 @@
                 <xct:StateView StateKey="Success"
                         HorizontalOptions="FillAndExpand"
                         VerticalOptions="FillAndExpand">
-                    <OnPlatform x:TypeArguments="tl:TLResponsiveLayout">
-                        <On Platform="Android">
-                            <tl:TLResponsiveLayout>
-                                <tl:TLResponsiveChild>
-                                    <DataTemplate>
-                                        <RefreshView Command="{Binding Reload}">
-                                            <CollectionView HeightRequest="100000"
-                                                    ItemSizingStrategy="MeasureAllItems"
-                                                    ItemsSource="{Binding Inspections}">
-                                                <CollectionView.Header>
+                    <StackLayout Orientation="Vertical">
+                        <xct:Expander Margin="7">
+                            <xct:Expander.Header>
+                                <Frame>
+                                    <Label Text="Филтри" HorizontalOptions="Start" />
+                                </Frame>
+                            </xct:Expander.Header>
+                            <Frame Margin="0,4">
+                                <tl:TLFlex GrowUnit="200">
+                                    <tl:TLDatePicker Title="Начаалнда дата" ValidState="{Binding StartDate}" />
+                                    <tl:TLDatePicker Title="Крайна Дата" ValidState="{Binding EndDate}" />
+                                    <StackLayout Orientation="Horizontal">
+                                        <Button Text="Филтрирай"
+                                                WidthRequest="130"
+                                                Command="{Binding Filter}" />
+                                        <BoxView HorizontalOptions="FillAndExpand" />
+                                        <Button Text="Изчисти"
+                                                WidthRequest="130"
+                                                Command="{Binding ClearFilters}" />
+                                    </StackLayout>
+                                </tl:TLFlex>
+                            </Frame>
+                        </xct:Expander>
+                        <OnPlatform x:TypeArguments="tl:TLResponsiveLayout">
+                            <On Platform="Android">
+                                <tl:TLResponsiveLayout>
+                                    <tl:TLResponsiveChild>
+                                        <DataTemplate>
+                                            <RefreshView Command="{Binding Reload}">
+                                                <CollectionView HeightRequest="100000"
+                                                        ItemSizingStrategy="MeasureAllItems"
+                                                        ItemsSource="{Binding Inspections}">
+                                                    <CollectionView.Header>
+                                                        <Grid Padding="20,10"
+                                                                ColumnDefinitions="150,*,*,*,175,100"
+                                                                RowDefinitions="Auto,1">
+                                                            <Label Grid.Column="0"
+                                                                    Text="{rt:Translate Number, Group=Inspections}"
+                                                                    TextColor="Gray" />
+                                                            <Label Grid.Column="1"
+                                                                    Text="{rt:Translate Description, Group=Inspections}"
+                                                                    TextColor="Gray" />
+                                                            <Label Grid.Column="2"
+                                                                    Text="{rt:Translate Inspectors, Group=Inspections}"
+                                                                    TextColor="Gray" />
+                                                            <Label Grid.Column="3"
+                                                                    Text="{rt:Translate InspectionSubjects, Group=Inspections}"
+                                                                    TextColor="Gray" />
+                                                            <Label Grid.Column="4"
+                                                                    Text="{rt:Translate StartDate, Group=Inspections}"
+                                                                    TextColor="Gray" />
+                                                            <BoxView Grid.Row="1"
+                                                                    Grid.ColumnSpan="6"
+                                                                    Margin="-10,0"
+                                                                    Color="LightGray" />
+                                                        </Grid>
+                                                    </CollectionView.Header>
+                                                    <CollectionView.ItemTemplate>
+                                                        <dts:InspectionDataTemplateSelector />
+                                                    </CollectionView.ItemTemplate>
+                                                    <CollectionView.Footer>
+                                                        <ContentView Padding="0,20,100,20">
+                                                            <sv:TLPagination PagedItemsSource="{Binding Inspections}" HorizontalOptions="End" />
+                                                        </ContentView>
+                                                    </CollectionView.Footer>
+                                                </CollectionView>
+                                            </RefreshView>
+                                        </DataTemplate>
+                                    </tl:TLResponsiveChild>
+                                    <tl:TLResponsiveChild QueryWidth="800">
+                                        <DataTemplate>
+                                            <RefreshView Command="{Binding Reload}">
+                                                <CollectionView HeightRequest="100000"
+                                                        ItemSizingStrategy="MeasureAllItems"
+                                                        ItemsSource="{Binding Inspections}">
+                                                    <CollectionView.ItemTemplate>
+                                                        <dts:InspectionOnPhoneDataTemplateSelector />
+                                                    </CollectionView.ItemTemplate>
+                                                    <CollectionView.Footer>
+                                                        <ContentView Padding="0,20,100,20">
+                                                            <sv:TLPagination PagedItemsSource="{Binding Inspections}" HorizontalOptions="End" />
+                                                        </ContentView>
+                                                    </CollectionView.Footer>
+                                                </CollectionView>
+                                            </RefreshView>
+                                        </DataTemplate>
+                                    </tl:TLResponsiveChild>
+                                </tl:TLResponsiveLayout>
+                            </On>
+                            <On Platform="UWP">
+                                <tl:TLResponsiveLayout>
+                                    <tl:TLResponsiveChild>
+                                        <DataTemplate>
+                                            <ListView HeightRequest="100000"
+                                                    ItemsSource="{Binding Inspections}"
+                                                    SeparatorVisibility="None"
+                                                    RefreshCommand="{Binding Reload}"
+                                                    IsPullToRefreshEnabled="True">
+                                                <ListView.Header>
                                                     <Grid Padding="20,10"
                                                             ColumnDefinitions="150,*,*,*,175,100"
                                                             RowDefinitions="Auto,1">
@@ -78,109 +166,40 @@
                                                                 Margin="-10,0"
                                                                 Color="LightGray" />
                                                     </Grid>
-                                                </CollectionView.Header>
-                                                <CollectionView.ItemTemplate>
+                                                </ListView.Header>
+                                                <ListView.ItemTemplate>
                                                     <dts:InspectionDataTemplateSelector />
-                                                </CollectionView.ItemTemplate>
-                                                <CollectionView.Footer>
+                                                </ListView.ItemTemplate>
+                                                <ListView.Footer>
                                                     <ContentView Padding="0,20,100,20">
-                                                        <sv:TLPagination PagedItemsSource="{Binding Inspections}"
-                                                                HorizontalOptions="End" />
+                                                        <sv:TLPagination PagedItemsSource="{Binding Inspections}" HorizontalOptions="Start" />
                                                     </ContentView>
-                                                </CollectionView.Footer>
-                                            </CollectionView>
-                                        </RefreshView>
-                                    </DataTemplate>
-                                </tl:TLResponsiveChild>
-                                <tl:TLResponsiveChild QueryWidth="800">
-                                    <DataTemplate>
-                                        <RefreshView Command="{Binding Reload}">
-                                            <CollectionView HeightRequest="100000"
-                                                    ItemSizingStrategy="MeasureAllItems"
-                                                    ItemsSource="{Binding Inspections}">
-                                                <CollectionView.ItemTemplate>
+                                                </ListView.Footer>
+                                            </ListView>
+                                        </DataTemplate>
+                                    </tl:TLResponsiveChild>
+                                    <tl:TLResponsiveChild QueryWidth="800">
+                                        <DataTemplate>
+                                            <ListView HeightRequest="100000"
+                                                    ItemsSource="{Binding Inspections}"
+                                                    SeparatorVisibility="None"
+                                                    RefreshCommand="{Binding Reload}"
+                                                    IsPullToRefreshEnabled="True">
+                                                <ListView.ItemTemplate>
                                                     <dts:InspectionOnPhoneDataTemplateSelector />
-                                                </CollectionView.ItemTemplate>
-                                                <CollectionView.Footer>
+                                                </ListView.ItemTemplate>
+                                                <ListView.Footer>
                                                     <ContentView Padding="0,20,100,20">
-                                                        <sv:TLPagination PagedItemsSource="{Binding Inspections}"
-                                                                HorizontalOptions="End" />
+                                                        <sv:TLPagination PagedItemsSource="{Binding Inspections}" HorizontalOptions="End" />
                                                     </ContentView>
-                                                </CollectionView.Footer>
-                                            </CollectionView>
-                                        </RefreshView>
-                                    </DataTemplate>
-                                </tl:TLResponsiveChild>
-                            </tl:TLResponsiveLayout>
-                        </On>
-                        <On Platform="UWP">
-                            <tl:TLResponsiveLayout>
-                                <tl:TLResponsiveChild>
-                                    <DataTemplate>
-                                        <ListView HeightRequest="100000"
-                                                ItemsSource="{Binding Inspections}"
-                                                SeparatorVisibility="None"
-                                                RefreshCommand="{Binding Reload}"
-                                                IsPullToRefreshEnabled="True">
-                                            <ListView.Header>
-                                                <Grid Padding="20,10"
-                                                        ColumnDefinitions="150,*,*,*,175,100"
-                                                        RowDefinitions="Auto,1">
-                                                    <Label Grid.Column="0"
-                                                            Text="{rt:Translate Number, Group=Inspections}"
-                                                            TextColor="Gray" />
-                                                    <Label Grid.Column="1"
-                                                            Text="{rt:Translate Description, Group=Inspections}"
-                                                            TextColor="Gray" />
-                                                    <Label Grid.Column="2"
-                                                            Text="{rt:Translate Inspectors, Group=Inspections}"
-                                                            TextColor="Gray" />
-                                                    <Label Grid.Column="3"
-                                                            Text="{rt:Translate InspectionSubjects, Group=Inspections}"
-                                                            TextColor="Gray" />
-                                                    <Label Grid.Column="4"
-                                                            Text="{rt:Translate StartDate, Group=Inspections}"
-                                                            TextColor="Gray" />
-                                                    <BoxView Grid.Row="1"
-                                                            Grid.ColumnSpan="6"
-                                                            Margin="-10,0"
-                                                            Color="LightGray" />
-                                                </Grid>
-                                            </ListView.Header>
-                                            <ListView.ItemTemplate>
-                                                <dts:InspectionDataTemplateSelector />
-                                            </ListView.ItemTemplate>
-                                            <ListView.Footer>
-                                                <ContentView Padding="0,20,100,20">
-                                                    <sv:TLPagination PagedItemsSource="{Binding Inspections}"
-                                                            HorizontalOptions="End" />
-                                                </ContentView>
-                                            </ListView.Footer>
-                                        </ListView>
-                                    </DataTemplate>
-                                </tl:TLResponsiveChild>
-                                <tl:TLResponsiveChild QueryWidth="800">
-                                    <DataTemplate>
-                                        <ListView HeightRequest="100000"
-                                                ItemsSource="{Binding Inspections}"
-                                                SeparatorVisibility="None"
-                                                RefreshCommand="{Binding Reload}"
-                                                IsPullToRefreshEnabled="True">
-                                            <ListView.ItemTemplate>
-                                                <dts:InspectionOnPhoneDataTemplateSelector />
-                                            </ListView.ItemTemplate>
-                                            <ListView.Footer>
-                                                <ContentView Padding="0,20,100,20">
-                                                    <sv:TLPagination PagedItemsSource="{Binding Inspections}"
-                                                            HorizontalOptions="End" />
-                                                </ContentView>
-                                            </ListView.Footer>
-                                        </ListView>
-                                    </DataTemplate>
-                                </tl:TLResponsiveChild>
-                            </tl:TLResponsiveLayout>
-                        </On>
-                    </OnPlatform>
+                                                </ListView.Footer>
+                                            </ListView>
+                                        </DataTemplate>
+                                    </tl:TLResponsiveChild>
+                                </tl:TLResponsiveLayout>
+                            </On>
+                        </OnPlatform>
+                    </StackLayout>
                 </xct:StateView>
             </xct:StateLayout.StateViews>
         </Grid>

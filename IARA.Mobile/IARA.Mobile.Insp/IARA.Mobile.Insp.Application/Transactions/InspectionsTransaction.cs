@@ -218,7 +218,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
             }
         }
 
-        public async Task<List<InspectionDto>> GetAll(int page)
+        public async Task<List<InspectionDto>> GetAll(int page, InspectionsFilters filters = null)
         {
             if (IsSendingOfflineInspection)
             {
@@ -232,17 +232,26 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
             if (CommonGlobalVariables.InternetStatus == InternetStatus.Disconnected)
             {
-                return PullInspectionsOffline(page);
+                return PullInspectionsOffline(page, filters);
             }
 
             DateTime? lastFetchDate = Settings.LastInspectionFetchDate;
             DateTime now = DateTime.Now;
 
-            InspectionsFilters filters = new InspectionsFilters
+
+            if (filters == null)
             {
-                UpdatedAfter = lastFetchDate,
-                ShowBothActiveAndInactive = lastFetchDate.HasValue
-            };
+                filters = new InspectionsFilters
+                {
+                    UpdatedAfter = lastFetchDate,
+                    ShowBothActiveAndInactive = lastFetchDate.HasValue
+                };
+            }
+            else
+            {
+                filters.UpdatedAfter = lastFetchDate;
+                filters.ShowBothActiveAndInactive = lastFetchDate.HasValue;
+            }
             GridRequest<InspectionsFilters> gridRequest = new GridRequest<InspectionsFilters>(filters)
             {
                 PageSize = int.MaxValue
@@ -403,10 +412,10 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 Settings.LastInspectionFetchDate = now;
             }
 
-            return PullInspectionsOffline(page);
+            return PullInspectionsOffline(page, filters);
         }
 
-        public int GetPageCount()
+        public int GetPageCount(InspectionsFilters filters = null)
         {
             if (!ContextBuilder.DatabaseExists)
             {
@@ -415,8 +424,31 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
             using (IAppDbContext context = ContextBuilder.CreateContext())
             {
+                int count;
+                if (filters == null)
+                {
+                    count = context.Inspections.Count();
+                }
+                else
+                {
+                    if (filters.DateTo != null && filters.DateFrom != null)
+                    {
+                        count = context.Inspections.Where(x => x.StartDate >= filters.DateFrom.Value && x.StartDate <= filters.DateTo.Value).Count();
+                    }
+                    else if (filters.DateTo != null)
+                    {
+                        count = context.Inspections.Where(x => x.StartDate <= filters.DateTo.Value).Count();
+                    }
+                    else if (filters.DateFrom != null)
+                    {
+                        count = context.Inspections.Where(x => x.StartDate >= filters.DateFrom.Value).Count();
+                    }
+                    else
+                    {
+                        count = context.Inspections.Count();
+                    }
+                }
                 double pageSize = CommonGlobalVariables.PullItemsCount;
-                int count = context.Inspections.Count();
 
                 return (int)Math.Ceiling((count > 1 ? count : 1) / pageSize);
             }
@@ -1094,7 +1126,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
             }
         }
 
-        private List<InspectionDto> PullInspectionsOffline(int page)
+        private List<InspectionDto> PullInspectionsOffline(int page, InspectionsFilters filters)
         {
             if (!ContextBuilder.DatabaseExists)
             {
@@ -1108,6 +1140,8 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 return (
                     from insp in context.Inspections
                     join inspType in context.NInspectionTypes on insp.InspectionTypeId equals inspType.Id
+                    where (filters == null ? true : (filters.DateFrom == null ? true : (insp.StartDate.Date >= filters.DateFrom.Value.Date))
+                        && (filters.DateTo == null ? true : (insp.StartDate.Date <= filters.DateTo.Value.Date)))
                     orderby insp.StartDate descending
                     select new InspectionDto
                     {

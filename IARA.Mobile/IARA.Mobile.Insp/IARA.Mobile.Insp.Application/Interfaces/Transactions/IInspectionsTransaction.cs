@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using IARA.Mobile.Application.DTObjects.Common;
+﻿using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
+using IARA.Mobile.Insp.Application.Filters;
 using IARA.Mobile.Insp.Domain.Enums;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 {
@@ -25,9 +26,9 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 
         List<RecentInspectorDto> GetRecentInspectors();
 
-        Task<List<InspectionDto>> GetAll(int page);
+        Task<List<InspectionDto>> GetAll(int page, InspectionsFilters filters = null);
 
-        int GetPageCount();
+        int GetPageCount(InspectionsFilters filters = null);
 
         Task<ObservationAtSeaDto> GetOFS(int id, bool isLocal);
 

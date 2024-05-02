@@ -15,8 +15,7 @@
         Title="{rt:Translate Title, Group=FirstSaleInspection}"
         BackgroundColor="{StaticResource BackgroundColor}">
     <lc:TLForwardSections x:Name="forwardSections">
-        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
-                Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}" Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
             <StackLayout Padding="10">
                 <lc:InspectionGeneralInfoView BindingContext="{Binding InspectionGeneralInfo}" />
             </StackLayout>
@@ -36,8 +35,7 @@
                 <lc:InspectedBuyerView BindingContext="{Binding Owner}"
                         Title="{rt:Translate Owner, Group=FirstSaleInspection}"
                         InRegisterText="{rt:Translate OwnerInRegister, Group=FirstSaleInspection}" />
-                <lc:PersonView BindingContext="{Binding Representative}"
-                        Title="{rt:Translate Representative, Group=FirstSaleInspection}" />
+                <lc:PersonView BindingContext="{Binding Representative}" Title="{rt:Translate Representative, Group=FirstSaleInspection}" />
             </StackLayout>
         </sv:SectionView>
         <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Table}, Color=White, Size=100}"
@@ -45,10 +43,8 @@
                 IsExpanded="False">
             <StackLayout Padding="10">
                 <lc:DeclarationCatchesView BindingContext="{Binding Catches}" />
-                <lc:TLGeneratedToggles ValidState="{Binding InspectionToggles}"
-                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
-                <tl:TLCheckView IsChecked="{Binding HasImporter}"
-                        Text="{rt:Translate HasImporter, Group=FirstSaleInspection}" />
+                <lc:TLGeneratedToggles ValidState="{Binding InspectionToggles}" IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLCheckView IsChecked="{Binding HasImporter}" Text="{rt:Translate HasImporter, Group=FirstSaleInspection}" />
                 <lc:LegalView BindingContext="{Binding Importer}"
                         Title="{rt:Translate Importer, Group=FirstSaleInspection}"
                         IsVisible="{Binding BindingContext.HasImporter, Source={Reference page}}" />
