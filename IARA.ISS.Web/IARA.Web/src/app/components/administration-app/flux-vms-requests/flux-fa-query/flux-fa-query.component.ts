@@ -80,7 +80,7 @@ export class FluxFAQueryComponent implements IDialogComponent {
                 vesselIrcsControl: new FormControl(undefined),
             }),
             tripIdentifierControl: new FormControl(undefined),
-            consolidatedControl: new FormControl(undefined)
+            consolidatedControl: new FormControl(false)
         });
 
         form.get('queryTypeControl')!.valueChanges.subscribe({

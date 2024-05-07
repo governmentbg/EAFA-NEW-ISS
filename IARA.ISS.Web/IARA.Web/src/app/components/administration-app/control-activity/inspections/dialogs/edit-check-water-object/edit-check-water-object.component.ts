@@ -120,7 +120,7 @@ export class EditCheckWaterObjectComponent extends BaseInspectionsComponent impl
                     this.hasOffender = false;
                 }
                 else {
-                    this.form.get('offendersControl')!.setValidators([Validators.required]);
+                    this.form.get('offendersControl')!.setValidators(Validators.required);
                     this.hasOffender = true;
                 }
 

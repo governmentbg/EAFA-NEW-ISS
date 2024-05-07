@@ -77,13 +77,13 @@
                                 [validityChecker]="form">
     </inspection-additional-info>
 
-    <tl-expansion-panel title="{{ 'inspections.edit-inspection-offender' | tlTranslate }}"
+    <tl-expansion-panel title="{{ 'inspections.edit-inspection-offenders' | tlTranslate }}"
                         tooltipResourceName="inspections.edit-inspection-files-helper"
                         [validityChecker]="form">
         <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
             <tl-checkbox fxFlex="100"
                          formControlName="hasNoOffenderControl"
-                         label="{{ 'inspections.has-no-offender' | tlTranslate }}">
+                         label="{{ 'inspections.has-no-offenders' | tlTranslate }}">
             </tl-checkbox>
 
             <div *ngIf="hasOffender">
