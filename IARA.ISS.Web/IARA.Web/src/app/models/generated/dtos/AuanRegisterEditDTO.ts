@@ -9,6 +9,7 @@ import { AuanConfiscatedFishingGearDTO } from './AuanConfiscatedFishingGearDTO';
 import { AuanDeliveryDataDTO } from './AuanDeliveryDataDTO';
 import { FileInfoDTO } from './FileInfoDTO';
 import { AuanObjectionResolutionTypesEnum } from '@app/enums/auan-objection-resolution-types.enum';
+import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 
 export class AuanRegisterEditDTO { 
     public constructor(obj?: Partial<AuanRegisterEditDTO>) {
@@ -83,6 +84,9 @@ export class AuanRegisterEditDTO {
 
     @StrictlyTyped(Number)
     public territoryUnitId?: number;
+
+    @StrictlyTyped(Number)
+    public status?: AuanStatusEnum;
 
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];

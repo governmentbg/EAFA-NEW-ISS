@@ -35,4 +35,5 @@ export class AuanRegisterFilters extends BaseRequestModel {
     public personId: number | undefined;
     public legalId: number | undefined;
     public inspectionId: number | undefined;
+    public auanStatuses: string[] | undefined;
 }

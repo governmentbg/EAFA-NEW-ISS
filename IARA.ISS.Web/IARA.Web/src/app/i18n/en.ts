@@ -5162,6 +5162,7 @@
         'filters-appliance': 'Confiscated appliance',
         'filters-is-delivered': 'Delivered',
         'filters-delivery-date': 'Sent date',
+        'filters-statuses': 'Status',
         'edit-law-section-filter': 'Free text search',
         'edit-auan-inspected-person': 'Inspected person',
 
@@ -5170,10 +5171,15 @@
         'table-draft-date': 'Draw up date',
         'table-inspected-entity': 'Offender',
         'table-territory-unit': 'Territory unit',
+        'table-status': 'Status',
         'view-auan': 'View AUAN',
         'edit-auan': 'Edit AUAN',
         'delete-auan': 'Delete AUAN',
         'restore-auan': 'Restore AUAN',
+
+        'canceled': 'Canceled',
+        'submitted': 'Submitted',
+        'draft': 'Draft',
 
         'delivered': 'Delivered',
         'not-delivered': 'Not delivered',
@@ -5193,7 +5199,15 @@
         'delete-auan-dialog-ok-btn-label': 'Delete',
         'print': 'Print',
         'save-print': 'Save and print',
+        'save-draft': 'Save draft',
+        'cancel': 'Cancel',
+        'activate': 'Activate',
+        'more-corrections-needed': 'Send for further corrections', 
         'inspection-auans-title': 'AUANs',
+
+        'cancel-auan-confirm-dialog-title': 'AUAN Cancellation',
+        'cancel-auan-confirm-dialog-message': 'Are you sur you want to cancel this AUAN?',
+        'cancel-auan-confirm-dialog-ok-btn-label': 'Cancel',
 
         'edit-auan-basic-data': 'Basic information',
         'edit-report-num': 'Report no.',

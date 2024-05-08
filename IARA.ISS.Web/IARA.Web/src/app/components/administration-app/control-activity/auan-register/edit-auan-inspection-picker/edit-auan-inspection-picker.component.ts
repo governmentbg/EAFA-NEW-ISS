@@ -19,6 +19,8 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
+import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
+import { PermissionsService } from '@app/shared/services/permissions.service';
 
 @Component({
     selector: 'edit-auan-inspection-picker',
@@ -36,6 +38,7 @@ export class EditAuanInspectionPickerComponent implements OnInit, AfterViewInit,
 
     private model: AuanInspectionDTO | undefined;
     private inspectionId: number | undefined;
+    private canCancelAuan: boolean;
 
     private readonly service!: IAuanRegisterService;
     private readonly nomenclatures: CommonNomenclatures;
@@ -46,13 +49,16 @@ export class EditAuanInspectionPickerComponent implements OnInit, AfterViewInit,
         service: AuanRegisterService,
         nomenclatures: CommonNomenclatures,
         translate: FuseTranslationLoaderService,
-        editDialog: TLMatDialog<EditAuanComponent>
+        editDialog: TLMatDialog<EditAuanComponent>,
+        permissions: PermissionsService
     ) {
         this.service = service;
         this.nomenclatures = nomenclatures;
         this.translate = translate;
         this.editDialog = editDialog;
         this.model = new AuanInspectionDTO();
+
+        this.canCancelAuan = permissions.has(PermissionsEnum.AuanRegisterCancel);
 
         this.form = this.buildForm();
     }
@@ -143,6 +149,15 @@ export class EditAuanInspectionPickerComponent implements OnInit, AfterViewInit,
     }
 
     private openEditAuanDialog(): Observable<AuanRegisterEditDTO | undefined> {
+        let leftSideActions: IActionInfo[] = [];
+        if (this.canCancelAuan) {
+            leftSideActions = [{
+                id: 'cancel-auan',
+                color: 'warn',
+                translateValue: 'auan-register.cancel'
+            }];
+        }
+
         const dialog = this.editDialog.openWithTwoButtons({
             title: this.translate.getValue('auan-register.add-auan-dialog-title'),
             TCtor: EditAuanComponent,
@@ -156,10 +171,16 @@ export class EditAuanInspectionPickerComponent implements OnInit, AfterViewInit,
                 isReadonly: false
             }),
             rightSideActionsCollection: [{
+                id: 'save-draft',
+                color: 'primary',
+                translateValue: 'auan-register.save-draft',
+            },
+            {
                 id: 'print',
                 color: 'accent',
                 translateValue: 'auan-register.save-print'
-            }],
+                }],
+            leftSideActionsCollection: leftSideActions,
             translteService: this.translate,
             disableDialogClose: true
         }, '1400px');

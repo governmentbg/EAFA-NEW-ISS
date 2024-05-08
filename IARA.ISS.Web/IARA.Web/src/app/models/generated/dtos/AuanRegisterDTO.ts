@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 
 export class AuanRegisterDTO { 
     public constructor(obj?: Partial<AuanRegisterDTO>) {
@@ -24,6 +25,12 @@ export class AuanRegisterDTO {
 
     @StrictlyTyped(String)
     public drafter?: string;
+
+    @StrictlyTyped(Number)
+    public status?: AuanStatusEnum;
+
+    @StrictlyTyped(String)
+    public statusName?: string;
 
     @StrictlyTyped(Date)
     public draftDate?: Date;

@@ -91,18 +91,26 @@
 
             <!-- Тип на инспекция и проверка, описание на проверяван обект -->
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-select fxFlex="25"
+                           formControlName="statusesControl"
+                           [options]="statuses"
+                           [isMultiple]="true"
+                           label="{{ 'auan-register.filters-statuses' | tlTranslate }}"
+                           tooltipResourceName="auan-register.filters-statuses-helper">
+                </tl-select>
+
+                <tl-input fxFlex="25"
+                          formControlName="locationDescriptionControl"
+                          label="{{ 'auan-register.filters-location-description' | tlTranslate }}"
+                          tooltipResourceName="auan-register.filters-location-description-helper">
+                </tl-input>
+
                 <tl-autocomplete fxFlex="50"
                                  formControlName="inspectionTypeControl"
                                  [options]="inspectionTypes"
                                  label="{{ 'auan-register.filters-inspection-type' | tlTranslate }}"
                                  tooltipResourceName="auan-register.filters-inspection-type-helper">
                 </tl-autocomplete>
-
-                <tl-input fxFlex="50"
-                          formControlName="locationDescriptionControl"
-                          label="{{ 'auan-register.filters-location-description' | tlTranslate }}"
-                          tooltipResourceName="auan-register.filters-location-description-helper">
-                </tl-input>
             </div>
         </div>
     </search-panel>
@@ -150,10 +158,26 @@
                              columnName="{{ 'auan-register.table-territory-unit' | tlTranslate }}">
                 </data-column>
 
+                <data-template-column propertyName="status"
+                                      [flexRate]="0.2"
+                                      columnName="{{ 'auan-register.table-status' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.5em">
+                            <div fxLayout="column" fxLayoutAlign="start start">
+                                <div fxLayout="column" fxLayoutAlign="start start">
+                                    <span>{{ row.data.statusName }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+
                 <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row wrap" fxLayoutAlign="end center">
-                            <tl-icon-button *ngIf="row.isActive && canEditRecords && (inspectionId === null || inspectionId === undefined)"
+                            <tl-icon-button *ngIf="row.isActive
+                                               && canEditRecords
+                                               && (inspectionId === null || inspectionId === undefined)"
                                             icon="ic-fluent-document-briefcase-24-regular"
                                             iconClass="accent-color"
                                             [size]="icIconSize"
@@ -167,21 +191,29 @@
                                             tooltipText="{{ 'auan-register.view-auan' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.isActive && canEditRecords && (inspectionId === null || inspectionId === undefined)"
+                            <tl-icon-button *ngIf="row.isActive
+                                               && canEditRecords
+                                               && row.status !== auanStatusesEnum.Canceled
+                                               && row.status !== auanStatusesEnum.Submitted
+                                               && (inspectionId === null || inspectionId === undefined)"
                                             icon="edit"
                                             (buttonClicked)="addEditAuan(row.data, false)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'auan-register.edit-auan' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.isActive && canDeleteRecords && (inspectionId === null || inspectionId === undefined)"
+                            <tl-icon-button *ngIf="row.isActive
+                                               && canDeleteRecords
+                                               && (inspectionId === null || inspectionId === undefined)"
                                             icon="delete"
                                             (buttonClicked)="deleteAuan(row.data)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'auan-register.delete-auan' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="!row.isActive && canRestoreRecords && (inspectionId === null || inspectionId === undefined)"
+                            <tl-icon-button *ngIf="!row.isActive
+                                               && canRestoreRecords
+                                               && (inspectionId === null || inspectionId === undefined)"
                                             icon="restore"
                                             (buttonClicked)="restoreAuan(row.data)"
                                             iconClass="accent-color"

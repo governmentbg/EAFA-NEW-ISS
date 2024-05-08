@@ -30,6 +30,8 @@ import { TLError } from '@app/shared/components/input-controls/models/tl-error.m
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
+import { AuanStatusEnum } from '@app/enums/auan-status.enum';
+import { AuanWitnessDTO } from '@app/models/generated/dtos/AuanWitnessDTO';
 
 @Component({
     selector: 'edit-auan',
@@ -63,6 +65,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
     public isFromThirdPartyInspection: boolean = false;
     public violatedRegulationsTouched: boolean = false;
     public showInspectedEntity: boolean = false;
+    public canAddInspectedEntity: boolean = false;
     public isFromInspection: boolean = true;
 
     public auanNumErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.auanNumErrorLabelText.bind(this);
@@ -140,12 +143,19 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                     this.form.get('inspectedEntityControl')!.clearValidators();
                     this.form.get('inspectedEntityControl')!.updateValueAndValidity({ emitEvent: false });
 
-                    this.form.get('drafterControl')!.disable();
-                    this.form.get('territoryUnitControl')!.disable();
-
                     this.service.getAuan(this.auanId).subscribe({
                         next: (auan: AuanRegisterEditDTO) => {
                             this.model = auan;
+
+                            if (auan.status !== AuanStatusEnum.Draft) {
+                                this.form.get('drafterControl')!.disable();
+                                this.form.get('territoryUnitControl')!.disable();
+                            }
+                            else if (auan.inspectedEntity === undefined || auan.inspectedEntity === null) {
+                                this.canAddInspectedEntity = true;
+                                this.form.get('inspectedEntityControl')!.setValidators(Validators.required);
+                                this.form.get('inspectedEntityControl')!.updateValueAndValidity({ emitEvent: false });
+                            }
 
                             if (auan.inspectorName !== undefined && auan.inspectorName !== null) {
                                 this.isInspector = false;
@@ -162,7 +172,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
     }
 
     public ngAfterViewInit(): void {
-        if (this.isAdding) {
+        if (!this.viewMode) {
             this.form.get('inspectedEntityControl')!.valueChanges.subscribe({
                 next: (entity: AuanInspectedEntityDTO | undefined) => {
                     this.inspectedEntity = entity;
@@ -199,7 +209,6 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                 });
             }
         }
-
 
         this.form.get('auanDeliveryDataControl')!.valueChanges.subscribe({
             next: (delivery: AuanDeliveryDataDTO) => {
@@ -285,29 +294,10 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                 next: (ok: boolean) => {
                     if (ok) {
                         this.fillModel();
+                        this.model.status = AuanStatusEnum.Submitted;
                         CommonUtils.sanitizeModelStrings(this.model);
 
-                        if (this.auanId !== undefined && this.auanId !== null) {
-                            this.service.editAuan(this.model).subscribe({
-                                next: () => {
-                                    dialogClose(this.model);
-                                },
-                                error: (response: HttpErrorResponse) => {
-                                    this.handleAddEditErrorResponse(response);
-                                }
-                            });
-                        }
-                        else {
-                            this.service.addAuan(this.model).subscribe({
-                                next: (id: number) => {
-                                    this.model.id = id;
-                                    dialogClose(this.model);
-                                },
-                                error: (response: HttpErrorResponse) => {
-                                    this.handleAddEditErrorResponse(response);
-                                }
-                            });
-                        }
+                        this.saveAuan(dialogClose);
                     }
                 }
             });
@@ -319,6 +309,47 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
     }
 
     public dialogButtonClicked(action: IActionInfo, dialogClose: DialogCloseCallback): void {
+        if (action.id === 'save-draft') {
+            this.markDraftOrCancelAsTouched();
+
+            if (this.isDraftOrCancelValid()) {
+                this.fillModel();
+                this.model.status = AuanStatusEnum.Draft;
+                CommonUtils.sanitizeModelStrings(this.model);
+
+                this.saveAuan(dialogClose);
+            }
+        }
+
+
+        if (action.id === 'cancel-auan') {
+            this.markDraftOrCancelAsTouched();
+
+            if (this.isDraftOrCancelValid() || this.viewMode) {
+                this.fillModel();
+                this.model.status = AuanStatusEnum.Canceled;
+                CommonUtils.sanitizeModelStrings(this.model);
+
+                this.confirmDialog.open({
+                    title: this.translate.getValue('auan-register.cancel-auan-confirm-dialog-title'),
+                    message: this.translate.getValue('auan-register.cancel-auan-confirm-dialog-message'),
+                    okBtnLabel: this.translate.getValue('auan-register.cancel-auan-confirm-dialog-ok-btn-label')
+                }).subscribe({
+                    next: (ok: boolean) => {
+                        if (ok) {
+                            this.saveAuan(dialogClose);
+                        }
+                    }
+                });
+            }
+        }
+
+        if (this.auanId !== undefined && this.auanId !== null) {
+            if (action.id === 'more-corrections-needed' || action.id === 'activate-auan') {
+                this.updateAuanStatus(AuanStatusEnum.Draft, dialogClose);
+            }
+        }
+
         if (action.id === 'print') {
             if (this.viewMode) {
                 this.service.downloadAuan(this.auanId!).subscribe({
@@ -333,6 +364,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
                 if (this.form.valid) {
                     this.fillModel();
+                    this.model.status = AuanStatusEnum.Submitted;
                     CommonUtils.sanitizeModelStrings(this.model);
 
                     this.openConfirmDialog().subscribe({
@@ -488,9 +520,21 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         this.model.locationDescription = this.form.get('locationDescriptionControl')!.value;
         this.model.territoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
 
-        this.model.auanWitnesses = this.form.get('witnessesControl')!.value;
+        const witnesses: AuanWitnessDTO[] = this.form.get('witnessesControl')!.value;
 
-        this.model.inspectedEntity = this.form.get('inspectedEntityBasicInfoControl')!.value;
+        this.model.auanWitnesses = witnesses.filter(x =>
+            x.witnessNames !== undefined && x.witnessNames !== null
+            && x.dateOfBirth !== undefined && x.dateOfBirth !== null
+            && x.address?.countryId !== undefined && x.address?.countryId !== null
+            && x.address?.street !== undefined && x.address?.street !== null);
+
+        const isInspectedEntityValid: boolean = this.form.get('inspectedEntityBasicInfoControl')!.valid;
+        if (isInspectedEntityValid) {
+            this.model.inspectedEntity = this.form.get('inspectedEntityBasicInfoControl')!.value;
+        }
+        else {
+            this.model.inspectedEntity = undefined;
+        }
 
         this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
         this.model.offenderComments = this.form.get('offenderCommentsControl')!.value;
@@ -603,6 +647,53 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             message: message,
             okBtnLabel: this.translate.getValue('auan-register.complete-auan-confirm-dialog-ok-btn-label')
         });
+    }
+
+    //В статуси "Чернова" и "Анулиран" са задължителни само полетата "Номер на АУАН", "Дата на съставяне" и "Актосъставител"
+    private markDraftOrCancelAsTouched(): void {
+        this.violatedRegulationsTouched = false;
+
+        this.form.get('auanNumControl')!.markAsTouched();
+        this.form.get('drafterControl')!.markAsTouched();
+        this.form.get('draftDateControl')!.markAsTouched();
+    }
+
+    private isDraftOrCancelValid(): boolean {
+        return (this.form.get('auanNumControl')!.valid
+            && this.form.get('drafterControl')!.valid
+            && this.form.get('draftDateControl')!.valid);
+    }
+
+    private updateAuanStatus(status: AuanStatusEnum, dialogClose: DialogCloseCallback): void {
+        this.service.updateAuanStatus(this.auanId!, status).subscribe({
+            next: () => {
+                dialogClose(this.model);
+            }
+        });
+    }
+
+    private saveAuan(dialogClose: DialogCloseCallback): void {
+        if (this.auanId !== undefined && this.auanId !== null) {
+            this.service.editAuan(this.model).subscribe({
+                next: () => {
+                    dialogClose(this.model);
+                },
+                error: (response: HttpErrorResponse) => {
+                    this.handleAddEditErrorResponse(response);
+                }
+            });
+        }
+        else {
+            this.service.addAuan(this.model).subscribe({
+                next: (id: number) => {
+                    this.model.id = id;
+                    dialogClose(this.model);
+                },
+                error: (response: HttpErrorResponse) => {
+                    this.handleAddEditErrorResponse(response);
+                }
+            });
+        }
     }
 
     private handleAddEditErrorResponse(response: HttpErrorResponse): void {

@@ -28,6 +28,8 @@ import { EditAuanInspectionPickerComponent } from '@app/components/administratio
 import { EditAuanComponent } from '@app/components/administration-app/control-activity/auan-register/edit-auan/edit-auan.component';
 import { InspDeliveryDataDialogParams } from '@app/components/administration-app/control-activity/auan-register/models/insp-delivery-data-dialog-params.model';
 import { EditAuanDialogParams } from '@app/components/administration-app/control-activity/auan-register/models/edit-auan-dialog-params.model';
+import { AuanStatusEnum } from '@app/enums/auan-status.enum';
+import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 
 @Component({
     selector: 'auan-register',
@@ -49,13 +51,17 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
     public fishes: NomenclatureDTO<number>[] = [];
     public fishingGears: NomenclatureDTO<number>[] = [];
     public appliances: NomenclatureDTO<number>[] = [];
+    public statuses: NomenclatureDTO<AuanStatusEnum>[] = [];
 
     public readonly canAddRecords: boolean;
     public readonly canEditRecords: boolean;
     public readonly canDeleteRecords: boolean;
     public readonly canRestoreRecords: boolean;
     public readonly canReadPenalDecreeRecords: boolean;
+    public readonly canCancelAuanRecords: boolean;
+    public readonly canReturnAuanForCorrections: boolean;
 
+    public auanStatusesEnum: typeof AuanStatusEnum = AuanStatusEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
     @ViewChild(TLDataTableComponent)
@@ -96,6 +102,26 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
         this.canDeleteRecords = permissions.has(PermissionsEnum.AuanRegisterDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.AuanRegisterRestoreRecords);
         this.canReadPenalDecreeRecords = permissions.hasAny(PermissionsEnum.PenalDecreesRead, PermissionsEnum.PenalDecreesReadAll);
+        this.canCancelAuanRecords = permissions.has(PermissionsEnum.AuanRegisterCancel);
+        this.canReturnAuanForCorrections = permissions.has(PermissionsEnum.AuanRegisterReturnForCorrections);
+
+        this.statuses = [
+            new NomenclatureDTO<AuanStatusEnum>({
+                value: AuanStatusEnum.Draft,
+                displayName: this.translate.getValue('auan-register.status-draft'),
+                isActive: true
+            }),
+            new NomenclatureDTO<AuanStatusEnum>({
+                value: AuanStatusEnum.Submitted,
+                displayName: this.translate.getValue('auan-register.status-submitted'),
+                isActive: true
+            }),
+            new NomenclatureDTO<AuanStatusEnum>({
+                value: AuanStatusEnum.Canceled,
+                displayName: this.translate.getValue('auan-register.status-canceled'),
+                isActive: true
+            })
+        ];
 
         this.buildForm();
     }
@@ -210,6 +236,51 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
                 ? this.translate.getValue('auan-register.print')
                 : this.translate.getValue('auan-register.save-print');
 
+            const rightButtons: IActionInfo[] = [];
+            if (auan.status === AuanStatusEnum.Draft) {
+                rightButtons.push({
+                    id: 'save-draft',
+                    color: 'primary',
+                    translateValue: 'auan-register.save-draft'
+                });
+            }
+
+            if (auan.status === AuanStatusEnum.Submitted && this.canReturnAuanForCorrections) {
+                rightButtons.push({
+                    id: 'more-corrections-needed',
+                    color: 'accent',
+                    translateValue: 'auan-register.more-corrections-needed',
+                    isVisibleInViewMode: true
+                });
+            }
+
+            rightButtons.push({
+                id: 'print',
+                color: 'accent',
+                translateValue: printBtnTitle,
+                isVisibleInViewMode: true
+            });
+
+            const leftButtons: IActionInfo[] = [];
+            if (this.canCancelAuanRecords) {
+                if (auan.status === AuanStatusEnum.Canceled) {
+                    leftButtons.push({
+                        id: 'activate-auan',
+                        color: 'accent',
+                        translateValue: 'auan-register.activate',
+                        isVisibleInViewMode: true
+                    });
+                }
+                else {
+                    leftButtons.push({
+                        id: 'cancel-auan',
+                        color: 'warn',
+                        translateValue: 'auan-register.cancel',
+                        isVisibleInViewMode: auan.status === AuanStatusEnum.Submitted
+                    });
+                }
+            }
+
             const dialog = this.editDialog.openWithTwoButtons({
                 title: title,
                 TCtor: EditAuanComponent,
@@ -221,12 +292,8 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
                 translteService: this.translate,
                 disableDialogClose: true,
                 viewMode: viewMode,
-                rightSideActionsCollection: [{
-                    id: 'print',
-                    color: 'accent',
-                    translateValue: printBtnTitle,
-                    isVisibleInViewMode: true
-                }],
+                rightSideActionsCollection: rightButtons,
+                leftSideActionsCollection: leftButtons,
                 saveBtn: {
                     id: 'save',
                     color: 'accent',
@@ -236,7 +303,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
                     id: 'cancel',
                     color: 'primary',
                     translateValue: this.translate.getValue('common.cancel'),
-                },
+                }
             }, '1400px');
 
             dialog.subscribe({
@@ -370,7 +437,8 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
             identifierControl: new FormControl(),
             inspEntityFirstNameControl: new FormControl(),
             inspEntityMiddleNameControl: new FormControl(),
-            inspEntityLastNameControl: new FormControl()
+            inspEntityLastNameControl: new FormControl(),
+            statusesControl: new FormControl()
         });
     }
 
@@ -404,6 +472,13 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
             else {
                 result.drafterName = drafter;
             }
+        }
+
+        const statuses: AuanStatusEnum[] | undefined = filters.getValue('statusesControl');
+        if (statuses !== undefined && statuses !== null) {
+            result.auanStatuses = statuses.map((status: AuanStatusEnum) => {
+                return AuanStatusEnum[status];
+            });
         }
 
         return result;
