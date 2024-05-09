@@ -687,6 +687,7 @@
         'generate-password': 'Generate password',
         'user-must-change-password': 'User must change password',
         'unlock-user': 'User is locked',
+        'is-email-confirmed': 'Email is confirmed',
         'position': 'Position',
         'Title': 'Title',
         'username-already-exists-error': 'The entered username already exists in the system',
@@ -5330,6 +5331,7 @@
         'complete-add-auan-confirm-dialog-message': 'Are you sure that you are done with the changes for this AUAN?',
         'complete-auan-confirm-dialog-title': 'Complete AUAN',
         'complete-auan-confirm-dialog-ok-btn-label': 'Complete',
+        'cannot-cancel-auan-with-penal-decrees': 'You cannot cancel AUAN with penal decrees'
     },
     'cross-check-results': {
         'check-code': 'Code',

@@ -30,6 +30,7 @@ import { InspDeliveryDataDialogParams } from '@app/components/administration-app
 import { EditAuanDialogParams } from '@app/components/administration-app/control-activity/auan-register/models/edit-auan-dialog-params.model';
 import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
+import { SecurityService } from '@app/services/common-app/security.service';
 
 @Component({
     selector: 'auan-register',
@@ -64,6 +65,8 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
     public auanStatusesEnum: typeof AuanStatusEnum = AuanStatusEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
+    public currentUser: string;
+
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
 
@@ -87,7 +90,8 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
         editDialog: TLMatDialog<EditAuanComponent>,
         inspectionPickerDialog: TLMatDialog<EditAuanInspectionPickerComponent>,
         inspDeliveryDialog: TLMatDialog<AuanDeliveryComponent>,
-        permissions: PermissionsService
+        permissions: PermissionsService,
+        authService: SecurityService
     ) {
         this.service = service;
         this.nomenclatures = nomenclatures;
@@ -104,6 +108,8 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
         this.canReadPenalDecreeRecords = permissions.hasAny(PermissionsEnum.PenalDecreesRead, PermissionsEnum.PenalDecreesReadAll);
         this.canCancelAuanRecords = permissions.has(PermissionsEnum.AuanRegisterCancel);
         this.canReturnAuanForCorrections = permissions.has(PermissionsEnum.AuanRegisterReturnForCorrections);
+
+        this.currentUser = authService.User!.username;
 
         this.statuses = [
             new NomenclatureDTO<AuanStatusEnum>({
@@ -245,7 +251,10 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
                 });
             }
 
-            if (auan.status === AuanStatusEnum.Submitted && this.canReturnAuanForCorrections) {
+            //ако няма правото за връщане за корекции, може да връща в статус "Чернова" само своите АУАНи, ако не са минали 48 часа от добавянето им
+            if (auan.status === AuanStatusEnum.Submitted
+                && (this.canReturnAuanForCorrections || (!auan.lockedForCorrections && auan.createdByUser === this.currentUser))
+            ) {
                 rightButtons.push({
                     id: 'more-corrections-needed',
                     color: 'accent',

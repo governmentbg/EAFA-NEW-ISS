@@ -158,6 +158,15 @@
                                  tooltipResourceName="users-page.unlock-user-helper">
                 </tl-slide-toggle>
             </div>
+            <div fxLayout="row" fxLayoutGap="2em" fxFlex="100" fxLayoutAlign="space-between center">
+                <tl-slide-toggle fxFlex="40"
+                                 label="{{ 'users-page.is-email-confirmed' | tlTranslate }}"
+                                 formControlName="isEmailConfirmedControl"
+                                 tooltipResourceName="users-page.is-email-confirmed-helper">
+                </tl-slide-toggle>
+
+                <div fxFlex="60"></div>
+            </div>
         </tl-card-content>
     </tl-card>
 

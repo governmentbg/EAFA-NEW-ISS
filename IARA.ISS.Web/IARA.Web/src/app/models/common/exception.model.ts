@@ -77,5 +77,6 @@ export enum ErrorCode {
     InvalidPermitLicenseNumber = 55,
     InvalidPassword = 56,
     OldPasswordFound = 57,
-    MoreThanOneActiveShipLogBook = 58
+    MoreThanOneActiveShipLogBook = 58,
+    CannotCancelAuanWithPenalDecrees = 59
 }

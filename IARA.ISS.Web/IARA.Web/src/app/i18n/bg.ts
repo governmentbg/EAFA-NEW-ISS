@@ -685,6 +685,7 @@
         'generate-password': 'Генерирай парола',
         'user-must-change-password': 'Смяна на паролата от потребителя',
         'unlock-user': 'Потребителят е заключен',
+        'is-email-confirmed': 'Имейлът е потвърден',
         'position': 'Длъжност',
         'title': 'Титла',
         'username-already-exists-error': 'Въведеното потребителско име вече съществува в системата',
@@ -5384,6 +5385,7 @@
         'complete-add-auan-confirm-dialog-message': 'Сигурни ли сте, че искате да приключите този АУАН?',
         'complete-auan-confirm-dialog-title': 'Потвърждение за приключване на АУАН',
         'complete-auan-confirm-dialog-ok-btn-label': 'Приключи',
+        'cannot-cancel-auan-with-penal-decrees': 'Не можете да анулирате АУАН, към който има издадени последващи документи'
     },
     'cross-check-results': {
         'check-code': 'Код',
