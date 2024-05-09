@@ -5219,6 +5219,7 @@
         'filters-appliance': 'Конфискувано приспособление',
         'filters-is-delivered': 'Връчени',
         'filters-delivery-date': 'Дата на връчване',
+        'filters-statuses': 'Статус',
         'edit-law-section-filter': 'Търсене по ключова дума',
         'edit-auan-inspected-person': 'Нарушител',
 
@@ -5227,6 +5228,7 @@
         'table-draft-date': 'Дата на съставяне',
         'table-inspected-entity': 'Нарушител',
         'table-territory-unit': 'Териториално звено',
+        'table-status': 'Статус',
         'view-auan': 'Преглед на АУАН',
         'edit-auan': 'Редакция на АУАН',
         'delete-auan': 'Изтриване на АУАН',
@@ -5250,7 +5252,19 @@
         'delete-auan-dialog-ok-btn-label': 'Изтриване',
         'print': 'Отпечатай',
         'save-print': 'Запази и отпечатай',
+        'save-draft': 'Запази чернова',
+        'cancel': 'Анулирай',
+        'activate': 'Възобнови',
+        'more-corrections-needed': 'Върни за корекции',
         'inspection-auans-title': 'Списък от АУАН за инспекцията',
+
+        'canceled': 'Анулиран',
+        'submitted': 'Подаден',
+        'draft': 'Чернова',
+
+        'cancel-auan-confirm-dialog-title': 'Анулиране на АУАН',
+        'cancel-auan-confirm-dialog-message': 'Сигурни ли сте, че искате да анулирате този АУАН?', 
+        'cancel-auan-confirm-dialog-ok-btn-label': 'Анулиране',
 
         'edit-auan-basic-data': 'Основна информация',
         'edit-report-num': '№ на доклад',

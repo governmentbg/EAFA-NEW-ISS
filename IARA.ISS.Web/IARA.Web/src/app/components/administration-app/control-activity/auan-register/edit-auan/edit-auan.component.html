@@ -85,7 +85,7 @@
                         tooltipResourceName="auan-register.auan-inspected-person-helper"
                         [validityChecker]="form">
         <div fxLayout="column" fxLayoutGap="1em">
-            <div *ngIf="isAdding" fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+            <div *ngIf="isAdding || canAddInspectedEntity" fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
                 <tl-autocomplete *ngIf="!isFromThirdPartyInspection && isFromInspection"
                                  fxFlex="50"
                                  formControlName="inspectedEntityControl"
@@ -126,7 +126,7 @@
     <!-- Нарушени разпоредби -->
     <tl-expansion-panel title="{{ 'auan-register.edit-auan-violated-regulations' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="form.errors?.atLeastOneViolatedRegulationNeeded !== true"
+                        [validityCheckerExtraCondition]="form.errors?.atLeastOneViolatedRegulationNeeded !== true || !violatedRegulationsTouched"
                         tooltipResourceName="auan-register.edit-auan-constatations-helper">
         <div fxLayout="column" fxLayoutGap="1em">
             <auan-violated-regulations formControlName="violatedRegulationsControl"

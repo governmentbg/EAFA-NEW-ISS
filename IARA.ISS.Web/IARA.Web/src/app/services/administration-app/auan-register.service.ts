@@ -21,22 +21,50 @@ import { AuanLawSectionDTO } from '@app/models/generated/dtos/AuanLawSectionDTO'
 import { AuanDeliveryDataDTO } from '@app/models/generated/dtos/AuanDeliveryDataDTO';
 import { IInspDeliveryService } from '@app/interfaces/administration-app/insp-delivery.interface';
 import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
+import { map } from 'rxjs/operators';
+import { AuanStatusEnum } from '@app/enums/auan-status.enum';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuanRegisterService extends BaseAuditService implements IAuanRegisterService, IInspDeliveryService {
     protected controller: string = 'AuanRegister';
+    private translate: FuseTranslationLoaderService;
 
-    public constructor(requestService: RequestService) {
+    public constructor(requestService: RequestService, translate: FuseTranslationLoaderService) {
         super(requestService, AreaTypes.Administrative);
+
+        this.translate = translate;
     }
 
     public getAllAuans(request: GridRequestModel<AuanRegisterFilters>): Observable<GridResultModel<AuanRegisterDTO>> {
-        return this.requestService.post(this.area, this.controller, 'GetAllAuans', request, {
+        type Result = GridResultModel<AuanRegisterDTO>;
+        type Body = GridRequestModel<AuanRegisterFilters>;
+
+        return this.requestService.post<Result, Body>(this.area, this.controller, 'GetAllAuans', request, {
             properties: RequestProperties.NO_SPINNER,
             responseTypeCtr: GridResultModel
-        });
+        }).pipe(map((result: GridResultModel<AuanRegisterDTO>) => {
+            for (const entry of result.records) {
+                switch (entry.status) {
+                    case AuanStatusEnum.Draft:
+                        entry.statusName = this.translate.getValue('auan-register.draft');
+                        break;
+                    case AuanStatusEnum.Submitted:
+                        entry.statusName = this.translate.getValue('auan-register.submitted');
+                        break;
+                    case AuanStatusEnum.Canceled:
+                        entry.statusName = this.translate.getValue('auan-register.canceled');
+                        break;
+                    default:
+                        entry.statusName = undefined;
+                        break;
+                }
+            }
+
+            return result;
+        }));
     }
 
     public getAuan(id: number): Observable<AuanRegisterEditDTO> {
@@ -142,6 +170,16 @@ export class AuanRegisterService extends BaseAuditService implements IAuanRegist
         });
     }
 
+    public updateAuanStatus(id: number, status: AuanStatusEnum): Observable<void> {
+        const params = new HttpParams()
+            .append('auanId', id.toString())
+            .append('status', status.toString());
+
+        return this.requestService.put(this.area, this.controller, 'UpdateAuanStatus', null, {
+            httpParams: params
+        });
+    }
+
     public getInspDeliverySimpleAudit(id: number): Observable<SimpleAuditDTO> {
         const params = new HttpParams().append('id', id.toString());
 
@@ -151,6 +189,7 @@ export class AuanRegisterService extends BaseAuditService implements IAuanRegist
         });
     }
 
+    //Nomenclatures
     public getAllInspectionReports(): Observable<NomenclatureDTO<number>[]> {
         return this.requestService.get(this.area, this.controller, 'GetAllInspectionReports', { responseTypeCtr: NomenclatureDTO });
     }

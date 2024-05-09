@@ -485,6 +485,8 @@
     AuanRegisterEditRecords = 'AuanRegisterEditRecords',
     AuanRegisterDeleteRecords = 'AuanRegisterDeleteRecords',
     AuanRegisterRestoreRecords = 'AuanRegisterRestoreRecords',
+    AuanRegisterCancel = 'AuanRegisterCancel',
+    AuanRegisterReturnForCorrections = 'AuanRegisterReturnForCorrections',
 
     //Impersonate user
     ImpersonateUser = 'ImpersonateUser',
