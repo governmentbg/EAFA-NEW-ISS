@@ -4,7 +4,7 @@ import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { EgnLncDTO } from './EgnLncDTO';
 import { RoleDTO } from './RoleDTO';
 
-export class UserEditDTO {
+export class UserEditDTO { 
     public constructor(obj?: Partial<UserEditDTO>) {
         Object.assign(this, obj);
     }
@@ -53,6 +53,9 @@ export class UserEditDTO {
 
     @StrictlyTyped(Number)
     public sectorId?: number;
+
+    @StrictlyTyped(Boolean)
+    public isEmailConfirmed?: boolean;
 
     @StrictlyTyped(Number)
     public territoryUnitId?: number;

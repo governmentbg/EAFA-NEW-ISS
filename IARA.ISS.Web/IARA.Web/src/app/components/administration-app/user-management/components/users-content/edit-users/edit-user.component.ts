@@ -448,6 +448,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         this.editUserForm.get('phoneNumberControl')!.setValue(model.phone);
         this.editUserForm.get('userMustChangePasswordControl')!.setValue(model.userMustChangePassword);
         this.editUserForm.get('isLockedControl')!.setValue(model.isLocked);
+        this.editUserForm.get('isEmailConfirmedControl')!.setValue(model.isEmailConfirmed);
         this.editUserForm.get('positionControl')!.setValue(model.position);
 
         this.userRoles = model.userRoles as RoleDTO[];
@@ -472,6 +473,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         }
         else {
             const externalUser: ExternalUserDTO = (model as ExternalUserDTO);
+
             if (externalUser.territoryUnitId !== null && externalUser.territoryUnitId !== undefined) {
 
                 const territoryUnit = NomenclatureStore.instance.getNomenclatureItem(NomenclatureTypes.TerritoryUnits, externalUser.territoryUnitId as number);
@@ -503,6 +505,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             this.internalUserModel.password = form.get('passwordConfirmation')!.value;
             this.internalUserModel.userMustChangePassword = form.get('userMustChangePasswordControl')!.value;
             this.internalUserModel.isLocked = form.get('isLockedControl')!.value ?? false;
+            this.internalUserModel.isEmailConfirmed = form.get('isEmailConfirmedControl')!.value ?? false;
             this.internalUserModel.position = form.get('positionControl')!.value;
             this.internalUserModel.title = form.get('titleControl')!.value;
 
@@ -529,6 +532,7 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             this.externalUserModel.password = form.get('passwordConfirmation')!.value;
             this.externalUserModel.userMustChangePassword = form.get('userMustChangePasswordControl')!.value;
             this.externalUserModel.isLocked = form.get('isLockedControl')!.value ?? false;
+            this.externalUserModel.isEmailConfirmed = form.get('isEmailConfirmedControl')!.value ?? false;
             this.externalUserModel.position = form.get('positionControl')!.value;
 
             this.externalUserModel.departmentId = NomenclatureStore.getValue(form.get('departmentControl')!.value);
@@ -566,7 +570,8 @@ export class EditUserComponent implements OnInit, IDialogComponent {
             sectorControl: new FormControl(),
             positionControl: new FormControl(null, Validators.maxLength(500)),
             titleControl: new FormControl(null, Validators.maxLength(50)),
-            mobileDevicesControl: new FormControl()
+            mobileDevicesControl: new FormControl(),
+            isEmailConfirmedControl: new FormControl()
         }, [this.uniqueValidEgnLncValidator(), this.userRolesValidator()]);
 
         this.editUserForm.get('identificationDataControl')!.valueChanges.subscribe({

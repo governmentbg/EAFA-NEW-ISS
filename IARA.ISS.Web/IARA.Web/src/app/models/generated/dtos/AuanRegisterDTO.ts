@@ -38,6 +38,12 @@ export class AuanRegisterDTO {
     @StrictlyTyped(Number)
     public deliveryId?: number;
 
+    @StrictlyTyped(String)
+    public createdByUser?: string;
+
+    @StrictlyTyped(Boolean)
+    public lockedForCorrections?: boolean;
+
     @StrictlyTyped(Boolean)
     public isActive?: boolean;
 }

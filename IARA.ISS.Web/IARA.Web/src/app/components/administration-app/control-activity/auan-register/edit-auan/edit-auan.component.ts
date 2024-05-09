@@ -138,6 +138,10 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
                 if (this.auanId === undefined || this.auanId === null) {
                     this.model = new AuanRegisterEditDTO();
+
+                    if (this.drafters !== undefined && this.drafters !== null && this.drafters.length === 1) {
+                        this.form.get('drafterControl')!.setValue(this.drafters[0]);
+                    }
                 }
                 else {
                     this.form.get('inspectedEntityControl')!.clearValidators();
@@ -717,6 +721,11 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             this.form.get('auanNumControl')!.setErrors({ auanNumExists: true });
             this.form.get('auanNumControl')!.markAsTouched();
             this.validityCheckerGroup.validate();
+        }
+
+        if (response.error?.code === ErrorCode.CannotCancelAuanWithPenalDecrees) {
+            const errorMessage: string = this.translate.getValue('auan-register.cannot-cancel-auan-with-penal-decrees');
+            this.snackbar.error(errorMessage);
         }
     }
 }
