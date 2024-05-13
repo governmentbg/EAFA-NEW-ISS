@@ -76,7 +76,7 @@ export class InspectionSelectionComponent implements OnInit, IDialogComponent {
             {
                 icon: 'fa-water',
                 iconSize: '2.1',
-                displayCode: 'cwo',
+                displayCode: 'cwo-type',
                 type: InspectionTypesEnum.CWO
             },
             {

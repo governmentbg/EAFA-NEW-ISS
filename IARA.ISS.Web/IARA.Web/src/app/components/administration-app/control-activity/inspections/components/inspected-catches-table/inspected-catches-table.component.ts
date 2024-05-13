@@ -331,8 +331,8 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
 
         return this.catches.map(x => new InspectionCatchMeasureDTO({
             action: x.action,
-            allowedDeviation: x.allowedDeviation,
-            averageSize: x.averageSize,
+            allowedDeviation: this.hasAllowedDeviation ? x.allowedDeviation : undefined,
+            averageSize: this.hasAverageSize ? x.averageSize : undefined,
             catchCount: x.catchCount,
             catchInspectionTypeId: this.hasUndersizedCheck
                 ? (x.undersized === true ? bms : lsc)
@@ -345,7 +345,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
             shipLogBookPageId: x.shipLogBookPageId,
             originShip: x.originShip,
             storageLocation: x.storageLocation,
-            unloadedQuantity: x.unloadedQuantity,
+            unloadedQuantity: this.hasUnloadedQuantity ? x.unloadedQuantity : undefined,
             turbotSizeGroupId: x.turbotSizeGroupId,
             hasMissingProperties: this.checkIfCatchHasMissingProperties(x)
         }));
