@@ -130,12 +130,26 @@
                                 <data-template-column [flexRate]="0.2">
                                     <ng-template ngx-datatable-cell-template let-row="row">
                                         <div fxLayout="row wrap" fxLayoutAlign="end center">
-                                            <tl-icon-button *ngIf="hasSendToFluxPermission"
-                                                            icon="send"
-                                                            iconClass="accent-color"
-                                                            (buttonClicked)="sendMessage(row.data)"
-                                                            tooltipText="{{ 'fishing-activities.send-message' | tlTranslate }}">
-                                            </tl-icon-button>
+                                            <button *ngIf="hasSendToFluxPermission"
+                                                    mat-icon-button
+                                                    fxLayoutAlign="center center"
+                                                    color="accent"
+                                                    matTooltip="{{ 'fishing-activities.send-message' | tlTranslate }}"
+                                                    [matMenuTriggerFor]="sendMenuButtons">
+                                                <tl-icon icon="send" [size]="1.66"></tl-icon>
+                                            </button>
+
+                                            <mat-menu #sendMenuButtons="matMenu">
+                                                <button mat-menu-item
+                                                        (click)="sendMessageOnlyLast(row.data)">
+                                                    {{ 'fishing-activities.send-message-single' | tlTranslate }}
+                                                </button>
+
+                                                <button mat-menu-item
+                                                        (click)="sendMessage(row.data)">
+                                                    {{ 'fishing-activities.send-message-multiple' | tlTranslate }}
+                                                </button>
+                                            </mat-menu>
 
                                             <tl-icon-button *ngIf="hasReplayMessagesPermission"
                                                             icon="replay"

@@ -240,6 +240,24 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
         });
     }
 
+    public sendMessageOnlyLast(report: FishingActivityReportItemDTO): void {
+        this.confirmDialog.open({
+            title: this.translate.getValue('fishing-activities.send-message-title'),
+            message: this.translate.getValue('fishing-activities.send-message-message'),
+            okBtnLabel: this.translate.getValue('fishing-activities.send-message-ok-btn-label')
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.sendFishingActivityReportToFlux(report.id!, true).subscribe({
+                        next: () => {
+                            // nothing
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     public sendMessage(report: FishingActivityReportItemDTO): void {
         this.confirmDialog.open({
             title: this.translate.getValue('fishing-activities.send-message-title'),
@@ -248,7 +266,7 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
         }).subscribe({
             next: (ok: boolean) => {
                 if (ok) {
-                    this.service.sendFishingActivityReportToFlux(report.id!).subscribe({
+                    this.service.sendFishingActivityReportToFlux(report.id!, false).subscribe({
                         next: () => {
                             // nothing
                         }
