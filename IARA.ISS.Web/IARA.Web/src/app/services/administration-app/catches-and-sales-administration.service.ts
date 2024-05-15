@@ -83,6 +83,10 @@ export class CatchesAndSalesAdministrationService extends BaseAuditService imple
         return this.commonService.getLogBookPageDocumentOwnerData(this.area, this.controller, documentNumber, documentType);
     }
 
+    public getAquacultureLogBookPageOwnerData(pageNumber: number): Observable<LogBookNomenclatureDTO[]> {
+        return this.commonService.getAquacultureLogBookPageOwnerData(this.area, this.controller, pageNumber);
+    }
+
     public getPreviousTripOnBoardCatchRecords(shipId: number, currentPageId?: number): Observable<OnBoardCatchRecordFishDTO[]> {
         return this.commonService.getPreviousTripsOnBoardCatchRecords(this.area, this.controller, shipId, currentPageId);
     }
@@ -153,6 +157,10 @@ export class CatchesAndSalesAdministrationService extends BaseAuditService imple
         });
     }
 
+    public editShipLogBookPageNumber(logBookPageId: number, pageNumber: string, hasMissingPagesRangePermission: boolean): Observable<void> {
+        return this.commonService.editShipLogBookPageNumber(this.area, this.controller, logBookPageId, pageNumber, hasMissingPagesRangePermission);
+    }
+
     public addFirstSaleLogBookPage(model: FirstSaleLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
         return this.commonService.addFirstSaleLogBookPage(this.area, this.controller, model, hasMissingPagesRangePermission);
     }
@@ -168,6 +176,10 @@ export class CatchesAndSalesAdministrationService extends BaseAuditService imple
             httpParams: params,
             successMessage: 'succ-restored-annulled-log-book-page'
         });
+    }
+
+    public editFirstSaleLogBookPageNumber(logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void> {
+        return this.commonService.editFirstSaleLogBookPageNumber(this.area, this.controller, logBookPageId, pageNumber, hasMissingPagesRangePermission);
     }
 
     public addAdmissionLogBookPage(model: AdmissionLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
@@ -187,6 +199,10 @@ export class CatchesAndSalesAdministrationService extends BaseAuditService imple
         });
     }
 
+    public editAdmissionLogBookPageNumber(logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void> {
+        return this.commonService.editAdmissionLogBookPageNumber(this.area, this.controller, logBookPageId, pageNumber, hasMissingPagesRangePermission);
+    }
+
     public addTransportationLogBookPage(model: TransportationLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
         return this.commonService.addTransportationLogBookPage(this.area, this.controller, model, hasMissingPagesRangePermission);
     }
@@ -204,6 +220,10 @@ export class CatchesAndSalesAdministrationService extends BaseAuditService imple
         });
     }
 
+    public editTransportationLogBookPageNumber(logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void> {
+        return this.commonService.editTransportationLogBookPageNumber(this.area, this.controller, logBookPageId, pageNumber, hasMissingPagesRangePermission);
+    }
+
     public addAquacultureLogBookPage(model: AquacultureLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
         return this.commonService.addAquacultureLogBookPage(this.area, this.controller, model, hasMissingPagesRangePermission);
     }
@@ -219,6 +239,10 @@ export class CatchesAndSalesAdministrationService extends BaseAuditService imple
             httpParams: params,
             successMessage: 'succ-restored-annulled-log-book-page'
         });
+    }
+
+    public editAquacultureLogBookPageNumber(logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void> {
+        return this.commonService.editAquacultureLogBookPageNumber(this.area, this.controller, logBookPageId, pageNumber, hasMissingPagesRangePermission);
     }
 
     public annulLogBookPage(reasonData: LogBookPageCancellationReasonDTO, logBookType: LogBookTypesEnum): Observable<void> {
@@ -252,7 +276,7 @@ export class CatchesAndSalesAdministrationService extends BaseAuditService imple
 
     public getPermitLicenseNomenclatures(): Observable<PermitLicenseNomenclatureDTO[]> {
         return this.requestService.get(this.area, this.controller, 'GetPermitLicenseNomenclatures', {
-            responseTypeCtr: NomenclatureDTO
+            responseTypeCtr: NomenclatureDTO 
         });
     }
 

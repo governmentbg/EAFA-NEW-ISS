@@ -1,0 +1,84 @@
+﻿<mat-vertical-stepper linear #stepper (selectionChange)="selectedStepChanged($event)" color="accent">
+    <mat-step [stepControl]="preliminaryDataFormGroup" [editable]="true">
+        <div [formGroup]="preliminaryDataFormGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span [ngClass]="{ 'error-color': preliminaryDataFormGroup.touched && preliminaryDataFormGroup.invalid }">
+                    {{ 'catches-and-sales.edit-log-book-page-fill-preliminary-data' | tlTranslate }}
+                </span>
+            </ng-template>
+            <div fxLayout="row">
+                <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
+                    <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                        <tl-input fxFlex="50"
+                                  formControlName="oldPageNumberControl"
+                                  [readonly]="true"
+                                  label="{{ 'catches-and-sales.edit-log-book-page-old-number' | tlTranslate }}"
+                                  tooltipResourceName="catches-and-sales.edit-log-book-page-old-number-helper">
+                        </tl-input>
+                    </div>
+
+                    <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                        <tl-input fxFlex="50"
+                                  formControlName="pageNumberControl"
+                                  label="{{ 'catches-and-sales.edit-log-book-page-new-number' | tlTranslate }}"
+                                  tooltipResourceName="catches-and-sales.edit-log-book-page-new-number-helper">
+                        </tl-input>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div fxLayout="row">
+            <button mat-raised-button matStepperNext color="accent">
+                {{ 'catches-and-sales.edit-log-book-page-number-confirm-preliminary-data' | tlTranslate }}
+            </button>
+        </div>
+    </mat-step>
+
+    <mat-step [stepControl]="confirmationDataFormGroup" [editable]="false">
+        <div [formGroup]="confirmationDataFormGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span [ngClass]="{ 'error-color': confirmationDataFormGroup.touched && confirmationDataFormGroup.invalid }">
+                    {{ 'catches-and-sales.edit-log-book-page-wizard-confirm-additional-data' | tlTranslate }}
+                </span>
+            </ng-template>
+            <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-autocomplete fxFlex="100"
+                                 formControlName="possibleLogBookControl"
+                                 label="{{ 'catches-and-sales.edit-log-book-page-number-chosen-log-book-for-page' | tlTranslate }}"
+                                 tooltipResourceName="catches-and-sales.edit-log-book-page-number-chosen-log-book-for-page-helper"
+                                 [options]="possibleLogBooks"
+                                 [readonly]="true"
+                                 [templateOptions]="true">
+                </tl-autocomplete>
+            </div>
+
+            <div *ngIf="permitLicenseId !== undefined && permitLicenseId !== null" fxLayout="column" fxLayoutGap="1em">
+                <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-input fxFlex="100"
+                              formControlName="permitLicenseControl"
+                              label="{{ 'catches-and-sales.edit-log-book-page-number-chosen-permit-license' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.edit-log-book-page-number-chosen-permit-license-helper"
+                              [readonly]="true">
+                    </tl-input>
+                </div>
+
+                <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-autocomplete fxFlex="100"
+                                     formControlName="shipControl"
+                                     label="{{ 'catches-and-sales.edit-log-book-page-number-chosen-ship' | tlTranslate }}"
+                                     tooltipResourceName="catches-and-sales.edit-log-book-page-number-chosen-ship-helper"
+                                     [readonly]="true"
+                                     [options]="ships">
+                    </tl-autocomplete>
+                </div>
+            </div>
+        </div>
+    </mat-step>
+</mat-vertical-stepper>

@@ -40,6 +40,9 @@ export class AdmissionPagesAndDeclarationsTableComponent {
     public canEditAdmissionLogBookRecords: boolean = false;
 
     @Input()
+    public canEditNumberAdmissionLogBookRecords: boolean = false;
+
+    @Input()
     public recordsPerPage: number = 10;
 
     @Input()
@@ -59,6 +62,9 @@ export class AdmissionPagesAndDeclarationsTableComponent {
 
     @Output()
     public onRestoreAnnulledAdmissionLogBookPage: EventEmitter<AdmissionLogBookPageRegisterDTO> = new EventEmitter<AdmissionLogBookPageRegisterDTO>();
+
+    @Output()
+    public onEditAdmissionLogBookPageNumber: EventEmitter<AdmissionLogBookPageRegisterDTO> = new EventEmitter<AdmissionLogBookPageRegisterDTO>();
 
     public readonly logBookPageStatusesEnum: typeof LogBookPageStatusesEnum = LogBookPageStatusesEnum;
     public readonly logBookTypesEnum: typeof LogBookTypesEnum = LogBookTypesEnum;
@@ -88,5 +94,9 @@ export class AdmissionPagesAndDeclarationsTableComponent {
 
     public onRestoreAnnulledAdmissionLogBookPageBtnClicked(document: AdmissionLogBookPageRegisterDTO): void {
         this.onRestoreAnnulledAdmissionLogBookPage.emit(document);
+    }
+
+    public onEditAdmissionLogBookPageNumberBtnClicked(document: AdmissionLogBookPageRegisterDTO): void {
+        this.onEditAdmissionLogBookPageNumber.emit(document);
     }
 }

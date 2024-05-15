@@ -41,6 +41,7 @@ import { CommonLogBookPageDataComponent } from './catches-and-sales/components/c
 import { EditAdmissionLogBookPageComponent } from './catches-and-sales/components/edit-admission-log-book/edit-admission-log-book-page.component';
 import { EditAquacultureLogBookPageComponent } from './catches-and-sales/components/edit-aquaculture-log-book-page/edit-aquaculture-log-book-page.component';
 import { EditFirstSaleLogBookPageComponent } from './catches-and-sales/components/edit-first-sale-log-book/edit-first-sale-log-book-page.component';
+import { EditLogBookPageNumberComponent } from './catches-and-sales/components/edit-log-book-page-number/edit-log-book-page-number.component';
 import { EditOriginDeclarationComponent } from './catches-and-sales/components/edit-origin-declaration/edit-origin-declaration.component';
 import { EditTransportationLogBookPageComponent } from './catches-and-sales/components/edit-transporation-log-book/edit-transportation-log-book-page.component';
 import { FirstSalePagesTableComponent } from './catches-and-sales/components/first-sale-pages-table/first-sale-pages-table.component';
@@ -229,7 +230,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         PenalDecreesComponent,
         InspectionsComponent,
         PenalPointsComponent,
-        AuanRegisterComponent
+        AuanRegisterComponent,
+        EditLogBookPageNumberComponent
     ],
     imports: [
         TLCommonModule,
@@ -311,6 +313,7 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         AddShipPageDocumentWizardComponent,
         AddRelatedDeclarationComponent,
         AddShipPageWizardComponent,
+        EditLogBookPageNumberComponent,
         StatisticalFormsContentComponent,
         StatisticalFormsBasicInfoComponent,
         StatisticalFormsAquaFarmComponent,

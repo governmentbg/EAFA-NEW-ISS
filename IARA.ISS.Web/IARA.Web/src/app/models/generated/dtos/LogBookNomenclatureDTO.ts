@@ -29,4 +29,7 @@ export class LogBookNomenclatureDTO extends NomenclatureDTO<number> {
 
     @StrictlyTyped(String)
     public permitLicenseNumber?: string;
+
+    @StrictlyTyped(Number)
+    public permitLicenseId?: number;
 }

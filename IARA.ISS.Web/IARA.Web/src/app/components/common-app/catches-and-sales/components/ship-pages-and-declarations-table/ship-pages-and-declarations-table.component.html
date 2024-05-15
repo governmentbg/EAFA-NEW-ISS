@@ -393,6 +393,17 @@
                                 tooltipText="{{ 'catches-and-sales.edit-ship-log-book-page' | tlTranslate }}"
                                 (buttonClicked)="editShipLogBookPage(row.data, false)">
                 </tl-icon-button>
+
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
+                                       && _pagesPermissions.canEditNumberShipLogBookRecords
+                                       && row.data.status !== logBookPageStatusesEnum.Canceled"
+                                icon="ic-fluent-doc-arrow-right-24-regular"
+                                iconClass="accent-color"
+                                [size]="icIconSize"
+                                tooltipText="{{ 'catches-and-sales.edit-ship-log-book-page-number' | tlTranslate }}"
+                                (buttonClicked)="onEditShipLogBookPageNumberBtnClicked(row.data, false)">
+                </tl-icon-button>
+
             </div>
         </ng-template>
     </data-template-column>

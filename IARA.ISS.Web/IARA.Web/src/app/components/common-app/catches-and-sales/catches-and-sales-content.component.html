@@ -162,7 +162,8 @@
                                                                    (onAddRelatedDeclaration)="onAddRelatedDeclarationBtnClicked($event)"
                                                                    (onAddAdmissionDocumentFromTransportation)="onAddAdmissionDocumentFromTransportationBtnClicked($event)"
                                                                    (onAddFirstSaleDocumentFromTransportation)="onAddFirstSaleDocumentFromTransportationBtnClicked($event)"
-                                                                   (onAddFirstSaleDocumentFromAdmission)="onAddFirstSaleDocumentFromAdmissionBtnClicked($event)">
+                                                                   (onAddFirstSaleDocumentFromAdmission)="onAddFirstSaleDocumentFromAdmissionBtnClicked($event)"
+                                                                   (onEditShipLogBookPageNumber)="onEditShipLogBookPageNumber($event)">
                                 </ship-pages-and-declarations-table>
 
                                 <!-- Страници от Дневници за приемане -->
@@ -172,13 +173,15 @@
                                                                         [showInactiveRecords]="!isPublicApp"
                                                                         [canCancelAdmissionLogBookRecords]="canCancelAdmissionLogBookRecords"
                                                                         [canEditAdmissionLogBookRecords]="canEditAdmissionLogBookRecords"
+                                                                        [canEditNumberAdmissionLogBookRecords]="canEditNumberAdmissionLogBookRecords"
                                                                         [canReadInspections]="canReadInspections"
                                                                         [allowEditAfterFinished]="row.data.allowNewLogBookPages"
                                                                         (onActiveRecordChanged)="editAdmissionLogBookPage($event.page, $event.viewMode)"
                                                                         (onEditAdmissionLogBookPage)="editAdmissionLogBookPage($event, false)"
                                                                         (onViewAdmissionLogBookPage)="editAdmissionLogBookPage($event, true)"
                                                                         (onAnnulAdmissionLogBookPage)="onAnnulAdmissionLogBookPageBtnClicked($event)"
-                                                                        (onRestoreAnnulledAdmissionLogBookPage)="onRestoreAnnulledAdmissionLogBookPageBtnClicked($event)">
+                                                                        (onRestoreAnnulledAdmissionLogBookPage)="onRestoreAnnulledAdmissionLogBookPageBtnClicked($event)"
+                                                                        (onEditAdmissionLogBookPageNumber)="onEditAdmissionLogBookPageNumber($event)">
                                 </admission-pages-and-declarations-table>
 
                                 <!-- Страници от Дневници за превоз -->
@@ -188,13 +191,15 @@
                                                                              [showInactiveRecords]="!isPublicApp"
                                                                              [canCancelTransportationLogBookRecords]="canCancelTransportationLogBookRecords"
                                                                              [canEditTransportationLogBookRecords]="canEditTransportationLogBookRecords"
+                                                                             [canEditNumberTransportationLogBookRecords]="canEditNumberTransportationLogBookRecords"
                                                                              [allowEditAfterFinished]="row.data.allowNewLogBookPages"
                                                                              [canReadInspections]="canReadInspections"
                                                                              (onActiveRecordChanged)="editTransportationLogBookPage($event.page, $event.viewMode)"
                                                                              (onEditTransportationLogBookPage)="editTransportationLogBookPage($event, false)"
                                                                              (onViewTransportationLogBookPage)="editTransportationLogBookPage($event, true)"
                                                                              (onAnnulTransportationLogBookPage)="onAnnulTransportationLogBookPageBtnClicked($event)"
-                                                                             (onRestoreAnnulledTransportationLogBookPage)="onRestoreAnnulledTransportationLogBookPageBtnClicked($event)">
+                                                                             (onRestoreAnnulledTransportationLogBookPage)="onRestoreAnnulledTransportationLogBookPageBtnClicked($event)"
+                                                                             (onEditTransportationLogBookPageNumber)="onEditTransportationLogBookPageNumber($event)">
                                 </transportation-pages-and-declarations-table>
 
                                 <!-- Страници от Дневници за първа продажба -->
@@ -204,13 +209,15 @@
                                                         [showInactiveRecords]="!isPublicApp"
                                                         [canCancelFirstSaleLogBookRecords]="canCancelFirstSaleLogBookRecords"
                                                         [canEditFirstSaleLogBookRecords]="canEditFirstSaleLogBookRecords"
+                                                        [canEditNumberFirstSaleLogBookRecords]="canEditNumberFirstSaleLogBookRecords"
                                                         [allowEditAfterFinished]="row.data.allowNewLogBookPages"
                                                         [canReadInspections]="canReadInspections"
                                                         (onActiveRecordChanged)="editFirstSaleLogBookPage($event.page, $event.viewMode)"
                                                         (onEditFirstSaleLogBookPage)="editFirstSaleLogBookPage($event, false)"
                                                         (onViewFirstSaleLogBookPage)="editFirstSaleLogBookPage($event, true)"
                                                         (onAnnulFirstSaleLogBookPage)="onAnnulFirstSaleLogBookPageBtnClicked($event)"
-                                                        (onRestoreAnnulledFirstSaleLogBookPage)="onRestoreAnnulledFirstSaleLogBookPageBtnClicked($event)">
+                                                        (onRestoreAnnulledFirstSaleLogBookPage)="onRestoreAnnulledFirstSaleLogBookPageBtnClicked($event)"
+                                                        (onEditFirstSaleLogBookPageNumber)="onEditFirstSaleLogBookPageNumber($event)">
                                 </first-sale-pages-table>
 
                                 <!-- Страници от Дневници за аквакултурно стопанство -->
@@ -220,13 +227,15 @@
                                                          [showInactiveRecords]="!isPublicApp"
                                                          [canCancelAquacultureLogBookRecords]="canCancelAquacultureLogBookRecords"
                                                          [canEditAquacultureLogBookRecords]="canEditAquacultureLogBookRecords"
+                                                         [canEditNumberAquacultureLogBookRecords]="canEditNumberAquacultureLogBookRecords"
                                                          [allowEditAfterFinished]="row.data.allowNewLogBookPages"
                                                          [canReadInspections]="canReadInspections"
                                                          (onActiveRecordChanged)="editAquacultureLogBookPage($event.page, $event.viewMode)"
                                                          (onEditAquacultureLogBookPage)="editAquacultureLogBookPage($event, false)"
                                                          (onViewAquacultureLogBookPage)="editAquacultureLogBookPage($event, true)"
                                                          (onAnnulAquacultureLogBookPage)="onAnnulAquacultureLogBookPageBtnClicked($event)"
-                                                         (onRestoreAnnulledAquacultureLogBookPage)="onRestoreAnnulledAquacultureLogBookPageBtnClicked($event)">
+                                                         (onRestoreAnnulledAquacultureLogBookPage)="onRestoreAnnulledAquacultureLogBookPageBtnClicked($event)"
+                                                         (onEditAquacultureLogBookPageNumber)="onEditAquacultureLogBookPageNumber($event)">
                                 </aquaculture-pages-table>
                             </tl-card-content>
                         </tl-card>

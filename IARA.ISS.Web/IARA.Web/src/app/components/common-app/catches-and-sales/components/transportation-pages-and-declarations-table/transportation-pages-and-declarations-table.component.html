@@ -118,6 +118,16 @@
                                 iconClass="accent-color"
                                 tooltipText="{{ 'catches-and-sales.edit-transportation-log-book-page' | tlTranslate }}">
                 </tl-icon-button>
+
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
+                                        && canEditNumberTransportationLogBookRecords
+                                        && row.data.status !== logBookPageStatusesEnum.Canceled"
+                                icon="ic-fluent-doc-arrow-right-24-regular"
+                                iconClass="accent-color"
+                                [size]="icIconSize"
+                                tooltipText="{{ 'catches-and-sales.edit-transportation-log-book-page-number' | tlTranslate }}"
+                                (buttonClicked)="onEditTransportationLogBookPageNumberBtnClicked(row.data, false)">
+                </tl-icon-button>
             </div>
         </ng-template>
     </data-template-column>

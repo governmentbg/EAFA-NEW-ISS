@@ -124,4 +124,5 @@
     InspectionVesselTypes,
     InspectionStates,
     CheckResolutionTypes,
+    LogBookPermitLicenses
 }

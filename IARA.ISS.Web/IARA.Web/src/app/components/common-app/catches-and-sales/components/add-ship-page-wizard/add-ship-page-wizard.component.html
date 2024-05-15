@@ -1,23 +1,37 @@
 ﻿<mat-vertical-stepper linear (selectionChange)="stepSelected($event)" color="accent">
-    <mat-step [stepControl]="pageNumberControl" [editable]="true">
-        <ng-template matStepLabel>
-            <span [ngClass]="{ 'error-color': pageNumberControl.touched && pageNumberControl.invalid }">
-                {{ 'catches-and-sales.add-ship-page-wizard-page-number-title' | tlTranslate }}
-            </span>
-        </ng-template>
+    <mat-step [stepControl]="preliminaryDataFormGroup" [editable]="true">
+        <div [formGroup]="preliminaryDataFormGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span [ngClass]="{ 'error-color': preliminaryDataFormGroup.touched && preliminaryDataFormGroup.invalid }">
+                    {{ 'catches-and-sales.add-ship-page-wizard-page-number-title' | tlTranslate }}
+                </span>
+            </ng-template>
 
-        <div fxLayout="row" fxFlex="100" fxLayoutAlign="start center">
-            <tl-input fxFlex="40"
-                      [formControl]="pageNumberControl"
-                      label="{{ 'catches-and-sales.add-ship-page-wizard-page-number' | tlTranslate }}"
-                      tooltipResourceName="catches-and-sales.add-ship-page-wizard-page-number-helper">
-            </tl-input>
-        </div>
+            <div *ngIf="isEditNumber" fxLayout="row" fxFlex="100" fxLayoutAlign="start center">
+                <tl-input fxFlex="40"
+                          formControlName="oldPageNumberControl"
+                          [readonly]="true"
+                          label="{{ 'catches-and-sales.add-ship-page-wizard-old-page-number' | tlTranslate }}"
+                          tooltipResourceName="catches-and-sales.add-ship-page-wizard-old-page-number-helper">
+                </tl-input>
+            </div>
 
-        <div fxLayout="row">
-            <button mat-raised-button matStepperNext color="accent">
-                {{ 'catches-and-sales.add-ship-page-wizard-confirm-page-number' | tlTranslate }}
-            </button>
+            <div fxLayout="row" fxFlex="100" fxLayoutAlign="start center">
+                <tl-input fxFlex="40"
+                          formControlName="pageNumberControl"
+                          [label]="pageNumberLabel"
+                          tooltipResourceName="catches-and-sales.add-ship-page-wizard-page-number-helper">
+                </tl-input>
+            </div>
+
+            <div fxLayout="row">
+                <button mat-raised-button matStepperNext color="accent">
+                    {{ 'catches-and-sales.add-ship-page-wizard-confirm-page-number' | tlTranslate }}
+                </button>
+            </div>
         </div>
     </mat-step>
 

@@ -29,6 +29,7 @@ import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
 import { LogBookOwnerNomenclatureDTO } from '@app/models/generated/dtos/LogBookOwnerNomenclatureDTO';
 import { LogBookPageNomenclatureDTO } from '@app/models/generated/dtos/LogBookPageNomenclatureDTO';
+import { LogBookNomenclatureDTO } from '@app/models/generated/dtos/LogBookNomenclatureDTO';
 
 export interface ICatchesAndSalesService {
     getAllCatchesAndSales(request: GridRequestModel<CatchesAndSalesAdministrationFilters | CatchesAndSalesPublicFilters>): Observable<GridResultModel<LogBookRegisterDTO>>;
@@ -36,6 +37,7 @@ export interface ICatchesAndSalesService {
     getCommonLogBookPageData(parameters: CommonLogBookPageDataParameters): Observable<CommonLogBookPageDataDTO>;
     getLogBookPageDocumentData(parameters: BasicLogBookPageDocumentParameters): Observable<BasicLogBookPageDocumentDataDTO>;
     getLogBookPageDocumentOwnerData(documentNumber: number, documentType: LogBookPageDocumentTypesEnum): Observable<NomenclatureDTO<number>[]>;
+    getAquacultureLogBookPageOwnerData(pageNumber: number): Observable<LogBookNomenclatureDTO[]>;
 
     getPreviousTripOnBoardCatchRecords(shipId: number, currentPageId?: number): Observable<OnBoardCatchRecordFishDTO[]>;
 
@@ -80,22 +82,27 @@ export interface ICatchesAndSalesService {
     addShipLogBookPage(model: ShipLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number>;
     editShipLogBookPage(model: ShipLogBookPageEditDTO): Observable<void>;
     restoreAnnulledShipLogBookPage(logBookPageId: number): Observable<void>;
+    editShipLogBookPageNumber(logBookPageId: number, pageNumber: string, hasMissingPagesRangePermission: boolean): Observable<void>;
 
     addFirstSaleLogBookPage(model: FirstSaleLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number>;
     editFirstSaleLogBookPage(model: FirstSaleLogBookPageEditDTO): Observable<void>;
     restoreAnnulledFirstSaleLogBookPage(logBookPageId: number): Observable<void>;
+    editFirstSaleLogBookPageNumber(logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void>;
 
     addAdmissionLogBookPage(model: AdmissionLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number>;
     editAdmissionLogBookPage(model: AdmissionLogBookPageEditDTO): Observable<void>;
     restoreAnnulledAdmissionLogBookPage(logBookPageId: number): Observable<void>;
+    editAdmissionLogBookPageNumber(logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void>;
 
     addTransportationLogBookPage(model: TransportationLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number>;
     editTransportationLogBookPage(model: TransportationLogBookPageEditDTO): Observable<void>;
     restoreAnnulledTransportationLogBookPage(logBookPageId: number): Observable<void>;
+    editTransportationLogBookPageNumber(logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void>;
 
     addAquacultureLogBookPage(model: AquacultureLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number>;
     editAquacultureLogBookPage(model: AquacultureLogBookPageEditDTO): Observable<void>;
     restoreAnnulledAquacultureLogBookPage(logBookPageId: number): Observable<void>;
+    editAquacultureLogBookPageNumber(logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void>;
 
     annulLogBookPage(reasonData: LogBookPageCancellationReasonDTO, logBookType: LogBookTypesEnum): Observable<void>;
 
