@@ -21,26 +21,33 @@ import { EditShipLogBookPageDialogParams } from '../ship-log-book/models/edit-sh
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { LogBookPermitLicenseNomenclatureDTO } from '@app/models/generated/dtos/LogBookPermitLicenseNomenclatureDTO';
+import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 
 @Component({
     selector: 'add-ship-page-wizard',
     templateUrl: './add-ship-page-wizard.component.html'
 })
 export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
-    public pageNumberControl!: FormControl;
+    public preliminaryDataFormGroup!: FormGroup;
     public dataFormGroup!: FormGroup;
 
     public permitLicenses: LogBookPermitLicenseNomenclatureDTO[] = [];
+
+    public pageNumberLabel!: string;
+    public isEditNumber: boolean = false;
 
     @ViewChild(MatVerticalStepper)
     private stepper!: MatVerticalStepper;
 
     private service!: ICatchesAndSalesService;
     private logBookId!: number;
+    private pageId: number | undefined;
+    private hasMissingPagesRangePermission: boolean = false;
 
     private translate: FuseTranslationLoaderService;
     private snackbar: MatSnackBar;
     private editShipLogBookPageDialog: TLMatDialog<EditShipLogBookPageComponent>;
+    private confirmDialog: TLConfirmDialog;
 
     private model!: ShipLogBookPageEditDTO;
     private dataCache: Map<string, ShipLogBookPageEditDTO[]> = new Map<string, ShipLogBookPageEditDTO[]>();
@@ -50,11 +57,17 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
     public constructor(
         translate: FuseTranslationLoaderService,
         snackbar: MatSnackBar,
-        editShipLogBookPageDialog: TLMatDialog<EditShipLogBookPageComponent>
+        editShipLogBookPageDialog: TLMatDialog<EditShipLogBookPageComponent>,
+        confirmDialog: TLConfirmDialog
     ) {
         this.translate = translate;
         this.snackbar = snackbar;
         this.editShipLogBookPageDialog = editShipLogBookPageDialog;
+        this.confirmDialog = confirmDialog;
+
+        this.pageNumberLabel = this.isEditNumber
+            ? this.translate.getValue('catches-and-sales.add-ship-page-wizard-new-page-number')
+            : this.translate.getValue('catches-and-sales.add-ship-page-wizard-page-number');
 
         this.buildForm();
     }
@@ -66,32 +79,39 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
     }
 
     public saveBtnClicked(action: IActionInfo, dialogClose: DialogCloseCallback): void {
-        this.pageNumberControl.markAllAsTouched();
-        this.pageNumberControl.updateValueAndValidity();
+        this.preliminaryDataFormGroup.get('pageNumberControl')!.markAllAsTouched();
+        this.preliminaryDataFormGroup.get('pageNumberControl')!.updateValueAndValidity();
 
         this.dataFormGroup.markAllAsTouched();
         this.dataFormGroup.updateValueAndValidity();
 
-        if (this.pageNumberControl.valid && this.dataFormGroup.valid) {
-            this.editShipLogBookPageDialog.openWithTwoButtons({
-                title: this.translate.getValue('catches-and-sales.add-fishing-log-book-page-dialog-title'),
-                TCtor: EditShipLogBookPageComponent,
-                translteService: this.translate,
-                viewMode: false,
-                headerCancelButton: {
-                    cancelBtnClicked: this.closeEditShipLogBookPageDialogBtnClicked.bind(this)
-                },
-                componentData: new EditShipLogBookPageDialogParams({
-                    service: this.service,
-                    model: this.model,
-                    viewMode: false
-                }),
-                disableDialogClose: true
-            }, '1450px').subscribe({
-                next: (result: ShipLogBookPageEditDTO | undefined) => {
-                    dialogClose(result);
+        if (this.preliminaryDataFormGroup.valid && this.dataFormGroup.valid) {
+            if (this.isEditNumber) {
+                if (this.pageId !== undefined && this.pageId !== null) {
+                    this.editShipLogBookPageNumber(dialogClose);
                 }
-            });
+            }
+            else {
+                this.editShipLogBookPageDialog.openWithTwoButtons({
+                    title: this.translate.getValue('catches-and-sales.add-fishing-log-book-page-dialog-title'),
+                    TCtor: EditShipLogBookPageComponent,
+                    translteService: this.translate,
+                    viewMode: false,
+                    headerCancelButton: {
+                        cancelBtnClicked: this.closeEditShipLogBookPageDialogBtnClicked.bind(this)
+                    },
+                    componentData: new EditShipLogBookPageDialogParams({
+                        service: this.service,
+                        model: this.model,
+                        viewMode: false
+                    }),
+                    disableDialogClose: true
+                }, '1450px').subscribe({
+                    next: (result: ShipLogBookPageEditDTO | undefined) => {
+                        dialogClose(result);
+                    }
+                });
+            }
         }
     }
 
@@ -106,19 +126,24 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
     public setData(data: AddShipWizardDialogParams, buttons: DialogWrapperData): void {
         this.service = data.service;
         this.logBookId = data.logBookId;
-        this.pageNumberControl.setValue(data.pageNumber);
+        this.isEditNumber = data.isEdit;
+        this.pageId = data.pageId;
+
+        if (data.isEdit) {
+            this.preliminaryDataFormGroup.get('oldPageNumberControl')!.setValue(data.pageNumber);
+        }
     }
 
     public stepSelected(event: StepperSelectionEvent): void {
         if (event.previouslySelectedIndex === 0 && event.selectedIndex === 1) {
-            if (this.pageNumberControl.valid) {
-                const cached: ShipLogBookPageEditDTO[] | undefined = this.dataCache.get(this.pageNumberControl.value);
+            if (this.preliminaryDataFormGroup.get('pageNumberControl')!.valid) {
+                const cached: ShipLogBookPageEditDTO[] | undefined = this.dataCache.get(this.preliminaryDataFormGroup.get('pageNumberControl')!.value);
 
                 if (cached === undefined || cached === null) {
                     this.subscriptions.push(
-                        this.service.getNewShipLogBookPages(this.pageNumberControl.value, this.logBookId).subscribe({
+                        this.service.getNewShipLogBookPages(this.preliminaryDataFormGroup.get('pageNumberControl')!.value, this.logBookId).subscribe({
                             next: (data: ShipLogBookPageEditDTO[]) => {
-                                this.dataCache.set(this.pageNumberControl.value, data);
+                                this.dataCache.set(this.preliminaryDataFormGroup.get('pageNumberControl')!.value, data);
                                 this.setNewPageData(data);
                                 this.fillDataForm();
                             },
@@ -176,7 +201,7 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
 
         if (data.length === 1) {
             this.model = data[0];
-            this.model.pageNumber = this.pageNumberControl.value;
+            this.model.pageNumber = this.preliminaryDataFormGroup.get('pageNumberControl')!.value;
         }
         else {
             this.model = new ShipLogBookPageEditDTO({
@@ -185,7 +210,7 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
                 fillDate: data[0].fillDate,
                 shipId: data[0].shipId,
                 shipName: data[0].shipName,
-                pageNumber: this.pageNumberControl.value
+                pageNumber: this.preliminaryDataFormGroup.get('pageNumberControl')!.value
             });
         }
     }
@@ -213,7 +238,10 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
     }
 
     private buildForm(): void {
-        this.pageNumberControl = new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 0)]);
+        this.preliminaryDataFormGroup = new FormGroup({
+            pageNumberControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 0)]),
+            oldPageNumberControl: new FormControl(undefined)
+        });
 
         this.dataFormGroup = new FormGroup({
             shipControl: new FormControl(undefined, Validators.required),
@@ -246,6 +274,109 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
         if (this.model.logBookPermitLicenseId !== null && this.model.logBookPermitLicenseId !== undefined) {
             const permitLicense: LogBookPermitLicenseNomenclatureDTO = this.permitLicenses.find(x => x.value == this.model.logBookPermitLicenseId)!;
             this.dataFormGroup.get('permitLicenceControl')!.setValue(permitLicense);
+        }
+    }
+
+    private editShipLogBookPageNumber(dialogClose: DialogCloseCallback): void {
+        this.service.editShipLogBookPageNumber(this.pageId!, this.preliminaryDataFormGroup.get('pageNumberControl')!.value!, this.hasMissingPagesRangePermission).subscribe({
+            next: () => {
+                dialogClose(this.model);
+            },
+            error: (response: HttpErrorResponse) => {
+                this.handleEditPageNumberErrorResponse(response, dialogClose);
+            }
+        });
+    }
+
+    private handleEditPageNumberErrorResponse(response: HttpErrorResponse, dialogClose: DialogCloseCallback): void {
+        const error: ErrorModel | undefined = response.error;
+
+        if (error?.code === ErrorCode.PageNumberNotInLogbook) {
+            this.snackbar.open(this.translate.getValue('catches-and-sales.ship-log-book-page-not-in-range-error'), undefined, {
+                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+            });
+        }
+        else if (error?.code === ErrorCode.PageNumberNotInLogBookLicense) {
+            this.snackbar.open(
+                this.translate.getValue('catches-and-sales.ship-log-book-page-not-in-log-book-license-range-error'),
+                undefined,
+                {
+                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                });
+        }
+        else if (error?.code === ErrorCode.LogBookPageAlreadySubmitted) {
+            this.snackbar.open(this.translate.getValue('catches-and-sales.ship-log-book-page-already-submitted-error'), undefined, {
+                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+            });
+        }
+        else if (error?.code === ErrorCode.LogBookPageAlreadySubmittedOtherLogBook) {
+            const message: string = this.translate.getValue('catches-and-sales.ship-log-book-page-already-submitted-other-logbook-error');
+            this.snackbar.open(
+                `${message}: ${error.messages[0]}`,
+                undefined,
+                {
+                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                });
+        }
+        else if (error?.code === ErrorCode.MaxNumberMissingPagesExceeded) {
+            if (error!.messages === null || error!.messages === undefined || error!.messages.length < 2) {
+                throw new Error('In MaxNumberMissingPagesExceeded exception at least the last used page number and a number saying the difference should be passed in the messages property.');
+            }
+
+            const lastUsedPageNum: number = Number(error!.messages[0]);
+            const diff: number = Number(error!.messages[1]);
+            const pageToAdd: string = this.model.pageNumber!;
+
+            // confirmation message
+
+            let message: string = '';
+
+            if (lastUsedPageNum === 0) { // няма добавени страници все още към този дневник
+                const currentStartPage: number = Number(error!.messages[2]);
+
+                const msg1: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-no-pages-first-message');
+                const msg2: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-second-message');
+                const msg3: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-third-message');
+                const msg4: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-forth-message');
+                const msg5: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-fifth-message');
+                const msg6: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-sixth-message');
+
+                message = `${msg1} ${currentStartPage} ${msg2} ${pageToAdd} ${msg3} ${diff} ${msg4}.\n\n${msg5} ${diff} ${msg6}.`;
+            }
+            else {
+                const msg1: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-first-message');
+                const msg2: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-second-message');
+                const msg3: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-third-message');
+                const msg4: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-forth-message');
+                const msg5: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-fifth-message');
+                const msg6: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-sixth-message');
+
+                message = `${msg1} ${lastUsedPageNum} ${msg2} ${pageToAdd} ${msg3} ${diff} ${msg4}.\n\n${msg5} ${diff} ${msg6}.`;
+            }
+
+            // button label
+
+            const btnMsg1: string = this.translate.getValue('catches-and-sales.ship-log-book-page-permit-generate-missing-pages-first-part');
+            const btnMsg2: string = this.translate.getValue('catches-and-sales.ship-log-book-page-permit-generate-missing-pages-second-part');
+
+            this.confirmDialog.open({
+                title: this.translate.getValue('catches-and-sales.ship-log-book-page-generate-missing-pages-permission-dialog-title'),
+                message: message,
+                okBtnLabel: `${btnMsg1} ${diff} ${btnMsg2}`,
+                okBtnColor: 'warn'
+            }).subscribe({
+                next: (ok: boolean | undefined) => {
+                    this.hasMissingPagesRangePermission = ok ?? false;
+
+                    if (this.hasMissingPagesRangePermission) {
+                        this.editShipLogBookPageNumber(dialogClose!); // start edit page number method again
+                    }
+                }
+            });
         }
     }
 

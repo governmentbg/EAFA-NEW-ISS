@@ -74,6 +74,10 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
         return this.commonService.getLogBookPageDocumentOwnerData(this.area, this.controller, documentNumber, documentType);
     }
 
+    public getAquacultureLogBookPageOwnerData(pageNumber: number): Observable<LogBookNomenclatureDTO[]> {
+        return this.commonService.getAquacultureLogBookPageOwnerData(this.area, this.controller, pageNumber);
+    }
+
     public getPreviousTripOnBoardCatchRecords(shipId: number, currentPageId?: number): Observable<OnBoardCatchRecordFishDTO[]> {
         return this.commonService.getPreviousTripsOnBoardCatchRecords(this.area, this.controller, shipId, currentPageId);
     }
@@ -139,6 +143,10 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
         throw new Error("Should not call this method from the public catch and sales service.");
     }
 
+    public editShipLogBookPageNumber(logBookPageId: number, pageNumber: string, hasMissingPagesRangePermission: boolean): Observable<void> {
+        throw new Error("Should not call this method from the public catch and sales service.");
+    }
+
     public addFirstSaleLogBookPage(model: FirstSaleLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
         return this.commonService.addFirstSaleLogBookPage(this.area, this.controller, model, hasMissingPagesRangePermission);
     }
@@ -148,6 +156,10 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
     }
 
     public restoreAnnulledFirstSaleLogBookPage(logBookPageId: number): Observable<void> {
+        throw new Error("Should not call this method from the public catch and sales service.");
+    }
+
+    public editFirstSaleLogBookPageNumber(logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void> {
         throw new Error("Should not call this method from the public catch and sales service.");
     }
 
@@ -163,6 +175,10 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
         throw new Error("Should not call this method from the public catch and sales service.");
     }
 
+    public editAdmissionLogBookPageNumber(logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void> {
+        throw new Error("Should not call this method from the public catch and sales service.");
+    }
+
     public addTransportationLogBookPage(model: TransportationLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
         return this.commonService.addTransportationLogBookPage(this.area, this.controller, model, hasMissingPagesRangePermission);
     }
@@ -175,6 +191,10 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
         throw new Error("Should not call this method from the public catch and sales service.");
     }
 
+    public editTransportationLogBookPageNumber(logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void> {
+        throw new Error("Should not call this method from the public catch and sales service.");
+    }
+
     public addAquacultureLogBookPage(model: AquacultureLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
         return this.commonService.addAquacultureLogBookPage(this.area, this.controller, model, hasMissingPagesRangePermission);
     }
@@ -184,6 +204,10 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
     }
 
     public restoreAnnulledAquacultureLogBookPage(logBookPageId: number): Observable<void> {
+        throw new Error("Should not call this method from the public catch and sales service.");
+    }
+
+    public editAquacultureLogBookPageNumber(logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void> {
         throw new Error("Should not call this method from the public catch and sales service.");
     }
 

@@ -288,6 +288,21 @@ export class CatchesAndSalesCommonService {
         }));
     }
 
+    public getAquacultureLogBookPageOwnerData(area: AreaTypes, controller: string, pageNumber: number): Observable<LogBookNomenclatureDTO[]> {
+        const params: HttpParams = new HttpParams().append('pageNumber', pageNumber.toString());
+        return this.http.get<LogBookNomenclatureDTO[]>(area, controller, 'GetAquacultureLogBookPageOwnerData', {
+            httpParams: params,
+            responseTypeCtr: LogBookNomenclatureDTO
+        }).pipe(map((entries: LogBookNomenclatureDTO[]) => {
+            const logBookOwnerLabel: string = this.translate.getValue('catches-and-sales.edit-aquaculture-log-book-page-number-owner');
+            for (const entry of entries) {
+                entry.displayName = `${entry.displayName} | ${logBookOwnerLabel}: ${entry.ownerName}`;
+            }
+
+            return entries;
+        }));
+    }
+
     public getPreviousTripsOnBoardCatchRecords(area: AreaTypes, controller: string, shipId: number, currentPageId?: number): Observable<OnBoardCatchRecordFishDTO[]> {
         let params: HttpParams = new HttpParams().append('shipId', shipId.toString());
 
@@ -445,6 +460,14 @@ export class CatchesAndSalesCommonService {
         throw new Error("Should not call this method from the common catch and sales service.");
     }
 
+    public editShipLogBookPageNumber(area: AreaTypes, controller: string, logBookPageId: number, pageNumber: string, hasMissingPagesRangePermission: boolean): Observable<void> {
+        const params: HttpParams = new HttpParams().append('logBookPageId', logBookPageId.toString())
+            .append('pageNumber', pageNumber.toString())
+            .append('hasMissingPagesRangePermission', hasMissingPagesRangePermission.toString());
+
+        return this.http.put(area, controller, 'EditShipLogBookPageNumber', null, { httpParams: params });
+    }
+
     public addFirstSaleLogBookPage(area: AreaTypes, controller: string, model: FirstSaleLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
         const params: HttpParams = new HttpParams().append('hasMissingPagesRangePermission', hasMissingPagesRangePermission.toString());
 
@@ -464,6 +487,14 @@ export class CatchesAndSalesCommonService {
 
     public restoreAnnulledFirstSaleLogBookPage(logBookPageId: number): Observable<void> {
         throw new Error("Should not call this method from the common catch and sales service.");
+    }
+
+    public editFirstSaleLogBookPageNumber(area: AreaTypes, controller: string, logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void> {
+        const params: HttpParams = new HttpParams().append('logBookPageId', logBookPageId.toString())
+            .append('pageNumber', pageNumber.toString())
+            .append('hasMissingPagesRangePermission', hasMissingPagesRangePermission.toString());
+
+        return this.http.put(area, controller, 'EditFirstSaleLogBookPageNumber', null, { httpParams: params });
     }
 
     public addAdmissionLogBookPage(area: AreaTypes, controller: string, model: AdmissionLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
@@ -487,6 +518,14 @@ export class CatchesAndSalesCommonService {
         throw new Error("Should not call this method from the common catch and sales service.");
     }
 
+    public editAdmissionLogBookPageNumber(area: AreaTypes, controller: string, logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void> {
+        const params: HttpParams = new HttpParams().append('logBookPageId', logBookPageId.toString())
+            .append('pageNumber', pageNumber.toString())
+            .append('hasMissingPagesRangePermission', hasMissingPagesRangePermission.toString());
+
+        return this.http.put(area, controller, 'EditAdmissionLogBookPageNumber', null, { httpParams: params });
+    }
+
     public addTransportationLogBookPage(area: AreaTypes, controller: string, model: TransportationLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
         const params: HttpParams = new HttpParams().append('hasMissingPagesRangePermission', hasMissingPagesRangePermission.toString());
 
@@ -508,6 +547,14 @@ export class CatchesAndSalesCommonService {
         throw new Error("Should not call this method from the common catch and sales service.");
     }
 
+    public editTransportationLogBookPageNumber(area: AreaTypes, controller: string, logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void> {
+        const params: HttpParams = new HttpParams().append('logBookPageId', logBookPageId.toString())
+            .append('pageNumber', pageNumber.toString())
+            .append('hasMissingPagesRangePermission', hasMissingPagesRangePermission.toString());
+
+        return this.http.put(area, controller, 'EditTransportationLogBookPageNumber', null, { httpParams: params });
+    }
+
     public addAquacultureLogBookPage(area: AreaTypes, controller: string, model: AquacultureLogBookPageEditDTO, hasMissingPagesRangePermission: boolean): Observable<number> {
         const params: HttpParams = new HttpParams().append('hasMissingPagesRangePermission', hasMissingPagesRangePermission.toString());
 
@@ -527,6 +574,14 @@ export class CatchesAndSalesCommonService {
 
     public restoreAnnulledAquacultureLogBookPage(logBookPageId: number): Observable<void> {
         throw new Error("Should not call this method from the common catch and sales service.");
+    }
+
+    public editAquacultureLogBookPageNumber(area: AreaTypes, controller: string, logBookPageId: number, pageNumber: number, hasMissingPagesRangePermission: boolean): Observable<void> {
+        const params: HttpParams = new HttpParams().append('logBookPageId', logBookPageId.toString())
+            .append('pageNumber', pageNumber.toString())
+            .append('hasMissingPagesRangePermission', hasMissingPagesRangePermission.toString());
+
+        return this.http.put(area, controller, 'EditAquacultureLogBookPageNumber', null, { httpParams: params });
     }
 
     public annulLogBookPage(area: AreaTypes, controller: string, reasonData: LogBookPageCancellationReasonDTO, logBookType: LogBookTypesEnum): Observable<void> {

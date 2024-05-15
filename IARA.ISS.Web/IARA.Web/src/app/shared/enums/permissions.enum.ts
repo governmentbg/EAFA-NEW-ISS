@@ -439,30 +439,35 @@
     FishLogBookPageAdd = 'FishLogBookPageAdd',
     FishLogBookPageEdit = 'FishLogBookPageEdit',
     FishLogBookPageCancel = 'FishLogBookPageCancel',
+    FishLogBookPageEditNumber = 'FishLogBookPageEditNumber',
 
     FirstSaleLogBookPageReadAll = 'FirstSaleLogBookPageReadAll',
     FirstSaleLogBookPageRead = 'FirstSaleLogBookPageRead',
     FirstSaleLogBookPageAdd = 'FirstSaleLogBookPageAdd',
     FirstSaleLogBookPageEdit = 'FirstSaleLogBookPageEdit',
     FirstSaleLogBookPageCancel = 'FirstSaleLogBookPageCancel',
+    FirstSaleLogBookPageEditNumber = 'FirstSaleLogBookPageEditNumber',
 
     AdmissionLogBookPageReadAll = 'AdmissionLogBookPageReadAll',
     AdmissionLogBookPageRead = 'AdmissionLogBookPageRead',
     AdmissionLogBookPageAdd = 'AdmissionLogBookPageAdd',
     AdmissionLogBookPageEdit = 'AdmissionLogBookPageEdit',
     AdmissionLogBookPageCancel = 'AdmissionLogBookPageCancel',
+    AdmissionLogBookPageEditNumber = 'AdmissionLogBookPageEditNumber',
 
     TransportationLogBookPageReadAll = 'TransportationLogBookPageReadAll',
     TransportationLogBookPageRead = 'TransportationLogBookPageRead',
     TransportationLogBookPageAdd = 'TransportationLogBookPageAdd',
     TransportationLogBookPageEdit = 'TransportationLogBookPageEdit',
     TransportationLogBookPageCancel = 'TransportationLogBookPageCancel',
+    TransportationLogBookPageEditNumber = 'TransportationLogBookPageEditNumber',
 
     AquacultureLogBookPageReadAll = 'AquacultureLogBookPageReadAll',
     AquacultureLogBookPageRead = 'AquacultureLogBookPageRead',
     AquacultureLogBookPageAdd = 'AquacultureLogBookPageAdd',
     AquacultureLogBookPageEdit = 'AquacultureLogBookPageEdit',
     AquacultureLogBookPageCancel = 'AquacultureLogBookPageCancel',
+    AquacultureLogBookPageEditNumber = 'AquacultureLogBookPageEditNumber',
 
     // Log book page edit exceptions
 

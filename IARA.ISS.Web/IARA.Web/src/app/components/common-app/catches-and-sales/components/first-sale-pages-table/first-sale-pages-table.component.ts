@@ -40,6 +40,9 @@ export class FirstSalePagesTableComponent {
     public canEditFirstSaleLogBookRecords: boolean = false;
 
     @Input()
+    public canEditNumberFirstSaleLogBookRecords: boolean = false;
+
+    @Input()
     public recordsPerPage: number = 10;
 
     @Input()
@@ -59,6 +62,9 @@ export class FirstSalePagesTableComponent {
 
     @Output()
     public onRestoreAnnulledFirstSaleLogBookPage: EventEmitter<FirstSaleLogBookPageRegisterDTO> = new EventEmitter<FirstSaleLogBookPageRegisterDTO>();
+
+    @Output()
+    public onEditFirstSaleLogBookPageNumber: EventEmitter<FirstSaleLogBookPageRegisterDTO> = new EventEmitter<FirstSaleLogBookPageRegisterDTO>();
 
     public readonly logBookPageStatusesEnum: typeof LogBookPageStatusesEnum = LogBookPageStatusesEnum;
     public readonly logBookTypesEnum: typeof LogBookTypesEnum = LogBookTypesEnum;
@@ -88,5 +94,9 @@ export class FirstSalePagesTableComponent {
 
     public onRestoreAnnulledFirstSaleLogBookPageBtnClicked(document: FirstSaleLogBookPageRegisterDTO): void {
         this.onRestoreAnnulledFirstSaleLogBookPage.emit(document);
+    }
+
+    public onEditFirstSaleLogBookPageNumberBtnClicked(document: FirstSaleLogBookPageRegisterDTO): void {
+        this.onEditFirstSaleLogBookPageNumber.emit(document);
     }
 }

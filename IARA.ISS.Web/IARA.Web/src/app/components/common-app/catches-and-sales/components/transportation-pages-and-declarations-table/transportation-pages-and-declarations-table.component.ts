@@ -40,6 +40,9 @@ export class TransportationPagesAndDeclarationsTableComponent {
     public canEditTransportationLogBookRecords: boolean = false;
 
     @Input()
+    public canEditNumberTransportationLogBookRecords: boolean = false;
+
+    @Input()
     public recordsPerPage: number = 10;
 
     @Input()
@@ -59,6 +62,9 @@ export class TransportationPagesAndDeclarationsTableComponent {
 
     @Output()
     public onRestoreAnnulledTransportationLogBookPage: EventEmitter<TransportationLogBookPageRegisterDTO> = new EventEmitter<TransportationLogBookPageRegisterDTO>();
+
+    @Output()
+    public onEditTransportationLogBookPageNumber: EventEmitter<TransportationLogBookPageRegisterDTO> = new EventEmitter<TransportationLogBookPageRegisterDTO>();
 
     public readonly logBookPageStatusesEnum: typeof LogBookPageStatusesEnum = LogBookPageStatusesEnum;
     public readonly logBookTypesEnum: typeof LogBookTypesEnum = LogBookTypesEnum;
@@ -88,5 +94,9 @@ export class TransportationPagesAndDeclarationsTableComponent {
 
     public onRestoreAnnulledTransportationLogBookPageBtnClicked(document: TransportationLogBookPageRegisterDTO): void {
         this.onRestoreAnnulledTransportationLogBookPage.emit(document);
+    }
+
+    public onEditTransportationLogBookPageNumberBtnClicked(document: TransportationLogBookPageRegisterDTO): void {
+        this.onEditTransportationLogBookPageNumber.emit(document);
     }
 }
