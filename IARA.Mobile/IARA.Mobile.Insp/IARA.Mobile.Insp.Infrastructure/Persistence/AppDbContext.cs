@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using IARA.Mobile.Domain.Entities.Exceptions;
+﻿using IARA.Mobile.Domain.Entities.Exceptions;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application.Interfaces.Database;
 using IARA.Mobile.Insp.Domain.Entities.Inspections;
 using IARA.Mobile.Insp.Domain.Entities.Nomenclatures;
 using SQLite;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace IARA.Mobile.Insp.Infrastructure.Persistence
 {
@@ -67,6 +67,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
 
         #region Inspections
 
+        public TLTableQuery<Catch> Catches => TLTable<Catch>();
         public TLTableQuery<PoundNetFishingGearPinger> PoundNetFishingGearPingers => TLTable<PoundNetFishingGearPinger>();
         public TLTableQuery<PoundNetFishingGearMark> PoundNetFishingGearMarks => TLTable<PoundNetFishingGearMark>();
         public TLTableQuery<PoundNetPermitLicense> PoundNetPermitLicenses => TLTable<PoundNetPermitLicense>();

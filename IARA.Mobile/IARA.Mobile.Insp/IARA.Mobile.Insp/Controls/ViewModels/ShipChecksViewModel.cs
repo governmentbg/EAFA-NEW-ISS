@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.Extensions;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
@@ -12,6 +8,10 @@ using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
@@ -26,13 +26,13 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         private List<ToggleOption> _opMembershipButtons;
         private List<SelectNomenclatureDto> _shipAssociations;
 
-        public ShipChecksViewModel(InspectionPageViewModel inspection)
+        public ShipChecksViewModel(InspectionPageViewModel inspection, ShipCatchesViewModel shipCatches = null)
         {
             Inspection = inspection;
 
             Permits = new PermitsViewModel(inspection);
             PermitLicenses = new PermitLicensesViewModel(inspection);
-            LogBooks = new LogBooksViewModel(inspection);
+            LogBooks = new LogBooksViewModel(inspection, shipCatches);
 
             this.AddValidation(others: new IValidatableViewModel[]
             {

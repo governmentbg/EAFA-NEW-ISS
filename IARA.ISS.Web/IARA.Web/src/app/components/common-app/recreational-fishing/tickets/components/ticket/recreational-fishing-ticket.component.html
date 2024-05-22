@@ -264,6 +264,8 @@
                                  tooltipResourceName="recreational-fishing.ticket-delivery-territory-unit-input-helper">
                 </tl-autocomplete>
             </div>
+
+            <mat-hint *ngIf="isPersonal" class="text-indent-2">*  {{ deliveryTerritoryUnitText }}</mat-hint>
         </tl-card-content>
     </tl-card>
 

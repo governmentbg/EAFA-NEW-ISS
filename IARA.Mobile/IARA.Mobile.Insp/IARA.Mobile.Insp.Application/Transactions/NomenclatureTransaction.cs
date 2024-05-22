@@ -1048,33 +1048,37 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
             using (IAppDbContext context = ContextBuilder.CreateContext())
             {
-                return (from buyer in context.Buyers
-                        join person in context.Persons on buyer.PersonId equals person.Id into pgrp
-                        from person in pgrp.DefaultIfEmpty()
-                        join legal in context.Legals on buyer.LegalId equals legal.Id into lgrp
-                        from legal in lgrp.DefaultIfEmpty()
-                        where search == null
-                            || ((person != null ? (person.FirstName.Contains(search)
-                                || string.IsNullOrEmpty(person.MiddleName) ? false : person.MiddleName.Contains(search)
-                                || person.LastName.Contains(search)
-                                || person.EgnLnc == search) : false)
-                            )
-                            || ((legal != null ? (legal.Name.Contains(search)
-                                || legal.Eik == search) : false)
-                            )
-                        orderby buyer.Id
-                        select new SelectNomenclatureDto
-                        {
-                            Id = buyer.Id,
-                            Code = person != null ? person.EgnLnc : legal?.Eik,
-                            Name = person != null
-                                ? (person.FirstName
-                                    + (person.MiddleName != null ? (" " + person.MiddleName) : "")
-                                    + " "
-                                    + person.LastName)
-                                : legal?.Name,
-                        }
+                var result =
+                        (from buyer in context.Buyers
+                         join person in context.Persons on buyer.PersonId equals person.Id into pgrp
+                         from person in pgrp.DefaultIfEmpty()
+                         join legal in context.Legals on buyer.LegalId equals legal.Id into lgrp
+                         from legal in lgrp.DefaultIfEmpty()
+                         where string.IsNullOrEmpty(search)
+                             || (person != null && ((!string.IsNullOrEmpty(person.FirstName) && person.FirstName.ToLower().Contains(search.ToLower()))
+                                 || (!string.IsNullOrEmpty(person.MiddleName) && person.MiddleName.ToLower().Contains(search))
+                                 || (!string.IsNullOrEmpty(person.LastName) && person.LastName.ToLower().Contains(search.ToLower()))
+                                 || (!string.IsNullOrEmpty(person.EgnLnc) && person.EgnLnc == search))
+                             )
+                             || (legal != null && ((!string.IsNullOrEmpty(legal.Name) && legal.Name.Contains(search))
+                                 || (!string.IsNullOrEmpty(legal.Eik) && legal.Eik.ToLower().Contains(search))
+                                 || (!string.IsNullOrEmpty(legal.Name) && legal.Name.ToLower().Contains(search)))
+                             )
+                         orderby buyer.Id
+                         select new SelectNomenclatureDto
+                         {
+                             Id = buyer.Id,
+                             Code = person != null ? person.EgnLnc : legal?.Eik,
+                             Name = person != null
+                                 ? (person.FirstName
+                                     + (person.MiddleName != null ? (" " + person.MiddleName) : "")
+                                     + " "
+                                     + person.LastName)
+                                 : legal?.Name,
+                         }
                     ).Skip(page * count).Take(count).ToList();
+
+                return result;
             }
         }
 

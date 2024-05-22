@@ -1,14 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application.Attributes;
+﻿using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ShipPickerDialog;
 using IARA.Mobile.Insp.Helpers;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
@@ -26,6 +26,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             _catchInspections = catchInspections;
 
             FishTypeChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnFishTypeChosen);
+            UnloadedQuantitySet = CommandBuilder.CreateFrom<int>(OnUnloadedQuantitySet);
             OpenShipPicker = CommandBuilder.CreateFrom(OnOpenShipPicker);
 
             this.AddValidation();
@@ -35,6 +36,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 CatchType.Validations.RemoveAt(CatchType.Validations.FindIndex(f => f.Name == nameof(RequiredAttribute)));
             }
         }
+
 
         public InspectionPageViewModel Inspection { get; }
 
@@ -55,6 +57,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         [TLRange(1, 10000, true)]
         public ValidState CatchCount { get; set; }
 
+        [Required]
         [TLRange(1, 10000, true)]
         public ValidState UnloadedQuantity { get; set; }
 
@@ -77,6 +80,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         }
 
         public ICommand FishTypeChosen { get; }
+        public ICommand UnloadedQuantitySet { get; set; }
         public ICommand OpenShipPicker { get; }
 
         private void OnFishTypeChosen(SelectNomenclatureDto dto)
@@ -85,6 +89,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             {
                 FishType.Value = null;
             }
+            //_catchInspections.SetSummary();
+        }
+
+        private void OnUnloadedQuantitySet(int unloadedQuantity)
+        {
+            //_catchInspections.SetSummary();
         }
 
         private async Task OnOpenShipPicker()

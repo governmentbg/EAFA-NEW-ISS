@@ -10,5 +10,6 @@
     PoundNetPermit = 1 << 7,
     PoundNetPermitAppl = 1 << 8,
     ActiveFishQuota = 1 << 9,
-    DestOrDereg = 1 << 10
+    DestOrDereg = 1 << 10,
+    HasErs = 1 << 11
 }

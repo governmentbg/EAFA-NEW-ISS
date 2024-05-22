@@ -47,6 +47,10 @@ export class ShipsUtils {
         return ShipsUtils.is(ship, ShipNomenclatureFlags.DestOrDereg);
     }
 
+    public static hasErs(ship: ShipNomenclatureDTO): boolean {
+        return ShipsUtils.is(ship, ShipNomenclatureFlags.HasErs);
+    }
+
     public static is(ship: ShipNomenclatureDTO, flags: ShipNomenclatureFlags): boolean {
         return (ship.flags! & flags) !== 0;
     }

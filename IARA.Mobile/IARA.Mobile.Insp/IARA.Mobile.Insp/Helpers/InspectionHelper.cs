@@ -38,7 +38,7 @@ namespace IARA.Mobile.Insp.Helpers
             }
         }
 
-        public static void InitShip(FishingShipViewModel fishingShip, ShipChecksViewModel shipChecks, FishingGearsViewModel fishingGears = null)
+        public static void InitShip(FishingShipViewModel fishingShip, ShipChecksViewModel shipChecks, ShipCatchesViewModel shipCatches = null, FishingGearsViewModel fishingGears = null)
         {
             fishingShip.ShipData.ShipSelected = CommandBuilder.CreateFrom(
                 async (ShipSelectNomenclatureDto ship) =>
@@ -150,7 +150,7 @@ namespace IARA.Mobile.Insp.Helpers
                             shipChecks.LogBooks.LogBooks.Value.ReplaceRange(
                                 logBooks.ConvertAll(f =>
                                 {
-                                    LogBookModel logBook = new LogBookModel
+                                    LogBookModel logBook = new LogBookModel(shipCatches)
                                     {
                                         Pages = pages?.FindAll(s => s.LogBookId == f.Id) ?? new List<LogBookPageDto>(),
                                         Dto = new InspectionLogBookDto

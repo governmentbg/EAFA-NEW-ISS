@@ -291,6 +291,9 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
     private handleEditPageNumberErrorResponse(response: HttpErrorResponse, dialogClose: DialogCloseCallback): void {
         const error: ErrorModel | undefined = response.error;
 
+        const pageToAdd: string = this.model.pageNumber!;
+        const oldPageNum: number | undefined = this.preliminaryDataFormGroup.get('oldPageNumberControl')!.value;
+
         if (error?.code === ErrorCode.PageNumberNotInLogbook) {
             this.snackbar.open(this.translate.getValue('catches-and-sales.ship-log-book-page-not-in-range-error'), undefined, {
                 duration: RequestProperties.DEFAULT.showExceptionDurationErr,
@@ -328,33 +331,31 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
             }
 
             const lastUsedPageNum: number = Number(error!.messages[0]);
-            const diff: number = Number(error!.messages[1]);
-            const pageToAdd: string = this.model.pageNumber!;
+            let diff: number = Number(error!.messages[1]);
 
             // confirmation message
 
-            let message: string = '';
+            let message: string = ''; 
 
-            if (lastUsedPageNum === 0) { // няма добавени страници все още към този дневник
-                const currentStartPage: number = Number(error!.messages[2]);
+            //генерира се липсваща страница и за страницата, чийто номер е променен
+            if (this.isEditNumber) {
+                diff = diff + 1;
+            }
 
-                const msg1: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-no-pages-first-message');
-                const msg2: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-second-message');
-                const msg3: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-third-message');
-                const msg4: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-forth-message');
-                const msg5: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-fifth-message');
-                const msg6: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-sixth-message');
+            const msg1: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-first-message');
+            const msg2: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-second-message');
+            const msg3: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-third-message');
+            const msg4: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-forth-message');
+            const msg5: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-fifth-message');
+            const msg6: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-sixth-message');
 
-                message = `${msg1} ${currentStartPage} ${msg2} ${pageToAdd} ${msg3} ${diff} ${msg4}.\n\n${msg5} ${diff} ${msg6}.`;
+            const msg7: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-one-third-message');
+            const msg8: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-one-forth-message');
+
+            if (diff === 1) {
+                message = `${msg1} ${lastUsedPageNum} ${msg2} ${pageToAdd} ${msg7} ${diff} ${msg8}.\n\n${msg5} ${diff} ${msg8}.`;
             }
             else {
-                const msg1: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-first-message');
-                const msg2: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-second-message');
-                const msg3: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-third-message');
-                const msg4: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-forth-message');
-                const msg5: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-fifth-message');
-                const msg6: string = this.translate.getValue('catches-and-sales.edit-page-number-generate-missing-pages-permission-sixth-message');
-
                 message = `${msg1} ${lastUsedPageNum} ${msg2} ${pageToAdd} ${msg3} ${diff} ${msg4}.\n\n${msg5} ${diff} ${msg6}.`;
             }
 
@@ -367,6 +368,29 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
                 title: this.translate.getValue('catches-and-sales.ship-log-book-page-generate-missing-pages-permission-dialog-title'),
                 message: message,
                 okBtnLabel: `${btnMsg1} ${diff} ${btnMsg2}`,
+                okBtnColor: 'warn'
+            }).subscribe({
+                next: (ok: boolean | undefined) => {
+                    this.hasMissingPagesRangePermission = ok ?? false;
+
+                    if (this.hasMissingPagesRangePermission) {
+                        this.editShipLogBookPageNumber(dialogClose!); // start edit page number method again
+                    }
+                }
+            });
+        }
+        else if (error?.code === ErrorCode.MissingPageWithOldNumber) {
+            const msg1: string = this.translate.getValue('catches-and-sales.edit-page-number-missing-page-with-old-number-first-part');
+            const msg2: string = this.translate.getValue('catches-and-sales.edit-page-number-missing-page-with-old-number-second-part');
+            const msg3: string = this.translate.getValue('catches-and-sales.edit-page-number-missing-page-with-old-number-third-part');
+            const msg4: string = this.translate.getValue('catches-and-sales.edit-page-number-missing-page-with-old-number-forth-part');
+
+            const message: string = `${msg1} ${pageToAdd} ${msg2} ${oldPageNum} ${msg3} ${msg4}`;
+
+            this.confirmDialog.open({
+                title: this.translate.getValue('catches-and-sales.edit-page-number-missing-page-with-old-number-dialog-title'),
+                message: message,
+                okBtnLabel: this.translate.getValue('catches-and-sales.edit-page-number-missing-page-with-old-number-dialog-ok-button'),
                 okBtnColor: 'warn'
             }).subscribe({
                 next: (ok: boolean | undefined) => {

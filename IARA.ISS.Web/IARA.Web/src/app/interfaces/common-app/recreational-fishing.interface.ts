@@ -15,6 +15,7 @@ import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dtos/RecreationalFishingAddTicketsResultDTO';
 import { RecreationalFishingTicketDuplicateDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDuplicateDTO';
 import { IBaseAuditService } from '../base-audit.interface';
+import { TerritoryUnitNomenclatureDTO } from '@app/models/generated/dtos/TerritoryUnitNomenclatureDTO';
 
 export interface IRecreationalFishingService extends IBaseAuditService {
     // tickets
@@ -22,6 +23,7 @@ export interface IRecreationalFishingService extends IBaseAuditService {
     getTicketTypes(): Observable<NomenclatureDTO<number>[]>;
     getTicketPrices(): Observable<RecreationalFishingTicketPriceDTO[]>;
     getAllFishingAssociations(): Observable<NomenclatureDTO<number>[]>;
+    getTicketTerritoryUnits(): Observable<TerritoryUnitNomenclatureDTO[]>;
 
     getTicket(id: number, getRegiXData: boolean): Observable<RecreationalFishingTicketDTO>;
 

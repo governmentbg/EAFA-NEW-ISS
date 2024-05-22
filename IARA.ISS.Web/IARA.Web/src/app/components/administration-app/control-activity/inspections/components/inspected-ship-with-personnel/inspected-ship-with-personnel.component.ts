@@ -16,18 +16,13 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
+import { InspectionSubjectPersonnelDTO } from '@app/models/generated/dtos/InspectionSubjectPersonnelDTO';
 
 @Component({
     selector: 'inspected-ship-with-personnel',
     templateUrl: './inspected-ship-with-personnel.component.html'
 })
 export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipWithPersonnelModel> implements OnInit, OnChanges {
-
-    private readonly translate: FuseTranslationLoaderService;
-
-    @Output()
-    public shipSelected: EventEmitter<VesselDuringInspectionDTO> = new EventEmitter<VesselDuringInspectionDTO>();
-
     @Input()
     public hasMap: boolean = true;
 
@@ -55,6 +50,9 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
     @Input()
     public vesselTypes: NomenclatureDTO<number>[] = [];
 
+    @Output()
+    public shipSelected: EventEmitter<VesselDuringInspectionDTO> = new EventEmitter<VesselDuringInspectionDTO>();
+
     public owners: InspectionShipSubjectNomenclatureDTO[] = [];
     public users: InspectionShipSubjectNomenclatureDTO[] = [];
     public representatives: InspectionShipSubjectNomenclatureDTO[] = [];
@@ -63,6 +61,7 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
     public readonly inspectedPersonTypeEnum: typeof InspectedPersonTypeEnum = InspectedPersonTypeEnum;
 
     private readonly service: InspectionsService;
+    private readonly translate: FuseTranslationLoaderService;
 
     public constructor(
         @Self() ngControl: NgControl,
@@ -119,39 +118,13 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
                         this.assignPersonnel(personnel);
 
                         setTimeout(() => {
-                            const personnel = value.personnel ?? [];
-
-                            this.form.get('shipOwnerControl')!.setValue(
-                                personnel.find(f => f.type === InspectedPersonTypeEnum.OwnerLegal || f.type === InspectedPersonTypeEnum.OwnerPers)
-                            );
-                            this.form.get('shipUserControl')!.setValue(
-                                personnel.find(f => f.type === InspectedPersonTypeEnum.LicUsrLgl || f.type === InspectedPersonTypeEnum.LicUsrPers)
-                            );
-                            this.form.get('shipRepresentativeControl')!.setValue(
-                                personnel.find(f => f.type === InspectedPersonTypeEnum.ReprsPers)
-                            );
-                            this.form.get('shipCaptainControl')!.setValue(
-                                personnel.find(f => f.type === InspectedPersonTypeEnum.CaptFshmn)
-                            );
+                            this.fillPersonnelControls(value.personnel ?? []);
                         });
                     }
                 });
             }
             else {
-                const personnel = value.personnel ?? [];
-
-                this.form.get('shipOwnerControl')!.setValue(
-                    personnel.find(f => f.type === InspectedPersonTypeEnum.OwnerLegal || f.type === InspectedPersonTypeEnum.OwnerPers)
-                );
-                this.form.get('shipUserControl')!.setValue(
-                    personnel.find(f => f.type === InspectedPersonTypeEnum.LicUsrLgl || f.type === InspectedPersonTypeEnum.LicUsrPers)
-                );
-                this.form.get('shipRepresentativeControl')!.setValue(
-                    personnel.find(f => f.type === InspectedPersonTypeEnum.ReprsPers)
-                );
-                this.form.get('shipCaptainControl')!.setValue(
-                    personnel.find(f => f.type === InspectedPersonTypeEnum.CaptFshmn)
-                );
+                this.fillPersonnelControls(value.personnel ?? []);
             }
         }
         else {
@@ -166,12 +139,19 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
     public async onShipSelected(ship: VesselDuringInspectionDTO): Promise<void> {
         this.shipSelected.emit(ship);
 
-        if (ship !== undefined && ship !== null && ship.shipId !== undefined && ship.shipId !== null) {
-            const personnel: InspectionShipSubjectNomenclatureDTO[] = await this.service.getShipPersonnel(ship.shipId).toPromise();
+        if (ship !== undefined && ship !== null) {
+            if (ship.shipId !== undefined && ship.shipId !== null) {
+                const personnel: InspectionShipSubjectNomenclatureDTO[] = await this.service.getShipPersonnel(ship.shipId).toPromise();
 
-            this.assignPersonnel(personnel);
+                this.assignPersonnel(personnel);
+            }
         }
         else {
+            this.form.get('shipOwnerControl')!.setValue(undefined);
+            this.form.get('shipUserControl')!.setValue(undefined);
+            this.form.get('shipRepresentativeControl')!.setValue(undefined);
+            this.form.get('shipCaptainControl')!.setValue(undefined);
+
             this.owners = [];
             this.users = [];
             this.representatives = [];
@@ -181,9 +161,7 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
 
     public assignPersonnel(personnel: InspectionShipSubjectNomenclatureDTO[]): void {
         this.owners = personnel.filter(f => f.type === InspectedPersonTypeEnum.OwnerLegal || f.type === InspectedPersonTypeEnum.OwnerPers);
-
         this.users = personnel.filter(f => f.type === InspectedPersonTypeEnum.LicUsrLgl || f.type === InspectedPersonTypeEnum.LicUsrPers);
-
         const persons = personnel.filter(f => f.type !== InspectedPersonTypeEnum.OwnerLegal && f.type !== InspectedPersonTypeEnum.LicUsrLgl);
 
         // nomenclature value is Person.ID (this is for removing duplicates)
@@ -253,7 +231,6 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
     protected getValue(): ShipWithPersonnelModel {
         const observation: string = this.form.get('observationControl')!.value;
         const ship: VesselDuringInspectionDTO = this.form.get('shipControl')!.value;
-
         const toggles: InspectionCheckDTO[] = this.form.get('togglesControl')!.value ?? [];
 
         return new ShipWithPersonnelModel({
@@ -272,5 +249,12 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
                     text: observation
                 })] : [],
         })
+    }
+
+    private fillPersonnelControls(personnel: InspectionSubjectPersonnelDTO[]): void {
+        this.form.get('shipOwnerControl')!.setValue(personnel.find(x => x.type === InspectedPersonTypeEnum.OwnerLegal || x.type === InspectedPersonTypeEnum.OwnerPers));
+        this.form.get('shipUserControl')!.setValue(personnel.find(x => x.type === InspectedPersonTypeEnum.LicUsrLgl || x.type === InspectedPersonTypeEnum.LicUsrPers));
+        this.form.get('shipRepresentativeControl')!.setValue(personnel.find(x => x.type === InspectedPersonTypeEnum.ReprsPers));
+        this.form.get('shipCaptainControl')!.setValue(personnel.find(x => x.type === InspectedPersonTypeEnum.CaptFshmn));
     }
 }

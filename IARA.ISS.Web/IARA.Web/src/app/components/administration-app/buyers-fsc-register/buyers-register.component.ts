@@ -302,7 +302,7 @@ export class BuyersComponent implements OnInit, AfterViewInit {
             isThirdCountry: false,
             isApplicationHistoryMode: false,
             showOnlyRegiXData: false,
-            viewMode: viewMode || entry.status === BuyerStatusesEnum.Canceled
+            viewMode: viewMode
         });
 
         const headerAuditBtn: IHeaderAuditButton = {
@@ -359,13 +359,13 @@ export class BuyersComponent implements OnInit, AfterViewInit {
         rightButtons.push({
             id: 'print',
             color: 'accent',
-            translateValue: viewMode || entry.status === BuyerStatusesEnum.Canceled
+            translateValue: viewMode 
                 ? 'buyers-and-sales-centers.print'
                 : 'buyers-and-sales-centers.save-print',
             isVisibleInViewMode: true
         });
 
-        this.openEditDialog(data, headerTitle, headerAuditBtn, rightButtons, viewMode || entry.status === BuyerStatusesEnum.Canceled);
+        this.openEditDialog(data, headerTitle, headerAuditBtn, rightButtons, viewMode);
     }
 
     public addLogBook(buyer: BuyerDTO): void {

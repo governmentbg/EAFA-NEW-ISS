@@ -58,10 +58,14 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
         public async Task<bool?> IsDeviceAllowed(string imei, IAuthTokenProvider tokenProvider)
         {
-            HttpResult<bool> result = await RestClient.GetAsync<bool>("InspectionData/IsDeviceAllowed", new { imei });
+            HttpResult<bool> result = await RestClient.GetAsync<bool>("InspectionData/CheckForInstallation");
             if (result.IsSuccessful)
             {
-                return result.Content;
+                if (result.Content == false)
+                {
+                    return true;
+                }
+                return await RestClient.GetAsync<bool>("InspectionData/IsDeviceAllowed", new { imei }).GetHttpContent();
             }
             else if (result.StatusCode == HttpStatusCode.Unauthorized && !string.IsNullOrEmpty(tokenProvider.RefreshToken))
             {
@@ -76,12 +80,15 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     tokenProvider.Token = newToken.Content.Token;
                     tokenProvider.RefreshToken = newToken.Content.RefreshToken;
                     tokenProvider.AccessTokenExpiration = newToken.Content.ValidTo;
+                    if (await RestClient.GetAsync<bool>("InspectionData/CheckForInstallation").GetHttpContent() == false)
+                    {
+                        return true;
+                    }
                     return await RestClient.GetAsync<bool>("InspectionData/IsDeviceAllowed", new { imei }).GetHttpContent();
                 }
             }
             return null;
         }
-
         public async Task<bool> IsInspectorAllowed()
         {
             HttpResult<bool> result = await RestClient.GetAsync<bool>("InspectionData/IsInspectorAllowed");
@@ -147,6 +154,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
             NomenclatureEnum[] inspNoms = new[]
             {
+                NomenclatureEnum.Catch,
                 NomenclatureEnum.Inspector,
                 NomenclatureEnum.PatrolVehicle,
                 NomenclatureEnum.Ship,

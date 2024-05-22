@@ -39,6 +39,26 @@ namespace IARA.Mobile.Insp.Application.Transactions
             _messagingCenter = messagingCenter;
         }
 
+        public List<InspectionCatchMeasureDto> GetCatchesFromLogBookPaheNumber(int logBookId, string pageNum)
+        {
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+                return (
+                    from c in context.Catches
+                    where c.LogBookId == logBookId && c.PageNumber == pageNum
+                    select new InspectionCatchMeasureDto()
+                    {
+                        Id = c.Id,
+                        FishId = c.FishId,
+                        CatchInspectionTypeId = c.CatchTypeId,
+                        CatchQuantity = c.Quantity,
+                        UnloadedQuantity = c.UnloadedQuantity,
+                        TurbotSizeGroupId = c.TurbotSizeGroupId,
+                        CatchZoneId = c.CatchZoneId
+                    }).ToList();
+            }
+        }
+
         public async Task<string> GetNextReportNumber(int userId = -1)
         {
             if (userId == -1)

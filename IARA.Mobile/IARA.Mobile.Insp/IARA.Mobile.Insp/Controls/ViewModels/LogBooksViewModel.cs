@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Domain.Enums;
+﻿using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -18,10 +18,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class LogBooksViewModel : ViewModel
     {
-        public LogBooksViewModel(InspectionPageViewModel inspection)
+        private ShipCatchesViewModel _shipCatches;
+        public LogBooksViewModel(InspectionPageViewModel inspection, ShipCatchesViewModel shipCatches)
         {
             Inspection = inspection;
-
+            _shipCatches = _shipCatches;
             Add = CommandBuilder.CreateFrom(OnAdd);
             Remove = CommandBuilder.CreateFrom<LogBookModel>(OnRemove);
 
@@ -46,7 +47,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             LogBooks.Value.AddRange(logBooks.ConvertAll(f =>
             {
-                LogBookModel model = new LogBookModel
+                LogBookModel model = new LogBookModel(_shipCatches)
                 {
                     Dto = f
                 };
@@ -75,7 +76,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         private void OnAdd()
         {
-            LogBookModel model = new LogBookModel
+            LogBookModel model = new LogBookModel(_shipCatches)
             {
                 AddedByInspector = true,
                 Dto = new InspectionLogBookDto(),

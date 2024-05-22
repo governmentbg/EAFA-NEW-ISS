@@ -50,6 +50,8 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
 
     public personTypes: NomenclatureDTO<LogBookPagePersonTypesEnum>[] = [];
 
+    private model: InspectionSubjectPersonnelDTO | undefined;
+
     private readonly translate: FuseTranslationLoaderService;
 
     public constructor(
@@ -97,7 +99,13 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
                 }
                 else {
                     this.hasSubjects = true;
-                    this.form.get('personRegisteredControl')!.setValue(this.isFromRegister);
+
+                    if (this.model !== undefined && this.model !== null) {
+                        this.form.get('personRegisteredControl')!.setValue(this.model.isRegistered);
+                    }
+                    else {
+                        this.form.get('personRegisteredControl')!.setValue(true);
+                    }
 
                     if (this.isFromRegister) {
                         this.form.get('personControl')!.setValue(null);
@@ -120,6 +128,7 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
 
     public writeValue(value: InspectionSubjectPersonnelDTO | undefined): void {
         this.form.get('personTypeControl')!.setValue(this.personTypes[PERSON_IDX]);
+        this.model = value;
        
         if (value !== undefined && value !== null) {
             this.isFromRegister = value.isRegistered === true;

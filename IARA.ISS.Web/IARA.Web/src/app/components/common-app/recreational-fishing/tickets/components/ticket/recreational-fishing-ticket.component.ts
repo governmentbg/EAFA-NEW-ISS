@@ -50,6 +50,7 @@ import { IssueDuplicateTicketComponent } from '../../../applications/components/
 import { IssueDuplicateTicketDialogParams } from '../../../applications/models/issue-duplicate-ticket-dialog-params.model';
 import { RegixPersonDataDTO } from '@app/models/generated/dtos/RegixPersonDataDTO';
 import { AddressRegistrationDTO } from '@app/models/generated/dtos/AddressRegistrationDTO';
+import { TerritoryUnitNomenclatureDTO } from '@app/models/generated/dtos/TerritoryUnitNomenclatureDTO';
 
 @Component({
     selector: 'recreational-fishing-ticket',
@@ -85,7 +86,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
     public validFrom: Date | undefined;
 
     public fishingAssociations!: NomenclatureDTO<number>[];
-    public territoryUnits: NomenclatureDTO<number>[] = [];
+    public territoryUnits: TerritoryUnitNomenclatureDTO[] = [];
 
     public showFilesPanel: boolean = false;
     public personPhotoMethod: TLPictureRequestMethod | undefined;
@@ -94,6 +95,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
     public dateOfBirthProperties!: RegixDateOfBirthProperties;
     public dateOfBirthRequiredTicketTypes: string[] = [];
     public representativeSameAsAdultLabel: string | undefined;
+    public deliveryTerritoryUnitText: string | undefined;
 
     public regixChecksData: RecreationalFishingTicketBaseRegixDataDTO | undefined;
     public regixChecks: ApplicationRegiXCheckDTO[] = [];
@@ -399,7 +401,9 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             if (this.hasProperty(value, 'deliveryTerritoryUnitId')) {
                 this.getTerritoryUnits().subscribe({
                     next: () => {
-                        this.form.get('deliveryTerritoryUnitControl')?.setValue(this.territoryUnits.find(x => x.value === value.deliveryTerritoryUnitId));
+                        const terrytoryUnit: TerritoryUnitNomenclatureDTO | undefined = this.territoryUnits.find(x => x.value === value.deliveryTerritoryUnitId);
+                        this.form.get('deliveryTerritoryUnitControl')?.setValue(terrytoryUnit);
+                        this.deliveryTerritoryUnitText = terrytoryUnit?.deliveryTerritoryUniitMessage;
                     }
                 });
             }
@@ -437,7 +441,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             // always set to true because it doesn't exist in this case
             this.form.get('guaranteeTrueDataControl')?.setValue(true);
         }
-        
+
         this.personPhotoRequired = !this.notRequiredPhotoPeriods.includes(this.period.code!);
         if (this.personPhotoRequired) {
             this.form.get('photoControl')?.setValidators(Validators.required);
@@ -1008,8 +1012,8 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
 
     private getTerritoryUnits(): Observable<void> {
         return NomenclatureStore.instance.getNomenclature(
-            NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures), false
-        ).pipe(map((territoryUnits: NomenclatureDTO<number>[]) => {
+            NomenclatureTypes.TerritoryUnits, this.service.getTicketTerritoryUnits.bind(this.service), false
+        ).pipe(map((territoryUnits: TerritoryUnitNomenclatureDTO[]) => {
             this.territoryUnits = territoryUnits;
         }));
     }

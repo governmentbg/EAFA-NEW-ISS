@@ -27,6 +27,9 @@ namespace IARA.Mobile.Insp.Menu
             InitializeComponent();
             VersionSpan.Text = VersionTracking.CurrentVersion;
 
+#if DEBUG
+            VersionSpan.Text += $" - {BuildInfo.BuildDate}";
+#endif
             Routes = new Dictionary<string, Func<Page>>
             {
                 {
